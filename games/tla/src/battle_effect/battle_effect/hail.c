@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 // The canvas preparer's packed arguments.
 #define PREPARE(kind, side, anchor) ((kind) | (side) << 4 | (anchor) << 5)
@@ -49,7 +52,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     s32 angle;
     s32 speed;
 
-    angle = (Random16() & 0x7fff) + 0x4000;
+    angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
     speed = (Random16() & 0x1ff) + 0x80;
     CHIPS[i].x = ((spawn[0] / 2 + (Random16() & 0xf)) - 8) << 16;
     CHIPS[i].y = (spawn[1] + 8) << 16;
@@ -162,13 +165,6 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 // Teardown: the callback and the blitter are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleEffect_RunGround (kind 203 there
-// too), with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
-// task priority, no work->effect store, the canvas preparer's packed
-// arguments, and the chips' blitter built by BattleEffect_BuildBlitter
-// directly. Other editions place a differently built version; only the
-// English listing was compared.
-
 #define ROCK_COUNT 6
 #define CHIPS_PER_ROCK 4
 // The chips' shapes and flips live in particles[32..63].
@@ -208,7 +204,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(effect, PREPARE(0, effect->side, 2), screen,
                                  otherPoint);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->side == 1)
     BattleEffect_LoadBlitter(
         HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
@@ -234,9 +230,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
     for (i = 0; i != 8; i++) {
       struct EffectStep *rock = &work->particles[i];
 
-      rock->x = actor->x;
-      rock->y = 0x420000;
-      rock->z = actor->z;
+      SET_POSITION(rock, actor->x, px(66), actor->z);
       rock->velocityX = (i * 0x500000) >> 5;
       rock->velocityY = (s32)(((Random16() & 127) - 64) << 16) >> 6;
       rock->velocityZ = (s32)(((Random16() & 255) - 127) << 16) >> 5;
@@ -321,8 +315,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
                 s32 mode = BLIT_MAX;
                 s32 flags = chip->velocityY;
                 /* FAKEMATCH(barrier): an empty asm after the mode and the flags
-                 * are set; without it, 2 of 571 instructions differ in
-                 * tla-en. */
+                 * are set. */
                 __asm__("");
                 BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7, flags,
                                           mode);
@@ -361,7 +354,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
             if (rock->y < 0x140000) {
               work->shakeFrames = 8;
               rock->variant = 0;
-              Sound_PlayFar(134);
+              Sound_PlayFar(SE_HEAVY_IMPACT);
               BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
               BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             }
@@ -466,8 +459,6 @@ void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 // that form keeps a constant from being carried across the call.
 
 static inline s32 RatioMulQ14(s32 divisor, s32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_RatioMulQ14, 10 of 1676 instructions of BattleEffect_RunThor differ
-   * in tla-en. */
+  /* FAKEMATCH(wrapper): the call through this inline. */
   return Iwram_RatioMulQ14(divisor, value);
 }

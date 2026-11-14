@@ -350,4 +350,4 @@ AlchemyUncredited_081c09c6:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c09c6:
 	.4byte	0x03007ff0
-	.4byte	gSound_ClockLengths
+	.4byte	gClockTable

@@ -109,9 +109,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
-   * a constant of each call, as ☀️'s system call layer does; as a direct call
-   * the address is kept in r5; as Decompress_TaggedLz called directly, 21 of
-   * 103 instructions differ in tla-en (Func_0200005c). */
+   * a constant of each call. */
   Decompress_TaggedLz(source, destination);
 }
 
@@ -137,13 +135,11 @@ void Func_0200005c(void) {
   Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   res += 0x1c0;
   Decode_(res, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800,
+  Dma_Set((void *)Ram_MapCellBuffer, BG_SCREEN_BLOCK(13),
           DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
 
   map = (u16 *)0x06003000;
   tile = 0x1a0;
-  // Written with goto: as for loops, the pinned column counter keeps its exit
-  // test ahead of the loop, and the scroll loop's zero leaves it.
   y = 0;
 row:
   x = 0;
@@ -170,10 +166,7 @@ scroll_pair:
   ((struct ClearWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
   {
     struct Actor *leader;
-    /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword, so that it
-     * loads from the pool after the call, as the native has; as a plain store
-     * it reuses the scroll loop's zero kept in r5; as leader->motionFlags = 0,
-     * 4 of 103 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword. */
     register u16 zero asm("r5");
 
     leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -210,13 +203,11 @@ void Func_0200015c(void) {
 void Func_020001f4(void) {
   if (gData_020024f6 == 0) {
     /* FAKEMATCH(pin): the held keys pointer pinned to r4, with the key pinned
-     * to r3 below; as an unpinned local, 12 of 92 instructions differ in
-     * tla-en. */
+     * to r3 below. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
     if (gData_020024fe != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3, with the pointer above; as an
-       * unpinned local, 6 of 92 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the key pinned to r3, with the pointer above. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
@@ -227,7 +218,7 @@ void Func_020001f4(void) {
         gData_020024fe = 1;
         if (gData_02002410[gData_020024fa] == 0) {
           gData_020024f6 = 1;
-          Event_PlaySound(110);
+          Event_PlaySound(SE_CHIME);
         }
       } else {
         gData_020024fa = 0;
@@ -235,13 +226,11 @@ void Func_020001f4(void) {
     }
   }
   if (gData_020024f8 == 0) {
-    /* FAKEMATCH(pin): the held keys pointer pinned to r4, as for the first
-     * code; as an unpinned local, 12 of 92 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the held keys pointer pinned to r4. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
     if (gData_02002500 != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3, as for the first code; as an
-       * unpinned local, 6 of 92 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the key pinned to r3. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
@@ -252,7 +241,7 @@ void Func_020001f4(void) {
         gData_02002500 = 1;
         if (gData_02002418[gData_020024fc] == 0) {
           gData_020024f8 = 1;
-          Event_PlaySound(110);
+          Event_PlaySound(SE_CHIME);
         }
       } else {
         gData_020024fc = 0;
@@ -272,7 +261,7 @@ s32 Func_020002e0(void) {
   struct MainRoutineWork *party;
   s32 mode;
 
-  if (Event_GetFlag(324) == 0)
+  if (Event_GetFlag(FLAG_RETREAT_BLOCKED) == 0)
     return 0;
   party = &gMainRoutineWork;
 
@@ -313,8 +302,7 @@ void StatusScreen_Run(void);
 #endif
 
 /// Swaps the map cell buffer out around a password or link screen.
-#define COPY_CELLS(to, from)                                                   \
-  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)(to), (s32)(from), 0x3000)
+#define COPY_CELLS(to, from) Iwram_CopyWords((s32)(to), (s32)(from), 0x3000)
 #define SAVE_CELLS()                                                           \
   u8 *cells = gSaveBuffer;                                                     \
                                                                                \
@@ -365,7 +353,7 @@ s32 Scene_Initialize(void) {
     }
     Event_Wait(60);
     Event_FinishScreenTransition();
-    Sound_Play(78);
+    Sound_Play(SOUND_FADE_OUT_BGM);
     Event_Wait(300);
     Event_SetDestination((s32)&SceneId_Title, 1);
     return 0;
@@ -537,7 +525,7 @@ top:
         Event_SetFlag(0x13f);
       }
     }
-    Event_ClearFlag(0x106);
+    Event_ClearFlag(FLAG_MENU_OPEN);
     goto finish;
   }
   if (result == 2) {
@@ -560,10 +548,10 @@ top:
         InventorySnapshot_Restore();
       WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
       Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
-      Event_ClearFlag(0x106);
+      Event_ClearFlag(FLAG_MENU_OPEN);
       party->ownerOverride = 0;
       gSleepDisabled = 1;
-      Event_SetDestination((s32)&SceneId_Ov6b5, 1);
+      Event_SetDestination((s32)&SceneId_Lobby, 1);
     }
     goto finish;
   }
@@ -620,7 +608,7 @@ again:
 finish:
   ((struct EventWork *)Ram_HeapSlots->eventWork)->countdown = 999;
   Event_Wait(30);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(60);
@@ -769,9 +757,9 @@ scan:
   }
   System_Wait(1);
 poll:
-  if (!(gInput.pressed & 2))
+  if (!(gInput.pressed & KEY_B))
     goto scan;
-  Event_PlaySound(113);
+  Event_PlaySound(SE_MENU_CANCEL);
   goto close;
 receive:
   System_Wait(10);
@@ -820,7 +808,7 @@ done:
     Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0, 4);
   interrupted:
     System_Wait(1);
-    if (!(gInput.pressed & 1))
+    if (!(gInput.pressed & KEY_A))
       goto interrupted;
   close:
     Window_Close(window, 2);
@@ -1012,14 +1000,14 @@ s32 Func_02000e44(void) {
   Window_LoadGraphics();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                     gMainRoutineWork.paletteGlow[1]);
-  palette = (u16 *)0x050001c0;
+  palette = (u16 *)&BG_PLTT_COLOR(14, 0);
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
-          (volatile u32 *)0x040000d4);
+          REG_DMA3);
   palette[4] = 0x6318;
   mode = IconMenu_ChooseSendOption(1);
   if (mode == -1)
     return -1;
-  Sound_Play(71);
+  Sound_Play(MUS_071);
   cursor = 0;
   column = 0;
   row = 0;
@@ -1085,8 +1073,8 @@ s32 Func_02000e44(void) {
       state = 1;
     Func_02000db4(window, drawColumn, drawRow, drawMode, height, 15);
     if (state == 0) {
-      if (gInput.repeat & 16) {
-        Sound_Play(111);
+      if (gInput.repeat & KEY_RIGHT) {
+        Sound_Play(SE_MENU_CURSOR_MOVE);
         {
           s32 next = column + 1;
 
@@ -1096,21 +1084,21 @@ s32 Func_02000e44(void) {
             column = next % (SIDE_COLUMN + 1);
         }
       }
-      if (gInput.repeat & 32) {
-        Sound_Play(111);
+      if (gInput.repeat & KEY_LEFT) {
+        Sound_Play(SE_MENU_CURSOR_MOVE);
         if (row == 2)
           column = (column + SIDE_COLUMN - 1) % SIDE_COLUMN;
         else
           column = (column + SIDE_COLUMN) % (SIDE_COLUMN + 1);
       }
-      if (gInput.repeat & 128) {
-        Sound_Play(111);
+      if (gInput.repeat & KEY_DOWN) {
+        Sound_Play(SE_MENU_CURSOR_MOVE);
         row = (row + 1) % 4;
         if (column == SIDE_COLUMN && row == 2)
           row = 3;
       }
-      if (gInput.repeat & 64) {
-        Sound_Play(111);
+      if (gInput.repeat & KEY_UP) {
+        Sound_Play(SE_MENU_CURSOR_MOVE);
         row = (row + 3) % 4;
         if (column != SIDE_COLUMN)
           goto not_side;
@@ -1199,9 +1187,8 @@ s32 Func_02000e44(void) {
           s32 code = gData_0200265e[column + row * SIDE_COLUMN];
 
           if (code <= 63) {
-            Sound_Play(112);
+            Sound_Play(SE_MENU_CONFIRM);
             Data_0200274a[cursor] = code;
-            // The native calls the remainder and reads nothing back.
             __modsi3(cursor, 10);
             if (cursor < length - 1) {
               if (cursor % 50 == 49)
@@ -1215,7 +1202,7 @@ s32 Func_02000e44(void) {
         }
       }
       if (action != 0 || state == 1) {
-        if (gInput.pressed & 8 || action == 3 || state == 1) {
+        if (gInput.pressed & KEY_START || action == 3 || state == 1) {
           u16 check;
           struct Window *box;
           struct MainRoutineWork *party;
@@ -1231,12 +1218,12 @@ s32 Func_02000e44(void) {
           if (DECODED_PASSWORD[size2] == (u16)crc >> 8 &&
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
             Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0, 0);
-            Sound_Play(112);
+            Sound_Play(SE_MENU_CONFIRM);
           wait_accepted:
             System_Wait(1);
-            if (!(gInput.pressed & 1))
+            if (!(gInput.pressed & KEY_A))
               goto wait_accepted;
-            Sound_Play(112);
+            Sound_Play(SE_MENU_CONFIRM);
             MainRoutineWork_InitializeDefaults();
             party = &gMainRoutineWork;
             party->currentOwner = 0;
@@ -1253,41 +1240,41 @@ s32 Func_02000e44(void) {
             Window_Close(grid, 2);
             Window_Close(window, 2);
             WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
-            Sound_Play(74);
+            Sound_Play(MUS_074);
             System_Wait(6);
             NameEntry_EditMemberName(0);
             StatusScreen_Run();
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
             return 0;
           }
-          Sound_Play(113);
+          Sound_Play(SE_MENU_CANCEL);
           Text_DrawMessageAsTiles(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
         wait_rejected:
           System_Wait(1);
-          if (!(gInput.pressed & 1) && !(gInput.pressed & 2))
+          if (!(gInput.pressed & KEY_A) && !(gInput.pressed & KEY_B))
             goto wait_rejected;
           Window_Close(box, 2);
           WindowSprite_RedrawSavedRect(window);
           DRAW_TITLE(window)
-        } else if (gInput.repeat & 512 || action == 2) {
+        } else if (gInput.repeat & KEY_L || action == 2) {
           if (cursor > 0) {
-            Sound_Play(111);
+            Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor--;
           }
-        } else if (gInput.repeat & 256 || action == 1) {
+        } else if (gInput.repeat & KEY_R || action == 1) {
           if (cursor < length - 1) {
-            Sound_Play(111);
+            Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor++;
           }
-        } else if (gInput.pressed & 2) {
+        } else if (gInput.pressed & KEY_B) {
           if (cursor > 0) {
-            Sound_Play(111);
+            Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor--;
           } else {
-            Sound_Play(113);
+            Sound_Play(SE_MENU_CANCEL);
             Window_Close(grid, 2);
             Window_Close(window, 2);
-            Sound_Play(74);
+            Sound_Play(MUS_074);
             return -1;
           }
         }
@@ -1311,14 +1298,11 @@ s32 Func_02000e44(void) {
       }
     }
     action = length;
-    /* FAKEMATCH(barrier): the count is not known to be the length, whose
-     * remainder the native reloads from the stack; as no asm, 2 of 1077
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the count is not known to be the length. */
     asm volatile("" : "+r"(action));
     if (length > 49) {
       if (pages - 1 == page) {
-        /* FAKEMATCH(barrier): r2 no longer holds the length; as no asm, 2 of
-         * 1077 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): r2 no longer holds the length. */
         asm volatile("" : : : "r2");
         action = length % 50;
       } else
@@ -1353,11 +1337,9 @@ s32 Func_02000e44(void) {
 /// Unpacks source into a scratch block, then writes a 16 by 8 block of tiles
 /// at the panel's cell into the BG map at 0x06002000 and into the window
 /// tilemap's shadow: palette 15, the tile of each cell the row times the
-/// panel's stride plus the column. The loops are the listing's: no loop pass
-/// touches them, so the tile is rebuilt and the mask reloaded on every pass.
+/// panel's stride plus the column.
 void Func_02001804(struct Panel_02001804 *panel, const void *source) {
-  /* FAKEMATCH(pin): the shadow pointer in r5; as a plain local, 7 of 53
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the shadow pointer in r5. */
   register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
   void *work = Heap_AllocEwram(0x300);
   u16 *tiles;
@@ -1394,8 +1376,7 @@ next_column:
 }
 
 void Func_0200187c(struct Panel_02001804 *panel) {
-  /* FAKEMATCH(pin): the shadow pointer in r5; as a plain local, 23 of 43
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the shadow pointer in r5. */
   register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
   void *work = Heap_AllocEwram(0x300);
   u16 *tiles;
@@ -1506,8 +1487,6 @@ void Func_020018e0(s32 mode, u8 *in) {
   for (i = 0; i != 4; i++) {
     struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
 
-    // The native clears the same 40 bytes, djinnAvailable through
-    // djinnActiveCounts, four times.
     for (n = 0; n != 4; n++)
       Iwram_ClearWordsEntry(unit->djinnAvailable, 40);
   }
@@ -1717,9 +1696,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
       for (m = 0; m != 23; m++) {
         s32 count = 0;
         u16 quantity;
-        /* FAKEMATCH(dead): a halfword copy of the count nothing reads, which
-         * keeps the zero-extension hoisted above the sign test; without it, 139
-         * of 479 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): a halfword copy of the count nothing reads. */
 
         for (n = 0; n != 15; n++) {
           if ((unit->inventory[n] & 0x1ff) == gData_0200271c[m])
@@ -1832,8 +1809,7 @@ s32 Func_02002068(u8 *src, s32 length, u8 *dst) {
 
 /// The CRC-16 of length bytes at p (polynomial 0x1021, seed 0xffff, the
 /// result inverted): the clear screen checks each decoded block with it,
-/// over all but the block's last two bytes. The loops are the listing's,
-/// counted up and tested at the bottom.
+/// over all but the block's last two bytes.
 u16 Func_0200217c(u32 length, u8 *p) {
   u32 crc;
   u32 i;

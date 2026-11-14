@@ -39,15 +39,6 @@ struct ResourceSprite {
   struct AnimationEntry *entries[4];
 };
 
-/* VIEW(resource_slot): routine SpriteAnimation_Alloc as s32
- * SpriteAnimation_Alloc(s32 id); the definition has struct AnimationEntry
- * *SpriteAnimation_Alloc(s32 id); tried as the definition's struct
- * AnimationEntry *SpriteAnimation_Alloc(s32 id), which the object already
- * declares, SpriteAnimation_Alloc (gone) moves: 60 of 60 instructions in
- * tla-ja. */
-extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__(
-    "SpriteAnimation_Alloc");
-#define SpriteAnimation_Alloc AnimationObject_Allocate__resource_slot
 #include "system/system.h"
 #undef SpriteAnimation_Alloc
 #include "types.h"
@@ -138,8 +129,8 @@ s32 Animation_LookupValueByKey(s32 key) {
 /* VIEW(resource_slot): tag struct ActorSpriteView as struct
  * ActorSpriteView__resource_slot; actor_view.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field.c:1026: structure has no member named
- * `width'. */
+ * tla-ja: games/tla/src/field/field/sprite_animation.c:158: structure has no
+ * member named `width'. */
 struct ActorSpriteView__resource_slot {
   u8 unk00[5];
   u8 unk05Low : 2;
@@ -168,8 +159,8 @@ struct ActorSpriteView__resource_slot {
  * actor_view.h has s32 InitializeAnimationObjects(struct ActorSpriteView *);
  * tried as the definition's s32 InitializeAnimationObjects(struct
  * ActorSpriteView__resource_slot *state), which the object already declares, it
- * does not compile in tla-ja: games/tla/src/field/field.c:1027: conflicting
- * types for `InitializeAnimationObjects'. */
+ * does not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:157:
+ * conflicting types for `InitializeAnimationObjects'. */
 s32 InitializeAnimationObjects__resource_slot(
     struct ActorSpriteView__resource_slot
         *state) __asm__("InitializeAnimationObjects");
@@ -241,9 +232,7 @@ void SpriteAnimation_Reset(struct AnimationEntry *work) {
       z = 0;
       work->kind = info->drawKind;
       work->script = (u8 *)z;
-      /* FAKEMATCH(dead): an empty once-only block keeps the kind's store and
-       * the script's clear ahead of the lists' stores; without it, 6 of 30
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an empty once-only block. */
       do {
       } while (0);
       animation = info->animation;
@@ -261,8 +250,8 @@ void SpriteAnimation_Reset(struct AnimationEntry *work) {
  * actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *,
  * s32); tried as the definition's s32 ResourceMetadata_Register(struct
  * MetadataSlotState *state, s32 id), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/field/field.c:1114: conflicting types
- * for `ResourceMetadata_Register'. */
+ * not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:248:
+ * conflicting types for `ResourceMetadata_Register'. */
 s32 ResourceMetadata_Register__resource_slot(
     struct MetadataSlotState *state,
     s32 id) __asm__("ResourceMetadata_Register");
@@ -285,7 +274,7 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
   }
   if (index == 4)
     return -1;
-  value = AnimationObject_Allocate__resource_slot(id);
+  value = SpriteAnimation_Alloc(id);
   if (value == 0)
     return 0;
   state->slots[index] = value;
@@ -373,8 +362,8 @@ void SpriteAnimation_Start(struct AnimationEntry *work, s32 no) {
  * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
  * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
  * AnimationGroup *state, s32 flags), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/field/field.c:1220: conflicting types
- * for `Animation_ApplyChildArgument'. */
+ * not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:360:
+ * conflicting types for `Animation_ApplyChildArgument'. */
 s32 Animation_ApplyChildArgument__resource_slot(
     struct AnimationGroup *state,
     s32 flags) __asm__("Animation_ApplyChildArgument");
@@ -453,7 +442,7 @@ s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
  * has void Animation_ApplyChildValue(struct ActorSpriteView *, s32); tried as
  * the definition's void Animation_ApplyChildValue(struct ChildGroup *group, s32
  * value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field.c:1294: conflicting types for
+ * games/tla/src/field/field/sprite_animation.c:440: conflicting types for
  * `Animation_ApplyChildValue'. */
 void Animation_ApplyChildValue__resource_slot(
     struct ChildGroup *group, s32 value) __asm__("Animation_ApplyChildValue");
@@ -522,8 +511,9 @@ void VramBlock_Load93(void) {
  * *SpriteAnimation_Alloc(s32 id); system/system.h has s32
  * SpriteAnimation_Alloc(s32 id); tried as the definition's struct
  * AnimationEntry *SpriteAnimation_Alloc(s32 id), which the object already
- * declares, it does not compile in tla-ja: games/tla/src/field/field.c:1358:
- * conflicting types for `SpriteAnimation_Alloc'. */
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/field/sprite_animation.c:509: conflicting types for
+ * `SpriteAnimation_Alloc'. */
 struct AnimationEntry *
 SpriteAnimation_Alloc__resource_slot(s32 id) __asm__("SpriteAnimation_Alloc");
 #define SpriteAnimation_Alloc SpriteAnimation_Alloc__resource_slot
@@ -684,9 +674,7 @@ struct ResourceObject *Sprite_Create(s32 id) {
   *attribute++ = 0x6000;
   *attribute = (gResourceTableEntries[93].offset >> 5) | 0x800;
   if (ResourceMetadata_Register(sprite, id) == -1) {
-    /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 built after
-     * the call and never used; with the call alone, 20 of 154 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): a store of the byte it reloads. */
     freeSprite->dirty = freeSprite->dirty;
   }
   return (struct ResourceObject *)freeSprite;

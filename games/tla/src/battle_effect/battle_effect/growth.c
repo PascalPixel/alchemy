@@ -127,7 +127,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
       }
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade the canvas out over the last 16 frames.
-        REG_BLDCNT = 0x3f44;
+        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = ((duration - frame) - 5) | 0x1000;
       }
       // Column i grows 8 pixels a frame from frame i * 4 + 8 to its full
@@ -158,8 +158,6 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
                   u8 *cell;
                   u32 width;
                   // side is set to 1 and then masked with i, which builds the 1
-                  // in its register first; as side = i & 1, 195 of 514
-                  // instructions differ in tla-en.
                   side = 1;
                   side &= i;
                   cell = work->sheet + gGrowth_VineCells[shape];
@@ -177,8 +175,6 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
                   u8 *cell;
                   u32 width;
                   // side is set to 1 and then masked with i, which builds the 1
-                  // in its register first; as side = i & 1, 195 of 514
-                  // instructions differ in tla-en.
                   side = 1;
                   side &= i;
                   cell = work->sheet + gGrowth_PillarCells[shape];
@@ -307,7 +303,8 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   BattleEffect_RunDjinniEntrance(
       effect, PREPARE_KIND | effect->side << 4 | PREPARE_ANCHOR << 5, &screen,
       &world);
-  REG_BG2CNT = 0x785;
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
@@ -412,16 +409,14 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   // moved 112 pixels right for the other side.
   heap = (u32 *)Ram_HeapSlots;
   /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the heap
-   * slots' fixed address, so the base stays in r5 until the flipped blitter's
-   * slot is read from it; without it, 23 of 453 instructions differ in
-   * tla-en. */
+   * slots' fixed address. */
   __asm__("" : "+r"(heap));
   work = (struct BattleEffectWork *)heap[23];
   canvas = (void *)heap[24];
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
@@ -447,7 +442,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
     }
     if (frame >= total - 16) {
       // Fade the canvas out over the last 16 frames.
-      REG_BLDCNT = 0x3f44;
+      REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = (total - frame - 1) | 0x1000;
     }
 
@@ -463,10 +458,6 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
 
         if (gGrowth_Kinds[i] < 2) {
           height = age * 16;
-          // Six times the age, spelled as the shifts and add the native
-          // computes from age in r10 each frame. Written age * 6, loop.c
-          // strength-reduces age * 3 into a spilled induction variable of
-          // its own: 225 of 453 instructions differ in tla-en.
           lean = (age * 2 + age) * 2;
           if (height > 80) {
             height = 80;

@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -60,7 +63,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet, work->sheet, 1,
                              1);
@@ -104,9 +107,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         s32 height = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
         s32 velocity;
 
-        thrown->x = caster->x;
-        thrown->y = caster->y + height;
-        thrown->z = caster->z;
+        SET_POSITION(thrown, caster->x, caster->y + height, caster->z);
         velocity = ((Random16() & 255) - 128) << 8;
         // DEAD: both stores are overwritten by the 0 below; the ROM keeps them.
         thrown->velocityX = velocity;
@@ -189,14 +190,14 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         drop = &DROPS[firstDrop + k];
         drop->x = pos.x << 16;
         drop->y = pos.y << 16;
-        angle = (Random16() & 0x7fff) + 0x4000;
+        angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 255) + 127;
         drop->velocityX = (Trig_Sin(angle) * speed) >> 5;
         drop->velocityY = (Trig_Cos(angle) * speed) >> 5;
         drop->variant = (Random16() & 15) + 16;
       }
       BattlePlayback_StartFar(134);
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       BattleEffect_StartActorMotion(effect->actors[member], 1, 0x20000, 0x80000,
                                     0x20000, i * 5 + 110);
       BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 16);
@@ -242,7 +243,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
 /// Fills the 32x30 tilemap at screen block 31: the upper 15 rows from tile
 /// 0x210 on, the lower 15 from tile 48 on, each row repeating 16 tiles.
 void BattleEffect_BuildRepeatingTilemap(void) {
-  u16 *dst = (u16 *)0x0600f800;
+  u16 *dst = (u16 *)BG_SCREEN_BLOCK(31);
   s32 y;
   s32 x;
 
@@ -326,9 +327,6 @@ struct CornerRow {
   struct Corner corners[2];
 };
 extern u8 gMapCellBuffer[];
-// 256 sparks. The listing's pool holds this address plus each constant offset
-// as one word (0x02014018, 0x02014e00, 0x02014e18), which only a constant
-// address folds to; through the symbol, each offset becomes an extra add.
 #define SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
@@ -384,7 +382,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -424,7 +422,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
         spawned->x = (source.x / 2) << 16;
         spawned->y = 240 << 15;
-        angle = (Random16() & 0x7fff) + 0x4000;
+        angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 1023) + 32;
         spawned->velocityX = (Trig_Sin(angle) * speed) >> 6;
         spawned->velocityY = (Trig_Cos(angle) * speed) >> 6;
@@ -434,10 +432,10 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     if (frame == 4) {
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
       work->shakeFrames = 8;
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
     if (frame == 163) {
-      REG_BG2CNT = 0x784;
+      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     }
     if (frame == 164) {
       BattleBackground_LoadFar(1, ((u16 *)Ram_HeapSlots->battleWork)[824], 24);
@@ -468,7 +466,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 59) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 60) {
       u16 *color;
@@ -484,8 +482,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
         s32 blue;
 
         red = max & entry;
-        /* FAKEMATCH(dead): green is taken and clamped, then never used; as no
-         * green at all, 329 of 1034 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): green is taken and clamped, then never used. */
         green = ((u16)entry >> 5) & 31;
         blue = ((u16)entry >> 10) & 31;
         // DEAD: both channels are already at most 31.
@@ -502,10 +499,10 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       gBgScroll[1].y = 104;
       gCameraSceneParameters[4] = 240;
       if (effect->side == 0) {
-        yaw = 0x4000;
+        yaw = TRIG_TURN / 4;
         camera->yaw = yaw;
       } else {
-        yaw = 0xc000;
+        yaw = TRIG_TURN * 3 / 4;
         camera->yaw = yaw;
       }
       for (i = 0; i != 256; i++) {
@@ -514,8 +511,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       height = 220;
     }
     if (frame == 134) {
-      Sound_PlayFar(145);
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Sound_PlayFar(SE_CRASH);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame > 59) {
       s32 scroll = gBgScroll[1].y;
@@ -545,7 +542,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
     victim[18] = 0;
     if ((u32)(frame - 4) <= 55) {
-      victim[3] = (frame * 9 << 16) - (18 << 16);
+      victim[3] = (frame * 9 << 16) - px(18);
     } else if (frame > 59) {
       victim[2] = 0;
       victim[3] = (294 - height) << 16;
@@ -592,19 +589,16 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     {
       s32 u = frame << 2;
 
-      /* FAKEMATCH(barrier): an empty asm that claims to read frame, giving
-       * frame's reload a fifth dependent, so sched2 takes it before the
-       * strip's pool load; without it, 2 of 1034 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that claims to read frame. */
       asm("" : "+l"(u) : "l"(frame));
       model->scrollU = 127 & ~u;
     }
     Transform_Reset();
-    SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+    SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
     Transform_Push();
     SceneTransform_ApplyPosition3((source.x - 128) << 16, height << 16, 0);
     if (effect->side == 1) {
-      Transform_ApplyYaw(0x8000);
+      Transform_ApplyYaw(TRIG_TURN / 2);
     }
     SceneTransform_ApplyUniformScale(0x21770);
     Render_TransformVertices(cells, vertices, 66);
@@ -619,8 +613,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       tex->pixels = work->sheet + 0x4000;
       SceneTransform_ApplyPosition3((target.x - 124) << 16,
                                     (height - 144) << 16, 0);
-      Transform_ApplyRoll(0x4000);
-      SceneTransform_ApplyScale3(0x19c40, 0x14e20, 0x10000);
+      Transform_ApplyRoll(TRIG_TURN / 4);
+      SceneTransform_ApplyScale3(0x19c40, 0x14e20, Q16_ONE);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(model);
     }
@@ -633,7 +627,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
         scatter->x = (source.x / 2) << 16;
         scatter->y = 0;
-        angle = (Random16() & 0x7fff) - 0x4000;
+        angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
         speed = (Random16() & 255) + 32;
         scatter->velocityX = (Trig_Sin(angle) * speed) >> 5;
         scatter->velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -650,7 +644,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
         burst->x = (source.x / 2) << 16;
         burst->y = 0;
-        angle = (Random16() & 0x7fff) - 0x4000;
+        angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
         speed = (Random16() & 255) + 32;
         burst->velocityX = (Trig_Sin(angle) * speed) >> 5;
         burst->velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -692,9 +686,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
         trail->y = startY;
         trail->x = x << 16;
         random = Random16() & 0x7fff;
-        angle = random + 0x4000;
+        angle = random + TRIG_TURN / 4;
         if (frame > 59) {
-          angle = random + 0xc000;
+          angle = random + TRIG_TURN * 3 / 4;
         }
         speed = (Random16() & 255) + 32;
         trail->velocityX = (Trig_Sin(angle) * speed) >> 6;

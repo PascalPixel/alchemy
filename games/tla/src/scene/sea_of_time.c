@@ -10,7 +10,7 @@
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
-#include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -64,8 +64,6 @@ s32 Position_FlatDistance(s32 *a, s32 *b);
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 #include "event_work.h"
 #include "module/field/event_commands.h"
@@ -91,7 +89,20 @@ static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 #include "system/io_reg.h"
 #include "map.h"
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
+struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *object = Import_ActorCreate(type, x, y, z);
+
+  if (object != NULL) {
+    Scene_SetActorSpritePriority(object, 1);
+    object->motionFlags = 0;
+    object->collisionFlags = 8;
+    Actor_SetSpriteFlags(object, 0);
+    Actor_SetSpriteColor(object, 15);
+    object->priorityFlags |= 34;
+    return object;
+  }
+  return NULL;
+}
 
 #include "../field/field_effect/move.c"
 
@@ -182,7 +193,7 @@ s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/position_flat_distance.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -193,7 +204,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gSeaOfTime_Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime2)
     return gSeaOfTime_Room2Placements;
   return gSeaOfTime_Placements;
 }
@@ -339,7 +350,7 @@ void SeaOfTime_RideCurrent(void) {
   phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
-      Event_PlaySound(0x255);
+      Event_PlaySound(SE_597);
     spark.priority = 2;
     spark.palette = 7;
     spark.startScaleX = 0xcccc;
@@ -398,8 +409,8 @@ void SeaOfTime_FollowChannel(void) {
   z = actor->z >> 20;
   dx = Trig_Cos(angle) >> 16;
   dz = Trig_Sin(angle) >> 16;
-  actor->speedLimit = 0x40000;
-  actor->acceleration = 0x40000;
+  actor->speedLimit = px(4);
+  actor->acceleration = px(4);
   targetZ = 0;
   targetX = 0;
   if (SeaOfTime_GetCellCode(1, x + (dz < 0 ? -dz : dz),
@@ -422,7 +433,7 @@ void SeaOfTime_FollowChannel(void) {
       phase &= gFrameCount;
       if (phase == 0) {
         if ((gFrameCount & 10) == 0) {
-          Sound_Play(0x255);
+          Sound_Play(SE_597);
         }
         spark.priority = 2;
         spark.palette = 7;
@@ -494,10 +505,9 @@ void SeaOfTime_CountLaps(void) {
     gSeaOfTime_LapTurn = 0;
   }
   last = gSeaOfTime_LastLapCell;
-  now = *(s16 *)(work + 340);
+  now = ((struct EventWork *)work)->exit;
   nowRaw = *(u16 *)(work + 340);
   if (last != now) {
-    // Each read below takes its own expression: the native reloads for each.
     s16 *delta = &gSeaOfTime_LapTurn;
     s32 raw;
     s32 diff;
@@ -541,7 +551,7 @@ void SeaOfTime_CountLaps(void) {
       p->priority = 2;
       x = Random16() & 31;
       z = Random16() & 31;
-      Event_PlaySound(246);
+      Event_PlaySound(SE_GLITTER);
       x <<= 16;
       z <<= 16;
       FieldEffect_Spawn(spots.spot[(u16)index].x + x, 0,
@@ -587,8 +597,8 @@ s32 SeaOfTime_StartWaves(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetFlag(0x200);
-  Event_PlaySound(0x22d);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
+  Event_PlaySound(SE_557);
   do {
     wait(10);
     changed = 0;
@@ -645,7 +655,7 @@ s32 SeaOfTime_StopWaves(void) {
   Task_Remove(SeaOfTime_TrackWaves);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(0x22c);
+  Sound_Play(SE_556);
   gSeaOfTime_WaveState = 1;
   // Each of the 14 colours steps one unit per channel toward its saved colour
   // every 10 frames, until none changes.
@@ -694,10 +704,9 @@ fade:
   if (changed)
     goto fade;
   gSeaOfTime_WaveState = 1;
-  GameFlag_Clear(0x200);
-  /* FAKEMATCH(signature): typed to return s32, passing on Event_End's,
-   * though its target Event_End returns nothing; as void, 6 of 150 instructions
-   * differ in tla-en. */
+  GameFlag_Clear(FLAG_SCENE_TEMP_00);
+  /* FAKEMATCH(signature): typed to return s32, passing on Event_End's, though
+   * its target Event_End returns nothing. */
   return Event_EndWithResult();
 }
 
@@ -720,9 +729,7 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   actor = Actor_GetById(8);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
-  // A goto loop: as while (Actor_HasArrived(actor) == 0), loop.c moves 0xb0000
-  // out of the loop and 191 of 165 instructions differ.
+  Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + px(8));
   while (Actor_HasArrived(actor) == 0) {
     if ((gFrameCount & 3) == 0) {
       options.priority = 2;
@@ -799,7 +806,7 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
     spark.startScaleY = 0xb333;
     spark.palette = 7;
     spark.priority = 1;
-    FieldEffect_Spawn(object->x + dx, 0, object->z + 0x100000, 0, even, even,
+    FieldEffect_Spawn(object->x + dx, 0, object->z + px(16), 0, even, even,
                       0xb0000, &spark);
   }
 }
@@ -818,15 +825,15 @@ void SeaOfTime_CrossToLemuria(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(0x8dd);
-  Actor_SetSpeed(8, 0x10000, 0x8000);
+  Actor_SetSpeed(8, 1);
   Actor_GetById(8)->facing = FACING_NORTH;
   Actor_WalkTo(8, 352, 264);
-  Camera_SetSpeedParameters(0x10000, 0x2000);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(8);
-  Sound_Play(78);
-  Sound_Play(556);
+  Sound_Play(SOUND_FADE_OUT_BGM);
+  Sound_Play(SE_556);
   // Fills palette 3's entries 1 to 14 with one colour.
   fill = RGB(11, 6, 23);
   Dma_Set((const void *)&fill, (void *)&BG_PLTT_COLOR(3, 1),
@@ -879,14 +886,12 @@ fade:
   if (changed)
     goto fade;
   Event_Wait(30);
-  // For 360 frames, spawns an effect every 16 frames, then every 8, then
-  // every other frame, and plays sound 164 every 64 frames. As a C loop,
-  // loop.c moves the mask, the palette and the options address out of it,
-  // which the native does not (differ 252).
+  // For 360 frames, spawns an effect every 16 frames, then every 8, then every
+  // other frame, and plays sound 164 every 64 frames.
   i = 0;
 sparks:
   if ((i & 63) == 0)
-    Sound_Play(164);
+    Sound_Play(SE_SCATTER);
   if (i < 120) {
     if (i & 15)
       goto next;
@@ -909,9 +914,7 @@ next:
   i++;
   if (i != 360)
     goto sparks;
-  // Then 16 larger effects, one a frame. As a C loop, loop.c also moves the
-  // mask and the options address out, which the native does not (differ 228).
-  // Entered at its test so that PRE leaves the address in the body.
+  // Then 16 larger effects, one a frame.
   i = 0;
   while (i != 16) {
     {
@@ -931,14 +934,14 @@ next:
     }
     i++;
   }
-  object = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);
+  object = Import_ActorCreate(159, px(348), 0, px(184));
   // The object's per-frame hook, struct Actor's update.
   *(void (**)(struct Actor *))((u8 *)object + 0x6c) = SeaOfTime_UpdateSpray;
   Event_Wait(60);
   Actor_SelectAnimation(object, 1);
   Event_Wait(40);
   gMainRoutineWork.battleRule24b = 2;
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov687Room2, 4);
+  Event_SetAfterBattleDestination((s32)&SceneId_SeaOfTime2, 4);
   Field_RequestBattleFromEncounterTable(12, 6);
   Event_End();
 }
@@ -993,7 +996,7 @@ DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit4, 4)
 DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit5, 5)
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime1)
     return gSeaOfTime_Room1Triggers;
   if (gMainRoutineWork.entrance <= 4)
     return gSeaOfTime_EntranceTriggers;
@@ -1046,10 +1049,8 @@ void SeaOfTime_AnimateSea(void) {
       s32 red = color & 31;
       s32 green = (color >> 5) & 31;
       s32 blue = (color >> 10) & 31;
-      s32 flag = GameFlag_Get(0x200);
-      /* FAKEMATCH(temporary): each channel shifted up after the flag test; as
-       * (u16)green << 5 and so on in the store, 167 of 272 instructions differ
-       * in tla-en. */
+      s32 flag = GameFlag_Get(FLAG_SCENE_TEMP_00);
+      /* FAKEMATCH(temporary): each channel shifted up after the flag test. */
       u32 greenBits = green << 16;
       u32 redBits = red << 16;
       u32 blueBits = blue << 16;
@@ -1101,7 +1102,7 @@ void SeaOfTime_AnimateSea(void) {
 
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= 16;
-  Actor_SetPosition(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
+  Actor_SetPositionFixed(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
   x >>= 1;
   z >>= 1;
   SeaOfTime_SetCellCode(1, x, z, 0xff00);
@@ -1116,14 +1117,14 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   s32 pz;
   s32 i;
 
-  FieldCamera_SetSpeed(0x60000, 0xc000);
+  FieldCamera_SetSpeed(6);
   px = (x << 19) + 0x80000;
   pz = (z << 19) + 0x80000;
-  FieldCamera_MoveTo(px, -1, pz, 1);
+  FieldCamera_MoveToFixed(px, -1, pz, 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(144);
-  MapGrid_SetShake(0, 0x100000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  Event_PlaySound(SE_CLATTER);
+  MapGrid_SetShake(0, 16, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   spark.startScaleX = 0x13333;
   spark.startScaleY = 0x18000;
   spark.priority = 1;
@@ -1135,7 +1136,7 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
     Actor_GetById(actor)->scaleY += 0x1999;
     Event_Wait(1);
   }
-  Actor_GetById(actor)->scaleY = 0x10000;
+  Actor_GetById(actor)->scaleY = Q16_ONE;
   Event_Wait(20);
 }
 
@@ -1152,11 +1153,11 @@ void SeaOfTime_Open(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(0);
+  Event_PlaySound(MUS_000);
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
-  actor = FieldActor_Create(159, 0x15c0000, 0, 0xb80000);
+  actor = FieldActor_Create(159, px(348), 0, px(184));
   actor->update = (void (*)(void))SeaOfTime_UpdateSpray;
-  FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 0);
+  FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 0);
   Event_StartScreenTransition();
   wait(1);
   Task_Add(SeaOfTime_AnimateSea, 0xc80);
@@ -1167,15 +1168,15 @@ void SeaOfTime_Open(void) {
   SeaOfTime_RaiseRock(47, 27, 12);
   SeaOfTime_RaiseRock(59, 19, 13);
   MapGrid_WaitForShakeToSettle();
-  FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 1);
+  FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 1);
   FieldCamera_WaitForArrival();
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   ((struct EventWork687 *)Ram_HeapSlots->eventWork)->unk16a = 200;
-  Event_PlaySound(0x212);
+  Event_PlaySound(SE_530);
   Event_Wait(40);
   for (i = 0; i != 360; i++) {
     if ((i & 31) == 0)
-      Event_PlaySound(164);
+      Event_PlaySound(SE_SCATTER);
     if (i < 120) {
       if (i & 15)
         continue;
@@ -1218,7 +1219,7 @@ void SeaOfTime_Open(void) {
     wait(1);
   }
   Actor_Release(actor);
-  Event_PlaySound(0x22d);
+  Event_PlaySound(SE_557);
   do {
     wait(10);
     changed = 0;
@@ -1271,12 +1272,12 @@ void SeaOfTime_Open(void) {
 // frame callback.
 s32 Scene_Initialize(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime1) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;
-    Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors, 0x8000000e,
-            (volatile u32 *)0x040000d4);
-    if (GameFlag_Get(0x200)) {
+    Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
+            DMA_COPY_HALFWORDS(14), REG_DMA3);
+    if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       u32 *state = gSceneState;
       u32 offset, i;
 
@@ -1292,13 +1293,13 @@ s32 Scene_Initialize(void) {
       } while (i != 14);
       Task_Add(SeaOfTime_TrackWaves, 0x480);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime2) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 0;
     if (gMainRoutineWork.entrance <= 4) {
       if (!GameFlag_Get(0x940)) {
         Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
-                0x8000000e, (volatile u32 *)0x040000d4);
+                DMA_COPY_HALFWORDS(14), REG_DMA3);
       } else {
         if (!GameFlag_Get(0xa90))
           SeaOfTime_PlaceRock(21, 23, 9);
@@ -1311,13 +1312,13 @@ s32 Scene_Initialize(void) {
         {
           void *block = Ram_HeapSlots->block32;
 
-          *(volatile u16 *)0x0500001e &= 0xffe0;
-          Dma_Set((const void *)0x05000000, block, 0x84000070,
-                  (volatile u32 *)0x040000d4);
+          BG_PLTT_COLOR(0, 15) &= 0xffe0;
+          Dma_Set((const void *)BG_PLTT, block, DMA_COPY_WORDS(112), REG_DMA3);
         }
         BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
       }
-      if (gMainRoutineWork.entrance == 4 && !GameFlag_Get(265))
+      if (gMainRoutineWork.entrance == 4 &&
+          !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         SeaOfTime_Open();
     } else {
       if (!GameFlag_Get(0xa95))
@@ -1362,12 +1363,12 @@ u32 gFieldEffect_LongScript[] = {
 u8 gSeaOfTime_LapsNeeded[] = {16, 24, 16, 24, 16, 24};
 
 struct Spots gSeaOfTime_LapSpots = {{
-    {PIXELS(672), PIXELS(704)},
-    {PIXELS(896), PIXELS(320)},
-    {PIXELS(512), PIXELS(192)},
-    {PIXELS(320), PIXELS(416)},
-    {PIXELS(320), PIXELS(832)},
-    {PIXELS(96), PIXELS(160)},
+    {px(672), px(704)},
+    {px(896), px(320)},
+    {px(512), px(192)},
+    {px(320), px(416)},
+    {px(320), px(832)},
+    {px(96), px(160)},
 }};
 // clang-format on
 
@@ -1389,34 +1390,39 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(197),
-    SCENE_EXIT_IF(1, 2, 42, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 198, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 197, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 42, 20, EXIT_FLAG_NONE),
-    SCENE_EXITS(198),
-    SCENE_EXIT_IF(1, 197, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 198, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 2, 44, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 2, 43, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(5, 198, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(SeaOfTime1),
+    SCENE_EXIT_UNLESS(1, WorldMap, 42, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, SeaOfTime2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, SeaOfTime1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, LemurianShipDeck1, 20, EXIT_FLAG_NONE),
+    SCENE_EXITS(SeaOfTime2),
+    SCENE_EXIT_UNLESS(1, SeaOfTime1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, SeaOfTime2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, WorldMap, 44, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, WorldMap, 43, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, SeaOfTime2, 2, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gSeaOfTime_Placements[] = {
-    {8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, PIXELS(120), 0,
-     PIXELS(280), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, 120, 0, 280,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSeaOfTime_Room2Placements[] = {
-    {8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, PIXELS(120), 0,
-     PIXELS(280), FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, 120, 0, 280,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

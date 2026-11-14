@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "game/item.h"
 #include "actor.h"
 
@@ -163,14 +164,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
   for (i = 0; i < 5; i++) {
     s32 y;
-    // t holds the attribute zero, then is reused for the window's y; as plain
-    // stores, 2 of 790 instructions differ in tla-en.
     u32 t = 0;
 
     y = i * 2;
-    /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
-     * and the zero ahead of the stores; without it, 56 of 790 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the row. */
     do {
     } while (0);
     iconSprite = &sprites[i];
@@ -190,8 +187,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   Vram_CopyTile(0xf019, 0x211);
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorStorage; as cursorStorage used
-     * directly, 219 of 790 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): sprite holds &cursorStorage. */
     sprite = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
@@ -273,8 +269,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds; without
-     * it, 44 of 790 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds. */
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = 0x40000000;
     ((u32 *)sprite)[2] = 0;
@@ -290,7 +285,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       NAVIGATION->preferredRow = preferredRow;
     } while (0);
     navigation = NAVIGATION;
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (count != 0) {
         result = firstEntry + selectedRow;
         Item_GetDirectFar(entries[result]);
@@ -300,7 +295,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           if (unusableReason == 0)
             break;
         }
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
         if (unusableReason == 2)
           MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, REFUSAL_TEXT_LENGTH);
         else if (entries[result] & ITEM_BROKEN)
@@ -313,21 +308,21 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         result = -1;
         break;
       }
-    } else if (navigation->timer == 0 || (gInput.pressed & 2)) {
-      Sound_PlayFar(113);
+    } else if (navigation->timer == 0 || (gInput.pressed & KEY_B)) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
 
     if (count != 0) {
-      if (gInput.repeat & 0x80) {
-        Sound_PlayFar(111);
+      if (gInput.repeat & KEY_DOWN) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == 5 || firstEntry + selectedRow == count)
           selectedRow = 0;
         preferredRow = selectedRow;
-      } else if (gInput.repeat & 0x40) {
-        Sound_PlayFar(111);
+      } else if (gInput.repeat & KEY_UP) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (count - 1) / 5 * 5)
@@ -336,8 +331,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
             selectedRow = 4;
         }
         preferredRow = selectedRow;
-      } else if (gInput.repeat & 0x10) {
-        Sound_PlayFar(111);
+      } else if (gInput.repeat & KEY_RIGHT) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + 5 >= count) {
           if (firstEntry != 0) {
@@ -353,8 +348,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
               selectedRow = preferredRow;
           }
         }
-      } else if (gInput.repeat & 0x20) {
-        Sound_PlayFar(111);
+      } else if (gInput.repeat & KEY_LEFT) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= 5;

@@ -64,10 +64,7 @@ typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
                                 u32 value) {
-  /* FAKEMATCH(wrapper): the fill called through this inline, whose entry
-   * comes in as a parameter, so the call loads it before the fill value; as a
-   * direct call, 2 of 38 instructions of WindowSystem_InitField differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): the fill called through this inline. */
   return fill(dst, size, value);
 }
 
@@ -131,7 +128,7 @@ void WindowSystem_UploadTilemap(void) {
   if (flags != 0) {
     if (!work->menuBusy) {
       src = (u8 *)work->tilemap;
-      dst = (u8 *)0x06002000;
+      dst = (u8 *)BG_SCREEN_BLOCK(4);
       if (flags & 1)
         flags = 63;
       flags &= 63;
@@ -401,10 +398,8 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   top = y + 1;
   width = right - x;
   height = bottom - y;
-  /* FAKEMATCH(signature): Window_ClearTextTilesInRect called as returning
-   * s32, though it returns nothing, so the call sets r0 and the scheduler
-   * sets r1 and r2 before r0; as void, 2 of 69 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(signature): Window_ClearTextTilesInRect called as returning s32.
+   */
   ((s32 (*)(s32, s32, u32, u32))Window_ClearTextTilesInRect)(left, top, width,
                                                              height);
   tiles = work->tilemap[0] + top * 32 + left;

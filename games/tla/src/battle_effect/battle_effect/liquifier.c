@@ -4,6 +4,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -46,8 +48,7 @@ struct RenderModel__liquifier {
   s32 shade;
 };
 
-// The first load names the buffer by its address: as the symbol it would
-// combine with the second.
+/* FAKEMATCH(temporary): the pictures' buffer by its address. */
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
 // Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)
@@ -73,7 +74,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   graphics = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, EFFECT_PICTURES,
                              1, 0);
@@ -100,9 +101,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
       // The shards start about the target, each with its own roll.
       for (i = 0, shard = &work->particles[32]; i != 16; i++, shard++) {
-        shard->x = (to.x + (Random16() & 127) - 64) << 16;
-        shard->y = to.y << 16;
-        shard->z = (Random16() & 0x1fff) + 0x7000;
+        SET_POSITION(shard, (to.x + (Random16() & 127) - 64) << 16, to.y << 16,
+                     (Random16() & 0x1fff) + 0x7000);
       }
     }
     if (frame == 0) {
@@ -118,9 +118,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
     if (frame == 0)
-      Sound_PlayFar(139);
+      Sound_PlayFar(SE_139);
     if (frame == 16)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
 
     if (frame > 15) {
       // The burst: sparks fly out of the caster, upward and forward.
@@ -176,7 +176,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         struct EffectStep *step = work->particles;
 
         for (i = 0; i != 32; i++) {
-          s32 angle = (Random16() & 0x7fff) - 0x4000;
+          s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
           s32 speed = (Random16() & 0x1ff) + 0x200;
           s32 y;
 
@@ -242,12 +242,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           model->shade = 0;
           age = frame - start;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3((from.x - 128) << 16,
                                         (from.y - 74) << 16, 0);
           Transform_ApplyRoll((i << 12) - 0x3800);
           SceneTransform_ApplyScale3(
-              0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2, 0x8000);
+              0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2,
+              TRIG_TURN / 2);
           Render_TransformVertices(Data_08199ea4, projected, 4);
           Render_DrawModelList(model);
         }
@@ -267,14 +268,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         if (frame >= start && frame < i * 2 + 70) {
           s32 scale;
 
-          scale = 0x20000 - ((frame - start) << 13);
+          scale = Q16_ONE * 2 - ((frame - start) << 13);
           model->shade = zero;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          SceneTransform_ApplyPosition3(step->x - (128 << 16),
-                                        step->y - (64 << 16), 0);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          SceneTransform_ApplyPosition3(step->x - px(128), step->y - px(64), 0);
           Transform_ApplyRoll(step->z);
-          SceneTransform_ApplyScale3(scale, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(scale, Q16_ONE, Q16_ONE / 2);
           Render_TransformVertices(Data_081991c0, projected, 4);
           Render_DrawModelList(model);
         }
@@ -301,9 +301,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           }
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          SceneTransform_ApplyPosition3(step->x - (128 << 16),
-                                        step->y - (64 << 16), 0);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          SceneTransform_ApplyPosition3(step->x - px(128), step->y - px(64), 0);
           Transform_ApplyPitch(0x3c00);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Render_TransformVertices(Data_081991e0, projected, 4);
@@ -316,18 +315,18 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         if (frame >= i * 4 && frame < i * 4 + 12) {
           s32 age = frame - i * 4;
           s32 shade = age * 8 - 64;
-          s32 scale = 0x18000 - (age << 13);
+          s32 scale = Q16_ONE * 3 / 2 - (age << 13);
 
           if (shade > 0)
             shade = 0;
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3((from.x - 128) << 16,
                                         (from.y - 80) << 16, 0);
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale);
-          Transform_ApplyRoll(0x6000 - (i << 14));
-          Transform_ApplyPitch(-0x1000);
+          Transform_ApplyRoll(TRIG_TURN * 3 / 8 - (i << 14));
+          Transform_ApplyPitch(-TRIG_TURN / 16);
           Render_TransformVertices(gData_08199210, projected, 4);
           Render_DrawModelList(model);
         }
@@ -339,7 +338,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           if (i == 7)
             BattlePlayback_StartFar(144);
           else
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 5);
           work->shakeFrames = 4;
@@ -401,7 +400,6 @@ void BattleEffect_RunCanvasMode3WithAction(
 #include "bg_scroll.h"
 #include "battle_work.h"
 
-// The ball is the last particle, never a local: the native rereads its address.
 #define ball (&work->particles[63])
 
 // Draws a disc of the given size from the disc sheet in the map cell buffer
@@ -468,7 +466,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     BattleEffect_StartCanvasLayer(1);
   else
     BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   discs = (s16 *)work->sheet;
@@ -511,7 +509,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     else
       EffectPosition_ProjectBattler(effect->actors[0], &to);
     if (mode == 0 && frame == 0)
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
 
     if (frame == 0) {
       if (mode == 0) {
@@ -700,7 +698,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   if (mode == 0) {
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode1(effect);
@@ -711,11 +709,12 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     // fade off and the backgrounds on again.
     struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
-    Sound_PlayFar(390);
+    Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
     gBgScroll[1].x = work->savedBg1X;
     gBgScroll[1].y = work->savedBg1Y;
-    REG_BG2CNT = 0x787;
-    Iwram_ClearWords((void *)0x06004000, 0x4000);
+    REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
     Task_Remove(Palette_StepFadeTransfer);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     REG_BLDCNT = 0;

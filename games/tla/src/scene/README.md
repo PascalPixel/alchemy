@@ -62,7 +62,7 @@ An [exit](../../glossary.md#exit) is a way out, by number. The exit table
 turns the number into a scene and an entrance:
 
 ```c
-SCENE_EXIT(2, 40, 3),
+SCENE_EXIT(2, LemurianShip1, 3),
 ```
 
 Rows can carry conditions here too, which is how one path leads to several
@@ -70,12 +70,12 @@ places at different points in the story. The Lemurian Ship's first way out
 leads to three, one after another:
 
 ```c
-SCENE_EXIT_IF(1, 43, 1, 0x907),
-SCENE_EXIT_IF(1, 200, 3, 0x9b4),
-SCENE_EXIT_IF(1, 234, 4, -1),
+SCENE_EXIT_UNLESS(1, LemurianShipDeck2, 1, 0x907),
+SCENE_EXIT_UNLESS(1, LemuriaDock, 3, 0x9b4),
+SCENE_EXIT_UNLESS(1, AttekaInlet1, 4, EXIT_FLAG_NONE),
 ```
 
-The last row's -1 is new in The Lost Age: `Scene_TakeExit` takes that exit
+The last row's EXIT_FLAG_NONE, a flag word of -1, is new in The Lost Age: `Scene_TakeExit` takes that exit
 whatever the flags hold, so the chain always ends somewhere.
 
 ### Who stands where
@@ -183,7 +183,7 @@ on which of its scenes is running.
 ## The Title, the File Screen and the Battle Arena
 
 Three scenes are not places. The Title (`title.c`), the File Screen
-(`clear.c`, `SceneId_Ov64a`, the row after the Title's) and the Battle
+(`clear.c`, `SceneId_Clear`, the row after the Title's) and the Battle
 Arena's lobby (`lobby.c`), where a link battle is arranged, are each in the
 scene table with an overlay of its own, and the game runs them exactly as
 it runs Daila.
@@ -197,15 +197,16 @@ scenes too.
 
 Only one overlay is ever loaded, so one cannot call another. Code that
 several scenes need is written once, in `shared/`, and compiled into each
-overlay that includes it. Most of it is macros, in headers by kind
-(`actors.h`, `push.h`, `whirlwind.h`, `cracked_tile.h`): each is one
-routine, which a scene expands where its copy sits, with its own names.
-Daila's pillars of ice are one:
+overlay that includes it. Each routine is a header of its own, as in The
+Broken Seal, which a scene includes where its copy sits. Daila's pillars of
+ice raise their actor with one:
 
 ```c
-DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
-                              gDaila_PuddleFrozenFlags)
+#include "shared/scene_raise_held_actor.h"
 ```
+
+Where a scene's copy differs in a number from the others, the scene writes
+its copy out.
 
 The cartridge really does hold it several times over.
 
@@ -232,8 +233,8 @@ same village twice, with different people about.
   [`daila.c`](daila.c). The debug rooms are scenes too, kept in
   [`../debug/`](../debug/README.md).
 - [`shared/`](shared) is the code several overlays keep a copy of: the
-  macro headers above, and routines a scene includes as text where its
-  copy sits, such as the ice slide six scenes share
+  routine headers above, and the larger routines a scene includes where
+  its copy sits, such as the ice slide six scenes share
   ([`slide_on_ice_from_edge.c`](shared/slide_on_ice_from_edge.c)), the
   flames' knock-back in three Mars Lighthouse rooms
   ([`leader_knock_back.c`](shared/leader_knock_back.c)) and the World

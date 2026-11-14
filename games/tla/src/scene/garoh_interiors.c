@@ -1,8 +1,8 @@
 /// @file
 /// Garoh's houses, in three scenes that share this overlay: the inn, where
-/// the weapon and armor merchants keep their counters (SceneId_Ov660Room1),
-/// the house of the item merchant (SceneId_Ov660Room2) and the sanctum
-/// (SceneId_Ov660Room3).
+/// the weapon and armor merchants keep their counters
+/// (SceneId_GarohInteriors1), the house of the item merchant
+/// (SceneId_GarohInteriors2) and the sanctum (SceneId_GarohInteriors3).
 ///
 /// Garoh is first seen on a night of the full moon (FLAG_GAROH_NIGHT), when
 /// its people hide that they are werewolves: the merchants sell only claws and
@@ -34,41 +34,21 @@
 enum GarohInnActorId {
   /// The father of the young werewolf who led the party to Maha. His event is
   /// GarohInteriors_AskWhatTheWanderersSeek.
-  /// ★ Named from the game: "Thanks for looking out for our son last night!"
-  /// (MsgGarohInteriors35)
   ACTOR_PUPS_FATHER = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Our oldest son is always scampering off late at
-  /// night... Where is he?" (MsgGarohInteriors02)
   ACTOR_PUPS_MOTHER,
-  /// ★ Named from the game: "No fair! My brother always gets to go out late!"
-  /// (MsgGarohInteriors03)
   ACTOR_PUPS_BROTHER,
   /// A werewolf who climbed Air's Rock for Maha's powers and did not gain
   /// them. His event is GarohInteriors_AskAboutReveal.
-  /// ★ Named from the game: "I thought I could become a leader if I learned
-  /// Reveal. How foolish of me." (MsgGarohInteriors50)
   ACTOR_REVEAL_SEEKER,
-  /// ★ Named from the game: "My mate is close to obtaining the power he's
-  /// been seeking..." (MsgGarohInteriors14)
   ACTOR_REVEAL_SEEKERS_MATE,
-  /// ★ Named from the game: "I'll bet these weapons suit you better than any
-  /// fangs would!" (MsgGarohInteriors52)
   ACTOR_WEAPON_MERCHANT,
-  /// ★ Named from the game: "But when you're human, armor always comes in
-  /// handy." (MsgGarohInteriors54)
   ACTOR_ARMOR_MERCHANT,
   ACTOR_INNKEEPER, ///< GarohInteriors_TalkToInnkeeper checks the party in
   /// The one who greets the party the morning after.
-  /// ★ Named from the game: "You folks didn't sleep much last night..."
-  /// (MsgGarohInteriors34)
   ACTOR_INN_ATTENDANT,
   /// A traveler who climbed Air's Rock and found nothing, asleep at night.
-  /// ★ Named from the game: "...Climbed all over that stupid rock, and for
-  /// what? Nothing!" (MsgGarohInteriors29)
   ACTOR_DISAPPOINTED_TRAVELER,
   /// His companion, still puzzling over the rock that would not spin.
-  /// ★ Named from the game: "Maybe we should stay and try climbing Air's Rock
-  /// one more time." (MsgGarohInteriors61)
   ACTOR_STUBBORN_TRAVELER,
   /// Placed beside the two travelers at night and taken away in the morning;
   /// talking to them wakes the travelers.
@@ -81,17 +61,9 @@ enum GarohInnActorId {
 /// The item merchant's house's actors, numbering the rows of
 /// gGarohInteriors_HouseActorPlacements.
 enum GarohHouseActorId {
-  /// ★ Named from the game: "Garoh exists to protect Air's Rock."
-  /// (MsgGarohInteriors07)
   ACTOR_AIRS_ROCK_GUARDIAN = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "So you've heard of Whirlwind? Most people
-  /// haven't..." (MsgGarohInteriors08)
   ACTOR_WHIRLWIND_TALKER,
-  /// ★ Named from the game: "I've heard about the Wind Stone..."
-  /// (MsgGarohInteriors09)
   ACTOR_WIND_STONE_TALKER,
-  /// ★ Named from the game: "I never change my stock, unlike the weapons and
-  /// armor shopkeeps..." (MsgGarohInteriors22)
   ACTOR_ITEM_MERCHANT
 };
 
@@ -134,11 +106,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov660Room1)
+  if (scene == (s32)&SceneId_GarohInteriors1)
     return gGarohInteriors_InnActorPlacements;
-  if (scene == (s32)&SceneId_Ov660Room2)
+  if (scene == (s32)&SceneId_GarohInteriors2)
     return gGarohInteriors_HouseActorPlacements;
-  if (scene == (s32)&SceneId_Ov660Room3)
+  if (scene == (s32)&SceneId_GarohInteriors3)
     return gGarohInteriors_SanctumActorPlacements;
   return gGarohInteriors_NoActorPlacements;
 }
@@ -368,14 +340,14 @@ void GarohInteriors_AskAboutReveal(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s32 shared = GameFlag_Get(FLAG_GAROH_SECRET_SHARED);
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 room1 = (s32)&SceneId_Ov660Room1;
+  s32 room1 = (s32)&SceneId_GarohInteriors1;
   s32 scene;
 
   if (shared) {
     scene = party->scene;
     if (scene == room1)
       return gGarohInteriors_InnMorningTriggers;
-    if (scene == (s32)&SceneId_Ov660Room2)
+    if (scene == (s32)&SceneId_GarohInteriors2)
       return gGarohInteriors_HouseMorningTriggers;
   } else {
     scene = party->scene;
@@ -384,10 +356,10 @@ const struct Trigger *Scene_GetEvents(void) {
         return gGarohInteriors_InnMorningTriggers;
       return gGarohInteriors_InnNightTriggers;
     }
-    if (scene == (s32)&SceneId_Ov660Room2)
+    if (scene == (s32)&SceneId_GarohInteriors2)
       return gGarohInteriors_HouseNightTriggers;
   }
-  if (scene == (s32)&SceneId_Ov660Room3)
+  if (scene == (s32)&SceneId_GarohInteriors3)
     return gGarohInteriors_SanctumTriggers;
   return gGarohInteriors_DoorTriggers;
 }
@@ -398,7 +370,7 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov660Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_GarohInteriors1) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED) ||
         gMainRoutineWork.entrance == 99) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_DISAPPOINTED_TRAVELERS_BED,
@@ -416,7 +388,7 @@ s32 Scene_Initialize(void) {
         x = 153;
         id = ACTOR_DISAPPOINTED_TRAVELER;
         /* FAKEMATCH(barrier): the forced id keeps its load right after that
-         * half; as no asm, 2 of 158 instructions differ in tla-en. */
+         * half. */
         asm volatile("" : "+l"(id));
         x <<= 17;
         z = 335 << 16;
@@ -465,7 +437,7 @@ void GarohInteriors_WakeAtInn(void) {
   Event_ResolvePendingActions(0);
   Event_Wait(30);
   ActorSystem_SuspendProjectionAndShowSprites();
-  Sound_Play(86);
+  Sound_Play(MUS_086);
   // "Felix and party stayed the night at the inn."
   FieldMessage_ShowCentered((s32)MsgGarohInteriors33, 0, 0);
   Event_Wait(20);
@@ -496,19 +468,19 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(64),
-    SCENE_EXIT_IF(1, 59, 1, -1),
-    SCENE_EXIT_IF(3, 59, 3, -1),
-    SCENE_EXIT_IF(4, 59, 4, -1),
-    SCENE_EXIT_IF(5, 59, 5, -1),
-    SCENE_EXIT_IF(6, 62, 7, -1),
-    SCENE_EXIT_IF(7, 62, 8, -1),
-    SCENE_EXITS(65),
-    SCENE_EXIT_IF(3, 62, 5, -1),
-    SCENE_EXIT_IF(4, 59, 2, -1),
-    SCENE_EXIT_IF(5, 62, 6, -1),
-    SCENE_EXITS(66),
-    SCENE_EXIT_IF(2, 59, 6, -1),
+    SCENE_EXITS(GarohInteriors1),
+    SCENE_EXIT_UNLESS(1, Garoh1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Garoh1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Garoh1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Garoh1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Garoh4, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Garoh4, 8, EXIT_FLAG_NONE),
+    SCENE_EXITS(GarohInteriors2),
+    SCENE_EXIT_UNLESS(3, Garoh4, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Garoh1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Garoh4, 6, EXIT_FLAG_NONE),
+    SCENE_EXITS(GarohInteriors3),
+    SCENE_EXIT_UNLESS(2, Garoh1, 6, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -518,32 +490,32 @@ struct ActorPlacement gGarohInteriors_NoActorPlacements[] = {
 };
 
 struct ActorPlacement gGarohInteriors_InnActorPlacements[] = {
-    {192, CONDITION_ALWAYS, 2, PIXELS(336), 0, PIXELS(120), FACING_SOUTH, 0, 0},
-    {190, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(104), FACING_WEST, 0, 0},
-    {191, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(136), FACING_NORTH, 1, 0},
-    {188, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(136), FACING_SOUTHEAST, 0, 0},
-    {194, CONDITION_ALWAYS, 1, PIXELS(592), 0, PIXELS(96), FACING_SOUTH, 1, 0},
-    {205, CONDITION_ALWAYS, 1, PIXELS(134), 0, PIXELS(120), FACING_SOUTH, 1, 0},
-    {105, CONDITION_ALWAYS, 1, PIXELS(112), 0, PIXELS(120), FACING_SOUTH, 1, 0},
-    {199, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(424), FACING_SOUTH, 1, 0},
-    {209, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(420), FACING_WEST, 0, 0},
-    {239, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(344), FACING_NORTHEAST, 1, 0},
-    {239, CONDITION_ALWAYS, 1, PIXELS(330), 0, PIXELS(376), FACING_SOUTHWEST, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(336), FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(344), FACING_SOUTHWEST, 2, 0},
+    ACTOR_PLACEMENT(192, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 336, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(190, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(188, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 136, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(194, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 592, 0, 96, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(205, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 134, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(105, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(209, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 420, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(239, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 344, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(239, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 330, 0, 376, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 344, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gGarohInteriors_HouseActorPlacements[] = {
-    {185, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(406), FACING_SOUTHEAST, 1, 0},
-    {196, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(424), FACING_NORTHWEST, 0, 0},
-    {186, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(456), FACING_SOUTH, 1, 0},
-    {198, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(412), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(185, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 406, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(196, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 424, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(198, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 412, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gGarohInteriors_SanctumActorPlacements[] = {
-    {202, CONDITION_ALWAYS, 1, PIXELS(448), 0, PIXELS(152), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -560,8 +532,8 @@ struct Trigger gGarohInteriors_InnNightTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {0x31, 6, CONDITION_ALWAYS, 6},
-    {0x31, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_PUPS_FATHER, CONDITION_ALWAYS,
      EVENT(GarohInteriors_AskWhatTheWanderersSeek)},
     {TRIGGER_TALK, ACTOR_PUPS_MOTHER, CONDITION_ALWAYS,
@@ -606,10 +578,14 @@ struct Trigger gGarohInteriors_InnNightTriggers[] = {
      CONDITION_ALWAYS, EVENT(GarohInteriors_ReadDisappointedTravelersMind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUBBORN_TRAVELERS_BED,
      CONDITION_ALWAYS, EVENT(GarohInteriors_ReadStubbornTravelersMind)},
-    {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
-    {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
-    {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
-    {0x173, 213, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors72))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 209, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 210, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 212, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 213, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors72))},
     {TRIGGER_TABLE_END},
 };
 
@@ -618,9 +594,9 @@ struct Trigger gGarohInteriors_HouseNightTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0x31, 5, CONDITION_ALWAYS, 5},
-    {0x31, 6, CONDITION_ALWAYS, 6},
-    {0x31, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_AIRS_ROCK_GUARDIAN, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriors07)},
     {TRIGGER_TALK, ACTOR_WHIRLWIND_TALKER, CONDITION_ALWAYS,
@@ -637,7 +613,8 @@ struct Trigger gGarohInteriors_HouseNightTriggers[] = {
      EVENT(GarohInteriors_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriors22)},
-    {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 211, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
     {TRIGGER_TABLE_END},
 };
 
@@ -711,10 +688,14 @@ struct Trigger gGarohInteriors_InnMorningTriggers[] = {
      CONDITION_ALWAYS, EVENT(GarohInteriors_ReadDisappointedTravelersMind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUBBORN_TRAVELER,
      CONDITION_ALWAYS, EVENT(GarohInteriors_ReadStubbornTravelersMind)},
-    {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
-    {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
-    {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
-    {0x173, 213, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors72))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 209, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 210, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 212, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 213, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors72))},
     {TRIGGER_TABLE_END},
 };
 
@@ -723,9 +704,9 @@ struct Trigger gGarohInteriors_HouseMorningTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0x31, 5, CONDITION_ALWAYS, 5},
-    {0x31, 6, CONDITION_ALWAYS, 6},
-    {0x31, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_AIRS_ROCK_GUARDIAN, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriors41)},
     {TRIGGER_TALK, ACTOR_WHIRLWIND_TALKER, CONDITION_ALWAYS,
@@ -742,6 +723,7 @@ struct Trigger gGarohInteriors_HouseMorningTriggers[] = {
      EVENT(GarohInteriors_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriors57)},
-    {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 211, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
     {TRIGGER_TABLE_END},
 };

@@ -110,12 +110,11 @@ void MercuryLighthouse_SpawnMotes(void) {
       sprite = object->sprite;
       x = Random16() * 40 + 0x32c0000;
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
-       * stored, as in the native; as object->z = 0x2b80000, 12 of 76
-       * instructions differ in tla-en. */
+       * stored. */
       z = 0x2b80000;
       object->motionFlags = phase;
       object->x = x;
-      object->y = PIXELS(160);
+      object->y = px(160);
       object->z = z;
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags &= ~1;
@@ -150,33 +149,32 @@ void MercuryLighthouse_HearVoices(void) {
   Event_SetMessageId(MsgImilVoicesDisbeliefReply);
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_ShowEmote(8, 256, 0);
-  Actor_ShowEmote(8, 256, 20);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_Jump(8, 4, 10);
-  Event_ShowMessage(0x8008, 0);
-  Actor_ShowEmote(11, 257, 0);
-  Actor_ShowEmote(12, 257, 40);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_SetAnimation(9, 3);
-  Event_ShowMessage(0x8009, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   Actor_FaceDirectionAndWait(12, FACING_EAST);
-  Event_ShowMessage(0x800c, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_FaceDirectionAndWait(11, FACING_WEST);
   Actor_SetAnimation(11, 4);
-  Event_ShowMessage(0x400b, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   actor = Actor_GetById(11);
   *((u8 *)actor + 98) = ((Random16() * 80) >> 16) + 40;
   *((u8 *)actor + 99) = 0;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   actor = Actor_GetById(12);
   {
-    /* FAKEMATCH(temporary): the timer's + 40 comes before its address, as in
-     * the native; as a direct store, 2 of 303 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the timer's + 40 comes before its address. */
     u8 timer = ((Random16() * 80) >> 16) + 40;
 
     *((u8 *)actor + 98) = timer;
@@ -187,35 +185,35 @@ void MercuryLighthouse_HearVoices(void) {
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_SetAnimation(8, 4);
-  Event_ShowMessage(0x8008, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
-  Event_ShowMessage(0x8009, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
-  Event_ShowMessage(0x8008, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
-  Event_ShowMessage(0x8009, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_SetAnimationAndWait(8, 3);
-  Event_ShowMessage(0x8008, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(1, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_Jump(9, 2, 0);
-  FieldActor_ShowEmote(9, 263, 20);
-  Event_ShowMessage(0x8009, 0);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_SetAnimationAndWait(8, 3);
-  Event_ShowMessage(0x8008, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(6, 0);
   FieldPsynergy_StopMindReadWave();
@@ -236,7 +234,7 @@ s32 Scene_Initialize(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Event_PlaySound(201);
+    Event_PlaySound(SE_ASCEND);
     BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);
@@ -250,15 +248,15 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 s32 gMercuryLighthouse_MoteScript[] = {
-    SC_ADD(SW_Y, PIXELS(-2)),
+    SC_ADD(SW_Y, px(-2)),
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
-    SC_ADD(SW_Y, PIXELS(-2)),
+    SC_ADD(SW_Y, px(-2)),
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, px(-1)),
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),
@@ -271,22 +269,25 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(309),      SCENE_EXIT(2, 309, 2), SCENE_EXIT(3, 297, 5),
-    SCENE_EXIT(9, 309, 2), SCENE_EXITS_END,
+    SCENE_EXITS(MercuryLighthouse),
+    SCENE_EXIT(2, MercuryLighthouse, 2),
+    SCENE_EXIT(3, MarsLighthouseAerie1, 5),
+    SCENE_EXIT(9, MercuryLighthouse, 2),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
 struct ActorPlacement gActorPlacements[] = {
-    {191, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(696), FACING_SOUTH + FACING_STEP, 2, 0},
-    {186, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, 2, 0},
-    {190, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTHWEST + FACING_STEP, 2, 0},
-    {188, CONDITION_ALWAYS, 1, PIXELS(906), 0, PIXELS(744), FACING_WEST, 2, 0},
-    {194, CONDITION_ALWAYS, 1, PIXELS(782), 0, PIXELS(762), FACING_EAST, 2, 0},
-    {3, CONDITION_ALWAYS, 1, PIXELS(904), 0, PIXELS(946), FACING_SOUTH, 2, 0},
-    {1, CONDITION_ALWAYS, 1, PIXELS(904), 0, PIXELS(946), FACING_SOUTH, 2, 0},
-    {6, CONDITION_ALWAYS, 1, PIXELS(780), 0, PIXELS(946), FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(10), 0, PIXELS(10), FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(10), 0, PIXELS(10), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 696, FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 696, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(190, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(188, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 906, 0, 744, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(194, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 782, 0, 762, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(3, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 780, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

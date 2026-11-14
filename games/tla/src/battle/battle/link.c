@@ -104,9 +104,7 @@ s32 LinkBattle_SendParty(void) {
   size = LINK_PARTY_OFFER_BYTES;
   Heap_Release(buffer);
   buffer = (u8 *)Heap_AllocEwram(size);
-  // The copy in a one-pass loop, a scheduling barrier that keeps the list
-  // pointer's copy ahead of the count's load; as the plain call, 2 of 153
-  // instructions differ in tla-en.
+  /* FAKEMATCH(dead): the copy in a one-pass loop, a scheduling barrier. */
   do {
     Iwram_CopyWordsEntry(buffer, Djinn_GetRecoveryTableFar(0), size);
   } while (0);

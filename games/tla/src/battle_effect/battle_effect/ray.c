@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
@@ -80,10 +83,8 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     s32 angle;
 
     speed = (Random16() & 0x3ff) + 256;
-    angle = (Random16() & 0x7fff) - 0x4000;
-    spark->x = 0x4000;
-    spark->y = 0x7000;
-    spark->z = (Trig_Sin(angle) * speed) >> 16;
+    angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+    SET_POSITION(spark, px(1) / 4, px(7) / 16, (Trig_Sin(angle) * speed) >> 16);
     spark->velocityZ = -(Trig_Cos(angle) * speed * 2) >> 16;
     spark->variant = 0;
   }
@@ -91,7 +92,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)
@@ -99,7 +100,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     if (frame < 16) {
       // Wipe the canvas every five frames.
       if (frame % 5 == 2)
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
       for (bolt = 0; bolt != BOLT_COUNT; bolt++) {
         s32 angle;
         s32 x;
@@ -107,7 +108,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
 
         // The radius across shrinks from 32 a pixel a frame.
         count = 0;
-        angle = ((frame << 11) + 0x4000) * bolt;
+        angle = ((frame << 11) + TRIG_TURN / 4) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -((Trig_Cos(angle) << 3) >> 16) - 8;
         if (effect->variant == 0)

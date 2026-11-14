@@ -84,9 +84,6 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     first = 0;
   }
   {
-    // columns holds the table's address before i is set; as
-    // table = gWindow_PartyColumnOffsets after i = first, 41 of 137
-    // instructions differ in tla-en.
     const s8 *columns = gWindow_PartyColumnOffsets;
 
     i = first;
@@ -112,9 +109,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     state = canvas->menuState;
   }
   {
-    /* FAKEMATCH(barrier): an empty asm copies the state into a word local,
-     * so the test reads the copy (add r3, r4, #0); as if (state) with no asm,
-     * 11 of 137 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm copies the state into a word local. */
     u32 shown;
 
     asm("" : "=r"(shown) : "0"(state));
@@ -198,14 +193,12 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
 
 /* VIEW(screens): routine BattleDjinn_CountStandbyFar as s32
  * BattleDjinn_CountStandbyFar(s32 a, u8 *counts); module/window/window.h has
- * void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts); not tried:
- * BattleDjinn_CountStandbyFar's bound declaration was not found. */
+ * void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts); tried as the rest of
+ * the object declares it, PartyStatus_Draw moves: 2 of 495 instructions,
+ * BattleCommandRow_Run moves: 1 of 1120 instructions in tla-ja. */
 extern s32
 Func_08118130__screens(s32 a,
                        u8 *counts) __asm__("BattleDjinn_CountStandbyFar");
-// Text_DrawPrefixedNumberAtOffset is called with no prototype in scope, as The
-// Broken Seal's screens.c calls it: with one, hp reaches r0 before the call's
-// other arguments rather than last (2 of 495 instructions in tla-en).
 
 #define DJINN_COUNT_TILE(n) ((n) > 9 ? (n) + 0xf196 : ((n) + '0') | 0xf000)
 
@@ -320,9 +313,7 @@ void PartyStatus_Draw(s32 flags) {
   if (work->menuState != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
     s32 row = y;
 
-    /* FAKEMATCH(dead): i set to a 0 never read, so the zero the first four
-     * tiles pass is i's (mov r7, #0) rather than the level store's; without
-     * it, 6 of 495 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): i set to a 0 never read. */
     i = 0;
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;

@@ -5,6 +5,8 @@
 /// and sets out for Madra (Room2).
 
 #include "battle/battle.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -24,7 +26,6 @@
 #include "system/frame.h"
 #include "event_work.h"
 #include "module/scene/scene.h"
-#include "shared/effects.h"
 #include "shared/tables.h"
 #include "version.h"
 #include "macros.h"
@@ -49,7 +50,7 @@ extern struct ActorPlacement gLemurianShipDeck_Room1Placements[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov657Room1)
+  if (scene == (s32)&SceneId_LemurianShipDeck1)
     return gLemurianShipDeck_Room1Placements;
   return gLemurianShipDeck_Placements;
 }
@@ -63,9 +64,6 @@ void LemurianShipDeck_EnterCabin(void) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    // The loop is written with goto so that it carries no loop notes: the bytes
-    // rebuild the zero and the height on every pass, and a for loop hoists both
-    // (differ 39).
     i = 8;
   loop:
     {
@@ -73,22 +71,22 @@ void LemurianShipDeck_EnterCabin(void) {
 
       if (object != 0) {
         object->motionFlags = 0;
-        object->y = PIXELS(32);
+        object->y = px(32);
       }
     }
     i++;
     if (i <= 63)
       goto loop;
-    if (!Event_GetFlag(0x201)) {
-      Event_PlaySound(158);
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
+      Event_PlaySound(SE_DOOR_OPEN);
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
     }
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
     FieldEvent_Wait(8);
-    Event_PlaySound(123);
-    FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
+    Event_PlaySound(SE_MAP_EXIT);
+    FieldEvent_SetExitRequest(((struct EventWork *)work)->exit);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Event_End();
@@ -101,13 +99,11 @@ extern struct Trigger gLemurianShipDeck_Room2Triggers[];
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov657Room2)
+  if (scene == (s32)&SceneId_LemurianShipDeck2)
     return gLemurianShipDeck_Room2Triggers;
   return gLemurianShipDeck_Triggers;
 }
 
-/// ★ Named from the game: "The door is held closed by a powerful force."
-/// (MsgTheDoorIsHeld)
 void LemurianShipDeck_TryHeldDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -251,18 +247,18 @@ void LemurianShipDeck_TakeTheTiller(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(342), PIXELS(48), PIXELS(408), 0);
+  FieldCamera_MoveTo(342, 48, 408, 0);
   System_Wait(1);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
-  LemurianShipDeck_PlaceFacing(gMainRoutineWork.currentOwner, PIXELS(552),
-                               PIXELS(376), FACING_EAST);
-  LemurianShipDeck_PlaceFacing(9, PIXELS(558), PIXELS(345), 0xd000);
-  LemurianShipDeck_PlaceFacing(7, PIXELS(534), PIXELS(404), FACING_EAST);
+  LemurianShipDeck_PlaceFacing(gMainRoutineWork.currentOwner, px(552), px(376),
+                               FACING_EAST);
+  LemurianShipDeck_PlaceFacing(9, px(558), px(345), 0xd000);
+  LemurianShipDeck_PlaceFacing(7, px(534), px(404), FACING_EAST);
   turn = 0x2000;
-  LemurianShipDeck_PlaceFacing(6, PIXELS(568), PIXELS(408), turn);
-  LemurianShipDeck_PlaceFacing(5, PIXELS(546), PIXELS(440), 0x4000);
+  LemurianShipDeck_PlaceFacing(6, px(568), px(408), turn);
+  LemurianShipDeck_PlaceFacing(5, px(546), px(440), 0x4000);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetScript(5, gLemurianShipDeck_FirstCrewLooksAround);
@@ -273,14 +269,15 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Task_AddFrame(LemurianShipDeck_ScrollWaves, 0x480);
   gLemurianShipDeck_BobPhase = 0;
   Task_AddFrame(LemurianShipDeck_BobDeck, 0x480);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(542), PIXELS(44), PIXELS(396), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(542, 44, 396, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(80);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 20);
   Event_ShowMessage(7, 0);
@@ -291,51 +288,51 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_ShowEmote(6, 0x101, 20);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(9, turn);
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(5, 0x108, 20);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(5, 0);
   Event_OpenMessage(7, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
     Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
-    Actor_ShowEmote(9, 0x109, 20);
+    Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     Event_ShowMessage(9, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
-    Actor_ShowEmote(9, 0x109, 20);
+    Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessage(9, 0);
   }
-  Actor_ShowEmote(7, 0x100, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_ShowMessage(7, 0);
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(6, 0x101, 20);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(5, 0x100, 20);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH + FACING_STEP);
   Event_ShowMessage(9, 0);
   Event_ShowMessage(6, 0);
-  Actor_ShowEmote(5, 0x108, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
   Event_ShowMessage(5, 0);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
-  Event_ShowMessage(0x4006, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Event_ShowMessage(5, 0);
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_ShowEmote(7, 0x101, 20);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(9, 0x108, 20);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(9, 0);
   FieldActor_Jump(6, 4, 10);
   Event_ShowMessage(6, 0);
@@ -357,7 +354,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
 static inline void RunToActor4(s32 id) {
   struct Actor *target;
 
-  Actor_SetSpeed(id, 0x13333, 0x9999);
+  Actor_SetSpeed(id, 1.2);
   Actor_SetAnimation(id, 2);
   target = Actor_GetById(4);
   if (target != NULL)
@@ -371,23 +368,19 @@ static inline void RunToActor4(s32 id) {
 /// emotes the four actors run to actor 4.
 void LemurianShipDeck_HoldOnToTiller(void) {
 #if !TLA_PATCH_2
-  /* FAKEMATCH(dead): a call that never runs, kept for its routine address,
-   * the first constant the function puts in its pool: the message id's pool
-   * label is then numbered one later, and reload's hard-register CSE, whose
-   * lookup of the second -16 finds r1's only through that label's hash in
-   * this object, builds -16 twice, as Japanese and English do; from patch 2
-   * the ROM copies it from r1, as the plain form does here. As nothing, 15 of
-   * 459 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a call that never runs, kept for its routine address, the
+   * first constant the function puts in its pool: the message id's pool label
+   * is then numbered one later, and reload's hard-register CSE. */
   if (0)
     Task_AddFrame(LemurianShipDeck_BobDeck, 0x480);
 #endif
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(458), PIXELS(48), PIXELS(408), 0);
+  FieldCamera_MoveTo(458, 48, 408, 0);
   FieldEvent_SetMessageId(MsgHoldOnTo);
-  Actor_SetPositionAndFacing(4, PIXELS(470), PIXELS(392), FACING_EAST);
+  Actor_SetPositionAndFacing(4, px(470), px(392), FACING_EAST);
   FieldActor_LaunchFromLeader(6, 0, -24, FACING_SOUTH);
   FieldActor_LaunchFromLeader(5, -16, -16, FACING_SOUTHEAST);
   FieldActor_LaunchFromLeader(9, -24, 8, FACING_NORTHEAST + FACING_STEP);
@@ -401,7 +394,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   Task_AddFrame(LemurianShipDeck_ScrollWaves, 0x480);
   gLemurianShipDeck_BobPhase = 0;
   Task_AddFrame(LemurianShipDeck_BobDeck, 0x480);
-  Actor_ShowEmote(6, 0x102, 30);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
@@ -409,7 +402,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 4);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
-  Actor_ShowEmote(4, 0x102, 30);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
@@ -426,23 +419,23 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
-  Actor_ShowEmote(7, 0x109, 30);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(7, 0, 5);
   Actor_FaceDirectionAndWait(9, FACING_SOUTHEAST);
-  Actor_ShowEmote(9, 0x101, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(7, 0x102, 30);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(7, 0, 5);
   Actor_FaceEachOther(6, 5, 0);
   FieldEvent_Wait(30);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(6, 0x101, 30);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(5);
@@ -455,7 +448,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(7, 0, 5);
-  Actor_ShowEmote(9, 0x102, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_FaceDirectionAndWait(9, FACING_NORTH);
   FieldEvent_Wait(10);
@@ -502,23 +495,18 @@ s32 Scene_Initialize(void) {
   struct MapModeBits bits = map->bits;
 
   /* FAKEMATCH(temporary): the mode bits changed in a one-byte copy, bits, and
-   * stored back; as map->bits.mode = 1 with no empty block, 2 of 62
-   * instructions differ in tla-en. */
+   * stored back. */
   bits.mode = 1;
-  /* FAKEMATCH(dead): an empty once-only block before the copy's store, so
-   * gMainRoutineWork's address loads between the or and the store; as no block,
-   * 12 of 62 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block before the copy's store. */
   do {
   } while (0);
   party = &gMainRoutineWork;
   map->bits = bits;
-  if (party->scene == (s32)&SceneId_Ov657Room1) {
+  if (party->scene == (s32)&SceneId_LemurianShipDeck1) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
-    /* FAKEMATCH(dead): an empty once-only block, which ends the scheduling
-     * block after the store; as no block, 4 of 62 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     Actor_Get(party->currentOwner)->priorityFlags |= 0x20;
@@ -534,7 +522,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov657Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShipDeck1) {
     MapGrid_CopyCellsTo(2, 2, 10, 24, 18, 10);
     MapGrid_CopyCellsTo(0, 62, 26, 62, 3, 8);
     MapGrid_CopyCellsTo(50, 65, 25, 61, 6, 1);
@@ -554,39 +542,39 @@ void LemurianShipDeck_SightMenardisShip(void) {
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(4, 0xcccc, 0x6666);
+  Actor_SetSpeed(4, 0.8);
   Actor_WalkToAndWait(4, 264, 136);
   FieldEvent_SetMessageId(MsgLookItS);
   FieldActor_LaunchFromLeader(5, 16, -16, FACING_SOUTH);
   FieldActor_LaunchFromLeader(9, 32, -16, FACING_SOUTH);
   FieldActor_LaunchFromLeader(6, -16, -16, FACING_SOUTH);
   FieldEvent_Wait(80);
-  Actor_ShowEmote(9, 0x102, 20);
-  Actor_SetSpeed(9, 0x19999, 0xcccc);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Actor_SetSpeed(9, 1.6);
   Actor_WalkToAndWait(9, 300, 152);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 20);
   Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
   Event_ShowMessage(9, 0);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(PIXELS(200), -1, PIXELS(344), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(200, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  FieldCamera_SetSpeed(0x13333, 0x2666);
-  FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(344), 1);
+  FieldCamera_SetSpeed(1.2);
+  FieldCamera_MoveTo(600, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
-  FieldCamera_SetSpeed(0x66666, 0xcccc);
-  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(128), 1);
+  FieldCamera_SetSpeed(6.4);
+  FieldCamera_MoveTo(264, CAMERA_KEEP, 128, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessage(0x2005, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
   Actor_SetAnimation(6, 4);
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
-  Actor_ShowEmote(9, 0x101, 0);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_OpenMessage(9, 0);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
@@ -604,25 +592,25 @@ void LemurianShipDeck_SightMenardisShip(void) {
     Event_ShowMessage(9, 0);
   }
   Actor_SetAnimation(5, 4);
-  Event_ShowMessage(0x2005, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
   Actor_SetAnimation(6, 4);
   Event_ShowMessage(6, 0);
   Actor_SetAnimation(9, 4);
   Event_ShowMessage(9, 0);
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
+  Actor_SetSpeed(9, 0.8);
   Actor_Get(9)->actionFlags &= ~1;
   Actor_WalkToAndWait(9, 288, 144);
   FieldEvent_Wait(1);
   Actor_Get(9)->actionFlags |= 1;
-  Event_ShowMessage(0x2009, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 9, 0);
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimationAndWait(9, 3);
-  Actor_SetSpeed(9, 0x13333, 0x9999);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(9, 1.2);
+  Actor_SetSpeed(6, 1.2);
+  Actor_SetSpeed(5, 1.2);
   {
     struct Actor *target;
 
@@ -654,23 +642,21 @@ void LemurianShipDeck_FreezePuddle(void) {
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-/// ★ Named from the game: "Well, there's no point in hanging around here all
-/// day." (MsgWellThereS)
 void LemurianShipDeck_LeaveToFindCrew(void) {
   struct Actor *object;
 
-  if (Event_GetFlag(0x212))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_12))
     return;
   if (Event_GetFlag(0x988))
     return;
-  Event_SetFlag(0x212);
-  if (Event_GetFlag(0x211)) {
+  Event_SetFlag(FLAG_SCENE_TEMP_12);
+  if (Event_GetFlag(FLAG_SCENE_TEMP_11)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     System_Wait(1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    Actor_SetSpeed(9, 0xcccc, 0x6666);
+    Actor_SetSpeed(9, 0.8);
     Actor_WalkToAndWait(9, 416, 428);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     FieldEvent_SetMessageId(MsgWellThereS);
@@ -684,16 +670,18 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     Actor_SetPosition(9, 0, 0);
     Event_SetFlag(0x988);
     Event_End();
-  } else if (Event_GetFlag(0x210)) {
-    Event_SetFlag(0x211);
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_10)) {
+    Event_SetFlag(FLAG_SCENE_TEMP_11);
   } else {
-    Event_SetFlag(0x210);
+    Event_SetFlag(FLAG_SCENE_TEMP_10);
   }
 }
 
 /// Stepping back off the gangway clears flag 0x212, so the crew is sought
 /// again.
-void LemurianShipDeck_ResetCrewSearch(void) { GameFlag_Clear(0x212); }
+void LemurianShipDeck_ResetCrewSearch(void) {
+  GameFlag_Clear(FLAG_SCENE_TEMP_12);
+}
 
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *data);
@@ -705,7 +693,7 @@ void LemurianShipDeck_EmitSparkle(void) {
   struct Actor *object;
 
   SET_VECTOR(position, 0x1680000, 0x400000, 0x1a80000);
-  FieldVector_AddPolarOffset(0x200000, Random16(), position);
+  FieldVector_AddPolarOffset(px(32), Random16(), position);
   object = FieldActor_Create(0x2a2, position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
@@ -713,16 +701,15 @@ void LemurianShipDeck_EmitSparkle(void) {
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
-    FieldActor_SetMoveTarget(object, PIXELS(360), PIXELS(64), PIXELS(424));
+    FieldActor_SetMoveTarget(object, 360, 64, 424);
     Actor_StartScript(object, gLemurianShipDeck_SparkleFades);
   }
 }
 
 /// The Black Crystal (item 242's icon) as an actor on the deck.
-/// ★ Named from the game: "Black Crystal" (item 242's name)
 struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   struct Actor *object =
-      (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
+      (struct Actor *)Import_ActorCreate(0x1e9, px(360), px(64), px(424));
   u8 *buffer = 0;
   struct FieldSprite *sprite;
 
@@ -737,7 +724,7 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   sprite->nextFrame = 0;
   sprite->unk1b[0] = 0;
   buffer = HeapSlot_Alloc(68, 0x608);
-  Icon_DrawItem(242);
+  Icon_DrawItem(ITEM_BLACK_CRYSTAL);
   VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
   HeapSlot_Release(68);
   return object;
@@ -756,10 +743,10 @@ void LemurianShipDeck_ReturnToShip(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Call2((void (*)())Actor_MoveToObject, 7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_SetSpeed(7, 0x19999, 0xcccc);
+  Actor_SetSpeed(7, 1.6);
   Actor_WalkToAndWait(7, 412, 424);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   FieldEvent_SetMessageId((s32)MsgAtLastI);
@@ -771,16 +758,16 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_FaceActor(7, gMainRoutineWork.currentOwner, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Event_ShowMessage(7, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gLemurianShipDeck_ReturnToShipScript);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  Actor_SetSpeed(7, 0.8);
   Actor_WalkToAndWait(7, 360, 424);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
-  Event_PlaySound(182);
+  Event_PlaySound(SE_GEM_SET);
   handle = LemurianShipDeck_CreateBlackCrystal();
   FieldEvent_Wait(20);
-  Event_PlaySound(220);
+  Event_PlaySound(SE_SHIMMER);
   func = LemurianShipDeck_EmitSparkle;
   Task_Add(func, TASK_PASS_VBLANK);
   PaletteFade_ApplyTarget(0x10003, 1);
@@ -793,10 +780,10 @@ void LemurianShipDeck_ReturnToShip(void) {
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
-  Event_SetFlag(0x201);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
   FieldTask_Remove(func);
   if (handle != 0)
-    Call1((void (*)())Actor_Release, handle);
+    Actor_Release(handle);
   FieldEvent_Wait(20);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(20);
@@ -829,47 +816,47 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_WalkTo(4, 264, 176);
   FieldActor_WaitForMoveById(4);
   FieldActor_LaunchFromLeader(7, 16, 8, FACING_SOUTH);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(288), -1, PIXELS(208), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(288, CAMERA_KEEP, 208, 1);
   FieldActor_LaunchFromLeader(9, 32, 0, FACING_SOUTH);
   FieldActor_LaunchFromLeader(6, 48, -8, FACING_SOUTH);
   FieldActor_LaunchFromLeader(5, -16, -8, FACING_SOUTH);
   FieldEvent_Wait(40);
-  Actor_SetSpeed(7, 0x26666, 0x13333);
+  Actor_SetSpeed(7, 2.4);
   Actor_WalkToAndWait(7, 280, 224);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(7, 264, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   FieldActor_Jump(7, 4, 10);
   FieldActor_Jump(7, 4, 20);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(9, 265, 20);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessage(9, 0);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(288), -1, PIXELS(184), 1);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(288, CAMERA_KEEP, 184, 1);
+  Actor_SetSpeed(7, 0.8);
   Actor_WalkByAndWait(7, 0, -16);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(7, 3);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(9, 258, 20);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   Actor_SetAnimation(6, 4);
   Event_ShowMessage(6, 0);
-  Actor_ShowEmote(7, 257, 20);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Actor_ShowEmote(5, 261, 20);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
-  Actor_ShowEmote(7, 261, 20);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Actor_SetAnimation(6, 4);
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Actor_SetAnimationAndWait(5, 3);
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Actor_SetAttachedEffect(7, 258);
+  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimationAndWait(6, 3);
   Actor_SetAnimation(9, 4);
@@ -880,7 +867,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_OpenMessage(9, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Actor_ShowEmote(5, 263, 20);
+    Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessage(5, 0);
     Event_ShowMessage(6, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
@@ -893,38 +880,38 @@ void LemurianShipDeck_ReachPiersShip(void) {
     Actor_SetAnimation(6, 3);
     Event_ShowMessage(6, 0);
   }
-  Actor_ShowEmote(9, 265, 0);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHEAST);
-  Event_ShowMessage(0x9009, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 9, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   Actor_SetAnimation(7, 4);
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
-  Actor_ShowEmote(5, 257, 0);
-  Actor_ShowEmote(6, 257, 40);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(9, 265, 20);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(6, FACING_WEST, 40);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
-  Actor_ShowEmote(7, 257, 20);
-  Actor_SetAttachedEffect(9, 258);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
-  Actor_ShowEmote(7, 264, 20);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(5, 264, 0);
-  Actor_ShowEmote(6, 264, 40);
-  Actor_ShowEmote(9, 261, 20);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(5, 0x100, 0);
-  Actor_ShowEmote(6, 0x100, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(5, FACING_EAST, 20);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   Actor_FaceDirection(9, FACING_WEST, 40);
@@ -933,48 +920,48 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetAnimationAndWait(7, 3);
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_ShowEmote(9, 0x100, 20);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_RunRepeatedMotion(9, 3);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_SetAttachedEffect(5, 258);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
   FieldActor_StartRepeatedMotion(9, 2);
   Actor_SetAnimationAndWait(9, 3);
-  Actor_ShowEmote(7, 265, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH + FACING_STEP);
   FieldActor_StartRepeatedMotion(9, 2);
-  Actor_ShowEmote(9, 261, 40);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_SetAnimationAndWait(9, 3);
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(7, 3);
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Actor_ShowEmote(6, 257, 20);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessage(6, 0);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(4, 257, 20);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   Actor_SetAnimation(7, 3);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(5, 265, 40);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   Actor_SetAnimation(7, 4);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_SetAnimationAndWait(5, 3);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   Event_ShowMessage(7, 0);
   Actor_SetAnimationAndWait(9, 3);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
-  Actor_ShowEmote(9, 264, 20);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
@@ -985,9 +972,9 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_WalkByAndWait(7, -16, 0);
   FieldEvent_Wait(40);
   Actor_WalkByAndWait(7, -16, 0);
-  Actor_ShowEmote(7, 261, 20);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_ShowEmote(5, 257, 40);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_WalkByAndWait(5, 0, 16);
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
@@ -1013,9 +1000,9 @@ void LemurianShipDeck_ReachPiersShip(void) {
   }
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH + FACING_STEP);
-  Actor_ShowEmote(9, 264, 20);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(7, 264, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
@@ -1024,10 +1011,10 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimationAndWait(7, 3);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
-  Actor_SetSpeed(9, 0x13333, 0x9999);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
-  Actor_SetSpeed(7, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
+  Actor_SetSpeed(9, 1.2);
+  Actor_SetSpeed(6, 1.2);
+  Actor_SetSpeed(7, 1.2);
   Actor_SetScript(5, gLemurianShipDeck_ReachPiersShipScript);
   Actor_SetScript(9, gLemurianShipDeck_ReachPiersShipScript);
   Actor_SetScript(6, gLemurianShipDeck_ReachPiersShipScript);
@@ -1037,18 +1024,15 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_End();
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 7, Actor_SelectAnimation,
-                        gLemurianShipDeck_SmokePuff)
+#include "shared/actor_emit_smoke.h"
 
-/// ★ Named from the game: "Then let's waste no time! We should set out for
-/// Madra at once!" (MsgThenLetS)
 void LemurianShipDeck_SetOutForMadra(void) {
   if (Event_GetFlag(7)) {
     struct Actor *object;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_SetSpeed(4, 0xcccc, 0x6666);
+    Actor_SetSpeed(4, 0.8);
     Actor_Get(7)->update = (void (*)(void))Actor_EmitSmoke;
     FieldActor_LaunchFromLeader(7, 16, 0, FACING_WEST);
     Actor_SetSpriteFlags(Actor_Get(7), 0);
@@ -1089,7 +1073,7 @@ u32 gLemurianShipDeck_ReachPiersShipScript[] = {
 
 u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(368), 0, PIXELS(448)),
+    SC_MOVE(px(368), 0, px(448)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(10),
@@ -1102,7 +1086,13 @@ u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_0200218C(gLemurianShipDeck_FirstCrewLooksAround, 30, 50, 10, 70)
+u32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
+      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(30),                        
+      SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(50),                        
+      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(10),                        
+      SC_SET(SW_FACING, FACING_SOUTHEAST), SC_WAIT(70),                        
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 u32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_EAST),
@@ -1130,32 +1120,32 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(43),
-    SCENE_EXIT(1, 40, 1),
-    SCENE_EXIT(1, 2, 68),
-    SCENE_EXIT(2, 2, 8),
-    SCENE_EXITS(42),
-    SCENE_EXIT(1, 2, 42),
-    SCENE_EXIT(2, 2, 8),
-    SCENE_EXIT(10, 2, 71),
+    SCENE_EXITS(LemurianShipDeck2),
+    SCENE_EXIT(1, LemurianShip1, 1),
+    SCENE_EXIT(1, WorldMap, 68),
+    SCENE_EXIT(2, WorldMap, 8),
+    SCENE_EXITS(LemurianShipDeck1),
+    SCENE_EXIT(1, WorldMap, 42),
+    SCENE_EXIT(2, WorldMap, 8),
+    SCENE_EXIT(10, WorldMap, 71),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gLemurianShipDeck_Placements[] = {
-    {290, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(312), FACING_SOUTH, 2, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
-    {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
-    {6, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
-    {7, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gLemurianShipDeck_Room1Placements[] = {
-    {290, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
-    {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
-    {6, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
-    {7, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1164,7 +1154,7 @@ struct Trigger gLemurianShipDeck_Triggers[] = {
 };
 
 struct Trigger gLemurianShipDeck_Room2Triggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x980, EVENT(LemurianShipDeck_SightMenardisShip)},
     {TRIGGER_STEP, 11, 0x981, EVENT(LemurianShipDeck_ReachPiersShip)},

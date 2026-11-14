@@ -56,19 +56,21 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(184),
-    SCENE_EXIT_IF(1, 182, 7, CONDITION_ALWAYS),
+    SCENE_EXITS(ChampaSanctum),
+    SCENE_EXIT_UNLESS(1, Champa1, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {202, CONDITION_ALWAYS, 1, PIXELS(720), 0, PIXELS(147), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 720, 0, 147,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(ChampaSanctum_ServeAcrossTheCounter)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(ChampaSanctum_ServeAcrossTheCounter)},
     {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgChampaTreasureEncouragesLaziness)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,

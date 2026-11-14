@@ -3,6 +3,8 @@
 /// Felix fires the Magma Ball at it from a safe distance.
 
 #include "shared/tables.h"
+#include "flags.h"
+#include "system/io_reg.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -100,10 +102,10 @@ void NorthernReaches_SightIceWall(void) {
   s32 result0;
   struct Actor *object1;
 
-  result0 = Event_GetFlag(0x200);
+  result0 = Event_GetFlag(FLAG_SCENE_TEMP_00);
   if (result0 != 0)
     goto done;
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);
@@ -134,12 +136,12 @@ void NorthernReaches_DiscussIceWall(void) {
   FieldActor_WaitForMove((s32)object1);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(176), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
-  Actor_SetPosition(11, PIXELS(408), PIXELS(288));
-  Actor_SetPosition(5, PIXELS(408), PIXELS(288));
-  Actor_SetPosition(6, PIXELS(408), PIXELS(288));
+  Actor_SetPosition(11, 408, 288);
+  Actor_SetPosition(5, 408, 288);
+  Actor_SetPosition(6, 408, 288);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
@@ -202,8 +204,8 @@ fire:
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipSafeFiringDistance);
-  Actor_MoveToAndWait(8, 0x1d0, 216);
-  Actor_FaceDirectionAndWait(8, 0xc000);
+  Actor_MoveToAndWait(8, 464, 216);
+  Actor_FaceDirectionAndWait(8, FACING_NORTH);
   FieldEvent_Wait(5);
   t10 = Actor_Get(11);
   t10->scaleX = v_r5;
@@ -221,16 +223,16 @@ fire:
   Actor_SetSpriteFlags(t18, 0);
   t20 = Actor_Get(6);
   Actor_SetSpriteFlags(t20, 0);
-  Actor_SetPosition(11, 0x1d00000, 0xd80000);
-  Actor_SetPosition(7, 0x1d00000, 0xd80000);
-  Actor_SetPosition(5, 0x1d00000, 0xd80000);
-  Actor_SetPosition(6, 0x1d00000, 0xd80000);
+  Actor_SetPosition(11, 464, 216);
+  Actor_SetPosition(7, 464, 216);
+  Actor_SetPosition(5, 464, 216);
+  Actor_SetPosition(6, 464, 216);
   t26 = Event_GetFlag(0x90d);
   v_r10 = (s32)MsgShipSafeFiringDistance;
   if (t26 != 0)
     goto ask;
   Event_SetFlag(0x90d);
-  FieldEvent_ShowMessageThenWait(0x2007, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 7, 0, 5);
 ask:
   FieldEvent_SetMessageId((v_r10 + 1));
   Event_OpenMessage(11, 0);
@@ -246,23 +248,23 @@ ready:
   t37 = FIELD_AT(t36, u16, 452);
   FIELD_AT(t36, u16, 452) = (t37 + 1);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
-  Actor_SetSpeed(8, 0x30000, 0x18000);
+  Actor_SetSpeed(8, 3);
   t40 = Actor_Get(8);
   t40->actionFlags &= 254;
   Actor_WalkBy(8, 0, 16);
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   FieldEvent_Wait(4);
-  v_r8->scaleX = 0x18000;
-  v_r8->scaleY = 0x18000;
+  v_r8->scaleX = Q16_ONE * 3 / 2;
+  v_r8->scaleY = Q16_ONE * 3 / 2;
   t45 = Actor_Get(10);
   Actor_SetSpriteColorMode(t45, 6);
-  Actor_SetPosition(10, 0x1d00000, 0xc80000);
+  Actor_SetPosition(10, 464, 200);
   Actor_SetAnimation(10, 1);
-  v_r6->scaleX = 0x8000;
-  v_r6->scaleY = 0x8000;
-  Actor_SetSpeed(9, 0x20000, 0x10000);
-  Actor_SetPosition(9, 0x1d00000, 0xd80000);
-  Actor_WalkTo(9, 0x1d0, 144);
+  v_r6->scaleX = Q16_ONE / 2;
+  v_r6->scaleY = Q16_ONE / 2;
+  Actor_SetSpeed(9, 2);
+  Actor_SetPosition(9, 464, 216);
+  Actor_WalkTo(9, 464, 144);
   v_r5 = 15;
 growBall:
   t52 = v_r6->scaleX;
@@ -273,10 +275,10 @@ growBall:
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)
     goto growBall;
-  FieldCamera_MoveTo(0x1d80000, -1, 0xb00000, 1);
+  FieldCamera_MoveTo(472, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(9);
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
   t59 = v_r6->x;
   from[0] = (t59 - 0x20000);
   t60 = v_r6->y;
@@ -297,14 +299,14 @@ growBall:
   Event_WaitTransitionFrames();
   t70 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t70, s32, 436) = 8;
-  FieldEvent_ShowMessageThenWait(0x2005, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
-  FieldEvent_ShowMessageThenWait(0x2006, 0, 5);
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
-  Actor_MoveToAndWait(8, 0x1d0, 176);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 6, 0, 5);
+  Actor_SetSpeed(8, 0.8);
+  Actor_MoveToAndWait(8, 464, 176);
   EventCamera_FollowActor(8, 1);
-  Actor_MoveToAndWait(8, 0x1d0, 152);
-  Actor_SetSpeed(8, 0x9999, 0x4ccc);
+  Actor_MoveToAndWait(8, 464, 152);
+  Actor_SetSpeed(8, 0.6);
   t79 = v_r7->scaleY;
   v_r7->scaleY = (t79 - 0x1000);
   v_r7->scaleX = (t79 - 0x1000);
@@ -330,7 +332,7 @@ growBall:
   v_r7->scaleX = (t91 - 0x1000);
   Actor_SetDestinationOffset(8, 0, -16);
   FieldActor_WaitForMoveById(8);
-  Actor_SetSpeed(8, 0x3333, 0x1999);
+  Actor_SetSpeed(8, 0.2);
   Actor_SetDestinationOffset(8, 0, -12);
   v_r5 = 19;
 settle:
@@ -372,7 +374,7 @@ s32 Scene_Initialize(void) {
   if (state->entrance == 90) {
     Event_SetFlag(0x90a);
     state->ownerOverride = 1;
-    Event_SetDestination((s32)&SceneId_Ov6a7Room1, 4);
+    Event_SetDestination((s32)&SceneId_NorthernReaches, 4);
   }
   RisingParticles_Start();
   return 0;
@@ -434,7 +436,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   }
   sparks = Heap_AllocEwram(0x600);
   /* FAKEMATCH(temporary): the size held in the local that then takes the
-   * buffer; as Heap_Alloc(0x1000), 19 of 323 instructions differ in tbs-en. */
+   * buffer. */
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);
   Decompress_TaggedLz(
@@ -447,22 +449,22 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     *timer = -(Random16() << 5 >> 16);
     timer += 4;
   }
-  Dma_Set(Field_Palette685, (void *)0x50003e0, 0x80000010,
-          (volatile u32 *)0x40000d4);
+  Dma_Set(Field_Palette685, (void *)0x50003e0, DMA_COPY_HALFWORDS(16),
+          REG_DMA3);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
-      Event_PlaySound(145);
+      Event_PlaySound(SE_CRASH);
     }
     if (frame == 60) {
       BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
       PaletteFade_StartInterpolation(90);
-      Event_PlaySound(141);
+      Event_PlaySound(SE_RUMBLE);
     }
     if (frame == 105) {
       callback();
       flying = 1;
-      MapGrid_SetShake(0x60000, 0x60000, 0x10000);
-      Event_PlaySound(228);
+      MapGrid_SetShake(6, 6, 1);
+      Event_PlaySound(SE_SPARKLING_PASSAGE);
     }
     if (frame == 130) {
       flying = 1;
@@ -473,7 +475,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
       for (i = 53; i >= 0; i--) {
         if (particle->age < 60) {
           EffectSprite_DrawAtWorldPosition(flySprite, particle);
-          BattleEffect_StepVector3(particle, 63, -0x3000);
+          BattleEffect_StepVector3(particle, 63, -12288);
           particle->age++;
         }
         flySprite++;
@@ -521,11 +523,16 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_5(268, 60, 4, 61)
+u32 gSceneExits[] = {
+    SCENE_EXITS(NorthernReaches),
+    SCENE_EXIT_UNLESS(1, WorldMap, 60, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, WorldMap, 61, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gActorPlacements[] = {
-    {8, CONDITION_ALWAYS, (s32)gNorthernReaches_ShipAtRest, PIXELS(120), 0,
-     PIXELS(280), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gNorthernReaches_ShipAtRest, 120,
+                    0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {263, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {285, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_EAST, 2, 0},

@@ -4,11 +4,14 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
+#include "macros.h"
 
 struct Actor *Actor_GetById(u32 objectId);
 
@@ -61,24 +64,22 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
     cell->collisionCode = 0;
   }
 
-  x = (object->x & CELL_MASK) + (8 << 16);
+  x = (object->x & CELL_MASK) + px(8);
   y = object->y & CELL_MASK;
-  top = y + (8 << 16);
-  z = (object->z & CELL_MASK) + (16 << 16);
+  top = y + px(8);
+  z = (object->z & CELL_MASK) + px(16);
   Actor_SelectAnimationFar((struct Actor *)object, 0);
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  object->z += 16 << 16;
-  object->y -= 64 << 16;
+  object->z += px(16);
+  object->y -= px(64);
   Actor_SetSpriteFlagsFar(object, 0);
 
   // Hang the links.
   last = 6;
   tail = &slot->root;
   for (i = 0; i <= last && (link = HangingVine_AllocLink()) != 0; i++) {
-    link->x = x;
-    link->y = y + (15 << 16) - i * (14 << 16);
-    link->z = z;
+    SET_POSITION(link, x, y + px(15) - i * px(14), z);
     if (i == 0)
       link->kind = 1;
     else if (i == 1)
@@ -102,9 +103,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
         s32 drop = -(frame << 15);
 
         do {
-          link->x = x;
-          link->y = top - drop / 2;
-          link->z = z;
+          SET_POSITION(link, x, top - drop / 2, z);
           drop += frame << 16;
           i++;
           link = link->next;
@@ -117,7 +116,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   slot->phase = 0;
   slot->swing = 0x100;
   slot->id = objectId;
-  slot->spacing = 14 << 16;
+  slot->spacing = px(14);
 }
 
 // The half turn on the leader's side of the anchor: 0 on its right, 1 on its
@@ -132,9 +131,7 @@ void HangingVine_Swing(s32 id) {
   s32 side = 0;
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   struct Actor *anchor = Actor_GetById(id);
-  /* FAKEMATCH(wrapper): the slot read through a one-member union, which may
-   * alias every store, so its reads stay after the stores before them; as
-   * struct HangingVineSlot *, 12 of 378 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the slot read through a one-member union. */
   union {
     struct HangingVineSlot s;
   } *slot;
@@ -228,7 +225,7 @@ void HangingVine_Swing(s32 id) {
   slot->s.active = 0;
   Actor_SelectAnimationFar(leader, 6);
   wait(6);
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Actor_SelectAnimationFar(leader, 7);
   leader->speedLimit = Q16_ONE * 3;
   leader->acceleration = Q16_ONE * 2;
@@ -310,8 +307,11 @@ void FieldPsynergy_StartMindReadWave(s32 sourceId, s32 targetId);
 #define FieldPsynergy_FrostOnTarget FieldPsynergy_FrostOnTarget
 /* VIEW(f0daecc): routine FieldPsynergy_WhirlwindOnTarget as void
  * FieldPsynergy_WhirlwindOnTarget(s32 targetId); battle.h has void
- * FieldPsynergy_WhirlwindOnTarget(void); not tried:
- * FieldPsynergy_WhirlwindOnTarget's bound declaration was not found. */
+ * FieldPsynergy_WhirlwindOnTarget(void); tried as the definition's void
+ * FieldPsynergy_WhirlwindOnTarget(void), which the object already declares, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes/psynergy_dispatch.c:455: too
+ * many arguments to function `FieldPsynergy_WhirlwindOnTarget'. */
 extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__(
     "FieldPsynergy_WhirlwindOnTarget");
 void FieldPsynergy_CatchOnTarget(s32 targetId);
@@ -664,8 +664,7 @@ void Func_080dba5c(void) {
   if (scene->mode == 0xc000) {
     scene->active = 1;
     buffer = Heap_Alloc(0x200);
-    // An empty once-only loop keeps the zero kept in sl after the fill's
-    // arguments; without it, 12 of 103 instructions differ in tla-en.
+    /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
     Iwram_FillWordsEntry(buffer, 0x200, 0);
@@ -679,7 +678,7 @@ void Func_080dba5c(void) {
     sprite->priority = 0;
     sprite->hidden = 0;
     sprite->layer = 0;
-    sprite->scale = 0x20000;
+    sprite->scale = Q16_ONE * 2;
     position[0] = scene->x;
     position[1] = mainObject->y + 0x1c0000;
     position[2] = mainObject->z;

@@ -36,8 +36,6 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
     return 0;
   unit = Unit_Get(unitId);
   {
-    // The entry held in a local loads before the size; as a plain
-    // Iwram_ClearWords call, 1 of 219 instructions differ in tla-en.
     s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
 
     clear(unit, BATTLE_UNIT_SIZE);
@@ -114,7 +112,7 @@ s32 Party_AddMember(s32 value) {
   s32 count = Party_CountMembers();
   s32 index;
 
-  GameFlag_SetBit__game(value);
+  GameFlag_Set(value);
   index = 0;
   while (index < count) {
     if (gMainRoutineWork.activeOwners[index] == value)
@@ -209,8 +207,8 @@ s32 Party_AdjustShopGifts(s32 amount) {
 /* VIEW(game): variable gSummon_OrderList as u8 gSummon_OrderList[29];
  * game/summon_table has const u8 gSummon_OrderList[29] = {; tried as the
  * definition's extern const u8 gSummon_OrderList[29], it does not compile in
- * tla-ja: games/tla/src/game/game.c:2618: `gSummon_OrderList' undeclared (first
- * use in this function). */
+ * tla-ja: games/tla/src/game/game/party.c:210: `gSummon_OrderList' undeclared
+ * (first use in this function). */
 extern u8 gSummon_OrderList__game[29] __asm__("gSummon_OrderList");
 #define gSummon_OrderList gSummon_OrderList__game
 

@@ -45,24 +45,45 @@ enum Element {
 /// as if aimed at.
 #define ABILITY_RANGE_ALL 255
 
-/// The low four bits of BattleAct.flags: how BattleTarget_Execute applies
-/// the ability's power. Kinds 0, 7 and 9 apply none: 0 is no ability, 7 is
-/// Granite, Flash and Kite, 9 the field Psynergy, Defend, Flee and enemies'
-/// commands.
-#define ABILITY_KIND_MASK 15
+/// The low four bits of AbilityDefinition.flags: the ability kind (enum
+/// AbilityFormula).
+#define ABILITY_FORMULA_MASK 15
 
-/// The kinds of ability, by the low four bits of BattleAct.flags. Kinds 0, 7
-/// and 9 have no enumerator; ABILITY_KIND_MASK says what they hold in TBS.
-enum AbilityKind {
-  ABILITY_KIND_HEAL_HP = 1,           ///< Cure, Fizz, healing items
-  ABILITY_KIND_EFFECT = 2,            ///< damage only if the effect lands
-  ABILITY_KIND_ATTACK = 3,            ///< Attack vs Defense, plus the power
-  ABILITY_KIND_ATTACK_MULTIPLIED = 4, ///< that attack times power / 10
-  ABILITY_KIND_DAMAGE = 5,            ///< HP damage from the power (Psynergy)
-  ABILITY_KIND_UNLEASHED_DAMAGE = 6,  ///< an enemy's. Shown as `X unleashes Y!`
-  ABILITY_KIND_SUMMON = 8,
-  ABILITY_KIND_PP_DAMAGE = 10,
-  ABILITY_KIND_HEAL_PP = 11
+/// An ability kind picks what the ability's power does to each target, as
+/// The Broken Seal's: ABILITY_FORMULA_BLANK, ABILITY_FORMULA_EFFECT_ONLY and
+/// ABILITY_FORMULA_NO_POWER apply no power.
+enum AbilityFormula {
+  ABILITY_FORMULA_BLANK = 0,             ///< no ability
+  ABILITY_FORMULA_HEAL_HP = 1,           ///< Cure, Fizz, healing items
+  ABILITY_FORMULA_EFFECT = 2,            ///< damage only if the effect lands
+  ABILITY_FORMULA_ATTACK = 3,            ///< Attack vs Defense, plus the power
+  ABILITY_FORMULA_ATTACK_MULTIPLIED = 4, ///< that attack times power / 10
+  ABILITY_FORMULA_DAMAGE = 5, ///< HP damage from the power (Psynergy)
+  /// HP damage from enemies' moves, announced as `<unit> unleashes
+  /// <ability>!`.
+  ABILITY_FORMULA_ENEMY_DAMAGE = 6,
+  /// Granite, Flash and Kite, whose effect is all they do.
+  ABILITY_FORMULA_EFFECT_ONLY = 7,
+  ABILITY_FORMULA_SUMMON = 8,
+  /// The field Psynergy, Defend, Flee and enemies' commands.
+  ABILITY_FORMULA_NO_POWER = 9,
+  ABILITY_FORMULA_PP_DAMAGE = 10,
+  ABILITY_FORMULA_HEAL_PP = 11
+};
+
+/// AbilityDefinition.flags: where an ability can be used.
+enum AbilityUse {
+  ABILITY_USABLE_IN_FIELD = 0x40, ///< can be used outside battle
+  ABILITY_USABLE_IN_BATTLE = 0x80 ///< can be used in battle; else greyed there
+};
+
+/// AbilityDefinition.targetMode: whom an ability may target, from its user's
+/// view.
+enum AbilityTarget {
+  ABILITY_TARGET_ONE = 0,    ///< the aimed unit alone, whatever its range
+  ABILITY_TARGET_FOES = 1,   ///< the other side
+  ABILITY_TARGET_ALLIES = 2, ///< the user's side, the user included
+  ABILITY_TARGET_SELF = 4    ///< the user alone, whatever the range
 };
 
 /// BattleAct.effect: what an ability does besides its damage or healing,
@@ -147,7 +168,7 @@ enum AbilityEffect {
 struct BattleAct {
   u8 targetMode; ///< TARGET_MODE_NONE, _FOES, _ALLIES or _SELF
   /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
-  /// row | 3..0 kind (ABILITY_KIND_MASK, enum AbilityKind).
+  /// row | 3..0 kind (ABILITY_FORMULA_MASK, enum AbilityFormula).
   u8 flags;
   u8 element; ///< enum Element
   u8 effect;  ///< enum AbilityEffect
@@ -318,9 +339,6 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
 }
 
 /// Recalculates HP and PP gauges, keeping at least one when any points remain.
-// A statement macro, written do { } while (0): every site matches through that
-// shape. Written out at each site, or as an inline function, the gauge loads
-// are scheduled across the store before them.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
     (unit)->hpGauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->maxHp);        \

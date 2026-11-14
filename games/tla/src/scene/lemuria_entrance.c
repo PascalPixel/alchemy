@@ -59,7 +59,7 @@ void LemuriaEntrance_LeaveByExit3(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
   Event_ClearFlag(0x960);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   party->currentOwner = 8;
   ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
   Event_FinishScreenTransition();
@@ -72,7 +72,7 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
   Event_SetFlag(0x960);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   party->currentOwner = 8;
   ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
   Event_FinishScreenTransition();
@@ -140,7 +140,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_Get(18), 0);
   if (gMainRoutineWork.entrance == 90) {
     gMainRoutineWork.ownerOverride = 1;
-    Event_SetDestination((s32)&SceneId_Ov688, 1);
+    Event_SetDestination((s32)&SceneId_LemuriaEntrance, 1);
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5) {
     gMainRoutineWork.currentOwner = 8;
@@ -216,7 +216,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   gMainRoutineWork.eventMode = 2;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(8, 0x451e, 0x228f);
+  Actor_SetSpeed(8, 0.27);
   Actor_SetScript(8, gLemuriaEntrance_ShipSailsOut);
   FieldEvent_Wait(80);
   FieldEvent_SetMessageId((s32)&MsgFieldAddressCompanion);
@@ -256,37 +256,37 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
 // clang-format off
 /// The ship's course out of the harbour.
 u32 gLemuriaEntrance_ShipSailsOut[] = {
-    SC_MOVE(PIXELS(728), 0, PIXELS(160)),
+    SC_MOVE(px(728), 0, px(160)),
     SC_SYNC,
-    SC_MOVE(PIXELS(608), 0, PIXELS(152)),
+    SC_MOVE(px(608), 0, px(152)),
     SC_SYNC,
-    SC_MOVE(PIXELS(488), 0, PIXELS(152)),
+    SC_MOVE(px(488), 0, px(152)),
     SC_SYNC,
-    SC_MOVE(PIXELS(368), 0, PIXELS(152)),
+    SC_MOVE(px(368), 0, px(152)),
     SC_SYNC,
-    SC_MOVE(PIXELS(368), 0, PIXELS(112)),
+    SC_MOVE(px(368), 0, px(112)),
     SC_SYNC,
-    SC_MOVE(PIXELS(336), 0, PIXELS(88)),
+    SC_MOVE(px(336), 0, px(88)),
     SC_SYNC,
-    SC_MOVE(PIXELS(320), 0, PIXELS(88)),
+    SC_MOVE(px(320), 0, px(88)),
     SC_SYNC,
-    SC_MOVE(PIXELS(288), 0, PIXELS(120)),
+    SC_MOVE(px(288), 0, px(120)),
     SC_SYNC,
-    SC_MOVE(PIXELS(288), 0, PIXELS(176)),
+    SC_MOVE(px(288), 0, px(176)),
     SC_SYNC,
-    SC_MOVE(PIXELS(272), 0, PIXELS(192)),
+    SC_MOVE(px(272), 0, px(192)),
     SC_SYNC,
-    SC_MOVE(PIXELS(272), 0, PIXELS(280)),
+    SC_MOVE(px(272), 0, px(280)),
     SC_SYNC,
-    SC_MOVE(PIXELS(344), 0, PIXELS(280)),
+    SC_MOVE(px(344), 0, px(280)),
     SC_SYNC,
-    SC_MOVE(PIXELS(384), 0, PIXELS(320)),
+    SC_MOVE(px(384), 0, px(320)),
     SC_SYNC,
-    SC_MOVE(PIXELS(384), 0, PIXELS(408)),
+    SC_MOVE(px(384), 0, px(408)),
     SC_SYNC,
-    SC_MOVE(PIXELS(416), 0, PIXELS(440)),
+    SC_MOVE(px(416), 0, px(440)),
     SC_SYNC,
-    SC_MOVE(PIXELS(416), 0, PIXELS(552)),
+    SC_MOVE(px(416), 0, px(552)),
     SC_SYNC,
     SC_END,
 };
@@ -304,29 +304,40 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(199),
-    SCENE_EXIT_IF(1, 2, 45, -1),
-    SCENE_EXIT_IF(2, 199, 4, -1),
-    SCENE_EXIT_IF(3, 200, 1, -1),
-    SCENE_EXIT_IF(4, 199, 2, -1),
-    SCENE_EXIT_IF(5, 200, 1, -1),
+    SCENE_EXITS(LemuriaEntrance),
+    SCENE_EXIT_UNLESS(1, WorldMap, 45, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, LemuriaEntrance, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LemuriaDock, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, LemuriaEntrance, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, LemuriaDock, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {8, CONDITION_ALWAYS, (s32)gLemuriaEntrance_ShipAtRest, PIXELS(14), 0,
-     PIXELS(4), FACING_NORTH, 2, 0},
-    {342, CONDITION_ALWAYS, 1, PIXELS(636), 0, PIXELS(112), FACING_WEST, 2, 0},
-    {342, CONDITION_ALWAYS, 1, PIXELS(668), 0, PIXELS(112), FACING_EAST, 2, 1},
-    {342, CONDITION_ALWAYS, 1, PIXELS(668), 0, PIXELS(216), FACING_EAST, 2, 1},
-    {342, CONDITION_ALWAYS, 1, PIXELS(732), 0, PIXELS(216), FACING_WEST, 2, 1},
-    {11, CONDITION_ALWAYS, 1, PIXELS(736), 0, PIXELS(104), FACING_SOUTH, 2, 0},
-    {11, CONDITION_ALWAYS, 1, PIXELS(640), 0, PIXELS(208), FACING_SOUTH, 2, 1},
-    {11, CONDITION_ALWAYS, 1, PIXELS(704), 0, PIXELS(208), FACING_SOUTH, 2, 1},
-    {11, CONDITION_ALWAYS, 1, PIXELS(52), 0, PIXELS(796), FACING_WEST, 2, 0},
-    {11, CONDITION_ALWAYS, 1, PIXELS(52), 0, PIXELS(828), FACING_WEST, 2, 1},
-    {11, CONDITION_ALWAYS, 1, PIXELS(52), 0, PIXELS(860), FACING_WEST, 2, 1},
-    {424, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(160), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gLemuriaEntrance_ShipAtRest, 14,
+                    0, 4, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 636, 0, 112,
+                    FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 668, 0, 112,
+                    FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 668, 0, 216,
+                    FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 732, 0, 216,
+                    FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(11, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 736, 0, 104,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(11, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 640, 0, 208,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(11, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 704, 0, 208,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(11, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 52, 0, 796,
+                    FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(11, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 52, 0, 828,
+                    FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(11, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 52, 0, 860,
+                    FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 160,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

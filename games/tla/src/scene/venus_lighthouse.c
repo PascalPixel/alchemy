@@ -1,6 +1,7 @@
 
 #include "../field/object/set_sprite_priority.c"
 #include "battle/battle.h"
+#include "flags.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -15,7 +16,6 @@
 #include "system/main_routine_work.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
-#include "shared/push.h"
 #include "field/field_coordinate.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
@@ -167,8 +167,83 @@ extern s32 gPushLeaderSteps[];
 s32 MapGrid_CheckCollision(struct StagedActor *object,
                            struct FieldPosition *position);
 
-DEFINE_BLOCK_PUSH_ONTO(VenusLighthouse_PushBlockOnto, gPushLeaderSteps,
-                       MapGrid_CheckCollision, Import_ActorSelectAnimation)
+void VenusLighthouse_PushBlockOnto(void) {
+  struct FieldPosition dst;
+  struct StagedActor *lead;
+  struct StagedActor *next;
+  struct StagedActor *blocker;
+  s32 dir;
+  u32 step;
+  s32 rate;
+
+  lead = (struct StagedActor *)Actor_GetById(gMainRoutineWork.currentOwner);
+  dir = lead->facing >> 12;
+  step = gPushLeaderSteps[dir];
+  dst.x = lead->x.fixed + (step & 0xffff0000);
+  dst.y = lead->y.fixed;
+  step <<= 16;
+  dst.z = lead->z.fixed + step;
+  next = Actor_FindInCell(&dst, lead);
+  if (next == 0)
+    return;
+
+  step = gPushLeaderSteps[dir];
+  dst.x = next->x.fixed + (step & 0xffff0000);
+  dst.y = next->y.fixed;
+  step <<= 16;
+  dst.z = next->z.fixed + step;
+  blocker = Actor_FindInCell(&dst, next);
+  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+    return;
+
+  dst.x = next->x.fixed;
+  dst.y = next->y.fixed + px(16);
+  dst.z = next->z.fixed;
+  blocker = Actor_FindInCell(&dst, next);
+  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+    return;
+
+  next->transitionMode = 2;
+  step = gPushLeaderSteps[dir];
+  dst.x = next->x.fixed + (step & 0xffff0000);
+  dst.y = next->y.fixed;
+  step <<= 16;
+  dst.z = next->z.fixed + step;
+  if (MapGrid_CheckCollision(next, &dst) > 0)
+    return;
+
+  if (next->transitionBusy != 0)
+    return;
+
+  Import_ActorSelectAnimation(lead, 8);
+  rate = 0x3333;
+  System_Wait(15);
+  Event_PlaySound(SE_PUSH);
+  next->moveRateX = rate;
+  next->moveRateZ = rate;
+  FieldActor_SetMoveTargetFixed(next, dst.x, dst.y, dst.z);
+  lead->moveRateX = rate;
+  lead->moveRateZ = rate;
+  FieldActor_SetMoveTargetFixed(lead, dst.x, dst.y, dst.z);
+  FieldActor_WaitForMove(next);
+  Event_NoOp();
+  next->x.fixed = dst.x;
+  {
+    /* FAKEMATCH(temporary): z read ahead of velocityX's store. */
+    s32 z = dst.z;
+
+    next->velocityX = 0;
+    next->z.fixed = z;
+    next->velocityZ = 0;
+  }
+  lead->targetX = 0x80000000;
+  lead->targetZ = 0x80000000;
+  lead->velocityX = 0;
+  lead->velocityZ = 0;
+  lead->x.fixed = lead->x.part.pixel << 16;
+  lead->z.fixed = lead->z.part.pixel << 16;
+  Import_ActorSelectAnimation(lead, 1);
+}
 
 #include "../field/map/cell_fill_byte.c"
 
@@ -184,7 +259,7 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
     FieldActor_SetSpriteColor(obj, 0);
 
   if ((gFrameCount & 7) == 0)
-    Event_PlaySound(138);
+    Event_PlaySound(SE_ITEM_BREAK);
   return 0;
 }
 
@@ -301,7 +376,7 @@ extern s32 gVenusLighthouse_LeaderFlashes[];
  * id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the
  * definition's struct Actor *Actor_GetById(u32 objectId), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:337: invalid type argument of `->'. */
+ * games/tla/src/scene/venus_lighthouse.c:415: invalid type argument of `->'. */
 extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -316,7 +391,7 @@ void Actor_WaitForMove(struct Actor *actor);
  * actorId, s32 emote, s32 frames); tried as the definition's struct
  * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
  * state), it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:310: conflicting types for
+ * games/tla/src/scene/venus_lighthouse.c:389: conflicting types for
  * `Actor_ShowEmoteById'. */
 extern void
 Actor_ShowEmoteById__floor(s32 actor, s32 height,
@@ -335,15 +410,12 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_RefreshSelectorById(leader);
   Actor_SetSpriteColor(Actor_GetById__floor(leader), 6);
   {
-    /* FAKEMATCH(pin): the leader pinned to r0, so it is copied there before the
-     * acceleration is built, as the native does; as
-     * Actor_SetSpeedParameters(leader, 0x40000, 0x20000), 2 of 85 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(pin): the leader pinned to r0. */
     register s32 who __asm__("r0");
 
     actor->speed = 0x40000;
     who = leader;
-    Actor_SetSpeedParameters(who, 0x40000, 0x20000);
+    Actor_SetSpeed(who, 4);
   }
   if (*(s32 *)&actor->zLow >> 20 <= 54) {
     Actor_GetById__floor(leader)->selectFlags &= ~1;
@@ -363,8 +435,7 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_SetSpriteColor(Actor_GetById__floor(leader), 0);
   Motion_SetModeAndWaitAnimation(leader, 4);
 
-  /* FAKEMATCH(dead): an empty once-only block, so the null callback is built
-   * after the wait; as no block, 46 of 85 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
 
@@ -379,21 +450,21 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
   if ((u32)(leader->xPixel - 676) > 7 || z < 788 || z >= 796) {
     MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-    GameFlag_Clear(0x201);
+    GameFlag_Clear(FLAG_SCENE_TEMP_01);
     leader->motionFlags |= 1;
     leader->terrainHeight = 0;
     leader->y = 0;
-  } else if (!Event_GetFlag(0x201)) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_Wait(5);
     MapGrid_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
-    GameFlag_Set(0x201);
-    Sound_Play(161);
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
+    Sound_Play(SE_RATTLE);
     leader->motionFlags &= ~1;
-    leader->terrainHeight = -0x20000;
-    leader->y = -0x20000;
+    leader->terrainHeight = -px(2);
+    leader->y = -px(2);
     Event_End();
   }
 }
@@ -413,12 +484,12 @@ void VenusLighthouse_SinkStatue(void) {
   FieldEvent_ResolvePendingActions(0);
   if (obj->x >> 20 == 42) {
     FieldEvent_Wait(30);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     obj->motionFlags = 0;
     val = 0xfffe0000;
     obj->terrainHeight = val;
     obj->y = val;
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
     a = 3;
     b = 5;
     MapGrid_CopyCellsTo(44, 117, 41, 117, a, b);
@@ -506,7 +577,7 @@ void VenusLighthouse_FelixMovesStatue(void) {
 /* VIEW(floor): tag struct AerieEventWork as struct AerieEventWork__floor;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:501: structure has no member named
+ * games/tla/src/scene/venus_lighthouse.c:582: structure has no member named
  * `mode'. */
 struct AerieEventWork__floor {
   u8 unk000[0x1ac];
@@ -585,17 +656,17 @@ static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
 void VenusLighthouse_FelixLeaves(void) {
   struct EventWork *work;
 
-  Actor_SetPosition(4, PIXELS(712), PIXELS(816));
-  Actor_SetPosition(5, PIXELS(696), PIXELS(840));
-  Actor_SetPosition(8, PIXELS(728), PIXELS(840));
+  Actor_SetPosition(4, 712, 816);
+  Actor_SetPosition(5, 696, 840);
+  Actor_SetPosition(8, 728, 840);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(8, FACING_NORTH, 0);
-  Actor_SetSpeed(4, 0x10000, 0x8000);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(8, 0x10000, 0x8000);
-  Actor_SetSpeed(9, 0x10000, 0x8000);
-  FieldCamera_MoveTo(PIXELS(664), -1, PIXELS(824), 0);
+  Actor_SetSpeed(4, 1);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(8, 1);
+  Actor_SetSpeed(9, 1);
+  FieldCamera_MoveTo(664, CAMERA_KEEP, 824, 0);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 256;
   work->delay = 60;
@@ -631,7 +702,7 @@ void VenusLighthouse_FelixLeaves(void) {
   FieldActor_WatchAndSetScript(8, 4);
   Actor_WalkToAndWait(4, 744, 816);
   Actor_WalkToAndWait(4, 744, 780);
-  Event_PlaySound(129);
+  Event_PlaySound(SE_STAIRS_DOWN);
   Exit_PrepareActorAnimation(4, -1);
   FieldEvent_Wait(50);
   Actor_FaceDirection(5, FACING_NORTH, 0);
@@ -639,8 +710,6 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_SetPosition(4, 0, 0);
 }
 
-// ★ Named from the game: "Are you sure we should be leaving like this?"
-// (MsgVenusLighthouseAreYouSureWeShouldBeLeaving)
 void VenusLighthouse_DoubtLeaving(void) {
   struct VenusActor *actor;
   struct EventWork *work;
@@ -650,7 +719,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Actor_WalkToAndWait(5, 664, 840);
-  Actor_FaceDirection(5, 0, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_WalkToAndWait(8, 696, 840);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(8, 3);
@@ -661,21 +730,21 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_WalkToAndWait(5, 664, 888);
   FieldActor_WaitForMoveById(8);
-  FieldActor_ShowEmote(8, 256, 30);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(8, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_WalkToAndWait(8, 696, 888);
-  Actor_FaceDirection(5, 0, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(PIXELS(696), -1, PIXELS(920), 1);
+  FieldCamera_MoveTo(696, CAMERA_KEEP, 920, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, 257, 50);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(8, 3);
@@ -684,25 +753,25 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, 257, 30);
-  Event_ShowMessage(0x2008, 0);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, 258, 40);
-  Event_ShowMessage(0x2008, 0);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(10);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(30);
-  Event_PlaySound(198);
-  Actor_SetPosition(9, PIXELS(680), PIXELS(920));
-  Actor_FaceDirection(9, 0xb000, 0);
+  Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
+  Actor_SetPosition(9, 680, 920);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   Actor_VanishInSparks(9);
-  Actor_FaceDirection(9, 0xb000, 0);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(8, FACING_SOUTH, 0);
@@ -715,18 +784,18 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(20);
   Actor_FaceEachOther(5, 8, 40);
-  FieldActor_ShowEmote(9, 256, 30);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(8, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(8, 258, 40);
-  Event_ShowMessage(0x2008, 0);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, 257, 30);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, 0, 0);
+  Actor_FaceDirection(9, FACING_EAST, 0);
   FieldEvent_Wait(30);
   Actor_FaceDirection(9, FACING_WEST, 0);
   FieldEvent_Wait(30);
@@ -736,49 +805,49 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(5, 0x8000, 0x4000);
+  Actor_SetSpeed(5, 0.5);
   FieldActor_WatchAndSetScript(8, 5);
   Actor_WalkByAndWait(5, 0, -32);
   FieldEvent_Wait(10);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, 261, 30);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Actor_WalkByAndWait(9, -8, -8);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(8, 0x5000, 0);
+  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, 256, 30);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(9, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, 257, 30);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, 258, 0);
-  FieldActor_ShowEmote(5, 258, 40);
-  Event_ShowMessage(0x2008, 0);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, 264, 30);
-  Actor_FaceDirection(9, 0xf000, 0);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(5, 262, 40);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, 0xb000, 0);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(5, 0x3000, 0);
+  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, 265, 30);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
@@ -789,13 +858,13 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 4);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
+  Actor_SetSpeed(5, 1);
   Actor_WalkByAndWait(5, 0, 16);
-  Actor_FaceDirection(5, 0x3000, 0);
+  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(10);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, 263, 30);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(9, 2);
@@ -804,12 +873,12 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 7);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(8, 0x9000, 0);
+  Actor_FaceDirection(8, FACING_WEST_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(8, 258, 40);
-  Event_ShowMessage(0x2008, 0);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, 0x1000, 0);
+  Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(5, 4);
   Event_ShowMessage(5, 0);
@@ -817,14 +886,14 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(5, 0, 16);
-  Actor_FaceDirection(5, 0x3000, 0);
+  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(10);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 4);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, 261, 50);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
   Event_ShowMessage(9, 0);
@@ -835,9 +904,9 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, 0, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(20);
@@ -845,41 +914,41 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, 0x3000, 0);
+  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(8, 258, 40);
-  Event_ShowMessage(0x2008, 0);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, 0, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, 265, 30);
-  Event_ShowMessage(0x2008, 0);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, 258, 40);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 4);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, 261, 30);
-  Event_ShowMessage(0x2008, 0);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, 263, 30);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(8, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
@@ -896,22 +965,22 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(8, 0x5000, 0);
+  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(8, 0x9000, 0);
-  Actor_FaceDirection(9, 0xd000, 0);
+  Actor_FaceDirection(8, FACING_WEST_NORTHWEST, 0);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(5, 0x1000, 0);
+  Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, 0xb000, 0);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(9, 4);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, 256, 30);
-  Actor_FaceDirection(5, 0x3000, 0);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
@@ -921,7 +990,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(20);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, 0xf000, 0);
+  Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(25);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
@@ -929,13 +998,13 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, 258, 40);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_NORTHWEST, 0);
@@ -947,29 +1016,29 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_FaceEachOther(5, 8, 50);
   Actor_FaceDirection(9, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(9, 264, 30);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 6);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(8, 257, 30);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(8, 0x5000, 0);
+  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, 256, 30);
-  Actor_FaceDirection(9, 0xf000, 0);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(20);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, 257, 30);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, 258, 40);
-  Actor_FaceDirection(9, 0xb000, 0);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
@@ -977,15 +1046,15 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, 0xf000, 0);
+  Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(10);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, 0xb000, 0);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
@@ -1004,13 +1073,13 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(8, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, 0x1000, 0);
+  Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(5, 261, 30);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 3);
@@ -1018,14 +1087,14 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_SetAnimation(9, 3);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(8, 0x13333, 0x9999);
+  Actor_SetSpeed(8, 1.2);
   Actor_SetAnimation(8, 2);
   actor = (struct VenusActor *)Actor_Get(5);
   if (actor != NULL)
     Actor_SetDestination(8, actor->xPixel, actor->zPixel);
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
-  Actor_SetSpeed(9, 0x13333, 0x9999);
+  Actor_SetSpeed(9, 1.2);
   Actor_SetAnimation(9, 2);
   actor = (struct VenusActor *)Actor_Get(5);
   if (actor != NULL)
@@ -1036,21 +1105,21 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_WalkByAndWait(5, 16, 0);
   Actor_WalkToAndWait(5, 680, 944);
   FieldEvent_Wait(15);
-  Actor_FaceDirection(5, 0xd000, 0);
+  Actor_FaceDirection(5, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(5, 0, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
   FieldEvent_Wait(15);
   Actor_WalkToAndWait(5, 728, 944);
   Actor_WalkToAndWait(5, 728, 928);
-  Actor_SetPosition(5, PIXELS(728), PIXELS(912));
-  Event_PlaySound(129);
+  Actor_SetPosition(5, 728, 912);
+  Event_PlaySound(SE_STAIRS_DOWN);
   Venus_ObjEffectSet(5, -1);
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
   MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-  Event_ClearFlag(513);
-  Actor_SetPosition(10, PIXELS(664), PIXELS(792));
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Event_ClearFlag(FLAG_SCENE_TEMP_01);
+  Actor_SetPosition(10, 664, 792);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   gMainRoutineWork.currentOwner = 5;
   Party_RemoveMember(4);
   FieldEvent_Wait(50);
@@ -1083,7 +1152,14 @@ u32 gFieldEffect_LongScript[] = {
     1, 38,
 };
 
-DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
+s32 gPushLeaderSteps[] = {                                                               
+      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
+      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
+      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
+      PUSH_STEP(16, 0),                                                        
+  };
 // clang-format on
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -1159,14 +1235,30 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(5),        SCENE_EXIT(1, 4, 9),   SCENE_EXIT(2, 5, 3),
-    SCENE_EXIT(3, 5, 2),   SCENE_EXIT(4, 5, 31),  SCENE_EXIT(5, 5, 30),
-    SCENE_EXIT(6, 5, 7),   SCENE_EXIT(7, 5, 6),   SCENE_EXIT(8, 5, 32),
-    SCENE_EXIT(9, 5, 22),  SCENE_EXIT(10, 5, 12), SCENE_EXIT(11, 5, 13),
-    SCENE_EXIT(12, 5, 10), SCENE_EXIT(13, 5, 11), SCENE_EXIT(14, 5, 24),
-    SCENE_EXIT(20, 5, 26), SCENE_EXIT(21, 5, 25), SCENE_EXIT(22, 5, 9),
-    SCENE_EXIT(24, 5, 14), SCENE_EXIT(25, 5, 21), SCENE_EXIT(26, 5, 20),
-    SCENE_EXIT(30, 5, 5),  SCENE_EXIT(31, 5, 4),  SCENE_EXIT(32, 5, 8),
+    SCENE_EXITS(VenusLighthouse),
+    SCENE_EXIT(1, VenusLighthouseEntrance, 9),
+    SCENE_EXIT(2, VenusLighthouse, 3),
+    SCENE_EXIT(3, VenusLighthouse, 2),
+    SCENE_EXIT(4, VenusLighthouse, 31),
+    SCENE_EXIT(5, VenusLighthouse, 30),
+    SCENE_EXIT(6, VenusLighthouse, 7),
+    SCENE_EXIT(7, VenusLighthouse, 6),
+    SCENE_EXIT(8, VenusLighthouse, 32),
+    SCENE_EXIT(9, VenusLighthouse, 22),
+    SCENE_EXIT(10, VenusLighthouse, 12),
+    SCENE_EXIT(11, VenusLighthouse, 13),
+    SCENE_EXIT(12, VenusLighthouse, 10),
+    SCENE_EXIT(13, VenusLighthouse, 11),
+    SCENE_EXIT(14, VenusLighthouse, 24),
+    SCENE_EXIT(20, VenusLighthouse, 26),
+    SCENE_EXIT(21, VenusLighthouse, 25),
+    SCENE_EXIT(22, VenusLighthouse, 9),
+    SCENE_EXIT(24, VenusLighthouse, 14),
+    SCENE_EXIT(25, VenusLighthouse, 21),
+    SCENE_EXIT(26, VenusLighthouse, 20),
+    SCENE_EXIT(30, VenusLighthouse, 5),
+    SCENE_EXIT(31, VenusLighthouse, 4),
+    SCENE_EXIT(32, VenusLighthouse, 8),
     SCENE_EXITS_END,
 };
 
@@ -1191,45 +1283,56 @@ s32 gVenusLighthouse_ShrinkAndHide[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
-    {57, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(664), 0,
-     PIXELS(792), FACING_SOUTH, 2, 0},
-    {229, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(12), FACING_SOUTH, 2, 0},
-    {230, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(12), FACING_SOUTH, 2, 0},
-    {229, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_EAST, 0, 0},
-    {315, CONDITION_ALWAYS, 1, PIXELS(872), 0, PIXELS(120), FACING_NORTH, 2, 0},
-    {315, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(104), FACING_NORTH, 2, 1},
-    {452, CONDITION_ALWAYS, (s32)gVenusLighthouse_ShrinkAndHide, PIXELS(488), 0,
-     PIXELS(536), FACING_SOUTH, 2, 0},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(72), 0,
-     PIXELS(104), FACING_SOUTH, 2, 0},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(72), 0,
-     PIXELS(168), FACING_SOUTH, 2, 1},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(168), 0,
-     PIXELS(104), FACING_SOUTH, 2, 1},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(168), 0,
-     PIXELS(168), FACING_SOUTH, 2, 1},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(72), 0,
-     PIXELS(344), FACING_SOUTH, 2, 0},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(104), 0,
-     PIXELS(344), FACING_SOUTH, 2, 1},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(136), 0,
-     PIXELS(344), FACING_SOUTH, 2, 1},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(168), 0,
-     PIXELS(344), FACING_SOUTH, 2, 1},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(200), 0,
-     PIXELS(344), FACING_SOUTH, 2, 1},
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    664, 0, 792, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(229, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 12,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(230, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 12,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(229, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
+                    FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 872, 0, 120,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 104,
+                    FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(452, CONDITION_ALWAYS, (s32)gVenusLighthouse_ShrinkAndHide,
+                    488, 0, 536, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    72, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    72, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    168, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    168, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    72, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    104, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    136, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    168, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    200, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gActorPlacementsEntrance99[] = {
-    {4, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
-    {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
-    {57, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
-    {336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows, PIXELS(664), 0,
-     PIXELS(792), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(4, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
+                    664, 0, 792, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1237,27 +1340,27 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {49, 4, CONDITION_ALWAYS, 4},
-    {49, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {49, 8, CONDITION_ALWAYS, 8},
-    {33, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
-    {33, 14, CONDITION_ALWAYS, 14},
-    {49, 20, CONDITION_ALWAYS, 20},
-    {49, 21, CONDITION_ALWAYS, 21},
-    {49, 22, CONDITION_ALWAYS, 22},
-    {49, 23, CONDITION_ALWAYS, 23},
-    {49, 24, CONDITION_ALWAYS, 24},
-    {33, 25, CONDITION_ALWAYS, 25},
-    {33, 26, CONDITION_ALWAYS, 26},
-    {33, 30, CONDITION_ALWAYS, 30},
-    {33, 31, CONDITION_ALWAYS, 31},
-    {33, 32, CONDITION_ALWAYS, 32},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 20, CONDITION_ALWAYS, 20},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 21, CONDITION_ALWAYS, 21},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 22, CONDITION_ALWAYS, 22},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 23, CONDITION_ALWAYS, 23},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 24, CONDITION_ALWAYS, 24},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 25, CONDITION_ALWAYS, 25},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 26, CONDITION_ALWAYS, 26},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, 30},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 31, CONDITION_ALWAYS, 31},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 32, CONDITION_ALWAYS, 32},
     {TRIGGER_STEP, 45, 0x200, EVENT(VenusLighthouse_RepelLeader)},
     {TRIGGER_STEP, 46, CONDITION_ALWAYS,
      EVENT(VenusLighthouse_StepOnFloorSwitch)},

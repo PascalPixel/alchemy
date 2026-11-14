@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 
 // The part's functions its code calls before their definitions, declared
 // once as they are defined.
@@ -257,48 +258,22 @@ void SelectionMenu_ReservedNoOp(void) {}
 /// Returns a free selection icon record of `kind` (enum SelectionIconGroup),
 /// or NULL.
 s32 SelectionMenu_FindFreeIcon(s32 kind) {
-  s32 state;
-  s32 off;
+  struct SelectionScreen *state =
+      (struct SelectionScreen *)Ram_HeapSlots->menuWork;
   s32 i;
-  s32 j;
-  u32 ret;
-  u16 *q;
-  u16 *p;
-  u32 v;
 
-  state = (s32)Ram_HeapSlots->menuWork;
   if (kind != 0) {
-    i = 0;
-    p = &((struct SelectionScreen *)state)->records[9].kind;
-    off = 0;
-  loop_2:
-    if (*p == 0) {
-      return state + off + 0x1D4;
+    for (i = 0; i != 5; i++) {
+      if (state->records[i + 9].kind == 0)
+        return (s32)&state->records[i + 9];
     }
-    i = i + 1;
-    p += 0x1A;
-    off = off + 0x34;
-    if (i == 5) {
-      goto block_10;
+  } else {
+    for (i = 0; i != 7; i++) {
+      if (state->records[i + 2].kind == 0)
+        return (s32)&state->records[i + 2];
     }
-    goto loop_2;
   }
-  j = 0;
-  ret = state + 0x68;
-  q = &((struct SelectionScreen *)state)->records[2].kind;
-loop_7:
-  v = *q;
-  q += 0x1A;
-  if (v == 0) {
-    return ret;
-  }
-  ret += 0x34;
-  j += 1;
-  if (j == 7) {
-  block_10:
-    return 0;
-  }
-  goto loop_7;
+  return 0;
 }
 
 /// Starts drawing the selection screen each frame, in the vertical blank pass
@@ -813,10 +788,6 @@ s32 SelectionMenu_Run(s32 mode) {
   }
 }
 
-#define SOUND_MENU_CURSOR_MOVE 111
-#define SOUND_MENU_CONFIRM 112
-#define SOUND_MENU_CANCEL 113
-
 /// As SelectionMenu_Run, with the menu sounds.
 u32 SelectionMenu_RunWithSounds(u32 mode) {
   struct SelectionScrollScreen *screen = Ram_HeapSlots->menuWork;
@@ -830,10 +801,10 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
 
     if (mode != SELECTION_FIXED) {
       if (gInput.repeat & KEY_RIGHT) {
-        Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         SelectionMenu_StepRight((struct SelectionScreen *)screen);
       } else if (gInput.repeat & KEY_LEFT) {
-        Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         SelectionMenu_StepLeft((struct StepMenu *)screen);
       }
 
@@ -841,18 +812,18 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
         result = screen->top + screen->cursor;
         if (screen->node->kind == NODE_KIND_YES_NO) {
           if (result == 0)
-            Sound_PlayFar(SOUND_MENU_CONFIRM);
+            Sound_PlayFar(SE_MENU_CONFIRM);
           else
-            Sound_PlayFar(SOUND_MENU_CANCEL);
+            Sound_PlayFar(SE_MENU_CANCEL);
         } else {
-          Sound_PlayFar(SOUND_MENU_CONFIRM);
+          Sound_PlayFar(SE_MENU_CONFIRM);
         }
         return result;
       }
     }
 
     if (mode != 0 && (gInput.pressed & KEY_B)) {
-      Sound_PlayFar(SOUND_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
   }
@@ -1051,8 +1022,6 @@ void SelectionMenu_StepLeft(struct StepMenu *state) {
     } else {
       node = state->nodes;
       i = 64;
-      // kind is reused for the 0; as a plain 0, 20 of 206 instructions differ
-      // in tla-en.
       kind = 0;
       state->moreBelow = kind;
       while (node->next != NULL) {
@@ -1591,9 +1560,7 @@ void MenuArrow_SetPosition(struct TextResourcePosition *obj, s32 arg1,
                            s32 arg2) {
   obj->index = arg1;
   obj->kind = arg2;
-  /* FAKEMATCH(dead): an empty once-only block keeps the index's store ahead of
-   * the depth argument (mov r1, #252); without it, 2 of 13 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
   Oam_AddSpriteAtDepth((s32 *)obj, 0xFC);
@@ -1680,46 +1647,51 @@ s32 FieldMenu_Run(void) {
   state = Ram_HeapSlots->eventWork;
   selection = 0;
 
-loop:
-  PartyStatus_OpenAndWait();
-  selection = FieldMenu_SelectCommand(selection);
+  for (;;) {
+    PartyStatus_OpenAndWait();
+    selection = FieldMenu_SelectCommand(selection);
 #ifdef UBFIX
-  // UB: the original reads the void return of PartyStatus_CloseWithMenu, called
-  // with no prototype in scope, as The Broken Seal's FieldMenu_Run does.
-  PartyStatus_CloseWithMenu();
-  ret = 0;
+    // UB: the original reads the void return of PartyStatus_CloseWithMenu,
+    // called with no prototype in scope, as The Broken Seal's FieldMenu_Run
+    // does.
+    PartyStatus_CloseWithMenu();
+    ret = 0;
 #else
-  ret = PartyStatus_CloseWithMenu();
+    ret = PartyStatus_CloseWithMenu();
 #endif
 
-  switch (selection) {
-  case 0:
-    ret = Actor_GetTriggerCellAheadOfCurrentFar();
-    if (ret == 0)
-      ret = 0xff;
-    *(u16 *)(state + 0x162) = ret;
-    break;
-  case 1:
-    ret = PsynergyMenu_RunFar();
-    if (ret == -1)
-      goto loop;
-    break;
-  case 2:
-    ret = DjinnMenu_RunFar();
-    if (ret != 0)
-      goto loop;
-    break;
-  case 3:
-    ret = ItemMenu_RunFar();
-    if (ret == -1)
-      goto loop;
-    break;
-  case 4:
-    ret = StatusScreen_RunFar();
-    if (ret == -1)
-      goto loop;
-    break;
-  default:
+    // A screen left without a choice (-1, or nonzero from the Djinn screen)
+    // opens the field menu again.
+    switch (selection) {
+    case 0:
+      ret = Actor_GetTriggerCellAheadOfCurrentFar();
+      if (ret == 0)
+        ret = 0xff;
+      *(u16 *)(state + 0x162) = ret;
+      break;
+    case 1:
+      ret = PsynergyMenu_RunFar();
+      if (ret == -1)
+        continue;
+      break;
+    case 2:
+      ret = DjinnMenu_RunFar();
+      if (ret != 0)
+        continue;
+      break;
+    case 3:
+      ret = ItemMenu_RunFar();
+      if (ret == -1)
+        continue;
+      break;
+    case 4:
+      ret = StatusScreen_RunFar();
+      if (ret == -1)
+        continue;
+      break;
+    default:
+      break;
+    }
     break;
   }
 
@@ -1763,7 +1735,4 @@ u32 Menu_RunSelectionForValue(u32 value) {
 #undef NODE_KIND_YES_NO
 #undef SELECTION_ROWS
 #undef ARROW_SCROLL_FRAMES
-#undef SOUND_MENU_CURSOR_MOVE
-#undef SOUND_MENU_CONFIRM
-#undef SOUND_MENU_CANCEL
 #undef Resource_DecodeByteLzInRam

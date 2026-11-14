@@ -13,12 +13,8 @@
 /// jupiter_lighthouse_room_4/, in two parts the shared field effect objects
 /// link between.
 
-#include "shared/whirlwind.h"
 #include "shared/tables.h"
 #include "flags.h"
-#include "shared/jupiter_lighthouse.h"
-#include "shared/actors.h"
-#include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -52,7 +48,6 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "system/frame.h"
-#include "shared/cracked_tile.h"
 #include "fixed_math.h"
 #include "system/heap_release.h"
 #include "system/io_write.h"
@@ -67,7 +62,6 @@
 #define FLAG_BRIDGE_BLOCK_RAISED 0xa06
 
 /// The grey blocks, numbering the rows of gActorPlacements.
-/// ★ Named from what the player sees: grey stone blocks (balance_platform.png)
 enum JupiterLighthouseBlockId {
   /// The first of the six blocks that rise once the lighthouse is activated.
   ACTOR_FIRST_BLOCK = ACTOR_FIRST_PLACED,
@@ -114,10 +108,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so each call keeps its own constants; as a direct call, 12
-   * of 47 instructions of JupiterLighthouse_RevealThePassage differ in tla-en.
-   */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline. */
   ((u8)MapGrid_SetCellBehavior(x, z, layer, value));
 }
 
@@ -125,10 +116,10 @@ void JupiterLighthouse_RevealThePassage(void) {
   MapGrid_CopyCellsLayered(17, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 19, 10);
   SetCollisionCode(0x1300000, 0xa00000, 0, 254);
-  Actor_SetPosition(ACTOR_HIDDEN_BLOCK, PIXELS(504), PIXELS(168));
+  Actor_SetPosition(ACTOR_HIDDEN_BLOCK, 504, 168);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_HIDDEN_BLOCK);
-    ((u8)FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 0, 254));
+    ((u8)FieldMapGrid_SetCellBehavior(px(496), px(160), 0, 254));
   }
 }
 
@@ -151,7 +142,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   if (object->x >> 20 == 10 && object->z >> 20 == 32) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y += 0x20000;
+      object->y += px(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -179,14 +170,14 @@ void JupiterLighthouse_OpenBlueDoor(void) {
 
 void JupiterLighthouse_UseRedKey(s32 item) {
   Event_SetFlag(FLAG_RED_DOOR_OPENED);
-  Event_PlaySound(134);
+  Event_PlaySound(SE_HEAVY_IMPACT);
   JupiterLighthouse_OpenRedDoor();
   PartyInventory_Remove(item);
 }
 
 void JupiterLighthouse_UseBlueKey(s32 item) {
   Event_SetFlag(FLAG_BLUE_DOOR_OPENED);
-  Event_PlaySound(134);
+  Event_PlaySound(SE_HEAVY_IMPACT);
   JupiterLighthouse_OpenBlueDoor();
   PartyInventory_Remove(item);
 }
@@ -268,22 +259,22 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
     Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
-    leader->y = leader->terrainHeight = -0x780000;
+    leader->y = leader->terrainHeight = -px(120);
     Event_StartScreenTransition();
     FieldEvent_Wait(10);
     for (i = 0; i <= 89 && leader->y < 0; i++) {
-      leader->terrainHeight = leader->y = leader->y + 0x30000;
+      leader->terrainHeight = leader->y = leader->y + px(3);
       leader->facing += 0x1800;
       System_Wait(2);
     }
     leader->terrainHeight = leader->y = 0;
     leader->facing = 0x4000;
     leader->motionFlags = 3;
-    leader->velocityY = 0x30000;
-    leader->gravity = 0x8000;
+    leader->velocityY = px(3);
+    leader->gravity = px(1) / 2;
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     FieldEvent_Wait(40);
-    leader->gravity = 0x10000;
+    leader->gravity = px(1);
     leader->priorityFlags |= 64;
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
     Event_End();
@@ -311,11 +302,11 @@ s32 Scene_PrepareMap(void) {
     Actor_RaiseFromCell(ACTOR_LAST_BLOCKS + 1);
     Actor_RaiseFromCell(ACTOR_LAST_BLOCKS + 2);
     Actor_RaiseFromCell(ACTOR_UNSEEN);
-    Actor_Get(ACTOR_UNSEEN)->gravity = 0x30000;
+    Actor_Get(ACTOR_UNSEEN)->gravity = px(3);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UNSEEN), 0);
   if (Event_GetFlag(FLAG_BRIDGE_BLOCK_RAISED)) {
-    Actor_SetPosition(ACTOR_BRIDGE_BLOCK, PIXELS(168), PIXELS(520));
+    Actor_SetPosition(ACTOR_BRIDGE_BLOCK, 168, 520);
     Actor_RaiseFromCell(ACTOR_BRIDGE_BLOCK);
   }
   return 0;
@@ -337,38 +328,105 @@ extern s32 gPaletteCycleFrame;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
-                          gPaletteCyclePausesInEvents, gPaletteCycleColors)
+#include "shared/palette_cycle_step.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gPaletteCyclePausesInEvents,
-                                        gPaletteCycleColors,
-                                        gPaletteCycleUnlitPalette,
-                                        PaletteCycle_Step,
-                                        gPaletteCycleUnlitColors)
+#include "shared/jupiter_lighthouse_load_palettes.h"
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
-                             MapGrid_SetAttributeBAt)
+#include "shared/actor_raise_from_cell.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
+#include "shared/whirlwind_carry_leader.h"
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/position_flat_distance.h"
 
 extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
-                        Position_FlatDistance, gWhirlwindEndScript,
-                        gWhirlwindRiding)
+void Whirlwind_UpdateLower(struct Actor *self) {
+  u8 *work = Ram_HeapSlots->eventWork;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 position[3];
+  s32 distance;
+  s32 near;
+
+  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
+      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+    Actor_SetAnimationSpeed(self, 0);
+    return;
+  }
+  Actor_SetAnimationSpeed(self, 16);
+  if ((++*(u16 *)&self->timer & 31) == 31)
+    Event_PlaySound(SE_WATER_LEVEL);
+  {
+    s8 *to = self->sprite;
+    s8 *from = leader->sprite;
+    u32 a = from[9] & 12;
+    to[9] = (s8)((to[9] & ~12) | a);
+  }
+  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
+    position[0] = self->x;
+    position[1] = self->y;
+    position[2] = self->z;
+    Camera_WorldToScreen(position);
+    distance = position[0];
+    if (distance > 0x1100000)
+      goto stop;
+    if (distance < -0x200000)
+      goto stop;
+    {
+      if (*((u8 *)self + 0x62) == 0) {
+        distance = leader->y - self->y;
+        if (distance < 0)
+          distance = self->y - leader->y;
+        near = 0;
+        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+            distance < 0xc0000)
+          near = 1;
+        if (near && !Event_GetFlag(260)) {
+          leader->facing = self->facing;
+          leader->watchedObject = self;
+          leader->priorityFlags &= ~1;
+          {
+            s32 delay = 200;
+            *(u16 *)(work + 362) = delay;
+          }
+          gMainRoutineWork.renderMode = 0;
+          *((u8 *)self + 0x62) = 1;
+          *((u8 *)self + 0x63) = 1;
+        }
+      }
+      {
+        s32 (*multiply)(s32, s32);
+        s32 cosine = Trig_Cos(self->facing);
+        s32 speed = self->speedLimit;
+        /* FAKEMATCH(dead): the routine address taken inside a once-only
+         * block. */
+        do {
+          multiply = Iwram_MulQ16;
+        } while (0);
+        self->x += multiply(cosine, speed);
+      }
+      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      return;
+    }
+  }
+stop:
+  {
+    s32 zero = 0;
+    *((u8 *)self + 0x63) = zero;
+    self->update = zero;
+    Actor_StartScript(self, gWhirlwindEndScript);
+    Event_PlaySound(SE_SPARKLING_PASSAGE);
+    gWhirlwindRiding = zero;
+  }
+}
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
-                       FieldEffect_Spawn)
+#include "shared/whirlwind_spawn.h"
 
 /// Unused: every eighth frame, sends a spark up from a random spot about the
 /// actor.
@@ -406,10 +464,10 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   struct Actor *rider = Actor_Get(23);
   struct FieldSprite *sprite = rider->sprite;
 
-  Actor_SetPosition(24, 0x2000000, 0xf80000);
-  Actor_SetPosition(23, 0x2000000, 0xf80000);
-  Actor_SetPosition(9, 0x1d80000, 0x1000000);
-  Actor_SetPosition(10, 0x2280000, 0x1000000);
+  Actor_SetPosition(24, 512, 248);
+  Actor_SetPosition(23, 512, 248);
+  Actor_SetPosition(9, 472, 256);
+  Actor_SetPosition(10, 552, 256);
   Actor_Get(24)->scaleX = 0;
   rider->motionFlags = 0;
   rider->y = rider->terrainHeight;
@@ -452,33 +510,86 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOam,
-                          gLightSpriteCount, gLightSpriteActors,
-                          gLightSpritesLarge, gLightSpritePriority,
-                          BattleEffect_GetObjectPriority,
-                          Oam_AddSpriteAtDepthClamped)
+void LightSprites_Draw(void) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 *view = &map->viewX;
+  s32 viewX, viewZ, tile, viewY;
+  struct LightOam *oam;
+  s32 i;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
+  viewY = map->origin[1];
+  oam = gLightSpriteOam;
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
+  for (i = 0; i < gLightSpriteCount; i++) {
+    struct Actor *actor = gLightSpriteActors[i];
+    if (actor != 0 && actor->x != 0) {
+      s32 big, ox, y, z, oy, depth;
+      s32 frame;
+      u32 *word;
+      ox = actor->x - viewX;
+      y = actor->y - viewY + 0x80000;
+      z = actor->z - viewZ - viewY;
+      oy = z - y;
+      depth = ((y + z) >> 16) + 58;
+      big = gLightSpritesLarge;
+      if (big == 0) {
+        s32 x, sy;
+        frame = actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 16;
+        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0x40002000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gLightSpritePriority == -1)
+          oam->priority = BattleEffect_GetObjectPriority(actor);
+        else
+          oam->priority = gLightSpritePriority;
+        Oam_AddSpriteAtDepthClamped(oam, depth);
+        oam++;
+      } else {
+        s32 x, sy;
+        frame = actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 64;
+        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0xc000a000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gLightSpritePriority == -1)
+          oam->priority = BattleEffect_GetObjectPriority(actor);
+        else
+          oam->priority = gLightSpritePriority;
+        Oam_AddSpriteAtDepthClamped(oam, depth);
+        oam++;
+      }
+    }
+  }
+}
+
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_a.h"
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_b.h"
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_c.h"
 
-DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
-                         gLightSpriteActors)
+#include "shared/light_sprites_add.h"
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
@@ -488,11 +599,26 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -500,42 +626,42 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(257),
-    SCENE_EXIT(1, 258, 1),
-    SCENE_EXIT(2, 256, 2),
-    SCENE_EXIT(3, 257, 4),
-    SCENE_EXIT(4, 257, 3),
-    SCENE_EXIT(5, 257, 6),
-    SCENE_EXIT(6, 257, 5),
-    SCENE_EXIT(7, 257, 8),
-    SCENE_EXIT(8, 257, 7),
-    SCENE_EXIT(9, 263, 9),
-    SCENE_EXIT(10, 263, 10),
-    SCENE_EXIT(11, 257, 11),
-    SCENE_EXIT(12, 256, 12),
-    SCENE_EXIT(13, 256, 13),
+    SCENE_EXITS(JupiterLighthouseRoom4),
+    SCENE_EXIT(1, JupiterLighthouseRoom5, 1),
+    SCENE_EXIT(2, JupiterLighthouseRoom3, 2),
+    SCENE_EXIT(3, JupiterLighthouseRoom4, 4),
+    SCENE_EXIT(4, JupiterLighthouseRoom4, 3),
+    SCENE_EXIT(5, JupiterLighthouseRoom4, 6),
+    SCENE_EXIT(6, JupiterLighthouseRoom4, 5),
+    SCENE_EXIT(7, JupiterLighthouseRoom4, 8),
+    SCENE_EXIT(8, JupiterLighthouseRoom4, 7),
+    SCENE_EXIT(9, JupiterLighthouseRoomM, 9),
+    SCENE_EXIT(10, JupiterLighthouseRoomM, 10),
+    SCENE_EXIT(11, JupiterLighthouseRoom4, 11),
+    SCENE_EXIT(12, JupiterLighthouseRoom3, 12),
+    SCENE_EXIT(13, JupiterLighthouseRoom3, 13),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {316, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(136), FACING_SOUTHEAST, 2, 0},
-    {316, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(136), FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(168), FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(168), FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(200), FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(200), FACING_EAST, 2, 1},
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 136, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 136, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 168, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 168, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 200, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 200, FACING_EAST, TALK_FACING_KEEP, 1),
     {316, CONDITION_ALWAYS, 1, -0x80000, 0, -0x80000, FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(520), FACING_EAST, 2, 0},
-    {316, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(520), FACING_SOUTHEAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(520), FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(520), FACING_EAST, 2, 1},
-    {489, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(520), FACING_EAST, 2, 0},
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 520, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 520, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 520, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 520, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 520, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct Trigger gSceneEvents[] = {
-    {33, 1, CONDITION_ALWAYS, 1},
-    {49, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
@@ -672,22 +798,22 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
+#include "shared/cracked_tiles_find.h"
 
 void Leader_CenterInCell(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
 
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
 
   x >>= 20;
   z >>= 20;
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,
                           (z << 4) + 8);
   System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
-                                       (z << 20) + PIXELS(8));
+  FieldActor_SetPositionAndResetMotion(object, (x << 20) + px(8), object->y,
+                                       (z << 20) + px(8));
   FieldEvent_Wait(4);
   ((struct Actor *)FieldCamera_GetActor())->y += 0xfff80000;
 }
@@ -696,7 +822,7 @@ void Leader_CenterInCell(void) {
 // the table's source cell over the leader's, keeping the source column's and
 // row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 // one of the table's cells.
-DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+#include "shared/cracked_tile_crack.h"
 
 /* VIEW(s1888): tag struct CellTarget as struct CellTarget__s1888; cell_target.h
  * has another definition; tried with the definition the rest of the object has,
@@ -713,8 +839,40 @@ struct CellTarget__s1888 {
   s16 tile;
 };
 
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1888,
-                         Leader_CenterInCell)
+void CrackedTile_Fall(struct CellTarget__s1888 *table,
+                      struct CellTargetEntry *entry) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
+  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
+
+  Leader_CenterInCell();
+  Event_PlaySound(SE_SPLASH);
+  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
+  FieldEvent_Wait(12);
+  leader->facing = 0x4000;
+  leader->motionFlags = 0;
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Io_Write16(0xf1f, &REG_WINOUT);
+  REG_DISPCNT |= 0x8000;
+  table->shown = 1;
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  FieldEvent_Wait(16);
+  x = 0;
+  do {
+    if (x == 5)
+      Event_PlaySound(SE_DUST_PUFF);
+    leader->scaleX += -0x400;
+    leader->scaleY += -0x300;
+    leader->y += -0x9999;
+    System_Wait(1);
+    x++;
+  } while (x <= 39);
+  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  table->shown = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+}
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -735,7 +893,7 @@ void JupiterLighthouse_LeaveBySecondCyclone(void);
 void JupiterLighthouse_TryLockedDoor(void);
 extern u32 gFieldEffect_LongScript[];
 
-DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
+#include "shared/cracked_tile_drop_in.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 

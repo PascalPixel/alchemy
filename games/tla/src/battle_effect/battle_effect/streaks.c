@@ -3,10 +3,13 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 /// Abilities: Sonic Wave (kind 300).
 void BattleEffect_RunSonicWave(void *object) {
@@ -76,13 +79,11 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
   s32 frame;
   s32 j;
   s32 streaks = STREAK_MAX;
-  s32 lift = 20 << 16;
+  s32 lift = px(20);
 
   heap = Ram_HeapSlots;
-  /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the
-   * heap slots' fixed address, so later reads go through its register, not
-   * the address built again; without it, 16 of 580 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the heap
+   * slots' fixed address. */
   __asm__("" : "=r"(heap) : "0"(heap));
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
@@ -142,9 +143,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
       for (j = 0; j != streaks; j++) {
         struct EffectStep *streak = &work->particles[k * streaks + j];
 
-        streak->x = source->x;
-        streak->y = source->y + lift;
-        streak->z = source->z;
+        SET_POSITION(streak, source->x, source->y + lift, source->z);
         streak->velocityX = (target->x - streak->x) / 24;
         streak->velocityY = (target->y + lift - streak->y) / 24;
         streak->velocityZ = (target->z - streak->z) / 24;
@@ -168,13 +167,13 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
         // Each target's streaks set out with the mode's cry.
         if (frame == k * 32) {
           if (mode == 1)
-            Sound_PlayFar(192);
+            Sound_PlayFar(SE_192);
           if (mode == 2)
-            Sound_PlayFar(189);
+            Sound_PlayFar(SE_STONE_GRIND);
           if (mode == 3)
-            Sound_PlayFar(148);
+            Sound_PlayFar(SE_BOSS_ROAR);
           if (mode == 4)
-            Sound_PlayFar(138);
+            Sound_PlayFar(SE_ITEM_BREAK);
         }
         if (frame >= k * 32) {
           for (j = 0; j != streaks; j++) {
@@ -218,9 +217,9 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
 
             struck->x += gStreaks_Tremble[(frame - k * 32 - 30) % 8] << 16;
             if (struck->x > 0)
-              struck->x += 0x8000;
+              struck->x += px(1) / 2;
             else
-              struck->x -= 0x8000;
+              struck->x -= px(1) / 2;
             BattleEffect_TintBattler(effect->actors[k], -1, 5, -1, 0);
           }
 
@@ -228,7 +227,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
           // hit lets the battle show its results.
           if (RECORD(mode, RECORD_HIT)) {
             if (frame == k * 32 + 24) {
-              Sound_PlayFar(133);
+              Sound_PlayFar(SE_IMPACT);
               if (k == 0)
                 BattlePlayback_StartFar(-1);
               BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 8);
@@ -273,10 +272,6 @@ void BattleEffect_RunSlaver(void *object) {
 
 // The motes live in the map cell buffer.
 #define EFFECT_STEPS ((struct EffectStep *)Ram_MapCellBuffer)
-
-// The IWRAM routines are called through one inline each, as The Broken Seal's
-// iwram_call.h layer calls them: called directly, CSE shares the size
-// between the two clears.
 
 // Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
 // Slaver (mode 2, kind 395).
@@ -348,7 +343,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
     mote = &EFFECT_STEPS[i];
     if (mode == MODE_SLAVER) {
       if (effect->side == 0)
-        angle = (Random16() & 0x7fff) + 0x8000;
+        angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
       else
         angle = Random16() & 0x7fff;
       speed = (Random16() & 0x3ff) + 0x800;
@@ -382,7 +377,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (mode == MODE_SLAVER && frame == 0)
-      Sound_PlayFar(103);
+      Sound_PlayFar(SE_CURSE);
 
     for (i = 0; i != 128; i++) {
       mote = &EFFECT_STEPS[i];
@@ -415,9 +410,9 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
         }
         if (mode == MODE_SLEEP_STAR) {
           if (source->x < 0)
-            mote->velocityX += 0x2000;
+            mote->velocityX += px(1) / 8;
           else
-            mote->velocityX -= 0x2000;
+            mote->velocityX -= px(1) / 8;
         }
         mote->variant--;
       }
@@ -434,7 +429,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
     } else if (mode == MODE_SOOTHING_STAR) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 8 + 48) {
-          Sound_PlayFar(126);
+          Sound_PlayFar(SE_RECOVERY);
           BattlePlayback_StartFar(-1);
           BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
         }
@@ -450,7 +445,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   HeapSlot_Release(SLOT_BLITTER);
   if (mode == MODE_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode1(effect);

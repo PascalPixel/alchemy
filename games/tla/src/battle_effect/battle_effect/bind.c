@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -20,7 +21,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   u16 *palette;
   u32 delayMask;
 
-  palette = (u16 *)0x05000040;
+  palette = (u16 *)(BG_PLTT + 2 * 16);
   i = 0;
   do {
     s32 half;
@@ -32,7 +33,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   delays = Ram_HeapSlots->unk64[0];
   end = 0;
   speed = 16;
-  Iwram_CopyWords(PIXEL_BUFFER, (void *)0x06008000, 0x7800);
+  Iwram_CopyWords(PIXEL_BUFFER, (void *)BG_CHAR_BLOCK(2), 0x7800);
   delayMask = 63;
   p = delays;
   do {
@@ -51,7 +52,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
           if (y <= 119) {
             pixel = PIXEL_BUFFER + ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) +
                                     ((y / 8) << 11));
-            color = ((s16 *)0x05000000)[*pixel];
+            color = ((s16 *)BG_PLTT)[*pixel];
             red = color & 31;
             green = (color >> 5) & 31;
             blue = (color >> 10) & 31;
@@ -66,13 +67,13 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
       } while (x != 256);
       row++;
     }
-    Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), PIXEL_BUFFER, 0x7800);
     wait(1);
     if (end > 248)
       break;
     i++;
   } while (i != 27);
-  palette = (u16 *)0x050000c0;
+  palette = (u16 *)(BG_PLTT + 6 * 16);
   i = 0;
   do {
     s32 half;
@@ -90,7 +91,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
       i++;
     } while (i != 0x7800);
   }
-  Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), PIXEL_BUFFER, 0x7800);
   wait(1);
 }
 
@@ -135,8 +136,6 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   // heap holds the heap slots from here for the second blitter's read, so the
-  // 0x03000000 base is built again there; as Ram_HeapSlots at that read, 28
-  // of 518 instructions differ in tla-en.
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, the
@@ -161,7 +160,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
     if (frame == 64)
@@ -295,8 +294,6 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   // heap holds the heap slots from here for the second blitter's read, so the
-  // 0x03000000 base is built again there; as Ram_HeapSlots at that read, 32
-  // of 428 instructions differ in tla-en.
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, and a
@@ -315,7 +312,7 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
     if (frame == 64)

@@ -7,8 +7,8 @@
 /// (MarsLighthouseAerie_LightBeacon) before the Golden Sun rises
 /// (MarsLighthouseAerie_WatchGoldenSunRise).
 
-#include "shared/mars_lighthouse.h"
-#include "shared/effects.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "event_work.h"
 #include "module/scene/mars_lighthouse_aerie.h"
 #include "module/scene/scene.h"
@@ -34,7 +34,6 @@
 #include "call.h"
 #include "field_event.h"
 #include "system/frame.h"
-#include "shared/actors.h"
 #include "shared/tables.h"
 #include "item_icon.h"
 #include "version.h"
@@ -68,7 +67,7 @@ extern u8 MsgUhhhhnnnICan[];
 extern u8 MsgKoffKoffYou[];
 extern u8 MsgUnnnnIAm[];
 extern u8 MsgIUnderstandYour[];
-extern s16 gMarsLighthouseAerie_Placements[];
+extern struct ActorPlacement gMarsLighthouseAerie_Placements[];
 extern struct ActorPlacement gData_0200644c[];
 extern s16 gData_020066bc[];
 extern u32 gData_02006b64;
@@ -138,8 +137,8 @@ void Func_0200008c(struct Actor *object) {
     u32 r = Random16();
 
     *timer = *timer + ((((r << 2) + r) * 16) >> 16) + 40;
-    object->scaleX = 0x12000;
-    object->scaleY = 0x11000;
+    object->scaleX = Q16_ONE * 9 / 8;
+    object->scaleY = Q16_ONE * 17 / 16;
   }
 }
 
@@ -189,8 +188,7 @@ const struct Trigger *Scene_GetPlacements(void) {
   return (const struct Trigger *)gMarsLighthouseAerie_Placements;
 }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Scene_LeaveByExit, Func_02004fac,
-                           Teleport_PlaySparks, 1, Func_02005010)
+#include "shared/scene_leave_by_exit.h"
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -217,20 +215,20 @@ void Func_020001d8(void) {
   }
   if (!Event_GetFlag(0xa3c))
     return;
-  Actor_SetPosition(8, 0x2000000, 0x1080000);
-  Actor_SetPosition(9, 0x2000000, 0x10f0000);
+  Actor_SetPosition(8, 512, 264);
+  Actor_SetPosition(9, 512, 271);
   System_Wait(1);
   FieldActor_SetSpritePriority(8, 1);
   object = Actor_Get(8);
   object->motionFlags = 4;
-  object->y = 0x700000;
+  object->y = px(112);
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(9, 2);
   object = Actor_Get(9);
   object->motionFlags = 4;
-  object->y = 0x700000;
+  object->y = px(112);
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   Actor_SetSpriteColorMode(object, 5);
@@ -247,11 +245,10 @@ s32 Scene_Initialize(void) {
   ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;
   Func_020001d8();
-  Event_SetFlag(0x112);
+  Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   if (gMainRoutineWork.entrance == 5) {
-    /* FAKEMATCH(pin): the blend word pinned to r3 as a halfword loads from
-     * the pool before the register address, as native; as a plain store, 2
-     * of 121 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the blend word pinned to r3 as a halfword loads from the
+     * pool before the register address. */
     register u16 alpha asm("r3") = 0xc08;
 
     REG_BLDALPHA = alpha;
@@ -263,13 +260,13 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(20, 8);
     Actor_SetAnimation(21, 8);
     Actor_SetAnimation(22, 7);
-    Actor_SetPosition(19, PIXELS(498), PIXELS(320));
-    Actor_SetPosition(1, PIXELS(538), PIXELS(320));
-    Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(506), PIXELS(280));
+    Actor_SetPosition(19, 498, 320);
+    Actor_SetPosition(1, 538, 320);
+    Actor_SetPosition(gMainRoutineWork.currentOwner, 506, 280);
     System_Wait(1);
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     EventCamera_GetActor()->motionFlags = 0;
-    FieldCamera_MoveTo(PIXELS(512), PIXELS(96), PIXELS(312), 1);
+    FieldCamera_MoveTo(512, 96, 312, 1);
     Map_CenterOnFollowedPoint();
     System_Wait(1);
     Event_StartScreenTransition();
@@ -292,9 +289,10 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
     Weather_StartRain(1);
-  TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
-                                                (s32)&SceneId_Ov6a8Room2),
-                        0x5000000);
+  TileMap_ConvertBuffer(
+      gMainRoutineWork.map +
+          ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
+      0x5000000);
   return 0;
 }
 
@@ -311,7 +309,7 @@ void Func_020004a4(void) {
   u32 phase;
 
   if (anchor != NULL && (phase = Data_0200eb60 & 15) == 0) {
-    object = FieldActor_Create(0x2a0, anchor->x + 0x80000,
+    object = FieldActor_Create(0x2a0, anchor->x + px(8),
                                anchor->y + offset + 0x80000, anchor->z);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
@@ -322,9 +320,7 @@ void Func_020004a4(void) {
       FieldActor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
       {
-        /* FAKEMATCH(temporary): the masked value held in a local; as
-         * object->action = Random16() & 0x0ffff000, 45 of 103 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(temporary): the masked value held in a local. */
         s32 action = Random16() & 0x0ffff000;
 
         object->timer = action;
@@ -353,7 +349,7 @@ void Func_020005a0(struct Actor *object) {
   object->z = (Math_Sin(angle) << 4) + 0x1080000;
   object->targetX = object->x;
   object->targetZ = object->z;
-  if (object->z < 0x1080000)
+  if (object->z < px(264))
     ((struct FieldSprite *)object->sprite)->priority = 2;
   else
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -400,7 +396,6 @@ extern u32 gData_02005ec4[];
 
 /// The party reaches the beacon in the storm, and the voice calls them
 /// betrayers before the Doom Dragon's battle.
-/// ★ Named from the game: "Betrayers, you have arrived!" (MsgBetrayersYouHave)
 void MarsLighthouseAerie_FaceDoomDragon(void) {
   u8 *unk85;
   u16 *dispcnt;
@@ -419,52 +414,52 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
 
   t0 = gMainRoutineWork.currentOwner;
   actor = Actor_Get(t0);
-  palette = (u16 *)0x500021e;
+  palette = (u16 *)&OBJ_PLTT_COLOR(0, 15);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t4 = Actor_Get(18);
   FieldActor_SetSpriteColor(t4, 15);
-  Actor_SetPosition(18, 0x2000000, 0x1140000);
+  Actor_SetPosition(18, 512, 276);
   System_Wait(1);
   FieldActor_SetSpritePriority(6, 1);
   FieldActor_SetSpritePriority(5, 1);
   FieldActor_SetSpritePriority(19, 1);
   FieldActor_SetSpritePriority(2, 1);
   FieldActor_SetSpritePriority(3, 1);
-  Event_PlaySound(0);
+  Event_PlaySound(MUS_000);
   FieldEvent_SetMessageId((s32)MsgBetrayersYouHave);
   Event_ShowMessage(18, 0);
   t16 = gMainRoutineWork.currentOwner;
-  Actor_ShowEmote(t16, 0x100, 20);
+  Actor_ShowEmote(t16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   t18 = EventCamera_GetActor();
   FIELD_AT(t18, u8, 85) = 0;
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1300000, 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 304, 1);
   t21 = gMainRoutineWork.currentOwner;
-  Actor_SetSpeed(t21, 0x19999, 0xcccc);
+  Actor_SetSpeed(t21, 1.6);
   t23 = gMainRoutineWork.currentOwner;
-  Actor_WalkToAndWait(t23, 0x1f8, 0x140);
+  Actor_WalkToAndWait(t23, 504, 320);
   t25 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirection(t25, 0xc000, 0);
+  Actor_FaceDirection(t25, FACING_NORTH, 0);
   t27 = gMainRoutineWork.currentOwner;
   Actor_MoveToObject(0, t27);
   System_Wait(1);
-  Actor_SetSpeed(0, 0x19999, 0xcccc);
-  Actor_WalkToAndWait(0, 0x208, 0x140);
-  Actor_FaceDirection(0, 0xc000, 0);
+  Actor_SetSpeed(0, 1.6);
+  Actor_WalkToAndWait(0, 520, 320);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_MoveToObject(1, 0);
   System_Wait(1);
-  Actor_SetSpeed(1, 0x19999, 0xcccc);
-  Actor_WalkToAndWait(1, 0x218, 0x140);
-  Actor_FaceDirection(1, 0xa000, 20);
-  Actor_FaceDirection(1, 0xe000, 20);
-  Actor_FaceDirection(1, 0xc000, 0);
+  Actor_SetSpeed(1, 1.6);
+  Actor_WalkToAndWait(1, 536, 320);
+  Actor_FaceDirection(1, FACING_NORTHWEST, 20);
+  Actor_FaceDirection(1, FACING_NORTHEAST, 20);
+  Actor_FaceDirection(1, FACING_NORTH, 0);
   Event_ShowMessage(1, 0);
   Actor_MoveToObject(3, 1);
   System_Wait(1);
-  Actor_SetSpeed(3, 0x19999, 0xcccc);
-  Actor_WalkToAndWait(3, 0x220, 0x148);
-  Actor_FaceDirectionAndWait(3, 0xa000);
+  Actor_SetSpeed(3, 1.6);
+  Actor_WalkToAndWait(3, 544, 328);
+  Actor_FaceDirectionAndWait(3, FACING_NORTHWEST);
   Actor_SetAnimation(3, 4);
   Event_ShowMessage(3, 0);
   t48 = gMainRoutineWork.currentOwner;
@@ -485,11 +480,11 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t61 = gMainRoutineWork.currentOwner;
   Actor_MoveToObject(19, t61);
   System_Wait(1);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
-  Actor_SetSpeed(6, 0x19999, 0xcccc);
-  Actor_SetSpeed(7, 0x19999, 0xcccc);
-  Actor_SetSpeed(2, 0x19999, 0xcccc);
-  Actor_SetSpeed(19, 0x19999, 0xcccc);
+  Actor_SetSpeed(5, 1.6);
+  Actor_SetSpeed(6, 1.6);
+  Actor_SetSpeed(7, 1.6);
+  Actor_SetSpeed(2, 1.6);
+  Actor_SetSpeed(19, 1.6);
   Actor_SetScript(5, (s32)gData_02005ba8);
   Actor_SetScript(6, (s32)gData_02005bd0);
   Actor_SetScript(7, (s32)gData_02005bf8);
@@ -511,22 +506,22 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(80);
   t88 = Actor_Get(6);
   FIELD_AT(t88, void *, 108) = 0;
-  Actor_FaceDirectionAndWait(6, 0);
+  Actor_FaceDirectionAndWait(6, FACING_EAST);
   Event_ShowMessage(6, 0);
   t91 = Actor_Get(5);
   FIELD_AT(t91, void *, 108) = 0;
-  Actor_FaceDirectionAndWait(5, 0x8000);
+  Actor_FaceDirectionAndWait(5, FACING_WEST);
   FieldActor_SetAnimationAndWait(5, 3);
   t94 = Actor_Get(7);
   FIELD_AT(t94, void *, 108) = 0;
-  Actor_FaceDirectionAndWait(7, 0);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
   FieldActor_Jump(7, 4, 10);
   Event_ShowMessage(7, 0);
   t98 = gMainRoutineWork.currentOwner;
   t99 = Actor_Get(t98);
   FIELD_AT(t99, void *, 108) = 0;
   t100 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirectionAndWait(t100, 0x8000);
+  Actor_FaceDirectionAndWait(t100, FACING_WEST);
   t102 = gMainRoutineWork.currentOwner;
   FieldActor_SetAnimationAndWait(t102, 3);
   Func_02000640(0);
@@ -538,15 +533,16 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(40);
   t112 = gMainRoutineWork.currentOwner;
-  Actor_SetSpeed(t112, 0xcccc, 0x6666);
+  Actor_SetSpeed(t112, 0.8);
   t114 = gMainRoutineWork.currentOwner;
-  Actor_WalkToAndWait(t114, 0x1f8, 0x124);
-  Event_PlaySound(162);
+  Actor_WalkToAndWait(t114, 504, 292);
+  Event_PlaySound(SE_162);
   FieldEvent_Wait(20);
   t118 = gMainRoutineWork.currentOwner;
   Actor_RunRepeatedMotion(t118, 2);
   t120 = gMainRoutineWork.currentOwner;
-  Actor_SetAttachedEffect(t120, 0x102);
+  Actor_SetAttachedEffect(t120,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   t122 = gMainRoutineWork.currentOwner;
   t123 = Actor_Get(t122);
   {
@@ -554,16 +550,17 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
     *f &= 254;
   }
   t125 = gMainRoutineWork.currentOwner;
-  Actor_SetSpeed(t125, 0x3333, 0x1999);
+  Actor_SetSpeed(t125, 0.2);
   t127 = gMainRoutineWork.currentOwner;
-  Actor_MoveToAndWait(t127, 0x1f8, 0x134);
+  Actor_MoveToAndWait(t127, 504, 308);
   t129 = gMainRoutineWork.currentOwner;
   Actor_RunRepeatedMotion(t129, 3);
-  Event_PlaySound(0x186);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   t132 = gMainRoutineWork.currentOwner;
-  Actor_SetAttachedEffect(t132, 0x102);
+  Actor_SetAttachedEffect(t132,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   t134 = gMainRoutineWork.currentOwner;
-  Actor_MoveToAndWait(t134, 0x1f8, 0x140);
+  Actor_MoveToAndWait(t134, 504, 320);
   t136 = gMainRoutineWork.currentOwner;
   t137 = Actor_Get(t136);
   FIELD_AT(t137, u8, 90) |= 1;
@@ -571,30 +568,30 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   System_Wait(1);
   Event_ShowMessage(18, 0);
   t141 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirection(t141, 0, 0);
-  Actor_FaceDirection(0, 0x8000, 40);
+  Actor_FaceDirection(t141, FACING_EAST, 0);
+  Actor_FaceDirection(0, FACING_WEST, 40);
   t144 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirection(t144, 0xc000, 0);
-  Actor_FaceDirectionAndWait(0, 0xc000);
-  Actor_WalkToAndWait(0, 0x208, 0x134);
-  Actor_FaceDirection(0, 0xa000, 20);
-  Actor_FaceDirection(0, 0xe000, 20);
-  Actor_FaceDirection(0, 0xc000, 0);
-  FieldEvent_ShowMessageThenWait(0x8000, 0, 20);
+  Actor_FaceDirection(t144, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(0, FACING_NORTH);
+  Actor_WalkToAndWait(0, 520, 308);
+  Actor_FaceDirection(0, FACING_NORTHWEST, 20);
+  Actor_FaceDirection(0, FACING_NORTHEAST, 20);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 20);
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(0, 0x101, 0);
-  Actor_ShowEmote(1, 0x101, 0);
-  Actor_FaceDirection(0, 0x2000, 0);
-  Actor_FaceDirection(1, 0xa000, 40);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(1, FACING_NORTHWEST, 40);
   Event_ShowMessage(2, 0);
-  Actor_FaceDirection(0, 0x4000, 0);
-  Actor_FaceDirectionAndWait(1, 0x4000);
+  Actor_FaceDirection(0, FACING_SOUTH, 0);
+  Actor_FaceDirectionAndWait(1, FACING_SOUTH);
   Actor_SetAnimation(0, 4);
   FieldActor_SetAnimationAndWait(1, 4);
-  Event_PlaySound(36);
+  Event_PlaySound(MUS_036);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, 0xc000, 0);
-  Actor_FaceDirectionAndWait(1, 0xc000);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(1, FACING_NORTH);
   t166 = gMainRoutineWork.currentOwner;
   Func_02000610(t166);
   Func_02000610(5);
@@ -607,7 +604,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Func_02000610(19);
   FieldEvent_Wait(40);
   Func_02000640(19);
-  Actor_ShowEmote(19, 0x100, 20);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldActor_Jump(19, 4, 10);
   FieldActor_Jump(19, 6, 10);
   Event_ShowMessage(19, 0);
@@ -625,56 +622,57 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   actor = Actor_Get(18);
   FIELD_AT(actor, u8, 85) = 0;
   t194 = Actor_Get(18);
-  FieldActor_SetPositionAndResetMotion(t194, 0x2000000, 0x780000, 0xd00000);
+  FieldActor_SetPositionAndResetMotion(t194, px(512), px(120), px(208));
   FieldEvent_Wait(20);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(0x2000000, -1, 0xd80000, 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 216, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(1, 0, 20);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1300000, 1);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(0, 0x102);
+  Actor_SetAttachedEffect(0, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   t206 = gMainRoutineWork.currentOwner;
-  Actor_SetAttachedEffect(t206, 0x102);
-  Actor_SetAttachedEffect(1, 0x102);
-  Actor_SetAttachedEffect(5, 0x102);
-  Actor_SetAttachedEffect(19, 0x102);
+  Actor_SetAttachedEffect(t206,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(19, 0);
   Actor_SetAnimation(0, 3);
   Actor_SetAnimationAndWait(0, 3);
-  Actor_FaceDirectionAndWait(5, 0xe000);
+  Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
   Event_ShowMessage(5, 0);
-  Actor_ShowEmote(0, 0x109, 0);
-  Event_ShowMessage(0x8000, 0);
-  Actor_ShowEmote(2, 0x101, 20);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
+  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessage(2, 0);
-  Actor_FaceDirectionAndWait(1, 0x4000);
-  Event_ShowMessage(0x4001, 0);
-  Actor_FaceDirectionAndWait(0, 0x4000);
-  Event_ShowMessage(0x5000, 0);
-  Actor_ShowEmote(3, 0x105, 0);
+  Actor_FaceDirectionAndWait(1, FACING_SOUTH);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
+  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 0, 0);
+  Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_ShowMessage(3, 0);
-  Actor_ShowEmote(1, 0x103, 0);
-  Actor_FaceDirectionAndWait(1, 0x2000);
-  Event_ShowMessage(0x5001, 0);
-  Actor_FaceDirectionAndWait(7, 0);
-  Event_ShowMessage(0x4007, 0);
-  FieldCamera_SetSpeed(0x6666, 0xccc);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1280000, 1);
-  Actor_SetSpeed(18, 0xcccc, 0x6666);
-  FieldActor_SetMoveTarget(actor, 0x2000000, 0x600000, 0x1140000);
+  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_FaceDirectionAndWait(1, FACING_SOUTHEAST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 296, 1);
+  Actor_SetSpeed(18, 0.8);
+  FieldActor_SetMoveTarget(actor, 512, 96, 276);
   FieldActor_WaitForMoveById(18);
   FieldEvent_Wait(10);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(1, 0xc000, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(1, FACING_NORTH, 0);
   Actor_RunRepeatedMotion(0, 1);
-  Actor_WalkToAndWait(0, 0x208, 0x140);
-  Actor_FaceDirectionAndWait(0, 0xc000);
+  Actor_WalkToAndWait(0, 520, 320);
+  Actor_FaceDirectionAndWait(0, FACING_NORTH);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
@@ -682,7 +680,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(10);
   Event_ShowMessage(18, 0);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(6, 0);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
@@ -701,16 +699,16 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_WaitForAnimationChange(18);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, 0, 0);
-  Actor_FaceDirection(1, 0x8000, 0);
-  Actor_FaceDirection(2, 0, 0);
-  Actor_FaceDirection(3, 0x8000, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
+  Actor_FaceDirection(0, FACING_EAST, 0);
+  Actor_FaceDirection(1, FACING_WEST, 0);
+  Actor_FaceDirection(2, FACING_EAST, 0);
+  Actor_FaceDirection(3, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
   t278 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirection(t278, 0x8000, 20);
-  Actor_ShowEmote(19, 0x100, 20);
+  Actor_FaceDirection(t278, FACING_WEST, 20);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 10);
   FieldEvent_Wait(20);
@@ -721,22 +719,22 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(20);
   Event_ShowMessage(19, 0);
-  Actor_FaceDirection(0, 0xc000, 0);
-  Actor_FaceDirection(1, 0xc000, 0);
-  Actor_FaceDirection(2, 0xc000, 0);
-  Actor_FaceDirection(3, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(1, FACING_NORTH, 0);
+  Actor_FaceDirection(2, FACING_NORTH, 0);
+  Actor_FaceDirection(3, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
   t298 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirection(t298, 0xc000, 0);
-  Actor_ShowEmote(18, 0x105, 80);
+  Actor_FaceDirection(t298, FACING_NORTH, 0);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_SetAnimation(5, 4);
   Event_ShowMessage(5, 0);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(19, 0x103, 20);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 10);
   FieldEvent_Wait(20);
@@ -752,23 +750,23 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(10);
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(19, 0x101, 20);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, 0, 0);
-  Actor_FaceDirection(1, 0x8000, 0);
-  Actor_FaceDirection(2, 0, 0);
-  Actor_FaceDirection(3, 0x8000, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
+  Actor_FaceDirection(0, FACING_EAST, 0);
+  Actor_FaceDirection(1, FACING_WEST, 0);
+  Actor_FaceDirection(2, FACING_EAST, 0);
+  Actor_FaceDirection(3, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
   t334 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirection(t334, 0x8000, 20);
+  Actor_FaceDirection(t334, FACING_WEST, 20);
   FieldActor_SetAnimation(18, 6);
   FieldEvent_Wait(20);
-  Event_PlaySound(142);
+  Event_PlaySound(SE_SWIRL);
   PaletteFade_ApplyTarget(0x10005, 0);
   PaletteFade_Interpolate(40);
   FieldEvent_Wait(40);
@@ -779,20 +777,20 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, 0xc000, 0);
-  Actor_FaceDirection(1, 0xc000, 0);
-  Actor_FaceDirection(2, 0xc000, 0);
-  Actor_FaceDirection(3, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(1, FACING_NORTH, 0);
+  Actor_FaceDirection(2, FACING_NORTH, 0);
+  Actor_FaceDirection(3, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
   t356 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirectionAndWait(t356, 0xc000);
+  Actor_FaceDirectionAndWait(t356, FACING_NORTH);
   Event_ShowMessage(5, 0);
   FieldActor_SetAnimation(18, 4);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(19, 0x101, 20);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessage(19, 0);
   FieldEvent_Wait(20);
   FieldActor_SetAnimation(18, 13);
@@ -802,48 +800,48 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimation(18, 8);
   FieldEvent_Wait(180);
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(2, 0x107, 0);
+  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Event_ShowMessage(2, 0);
-  Actor_FaceDirection(19, 0, 0);
+  Actor_FaceDirection(19, FACING_EAST, 0);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(5);
   Actor_SetAnimation(18, 9);
-  Actor_ShowEmote(18, 0x105, 40);
-  Actor_ShowEmote(19, 0x100, 20);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(19, 0);
   Func_020054e4(actor);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(7, 0x103, 0);
-  Actor_FaceDirection(7, 0x2000, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
   FieldActor_Jump(7, 4, 10);
-  Event_ShowMessage(0x4007, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   FieldActor_SetAnimation(18, 10);
   FieldEvent_Wait(20);
   FieldActor_SetAnimation(18, 11);
   FieldEvent_Wait(5);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(1, 0x107, 0);
-  Actor_FaceDirectionAndWait(1, 0x2000);
-  Event_ShowMessage(0x5001, 0);
-  Actor_ShowEmote(3, 0x109, 0);
+  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  Actor_FaceDirectionAndWait(1, FACING_SOUTHEAST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
+  Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_SetAnimation(3, 4);
   Event_ShowMessage(3, 0);
   Actor_SetAnimation(0, 4);
   Event_ShowMessage(0, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirection(6, 0xe000, 0);
-  Actor_FaceDirection(5, 0xe000, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
   t406 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirection(t406, 0, 0);
-  Actor_FaceDirection(19, 0xd000, 0);
-  Actor_FaceDirection(3, 0xa000, 0);
-  Actor_FaceDirection(1, 0x8000, 20);
-  Actor_FaceDirectionAndWait(0, 0x8000);
+  Actor_FaceDirection(t406, FACING_EAST, 0);
+  Actor_FaceDirection(19, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(3, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(1, FACING_WEST, 20);
+  Actor_FaceDirectionAndWait(0, FACING_WEST);
   Actor_SetAnimation(0, 4);
-  Event_OpenMessage(0x4000, 0);
+  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   t414 = gMainRoutineWork.currentOwner;
   if (!FieldEvent_AskYesNoWithActorAnimation(t414, 0)) {
     Actor_SetAnimation(6, 3);
@@ -860,41 +858,41 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
     FIELD_AT(t423, u16, 452) = (t424 + 1);
     Event_ShowMessage(6, 0);
   }
-  Actor_FaceDirection(0, 0xc000, 0);
-  Actor_FaceDirection(1, 0xc000, 0);
-  Actor_FaceDirection(2, 0xc000, 0);
-  Actor_FaceDirection(3, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(1, FACING_NORTH, 0);
+  Actor_FaceDirection(2, FACING_NORTH, 0);
+  Actor_FaceDirection(3, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
   t433 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirection(t433, 0xc000, 0);
+  Actor_FaceDirection(t433, FACING_NORTH, 0);
   FieldActor_SetAnimation(18, 11);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirectionAndWait(6, 0);
-  Actor_ShowEmote(6, 0x109, 20);
-  Actor_FaceDirection(5, 0x8000, 40);
-  Actor_ShowEmote(5, 0x100, 20);
-  Actor_FaceDirectionAndWait(5, 0xc000);
+  Actor_FaceDirectionAndWait(6, FACING_EAST);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  Actor_FaceDirection(5, FACING_WEST, 40);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_FaceDirectionAndWait(5, FACING_NORTH);
   Event_ShowMessage(5, 0);
   Actor_SetAnimation(18, 8);
-  Actor_FaceDirection(19, 0x8000, 0);
-  Actor_FaceDirection(2, 0x8000, 0);
-  Actor_FaceDirection(3, 0x8000, 0);
-  Actor_FaceDirection(1, 0x6000, 0);
-  Actor_FaceDirection(0, 0x6000, 0);
-  Actor_FaceDirection(7, 0x2000, 0);
+  Actor_FaceDirection(19, FACING_WEST, 0);
+  Actor_FaceDirection(2, FACING_WEST, 0);
+  Actor_FaceDirection(3, FACING_WEST, 0);
+  Actor_FaceDirection(1, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(0, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
   t451 = gMainRoutineWork.currentOwner;
-  Actor_FaceDirection(t451, 0x4000, 0);
+  Actor_FaceDirection(t451, FACING_SOUTH, 0);
   Actor_WaitForAnimationChange(18);
   Actor_SetAnimation(18, 1);
-  Actor_ShowEmote(2, 0x108, 20);
-  Event_ShowMessage(0x4002, 0);
-  Actor_FaceDirectionAndWait(1, 0x8000);
-  Event_ShowMessage(0x4001, 0);
-  Actor_FaceDirectionAndWait(0, 0x8000);
-  Event_OpenMessage(0x4000, 0);
+  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 2, 0);
+  Actor_FaceDirectionAndWait(1, FACING_WEST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
+  Actor_FaceDirectionAndWait(0, FACING_WEST);
+  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   t461 = gMainRoutineWork.currentOwner;
   if (!FieldEvent_AskYesNoWithActorAnimation(t461, 0)) {
     t463 = gMainRoutineWork.currentOwner;
@@ -904,34 +902,34 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
     FIELD_AT(t465, u16, 452) = (t466 + 1);
   } else {
     Actor_SetAnimation(1, 4);
-    Event_ShowMessage(0x4001, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
   }
   work = &gMainRoutineWork;
   t469 = work->currentOwner;
-  Actor_FaceDirectionAndWait(t469, 0);
+  Actor_FaceDirectionAndWait(t469, FACING_EAST);
   t471 = work->currentOwner;
   FieldActor_SetAnimationAndWait(t471, 3);
   t473 = work->currentOwner;
-  Actor_FaceDirectionAndWait(t473, 0xc000);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirection(0, 0xc000, 0);
-  Actor_FaceDirection(1, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(19, 0xc000, 0);
-  Actor_FaceDirection(2, 0xc000, 0);
-  Actor_FaceDirection(3, 0xc000, 0);
+  Actor_FaceDirectionAndWait(t473, FACING_NORTH);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(1, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(19, FACING_NORTH, 0);
+  Actor_FaceDirection(2, FACING_NORTH, 0);
+  Actor_FaceDirection(3, FACING_NORTH, 0);
   t482 = work->currentOwner;
-  Actor_SetSpeed(t482, 0x6666, 0x3333);
+  Actor_SetSpeed(t482, 0.4);
   t484 = work->currentOwner;
-  Actor_WalkToAndWait(t484, 0x1f8, 0x134);
-  Event_PlaySound(201);
+  Actor_WalkToAndWait(t484, 504, 308);
+  Event_PlaySound(SE_ASCEND);
   FieldActor_SetAnimation(18, 14);
   FieldEvent_Wait(10);
   Actor_SetSpriteColorById(18, 0x100);
   t490 = work->currentOwner;
   Actor_RunRepeatedMotion(t490, 2);
   t492 = work->currentOwner;
-  Actor_SetSpeed(t492, 0x19999, 0xcccc);
+  Actor_SetSpeed(t492, 1.6);
   t494 = work->currentOwner;
   FieldActor_Jump(t494, 4, 0);
   t496 = work->currentOwner;
@@ -941,12 +939,12 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
     *f &= 254;
   }
   t499 = work->currentOwner;
-  Actor_WalkToAndWait(t499, 0x1f8, 0x140);
+  Actor_WalkToAndWait(t499, 504, 320);
   FieldEvent_Wait(1);
   t502 = work->currentOwner;
   t503 = Actor_Get(t502);
   FIELD_AT(t503, u8, 90) |= 1;
-  Actor_SetAttachedEffect(7, 0x102);
+  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(7, 0);
   FieldActor_SetAnimation(18, 14);
@@ -957,32 +955,32 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, 0, 0);
-  Actor_FaceDirection(1, 0x8000, 0);
-  Actor_FaceDirection(2, 0, 0);
-  Actor_FaceDirection(3, 0x8000, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
+  Actor_FaceDirection(0, FACING_EAST, 0);
+  Actor_FaceDirection(1, FACING_WEST, 0);
+  Actor_FaceDirection(2, FACING_EAST, 0);
+  Actor_FaceDirection(3, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
   t523 = work->currentOwner;
-  Actor_FaceDirection(t523, 0x8000, 40);
+  Actor_FaceDirection(t523, FACING_WEST, 40);
   Event_ShowMessage(7, 0);
-  Event_PlaySound(0x23c);
+  Event_PlaySound(SE_572);
   Actor_SetSpriteColorById(18, 0);
   t528 = Actor_Get(18);
   FieldActor_SetSpriteColor(t528, 7);
   FieldEvent_Wait(20);
   t531 = Actor_Get(18);
   FieldActor_SetSpriteColor(t531, 0);
-  Actor_FaceDirection(0, 0xc000, 0);
-  Actor_FaceDirection(1, 0xc000, 0);
-  Actor_FaceDirection(2, 0xc000, 0);
-  Actor_FaceDirection(3, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(1, FACING_NORTH, 0);
+  Actor_FaceDirection(2, FACING_NORTH, 0);
+  Actor_FaceDirection(3, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
   t540 = work->currentOwner;
-  Actor_FaceDirection(t540, 0xc000, 20);
+  Actor_FaceDirection(t540, FACING_NORTH, 20);
   Event_ShowMessage(18, 0);
   Event_ShowMessage(19, 0);
   Actor_SetAnimation(7, 3);
@@ -994,7 +992,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(2, 3);
   FieldActor_SetAnimationAndWait(3, 3);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FIELD_AT(actor, s32, 108) = (s32)Func_02000068;
   Actor_SetScript(18, (s32)gData_02005c70);
   PaletteFade_ApplyTarget(0x10001, 1);
@@ -1017,80 +1015,80 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   actor = Actor_Get(17);
   FIELD_AT(actor, s32, 24) = 0x1000;
   FIELD_AT(actor, s32, 28) = 0x1000;
-  Actor_SetPosition(17, 0x2000000, 0x1180000);
+  Actor_SetPosition(17, 512, 280);
   System_Wait(1);
   unk85 = (u8 *)actor + 85;
   *unk85 = 0;
-  FieldActor_SetPositionAndResetMotion(actor, 0x2000000, 0x300000, 0x1180000);
+  FieldActor_SetPositionAndResetMotion(actor, px(512), px(48), px(280));
   System_Wait(1);
   *unk85 = 0;
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_Interpolate(20);
-  dispcnt = (u16 *)0x4000000;
-  Event_PlaySound(39);
+  dispcnt = (u16 *)&REG_DISPCNT;
+  Event_PlaySound(MUS_039);
   Actor_RunScriptAndWait(17, (s32)gData_02005cac);
   *dispcnt = *dispcnt & 0xf9ff;
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(40);
-  Actor_SetSpeed(17, 0x33333, 0x3333);
-  Event_PlaySound(138);
+  Actor_SetSpeedAndAcceleration(17, 3.2, 0.2);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  FieldActor_SetMoveTarget(actor, 0x2200000, 0x580000, 0x1180000);
+  FieldActor_SetMoveTarget(actor, 544, 88, 280);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(17);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  FieldActor_SetMoveTarget(actor, 0x1d00000, 0x580000, 0x1180000);
+  FieldActor_SetMoveTarget(actor, 464, 88, 280);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(17);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  FieldActor_SetMoveTarget(actor, 0x2400000, 0x580000, 0x1180000);
+  FieldActor_SetMoveTarget(actor, 576, 88, 280);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(17);
-  Actor_SetSpeed(17, 0x66666, 0x33333);
-  Event_PlaySound(138);
+  Actor_SetSpeed(17, 6.4);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  FieldActor_SetMoveTarget(actor, 0x1fc0000, 0xd00000, 0x1200000);
+  FieldActor_SetMoveTarget(actor, 508, 208, 288);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(17);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   *dispcnt |= 0x600;
-  Actor_SetPosition(7, 0x1e80000, 0x1400000);
+  Actor_SetPosition(7, 488, 320);
   t628 = work->currentOwner;
-  Actor_SetPosition(t628, 0x1f80000, 0x1400000);
-  Actor_SetPosition(0, 0x2080000, 0x1400000);
-  Actor_SetPosition(1, 0x2180000, 0x1400000);
-  Actor_SetPosition(6, 0x1e00000, 0x1480000);
-  Actor_SetPosition(5, 0x1f00000, 0x1480000);
-  Actor_SetPosition(19, 0x2000000, 0x1480000);
-  Actor_SetPosition(2, 0x2100000, 0x1480000);
-  Actor_SetPosition(3, 0x2200000, 0x1480000);
+  Actor_SetPosition(t628, 504, 320);
+  Actor_SetPosition(0, 520, 320);
+  Actor_SetPosition(1, 536, 320);
+  Actor_SetPosition(6, 480, 328);
+  Actor_SetPosition(5, 496, 328);
+  Actor_SetPosition(19, 512, 328);
+  Actor_SetPosition(2, 528, 328);
+  Actor_SetPosition(3, 544, 328);
   System_Wait(1);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_Interpolate(10);
   System_Wait(20);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
@@ -1101,33 +1099,33 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FIELD_AT(actor, s32, 72) = 0x4000;
   *unk85 = 3;
   FieldEvent_Wait(30);
-  Event_PlaySound(208);
-  MapGrid_SetShake(0x20000, 0x40000, 0x10000);
+  Event_PlaySound(SE_BANE_ESCAPE);
+  MapGrid_SetShake(2, 4, 1);
   FieldEvent_Wait(10);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(17, 1);
-  Event_PlaySound(148);
+  Event_PlaySound(SE_BOSS_ROAR);
   FieldEvent_Wait(80);
   Event_ShowMessage(6, 0);
-  Actor_ShowEmote(7, 0x103, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(1, 0x103, 0);
+  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_ShowMessage(1, 0);
   Actor_SetAnimation(3, 3);
   Event_ShowMessage(3, 0);
-  Actor_FaceDirectionAndWait(2, 0xa000);
+  Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
   Event_ShowMessage(2, 0);
-  Actor_SetSpeed(7, 0x19999, 0xcccc);
+  Actor_SetSpeed(7, 1.6);
   t670 = work->currentOwner;
-  Actor_SetSpeed(t670, 0x19999, 0xcccc);
-  Actor_SetSpeed(0, 0x19999, 0xcccc);
-  Actor_SetSpeed(1, 0x19999, 0xcccc);
-  Actor_SetSpeed(6, 0x19999, 0xcccc);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
-  Actor_SetSpeed(2, 0x19999, 0xcccc);
-  Actor_SetSpeed(3, 0x19999, 0xcccc);
+  Actor_SetSpeed(t670, 1.6);
+  Actor_SetSpeed(0, 1.6);
+  Actor_SetSpeed(1, 1.6);
+  Actor_SetSpeed(6, 1.6);
+  Actor_SetSpeed(5, 1.6);
+  Actor_SetSpeed(2, 1.6);
+  Actor_SetSpeed(3, 1.6);
   Actor_SetScript(7, (s32)gData_02005df8);
   t679 = work->currentOwner;
   Actor_SetScript(t679, (s32)gData_02005ce8);
@@ -1137,20 +1135,20 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetScript(2, (s32)gData_02005e3c);
   Actor_SetScript(3, (s32)gData_02005e80);
   Actor_RunScriptAndWait(1, (s32)gData_02005ec4);
-  Actor_ShowEmote(19, 0x101, 40);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(19, 0);
-  Actor_SetAttachedEffect(19, 0x102);
-  Actor_FaceDirectionAndWait(19, 0xa000);
-  Event_ShowMessage(0x2013, 0);
-  Actor_FaceDirectionAndWait(1, 0x6000);
+  Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_FaceDirectionAndWait(19, FACING_NORTHWEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
+  Actor_FaceDirectionAndWait(1, FACING_SOUTHWEST);
   FieldActor_Jump(1, 6, 10);
   Event_ShowMessage(1, 0);
   FieldActor_Jump(19, 2, 10);
   FieldActor_Jump(19, 4, 10);
-  Event_ShowMessage(0x2013, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
-  Call2(Field_RequestBattleFromEncounterTable, 102, 1);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseAerie1, 2);
+  Field_RequestBattleFromEncounterTable(102, 1);
   return;
 }
 
@@ -1177,7 +1175,6 @@ extern u32 gData_02006004[];
 extern u32 gData_0200602c[];
 extern u32 gData_02006070[];
 
-/// ★ Named from the game: "...Who are they?" (MsgWhoAreThey)
 void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   s32 lastArg, spill;
   s32 owner, actor, owner2, t1;
@@ -1199,7 +1196,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT(actor, s32, 16) += 0x100000;
   Actor_SetAnimation(28, 2);
   Actor_SetAnimation(29, 3);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   Actor_SetAnimation(30, 7);
   Actor_SetAnimation(31, 7);
@@ -1208,7 +1205,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   owner = (owner + 0x214);
   t16 = *(s32 *)owner;
   lastArg = 0xc000;
-  Actor_SetPositionAndFacing(t16, 0x1f80000, 0x1400000, lastArg);
+  Actor_SetPositionAndFacing(t16, px(504), px(320), lastArg);
   System_Wait(1);
   PaletteFade_ApplySource(0, 0);
   PaletteFade_ApplyTarget(0, 0);
@@ -1227,7 +1224,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT(t34, s32, 436) = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(0x186);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_Interpolate(16);
@@ -1242,15 +1239,15 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT(t1, s32, 108) = (s32)Func_02001ee4;
   FIELD_AT(t2, s32, 108) = (s32)Func_02001ee4;
   FIELD_AT((spill), s32, 108) = (s32)Func_02001ee4;
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(10);
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(10);
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(10);
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(10);
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(40);
   *(s32 *)&gData_02006b6c = 3;
   System_Wait(30);
@@ -1268,7 +1265,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT(t2, s32, 108) = 0;
   FIELD_AT((spill), s32, 108) = 0;
   System_Wait(1);
-  Event_PlaySound(103);
+  Event_PlaySound(SE_CURSE);
   FieldActor_SetSpriteColor((Actor_Get(30)), 9);
   FieldActor_SetSpriteColor((Actor_Get(31)), 9);
   FieldActor_SetSpriteColor((Actor_Get(32)), 9);
@@ -1291,51 +1288,51 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   PaletteFade_Interpolate(40);
   System_Wait(80);
   FieldEvent_SetMessageId((s32)MsgWhoAreThey);
-  Actor_FaceDirectionAndWait(26, 0x8000);
+  Actor_FaceDirectionAndWait(26, FACING_WEST);
   Event_ShowMessage(26, 0);
   Event_ShowMessage(19, 0);
-  Actor_FaceDirection(22, 0x2000, 0);
-  Actor_FaceDirection((*(s32 *)owner), 0x2000, 0);
-  Actor_FaceDirection(23, 0x4000, 0);
-  Actor_FaceDirection(24, 0x4000, 0);
-  Actor_FaceDirection(21, 0x2000, 0);
-  Actor_FaceDirection(20, 0x2000, 0);
-  Actor_FaceDirection(26, 0x4000, 0);
-  Actor_FaceDirection(25, 0x4000, 0);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
+  Actor_FaceDirection(22, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection((*(s32 *)owner), FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(23, FACING_SOUTH, 0);
+  Actor_FaceDirection(24, FACING_SOUTH, 0);
+  Actor_FaceDirection(21, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(26, FACING_SOUTH, 0);
+  Actor_FaceDirection(25, FACING_SOUTH, 0);
+  FieldCamera_SetSpeed(1.6);
   FIELD_AT((EventCamera_GetActor()), u8, 85) = 0;
-  FieldCamera_MoveTo(0x2000000, 0x500000, 0x1540000, 1);
+  FieldCamera_MoveTo(512, 80, 340, 1);
   FieldCamera_WaitForArrival();
-  Actor_ShowEmote(19, 0x109, 20);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessage(19, 0);
-  Event_PlaySound(8);
-  Actor_SetAttachedEffect(24, 0x102);
+  Event_PlaySound(MUS_008);
+  Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(24, 0);
   Event_ShowMessage(25, 0);
   Actor_SetAnimationAndWait(19, 3);
   Event_ShowMessage(19, 0);
-  Actor_SetAttachedEffect(26, 0x102);
-  Event_ShowMessage(0x101a, 0);
+  Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   Actor_SetAnimation(19, 4);
   Event_ShowMessage(19, 0);
-  Actor_ShowEmote(23, 0x103, 0);
-  Actor_SetSpeed(23, 0x19999, 0xcccc);
-  Actor_WalkToAndWait(23, 0x200, 0x148);
-  Actor_FaceDirectionAndWait(23, 0x2000);
-  Event_ShowMessage(0x1017, 0);
-  Actor_FaceDirectionAndWait(20, 0x8000);
-  Event_ShowMessage(0xa014, 0);
-  Actor_ShowEmote(19, 0x100, 20);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_SetSpeed(23, 1.6);
+  Actor_WalkToAndWait(23, 512, 328);
+  Actor_FaceDirectionAndWait(23, FACING_SOUTHEAST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 23, 0);
+  Actor_FaceDirectionAndWait(20, FACING_WEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 20, 0);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldActor_SetSpritePriority(21, 2);
   FIELD_AT((Actor_Get(20)), u8, 98) = 0;
   FIELD_AT((Actor_Get(21)), u8, 98) = 0;
-  Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Actor_SetSpeed(20, 0xcccc, 0x6666);
+  Actor_SetSpeed(21, 0.8);
+  Actor_SetSpeed(20, 0.8);
   Actor_SetScript(21, (s32)gData_02005f08);
   Actor_SetScript(20, (s32)gData_02005f50);
-  Actor_SetSpeed(19, 0x26666, 0x13333);
-  Actor_WalkToAndWait(19, 0x21c, 0x154);
+  Actor_SetSpeed(19, 2.4);
+  Actor_WalkToAndWait(19, 540, 340);
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(19, 0);
   actor = Actor_Get(21);
@@ -1343,21 +1340,21 @@ L_0200a47a:
   System_Wait(1);
   if (FIELD_AT(actor, u8, 98) == 0)
     goto L_0200a47a;
-  Actor_FaceDirection(20, 0x2000, 0);
-  Actor_FaceDirectionAndWait(21, 0x2000);
+  Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionAndWait(21, FACING_SOUTHEAST);
   Event_ShowMessage(21, 0);
   FieldActor_SetSpritePriority(20, 2);
   FieldActor_SetSpritePriority(22, 2);
-  FieldActor_ShowEmote(20, 0x100, 0);
-  Actor_SetSpeed(20, 0x19999, 0xcccc);
-  Actor_WalkToAndWait(20, 0x1ea, 0x128);
-  Actor_FaceDirection(21, 0xe000, 20);
-  Actor_FaceDirection(20, 0xa000, 20);
-  Actor_FaceDirection(20, 0xe000, 20);
-  Actor_SetSpeed(20, 0x3333, 0x1999);
+  FieldActor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_SetSpeed(20, 1.6);
+  Actor_WalkToAndWait(20, 490, 296);
+  Actor_FaceDirection(21, FACING_NORTHEAST, 20);
+  Actor_FaceDirection(20, FACING_NORTHWEST, 20);
+  Actor_FaceDirection(20, FACING_NORTHEAST, 20);
+  Actor_SetSpeed(20, 0.2);
   t158 = Actor_Get(20);
   FIELD_AT(t158, u8, 90) &= 254;
-  Actor_WalkToAndWait(20, 0x1e8, 0x12c);
+  Actor_WalkToAndWait(20, 488, 300);
   FieldEvent_Wait(1);
   t162 = Actor_Get(20);
   FIELD_AT(t162, u8, 90) |= 1;
@@ -1365,26 +1362,26 @@ L_0200a47a:
   Actor_RunRepeatedMotion(20, 2);
   t166 = Actor_Get(20);
   FIELD_AT(t166, u8, 90) &= 254;
-  Actor_WalkToAndWait(20, 0x1e6, 0x134);
+  Actor_WalkToAndWait(20, 486, 308);
   FieldEvent_Wait(1);
   t170 = Actor_Get(20);
   FIELD_AT(t170, u8, 90) |= 1;
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(0x2000000, 0x600000, 0x1400000, 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(512, 96, 320, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(21, 0, 40);
-  Actor_FaceDirection(21, 0xe000, 20);
-  Actor_FaceDirectionAndWait(21, 0);
-  Event_ShowMessage(0x8015, 0);
-  Actor_FaceDirection(22, 0xc000, 0);
+  Actor_FaceDirection(21, FACING_EAST, 40);
+  Actor_FaceDirection(21, FACING_NORTHEAST, 20);
+  Actor_FaceDirectionAndWait(21, FACING_EAST);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 21, 0);
+  Actor_FaceDirection(22, FACING_NORTH, 0);
   owner2 = (s32)&gMainRoutineWork;
   owner2 = (owner2 + 0x214);
-  Actor_FaceDirection((*(s32 *)owner2), 0xa000, 0);
-  Actor_FaceDirection(23, 0xa000, 0);
-  Actor_FaceDirection(24, 0xa000, 0);
-  Actor_FaceDirection(26, 0xa000, 0);
-  Actor_FaceDirection(25, 0xa000, 0);
-  Event_ShowMessage(0x8014, 0);
+  Actor_FaceDirection((*(s32 *)owner2), FACING_NORTHWEST, 0);
+  Actor_FaceDirection(23, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(24, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(26, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(25, FACING_NORTHWEST, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   actor = Actor_Get(32);
   FIELD_AT(actor, s32, 108) = 0;
   System_Wait(1);
@@ -1392,25 +1389,25 @@ L_0200a47a:
   FIELD_AT(actor, s32, 28) = 0x10000;
   Actor_RunRepeatedMotion(32, 2);
   Event_ShowMessage(32, 0);
-  Actor_ShowEmote(23, 0x100, 0);
-  Actor_FaceDirection(23, 0xe000, 40);
-  Actor_FaceDirection(25, 0x8000, 0);
-  Actor_ShowEmote(25, 0x101, 20);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_FaceDirection(23, FACING_NORTHEAST, 40);
+  Actor_FaceDirection(25, FACING_WEST, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessage(25, 0);
-  Actor_FaceDirection(23, 0, 40);
-  Actor_FaceDirectionAndWait(23, 0xc000);
+  Actor_FaceDirection(23, FACING_EAST, 40);
+  Actor_FaceDirectionAndWait(23, FACING_NORTH);
   FieldActor_StartRepeatedMotion(32, 3);
   Event_ShowMessage(32, 0);
-  Actor_FaceDirection(24, 0xc000, 40);
-  Actor_FaceDirectionAndWait(24, 0x6000);
-  Event_ShowMessage(0x4018, 0);
-  Actor_FaceDirectionAndWait(21, 0x2000);
-  Actor_SetAttachedEffect(21, 0x102);
+  Actor_FaceDirection(24, FACING_NORTH, 40);
+  Actor_FaceDirectionAndWait(24, FACING_SOUTHWEST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 24, 0);
+  Actor_FaceDirectionAndWait(21, FACING_SOUTHEAST);
+  Actor_SetAttachedEffect(21, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(21, 0);
-  Actor_FaceDirection((*(s32 *)owner2), 0xc000, 0);
-  Actor_FaceDirection(24, 0xc000, 0);
-  Actor_FaceDirection(26, 0xc000, 0);
-  Actor_FaceDirection(25, 0xc000, 0);
+  Actor_FaceDirection((*(s32 *)owner2), FACING_NORTH, 0);
+  Actor_FaceDirection(24, FACING_NORTH, 0);
+  Actor_FaceDirection(26, FACING_NORTH, 0);
+  Actor_FaceDirection(25, FACING_NORTH, 0);
   actor = Actor_Get(30);
   FIELD_AT(actor, s32, 108) = 0;
   System_Wait(1);
@@ -1423,47 +1420,47 @@ L_0200a47a:
   FIELD_AT(actor, s32, 28) = 0x10000;
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(31, 1);
-  Event_ShowMessage(0x201f, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 31, 0);
   Actor_RunRepeatedMotion(30, 2);
   Event_ShowMessage(30, 0);
   FieldActor_Jump(20, 2, 10);
   FieldActor_Jump(20, 4, 10);
-  Event_ShowMessage(0x8014, 0);
-  Actor_SetSpeed(20, 0x26666, 0x13333);
-  Actor_SetSpeed((*(s32 *)owner2), 0x26666, 0x13333);
-  Actor_SetSpeed(23, 0x26666, 0x13333);
-  Actor_SetSpeed(24, 0x26666, 0x13333);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
+  Actor_SetSpeed(20, 2.4);
+  Actor_SetSpeed((*(s32 *)owner2), 2.4);
+  Actor_SetSpeed(23, 2.4);
+  Actor_SetSpeed(24, 2.4);
   Actor_SetScript(20, (s32)gData_02005f98);
   Actor_SetScript((*(s32 *)owner2), (s32)gData_02005fdc);
   Actor_SetScript(23, (s32)gData_02006004);
   Actor_RunScriptAndWait(24, (s32)gData_0200602c);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(22, 0x19999, 0xcccc);
-  Actor_WalkToAndWait(22, 0x210, 0x140);
-  Actor_FaceDirection(22, 0x2000, 0);
-  Actor_FaceDirectionAndWait(25, 0xa000);
-  Event_ShowMessage(0x5016, 0);
-  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(22, 1.6);
+  Actor_WalkToAndWait(22, 528, 320);
+  Actor_FaceDirection(22, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionAndWait(25, FACING_NORTHWEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 22, 0);
+  Actor_SetSpeed(25, 1.6);
   Actor_SetScript(25, (s32)gData_02006070);
-  Actor_WalkToAndWait(22, 0x1e6, 0x134);
-  Actor_FaceDirectionAndWait(22, 0xa000);
-  Actor_SetSpeed(21, 0x26666, 0x13333);
+  Actor_WalkToAndWait(22, 486, 308);
+  Actor_FaceDirectionAndWait(22, FACING_NORTHWEST);
+  Actor_SetSpeed(21, 2.4);
   t244 = Actor_Get(21);
   FIELD_AT(t244, u8, 90) &= 254;
-  Actor_WalkToAndWait(21, 0x1da, 0x13c);
+  Actor_WalkToAndWait(21, 474, 316);
   FieldEvent_Wait(1);
   t248 = Actor_Get(21);
   FIELD_AT(t248, u8, 90) |= 1;
-  Actor_FaceDirection(21, 0xe000, 0);
-  Actor_WalkToAndWait(22, 0x1ce, 0x118);
-  Actor_FaceDirectionAndWait(22, 0);
+  Actor_FaceDirection(21, FACING_NORTHEAST, 0);
+  Actor_WalkToAndWait(22, 462, 280);
+  Actor_FaceDirectionAndWait(22, FACING_EAST);
   FieldActor_SetSpritePriority(22, 1);
   Func_020053e4((Actor_Get(22)), (s32)gData_02006c20);
   Func_020053e4((Actor_Get(25)), (s32)gData_02006b70);
   FieldEvent_Wait(40);
   Actor_SetAnimationAndWait(19, 4);
   Event_ShowMessage(19, 0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(120);
   System_Wait(120);
@@ -1487,9 +1484,9 @@ void Func_0200298c(s32 id) {
 void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(506), PIXELS(280));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 506, 280);
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1505,45 +1502,45 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   FieldEvent_SetMessageId(MsgWhatSTheMatter);
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
-  Event_ShowMessage(0x8002, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 2, 0);
   Actor_FaceDirection(3, FACING_SOUTHEAST, 20);
-  FieldActor_ShowEmote(3, 0x109, 0x14);
-  Event_ShowMessage(0x1003, 0);
+  FieldActor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 3, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(7, 4);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
-  FieldActor_ShowEmote(5, 0x107, 0);
-  FieldActor_Jump(5, 2, 0xa);
-  FieldActor_Jump(5, 4, 0xa);
-  Event_ShowMessage(0x8005, 0);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  FieldActor_Jump(5, 2, 10);
+  FieldActor_Jump(5, 4, 10);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(6, FACING_NORTHWEST, 0);
   Actor_FaceDirection(0, FACING_WEST, 0);
   Actor_FaceDirection(1, FACING_WEST, 0);
   Actor_FaceDirection(2, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(3, FACING_WEST);
-  Event_ShowMessage(0x8005, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
   Actor_SetAnimation(7, 4);
-  Event_ShowMessage(0x2007, 0);
-  FieldActor_ShowEmote(5, 0x109, 0x14);
-  FieldEvent_ShowMessageThenWait(0x8005, 0, 0x28);
-  Event_ShowMessage(0x2006, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 5, 0, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
   Actor_FaceDirectionAndWait(5, FACING_EAST);
   Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessage(0x8005, 0);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
+  Actor_SetSpeed(5, 1.6);
   Actor_SetAnimation(5, 5);
   Actor_MoveToAndWait(5, 460, 288);
   Actor_SetAnimation(5, 0x16);
   Event_ShowMessage(5, 0);
-  FieldActor_ShowEmote(0x13, 0x109, 0);
-  Event_PlaySound(0x4e);
-  FieldCamera_SetSpeed(0x3333, 0x666);
-  FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(320), 1);
+  FieldActor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  FieldCamera_SetSpeed(0.2);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
-  Event_ShowMessage(0x2013, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
@@ -1552,55 +1549,55 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(2, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(3, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(19, 4);
-  FieldEvent_ShowMessageThenWait(0x2013, 0, 0x14);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 19, 0, 20);
   Actor_SetAnimation(5, 1);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   Event_ShowMessage(5, 0);
-  FieldEvent_ShowMessageThenWait(0x2013, 0, 0x14);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 19, 0, 20);
   Event_ShowMessage(5, 0);
   Actor_SetAnimationAndWait(19, 3);
-  Event_ShowMessage(0x2013, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(0, FACING_EAST, 40);
-  Actor_SetSpeed(1, 0xcccc, 0x6666);
+  Actor_SetSpeed(1, 0.8);
   Actor_Get(1)->actionFlags &= 0xfe;
   Actor_WalkToAndWait(1, 542, 328);
   FieldEvent_Wait(1);
   Actor_Get(1)->actionFlags |= 1;
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  FieldCamera_SetSpeed(0.8);
   EventCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(540), PIXELS(76), PIXELS(340), 1);
+  FieldCamera_MoveTo(540, 76, 340, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
   Actor_WalkToAndWait(1, 542, 340);
-  FieldActor_Jump(1, 2, 0xa);
-  FieldActor_Jump(1, 4, 0xa);
-  Event_ShowMessage(0x5001, 0);
+  FieldActor_Jump(1, 2, 10);
+  FieldActor_Jump(1, 4, 10);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
   Actor_FaceDirection(1, FACING_SOUTHWEST, 40);
   Actor_FaceDirection(1, FACING_SOUTHEAST, 20);
-  FieldActor_Jump(1, 4, 0xa);
-  Event_ShowMessage(0x5001, 0);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(PIXELS(478), PIXELS(96), PIXELS(312), 1);
+  FieldActor_Jump(1, 4, 10);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(478, 96, 312, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(6, FACING_SOUTH, 40);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
-  FieldActor_ShowEmote(6, 0x103, 0x14);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
-  FieldActor_Jump(6, 4, 0xa);
-  Event_ShowMessage(0x6006, 0);
-  FieldCamera_MoveTo(PIXELS(480), -1, PIXELS(276), 1);
+  FieldActor_Jump(6, 4, 10);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 6, 0);
+  FieldCamera_MoveTo(480, CAMERA_KEEP, 276, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(7, FACING_NORTHEAST, 20);
   Actor_FaceDirection(7, FACING_NORTHWEST, 20);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
-  Event_ShowMessage(0x8007, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 7, 0);
   Actor_SetAnimationAndWait(7, 4);
-  Event_ShowMessage(0x8007, 0);
-  Event_ShowMessage(0x5000, 0);
-  FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(312), 1);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 7, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 0, 0);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 312, 1);
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(3, FACING_SOUTHWEST, 0);
@@ -1608,7 +1605,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(1, FACING_NORTH, 40);
   Actor_FaceDirectionAndWait(0, FACING_NORTH);
-  FieldEvent_ShowMessageThenWait(0x8000, 0, 0x14);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 20);
   {
     s32 third = 0x28;
     s32 second = 0x105;
@@ -1618,61 +1615,61 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
     FieldActor_ShowEmote(actor, second, third);
   }
   Actor_FaceDirectionAndWait(0, FACING_EAST);
-  FieldActor_ShowEmote(0, 0x109, 0x14);
-  Event_ShowMessage(0x9000, 0);
+  FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 0, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
   {
     s32 flags = 0;
 
-    Event_OpenMessage(0x8000, flags);
+    Event_OpenMessage(SPEAKER_WINDOW_BELOW | 0, flags);
   }
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
     Actor_SetAnimationAndWait(5, 3);
-    Event_ShowMessage(0x8005, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   } else {
     Actor_SetAnimationAndWait(5, 3);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Event_ShowMessage(5, 0);
   }
-  Actor_SetSpeed(1, 0xcccc, 0x6666);
+  Actor_SetSpeed(1, 0.8);
   Actor_WalkToAndWait(1, 548, 320);
   Actor_FaceDirectionAndWait(1, FACING_NORTHWEST);
   Actor_SetAnimation(1, 3);
   Event_ShowMessage(1, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 0);
-  FieldActor_ShowEmote(6, 0x109, 0x28);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(2, FACING_WEST, 0);
-  FieldActor_ShowEmote(2, 0x105, 0x28);
-  Event_ShowMessage(0x8002, 0);
+  FieldActor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 2, 0);
   Actor_SetAnimation(7, 3);
   Event_ShowMessage(7, 0);
   Actor_SetAnimation(3, 4);
   Event_ShowMessage(3, 0);
-  Actor_SetSpeed(19, 0xcccc, 0x6666);
+  Actor_SetSpeed(19, 0.8);
   Actor_WalkToAndWait(19, 498, 320);
   Actor_SetAnimation(19, 3);
-  Event_ShowMessage(0x2013, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Event_SetFlag(0xa3d);
-  Event_PlaySound(0x1c);
-  Actor_SetSpeed(0, 0xcccc, 0x6666);
+  Event_PlaySound(MUS_028);
+  Actor_SetSpeed(0, 0.8);
   Actor_WalkToAndWait(0, 540, 286);
   Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
   Func_0200298c(7);
   Func_0200298c(5);
   Func_0200298c(6);
-  Func_0200298c(0x13);
+  Func_0200298c(19);
   Func_0200298c(0);
   Func_0200298c(3);
   Func_0200298c(2);
   Func_0200298c(1);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  Event_SetFlag(0x202);
-  MapGrid_CopyCellAttributes(0x27, 0x28, 0x12, 0x10, 0x17, 0xa);
+  Event_SetFlag(FLAG_SCENE_TEMP_02);
+  MapGrid_CopyCellAttributes(39, 40, 18, 16, 23, 10);
   Party_RestoreHpPp(1);
   Party_RemoveMemberRestored(7);
   Party_RemoveMemberRestored(5);
@@ -1684,19 +1681,16 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_Get(20)->collisionFlags |= 8;
   Actor_Get(21)->collisionFlags |= 8;
   FieldActor_SetSpriteColor(Actor_Get(28), 0xf);
-  Actor_SetPosition(28, PIXELS(568), PIXELS(274));
+  Actor_SetPosition(28, 568, 274);
   Actor_Get(17)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(17), PIXELS(492), PIXELS(96),
-                                       PIXELS(284));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(17), px(492), px(96), px(284));
   Actor_Get(29)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(29), PIXELS(510), PIXELS(96),
-                                       PIXELS(295));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(29), px(510), px(96), px(295));
   Actor_Get(30)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(30), PIXELS(540), PIXELS(96),
-                                       PIXELS(300));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(30), px(540), px(96), px(300));
   System_Wait(1);
   Event_SetFlag(0x17c);
-  Event_SetFlag(0x144);
+  Event_SetFlag(FLAG_RETREAT_BLOCKED);
   Event_End();
 }
 
@@ -1723,17 +1717,51 @@ void Func_02003210(struct Actor *self) {
 
 static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
                                                     s32 z) {
-  /* FAKEMATCH(wrapper): the effect created through an inline, which
-   * evaluates the position before the type; as a direct call of
-   * Import_ActorCreate, 4 of 92 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the effect created through an inline. */
   return (struct OrbitEffect *)Import_ActorCreate(type, x, y, z);
 }
 
 /// Every third frame, or every frame once flag 0x200 is set, starts a particle
 /// circling actor 23 at a random height above it, as overlay 69e's
 /// Func_020001a4 does under flag 0x201.
-DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x200, gData_02006afc, Func_02003210,
-                         2)
+void Orbs_SpawnRising(void) {
+  struct Actor *center;
+  struct OrbitEffect *effect;
+  struct FieldSprite *sprite;
+  s32 angle;
+
+  if (Event_GetFlag(0x200) == 0 && gFrameCount % 3 != 0)
+    return;
+  center = Actor_Get(23);
+  if (Event_GetFlag(0x200) != 0) {
+    u32 random;
+
+    random = Random16();
+    effect = CreateOrbitEffect(
+        0x2a0, center->x,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y - px(28), center->z);
+  } else {
+    u32 random;
+
+    random = Random16();
+    effect = CreateOrbitEffect(
+        0x2a0, center->x,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y - px(28), center->z);
+  }
+  if (effect != 0) {
+    sprite = effect->sprite;
+    Actor_StartScript(effect, gData_02006afc);
+    FieldActor_SetSpriteColor(effect, 1);
+    effect->motionFlags = 0;
+    angle = Random16() & 0xffff000;
+    effect->angle = angle;
+    effect->unk66 = 0;
+    effect->update = (void (*)(struct OrbitEffect *))Func_02003210;
+    effect->radius = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    sprite->nextFrame = 0;
+    sprite->priority = 2;
+  }
+}
 
 #include "../field/object/park_record.c"
 
@@ -1758,8 +1786,8 @@ void Func_02003370(void) {
 
   switch (Data_02006ccc) {
   case 0:
-    Event_PlaySound(220);
-    MapGrid_SetShake(0x60000, 0x60000, 0x10000);
+    Event_PlaySound(SE_SHIMMER);
+    MapGrid_SetShake(6, 6, 1);
     PaletteFade_ApplyTarget(0x2063ff, 1);
     PaletteFade_Interpolate(8);
     break;
@@ -1768,14 +1796,14 @@ void Func_02003370(void) {
     PaletteFade_Interpolate(8);
     break;
   case 16:
-    MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+    MapGrid_SetShake(1, 1, 1);
     break;
   case 24:
-    anchor->x = 0x2000000;
-    anchor->y = -0x1680000;
-    anchor->z = 0xcc0000;
-    anchor->scaleX = 0x10000;
-    anchor->scaleY = 0x10000;
+    anchor->x = px(512);
+    anchor->y = -px(360);
+    anchor->z = px(204);
+    anchor->scaleX = Q16_ONE;
+    anchor->scaleY = Q16_ONE;
     SceneActor_ParkRecord(anchor);
     Actor_SetScript(8, gData_02005b54);
     break;
@@ -1787,19 +1815,19 @@ void Func_02003370(void) {
       Data_02006ccc++;
     } else {
       if ((gFrameCount & 7) == 0)
-        Event_PlaySound(246);
+        Event_PlaySound(SE_GLITTER);
       spawn = 1;
       anchor->y += 0x24000;
     }
     break;
   case 26:
     Data_02006ccc--;
-    if (anchor->y > 0x140000) {
+    if (anchor->y > px(20)) {
       Data_02006ccc = 999;
       FieldTask_Remove(Func_02003370);
     } else {
       if ((gFrameCount & 7) == 0)
-        Event_PlaySound(246);
+        Event_PlaySound(SE_GLITTER);
       anchor->y += 0x24000;
       spawn = 1;
     }
@@ -1818,9 +1846,7 @@ void Func_02003370(void) {
       FieldActor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
       {
-        /* FAKEMATCH(temporary): the masked value held in a local; as
-         * object->action = Random16() & 0x0ffff000, 36 of 207 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(temporary): the masked value held in a local. */
         s32 action = Random16() & 0x0ffff000;
 
         object->timer = action;
@@ -1828,8 +1854,7 @@ void Func_02003370(void) {
       zero = 0;
       object->unk66 = 0;
       {
-        /* FAKEMATCH(temporary): the byte held in a local; as a direct store, 2
-         * of 207 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): the byte held in a local. */
         u8 phase = Random16() >> 13;
 
         ((u8 *)object)[98] = phase;
@@ -1850,16 +1875,16 @@ void Func_020035ec(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x - PIXELS(16),
-                                       object->y, object->z + PIXELS(32));
+  FieldActor_SetPositionAndResetMotion(object, object->x - px(16), object->y,
+                                       object->z + px(32));
 }
 
 void Func_0200361c(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x + PIXELS(16),
-                                       object->y, object->z + PIXELS(32));
+  FieldActor_SetPositionAndResetMotion(object, object->x + px(16), object->y,
+                                       object->z + px(32));
 }
 
 void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
@@ -1872,7 +1897,6 @@ extern s32 gData_020060fc[];
 
 #define A(p) ((struct OverlayActor *)(p))
 
-/// ★ Named from the game: "The beacon is lit!" (MsgTheBeaconIs)
 void MarsLighthouseAerie_LightBeacon(void) {
   struct AerieEventWork *work, *later;
   struct OverlaySprite *sprite;
@@ -1882,18 +1906,18 @@ void MarsLighthouseAerie_LightBeacon(void) {
   s32 piece2, piece3;
   s32 owner, actor;
 
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   Actor_SetPosition(28, 0, 0);
   Actor_SetPosition(29, 0, 0);
   Actor_SetPosition(30, 0, 0);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
+  FieldCamera_SetSpeed(1.6);
   A(((s32)FieldCamera_GetActor()))->motionFlags = 0;
-  FieldCamera_MoveTo(0x2000000, 0x600000, 0x1380000, 1);
+  FieldCamera_MoveTo(512, 96, 312, 1);
   FieldCamera_WaitForArrival();
   System_Wait(1);
-  *(u16 *)0x4000052 = 0xc08;
-  *(u16 *)0x4000050 = 0x3f10;
+  REG_BLDALPHA = 0xc08;
+  REG_BLDCNT = 0x3f10;
   MapGrid_CopyCellAttributes(18, 40, 18, 16, 23, 10);
   Func_02003648(7);
   Func_02003648(5);
@@ -1906,9 +1930,9 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Func_02003648(2);
   Func_02003648(1);
   Event_PrepareActorAndApplyValue(0, 0);
-  Actor_SetSpeed((OWNER), 0xcccc, 0x6666);
-  Actor_WalkToAndWait((OWNER), 0x200, 0x118);
-  Actor_FaceDirectionAndWait((OWNER), 0xc000);
+  Actor_SetSpeed((OWNER), 0.8);
+  Actor_WalkToAndWait((OWNER), 512, 280);
+  Actor_FaceDirectionAndWait((OWNER), FACING_NORTH);
   Actor_RunRepeatedMotion((OWNER), 2);
   FieldEvent_Wait(20);
   PartyInventory_Remove(222);
@@ -1933,22 +1957,22 @@ void MarsLighthouseAerie_LightBeacon(void) {
     Actor_SetSpriteFlags(created, 0);
     A(object)->speedLimit = 0x6666;
     A(object)->acceleration = 0xccc;
-    A(object)->gravity = 0x8000;
+    A(object)->gravity = px(1) / 2;
     block = HeapSlot_Alloc(68, 0x608);
-    Item_LoadIcon(247);
+    Item_LoadIcon(ITEM_MARS_STAR);
     tiles = (block + 0x400);
     Vram_Load(sprite->vramBlock, 128, tiles);
     HeapSlot_Release(68);
     A(object)->motionFlags = zero;
-    FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1180000);
+    FieldActor_SetMoveTarget(object, 512, 128, 280);
     FieldActor_WaitForMove(object);
     A(object)->motionFlags = 4;
     FieldEvent_Wait(60);
     A(object)->motionFlags = zero;
-    FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1080000);
+    FieldActor_SetMoveTarget(object, 512, 128, 264);
     FieldActor_WaitForMove(object);
     FieldEvent_Wait(20);
-    FieldActor_SetMoveTarget(object, 0x2000000, 0x500000, 0xfc0000);
+    FieldActor_SetMoveTarget(object, 512, 80, 252);
     FieldActor_WaitForMove(object);
     FieldEvent_Wait(20);
     Actor_Release(object);
@@ -1959,41 +1983,41 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldActor_SetSpritePriority(25, 2);
   FieldActor_SetSpritePriority(26, 2);
   FieldActor_SetSpritePriority(27, 2);
-  Event_PlaySound(141);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  Event_PlaySound(SE_RUMBLE);
+  MapGrid_SetShake(1, 1, 1);
   FieldActor_SetSpriteColor(((s32)Actor_Get(23)), 7);
   beam = (s32)Actor_Get(23);
   A(beam)->scaleX = 0x1999;
   A(beam)->scaleY = 0xffff0000;
   A(beam)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(beam, 0x2000000, 0x400000, 0xcc0000);
+  FieldActor_SetPositionAndResetMotion(beam, px(512), px(64), px(204));
   FieldActor_SetSpriteColor(((s32)Actor_Get(24)), 7);
   beam2 = (s32)Actor_Get(24);
   A(beam2)->scaleX = 0x1999;
   A(beam2)->scaleY = 0xffff0000;
   A(beam2)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(beam2, 0x2000000, 0x600000, 0xcc0000);
+  FieldActor_SetPositionAndResetMotion(beam2, px(512), px(96), px(204));
   Task_AddFrame(Orbs_SpawnRising, 0x480);
-  Actor_FaceDirection(7, 0xe000, 0);
-  Actor_FaceDirection(5, 0xe000, 0);
-  Actor_FaceDirection(6, 0xe000, 0);
-  Actor_FaceDirection(19, 0xd000, 0);
-  Actor_FaceDirection(0, 0xa000, 0);
-  Actor_FaceDirection(3, 0xa000, 0);
-  Actor_FaceDirection(1, 0xa000, 0);
-  Actor_FaceDirection(1, 0xa000, 80);
+  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(19, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(0, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(3, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(1, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(1, FACING_NORTHWEST, 80);
   Actor_SetScript(23, gData_020060b4);
   Actor_SetScript(24, gData_020060b4);
-  Event_PlaySound(145);
-  MapGrid_SetShake(0x60000, 0x60000, 0x10000);
+  Event_PlaySound(SE_CRASH);
+  MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplyTarget(0x4063ff, 0);
   PaletteFade_Interpolate(16);
   System_Wait(20);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(24);
   System_Wait(60);
-  Event_PlaySound(141);
-  Event_SetFlag(0x200);
+  Event_PlaySound(SE_RUMBLE);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   A(((s32)Actor_Get(23)))->y = 0xffc80000;
   A(((s32)Actor_Get(24)))->y = 0xffe80000;
   FieldActor_SetSpriteColor(((s32)Actor_Get(25)), 7);
@@ -2001,19 +2025,19 @@ void MarsLighthouseAerie_LightBeacon(void) {
   A(piece)->scaleY = 0xffff0000;
   A(piece)->scaleX = (A(((s32)Actor_Get(23)))->scaleX);
   A(piece)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(piece, 0x2000000, 0x80000, 0xcc0000);
+  FieldActor_SetPositionAndResetMotion(piece, px(512), px(8), px(204));
   FieldActor_SetSpriteColor(((s32)Actor_Get(26)), 7);
   piece2 = (s32)Actor_Get(26);
   A(piece2)->scaleY = 0xffff0000;
   A(piece2)->scaleX = (A(((s32)Actor_Get(23)))->scaleX);
   A(piece2)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(piece2, 0x2000000, 0x280000, 0xcc0000);
+  FieldActor_SetPositionAndResetMotion(piece2, px(512), px(40), px(204));
   FieldActor_SetSpriteColor(((s32)Actor_Get(27)), 7);
   piece3 = (s32)Actor_Get(27);
   A(piece3)->scaleY = 0xffff0000;
   A(piece3)->scaleX = (A(((s32)Actor_Get(23)))->scaleX);
   A(piece3)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(piece3, 0x2000000, 0x480000, 0xcc0000);
+  FieldActor_SetPositionAndResetMotion(piece3, px(512), px(72), px(204));
   MapGrid_CopyCellsTo(106, 36, 87, 7, 17, firstBeam);
   MapGrid_CopyCellsTo(42, 98, 23, 69, 17, firstBeam);
   MapGrid_CopyCellAttributes(0, 40, 18, 20, firstBeam, 10);
@@ -2032,11 +2056,11 @@ void MarsLighthouseAerie_LightBeacon(void) {
   owner = OWNER;
   {
     s32 speed = 0xe000;
-    Actor_SetPositionAndFacing(owner, 0x1e40000, 0x1380000, speed);
+    Actor_SetPositionAndFacing(owner, px(484), px(312), speed);
   }
   FieldActor_SetSpritePriority((OWNER), 1);
   System_Wait(1);
-  MapGrid_SetShake(0x40000, 0x40000, 0x10000);
+  MapGrid_SetShake(4, 4, 1);
   PaletteFade_ApplyTarget(0x4063ff, 0);
   PaletteFade_Interpolate(120);
   Actor_SetScript(23, gData_020060fc);
@@ -2045,22 +2069,22 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_SetScript(26, gData_020060fc);
   Actor_SetScript(27, gData_020060fc);
   System_Wait(120);
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   PaletteFade_ApplyTarget(0x203210, 0);
   PaletteFade_Interpolate(120);
   System_Wait(120);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(2, 2, 1);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(120);
   System_Wait(120);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
-  Event_PlaySound(78);
+  MapGrid_SetShake(1, 1, 1);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   A(((s32)Actor_Get(23)))->scaleY = 0x51e;
   Actor_SetScript(24, gData_02006120);
   Actor_SetScript(25, gData_02006120);
   Actor_SetScript(26, gData_02006120);
   Actor_RunScriptAndWait(27, gData_02006120);
-  Event_PlaySound(0x186);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldActor_SetSpriteColor(((s32)Actor_Get(23)), 15);
   FieldEvent_Wait(20);
   Actor_RunScriptAndWait(23, gData_02006150);
@@ -2077,27 +2101,27 @@ L_0200bcea:
   System_Wait(1);
   if ((u32)(*(s32 *)(s32)&Data_02006ccc) <= (u32)100)
     goto L_0200bcea;
-  Event_PlaySound(72);
+  Event_PlaySound(MUS_072);
   FieldEvent_Wait(120);
-  Actor_ShowEmote(3, 0x109, 40);
+  Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   FieldEvent_SetMessageId((s32)MsgTheBeaconIs);
   Event_ShowMessage(3, 0);
-  FieldActor_ShowEmote(2, 0x105, 40);
+  FieldActor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(2, 0);
   Event_ShowMessage(6, 0);
-  FieldActor_ShowEmote(7, 0x109, 20);
+  FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessage(7, 0);
-  FieldActor_ShowEmote(1, 0x103, 40);
+  FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Event_ShowMessage(1, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirection((OWNER), 0, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirection(19, 0, 0);
-  Actor_FaceDirection(3, 0x8000, 0);
-  Actor_FaceDirection(0, 0x8000, 0);
-  Actor_FaceDirection(1, 0x8000, 0);
-  Actor_FaceDirection(2, 0x8000, 20);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection((OWNER), FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(19, FACING_EAST, 0);
+  Actor_FaceDirection(3, FACING_WEST, 0);
+  Actor_FaceDirection(0, FACING_WEST, 0);
+  Actor_FaceDirection(1, FACING_WEST, 0);
+  Actor_FaceDirection(2, FACING_WEST, 20);
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation((OWNER), 3);
   Actor_SetAnimation(5, 3);
@@ -2108,16 +2132,16 @@ L_0200bcea:
   Actor_SetAnimation(1, 3);
   Actor_SetAnimationAndWait(2, 3);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(7, 0x4000, 0);
-  Actor_FaceDirection((OWNER), 0x4000, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(19, 0xb000, 0);
-  Actor_FaceDirection(3, 0x4000, 0);
-  Actor_FaceDirection(1, 0xe000, 0);
-  Actor_FaceDirectionAndWait(0, 0);
-  FieldEvent_ShowMessageThenWait(0x4005, 0, 10);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_FaceDirection((OWNER), FACING_SOUTH, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(19, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(3, FACING_SOUTH, 0);
+  Actor_FaceDirection(1, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionAndWait(0, FACING_EAST);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 5, 0, 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   FieldPsynergy_StartMindReadWave(23, 24);
   Message_ShowCentered(((s32)MsgTheBeaconIs + 6), 1);
@@ -2136,24 +2160,25 @@ L_0200bcea:
   Func_02000610(1);
   Func_02000610(2);
   Func_02000610(3);
-  Actor_FaceDirection(0, 0xc000, 40);
-  Actor_FaceDirection(0, 0x4000, 40);
-  Actor_FaceDirectionAndWait(0, 0x4000);
-  FieldEvent_ShowMessageThenWait(0x6000, 0, 10);
+  Actor_FaceDirection(0, FACING_NORTH, 40);
+  Actor_FaceDirection(0, FACING_SOUTH, 40);
+  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 0, 0, 10);
   FieldPsynergy_StartMindReadWave(23, 24);
   message = ((s32)MsgTheBeaconIs + 9);
   Message_ShowCentered(message, 1);
   FieldPsynergy_StopMindReadWave();
   Func_02000640(3);
-  Actor_FaceDirectionAndWait(0x6003, 0x4000);
+  Actor_FaceDirectionAndWait(24579, FACING_SOUTH);
   A(((s32)Actor_Get(3)))->update = 0;
   // Read as a word, so the store to the actor before it may alias.
   later =
       (struct AerieEventWork *)((struct HeapWords *)Ram_HeapSlots)->eventWord;
   later->stepRead = later->stepRead + 1;
-  FieldActor_ShowEmote(3, 0x100, 20);
+  FieldActor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_ShowMessageThenWait(3, 0, 20);
-  Event_PlaySound(201);
+  Event_PlaySound(SE_ASCEND);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(20);
   System_Wait(20);
@@ -2171,7 +2196,6 @@ L_0200bcea:
        ->v)
 void Func_020004a4(void);
 
-/// ★ Named from the game: "What could he be doing?" (MsgWhatCouldHe)
 void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   s32 owner, i, ownerInLoop, ownerAfterLoop, quarterTurn;
   s32 threeSixteenthsTurn, actor, t2, t3;
@@ -2210,15 +2234,15 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_SetAnimation(20, 8);
   Actor_SetAnimation(21, 8);
   Actor_SetAnimation(22, 7);
-  Actor_SetPosition(19, 0x1f20000, 0x1400000);
-  Actor_SetPosition(1, 0x21a0000, 0x1400000);
+  Actor_SetPosition(19, 498, 320);
+  Actor_SetPosition(1, 538, 320);
   t17 = *(s32 *)owner;
-  Actor_SetPosition(t17, 0x1fa0000, 0x1180000);
+  Actor_SetPosition(t17, 506, 280);
   System_Wait(1);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   t21 = FieldCamera_GetActor();
   ((struct Actor *)t21)->motionFlags = 0;
-  FieldCamera_MoveTo(0x2000000, 0x600000, 0x1200000, 0);
+  FieldCamera_MoveTo(512, 96, 288, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   t25 = (s32)Ram_HeapSlots->eventWork;
@@ -2226,34 +2250,34 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirection(6, 0, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
   t31 = *(s32 *)owner;
-  Actor_FaceDirection(t31, 0, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirection(19, 0, 0);
-  Actor_FaceDirection(0, 0x8000, 0);
-  Actor_FaceDirection(3, 0x8000, 0);
-  Actor_FaceDirection(1, 0x8000, 0);
-  Actor_FaceDirection(2, 0x8000, 40);
-  Actor_FaceDirectionAndWait(6, 0xe000);
+  Actor_FaceDirection(t31, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(19, FACING_EAST, 0);
+  Actor_FaceDirection(0, FACING_WEST, 0);
+  Actor_FaceDirection(3, FACING_WEST, 0);
+  Actor_FaceDirection(1, FACING_WEST, 0);
+  Actor_FaceDirection(2, FACING_WEST, 40);
+  Actor_FaceDirectionAndWait(6, FACING_NORTHEAST);
   FieldEvent_SetMessageId((s32)MsgWhatCouldHe);
   Event_ShowMessage(6, 0);
-  Actor_FaceDirection(3, 0x6000, 20);
+  Actor_FaceDirection(3, FACING_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(3, 4);
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(19, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirection(5, 0x2000, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(7, quarterTurn, 0);
   t49 = *(s32 *)owner;
   Actor_FaceDirection(t49, quarterTurn, 0);
-  Actor_FaceDirection(0, 0x6000, 0);
-  Actor_FaceDirection(2, 0x6000, 0);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1400000, 1);
+  Actor_FaceDirection(0, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(2, FACING_SOUTHWEST, 0);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirectionAndWait(19, 0xd000);
+  Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
   Actor_SetAnimation(19, 3);
   Event_ShowMessage(19, 0);
   Actor_SetAnimation(7, 3);
@@ -2265,17 +2289,17 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_SetAnimation(3, 3);
   Actor_SetAnimation(2, 3);
   Actor_SetAnimationAndWait(1, 3);
-  Actor_SetAttachedEffect(19, 0x102);
+  Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(19, 0);
   Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(19, 0xb000);
+  Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHWEST);
   Actor_SetAnimationAndWait(19, 3);
-  Actor_ShowEmote(1, 0x103, 20);
+  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Event_ShowMessage(1, 0);
   t76 = Actor_Get(28);
   FieldActor_SetSpriteColor(t76, 15);
-  Actor_SetPosition(28, 0x2000000, 0x1680000);
+  Actor_SetPosition(28, 512, 360);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
@@ -2293,14 +2317,14 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(1, quarterTurn, 0);
   Actor_FaceDirection(3, quarterTurn, 0);
   Actor_FaceDirectionAndWait(0, quarterTurn);
-  FieldActor_ShowEmote(0, 0x109, 20);
+  FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessage(0, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   t101 = *(s32 *)owner;
-  Actor_FaceDirection(t101, 0, 0);
-  Actor_FaceDirection(0, 0x8000, 20);
+  Actor_FaceDirection(t101, FACING_EAST, 0);
+  Actor_FaceDirection(0, FACING_WEST, 20);
   t104 = *(s32 *)owner;
   Actor_SetAnimation(t104, 3);
   Actor_SetAnimationAndWait(0, 3);
@@ -2321,7 +2345,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldPsynergy_StopMindReadWave();
   ((struct Actor *)actor)->facing = quarterTurn;
   Actor_SetAnimation(5, 1);
-  FieldActor_ShowEmote(5, 0x100, 20);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(5, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
@@ -2330,42 +2354,42 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
-  FieldActor_ShowEmote(1, 0x100, 20);
+  FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(1, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_ShowEmote(19, 0x100, 20);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(19, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   FieldEvent_Wait(40);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1280000, 1);
-  Actor_FaceDirection(19, 0x5000, 20);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 296, 1);
+  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(19, threeSixteenthsTurn, 40);
-  Actor_FaceDirectionAndWait(19, 0xd000);
+  Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
   Event_ShowMessage(19, 0);
-  Actor_FaceDirectionAndWait(5, 0x2000);
-  Event_ShowMessage(0x4005, 0);
-  Actor_FaceDirectionAndWait(0, 0x8000);
-  Event_ShowMessage(0x8000, 0);
-  Actor_FaceDirectionAndWait(7, 0);
+  Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 5, 0);
+  Actor_FaceDirectionAndWait(0, FACING_WEST);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
   Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(2, 0x8000);
-  Actor_ShowEmote(2, 0x109, 40);
+  Actor_FaceDirectionAndWait(2, FACING_WEST);
+  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_OpenMessage(2, 0);
   t156 = *(s32 *)owner;
-  Actor_FaceDirectionAndWait(t156, 0);
+  Actor_FaceDirectionAndWait(t156, FACING_EAST);
   t158 = *(s32 *)owner;
   FieldEvent_AskYesNoWithActorAnimation(t158, 0);
   t160 = *(s32 *)owner;
   Actor_WaitForAnimationChange(t160);
   PaletteFade_ApplyTarget(0x10004, 1);
   PaletteFade_Interpolate(40);
-  Event_PlaySound(78);
-  Event_PlaySound(141);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Event_PlaySound(SE_RUMBLE);
+  MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
   t168 = *(s32 *)owner;
   Func_02000610(t168);
@@ -2378,11 +2402,11 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Func_02000610(2);
   Func_02000610(3);
   FieldEvent_Wait(20);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1200000, 1);
+  FieldCamera_SetSpeed(1.6);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
   FieldTask_Remove((s32)Func_020004a4);
-  Event_PlaySound(140);
+  Event_PlaySound(SE_SPIN);
   t184 = Actor_Get(8);
   FieldActor_SetSpriteColor(t184, 12);
   t186 = Actor_Get(9);
@@ -2395,25 +2419,25 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   ((struct Actor *)actor)->scaleX = 0x1999;
   ((struct Actor *)actor)->motionFlags = 0;
   ((struct Actor *)actor)->priorityFlags |= 2;
-  FieldActor_SetPositionAndResetMotion(actor, 0x2000000, 0x400000, 0xcc0000);
+  FieldActor_SetPositionAndResetMotion(actor, px(512), px(64), px(204));
   i = 0;
 L_0200c66c:
   if (i == 20) {
-    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShake(2, 2, 1);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
       ownerInLoop = (s32)&party->currentOwner;
     }
     t195 = *(s32 *)ownerInLoop;
-    FieldActor_ShowEmote(t195, 0x100, 0);
-    FieldActor_ShowEmote(5, 0x100, 0);
-    FieldActor_ShowEmote(6, 0x100, 0);
-    FieldActor_ShowEmote(7, 0x100, 0);
-    FieldActor_ShowEmote(19, 0x100, 0);
-    FieldActor_ShowEmote(0, 0x100, 0);
-    FieldActor_ShowEmote(1, 0x100, 0);
-    FieldActor_ShowEmote(2, 0x100, 0);
-    Actor_ShowEmote(3, 0x100, 0);
+    FieldActor_ShowEmote(t195, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     t205 = *(s32 *)ownerInLoop;
     Func_02000640(t205);
     Func_02000640(5);
@@ -2431,15 +2455,15 @@ L_0200c66c:
   i = (i + 1);
   if ((u32)i <= (u32)39)
     goto L_0200c66c;
-  Event_PlaySound(63);
+  Event_PlaySound(MUS_063);
   Actor_SetScript(23, (s32)gMarsLighthouseAerie_WatchGoldenSunRiseScript);
   FieldEvent_Wait(80);
   FieldActor_Jump(1, 4, 10);
   FieldActor_Jump(1, 6, 10);
-  Actor_FaceDirectionAndWait(1, 0x8000);
+  Actor_FaceDirectionAndWait(1, FACING_WEST);
   Event_ShowMessage(1, 0);
   Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(6, 0xa000);
+  Actor_FaceDirectionAndWait(6, FACING_NORTHWEST);
   Event_ShowMessage(6, 0);
   Event_ShowMessage(19, 0);
   {
@@ -2447,37 +2471,37 @@ L_0200c66c:
     ownerAfterLoop = (s32)&party->currentOwner;
   }
   t228 = *(s32 *)ownerAfterLoop;
-  Actor_FaceDirection(t228, 0, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirection(19, 0, 0);
-  Actor_FaceDirection(0, 0x8000, 0);
-  Actor_FaceDirection(1, 0x8000, 0);
-  Actor_FaceDirection(2, 0x8000, 0);
-  Actor_FaceDirection(3, 0x8000, 40);
+  Actor_FaceDirection(t228, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(19, FACING_EAST, 0);
+  Actor_FaceDirection(0, FACING_WEST, 0);
+  Actor_FaceDirection(1, FACING_WEST, 0);
+  Actor_FaceDirection(2, FACING_WEST, 0);
+  Actor_FaceDirection(3, FACING_WEST, 40);
   t238 = *(s32 *)ownerAfterLoop;
-  Actor_FaceDirection(t238, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirection(19, 0xc000, 0);
-  Actor_FaceDirection(0, 0xc000, 0);
-  Actor_FaceDirection(1, 0xc000, 0);
-  Actor_FaceDirection(2, 0xc000, 0);
-  Actor_FaceDirection(3, 0xc000, 20);
-  Actor_FaceDirectionAndWait(3, 0x8000);
+  Actor_FaceDirection(t238, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(19, FACING_NORTH, 0);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(1, FACING_NORTH, 0);
+  Actor_FaceDirection(2, FACING_NORTH, 0);
+  Actor_FaceDirection(3, FACING_NORTH, 20);
+  Actor_FaceDirectionAndWait(3, FACING_WEST);
   Event_ShowMessage(3, 0);
   t250 = *(s32 *)ownerAfterLoop;
-  Actor_FaceDirection(t250, 0, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirection(19, 0, 0);
-  Actor_FaceDirection(0, 0x8000, 0);
-  Actor_FaceDirection(1, 0x8000, 0);
-  Actor_FaceDirection(2, 0x8000, 0);
-  Actor_FaceDirection(3, 0x8000, 20);
+  Actor_FaceDirection(t250, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(19, FACING_EAST, 0);
+  Actor_FaceDirection(0, FACING_WEST, 0);
+  Actor_FaceDirection(1, FACING_WEST, 0);
+  Actor_FaceDirection(2, FACING_WEST, 0);
+  Actor_FaceDirection(3, FACING_WEST, 20);
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(6, 3);
@@ -2487,69 +2511,69 @@ L_0200c66c:
   Actor_SetAnimation(3, 3);
   Actor_SetAnimation(2, 3);
   Actor_SetAnimationAndWait(1, 3);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1380000, 1);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 312, 1);
   Actor_SetPosition(8, 0, 0);
   t271 = Actor_Get(9);
   FieldActor_SetSpriteColor(t271, 7);
   FieldActor_SetSpritePriority(9, 1);
   t274 = Actor_Get(9);
   ((struct Actor *)t274)->priorityFlags &= 253;
-  Event_PlaySound(140);
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  Event_PlaySound(SE_SPIN);
+  MapGrid_SetShake(3, 3, 1);
   PaletteFade_ApplyTarget(0x203210, 0);
   PaletteFade_Interpolate(40);
-  Actor_FaceDirection(7, 0x4000, 0);
-  Actor_FaceDirection(5, 0x2000, 0);
-  Actor_FaceDirection(6, 0xe000, 0);
-  Actor_FaceDirection(19, 0xb000, 0);
+  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(19, FACING_NORTH_NORTHWEST, 0);
   t284 = *(s32 *)ownerAfterLoop;
-  Actor_FaceDirection(t284, 0x4000, 0);
-  Actor_FaceDirection(3, 0x4000, 0);
-  Actor_FaceDirection(6, 0x8000, 0);
-  Actor_FaceDirection(0, 0, 0);
-  Actor_FaceDirection(1, 0xc000, 80);
+  Actor_FaceDirection(t284, FACING_SOUTH, 0);
+  Actor_FaceDirection(3, FACING_SOUTH, 0);
+  Actor_FaceDirection(6, FACING_WEST, 0);
+  Actor_FaceDirection(0, FACING_EAST, 0);
+  Actor_FaceDirection(1, FACING_NORTH, 80);
   FieldActor_Jump(1, 4, 0);
-  Actor_SetSpeed(1, 0x33333, 0x19999);
+  Actor_SetSpeed(1, 3.2);
   t292 = Actor_Get(1);
   FIELD_AT(t292, u8, 90) &= 254;
-  Actor_WalkToAndWait(1, 0x21e, 0x148);
+  Actor_WalkToAndWait(1, 542, 328);
   FieldEvent_Wait(1);
   t296 = Actor_Get(1);
   FIELD_AT(t296, u8, 90) |= 1;
   Event_ShowMessage(1, 0);
-  Actor_FaceDirection(0, 0x4000, 0);
-  Actor_FaceDirection(3, 0x2000, 0);
-  Actor_FaceDirection(2, 0x4000, 40);
-  Actor_FaceDirection(3, 0x6000, 0);
-  Actor_FaceDirection(2, 0xa000, 0);
-  Actor_FaceDirection(0, 0xe000, 20);
-  Actor_ShowEmote(0, 0x103, 0);
-  Actor_FaceDirectionAndWait(0, 0x4000);
+  Actor_FaceDirection(0, FACING_SOUTH, 0);
+  Actor_FaceDirection(3, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(2, FACING_SOUTH, 40);
+  Actor_FaceDirection(3, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(2, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(0, FACING_NORTHEAST, 20);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
   FieldActor_Jump(0, 4, 10);
-  Event_ShowMessage(0x1000, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 0, 0);
   Actor_SetAnimation(1, 4);
   Event_ShowMessage(1, 0);
-  Actor_FaceDirection(3, 0x4000, 0);
-  Actor_ShowEmote(3, 0x100, 20);
+  Actor_FaceDirection(3, FACING_SOUTH, 0);
+  Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(3, 0);
-  Actor_SetAttachedEffect(7, 0x102);
+  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(7, 0);
   FieldActor_Jump(5, 4, 10);
   Event_ShowMessage(5, 0);
-  Event_ShowMessage(0x8002, 0);
-  Actor_FaceDirectionAndWait(19, 0xd000);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 2, 0);
+  Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
   FieldActor_Jump(19, 2, 10);
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(19, 0);
-  Event_PlaySound(0x12a);
-  Event_PlaySound(78);
+  Event_PlaySound(SE_298);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
-  Event_PlaySound(140);
+  Event_PlaySound(SE_SPIN);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(20);
   System_Wait(240);
-  *(u16 *)0x4000000 = 0;
+  REG_DISPCNT = 0;
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(8);
   System_Wait(8);
@@ -2557,39 +2581,34 @@ L_0200c66c:
   return;
 }
 
-/// ★ Named from the game: "Do not let your sadness overwhelm you, ! Go!"
-/// (MsgDoNotLet)
 void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(19, FACING_SOUTH + FACING_STEP);
   FieldEvent_SetMessageId(MsgDoNotLet);
-  Event_ShowMessage(0x8013, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 19, 0);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 480, 348);
   Actor_FaceDirectionAndWait(19, FACING_NORTHWEST + FACING_STEP);
   Event_End();
 }
 
-/// ★ Named from the game: "Do not let your sadness overwhelm you, ! Go!"
-/// (MsgDoNotLet)
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(19, FACING_SOUTHEAST + FACING_STEP);
   FieldEvent_SetMessageId(MsgDoNotLet);
-  Event_ShowMessage(0x8013, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 19, 0);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 544, 348);
   Actor_FaceDirectionAndWait(19, FACING_NORTHWEST + FACING_STEP);
   Event_End();
 }
 
-/// ★ Named from the game: "Will you cast in the Mars Star?" (MsgWillYouCast)
 void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetPosition(18, PIXELS(512), PIXELS(232));
+  Actor_SetPosition(18, 512, 232);
   System_Wait(1);
   FieldEvent_SetMessageId(MsgWillYouCast);
   Event_OpenMessage(18, 0);
@@ -2601,11 +2620,11 @@ void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   }
   Actor_SetPosition(18, 0, 0);
   System_Wait(1);
-  Event_SetFlag(0x202);
+  Event_SetFlag(FLAG_SCENE_TEMP_02);
   Event_End();
 }
 
-void Func_02004d14(void) { GameFlag_Clear(0x202); }
+void Func_02004d14(void) { GameFlag_Clear(FLAG_SCENE_TEMP_02); }
 
 // From patch 1, as is Func_02004d50.
 #if TLA_PATCH_1
@@ -2631,8 +2650,7 @@ void Func_02004d50(s32 id) {
   struct MarsLighthouseAerieParty *party =
       (struct MarsLighthouseAerieParty *)&gMainRoutineWork;
   s32 held = party->held;
-  /* FAKEMATCH(temporary): the word held in a halfword struct; as a plain store
-   * of -1, 42 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the word held in a halfword struct. */
   struct HeldHalfword raw = *(struct HeldHalfword *)&party->held;
   struct HeldHalfword ones;
 
@@ -2649,7 +2667,6 @@ void Func_02004d50(s32 id) {
 
 #endif
 
-/// ★ Named from the game: ", I understand your loss..." (MsgIUnderstandYour)
 void MarsLighthouseAerie_TalkToConsoler(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2668,8 +2685,6 @@ void MarsLighthouseAerie_TalkToConsoler(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "I...can't see you, but I sense that you're
-/// nearby..." (MsgUhhhhnnnICan)
 void MarsLighthouseAerie_TalkToBlindedParent(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2684,8 +2699,6 @@ void MarsLighthouseAerie_TalkToBlindedParent(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Tell Dora...to live her life to the fullest...for
-/// me..." (MsgKoffKoffYou)
 void MarsLighthouseAerie_TalkToCoughingParent(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2700,8 +2713,6 @@ void MarsLighthouseAerie_TalkToCoughingParent(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "I am so happy...to have one last chance to see you
-/// again..." (MsgUnnnnIAm)
 void MarsLighthouseAerie_TalkToGladParent(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2749,30 +2760,96 @@ void Func_02004ee4(void) { Func_02004e80(29, 21); }
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS_FADE(Palette_SetColorsFade, gData_02006ce0,
-                               Data_02006ce4, Data_02006ce8, Data_02006cd4,
-                               Func_020051e0)
+void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
+  u8 *saved = Ram_HeapSlots->block32;
 
-DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
-                           List_CountEntries, gData_02006ce0, gData_02006cdc,
-                           15, gData_02006cd8, 16, gData_02006cd0,
-                           PaletteCycle_Fade)
+  gData_02006ce0 = slots;
+  Data_02006ce4 = colours;
+  Data_02006ce8 = a;
+  Data_02006cd4 = b;
+  if (*slots != 0xffff && *colours != 0xffff) {
+  next:
+    {
+      int red = *colours++;
+      int index = *slots++;
+      int green = *colours++;
+      int blue = *colours++;
+      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
+    }
+    if (*slots != 0xffff && *colours != 0xffff)
+      goto next;
+  }
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  PaletteFade_ApplyTarget(0x10000, 0);
+  if ((s8)gMainRoutineWork.unk2c2 == 2)
+    Func_020051e0();
+}
+
+void Func_02004fac(void) {
+  gData_02006cf0 = 0;
+  gData_02006cec = List_CountEntries(gData_02006ce0);
+  gData_02006cdc = 15;
+  gData_02006cd8 = 16;
+  gData_02006cd0 = 1;
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
 void Func_02005010(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START(Func_02005030, gData_02006cf0, gData_02006cec,
-                           List_CountEntries, gData_02006ce0, gData_02006cdc, 2,
-                           gData_02006cd8, 2, gData_02006cd0, PaletteCycle_Fade)
+void Func_02005030(void) {
+  gData_02006cf0 = 0;
+  gData_02006cec = List_CountEntries(gData_02006ce0);
+  gData_02006cdc = 2;
+  gData_02006cd8 = 2;
+  gData_02006cd0 = 1;
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
-DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
+#include "shared/list_count_entries.h"
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02006cd8, gData_02006cdc,
-                          Data_02006ce8, gData_02006cec, Data_02006cd4,
-                          gData_02006cf0, gData_02006ce0, gData_02006cd0,
-                          Data_02006ce4)
+void PaletteCycle_Fade(void) {
+  s32 step;
+  u32 i;
+  u16 *src;
+  volatile u16 *dst;
+  int red, green, blue;
+
+  step = 0;
+  if (gData_02006cd8 != 0) {
+    if (--gData_02006cd8 == 0) {
+      step = 1;
+      gData_02006cd8 = gData_02006cdc;
+      if (gData_02006cdc > 2)
+        gData_02006cdc--;
+    }
+  }
+  if (step == 0)
+    return;
+  src = Data_02006ce8;
+  for (i = 0; i < gData_02006cec; i++) {
+    dst = &BG_PLTT[Data_02006cd4[gData_02006cf0 * gData_02006cec + i]];
+    red = *src++;
+    green = *src++;
+    blue = *src++;
+    SET_RGB(*dst, red, green, blue);
+  }
+  dst = &BG_PLTT[gData_02006ce0[gData_02006cec]];
+  if (gData_02006cd0 != 0)
+    src = Data_02006ce4 + gData_02006cec * 3;
+  else
+    src = Data_02006ce8 + gData_02006cec * 3;
+  red = *src++;
+  green = *src++;
+  blue = *src++;
+  SET_RGB(*dst, red, green, blue);
+  gData_02006cd0 ^= 1;
+  if (++gData_02006cf0 == gData_02006cec)
+    gData_02006cf0 = 0;
+}
 
 void Func_020051e0(void) {
   struct MarsLighthouseAerieEventWork *work = Ram_HeapSlots->eventWork;
@@ -2815,7 +2892,7 @@ void Func_02005268(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Event_PlaySound(0x256);
+      Event_PlaySound(SE_598);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }
@@ -2869,7 +2946,7 @@ void Func_02005268(struct Actor *object) {
 /* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:2908: structure has no member
+ * games/tla/src/scene/mars_lighthouse_aerie.c:2994: structure has no member
  * named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
@@ -2886,7 +2963,7 @@ struct SparkleSprite__s53e4 {
 
 /* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2898:
+ * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2985:
  * incompatible types in assignment. */
 struct SparkleWork__s53e4 {
   struct SparkleSprite__s53e4 sprites[4];
@@ -2899,8 +2976,11 @@ struct SparkleWork__s53e4 {
 
 /* VIEW(s3370): routine BattleEffect_GetObjectPriority as s32
  * BattleEffect_GetObjectPriority(struct Actor *object); module/scene/scene.h
- * has void BattleEffect_GetObjectPriority(void); not tried:
- * BattleEffect_GetObjectPriority's bound declaration was not found. */
+ * has void BattleEffect_GetObjectPriority(void); tried as the definition's s32
+ * BattleEffect_GetObjectPriority(struct Actor *object), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_aerie.c:3004: too many arguments to
+ * function `BattleEffect_GetObjectPriority'. */
 extern s32 Func_020057b4__s3370(struct Actor *object) __asm__(
     "BattleEffect_GetObjectPriority");
 
@@ -3000,17 +3080,47 @@ u32 gData_02005b0c[] = {
     0x8b008a, 0x8d008c, 0x89008e, 0x8a0089, 0x8c008b, 0x8e008d,
 };
 
-DEFINE_G_DATA_02005B54(gData_02005b54)
+s32 gData_02005b54[] = {                                                               
+      SC_LABEL(1),                                                             
+      SC_ADD(SW_SCALE_X, -1536),                                               
+      SC_WAIT(1),                                                              
+      SC_LOOP(4, SC_TO(1)),                                                    
+      SC_LABEL(2),                                                             
+      SC_ADD(SW_SCALE_X, 0x600),                                               
+      SC_WAIT(1),                                                              
+      SC_LOOP(4, SC_TO(2)),                                                    
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
-DEFINE_G_DATA_02002F1C(gData_02005ba8, 496, 328)
+u32 gData_02005ba8[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(px(496), 0, px(328)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02002F1C(gData_02005bd0, 480, 328)
+u32 gData_02005bd0[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(px(480), 0, px(328)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02002F1C(gData_02005bf8, 488, 320)
+u32 gData_02005bf8[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(px(488), 0, px(320)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02002F1C(gData_02005c20, 528, 328)
+u32 gData_02005c20[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(px(528), 0, px(328)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328)
+u32 gData_02005c48[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(px(512), 0, px(328)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
 s32 gData_02005c70[] = {
     23, 9, -1024, 23, 10, -1024,
@@ -3027,21 +3137,66 @@ u32 gData_02005cac[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02002F44(gData_02005ce8, 500, 306)
+u32 gData_02005ce8[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(500), 0, px(306)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F88(gData_02005d2c, 524, 306, 10)
+u32 gData_02005d2c[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(524), 0, px(306)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F44(gData_02005d70, 488, 320)
+u32 gData_02005d70[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(488), 0, px(320)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F44(gData_02005db4, 472, 304)
+u32 gData_02005db4[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(472), 0, px(304)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02003534(gData_02005df8, 464, 280, 10)
+u32 gData_02005df8[] = {                                                               
+      SC_ARG(2),   SC_MOVE(px(464), 0, px(280)), SC_SYNC,     SC_ARG(1), 
+      SC_WAIT(10), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(10), SC_END,    
+  };
 
-DEFINE_G_DATA_02002F88(gData_02005e3c, 538, 320, 10)
+u32 gData_02005e3c[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(538), 0, px(320)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
+u32 gData_02005e80[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(552), 0, px(304)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02005EC4(gData_02005ec4)
+u32 gData_02005ec4[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(560), 0, px(280)),                   
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_WEST),                         
+          SC_WAIT(10), SC_END,                                                 
+  };
 
 u32 gData_02005f08[] = {
     39, 2, 4, 0x1d80000, 0, 0x1400000,
@@ -3055,15 +3210,41 @@ u32 gData_02005f50[] = {
     39, 1, 22, 39, 1, 17,
 };
 
-DEFINE_G_DATA_02002F88(gData_02005f98, 486, 286, 10)
+u32 gData_02005f98[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(486), 0, px(286)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F1C(gData_02005fdc, 504, 300)
+u32 gData_02005fdc[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(px(504), 0, px(300)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02002F1C(gData_02006004, 528, 292)
+u32 gData_02006004[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(px(528), 0, px(292)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02005EC4(gData_0200602c)
+u32 gData_0200602c[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(560), 0, px(280)),                   
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_WEST),                         
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F88(gData_02006070, 548, 292, 10)
+u32 gData_02006070[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(px(548), 0, px(292)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
 s32 gData_020060b4[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
@@ -3076,7 +3257,12 @@ s32 gData_020060b4[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02002F94(gData_020060fc, 896, 160)
+s32 gData_020060fc[] = {                                                               
+      SC_ADD(SW_SCALE_X, -896),                                                 
+      SC_WAIT(1),                                                              
+      SC_LOOP(160, SC_TOP),                                                     
+      SC_END,                                                                  
+  };
 
 u32 gData_02006120[] = {
     23, 6, 0x40000, 0, 1, 13,
@@ -3111,67 +3297,60 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_2(297, 287, 1, 297, 3, 309, 2, 272, 20)
+u32 gSceneExits[] = {                                                        
+      SCENE_EXITS(MarsLighthouseAerie1),       SCENE_EXIT(1, MarsLighthouseRoomM1, 1), SCENE_EXIT(2, MarsLighthouseAerie1, 3),     
+      SCENE_EXIT(3, MercuryLighthouse, 2), SCENE_EXIT(4, Prox4, 20), SCENE_EXITS_END,           
+  };
 
-s16 gMarsLighthouseAerie_Placements[] = {
-    489, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, 489, -1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 2,
-    302, -1, 7, 0, 0, 584, 0, 16,
-    0, 440, 0x4000, 2, 302, -1, 7, 0,
-    0, 616, 0, 16, 0, 440, 0x4000, 258,
-    302, -1, 7, 0, 0, 648, 0, 16,
-    0, 440, 0x4000, 258, 302, -1, 7, 0,
-    0, 648, 0, 16, 0, 408, 0x4000, 258,
-    302, -1, 7, 0, 0, 648, 0, 16,
-    0, 376, 0x4000, 258, 302, -1, 7, 0,
-    0, 648, 0, 16, 0, 344, 0x4000, 258,
-    302, -1, 7, 0, 0, 648, 0, 16,
-    0, 312, 0x4000, 258, 182, -1, 7, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 2,
-    311, -1, 7, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, 56, -1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 2,
-    5, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, 6, -1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 2,
-    7, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, 0, -1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 2,
-    1, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, 3, -1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 2,
-    2, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, -1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
+struct ActorPlacement gMarsLighthouseAerie_Placements[] = {
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 584, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 616, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 408, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 376, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 312, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(182, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(311, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(3, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(2, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gData_0200644c[] = {
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
-    {182, CONDITION_ALWAYS, 7, PIXELS(512), 0, PIXELS(236), FACING_SOUTH, 2, 0},
-    {311, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(544), 0, PIXELS(354), FACING_NORTHWEST + FACING_STEP, 2, 0},
-    {48, CONDITION_ALWAYS, 1, PIXELS(496), 0, PIXELS(328), FACING_NORTH, 2, 0},
-    {49, CONDITION_ALWAYS, 1, PIXELS(480), 0, PIXELS(328), FACING_NORTH, 2, 0},
-    {50, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(320), FACING_NORTH, 2, 0},
-    {51, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(320), FACING_NORTH, 2, 0},
-    {52, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(320), FACING_NORTH, 2, 0},
-    {54, CONDITION_ALWAYS, 1, PIXELS(544), 0, PIXELS(328), FACING_NORTH, 2, 0},
-    {53, CONDITION_ALWAYS, 1, PIXELS(528), 0, PIXELS(328), FACING_NORTH, 2, 0},
-    {183, CONDITION_ALWAYS, 7, PIXELS(478), 0, PIXELS(266), FACING_SOUTH, 2, 0},
-    {183, CONDITION_ALWAYS, 7, PIXELS(506), 0, PIXELS(280), FACING_SOUTH, 2, 0},
-    {183, CONDITION_ALWAYS, 7, PIXELS(536), 0, PIXELS(276), FACING_SOUTH, 2, 0},
-    {61, CONDITION_ALWAYS, 7, PIXELS(480), 0, PIXELS(282), FACING_SOUTH, 2, 0},
-    {60, CONDITION_ALWAYS, 7, PIXELS(506), 0, PIXELS(292), FACING_SOUTH, 2, 0},
-    {62, CONDITION_ALWAYS, 7, PIXELS(540), 0, PIXELS(284), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(182, CONDITION_ALWAYS, 7, 512, 0, 236, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(311, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 544, 0, 354, FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(48, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 496, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(49, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(50, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(51, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(52, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(54, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 544, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(53, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(183, CONDITION_ALWAYS, 7, 478, 0, 266, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(183, CONDITION_ALWAYS, 7, 506, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(183, CONDITION_ALWAYS, 7, 536, 0, 276, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(61, CONDITION_ALWAYS, 7, 480, 0, 282, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(60, CONDITION_ALWAYS, 7, 506, 0, 292, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(62, CONDITION_ALWAYS, 7, 540, 0, 284, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3226,7 +3405,7 @@ s16 gData_020066bc[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {0x9c05, 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
     {TRIGGER_STEP, 10, 0xa3d, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
     {TRIGGER_TALK, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
     {TRIGGER_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgIWishICould)},
@@ -3235,12 +3414,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowMy)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgIMSorryThings)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBothKyleAnd)},
-    {0x4400, 28, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToConsoler)},
-    {0x4400, 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
-    {0x6400, 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
-    {0xe400, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
-    {0x400, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
-    {0x2400, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
+    {TALK_TRIGGER_FACING(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToConsoler)},
+    {TALK_TRIGGER_FACING(FACING_SOUTH), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
+    {TALK_TRIGGER_FACING(FACING_SOUTHWEST), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
+    {TALK_TRIGGER_FACING(FACING_NORTHEAST), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
+    {TALK_TRIGGER_FACING(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
+    {TALK_TRIGGER_FACING(FACING_SOUTHEAST), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToGladParent)},
 #if TLA_PATCH_1 /* From patch 1. */
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), 28, CONDITION_ALWAYS, EVENT(Func_02004ec0)},
@@ -3263,5 +3442,16 @@ u32 gData_02006ad0[] = {
     SC_FREE,
 };
 
-DEFINE_G_DATA_02003214(gData_02006afc)
+u32 gData_02006afc[] = {                                                               
+      SC_SET(SW_SCALE_X, 0xcccc),                                              
+      SC_SET(SW_SCALE_Y, 0xcccc),                                              
+      SC_ARG(1),                                                               
+      SC_LABEL(1),                                                             
+      SC_ADD(SW_Y, px(1)),                                                 
+      SC_WAIT(1),                                                              
+      SC_LOOP(16, SC_TO(1)),                                                   
+      SC_POSITION(0, 0, 0),                                                    
+      SC_WAIT(1),                                                              
+      SC_FREE,                                                                 
+  };
 // clang-format on

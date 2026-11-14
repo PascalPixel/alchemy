@@ -4,6 +4,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "module/battle_effect/battle_effect.h"
@@ -167,8 +168,9 @@ void *Scene_FindActorTalkTrigger(s32 id) {
  * BattleEffect_GetFlags(s32 id); field/object/screen_transition has u8
  * BattleEffect_GetFlags(void) {; tried as the definition's u8
  * BattleEffect_GetFlags(void), which the object already declares, it does not
- * compile in tla-ja (make modern): games/tla/src/field/field_sequence.c:291:15:
- * note: in expansion of macro 'Scene_GetArea'. */
+ * compile in tla-ja (make modern):
+ * games/tla/src/field/field_sequence/encounter.c:272:15: note: in expansion of
+ * macro 'Scene_GetArea'. */
 s32 BattleEffect_GetFlags__field_sequence(s32 id) __asm__(
     "BattleEffect_GetFlags");
 #define BattleEffect_GetFlags BattleEffect_GetFlags__field_sequence
@@ -267,12 +269,12 @@ s32 Scene_TalkToActor(s32 id) {
 
         trap->update = ItemDisplay_EmitSparkles;
         ItemDisplay_RaiseAboveLeader(trap);
-        Sound_PlayFar(83);
+        Sound_PlayFar(MUS_083);
         MessageArgument_PushFar(contents, 5);
         FieldMessage_ShowFar((s32)&MsgKey0e17, 3);
         Party_AddPp(1999, 0);
         PartyStatus_CreateWindowFar(1);
-        Sound_PlayFar(126);
+        Sound_PlayFar(SE_RECOVERY);
         if (Party_CountMembersFar() == 1)
           FieldMessage_ShowFar((s32)&MsgKey0e17 + 6, 1);
         else
@@ -280,7 +282,7 @@ s32 Scene_TalkToActor(s32 id) {
         PartyStatus_CloseFar();
         trap->update = NULL;
         Actor_SelectAnimationFar(trap, 2);
-        Sound_PlayFar(246);
+        Sound_PlayFar(SE_GLITTER);
         Event_Wait(30);
         FieldMessage_ShowFar((s32)&MsgKey0e19, 1);
         ObjectEvent_Remove(index);
@@ -335,7 +337,7 @@ s32 Scene_TalkToActor(s32 id) {
             ObjectEvent_SetMode2(index);
         }
         ItemDisplay_RaiseAboveLeader(shown);
-        Sound_PlayFar(83);
+        Sound_PlayFar(MUS_083);
         contents &= 0x7fff;
         MessageArgument_PushFar(contents, 5);
         FieldMessage_ShowFar((s32)&MsgKey0e10, 3);
@@ -376,7 +378,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (type == 128)
         ObjectEvent_SetMode2(index);
       ItemDisplay_RaiseAboveLeader(shown);
-      Sound_PlayFar(83);
+      Sound_PlayFar(MUS_083);
       MessageArgument_PushFar(contents, 2);
       if (slot == gMainRoutineWork.currentOwner) {
         FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
@@ -473,8 +475,8 @@ resume:
 /* VIEW(field_sequence): tag struct TouchWork as struct
  * TouchWork__field_sequence; module/field/field.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence.c:2782: structure has no member
- * named `blockedSteps'. */
+ * tla-ja: games/tla/src/field/field_sequence/triggers.c:508: structure has no
+ * member named `blockedSteps'. */
 struct TouchWork__field_sequence {
   u8 unk000[0x158];
   s16 exit;
@@ -527,18 +529,18 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
     if (event != NULL) {
       switch (event->flags & 0x70) {
       case 0:
-        Sound_PlayFar(123);
+        Sound_PlayFar(SE_MAP_EXIT);
         break;
       case 32:
-        Sound_PlayFar(128);
+        Sound_PlayFar(SE_STAIRS_UP);
         Exit_StartStairsUp();
         break;
       case 48:
-        Sound_PlayFar(129);
+        Sound_PlayFar(SE_STAIRS_DOWN);
         Exit_StartStairsDown();
         break;
       case 80:
-        Sound_PlayFar(123);
+        Sound_PlayFar(SE_MAP_EXIT);
         Func_080d5fd4();
         break;
       }

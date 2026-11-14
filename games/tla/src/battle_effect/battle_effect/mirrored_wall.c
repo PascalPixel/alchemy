@@ -3,10 +3,13 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 /// Builds the two usual routines that draw onto the 128x128 canvas, clipped,
 /// mirrored when flip is nonzero. out[0] keeps the higher colour index (heap
@@ -22,9 +25,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     s32 flags = 19;
     void **slots;
 
-    /* FAKEMATCH(barrier): an empty asm on heap and flags, so both are set
-     * before the heap base is shifted and the slot offset built; without it,
-     * 2 of 30 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on heap and flags. */
     __asm__("" : "+l"(heap), "+l"(flags));
     slots = (void **)(heap << 18);
     BattleEffect_LoadBlitter(104, flags);
@@ -36,8 +37,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     s32 flags = 23;
     void **slots;
 
-    /* FAKEMATCH(barrier): the same asm for the mirrored blitters; without it,
-     * 2 of 30 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the same asm for the mirrored blitters. */
     __asm__("" : "+l"(heap), "+l"(flags));
     slots = (void **)(heap << 18);
     BattleEffect_LoadBlitter(104, flags);
@@ -85,8 +85,6 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   // heap holds the heap slots from here for the second blitter's read, so the
-  // 0x03000000 base is built again there; as Ram_HeapSlots at that read, 102
-  // of 652 instructions differ in tla-en.
   heap = Ram_HeapSlots;
 
   // Set up: the canvas for the Djinn when there is a prelude, then the beam,
@@ -111,9 +109,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
 
   // The motes start 80 pixels up, each at its own phase of the sway.
   for (i = 0; i != 512; i++) {
-    PARTICLES[i].x = 0;
-    PARTICLES[i].y = 80 << 16;
-    PARTICLES[i].z = (Random16() | -32) << 14;
+    SET_POSITION(&PARTICLES[i], 0, 80 << 16, (Random16() | -32) << 14);
     PARTICLES[i].variant = Random16() & 255;
   }
 
@@ -138,7 +134,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
     s32 prelude;
 
     if (frame == 64)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 80)
       BattlePlayback_StartFar(0);
 
@@ -181,7 +177,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
         for (i = 0; i != MOTES; i++) {
           struct EffectStep *mote = &PARTICLES[k * 64 + i];
 
-          if (frame > i * 8 + start && mote->y > 8 << 16) {
+          if (frame > i * 8 + start && mote->y > px(8)) {
             s32 sway;
 
             EffectPosition_ProjectPoint((s32 *)mote, &pos);
@@ -197,7 +193,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
                                 576 +
                             PIC_MOTE,
                         pos.x - 12, pos.y - 12, 24, 24);
-            mote->y -= 1 << 16;
+            mote->y -= px(1);
             mote->variant++;
           }
         }
@@ -336,10 +332,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     BattleEffect_StartCanvasLayer(0);
     BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 0x44,
                                    preludeOrigin, preludeSize);
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
   } else {
     BattleEffect_StartCanvasLayer(1);
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_GoldShellSheet, work->sheet, 1,
                              1);
@@ -384,12 +381,10 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
       struct EffectStep *shot = &PARTICLES[k * 16 + i];
       s32 aimZ;
 
-      shot->x = source->x;
-      shot->y = height;
-      shot->z = source->z;
+      SET_POSITION(shot, source->x, height, source->z);
       aimZ = target->z + (((Random16() & 31) - 16) << 17);
       shot->velocityX = (target->x - source->x) >> 4;
-      shot->velocityY = 0x40000;
+      shot->velocityY = px(4);
       shot->velocityZ = (aimZ - source->z) >> 4;
       shot->variant = 0;
     }
@@ -410,7 +405,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   total = Data_08197880[mode * 4 + RECORD_FRAMES] + effect->count * 8;
-  Sound_PlayFar(103);
+  Sound_PlayFar(SE_CURSE);
 
   for (frame = 0; frame != total; frame++) {
     struct EffectStep *burst;
@@ -463,9 +458,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
                 count = 16;
               for (n = 0; n != count; n++) {
                 piece = &BURSTS[(k * 4 + i) * 8 + n];
-                piece->x = shot->x;
-                piece->y = shot->y;
-                piece->z = shot->z;
+                SET_POSITION(piece, shot->x, shot->y, shot->z);
                 if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0) {
                   piece->velocityX = ((Random16() & 63) - 32) << 11;
                   piece->velocityY = 0;
@@ -526,7 +519,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
   if (mode == 3 || mode == 5) {
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     if (mode == 3)

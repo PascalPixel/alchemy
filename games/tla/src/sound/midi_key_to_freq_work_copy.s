@@ -58,6 +58,6 @@ MidiKeyToFreqWorkCopy:
 	pop	{r1}
 	bx	r1
 .L_081c0484:
-	.4byte	0	@ the pitch codes (gSound_PcmPitchCodes)
+	.4byte	0	@ the pitch codes (gScaleTable)
 .L_081c0488:
-	.4byte	0	@ the frequency steps (gSound_PcmFrequencySteps)
+	.4byte	0	@ the frequency steps (gFreqTable)

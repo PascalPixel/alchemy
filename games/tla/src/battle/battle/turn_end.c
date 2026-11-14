@@ -4,12 +4,13 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
-  struct BattleUnit *state = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *state = Unit_Get(unitId);
 
   if (turns <= 5) {
     s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
@@ -20,7 +21,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
 }
 
 s32 BattleUnit_CountDownAttackStage(s32 unitId) {
-  struct BattleUnit *state = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *state = Unit_Get(unitId);
 
   if (state->attackTurns != 0) {
     s32 zero;
@@ -42,7 +43,7 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
 }
 
 s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
-  struct BattleUnit *state = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *state = Unit_Get(unitId);
 
   if (state->defenseTurns != 0) {
     state->defenseTurns--;
@@ -61,7 +62,7 @@ s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
 }
 
 s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
-  struct BattleUnit *state = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *state = Unit_Get(unitId);
 
   if (state->resistanceTurns != 0) {
     state->resistanceTurns--;
@@ -81,7 +82,7 @@ s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
 }
 
 s32 BattleUnit_CountDownDelusion(s32 unitId) {
-  struct BattleUnit *state = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *state = Unit_Get(unitId);
   if (state->delusion != 0) {
     state->delusion--;
     if (state->delusion == 0)
@@ -95,7 +96,7 @@ s32 BattleUnit_CountDownDelusion(s32 unitId) {
 }
 
 s32 BattleUnit_CountDownConfusion(s32 unitId) {
-  struct BattleUnit *state = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *state = Unit_Get(unitId);
   if ((u8)state->confusion != 0) {
     (*(u8 *)&state->confusion)--;
     if (state->confusion == 0)
@@ -109,7 +110,7 @@ s32 BattleUnit_CountDownConfusion(s32 unitId) {
 }
 
 s32 BattleUnit_CountDownCharm(s32 unitId) {
-  struct BattleUnit *state = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *state = Unit_Get(unitId);
   if (state->charm != 0) {
     state->charm--;
     if (state->charm == 0)
@@ -123,7 +124,7 @@ s32 BattleUnit_CountDownCharm(s32 unitId) {
 }
 
 s32 BattleUnit_CountDownStun(s32 unitId) {
-  struct BattleUnit *state = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *state = Unit_Get(unitId);
   if (state->stun != 0) {
     state->stun--;
     if (state->stun == 0)
@@ -137,7 +138,7 @@ s32 BattleUnit_CountDownStun(s32 unitId) {
 }
 
 s32 BattleUnit_CountDownSleep(s32 unitId) {
-  struct BattleUnit *state = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *state = Unit_Get(unitId);
   if (state->sleep != 0) {
     state->sleep--;
     if (state->sleep == 0)
@@ -158,7 +159,7 @@ s32 BattleUnit_CountDownPsynergySeal(s32 id) {
   s32 packed;
   struct BattleUnit *unit;
 
-  unit = Unit_Get__f11f66c(id);
+  unit = Unit_Get(id);
   packed = unit->psySeal;
   turns = packed & 0xFF;
   if (turns != 0) {
@@ -187,7 +188,7 @@ s32 BattleUnit_CountDownPsynergySeal(s32 id) {
 }
 
 s32 BattleUnit_CountDownRegenerate(s32 id) {
-  struct BattleUnit *unit = Unit_Get__f11f66c(id);
+  struct BattleUnit *unit = Unit_Get(id);
   u8 *count = &unit->refrain;
 
   if (*count != 0) {
@@ -227,7 +228,7 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
 }
 
 s32 BattleUnit_CountDownReflect(s32 id) {
-  u8 *value = (u8 *)&((struct BattleUnit *)Unit_Get__f11f66c(id))->reflect;
+  u8 *value = (u8 *)&((struct BattleUnit *)Unit_Get(id))->reflect;
   if (*value != 0) {
     (*value)--;
     if (*value == 0) {
@@ -238,7 +239,7 @@ s32 BattleUnit_CountDownReflect(s32 id) {
 }
 
 s32 BattleUnit_CountDownAgilityStage(s32 id) {
-  struct BattleUnit *unit = Unit_Get__f11f66c(id);
+  struct BattleUnit *unit = Unit_Get(id);
   u8 *value = &unit->agilityTurns;
   if (*value != 0) {
     (*value)--;
@@ -266,8 +267,7 @@ s32 DjinnRecovery_CountDown(void) {
     timedEntry = list->entries;
     do {
       if (timedEntry->turns > 0 &&
-          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
-              0) {
+          ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
         timedEntry->turns--;
       }
       index++;
@@ -329,8 +329,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
     timedEntry = list->entries;
     do {
       if (timedEntry->turns > 0 && BattleUnit_IsListed(timedEntry->unitId) &&
-          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
-              0) {
+          ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
         timedEntry->turns--;
         result = 1;
       }
@@ -450,8 +449,7 @@ void Battle_ProcessTurnEnd(void) {
       do {
         if (timedEntry->turns > 0 &&
             BattleObject_Get(timedEntry->unitId) != 0 &&
-            ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
-                0) {
+            ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
           timedEntry->turns--;
         }
         recoveryIndex++;
@@ -476,7 +474,7 @@ void Battle_ProcessTurnEnd(void) {
             BattlePlayback_Push(10, 0);
             BattlePlayback_Push(4, (u32)&MsgDjinnIsSet);
             BattlePlayback_Push(11, unitId);
-            Sound_PlayFar(212);
+            Sound_PlayFar(SE_POWER_UP);
             if (BattleUnit_IsListed(unitId)) {
               Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
               Actor_SetAnimationSpeedFar(
@@ -519,7 +517,7 @@ void Battle_ProcessTurnEnd(void) {
         s32 hpAmount;
         s32 ppAmount;
         s32 unitId = unitIds[unitIndex];
-        struct BattleUnit *unit = Unit_Get__f11f66c(unitId);
+        struct BattleUnit *unit = Unit_Get(unitId);
 
         unit->equipBonus[1] = 0;
         if (unit->ready != 0) {
@@ -551,7 +549,7 @@ void Battle_ProcessTurnEnd(void) {
             } else {
               BattleMessage_ShowAndWaitFar((s32)&MsgHpRecover);
             }
-            Sound_PlayFar(175);
+            Sound_PlayFar(SE_NOTE_HIGH);
             BattleMessage_WaitForAdvance();
           }
           if (unit->ppRegen != 0 && unit->pp != unit->maxPp) {
@@ -567,7 +565,7 @@ void Battle_ProcessTurnEnd(void) {
             } else {
               BattleMessage_ShowAndWaitFar((s32)&MsgPpRecover);
             }
-            Sound_PlayFar(175);
+            Sound_PlayFar(SE_NOTE_HIGH);
             BattleMessage_WaitForAdvance();
           }
         }
@@ -719,7 +717,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
 
   unitId = plan->actorId;
   battleContinues = 0;
-  unit = Unit_Get__f11f66c(unitId);
+  unit = Unit_Get(unitId);
   if (unitId <= 7 ||
       ((struct BattleWork *)Ram_HeapSlots->battleWork)->twoSided != 0) {
     list = &Djinn_GetRecoveryTableFar(unitId > 7)->list;
@@ -807,7 +805,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         // all but MsgGoesDown still need their names in the PO catalogs.
         BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
         BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(unitId)->object, 32);

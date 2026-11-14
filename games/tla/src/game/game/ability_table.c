@@ -9,30 +9,30 @@
 const struct AbilityDefinition gAbilityDefinitions[] = {
     // Nothing
     {
-        .targetMode = 1,
-        .flags = 0x5,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_NONE,
         .range = 1,
     },
     // Attack
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_NONE,
         .range = 1,
     },
     // Defend
     {
-        .targetMode = 4,
-        .flags = 0x89,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 46,
+        .effect = ABILITY_EFFECT_DEFEND,
         .range = 1,
     },
     // Quake
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 1,
         .range = 2,
         .ppCost = 4,
@@ -40,8 +40,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Earthquake
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 2,
         .range = 3,
         .ppCost = 7,
@@ -49,8 +49,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Quake Sphere
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 3,
         .range = 4,
         .ppCost = 15,
@@ -58,8 +58,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Spire
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 4,
         .range = 1,
         .ppCost = 5,
@@ -67,8 +67,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Clay Spire
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 5,
         .range = 2,
         .ppCost = 13,
@@ -76,8 +76,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Stone Spire
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 6,
         .range = 2,
         .ppCost = 22,
@@ -85,8 +85,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Gaia
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 7,
         .range = 2,
         .ppCost = 7,
@@ -94,8 +94,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Mother Gaia
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 8,
         .range = 3,
         .ppCost = 17,
@@ -103,8 +103,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Grand Gaia
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 9,
         .range = 3,
         .ppCost = 32,
@@ -112,8 +112,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Growth
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 10,
         .fieldPsynergy = FIELD_PSYNERGY_GROWTH,
         .range = 1,
@@ -122,8 +122,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Mad Growth
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 11,
         .range = 2,
         .ppCost = 10,
@@ -131,8 +131,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Wild Growth
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 12,
         .range = 3,
         .ppCost = 19,
@@ -140,8 +140,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Thorn
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 13,
         .range = 2,
         .ppCost = 6,
@@ -149,8 +149,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Briar
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 14,
         .range = 2,
         .ppCost = 11,
@@ -158,8 +158,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Nettle
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 15,
         .range = 3,
         .ppCost = 23,
@@ -179,8 +179,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Frost
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 16,
         .fieldPsynergy = FIELD_PSYNERGY_FROST,
@@ -190,8 +190,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Tundra
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 17,
         .range = 2,
@@ -200,8 +200,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Glacier
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 18,
         .range = 2,
@@ -210,8 +210,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Ice
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 19,
         .range = 1,
@@ -220,8 +220,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Ice Horn
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 20,
         .range = 2,
@@ -230,8 +230,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Ice Missile
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 21,
         .range = 2,
@@ -240,8 +240,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Prism
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 22,
         .range = 2,
@@ -250,8 +250,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Hail Prism
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 23,
         .range = 3,
@@ -260,8 +260,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Freeze Prism
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 24,
         .range = 3,
@@ -270,8 +270,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Douse
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 28,
         .fieldPsynergy = FIELD_PSYNERGY_DOUSE,
@@ -281,8 +281,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Drench
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 29,
         .range = 2,
@@ -291,8 +291,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Deluge
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 30,
         .range = 3,
@@ -301,8 +301,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Froth
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 25,
         .range = 2,
@@ -311,8 +311,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Froth Sphere
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 26,
         .range = 3,
@@ -321,8 +321,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Froth Spiral
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 27,
         .range = 4,
@@ -331,8 +331,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Cool
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 173,
         .range = 2,
@@ -341,8 +341,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Supercool
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 174,
         .range = 3,
@@ -351,8 +351,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Megacool
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 175,
         .range = 4,
@@ -367,8 +367,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Flare
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 31,
         .range = 2,
@@ -377,8 +377,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Flare Wall
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 32,
         .range = 2,
@@ -387,8 +387,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Flare Storm
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 33,
         .range = 2,
@@ -397,8 +397,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fire
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 34,
         .range = 2,
@@ -407,8 +407,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fireball
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 35,
         .range = 3,
@@ -417,8 +417,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Inferno
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 36,
         .range = 3,
@@ -427,8 +427,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Volcano
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 37,
         .range = 1,
@@ -437,8 +437,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Eruption
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 38,
         .range = 2,
@@ -447,8 +447,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Pyroclasm
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 39,
         .range = 3,
@@ -457,8 +457,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Blast
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 40,
         .range = 2,
@@ -467,8 +467,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Mad Blast
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 41,
         .range = 2,
@@ -477,8 +477,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fiery Blast
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 42,
         .range = 3,
@@ -487,8 +487,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Blast
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 43,
         .range = 2,
@@ -497,8 +497,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Nova
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 44,
         .range = 3,
@@ -507,8 +507,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Supernova
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 45,
         .range = 4,
@@ -517,8 +517,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fume
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 176,
         .range = 1,
@@ -527,8 +527,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Serpent Fume
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 177,
         .range = 1,
@@ -537,8 +537,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Dragon Fume
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 178,
         .range = 1,
@@ -547,8 +547,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Beam
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 179,
         .range = 2,
@@ -557,8 +557,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Cycle Beam
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 180,
         .range = 3,
@@ -567,8 +567,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Searing Beam
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 181,
         .range = 4,
@@ -577,8 +577,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Bolt
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 46,
         .range = 1,
@@ -587,8 +587,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Flash Bolt
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 47,
         .range = 2,
@@ -597,8 +597,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Blue Bolt
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 48,
         .range = 2,
@@ -607,8 +607,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Ray
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 49,
         .range = 2,
@@ -617,8 +617,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Storm Ray
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 50,
         .range = 2,
@@ -627,8 +627,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Destruct Ray
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 51,
         .range = 2,
@@ -637,8 +637,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Plasma
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 52,
         .range = 2,
@@ -647,8 +647,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Shine Plasma
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 53,
         .range = 3,
@@ -657,8 +657,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Spark Plasma
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 54,
         .range = 4,
@@ -667,8 +667,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Slash
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 55,
         .range = 1,
@@ -677,8 +677,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Wind Slash
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 56,
         .range = 2,
@@ -687,8 +687,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Sonic Slash
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 57,
         .range = 3,
@@ -697,8 +697,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Whirlwind
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 58,
         .fieldPsynergy = FIELD_PSYNERGY_WHIRLWIND,
@@ -708,8 +708,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Tornado
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 59,
         .range = 3,
@@ -718,8 +718,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Tempest
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 60,
         .range = 3,
@@ -740,38 +740,38 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Aura
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MARS,
         .icon = 182,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 7,
         .power = 50,
     },
     // Healing Aura
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MARS,
         .icon = 183,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 11,
         .power = 100,
     },
     // Cool Aura
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MARS,
         .icon = 184,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 16,
         .power = 200,
     },
     // Cure
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .icon = 61,
         .range = 1,
         .ppCost = 3,
@@ -779,8 +779,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Cure Well
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .icon = 62,
         .range = 1,
         .ppCost = 7,
@@ -788,8 +788,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Potent Cure
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .icon = 63,
         .range = 1,
         .ppCost = 10,
@@ -797,8 +797,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Ply
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 64,
         .fieldPsynergy = FIELD_PSYNERGY_PLY,
@@ -808,8 +808,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Ply Well
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 65,
         .fieldPsynergy = FIELD_PSYNERGY_PLY,
@@ -819,8 +819,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Pure Ply
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 66,
         .fieldPsynergy = FIELD_PSYNERGY_PLY,
@@ -830,289 +830,289 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Wish
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 67,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 9,
         .power = 80,
     },
     // Wish Well
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 68,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 13,
         .power = 160,
     },
     // Pure Wish
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 69,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 20,
         .power = 400,
     },
     // Cure Poison
     {
-        .targetMode = 2,
-        .flags = 0xc2,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 3,
+        .effect = ABILITY_EFFECT_CURE_POISON,
         .icon = 70,
         .range = 1,
         .ppCost = 2,
     },
     // Restore
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 4,
+        .effect = ABILITY_EFFECT_RESTORE,
         .icon = 71,
         .range = 1,
         .ppCost = 3,
     },
     // Revive
     {
-        .targetMode = 2,
-        .flags = 0xc2,
-        .effect = 5,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_REVIVE,
         .icon = 72,
         .range = 1,
         .ppCost = 15,
     },
     // Impact
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 6,
+        .effect = ABILITY_EFFECT_ATTACK_UP_2,
         .icon = 73,
         .range = 1,
         .ppCost = 7,
     },
     // High Impact
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 7,
+        .effect = ABILITY_EFFECT_ATTACK_UP,
         .icon = 74,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 12,
     },
     // Dull
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .icon = 75,
         .range = 1,
         .ppCost = 6,
     },
     // Blunt
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 9,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN,
         .icon = 76,
         .range = 2,
         .ppCost = 11,
     },
     // Guard
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 10,
+        .effect = ABILITY_EFFECT_DEFENSE_UP_2,
         .icon = 77,
         .range = 1,
         .ppCost = 3,
     },
     // Protect
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 11,
+        .effect = ABILITY_EFFECT_DEFENSE_UP,
         .icon = 78,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 5,
     },
     // Impair
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 12,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .icon = 79,
         .range = 1,
         .ppCost = 4,
     },
     // Debilitate
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 13,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN,
         .icon = 80,
         .range = 2,
         .ppCost = 6,
     },
     // Ward
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 14,
+        .effect = ABILITY_EFFECT_RESISTANCE_UP_2,
         .icon = 81,
         .range = 1,
         .ppCost = 3,
     },
     // Resist
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 15,
+        .effect = ABILITY_EFFECT_RESISTANCE_UP,
         .icon = 82,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 5,
     },
     // Weaken
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 16,
+        .effect = ABILITY_EFFECT_RESISTANCE_DOWN_2,
         .icon = 83,
         .range = 1,
         .ppCost = 4,
     },
     // Enfeeble
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 17,
+        .effect = ABILITY_EFFECT_RESISTANCE_DOWN,
         .icon = 84,
         .range = 2,
         .ppCost = 6,
     },
     // Taint
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 18,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
         .ppCost = 4,
     },
     // Poison
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 19,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
         .ppCost = 6,
     },
     // Delude
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .icon = 85,
         .range = 2,
         .ppCost = 4,
     },
     // Confuse
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 21,
+        .effect = ABILITY_EFFECT_CONFUSION,
         .range = 2,
         .ppCost = 6,
     },
     // Charm
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 22,
+        .effect = ABILITY_EFFECT_CHARM,
         .range = 1,
         .ppCost = 9,
     },
     // Paralyze
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .ppCost = 7,
     },
     // Sleep
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .icon = 86,
         .range = 2,
         .ppCost = 5,
     },
     // Bind
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 25,
+        .effect = ABILITY_EFFECT_SEAL,
         .icon = 87,
         .range = 1,
         .ppCost = 4,
     },
     // Haunt
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 26,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_HAUNT,
         .icon = 88,
         .range = 2,
         .ppCost = 5,
     },
     // Curse
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 28,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_CURSE,
         .icon = 90,
         .range = 1,
         .ppCost = 6,
     },
     // Condemn
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .icon = 89,
         .range = 1,
         .ppCost = 8,
     },
     // Drain
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 31,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .icon = 91,
         .range = 1,
         .ppCost = 3,
@@ -1120,40 +1120,40 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Psy Drain
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 32,
+        .effect = ABILITY_EFFECT_DRAIN_PP,
         .icon = 92,
         .range = 1,
         .power = 15,
     },
     // Break
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 33,
+        .effect = ABILITY_EFFECT_BREAK,
         .icon = 93,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 5,
     },
     // Regenerate
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 29,
+        .effect = ABILITY_EFFECT_REGENERATE,
         .range = 1,
         .ppCost = 6,
         .power = 60,
     },
     // Reflect
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 30,
+        .effect = ABILITY_EFFECT_REFLECT,
         .icon = 94,
         .range = 1,
         .ppCost = 5,
@@ -1166,7 +1166,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Lash
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_JUPITER,
         .icon = 159,
         .fieldPsynergy = FIELD_PSYNERGY_LASH,
@@ -1175,7 +1175,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Pound
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_MARS,
         .icon = 160,
         .fieldPsynergy = FIELD_PSYNERGY_POUND,
@@ -1184,7 +1184,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Tremor
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .icon = 161,
         .fieldPsynergy = FIELD_PSYNERGY_TREMOR,
         .range = 1,
@@ -1192,7 +1192,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Scoop
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .icon = 162,
         .fieldPsynergy = FIELD_PSYNERGY_SCOOP,
         .range = 1,
@@ -1200,7 +1200,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Cyclone
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_JUPITER,
         .icon = 167,
         .fieldPsynergy = FIELD_PSYNERGY_CYCLONE,
@@ -1209,7 +1209,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Parch
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_MERCURY,
         .icon = 164,
         .fieldPsynergy = FIELD_PSYNERGY_PARCH,
@@ -1218,7 +1218,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Sand
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .icon = 165,
         .fieldPsynergy = FIELD_PSYNERGY_SAND,
         .range = 1,
@@ -1226,7 +1226,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Move
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_MARS,
         .icon = 95,
         .fieldPsynergy = FIELD_PSYNERGY_MOVE,
@@ -1235,7 +1235,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Mind Read
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_JUPITER,
         .icon = 96,
         .fieldPsynergy = FIELD_PSYNERGY_MIND_READ,
@@ -1244,7 +1244,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Force
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .icon = 97,
         .fieldPsynergy = FIELD_PSYNERGY_FORCE,
@@ -1253,7 +1253,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Lift
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_MERCURY,
         .icon = 98,
         .fieldPsynergy = FIELD_PSYNERGY_LIFT,
@@ -1262,7 +1262,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Reveal
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_JUPITER,
         .icon = 99,
         .fieldPsynergy = FIELD_PSYNERGY_REVEAL,
@@ -1271,7 +1271,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Halt
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_JUPITER,
         .icon = 100,
         .fieldPsynergy = FIELD_PSYNERGY_HALT,
@@ -1280,7 +1280,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Cloak
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_MERCURY,
         .icon = 101,
         .fieldPsynergy = FIELD_PSYNERGY_CLOAK,
@@ -1289,7 +1289,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Carry
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .icon = 102,
         .fieldPsynergy = FIELD_PSYNERGY_CARRY,
         .range = 1,
@@ -1297,7 +1297,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Catch
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .icon = 103,
         .fieldPsynergy = FIELD_PSYNERGY_CATCH,
         .range = 1,
@@ -1305,7 +1305,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Retreat
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .icon = 156,
         .fieldPsynergy = FIELD_PSYNERGY_RETREAT,
         .range = 1,
@@ -1313,7 +1313,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Avoid
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_MERCURY,
         .icon = 157,
         .fieldPsynergy = FIELD_PSYNERGY_AVOID,
@@ -1322,7 +1322,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Burst
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_MARS,
         .icon = 163,
         .fieldPsynergy = FIELD_PSYNERGY_BURST,
@@ -1331,7 +1331,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Grind
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .icon = 169,
         .fieldPsynergy = FIELD_PSYNERGY_GRIND,
         .range = 1,
@@ -1339,7 +1339,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Hover
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_JUPITER,
         .icon = 166,
         .fieldPsynergy = FIELD_PSYNERGY_HOVER,
@@ -1348,7 +1348,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Blaze
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_MARS,
         .icon = 168,
         .fieldPsynergy = FIELD_PSYNERGY_BLAZE,
@@ -1357,7 +1357,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Ma????
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .icon = 170,
         .fieldPsynergy = FIELD_PSYNERGY_UNNAMED_28,
         .range = 1,
@@ -1365,7 +1365,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Teleport
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_JUPITER,
         .icon = 172,
         .fieldPsynergy = FIELD_PSYNERGY_TELEPORT,
@@ -1374,7 +1374,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // A??
     {
-        .flags = 0x9,
+        .flags = ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_JUPITER,
         .icon = 171,
         .fieldPsynergy = FIELD_PSYNERGY_UNNAMED_29,
@@ -1387,8 +1387,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Dragon Cloud
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 117,
         .range = 1,
@@ -1397,9 +1397,9 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Demon Night
     {
-        .targetMode = 1,
-        .flags = 0x85,
-        .effect = 26,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
+        .effect = ABILITY_EFFECT_HAUNT,
         .icon = 119,
         .range = 2,
         .ppCost = 12,
@@ -1407,9 +1407,9 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Helm Splitter
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .icon = 116,
         .range = 1,
         .ppCost = 8,
@@ -1417,8 +1417,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Quick Strike
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
         .icon = 118,
         .range = 1,
@@ -1427,8 +1427,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Rockfall
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 104,
         .range = 2,
         .ppCost = 5,
@@ -1436,8 +1436,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Rockslide
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 105,
         .range = 3,
         .ppCost = 15,
@@ -1445,8 +1445,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Avalanche
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 106,
         .range = 3,
         .ppCost = 30,
@@ -1454,8 +1454,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Lava Shower
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 107,
         .range = 1,
@@ -1464,8 +1464,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Molten Bath
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 108,
         .range = 2,
@@ -1474,8 +1474,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Magma Storm
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 109,
         .range = 3,
@@ -1484,70 +1484,70 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Demon Spear
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 6,
+        .effect = ABILITY_EFFECT_ATTACK_UP_2,
         .icon = 110,
         .range = 1,
         .ppCost = 7,
     },
     // Angel Spear
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 7,
+        .effect = ABILITY_EFFECT_ATTACK_UP,
         .icon = 111,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 12,
     },
     // Guardian
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 10,
+        .effect = ABILITY_EFFECT_DEFENSE_UP_2,
         .icon = 114,
         .range = 1,
         .ppCost = 3,
     },
     // Protector
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 11,
+        .effect = ABILITY_EFFECT_DEFENSE_UP,
         .icon = 115,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 5,
     },
     // Magic Shell
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 14,
+        .effect = ABILITY_EFFECT_RESISTANCE_UP_2,
         .icon = 112,
         .range = 1,
         .ppCost = 3,
     },
     // Magic Shield
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 15,
+        .effect = ABILITY_EFFECT_RESISTANCE_UP,
         .icon = 113,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 5,
     },
     // Death Plunge
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .icon = 134,
         .range = 1,
         .ppCost = 14,
@@ -1555,8 +1555,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Shuriken
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
         .icon = 135,
         .range = 2,
@@ -1565,9 +1565,9 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Annihilation
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .icon = 133,
         .range = 1,
         .ppCost = 18,
@@ -1575,8 +1575,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Punji
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 120,
         .range = 2,
         .ppCost = 7,
@@ -1584,8 +1584,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Punji Trap
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 121,
         .range = 2,
         .ppCost = 13,
@@ -1593,8 +1593,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Punji Strike
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 122,
         .range = 3,
         .ppCost = 24,
@@ -1602,8 +1602,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fire Bomb
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 123,
         .range = 2,
@@ -1612,8 +1612,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Cluster Bomb
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 124,
         .range = 3,
@@ -1622,8 +1622,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Carpet Bomb
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 125,
         .range = 4,
@@ -1632,8 +1632,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Gale
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 126,
         .fieldPsynergy = FIELD_PSYNERGY_WHIRLWIND,
@@ -1643,8 +1643,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Typhoon
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 127,
         .range = 3,
@@ -1653,8 +1653,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Hurricane
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 128,
         .range = 3,
@@ -1663,8 +1663,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Thunderclap
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 129,
         .range = 2,
@@ -1673,8 +1673,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Thunderbolt
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 130,
         .range = 3,
@@ -1683,8 +1683,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Thunderhead
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 131,
         .range = 4,
@@ -1693,18 +1693,18 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Mist
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .icon = 132,
         .range = 2,
         .ppCost = 4,
     },
     // Ragnarok
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .icon = 137,
         .range = 1,
         .ppCost = 7,
@@ -1712,8 +1712,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Cutting Edge
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
         .icon = 136,
         .range = 1,
@@ -1722,8 +1722,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Heat Wave
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .icon = 138,
         .range = 1,
@@ -1732,8 +1732,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Astral Blast
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
         .icon = 158,
         .range = 1,
@@ -1742,8 +1742,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Planet Diver
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .icon = 139,
         .range = 1,
@@ -1752,8 +1752,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Diamond Dust
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
         .icon = 185,
         .range = 1,
@@ -1762,8 +1762,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Odyssey
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .icon = 242,
         .range = 1,
         .ppCost = 18,
@@ -1771,8 +1771,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Liquifier
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .icon = 243,
         .range = 1,
@@ -1781,8 +1781,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Plume Edge
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
         .icon = 244,
         .range = 1,
@@ -1791,8 +1791,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Thunder Mine
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
         .icon = 245,
         .range = 1,
@@ -1801,8 +1801,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Planetary
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .icon = 246,
         .range = 1,
@@ -1811,8 +1811,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Diamond Berg
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
         .icon = 247,
         .range = 1,
@@ -1821,10 +1821,10 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Death Leap
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .icon = 248,
         .range = 1,
         .ppCost = 22,
@@ -1832,8 +1832,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Epicenter
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 249,
         .range = 1,
@@ -1842,9 +1842,9 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Thorny Grave
     {
-        .targetMode = 1,
-        .flags = 0x85,
-        .effect = 26,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
+        .effect = ABILITY_EFFECT_HAUNT,
         .icon = 250,
         .range = 2,
         .ppCost = 24,
@@ -1852,9 +1852,9 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Skull Splitter
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .icon = 251,
         .range = 1,
         .ppCost = 8,
@@ -1866,249 +1866,249 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Terra Strike
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 20,
     },
     // Poison Cloud
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 18,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
         .power = 55,
     },
     // Poison Death
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 19,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
         .power = 53,
     },
     // Mortal Danger
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 28,
     },
     // Bad Omen
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 26,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_HAUNT,
         .range = 1,
         .power = 43,
     },
     // Life Nourish
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 31,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 25,
     },
     // Aqua Sock
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
         .range = 1,
         .power = 42,
     },
     // Blizzard
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .range = 1,
         .power = 18,
     },
     // Frost Bite
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 28,
     },
     // Drown
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 27,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 47,
     },
     // Life Leech
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 31,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 29,
     },
     // Psy Leech
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 69,
+        .effect = ABILITY_EFFECT_PSY_LEECH,
         .range = 1,
         .power = 22,
     },
     // Broil
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .range = 1,
         .power = 23,
     },
     // Meltdown
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 12,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
         .power = 47,
     },
     // Heat Mirage
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 21,
     },
     // Barrage
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 20,
     },
     // Demonfire
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 26,
+        .effect = ABILITY_EFFECT_HAUNT,
         .range = 1,
         .power = 60,
     },
     // Acid Bath
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .range = 1,
         .power = 34,
     },
     // Vorpal Slash
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 16,
     },
     // Stun Voltage
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 12,
     },
     // Blinding Smog
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 49,
     },
     // Murk
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .range = 1,
         .power = 10,
     },
     // Cyclone Slash
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 16,
+        .effect = ABILITY_EFFECT_RESISTANCE_DOWN_2,
         .range = 1,
         .power = 38,
     },
     // Psyphon Seal
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 25,
+        .effect = ABILITY_EFFECT_SEAL,
         .range = 1,
         .power = 14,
     },
     // Rapid Smash
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
-        .effect = 65,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_60,
         .range = 1,
         .power = 9,
     },
     // Sonic Smash
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 68,
+        .effect = ABILITY_EFFECT_TRIPLE_BLOW_60,
         .range = 1,
     },
     // Asura
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 35,
+        .effect = ABILITY_EFFECT_HALVE_DEFENSE,
         .range = 1,
         .power = 64,
     },
     // Titan Blade
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 70,
     },
     // Shining Star
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 57,
     },
@@ -2136,128 +2136,128 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Herb
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 50,
     },
     // Nut
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 200,
     },
     // Vial
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 500,
     },
     // Potion
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 9999,
     },
     // Soothing Water
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 9999,
     },
     // Psy Crystal
     {
-        .targetMode = 2,
-        .flags = 0xcb,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_PP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 9999,
     },
     // Antidote
     {
-        .targetMode = 2,
-        .flags = 0xc2,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_NONE,
-        .effect = 3,
+        .effect = ABILITY_EFFECT_CURE_POISON,
         .range = 1,
     },
     // Elixir
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_NONE,
-        .effect = 4,
+        .effect = ABILITY_EFFECT_RESTORE,
         .range = 1,
     },
     // Water of Life
     {
-        .targetMode = 2,
-        .flags = 0xc2,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_NONE,
-        .effect = 5,
+        .effect = ABILITY_EFFECT_REVIVE,
         .range = 1,
     },
     // Mist Potion
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_NONE,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .power = 300,
     },
     // Power Bread
     {
-        .targetMode = 2,
-        .flags = 0x49,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 8,
     },
     // Cookie
     {
-        .targetMode = 2,
-        .flags = 0x49,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 6,
     },
     // Apple
     {
-        .targetMode = 2,
-        .flags = 0x49,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 5,
     },
     // Hard Nut
     {
-        .targetMode = 2,
-        .flags = 0x49,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 3,
     },
     // Mint
     {
-        .targetMode = 2,
-        .flags = 0x49,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 5,
     },
     // Lucky Pepper
     {
-        .targetMode = 2,
-        .flags = 0x49,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 2,
@@ -2266,32 +2266,32 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Smoke Bomb
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
     },
     // Sleep Bomb
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .range = 1,
     },
     // Adept Ring
     {
-        .targetMode = 4,
-        .flags = 0xcb,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_PP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 7,
     },
     // Corn
     {
-        .targetMode = 2,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 100,
@@ -2352,453 +2352,453 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Aurora Field
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_NONE,
-        .effect = 5,
-        .range = 255,
+        .effect = ABILITY_EFFECT_REVIVE,
+        .range = ABILITY_RANGE_ALL,
         .power = 9999,
     },
     // Djinn Counter
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .range = 1,
         .power = 20,
     },
     // Flint
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .range = 1,
         .power = 16,
     },
     // Granite
     {
-        .targetMode = 2,
-        .flags = 0x87,
-        .effect = 46,
-        .range = 255,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
+        .effect = ABILITY_EFFECT_DEFEND,
+        .range = ABILITY_RANGE_ALL,
     },
     // Quartz
     {
-        .targetMode = 2,
-        .flags = 0x82,
-        .effect = 56,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_REVIVE_HALF,
         .range = 1,
     },
     // Vine
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 58,
-        .range = 255,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_AGILITY_DOWN,
+        .range = ABILITY_RANGE_ALL,
     },
     // Sap
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 60,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DRAIN_HALF_HP,
         .range = 1,
         .power = 50,
     },
     // Ground
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 53,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_GROUND,
         .range = 1,
     },
     // Bane
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 19,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
         .power = 60,
     },
     // Echo
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .range = 1,
         .power = 16,
     },
     // Iron
     {
-        .targetMode = 2,
-        .flags = 0x82,
-        .effect = 10,
-        .range = 255,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_DEFENSE_UP_2,
+        .range = ABILITY_RANGE_ALL,
     },
     // Steel
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 60,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_DRAIN_HALF_HP,
         .range = 1,
         .power = 13,
     },
     // Mud
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 58,
-        .range = 255,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_AGILITY_DOWN,
+        .range = ABILITY_RANGE_ALL,
     },
     // Flower
     {
-        .targetMode = 2,
-        .flags = 0x81,
-        .effect = 62,
-        .range = 255,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
+        .effect = ABILITY_EFFECT_HEAL_HP_30,
+        .range = ABILITY_RANGE_ALL,
     },
     // Meld
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
     },
     // Petra
     {
-        .targetMode = 1,
-        .flags = 0x87,
-        .effect = 53,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
+        .effect = ABILITY_EFFECT_GROUND,
         .range = 1,
     },
     // Salt
     {
-        .targetMode = 2,
-        .flags = 0x82,
-        .effect = 64,
-        .range = 255,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_CURE_ALL,
+        .range = ABILITY_RANGE_ALL,
     },
     // Geode
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .range = 1,
         .power = 19,
     },
     // Mold
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 80,
     },
     // Crystal
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .effect = 70,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Earth18
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
     },
     // Earth19
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
     },
     // Fizz
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
-        .effect = 61,
+        .effect = ABILITY_EFFECT_HEAL_HP_60,
         .range = 1,
     },
     // Sleet
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .range = 1,
         .power = 30,
     },
     // Mist
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_MERCURY,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .range = 1,
         .power = 13,
     },
     // Spritz
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
-        .effect = 62,
-        .range = 255,
+        .effect = ABILITY_EFFECT_HEAL_HP_30,
+        .range = ABILITY_RANGE_ALL,
     },
     // Hail
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 12,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
         .power = 40,
     },
     // Tonic
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 64,
-        .range = 255,
+        .effect = ABILITY_EFFECT_CURE_ALL,
+        .range = ABILITY_RANGE_ALL,
     },
     // Dew
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 57,
+        .effect = ABILITY_EFFECT_REVIVE_80,
         .range = 1,
     },
     // Fog
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 30,
     },
     // Sour
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_MERCURY,
-        .effect = 16,
+        .effect = ABILITY_EFFECT_RESISTANCE_DOWN_2,
         .range = 1,
         .power = 15,
     },
     // Spring
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .effect = 71,
         .range = 1,
     },
     // Shade
     {
-        .targetMode = 2,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_MERCURY,
         .effect = 72,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Chill
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 12,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
         .power = 40,
     },
     // Steam
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 14,
-        .range = 255,
+        .effect = ABILITY_EFFECT_RESISTANCE_UP_2,
+        .range = ABILITY_RANGE_ALL,
     },
     // Rime
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 67,
+        .effect = ABILITY_EFFECT_SEAL_2_TURNS,
         .range = 1,
     },
     // Gel
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_MERCURY,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .range = 1,
         .power = 15,
     },
     // Eddy
     {
-        .targetMode = 2,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_MERCURY,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Balm
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
         .effect = 73,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Serac
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 27,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 70,
     },
     // Water18
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
     },
     // Water19
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
     },
     // Forge
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 6,
-        .range = 255,
+        .effect = ABILITY_EFFECT_ATTACK_UP_2,
+        .range = ABILITY_RANGE_ALL,
     },
     // Fever
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 30,
     },
     // Corona
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 10,
-        .range = 255,
+        .effect = ABILITY_EFFECT_DEFENSE_UP_2,
+        .range = ABILITY_RANGE_ALL,
     },
     // Scorch
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 50,
     },
     // Ember
     {
-        .targetMode = 2,
-        .flags = 0x8b,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_PP,
         .element = ELEMENT_MARS,
-        .effect = 63,
-        .range = 255,
+        .effect = ABILITY_EFFECT_HEAL_PP_7,
+        .range = ABILITY_RANGE_ALL,
     },
     // Flash
     {
-        .targetMode = 2,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_MARS,
-        .effect = 47,
-        .range = 255,
+        .effect = ABILITY_EFFECT_TOTAL_DEFENSE,
+        .range = ABILITY_RANGE_ALL,
     },
     // Torch
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 35,
+        .effect = ABILITY_EFFECT_HALVE_DEFENSE,
         .range = 1,
         .power = 30,
     },
     // Cannon
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .range = 1,
         .power = 40,
     },
     // Spark
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
         .effect = 73,
         .range = 1,
     },
     // Kindle
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 6,
-        .range = 255,
+        .effect = ABILITY_EFFECT_ATTACK_UP_2,
+        .range = ABILITY_RANGE_ALL,
     },
     // Char
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 50,
     },
     // Coal
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 59,
-        .range = 255,
+        .effect = ABILITY_EFFECT_AGILITY_UP,
+        .range = ABILITY_RANGE_ALL,
     },
     // Reflux
     {
-        .targetMode = 2,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_MARS,
         .effect = 74,
         .range = 1,
     },
     // Core
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 35,
+        .effect = ABILITY_EFFECT_HALVE_DEFENSE,
         .range = 1,
         .power = 40,
     },
     // Tinder
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 5,
+        .effect = ABILITY_EFFECT_REVIVE,
         .range = 1,
     },
     // Shine
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .effect = 75,
         .range = 1,
@@ -2806,180 +2806,180 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fury
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 26,
+        .effect = ABILITY_EFFECT_HAUNT,
         .range = 1,
         .power = 70,
     },
     // Fugue
     {
-        .targetMode = 1,
-        .flags = 0x8a,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_PP_DAMAGE,
         .element = ELEMENT_MARS,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .power = 18,
     },
     // Fire18
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
     },
     // Fire19
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
     },
     // Gust
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 65,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_60,
         .range = 1,
         .power = 10,
     },
     // Breeze
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 14,
-        .range = 255,
+        .effect = ABILITY_EFFECT_RESISTANCE_UP_2,
+        .range = ABILITY_RANGE_ALL,
     },
     // Zephyr
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 59,
-        .range = 255,
+        .effect = ABILITY_EFFECT_AGILITY_UP,
+        .range = ABILITY_RANGE_ALL,
     },
     // Smog
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 60,
     },
     // Kite
     {
-        .targetMode = 2,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_JUPITER,
-        .effect = 66,
+        .effect = ABILITY_EFFECT_ACT_TWICE,
         .range = 1,
     },
     // Squall
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 14,
     },
     // Luff
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 67,
+        .effect = ABILITY_EFFECT_SEAL_2_TURNS,
         .range = 1,
     },
     // Breath
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_JUPITER,
         .effect = 76,
         .range = 1,
     },
     // Blitz
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 30,
     },
     // Ether
     {
-        .targetMode = 2,
-        .flags = 0x8b,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_PP,
         .element = ELEMENT_JUPITER,
         .effect = 78,
         .range = 1,
     },
     // Waft
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .range = 1,
         .power = 40,
     },
     // Haze
     {
-        .targetMode = 2,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_JUPITER,
         .effect = 79,
         .range = 1,
     },
     // Wheeze
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 19,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
         .power = 50,
     },
     // Aroma
     {
-        .targetMode = 2,
-        .flags = 0x8b,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_PP,
         .element = ELEMENT_JUPITER,
         .effect = 77,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Whorl
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 27,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 40,
     },
     // Gasp
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
         .effect = 80,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Lull
     {
-        .targetMode = 4,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_JUPITER,
         .effect = 81,
         .range = 1,
     },
     // Gale
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
         .effect = 82,
         .range = 1,
@@ -2987,71 +2987,71 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Wind18
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
     },
     // Wind19
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
     },
     // Venus
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .icon = 140,
         .range = 6,
         .power = 30,
     },
     // Ramses
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .icon = 141,
         .range = 6,
         .power = 60,
     },
     // Cybele
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .icon = 142,
         .range = 6,
         .power = 120,
     },
     // Judgment
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .icon = 143,
         .range = 6,
         .power = 240,
     },
     // Zagan
     {
-        .targetMode = 1,
-        .flags = 0x88,
-        .effect = 12,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .icon = 186,
         .range = 6,
         .power = 50,
     },
     // Haures
     {
-        .targetMode = 1,
-        .flags = 0x88,
-        .effect = 19,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .icon = 187,
         .range = 6,
         .power = 270,
     },
     // Charon
     {
-        .targetMode = 1,
-        .flags = 0x88,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .icon = 188,
         .range = 6,
         .power = 500,
@@ -3060,8 +3060,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Mercury
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MERCURY,
         .icon = 144,
         .range = 6,
@@ -3069,8 +3069,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Nereid
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MERCURY,
         .icon = 145,
         .range = 6,
@@ -3078,8 +3078,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Neptune
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MERCURY,
         .icon = 146,
         .range = 6,
@@ -3087,8 +3087,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Boreas
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MERCURY,
         .icon = 147,
         .range = 6,
@@ -3096,30 +3096,30 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Moloch
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MERCURY,
-        .effect = 58,
+        .effect = ABILITY_EFFECT_AGILITY_DOWN,
         .icon = 189,
         .range = 6,
         .power = 100,
     },
     // Coatlicue
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
-        .effect = 29,
+        .effect = ABILITY_EFFECT_REGENERATE,
         .icon = 190,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .power = 60,
     },
     // Azul
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MERCURY,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .icon = 191,
         .range = 6,
         .power = 330,
@@ -3128,8 +3128,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Mars
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .icon = 148,
         .range = 6,
@@ -3137,8 +3137,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Kirin
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .icon = 149,
         .range = 6,
@@ -3146,8 +3146,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Tiamat
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .icon = 150,
         .range = 6,
@@ -3155,8 +3155,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Meteor
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .icon = 151,
         .range = 6,
@@ -3164,8 +3164,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Megaera
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .icon = 192,
         .range = 6,
@@ -3173,8 +3173,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Ulysses
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .effect = 83,
         .icon = 193,
@@ -3183,8 +3183,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Daedalus
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .icon = 194,
         .range = 6,
@@ -3192,8 +3192,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Daedalus
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .icon = 194,
         .range = 6,
@@ -3201,8 +3201,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Iris
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .icon = 195,
         .range = 6,
@@ -3212,8 +3212,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Jupiter
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_JUPITER,
         .icon = 152,
         .range = 6,
@@ -3221,8 +3221,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Atalanta
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_JUPITER,
         .icon = 153,
         .range = 6,
@@ -3230,8 +3230,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Procne
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_JUPITER,
         .icon = 154,
         .range = 6,
@@ -3239,8 +3239,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Thor
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_JUPITER,
         .icon = 155,
         .range = 6,
@@ -3248,28 +3248,28 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Flora
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_JUPITER,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .icon = 196,
         .range = 6,
         .power = 80,
     },
     // Eclipse
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_JUPITER,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .icon = 197,
         .range = 6,
         .power = 300,
     },
     // Catastrophe
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_JUPITER,
         .effect = 84,
         .icon = 198,
@@ -3292,165 +3292,165 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Fire Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .range = 2,
         .power = 60,
     },
     // Fire Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .range = 2,
         .power = 90,
     },
     // Fire Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .range = 2,
         .power = 130,
     },
     // Water Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 2,
         .power = 25,
     },
     // Water Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 2,
         .power = 50,
     },
     // Water Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 2,
         .power = 100,
     },
     // Ice Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 2,
         .power = 50,
     },
     // Ice Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 2,
         .power = 90,
     },
     // Ice Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 2,
         .power = 180,
     },
     // Dark Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
-        .effect = 20,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 2,
         .power = 70,
     },
     // Dark Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
-        .effect = 20,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 2,
         .power = 110,
     },
     // Acid Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
-        .effect = 13,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN,
         .range = 2,
         .power = 170,
     },
     // Acid Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
-        .effect = 13,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN,
         .range = 2,
         .power = 190,
     },
     // Storm Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 2,
         .power = 190,
     },
     // Storm Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 2,
         .power = 220,
     },
     // Sonic Wave
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 5,
     },
     // Sonic Wave
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 45,
     },
     // Shriek
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 30,
     },
     // Banshee Howl
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 70,
     },
     // Crazy Voice
     {
-        .targetMode = 1,
-        .flags = 0x8a,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_PP_DAMAGE,
         .element = ELEMENT_JUPITER,
         .effect = 52,
         .range = 1,
@@ -3458,60 +3458,60 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // War Cry
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
-        .effect = 53,
+        .effect = ABILITY_EFFECT_GROUND,
         .range = 1,
         .power = 45,
     },
     // Wicked Howl
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
-        .effect = 53,
+        .effect = ABILITY_EFFECT_GROUND,
         .range = 1,
         .power = 60,
     },
     // Wing Beat
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 35,
     },
     // Wing Flutter
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
         .range = 2,
         .power = 70,
     },
     // Wing Stroke
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,
         .range = 2,
         .power = 140,
     },
     // Evil Blessing
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
-        .effect = 26,
+        .effect = ABILITY_EFFECT_HAUNT,
         .range = 2,
         .power = 80,
     },
     // Deadly Gas
     {
-        .targetMode = 1,
-        .flags = 0x86,
-        .effect = 19,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 2,
         .power = 30,
     },
@@ -3523,534 +3523,534 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Rumble
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
         .power = 9,
     },
     // Bone Chiller
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 1,
         .power = 7,
     },
     // Slice
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
-        .effect = 65,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_60,
         .range = 1,
         .power = 9,
     },
     // Bone Charge
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .range = 1,
         .power = 17,
     },
     // Mystic Flame
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .range = 1,
         .power = 16,
     },
     // Numbing Sting
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 8,
     },
     // Brute Force
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 22,
     },
     // Sticky Goo
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
-        .effect = 13,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN,
         .range = 1,
         .power = 13,
     },
     // Cannibal Fang
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 31,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 24,
     },
     // Bear Claw
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 16,
     },
     // Poisonous Bite
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 18,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
     },
     // Flying Attack
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 42,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4,
         .range = 1,
         .power = 8,
     },
     // Undead Sword
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 15,
     },
     // Ransack
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 35,
     },
     // Sticky Poison
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
-        .effect = 18,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
         .power = 16,
     },
     // Poison Fang
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 18,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
     },
     // Electric Bite
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
     },
     // Poison Tail
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 19,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
         .power = 30,
     },
     // Onslaught
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 24,
     },
     // Vampiric Fang
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 31,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 35,
     },
     // Bacteria Rush
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 18,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
         .power = 16,
     },
     // Swift Strike
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 44,
+        .effect = ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4,
         .range = 1,
         .power = 15,
     },
     // Rotten Blood
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
-        .effect = 12,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
         .power = 44,
     },
     // Forcible Arm
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 40,
     },
     // Double Fang
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 42,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4,
         .range = 1,
         .power = 35,
     },
     // Mortal Blow
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 55,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_SELF_DESTRUCT,
         .range = 1,
         .power = 35,
     },
     // Freebite Rush
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 9,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN,
         .range = 1,
         .power = 40,
     },
     // Twin Beaks
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 42,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4,
         .range = 1,
         .power = 30,
     },
     // Rabid Fang
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 19,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
         .power = 36,
     },
     // Acid Bite
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 13,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN,
         .range = 1,
         .power = 36,
     },
     // Dynamite
     {
-        .targetMode = 1,
-        .flags = 0x85,
-        .effect = 55,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
+        .effect = ABILITY_EFFECT_SELF_DESTRUCT,
         .range = 2,
         .power = 200,
     },
     // Headbutt
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 60,
     },
     // Poison Ink
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 19,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
     },
     // Truncheon Fist
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 34,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_LEAVE_ONE_HP,
         .range = 1,
         .power = 60,
     },
     // Counterstrike
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 50,
     },
     // Mad Dash
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 70,
     },
     // Soothing Star
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .range = 2,
         .power = 10,
     },
     // Spider Web
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 12,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
     },
     // Heartrender
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_NONE,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .range = 1,
     },
     // Mad Spatter
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 20,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 2,
     },
     // Spasm
     {
-        .targetMode = 4,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .range = 1,
         .power = 40,
     },
     // Sleep Star
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .range = 2,
     },
     // Decompose
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 9,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN,
         .range = 2,
     },
     // Haunting
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 26,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_HAUNT,
         .range = 1,
     },
     // Worms
     {
-        .targetMode = 4,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .range = 1,
         .power = 50,
     },
     // Berserk
     {
-        .targetMode = 4,
-        .flags = 0x82,
-        .effect = 6,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_ATTACK_UP_2,
         .range = 1,
     },
     // Lucid Prophecy
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 28,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_CURSE,
         .range = 1,
     },
     // Recovery
     {
-        .targetMode = 4,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 150,
     },
     // Flee
     {
-        .flags = 0x89,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 49,
+        .effect = ABILITY_EFFECT_FLEE,
         .range = 1,
     },
     // Contain
     {
-        .flags = 0x89,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 45,
+        .effect = ABILITY_EFFECT_THREATEN,
         .range = 1,
     },
     // Threaten
     {
-        .flags = 0x89,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 45,
+        .effect = ABILITY_EFFECT_THREATEN,
         .range = 1,
     },
     // Tremble
     {
-        .flags = 0x89,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 45,
+        .effect = ABILITY_EFFECT_THREATEN,
         .range = 1,
     },
     // Fortify
     {
-        .targetMode = 4,
-        .flags = 0x89,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 46,
+        .effect = ABILITY_EFFECT_DEFEND,
         .range = 1,
     },
     // Speed Surge
     {
-        .flags = 0x89,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 50,
+        .effect = ABILITY_EFFECT_CALL_ALLY,
         .range = 1,
     },
     // Ally Search
     {
-        .flags = 0x89,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 50,
+        .effect = ABILITY_EFFECT_CALL_ALLY,
         .range = 1,
     },
     // Sidestep
     {
-        .targetMode = 4,
-        .flags = 0x89,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .effect = 48,
         .range = 1,
     },
     // Total Defense
     {
-        .targetMode = 4,
-        .flags = 0x89,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 47,
+        .effect = ABILITY_EFFECT_TOTAL_DEFENSE,
         .range = 1,
     },
     // Stand Ready
     {
-        .targetMode = 4,
-        .flags = 0x89,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 46,
+        .effect = ABILITY_EFFECT_DEFEND,
         .range = 1,
     },
     // Battle Cry
     {
-        .flags = 0x89,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 51,
+        .effect = ABILITY_EFFECT_CALL_HELP,
         .range = 1,
     },
     // Can't Use
     {
-        .flags = 0x85,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .range = 1,
     },
     // Poison Beat
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 18,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
         .power = 20,
     },
     // Spinning Beat
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 35,
+        .effect = ABILITY_EFFECT_HALVE_DEFENSE,
         .range = 1,
         .power = 40,
     },
     // Heat Flash
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 20,
     },
     // Death Scythe
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 35,
     },
     // Outer Space
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .range = 6,
         .power = 200,
     },
     // Dragon Driver
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .range = 6,
         .power = 120,
     },
     // Drain Fang
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 31,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 80,
     },
     // Severe Blow
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 34,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_LEAVE_ONE_HP,
         .range = 1,
         .power = 12,
     },
     // Thrash
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 34,
+        .effect = ABILITY_EFFECT_LEAVE_ONE_HP,
         .range = 1,
         .power = 30,
     },
@@ -4058,96 +4058,96 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Stone Justice
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 58,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_AGILITY_DOWN,
         .range = 1,
         .power = 11,
     },
     // Sarcophagus
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 26,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_HAUNT,
         .range = 1,
         .power = 30,
     },
     // Evil Eye
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 20,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 38,
     },
     // Vein Tap
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 31,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 43,
     },
     // Heavy Divide
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 12,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
         .power = 60,
     },
     // Hammersphere
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 35,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_HALVE_DEFENSE,
         .range = 1,
         .power = 58,
     },
     // Mother Earth
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 24,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_SLEEP,
         .range = 1,
         .power = 59,
     },
     // Wyrd Curse
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 26,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_HAUNT,
         .range = 1,
         .power = 41,
     },
     // Heartbreak
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 42,
     },
     // Vengeance
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .effect = 89,
         .range = 1,
         .power = 71,
     },
     // Acheron's Grief
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 19,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
         .power = 76,
     },
     // Megiddo
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .range = 1,
         .power = 30,
     },
@@ -4159,91 +4159,91 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Hurricane
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .range = 1,
         .power = 21,
     },
     // Dreamtide
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .range = 1,
         .power = 12,
     },
     // Stun Cloud
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 31,
     },
     // Searing Fog
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 36,
     },
     // Ice Crush
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 12,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
         .power = 34,
     },
     // Flash Force
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 25,
+        .effect = ABILITY_EFFECT_SEAL,
         .range = 1,
         .power = 44,
     },
     // Sargasso
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 27,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 39,
     },
     // Lethe Albion
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 25,
+        .effect = ABILITY_EFFECT_SEAL,
         .range = 1,
         .power = 56,
     },
     // Reverse Star
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 69,
+        .effect = ABILITY_EFFECT_PSY_LEECH,
         .range = 1,
         .power = 58,
     },
     // Rising Dragon
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 65,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_60,
         .range = 1,
         .power = 62,
     },
@@ -4257,116 +4257,116 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Power Drive
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .range = 1,
         .power = 24,
     },
     // Boost Hack
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .range = 1,
         .power = 17,
     },
     // Heat Smash
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 16,
+        .effect = ABILITY_EFFECT_RESISTANCE_DOWN_2,
         .range = 1,
         .power = 41,
     },
     // Fire Dance
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .range = 1,
         .power = 51,
     },
     // Blaze Rush
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 12,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
         .power = 54,
     },
     // Flare Burst
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 31,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 56,
     },
     // Shred
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 12,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
         .power = 33,
     },
     // Crucible Fire
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 58,
+        .effect = ABILITY_EFFECT_AGILITY_DOWN,
         .range = 1,
         .power = 48,
     },
     // Scorpionfish
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 19,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
         .power = 43,
     },
     // Purgatory
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .range = 1,
         .power = 67,
     },
     // Soul Shatter
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 69,
+        .effect = ABILITY_EFFECT_PSY_LEECH,
         .range = 1,
         .power = 50,
     },
     // Radiant Fire
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 35,
+        .effect = ABILITY_EFFECT_HALVE_DEFENSE,
         .range = 1,
         .power = 66,
     },
     // Life Shear
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 27,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 114,
     },
@@ -4378,80 +4378,80 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Moon Air
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .range = 1,
         .power = 18,
     },
     // Flash Edge
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 46,
     },
     // Aging Gas
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 31,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 45,
     },
     // Mad Zephyr
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 65,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_60,
         .range = 1,
         .power = 40,
     },
     // Lunar Slash
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 16,
+        .effect = ABILITY_EFFECT_RESISTANCE_DOWN_2,
         .range = 1,
         .power = 25,
     },
     // Nirvana
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 69,
+        .effect = ABILITY_EFFECT_PSY_LEECH,
         .range = 1,
         .power = 50,
     },
     // High Vitals
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 31,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 52,
     },
     // Stun Bolt
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 47,
     },
     // Trident
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
         .effect = 91,
         .range = 1,
@@ -4459,17 +4459,17 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Light Surge
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 51,
     },
     // Raiden's Wrath
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
         .effect = 90,
         .range = 1,
@@ -4477,37 +4477,37 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Void Beam
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 25,
+        .effect = ABILITY_EFFECT_SEAL,
         .range = 1,
         .power = 57,
     },
     // Supernova
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 63,
     },
     // Apocalypse
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 28,
+        .effect = ABILITY_EFFECT_CURSE,
         .range = 1,
         .power = 125,
     },
     // Legend
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 68,
+        .effect = ABILITY_EFFECT_TRIPLE_BLOW_60,
         .range = 1,
         .power = 73,
     },
@@ -4521,8 +4521,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Sabre Dance
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .icon = 199,
         .range = 1,
         .ppCost = 7,
@@ -4530,10 +4530,10 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Backstab
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 27,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .icon = 200,
         .range = 1,
         .ppCost = 16,
@@ -4541,8 +4541,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fire Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 201,
         .range = 2,
@@ -4551,8 +4551,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Juggle
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 202,
         .range = 2,
@@ -4561,8 +4561,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Heat Juggle
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 203,
         .range = 3,
@@ -4571,8 +4571,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fiery Juggle
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 204,
         .range = 3,
@@ -4581,8 +4581,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Flame Card
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 205,
         .range = 2,
@@ -4591,8 +4591,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Thunder Card
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
         .icon = 208,
         .range = 2,
@@ -4601,8 +4601,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Bramble Card
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .icon = 207,
         .range = 2,
         .ppCost = 22,
@@ -4610,8 +4610,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Frost Card
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 206,
         .range = 2,
@@ -4620,39 +4620,39 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Baffle Card
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .icon = 209,
         .range = 2,
         .ppCost = 4,
     },
     // Sword Card
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .icon = 212,
         .range = 1,
         .ppCost = 6,
     },
     // Sleep Card
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = 24,
+        .effect = ABILITY_EFFECT_SLEEP,
         .icon = 210,
         .range = 2,
         .ppCost = 5,
     },
     // Death Card
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .icon = 211,
         .range = 1,
         .ppCost = 8,
@@ -4661,8 +4661,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Whiplash
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
         .icon = 213,
         .range = 1,
@@ -4671,8 +4671,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Wild Wolf
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_NONE,
         .icon = 214,
         .range = 1,
@@ -4681,8 +4681,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Emu
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
         .icon = 215,
         .range = 1,
@@ -4691,8 +4691,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Roc
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_NONE,
         .icon = 216,
         .range = 1,
@@ -4701,8 +4701,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Salamander
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 217,
         .range = 2,
@@ -4711,8 +4711,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Orc
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_NONE,
         .icon = 218,
         .range = 1,
@@ -4721,8 +4721,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Harpy
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
         .icon = 219,
         .range = 1,
@@ -4731,8 +4731,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Grand Golem
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .icon = 220,
         .range = 1,
         .ppCost = 22,
@@ -4740,8 +4740,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Cerberus
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 221,
         .range = 2,
@@ -4750,8 +4750,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Wyvern
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 222,
         .range = 3,
@@ -4760,8 +4760,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Pixie
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 223,
         .range = 1,
@@ -4770,8 +4770,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Dinox
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .icon = 224,
         .range = 1,
         .ppCost = 3,
@@ -4779,10 +4779,10 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Gryphon
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 65,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_60,
         .icon = 225,
         .range = 1,
         .ppCost = 10,
@@ -4790,8 +4790,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Living Armor
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .icon = 226,
         .range = 1,
         .ppCost = 17,
@@ -4799,8 +4799,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Chimera
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 227,
         .range = 2,
@@ -4809,8 +4809,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Blue Dragon
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .icon = 228,
         .range = 3,
@@ -4819,8 +4819,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Faery
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 229,
         .range = 1,
@@ -4829,27 +4829,27 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Elder Wood
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 230,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 14,
         .power = 170,
     },
     // Lich
     {
-        .targetMode = 2,
-        .flags = 0x82,
-        .effect = 5,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_REVIVE,
         .icon = 231,
         .range = 1,
         .ppCost = 10,
     },
     // Troll
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .icon = 232,
         .range = 1,
         .ppCost = 3,
@@ -4857,8 +4857,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Minotaur
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .icon = 233,
         .range = 1,
         .ppCost = 10,
@@ -4866,10 +4866,10 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Ghost Soldier
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 35,
+        .effect = ABILITY_EFFECT_HALVE_DEFENSE,
         .icon = 234,
         .range = 1,
         .ppCost = 22,
@@ -4877,8 +4877,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Macetail
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 235,
         .range = 2,
@@ -4887,8 +4887,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fire Dragon
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 236,
         .range = 3,
@@ -4897,8 +4897,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Weird Nymph
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 237,
         .range = 1,
@@ -4907,8 +4907,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Succubus
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 238,
         .range = 1,
@@ -4917,30 +4917,30 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Estre Wood
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 239,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 14,
         .power = 180,
     },
     // Manticore
     {
-        .targetMode = 2,
-        .flags = 0x81,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MARS,
         .icon = 240,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
         .ppCost = 18,
         .power = 300,
     },
     // Phoenix
     {
-        .targetMode = 2,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_ALLIES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 5,
+        .effect = ABILITY_EFFECT_REVIVE,
         .icon = 241,
         .range = 1,
         .ppCost = 10,
@@ -4949,8 +4949,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Call Zombie
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
         .icon = 252,
         .range = 1,
@@ -4959,9 +4959,9 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Call Demon
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 34,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_LEAVE_ONE_HP,
         .icon = 253,
         .range = 1,
         .ppCost = 13,
@@ -4969,8 +4969,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Call Dullahan
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
         .icon = 254,
         .range = 1,
@@ -4979,8 +4979,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Raging Heat
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 255,
         .range = 3,
@@ -4989,8 +4989,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fiery Abyss
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 256,
         .range = 3,
@@ -4999,8 +4999,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Dire Inferno
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .icon = 257,
         .range = 4,
@@ -5009,10 +5009,10 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Poison Flow
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_JUPITER,
-        .effect = 19,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .icon = 258,
         .range = 3,
         .ppCost = 28,
@@ -5020,8 +5020,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Fire Puppet
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .effect = 85,
         .icon = 259,
         .range = 2,
@@ -5035,94 +5035,94 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Sand Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .range = 2,
         .power = 35,
     },
     // Desert Gasp
     {
-        .targetMode = 1,
-        .flags = 0x86,
-        .effect = 13,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN,
         .range = 2,
         .power = 45,
     },
     // Black Ice
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .range = 2,
         .power = 80,
     },
     // Toxic Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
-        .effect = 18,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 2,
         .power = 60,
     },
     // Typhoon Blow
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 2,
         .power = 150,
     },
     // Blast Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
-        .effect = 13,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN,
         .range = 2,
         .power = 170,
     },
     // Gravel Blow
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .range = 2,
         .power = 90,
     },
     // Darksol Gasp
     {
-        .targetMode = 1,
-        .flags = 0x86,
-        .effect = 26,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
+        .effect = ABILITY_EFFECT_HAUNT,
         .range = 2,
         .power = 230,
     },
     // Flame Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .range = 2,
         .power = 170,
     },
     // Aqua Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 2,
         .power = 140,
     },
     // Fire Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MARS,
         .range = 2,
         .power = 180,
     },
     // Chill Breath
     {
-        .targetMode = 1,
-        .flags = 0x86,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 2,
         .power = 210,
@@ -5145,188 +5145,188 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     {0},
     // Flash Punch
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 10,
     },
     // Formic Acid
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 15,
     },
     // Claw Attack
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 20,
     },
     // Beat Dance
     {
-        .targetMode = 4,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_NONE,
-        .effect = 6,
+        .effect = ABILITY_EFFECT_ATTACK_UP_2,
         .range = 1,
     },
     // Twin Shear
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .range = 1,
         .power = 18,
     },
     // Paralytail
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 23,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 20,
     },
     // Echo Cut
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 30,
     },
     // Clarion Cry
     {
-        .flags = 0x89,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .effect = 86,
         .range = 1,
     },
     // Triple Chomp
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_MERCURY,
         .range = 1,
         .power = 24,
     },
     // Raging Flood
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MERCURY,
         .range = 6,
         .power = 110,
     },
     // Rising Venom
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 18,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
         .power = 30,
     },
     // Slaver
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 13,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN,
         .range = 3,
     },
     // Mighty Press
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 50,
     },
     // Star Mine
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .range = 6,
         .power = 35,
     },
     // Heat Stun
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_MARS,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 13,
     },
     // Ocean Fist
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_NONE,
-        .effect = 34,
+        .effect = ABILITY_EFFECT_LEAVE_ONE_HP,
         .range = 1,
         .power = 50,
     },
     // Watery Grave
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_NONE,
-        .effect = 27,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 6,
         .power = 130,
     },
     // Counter-rush
     {
-        .targetMode = 4,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_MERCURY,
         .effect = 74,
         .range = 1,
     },
     // Counter
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
         .range = 1,
         .power = 70,
     },
     // Bosca Hit
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 17,
     },
     // Strong Hit
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 14,
     },
     // Rolling Flame
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .range = 2,
         .power = 100,
     },
     // Rising Dragon
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
         .range = 1,
         .ppCost = 37,
@@ -5334,8 +5334,8 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Meteor Blow
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .element = ELEMENT_MARS,
         .range = 6,
         .ppCost = 21,
@@ -5343,376 +5343,376 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Cage
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 53,
+        .effect = ABILITY_EFFECT_GROUND,
         .range = 1,
         .power = 8,
     },
     // Stun Muscle
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_MARS,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 13,
     },
     // Djinnfest
     {
-        .targetMode = 1,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_MARS,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Heat Kiss
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = 8,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
         .range = 2,
     },
     // Fatal Fang
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 11,
     },
     // Angle Spike
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
         .range = 1,
         .power = 9,
     },
     // Quick Slash
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 13,
     },
     // Doublestep
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 18,
     },
     // Maneater
     {
-        .targetMode = 1,
-        .flags = 0x85,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_NONE,
-        .effect = 31,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 1,
         .power = 50,
     },
     // Claw Slash
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 16,
     },
     // Mega Slash
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 15,
     },
     // Vanish Claw
     {
-        .targetMode = 1,
-        .flags = 0x83,
-        .effect = 20,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 21,
     },
     // Crusher Grip
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 23,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 13,
     },
     // Ur Flash
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 14,
     },
     // Power Bite
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .range = 1,
         .power = 12,
     },
     // Terrible Bite
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 34,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_LEAVE_ONE_HP,
         .range = 1,
         .power = 13,
     },
     // Poison Sting
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 18,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
         .power = 12,
     },
     // Kill Sting
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
         .power = 11,
     },
     // Beast Needle
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
         .range = 1,
         .power = 15,
     },
     // Poison Sting
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 18,
+        .effect = ABILITY_EFFECT_POISON,
         .range = 1,
         .power = 20,
     },
     // Stun Sting
     {
-        .targetMode = 1,
-        .flags = 0x83,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = 23,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 25,
     },
     // Mucous Gel
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 20,
+        .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
     },
     // Poison Gel
     {
-        .targetMode = 1,
-        .flags = 0x82,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = 19,
+        .effect = ABILITY_EFFECT_DEADLY_POISON,
         .range = 1,
     },
     // Hydro Slash
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_MERCURY,
         .range = 1,
         .power = 14,
     },
     // Regen Dance
     {
-        .flags = 0x82,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_NONE,
         .effect = 87,
         .range = 1,
     },
     // Fire Dance
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_MARS,
         .range = 1,
         .power = 13,
     },
     // Power Crush
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 34,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_LEAVE_ONE_HP,
         .range = 1,
         .power = 12,
     },
     // Sack
     {
-        .targetMode = 4,
-        .flags = 0x82,
-        .effect = 6,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_ATTACK_UP_2,
         .range = 1,
     },
     // Vital Moon
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 34,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_LEAVE_ONE_HP,
         .range = 1,
         .power = 14,
     },
     // Human Hunt
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 27,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_INSTANT_DEATH,
         .range = 1,
     },
     // Demon Eye
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 26,
-        .range = 255,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_HAUNT,
+        .range = ABILITY_RANGE_ALL,
     },
     // Stun Jip
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 23,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_STUN,
         .range = 1,
         .power = 16,
     },
     // Pike Assault
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
-        .effect = 35,
+        .effect = ABILITY_EFFECT_HALVE_DEFENSE,
         .range = 1,
         .power = 14,
     },
     // Formina Sage
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
         .range = 1,
         .power = 28,
     },
     // True Collide
     {
-        .targetMode = 1,
-        .flags = 0x85,
-        .effect = 31,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
+        .effect = ABILITY_EFFECT_DRAIN_HP,
         .range = 2,
         .power = 180,
     },
     // Armor Crush
     {
-        .targetMode = 1,
-        .flags = 0x84,
-        .effect = 12,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
         .range = 1,
         .power = 14,
     },
     // Djinn Blast
     {
-        .targetMode = 1,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_NONE,
         .range = 1,
     },
     // Djinn Storm
     {
-        .targetMode = 1,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_NONE,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Earth Force
     {
-        .targetMode = 1,
-        .flags = 0x82,
-        .effect = 53,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
+        .effect = ABILITY_EFFECT_GROUND,
         .range = 1,
     },
     // Guard Aura
     {
-        .targetMode = 4,
-        .flags = 0x89,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .effect = 88,
         .range = 1,
     },
     // Cruel Ruin
     {
-        .targetMode = 1,
-        .flags = 0x88,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
         .range = 6,
         .power = 200,
     },
     // Mystic Call
     {
-        .flags = 0x89,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
         .effect = 86,
         .range = 1,
     },
     // Mine Ball
     {
-        .targetMode = 1,
-        .flags = 0x84,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_MERCURY,
         .range = 3,
         .power = 15,
     },
     // Angry Mine
     {
-        .targetMode = 1,
-        .flags = 0x85,
-        .effect = 55,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
+        .effect = ABILITY_EFFECT_SELF_DESTRUCT,
         .range = 2,
         .power = 300,
     },
     // Djinn Stun
     {
-        .targetMode = 1,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_NONE,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Crucible
     {
-        .targetMode = 1,
-        .flags = 0x87,
+        .targetMode = ABILITY_TARGET_FOES,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT_ONLY,
         .element = ELEMENT_NONE,
-        .range = 255,
+        .range = ABILITY_RANGE_ALL,
     },
     // Element Swap
     {
-        .targetMode = 4,
-        .flags = 0x89,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 45,
+        .effect = ABILITY_EFFECT_THREATEN,
         .range = 1,
     },
     // Earnest Ply
     {
-        .targetMode = 4,
-        .flags = 0xc1,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
         .icon = 66,
         .fieldPsynergy = FIELD_PSYNERGY_PLY,
@@ -5722,18 +5722,18 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     },
     // Psy Boost
     {
-        .targetMode = 4,
-        .flags = 0x8b,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_PP,
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 20,
     },
     // Pressure
     {
-        .targetMode = 4,
-        .flags = 0x89,
+        .targetMode = ABILITY_TARGET_SELF,
+        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_NO_POWER,
         .element = ELEMENT_NONE,
-        .effect = 45,
+        .effect = ABILITY_EFFECT_THREATEN,
         .range = 1,
     },
 };

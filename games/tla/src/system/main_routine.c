@@ -4,6 +4,8 @@
 /// in bank 04 it follows the field sequence's picture decoders.
 
 #include "battle/battle.h"
+#include "flags.h"
+#include "sounds.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -169,7 +171,7 @@ void Scene_ReturnFromSequence(s32 result) {
     } else {
       gMainRoutineWork.scene = gMainRoutineWork.primary;
       gMainRoutineWork.entrance = gMainRoutineWork.secondary;
-      GameFlag_Set(0x109);
+      GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     }
   }
 }
@@ -204,10 +206,10 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.scene = (s32)&SceneId_VenusLighthouseEntrance;
     gMainRoutineWork.entrance = 10;
   } else if (gDebugMode && mode == 2) {
-    gMainRoutineWork.scene = (s32)&SceneId_Ov64a;
+    gMainRoutineWork.scene = (s32)&SceneId_Clear;
     gMainRoutineWork.entrance = 1;
   } else if (gDebugMode && mode == 3) {
-    gMainRoutineWork.scene = (s32)&SceneId_Ov6b4;
+    gMainRoutineWork.scene = (s32)&SceneId_MtAlephSummit;
     gMainRoutineWork.entrance = 1;
   } else if (gDebugMode && mode == 4) {
     gMainRoutineWork.scene = (s32)&SceneId_Title;
@@ -226,7 +228,7 @@ void MainRoutine_Run(s32 mode) {
     if (GameFlag_Get(0x101))
       GameFlag_Clear(0x101);
     else
-      Sound_PlayFar(0x120);
+      Sound_PlayFar(SE_288);
     record = &table[gMainRoutineWork.scene];
     entrance = gMainRoutineWork.entrance;
     {
@@ -262,9 +264,10 @@ void MainRoutine_Run(s32 mode) {
       continue;
     }
 
-    Scene_Arrive(gMainRoutineWork.scene, GameFlag_Get(0x109));
+    Scene_Arrive(gMainRoutineWork.scene,
+                 GameFlag_Get(FLAG_KEEP_PARTY_POSITION));
     Scene_ChooseMusic();
-    if (!GameFlag_Get(0x109)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       if (GameFlag_Get(0x11a) || GameFlag_Get(0x11b))
         GameFlag_Clear(0x11a);
       else

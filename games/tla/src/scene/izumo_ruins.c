@@ -2,7 +2,6 @@
 /// The Izumo Ruins' pillars: those Pound sinks into the floor (Pillars_Place,
 /// Pillars_Pound) and the grey ones that crack under a first step and crumble
 /// under a second (CrumblingPillars_Step).
-#include "shared/map_cells.h"
 #include "system/iwram_call.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -107,7 +106,6 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 #include "system/field_effect.h"
 #include "module/field/field_effect.h"
 #include "flags.h"
-#include "shared/actors.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "game/game.h"
@@ -160,7 +158,6 @@ void Pillars_Pound(u16 *list, s32 mode, s32 count) {
 
   if (*list == 0xffff)
     return;
-  // A goto loop: as a do-while loop, 42 of 61 instructions differ in tla-en.
 top:
   {
     u32 entry = *list;
@@ -179,7 +176,7 @@ top:
       if (mode == 1) {
         Event_SetFlag(flag);
         Actor_SetCellOpen(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       return;
     }
@@ -189,8 +186,7 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+#include "shared/actor_set_cell_open.h"
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
@@ -265,7 +261,7 @@ body:
 
       Event_Start();
       if (!GameFlag_Get(flag)) {
-        Sound_Play(125);
+        Sound_Play(SE_CHEST_CLOSE);
         Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
         Actor_SelectAnimation(pillar, 0);
@@ -280,8 +276,8 @@ body:
         u8 *flags = &leader->motionFlags;
 
         *flags = 0;
-        Sound_Play(185);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        Sound_Play(SE_PUSH);
+        MapGrid_SetShake(1, 4, 1);
         Rubble_Spray(0);
         wait(8);
         Actor_SelectAnimation(pillar, 2);
@@ -290,13 +286,13 @@ body:
         wait(16);
         Leader_SetCellShapeAt(-2, pillar->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         *flags = 3;
         wait(5);
         Actor_SetPositionAndResetMotion(pillar, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Sound_Play(SE_THUMP);
         Rubble_Burst();
         wait(20);
         GameFlag_Set(flag + 1);
@@ -324,19 +320,19 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
       flag = entry->flag;
       Event_Start();
       if (!Event_GetFlag(flag + 1)) {
-        Event_PlaySound(185);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        Event_PlaySound(SE_PUSH);
+        MapGrid_SetShake(1, 4, 1);
         Rubble_Spray(0);
         System_Wait(8);
         Actor_SelectAnimation(object, 2);
         Actor_SetCellShapeAt(-4, OBJECT_BYTE(object, 34), id);
         Rubble_Spray(1);
         System_Wait(16);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         System_Wait(8);
         FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
         System_Wait(2);
-        Event_PlaySound(188);
+        Event_PlaySound(SE_THUMP);
         Rubble_Burst();
         System_Wait(20);
         Event_SetFlag(flag);
@@ -395,8 +391,6 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
 
       Actor_DisableById(id);
       cell->attributeB = 128;
-      // Read through the actor, not actor->terrainId: the native reloads it
-      // after the cell store.
       *shape =
           MapCollision_FindOrAddTag(actor->terrainId, kind, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
@@ -445,7 +439,7 @@ body:
         Actor_SelectAnimation(helper, 1);
         Actor_TakePlaceOf(helper, pillar);
         wait(1);
-        Sound_Play(125);
+        Sound_Play(SE_CHEST_CLOSE);
         Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Actor_SelectAnimation(helper, 0);
@@ -467,8 +461,8 @@ body:
         wait(1);
         flags = &leader->motionFlags;
         *flags = 0;
-        Sound_Play(185);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        Sound_Play(SE_PUSH);
+        MapGrid_SetShake(1, 4, 1);
         Rubble_Spray(0);
         wait(8);
         Actor_SelectAnimation(helper, 2);
@@ -477,13 +471,13 @@ body:
         wait(16);
         Leader_SetCellShapeAt(-2, pillar->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         *flags = 3;
         wait(5);
         Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Sound_Play(SE_THUMP);
         Rubble_Burst();
         wait(20);
         GameFlag_Set(flag + 1);
@@ -519,12 +513,11 @@ void Rubble_Spray(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
-       * one expression, 14 of 122 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): y held in a local. */
       s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)FieldActor_Create(
-          285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
+          285, (i << 17) + leader->x - px(8), y - 0x20000, leader->z);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -593,8 +586,21 @@ void Rubble_Burst(void) {
 
 s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
 
-DEFINE_ACTOR_SET_CELL_SHAPE_AT(Actor_SetCellShapeAt, MapGrid_GetTerrainKind,
-                               MapCollision_FindOrAddTag)
+void Actor_SetCellShapeAt(s32 heightOffset, s32 layer, s32 id) {
+  struct Actor *actor = Actor_Get(id);
+  s32 cell = Ram_HeapSlots->mapWork->layers[layer].cells -
+             (struct MapCell *)Ram_MapCellBuffer;
+  s32 z = actor->z;
+  u8 *shapes = gMapShapeGrid + cell;
+  s32 value;
+  s32 height;
+
+  value = MapGrid_GetTerrainKind(actor->terrainId, actor->x, z);
+  height = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z) >> 19;
+  height += heightOffset;
+  shapes += actor->x / 0x100000 + (actor->z / 0x100000 << 7);
+  *shapes = MapCollision_FindOrAddTag(actor->terrainId, value, height);
+}
 
 void Leader_SetCellShapeAt(s32 a, s32 b) {
   Actor_SetCellShapeAt(a, b, gMainRoutineWork.currentOwner);
@@ -782,15 +788,14 @@ void IzumoRuins_SinkIntoSand(void) {
   s32 result1;
 
   object0 = Actor_Get(gMainRoutineWork.currentOwner);
-  result1 = Value3((s32 (*)())MapGrid_GetCellWord, 2, (object0->x >> 20),
-                   (object0->z >> 20));
+  result1 = MapGrid_GetCellWord(2, (object0->x >> 20), (object0->z >> 20));
   if (!((result1 >> 8) != 232)) {
     object0->terrainId = 2;
   }
   return;
 }
 
-DEFINE_LEADER_SET_LAYER(Leader_SetLayer, 0)
+#include "shared/leader_set_layer.h"
 
 // Outside the first room, sets the high byte of map cell (50, 13) on layer 2
 // to 0xff; then starts the room's effect.
@@ -798,10 +803,7 @@ void IzumoRuins_StartMovingPillar(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsFirstRoom) {
     Actor_LiftTargetBlock(gIzumoRuins_FirstRoomMovablePillars);
   } else {
-    /* FAKEMATCH(signature): the cell read through an s16 return type, so the
-     * old cell is masked in r3 and 0xff00 built in r2; read as s32 the two
-     * registers swap; as the header's s32 return, 6 of 29 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(signature): the cell read through an s16 return type. */
     MapGrid_SetCellWord(
         2, 50, 13,
         0xff00 |
@@ -873,15 +875,36 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
-DEFINE_G_DATA_02001540(gIzumoRuins_RubbleSprayScript, 33)
+u32 gIzumoRuins_RubbleSprayScript[] = {                                                               
+      SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
+      SC_FREE,                                                                 
+  };
 
-DEFINE_G_DATA_02001540(gIzumoRuins_RubbleBurstScript, 44)
+u32 gIzumoRuins_RubbleBurstScript[] = {                                                               
+      SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
+      SC_FREE,                                                                 
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 s16 gIzumoRuins_FirstRoomMovablePillars[] = {
     13, -1,
@@ -926,15 +949,15 @@ u32 gIzumoRuins_SecondRoomRegions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(172),
-    SCENE_EXIT_IF(1, 171, 10, -1),
-    SCENE_EXIT_IF(2, 172, 3, -1),
-    SCENE_EXIT_IF(3, 172, 2, -1),
-    SCENE_EXIT_IF(4, 173, 1, -1),
-    SCENE_EXITS(173),
-    SCENE_EXIT_IF(1, 172, 4, -1),
-    SCENE_EXIT_IF(2, 173, 3, -1),
-    SCENE_EXIT_IF(3, 173, 2, -1),
+    SCENE_EXITS(IzumoRuinsFirstRoom),
+    SCENE_EXIT_UNLESS(1, Izumo, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IzumoRuinsFirstRoom, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IzumoRuinsFirstRoom, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IzumoRuinsSecondRoom, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(IzumoRuinsSecondRoom),
+    SCENE_EXIT_UNLESS(1, IzumoRuinsFirstRoom, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IzumoRuinsSecondRoom, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IzumoRuinsSecondRoom, 2, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -943,24 +966,24 @@ struct ActorPlacement gIzumoRuins_ActorPlacements[] = {
 };
 
 struct ActorPlacement gIzumoRuins_FirstRoomActorPlacements[] = {
-    {406, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(824), FACING_NORTH, 2, 0},
-    {406, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(824), FACING_NORTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(824), FACING_NORTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(824), FACING_NORTH, 2, 0},
-    {406, CONDITION_ALWAYS, 1, PIXELS(696), 0, PIXELS(248), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(88), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 824, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 824, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 824, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 824, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 88, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gIzumoRuins_SecondRoomActorPlacements[] = {
-    {406, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(552), FACING_NORTH, 2, 0},
-    {406, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(552), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(792), 0, PIXELS(152), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(152), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(184), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(792), 0, PIXELS(216), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(216), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(856), 0, PIXELS(184), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 856, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -988,8 +1011,8 @@ struct Trigger gIzumoRuins_FirstRoomTriggers[] = {
      CONDITION_ALWAYS, EVENT(IzumoRuins_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS,
      EVENT(IzumoRuins_FinishMovingPillar)},
-    {8, 0, CONDITION_ALWAYS, EVENT(IzumoRuins_StartMovingPillar)},
-    {9, 0, CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(IzumoRuins_StartMovingPillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
     {TRIGGER_TABLE_END},
 };
 

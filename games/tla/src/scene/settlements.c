@@ -8,8 +8,6 @@
 /// Settlement (4 to 6), with its vine, crate and Tinder; Kalt Island (7 and 8),
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
-/// ★ Named from their area names: "Gondowan Settlement", "Hesperia
-/// Settlement", "Kalt Island", "SW Atteka Islet".
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -20,9 +18,8 @@
 
 #undef EFFECT_SPAWN
 
-#include "shared/actors.h"
-#include "shared/effects.h"
-#include "shared/mars_lighthouse.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -47,14 +44,11 @@ void Settlements_SinkPillar(void);
 void Settlements_SlideCrateDownFalls(void);
 void Settlements_RestoreWallCells(void);
 void Settlements_DropCrate(void);
-void Settlements_SlideOnIce(void);
+void TundariaTower_SlideOnIce(void);
 void Leader_StopMoving(void);
 void Event_ResolveAllPendingActions(void);
 void Scene_QueueMusic(s32 a);
 #ifdef MODERN
-// The rope routine is called with no prototype in scope, as its bytes need:
-// called as returning int, the two post ids load before the first argument.
-// A current GCC gets it here.
 void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
 void Actor_LiftTargetBlock(const void *data);
@@ -114,11 +108,11 @@ static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
 #include "system/input.h"
 #include "shared/tables.h"
 
-extern s16 gSettlements_SlideAnglesByKey[];
+extern s16 gTundariaTower_SlideAnglesByKey[];
 
 void Settlements_StepOntoWall(void);
 
-void Settlements_StopLeader(void);
+void TundariaTower_StopLeader(void);
 
 void Settlements_MeetTinder(void);
 
@@ -216,17 +210,17 @@ struct SettlementsSpawn {
   void *update;
 };
 
-extern char SceneId_Ov690Room1;
-extern char SceneId_Ov690Room2;
-extern char SceneId_Ov690Room4;
-extern char SceneId_Ov690Room7;
-extern char SceneId_Ov690Room8;
-extern char SceneId_Ov690Room9;
-extern char SceneId_Ov690Room10;
+extern char SceneId_Settlements1;
+extern char SceneId_Settlements2;
+extern char SceneId_Settlements4;
+extern char SceneId_Settlements7;
+extern char SceneId_Settlements8;
+extern char SceneId_Settlements9;
+extern char SceneId_Settlements10;
 
 void Rope_Initialize(void);
 
-extern char SceneId_Ov690Room6;
+extern char SceneId_Settlements6;
 
 void Settlements_StepOntoWall(void);
 
@@ -252,7 +246,7 @@ s32 Settlements_ClearSpriteFlags(struct Actor *object) {
   return 0;
 }
 
-DEFINE_ACTOR_BOB(Actor_Bob)
+#include "shared/actor_bob.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -260,10 +254,10 @@ u32 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
   u32 *placements;
 
-  if (scene == (s32)&SceneId_Ov690Room5)
+  if (scene == (s32)&SceneId_Settlements5)
     return gSettlements_Room5Regions;
   placements = 0;
-  if (scene == (s32)&SceneId_Ov690Room3)
+  if (scene == (s32)&SceneId_Settlements3)
     placements = gSettlements_Room3Regions;
   return placements;
 }
@@ -283,21 +277,21 @@ extern struct ActorPlacement gSettlements_Room8Placements[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov690Room1)
+  if (scene == (s32)&SceneId_Settlements1)
     return gSettlements_Room1Placements;
-  if (scene == (s32)&SceneId_Ov690Room2)
+  if (scene == (s32)&SceneId_Settlements2)
     return gSettlements_Room2Placements;
-  if (scene == (s32)&SceneId_Ov690Room4)
+  if (scene == (s32)&SceneId_Settlements4)
     return gSettlements_Room4Placements;
-  if (scene == (s32)&SceneId_Ov690Room5)
+  if (scene == (s32)&SceneId_Settlements5)
     return gSettlements_Room5Placements;
-  if (scene == (s32)&SceneId_Ov690Room7)
+  if (scene == (s32)&SceneId_Settlements7)
     return gSettlements_Room7Placements;
-  if (scene == (s32)&SceneId_Ov690Room8)
+  if (scene == (s32)&SceneId_Settlements8)
     return gSettlements_Room8Placements;
-  if (scene == (s32)&SceneId_Ov690Room9)
+  if (scene == (s32)&SceneId_Settlements9)
     return gSettlements_Room9Placements;
-  if (scene == (s32)&SceneId_Ov690Room10)
+  if (scene == (s32)&SceneId_Settlements10)
     return gSettlements_Room10Placements;
   return gSettlements_Placements;
 }
@@ -309,14 +303,12 @@ void Settlements_CatchApple(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0xf5d);
-  ItemDisplay_ShowItem(193, 3);
+  ItemDisplay_ShowItem(ITEM_APPLE, 3);
   mode = 0;
-  Party_GiveItem(193, mode);
+  Party_GiveItem(ITEM_APPLE, mode);
   Event_End();
 }
 
-/// ★ Named from the game: "Don't tell me, you're here to solve the riddle of
-/// the rock!" (MsgSettlements01)
 void Settlements_WarnOfRiddleOfRock(s32 actor) {
   s32 msg = (s32)MsgSettlements01;
 
@@ -365,7 +357,7 @@ void Settlements_EnterDoor(void) {
   FieldActor_WaitForMoveById(4);
   Actor_SetAnimation(4, 10);
   FieldEvent_Wait(10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(next);
   Event_End();
 }
@@ -395,7 +387,7 @@ void Settlements_EnterDoor3(void) {
 
 void Settlements_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
-  Event_SetFlag(0x230);
+  Event_SetFlag(FLAG_SCENE_TEMP_30);
 }
 
 extern struct Trigger gSettlements_Triggers[];
@@ -411,21 +403,21 @@ extern struct Trigger gSettlements_Room10Triggers[];
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov690Room1)
+  if (scene == (s32)&SceneId_Settlements1)
     return gSettlements_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov690Room2)
+  if (scene == (s32)&SceneId_Settlements2)
     return gSettlements_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov690Room4)
+  if (scene == (s32)&SceneId_Settlements4)
     return gSettlements_Room4Triggers;
-  if (scene == (s32)&SceneId_Ov690Room5)
+  if (scene == (s32)&SceneId_Settlements5)
     return gSettlements_Room5Triggers;
-  if (scene == (s32)&SceneId_Ov690Room7)
+  if (scene == (s32)&SceneId_Settlements7)
     return gSettlements_Room7Triggers;
-  if (scene == (s32)&SceneId_Ov690Room8)
+  if (scene == (s32)&SceneId_Settlements8)
     return gSettlements_Room8Triggers;
-  if (scene == (s32)&SceneId_Ov690Room9)
+  if (scene == (s32)&SceneId_Settlements9)
     return gSettlements_Room9Triggers;
-  if (scene == (s32)&SceneId_Ov690Room10)
+  if (scene == (s32)&SceneId_Settlements10)
     return gSettlements_Room10Triggers;
   return gSettlements_Triggers;
 }
@@ -459,8 +451,8 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
     animation = object->sprite;
     animation[9] = (animation[9] & -13) | 4;
     Actor_SetSpriteFlags(object, 0);
-    object->scaleX = 0x8000;
-    object->scaleY = 0x8000;
+    object->scaleX = Q16_ONE / 2;
+    object->scaleY = Q16_ONE / 2;
     *(s32 *)&object->watchedObject = 60;
     object->update = (void (*)(void))Settlements_DriftSmoke;
     Actor_SelectAnimation(object, 5);
@@ -533,12 +525,12 @@ void Settlements_SetUpKaltIsland(void) {
   Actor_SetSpriteFlags((struct Actor *)actor, 0);
   actor->active = 0;
   actor->mode = 0;
-  if (Event_GetFlag(0x109) == 0)
-    actor->y += 0x100000;
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
+    actor->y += px(16);
   actor->flags23 &= 0xfe;
   actor->visible = 1;
   transfer = HeapSlot_Alloc(68, 0x608);
-  Item_LoadIcon(193);
+  Item_LoadIcon(ITEM_APPLE);
   transfer += 0x400;
   Vram_Load(sprite->palette, 128, transfer);
   HeapSlot_Release(68);
@@ -556,67 +548,68 @@ void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements7)
     Settlements_SetUpKaltIsland();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements9) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
-    if (Event_GetFlag(0x206))
+    if (Event_GetFlag(FLAG_SCENE_TEMP_06))
       Actor_SetPosition(10, 0, 0);
     Actor_GetById(10)->priorityFlags |= 2;
     Actor_SetAnimation(18, 2);
     Actor_SetAnimation(19, 2);
     Actor_SetAnimation(21, 2);
-    if (Event_GetFlag(0x205))
+    if (Event_GetFlag(FLAG_SCENE_TEMP_05))
       Actor_SetAnimation(10, 2);
     Settlements_StartWaterfall();
 #if TLA_PATCH_1
-    if (Event_GetFlag(0x204)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       Actor_SetPosition(9, 0, 0);
-      Actor_SetPosition(21, PIXELS(184), PIXELS(184));
+      Actor_SetPosition(21, 184, 184);
       Actor_GetById(21)->motionFlags = 0;
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
 #endif
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4) {
-    if (Event_GetFlag(0x230)) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements4) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_30)) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
       Actor_SetAnimation(9, 4);
     }
-    if (Event_GetFlag(0x109) && Event_GetFlag(0x220)) {
-      Event_ClearFlag(0x220);
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
+        Event_GetFlag(FLAG_SCENE_TEMP_20)) {
+      Event_ClearFlag(FLAG_SCENE_TEMP_20);
       Settlements_StepOntoWall();
     }
     Actor_PlaceBlocks(gSettlements_WallCrate);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements3)
     FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements6)
     FieldEffect_StartBlankOverlay(0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
-    if (Event_GetFlag(0x205)) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements9) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_05)) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
     }
 #if !TLA_PATCH_1
-    if (Event_GetFlag(0x205))
+    if (Event_GetFlag(FLAG_SCENE_TEMP_05))
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
 #else
-    if (Event_GetFlag(0x204)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       Actor_SetPosition(9, 0, 0);
-      Actor_SetPosition(21, PIXELS(184), PIXELS(184));
+      Actor_SetPosition(21, 184, 184);
       Actor_GetById(21)->motionFlags = 0;
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
 #endif
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements1) {
     if (Event_GetFlag(0xa60)) {
       MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
       MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
@@ -626,19 +619,17 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Settlements_StepOntoIce(void) { GameFlag_Set(0x201); }
+void Settlements_StepOntoIce(void) { GameFlag_Set(FLAG_SCENE_TEMP_01); }
 
-void Settlements_StepOffIce(void) { GameFlag_Clear(0x201); }
+void Settlements_StepOffIce(void) { GameFlag_Clear(FLAG_SCENE_TEMP_01); }
 
-void Settlements_StepOnIceSlide(void) { Settlements_SlideOnIce(); }
+void Settlements_StepOnIceSlide(void) { TundariaTower_SlideOnIce(); }
 
 void Settlements_EnterCave(void) {
   u32 i;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  // A goto loop carries no loop notes: the bytes rebuild the zero on every
-  // pass, and a for loop hoists it.
   i = 8;
 loop:
   {
@@ -650,13 +641,13 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements4)
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
   else
     MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
   FieldEvent_Wait(6);
   FieldEvent_SetExitRequest(2);
@@ -667,7 +658,7 @@ loop:
 
 void Settlements_LashRope(void) {
   Rope_Lash(1, 8, 9);
-  Event_SetFlag(0x203);
+  Event_SetFlag(FLAG_SCENE_TEMP_03);
 }
 
 extern s32 gSettlements_WaterColorFrame;
@@ -716,7 +707,7 @@ void Settlements_CycleWaterColors(void) {
 void Settlements_StartWaterfall(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 514;
   FieldTask_AddFrame(Settlements_CycleWaterColors, 0x480);
-  Scene_QueueMusic(170);
+  Scene_QueueMusic(SE_170);
   Scroll_StartHBlank();
 }
 
@@ -736,11 +727,9 @@ void Scroll_HBlank(void) {
   }
 }
 
-DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gSettlements_WaterfallLine,
-                          gSettlements_WaterfallScrollAbove,
-                          gSettlements_WaterfallScrollBelow)
+#include "shared/layer_track_scroll.h"
 
-DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Scroll_HBlank, Layer_TrackScroll)
+#include "shared/scroll_start_hblank.h"
 
 void Settlements_UnblockFallsObjects(void) {
   Actor_LiftTargetBlock(gSettlements_FallsObjects);
@@ -759,19 +748,19 @@ void Settlements_SinkPillar(void) {
   s32 row = object->z >> 20;
   s32 i;
 
-  if (!Event_GetFlag(0x204) && column == 11 && row == 12) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 11 && row == 12) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
-      object->y -= 0x20000;
+      object->y -= px(2);
       Event_Wait(1);
     }
     Settlements_SplashCrate(9);
     Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(21, PIXELS(184), PIXELS(184));
+    Actor_SetPosition(21, 184, 184);
     Actor_GetById(21)->motionFlags = 0;
-    Actor_GetById(21)->y -= 0x400000;
+    Actor_GetById(21)->y -= px(64);
     MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
-    Event_SetFlag(0x204);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
   }
 }
 
@@ -784,37 +773,35 @@ void Settlements_SlideCrateDownFalls(void) {
 
   if (column == 11 && row == 9) {
     object->motionFlags = 0;
-    // A goto loop carries no loop notes: as a for loop its two uses of the
-    // object count double and the object takes the row's register.
     i = 8;
   sink:
     FieldEvent_Wait(1);
-    object->y -= 0x20000;
+    object->y -= px(2);
     i--;
     if (i > 0)
       goto sink;
     Settlements_SplashCrate(10);
     FieldEvent_Wait(20);
-    FieldCamera_MoveTo(0xc00000, -1, 0xe00000, 1);
-    Actor_SetSpeed(10, 0xcccc, 0x6666);
+    FieldCamera_MoveTo(192, CAMERA_KEEP, 224, 1);
+    Actor_SetSpeed(10, 0.8);
     Actor_SetDestinationOffset(10, 0, 8);
     FieldActor_WaitForMoveById(10);
     FieldEvent_Wait(10);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
-    Actor_SetSpeed(10, 0x26666, 0x13333);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+    Actor_SetSpeed(10, 2.4);
     Actor_SetDestinationOffset(10, 0, 80);
     FieldActor_WaitForMoveById(10);
     Settlements_SplashCrate(10);
-    if (!Event_GetFlag(0x204)) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       FieldEvent_Wait(10);
-      Actor_SetSpeed(10, 0xcccc, 0x6666);
+      Actor_SetSpeed(10, 0.8);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldActor_WaitForMoveById(10);
-      Actor_SetSpeed(10, 0x28000, 0x14000);
+      Actor_SetSpeed(10, 2.5);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldEvent_Wait(5);
       Actor_SetPosition(10, 0, 0);
-      Event_SetFlag(0x206);
+      Event_SetFlag(FLAG_SCENE_TEMP_06);
     } else {
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
@@ -824,16 +811,16 @@ void Settlements_SlideCrateDownFalls(void) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
       Actor_SetAnimation(10, 2);
       FieldEvent_Wait(30);
-      Event_SetFlag(0x205);
+      Event_SetFlag(FLAG_SCENE_TEMP_05);
     }
     Event_End();
-  } else if (!Event_GetFlag(0x207) && column == 16 && row == 12) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_07) && column == 16 && row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
     *flags = 3;
     FieldEvent_Wait(30);
     *flags = 0;
-    Event_SetFlag(0x207);
+    Event_SetFlag(FLAG_SCENE_TEMP_07);
     Event_End();
   }
 }
@@ -866,19 +853,20 @@ void Settlements_RestoreWallCells(void) {
 }
 
 void Settlements_StepOntoWall(void) {
-  if (!Event_GetFlag(0x221) && !Event_GetFlag(0x220)) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_21) &&
+      !Event_GetFlag(FLAG_SCENE_TEMP_20)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);
     MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 60);
     MapGrid_CopyCellAttributes(42, 11, 10, 4, 11, 75);
-    Event_SetFlag(0x220);
+    Event_SetFlag(FLAG_SCENE_TEMP_20);
   }
 }
 
 void Settlements_StepOffWall(void) {
-  if (Event_GetFlag(0x220)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_20)) {
     MapGrid_CopyCellAttributes(64, 50, 10, 10, 11, 73);
     MapGrid_CopyCellAttributes(64, 60, 10, 10, 42, 73);
-    Event_ClearFlag(0x220);
+    Event_ClearFlag(FLAG_SCENE_TEMP_20);
   }
 }
 
@@ -909,7 +897,7 @@ extern s32 gSettlements_CrateDropScript[];
   i = (frames);                                                                \
   do {                                                                         \
     FieldEvent_Wait(1);                                                        \
-    object->y -= 0x20000;                                                      \
+    object->y -= px(2);                                                        \
     i--;                                                                       \
   } while (i > 0)
 
@@ -926,22 +914,22 @@ void Settlements_DropCrate(void) {
   column = object->x >> 20;
   row = object->z >> 20;
   if (column == 12 && row == 15) {
-    Event_SetFlag(0x221);
+    Event_SetFlag(FLAG_SCENE_TEMP_21);
     object->motionFlags = 0;
     SINK(32);
     Settlements_SpawnSplashRing(10);
     FieldEvent_Wait(20);
-  } else if (!Event_GetFlag(0x205) && column == 16 && row == 15) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_05) && column == 16 && row == 15) {
     object->motionFlags = 0;
-    Event_SetFlag(0x205);
-    Event_SetFlag(0x221);
+    Event_SetFlag(FLAG_SCENE_TEMP_05);
+    Event_SetFlag(FLAG_SCENE_TEMP_21);
     SINK(48);
     Settlements_SpawnSplashRing(10);
     FieldEvent_Wait(30);
   } else if (column == 19 && row == 15) {
     MapGrid_CopyCellAttributes(18, 16, 1, 1, column, row);
     object->motionFlags = 0;
-    Event_SetFlag(0x221);
+    Event_SetFlag(FLAG_SCENE_TEMP_21);
     SINK(32);
     Settlements_SpawnSplashRing(10);
     if (!Event_GetFlag(102)) {
@@ -950,14 +938,14 @@ void Settlements_DropCrate(void) {
       FieldEvent_Wait(20);
     }
     FieldEvent_Wait(20);
-  } else if (!Event_GetFlag(0x204) && column == 13 && row == 15) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 13 && row == 15) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, 12, row);
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
     object->motionFlags = 0;
     SINK(16);
     Settlements_SpawnSplashRing(10);
     FieldEvent_Wait(20);
-    Event_SetFlag(0x204);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
   } else if (column == 14 && row == 15) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, 12, row);
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
@@ -975,9 +963,7 @@ extern u32 gSettlements_SmokeScript[];
 
 void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 68 bytes it reserves (sub sp, #68), no instruction
-   * addresses the 12 at sp+56 to sp+67, where Settlements_SpawnSplashRing keeps
-   * its velocity; as without it, 4 of 41 instructions differ in tla-en. */
+   * touches: of the 68 bytes it reserves. */
   UNUSED struct SettlementsVector velocity;
   struct SettlementsSpawn spawn;
   struct Actor *object = Actor_Get(id);
@@ -986,9 +972,9 @@ void Settlements_SplashCrate(s32 id) {
   spawn.scaleX = 0xcccc;
   spawn.scaleY = 0xcccc;
   spawn.speed = 0x10000;
-  spawn.acceleration = 0x10000;
+  spawn.acceleration = px(1);
   spawn.script = gSettlements_SmokeScript;
-  Event_PlaySound(154);
+  Event_PlaySound(SE_CAST);
   FieldEffect_Spawn(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
 }
 
@@ -1030,37 +1016,34 @@ void Settlements_SpawnSplashRing(s32 objectId) {
   }
 }
 
-void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
+void Settlements_LiftBoulder(void) { GameFlag_Set(FLAG_SCENE_TEMP_08); }
 
-extern s16 gSettlements_SlideAngles[];
+extern s16 gTundariaTower_SlideAngles[];
 
-DEFINE_ACTOR_STEER_BY_PAD(Settlements_KeepSliding, gSettlements_SlideAngles,
-                          Actor_SelectAnimation)
+#include "shared/actor_steer_by_pad.h"
 
-void Settlements_StopLeader(void) {
+void TundariaTower_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (work->actionCounter != 0) {
-    Event_SetFlag(0x106);
+    Event_SetFlag(FLAG_MENU_OPEN);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
-    Event_ClearFlag(0x106);
+    Event_ClearFlag(FLAG_MENU_OPEN);
   }
 }
 
-extern s16 gSettlements_SlideAnglesByKey[];
+extern s16 gTundariaTower_SlideAnglesByKey[];
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-DEFINE_LEADER_SLIDE_ON_ICE(Settlements_SlideOnIce, Settlements_StopLeader,
-                           gSettlements_SlideAnglesByKey, Actor_SelectAnimation,
-                           Settlements_KeepSliding, Field_CheckSpheresOverlap)
+#include "shared/leader_slide_on_ice.h"
 
 extern volatile s16 gSettlements_SlideStopped;
 
-extern s16 gSettlements_SlideAnglesByKey[];
-void Settlements_KeepSliding(struct Actor *object);
-void Settlements_StopLeader(void);
+extern s16 gTundariaTower_SlideAnglesByKey[];
+void TundariaTower_KeepSliding(struct Actor *object);
+void TundariaTower_StopLeader(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 s32 Actor_HasArrived(struct Actor *object);
@@ -1068,11 +1051,11 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 #define SLIDE_FROM_EDGE Settlements_SlideOnIceFromEdge
 #define SLIDE_STOPPED gSettlements_SlideStopped
-#define SLIDE_STOP_LEADER Settlements_StopLeader
-#define SLIDE_ANGLES gSettlements_SlideAnglesByKey
+#define SLIDE_STOP_LEADER TundariaTower_StopLeader
+#define SLIDE_ANGLES gTundariaTower_SlideAnglesByKey
 #define SLIDE_SET_ANIMATION Actor_SelectAnimation
 #define SLIDE_HAS_ARRIVED Actor_HasArrived
-#define SLIDE_KEEP_SLIDING Settlements_KeepSliding
+#define SLIDE_KEEP_SLIDING TundariaTower_KeepSliding
 #define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
 #include "shared/slide_on_ice_from_edge.c"
 #undef SLIDE_FROM_EDGE
@@ -1088,10 +1071,7 @@ void Settlements_SetSlideStopped(s32 value) {
   gSettlements_SlideStopped = value;
 }
 
-DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Settlements_SlideOnIceFacing,
-                                 Settlements_StopLeader, Actor_SelectAnimation,
-                                 Settlements_KeepSliding,
-                                 Field_CheckSpheresOverlap)
+#include "shared/leader_slide_on_ice_ahead.h"
 
 #include "text/msg_ids.h"
 
@@ -1131,9 +1111,14 @@ s16 gSettlements_WallCrate[] = {
     10, -1,
 };
 
-DEFINE_G_DATA_02002276(gSettlements_SlideAngles)
+s16 gTundariaTower_SlideAngles[] = {                                                               
+      -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
+      0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
+      -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          
+      0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              
+  };
 
-s16 gSettlements_SlideAnglesByKey[] = {
+s16 gTundariaTower_SlideAnglesByKey[] = {
     -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
     0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
     0,
@@ -1190,120 +1175,109 @@ u32 gSettlements_Room3Regions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(213),
-    SCENE_EXIT_IF(1, 2, 48, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 214, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 215, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 215, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(214),
-    SCENE_EXIT_IF(1, 213, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(215),
-    SCENE_EXIT_IF(1, 213, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 216, 4, EXIT_FLAG_NONE),
-    SCENE_EXITS(216),
-    SCENE_EXIT_IF(1, 2, 49, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 217, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 217, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 217, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(5, 217, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(6, 218, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(218),
-    SCENE_EXIT_IF(2, 216, 4, EXIT_FLAG_NONE),
-    SCENE_EXITS(217),
-    SCENE_EXIT_IF(11, 216, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(12, 217, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(13, 217, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(14, 216, 3, EXIT_FLAG_NONE),
-    SCENE_EXITS(219),
-    SCENE_EXIT_IF(1, 2, 50, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 220, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(220),
-    SCENE_EXIT_IF(1, 219, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(221),
-    SCENE_EXIT_IF(1, 2, 47, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 222, 11, EXIT_FLAG_NONE),
-    SCENE_EXITS(222),
-    SCENE_EXIT_IF(1, 221, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements1),
+    SCENE_EXIT_UNLESS(1, WorldMap, 48, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Settlements2, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Settlements3, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Settlements3, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements2),
+    SCENE_EXIT_UNLESS(1, Settlements1, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements3),
+    SCENE_EXIT_UNLESS(1, Settlements1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Settlements4, 4, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements4),
+    SCENE_EXIT_UNLESS(1, WorldMap, 49, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Settlements5, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Settlements5, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Settlements5, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Settlements5, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Settlements6, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements6),
+    SCENE_EXIT_UNLESS(2, Settlements4, 4, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements5),
+    SCENE_EXIT_UNLESS(11, Settlements4, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, Settlements5, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, Settlements5, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, Settlements4, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements7),
+    SCENE_EXIT_UNLESS(1, WorldMap, 50, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Settlements8, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements8),
+    SCENE_EXIT_UNLESS(1, Settlements7, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements9),
+    SCENE_EXIT_UNLESS(1, WorldMap, 47, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Settlements10, 11, EXIT_FLAG_NONE),
+    SCENE_EXITS(Settlements10),
+    SCENE_EXIT_UNLESS(1, Settlements9, 2, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gSettlements_Placements[] = {
-    {56, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(808), FACING_NORTH, 0, 0},
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 808, FACING_NORTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_Room1Placements[] = {
-    {115, CONDITION_ALWAYS, 2, PIXELS(192), 0, PIXELS(240), FACING_NORTH, 1, 0},
-    {106, CONDITION_ALWAYS, 2, PIXELS(336), 0, PIXELS(240), FACING_NORTH, 1, 0},
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 192, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 336, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_Room2Placements[] = {
-    {116, CONDITION_ALWAYS, 3, PIXELS(120), 0, PIXELS(632), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 632, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_Room4Placements[] = {
-    {114, CONDITION_ALWAYS, 2, PIXELS(392), 0, PIXELS(280), FACING_NORTH, 1, 0},
-    {299, CONDITION_ALWAYS, 7, PIXELS(56), 0, PIXELS(240), FACING_NORTH, 2, 0},
-    {287, CONDITION_ALWAYS, (s32)gSettlements_CrateBobScript, PIXELS(280), 0, PIXELS(184),
-     FACING_NORTH, 2, 0},
-    {245, 0x66, 1, PIXELS(312), 0, PIXELS(248), FACING_WEST, 0, 0},
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(299, CONDITION_ALWAYS, 7, 56, 0, 240, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gSettlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(245, 0x66, MOVEMENT_TYPE_STAND, 312, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_Room5Placements[] = {
-    {116, CONDITION_ALWAYS, 1, PIXELS(664), 0, PIXELS(168), FACING_SOUTH, 1, 0},
-    {106, CONDITION_ALWAYS, 3, PIXELS(696), 0, PIXELS(456), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 696, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_Room9Placements[] = {
-    {93, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(176), FACING_SOUTH, 1, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(200), FACING_SOUTH, 1, 0},
-    {288, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(168), FACING_SOUTH, 1, 0},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(120), 0, PIXELS(72),
-     FACING_SOUTH, 1, 0},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(72), 0, PIXELS(104),
-     FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(88), 0, PIXELS(104),
-     FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(120), 0, PIXELS(104),
-     FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(72), 0, PIXELS(136),
-     FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(104), 0, PIXELS(136),
-     FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(104), 0, PIXELS(152),
-     FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(120), 0, PIXELS(184),
-     FACING_SOUTH, 1, 0},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(152), 0, PIXELS(184),
-     FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(152), 0, PIXELS(152),
-     FACING_SOUTH, 1, 0},
-    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 0, 0, 0, FACING_SOUTH, 1, 0},
-    {329, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(92), FACING_SOUTH, 1, 0},
-    {246, 0x7f, 1, PIXELS(72), 0, PIXELS(104), FACING_WEST, 0, 0},
+    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 176, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 200, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(288, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 72, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 88, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(246, 0x7f, MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_Room10Placements[] = {
-    {93, CONDITION_ALWAYS, 1, PIXELS(96), 0, PIXELS(816), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 816, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_Room7Placements[] = {
-    {407, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(200), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(200), FACING_NORTH, 2, 0},
-    {244, 0x52, 1, PIXELS(312), 0, PIXELS(296), FACING_WEST, 0, 0},
-    {489, CONDITION_ALWAYS, 7, PIXELS(88), 0, PIXELS(336), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(244, 0x52, MOVEMENT_TYPE_STAND, 312, 0, 296, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 88, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_Room8Placements[] = {
-    {75, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(216), FACING_SOUTH, 1, 0},
-    {76, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(136), FACING_NORTH, 1, 0},
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 216, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1321,8 +1295,10 @@ struct Trigger gSettlements_Triggers[] = {
 struct Trigger gSettlements_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x4602, 3, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor3)},
-    {0x602, 4, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor4)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, CONDITION_ALWAYS,
+     EVENT(Settlements_EnterDoor3)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 4, CONDITION_ALWAYS,
+     EVENT(Settlements_EnterDoor4)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Settlements_WarnOfRiddleOfRock)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements03)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
@@ -1346,11 +1322,15 @@ struct Trigger gSettlements_Room2Triggers[] = {
 
 struct Trigger gSettlements_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Settlements_EnterCave)},
-    {0x4602, 3, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor3)},
-    {0x602, 4, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor4)},
-    {0x8602, 5, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor5)},
-    {0xc401, 6, CONDITION_ALWAYS, 6},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Settlements_EnterCave)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, CONDITION_ALWAYS,
+     EVENT(Settlements_EnterDoor3)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 4, CONDITION_ALWAYS,
+     EVENT(Settlements_EnterDoor4)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 5, CONDITION_ALWAYS,
+     EVENT(Settlements_EnterDoor5)},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_STEP, 34, 0x220, EVENT(Settlements_StepOntoWall)},
     {TRIGGER_STEP, 35, 0x1220, EVENT(Settlements_StepOffWall)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements07)},
@@ -1361,16 +1341,16 @@ struct Trigger gSettlements_Room4Triggers[] = {
      CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS,
      EVENT(Settlements_BlockCrate)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockCrate)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 9, 0x230, EVENT(Settlements_GrowVine)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room5Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {33, 12, CONDITION_ALWAYS, 12},
-    {49, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements08)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements09)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
@@ -1382,7 +1362,8 @@ struct Trigger gSettlements_Room5Triggers[] = {
 
 struct Trigger gSettlements_Room7Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Settlements_EnterCave)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Settlements_EnterCave)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Settlements_StepOntoIce)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Settlements_StepOffIce)},
     {TRIGGER_STEP, 20, 0x201, EVENT(Settlements_StepOnIceSlide)},
@@ -1401,13 +1382,14 @@ struct Trigger gSettlements_Room8Triggers[] = {
      MSGNO(MsgSettlements15)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgSettlements16)},
-    {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSettlements21))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgSettlements21))},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room9Triggers[] = {
-    {0xc401, 1, CONDITION_ALWAYS, 1},
-    {0xc401, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements18)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS,
      EVENT(Settlements_MeetLostJupiterDjinni)},
@@ -1419,8 +1401,8 @@ struct Trigger gSettlements_Room9Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
      0x205, EVENT(Settlements_UnblockFallsObjects)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x205, EVENT(Settlements_MoveCrate)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockFallsObject)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Settlements_PushIntoFalls)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockFallsObject)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Settlements_PushIntoFalls)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x208,
      EVENT(Settlements_LiftBoulder)},
     {TRIGGER_TABLE_END},

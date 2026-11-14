@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector2(vector, damping, gravity);
@@ -171,8 +172,8 @@ void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
 
 #include "system/dma.h"
 
-#define OBJ_TILES ((u8 *)0x06010000)
-#define BG_VRAM ((void *)0x06000000)
+#define OBJ_TILES ((u8 *)OBJ_VRAM0)
+#define BG_VRAM ((void *)BG_CHAR_BLOCK(0))
 #define TILE_SIZE 32
 
 /// The canvas in words, as one 32-bit DMA.
@@ -196,9 +197,7 @@ void BattleEffect_UploadCanvas(void) {
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
     {
       s32 size = 128;
-      /* FAKEMATCH(pin): the canvas pinned to the r0 it is passed in, so its
-       * copy there comes before the size's shift; as a plain u8 *buffer, 2
-       * of 98 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the canvas pinned to the r0 it is passed in. */
       register u8 *buffer asm("r0");
       s32 (*fill)(void *, s32, u32);
 
@@ -305,8 +304,8 @@ void BattleEffect_StartCanvasSprite(void) {
   work->command = 0;
   work->x = 16;
   work->y = 0;
-  work->scaleX = 0x10000;
-  work->scaleY = 0x10000;
+  work->scaleX = Q16_ONE;
+  work->scaleY = Q16_ONE;
   work->priority = 1;
   work->depth = 250;
   Iwram_FillWordsEntry(canvas, CANVAS_SIZE, 0);
@@ -354,8 +353,8 @@ struct Spark {
 /* VIEW(step_vector): tag struct SparkWork as struct SparkWork__step_vector;
  * field/event_commands/psynergy has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:9718: redefinition of `struct
- * SparkWork'. */
+ * games/tla/src/field/event_commands/radial/step_vector.c:353: redefinition of
+ * `struct SparkWork'. */
 #define SparkWork SparkWork__step_vector
 struct SparkWork {
   u8 picture[0x400];
@@ -406,7 +405,7 @@ void Actor_VanishInSparks(s32 objectId) {
     spark->age = -1;
   }
   object->scaleX = 0;
-  object->scaleY = 0x10000;
+  object->scaleY = Q16_ONE;
   Actor_SetSpriteFlagsFar(object, 0);
   spawning = 1;
   phase = 0;
@@ -437,9 +436,7 @@ void Actor_VanishInSparks(s32 objectId) {
     for (; i >= 0; i--, sprite++, spark++) {
       if (spark->age >= 0) {
         struct EffectSprite *drawn = sprite;
-        /* FAKEMATCH(barrier): sprite copied to drawn through an empty asm,
-           which keeps the two in registers of their own; as sprite itself (or
-           the plain copy), 83 of 325 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): sprite copied to drawn through an empty asm. */
         asm("" : "=r"(drawn) : "0"(drawn));
 
         if ((u32)spark->age < SPARK_LIFE) {
@@ -460,7 +457,7 @@ void Actor_VanishInSparks(s32 objectId) {
           drawn->y = pos[2];
           drawn->oam.index = tiles + (spark->age & 3) * 2;
           EffectSprite_Draw(drawn);
-          spark->angle += 0x800;
+          spark->angle += TRIG_TURN / 32;
           spark->radius -= 0x3333;
           spark->centre[1] -= 0x4000;
         }
@@ -477,10 +474,10 @@ void Actor_VanishInSparks(s32 objectId) {
       break;
     case 1:
       if (frame < 64) {
-        object->facing -= 0x1000;
+        object->facing -= TRIG_TURN / 16;
         object->scaleX = frame << 10;
-        if (object->scaleX > 0x10000)
-          object->scaleX = 0x10000;
+        if (object->scaleX > Q16_ONE)
+          object->scaleX = Q16_ONE;
       }
       if (frame == 64) {
         object->facing = angle;

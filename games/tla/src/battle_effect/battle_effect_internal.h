@@ -59,6 +59,10 @@
 #include "system/vector3.h"
 #include "system/ram_code.h"
 
+struct EffectSprite;
+struct EffectSprite *EffectSprite_CreateWithTiles(s32 width, s32 height,
+                                                  s32 attributes, s32 flags);
+
 struct EclipseObject {
   u8 unk0[9];
   u8 unk09 : 2;

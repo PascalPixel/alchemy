@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 
 struct FxPartyList;
 struct Model;
@@ -150,7 +151,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   BattleEffect_LoadBlitter(
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
@@ -177,7 +178,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 22) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       BattlePlayback_StartFar(144);
       work->shakeFrames = 8;
       BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
@@ -255,7 +256,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         if (thickness > 24) {
           thickness = 24;
         }
-        thickness = thickness * width / 0x10000;
+        thickness = thickness * width / Q16_ONE;
         i = 0;
         half = thickness / -2;
         baseY = height + half;
@@ -295,11 +296,11 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           Transform_Reset();
           SceneTransform_ApplyPosition3((caster.x / 2 - 64) << 16,
                                         (caster.y << 16) + 0xffc00000, 0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (effect->side == 1) {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
           }
-          SceneTransform_ApplyUniformScale(0x40000);
+          SceneTransform_ApplyUniformScale(Q16_ONE * 4);
           Render_TransformVertices(corners, buffer, 66);
           Render_DrawModelList(model);
 
@@ -311,7 +312,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
             model->scrollU = 0;
             texture.pixels = work->sheet + 0x4000;
             SceneTransform_ApplyPosition3(endX << 16, endY << 16, 0);
-            Transform_ApplyRoll(0x4000 - arc.head * 32);
+            Transform_ApplyRoll(TRIG_TURN / 4 - arc.head * 32);
             SceneTransform_ApplyUniformScale(width * 28 / 32);
             Render_TransformVertices(Data_081991e0, buffer, 4);
             Render_DrawModelList(model);

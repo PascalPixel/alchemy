@@ -11,6 +11,8 @@
 /// (Izumo_StopThePartyToThankThem).
 
 #include "shared/tables.h"
+#include "field/emote.h"
+#include "sounds.h"
 #include "event_work.h"
 #include "types.h"
 #include "flags.h"
@@ -112,13 +114,9 @@ void Izumo_FinishMovingStone(void) {
   s32 x = actor->x >> 20;
   s32 z = actor->z >> 20;
 
-  /* FAKEMATCH(wrapper): the flag commands go through flag_call.h's inlines,
-   * which build each flag id again, and the block copies through call.h's
-   * Call6; as direct calls to GameFlag_Get, GameFlag_Set,
-   * GameFlag_Clear and Map_CopyCellAttributeRect, 27 of 135 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(wrapper): the flag commands go through flag_call.h's inlines. */
   Actor_PlaceMovedBlock();
-  Sound_Play(132);
+  Sound_Play(SE_WATER);
   if (x == 20 && z == 9) {
     if (Flag_IsSet(FLAG_REVEALING)) {
       MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
@@ -129,16 +127,16 @@ void Izumo_FinishMovingStone(void) {
       Event_ResolvePendingActions(0);
       FieldCamera_FollowActor(22, 1);
       FieldCamera_WaitForArrival();
-      Actor_ShowEmoteById(22, 257, 0);
+      Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
       FieldEvent_Wait(60);
       Actor_ArmCallback(22, FACING_WEST, 0);
       FieldEvent_Wait(60);
-      Actor_ShowEmoteById(22, 256, 0);
+      Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       FieldEvent_Wait(60);
       Event_SetMessageId(MsgTheMisalignedStone);
       Event_ShowMessageAndWait(22, 0);
       FieldEvent_Wait(30);
-      Actor_ShowEmoteById(22, 262, 0);
+      Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
       FieldEvent_Wait(30);
       Event_ShowMessageAndWait(22, 0);
       Actor_ArmCallback(22, FACING_SOUTH, 0);
@@ -176,14 +174,15 @@ void Izumo_CycloneSecondPatch(void) {
 
   Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(3999)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, PIXELS(456),
-          PIXELS(584));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, px(456),
+          px(584));
     if (object->x >> 20 == 28 && object->z >> 20 == 36) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
+      FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, -16, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -195,15 +194,16 @@ void Izumo_CycloneThirdPatch(void) {
 
   Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(4000)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, PIXELS(472),
-          PIXELS(552));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, px(472),
+          px(552));
     if (object->x >> 20 == 29 && object->z >> 20 == 34) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
+      FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Call3((void (*)())Actor_SetDestinationOffsetById,
             gMainRoutineWork.currentOwner, 0, -16);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -227,14 +227,15 @@ void Izumo_CycloneSeventhPatch(void) {
 
   Call7((void (*)())TileCopies_CopyTouchedCells, 42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Get(4001)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, PIXELS(168),
-          PIXELS(328));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, px(168),
+          px(328));
     if (object->x >> 20 == 10 && object->z >> 20 == 20) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
+      FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -257,8 +258,8 @@ void Izumo_EnterDoor(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Sound_Play(123);
-  Func_02000db0(*(s16 *)(work + 340));
+  Sound_Play(SE_MAP_EXIT);
+  Func_02000db0(((struct EventWork *)work)->exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -271,11 +272,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 static inline s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH(wrapper): the flag test forwarded through the inline, as overlay
-   * 679's GameFlag_Test_ does, keeps the actor in r5 and the message in r6; as
-   * a direct call to GameFlag_Get the two swap; as that direct call, 16 of 42
-   * instructions of Izumo_TalkToStoneCircleGuard differ in tla-en, as do 16 of
-   * 42 of Izumo_TalkToFestivalStoneCircleGuard. */
+  /* FAKEMATCH(wrapper): the flag test forwarded through the inline. */
   return GameFlag_Get(flag);
 }
 
@@ -352,9 +349,6 @@ void Izumo_RotateWaterColors(void) {
   s16 saved;
   s32 index;
 
-  // The three rotations are goto loops, which loop.c leaves alone, as the
-  // native's are; as do-while, while or for loops, 90 instructions differ in
-  // tla-en.
   if ((gFrameCount & 3) == 0) {
     saved = *(volatile u16 *)&BG_PLTT_COLOR(3, 14);
     index = 14;
@@ -390,10 +384,7 @@ void Izumo_RotateWaterColors(void) {
 
 void Izumo_StopThePartyToThankThem(void) {
   /* FAKEMATCH(signature): six routines called through call.h's Call3 and Value
-   * with function types they do not have (Value3 calls the void
-   * Actor_ShowEmoteById as returning a value), so each call's arguments are set
-   * up in the native's order; as all six direct calls, 12 of 140 instructions
-   * differ in tla-en. */
+   * with function types they do not have. */
   GameFlag_Set(FLAG_STOPPED_TO_THANK_THE_PARTY);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -404,8 +395,8 @@ void Izumo_StopThePartyToThankThem(void) {
   FieldEvent_Wait(15);
   Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 256,
          30);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
-        PIXELS(216));
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, px(200),
+        px(216));
   Actor_WalkToById(32, 200, 248);
   Actor_WaitForMoveById(32);
   FieldEvent_Wait(30);
@@ -417,7 +408,7 @@ void Izumo_StopThePartyToThankThem(void) {
   Event_ShowMessageAndWait(32, 0);
   Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 261,
          60);
-  Actor_ShowEmoteById(32, 262, 30);
+  Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(15);
@@ -430,7 +421,7 @@ void Izumo_StopThePartyToThankThem(void) {
     FieldCamera_MoveToActorById(32, 1);
     FieldEvent_Wait(60);
     Call3((void (*)())Actor_ArmCallback, 32, FACING_SOUTH, 0);
-    Actor_ShowEmoteById(32, 265, 30);
+    Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     Event_ShowMessageAndWait(32, 0);
     Actor_SetSpritePriority(32, 3);
     Actor_GetById(32)->motionFlags |= 2;
@@ -443,7 +434,7 @@ void Izumo_StopThePartyToThankThem(void) {
 
 void Izumo_TellTheCloudBrandLegend(void) {
   Event_SetMessageId(MsgThisTokenIsn);
-  Actor_ShowEmoteById(32, 264, 30);
+  Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_ArmCallback(32, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
@@ -460,7 +451,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(15);
-  Actor_ShowEmoteById(32, 265, 30);
+  Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(32, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(15);
@@ -485,13 +476,11 @@ void Izumo_OfferATokenOfGratitude(void) {
 
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_ShowEmoteById(32, 256, 60);
+    Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     message = MsgWouldYouBe;
     Event_SetMessageId(message);
     /* FAKEMATCH(signature): FieldMessage_ShowAtActor called as returning a
-     * value, so the flags load before the actor as the native schedules it;
-     * as FieldMessage_ShowAtActor(32, 0) through the header's void prototype,
-     * 2 of 43 instructions differ in tla-en. */
+     * value. */
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(32, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -529,8 +518,8 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
         !GameFlag_Get(FLAG_TOKEN_OFFERED)) {
-      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
-            PIXELS(216));
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, px(200),
+            px(216));
       Actor_SetSpritePriority(32, 3);
       Actor_GetById(32)->motionFlags |= 2;
       GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
@@ -554,7 +543,7 @@ void Izumo_RevealTheStoneCircle(void) {
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     if (x == 23 && z == 9)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
-                                             PIXELS(376), PIXELS(136));
+                                             px(376), px(136));
   } else {
     MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);
@@ -577,7 +566,7 @@ void Izumo_DescendIntoTheRuins(void) {
   Actor_WaitForMoveById(4);
   Actor_SetSpriteFlags(Actor_GetById(4), 0);
 #if TLA_PATCH_1 /* From patch 1. */
-  Sound_Play(129);
+  Sound_Play(SE_STAIRS_DOWN);
 #endif
   Actor_SetDestinationOffsetById(4, 0, 16);
   Actor_WaitForMoveById(4);
@@ -614,17 +603,179 @@ s16 gIzumo_MovableStones[] = {
 };
 
 // clang-format off
-DEFINE_SPIN_FROM_SOUTH_SCRIPT(gIzumo_FirstSpinnerScript)
+u32 gIzumo_FirstSpinnerScript[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x3333),                                                
+      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_SET(SW_STEERING, 2),                                                  
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_LABEL(1),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(60),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(60),                                                             
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
-DEFINE_SPIN_FROM_EAST_SCRIPT(gIzumo_SecondSpinnerScript)
+u32 gIzumo_SecondSpinnerScript[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x3333),                                                
+      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_SET(SW_STEERING, 2),                                                  
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_LABEL(1),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(60),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(60),                                                             
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
-DEFINE_SPIN_FROM_NORTH_SCRIPT(gIzumo_ThirdSpinnerScript, 0x3333)
+u32 gIzumo_ThirdSpinnerScript[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x3333),                                                    
+      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_SET(SW_STEERING, 2),                                                  
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_LABEL(1),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(60),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(60),                                                             
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
-DEFINE_SPIN_FROM_SOUTH_SCRIPT(gIzumo_FourthSpinnerScript)
+u32 gIzumo_FourthSpinnerScript[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x3333),                                                
+      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_SET(SW_STEERING, 2),                                                  
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_LABEL(1),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(60),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(60),                                                             
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
-DEFINE_SPIN_FROM_EAST_SCRIPT(gIzumo_FifthSpinnerScript)
+u32 gIzumo_FifthSpinnerScript[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x3333),                                                
+      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_SET(SW_STEERING, 2),                                                  
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_LABEL(1),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(60),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(60),                                                             
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
-DEFINE_SPIN_FROM_NORTH_SCRIPT(gIzumo_SixthSpinnerScript, 0x4ccc)
+u32 gIzumo_SixthSpinnerScript[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x4ccc),                                                    
+      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_SET(SW_STEERING, 2),                                                  
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_LABEL(1),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(60),                                                             
+      SC_WAIT(30),                                                             
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(5),                                                              
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(60),                                                             
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -632,84 +783,94 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(171),
-    SCENE_EXIT_IF(1, 2, 38, -1),
-    SCENE_EXIT_IF(2, 170, 1, -1),
-    SCENE_EXIT_IF(3, 170, 2, -1),
-    SCENE_EXIT_IF(4, 170, 3, -1),
-    SCENE_EXIT_IF(5, 170, 4, -1),
-    SCENE_EXIT_IF(6, 170, 5, -1),
-    SCENE_EXIT_IF(7, 170, 6, -1),
-    SCENE_EXIT_IF(8, 170, 7, -1),
-    SCENE_EXIT_IF(10, 172, 1, -1),
+    SCENE_EXITS(Izumo),
+    SCENE_EXIT_UNLESS(1, WorldMap, 38, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IzumoInteriors, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IzumoInteriors, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IzumoInteriors, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IzumoInteriors, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, IzumoInteriors, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, IzumoInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, IzumoInteriors, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, IzumoRuinsFirstRoom, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gIzumo_ActorPlacements[] = {
-    {272, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(120), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(120), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(184), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(184), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(152), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(152), FACING_NORTH, 2, 0},
-    {117, CONDITION_ALWAYS, 3, PIXELS(120), 0, PIXELS(488), FACING_WEST, 1, 0},
-    {120, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(488), FACING_SOUTH, 0, 0},
-    {118, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(568), FACING_SOUTH, 1, 0},
-    {122, CONDITION_ALWAYS, 3, PIXELS(248), 0, PIXELS(464), FACING_NORTH, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(344), FACING_SOUTH, 0, 0},
-    {125, CONDITION_ALWAYS, 3, PIXELS(424), 0, PIXELS(600), FACING_SOUTH, 1, 0},
-    {126, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(488), FACING_NORTHEAST, 1, 0},
-    {127, CONDITION_ALWAYS, 3, PIXELS(360), 0, PIXELS(392), FACING_WEST, 1, 0},
-    {117, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(117), FACING_SOUTH, 1, 0},
-    {117, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(155), FACING_SOUTH, 1, 0},
-    {117, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(155), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 488, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 488, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(122, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 248, 0, 464, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 344, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(125, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 424, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(126, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 488, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 360, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 117, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 155, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 155, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 // clang-format off
 struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[] = {
-    {272, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(120), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(120), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(184), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(184), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(152), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(152), FACING_NORTH, 2, 0},
-    {117, CONDITION_ALWAYS, 3, PIXELS(120), 0, PIXELS(488), FACING_WEST, 1, 0},
-    {120, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(552), FACING_SOUTH, 2, 0},
-    {118, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(568), FACING_SOUTH, 1, 0},
-    {122, CONDITION_ALWAYS, 3, PIXELS(472), 0, PIXELS(456), FACING_SOUTH, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(344), FACING_SOUTH, 0, 0},
-    {125, CONDITION_ALWAYS, 3, PIXELS(424), 0, PIXELS(568), FACING_SOUTH, 1, 0},
-    {126, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(488), FACING_NORTHEAST, 1, 0},
-    {127, CONDITION_ALWAYS, 3, PIXELS(360), 0, PIXELS(392), FACING_WEST, 1, 0},
-    {117, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(117), FACING_SOUTH, 1, 0},
-    {117, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(155), FACING_SOUTH, 1, 0},
-    {117, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(155), FACING_SOUTH, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gIzumo_FirstSpinnerScript, PIXELS(256), 0, PIXELS(424), FACING_SOUTH, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gIzumo_SecondSpinnerScript, PIXELS(264), 0, PIXELS(504), FACING_SOUTH, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gIzumo_ThirdSpinnerScript, PIXELS(360), 0, PIXELS(456), FACING_SOUTH, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(472), FACING_NORTHEAST, 1, 0},
-    {124, CONDITION_ALWAYS, (s32)gIzumo_FourthSpinnerScript, PIXELS(232), 0, PIXELS(456), FACING_SOUTH, 1, 0},
-    {124, CONDITION_ALWAYS, (s32)gIzumo_FifthSpinnerScript, PIXELS(328), 0, PIXELS(504), FACING_SOUTH, 1, 0},
-    {125, CONDITION_ALWAYS, (s32)gIzumo_SixthSpinnerScript, PIXELS(336), 0, PIXELS(424), FACING_SOUTH, 1, 0},
-    {29, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 488, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(122, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 472, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 344, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(125, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 424, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(126, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 488, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 360, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 117, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 155, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 155, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, (s32)gIzumo_FirstSpinnerScript, 256, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, (s32)gIzumo_SecondSpinnerScript, 264, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, (s32)gIzumo_ThirdSpinnerScript, 360, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, (s32)gIzumo_FourthSpinnerScript, 232, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, (s32)gIzumo_FifthSpinnerScript, 328, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(125, CONDITION_ALWAYS, (s32)gIzumo_SixthSpinnerScript, 336, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(29, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 struct Trigger gIzumo_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0x4602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuins)},
-    {0x8602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheRight)},
-    {0x602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheLeft)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterTheRuins)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterTheRuinsFromTheRight)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterTheRuinsFromTheLeft)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgWeVeHad)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgMyNameS)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeDoesn)},
@@ -743,8 +904,8 @@ struct Trigger gIzumo_Triggers[] = {
      MSGNO(MsgYouKnowI)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgLadyUzumeSays)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Izumo_FinishMovingStone)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Izumo_FinishMovingStone)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
      CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS,
@@ -776,16 +937,26 @@ struct Trigger gIzumo_Triggers[] = {
 
 struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
-    {0xc602, 8, FLAG_THANKFUL_ONE_WAITS, EVENT(Izumo_EnterDoor)},
-    {0x4602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuins)},
-    {0x8602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheRight)},
-    {0x602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheLeft)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, FLAG_THANKFUL_ONE_WAITS,
+     EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterTheRuins)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterTheRuinsFromTheRight)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS,
+     EVENT(Izumo_EnterTheRuinsFromTheLeft)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgThoseScreamsFrom)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgWeRePlanning)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgSusaHasChanged)},
@@ -844,12 +1015,12 @@ struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
      MSGNO(MsgAsLongAsWe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1056, CONDITION_ALWAYS,
      EVENT(Izumo_OfferATokenOfGratitude)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 12, CONDITION_ALWAYS,
-     EVENT(Izumo_StartMovingStone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
+     CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS,
      EVENT(Izumo_FinishMovingStone)},
-    {0x8, 0, CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
-    {0x9, 0, CONDITION_ALWAYS, EVENT(Izumo_FinishMovingStone)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Izumo_FinishMovingStone)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Izumo_RevealTheStoneCircle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,

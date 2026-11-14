@@ -24,10 +24,7 @@ s32 Item_RaisesStat(s32 id) {
 }
 #endif
 
-/* VIEW(game): variable gInventorySnapshot as u16 gInventorySnapshot[];
- * module/tla.h has u8 gInventorySnapshot[]; not tried: gInventorySnapshot's
- * bound declaration was not found. */
-extern u16 gData_020023c4__game[] __asm__("gInventorySnapshot");
+extern u8 gInventorySnapshot[];
 
 // XXX: what this snapshot puts aside and when; the twin of The Broken Seal's
 // Colosso snapshot, its callers in this game would settle it.
@@ -40,7 +37,7 @@ void InventorySnapshot_Save(void) {
   s16 first;
   s16 second;
 
-  save = gData_020023c4__game;
+  save = gInventorySnapshot;
   if (*save != 0x6774) {
     *save++ = 0x6774;
     first = gMainRoutineWork.packedEvents[0];
@@ -71,14 +68,14 @@ void InventorySnapshot_Save(void) {
     save[0] = inventory[0];
     save[1] = inventory[1];
   }
-  GameFlag_SetBit__game(0x9ff);
+  GameFlag_Set(0x9ff);
   Party_RestoreHpPp(1);
   for (i = 0xe50; i <= 0xe59; i++)
     GameFlag_Clear(i);
 }
 
 void InventorySnapshot_Restore(void) {
-  u16 *src = gData_020023c4__game;
+  u16 *src = gInventorySnapshot;
   s32 owner;
 
   if (*src++ == 0x6774) {
@@ -104,14 +101,12 @@ void InventorySnapshot_Restore(void) {
       u16 *owners = (u16 *)gMainRoutineWork.activeOwners;
 
       /* FAKEMATCH(temporary): both party-order halfwords stored through one
-       * cursor over activeOwners; as stores through
-       * *(u16 *)&gMainRoutineWork.activeOwners[0] and [2], 4 of 58
-       * instructions differ in tla-en. */
+       * cursor over activeOwners. */
       *owners++ = *src++;
       *owners = *src;
     }
 #endif
-    src = gData_020023c4__game;
+    src = gInventorySnapshot;
     *src = 0;
   }
   GameFlag_Clear(0x9ff);

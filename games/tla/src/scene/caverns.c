@@ -1,6 +1,6 @@
 /// @file
-#include "shared/actors.h"
 #include "types.h"
+#include "system/io_reg.h"
 #include "scene_tables.h"
 #include "system/ram_buffer.h"
 #include "field_event.h"
@@ -22,10 +22,10 @@ struct CavernsMapWork {
   struct CavernsMapLayer layers[3];
 };
 
-extern char SceneId_Ov6a9Room1;
-extern char SceneId_Ov6a9Room2;
-extern char SceneId_Ov6a9Room3;
-extern char SceneId_Ov6a9Room4;
+extern char SceneId_Caverns1;
+extern char SceneId_Caverns2;
+extern char SceneId_Caverns3;
+extern char SceneId_Caverns4;
 extern u8 gMapCellBuffer[];
 extern s16 gData_02001220[];
 extern s16 gData_02001264[];
@@ -75,7 +75,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position);
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -104,7 +104,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const s16 *Scene_GetRegions(void) {
   const s16 *result = NULL;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Caverns2)
     result = gData_02001264;
   return result;
 }
@@ -114,9 +114,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a9Room1)
+  if (scene == (s32)&SceneId_Caverns1)
     return gCaverns_Room1Placements;
-  if (scene == (s32)&SceneId_Ov6a9Room4)
+  if (scene == (s32)&SceneId_Caverns4)
     return gCaverns_Room4Placements;
   return gCaverns_Placements;
 }
@@ -213,21 +213,21 @@ void Func_0200053c(s32 offset) {
   s32 height;
 
   offset <<= 3;
-  if (HALF_AT(work, 14) > 31 || Event_GetFlag(0x213)) {
+  if (HALF_AT(work, 14) > 31 || Event_GetFlag(FLAG_SCENE_TEMP_13)) {
     SET_CELL_HEIGHT(142 << 18, 134 << 18);
     SET_CELL_HEIGHT(146 << 18, 138 << 18);
     if (offset == 8)
-      Event_SetFlag(0x213);
+      Event_SetFlag(FLAG_SCENE_TEMP_13);
     else
-      Event_ClearFlag(0x213);
-  } else if (Half(work, 18) == 536 || Event_GetFlag(0x213)) {
+      Event_ClearFlag(FLAG_SCENE_TEMP_13);
+  } else if (Half(work, 18) == 536 || Event_GetFlag(FLAG_SCENE_TEMP_13)) {
     SET_CELL_HEIGHT(134 << 18, 138 << 18);
     SET_CELL_HEIGHT(138 << 18, 138 << 18);
     SET_CELL_HEIGHT(142 << 18, 138 << 18);
     if (offset == 6)
-      Event_SetFlag(0x213);
+      Event_SetFlag(FLAG_SCENE_TEMP_13);
     else
-      Event_ClearFlag(0x213);
+      Event_ClearFlag(FLAG_SCENE_TEMP_13);
   } else {
     SET_CELL_HEIGHT(134 << 18, 134 << 18);
     SET_CELL_HEIGHT(138 << 18, 134 << 18);
@@ -353,13 +353,13 @@ void Func_0200087c(void) {
     kind = MapGrid_GetCellBehaviorAt(2, object->x, object->z);
     if (kind != 0) {
       object->priorityFlags |= 2;
-      *(u16 *)0x4000052 = 0x1000;
-      blendControl = (u16 *)0x4000050;
+      REG_BLDALPHA = 0x1000;
+      blendControl = (u16 *)&REG_BLDCNT;
       *blendControl = 0x3f10;
       sum = kind + 2;
       spawned = OverlayObject_PrepareObject(object->x, 0,
                                             object->z + (sum << 20), 312);
-      Sound_Play(204);
+      Sound_Play(SE_DUST_PUFF);
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
       object->x = object->y = object->z = 0;
@@ -369,15 +369,13 @@ void Func_0200087c(void) {
     } else {
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
-      Sound_Play(188);
+      Sound_Play(SE_THUMP);
       options.palette = 7;
       options.priority = 2;
       options.update = (void (*)(union FieldObject *))Func_020007ec;
       options.startScaleX = 0xcccc;
       options.startScaleY = 0xcccc;
       i = 0;
-      // A goto loop carries no loop notes: as a do loop, GCSE moves the
-      // array's address out of the loop.
     loop:
       {
         angle = i << 12;
@@ -387,9 +385,8 @@ void Func_0200087c(void) {
         velocity[0] += velocity[0] >> 1;
         velocity[0] += ((u32)(Random16() * 3 << 14) >> 16) - 0x6000;
         velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
-        /* FAKEMATCH(dead): sum, never read again, assigned the flags inside
-         * the call's arguments; as 0x10b0000 passed directly, 6 of 255
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): sum, never read again, assigned the flags inside the
+         * call's arguments. */
         FieldEffect_Spawn(object->x, object->y, object->z, velocity[0],
                           velocity[1], velocity[2], sum = 0x10b0000, &options);
         i++;
@@ -409,7 +406,7 @@ void Func_0200087c(void) {
         object->update = (void (*)(void))Func_02000848;
         object->riseCounter = 1;
         other->riseCounter = 1;
-        GameFlag_Set(0x212);
+        GameFlag_Set(FLAG_SCENE_TEMP_12);
       }
     }
   }
@@ -424,20 +421,20 @@ void Func_0200087c(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a9Room1)
+  if (scene == (s32)&SceneId_Caverns1)
     return gCaverns_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov6a9Room3)
+  if (scene == (s32)&SceneId_Caverns3)
     return gCaverns_Room3Triggers;
-  if (scene == (s32)&SceneId_Ov6a9Room4)
+  if (scene == (s32)&SceneId_Caverns4)
     return gCaverns_Room4Triggers;
   return gCaverns_Triggers;
 }
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Caverns1)
     Func_02000ba8();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Caverns4)
     Caverns_InitializeRoom4();
   return 0;
 }
@@ -445,11 +442,11 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a9Room2)
+  if (scene == (s32)&SceneId_Caverns2)
     Func_02000d10();
-  else if (scene == (s32)&SceneId_Ov6a9Room3)
+  else if (scene == (s32)&SceneId_Caverns3)
     Func_02000ea0();
-  else if (scene == (s32)&SceneId_Ov6a9Room4)
+  else if (scene == (s32)&SceneId_Caverns4)
     Func_02000f50();
   return 0;
 }
@@ -486,11 +483,11 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
     Event_ResolvePendingActions(0);
     Actor_SelectAnimation(object, 6);
     wait(6);
-    Sound_Play(152);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(object, 7);
-    object->speedLimit = 0x30000;
-    object->acceleration = 0x20000;
-    object->velocityY = 0x40000;
+    object->speedLimit = px(3);
+    object->acceleration = px(2);
+    object->velocityY = px(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlags(object, 0);
     {
@@ -544,9 +541,9 @@ void Func_02000d68(void) {
   s32 value = HALF_AT(Ram_HeapSlots->eventWork, 340);
 
   if (value == 2)
-    Actor_SetPosition(8, PIXELS(144), PIXELS(224));
+    Actor_SetPosition(8, 144, 224);
   else
-    Actor_SetPosition(8, PIXELS(224), PIXELS(224));
+    Actor_SetPosition(8, 224, 224);
   Actor_ArmCallback(4, FACING_NORTH, 0);
   Event_Wait(10);
   BYTE_AT(Actor_GetById(4), 90) &= ~1;
@@ -557,7 +554,7 @@ void Func_02000d68(void) {
   Actor_SetDestinationOffsetById(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_Wait(14);
   Import_EventSetExitRequest(value);
 }
@@ -634,11 +631,11 @@ void Caverns_InitializeRoom4(void) {
 void Func_02000fe4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
   Event_Wait(10);
   MapGrid_CopyCellsTo(7, 94, 6, 94, 1, 2);
   Event_Wait(16);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(8);
   Event_End();
 }
@@ -684,64 +681,64 @@ s16 gData_02001264[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(276),
-    SCENE_EXIT_IF(1, 2, 82, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 276, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 276, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 276, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 276, 3, CONDITION_ALWAYS),
-    SCENE_EXITS(275),
-    SCENE_EXIT_IF(1, 2, 83, CONDITION_ALWAYS),
-    SCENE_EXITS(277),
-    SCENE_EXIT_IF(5, 2, 88, CONDITION_ALWAYS),
-    SCENE_EXITS(278),
-    SCENE_EXIT_IF(1, 2, 89, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 278, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 278, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 278, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 278, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 278, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 278, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 278, 9, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 278, 8, CONDITION_ALWAYS),
+    SCENE_EXITS(Caverns2),
+    SCENE_EXIT_UNLESS(1, WorldMap, 82, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Caverns2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Caverns2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Caverns2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Caverns2, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(Caverns1),
+    SCENE_EXIT_UNLESS(1, WorldMap, 83, EXIT_FLAG_NONE),
+    SCENE_EXITS(Caverns3),
+    SCENE_EXIT_UNLESS(5, WorldMap, 88, EXIT_FLAG_NONE),
+    SCENE_EXITS(Caverns4),
+    SCENE_EXIT_UNLESS(1, WorldMap, 89, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Caverns4, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Caverns4, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Caverns4, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Caverns4, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Caverns4, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Caverns4, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, Caverns4, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, Caverns4, 8, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gCaverns_Placements[] = {
-    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gCaverns_Room1Placements[] = {
-    {407, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(168), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(168), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(168), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gCaverns_Room4Placements[] = {
-    {315, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(552), FACING_NORTH, 2, 0},
-    {315, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(536), FACING_NORTH, 2, 0},
-    {386, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(512), FACING_NORTH, 2, 0},
-    {386, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(512), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct Trigger gCaverns_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x4602, 2, CONDITION_ALWAYS, EVENT(Func_02000e6c)},
-    {0x8602, 2, CONDITION_ALWAYS, EVENT(Func_02000e44)},
-    {0x602, 2, CONDITION_ALWAYS, EVENT(Func_02000e20)},
-    {0x4602, 3, CONDITION_ALWAYS, EVENT(Func_02000e6c)},
-    {0x8602, 3, CONDITION_ALWAYS, EVENT(Func_02000e44)},
-    {0x602, 3, CONDITION_ALWAYS, EVENT(Func_02000e20)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 2, CONDITION_ALWAYS, EVENT(Func_02000e6c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 2, CONDITION_ALWAYS, EVENT(Func_02000e44)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 2, CONDITION_ALWAYS, EVENT(Func_02000e20)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, CONDITION_ALWAYS, EVENT(Func_02000e6c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 3, CONDITION_ALWAYS, EVENT(Func_02000e44)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 3, CONDITION_ALWAYS, EVENT(Func_02000e20)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, 0x9af, EVENT(Func_02000e88)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gCaverns_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x602, 10, CONDITION_ALWAYS, EVENT(Func_02000cdc)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT(Func_02000cdc)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x200, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02000bf8)},
     {TRIGGER_TABLE_END},
@@ -755,23 +752,23 @@ struct Trigger gCaverns_Room3Triggers[] = {
 
 struct Trigger gCaverns_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x31, 2, CONDITION_ALWAYS, 2},
-    {0x21, 3, CONDITION_ALWAYS, 3},
-    {0x31, 4, CONDITION_ALWAYS, 4},
-    {0x21, 5, CONDITION_ALWAYS, 5},
-    {0x31, 6, CONDITION_ALWAYS, 6},
-    {0x21, 7, CONDITION_ALWAYS, 7},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_02000fe4)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Func_02000fe4)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0x8, 0, 0x212, EVENT(Func_020006a8)},
-    {0x9, 0, 0x212, EVENT(Func_0200087c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x212, EVENT(Func_020006a8)},
+    {TRIGGER_PUSH, 0, 0x212, EVENT(Func_020006a8)},
+    {TRIGGER_PUSHED, 0, 0x212, EVENT(Func_0200087c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x212, EVENT(Func_020006a8)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x212, EVENT(Func_0200087c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 9, 0x212, EVENT(Func_020006a8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x212, EVENT(Func_020006a8)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x212, EVENT(Func_0200087c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), 8, 0x212, EVENT(Func_020006a8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x212, EVENT(Func_020006a8)},
     {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 8, 0x212, EVENT(Func_0200087c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), 9, 0x212, EVENT(Func_020006a8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x212, EVENT(Func_020006a8)},
     {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 9, 0x212, EVENT(Func_0200087c)},
     {TRIGGER_TABLE_END},
 };

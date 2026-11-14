@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 void Menu_CreatePairEntryObjects(s32 first, s32 second);
 
@@ -224,9 +225,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
           window =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3, 8, 0, 1);
-          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
-           * Broken Seal's twin has it; as a plain statement, 4 of 1244
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->active = 1;
           } while (0);
@@ -241,9 +240,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 11;
-          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
-           * Broken Seal's twin has it; as a plain statement, 2 of 1244
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->active = 13;
           } while (0);
@@ -256,9 +253,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
           window =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2, 8, 0, 1);
-          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
-           * Broken Seal's twin has it; as a plain statement, 4 of 1244
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->active = 1;
           } while (0);
@@ -274,9 +269,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
-          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
-           * Broken Seal's twin has it; as a plain statement, 2 of 1244
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->active = 13;
           } while (0);
@@ -402,41 +395,41 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       }
     }
 
-    if ((pressed & 1) != 0) {
+    if ((pressed & KEY_A) != 0) {
       if (confirmationChoice == 0) {
         result = 1;
         break;
       }
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
-    if ((pressed & 8) != 0) {
-      Sound_PlayFar(113);
+    if ((pressed & KEY_START) != 0) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -2;
       break;
-    } else if ((pressed & 2) != 0) {
-      Sound_PlayFar(113);
+    } else if ((pressed & KEY_B) != 0) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
-    } else if ((pressed & 0x100) != 0) {
+    } else if ((pressed & KEY_R) != 0) {
       if (mode <= 1) {
         page = (page + 1) % 3;
         redraw = 2;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
-    } else if ((repeat & 0x20) != 0) {
+    } else if ((repeat & KEY_LEFT) != 0) {
       if (page <= 1) {
         selectedPages[page]--;
         selectedPages[page] =
             Menu_GetModuloOfSum(selectedPages[page], pageCounts[page]);
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         redraw = 1;
       }
-    } else if ((repeat & 0x10) != 0) {
+    } else if ((repeat & KEY_RIGHT) != 0) {
       if (page <= 1) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         selectedPages[page]++;
         redraw = 1;
@@ -502,8 +495,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   frame = 0;
   menu->cursor->active = 13;
   /* FAKEMATCH(temporary): selected = selectedPages, the page array read through
-   * a pointer; as selectedPages itself, 12 of 436 instructions differ in
-   * tla-en. */
+   * a pointer. */
   selected = selectedPages;
   selected[1] = selected[0] = result;
   for (side = 3; side >= 0; side--)
@@ -511,7 +503,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
   /* FAKEMATCH(temporary): counts = pageCounts, the count array read through a
-   * pointer; as pageCounts itself, 55 of 436 instructions differ in tla-en. */
+   * pointer. */
   counts = pageCounts;
   counts[1] = counts[0] = 1;
   listedActions = Heap_AllocEwram(96);
@@ -542,15 +534,13 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     s32 *pageCount;
     s32 *selectedPage;
     /* FAKEMATCH(temporary): selectedPage = &selected[side], taken at the top of
-     * the loop; as selected[side] at each page turn, 22 of 436 instructions
-     * differ in tla-en. */
+     * the loop. */
     selectedPage = &selected[side];
     render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
     pressedKeys = gInput.pressed;
     repeatedKeys = gInput.repeat;
     /* FAKEMATCH(temporary): pageCount = &pageCounts[side], taken at the top of
-     * the loop; as pageCounts[side] at each page turn, 227 of 436 instructions
-     * differ in tla-en. */
+     * the loop. */
     pageCount = &pageCounts[side];
     pairMember = menu->pairMember;
     if (redraw) {
@@ -594,36 +584,31 @@ s32 DjinnMenu_ShowMemberStatus(void) {
         Iwram_FillWordsEntry((void *)0x060052c0, 32, 0x44444444);
     }
     if (pressedKeys & KEY_START) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -2;
       break;
     }
     if (pressedKeys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if (repeatedKeys & KEY_LEFT) {
       (*selectedPage)--;
       *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
     } else if (repeatedKeys & KEY_RIGHT) {
       (*selectedPage)++;
       *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
     }
     wait(1);
   }
-  {
-    // A local holding one constant: as a literal argument, 2 of 436
-    // instructions differ in tla-en.
-    s32 priority = TASK_PASS_VBLANK;
-    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
-  }
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   Window_CloseIfOpen(helpWindowSlot, 1);
   wait(1);

@@ -8,6 +8,7 @@
 #include "../visual_attributes_internal.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
+#include "macros.h"
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32
  * ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y),
@@ -35,9 +36,9 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
     for (i = 0; i <= segments; i++) {
       s32 bow = Iwram_MulQ16(Trig_Sin((i << 15) / segments), height);
 
-      node->x = x + i * dx / segments + Iwram_MulQ16(bow, cos);
-      node->y = y + i * dy / segments + Iwram_MulQ16(bow, sin);
-      node->z = z + i * (toZ - z) / segments;
+      SET_POSITION(node, x + i * dx / segments + Iwram_MulQ16(bow, cos),
+                   y + i * dy / segments + Iwram_MulQ16(bow, sin),
+                   z + i * (toZ - z) / segments);
       node->kind = kind;
       node = node->next;
     }
@@ -64,10 +65,6 @@ void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
     slot->second = secondId;
     slot->priority = priority;
     lift = 128;
-    /* FAKEMATCH(barrier): an empty asm on lift keeps its 128 built after the
-     * priority's store and ahead of the coordinates' loads; without it, 10 of
-     * 69 instructions differ in tla-en. */
-    asm volatile("" : "+l"(lift));
     lift <<= 12;
     Rope_LayCoil(index, first->x, first->y + lift, first->z, second->x,
                  second->y + lift, second->z);
@@ -101,9 +98,8 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       result = -1;
       break;
     }
-    node->x = x + Iwram_MulQ16(Trig_Cos(angle), radius);
-    node->y = y;
-    node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
+    SET_POSITION(node, x + Iwram_MulQ16(Trig_Cos(angle), radius), y,
+                 z + Iwram_MulQ16(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
     step = ArcTan2(0x60000, radius);
@@ -326,9 +322,8 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
     i = segments + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register,
-       * which copies it for the compare ahead of the store; without it, 2 of
-       * 225 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register.
+       */
       asm("" : : "l"(i));
       *cursor++ = node;
       node = node->next;
@@ -393,7 +388,7 @@ void Rope_DebugSwing(struct Actor *object) {
 
   parts[22] = 253;
   parts[23] = 12;
-  if (gInput.repeat & 0x200)
+  if (gInput.repeat & KEY_L)
     gRope_DebugSwinging = 1;
   if (gRope_DebugSwinging != 0)
     Rope_SwingBetween(0, 12, 13, 0);
@@ -689,9 +684,8 @@ s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       break;
     }
     node->slot = index + 1;
-    node->x = x + i * dx / segments;
-    node->y = y + i * dy / segments;
-    node->z = z + i * dz / segments;
+    SET_POSITION(node, x + i * dx / segments, y + i * dy / segments,
+                 z + i * dz / segments);
     if (i == segments)
       node->kind = 2;
     else
@@ -736,9 +730,8 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   for (i = 0; i <= segments; i += one) {
     s32 bow = IwramMulQ16(Trig_Sin((i << 15) / segments), height);
 
-    node->x = x + i * dx / segments;
-    node->y = y + i * dy / segments + bow;
-    node->z = z + i * dz / segments;
+    SET_POSITION(node, x + i * dx / segments, y + i * dy / segments + bow,
+                 z + i * dz / segments);
     node->kind = one;
     node = node->next;
   }
@@ -788,9 +781,8 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
       result = -1;
       break;
     }
-    node->x = x + Iwram_MulQ16(Trig_Cos(angle), radius);
-    node->y = y;
-    node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
+    SET_POSITION(node, x + Iwram_MulQ16(Trig_Cos(angle), radius), y,
+                 z + Iwram_MulQ16(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
     step = ArcTan2(0x60000, radius);
@@ -856,9 +848,8 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     i = segments + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register,
-       * which copies it for the compare ahead of the store; without it, 2 of
-       * 319 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register.
+       */
       asm("" : : "l"(i));
       *cursor++ = node;
       node = node->next;
@@ -956,9 +947,8 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
     i = count + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register,
-       * which copies it for the compare ahead of the store; without it, 2 of
-       * 259 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register.
+       */
       asm("" : : "l"(i));
       *entry++ = node;
       node = node->next;
@@ -1034,7 +1024,7 @@ void Tightrope_DebugSwing(struct Actor *object) {
 
   parts[22] = 253;
   parts[23] = 12;
-  if (gInput.repeat & 0x200)
+  if (gInput.repeat & KEY_L)
     gTightrope_DebugSwinging = 1;
   if (gTightrope_DebugSwinging != 0)
     Tightrope_WobbleBetween(0, 12, 13, 0);
@@ -1081,10 +1071,6 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
     Decompress_TaggedLz(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
     Decompress_TaggedLz(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
-    /* FAKEMATCH(barrier): an empty asm closing the arm keeps each decode's
-     * destination set before its source loads; without it, 4 of 95
-     * instructions differ in tla-en. */
-    asm("");
   }
   {
     s32 priority = 0x480;
@@ -1208,8 +1194,8 @@ void HangingVine_Update(void) {
     // deep, and between 8 above and 80 below the anchor.
     if ((x - leader->x >= 0 ? x - leader->x <= 0x7ffff
                             : leader->x - x <= 0x7ffff) &&
-        (u32)(z - leader->z + 0xfffff) <= 0xffffe &&
-        y + (8 << 16) > leader->y && y - (80 << 16) < leader->y)
+        (u32)(z - leader->z + 0xfffff) <= 0xffffe && y + px(8) > leader->y &&
+        y - px(80) < leader->y)
       target = 32;
 
     // Hang the five links below the anchor.
@@ -1239,9 +1225,7 @@ struct HangingVineSlot *HangingVine_FindFreeSlot(void) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineSlot *found = NULL;
   s32 index;
-  /* FAKEMATCH(dead): index set to 0 before the loop sets it again, so its
-   * zero is copied from found's register (adds r1, r0, #0); without it, 2 of
-   * 26 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): index set to 0 before the loop sets it again. */
   index = 0;
 
   for (index = 0; index <= 7; index++) {
@@ -1259,9 +1243,7 @@ struct HangingVineSlot *HangingVine_FindSlot(s32 id) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineSlot *found = NULL;
   s32 index;
-  /* FAKEMATCH(dead): index set to 0 before the loop sets it again, so its
-   * zero is copied from found's register (adds r1, r5, #0); without it, 2 of
-   * 27 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): index set to 0 before the loop sets it again. */
   index = 0;
 
   for (index = 0; index <= 7; index++) {

@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct Model;
 
@@ -21,7 +24,7 @@ struct Model;
 /* VIEW(f173588): tag struct Texture as struct Texture__f173588;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:39109: structure has no member
+ * games/tla/src/battle_effect/battle_effect/rime.c:181: structure has no member
  * named `logWidth'. */
 struct Texture__f173588 {
   u32 logWidth : 8;
@@ -34,7 +37,7 @@ struct Texture__f173588 {
 /* VIEW(f173588): tag struct RenderModel as struct RenderModel__f173588;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:39123: structure has no member
+ * games/tla/src/battle_effect/battle_effect/rime.c:195: structure has no member
  * named `brightness'. */
 struct RenderModel__f173588 {
   s32 kind;
@@ -153,9 +156,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *star = &work->particles[i];
 
-        star->x = ((Random16() & 31) - 16) << 16;
-        star->y = ((Random16() & 63) - 16) << 16;
-        star->z = (Random16() & 127) + 128;
+        SET_POSITION(star, ((Random16() & 31) - 16) << 16,
+                     ((Random16() & 63) - 16) << 16, (Random16() & 127) + 128);
         star->velocityY = Random16();
         star->variant = -i * 2;
       }
@@ -164,7 +166,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       BattlePlayback_StartFar(-1);
     if (mode == 0) {
       if (frame == 32)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
     } else {
       if (frame > 7)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_StarCrossSheet);
@@ -206,19 +208,19 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       model->brightness = brightness;
       texture.pixels = work->sheet + CRYSTAL_OFFSET;
       for (i = 0; i != 2; i++) {
-        s32 scale = 0x20000 - frame * 0x800;
+        s32 scale = Q16_ONE * 2 - frame * 0x800;
 
         if (frame > 31 && i == 1)
           continue;
-        if (scale < 0x10000)
-          scale = 0x10000;
+        if (scale < Q16_ONE)
+          scale = Q16_ONE;
         Transform_Reset();
-        Transform_ApplyPitch(-0x4000);
+        Transform_ApplyPitch(-TRIG_TURN / 4);
         if (frame <= 31) {
           if (i == 0)
             Transform_ApplyYaw((32 - frame) << 9);
           else
-            Transform_ApplyYaw((frame << 9) - 0x4000);
+            Transform_ApplyYaw((frame << 9) - TRIG_TURN / 4);
         }
         SceneTransform_ApplyScale3(scale >> 1, scale >> 1, scale >> 1);
         Render_TransformVertices(gData_08199210, vertices, 4);
@@ -233,7 +235,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       texture.pixels = work->sheet;
       for (i = 0, star = work->particles; i != 16; i++, star++) {
         if (star->variant == 4 && (i & 3) == 0)
-          Sound_PlayFar(130);
+          Sound_PlayFar(SE_PSYNERGY_START);
         if (star->variant >= 0 && star->variant < 16) {
           s32 swell = Trig_Sin(star->variant << 11) * star->z;
           s32 size;
@@ -241,7 +243,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(star->x, star->y, 0);
           size = swell >> 8;
-          Transform_ApplyPitch(0x4000);
+          Transform_ApplyPitch(TRIG_TURN / 4);
           Transform_ApplyYaw(frame << 9);
           size /= 2;
           SceneTransform_ApplyScale3(size, size, size);

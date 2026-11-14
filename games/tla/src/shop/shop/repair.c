@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 
 /// Returns what a repair costs: a quarter of the price for a broken item,
@@ -74,13 +75,13 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   Shop_ShowKeeperMessageHidingCursor(message + 2);
   Message_CloseFinishedWindowsFar();
   wait(10);
-  Sound_PlayFar(100);
+  Sound_PlayFar(SE_BELL);
   wait(110);
-  Sound_PlayFar(100);
+  Sound_PlayFar(SE_BELL);
   wait(110);
-  Sound_PlayFar(100);
+  Sound_PlayFar(SE_BELL);
   wait(110);
-  Sound_PlayFar(112);
+  Sound_PlayFar(SE_MENU_CONFIRM);
   wait(20);
   unit->inventory[slot] = saved;
   Inventory_RepairFar(unitId, slot);

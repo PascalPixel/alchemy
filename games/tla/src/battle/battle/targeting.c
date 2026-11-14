@@ -4,6 +4,8 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "item_icon.h"
@@ -22,14 +24,6 @@
 
 #define PLACE_PARTY 0x100
 #define PLACE_ENEMY 0x180
-
-/* VIEW(f11f66c): routine Unit_Get as void *Unit_Get(s32 owner); strongest_unit
- * has struct BattleUnit *Unit_Get(s32 unitId); tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares,
- * BattleAI_ChooseTarget moves: 5 of 776 instructions, BattleUnit_ClearStatuses
- * moves: 1 of 97 instructions, BattleObject_DestroyTemporaryObject moves: 1 of
- * 24 instructions, 32 more in tla-ja. */
-extern void *Unit_Get__f11f66c(s32 owner) __asm__("Unit_Get");
 
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
   {                                                                            \
@@ -188,32 +182,32 @@ extern void *Unit_Get__f11f66c(s32 owner) __asm__("Unit_Get");
     if ((unit)->hp == 0 && Battle_IsReviveEffectFar((action)->effect) == 0)    \
       (applies) = 0;                                                           \
     if ((applies) == 0) {                                                      \
-      (kindIndex) = ((action)->flags & ABILITY_KIND_MASK) - 1;                 \
+      (kindIndex) = ((action)->flags & ABILITY_FORMULA_MASK) - 1;              \
       switch (kindIndex) {                                                     \
-      case ABILITY_KIND_ATTACK - 1:                                            \
-      case ABILITY_KIND_ATTACK_MULTIPLIED - 1:                                 \
+      case ABILITY_FORMULA_ATTACK - 1:                                         \
+      case ABILITY_FORMULA_ATTACK_MULTIPLIED - 1:                              \
         if ((unit)->hp != 0)                                                   \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_DAMAGE - 1:                                            \
-      case ABILITY_KIND_UNLEASHED_DAMAGE - 1:                                  \
-      case ABILITY_KIND_SUMMON - 1:                                            \
+      case ABILITY_FORMULA_DAMAGE - 1:                                         \
+      case ABILITY_FORMULA_ENEMY_DAMAGE - 1:                                   \
+      case ABILITY_FORMULA_SUMMON - 1:                                         \
         if ((action)->power != 0 && (unit)->hp != 0)                           \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_PP_DAMAGE - 1:                                         \
+      case ABILITY_FORMULA_PP_DAMAGE - 1:                                      \
         if ((unit)->pp != 0)                                                   \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_HEAL_HP - 1:                                           \
+      case ABILITY_FORMULA_HEAL_HP - 1:                                        \
         if ((unit)->hp != 0 && (unit)->hp < (unit)->maxHp)                     \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_HEAL_PP - 1:                                           \
+      case ABILITY_FORMULA_HEAL_PP - 1:                                        \
         if ((unit)->pp < (unit)->maxPp)                                        \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_EFFECT - 1:                                            \
+      case ABILITY_FORMULA_EFFECT - 1:                                         \
       case 9 - 1:                                                              \
         if ((action)->power != 0 && (unit)->hp != 0)                           \
           (applies)++;                                                         \
@@ -299,7 +293,7 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
     return -2;
 
   for (targetIndex = 0; targetIndex < candidateCount; targetIndex++) {
-    unit = Unit_Get__f11f66c(unitIds[targetIndex]);
+    unit = Unit_Get(unitIds[targetIndex]);
     CHECK_EFFECT_TARGET(unit, action, applies, kindIndex);
     if (applies != 0) {
       unitIds[targetCount] = unitIds[targetIndex];
@@ -312,18 +306,18 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
     return -1;
 
   if (action->targetMode == TARGET_MODE_FOES && action->range == 1 &&
-      Enemy_GetDefinitionFar(
-          ((struct BattleUnit *)Unit_Get__f11f66c(actorId))->enemyId)
+      Enemy_GetDefinitionFar(((struct BattleUnit *)Unit_Get(actorId))->enemyId)
               ->targetStrategy != STRATEGY_RANDOM &&
-      (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <= 2) {
+      (u32)((action->flags & ABILITY_FORMULA_MASK) - ABILITY_FORMULA_ATTACK) <=
+          2) {
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
            innerIndex++) {
-        thisUnit = Unit_Get__f11f66c(unitIds[innerIndex]);
-        nextUnit = Unit_Get__f11f66c(unitIds[innerIndex + 1]);
+        thisUnit = Unit_Get(unitIds[innerIndex]);
+        nextUnit = Unit_Get(unitIds[innerIndex + 1]);
         if (Enemy_GetDefinitionFar(
-                ((struct BattleUnit *)Unit_Get__f11f66c(actorId))->enemyId)
+                ((struct BattleUnit *)Unit_Get(actorId))->enemyId)
                 ->targetStrategy == STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
@@ -386,7 +380,7 @@ void BattleUnit_ClearStatuses(s32 actor) {
   s32 count;
   u8 zero;
 
-  state = Unit_Get__f11f66c(actor);
+  state = Unit_Get(actor);
   zero = 0;
   count = 3;
   cursor = state + 0x12f;
@@ -443,7 +437,6 @@ void BattleMessage_WaitForAdvance(void) {
     wait(1);
   prompt = &promptStorage;
   // The arrow sheet's address held in a local is added after the window's
-  // loads; at its use, 36 of 146 instructions differ in tla-en.
   sheet = (s32)gBattleMessage_AdvanceArrowTiles;
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
@@ -453,7 +446,7 @@ void BattleMessage_WaitForAdvance(void) {
     offset = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->offset;
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-    Io_Write16(16, &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     ((u32 *)prompt)[1] = 0xa400;
     ((u32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
@@ -464,15 +457,15 @@ void BattleMessage_WaitForAdvance(void) {
     Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
-    // The held keys reread through a volatile pointer for the last test, a
-    // load apart from the B test's; as gInput.held, 14 of 146 instructions
-    // differ in tla-en.
-    if ((gInput.held & 2) || (gInput.pressed & 0x303) ||
-        (frame > 15 && (*(volatile u32 *)&gInput.held & 0x303)))
+    /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
+    if ((gInput.held & KEY_B) ||
+        (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
+        (frame > 15 &&
+         (*(volatile u32 *)&gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))))
       break;
     wait(1);
   }
-  Sound_PlayFar(111);
+  Sound_PlayFar(SE_MENU_CURSOR_MOVE);
   VramCache_FreeEntry(tileSlot);
   wait(1);
 }
@@ -496,14 +489,14 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   while (1) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-    Io_Write16(16, &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     ((s32 *)prompt)[1] = 0x40000000;
     ((s32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pointerTiles);
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
     Oam_AddSpriteAtDepth(prompt, 240);
-    if (gInput.pressed & 0x303)
+    if (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS))
       break;
     wait(1);
   }
@@ -523,7 +516,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 arg0) {
   struct BattleUnit *creature;
   struct BattleObj *runtime;
 
-  creature = Unit_Get__f11f66c(arg0);
+  creature = Unit_Get(arg0);
   if (creature->side == 1) {
     Unit_SetHpFar(creature, 0);
     BattleObject_RemoveFromLists(arg0);
@@ -544,8 +537,8 @@ void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
  * BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void
  * BattleMotion_FlashHit(s32 id); tried as the definition's void
  * BattleMotion_FlashHit(s32 id), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/battle/battle.c:6851: too many arguments to
- * function `BattleMotion_FlashHit'. */
+ * compile in tla-ja: games/tla/src/battle/battle/targeting.c:590: too many
+ * arguments to function `BattleMotion_FlashHit'. */
 extern void
 BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a,
                                s32 b) __asm__("BattleMotion_FlashHit");
@@ -654,7 +647,7 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 }
 
 s32 BattleUnit_KeepsOneHp(s32 unitId) {
-  struct BattleUnit *unit = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *unit = Unit_Get(unitId);
 
   if (unit->enemyId == 110 || unit->enemyId == 113)
     return 1;
@@ -683,10 +676,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 
         if (distance < 0)
           distance = divider - i;
-        /* FAKEMATCH(barrier): an empty asm that, with the one below, keeps
-         * side's 1 and counts' address inside the loop instead of hoisted
-         * into r8 and ip; without it, 32 of 67 instructions differ in
-         * tla-en. */
+        /* FAKEMATCH(barrier): an empty asm that, with the one below. */
         __asm__("");
         if (slot - divider >= 0) {
           if (distance >= slot - divider)
@@ -696,9 +686,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
         }
       }
       slot = i;
-      /* FAKEMATCH(barrier): the second empty asm keeping the loop's 1 and
-       * counts' address inside it; without it, 32 of 67 instructions differ
-       * in tla-en. */
+      /* FAKEMATCH(barrier): the second empty asm. */
       __asm__("");
     next:;
     } else {
@@ -840,8 +828,8 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   crit = plan->targetCritical[slot];
 
   action = Ability_Get(abilityId);
-  actor = Unit_Get__f11f66c(aid);
-  target = Unit_Get__f11f66c(tid);
+  actor = Unit_Get(aid);
+  target = Unit_Get(tid);
   Iwram_CopyWordsEntry(bak, target, size);
   switch (target->enemyId) {
   case 221:
@@ -921,7 +909,7 @@ power_end:
     Battle_ApplyActionExtras(tid, 1, 0);
   if (abilityId == 728)
     Battle_ApplyActionExtras(tid, 1, 1);
-  type = action->flags & 15;
+  type = action->flags & ABILITY_FORMULA_MASK;
   {
     s32 res;
 
@@ -988,8 +976,8 @@ power_end:
         struct BattleObj *obj;
 
         obj = BattleObject_Get(ent);
-        BattleObject_Make((struct BattleObj *)obj, ent, obj->anchorX / 0x10000,
-                          obj->anchorZ / 0x10000);
+        BattleObject_Make((struct BattleObj *)obj, ent, obj->anchorX / Q16_ONE,
+                          obj->anchorZ / Q16_ONE);
       }
       BattleObject_Put();
       {
@@ -1078,11 +1066,9 @@ power_end:
 
           atk = actor->atk;
           if (abilityId == 312 || abilityId == 316) {
-            atk = ((struct BattleUnit *)Unit_Get__f11f66c(plan->actorId))->atk;
+            atk = ((struct BattleUnit *)Unit_Get(plan->actorId))->atk;
             if (abilityId == 312)
-              atk += ((struct BattleUnit *)Unit_Get__f11f66c(plan->actorId2))
-                         ->atk /
-                     4;
+              atk += ((struct BattleUnit *)Unit_Get(plan->actorId2))->atk / 4;
           }
           dmg = Battle_CalculateAttackDamageFar(atk, scale, ap, bonus);
         }
@@ -1580,8 +1566,7 @@ power_end:
       u16 *pt;
 
       /* FAKEMATCH(temporary): a pointer walked down from hp to maxHp reads each
-       * stat twice, unsigned and signed; as reads of target->hp and
-       * target->maxHp, 94 of 3451 instructions differ in tla-en. */
+       * stat twice. */
       pt = (u16 *)&target->hp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
@@ -1600,9 +1585,7 @@ power_end:
       } else if (action->effect == 70) {
         maxu = (u16)target->maxHp;
         heal += (s16)maxu / 2;
-        /* FAKEMATCH(barrier): an empty asm on maxu, so the clamp shifts maxu
-         * left by 16 again instead of sharing this halving's shift; without
-         * it, 45 of 3451 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm on maxu. */
         asm("" : "+r"(maxu));
       } else {
         pt--;
@@ -1642,8 +1625,7 @@ power_end:
       u16 *pt;
 
       /* FAKEMATCH(temporary): a pointer walked down from pp to maxPp reads each
-       * stat twice, unsigned and signed; as reads of target->pp and
-       * target->maxPp, 255 of 3451 instructions differ in tla-en. */
+       * stat twice. */
       pt = (u16 *)&target->pp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
@@ -1919,9 +1901,7 @@ power_end:
     case 60:
       ap = dealt;
       dmg = actor->hp;
-      /* FAKEMATCH(barrier): an empty asm on dmg, so its copy comes before
-       * dealt is reloaded from the stack; without it, 2 of 3451 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on dmg. */
       __asm__("" : "=r"(dmg) : "0"(dmg));
       if (action->effect == 60)
         ap /= 2;
@@ -2209,7 +2189,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
     return selectedAction;
   }
 
-  unit = Unit_Get__f11f66c(request->unitId);
+  unit = Unit_Get(request->unitId);
   itemsAllowed = 1;
   failedChoices = 0;
   needsChoice = 1;

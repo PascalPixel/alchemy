@@ -37,12 +37,8 @@ void FieldCamera_WaitForArrival(void);
 /// The two guards, numbering the rows of gActorPlacements.
 enum MadraDrawbridgeActorId {
   /// The guard on the east side of the bridge.
-  /// ★ Named from the game: "If you wanna cross here, you'll need permission
-  /// from the town elder!" (MsgMadraNeedEldersPermission)
   ACTOR_EAST_GUARD = ACTOR_FIRST_PLACED,
   /// The guard on the west side of the bridge.
-  /// ★ Named from the game: "But try to cross illegally, and we'll throw you
-  /// in the hoosegow with Mr. Bluehair!" (MsgMadraCanCrossWithPermission)
   ACTOR_WEST_GUARD
 };
 
@@ -83,8 +79,8 @@ void MadraDrawbridge_BlockBridge(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
-      FieldCamera_SetSpeed(0x18000, 0x3000);
-      FieldCamera_MoveTo(PIXELS(164), -1, PIXELS(260), 1);
+      FieldCamera_SetSpeed(1.5);
+      FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
       Actor_WalkTo(gMainRoutineWork.currentOwner, 158, 316);
     }
     Actor_GetById(ACTOR_EAST_GUARD)->actionFlags &= ~1;
@@ -120,7 +116,7 @@ void MadraDrawbridge_GreetPermittedParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
-  FieldCamera_MoveTo(PIXELS(164), -1, PIXELS(260), 1);
+  FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
@@ -143,15 +139,17 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(53),
-    SCENE_EXIT_IF(1, 2, 10, -1),
-    SCENE_EXIT_IF(2, 2, 11, -1),
+    SCENE_EXITS(MadraDrawbridge),
+    SCENE_EXIT_UNLESS(1, WorldMap, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, WorldMap, 11, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {73, CONDITION_ALWAYS, 1, PIXELS(188), 0, PIXELS(260), FACING_SOUTH, 1, 0},
-    {88, CONDITION_ALWAYS, 1, PIXELS(132), 0, PIXELS(260), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 188, 0, 260,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 132, 0, 260,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 

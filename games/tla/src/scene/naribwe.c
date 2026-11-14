@@ -4,6 +4,7 @@
 /// shows the stone that hides the Unicorn Ring.
 
 #include "types.h"
+#include "flags.h"
 #include "text/msg_ids.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -37,10 +38,9 @@ extern struct ActorPlacement gNaribwe_PlacementsOnReturn[];
 extern struct Trigger gNaribwe_Triggers[];
 extern struct Trigger gNaribwe_TriggersOnReturn[];
 /* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
- * has another; tried as the one declaration extern const struct WarpEntry
- * gNaribwe_Doors[], it does not compile in tla-ja:
- * games/tla/src/scene/naribwe.c:211: `gNaribwe_Doors' undeclared (first use in
- * this function). */
+ * has another; tried as the definition's extern s32 gNaribwe_Doors[], it does
+ * not compile in tla-ja: games/tla/src/scene/naribwe.c:212: `gNaribwe_Doors'
+ * undeclared (first use in this function). */
 extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
 #define gNaribwe_Doors gNaribwe_Doors__first
 
@@ -213,11 +213,11 @@ void Naribwe_EnterDoor(void) {
   }
   work += 0x154;
   index = *(s16 *)work;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   index -= 4;
   MapGrid_AnimateCells(gNaribwe_Doors[index].script, gNaribwe_Doors[index].x,
                        gNaribwe_Doors[index].z);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Import_EventSetExitRequest(*(s16 *)work);
@@ -231,7 +231,7 @@ void Naribwe_EnterDoor(void) {
 void Naribwe_BlowAwayIvy(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetFlag(0x201);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
   Event_End();
 }
 
@@ -253,7 +253,7 @@ void Naribwe_RevealStone(void) {
 
 void Naribwe_HideStone(void) {
   ObjectEvent_PlaceOnGround(65, 0, 0);
-  Actor_SetPosition(27, PIXELS(104), PIXELS(104));
+  Actor_SetPosition(27, 104, 104);
 }
 
 s32 Scene_Initialize(void) {
@@ -262,10 +262,10 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
   Actor_SetSpriteFlags(Actor_GetById(23), 0);
   Actor_GetById(23)->scaleY = 0x19999;
-  Actor_GetById(27)->scaleX = 0x8000;
-  Actor_GetById(27)->scaleY = 0x8000;
+  Actor_GetById(27)->scaleX = Q16_ONE / 2;
+  Actor_GetById(27)->scaleY = Q16_ONE / 2;
   Naribwe_HideStone();
-  if (Event_GetFlag(0x201))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01))
     Actor_SetPosition(23, 0, 0);
   Rope_Initialize();
   Rope_Place(0, 0x202, 24, 25);
@@ -306,46 +306,46 @@ void Naribwe_HideStone(void);
 // The village's placements, the same before and after the return with Piers.
 #define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
   struct ActorPlacement name[] = {                                             \
-      {365, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, \
-       0},                                                                     \
-      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(316), 0,      \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(372), 0,      \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, PIXELS(316), 0,        \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, PIXELS(372), 0,        \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {115, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(344), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {116, CONDITION_ALWAYS, 3, PIXELS(200), 0, PIXELS(296), FACING_EAST, 0,  \
-       0},                                                                     \
-      {114, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(152), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {128, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(376), FACING_NORTHEAST, \
-       0, 0},                                                                  \
-      {112, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(88), FACING_SOUTHEAST, \
-       1, 0},                                                                  \
-      {113, CONDITION_ALWAYS, 1, PIXELS(368), 0, PIXELS(224),                  \
-       FACING_SOUTHEAST, 1, 0},                                                \
-      {136, CONDITION_ALWAYS, 2, PIXELS(200), 0, PIXELS(200),                  \
-       FACING_NORTHEAST, 0, 0},                                                \
-      {147, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(232),                  \
-       FACING_SOUTHWEST, 1, 0},                                                \
-      {112, CONDITION_ALWAYS, 2, PIXELS(56), 0, PIXELS(232), FACING_EAST, 0,   \
-       0},                                                                     \
-      {110, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(360), FACING_EAST, 1,  \
-       0},                                                                     \
-      {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, PIXELS(40), 0,       \
-       PIXELS(168), FACING_SOUTH, 2, 0},                                       \
-      {407, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(376), FACING_SOUTH, 2, \
-       0},                                                                     \
-      {489, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(376), FACING_SOUTH, 2, \
-       0},                                                                     \
-      {201, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(168), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {328, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(104), FACING_SOUTH, 1, \
-       0},                                                                     \
+      ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, \
+                      FACING_SOUTH, TALK_FACING_PARTY, 0),                     \
+      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(316), 0, px(132), \
+       FACING_SOUTH, 0, 0},                                                    \
+      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(372), 0, px(132), \
+       FACING_SOUTH, 0, 0},                                                    \
+      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, px(316), 0, px(132),   \
+       FACING_SOUTH, 0, 0},                                                    \
+      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, px(372), 0, px(132),   \
+       FACING_SOUTH, 0, 0},                                                    \
+      ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 344, \
+                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 200,   \
+                      0, 296, FACING_EAST, TALK_FACING_PARTY, 0),              \
+      ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 152, \
+                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0, \
+                      376, FACING_NORTHEAST, 0, 0),                            \
+      ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 88,  \
+                      FACING_SOUTHEAST, 1, 0),                                 \
+      ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 224, \
+                      FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),        \
+      ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 200, 0,     \
+                      200, FACING_NORTHEAST, TALK_FACING_PARTY, 0),            \
+      ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 232, \
+                      FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),        \
+      ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 56, 0, 232, \
+                      FACING_EAST, TALK_FACING_PARTY, 0),                      \
+      ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 360, \
+                      FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),             \
+      {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, px(40), 0, px(168),  \
+       FACING_SOUTH, 2, 0},                                                    \
+      ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 376, \
+                      FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
+      ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, \
+                      FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
+      ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 168, \
+                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 104, \
+                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
       {SCENE_TABLE_END},                                                       \
   };
 
@@ -374,24 +374,38 @@ s16 gNaribwe_DoorOpening[] = {
     8, 42, 1, 2, 6, -1,
 };
 
-DEFINE_G_DATA_0200064C(gNaribwe_Doors, gNaribwe_DoorOpening, 0x330012, gNaribwe_DoorOpening,
-    0x220015)
+s32 gNaribwe_Doors[] = {                                                               
+      (s32)gNaribwe_DoorOpening,                                                              
+      0x330012,                                                                      
+      (s32)gNaribwe_DoorOpening,                                                              
+      0x220015,                                                                      
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 224, 0, 190, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_4(105, 106, 2, 23, 24)
+u32 gSceneExits[] = {                                                        
+      SCENE_EXITS(Naribwe),                                                         
+      SCENE_EXIT_UNLESS(1, NaribweInteriors, 1, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(2, NaribweInteriors, 2, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(3, NaribweInteriors, 3, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(4, NaribweInteriors, 4, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(5, NaribweInteriors, 5, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(6, WorldMap, 23, EXIT_FLAG_NONE),                                
+      SCENE_EXIT_UNLESS(7, WorldMap, 24, EXIT_FLAG_NONE),                                
+      SCENE_EXITS_END,                                                         
+  };
 
 DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements)
 
 struct ActorPlacement gNaribwe_Entrance10Placements[] = {
-    {364, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, 0},
-    {305, CONDITION_ALWAYS, 1, PIXELS(316), 0, PIXELS(132), FACING_SOUTH, 0, 0},
-    {305, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(132), FACING_SOUTH, 0, 0},
-    {410, CONDITION_ALWAYS, 1, PIXELS(316), 0, PIXELS(132), FACING_SOUTH, 0, 0},
-    {410, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(132), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(364, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(305, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(305, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -402,8 +416,10 @@ struct Trigger gNaribwe_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Naribwe_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Naribwe_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+     EVENT(Naribwe_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+     EVENT(Naribwe_EnterDoor)},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNaribwe01)},
@@ -440,7 +456,8 @@ struct Trigger gNaribwe_Triggers[] = {
      MSGNO(MsgNaribwe22)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
      MSGNO(MsgNaribwe24)},
-    {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgNaribwe47))},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgNaribwe47))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, 0x201,
@@ -457,8 +474,10 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Naribwe_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Naribwe_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+     EVENT(Naribwe_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+     EVENT(Naribwe_EnterDoor)},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNaribwe25)},
@@ -495,7 +514,8 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      MSGNO(MsgNaribwe44)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
      MSGNO(MsgNaribwe46)},
-    {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgNaribwe47))},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgNaribwe47))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, 0x201,

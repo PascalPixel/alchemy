@@ -9,7 +9,8 @@
 /// rescued, the drained floor opens the way on (DailaInteriors_Start).
 
 #include "shared/tables.h"
-#include "shared/actors.h"
+#include "field/emote.h"
+#include "sounds.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -42,8 +43,6 @@ void Actor_ShowEmoteById(s32 actor, s32 jump, s32 frames);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                        s32 height);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 static inline void Daila_ObjWalk(s32 actor, s32 x, s32 z) {
@@ -60,9 +59,7 @@ static inline void Daila_Jump(s32 actor, s32 height, s32 frames) {
   s32 a = actor;
 
   /* FAKEMATCH(barrier): an empty asm over the three copies finishes height and
-   * frames before the actor; as Actor_ShowEmoteById(actor, height, frames), the
-   * actor is copied two instructions early and, in
-   * DailaInteriors_PracticeShout, 2 of 62 instructions differ in tla-en. */
+   * frames before the actor. */
   __asm__("" : "+l"(h), "+l"(f), "+l"(a));
   Actor_ShowEmoteById(a, h, f);
 }
@@ -76,10 +73,7 @@ static inline void Daila_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
 enum DailaSanctuaryActorId {
   /// An actor with no picture at the pillars' top that holds the Tear: the
   /// game shows the item on it (Actor_SetItemIcon) until it is taken.
-  /// ★ Named from the game: "Sea God's Tear" (MsgItemName)
   ACTOR_SEA_GODS_TEAR = ACTOR_FIRST_PLACED + 1,
-  /// ★ Named from what the player sees: a puddle that Frost turns into a
-  /// pillar of ice (puddle.png)
   ACTOR_FIRST_PILLAR,
   ACTOR_SECOND_PILLAR,
   ACTOR_THIRD_PILLAR,
@@ -148,7 +142,7 @@ void DailaInteriors_EmptyHook(void) {}
 
 /// Unused: the practising man shouts and jumps to the other of his two spots.
 UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
-  Daila_Jump(actor, 0x100, 50);
+  Daila_Jump(actor, 256, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
@@ -172,7 +166,7 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
 UNUSED void DailaInteriors_StartleAtTheLeader(s32 unused, s32 actor) {
   Actor_FaceActorById(actor, 4, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmoteById(actor, 0x103, 50);
+  Actor_ShowEmoteById(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
@@ -369,8 +363,6 @@ void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   }
 }
 
-/// ★ Named from the game: "Are you going to Madra?"
-/// (MsgDailaInteriorsGoingToMadra)
 void DailaInteriors_AskGoingToMadra(void) {
   s32 msg;
 
@@ -390,8 +382,6 @@ void DailaInteriors_AskGoingToMadra(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Don't tell me you're all looking for a boat, too!"
-/// (MsgDailaInteriorsLookingForBoat)
 void DailaInteriors_TalkNoBoats(void) {
   s32 msg;
 
@@ -411,8 +401,6 @@ void DailaInteriors_TalkNoBoats(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Er... Aheh heh... You... weren't watching, were
-/// you?" (MsgDailaInteriorsWatchingPractice)
 void DailaInteriors_TalkCaughtPracticing(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -425,8 +413,7 @@ void DailaInteriors_TalkCaughtPracticing(void) {
   Event_End();
 }
 
-DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
-                              gDailaInteriors_PillarFrozenFlags)
+#include "shared/scene_raise_held_actor.h"
 
 void ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
 void Sound_Play(s32 cue);
@@ -448,7 +435,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
   Event_ResolvePendingActions(0);
   if (PartyInventory_FindRoom(item) >= 0) {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
-    Sound_Play(83);
+    Sound_Play(MUS_083);
     MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
@@ -458,7 +445,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
   } else {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
-    Sound_Play(83);
+    Sound_Play(MUS_083);
     if (DailaInteriors_GiveItem(item, 0) != -1) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, 232 << 16,
@@ -537,7 +524,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       Unit_RefreshPsynergy(member);
       Unit_Calculate(member);
       owner = PartyInventory_Add(item);
-      Sound_Play(83);
+      Sound_Play(MUS_083);
       if (owner == gMainRoutineWork.currentOwner) {
         MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemReceived, 3);
@@ -550,7 +537,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       return owner;
     }
   } else {
-    Sound_Play(83);
+    Sound_Play(MUS_083);
     MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 3);
     if (owner != gMainRoutineWork.currentOwner) {
@@ -630,7 +617,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Scene_FadeInAndClearFlag)
+#include "shared/scene_fade_in_and_clear_flag.h"
 
 /// The step triggers of the cells to jump from, one for each heading.
 void DailaInteriors_JumpForward(void) { Field_TryJumpForward(); }
@@ -702,70 +689,74 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-DEFINE_G_DATA_0200116C(gDailaInteriorsExits, 0x1010100a, 0x1020200a, 0x1030300a,
-    0x1040400a, 0x1050500a, 0x1060600a, 0x1010700a)
+s32 gDailaInteriorsExits[] = {                                                               
+      11, 0x1010100a, -1, 0x1020200a,         -1, 0x1030300a, -1, 0x1040400a, -1,  0x1050500a,                         
+      -1, 0x1060600a, -1, 0x10703085, -1, 12, 0x1010700a, -1, 511,                             
+  };
 
-DEFINE_G_DATA_0200116C(gDailaInteriorsExitsOnceTaviIsRescued, 0x1010100d, 0x1020200d, 0x1030300d,
-    0x1040400d, 0x1050500d, 0x1060600d, 0x1010700d)
+s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {                                                               
+      11, 0x1010100d, -1, 0x1020200d,         -1, 0x1030300d, -1, 0x1040400d, -1,  0x1050500d,                         
+      -1, 0x1060600d, -1, 0x10703085, -1, 12, 0x1010700d, -1, 511,                             
+  };
 
 struct ActorPlacement gDailaInteriors1Placements[] = {
-    {115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(104), FACING_WEST, 0, 0},
-    {116, CONDITION_ALWAYS, 2, PIXELS(88), 0, PIXELS(88), FACING_EAST, 0, 0},
-    {114, CONDITION_ALWAYS, (s32)gDailaInteriors_PacingScript, PIXELS(360), 0, PIXELS(168), FACING_WEST, 1, 0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(72), FACING_SOUTHEAST, 1, 0},
-    {112, CONDITION_ALWAYS, 2, PIXELS(632), 0, PIXELS(168), FACING_EAST, 0, 0},
-    {113, CONDITION_ALWAYS, 2, PIXELS(568), 0, PIXELS(88), FACING_SOUTH, 0, 0},
-    {114, CONDITION_ALWAYS, 2, PIXELS(160), 0, PIXELS(360), FACING_SOUTH, 0, 0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(456), FACING_NORTHEAST, 1, 0},
-    {115, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(440), FACING_SOUTHWEST, 1, 0},
-    {116, CONDITION_ALWAYS, 2, PIXELS(216), 0, PIXELS(472), FACING_EAST, 0, 0},
-    {108, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(712), FACING_SOUTH, 1, 0},
-    {109, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(724), FACING_SOUTH, 1, 0},
-    {134, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(468), FACING_EAST, 0, 0},
-    {135, CONDITION_ALWAYS, 2, PIXELS(536), 0, PIXELS(456), FACING_EAST, 0, 0},
-    {238, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(376), FACING_NORTHWEST, 0, 0},
-    {116, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(360), FACING_SOUTHEAST, 1, 0},
-    {74, CONDITION_ALWAYS, 3, PIXELS(472), 0, PIXELS(746), FACING_NORTH, 1, 0},
-    {75, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(712), FACING_SOUTH, 1, 0},
-    {76, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(712), FACING_WEST, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(728), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, (s32)gDailaInteriors_PacingScript, 360, 0, 168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 72, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 168, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 568, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 160, 0, 360, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 456, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 440, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0, 472, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 712, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 724, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 468, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 536, 0, 456, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(238, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 360, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 472, 0, 746, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 712, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 712, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gDailaInteriors2Placements[] = {
-    {201, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(333), FACING_SOUTH, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(196), FACING_SOUTH, 2, 0},
-    {290, 0x223, 1, PIXELS(184), 0, PIXELS(248), FACING_SOUTH, 2, 0},
-    {290, 0x224, 1, PIXELS(216), 0, PIXELS(248), FACING_SOUTH, 2, 0},
-    {290, 0x225, 1, PIXELS(248), 0, PIXELS(232), FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 333, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 196, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, 0x223, MOVEMENT_TYPE_STAND, 184, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, 0x224, MOVEMENT_TYPE_STAND, 216, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, 0x225, MOVEMENT_TYPE_STAND, 248, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gDailaInteriors1PlacementsOnceTaviIsRescued[] = {
-    {115, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(120), FACING_NORTHWEST, 0, 0},
-    {116, CONDITION_ALWAYS, 2, PIXELS(88), 0, PIXELS(88), FACING_EAST, 0, 0},
-    {114, CONDITION_ALWAYS, (s32)gDailaInteriors_PacingScript, PIXELS(360), 0, PIXELS(168), FACING_WEST, 1, 0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(72), FACING_SOUTHEAST, 1, 0},
-    {112, CONDITION_ALWAYS, 2, PIXELS(632), 0, PIXELS(168), FACING_EAST, 0, 0},
-    {113, CONDITION_ALWAYS, 2, PIXELS(568), 0, PIXELS(88), FACING_SOUTH, 0, 0},
-    {114, CONDITION_ALWAYS, 2, PIXELS(160), 0, PIXELS(360), FACING_SOUTH, 0, 0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(440), FACING_NORTHEAST, 1, 0},
-    {115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(488), FACING_SOUTHWEST, 1, 0},
-    {116, CONDITION_ALWAYS, 2, PIXELS(216), 0, PIXELS(472), FACING_EAST, 0, 0},
-    {108, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(712), FACING_SOUTH, 1, 0},
-    {109, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(724), FACING_SOUTH, 1, 0},
-    {134, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(468), FACING_EAST, 0, 0},
-    {135, CONDITION_ALWAYS, (s32)gDailaInteriors_LookAroundScript, PIXELS(424), 0, PIXELS(520), FACING_SOUTH, 0, 0},
-    {238, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(376), FACING_NORTHWEST, 0, 0},
-    {116, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(360), FACING_SOUTHEAST, 1, 0},
-    {18, CONDITION_ALWAYS, 1, PIXELS(161), 0, PIXELS(111), FACING_SOUTH, 1, 0},
-    {17, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(112), FACING_SOUTH, 1, 0},
-    {116, CONDITION_ALWAYS, (s32)gDailaInteriors_LookAroundScript, PIXELS(456), 0, PIXELS(520), FACING_SOUTH, 1, 0},
-    {74, CONDITION_ALWAYS, 3, PIXELS(472), 0, PIXELS(746), FACING_NORTH, 1, 0},
-    {75, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(712), FACING_SOUTH, 1, 0},
-    {76, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(712), FACING_WEST, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(728), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, (s32)gDailaInteriors_PacingScript, 360, 0, 168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 72, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 168, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 568, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 160, 0, 360, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 440, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 488, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0, 472, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 712, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 724, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 468, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(135, CONDITION_ALWAYS, (s32)gDailaInteriors_LookAroundScript, 424, 0, 520, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(238, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 360, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(18, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 161, 0, 111, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(17, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 112, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, (s32)gDailaInteriors_LookAroundScript, 456, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 472, 0, 746, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 712, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 712, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -896,10 +887,10 @@ struct Trigger gDailaInteriors2EventsOnceTaviIsRescued[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {0x4602, 30, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
-    {0x602, 31, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
-    {0x8602, 32, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
-    {0xc602, 33, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT(DailaInteriors_JumpForward)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToHealerOnceTaviIsRescued)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBoringVillage)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PILLAR, FLAG_DAILA_SANCTUARY_PILLAR_FROZEN_FIRST + 0, EVENT(Scene_RaiseHeldActor)},

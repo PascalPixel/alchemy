@@ -2,7 +2,7 @@
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
-#include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -26,7 +26,6 @@ void Field_TryJumpForward(void);
 s32 Leader_CanPushObjectAhead(void);
 void Leader_PushObjectAhead(void);
 #include "field/field.h"
-#include "shared/jupiter_lighthouse.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
@@ -57,7 +56,7 @@ void Leader_PushObjectAhead(void);
 
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -104,7 +103,7 @@ extern LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
 extern struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctumEntrance)
     return gAnemosInnerSanctumEntrance_Room1Placements;
   return gAnemosInnerSanctumEntrance_Placements;
 }
@@ -125,22 +124,22 @@ void Func_02000388(void) {
   party->battleGroup = 0x1a9f;
   party->battleRule = 2;
   Field_RequestBattleFromEncounterTable(103, 3);
-  GameFlag_Set(0x201);
+  GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
 void Func_02000408(void) {
   struct Actor *object = Actor_GetById(15);
 
   object->motionFlags = 0;
-  object->scaleX = 0x4000;
-  object->scaleY = 0x4000;
+  object->scaleX = Q16_ONE / 4;
+  object->scaleY = Q16_ONE / 4;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(151);
+  Sound_Play(SE_LIGHT_APPEAR);
   Actor_SetSpriteColor(Actor_GetById(8), 7);
   Actor_SetSpriteColor(Actor_GetById(15), 7);
   Event_Wait(20);
-  Sound_Play(190);
+  Sound_Play(SE_WARP);
   Actor_MoveToObject(15, 8);
   wait(1);
   Actor_SetMovementTypeById(8, gData_02000ea4);
@@ -194,8 +193,8 @@ void Func_020004e4(s32 a, s32 b) {
         return;
     }
   }
-  GameFlag_Set(0x200);
-  Sound_Play(201);
+  GameFlag_Set(FLAG_SCENE_TEMP_00);
+  Sound_Play(SE_ASCEND);
   Func_02000be0(1);
   Func_02000494();
 }
@@ -211,7 +210,7 @@ void Func_02000534(s32 a) {
       Func_020004e4(0, a);
     }
   } else {
-    if (Actor_GetById(party->currentOwner)->y > -0x1c0000)
+    if (Actor_GetById(party->currentOwner)->y > -px(28))
       Field_TryJumpForward();
   }
 }
@@ -224,14 +223,14 @@ void Func_02000588(void) {
   if (object->z >> 20 <= 9)
     shift = -shift;
   Event_ResolvePendingActions(0);
-  if (!GameFlag_Get(0x200))
+  if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
     return;
   if (MapGrid_GetCellBehaviorAt(object->terrainId, object->x, object->z) != 77)
     return;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
 #if TLA_PATCH_1
-  FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000,
-                           object->y, (object->z & 0xfff00000) + 0x80000);
+  FieldActor_SetMoveTargetFixed(object, (object->x & 0xfff00000) + 0x80000,
+                                object->y, (object->z & 0xfff00000) + 0x80000);
 #endif
   {
     s32 id = gMainRoutineWork.currentOwner;
@@ -248,18 +247,18 @@ next:
     object = Actor_GetById(gData_02000eec[i]);
     object->motionFlags = 0;
     object->y += 0x8000;
-    object->acceleration = 0x1000;
-    object->speedLimit = 0x20000;
+    object->acceleration = px(1) / 16;
+    object->speedLimit = px(2);
     Actor_SetSpriteFlags(object, 1);
     Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
     object->update = Func_020004b4;
-    Sound_Play(152);
+    Sound_Play(SE_JUMP);
     wait((Random16() * 4 >> 16) + 3);
   }
   if (++i <= 6)
     goto next;
   wait(40);
-  Sound_Play(198);
+  Sound_Play(SE_KOLIMA_BRIDGE_POST);
   i = 9;
 lower:
   {
@@ -285,7 +284,7 @@ land:
   if (++i <= 14)
     goto land;
   wait(3);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   wait(10);
   if (!GameFlag_Get(0xa9f) && shift > 0)
     Func_02000388();
@@ -297,20 +296,16 @@ extern struct Trigger gAnemosInnerSanctumEntrance_Triggers[];
 extern struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctumEntrance)
     return gAnemosInnerSanctumEntrance_Room1Triggers;
   return gAnemosInnerSanctumEntrance_Triggers;
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void SetObjectValue(s32 id, s32 value) {
   /* FAKEMATCH(pin): the value pinned to r1, which the ROM loads before the id
-   * (movs r1; movs r0); as a direct call or a plain forwarding inline, the id
-   * comes first, 10 of 110 instructions of Scene_Initialize differ in tla-en.
-   */
+   * (movs r1. */
   register s32 v asm("r1") = value;
 
   Func_02000ba4(id, v);
@@ -326,12 +321,10 @@ s32 Scene_Initialize(void) {
            ->route;
   s32 value = 0x204;
 
-  /* FAKEMATCH(barrier): an empty asm after the address and the value, so
-   * gMainRoutineWork's address loads just before the store; as one assignment,
-   * 2 of 110 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm after the address and the value. */
   __asm__("");
   *route = value;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     Func_02000b18();
     Func_02000bd4(2);
     SetObjectValue(9, 0);
@@ -347,16 +340,16 @@ s32 Scene_Initialize(void) {
     Actor_GetById(12)->priorityFlags |= 0x80;
     Actor_GetById(13)->priorityFlags |= 0x80;
     Actor_GetById(14)->priorityFlags |= 0x80;
-    if (GameFlag_Get(0x200)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       Func_02000be0(1);
       Func_02000494();
     }
   }
-  if (Flag_Test(0x201)) {
+  if (Flag_Test(FLAG_SCENE_TEMP_01)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02000408();
-    GameFlag_Clear(0x201);
+    GameFlag_Clear(FLAG_SCENE_TEMP_01);
   }
   return 0;
 }
@@ -438,13 +431,21 @@ void LightSprites_Draw(void) {
   }
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw, gData_02001cde,
-                            gData_02001de0, gData_02001de2)
+void LightSprites_InitA(void) {
+  u8 *buffer = BumpAlloc(0xc00);
+
+  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Decompress_TaggedLz(gField_CachedTilesA, buffer);
+  gLightSpriteTile = VramCache_FindFreeEntry();
+  VramCache_Load(gLightSpriteTile, 0xc00, buffer);
+  Heap_Release(buffer);
+  Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
+  gData_02001cde = 0;
+  gData_02001de0 = 0;
+  gData_02001de2 = -1;
+}
 
 void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
@@ -543,56 +544,66 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA DEFINE_G_SCENE_EXITS(308, 239, 23, 303, 1, 239, 22, 24, 306, 5)
+LATE_DATA u32 gSceneExits[] = {
+    SCENE_EXITS(AnemosInnerSanctumEntrance),
+    SCENE_EXIT_UNLESS(1, Contigo4, 23, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AnemosInnerSanctum1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Contigo4, 22, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Contigo4, 24, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AnemosInnerSanctum4, 5, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
-    LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
-        {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
+    {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[] =
     {
-        {180, 0xa9f, 1, PIXELS(200), 0, PIXELS(104), FACING_EAST, 1, 0},
-        {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(424), FACING_EAST, 1,
-         0},
-        {430, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(456), FACING_EAST, 1,
-         1},
-        {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(472), FACING_EAST, 1,
-         1},
-        {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(424), FACING_EAST, 1,
-         1},
-        {430, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(456), FACING_EAST, 1,
-         1},
-        {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(472), FACING_EAST, 1,
-         1},
-        {303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0,
-         PIXELS(168), FACING_WEST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0,
-         PIXELS(216), FACING_WEST, 1, 1},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0,
-         PIXELS(168), FACING_EAST, 1, 1},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0,
-         PIXELS(216), FACING_EAST, 1, 1},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(696), 0,
-         PIXELS(240), FACING_WEST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(744), 0,
-         PIXELS(240), FACING_EAST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
-         PIXELS(232), FACING_WEST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
-         PIXELS(288), FACING_WEST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
-         PIXELS(232), FACING_EAST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
-         PIXELS(288), FACING_EAST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
-         PIXELS(712), FACING_WEST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
-         PIXELS(768), FACING_WEST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
-         PIXELS(712), FACING_EAST, 1, 0},
-        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
-         PIXELS(768), FACING_EAST, 1, 0},
+        ACTOR_PLACEMENT(180, 0xa9f, MOVEMENT_TYPE_STAND, 200, 0, 104,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 424,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 472,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 424,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 456,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+        ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 472,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+        ACTOR_PLACEMENT(303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+                        TALK_FACING_KEEP, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 152, 0, 168,
+                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 152, 0, 216,
+                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 248, 0, 168,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 248, 0, 216,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 696, 0, 240,
+                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 744, 0, 240,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 424, 0, 232,
+                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 424, 0, 288,
+                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 504, 0, 232,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 504, 0, 288,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 424, 0, 712,
+                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 424, 0, 768,
+                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 504, 0, 712,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_02001970, 504, 0, 768,
+                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
         {SCENE_TABLE_END},
 };
 
@@ -606,8 +617,8 @@ LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {0x202, 33, CONDITION_ALWAYS, EVENT(Func_02000534)},
-    {0x202, 77, CONDITION_ALWAYS, EVENT(Func_02000534)},
+    {STEP_TRIGGER_WALKING, 33, CONDITION_ALWAYS, EVENT(Func_02000534)},
+    {STEP_TRIGGER_WALKING, 77, CONDITION_ALWAYS, EVENT(Func_02000534)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x200, EVENT(Func_020004e4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x200, EVENT(Func_020004e4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x200, EVENT(Func_020004e4)},

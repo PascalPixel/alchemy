@@ -18,6 +18,7 @@
 #include "graphics/resource.h"
 #include <system/affine.h>
 #include "system/sprite_metadata.h"
+#include "actor.h"
 #include "actor_view.h"
 #include "module/field/field.h"
 #include "battle/battle.h"
@@ -30,15 +31,6 @@
 
 struct Actor;
 struct FieldPosition;
-/// Defined in map/tile_animation.c.
-/* VIEW(resource_slot): routine MapGrid_CheckCollision as s32
- * MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
- * field/map/tile_animation has s32 MapGrid_CheckCollision(struct Actor *actor,
- * s16 *position) {. */
-s32 MapGrid_CheckCollision__resource_slot(
-    struct Actor *actor,
-    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
-#define MapGrid_CheckCollision MapGrid_CheckCollision__resource_slot
 
 typedef void (*ConvertFn)(void *destination, void *source, void *saved);
 
@@ -203,19 +195,28 @@ struct MapScrollWork {
 struct WorldView {
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;
-  u8 *unk010;
-  u16 unk014;
-  u8 unk016;
+  u8 *script;  ///< NULL at load, as The Broken Seal's WorldMapView
+  u16 fade;    ///< REG_DISPCNT bits, BG0 to BG3 and the sprites at load
+  u8 fadeStep; ///< 0x80 at load
   u8 unk017[0xcd];
   s32 viewX;
   s32 viewY;
-  u8 unk0ec[0x18];
+  s32 scaleX; ///< 32 in 16.16 at load, as The Broken Seal's WorldMapView
+  s32 scaleY; ///< 64 in 16.16 at load
+  s32 limitX; ///< 16352 in 16.16 at load
+  s32 limitY; ///< 16352 in 16.16 at load
+  u8 unk0fc[8];
   u16 windowTop;
   u16 windowBottom;
-  u8 unk108[0x14];
+  u8 unk108[0xc];
+  /// The world map's tile offsets (ResourceId_PerspectiveDataA).
+  void *tiles;
+  u8 unk118[4];
   u16 pitch;
   u16 yaw;
-  u8 unk120[0x83c];
+  u8 unk120[0x28];
+  u16 tileIds[1024]; ///< the world map tile in each cell
+  u8 unk948[0x14];
   s32 farPlane;
   s32 distance;
   u8 unk964[4];
@@ -245,8 +246,7 @@ struct Unk_WakeActor {
 
 struct Unk_ClimbEventWork {
   u8 unk000[0xd4a];
-  /// Read as the low byte of a halfword: as a u8 or s16 field the read waits
-  /// for the sprite store (8 of 965 instructions differ in tla-en).
+  /* FAKEMATCH(signature): read as the low byte of a halfword. */
   u16 unkd4a : 8;
   u16 unkd4b : 8;
 };

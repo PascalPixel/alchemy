@@ -4,6 +4,7 @@
 /// the quay.
 
 #include "battle/battle.h"
+#include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -82,16 +83,16 @@ void LemuriaDock_MovePiers(void) {
       Actor_WalkByAndWait(4, 0, -16);
       FieldActor_LaunchFromLeader(8, 0, -16, FACING_SOUTHEAST + FACING_STEP);
       Actor_WaitForMoveById(8);
-      Actor_SetSpeed(8, 0x13333, 0x9999);
+      Actor_SetSpeed(8, 1.2);
       Actor_WalkToAndWait(8, 472, 392);
       Actor_FaceDirectionAndWait(8, FACING_SOUTH + FACING_STEP);
     } else {
       struct Actor *leader;
 
       Actor_WalkByAndWait(4, 0, 16);
-      Actor_SetSpeed(8, 0x20000, 0x10000);
+      Actor_SetSpeed(8, 2);
       Actor_WalkToAndWait(8, 440, 440);
-      Actor_SetSpeed(8, 0x13333, 0x9999);
+      Actor_SetSpeed(8, 1.2);
       Actor_SetAnimation(8, 2);
       leader = Actor_GetById(party->currentOwner);
       if (leader != NULL)
@@ -114,7 +115,7 @@ void LemuriaDock_AskSettingOff(void) {
 
   if (SCENE_WORK->unk166 != 0) {
     Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
-    Actor_ShowEmote(8, 0x100, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   }
   Event_SetMessageId((s32)MsgAreWeSetting);
   Event_OpenMessage(8, 0);
@@ -154,10 +155,10 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
@@ -213,7 +214,7 @@ s32 Scene_Initialize(void) {
   SCENE_WORK->unk1ac = 256;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Task_Add(LemuriaDock_CyclePalette, 0x480);
-  Flag_Clear(0x12f);
+  Flag_Clear(FLAG_SHOW_AREA_NAME);
 #if TLA_PATCH_1 /* From patch 1. */
   if (Flag_IsSet(0x90a))
     Actor_SetSpritePriority(9, 1);
@@ -224,7 +225,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (!Flag_IsSet(0x8df)) {
+  if (!Flag_IsSet(FLAG_SHIP_FLIES)) {
     MapGrid_CopyCellsTo(57, 52, 64, 15, 1, 1);
     MapGrid_CopyCellsTo(60, 53, 67, 16, 6, 3);
     MapGrid_CopyCellsTo(50, 52, 16, 16, 6, 3);
@@ -256,9 +257,9 @@ s32 gLemuriaDock_ExitsWithFlag960[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 0, 0},
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 #if TLA_PATCH_1
-    {420, CONDITION_ALWAYS, 1, PIXELS(384), 0, PIXELS(392), FACING_EAST, 2, 0},
+    ACTOR_PLACEMENT(420, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 392, FACING_EAST, TALK_FACING_KEEP, 0),
 #endif
     {SCENE_TABLE_END},
 };
@@ -273,7 +274,8 @@ struct WarpTarget gLemuriaDock_HouseDoor = {(s32)gLemuriaDock_HouseDoorOpening,
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(LemuriaDock_EnterHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(LemuriaDock_EnterHouse)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LemuriaDock_MovePiers)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LemuriaDock_AskSettingOff)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS,

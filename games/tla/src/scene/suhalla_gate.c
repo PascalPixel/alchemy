@@ -4,6 +4,7 @@
 /// Punch Ant in the Gateway Cave (Room3) on the way to Idejima.
 
 #include "types.h"
+#include "flags.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -90,7 +91,7 @@ void SuhallaGate_SetUpRoom1(void) {
   if (gMainRoutineWork.entrance == 99)
     Event_SetFlag(0x894);
   if (Event_GetFlag(0x894)) {
-    Actor_SetPosition(8, PIXELS(456), PIXELS(312));
+    Actor_SetPosition(8, 456, 312);
     Actor_FallOverWithAnimationById(8, 0x4000, 0);
     Actor_SetActionCallback(Actor_GetById(8), 8);
   }
@@ -102,9 +103,9 @@ void SuhallaGate_SetUpRoom2(void) {
   if (gMainRoutineWork.entrance == 99)
     Event_SetFlag(0x895);
   if (Event_GetFlag(0x895)) {
-    Actor_SetPosition(13, PIXELS(590), PIXELS(920));
-    Actor_SetPosition(14, PIXELS(624), PIXELS(939));
-    Actor_SetPosition(15, PIXELS(632), PIXELS(920));
+    Actor_SetPosition(13, 590, 920);
+    Actor_SetPosition(14, 624, 939);
+    Actor_SetPosition(15, 632, 920);
     Actor_GetById(13)->facing = 0x4000;
     Actor_FallOverById(13, 0x6000);
     Actor_GetById(14)->facing = 0;
@@ -124,7 +125,8 @@ void SuhallaGate_SetUpRoom2(void) {
 
 /// Back from the Punch Ant's battle, the party talks it over.
 void SuhallaGate_SetUpRoom3(void) {
-  if (Event_GetFlag(0x109) == 0 && gMainRoutineWork.entrance == 99)
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
+      gMainRoutineWork.entrance == 99)
     SuhallaGate_AfterThievesBattle();
 }
 
@@ -155,13 +157,13 @@ void SuhallaGate_EnterHouse(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   Actor_GetById(0)->motionFlags = 0;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, 2, 2);
   wait(4);
   MapGrid_CopyCellsTo(68, 36, 71, 8, 2, 2);
   wait(4);
   Actor_CenterAndWalk(0, 3, -16);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(value);
 }
 
@@ -170,7 +172,7 @@ void SuhallaGate_LeaveForIdejima(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   gMainRoutineWork.currentOwner = 4;
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(value);
 }
 
@@ -184,7 +186,7 @@ void SuhallaGate_ThievesSpotParty(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 472, 320);
-  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(280), 1);
+  FieldCamera_MoveTo(456, CAMERA_KEEP, 280, 1);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
@@ -227,14 +229,14 @@ void SuhallaGate_ThievesAmbushParty(void) {
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(*owner, 0, 16);
   FieldEvent_Wait(30);
-  Actor_SetPosition(13, 0x2680000, 0x3900000);
-  Actor_WalkToAndWait(13, 0x258, 0x398);
-  Actor_SetPosition(15, 0x2680000, 0x3900000);
-  Actor_FaceDirection(13, 0x4000, 0);
-  Actor_WalkToAndWait(15, 0x278, 0x398);
-  Actor_FaceDirection(15, 0x4000, 0);
-  Actor_SetPosition(14, 0x2680000, 0x3900000);
-  Actor_WalkToAndWait(14, 0x268, 0x398);
+  Actor_SetPosition(13, 616, 912);
+  Actor_WalkToAndWait(13, 600, 920);
+  Actor_SetPosition(15, 616, 912);
+  Actor_FaceDirection(13, FACING_SOUTH, 0);
+  Actor_WalkToAndWait(15, 632, 920);
+  Actor_FaceDirection(15, FACING_SOUTH, 0);
+  Actor_SetPosition(14, 616, 912);
+  Actor_WalkToAndWait(14, 616, 920);
   Actor_RunRepeatedMotion(13, 2);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(13, 0, 10);
@@ -273,10 +275,11 @@ void SuhallaGate_FightPunchAnt(void) {
 void SuhallaGate_PunchAntHopsFromWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPosition(8, PIXELS(472), PIXELS(480));
+  Actor_SetPosition(8, 472, 480);
   Event_Wait(16);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldCamera_FollowActor(8, 1);
   FieldCamera_WaitForArrival();
   Actor_Jump(8, 4, 0);
@@ -298,7 +301,7 @@ void SuhallaGate_PunchAntHopsFromEast(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPosition(8, PIXELS(472), PIXELS(480));
+  Actor_SetPosition(8, 472, 480);
   Event_Wait(16);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
@@ -330,8 +333,8 @@ void SuhallaGate_AfterThievesBattle(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
-  Actor_SetPosition(9, PIXELS(512), PIXELS(432));
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
+  Actor_SetPosition(9, 512, 432);
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 528, 432);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(9, 0, 10);
@@ -362,7 +365,7 @@ void SuhallaGate_PointToMeetingSpot(void) {
   Event_SetMessageId((s32)&MsgNotThatWay);
   Actor_LaunchFromLeader(16, -16, 0, 0);
   Actor_WaitForMoveById(16);
-  Event_ShowMessageThenWait(0x1010, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 16, 0, 10);
   Actor_SetAnimation(16, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
@@ -435,49 +438,45 @@ struct SceneEntrance gSuhallaGate_Room3Entrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(6),
-    SCENE_EXIT(2, 7, 1),
-    SCENE_EXIT(4, 7, 4),
-    SCENE_EXIT(5, 4, 2),
-    SCENE_EXITS(7),
-    SCENE_EXIT(1, 6, 2),
-    SCENE_EXIT(2, 7, 3),
-    SCENE_EXIT(3, 7, 2),
-    SCENE_EXIT(4, 6, 4),
-    SCENE_EXIT(5, 8, 1),
-    SCENE_EXITS(8),
-    SCENE_EXIT(1, 7, 5),
-    SCENE_EXIT(2, 8, 3),
-    SCENE_EXIT(3, 8, 2),
-    SCENE_EXIT(4, 9, 11),
+    SCENE_EXITS(SuhallaGate1),
+    SCENE_EXIT(2, SuhallaGate2, 1),
+    SCENE_EXIT(4, SuhallaGate2, 4),
+    SCENE_EXIT(5, VenusLighthouseEntrance, 2),
+    SCENE_EXITS(SuhallaGate2),
+    SCENE_EXIT(1, SuhallaGate1, 2),
+    SCENE_EXIT(2, SuhallaGate2, 3),
+    SCENE_EXIT(3, SuhallaGate2, 2),
+    SCENE_EXIT(4, SuhallaGate1, 4),
+    SCENE_EXIT(5, SuhallaGate3, 1),
+    SCENE_EXITS(SuhallaGate3),
+    SCENE_EXIT(1, SuhallaGate2, 5),
+    SCENE_EXIT(2, SuhallaGate3, 3),
+    SCENE_EXIT(3, SuhallaGate3, 2),
+    SCENE_EXIT(4, Idejima, 11),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gSuhallaGate_Placements[] = {
-    {247, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 0, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTHEAST, 2, 0},
+    ACTOR_PLACEMENT(247, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSuhallaGate_Room2Placements[] = {
-    {299, CONDITION_ALWAYS, 7, PIXELS(264), 0, PIXELS(400), 0x5000, 2, 0},
-    {299, CONDITION_ALWAYS, 7, PIXELS(280), 0, PIXELS(368), 0x5000, 2, 0},
-    {299, CONDITION_ALWAYS, 7, PIXELS(472), 0, PIXELS(912), 0x5000, 2, 0},
-    {299, CONDITION_ALWAYS, 7, PIXELS(536), 0, PIXELS(912), 0x5000, 2, 0},
-    {299, CONDITION_ALWAYS, 7, PIXELS(552), 0, PIXELS(880), 0x5000, 2, 0},
-    {93, CONDITION_ALWAYS, 1, PIXELS(24), 0, PIXELS(24), FACING_SOUTHEAST, 2, 0,
-     },
-    {93, CONDITION_ALWAYS, 1, PIXELS(24), 0, PIXELS(24), FACING_SOUTHEAST, 2, 0,
-     },
-    {93, CONDITION_ALWAYS, 1, PIXELS(24), 0, PIXELS(24), FACING_SOUTHEAST, 2, 0,
-     },
-    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTHEAST, 2, 0},
+    ACTOR_PLACEMENT(299, CONDITION_ALWAYS, 7, 264, 0, 400, 0x5000, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(299, CONDITION_ALWAYS, 7, 280, 0, 368, 0x5000, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(299, CONDITION_ALWAYS, 7, 472, 0, 912, 0x5000, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(299, CONDITION_ALWAYS, 7, 536, 0, 912, 0x5000, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(299, CONDITION_ALWAYS, 7, 552, 0, 880, 0x5000, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 24, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 24, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 24, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSuhallaGate_Room1Placements[] = {
-    {93, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(264), FACING_SOUTHEAST, 2,
-     0},
+    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 264, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -487,7 +486,8 @@ struct Trigger gSuhallaGate_Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(SuhallaGate_EnterHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(SuhallaGate_EnterHouse)},
     {TRIGGER_STEP, 20, 0x894, EVENT(SuhallaGate_ThievesSpotParty)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOoooogMaybeI)},
@@ -506,14 +506,14 @@ struct Trigger gSuhallaGate_Room2Triggers[] = {
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAllRightSo)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgOhManThere)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(SuhallaGate_FightRuffian)},
-    {19, 100, 0xfb4, 0x1000c3},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xfb4, 0x1000c3},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSuhallaGate_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {49, 2, CONDITION_ALWAYS, 2},
-    {33, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(SuhallaGate_LeaveForIdejima)},
     {TRIGGER_STEP, 22, 0x896, EVENT(SuhallaGate_PunchAntHopsFromWest)},
     {TRIGGER_STEP, 23, 0x896, EVENT(SuhallaGate_PunchAntHopsFromEast)},

@@ -3,6 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
+#include "fixed_math.h"
 #include "system/projection.h"
 
 struct ProjectedPoint {
@@ -18,7 +19,7 @@ struct ProjectedPoint {
 #define MTX_DMA DMA_COPY_WORDS(12) ///< DMA for one matrix.
 
 /// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
-#define COS(a) Trig_Sin((a) + 0x4000)
+#define COS(a) Trig_Sin((a) + TRIG_TURN / 4)
 
 void Render_EmptyHook(void) {}
 
@@ -302,8 +303,7 @@ void Transform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
 #define RelocatedQ16DotProduct Math_DotProductQ16Code
 
 void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
-  /* FAKEMATCH(pin): dot held in r10; as a plain local, 175 of 228
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): dot held in r10. */
   register Dot3Fn dot asm("r10");
   u32 code[8];
   s32 dx, dy, dz;
@@ -318,11 +318,9 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   s32 t;
   s32 w;
   u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
-  /* FAKEMATCH(pin): divide held in r9; as a plain local, 141 of 228
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): divide held in r9. */
   register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
-  /* FAKEMATCH(pin): mul held in r11; as a plain local, 209 of 228
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): mul held in r11. */
   register s32 (*mul)(s32 a, s32 b) asm("r11");
 
   // Copy the dot-product routine to the stack and call it there.
@@ -342,9 +340,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
   scale = divide(num, t) >> 15;
   scale = -scale;
-  // The normalization in a once-only block, so the axis is negated before the
-  // third product spills; as plain statements, 2 of 228 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the normalization in a once-only block. */
   do {
     dx = mul(dx, scale);
     dy = mul(dy, scale);
@@ -354,7 +350,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
 
   // Normalize the horizontal axis u = (dz, 0, -dx).
   w = 0x10000 - mul(dy, dy);
-  scale = 0x10000;
+  scale = Q16_ONE;
   if (w > 0)
     scale = divide(num, FixedSqrt(w)) << 1;
   ux = mul(dz, scale);
@@ -406,7 +402,7 @@ void Projection_SetFieldOfView(s32 value, s32 param1, s32 param2) {
 
   half = value / 2;
   first = Trig_Sin(half);
-  result = Iwram_RatioMulQ14(first, Trig_Sin(half + 0x4000) * 0x50);
+  result = Iwram_RatioMulQ14(first, Trig_Sin(half + TRIG_TURN / 4) * 0x50);
   gCameraSceneParameters[1] = param1;
   gCameraSceneParameters[0] = result;
   gCameraSceneParameters[2] = param2;
@@ -419,9 +415,6 @@ void Projection_Set(u32 value0, u32 value1, u32 value2) {
   work[2] = value2;
 }
 
-// The Broken Seal's typed Iwram_TransformVector inline from iwram_call.h, the
-// layer every call goes through there; as a direct call to the fixed entry, 4
-// of 82 instructions of Render_ProjectPoint differ in tla-en.
 static inline void Render_TransformVector(const void *vector, s32 *result) {
   Iwram_TransformVectorEntry(vector, result);
 }
@@ -446,8 +439,8 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
     } else {
       scale = 0x151eb;
     }
-    x = projection->centerX + Iwram_MulQ16(view.x, scale) / 0x10000;
-    y = projection->centerY - Iwram_MulQ16(view.y, scale) / 0x10000;
+    x = projection->centerX + Iwram_MulQ16(view.x, scale) / (Q16_ONE);
+    y = projection->centerY - Iwram_MulQ16(view.y, scale) / (Q16_ONE);
     screen->x = x;
     screen->y = y;
     return scale;

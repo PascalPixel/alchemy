@@ -71,9 +71,9 @@ extern u32 gData_0200101c[];
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct ActorPlacement *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1)
     return (const struct ActorPlacement *)gData_02000f5c;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2)
     return (const struct ActorPlacement *)gData_02000f8c;
   return 0;
 }
@@ -81,11 +81,11 @@ const struct ActorPlacement *Scene_GetRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct Trigger *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1)
     return (const struct Trigger *)gGaiaRock_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2)
     return (const struct Trigger *)gGaiaRock_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock3)
     return (const struct Trigger *)gGaiaRock_Room3Placements;
   return (const struct Trigger *)gGaiaRock_Placements;
 }
@@ -102,8 +102,7 @@ void Func_020000f0(void) { Func_02000bc0(19, 0x302); }
 #if !TLA_PATCH_1
 void Func_02000100(s32 id) {
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH(pin): the counter fixed to r6, so the object takes r5; as a plain
-   * local, 12 of 22 instructions differ in tla-ja. */
+  /* FAKEMATCH(pin): the counter fixed to r6. */
   register s32 frames asm("r6");
 
   object->motionFlags = 3;
@@ -118,26 +117,19 @@ void Func_02000100(s32 id) {
 #else
 void Func_02000100(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH(pin): the flags' address fixed to r2, so it is built with 85 in
-   * it first (movs r2, #85; adds r2, r2, r5) and the 3 takes r3; as a plain
-   * local, 21 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the flags' address fixed to r2. */
   register u8 *flags asm("r2");
   u8 *held;
-  /* FAKEMATCH(pin): the counter fixed to r6, so the object takes r5; as a plain
-   * local, 12 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the counter fixed to r6. */
   register s32 frames asm("r6");
 
   flags = (u8 *)85;
-  /* FAKEMATCH(barrier): an empty asm on flags, so 85 stays in a register and is
-   * added to the object rather than the object copied and 85 added; without it,
-   * 4 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm on flags. */
   asm("" : "+r"(flags));
   flags += (s32)object;
   *flags = 3;
   frames = 60;
-  /* FAKEMATCH(temporary): a copy of the flags' address, so it is copied to r8
-   * for the calls after the counter starts; as flags itself, 9 of 32
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): a copy of the flags' address. */
   held = flags;
   while (frames != 0) {
     System_Wait(1);
@@ -182,7 +174,7 @@ void Func_02000164(s32 unused, s32 id) {
     if ((object->x >> 19) == 77)
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
     /* FAKEMATCH(temporary): the object read again through p for the last two
-     * tests; as object throughout, 22 of 109 instructions differ in tla-en. */
+     * tests. */
     p = object;
     if ((p->x >> 19) == 79 && (p->y >> 19) == 12) {
       DROP_OBJECT(19);
@@ -223,9 +215,9 @@ void Func_020002c0(void) {
     return;
   done = Event_GetFlag(0xf74);
   if (done == 0) {
-    Actor_SetPosition(64, PIXELS(657), PIXELS(246));
+    Actor_SetPosition(64, 657, 246);
     object->motionFlags = done;
-    object->y = PIXELS(80);
+    object->y = px(80);
   }
 }
 
@@ -239,7 +231,7 @@ void Func_02000314(void) {
 
   Message_ShowCentered(MsgCheckedTheAltar, 1);
   if (object != NULL && object->x != 0) {
-    Scene_TalkToActor(0x1040);
+    Scene_TalkToActor(4160);
   } else if (Event_GetFlag(0xf74) == 0) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -284,9 +276,9 @@ void Func_020003fc(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1)
     return gGaiaRock_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2)
     return gGaiaRock_Room2Triggers;
   return gGaiaRock_Triggers;
 }
@@ -422,14 +414,14 @@ void Func_02000670(void) {
     Event_PlayCueNearFocus(object, 202);
     object = Actor_Spawn(0x118, object->x, object->y, object->z);
     if (object != NULL) {
-      object->acceleration = 0x20000;
-      object->speedLimit = 0x20000;
-      object->scaleX = 0x8000;
+      object->acceleration = px(2);
+      object->speedLimit = px(2);
+      object->scaleX = Q16_ONE / 2;
       object->scaleY = 0x1999;
       object->priorityFlags = phase;
       Actor_SelectAnimation(object, 2);
-      FieldActor_SetMoveTarget(object, object->x - PIXELS(32), object->y,
-                               object->z);
+      FieldActor_SetMoveTargetFixed(object, object->x - px(32), object->y,
+                                    object->z);
       Actor_StartScript(object, gData_020015c4);
       Actor_SetSpritePriorityDirect(object, 2);
     }
@@ -449,10 +441,10 @@ s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = SCREEN_EFFECT;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_Ov680Room1;
+  gMainRoutineWork.retreatScene = (s32)&SceneId_GaiaRock1;
   gMainRoutineWork.retreatEntrance = 5;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1) {
     Task_Add((s32)Func_02000670, 0x480);
     Call2((void (*)())HangingVine_Place, 8, 1);
     Call2((void (*)())HangingVine_Place, 9, 1);
@@ -465,8 +457,8 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0x920)) {
       actor = Actor_GetById(16);
       actor->motionFlags = 0;
-      actor->x = 0x580000;
-      actor->y = 0x800000;
+      actor->x = px(88);
+      actor->y = px(128);
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
     }
@@ -474,8 +466,8 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     if (GameFlag_Get(0x921)) {
       actor->motionFlags = 0;
-      actor->x = 0x2880000;
-      actor->y = 0x400000;
+      actor->x = px(648);
+      actor->y = px(64);
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       MapGrid_CopyCellAttributes(27, 44, 1, 1, 40, 46);
@@ -489,7 +481,7 @@ s32 Scene_Initialize(void) {
       }
     }
     if (GameFlag_Get(FLAG_SERPENT_SLAIN) && !GameFlag_Get(0x9ab)) {
-      Actor_SetPosition(20, 0x31e0000, 0x3200000);
+      Actor_SetPosition(20, 798, 800);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
       Actor_SetModeById(20, 5);
@@ -507,7 +499,7 @@ s32 Scene_Initialize(void) {
         Event_End();
       }
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2) {
     Call2((void (*)())HangingVine_Place, 8, 1);
     Call2((void (*)())HangingVine_Place, 9, 1);
     Call2((void (*)())HangingVine_Place, 10, 1);
@@ -518,16 +510,16 @@ s32 Scene_Initialize(void) {
     if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
       Func_02000dd0();
     }
-    if (GameFlag_Get(0x300)) {
+    if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
       Func_02000b2c(17, 0x2fc0000, -0x1870000, 0x1a80000);
     }
-    if (GameFlag_Get(0x301)) {
+    if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
       Func_02000b2c(18, 0x3150000, -0xf80000, 0x1a80000);
     }
-    if (GameFlag_Get(0x302)) {
+    if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
       Func_02000b2c(19, 0x30a0000, -0x770000, 0x1a80000);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room3) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock3) {
     actor = Actor_GetById(64);
     if (actor != 0) {
       Actor_SetPosition(64, 0, 0);
@@ -543,7 +535,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2 &&
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
     s32 *layer = (s32 *)&Ram_HeapSlots->mapWork->layers[1];
 
@@ -593,7 +585,7 @@ void Func_02000bc0(s32 id, s32 flag) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   pillar = Actor_Get(id);
   Func_02000b2c(id, leader->x, leader->y, leader->z);
   Actor_StartScript(pillar, gData_020016cc);
@@ -601,7 +593,7 @@ void Func_02000bc0(s32 id, s32 flag) {
 dust:
   {
     struct Actor *dust =
-        FieldActor_Create(255, leader->x, leader->y + 0x100000, leader->z);
+        FieldActor_Create(255, leader->x, leader->y + px(16), leader->z);
 
     if (dust != 0) {
       s32 angle;
@@ -620,18 +612,19 @@ dust:
       dust->scaleX = scale;
       dust->scaleY = scale;
       dust->gravity = 0x547a;
-      dust->bounce = 0x8000;
+      dust->bounce = Q16_ONE / 2;
     }
   }
   if (--i >= 0)
     goto dust;
-  Event_PlaySound(0x24e);
-  Event_PlaySound(217);
-  MapGrid_SetShake(0x20000, 0x20000, 0xe666);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Event_PlaySound(SE_590);
+  Event_PlaySound(SE_FLOOR_SWITCH);
+  MapGrid_SetShake(2, 2, 0.9);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   id = 0;
   leader->gravity = 0x547a;
@@ -644,20 +637,21 @@ fall:
     if (leader->y > leader->terrainHeight)
       goto next;
   }
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   leader->gravity = gravity;
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_REMOVE);
   Actor_SelectAnimation(leader, 38);
-  MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+  MapGrid_SetShake(1, 4, 1);
   System_Wait(10);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   System_Wait(20);
-  FieldCamera_MoveTo(leader->x, leader->y, leader->z, 1);
+  FieldCamera_MoveToFixed(leader->x, leader->y, leader->z, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpriteFlags(leader, 1);
   Actor_SelectAnimation(leader, 1);
-  leader->velocityY = 0x40000;
+  leader->velocityY = px(4);
   System_Wait(20);
   gMainRoutineWork.renderMode = 0;
   Event_End();
@@ -684,19 +678,19 @@ u32 gData_02000f8c[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(174),
-    SCENE_EXIT_IF(1, 175, 1, -1),
-    SCENE_EXIT_IF(2, 174, 3, -1),
-    SCENE_EXIT_IF(3, 174, 2, -1),
-    SCENE_EXIT_IF(4, 178, 1, -1),
-    SCENE_EXIT_IF(5, 2, 39, -1),
-    SCENE_EXITS(175),
-    SCENE_EXIT_IF(1, 174, 1, -1),
-    SCENE_EXIT_IF(2, 175, 3, -1),
-    SCENE_EXIT_IF(3, 175, 2, -1),
-    SCENE_EXIT_IF(4, 176, 1, -1),
-    SCENE_EXITS(176),
-    SCENE_EXIT_IF(1, 175, 4, -1),
+    SCENE_EXITS(GaiaRock1),
+    SCENE_EXIT_UNLESS(1, GaiaRock2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GaiaRock1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GaiaRock1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, GaiaRockInside2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, WorldMap, 39, EXIT_FLAG_NONE),
+    SCENE_EXITS(GaiaRock2),
+    SCENE_EXIT_UNLESS(1, GaiaRock1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GaiaRock2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GaiaRock2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, GaiaRock3, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GaiaRock3),
+    SCENE_EXIT_UNLESS(1, GaiaRock2, 4, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -710,35 +704,35 @@ struct ActorPlacement gGaiaRock_Placements[] = {
 };
 
 struct ActorPlacement gGaiaRock_Room1Placements[] = {
-    {372, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(424), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(440), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(472), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(488), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(408), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(1000), 0, PIXELS(424), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(664), 0, PIXELS(456), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(936), 0, PIXELS(456), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gData_0200101c, PIXELS(120), 0, PIXELS(440), FACING_SOUTH, 2, 0},
-    {377, CONDITION_ALWAYS, 1, PIXELS(295), 0, PIXELS(442), FACING_WEST, 2, 0},
-    {280, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gData_0200101c, PIXELS(600), 0, PIXELS(744), FACING_SOUTH, 2, 0},
-    {29, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1000, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 936, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gData_0200101c, 120, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 295, 0, 442, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gData_0200101c, 600, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(29, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gGaiaRock_Room2Placements[] = {
-    {372, CONDITION_ALWAYS, 1, PIXELS(904), 0, PIXELS(440), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(344), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(344), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(376), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(376), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(408), FACING_SOUTH, 2, 0},
-    {372, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(392), FACING_SOUTH, 2, 0},
-    {377, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(424), FACING_SOUTH, 2, 0},
-    {377, CONDITION_ALWAYS, 1, PIXELS(808), 0, PIXELS(424), FACING_SOUTH, 2, 0},
-    {378, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {378, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {378, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(378, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(378, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(378, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -780,7 +774,7 @@ struct Trigger gGaiaRock_Room1Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x920, EVENT(Func_02000148)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x920, EVENT(Func_02000164)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x921, EVENT(Func_02000164)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000164)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02000164)},
     {TRIGGER_TABLE_END},
 };
 
@@ -805,8 +799,8 @@ struct Trigger gGaiaRock_Triggers[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000314)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000258)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_0200027c)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000258)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_0200027c)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_02000258)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_0200027c)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_020002c0)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020002fc)},
     {TRIGGER_TABLE_END},
@@ -848,5 +842,45 @@ u32 gData_02001688[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-DEFINE_G_DATA_020016CC(gData_020016cc)
+s32 gData_020016cc[] = {                                                               
+      SC_ADD(SW_SCALE_X, 0x8000),                                              
+      SC_ADD(SW_SCALE_Y, 0x8000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, -0x4000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, 0x8000),                                              
+      SC_ADD(SW_SCALE_Y, 0x8000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, -0x4000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, 0x8000),                                              
+      SC_ADD(SW_SCALE_Y, 0x8000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, -0x4000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(4),                                                              
+      SC_WAIT(20),                                                             
+      SC_LOOP(3, SC_TOP),                                                      
+      SC_END,                                                                  
+  };
 // clang-format on

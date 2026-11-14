@@ -16,9 +16,7 @@
 /// four random numbers a frame, which only advances the random number
 /// generator. Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
-  // volatile: the four saved BGxCNT values kept on the stack, each stored and
-  // loaded again as in the ROM; without volatile, 65 of 94 instructions differ
-  // in tla-en.
+  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack. */
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;
   volatile u16 bg2cnt;
@@ -49,7 +47,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
     wait(1);
   }
 
-  REG_DISPCNT = 1;
+  REG_DISPCNT = DISPCNT_MODE_1;
   wait(4);
   saved = bg0cnt;
   reg = &REG_BG0CNT;
@@ -86,8 +84,6 @@ void Graphics_BuildSequentialTileTable(s32 *dst) {
     v += 0x04040404;
   } while (n >= 0 && n <= 55);
 
-  // The fill's entry held in a local loads its address before the size's
-  // shift; called directly, 2 of 25 instructions differ in tla-en.
   fill = Iwram_FillWordsEntry;
   fill(dst, 544, -1);
 }
@@ -138,7 +134,7 @@ void BattleTransition_UploadTileVariant(void) {
 
   if (variant <= 31)
     Dma_Set(gBattleTransition_CurtainVariants + (variant >> 2) * 32,
-            (void *)0x06005000, DMA_COPY_WORDS(8), REG_DMA3);
+            (void *)BG_SCREEN_BLOCK(10), DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 void BattleTransition_AdvanceTimer(void) {
@@ -254,21 +250,19 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     view->secondMode = 1;
     view->busy = 0;
     view->mode = 1;
-    REG_DISPCNT = 1;
+    REG_DISPCNT = DISPCNT_MODE_1;
     {
       u32 v = 0x33333333;
-      /* FAKEMATCH(barrier): an empty asm on v, so the fill's value loads after
-       * its size; as Iwram_FillWords((void *)0x06005000, 32, 0x33333333), 2
-       * of 490 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on v. */
       __asm__("" : "=r"(v) : "0"(v));
-      Iwram_FillWordsEntry((void *)0x06005000, 32, v);
+      Iwram_FillWordsEntry((void *)BG_SCREEN_BLOCK(10), 32, v);
     }
     IWRAM_FILL_WORDS((void *)0x06005100, 32, 0);
-    REG_BG1CNT = 0xc04;
+    REG_BG1CNT = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(12);
     REG_BG0CNT |= 2;
     view->mode = 2;
     {
-      u16 *map = (u16 *)0x06006000;
+      u16 *map = (u16 *)BG_SCREEN_BLOCK(12);
 
       for (i = 0; i < 32; i++) {
         u32 tile;
@@ -292,8 +286,10 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     REG_WIN0V = 0x88;
     REG_WIN1H = 0xf0;
     REG_WIN1V = 0x88;
-    REG_WININ = 0x3537;
-    REG_WINOUT = 0x3f21;
+    REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+                WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+                WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+    REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
     IoWriteQueue_Store16(0x04000000, 0x7741);
     BattleCamera_SetView(0, 0, 0, 180);
     *timer = zero;
@@ -325,7 +321,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     for (i = 0; i != ownerCount; i++) {
       s32 id = owners[i];
       struct BattleObj *battleObject = BattleObject_Get(id);
-      u16 enemyId = ((struct BattleUnit *)Unit_Get__f11f66c(id))->enemyId;
+      u16 enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
 
       if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376)
         battleObject->scale = 0xb333;
@@ -351,7 +347,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     IoWriteQueue_ClearBits16(0x04000008, 2);
     IoWriteQueue_SetBits16(0x04000008, 0);
-    REG_BLDCNT = 0x3f40;
+    REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     count = BattleParty_ListActorIds(3, shown);
     shown[count] = 255;
     BattleActor_SpawnObjectsForList((s16 *)shown, 0);
@@ -370,11 +366,12 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     Irq_SetHandler(2, 0, 0);
   }
   Irq_SetHandler(2, 0, 0);
-  REG_BG1CNT = 0x1f83;
+  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   wait(1);
-  REG_BG1CNT = 0x1f83;
+  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   REG_BG0CNT &= 0xfffd;
   gBgScroll[1].x = 8;
-  REG_DISPCNT = 0x1541;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   HeapSlot_Release(168);
 }

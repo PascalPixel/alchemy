@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 // Defined below or in later parts of the menu object.
 struct OwnerInventoryState;
@@ -109,8 +110,8 @@ s32 ItemMenu_Run(void) {
       (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, 2);
 #if TLA_PATCH_1
   Menu_SuspendFieldTasks();
-  Iwram_CopyWords(backup, (void *)0x06004000, size);
-  Iwram_FillWords((void *)0x06004000, size, 0x33333333);
+  Iwram_CopyWords(backup, (void *)BG_CHAR_BLOCK(1), size);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), size, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
 
@@ -139,7 +140,7 @@ s32 ItemMenu_Run(void) {
 #if TLA_PATCH_1
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)0x06004000, backup, size);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), backup, size);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(backup);
   wait(1);
@@ -378,7 +379,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       menu->sideMember[1] = 0;
-      // The icon's slot is read unsigned, as the bytes show.
       Resource_LoadByModeIntoSlotFar(
           2, (menu->selectedItems[0] & 0x1ff) | (result << 11),
           (u8)menu->selectedItemIcon->index, 0);
@@ -506,7 +506,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 14);
           item = Item_GetDirectFar(menu->selectedItems[0]);
           if ((item->flags & 1) != 0) {
-            Sound_PlayFar(0x67);
+            Sound_PlayFar(SE_CURSE);
             WindowSprite_ClearListFar(menu->infoWindow);
             ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X,
                                  14);
@@ -622,7 +622,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 14);
             item = Item_GetDirectFar(menu->selectedItems[0]);
             if ((item->flags & 1) != 0) {
-              Sound_PlayFar(0x67);
+              Sound_PlayFar(SE_CURSE);
               WindowSprite_ClearListFar(menu->infoWindow);
               ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X,
                                    14);
@@ -666,7 +666,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 8);
       item = Item_GetDirectFar(menu->selectedItems[0]);
       if ((item->flags & 1) != 0) {
-        Sound_PlayFar(0x67);
+        Sound_PlayFar(SE_CURSE);
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X, 8);
       }
@@ -741,7 +741,7 @@ s32 ItemMenu_Use(void) {
                     menu->sideMember[1]);
 
   if (result == -1) {
-    Sound_PlayFar(114);
+    Sound_PlayFar(SE_MENU_ERROR);
     WindowSprite_ClearListFar(menu->infoWindow);
     ItemMenu_ShowMessage(menu->messageOffset + (s32)MsgItemUseResult, result,
                          result);
@@ -917,7 +917,6 @@ s32 ItemMenu_SelectMember(s32 pane) {
   } else {
     MenuCursor_Slide(index * 24 - 10, 16);
   }
-  // Read unsigned (ldrh): the party's ids, as this routine's bytes load them.
   owner = Unit_Get((u16)menu->memberIds[index]);
   menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
   result = ItemMenu_RunMemberSelection(menu->memberIds, menu->items);
@@ -952,8 +951,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 selection = menu->sideIndex[0];
   /* FAKEMATCH(temporary): the first owner's byte offset, taken before the
-   * count; as Unit_Get(ownerIds[selection]) below, 2 of 307 instructions
-   * differ in tla-en. */
+   * count. */
   s32 firstOffset = selection * 2;
   s32 count;
   s32 redraw;
@@ -1016,30 +1014,30 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
     }
     MenuCursor_Position(selection % 4 * 24 - 10, 16);
     wait(1);
-    if (gInput.pressed & 1) {
-      if (gInput.held & 0x200) {
+    if (gInput.pressed & KEY_A) {
+      if (gInput.held & KEY_L) {
         sortMode = (sortMode + 4) % 4;
         ItemMenu_Sort(owner->inventory, sortMode);
         sortMode++;
         ItemMenu_RefreshMember(ownerIds[selection], 0);
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
       } else if (ItemMenu_CountItems(ownerIds[selection])) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = ownerIds[selection];
         break;
       } else {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       }
     }
-    if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
-    if (gInput.pressed & 0x100) {
+    if (gInput.pressed & KEY_R) {
       showEquipment = 1;
       redraw = 1;
-    } else if (!(gInput.held & 0x100) && showEquipment == 1) {
+    } else if (!(gInput.held & KEY_R) && showEquipment == 1) {
       showEquipment = 0;
       redraw = 1;
     } else {
@@ -1182,20 +1180,15 @@ s32 ItemMenu_SelectTarget(s32 mode) {
           } else if (heldCount != 0) {
             Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);
             /* FAKEMATCH(dead): an empty once-only block between
-             * `Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);` and
-             * `labelX = IN_STOCK_LABEL_X;`, which keeps their instructions
-             * apart; as plain statements, 2 of 387 instructions differ in
-             * tla-en. */
+             * `Text_DrawNumberInWindowFar(heldCount. */
             do {
             } while (0);
             labelX = IN_STOCK_LABEL_X;
             label = (s32)MsgInStock;
           } else {
             labelX = 16;
-            /* FAKEMATCH(dead): an empty once-only block between `labelX = 16;`
-             * and `label = (s32)MsgNoneInStock;`, which keeps their
-             * instructions apart; as plain statements, 2 of 387 instructions
-             * differ in tla-en. */
+            /* FAKEMATCH(dead): an empty once-only block between `labelX = 16.
+             */
             do {
             } while (0);
             label = (s32)MsgNoneInStock;
@@ -1226,17 +1219,17 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     }
     MenuCursor_Position(selection % 4 * 24 - 10, 16);
     wait(1);
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = menu->ownerIds[selection];
       break;
     }
-    if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = 255;
       break;
     }
@@ -1304,22 +1297,15 @@ struct ItemListMenu {
   struct WindowSprite *messageWindow;
 };
 
-s32 ItemMenu_IsStatRaisingItem(s32 item_id) {
-  s32 result;
-  s32 first;
-
-  if (item_id > 0xC4) {
-    goto L0;
+s32 ItemMenu_IsStatRaisingItem(s32 itemId) {
+  switch (itemId) {
+  case 193: // Apple
+  case 194: // Hard Nut
+  case 195: // Mint
+  case 196: // Lucky Pepper
+    return 1;
   }
-  first = 0xC1;
-  if (item_id < first) {
-    goto L0;
-  }
-  result = 1;
-  return result;
-L0:
-  result = 0;
-  return result;
+  return 0;
 }
 
 void ItemMenu_DrawMessage(s32 unused, s32 message) {
@@ -1483,7 +1469,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   case 0:
   case 11:
     /* FAKEMATCH(dead): the test of menu, whose two branches make the same call,
-     * kept; as the one call, 34 of 217 instructions differ in tla-en. */
+     * kept. */
     if (menu)
       StatusPanel_Draw(menu->statusWindow, target, slot, style);
     else
@@ -1751,56 +1737,56 @@ s32 ItemMenu_ChooseCommand(void) {
                         COMMAND_CURSOR_Y(column, row));
     wait(1);
 
-    if ((gInput.pressed & 1) != 0) {
+    if ((gInput.pressed & KEY_A) != 0) {
       if (commandStates[commandIndex] == -1) {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       } else {
         switch (commandIndex) {
         case ITEM_COMMAND_USE:
-          Sound_PlayFar(174);
+          Sound_PlayFar(SE_NOTE_MID);
           break;
         case ITEM_COMMAND_EQUIP:
-          Sound_PlayFar(175);
+          Sound_PlayFar(SE_NOTE_HIGH);
           break;
         case ITEM_COMMAND_INSPECT:
         case ITEM_COMMAND_GIVE:
         case ITEM_COMMAND_DROP:
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           break;
         case ITEM_COMMAND_REMOVE:
-          Sound_PlayFar(117);
+          Sound_PlayFar(SE_ITEM_REMOVE);
           break;
         default:
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           break;
         }
         menu->listMode = commandIndex;
         break;
       }
     }
-    if ((gInput.pressed & 2) != 0) {
-      Sound_PlayFar(113);
+    if ((gInput.pressed & KEY_B) != 0) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       commandIndex = -1;
       menu->listMode = commandIndex;
       break;
     }
 
-    if ((gInput.repeat & 64) != 0) {
+    if ((gInput.repeat & KEY_UP) != 0) {
       row -= 1;
       redraw = 1;
-      Sound_PlayFar(111);
-    } else if ((gInput.repeat & 128) != 0) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+    } else if ((gInput.repeat & KEY_DOWN) != 0) {
       row += 1;
       redraw = 1;
-      Sound_PlayFar(111);
-    } else if ((gInput.repeat & 16) != 0) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+    } else if ((gInput.repeat & KEY_RIGHT) != 0) {
       column += 1;
       redraw = 1;
-      Sound_PlayFar(111);
-    } else if ((gInput.repeat & 32) != 0) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+    } else if ((gInput.repeat & KEY_LEFT) != 0) {
       column -= 1;
       redraw = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   }
 
@@ -2007,7 +1993,7 @@ void ItemMenu_TryBreak(void) {
   mask &= item;
   if (((u8 *)Item_GetDirectFar(mask))[12] == 2 && Random16() < 0x2000) {
     Inventory_BreakFar(work[0x216], *(u16 *)(work + 0x168));
-    Sound_PlayFar(138);
+    Sound_PlayFar(SE_ITEM_BREAK);
     ItemMenu_ShowMessage((s32)MsgItBroke, 0, -1);
     WindowSprite_RedrawSavedRectFar(*(void **)(work + 0x30));
   }
@@ -2093,18 +2079,18 @@ s32 ItemMenu_ShowDetails(s32 value) {
       ItemMenu_DrawItemDetails(window, value);
     }
 
-    if (gInput.pressed & 1)
+    if (gInput.pressed & KEY_A)
       break;
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       counter = -1;
       break;
     }
 
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       counter -= 1;
       changed = 1;
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       counter += 1;
       changed = 1;
     }
@@ -2598,25 +2584,25 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
           Text_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[1]), window, 80,
                                      16);
       }
-      if (gInput.pressed & 1) {
-        Sound_PlayFar(112);
+      if (gInput.pressed & KEY_A) {
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
-      if (gInput.pressed & 2) {
+      if (gInput.pressed & KEY_B) {
         value = -1;
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         break;
       }
       MenuCursor_Position(CURSOR_X, 40);
-      if (gInput.repeat & 32) {
+      if (gInput.repeat & KEY_LEFT) {
         value--;
         changed = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
-      if (gInput.repeat & 16) {
+      if (gInput.repeat & KEY_RIGHT) {
         value++;
         changed = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       wait(1);
     }
@@ -2689,25 +2675,25 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
       changed = 0;
       selection = (selection + rows) % rows;
     }
-    if (gInput.pressed & 1) {
-      Sound_PlayFar(112);
+    if (gInput.pressed & KEY_A) {
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       selection = 1;
       break;
     }
     MenuCursor_Position(104, (selection << 4) + 70);
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       selection--;
       changed = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       selection++;
       changed = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     wait(1);
   }
@@ -2779,7 +2765,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   member = menu->paneOwner[1];
   ItemMenu_DrawEquipPreview(member, slot, 0, member);
   /* FAKEMATCH(temporary): the unit size held in size for the allocation and
-   * both copies; as 332 at each, 6 of 179 instructions differ in tla-en. */
+   * both copies. */
   size = 332;
   saved = Heap_Alloc(size);
   Iwram_CopyWordsEntry(saved, unit, size);
@@ -2801,11 +2787,11 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         selection = (selection + rows) % rows;
       }
       if (gInput.pressed & KEY_A) {
-        Sound_PlayFar(175);
+        Sound_PlayFar(SE_NOTE_HIGH);
         break;
       }
       if (gInput.pressed & KEY_B) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         selection = 1;
         break;
       }
@@ -2813,12 +2799,12 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
       if (gInput.repeat & EQUIP_PREVIOUS_KEY) {
         selection--;
         changed = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       if (gInput.repeat & EQUIP_NEXT_KEY) {
         selection++;
         changed = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       wait(1);
     }
@@ -3139,30 +3125,31 @@ s32 ItemMenu_RunList(s32 pane) {
       if (moved == -1)
         changed = 0;
 
-      if ((gInput.pressed & 1) != 0 && menu->items[state.selectedIndex] != 0) {
-        Sound_PlayFar(173);
+      if ((gInput.pressed & KEY_A) != 0 &&
+          menu->items[state.selectedIndex] != 0) {
+        Sound_PlayFar(SE_NOTE_LOW);
         result = menu->items[state.selectedIndex];
         done = 1;
         break;
       }
-      if ((gInput.pressed & 2) != 0) {
-        Sound_PlayFar(113);
+      if ((gInput.pressed & KEY_B) != 0) {
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
-      if ((gInput.repeat & 0x100) != 0 || (gInput.repeat & 0x200) != 0) {
+      if ((gInput.repeat & KEY_R) != 0 || (gInput.repeat & KEY_L) != 0) {
         if (pane == 1) {
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
           wait(1);
         } else {
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           menu->selectedIndexByOwner[menu->paneOwner[pane]] =
               state.selectedIndex;
           member = menu->paneIndex[pane];
           count = menu->partyCount;
           do {
-            if ((gInput.repeat & 0x100) != 0)
+            if ((gInput.repeat & KEY_R) != 0)
               member++;
             else
               member--;

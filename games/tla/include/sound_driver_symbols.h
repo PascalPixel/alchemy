@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_SOUND_DRIVER_SYMBOLS_H
 #define ALCHEMY_SOUND_DRIVER_SYMBOLS_H
 
+#include "sounds.h"
 #include "types.h"
 
 struct SoundPlayer;
@@ -16,24 +17,20 @@ enum AudioCommandMask {
 #define AUDIO_INITIAL_MODE 0x0099FA00
 
 /// A sound for Sound_Play, as The Broken Seal's: bits 11..0 the sound number,
-/// 15..12 flags, with this game's ranges.
+/// 15..12 flags, with this game's ranges. SOUND_FADE_OUT_BGM, SOUND_KEEP_BGM,
+/// SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_SE5 are rows of the song table,
+/// in sounds.h.
 enum SoundControl {
   SOUND_NUM_MASK = 0xfff,
   SOUND_FLAGS_MASK = 0xf000,
   SOUND_FLAG_FADE_IN = 0x1000, ///< music fades in over 64 VBlanks
-  SOUND_FADE_OUT_BGM = 78,     ///< fades the music out
-  SOUND_KEEP_BGM = 79,         ///< changes nothing
   /// Sounds from here to SOUND_SE_FIRST are jingles; those below are music,
   /// but for SOUND_FADE_OUT_BGM and SOUND_KEEP_BGM.
-  SOUND_JINGLE_FIRST = 80,
+  SOUND_JINGLE_FIRST = MUS_080,
   /// Sounds from here to SOUND_SE_END, but for the two fades, each play on the
   /// player gSongTable names for them.
-  SOUND_SE_FIRST = 100,
-  /// Fades MUSIC_PLAYER_ACTION_SE and MUSIC_PLAYER_SE5 out; the song table's
-  /// row of this number never plays.
-  SOUND_FADE_OUT_ACTION_SE = 390,
-  SOUND_FADE_OUT_SE5 = 395, ///< fades MUSIC_PLAYER_SE5 out
-  SOUND_SE_END = 700        ///< sounds from here on are music again
+  SOUND_SE_FIRST = SE_BELL,
+  SOUND_SE_END = MUS_700 ///< sounds from here on are music again
 };
 
 /// The music players by their row in gSound_PlayerSlots

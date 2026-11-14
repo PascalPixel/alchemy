@@ -3,14 +3,14 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// One model vertex: signed byte coordinates, padded to a word. Written
-// through this struct, its stores are not char stores, so a reload of the
-// stack may pass them.
 /* VIEW(summon_effects): tag struct ModelVertex as struct
  * ModelVertex__summon_effects; battle_effect/ability_effects has another
  * definition; not tried: struct ModelVertex__summon_effects was not found. */
@@ -170,9 +170,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   transformed = Data_02011000;
   strip = Data_02012000;
   sheet2 = gData_02014000;
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 150, 0x50000);
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
@@ -184,7 +184,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   caster = BattleObject_GetFar(effect->actor)->object;
   x = 0;
   z = 0;
-  scale = 0x10000;
+  scale = Q16_ONE;
   Render_BuildQuadStrip(strip, 8, 16, 32);
   Render_BuildQuadStrip(meshB, 2, 32, 15);
   for (j = 0; j != 16; j++) {
@@ -196,9 +196,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     for (m = 0; m != 2; m++) {
       struct ModelVertex *v = (struct ModelVertex *)(meshA + j * 8 + m * 4);
 
-      v->x = (Trig_Sin(m << 13) * r) >> 16;
-      v->y = y + 24;
-      v->z = (Trig_Cos(m << 13) * r) >> 16;
+      SET_POSITION(v, (Trig_Sin(m << 13) * r) >> 16, y + 24,
+                   (Trig_Cos(m << 13) * r) >> 16);
     }
   }
   casterValue = caster[18];
@@ -211,21 +210,21 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 188; frame++) {
     if (frame == 4) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 28) {
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     if (frame == 84) {
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     }
     if (frame == 143) {
-      Sound_PlayFar(191);
+      Sound_PlayFar(SE_191);
     }
     if (frame == 171) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
-    if ((gInput.repeat & 3) && frame > 3 && frame <= 142) {
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 3 && frame <= 142) {
       frame = 143;
     }
     if (frame == 0) {
@@ -240,7 +239,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
                                  work->sheet + 0x2400, 1, 0);
       Graphics_LoadGreyRamp();
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       if (!effect->side) {
         x = 0xa00000;
       } else {
@@ -299,9 +298,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         if (i != 1) {
           r = ((Trig_Sin((frame + k * 4) << 12) * 2) >> 16) + 120;
         }
-        v->x = (Trig_Sin(k << 11) * r) >> 16;
-        v->y = (Trig_Cos(k << 11) * r) >> 16;
-        v->z = zero;
+        SET_POSITION(v, (Trig_Sin(k << 11) * r) >> 16,
+                     (Trig_Cos(k << 11) * r) >> 16, zero);
       }
     }
 
@@ -317,9 +315,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       } else if ((u32)(frame - 64) <= 7) {
         s32 twice = frame * 2;
 
-        /* FAKEMATCH(barrier): an empty asm on twice that claims to clobber r3,
-         * so local-alloc gives twice r2; without it, 4 of 1361 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm on twice that claims to clobber r3.
+         */
         asm("" : "+l"(twice) : : "r3");
         d = twice - 144;
       } else if ((u32)(frame - 72) <= 11) {
@@ -414,15 +411,14 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if (frame == 171) {
       work->shakeFrames = 8;
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
       work->transferMode = 1;
       work->transferValue = 0x10101010;
     }
-    /* FAKEMATCH(temporary): f, a copy of frame tested below; as frame > 1, 131
-     * of 1361 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): f, a copy of frame tested below. */
     f = frame;
     if (frame > 174) {
       Palette_BrightenBgEntries(2, 2, 2);
@@ -436,15 +432,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       if (frame > 142) {
         s32 n = frame - 143;
 
-        scale = n * 1236 + 0x4000;
-        if (scale > 0xc000) {
-          scale = 0xc000;
+        scale = n * 1236 + Q16_ONE / 4;
+        if (scale > Q16_ONE * 3 / 4) {
+          scale = Q16_ONE * 3 / 4;
         }
       }
       pair = (s32 *)req;
-      /* FAKEMATCH(barrier): an empty asm on pair, which hides from CSE that
-       * pair holds req's address, so req's first word is stored at its own
-       * frame address; as no asm, 2 of 1361 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on pair. */
       asm("" : "+r"(pair));
       v = scale * 2;
       pair[1] = v;
@@ -475,18 +469,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       model->texture = t;
       model->shade = 0;
       model->scrollV = 0;
-      /* FAKEMATCH(barrier): an empty asm that reads and writes *t, the first of
-       * three that each add a dependent to t's setter, so sched2 takes add r6,
-       * sp, #108 before the model's copy; without it, 2 of 1361 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that reads and writes *t. */
       asm("" : "+m"(*t));
-      /* FAKEMATCH(barrier): the second asm on *t; without it, 2 of 1361
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the second asm on *t. */
       asm("" : "+m"(*t));
-      /* FAKEMATCH(barrier): the third asm on *t; without it, 2 of 1361
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the third asm on *t. */
       asm("" : "+m"(*t));
-      // A once-only block: it ends CSE's block after the % 5.
+      /* FAKEMATCH(dead): a once-only block. */
       do {
         t->pixels = work->sheet + 0x1000 + ((frame / 2) % 5) * 0x400;
       } while (0);
@@ -494,12 +483,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       {
         s32 half = 0x8000;
 
-        /* FAKEMATCH(barrier): an empty asm on half, whose references keep it
-         * ahead of t for r5 once the asms on *t add theirs; without it, 24 of
-         * 1361 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm on half. */
         asm("" : "+r"(half));
         Transform_Reset();
-        SceneTransform_ApplyScale3(half, 0x10000, half);
+        SceneTransform_ApplyScale3(half, Q16_ONE, half);
       }
       SceneTransform_ApplyPosition3(x - 0x7e0000, z - 0x4c0000, 0);
       SceneTransform_ApplyUniformScale(46536);
@@ -528,21 +515,20 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           n = 32;
         }
         i = 0;
-        /* FAKEMATCH(temporary): twice, frame * 2 kept apart; as scroll =
-         * frame * 3, 91 of 1361 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): twice, frame * 2 kept apart. */
         twice = frame * 2;
-        angle = -0x4000;
+        angle = -TRIG_TURN / 4;
         tilt = n * 384;
         scroll = twice + frame;
         for (; i != 10; i++) {
           model->scrollU = ~scroll & 127;
           Transform_Reset();
           SceneTransform_ApplyPosition3(-0x20000, -0x200000, 0);
-          SceneTransform_ApplyScale3(82000, 0x35208, 0x10000);
+          SceneTransform_ApplyScale3(82000, 0x35208, Q16_ONE);
           SceneTransform_ApplyUniformScale(scale);
-          Transform_ApplyRoll(0x8000);
+          Transform_ApplyRoll(TRIG_TURN / 2);
           scroll += 20;
-          Transform_ApplyPitch(tilt - 0x3000);
+          Transform_ApplyPitch(tilt - TRIG_TURN * 3 / 16);
           Transform_ApplyYaw(angle);
           Render_TransformVertices(meshA, transformed, 32);
           Render_DrawModelList(model);
@@ -590,13 +576,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       if (frame == 143) {
         p = work->particles;
         for (i = 0; i != 64; i++, p++) {
-          p->x = Random16() & 127;
-          p->y = Random16() % 192 - 64;
-          p->z = Random16() & 127;
+          SET_POSITION(p, Random16() & 127, Random16() % 192 - 64,
+                       Random16() & 127);
         }
       }
       Transform_Reset();
-      Transform_ApplyPitch(n * 384 - 0x3000);
+      Transform_ApplyPitch(n * 384 - TRIG_TURN * 3 / 16);
       p = work->particles;
       for (i = 0; i != 64; i++, p++) {
         s32 size = 1;
@@ -679,7 +664,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
               (pos.x / 2 - Data_08199f1a[i] - 62) << 16,
               (Data_08199f22[i] + pos.y - 54) << 16, 0);
         }
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (!effect->side) {
           Transform_ApplyRoll(Data_08199f0a[i]);
         } else {

@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "macros.h"
 
 /// The event command "camera move to", as The Broken Seal's
 /// FieldCamera_MoveWithinMapBounds: sends the camera to the requested axes,
@@ -63,9 +64,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
     positionZ = maximumZ;
   }
   if (shouldUseSetter == 0) {
-    object->x = positionX;
-    object->y = positionY;
-    object->z = positionZ;
+    SET_POSITION(object, positionX, positionY, positionZ);
     wait(1);
     if (runtimeBlock->controlMode != 3) {
       Map_CenterOnFollowedPointFar();
@@ -89,7 +88,7 @@ void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
  * FieldCamera_MoveToActor(s32 id, s32 use_setter); field/event.h has s32
  * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
  * FieldCamera_MoveToActor(s32 id, s32 use_setter), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/field/event.h:143:
+ * declares, it does not compile in tla-ja: games/tla/include/field/event.h:157:
  * conflicting types for `FieldCamera_MoveToActor'. */
 void FieldCamera_MoveToActor__visual_attributes(s32 id, s32 use_setter) __asm__(
     "FieldCamera_MoveToActor");

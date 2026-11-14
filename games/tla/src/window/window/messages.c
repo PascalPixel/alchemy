@@ -9,8 +9,10 @@
 /// Expands message into buf without an upper length bound.
 /* VIEW(window): routine Message_DecodeRawUnbounded as void
  * Message_DecodeRawUnbounded(s32 message, s32 buf); field/event.h has void
- * Message_DecodeRawUnbounded(s32 message, u16 *buffer); not tried:
- * Message_DecodeRawUnbounded's declaration holds a FAKEMATCH tag. */
+ * Message_DecodeRawUnbounded(s32 message, u16 *buffer); tried as the
+ * definition's void Message_DecodeRawUnbounded(s32 message, s32 buf), it does
+ * not compile in tla-ja: games/tla/src/window/window/messages.c:9: conflicting
+ * types for `Message_DecodeRawUnbounded'. */
 void Message_DecodeRawUnbounded__window(s32 message, s32 buf) __asm__(
     "Message_DecodeRawUnbounded");
 #define Message_DecodeRawUnbounded Message_DecodeRawUnbounded__window
@@ -291,8 +293,7 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
-  // The held keys read through a volatile pointer, so each test loads them
-  // again; as a plain pointer, 13 of 40 instructions differ in tla-en.
+  /* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
   volatile u32 *held;
 
   if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
@@ -609,8 +610,7 @@ void Message_Find(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
   u32 size;
 
-  // The size's load in a once-only block keeps it after the parameters are
-  // copied; as a plain assignment, 4 of 31 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the size's load in a once-only block. */
   do {
     size = (u32)Text_LookupSymbolCodeSize;
   } while (0);
@@ -726,8 +726,11 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 /* VIEW(window): routine Portrait_Create as s32 Portrait_Create(s32 id, s32
  * kind, s32 slot, struct Window *window, s32 x, s32 y); window/screens has
  * struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
- * s32 arg3, s32 arg4, s32 arg5) {; tried with no declaration of its own, it
- * does not compile with a current GCC (make modern): conflicting types. */
+ * s32 arg3, s32 arg4, s32 arg5) {; tried as the definition's struct
+ * WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side, s32
+ * arg3, s32 arg4, s32 arg5), it does not compile in tla-ja (make modern):
+ * games/tla/include/system/task.h:53:23: note: expected 'TaskFunc' {aka 'void
+ * (*)(void)'} but argument is of type 'int'. */
 s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
                             s32 x, s32 y) __asm__("Portrait_Create");
 #define Portrait_Create Portrait_Create__window

@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
@@ -14,8 +15,8 @@
 /* VIEW(motes): tag struct MoteWork as struct MoteWork__motes;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:2854: structure has no member
- * named `motes'. */
+ * games/tla/src/field/object/visual_attributes/motes.c:32: structure has no
+ * member named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;
   s32 tileBase;
@@ -35,9 +36,7 @@ void FieldMotes_Start(void) {
   volatile u32 zero;
   volatile u16 *reg;
   struct HeapSlots *slots;
-  /* FAKEMATCH(pin): clear held in r6, which keeps its zero set inside the
-   * loop on every pass and ready for the last blend register; as a plain
-   * local, 4 of 92 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): clear held in r6. */
   register s32 clear asm("r6");
 
   size = sizeof(struct MoteWork__motes);
@@ -58,9 +57,8 @@ void FieldMotes_Start(void) {
   for (; i < 64; i++) {
     struct MapWork *view = slots->mapWork;
     s32 *pos;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
-     * the height's x keeps the stores in r1; as an s32 * cursor and an x of
-     * its own, 18 of 92 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
+     * height's x. */
     u32 p;
     s32 z;
 
@@ -80,14 +78,11 @@ void FieldMotes_Start(void) {
     mote->timer = (i & 15) + 1;
     mote++;
   }
-  // The blend writes in a once-only block keep the task routine's address
-  // ahead of the call's other argument; as a plain block, 4 of 92 instructions
-  // differ in tla-en.
+  /* FAKEMATCH(dead): the blend writes in a once-only block keep the task
+   * routine's address ahead of the call's other argument. */
   do {
-    /* FAKEMATCH(temporary): the values through v and the registers through
-     * one stepped pointer, which builds each value from a small constant and
-     * steps the address by 2; as REG_BLDCNT, REG_BLDALPHA and REG_BLDY
-     * written directly, 31 of 92 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the values through v and the registers through one
+     * stepped pointer. */
     s32 v;
     v = 0x3f00;
     reg = &REG_BLDCNT;
@@ -107,20 +102,18 @@ void FieldMotes_Start(void) {
 /// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
 /// words and places it on the ground at the map's focus with a timer of
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
-/// update and, when asked, plays cue 137 (Scene_QueueMusic).
+/// update and, when asked, plays SE_137 (Scene_QueueMusic).
 void Weather_StartRain(s32 withCue) {
   struct SparkParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct SparkParticle *particle = work->particles;
   volatile u32 fill;
-  /* FAKEMATCH(pin): the fill's zero held in r1, built after the copy of
-   * work; as a plain local, 8 of 100 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the fill's zero held in r1, built after the copy of work.
+   */
   register u32 zero asm("r1");
   u8 *tiles;
   u32 i;
   struct HeapSlots *slots;
-  /* FAKEMATCH(pin): clear held in r6, which keeps its zero set inside the
-   * loop on every pass and ready for the last blend register; as a plain
-   * local, 4 of 100 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): clear held in r6. */
   register s32 clear asm("r6");
 
   zero = 0;
@@ -135,9 +128,8 @@ void Weather_StartRain(s32 withCue) {
   for (; i < 64; i++, particle++) {
     struct MapWork *view = slots->mapWork;
     s32 *focus;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
-     * the height's x keeps the stores in r1; as an s32 * cursor and an x of
-     * its own, 18 of 100 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
+     * height's x. */
     u32 p;
     s32 z;
 
@@ -161,7 +153,7 @@ void Weather_StartRain(s32 withCue) {
   Io_Write16(clear, &REG_BLDY);
   Task_Add(Weather_UpdateRain, TASK_PASS_VBLANK);
   if (withCue != 0)
-    Scene_QueueMusic(137);
+    Scene_QueueMusic(SE_137);
 }
 
 /// Stops Weather_StartRain's particles. Unused: nothing calls
@@ -219,7 +211,7 @@ void FieldEffect_UpdateSparkles(void) {
       b = Random16();
       x = ((sparkle->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
       sx = x - 1;
-      sy = (sparkle->posZ - sparkle->height - cameraZ) / 0x10000 +
+      sy = (sparkle->posZ - sparkle->height - cameraZ) / Q16_ONE +
            *(const s16 *)frame;
       frame++;
       if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= 159) {
@@ -230,10 +222,7 @@ void FieldEffect_UpdateSparkles(void) {
 #ifdef UBFIX
         frames = gFrameCount;
 #else
-        // UB: this reads a u32 as unsigned long. The unsigned long alias
-        // combines the size and flip stores; as gFrameCount or a u32 alias,
-        // 29 of 232 instructions differ in tla-en. UBFIX reads the declared
-        // type.
+        // UB: this reads a u32 as unsigned long; UBFIX reads the declared type.
         frames = *(unsigned long *)&gFrameCount;
 #endif
         sparkle->y = sy;
@@ -317,13 +306,10 @@ void FieldEffect_InitializeSparkles(void) {
   i = 0;
   slots = Ram_HeapSlots;
   clear = 0;
-loop:
-  {
+  do {
     struct MapWork *view = slots->mapWork;
     s32 *leader;
-    /* FAKEMATCH(temporary): one integer cursor for the stores and the x keeps
-     * the leader in r2; as a u32 * cursor and an x of its own, 16 of 79
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): one integer cursor for the stores and the x. */
     u32 attr;
     s32 z;
 
@@ -340,11 +326,9 @@ loop:
     p->posZ = clear;
     p->posY = MapGrid_GetTerrainHeightFar(0, attr, z);
     p->timer = (i & 15) + 1;
-  }
-  i++;
-  p++;
-  if (i < 64)
-    goto loop;
+    i++;
+    p++;
+  } while (i < 64);
   Task_Add(FieldEffect_UpdateSparkles, TASK_PASS_VBLANK);
 }
 

@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "module/window/screens.h"
 
 struct WindowTiles {
@@ -32,10 +33,7 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define NAVIGATION ((struct CommandRowNavigation *)Ram_HeapSlots->unke4[0])
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
 
-/* VIEW(screens): variable gBgScroll as struct BgScrollPair gBgScroll[];
- * bg_scroll.h has struct BgScroll gBgScroll[]; not tried: gBgScroll's
- * declaration holds a FAKEMATCH tag. */
-extern struct BgScrollPair gBgScroll__screens[] __asm__("gBgScroll");
+extern struct BgScrollPair gBgScroll[];
 #include "system/main_routine_work.h"
 
 /// Runs a battle command row: the commands as icons along the bottom of the
@@ -143,8 +141,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
     pulseScale = (pulseScale - 256) / 4 + 304;
     selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
-    gBgScroll__screens[1].x = 0;
-    gBgScroll__screens[1].y = 32;
+    gBgScroll[1].x = 0;
+    gBgScroll[1].y = 32;
     if (stripDirty != 0) {
       stripDirty = 0;
       work->holdTilemapUpload = 1;
@@ -166,7 +164,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 
             for (col = 0; col <= 2; col++) {
               volatile u16 *vram =
-                  (volatile u16 *)0x0600f800 + 21 * 32 + WINDOW_X;
+                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
 
               vram[panel * 3 + entryIndex * 32 + (col & 3) -
                    selectionUi->iconCount * 3] =
@@ -193,7 +191,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 20;
+              volatile u16 *vram =
+                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
 
               vram[panel * 3 + entryIndex * 32 + (col & 3) -
                    selectionUi->iconCount * 3] =
@@ -283,25 +282,25 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
         navigation->tutorialDelay--;
       }
     }
-    if ((keys & 0x300) && mode != 0) {
+    if ((keys & KEYS_SHOULDERS) && mode != 0) {
       command = -2;
       break;
     }
-    if (keys & 1) {
+    if (keys & KEY_A) {
       command = selectionUi->commandKinds[selectionUi->selectedIndex];
       break;
     }
-    if (keys & 2) {
-      Sound_PlayFar(113);
+    if (keys & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       command = -1;
       break;
     }
-    if (repeat & 0x90) {
-      Sound_PlayFar(111);
+    if (repeat & (KEY_RIGHT | KEY_DOWN)) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + 1) % selectionUi->iconCount;
-    } else if (repeat & 0x60) {
-      Sound_PlayFar(111);
+    } else if (repeat & (KEY_LEFT | KEY_UP)) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;
@@ -328,8 +327,6 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
         s32 col;
 
-        // The add of 0x452 stays apart from the store it addresses; as a plain
-        // store, 11 of 1119 instructions differ in tla-en.
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
                             5 + (col & 3)) = 0xf07f;
@@ -382,8 +379,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
           p++;
         } while (col != 0);
       }
-      // The dirty-row mark in a once-only block keeps it before the row count's
-      // step; as the plain store, 2 of 72 instructions differ in tla-en.
+      /* FAKEMATCH(dead): the dirty-row mark in a once-only block. */
       do {
         tiles->dirty |= 2 << ((u32)y >> 2);
       } while (0);

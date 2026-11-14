@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -181,7 +183,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   BattleEffect_WipeCanvas(1, 0);
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0x400;
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
@@ -312,7 +314,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   }
   BattleBackground_LoadFar(1, (s32)&ResourceId_MossCaveBackdrop, 0);
   frame = 0;
-  if (!(gInput.repeat & 3)) {
+  if (!(gInput.repeat & (KEY_A | KEY_B))) {
     do {
       s32 cut = frame - 267;
 
@@ -337,7 +339,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
 
           for (i = 0; i != 4; i++, p++, q2++) {
             p->x = *q2 << 16;
-            p->y = 0x100000;
+            p->y = px(16);
             p->velocityX = 0;
             p->velocityY = 0;
             p->variant = 0;
@@ -356,8 +358,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         {
           struct EffectStep *p = &work->particles[63];
 
-          p->x = 0x3c0000;
-          p->y = 0x700000;
+          p->x = px(60);
+          p->y = px(112);
           p->variant = 0;
         }
         for (i = 0; i != 32; i++) {
@@ -386,19 +388,19 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                                       (frame - 360) / 8 - 12);
       }
       if (frame == 48) {
-        Sound_PlayFar(136);
+        Sound_PlayFar(SE_WHOOSH);
       }
       if (frame == 74) {
-        Sound_PlayFar(136);
+        Sound_PlayFar(SE_WHOOSH);
       }
       if (frame == 100) {
-        Sound_PlayFar(136);
+        Sound_PlayFar(SE_WHOOSH);
       }
       if (frame == 126) {
-        Sound_PlayFar(136);
+        Sound_PlayFar(SE_WHOOSH);
       }
       if (frame == 140) {
-        Sound_PlayFar(141);
+        Sound_PlayFar(SE_RUMBLE);
       }
       if (frame <= 266) {
         if (frame <= 639) {
@@ -592,10 +594,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 267) {
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       }
       if (frame == 271) {
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
       }
       if ((u32)cut <= 9) {
         struct RenderModel *model;
@@ -661,7 +663,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             model->mesh = Data_08199388;
             Transform_Reset();
             SceneTransform_ApplyPosition3(0, -0x40000, 0);
-            SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, 0x20000);
+            SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, Q16_ONE * 2);
             Render_TransformVertices(Data_081991e0, verts, 4);
             Render_DrawModelList(model);
           }
@@ -774,11 +776,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         model->vertices = verts;
         model->shade = (s32)shades;
         {
-          /* FAKEMATCH(dead): a never-true test of the byte scroll, which
-           * combine folds after CSE, so its label ends post-reload CSE's run
-           * (the fill pointer reloads its pool word, not r0's copy) and flow2
-           * merges the blocks before sched2; without it, 2 of 2667 instructions
-           * differ in tla-en. */
+          /* FAKEMATCH(dead): a never-true test of the byte scroll. */
           s32 scroll = model->scrollU;
 
           if (scroll > 255) {
@@ -797,7 +795,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               Transform_Reset();
               SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000,
                                             0);
-              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+              SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               switch (i & 3) {
               case 0:
                 Transform_ApplyPitch(p->z);
@@ -820,7 +818,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               Render_DrawModelList(model);
             }
             BattleEffectKernels_IntegrateVector3(p, 62, 0);
-            p->x += 0x40000;
+            p->x += px(4);
           }
         }
         Heap_Release(model);
@@ -833,7 +831,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
       wait(1);
       frame++;
-    } while (frame != 440 && !(gInput.repeat & 3));
+    } while (frame != 440 && !(gInput.repeat & (KEY_A | KEY_B)));
   }
   if (dived == 0) {
     Sprite_DestroyFar(work->objects[0]);
@@ -879,7 +877,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   draw[0] = Ram_HeapSlots->unk64[1];
   for (frame = 0; frame != 92; frame++) {
@@ -980,10 +978,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 10) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 14) {
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 150);
@@ -992,10 +990,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 30) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 34) {
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 50);
@@ -1004,7 +1002,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 58) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 200);
@@ -1037,12 +1035,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           Transform_Reset();
           if (i == 0) {
             SceneTransform_ApplyPosition3(x << 16, y << 16, 0);
-            Transform_ApplyRoll(-0x2000);
+            Transform_ApplyRoll(-TRIG_TURN / 8);
           } else {
             SceneTransform_ApplyPosition3((x - 16) << 16, y << 16, 0);
             Transform_ApplyRoll(0x27d0);
           }
-          SceneTransform_ApplyScale3(0x30000, amp, 0x20000);
+          SceneTransform_ApplyScale3(Q16_ONE * 3, amp, Q16_ONE * 2);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
         }
@@ -1068,7 +1066,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       if (frame <= 71) {
         v = Trig_Sin((frame << 10) + -0xe000) * 80 >> 16;
       } else if (frame > 79) {
-        v = Trig_Sin((frame << 10) + -0x10000) * 80 >> 16;
+        v = Trig_Sin((frame << 10) + -TRIG_TURN) * 80 >> 16;
       } else {
         v = 80;
       }
@@ -1130,16 +1128,13 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
     for (i = 0; i != segments; i++) {
       // The vertex: a point on the ring, 96 units out (3 * 0x10000 >> 11).
       vertices[ring * segments + i].x =
-          (u32)(Trig_Sin(i * (0x10000 / segments)) * 3) >> 11;
+          (u32)(Trig_Sin(i * (TRIG_TURN / segments)) * 3) >> 11;
       vertices[ring * segments + i].y = ring * RING_SPACING + FIRST_RING_Y;
       vertices[ring * segments + i].z =
-          (u32)(Trig_Cos(i * (0x10000 / segments)) * 3) >> 11;
+          (u32)(Trig_Cos(i * (TRIG_TURN / segments)) * 3) >> 11;
 
       // The side from this vertex to the next, as two triangles.
       if (ring < 1) {
-        // A byte offset added to the base: as
-        // &triangles[(ring * segments + i) * 2], 4 of 141 differ (base +
-        // offset, where the native adds offset + base).
         struct MeshTriangle *triangle =
             (struct MeshTriangle *)((ring * segments + i) * 24 +
                                     (u32)triangles);

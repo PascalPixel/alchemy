@@ -42,11 +42,6 @@ void IoWriteQueue_FlushPending(void);
 /// Disables interrupts to enqueue one I/O write; a full 32-entry queue is
 /// ignored. address: destination, value: value to write, control: delay frames
 /// << 16 or a DMA control word.
-// The body is braces alone: as do { } while (0), 15 objects of tla-en differ,
-// the nine writers' among them (2 of 25 instructions in IoWriteQueue_Store8).
-// The count is read and written as *&q->count, a pointer to the member: as
-// q->count, the struct store of the new count is scheduled before the first
-// entry word (4 of 25 instructions in IoWriteQueue_Store8 in tla-en).
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                           \
   {                                                                            \
     struct IoWriteQueue *q = &gIoWriteQueue;                                   \

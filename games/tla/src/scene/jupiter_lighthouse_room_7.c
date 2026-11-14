@@ -1,9 +1,5 @@
 /// @file
 #include "flags.h"
-#include "shared/whirlwind.h"
-#include "shared/jupiter_lighthouse.h"
-#include "shared/actors.h"
-#include "shared/effects.h"
 #include "types.h"
 #include "system/iwram_call.h"
 #include "actor.h"
@@ -47,7 +43,6 @@ void Leader_CenterInCell(void);
 #include "field_event.h"
 #include "system/frame.h"
 #include "field_sprite.h"
-#include "shared/map_cells.h"
 #include "system/field_effect.h"
 #include "field/field_coordinate.h"
 #include "map.h"
@@ -55,7 +50,6 @@ void Leader_CenterInCell(void);
 #include "system/task.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
-#include "shared/cracked_tile.h"
 #include "system/heap_release.h"
 #include "field/cell_target.h"
 #include "system/io_write.h"
@@ -86,22 +80,15 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(JupiterLighthouse_OpenDoor, 76, 42, 4, 76,
-                                    35, 81, 42, 12, 41, 12, 35)
+#include "shared/jupiter_lighthouse_open_door.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(JupiterLighthouse_CloseDoor, 76, 42, 4, 76,
-                                     35, 71, 12, 36, 12, 35)
+#include "shared/jupiter_lighthouse_close_door.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(
-    JupiterLighthouse_CheckBlockOnCell, 16, 0xa1b, 8, 37,
-    JupiterLighthouse_OpenDoor)
+#include "shared/jupiter_lighthouse_check_block_on_cell.h"
 
-DEFINE_BUTTON_STEP_ON(JupiterLighthouse_StepOnButton, 0x202,
-                      JupiterLighthouse_OpenDoor)
+#include "shared/button_step_on.h"
 
-DEFINE_BUTTON_STEP_OFF(JupiterLighthouse_StepOffButton, 0x202,
-                       JupiterLighthouse_CloseDoor,
-                       JupiterLighthouse_CheckBlockOnCell)
+#include "shared/button_step_off.h"
 
 void Func_02000184(void) {
   System_Wait(10);
@@ -199,16 +186,13 @@ s32 Func_02000290(void) {
 /// Copies the map cells and sets the cell values that flags 0xa10 to 0xa15 call
 /// for.
 void Func_020002f0(void) {
-  /* FAKEMATCH(wrapper): every call forwarded through the call layer; as direct
-   * calls, 63 of 303 instructions differ in tla-en, the coordinates and flags
-   * shared in saved registers. */
-  MapGrid_CopyCellsLayered(0x5e, 0x3c, 9, 8, 0x5e, 0xa);
+  MapGrid_CopyCellsLayered(94, 60, 9, 8, 94, 10);
   Call4((void (*)())MapGrid_SetCellHeight, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x1f00000, 0x1000000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x2100000, 0xa00000, 0, -2);
-  FieldMapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(px(608), px(160), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(496), px(160), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(496), px(224), 2, 0);
   if (Event_GetFlag(0xa10) || Event_GetFlag(0xa11))
     MapGrid_SetCellHeight(0x2300000, 0xf00000, 0, 0);
   if (Event_GetFlag(0xa12) || Event_GetFlag(0xa13))
@@ -216,33 +200,33 @@ void Func_020002f0(void) {
   if (Event_GetFlag(0xa14) || Event_GetFlag(0xa15))
     MapGrid_SetCellHeight(0x2100000, 0xa00000, 0, 0);
   if (Event_GetFlag(0xa10)) {
-    MapGrid_CopyCellsLayered(0x60, 0x38, 7, 2, 0x60, 0xf);
-    MapGrid_CopyCellsLayered(0x6f, 0x33, 1, 1, 0x63, 0xf);
+    MapGrid_CopyCellsLayered(96, 56, 7, 2, 96, 15);
+    MapGrid_CopyCellsLayered(111, 51, 1, 1, 99, 15);
     if (Event_GetFlag(0xa13)) {
-      MapGrid_CopyCellsLayered(0x69, 0x33, 1, 3, 0x5f, 0xe);
-      FieldMapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0xec);
+      MapGrid_CopyCellsLayered(105, 51, 1, 3, 95, 14);
+      FieldMapGrid_SetCellBehavior(px(496), px(224), 2, 0xec);
     }
     if (Event_GetFlag(0xa15))
-      MapGrid_CopyCellsLayered(0x6f, 0x35, 1, 1, 0x61, 0xa);
+      MapGrid_CopyCellsLayered(111, 53, 1, 1, 97, 10);
   } else if (Event_GetFlag(0xa11)) {
-    MapGrid_CopyCellsLayered(0x62, 0x33, 5, 1, 0x62, 0xa);
-    MapGrid_CopyCellsLayered(0x63, 0x34, 4, 5, 0x63, 0xb);
-    FieldMapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0xec);
+    MapGrid_CopyCellsLayered(98, 51, 5, 1, 98, 10);
+    MapGrid_CopyCellsLayered(99, 52, 4, 5, 99, 11);
+    FieldMapGrid_SetCellBehavior(px(608), px(160), 2, 0xec);
     if (Event_GetFlag(0xa12))
-      MapGrid_CopyCellsLayered(0x6a, 0x35, 1, 1, 0x5f, 0x10);
+      MapGrid_CopyCellsLayered(106, 53, 1, 1, 95, 16);
     if (Event_GetFlag(0xa14)) {
-      MapGrid_CopyCellsLayered(0x6d, 0x33, 3, 1, 0x5f, 0xa);
-      FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0xec);
+      MapGrid_CopyCellsLayered(109, 51, 3, 1, 95, 10);
+      FieldMapGrid_SetCellBehavior(px(496), px(160), 2, 0xec);
     }
   } else {
     if (Event_GetFlag(0xa12))
-      MapGrid_CopyCellsLayered(0x6a, 0x35, 1, 1, 0x5f, 0x10);
+      MapGrid_CopyCellsLayered(106, 53, 1, 1, 95, 16);
     if (Event_GetFlag(0xa13))
-      MapGrid_CopyCellsLayered(0x6b, 0x35, 1, 1, 0x5f, 0x10);
+      MapGrid_CopyCellsLayered(107, 53, 1, 1, 95, 16);
     if (Event_GetFlag(0xa14))
-      MapGrid_CopyCellsLayered(0x6f, 0x34, 1, 1, 0x61, 0xa);
+      MapGrid_CopyCellsLayered(111, 52, 1, 1, 97, 10);
     if (Event_GetFlag(0xa15))
-      MapGrid_CopyCellsLayered(0x6f, 0x35, 1, 1, 0x61, 0xa);
+      MapGrid_CopyCellsLayered(111, 53, 1, 1, 97, 10);
   }
 }
 
@@ -261,8 +245,6 @@ void Func_020005e8(s32 mode) {
   struct Actor *object;
   s32 i, frame;
 
-  // Goto loops: as for loops, the stored constants (3, 4, 0x208000) are hoisted
-  // out of the loops and 42 of 181 instructions differ in tla-en.
   if (!Event_GetFlag(0xa1a)) {
     MapGrid_CopyCellsLayered(80, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(80, 53, 8, 5, 72, 16);
@@ -276,7 +258,7 @@ void Func_020005e8(s32 mode) {
       object = Actor_Get(i + 10);
       if (Func_020005a0(object)) {
         object->motionFlags = 0;
-        object->y -= 0x20000;
+        object->y -= px(2);
       }
       if (++i <= 5)
         goto L_0200864e;
@@ -294,8 +276,7 @@ void Func_020005e8(s32 mode) {
     if (i <= 5)
       goto L_02008684;
     /* FAKEMATCH(dead): an empty once-only block keeps the loop's exit branch
-     * from being threaded to the function's end; as the plain if/else, 4 of 175
-     * instructions differ in tla-en. */
+     * from being threaded to the function's end. */
     do {
     } while (0);
   } else {
@@ -313,7 +294,7 @@ void Func_020005e8(s32 mode) {
       object = Actor_Get(i + 10);
       if (Func_020005a0(object)) {
         object->motionFlags = 0;
-        object->y += 0x20000;
+        object->y += px(2);
       }
       if (++i <= 5)
         goto L_0200870c;
@@ -350,8 +331,6 @@ void Func_02000778(s32 unused, s32 id) {
 // that flag and shows object 17 changing (sound 151) from the camera at (664,
 // 136). Object 20 on cell (8, 12) sets flag 2586, plays sound 167 and with flag
 // 2583 shows object 9 changing; off that cell it marks the cell it stands on.
-// The landing wait is the rotated loop (an if around a do-while), and the flag
-// and sound calls go through the call layer, each as the native has it.
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
@@ -374,7 +353,7 @@ void Func_020007a4(s32 unused, s32 id) {
           break;
       } while (object->y > object->terrainHeight || object->velocityY != 0);
     }
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     object->motionFlags = 0;
   }
   if ((u32)(id - 18) <= 1) {
@@ -385,13 +364,13 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_Wait(30);
     Func_020002f0();
     if (spot == 0)
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
     if (spot == 1)
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
     if (spot == 3 && Event_GetFlag(2576))
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
     if (spot == 4 && Event_GetFlag(2577))
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
     Actor_Stop(gMainRoutineWork.currentOwner);
     Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
     if (Func_02000290() != 2 || !Event_GetFlag(2582))
@@ -401,10 +380,10 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_Wait(10);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    FieldCamera_MoveTo(166 << 18, -1, PIXELS(136), 1);
+    FieldCamera_MoveTo(664, CAMERA_KEEP, 136, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
-    Event_PlaySound(151);
+    Event_PlaySound(SE_LIGHT_APPEAR);
     Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
     FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
@@ -420,14 +399,14 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_SetFlag(2586);
     Actor_SetSpriteFlags(Actor_GetById(20), 0);
     Event_Wait(30);
-    Event_PlaySound(167);
+    Event_PlaySound(SE_MAP_TRANSITION);
     Func_020005e8(1);
     if (!Event_GetFlag(2583))
       return;
     object = Actor_GetById(9);
     Event_ClearFlag(2583);
     Event_Wait(20);
-    Event_PlaySound(151);
+    Event_PlaySound(SE_LIGHT_APPEAR);
     Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
     FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
@@ -444,14 +423,14 @@ void Func_020009e4(s32 a, s32 b) { Func_02001a48(gData_020031c4, a, b); }
 void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   struct Actor *object = Actor_Get(id);
 
-  Actor_SetPosition(id, (x << 20) + PIXELS(8), (z << 20) + PIXELS(8));
+  Actor_SetPositionFixed(id, (x << 20) + px(8), (z << 20) + px(8));
   object->motionFlags = 3;
-  object->terrainHeight = PIXELS(-16);
-  object->y = PIXELS(-16);
-  object->velocityY = PIXELS(8);
-  Actor_SetSpeed(id, 0x19999, 0xcccc);
+  object->terrainHeight = px(-16);
+  object->y = px(-16);
+  object->velocityY = px(8);
+  Actor_SetSpeed(id, 1.6);
   Actor_SetDestinationOffset(id, dx, dz);
-  Event_PlaySound(222);
+  Event_PlaySound(SE_222);
 }
 
 /// Drops objects 18 and 19 once any of flags 2576 to 2581 is set: the camera
@@ -467,7 +446,7 @@ void Func_02000a74(void) {
           Event_GetFlag(2577) + Event_GetFlag(2579) + Event_GetFlag(2581) ==
       0)
     return;
-  FieldCamera_MoveTo(148 << 18, -1, PIXELS(248), 1);
+  FieldCamera_MoveTo(592, CAMERA_KEEP, 248, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   if (Event_GetFlag(2576))
@@ -551,7 +530,7 @@ void Func_02000cec(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  FieldVector_AddPolarOffset(0x100000, facing, position);
+  FieldVector_AddPolarOffset(px(16), facing, position);
   x = position[0] >> 20;
   z = position[2] >> 20;
   if (first->y == 0 && x == first->x >> 20 && z == first->z >> 20)
@@ -599,10 +578,10 @@ L_02008e6e:
   Actors_SetCellsOpen((s32)&gData_020031c4);
   t5 = Event_GetFlag(0xa1b);
   if (t5 != 0) {
-    Actor_SetPosition(16, PIXELS(136), PIXELS(600));
+    Actor_SetPosition(16, 136, 600);
     JupiterLighthouse_OpenDoor(0);
   }
-  t8 = Event_GetFlag(0x202);
+  t8 = Event_GetFlag(FLAG_SCENE_TEMP_02);
   if (t8 != 0) {
     JupiterLighthouse_OpenDoor(0);
   }
@@ -663,12 +642,12 @@ s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(1);
   if (gMainRoutineWork.entrance == 12) {
-    Actor_SetPosition(10, PIXELS(168), PIXELS(264));
-    Actor_SetPosition(11, PIXELS(200), PIXELS(264));
-    Actor_SetPosition(12, PIXELS(232), PIXELS(264));
-    Actor_SetPosition(13, PIXELS(168), PIXELS(296));
-    Actor_SetPosition(14, PIXELS(136), PIXELS(328));
-    Actor_SetPosition(15, PIXELS(168), PIXELS(328));
+    Actor_SetPosition(10, 168, 264);
+    Actor_SetPosition(11, 200, 264);
+    Actor_SetPosition(12, 232, 264);
+    Actor_SetPosition(13, 168, 296);
+    Actor_SetPosition(14, 136, 328);
+    Actor_SetPosition(15, 168, 328);
   }
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && Func_02000290() != 2) {
     Event_ClearFlag(0xa10);
@@ -712,31 +691,40 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 extern u32 gPaletteCycleColors[];
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
-                          gPaletteCyclePausesInEvents, gPaletteCycleColors)
+#include "shared/palette_cycle_step.h"
 
 extern u16 gLighthousePalette13[];
 extern u16 gLighthouseUnlitColors[];
 
 void MapGrid_SetAttributeBAt();
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gPaletteCyclePausesInEvents,
-                                        gPaletteCycleColors,
-                                        gLighthousePalette13, PaletteCycle_Step,
-                                        gLighthouseUnlitColors)
+void JupiterLighthouse_LoadPalettes(s32 mode) {
+  gPaletteCyclePausesInEvents = 1;
+  if (mode != 2) {
+    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
+                         32);
+    Iwram_CopyWordsEntry(gLighthousePalette13, (void *)&BG_PLTT_COLOR(13, 0),
+                         32);
+  }
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
+    Counter_Set(0);
+    Task_Add(PaletteCycle_Step, 1152);
+  } else {
+    Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
+            DMA_COPY_WORDS(2), REG_DMA3);
+  }
+}
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
-                             MapGrid_SetAttributeBAt)
+#include "shared/actor_raise_from_cell.h"
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
+#include "shared/whirlwind_carry_leader.h"
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/position_flat_distance.h"
 
 extern s32 gWhirlwindEndScript[];
 extern s32 gWhirlwindRiding;
@@ -745,9 +733,84 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 s32 Trig_Cos(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
-                        Position_FlatDistance, gWhirlwindEndScript,
-                        gWhirlwindRiding)
+void Whirlwind_UpdateLower(struct Actor *self) {
+  u8 *work = Ram_HeapSlots->eventWork;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 position[3];
+  s32 distance;
+  s32 near;
+
+  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
+      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+    Actor_SetAnimationSpeed(self, 0);
+    return;
+  }
+  Actor_SetAnimationSpeed(self, 16);
+  if ((++*(u16 *)&self->timer & 31) == 31)
+    Event_PlaySound(SE_WATER_LEVEL);
+  {
+    s8 *to = self->sprite;
+    s8 *from = leader->sprite;
+    u32 a = from[9] & 12;
+    to[9] = (s8)((to[9] & ~12) | a);
+  }
+  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
+    position[0] = self->x;
+    position[1] = self->y;
+    position[2] = self->z;
+    Camera_WorldToScreen(position);
+    distance = position[0];
+    if (distance > 0x1100000)
+      goto stop;
+    if (distance < -0x200000)
+      goto stop;
+    {
+      if (*((u8 *)self + 0x62) == 0) {
+        distance = leader->y - self->y;
+        if (distance < 0)
+          distance = self->y - leader->y;
+        near = 0;
+        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+            distance < 0xc0000)
+          near = 1;
+        if (near && !Event_GetFlag(260)) {
+          leader->facing = self->facing;
+          leader->watchedObject = self;
+          leader->priorityFlags &= ~1;
+          {
+            s32 delay = 200;
+            *(u16 *)(work + 362) = delay;
+          }
+          gMainRoutineWork.renderMode = 0;
+          *((u8 *)self + 0x62) = 1;
+          *((u8 *)self + 0x63) = 1;
+        }
+      }
+      {
+        s32 (*multiply)(s32, s32);
+        s32 cosine = Trig_Cos(self->facing);
+        s32 speed = self->speedLimit;
+        /* FAKEMATCH(dead): the routine address taken inside a once-only
+         * block. */
+        do {
+          multiply = Iwram_MulQ16;
+        } while (0);
+        self->x += multiply(cosine, speed);
+      }
+      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      return;
+    }
+  }
+stop:
+  {
+    s32 zero = 0;
+    *((u8 *)self + 0x63) = zero;
+    self->update = zero;
+    Actor_StartScript(self, gWhirlwindEndScript);
+    Event_PlaySound(SE_SPARKLING_PASSAGE);
+    gWhirlwindRiding = zero;
+  }
+}
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -796,20 +859,18 @@ void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 void Field_TryJumpForward(void);
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-void Whirlwind_Update(struct Actor *self);
+void Whirlwind_UpdateLower(struct Actor *self);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
-                       FieldEffect_Spawn)
+#include "shared/whirlwind_spawn.h"
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
+#include "shared/actor_emit_rising_sparks.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
-    JupiterLighthouse_PlaceRaisedActors)
+#include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-DEFINE_ACTORS_SET_CELLS_OPEN(Actors_SetCellsOpen, Actor_SetCellOpen)
+#include "shared/actors_set_cells_open.h"
 
 // Finds the current target's table row and shrinks it.
 void Func_02001a48(u16 *list, s32 mode, s32 count) {
@@ -817,12 +878,10 @@ void Func_02001a48(u16 *list, s32 mode, s32 count) {
 
   if (*list == 0xffff)
     return;
-  // A goto loop: as a do-while loop, 42 of 61 instructions differ in tla-en.
 top:
   {
     u32 entry = *list;
-    /* FAKEMATCH(dead): the effect work read through its own address; as
-     * work->objectId, 21 of 61 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the effect work read through its own address. */
     s32 id = (*&work)->objectId;
 
     if (id == entry) {
@@ -838,7 +897,7 @@ top:
       if (mode == 1) {
         Event_SetFlag(flag);
         Actor_SetCellOpen(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       return;
     }
@@ -848,8 +907,7 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+#include "shared/actor_set_cell_open.h"
 
 extern u32 gLightSpriteActors[];
 extern s16 gLightSpritePriority;
@@ -860,33 +918,17 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
-                          gLightSpriteCount, gLightSpriteActors,
-                          gLightSpritesLarge, gLightSpritePriority,
-                          BattleEffect_GetObjectPriority,
-                          Oam_AddSpriteAtDepthClamped)
+#include "shared/light_sprites_draw.h"
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_a.h"
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_b.h"
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_c.h"
 
-DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
-                                 gLightSpriteCount)
+#include "shared/light_sprites_add_counted.h"
 
 void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
@@ -985,15 +1027,15 @@ void Oam_AddSpriteAtDepthClamped__s1f74(void *entry, s32 priority) __asm__(
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1f74
 #include "../field/map/cell_sprite.c"
 
-DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
+#include "shared/cracked_tiles_find.h"
 
-DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+#include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
 // row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 // one of the table's cells.
-DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+#include "shared/cracked_tile_crack.h"
 
 struct CellTargetEntry;
 
@@ -1017,8 +1059,40 @@ struct CellTarget__s25a4 {
 void CrackedTile_Fall__s25a4(
     struct CellTarget__s25a4 *table,
     struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
-                         Leader_CenterInCell)
+void CrackedTile_Fall__s25a4(struct CellTarget__s25a4 *table,
+                             struct CellTargetEntry *entry) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
+  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
+
+  Leader_CenterInCell();
+  Event_PlaySound(SE_SPLASH);
+  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
+  FieldEvent_Wait(12);
+  leader->facing = 0x4000;
+  leader->motionFlags = 0;
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Io_Write16(0xf1f, &REG_WINOUT);
+  REG_DISPCNT |= 0x8000;
+  table->shown = 1;
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  FieldEvent_Wait(16);
+  x = 0;
+  do {
+    if (x == 5)
+      Event_PlaySound(SE_DUST_PUFF);
+    leader->scaleX += -0x400;
+    leader->scaleY += -0x300;
+    leader->y += -0x9999;
+    System_Wait(1);
+    x++;
+  } while (x <= 39);
+  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  table->shown = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+}
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -1040,17 +1114,17 @@ void CrackedTile_DropIn(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y = 0x820000;
-  actor->gravity = 0x8000;
+  actor->y = px(130);
+  actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -1059,10 +1133,8 @@ void CrackedTile_DropIn(void) {
   options.startScaleY = 0xa3d7;
   always = 1;
   i = 0;
-  // A goto loop: as a do-while loop, 4 of 169 instructions differ in tla-en.
 loop:
-  /* FAKEMATCH(dead): the body tested on a flag that is always set; without
-   * the test, 4 of 169 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the body tested on a flag that is always set. */
   if (always) {
     s32 angle;
     s32 velocity[3];
@@ -1080,15 +1152,17 @@ loop:
   i++;
   if (i <= 16)
     goto loop;
-  Event_PlaySound(188);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Event_PlaySound(SE_THUMP);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
-  actor->gravity = 0x10000;
-  actor->bounce = 0x4000;
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  actor->gravity = px(1);
+  actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Event_End();
@@ -1098,11 +1172,9 @@ extern struct CellTarget gCrackedTiles;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                          CrackedTile_Fall)
+#include "shared/cracked_tiles_step.h"
 
-DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                  CrackedTile_DropIn)
+#include "shared/cracked_tile_place_landing.h"
 
 // clang-format off
 s16 gData_02002c64[][2] = {
@@ -1116,11 +1188,26 @@ void JupiterLighthouse_StepOnButton(void);
 void Func_02000e20(void);
 
 // clang-format off
-LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+LATE_DATA u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 LATE_DATA s16 gData_020031c4[] = {
     17, 1, 0xa16, 9, 1, 0xa17, -1, 0,
@@ -1131,53 +1218,59 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA DEFINE_G_SCENE_EXITS_3(260, 262, 260, 7, 6, 263, 10, 9, 12, 260)
+LATE_DATA u32 gSceneExits[] = {                                                        
+      SCENE_EXITS(JupiterLighthouseRoom7),         SCENE_EXIT(1, JupiterLighthouseRoom9, 1),   SCENE_EXIT(2, JupiterLighthouseRoom7, 3),   
+      SCENE_EXIT(3, JupiterLighthouseRoom7, 2),    SCENE_EXIT(4, JupiterLighthouseRoom7, 5),   SCENE_EXIT(5, JupiterLighthouseRoom7, 4),   
+      SCENE_EXIT(6, JupiterLighthouseRoom7, 7),   SCENE_EXIT(7, JupiterLighthouseRoom7, 6),  SCENE_EXIT(8, JupiterLighthouseRoomM, 8),   
+      SCENE_EXIT(9, JupiterLighthouseRoom7, 10),   SCENE_EXIT(10, JupiterLighthouseRoom7, 9), SCENE_EXIT(11, JupiterLighthouseRoom7, 12), 
+      SCENE_EXIT(12, JupiterLighthouseRoom7, 11), SCENE_EXITS_END,                                
+  };
 
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
-    {340, CONDITION_ALWAYS, 1, PIXELS(564), 0, PIXELS(712), FACING_SOUTHWEST, 2, 0},
-    {406, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(216), FACING_SOUTHWEST, 2, 0},
-    {316, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(264), FACING_EAST, 2, 0},
-    {316, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(264), FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(376), FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(376), FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(376), FACING_EAST, 2, 1},
-    {316, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(376), FACING_EAST, 2, 1},
-    {312, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(600), FACING_SOUTH, 2, 0},
-    {406, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(136), FACING_SOUTHWEST, 2, 0},
-    {428, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(152), FACING_SOUTH, 2, 0},
-    {428, CONDITION_ALWAYS, 1, PIXELS(696), 0, PIXELS(232), FACING_SOUTH, 2, 0},
-    {428, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(200), FACING_SOUTH, 2, 0},
-    {246, 0x7a, 1, PIXELS(440), 0, PIXELS(216), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(340, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 564, 0, 712, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 216, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 264, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 264, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 136, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(428, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(428, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(428, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(246, 0x7a, MOVEMENT_TYPE_STAND, 440, 0, 216, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct Trigger gSceneEvents[] = {
-    {33, 1, CONDITION_ALWAYS, 1},
-    {49, 2, CONDITION_ALWAYS, 2},
-    {33, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {33, 9, CONDITION_ALWAYS, 9},
-    {49, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {514, 30, IF_FLAG_SET(0xa1a), EVENT(Func_02000e20)},
+    {STEP_TRIGGER_WALKING, 30, IF_FLAG_SET(0xa1a), EVENT(Func_02000e20)},
     {TRIGGER_STEP, 20, 0xa1b, EVENT(JupiterLighthouse_StepOnButton)},
     {TRIGGER_STEP, 21, 0xa1b, EVENT(JupiterLighthouse_StepOffButton)},
-    {0x8602, 40, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {0xc602, 41, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {0x602, 42, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {0x4602, 43, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {0xc400, 21, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FightWhorl)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT(Func_02000cec)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT(Func_02000cec)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 42, CONDITION_ALWAYS, EVENT(Func_02000cec)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 43, CONDITION_ALWAYS, EVENT(Func_02000cec)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FightWhorl)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000778)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_020007a4)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000778)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_020007a4)},
-    {8, 35, CONDITION_ALWAYS, EVENT(Func_02000778)},
-    {9, 35, CONDITION_ALWAYS, EVENT(Func_020007a4)},
+    {TRIGGER_PUSH, 35, CONDITION_ALWAYS, EVENT(Func_02000778)},
+    {TRIGGER_PUSHED, 35, CONDITION_ALWAYS, EVENT(Func_020007a4)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 20, CONDITION_ALWAYS, EVENT(Func_02000778)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT(Func_020007a4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, 0},
@@ -1187,7 +1280,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0xa1b, EVENT(Func_02000184)},
-    {0x80008615, 17, 0xa16, EVENT(Func_020009d8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_FIRST), 17, 0xa16, EVENT(Func_020009d8)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0xa16, EVENT(Func_020009e4)},
     {PSYNERGY_ON_ACTOR(ABILITY_POUND), 17, 0xa16, EVENT(Func_02000a74)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0xa17, EVENT(Func_020009e4)},

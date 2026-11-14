@@ -1,6 +1,4 @@
 /// @file
-#include "shared/actors.h"
-#include "shared/effects.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"
@@ -31,7 +29,6 @@
 #include "flags.h"
 #include "module/field/object.h"
 #include "call.h"
-#include "shared/cracked_tile.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
@@ -109,9 +106,9 @@ void Teleport_PlayWhirl(void);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 s32 Actor_LiftTargetBlock();
 
-extern char SceneId_Ov6B0Room2;
-extern char SceneId_Ov6B0Room3;
-extern char SceneId_Ov6B0Room4;
+extern char SceneId_AnemosInnerSanctum2;
+extern char SceneId_AnemosInnerSanctum3;
+extern char SceneId_AnemosInnerSanctum4;
 
 void Actor_PlaceMovedBlock(void);
 
@@ -119,7 +116,7 @@ void Func_02000158(void);
 
 void Actor_Release(struct Actor *object);
 
-extern char SceneId_Ov6B0Room5;
+extern char SceneId_AnemosInnerSanctum5;
 
 void Func_020000f4(void);
 
@@ -159,8 +156,6 @@ extern s16 gData_020043fa[];
 extern s32 gData_02003584[];
 
 /// Writes one background palette entry from its red, green and blue.
-// A statement macro, written do { } while (0): this store matches through that
-// shape (see the header).
 #define BG_PLTT_SET_RGB(index, r, g, b)                                        \
   do {                                                                         \
     int value = RGB(r, g, b);                                                  \
@@ -188,40 +183,33 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     if (*slots != 0xffff && *colours != 0xffff)
       goto next;
   }
-  Dma_Set((const void *)0x05000000, saved, 0x84000070, REG_DMA3);
-  Dma_Set((const void *)0x05000200, saved + 448, 0x84000070, REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_ApplyTarget(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
     Func_02000328();
 }
 
-DEFINE_PALETTE_CYCLE_START(Func_020000f4, gPaletteCycleIndex,
-                           gPaletteCycleLength, List_CountEntries,
-                           gPaletteSlots, gPaletteCycleDelay, 15,
-                           gPaletteCycleTimer, 16, gPaletteCycleBright,
-                           PaletteCycle_Fade)
+#include "shared/palette_cycle_start.h"
 
 void Func_02000158(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   FieldTask_Remove((s32)PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START(Func_02000178, gPaletteCycleIndex,
-                           gPaletteCycleLength, List_CountEntries,
-                           gPaletteSlots, gPaletteCycleDelay, 2,
-                           gPaletteCycleTimer, 2, gPaletteCycleBright,
-                           PaletteCycle_Fade)
+void Func_02000178(void) {
+  gPaletteCycleIndex = 0;
+  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
+  gPaletteCycleDelay = 2;
+  gPaletteCycleTimer = 2;
+  gPaletteCycleBright = 1;
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
-DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
+#include "shared/list_count_entries.h"
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
-                          gPaletteCycleDelay, gPaletteCycleColors,
-                          gPaletteCycleLength, gPaletteCycleSlots,
-                          gPaletteCycleIndex, gPaletteSlots,
-                          gPaletteCycleBright, gPaletteColors)
+#include "shared/palette_cycle_fade.h"
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02003458_(s32 a, s32 b) {
   BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
@@ -336,7 +324,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-s32 Func_02000654(s32 a0) {
+s32 AnemosInnerSanctum_ClearScriptedActorSpriteFlags(s32 a0) {
   Actor_SetSpriteFlags(a0, 0);
   return 0;
 }
@@ -378,9 +366,6 @@ s32 Func_020006f8(struct Mover *mover) {
   mover->x = mover->originX;
   mover->y = mover->height;
   mover->z = mover->originZ;
-  // Read through a pointer of its own type, an access alchemy-gcc keeps apart
-  // from the s32 stores before it: as mover->angle, the angle loads before
-  // the radius (2 of 73 instructions differ).
   FieldVector_AddPolarOffset(mover->radius, *(s16 *)&mover->angle, &mover->x);
   Func_020006a4(mover);
   mover->radius -= mover->step >> 1;
@@ -426,15 +411,15 @@ extern s32 gAnemosInnerSanctum_Room4Placements[];
 extern struct ActorPlacement gAnemosInnerSanctum_Room5Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum1)
     return gAnemosInnerSanctum_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum2)
     return gAnemosInnerSanctum_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3)
     return gAnemosInnerSanctum_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4)
     return gAnemosInnerSanctum_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum5)
     return gAnemosInnerSanctum_Room5Placements;
   return gAnemosInnerSanctum_Placements;
 }
@@ -496,10 +481,10 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
   s32 i;
 
   for (i = 0; i != 16;) {
-    struct Actor *object = (FieldActor_Create(0x2a0, x, y, 0x980000));
+    struct Actor *object = (FieldActor_Create(0x2a0, x, y, px(152)));
     s32 angle = i << 12;
 
-    FieldVector_AddPolarOffset(0x200000, angle, &object->x);
+    FieldVector_AddPolarOffset(px(32), angle, &object->x);
     object->timer = angle;
     object->unk66 = a3;
     BYTE_AT(object, 98) = i;
@@ -521,7 +506,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
 void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   struct Actor *object;
 
-  object = FieldActor_Create(0x2a0, (a0 << 16), ((a1 + 3) << 16), 0x980000);
+  object = FieldActor_Create(0x2a0, (a0 << 16), ((a1 + 3) << 16), px(152));
   object->motionFlags = 4;
   FieldActor_SetSpriteColor(object, (u16)a2);
   Scene_SetActorSpritePriority(object, 2);
@@ -534,7 +519,7 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 /* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
  * scene/anemos_inner_sanctum/scene_tables has another definition; tried with
  * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:556: structure has no member named
+ * games/tla/src/scene/anemos_inner_sanctum.c:554: structure has no member named
  * `room'. */
 struct Work__s0ac8 {
   u8 pad[340];
@@ -626,7 +611,7 @@ void Func_02000ac8(void) {
     targetZ = 40;
     if (GameFlag_Get(0xa8a)) {
     seen:
-      GameFlag_Set(0x200);
+      GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
     }
     break;
@@ -648,15 +633,15 @@ void Func_02000ac8(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+  FieldCamera_SetSpeed(0.8);
   Actor_WalkTo(gMainRoutineWork.currentOwner, x, z);
-  FieldCamera_MoveTo(x << 16, -1, z << 16, 1);
+  FieldCamera_MoveToFixed(x << 16, -1, z << 16, 1);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
   actor =
-      (FieldActor_Create((u16)type, leader->x, leader->y + 0x80000, leader->z));
+      (FieldActor_Create((u16)type, leader->x, leader->y + px(8), leader->z));
   actor->motionFlags = 0;
   actor->scaleY = 0x1999;
   actor->scaleX = 0x1999;
@@ -684,7 +669,7 @@ void Func_02000ac8(void) {
       goto fadeIn;
   }
   BlendScript_Resume();
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   FieldEvent_Wait(48);
 
   last = count - 1;
@@ -708,7 +693,7 @@ void Func_02000ac8(void) {
     to.z = leader->z + (gData_020036fc[slot][1] << 16);
     Func_0200088c(&from, &to, part);
     if (i & 1)
-      Event_PlaySound(195);
+      Event_PlaySound(SE_195);
     i++;
     FieldEvent_Wait(8);
   }
@@ -740,10 +725,10 @@ void Func_02000ac8(void) {
     Event_SetFlag((s16)work->room + 0xa55);
     Actor_StartScript(actor, gData_02003620);
     FieldEvent_Wait(60);
-    FieldCamera_SetSpeed(0x40000, 0x8000);
-    FieldCamera_MoveTo(0x2180000, -1, 0x780000, 1);
+    FieldCamera_SetSpeed(4);
+    FieldCamera_MoveTo(536, CAMERA_KEEP, 120, 1);
     FieldCamera_WaitForArrival();
-    Event_PlaySound(220);
+    Event_PlaySound(SE_SHIMMER);
     {
       s32 a = targetX << 16;
       s32 b = targetZ << 16;
@@ -761,13 +746,13 @@ void Func_02000ac8(void) {
     System_Wait(1);
     PaletteFade_ApplyTarget(0x10000, 0);
     PaletteFade_Interpolate(32);
-    Event_PlaySound(0x23e);
+    Event_PlaySound(SE_574);
     Func_02000a78(targetX, targetZ, part);
     FieldEvent_Wait(80);
     if (GameFlag_Get(0xa87) && GameFlag_Get(0xa88) && GameFlag_Get(0xa89) &&
         GameFlag_Get(0xa8a)) {
       Event_SetFlag(0xa8b);
-      Event_PlaySound(188);
+      Event_PlaySound(SE_THUMP);
       MapGrid_CopyCellsTo(52, 7, 33, 7, 1, 2);
       System_Wait(5);
       MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
@@ -777,7 +762,7 @@ void Func_02000ac8(void) {
   }
 
   Actor_Release(actor);
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
@@ -791,7 +776,7 @@ void Func_02000ac8(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001090(void) { GameFlag_Clear(0x200); }
+void Func_02001090(void) { GameFlag_Clear(FLAG_SCENE_TEMP_00); }
 
 extern s16 gData_020036e4[];
 extern s16 gData_020036ea[];
@@ -834,33 +819,33 @@ void Func_02001160(void) {
   Actor_PlaceMovedBlock();
   x = leader->x >> 19;
   z = leader->z >> 19;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3) {
     Field_SetCellBehaviorAt(2, 0x480000, 0x1b80000, 232);
     if (x != 8)
       Field_SetCellBehaviorAt(2, 0x480000, 0x1a80000, 232);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4) {
     Field_SetCellBehaviorAt(2, 0x1180000, 0x1580000, 0);
     Field_SetCellBehaviorAt(2, 0x1180000, 0x1780000, 232);
     Field_SetCellBehaviorAt(2, 0x1280000, 0x1680000, 0);
     Field_SetCellBehaviorAt(2, 0x2080000, 0x2780000, 232);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum2) {
     if (x == 37 && z == 31) {
       GameFlag_Set(0xa80);
       Actor_SetSpritePriority(8, 2);
     }
     if (x == 55 && z == 95)
       GameFlag_Set(0xa81);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3) {
     if (x == 7 && z == 53)
       GameFlag_Set(0xa82);
     if (x == 67 && z == 45) {
       MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
       Actor_SetPosition(14, 0, 0);
-      Event_PlaySound(0x248);
+      Event_PlaySound(SE_584);
       FieldEvent_Wait(30);
-      Event_PlaySound(188);
+      Event_PlaySound(SE_THUMP);
       MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
       FieldEvent_Wait(5);
       MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
@@ -874,13 +859,14 @@ void Func_02001160(void) {
       if (!Event_GetFlag(0xa84)) {
         s32 fromX = (Actor_Get(12)->x >> 16) << 16;
 
-        Actor_SetPosition(13, fromX, (Actor_Get(12)->z >> 16) << 16);
-        Actor_SetPosition(12, PIXELS(728), PIXELS(472));
+        Actor_SetPositionFixed(13, fromX, (Actor_Get(12)->z >> 16) << 16);
+        Actor_SetPosition(12, 728, 472);
       }
       GameFlag_Set(0xa85);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4 && x == 33 && z == 45)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4 && x == 33 &&
+      z == 45)
     GameFlag_Set(0xa86);
   Event_End();
 }
@@ -900,56 +886,56 @@ void Func_02001398(void) {
   s32 i;
   s32 id;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4)
     MapGrid_CopyCellsTo(17, 71, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
   else
     MapGrid_CopyCellsTo(54, 87, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
-  Event_PlaySound(106);
+  Event_PlaySound(SE_DRIP);
   object = FieldActor_Create(0x15d, ((leader->x >> 20) << 20) + 0x80000, 0,
                              ((leader->z >> 20) << 20) + 0x80000);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
   FieldActor_SetSpriteColor(object, 4);
-  object->scaleY = 0x16000;
-  object->scaleX = 0x16000;
+  object->scaleY = Q16_ONE * 11 / 8;
+  object->scaleX = Q16_ONE * 11 / 8;
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 3);
   Actor_SetSpriteFlags(object, 0);
   Actor_StartScript(object, gData_02003574);
   Event_SetFlag(work->exit + 0x1ce);
-  all = Event_GetFlag(0x200);
+  all = Event_GetFlag(FLAG_SCENE_TEMP_00);
   for (i = 1; i != 7; i++)
     all &= Event_GetFlag(0x200 + i);
   if (all) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_Wait(10);
-    FieldCamera_SetSpeed(0xcccc, 0x1999);
+    FieldCamera_SetSpeed(0.8);
     id = 9;
-    if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
+    if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4)
       id = 8;
     FieldCamera_MoveToActorById(id, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
-    Event_PlaySound(0x246);
+    Event_PlaySound(SE_582);
     Actor_SetAnimation(id, 2);
-    Event_SetFlag(0x207);
+    Event_SetFlag(FLAG_SCENE_TEMP_07);
     Actor_Get(id)->motionFlags = 4;
     FieldEvent_Wait(80);
     Event_End();
   }
 }
 
-// Centres the party leader on its cell and raises actor 8 (in Ov6B0Room4) or
-// actor 9 with cue 198, 4 pixels at once and then 128 more, before the screen
-// transition finishes.
+// Centres the party leader on its cell and raises actor 8 (in
+// AnemosInnerSanctum4) or actor 9 with cue 198, 4 pixels at once and then 128
+// more, before the screen transition finishes.
 void Func_02001518(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4) {
     object = Actor_Get(8);
     FieldEvent_SetExitRequest(13);
   } else {
@@ -965,15 +951,17 @@ void Func_02001518(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
   FieldEvent_Wait(30);
   object->motionFlags = 0;
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  object->speedLimit = 0x20000;
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  object->speedLimit = px(2);
   object->acceleration = 0x800;
-  Event_PlaySound(198);
-  FieldActor_SetMoveTarget(object, object->x, object->y + 0x40000, object->z);
+  Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + px(4),
+                                object->z);
   FieldActor_WaitForMove(object);
   Scene_SetActorSpritePriority(leader, 1);
   Scene_SetActorSpritePriority(object, 1);
-  FieldActor_SetMoveTarget(object, object->x, object->y + 0x800000, object->z);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + px(128),
+                                object->z);
   FieldEvent_Wait(80);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -991,7 +979,12 @@ void Func_02001614(void) {
   }
 }
 
-DEFINE_LEADER_SET_LAYER_BYTE(Leader_SetLayerByte, 0)
+void Leader_SetLayerByte(void) {
+  s32 t0;
+
+  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  FIELD_AT((t0 + 0x22), u8, 0) = 0;
+}
 
 void Func_02001660(void) {
   Event_Start();
@@ -1000,14 +993,14 @@ void Func_02001660(void) {
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
   Actor_SetPosition(14, 0, 0);
-  Event_PlaySound(0x248);
+  Event_PlaySound(SE_584);
   FieldEvent_Wait(30);
-  Event_PlaySound(0xbc);
+  Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
   MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_End();
 }
 
@@ -1017,19 +1010,19 @@ void Func_020016fc(void) {
   object = Actor_Get(14);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->x = 0x2180000;
-  object->z = 0x1680000;
+  object->x = px(536);
+  object->z = px(360);
   object->terrainHeight = -917504;
   object->y = -917504;
   MapGrid_CopyCellsTo(51, 22, 33, 22, 1, 1);
-  Event_PlaySound(0x248);
+  Event_PlaySound(SE_584);
   FieldEvent_Wait(30);
-  Event_PlaySound(0xbc);
+  Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
   MapGrid_CopyCellsTo(52, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
-  Event_ClearFlag(0x200);
+  Event_ClearFlag(FLAG_SCENE_TEMP_00);
   Event_End();
 }
 
@@ -1065,7 +1058,7 @@ void Func_020017b4(struct Actor *self) {
 
   if (Actor_Get(gMainRoutineWork.currentOwner)->z >> 16 > 248) {
     self->update = 0;
-    Event_ClearFlag(0x200);
+    Event_ClearFlag(FLAG_SCENE_TEMP_00);
     self->x = (self->x & 0xfff00000) + 0x80000;
     self->z = (self->z & 0xfff00000) + 0x80000;
     return;
@@ -1086,11 +1079,11 @@ void Func_020017b4(struct Actor *self) {
     self->unk4c = leader->x;
     self->acceleration = leader->z;
     if ((gFrameCount & 3) == 0)
-      Event_PlaySound(106);
+      Event_PlaySound(SE_DRIP);
   }
   if (ahead[2] >> 16 > 248)
     return;
-  FieldVector_AddPolarOffset(0x70000, 0x8000 - leader->facing, ahead);
+  FieldVector_AddPolarOffset(px(7), 0x8000 - leader->facing, ahead);
   if (FieldMapGrid_GetCellBehaviorAt(self->terrainId, ahead[0], ahead[2]) ==
       255)
     return;
@@ -1136,7 +1129,7 @@ void Func_02001938(void) {
     object->update = Func_020017b4;
     object->unk4c = Actor_Get(gMainRoutineWork.currentOwner)->x;
     object->acceleration = Actor_Get(gMainRoutineWork.currentOwner)->z;
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
 
@@ -1164,21 +1157,21 @@ void Func_020019a8(void) {
     object = Actor_Get(10);
   position[0] = (object->x & 0xfff00000) + 0x80000;
   position[2] = (object->z & 0xfff00000) + 0x80000;
-  object->acceleration = 0x10000;
-  object->speedLimit = 0x10000;
+  object->acceleration = px(1);
+  object->speedLimit = px(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTarget(object, position[0], 0, position[2]);
+  FieldActor_SetMoveTargetFixed(object, position[0], 0, position[2]);
   effect =
       OverlayObject_PrepareObject(object->x, 0, position[2] + 0x3b0000, 286);
-  effect->scaleX = 0x18000;
-  effect->scaleY = 0x18000;
+  effect->scaleX = Q16_ONE * 3 / 2;
+  effect->scaleY = Q16_ONE * 3 / 2;
   sprite = effect->sprite;
   ((struct SpriteView *)sprite)->mode = 2;
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
                WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
   object->x = 0;
@@ -1198,28 +1191,28 @@ void Func_02001a94(void) {
 
   if (gMainRoutineWork.entrance == 1) {
     object = Actor_Get(8);
-    Event_SetFlag(0x301);
+    Event_SetFlag(FLAG_AREA_TEMP_01);
     column = 11;
   } else if (gMainRoutineWork.entrance == 3) {
     object = Actor_Get(9);
-    Event_SetFlag(0x302);
+    Event_SetFlag(FLAG_AREA_TEMP_02);
     column = 26;
   } else {
     object = Actor_Get(10);
-    Event_SetFlag(0x303);
+    Event_SetFlag(FLAG_AREA_TEMP_03);
     column = 53;
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   target[0] = (object->x & 0xfff00000) + 0x80000;
   target[2] = (object->z & 0xfff00000) + 0x80000;
-  object->acceleration = 0x10000;
-  object->speedLimit = 0x10000;
+  object->acceleration = px(1);
+  object->speedLimit = px(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTarget(object, target[0], 0, target[2]);
+  FieldActor_SetMoveTargetFixed(object, target[0], 0, target[2]);
   FieldActor_WaitForMove(object);
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(18, 4, column, 4, 1, 2);
   System_Wait(5);
   MapGrid_CopyCellsTo(18, 7, column, 4, 1, 2);
@@ -1240,11 +1233,11 @@ void Func_02001b88(void) {
   FieldEvent_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_Interpolate(0x3c);
+  PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   FieldMessage_ShowCentered((s32)MsgSummonInheritedEarthDarkness, 0, 6);
   PaletteFade_ApplyTarget(0x10000, 0);
-  PaletteFade_Interpolate(0x3c);
+  PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   Event_SetFlag(0xa8c);
   Event_End();
@@ -1258,15 +1251,15 @@ extern struct Trigger gAnemosInnerSanctum_Room4Triggers[];
 extern struct Trigger gAnemosInnerSanctum_Room5Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum1)
     return gAnemosInnerSanctum_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum2)
     return gAnemosInnerSanctum_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3)
     return gAnemosInnerSanctum_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4)
     return gAnemosInnerSanctum_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum5)
     return gAnemosInnerSanctum_Room5Triggers;
   return gAnemosInnerSanctum_Triggers;
 }
@@ -1280,7 +1273,7 @@ void Func_02001c60(void) {
 
     party->value = 2;
   }
-  Event_SetDestination((s32)&SceneId_Ov694Room1, 99);
+  Event_SetDestination((s32)&SceneId_Contigo1, 99);
   FieldEvent_Wait(40);
   Func_02000158();
 }
@@ -1288,7 +1281,7 @@ void Func_02001c60(void) {
 /* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:1306: structure has no member
+ * games/tla/src/scene/anemos_inner_sanctum.c:1312: structure has no member
  * named `value'. */
 struct EventWork154__s1938 {
   u8 unk000[0x154];
@@ -1298,8 +1291,6 @@ struct EventWork154__s1938 {
 extern s16 gData_020043e4[];
 extern struct MapGridCellAnimation gData_02004410[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02003320_(const void *data, s32 a, s32 b) {
   MapGrid_PlayMapEdit(data, a, b);
 }
@@ -1312,8 +1303,6 @@ void Func_02001c94(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  // A goto loop, as in overlay 6a6's Func_02000e54 (its twin): it carries no
-  // loop notes.
   i = 8;
 loop:
   {
@@ -1325,8 +1314,8 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  Event_PlaySound(158);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1) {
+  Event_PlaySound(SE_DOOR_OPEN);
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum1) {
     MapGrid_AnimateCells(gData_020043e4, 33, 7);
   } else {
     s32 index = work->value / 2 - 1;
@@ -1335,7 +1324,7 @@ loop:
                    gData_02004410[index].y);
   }
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   FieldEvent_Wait(6);
   FieldEvent_SetExitRequest(work->value);
@@ -1344,8 +1333,6 @@ loop:
   Event_End();
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
@@ -1356,16 +1343,17 @@ void Func_02001d68(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(9, 2);
-  object->y = -0x400000;
-  Func_020033e0_(9, PIXELS(728), PIXELS(120));
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(728), PIXELS(120));
-  Actor_Get(gMainRoutineWork.currentOwner)->y = -0x300000;
+  object->y = -px(64);
+  Func_020033e0_(9, px(728), px(120));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 728, 120);
+  Actor_Get(gMainRoutineWork.currentOwner)->y = -px(48);
   Event_StartScreenTransition();
-  object->acceleration = 0x10000;
-  object->speedLimit = 0x10000;
-  FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
+  object->acceleration = px(1);
+  object->speedLimit = px(1);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + px(48),
+                                object->z);
   FieldActor_WaitForMove(object);
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
   Event_End();
 }
 
@@ -1375,14 +1363,15 @@ void Func_02001df4(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
-  object->y = -0x400000;
-  Actor_Get(gMainRoutineWork.currentOwner)->y = -0x300000;
+  object->y = -px(64);
+  Actor_Get(gMainRoutineWork.currentOwner)->y = -px(48);
   Event_StartScreenTransition();
-  object->acceleration = 0x10000;
-  object->speedLimit = 0x10000;
-  FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
+  object->acceleration = px(1);
+  object->speedLimit = px(1);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + px(48),
+                                object->z);
   FieldActor_WaitForMove(object);
-  Event_SetFlag(0x304);
+  Event_SetFlag(FLAG_AREA_TEMP_04);
   Event_End();
 }
 
@@ -1409,23 +1398,23 @@ s32 Scene_Initialize(void) {
   v_r6 = (s32)&gMainRoutineWork;
   FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;
   v_r1 = gMainRoutineWork.scene;
-  if (v_r1 == (s32)&SceneId_Ov6B0Room1) {
-    Call4((void (*)())Func_02000038, (s32)gData_0200384c, (s32)gData_0200385c,
-          (s32)gData_02003888, (s32)gData_020038b4);
+  if (v_r1 == (s32)&SceneId_AnemosInnerSanctum1) {
+    Func_02000038((s32)gData_0200384c, (s32)gData_0200385c, (s32)gData_02003888,
+                  (s32)gData_020038b4);
     if (Event_GetFlag(0xa87)) {
-      Call3((void (*)())Func_02000a78, 0x208, 48, 0);
+      Func_02000a78(0x208, 48, 0);
       MapGrid_CopyCellsTo(85, 34, 85, 8, 9, 8);
     }
     if (Event_GetFlag(0xa88)) {
-      Call3((void (*)())Func_02000a78, 0x228, 48, 3);
+      Func_02000a78(0x228, 48, 3);
       MapGrid_CopyCellsTo(101, 34, 101, 8, 9, 8);
     }
     if (Event_GetFlag(0xa89)) {
-      Call3((void (*)())Func_02000a78, 0x1f8, 40, 10);
+      Func_02000a78(0x1f8, 40, 10);
       MapGrid_CopyCellsTo(85, 46, 85, 20, 9, 8);
     }
     if (Event_GetFlag(0xa8a)) {
-      Call3((void (*)())Func_02000a78, 0x238, 40, 2);
+      Func_02000a78(0x238, 40, 2);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
     if (!Event_GetFlag(0xa8b))
@@ -1434,15 +1423,15 @@ s32 Scene_Initialize(void) {
     MapGrid_SetCellHeight(0x2180000, 0x880000, 0, 0);
     goto L_0200a6e6;
   }
-  if (v_r1 != (s32)&SceneId_Ov6B0Room2)
+  if (v_r1 != (s32)&SceneId_AnemosInnerSanctum2)
     goto L_0200a1b4;
   FieldActor_SetSpritePriority(8, 1);
   if ((Event_GetFlag(0xa80)) != 0) {
-    Actor_SetPosition(8, 0x1280000, 0xf80000);
+    Actor_SetPosition(8, 296, 248);
     FieldActor_SetSpritePriority(8, 2);
   }
   if ((Event_GetFlag(0xa81)) != 0) {
-    Actor_SetPosition(10, 0x1b80000, 0x2f80000);
+    Actor_SetPosition(10, 440, 760);
   }
   Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036e4);
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
@@ -1450,50 +1439,50 @@ s32 Scene_Initialize(void) {
   FIELD_AT(((s32)Actor_Get(9)), u8, 35) |= 128;
   if ((FIELD_AT(v_r6, s16, 482)) != 17)
     goto L_0200a03c;
-  if ((Event_GetFlag(0x300)) == 0)
+  if ((Event_GetFlag(FLAG_AREA_TEMP_00)) == 0)
     goto L_0200a03c;
   Actor_SetAnimation(9, 2);
-  Actor_SetPosition(9, 0x2d80000, 0x780000);
+  Actor_SetPosition(9, 728, 120);
 L_0200a03c:
-  if (gMainRoutineWork.entrance == 18 && GameFlag_Get(0x300) == 0)
+  if (gMainRoutineWork.entrance == 18 && GameFlag_Get(FLAG_AREA_TEMP_00) == 0)
     Func_02001d68();
   {
     struct MainRoutineWork *work = &gMainRoutineWork;
     if (work->entrance != 10)
       goto L_0200a6e6;
-    if ((Event_GetFlag(0x300)) != 0) {
+    if ((Event_GetFlag(FLAG_AREA_TEMP_00)) != 0) {
       Actor_SetPosition(9, 0, 0);
     }
-    if ((Event_GetFlag(0x207)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_07)) != 0) {
       t42 = Actor_Get(9);
       t42->motionFlags = 4;
     }
-    if ((Event_GetFlag(0x200)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_00)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 44, 86, 1, 1);
     }
-    if ((Event_GetFlag(0x201)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_01)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 46, 86, 1, 1);
     }
-    if ((Event_GetFlag(0x202)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_02)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 43, 87, 1, 1);
     }
-    if ((Event_GetFlag(0x203)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_03)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 45, 87, 1, 1);
     }
-    if ((Event_GetFlag(0x204)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_04)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 47, 87, 1, 1);
     }
-    if ((Event_GetFlag(0x205)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_05)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 44, 88, 1, 1);
     }
-    if ((Event_GetFlag(0x206)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_06)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 46, 88, 1, 1);
     }
     FIELD_AT(((s32)Actor_Get((work->currentOwner))), u8, 35) |= 32;
   }
   goto L_0200a6e6;
 L_0200a1b4:
-  if (v_r1 != (s32)&SceneId_Ov6B0Room3)
+  if (v_r1 != (s32)&SceneId_AnemosInnerSanctum3)
     goto L_0200a2ce;
   t60 = Actor_Get(14);
   v_two = 2;
@@ -1505,15 +1494,15 @@ L_0200a1b4:
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
   FIELD_AT(((s32)Actor_Get(9)), u8, 98) = v_r5;
   if ((Event_GetFlag(0xa82)) != 0) {
-    Actor_SetPosition(8, 0x380000, 0x1a80000);
+    Actor_SetPosition(8, 56, 424);
   }
   if ((Event_GetFlag(0xa83)) != 0) {
-    Actor_SetPosition(10, 0x2180000, 0x1680000);
+    Actor_SetPosition(10, 536, 360);
     MapGrid_CopyCellsTo(51, 20, 31, 20, v_r5, v_two);
     MapGrid_SetCellHeight(0x1f00000, 0x1500000, 0, 0);
   }
   if ((Event_GetFlag(0xa84)) != 0) {
-    Actor_SetPosition(13, 0x2e80000, 0x1c80000);
+    Actor_SetPosition(13, 744, 456);
   }
   if ((Event_GetFlag(0xa85)) == 0)
     goto L_0200a2c6;
@@ -1524,17 +1513,17 @@ L_0200a1b4:
   t78 = FIELD_AT(((s32)Actor_Get(12)), s16, 10);
   t80 = FIELD_AT(((s32)Actor_Get(12)), s16, 18);
   v_r5 = (t78 << 16);
-  Actor_SetPosition(13, v_r5, (t80 << 16));
+  Actor_SetPositionFixed(13, v_r5, (t80 << 16));
 L_0200a2b8:
-  Actor_SetPosition(12, 0x2d80000, 0x1d80000);
+  Actor_SetPosition(12, 728, 472);
 L_0200a2c6:
   Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036ea);
   goto L_0200a6e6;
 L_0200a2ce:
-  if (v_r1 != (s32)&SceneId_Ov6B0Room4)
+  if (v_r1 != (s32)&SceneId_AnemosInnerSanctum4)
     goto L_0200a52c;
   if ((Event_GetFlag(0xa86)) != 0) {
-    Actor_SetPosition(9, 0x1080000, 0x1680000);
+    Actor_SetPosition(9, 264, 360);
   }
   Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036f6);
   v_r3 = (FIELD_AT(v_r6, u16, 482));
@@ -1542,7 +1531,7 @@ L_0200a2ce:
   if (v_r2 != 1)
     goto L_0200a4a2;
   CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
-  v_r5 = (Event_GetFlag(0x304));
+  v_r5 = (Event_GetFlag(FLAG_AREA_TEMP_04));
   if (v_r5 == 0) {
     t91 = FIELD_AT(v_r6, s32, 532);
     t92 = Actor_Get(t91);
@@ -1554,37 +1543,37 @@ L_0200a2ce:
     goto L_0200a3a8;
   }
   Actor_SetPosition(8, 0, 0);
-  Event_SetFlag(0x200);
-  Event_SetFlag(0x201);
-  Event_SetFlag(0x202);
-  Event_SetFlag(0x203);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
+  Event_SetFlag(FLAG_SCENE_TEMP_02);
+  Event_SetFlag(FLAG_SCENE_TEMP_03);
   Event_SetFlag(v_r7);
-  Event_SetFlag(0x205);
-  Event_SetFlag(0x206);
+  Event_SetFlag(FLAG_SCENE_TEMP_05);
+  Event_SetFlag(FLAG_SCENE_TEMP_06);
 L_0200a3a8:
-  if ((Event_GetFlag(0x207)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_07)) != 0) {
     t106 = Actor_Get(8);
     t106->motionFlags = 4;
   }
-  if ((Event_GetFlag(0x200)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_00)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 8, 69, 1, 1);
   }
-  if ((Event_GetFlag(0x205)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_05)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 6, 71, 1, 1);
   }
-  if ((Event_GetFlag(0x201)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_01)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 5, 75, 1, 1);
   }
-  if ((Event_GetFlag(0x202)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_02)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 8, 75, 1, 1);
   }
-  if ((Event_GetFlag(0x203)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_03)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 11, 75, 1, 1);
   }
-  if ((Event_GetFlag(0x204)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_04)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 8, 73, 1, 1);
   }
-  if ((Event_GetFlag(0x206)) == 0)
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_06)) == 0)
     goto L_0200a6e6;
   MapGrid_CopyCellsTo(17, 71, 10, 71, 1, 1);
   goto L_0200a6e6;
@@ -1599,7 +1588,7 @@ L_0200a4a2:
   CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
   if ((Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) != 0)
     goto L_0200a6e6;
-  CrackedTile_PlaceLanding(36, -0x24, v_r7);
+  CrackedTile_PlaceLanding(36, -36, v_r7);
   goto L_0200a6e6;
 L_0200a4f4:
   if ((u32)((v_r3 - 4) << 16) > (u32)0x10000)
@@ -1607,7 +1596,7 @@ L_0200a4f4:
   CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
   goto L_0200a6e6;
 L_0200a52c:
-  if (v_r1 != (s32)&SceneId_Ov6B0Room5)
+  if (v_r1 != (s32)&SceneId_AnemosInnerSanctum5)
     goto L_0200a6e6;
   v_r5 = FIELD_AT(v_r2, s32, 32);
   v_r3 = ((FIELD_AT(v_r6, s16, 482)) - 1);
@@ -1640,7 +1629,7 @@ L_0200a52c:
     goto L_0200a596;
   }
 L_0200a580:
-  if ((Event_GetFlag(0x304)) != 0)
+  if ((Event_GetFlag(FLAG_AREA_TEMP_04)) != 0)
     goto L_0200a596;
   Actor_SetPosition(11, 0, 0);
 L_0200a596:
@@ -1649,10 +1638,9 @@ L_0200a596:
   FIELD_AT(((s32)Actor_Get(11)), u8, 85) = 0;
   FIELD_AT(((s32)Actor_Get(11)), u8, 35) |= 128;
   Actor_SetAnimation(11, 2);
-  /* FAKEMATCH(dead): v_r6 set again to the address it already holds; without
-   * it, 4 of 913 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): v_r6 set again to the address it already holds. */
   v_r6 = (s32)&gMainRoutineWork;
-  if ((Event_GetFlag(0x304)) != 0)
+  if ((Event_GetFlag(FLAG_AREA_TEMP_04)) != 0)
     goto L_0200a5fa;
   if ((FIELD_AT(v_r6, s16, 482)) != 12)
     goto L_0200a5fa;
@@ -1662,7 +1650,7 @@ L_0200a5fa:
   FIELD_AT(((s32)Actor_Get(11)), s32, 12) = 0xfff00000;
   goto L_0200a6e6;
 L_0200a606:
-  if ((Event_GetFlag(0x301)) != 0) {
+  if ((Event_GetFlag(FLAG_AREA_TEMP_01)) != 0) {
     v_r2 = 240;
     v_r0 = 8;
     v_r1 = 0x780000;
@@ -1673,14 +1661,14 @@ L_0200a606:
   v_r0 = 0xb80000;
   goto L_0200a67a;
 L_0200a63a:
-  if ((Event_GetFlag(0x302)) == 0)
+  if ((Event_GetFlag(FLAG_AREA_TEMP_02)) == 0)
     goto L_0200a660;
   v_r2 = 240;
   v_r0 = 9;
   v_r1 = 0x2280000;
 L_0200a650:
-  Actor_SetPosition(v_r0, v_r1, (v_r2 << 15));
-  Event_SetFlag(0x200);
+  Actor_SetPositionFixed(v_r0, v_r1, (v_r2 << 15));
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   goto L_0200a6e6;
 L_0200a660:
   MapGrid_CopyCellsTo(18, 1, 26, 4, 1, 2);
@@ -1690,9 +1678,9 @@ L_0200a67a:
   MapGrid_SetCellHeight(v_r0, (v_r1 << 15), 0, 2);
   goto L_0200a6e6;
 L_0200a686:
-  if ((Event_GetFlag(0x303)) != 0) {
-    Actor_SetPosition(10, 0x3180000, 0x780000);
-    Event_SetFlag(0x200);
+  if ((Event_GetFlag(FLAG_AREA_TEMP_03)) != 0) {
+    Actor_SetPosition(10, 792, 120);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
     goto L_0200a6d0;
   }
   MapGrid_CopyCellsTo(18, 1, 53, 4, 1, 2);
@@ -1805,14 +1793,14 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map/cell_sprite.c"
 
-DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
+#include "shared/cracked_tiles_find.h"
 
 void Leader_CenterInCell(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
 
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
 
   x >>= 20;
   z >>= 20;
@@ -1822,7 +1810,7 @@ void Leader_CenterInCell(void) {
   FieldActor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                        (z << 20) + 0x80000);
   FieldEvent_Wait(4);
-  FieldCamera_GetActor()->y -= 0x80000;
+  FieldCamera_GetActor()->y -= px(8);
 }
 
 // Map_CopyCellsRect through this overlay's import.
@@ -1831,7 +1819,7 @@ void Leader_CenterInCell(void) {
 // the table's source cell over the leader's, keeping the source column's and
 // row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 // one of the table's cells.
-DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+#include "shared/cracked_tile_crack.h"
 
 void CrackedTile_Fall(struct PushEvent *event) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1847,7 +1835,7 @@ void CrackedTile_Fall(struct PushEvent *event) {
   z = object->z >> 20;
   z |= (s16)(event->z & mask);
   Leader_CenterInCell();
-  Sound_Play(229);
+  Sound_Play(SE_SPLASH);
   Map_CopyCellsRect(event->x, event->z + 2, 1, 1, x, z);
   Event_Wait(12);
   {
@@ -1870,7 +1858,7 @@ void CrackedTile_Fall(struct PushEvent *event) {
   Event_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
-      Sound_Play(204);
+      Sound_Play(SE_DUST_PUFF);
     object->scaleX += -0x400;
     object->scaleY += -0x300;
     object->y += -0x9999;
@@ -1909,17 +1897,17 @@ void CrackedTile_DropIn(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y = 0x820000;
-  actor->gravity = 0x8000;
+  actor->y = px(130);
+  actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -1927,9 +1915,6 @@ void CrackedTile_DropIn(void) {
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   i = 0;
-  // A goto loop carries no loop notes: as a do-while loop, loop.c moves the
-  // velocity array's address out of the loop and 4 of 169 instructions differ
-  // in tla-en (10 as a for or while loop).
 loop:
   {
     s32 angle;
@@ -1939,9 +1924,7 @@ loop:
     angle = i << 12;
     cosine = Trig_Cos(angle);
     /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
-     * partial redundancy pass, so that pass leaves the velocity array's
-     * address in the loop, built after the cosine call as the native has it;
-     * as the plain body, 4 of 169 instructions differ in tla-en. */
+     * partial redundancy pass. */
     if (spawn) {
       velocity[0] = cosine;
       velocity[1] = 0;
@@ -1956,15 +1939,17 @@ loop:
   }
   if (i <= 16)
     goto loop;
-  Event_PlaySound(188);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Event_PlaySound(SE_THUMP);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
-  actor->gravity = 0x10000;
-  actor->bounce = 0x4000;
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  actor->gravity = px(1);
+  actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Event_End();
@@ -1972,22 +1957,18 @@ loop:
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s2f48): routine CrackedTile_Fall as this part declared it; the joined
- * file has another; tried as the definition's
- * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
- * CrackedTile_Fall(struct PushEvent *event), which the object already declares,
- * it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:1955: too many arguments to
- * function `CrackedTile_Fall'. */
+ * file has another; tried as the definition's void CrackedTile_Fall(struct
+ * PushEvent *event), which the object already declares, it does not compile in
+ * tla-ja: games/tla/src/scene/shared/cracked_tiles_step.h:23: too many
+ * arguments to function `CrackedTile_Fall'. */
 void CrackedTile_Fall__s2f48(
     struct CellTarget *work,
     struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
 #define CrackedTile_Fall CrackedTile_Fall__s2f48
 
-DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                          CrackedTile_Fall)
+#include "shared/cracked_tiles_step.h"
 
-DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                  CrackedTile_DropIn)
+#include "shared/cracked_tile_place_landing.h"
 
 extern u32 gData_0200378c[];
 extern u32 gData_020037c8[];
@@ -2015,7 +1996,12 @@ s32 gData_02003574[] = {
     0, 20, 38, 17,
 };
 
-DEFINE_G_DATA_02003584(gData_02003584, Func_02000660, 38, 17)
+s32 gData_02003584[] = {                                                               
+      46,                                                                      
+      (s32)Func_02000660,                                                              
+      38,                                                                      
+      17,                                                                      
+  };
 
 s32 gData_02003594[] = {
     0x80010000, 23, 9, 0xffffe667, 23, 10,
@@ -2126,11 +2112,14 @@ s16 gData_02003888[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-DEFINE_G_DATA_020013B4(gData_020038b4, 94, 89, 90, 91, 92, 93)
+u16 gData_020038b4[] = {                                                               
+      94, 89, 90, 91, 92, 93, 93, 94, 89, 90, 91, 92, 92, 93, 94, 89, 90, 91,  
+      91, 92, 93, 94, 89, 90, 90, 91, 92, 93, 94, 89, 89, 90, 91, 92, 93, 94,  
+  };
 
 s32 gData_020038fc[] = {
     46,
-    (s32)Func_02000654,
+    (s32)AnemosInnerSanctum_ClearScriptedActorSpriteFlags,
     17,
 };
 
@@ -2140,72 +2129,72 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(303),
-    SCENE_EXIT_IF(1, 308, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 307, 10, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(99, 236, 99, CONDITION_ALWAYS),
-    SCENE_EXITS(304),
-    SCENE_EXIT_IF(1, 304, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 304, 12, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 304, 17, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 305, 8, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 304, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 307, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 304, 13, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 307, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 304, 15, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(10, 304, 14, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(11, 304, 18, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(12, 304, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(13, 304, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(14, 304, 10, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(15, 304, 9, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(16, 307, 9, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(17, 304, 3, CONDITION_ALWAYS),
-    SCENE_EXITS(305),
-    SCENE_EXIT_IF(1, 305, 13, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 306, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 305, 14, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 305, 15, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 305, 10, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 307, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 306, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 304, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 306, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(10, 305, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(11, 305, 17, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(12, 307, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(13, 305, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(14, 305, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(15, 305, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(16, 307, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(17, 305, 11, CONDITION_ALWAYS),
-    SCENE_EXITS(306),
-    SCENE_EXIT_IF(1, 305, 9, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 305, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 306, 9, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 306, 8, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 308, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 307, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 305, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 306, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 306, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(10, 307, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(11, 306, 11, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(12, 306, 12, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(13, 307, 12, CONDITION_ALWAYS),
-    SCENE_EXITS(307),
-    SCENE_EXIT_IF(1, 304, 8, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 304, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 305, 16, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 305, 12, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 306, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 306, 10, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 305, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 307, 11, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 304, 16, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(10, 303, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(11, 307, 8, CONDITION_ALWAYS),
+    SCENE_EXITS(AnemosInnerSanctum1),
+    SCENE_EXIT_UNLESS(1, AnemosInnerSanctumEntrance, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AnemosInnerSanctum5, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(99, Contigo1, 99, EXIT_FLAG_NONE),
+    SCENE_EXITS(AnemosInnerSanctum2),
+    SCENE_EXIT_UNLESS(1, AnemosInnerSanctum2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AnemosInnerSanctum2, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AnemosInnerSanctum2, 17, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AnemosInnerSanctum3, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AnemosInnerSanctum2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AnemosInnerSanctum5, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AnemosInnerSanctum2, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AnemosInnerSanctum5, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AnemosInnerSanctum2, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, AnemosInnerSanctum2, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, AnemosInnerSanctum2, 18, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, AnemosInnerSanctum2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, AnemosInnerSanctum2, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, AnemosInnerSanctum2, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, AnemosInnerSanctum2, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, AnemosInnerSanctum5, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(17, AnemosInnerSanctum2, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(AnemosInnerSanctum3),
+    SCENE_EXIT_UNLESS(1, AnemosInnerSanctum3, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AnemosInnerSanctum4, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AnemosInnerSanctum3, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AnemosInnerSanctum3, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AnemosInnerSanctum3, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AnemosInnerSanctum5, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AnemosInnerSanctum4, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AnemosInnerSanctum2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AnemosInnerSanctum4, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, AnemosInnerSanctum3, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, AnemosInnerSanctum3, 17, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, AnemosInnerSanctum5, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, AnemosInnerSanctum3, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, AnemosInnerSanctum3, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, AnemosInnerSanctum3, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, AnemosInnerSanctum5, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(17, AnemosInnerSanctum3, 11, EXIT_FLAG_NONE),
+    SCENE_EXITS(AnemosInnerSanctum4),
+    SCENE_EXIT_UNLESS(1, AnemosInnerSanctum3, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AnemosInnerSanctum3, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AnemosInnerSanctum4, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AnemosInnerSanctum4, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AnemosInnerSanctumEntrance, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AnemosInnerSanctum5, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AnemosInnerSanctum3, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AnemosInnerSanctum4, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AnemosInnerSanctum4, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, AnemosInnerSanctum5, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, AnemosInnerSanctum4, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, AnemosInnerSanctum4, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, AnemosInnerSanctum5, 12, EXIT_FLAG_NONE),
+    SCENE_EXITS(AnemosInnerSanctum5),
+    SCENE_EXIT_UNLESS(1, AnemosInnerSanctum2, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AnemosInnerSanctum2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AnemosInnerSanctum3, 16, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AnemosInnerSanctum3, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AnemosInnerSanctum4, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AnemosInnerSanctum4, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AnemosInnerSanctum3, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AnemosInnerSanctum5, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AnemosInnerSanctum2, 16, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, AnemosInnerSanctum1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, AnemosInnerSanctum5, 8, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -2235,18 +2224,20 @@ struct ActorPlacement gAnemosInnerSanctum_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02003C88(gAnemosInnerSanctum_Room4Placements, 0xffff01b0, gData_020038fc, 3, 0x202c000,
-    7, 4, 0xffff0110, 5, 0x202c000)
+s32 gAnemosInnerSanctum_Room4Placements[] = {                                                               
+      (s32)0xffff01b0, (s32)gData_020038fc, 3, 0, 0, 0x202c000, (s32)0xffff0110, 7, 4, 0, 0, 0x202c000,    
+      (s32)0xffff0110, 7,         5, 0, 0, 0x202c000, 0xffff,          0,  0,  0, 0, 0,     
+  };
 
 struct ActorPlacement gAnemosInnerSanctum_Room5Placements[] = {
     {431, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
     {431, CONDITION_ALWAYS, 7, 0x2, 0, 0, FACING_NORTH, 2, 2},
     {431, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
     {432, CONDITION_ALWAYS, (s32)gData_020038fc, 0x4, 0, 0, FACING_NORTH, 2, 2},
-    {429, CONDITION_ALWAYS, (s32)gData_020038fc, PIXELS(584), 0, PIXELS(582), FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_020038fc, PIXELS(584), 0, PIXELS(630), FACING_WEST, 1, 1},
-    {429, CONDITION_ALWAYS, (s32)gData_020038fc, PIXELS(680), 0, PIXELS(582), FACING_EAST, 1, 1},
-    {429, CONDITION_ALWAYS, (s32)gData_020038fc, PIXELS(680), 0, PIXELS(630), FACING_EAST, 1, 1},
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_020038fc, 584, 0, 582, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_020038fc, 584, 0, 630, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_020038fc, 680, 0, 582, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_020038fc, 680, 0, 630, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
     {SCENE_TABLE_END},
 };
 
@@ -2262,26 +2253,26 @@ struct Trigger gAnemosInnerSanctum_Room1Triggers[] = {
     {TRIGGER_STEP, 51, 0x200, EVENT(Func_02000ac8)},
     {TRIGGER_STEP, 52, 0x200, EVENT(Func_02000ac8)},
     {TRIGGER_STEP, 53, 0x200, EVENT(Func_02000ac8)},
-    {0x9c05, 30, CONDITION_ALWAYS, EVENT(Func_02001c60)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30, CONDITION_ALWAYS, EVENT(Func_02001c60)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAnemosInnerSanctum_Room2Triggers[] = {
-    {0x31, 1, CONDITION_ALWAYS, 1},
-    {0x31, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0x31, 4, CONDITION_ALWAYS, 4},
-    {0x21, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {0x21, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {0x21, 16, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_STEP, 11, IF_FLAG_SET(0x207), EVENT(Func_02001518)},
     {TRIGGER_STEP, 50, 0x200, EVENT(Func_02001398)},
@@ -2291,24 +2282,24 @@ struct Trigger gAnemosInnerSanctum_Room2Triggers[] = {
     {TRIGGER_STEP, 54, 0x204, EVENT(Func_02001398)},
     {TRIGGER_STEP, 55, 0x205, EVENT(Func_02001398)},
     {TRIGGER_STEP, 56, 0x206, EVENT(Func_02001398)},
-    {0x8, 0, CONDITION_ALWAYS, EVENT(Func_0200109c)},
-    {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0xa80, EVENT(Func_0200109c)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_0200109c)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02001160)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0xa80, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa80, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 10, 0xa81, EVENT(Func_0200109c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0xa81, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa81, EVENT(Func_02001160)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAnemosInnerSanctum_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x31, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {0x21, 6, CONDITION_ALWAYS, 6},
-    {0x31, 7, CONDITION_ALWAYS, 7},
-    {0x21, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
@@ -2323,31 +2314,31 @@ struct Trigger gAnemosInnerSanctum_Room3Triggers[] = {
     {TRIGGER_STEP, 50, 0x200, EVENT(Func_02001660)},
     {TRIGGER_STEP, 51, IF_FLAG_SET(0x200), EVENT(Func_020016fc)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 9, CONDITION_ALWAYS, 0},
-    {0x8, 0, CONDITION_ALWAYS, EVENT(Func_0200109c)},
-    {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0xa82, EVENT(Func_0200109c)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_0200109c)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02001160)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0xa82, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa82, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 10, 0xa83, EVENT(Func_0200109c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0xa83, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa83, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 11, CONDITION_ALWAYS, EVENT(Func_0200109c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 12, 0xa85, EVENT(Func_0200109c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0xa85, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0xa85, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 13, 0xa84, EVENT(Func_0200109c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, 0xa84, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0xa84, EVENT(Func_02001160)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAnemosInnerSanctum_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x21, 2, CONDITION_ALWAYS, 2},
-    {0x21, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {0x21, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {0x31, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_STEP, 11, IF_FLAG_SET(0x207), EVENT(Func_02001518)},
     {TRIGGER_STEP, 50, 0x200, EVENT(Func_02001398)},
@@ -2363,11 +2354,11 @@ struct Trigger gAnemosInnerSanctum_Room4Triggers[] = {
     {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(Func_020017a0)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02001614)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
-    {0x8, 0, CONDITION_ALWAYS, EVENT(Func_0200109c)},
-    {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 9, 0xa86, EVENT(Func_0200109c)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_0200109c)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02001160)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0xa86, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa86, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 10, CONDITION_ALWAYS, EVENT(Func_0200109c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02001160)},
     {TRIGGER_TABLE_END},
 };
@@ -2379,9 +2370,9 @@ struct Trigger gAnemosInnerSanctum_Room5Triggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {0x31, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {0x31, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_STEP, 50, 0x200, EVENT(Func_02001938)},

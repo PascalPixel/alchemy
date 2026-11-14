@@ -7,6 +7,7 @@
 #include "module/tla.h"
 #include "module/window/screens.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
@@ -427,7 +428,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
     if (palette->slot[index] == 255) {
       palette->slot[index] = palette->count;
       if (palette->count < 64) {
-        ((u16 *)0x05000000)[palette->count] = ((u16 *)0x05000200)[index];
+        ((u16 *)BG_PLTT)[palette->count] = ((u16 *)OBJ_PLTT)[index];
         palette->count++;
       }
     }
@@ -456,8 +457,8 @@ void BattleCommandRow_LoadIcon(u8 *base, s32 index, u32 value) {
                                  index * 16);
   store_offset = offset + 0x11C;
   *(u32 *)(base + store_offset) = value;
-  // The sprite's shape and its cleared attributes 2 and 3 in a once-only
-  // block; as plain stores, 4 of 47 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the sprite's shape and its cleared attributes 2 and 3 in a
+   * once-only block. */
   do {
     *(u32 *)(entry + 4) = 0x80002000;
     *(u32 *)(entry + 8) = 0;

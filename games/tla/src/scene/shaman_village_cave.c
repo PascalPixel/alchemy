@@ -4,6 +4,8 @@
 /// the party, and in a linked game the three gladiators from Colosso.
 
 #include "battle/battle.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -113,7 +115,7 @@ void ShamanVillageCave_FinishMovingPillar(s32 unused, s32 id) {
 void ShamanVillageCave_FreezePuddle(void) {
   struct Actor *object = Actor_Get(16);
 
-  Event_SetFlag(0x302);
+  Event_SetFlag(FLAG_AREA_TEMP_02);
   object->motionFlags = 0;
   object->priorityFlags = 0;
   MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
@@ -146,8 +148,8 @@ void ShamanVillageCave_EddyFlees(void) {
   dz = -1;
   if (leaderZ <= 95)
     dz = 1;
-  if (dz == 1 && Event_GetFlag(514) != 0) {
-    if (Event_GetFlag(516) != 0)
+  if (dz == 1 && Event_GetFlag(FLAG_SCENE_TEMP_02) != 0) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_04) != 0)
       return;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -160,16 +162,17 @@ void ShamanVillageCave_EddyFlees(void) {
     Actor_SetDestinationOffset(17, -8, 0);
     FieldActor_WaitForMoveById(17);
     FieldActor_Jump(17, 4, 20);
-    Actor_SetAttachedEffect(17, 258);
+    Actor_SetAttachedEffect(17,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldEvent_Wait(30);
     Actor_GetById(17)->actionFlags &= ~1;
     Actor_WalkBy(17, 8, 0);
     FieldActor_WaitForMoveById(17);
     FieldEvent_Wait(30);
-    Actor_ShowEmote(17, 258, 0);
+    Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     FieldEvent_Wait(30);
     Event_End();
-    Event_SetFlag(516);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
     return;
   }
   Event_Start();
@@ -181,7 +184,7 @@ void ShamanVillageCave_EddyFlees(void) {
   Actor_SetDestinationOffset(17, dx << 4, 0);
   FieldActor_WaitForMoveById(17);
   Actor_SetDestinationOffset(17, dx * 48, 0);
-  object->velocityY = 0x80000;
+  object->velocityY = px(8);
   dz = -dz;
   FieldActor_WaitForMoveById(17);
   Actor_SetDestinationOffset(17, 0, dz);
@@ -191,8 +194,8 @@ void ShamanVillageCave_EddyFlees(void) {
 
 /// Talking to Eddy, the Mercury Djinni, starts its battle.
 void ShamanVillageCave_FightEddy(void) {
-  Event_SetFlag(0x205);
-  Event_SetFlag(0x206);
+  Event_SetFlag(FLAG_SCENE_TEMP_05);
+  Event_SetFlag(FLAG_SCENE_TEMP_06);
   Event_RequestDjinnBattle(17, 35);
 }
 
@@ -209,22 +212,22 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 /// Lift raises one of the four rocks (actors 11 to 14), each for good.
 void ShamanVillageCave_LiftFirstRock(void) {
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   return;
 }
 
 void ShamanVillageCave_LiftSecondRock(void) {
-  Event_SetFlag(0x201);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
   return;
 }
 
 void ShamanVillageCave_LiftThirdRock(void) {
-  Event_SetFlag(0x202);
+  Event_SetFlag(FLAG_SCENE_TEMP_02);
   return;
 }
 
 void ShamanVillageCave_LiftFourthRock(void) {
-  Event_SetFlag(0x203);
+  Event_SetFlag(FLAG_SCENE_TEMP_03);
   return;
 }
 
@@ -250,9 +253,9 @@ void ShamanVillageCave_PlaceGladiators(void) {
   s32 angle;
 
   angle = 0x5000;
-  Actor_SetPositionAndFacing(19, PIXELS(231), PIXELS(199), angle);
-  Actor_SetPositionAndFacing(20, PIXELS(220), PIXELS(191), angle);
-  Actor_SetPositionAndFacing(21, PIXELS(204), PIXELS(191), angle);
+  Actor_SetPositionAndFacing(19, px(231), px(199), angle);
+  Actor_SetPositionAndFacing(20, px(220), px(191), angle);
+  Actor_SetPositionAndFacing(21, px(204), px(191), angle);
   return;
 }
 
@@ -260,16 +263,15 @@ void ShamanVillageCave_PlaceGladiators(void) {
 void ShamanVillageCave_PlaceGoldenShirt(void) {
   s32 angle;
 
-  FieldActor_ShowItemIconById(22, 0x190);
+  FieldActor_ShowItemIconById(22, ITEM_GOLDEN_SHIRT);
   angle = 0xc000;
-  Actor_SetPositionAndFacing(22, PIXELS(212), PIXELS(199), angle);
+  Actor_SetPositionAndFacing(22, px(212), px(199), angle);
   Event_SetFlag(0xa73);
   return;
 }
 
 /// The fighters from Colosso, after a linked game, find the party and challenge
 /// it.
-/// ★ Named from the game: "I found !" (MsgIFound2)
 void ShamanVillageCave_MeetColossoFans(void) {
   s32 angle;
 
@@ -297,38 +299,38 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_FaceDirection(18, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(0, 256, 0);
-  Actor_ShowEmote(18, 256, 0);
-  Actor_ShowEmote(4, 256, 40);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(177), 1);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 177, 1);
   FieldCamera_WaitForArrival();
   angle = 0x4000;
-  Actor_SetPositionAndFacing(19, PIXELS(199), PIXELS(130), angle);
+  Actor_SetPositionAndFacing(19, px(199), px(130), angle);
   Actor_WalkTo(19, 231, 199);
   FieldEvent_Wait(20);
-  Actor_SetPositionAndFacing(20, PIXELS(199), PIXELS(130), angle);
+  Actor_SetPositionAndFacing(20, px(199), px(130), angle);
   Actor_WalkTo(20, 220, 191);
   FieldEvent_Wait(20);
-  Actor_SetPositionAndFacing(21, PIXELS(199), PIXELS(130), angle);
+  Actor_SetPositionAndFacing(21, px(199), px(130), angle);
   Actor_WalkTo(21, 204, 191);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(225), 1);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 225, 1);
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(19);
-  Actor_FaceDirection(19, 0x5000, 0);
+  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_WaitForMoveById(20);
-  Actor_FaceDirection(20, 0x5000, 0);
+  Actor_FaceDirection(20, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_WaitForMoveById(21);
-  Actor_FaceDirectionAndWait(21, 0x5000);
+  Actor_FaceDirectionAndWait(21, FACING_SOUTH_SOUTHWEST);
   Actor_RunRepeatedMotion(21, 2);
   FieldEvent_ShowMessageThenWait(21, 0, 5);
-  Actor_ShowEmote(18, 258, 30);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(18, 0, 5);
-  Actor_ShowEmote(19, 264, 30);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(19, 0, 5);
   Actor_RunRepeatedMotion(20, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(20, 0, 5);
-  Actor_ShowEmote(21, 263, 30);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(0, 3);
@@ -339,9 +341,9 @@ void ShamanVillageCave_MeetColossoFans(void) {
   FieldEvent_ShowMessageThenWait(19, 0, 5);
   Actor_FaceEachOther(18, 4, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(0, 257, 30);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
-  Actor_ShowEmote(20, 263, 30);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(20, 0, 5);
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTHEAST);
@@ -350,22 +352,22 @@ void ShamanVillageCave_MeetColossoFans(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(21, 4);
   FieldEvent_ShowMessageThenWait(21, 0, 5);
-  Actor_ShowEmote(18, 265, 30);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(18, 0, 5);
   Actor_SetAnimation(21, 4);
   Actor_SetAnimation(19, 4);
   Actor_SetAnimationAndWait(20, 4);
   FieldEvent_ShowMessageThenWait(19, 0, 5);
-  Actor_ShowEmote(4, 256, 0);
-  Actor_ShowEmote(18, 256, 30);
-  Actor_ShowEmote(0, 258, 30);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   Actor_FaceEachOther(20, 21, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(20, 263, 30);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(20, 0, 5);
-  Actor_FaceDirection(20, 0x5000, 0);
-  Actor_FaceDirection(21, 0x5000, 0);
+  Actor_FaceDirection(20, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(21, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTHEAST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(18, 4);
@@ -377,13 +379,12 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Actor_SetDestinationOffset(19, -16, 24);
   FieldActor_WaitForMoveById(19);
   /* FAKEMATCH(dead): the once-only block loads gMainRoutineWork before its
-   * offset is built; as the plain store, 4 of 408 instructions differ in
-   * tla-en. */
+   * offset is built. */
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
-  Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_ShamanVillageCave, 20);
+  Event_SetDefeatDestination((s32)&SceneId_ShamanVillageCave, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
 }
 
@@ -396,13 +397,12 @@ void ShamanVillageCave_FightGladiators(void) {
 
     party->battleRule24b = 2;
     /* FAKEMATCH(dead): the empty once-only block's loop note ends the
-     * scheduling block after the store; without it, 4 of 22 instructions
-     * differ in tla-en (the scene id is loaded before the store). */
+     * scheduling block after the store. */
     do {
     } while (0);
   }
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
-  Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_ShamanVillageCave, 20);
+  Event_SetDefeatDestination((s32)&SceneId_ShamanVillageCave, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
 }
 
@@ -415,21 +415,19 @@ void Event_SetDestination();
     } *)Ram_HeapSlots->eventWork)                                              \
        ->message)
 
-/// ★ Named from the game: "Hey, these guys aren't very strong at all!"
-/// (MsgHeyTheseGuys)
 void ShamanVillageCave_LoseToColossoFans(void) {
   s32 angle = 0xa000;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(273), 0);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
-  Actor_SetPositionAndFacing(4, PIXELS(184), PIXELS(229), angle);
-  Actor_SetPositionAndFacing(0, PIXELS(200), PIXELS(221), angle);
+  Actor_SetPositionAndFacing(4, px(184), px(229), angle);
+  Actor_SetPositionAndFacing(0, px(200), px(221), angle);
   {
     s32 turn = 0xc000;
 
-    Actor_SetPositionAndFacing(18, PIXELS(218), PIXELS(320), turn);
+    Actor_SetPositionAndFacing(18, px(218), px(320), turn);
   }
   Actor_SetAnimation(4, 19);
   Actor_SetAnimation(0, 39);
@@ -437,9 +435,9 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   Event_WaitTransitionFrames();
   Actor_RunRepeatedMotion(21, 2);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(21, 263, 30);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(21, 0, 5);
-  Actor_ShowEmote(19, 263, 30);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_OpenMessage(19, 0);
   if (EventYesNo_Ask(1) == 0) {
     Message_CloseFinishedWindows();
@@ -455,10 +453,10 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   Actor_SetAnimationAndWait(19, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(19, 0, 5);
-  FieldCamera_SetSpeed(0x8000, 0x1000);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(373), 1);
+  FieldCamera_SetSpeed(0.5);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 373, 1);
   FieldEvent_Wait(100);
-  Actor_ShowEmote(18, 261, 1);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 1);
   FieldEvent_Wait(20);
   Event_SetDestination((s16)gMainRoutineWork.savedScene,
                        (s16)gMainRoutineWork.savedEntrance);
@@ -473,7 +471,6 @@ void ShamanVillageCave_LoseToColossoFans(void) {
       ->value = 0;
 }
 
-/// ★ Named from the game: "These guys were phenomenal!" (MsgTheseGuysWere)
 void ShamanVillageCave_BeatColossoFans(void) {
   s16 *target;
   s32 angle = 0xe000;
@@ -482,11 +479,11 @@ void ShamanVillageCave_BeatColossoFans(void) {
   Event_SetFlag(0xa72);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(273), 0);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgTheseGuysWere);
-  Actor_SetPositionAndFacing(4, PIXELS(184), PIXELS(229), angle);
-  Actor_SetPositionAndFacing(0, PIXELS(200), PIXELS(221), angle);
-  Actor_SetPositionAndFacing(18, PIXELS(208), PIXELS(237), angle);
+  Actor_SetPositionAndFacing(4, px(184), px(229), angle);
+  Actor_SetPositionAndFacing(0, px(200), px(221), angle);
+  Actor_SetPositionAndFacing(18, px(208), px(237), angle);
   Actor_SetAnimation(20, 8);
   Actor_SetAnimation(19, 8);
   Actor_SetAnimation(21, 8);
@@ -497,17 +494,17 @@ void ShamanVillageCave_BeatColossoFans(void) {
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   FieldEvent_ShowMessageThenWait(19, 0, 5);
   FieldEvent_ShowMessageThenWait(20, 0, 5);
-  Actor_ShowEmote(19, 258, 0);
-  Actor_ShowEmote(21, 258, 30);
-  Actor_ShowEmote(0, 263, 30);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   Actor_SetAnimationAndWait(21, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(21, 0, 5);
-  Actor_ShowEmote(19, 265, 30);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_OpenMessage(19, 0);
   while (FieldEvent_AskYesNoWithActorAnimation(0, 0) != 0) {
-    Actor_ShowEmote(19, 258, 30);
+    Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_OpenMessage(20, 0);
     EVENT_MESSAGE--;
   }
@@ -522,16 +519,16 @@ void ShamanVillageCave_BeatColossoFans(void) {
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   ShamanVillageCave_PlaceGoldenShirt();
   FieldEvent_Wait(60);
-  Actor_ShowEmote(0, 257, 30);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_SetAnimationAndWait(19, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(19, 0, 5);
   Actor_FaceDirectionAndWait(0, FACING_SOUTH);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(20, 264, 30);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceDirection(0, FACING_NORTHEAST, 0);
   FieldEvent_ShowMessageThenWait(20, 0, 5);
-  Actor_ShowEmote(21, 265, 30);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_SetAnimationAndWait(19, 3);
   FieldEvent_Wait(10);
@@ -543,9 +540,9 @@ void ShamanVillageCave_BeatColossoFans(void) {
   Actor_SetAnimation(4, 3);
   Actor_SetAnimationAndWait(18, 3);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(19, 0x10000, 0x8000);
-  Actor_SetSpeed(20, 0x10000, 0x8000);
-  Actor_SetSpeed(21, 0x10000, 0x8000);
+  Actor_SetSpeed(19, 1);
+  Actor_SetSpeed(20, 1);
+  Actor_SetSpeed(21, 1);
   Actor_SetScript(19, gShamanVillageCave_GladiatorLeaves);
   FieldEvent_Wait(20);
   Actor_SetScript(20, gShamanVillageCave_GladiatorFollowsOut);
@@ -595,7 +592,7 @@ next:
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(5);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(work->value154);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -612,19 +609,19 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(0x9aa))
     Actor_SetPosition(10, 0, 0);
   if (Event_GetFlag(83) || Event_GetFlag(163))
-    Event_SetFlag(0x205);
+    Event_SetFlag(FLAG_SCENE_TEMP_05);
   if (Event_GetFlag(0x9a8)) {
     object = Actor_Get(15);
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->x = 0x2680000;
+    object->x = px(616);
     object->y = 0;
     Actor_SetSpriteFlags(object, 0);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, 38, 19);
   }
   Actor_SetSpriteFlags(Actor_Get(16), 0);
   Actor_SetAnimation(16, 1);
-  if (Event_GetFlag(770)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
     object = Actor_Get(16);
     Actor_SetAnimation(16, 5);
     FieldActor_SetSpriteColor(Actor_Get(16), 0);
@@ -633,18 +630,20 @@ s32 Scene_Initialize(void) {
     object->y = 0;
     MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
   }
-  if (Event_GetFlag(518))
-    Actor_SetPosition(17, PIXELS(328), PIXELS(792));
+  if (Event_GetFlag(FLAG_SCENE_TEMP_06))
+    Actor_SetPosition(17, 328, 792);
   FieldActor_SetSpriteColor(Actor_Get(19), 1);
   FieldActor_SetSpriteColor(Actor_Get(20), 0);
   FieldActor_SetSpriteColor(Actor_Get(21), 2);
-  if ((!Event_GetFlag(265) &&
+  if ((!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
        (gMainRoutineWork.entrance == 20 || gMainRoutineWork.entrance == 21)) ||
       Event_GetFlag(0xa71)) {
     ShamanVillageCave_PlaceGladiators();
-    if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 20) {
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
+        gMainRoutineWork.entrance == 20) {
       ShamanVillageCave_BeatColossoFans();
-    } else if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 21) {
+    } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
+               gMainRoutineWork.entrance == 21) {
       Event_SetFlag(0xa71);
       ShamanVillageCave_LoseToColossoFans();
     }
@@ -682,17 +681,17 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(240),
-    SCENE_EXIT_IF(1, 2, 56, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 240, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 240, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 240, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(5, 240, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(6, 240, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(7, 240, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(8, 240, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(9, 240, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(10, 2, 57, EXIT_FLAG_NONE),
+    SCENE_EXITS(ShamanVillageCave),
+    SCENE_EXIT_UNLESS(1, WorldMap, 56, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ShamanVillageCave, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ShamanVillageCave, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ShamanVillageCave, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ShamanVillageCave, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, ShamanVillageCave, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, ShamanVillageCave, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, ShamanVillageCave, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, ShamanVillageCave, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, WorldMap, 57, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -706,44 +705,41 @@ u32 gShamanVillageCave_Settle[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {307, CONDITION_ALWAYS, (s32)gShamanVillageCave_OvergrowthRests, PIXELS(40), 0, PIXELS(128),
-     FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gShamanVillageCave_OvergrowthRests, PIXELS(232), 0, PIXELS(608),
-     FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(808), FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(808), FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(792), FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(792), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gShamanVillageCave_Settle, PIXELS(584), 0, PIXELS(312),
-     FACING_NORTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(680), FACING_SOUTH, 2, 0},
-    {244, 0x53, 1, PIXELS(264), 0, PIXELS(760), FACING_SOUTH, 0, 0},
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {239, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {239, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {239, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
-    {0, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gShamanVillageCave_OvergrowthRests, 40, 0, 128, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gShamanVillageCave_OvergrowthRests, 232, 0, 608, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 808, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 808, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 792, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 792, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gShamanVillageCave_Settle, 584, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(244, 0x53, MOVEMENT_TYPE_STAND, 264, 0, 760, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(239, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(239, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(239, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc402, 2, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
-    {0xc402, 3, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
-    {0xc402, 4, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {0xc402, 8, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_STEP, 50, 0x205, EVENT(ShamanVillageCave_EddyFlees)},
-    {0x602, 41, 0x201, EVENT(ShamanVillageCave_JumpForward)},
-    {0x8602, 42, 0x201, EVENT(ShamanVillageCave_JumpForward)},
-    {0x602, 43, 0x202, EVENT(ShamanVillageCave_JumpForward)},
-    {0x8602, 44, 0x202, EVENT(ShamanVillageCave_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 41, 0x201, EVENT(ShamanVillageCave_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 42, 0x201, EVENT(ShamanVillageCave_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 43, 0x202, EVENT(ShamanVillageCave_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 44, 0x202, EVENT(ShamanVillageCave_JumpForward)},
     {TRIGGER_STEP, 100, 0xa70, EVENT(ShamanVillageCave_MeetColossoFans)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightEddy)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightGladiators)},
@@ -759,7 +755,7 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x302, EVENT(ShamanVillageCave_FreezePuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, 0x9a8, EVENT(ShamanVillageCave_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9a8, EVENT(ShamanVillageCave_FinishMovingPillar)},
-    {9, 0, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FinishMovingPillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FinishMovingPillar)},
     {TRIGGER_TABLE_END},
 };
 

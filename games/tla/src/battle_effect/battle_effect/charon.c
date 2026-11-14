@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 // A pair of 16.16 scales; the game keeps each start value in the rodata.
 struct ScalePair {
@@ -12,8 +15,8 @@ struct ScalePair {
 /* VIEW(f175f74): tag struct Particle as struct Particle__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:41100: structure has no member
- * named `timer'. */
+ * games/tla/src/battle_effect/battle_effect/charon.c:439: structure has no
+ * member named `timer'. */
 struct Particle__f175f74 {
   s32 x;
   s32 y;
@@ -27,8 +30,8 @@ struct Particle__f175f74 {
 /* VIEW(f175f74): tag struct SpriteObject as struct SpriteObject__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:40986: structure has no member
- * named `oamPriority'. */
+ * games/tla/src/battle_effect/battle_effect/charon.c:326: structure has no
+ * member named `oamPriority'. */
 struct SpriteObject__f175f74 {
   u16 unk00;
   u16 unk02;
@@ -55,8 +58,8 @@ struct ModelDesc {
 /* VIEW(f175f74): tag struct Model as struct Model__f175f74; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:41464: structure has no member
- * named `depth'. */
+ * games/tla/src/battle_effect/battle_effect/charon.c:801: structure has no
+ * member named `depth'. */
 struct Model__f175f74 {
   s32 kind;
   s32 unk04;
@@ -78,8 +81,8 @@ struct ActorPos {
 /* VIEW(f175f74): tag struct SummonWork as struct SummonWork__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:40934: structure has no member
- * named `transferMode'. */
+ * games/tla/src/battle_effect/battle_effect/charon.c:272: structure has no
+ * member named `transferMode'. */
 struct SummonWork__f175f74 {
   struct Particle__f175f74 drops[16];
   struct Particle__f175f74 members[16];
@@ -163,9 +166,9 @@ extern u8 gData_02014000[];
 #define OAM_BUFFER ((u32 *)gData_02014000)
 #define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
 #define PARTICLES ((struct Particle__f175f74 *)(Ram_MapCellBuffer + 0x4200))
-#define OBJ_VRAM ((u8 *)0x06010000)
+#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 #define BG_VRAM_A900 ((u8 *)0x0600a900)
-#define PLTT ((u16 *)0x05000000)
+#define PLTT ((u16 *)BG_PLTT)
 
 extern char ResourceId_AerialViewBackdrop;
 extern char ResourceId_CrimsonBeastTiles;
@@ -207,9 +210,8 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
  * *EffectSprite_Acquire(s32, s32, u32, u32); the definition has struct
  * EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value); tried as
  * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
- * s32 value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:41077: too many arguments to
- * function `EffectSprite_Acquire'. */
+ * s32 value), which the object already declares, BattleEffect_RunCharon moves:
+ * 1 of 4316 instructions in tla-ja. */
 extern struct SpriteObject__f175f74 *
 EffectSprite_Acquire__f175f74(s32, s32, u32,
                               u32) __asm__("EffectSprite_Acquire");
@@ -290,7 +292,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   scene = SYSTEM_WORK->scene;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT[0] = 0;
   PLTT[1] = 0;
   work->transferMode = 0;
@@ -305,7 +307,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   gBgScroll[1].x = 0;
   local264.value = 255;
   BattleActor_SpawnObjectsForListFar(&local264, 0);
-  REG_WININ = 0x2737;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = 240;
   wait(1);
   Palette_LoadBasicSpriteColors();
@@ -313,8 +317,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -20, -20);
   BattleEffect_WipeCanvas(1, 1);
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   blit = routine;
@@ -382,12 +386,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                              work->buffer + 0x1000, 1, 1);
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
   Iwram_CopyWords(PLTT, source, 128);
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_BG2X = 0x800;
   posX = 0;
   posZ = 0;
 
-  for (frame = 0; frame != 394 && !(gInput.repeat & 3); frame++) {
+  for (frame = 0; frame != 394 && !(gInput.repeat & (KEY_A | KEY_B)); frame++) {
     u8 *order = REVEAL_BUFFER + (frame - 244) * 2;
 
     t = frame - 32;
@@ -398,47 +402,46 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       Palette_BrightenSavedBattleBg(0, -10, -20);
     }
     if (frame == 4) {
-      Sound_PlayFar(107);
+      Sound_PlayFar(SE_TREMOR);
     }
     if (frame == 55) {
-      Sound_PlayFar(208);
+      Sound_PlayFar(SE_BANE_ESCAPE);
     }
     if (frame == 78) {
-      Sound_PlayFar(219);
+      Sound_PlayFar(SE_GUSH);
     }
     if (frame == 127) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 131) {
-      Sound_PlayFar(149);
+      Sound_PlayFar(SE_MONSTER_ROAR);
     }
     if (frame == 206) {
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 244) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 302) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 308) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 312) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 350) {
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     }
     if (frame == 0) {
       work->transferMode = 2;
       work->transferValue = 75;
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       {
         u32 hidden;
         /* FAKEMATCH(temporary): the mask held in a halfword struct set in the
-         * for clause; as a literal 0xf000, 4 of 4354 instructions differ in
-         * tla-en. */
+         * for clause. */
         struct {
           u16 value;
         } mask;
@@ -464,8 +467,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame >= 132 && frame < 240) {
       struct ScalePair scale168 = Data_08196ea8;
 
-      scale168.v[1] = 0x14000;
-      scale168.v[0] = 0x14000;
+      scale168.v[1] = Q16_ONE * 5 / 4;
+      scale168.v[0] = Q16_ONE * 5 / 4;
       if (frame == 132) {
         for (i = 0; i != 128; i++) {
           PARTICLES[i].x = (Random16() % 160 + 40) << 16;
@@ -477,8 +480,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       for (i = 0; i != 48; i++) {
         if (i == 10) {
-          scale168.v[1] = 0x10000;
-          scale168.v[0] = 0x10000;
+          scale168.v[1] = Q16_ONE;
+          scale168.v[0] = Q16_ONE;
         }
         pos248[3] = 0;
         pos248[1] = 0xff0000;
@@ -503,10 +506,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (t56 >= 0 && t56 < 76) {
       struct ScalePair scale160 = Data_08196eb0;
 
-      scale160.v[0] = scale160.v[1] = Trig_Sin(t56 << 7) * 2 + 0x4000;
+      scale160.v[0] = scale160.v[1] = Trig_Sin(t56 << 7) * 2 + TRIG_TURN / 4;
       pos232[3] = 0;
       pos232[1] = 0xff0000;
-      pos232[0] = 114 << 16;
+      pos232[0] = px(114);
       pos232[2] = (t56 >= 0 ? 78 : 100) << 16;
       Render_ApplyProjectedPlacementFar(work->objects[0], pos232, scale160.v,
                                         0);
@@ -770,15 +773,15 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         } else {
           posX += 0x2000;
         }
-        scale152[1] = 0x14000;
-        scale152[0] = 0x14000;
-        scale152[0] = scale152[1] = posZ / 48 + 0x4000;
+        scale152[1] = Q16_ONE * 5 / 4;
+        scale152[0] = Q16_ONE * 5 / 4;
+        scale152[0] = scale152[1] = posZ / 48 + Q16_ONE / 4;
         pos216[0] = posX + 0x400000;
-        pos216[2] = 144 << 16;
+        pos216[2] = px(144);
         Render_ApplyProjectedPlacementFar(work->objects[12], pos216, scale152,
                                           0);
-        scale152[1] = 0x10000;
-        scale152[0] = 0x10000;
+        scale152[1] = Q16_ONE;
+        scale152[0] = Q16_ONE;
         for (i = 0; i != 12; i++) {
           pos216[0] = ((i % 4) << 21) + posX;
           pos216[2] = ((i / 4) << 21) + posZ;
@@ -823,7 +826,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale * 2);
           SceneTransform_ApplyPosition3(-0x100000, -0x80000, 0);
           Transform_ApplyPitch(0xe000);
-          Transform_ApplyRoll(0x4000 - t * 256);
+          Transform_ApplyRoll(TRIG_TURN / 4 - t * 256);
           Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList(model);
@@ -849,7 +852,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(-0x80000, -0x80000, 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
-          Transform_ApplyPitch(0xc000);
+          Transform_ApplyPitch(TRIG_TURN * 3 / 4);
           Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList(model);
@@ -864,7 +867,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           u8 *low = REVEAL_BUFFER;
           u8 *high = REVEAL_BUFFER + 1;
           /* FAKEMATCH(temporary): orderCopy, a copy of order set again in the
-           * loop; as order itself, 20 of 4354 instructions differ in tla-en. */
+           * loop. */
           u8 *orderCopy = order;
 
           for (i = 0; i != 64; i++) {
@@ -1004,11 +1007,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               if (k == 0) {
                 Transform_ApplyRoll(0xf000);
               } else if (k == 1) {
-                Transform_ApplyRoll(0x2000);
+                Transform_ApplyRoll(TRIG_TURN / 8);
               } else {
                 Transform_ApplyRoll(0xe000);
               }
-              Transform_ApplyPitch(0x800);
+              Transform_ApplyPitch(TRIG_TURN / 32);
               Render_TransformVertices(gData_08199210, texture, 4);
               Render_DrawModelList(model);
             }
@@ -1275,7 +1278,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Transform_Reset();
         SceneTransform_ApplyPosition3(0x40000, 0, 0);
         SceneTransform_ApplyScale3(scale112, scale112, scale112);
-        Transform_ApplyPitch(0x2000);
+        Transform_ApplyPitch(TRIG_TURN / 8);
         if (frame > 55) {
           Transform_ApplyYaw(frame << 10);
         } else {
@@ -1292,7 +1295,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Transform_Reset();
         SceneTransform_ApplyPosition3(0x40000, -0x100000, 0);
         SceneTransform_ApplyUniformScale(-0xa710);
-        Transform_ApplyPitch(0x2000);
+        Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(-frame << 9);
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList(model);
@@ -1308,13 +1311,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Transform_Reset();
         SceneTransform_ApplyPosition3(0x20000, -0x200000, 0);
         SceneTransform_ApplyUniformScale(0x58f0);
-        Transform_ApplyPitch(0x2000);
+        Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList(model);
-        /* FAKEMATCH(dead): twice raised to frame though nothing reads it again;
-         * flow deletes the store and its test; as no test, 290 of 4354
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): twice raised to frame though nothing reads it again.
+         */
         if (frame > twice) {
           twice = frame;
         }
@@ -1322,7 +1324,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(0x20000, -0x300000, 0);
           SceneTransform_ApplyUniformScale(-0x31e0);
-          Transform_ApplyPitch(0x2000);
+          Transform_ApplyPitch(TRIG_TURN / 8);
           Transform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList(model);
@@ -1337,7 +1339,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     wait(1);
   }
 
-  Sound_PlayFar(162);
+  Sound_PlayFar(SE_162);
   if (frame < 132) {
     Sprite_DestroyFar((struct ResourceObjectWork *)work->objects[0]);
   } else {
@@ -1351,20 +1353,18 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   Palette_LoadBasicSpriteColors();
-  REG_DISPCNT = 0x141;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   wait(1);
   scene->unk867 = 0;
   BattleBackground_LoadFar(1, scene->unk670, 24);
-  // An empty once-only loop before the canvas fill, so its entry loads before
-  // the size; without it, 2 of 4354 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop before the canvas fill. */
   do {
   } while (0);
-  Iwram_FillWords(canvas, 0x4000, 0);
-  // An empty once-only loop before the BG fill, so its address loads before
-  // the size; without it, 10 of 4354 instructions differ in tla-en.
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
+  /* FAKEMATCH(dead): an empty once-only loop before the BG fill. */
   do {
   } while (0);
-  Iwram_FillWords((void *)0x06004000, 0x4000, 0);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
   gCameraSceneParameters[4] = 120;
   unit30 = SYSTEM_WORK->unit30;
   shake = 0;
@@ -1374,9 +1374,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   work->transferValue = 0;
   work->transferMode = 2;
   work->transferValue = 50;
-  REG_BLDALPHA = 0x410;
+  REG_BLDALPHA = BLEND_ALPHA(16, 4);
   REG_BG2X = 0;
-  REG_BG2CNT = 0x786;
+  REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
   for (i = 1; i != 64; i++) {
     s32 q = i * 2 / 3;
     s32 r = 31 - q;
@@ -1437,11 +1438,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   twenty = 20;
   frame = 0;
   do {
-    if ((gInput.repeat & 3) && frame < 120) {
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame < 120) {
       frame = 120;
     }
     if (frame == 0) {
-      Sound_PlayFar(162);
+      Sound_PlayFar(SE_162);
       work->wave = 160;
       shake = 0;
       for (i = 0; i != arg->count; i++) {
@@ -1453,7 +1454,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         BattleEffect_TintBattler(arg->actors[i], 0, 5, -1, -1);
         actor->x = -(i + 4) * 0x800000;
         actor->z = 0;
-        actor->y = 0x140000;
+        actor->y = px(20);
         actor->unk48 = 0;
       }
     }
@@ -1464,9 +1465,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       for (i = 0; i != arg->count; i++) {
         struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
-        actor->x = 0;
-        actor->y = 0x7c0000;
-        actor->z = 0;
+        SET_POSITION(actor, 0, px(124), 0);
         actor->unk48 = 0;
       }
     }
@@ -1497,17 +1496,16 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
         Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                    SPRITE_BUFFER, 1, 0);
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
         Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-        REG_BG2CNT = 0x784;
+        REG_BG2CNT =
+            BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
         work->transferMode = 2;
         work->transferValue = 50;
         for (i = 0; i != arg->count; i++) {
           struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
-          actor->x = 0;
-          actor->y = 0x200000;
-          actor->z = work->homes[i].z;
+          SET_POSITION(actor, 0, px(32), work->homes[i].z);
         }
         for (i = 0; i != arg->count; i++) {
           s32 spin = Random16();
@@ -1631,9 +1629,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
         if (actor->y < 0x640000) {
           if (member->timer == -1) {
-            actor->x += 0xa0000;
+            actor->x += px(10);
           } else {
-            actor->x += 0x20000;
+            actor->x += px(2);
           }
           if (member->timer == -1) {
             if (actor->x > 0x300000) {
@@ -1642,7 +1640,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             if (landed == 1) {
               member->timer = 0;
               EffectPosition_ProjectScaledBattler(arg->actors[i], member);
-              Sound_PlayFar(103);
+              Sound_PlayFar(SE_CURSE);
               for (j = 0; j != 16; j++) {
                 s32 angle = Random16() & 0x7fff;
                 s32 speed;
@@ -1662,9 +1660,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (member->timer == 2 || member->timer == 7) {
           BattleEffect_TintBattler(arg->actors[i], 7, 5, i, 32);
         }
-        /* FAKEMATCH(dead): landed set to 2 though nothing reads it again; flow
-         * deletes the store and its test; as no test, 402 of 4354 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(dead): landed set to 2 though nothing reads it again. */
         if (actor == 0) {
           landed = 2;
         }
@@ -1672,9 +1668,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           BattleEffect_TintBattler(arg->actors[i], 15, -1, i, 32);
         }
         if (member->timer == 8) {
-          actor->x = 0;
-          actor->y = 148 << 16;
-          actor->z = 0;
+          SET_POSITION(actor, 0, px(148), 0);
         }
       }
       if (frame >= 0) {
@@ -1775,7 +1769,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             SceneTransform_ApplyPosition3((member->x / 2 - 56) << 16,
                                           (member->y - 56) << 16, 0);
             SceneTransform_ApplyScale3(size / 3, size, size);
-            Transform_ApplyPitch(0xc000);
+            Transform_ApplyPitch(TRIG_TURN * 3 / 4);
             Render_TransformVertices(gData_08199210, texture, 4);
             Render_DrawModelList(model);
           }

@@ -3,6 +3,8 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/field/field.h"
 
 struct BattleFxScene;
@@ -29,16 +31,16 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   Shop_SaveAndTintFieldPaletteFar(0x201204);
   wait(30);
   djinni->visible = 0;
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(arg, 4, 15);
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(arg, 4, 15);
   wait(30);
   djinni->callback = (void *)BattleEffect_AdvanceSpinAngle;
-  Sound_PlayFar(153);
+  Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(arg, 8, 22);
-  Sound_PlayFar(140);
-  MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
+  Sound_PlayFar(SE_SPIN);
+  MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
   djinni->callback = (void *)FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar((struct Actor *)djinni, 3);
   wait(90);
@@ -46,7 +48,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(30);
-  MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
+  MapGrid_SetScreenShakeFar(0x19999, 0x19999, Q16_ONE);
 
   position[0] = djinni->x;
   position[1] = djinni->y;
@@ -60,8 +62,8 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
     FieldParticle_SetCallback(slot, (void *)FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(slot, 7);
     Actor_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
-    ((struct FieldParticle *)slot)->scaleX = 0x8000;
-    ((struct FieldParticle *)slot)->scaleY = Random16() + 0x18000;
+    ((struct FieldParticle *)slot)->scaleX = Q16_ONE / 2;
+    ((struct FieldParticle *)slot)->scaleY = Random16() + Q16_ONE * 3 / 2;
     remaining--;
     wait(1);
     slot += 72;
@@ -94,7 +96,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
     djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
                                                  position[2]);
     if (djinni != NULL) {
-      scale = Random16() / 3 + 0x10000;
+      scale = Random16() / 3 + Q16_ONE;
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->timer = 100;
@@ -102,14 +104,14 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
       djinni->callback = (void *)FieldEffect_UpdateDescendingOrbitActor;
       djinni->mode = 0;
       Actor_SelectAnimationFar((struct Actor *)djinni, 7);
-      Animation_ApplyChildValuesFar__mars_join(djinni, 11);
+      Actor_SetSpriteColorModeFar(djinni, 11);
     }
   }
 
   wait(100);
-  Sound_PlayFar(298);
+  Sound_PlayFar(SE_298);
   wait(1);
-  Sound_PlayFar(151);
+  Sound_PlayFar(SE_LIGHT_APPEAR);
   position[0] = leader->x;
   position[1] = leader->y + 0x120000;
   position[2] = leader->z;
@@ -121,11 +123,11 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
     djinni->scaleY = 0x9999;
     djinni->scaleX = 0x9999;
     djinni->mode = 2;
-    djinni->gravity = 0x50000;
+    djinni->gravity = px(5);
     djinni->baseY = djinni->y;
     djinni->speed = Random16() + 0x16666;
-    Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
-    Animation_ApplyChildValuesFar__mars_join(djinni, 11);
+    Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(32), Random16());
+    Actor_SetSpriteColorModeFar(djinni, 11);
     djinni->lifetime = 8;
     Actor_StartScriptFar((struct Actor *)djinni,
                          gBattleEffect_SharedParticleScript);
@@ -184,16 +186,16 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
-      Vector_AddPolarOffset(0xc0000, Random16(), &position);
+      Vector_AddPolarOffset(px(12), Random16(), &position);
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->stopAtTarget = 0;
       effect->speed = Q16_ONE;
       effect->acceleration = 0;
       effect->maxSpeed = Random16() + 0x23333;
-      effect->scaleX = 0x8000;
-      effect->scaleY = 0x8000;
-      Sound_PlayFar(143);
+      effect->scaleX = Q16_ONE / 2;
+      effect->scaleY = Q16_ONE / 2;
+      Sound_PlayFar(SE_CRACK);
 
       if (*statePointer == 1)
         (*statePointer)--;

@@ -4,8 +4,7 @@
 /// Serac at the end of their rides (IsletCave_FightMeld, IsletCave_FightSerac),
 /// and the cycling colours of its water (IsletCave_StartSlowPaletteCycle).
 
-#include "shared/actors.h"
-#include "shared/effects.h"
+#include "flags.h"
 #include "field/field.h"
 #include "system/main_routine_work.h"
 #include "types.h"
@@ -101,34 +100,98 @@ extern u16 *gPaletteCycleSlots;
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gPaletteColors,
-                          Data_02001a2c, gPaletteCycleSlots, Func_02000328)
+void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
+  u8 *saved = Ram_HeapSlots->block32;
+
+  gData_02001a24 = slots;
+  gPaletteColors = colours;
+  Data_02001a2c = a;
+  gPaletteCycleSlots = b;
+  if (*slots != 0xffff && *colours != 0xffff) {
+  next:
+    {
+      int red = *colours++;
+      int index = *slots++;
+      int green = *colours++;
+      int blue = *colours++;
+      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
+    }
+    if (*slots != 0xffff && *colours != 0xffff)
+      goto next;
+  }
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  if ((s8)gMainRoutineWork.unk2c2 == 2)
+    Func_02000328();
+}
 
 extern u16 gPaletteCycleTimer;
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartSlowPaletteCycle,
-                                  gData_02001a34, gData_02001a30,
-                                  List_CountEntries, gData_02001a24,
-                                  gData_02001a20, 15, gPaletteCycleTimer, 16,
-                                  gData_02001a14, PaletteCycle_Fade)
+void IsletCave_StartSlowPaletteCycle(void) {
+  gData_02001a34 = 0;
+  gData_02001a30 = List_CountEntries(gData_02001a24);
+  gData_02001a20 = 15;
+  gPaletteCycleTimer = 16;
+  gData_02001a14 = 1;
+  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
 void IsletCave_StopPaletteCycle(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Task_Remove(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartFastPaletteCycle,
-                                  gData_02001a34, gData_02001a30,
-                                  List_CountEntries, gData_02001a24,
-                                  gData_02001a20, 2, gPaletteCycleTimer, 2,
-                                  gData_02001a14, PaletteCycle_Fade)
+void IsletCave_StartFastPaletteCycle(void) {
+  gData_02001a34 = 0;
+  gData_02001a30 = List_CountEntries(gData_02001a24);
+  gData_02001a20 = 2;
+  gPaletteCycleTimer = 2;
+  gData_02001a14 = 1;
+  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
-DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
+#include "shared/list_count_entries.h"
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer, gData_02001a20,
-                          Data_02001a2c, gData_02001a30, gPaletteCycleSlots,
-                          gData_02001a34, gData_02001a24, gData_02001a14,
-                          gPaletteColors)
+void PaletteCycle_Fade(void) {
+  s32 step;
+  u32 i;
+  u16 *src;
+  volatile u16 *dst;
+  int red, green, blue;
+
+  step = 0;
+  if (gPaletteCycleTimer != 0) {
+    if (--gPaletteCycleTimer == 0) {
+      step = 1;
+      gPaletteCycleTimer = gData_02001a20;
+      if (gData_02001a20 > 2)
+        gData_02001a20--;
+    }
+  }
+  if (step == 0)
+    return;
+  src = Data_02001a2c;
+  for (i = 0; i < gData_02001a30; i++) {
+    dst = &BG_PLTT[gPaletteCycleSlots[gData_02001a34 * gData_02001a30 + i]];
+    red = *src++;
+    green = *src++;
+    blue = *src++;
+    SET_RGB(*dst, red, green, blue);
+  }
+  dst = &BG_PLTT[gData_02001a24[gData_02001a30]];
+  if (gData_02001a14 != 0)
+    src = gPaletteColors + gData_02001a30 * 3;
+  else
+    src = Data_02001a2c + gData_02001a30 * 3;
+  red = *src++;
+  green = *src++;
+  blue = *src++;
+  SET_RGB(*dst, red, green, blue);
+  gData_02001a14 ^= 1;
+  if (++gData_02001a34 == gData_02001a30)
+    gData_02001a34 = 0;
+}
 
 void Func_02000328(void) {
   struct IsletCaveEventWork *work = Ram_HeapSlots->eventWork;
@@ -167,7 +230,7 @@ void IsletCave_FightSerac(void) {
   return;
 }
 
-s32 Func_020003c8(s32 arg0) {
+s32 IsletCave_ClearScriptedActorSpriteFlags(s32 arg0) {
   Actor_SetSpriteFlags(arg0, 0);
   return 0;
 }
@@ -180,7 +243,7 @@ s32 Func_020003d4(struct Actor *object) {
   object->motionFlags = 3;
   if (step < 32) {
     if (step == 0)
-      object->velocityY = PIXELS(1);
+      object->velocityY = px(1);
     animation[9] = Trig_Cos(step << 12) / 128;
   }
   (*phase)++;
@@ -203,9 +266,9 @@ extern struct Trigger gIsletCave_Room3Triggers[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov675Room1)
+  if (scene == (s32)&SceneId_IsletCave1)
     return gIsletCave_Room1Placements;
-  if (scene == (s32)&SceneId_Ov675Room2)
+  if (scene == (s32)&SceneId_IsletCave2)
     return gIsletCave_Room2Placements;
   return gIsletCave_Placements;
 }
@@ -213,9 +276,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov675Room2)
+  if (scene == (s32)&SceneId_IsletCave2)
     return gIsletCave_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov675Room3)
+  if (scene == (s32)&SceneId_IsletCave3)
     return gIsletCave_Room3Triggers;
   return gIsletCave_Triggers;
 }
@@ -245,7 +308,7 @@ void Func_020004ac(void) {
     gMainRoutineWork.unk2c2 = 1;                                               \
     Event_Wait(40);                                                            \
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,      \
-                                           PIXELS(n1), PIXELS(n2));            \
+                                           px(n1), px(n2));                    \
     Func_020004ac();                                                           \
   }
 
@@ -266,7 +329,7 @@ void Func_02000580(s32 scale) {
     value = (color >> 10) & 31;
     value <<= 10;
     /* FAKEMATCH(dead): blue masked like the other two channels, clearing
-       nothing; as no mask on blue, 38 of 59 instructions differ in tla-en. */
+     * nothing. */
     value &= mask;
     if (value > 0x7c00)
       value = 0x7c00;
@@ -296,8 +359,6 @@ void Func_020005fc(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  // A goto loop carries no loop notes: the bytes rebuild the zero on every
-  // pass; as a for loop, loop.c hoists it and 20 of 63 instructions differ.
   i = 8;
 loop:
   {
@@ -309,15 +370,13 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  index = *(s16 *)(work + 0x154) - 1;
-  Sound_Play(158);
+  index = ((struct EventWork *)work)->exit - 1;
+  Sound_Play(SE_DOOR_OPEN);
   index >>= 1;
   {
     s32 x = gData_020019ec[index].x;
-    /* FAKEMATCH(temporary): x read first and y read through a pointer
-     * to x from a separate byte offset; as
-     * gData_020019ec[index].y in the call, 4 of 63 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(temporary): x read first and y read through a pointer to x from
+     * a separate byte offset. */
     u32 offset = index * sizeof(struct MapGridCellAnimation) +
                  offsetof(struct MapGridCellAnimation, x);
     const u16 *position = (const u16 *)((const u8 *)gData_020019ec + offset);
@@ -325,10 +384,10 @@ loop:
     MapGrid_AnimateCells(gData_020019ec[index].steps, x, position[1]);
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Event_Wait(6);
-  Import_EventSetExitRequest(*(s16 *)(work + 0x154));
+  Import_EventSetExitRequest(((struct EventWork *)work)->exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -346,32 +405,32 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   FieldEffect_StartBlankOverlay(0);
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov675Room1) {
+  if (scene == (s32)&SceneId_IsletCave1) {
     Func_020008c8();
     Palette_SetColors(gData_0200134c, gData_0200135c, gData_02001388,
                       gData_020013b4);
-  } else if (scene == (s32)&SceneId_Ov675Room3) {
+  } else if (scene == (s32)&SceneId_IsletCave3) {
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     if (gMainRoutineWork.entrance == 2) {
       Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
       GameFlag_Set(0x9cf);
     }
-  } else if (scene == (s32)&SceneId_Ov675Room2) {
+  } else if (scene == (s32)&SceneId_IsletCave2) {
     if (GameFlag_Get(85) || GameFlag_Get(165)) {
-      GameFlag_Set(0x230);
-    } else if (!GameFlag_Get(0x230)) {
+      GameFlag_Set(FLAG_SCENE_TEMP_30);
+    } else if (!GameFlag_Get(FLAG_SCENE_TEMP_30)) {
       Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
       Actor_SetMovementTypeById(8, gData_02001454);
     }
   } else {
     goto other;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov675Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_IsletCave2)
     goto fade;
 other:
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov675Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_IsletCave3) {
   fade:
-    if (gMainRoutineWork.scene == (s32)&SceneId_Ov675Room2)
+    if (gMainRoutineWork.scene == (s32)&SceneId_IsletCave2)
       dim = (gMainRoutineWork.entrance - 3) / 2;
     else
       dim = 3;
@@ -472,7 +531,7 @@ void Func_020009ec(void) {
 /* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave;
  * field_event.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:486: dereferencing pointer to incomplete
+ * games/tla/src/scene/islet_cave.c:545: dereferencing pointer to incomplete
  * type. */
 struct FieldActor__islet_cave {
   u8 unk00[8];
@@ -500,23 +559,23 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   x = ((leader->x + (dx << 16)) & 0xfff00000) + 0x80000;
   z = ((leader->z + (dz << 16)) & 0xfff00000) + 0x80000;
   leader->speed = 0x10000;
-  leader->acceleration = 0x8000;
+  leader->acceleration = px(1) / 2;
   Actor_SetMoveTarget(leader, x, leader->y, z);
   Actor_SelectAnimation(leader, 27);
   x = ((actor->x + (dx << 16)) & 0xfff00000) + 0x80000;
   z = ((actor->z + (dz << 16)) & 0xfff00000) + 0x80000;
   actor->speed = 0x10000;
-  actor->acceleration = 0x8000;
+  actor->acceleration = px(1) / 2;
   Actor_SetMoveTarget(actor, x, actor->y, z);
   if (dx < 0 || dz < 0) {
     Actor_SelectAnimation(actor, 4);
   } else {
     Actor_SelectAnimation(actor, 3);
   }
-  Sound_Play(226);
+  Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(leader);
   Actor_SelectAnimation(actor, 2);
-  Sound_Play(298);
+  Sound_Play(SE_298);
   Event_End();
 }
 
@@ -559,7 +618,7 @@ void Func_02000bb0(void) {
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
                             (object4->x >> 20), ((value3 >> 20) - 1));
   Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_Clear(0x281);
+  GameFlag_Clear(FLAG_SCENE_TEMP_81);
   return;
 }
 
@@ -581,7 +640,7 @@ void Func_02000c1c(void) {
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
                             (object4->x >> 20), ((value3 >> 20) - 1));
   Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_Set(0x281);
+  GameFlag_Set(FLAG_SCENE_TEMP_81);
   return;
 }
 
@@ -627,7 +686,7 @@ void Func_02000fa8(void) {
   v5 = (v5 - 1);
   MapGrid_CopyCellAttributes(v5, v8, 3, 1, v5, (object3->z >> 20));
   Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v8);
-  GameFlag_Set(0x286);
+  GameFlag_Set(FLAG_SCENE_TEMP_86);
   return;
 }
 
@@ -656,7 +715,7 @@ void Func_02001034(void) {
   v6 = (v6 >> 20);
   MapGrid_CopyCellAttributes(v5, v6, 3, 1, v5, (object4->z >> 20));
   Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v6);
-  GameFlag_Clear(0x286);
+  GameFlag_Clear(FLAG_SCENE_TEMP_86);
   return;
 }
 
@@ -677,11 +736,11 @@ void Func_020010ac(void) {
   Event_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  PaletteFade_StartInterpolation(0x3c);
+  PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   EventMessage_ShowCentered((s32)MsgSummonGuardianOfWind, 0, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  PaletteFade_StartInterpolation(0x3c);
+  PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != 0) {
@@ -689,29 +748,28 @@ void Func_020010ac(void) {
                              FIELD_AT((u8 *)object, s16, 18));
   }
   Event_Wait(20);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov675Room3, 2);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_IsletCave3, 2);
   gMainRoutineWork.battleRule24b = 2;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
-   * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67,
-   * 2), 2 of 64 instructions differ in tla-en. */
+   * second. */
   __asm__ volatile("" : "+r"(cue));
   Field_RequestBattleFromEncounterTable(cue, 2);
   Event_End();
 }
 
 void Func_0200115c(void) {
-  if (!Event_GetFlag(0x230)) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
     struct Actor *object = Actor_GetById(9);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
 
-    Event_SetFlag(0x230);
-    Actor_SetPosition(9, PIXELS(296), PIXELS(160));
-    object->speedLimit = 0x18000;
-    object->velocityY = PIXELS(15);
+    Event_SetFlag(FLAG_SCENE_TEMP_30);
+    Actor_SetPosition(9, 296, 160);
+    object->speedLimit = px(3) / 2;
+    object->velocityY = px(15);
     Actor_MoveToAndWait(9, 344, ((owner->z >> 19) << 3) + 24);
     Actor_Stop(8);
-    object->speedLimit = 0x10000;
+    object->speedLimit = px(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 9, 0);
   }
 }
@@ -730,7 +788,10 @@ u16 gData_0200135c[] = {23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 
 
 u16 gData_02001388[] = {30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, 65535};
 
-DEFINE_G_DATA_020013B4(gData_020013b4, 14, 9, 10, 11, 12, 13)
+u16 gData_020013b4[] = {                                                               
+      14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  
+      11, 12, 13, 14, 9, 10, 10, 11, 12, 13, 14, 9, 9, 10, 11, 12, 13, 14,  
+  };
 
 u32 gData_020013fc[] = {
     SC_SET(SW_SCALE_Y, 0x14ccc),
@@ -740,10 +801,10 @@ u32 gData_020013fc[] = {
 
 s32 gData_02001418[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, PIXELS(-4)),
+    SC_ADD(SW_Y, px(-4)),
     SC_SET(SW_SCALE_X, 0xcccc),
     SC_SET(SW_SCALE_Y, 0xcccc),
-    SC_CALL(Func_020003c8),
+    SC_CALL(IsletCave_ClearScriptedActorSpriteFlags),
     SC_END,
 };
 
@@ -758,89 +819,89 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(136),
-    SCENE_EXIT_IF(1, 135, 5, -1),
-    SCENE_EXIT_IF(2, 136, 3, -1),
-    SCENE_EXIT_IF(3, 136, 2, -1),
-    SCENE_EXIT_IF(4, 136, 5, -1),
-    SCENE_EXIT_IF(5, 136, 4, -1),
-    SCENE_EXIT_IF(6, 136, 7, -1),
-    SCENE_EXIT_IF(7, 136, 6, -1),
-    SCENE_EXIT_IF(8, 137, 1, -1),
-    SCENE_EXIT_IF(9, 136, 10, -1),
-    SCENE_EXIT_IF(10, 136, 9, -1),
-    SCENE_EXITS(137),
-    SCENE_EXIT_IF(1, 136, 8, -1),
-    SCENE_EXIT_IF(2, 137, 3, -1),
-    SCENE_EXIT_IF(3, 137, 2, -1),
-    SCENE_EXIT_IF(4, 137, 5, -1),
-    SCENE_EXIT_IF(5, 137, 4, -1),
-    SCENE_EXIT_IF(6, 137, 7, -1),
-    SCENE_EXIT_IF(7, 137, 6, -1),
-    SCENE_EXIT_IF(8, 137, 9, -1),
-    SCENE_EXIT_IF(9, 137, 8, -1),
-    SCENE_EXIT_IF(10, 138, 1, -1),
-    SCENE_EXITS(138),
-    SCENE_EXIT_IF(1, 137, 10, -1),
+    SCENE_EXITS(IsletCave1),
+    SCENE_EXIT_UNLESS(1, Islets5, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IsletCave1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IsletCave1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IsletCave1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IsletCave1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, IsletCave1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, IsletCave1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, IsletCave2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, IsletCave1, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, IsletCave1, 9, EXIT_FLAG_NONE),
+    SCENE_EXITS(IsletCave2),
+    SCENE_EXIT_UNLESS(1, IsletCave1, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IsletCave2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IsletCave2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IsletCave2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IsletCave2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, IsletCave2, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, IsletCave2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, IsletCave2, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, IsletCave2, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, IsletCave3, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(IsletCave3),
+    SCENE_EXIT_UNLESS(1, IsletCave2, 10, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gIsletCave_Placements[] = {
-    {170, 0x9cf, (s32)gData_020013fc, PIXELS(184), 0, PIXELS(184), FACING_SOUTH, 2, 0},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(152), 0, PIXELS(144), FACING_NORTH, 2, 0},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(216), 0, PIXELS(144), FACING_NORTH, 2, 1},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(136), 0, PIXELS(176), FACING_NORTH, 2, 1},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(232), 0, PIXELS(176), FACING_NORTH, 2, 1},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(152), 0, PIXELS(224), FACING_NORTH, 2, 1},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(216), 0, PIXELS(224), FACING_NORTH, 2, 1},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(136), 0, PIXELS(256), FACING_NORTH, 2, 1},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(232), 0, PIXELS(256), FACING_NORTH, 2, 1},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(136), 0, PIXELS(304), FACING_NORTH, 2, 1},
-    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(232), 0, PIXELS(304), FACING_NORTH, 2, 1},
+    ACTOR_PLACEMENT(170, 0x9cf, (s32)gData_020013fc, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 232, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 152, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 216, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 136, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 232, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 136, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 232, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gIsletCave_Room1Placements[] = {
-    {298, CONDITION_ALWAYS, 7, PIXELS(168), 0, PIXELS(504), FACING_SOUTH, 2, 0},
-    {298, CONDITION_ALWAYS, 7, PIXELS(344), 0, PIXELS(232), FACING_SOUTH, 2, 0},
-    {298, CONDITION_ALWAYS, 7, PIXELS(776), 0, PIXELS(152), FACING_SOUTH, 2, 0},
-    {298, CONDITION_ALWAYS, 7, PIXELS(872), 0, PIXELS(152), FACING_SOUTH, 2, 0},
-    {298, CONDITION_ALWAYS, 7, PIXELS(776), 0, PIXELS(376), FACING_SOUTH, 2, 0},
-    {298, CONDITION_ALWAYS, 7, PIXELS(872), 0, PIXELS(376), FACING_SOUTH, 2, 0},
-    {297, CONDITION_ALWAYS, 7, PIXELS(824), 0, PIXELS(472), FACING_SOUTH, 2, 0},
-    {243, 0x3c, 1, PIXELS(824), 0, PIXELS(88), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 168, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 344, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 776, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 872, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 776, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(298, CONDITION_ALWAYS, 7, 872, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(297, CONDITION_ALWAYS, 7, 824, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(243, 0x3c, MOVEMENT_TYPE_STAND, 824, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gIsletCave_Room2Placements[] = {
-    {252, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(184), FACING_SOUTH, 2, 0},
-    {244, 0x55, 1, PIXELS(336), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(252, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(244, 0x55, MOVEMENT_TYPE_STAND, 336, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct Trigger gIsletCave_Triggers[] = {
-    {0x21, 1, CONDITION_ALWAYS, 1},
-    {0x31, 2, CONDITION_ALWAYS, 2},
-    {0x21, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {0x602, 20, CONDITION_ALWAYS, EVENT(Func_02000aec)},
-    {0x8602, 20, CONDITION_ALWAYS, EVENT(Func_02000b4c)},
-    {0x602, 21, CONDITION_ALWAYS, EVENT(Func_02000bb0)},
-    {0x8602, 21, CONDITION_ALWAYS, EVENT(Func_02000c1c)},
-    {0x602, 22, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
-    {0x8602, 22, CONDITION_ALWAYS, EVENT(Func_02000cf0)},
-    {0x602, 23, CONDITION_ALWAYS, EVENT(Func_02000d54)},
-    {0x8602, 23, CONDITION_ALWAYS, EVENT(Func_02000db8)},
-    {0x602, 24, CONDITION_ALWAYS, EVENT(Func_02000e1c)},
-    {0x8602, 24, CONDITION_ALWAYS, EVENT(Func_02000e7c)},
-    {0x602, 25, CONDITION_ALWAYS, EVENT(Func_02000ee0)},
-    {0x8602, 25, CONDITION_ALWAYS, EVENT(Func_02000f44)},
-    {0xc602, 26, CONDITION_ALWAYS, EVENT(Func_02000fa8)},
-    {0x4602, 26, CONDITION_ALWAYS, EVENT(Func_02001034)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT(Func_02000aec)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT(Func_02000b4c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT(Func_02000bb0)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(Func_02000c1c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 22, CONDITION_ALWAYS, EVENT(Func_02000cf0)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT(Func_02000d54)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT(Func_02000db8)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT(Func_02000e1c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT(Func_02000e7c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT(Func_02000ee0)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT(Func_02000f44)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 26, CONDITION_ALWAYS, EVENT(Func_02000fa8)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT(Func_02001034)},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_020009a4)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_020009b0)},
     {TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT(Func_020009bc)},
@@ -849,8 +910,8 @@ struct Trigger gIsletCave_Triggers[] = {
     {TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(Func_020009e0)},
     {TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(Func_020009ec)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IsletCave_FightMeld)},
-    {0x9c05, 50, CONDITION_ALWAYS, EVENT(Func_02000508)},
-    {0x9c05, 51, CONDITION_ALWAYS, EVENT(Func_02000544)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 50, CONDITION_ALWAYS, EVENT(Func_02000508)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 51, CONDITION_ALWAYS, EVENT(Func_02000544)},
     {TRIGGER_TABLE_END},
 };
 
@@ -860,11 +921,11 @@ struct Trigger gIsletCave_Room2Triggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_020005fc)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_020005fc)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_020005fc)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_020005fc)},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Func_020005fc)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, 0x230, EVENT(Func_0200115c)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(IsletCave_FightSerac)},
     {TRIGGER_TABLE_END},

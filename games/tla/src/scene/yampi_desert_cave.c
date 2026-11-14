@@ -5,9 +5,7 @@
 /// Scoops up the Venus Djinni Crystal racing through the sand, and meets
 /// Valukar, the guardian of fire.
 
-#include "shared/map_cells.h"
-#include "shared/actors.h"
-#include "shared/effects.h"
+#include "flags.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "map.h"
@@ -93,8 +91,7 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   i = 0;
   if ((u16)sprite != gYampiDesertCave_LogSprites[i]) {
   loop:
-    /* FAKEMATCH(temporary): kind set to i, then stepped; as kind = (u16)(i +
-     * 1), 12 of 160 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): kind set to i, then stepped. */
     kind = (u16)i;
     kind = (u16)(kind + 1);
     i = (s16)kind;
@@ -117,13 +114,12 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   az = *(s32 *)&map->layers[1].unk08[4] >> 20;
   bx = *(s32 *)&map->layers[2].unk08[0];
   bz = *(s32 *)&map->layers[2].unk08[4];
-  /* FAKEMATCH(temporary): the first call's last two arguments held in locals;
-   * as direct arguments, 36 of 160 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the first call's last two arguments held in locals.
+   */
   layer1X = (u16)i + x;
   layer1Z = (u16)az + z;
   MapGrid_CopyCellAttributes(x, z, w, h, layer1X, layer1Z);
-  /* FAKEMATCH(temporary): the second call's arguments held in locals; as direct
-   * arguments, 10 of 160 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the second call's arguments held in locals. */
   fromX = (u16)(bx >> 20) + x;
   fromZ = (u16)(bz >> 20) + z;
   toX = x + 64;
@@ -191,10 +187,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
   row:
     probe[0] = position[0] + (gYampiDesertCave_LogFootprints[offset] << 16);
     for (i = 0; i < w; i++) {
-      /* FAKEMATCH(wrapper): the call through YampiDesertCave_CheckCollision; as
-         MapGrid_CheckCollision(object, probe), 2 of 171 instructions differ in
-         tla-en.
-       */
+      /* FAKEMATCH(wrapper): the call through YampiDesertCave_CheckCollision. */
       if (YampiDesertCave_CheckCollision(object, probe) == 2)
         goto hit;
       probe[0] += 0x100000;
@@ -224,7 +217,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
 #include "text/msg_ids.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
-#define PIXELS(v) (((s16 *)&(v))[1])
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
                                             s32 *kind) {
@@ -244,14 +237,17 @@ outer:
 inner:
   if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gYampiDesertCave_LogSprites[k]) {
-    x = (PIXELS(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
-    z = (PIXELS(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
-    left = (PIXELS(object->x) + gYampiDesertCave_LogFootprints[k * 4]) >> 4;
-    top = (PIXELS(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 1]) >> 4;
+    x = (PIXEL_PART(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
+    z = (PIXEL_PART(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
+    left = (PIXEL_PART(object->x) + gYampiDesertCave_LogFootprints[k * 4]) >> 4;
+    top = (PIXEL_PART(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
+          4;
     right =
-        (PIXELS(object->x) + gYampiDesertCave_LogFootprints[k * 4 + 2]) >> 4;
+        (PIXEL_PART(object->x) + gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
+        4;
     bottom =
-        (PIXELS(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 3]) >> 4;
+        (PIXEL_PART(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
+        4;
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
@@ -277,9 +273,9 @@ inner:
   return NULL;
 }
 
-extern char SceneId_Ov662Room1;
-extern char SceneId_Ov662Room2;
-extern char SceneId_Ov662Room3;
+extern char SceneId_YampiDesertCave1;
+extern char SceneId_YampiDesertCave2;
+extern char SceneId_YampiDesertCave3;
 
 struct YampiDesertCaveRect {
   s32 word[6];
@@ -346,7 +342,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
        ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >>
       4;
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
   wait(15);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
@@ -356,19 +352,17 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
       YampiDesertCave_StopLeaderAtLog;
   wait(4);
   Actor_SelectAnimation(object, 2);
-  Event_PlaySound(239);
-  Actor_SetSpeed(rect.word[4], 0x8000, 0x1999);
+  Event_PlaySound(SE_HEAVY_MOVE);
+  Actor_SetSpeedAndAcceleration(rect.word[4], 0.5, 0.1);
   Actor_SetMoveTarget(object, rect.word[0], rect.word[1], rect.word[2]);
-  /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch, so the
-   * second half starts afresh in cse; as no loop, 277 of 342 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch. */
   for (j = 0; j < 1; j++) {
     if (j != 0 && j != 5)
       w = 1;
   }
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
   offset = gPushLeaderSteps[i] << 16;
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, offset >> 31,
                              offset >> 17);
@@ -380,8 +374,8 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(298);
-  Event_PlaySound(213);
+  Event_PlaySound(SE_298);
+  Event_PlaySound(SE_HEAVY_STOP);
   Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
                                   rect.word[2]);
   Actor_SelectAnimation(object, 1);
@@ -444,31 +438,25 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS(YampiDesertCave_SetMarkColors,
-                          gYampiDesertCave_MarkSlots,
-                          gYampiDesertCave_MarkColors,
-                          gYampiDesertCave_MarkDimColors,
-                          gYampiDesertCave_MarkCycleSlots,
-                          YampiDesertCave_ArriveByTeleport)
+#include "shared/palette_set_colors.h"
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(
-    YampiDesertCave_StartMarkGlow, gYampiDesertCave_MarkCycleIndex,
-    gYampiDesertCave_MarkCount, List_CountEntries, gYampiDesertCave_MarkSlots,
-    gYampiDesertCave_MarkPeriod, 15, gYampiDesertCave_MarkTimer, 16,
-    gYampiDesertCave_MarkBright, PaletteCycle_Fade)
+#include "shared/palette_cycle_start_vblank.h"
 
 void YampiDesertCave_StopMarkGlow(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
   Task_Remove(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(
-    YampiDesertCave_StartMarkFlash, gYampiDesertCave_MarkCycleIndex,
-    gYampiDesertCave_MarkCount, List_CountEntries, gYampiDesertCave_MarkSlots,
-    gYampiDesertCave_MarkPeriod, 2, gYampiDesertCave_MarkTimer, 2,
-    gYampiDesertCave_MarkBright, PaletteCycle_Fade)
+void YampiDesertCave_StartMarkFlash(void) {
+  gYampiDesertCave_MarkCycleIndex = 0;
+  gYampiDesertCave_MarkCount = List_CountEntries(gYampiDesertCave_MarkSlots);
+  gYampiDesertCave_MarkPeriod = 2;
+  gYampiDesertCave_MarkTimer = 2;
+  gYampiDesertCave_MarkBright = 1;
+  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
-DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
+#include "shared/list_count_entries.h"
 
 void PaletteCycle_Fade(void) {
   s32 step = 0;
@@ -567,17 +555,75 @@ loop:
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Statue_Sink, YampiDesertCave_SetStakeCell)
+void Statue_Sink(u16 *list, s32 mode, s32 count) {
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+
+  while (*list != 0xffff) {
+    u32 entry = *list;
+    s32 id = work->objectId;
+
+    if (id == entry) {
+      struct Actor *object = Actor_GetById(id);
+      s32 a;
+      s32 flag;
+
+      list++;
+      a = list[0];
+      flag = list[1];
+      if (count < 8)
+        object->scaleY -= 0x1f00;
+      if (mode == 1) {
+        GameFlag_Set(flag);
+        YampiDesertCave_SetStakeCell(id, a, flag, object->terrainId);
+        object->scaleY = Q16_ONE;
+      }
+      break;
+    }
+    list += 3;
+  }
+}
 
 s32 Actor_GetCellIndex(struct Actor *object);
 
-DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+void YampiDesertCave_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer) {
+  struct Actor *object = Actor_GetById(id);
+  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
+
+  cell += Actor_GetCellIndex(object);
+  if (GameFlag_Get(flag)) {
+    cell->collisionCode = 0;
+    object->priorityFlags |= 2;
+    switch (kind) {
+    case 0:
+      Actor_SelectAnimation(object, 2);
+      break;
+    case 1:
+      Actor_SelectAnimation(object, 4);
+      break;
+    case 2:
+      Actor_SelectAnimation(object, 6);
+      break;
+    }
+  } else {
+    cell->collisionCode = 255;
+    switch (kind) {
+    case 0:
+      Actor_SelectAnimation(object, 1);
+      break;
+    case 1:
+      Actor_SelectAnimation(object, 3);
+      break;
+    case 2:
+      Actor_SelectAnimation(object, 5);
+      break;
+    }
+  }
+}
 
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
 /// (flag 0x271).
 void YampiDesertCave_FightCrystal(void) {
-  Event_SetFlag(0x271);
+  Event_SetFlag(FLAG_SCENE_TEMP_71);
   Event_RequestDjinnBattle(17, 17);
   return;
 }
@@ -588,7 +634,8 @@ void Event_End();
 void YampiDesertCave_WonderAtRipple(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x101, 32);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                       EMOTE_IN_FRONT | EMOTE_QUESTION, 32);
   Event_End();
   return;
 }
@@ -600,9 +647,9 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave2)
     return gYampiDesertCave_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave3)
     return gYampiDesertCave_Room3Placements;
   return gYampiDesertCave_Placements;
 }
@@ -625,7 +672,7 @@ void YampiDesertCave_TryPushLog(void) {
                                                                                \
       party[0x2c2] = 2;                                                        \
     }                                                                          \
-    Event_SetDestination((s32)&SceneId_Ov662Room1, n1);                        \
+    Event_SetDestination((s32)&SceneId_YampiDesertCave1, n1);                  \
     Event_Wait(40);                                                            \
     YampiDesertCave_StopMarkGlow();                                            \
   }
@@ -655,13 +702,13 @@ DEFINE_BURST_PILLAR(YampiDesertCave_BurstRoom1Pillar, 0x300, 11)
 DEFINE_BURST_PILLAR(YampiDesertCave_BurstRoom3Pillar, 0x301, 15)
 
 void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave2) {
     s32 row = 12;
 
     MapGrid_CopyCellAttributes(98, 3, 3, 3, 97, row);
     MapGrid_CopyCellAttributes(33, 12, 1, 1, 34, row);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave3) {
     if (id == 12) {
       MapGrid_CopyCellAttributes(102, 15, 1, 1, 103, 15);
       MapGrid_CopyCellAttributes(43, 14, 1, 1, 39, 16);
@@ -682,12 +729,12 @@ void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
 void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave2) {
     s32 row = object->z >> 20;
 
     if (row == 13) {
       object->motionFlags = 0;
-      Event_SetFlag(0x303);
+      Event_SetFlag(FLAG_AREA_TEMP_03);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, row);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 97, 12);
     } else {
@@ -696,14 +743,14 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, row);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave3) {
     if (id == 12) {
       s32 column;
 
       MapGrid_CopyCellAttributes(103, 16, 1, 1, 103, 15);
       column = object->x >> 20;
       if (column == 38) {
-        Event_SetFlag(0x305);
+        Event_SetFlag(FLAG_AREA_TEMP_05);
         MapGrid_CopyCellAttributes(38, 15, 1, 1, column, 16);
       } else {
         MapGrid_CopyCellAttributes(38, 15, 1, 1, 39, 16);
@@ -711,7 +758,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
     }
     if (id == 13) {
       if (object->x >> 20 == 10 && object->z >> 20 == 11)
-        Event_SetFlag(0x304);
+        Event_SetFlag(FLAG_AREA_TEMP_04);
       MapGrid_CopyCellAttributes(12, 11, 1, 1, object->x >> 20,
                                  object->z >> 20);
     }
@@ -724,11 +771,11 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
 /// Sand: the leader sinks into the sand and the rooms' sand-only cells open.
 void YampiDesertCave_CastSand(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave1) {
     MapGrid_CopyCellAttributes(55, 71, 4, 1, 43, 70);
     MapGrid_CopyCellAttributes(43, 71, 4, 1, 55, 71);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave3) {
     MapGrid_CopyCellAttributes(110, 45, 5, 2, 90, 50);
     MapGrid_CopyCellAttributes(113, 47, 2, 1, 90, 52);
     MapGrid_CopyCellAttributes(107, 48, 3, 2, 90, 53);
@@ -741,9 +788,9 @@ void YampiDesertCave_CastSand(void) {
 /// Sand fades: the leader rises and the cells close again.
 void YampiDesertCave_EndSand(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 0;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave1)
     MapGrid_CopyCellAttributes(43, 70, 4, 1, 55, 71);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave3) {
     MapGrid_CopyCellAttributes(90, 50, 5, 2, 110, 45);
     MapGrid_CopyCellAttributes(90, 52, 2, 1, 113, 47);
     MapGrid_CopyCellAttributes(90, 53, 3, 2, 107, 48);
@@ -771,7 +818,7 @@ void YampiDesertCave_MoveSandRipple(void) {
   s32 row = gYampiDesertCave_RipplePath[index + 1];
 
   if (Actor_GetById(16)->movementState == 0) {
-    Actor_SetPosition(16, column << 19, row << 19);
+    Actor_SetPositionFixed(16, column << 19, row << 19);
     if (Event_GetFlag(0x104) == 0)
       step++;
     GameFlag_SetByte(0x278, step);
@@ -806,13 +853,11 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   if (mode == 2) {
     struct Actor *chest = Actor_GetById(17);
 
-    Actor_SetPosition(17, column << 19, row << 19);
-    chest->y = 0x200000;
+    Actor_SetPositionFixed(17, column << 19, row << 19);
+    chest->y = px(32);
     chest->motionFlags = 3;
     chest->gravity = 0x170a;
     wait(50);
-    // Through an s32 and a pointer the 17 is built with a move; as a halfword
-    // constant it comes from the pool.
     {
       s16 *counter = (s16 *)(work + 0x160);
       s32 value = 17;
@@ -820,7 +865,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
       *counter = value;
     }
 #if TLA_PATCH_1
-    Event_ClearFlag(0x270);
+    Event_ClearFlag(FLAG_SCENE_TEMP_70);
 #endif
   }
 }
@@ -856,14 +901,13 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Event_Wait(20);
   /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
    * call's first argument ahead of the scene store's address, where without it
-   * the argument follows the store; as plain stores, 2 of 71 instructions
-   * differ in tla-en. */
+   * the argument follows the store. */
   do {
     FIELD_AT(&gMainRoutineWork, u16, 0x254) = 0x19cd;
     FIELD_AT(&gMainRoutineWork, u8, 0x24b) = 2;
   } while (0);
-  FIELD_AT(&gMainRoutineWork, u16, 0x1f6) = (s32)&SceneId_Ov664Room4;
-  Field_RequestBattleFromEncounterTable(0x67, 1);
+  FIELD_AT(&gMainRoutineWork, u16, 0x1f6) = (s32)&SceneId_AirsRockInside4;
+  Field_RequestBattleFromEncounterTable(103, 1);
 }
 
 void YampiDesertCave_ScoopTreasure(s32 a) {
@@ -871,9 +915,9 @@ void YampiDesertCave_ScoopTreasure(s32 a) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave2)
     return gYampiDesertCave_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave3)
     return gYampiDesertCave_Room3Triggers;
   return gYampiDesertCave_Triggers;
 }
@@ -894,7 +938,7 @@ void Actor_SetWideSprite(s32 id, s32 wide);
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave1) {
     YampiDesertCave_SetMarkColors(
         gYampiDesertCave_MarkPaletteSlots, gYampiDesertCave_MarkColorsLit,
         gYampiDesertCave_MarkColorsDim, gYampiDesertCave_MarkCycle);
@@ -904,35 +948,35 @@ s32 Scene_Initialize(void) {
     YampiDesertCave_SetLogCells(8);
     YampiDesertCave_SetLogCells(9);
     YampiDesertCave_SetLogCells(10);
-    if (Event_GetFlag(0x300)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_00)) {
       Actor_SetPosition(11, 0, 0);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
     }
     if (gMainRoutineWork.entrance == 1) {
       if (Event_GetFlag(0xa29)) {
-        gMainRoutineWork.retreatScene = (s32)&SceneId_Ov661Room1;
+        gMainRoutineWork.retreatScene = (s32)&SceneId_YampiDesert1;
         gMainRoutineWork.retreatEntrance = 1;
       } else if (Event_GetFlag(0xa2a)) {
-        gMainRoutineWork.retreatScene = (s32)&SceneId_Ov661Room8;
+        gMainRoutineWork.retreatScene = (s32)&SceneId_YampiDesert8;
         gMainRoutineWork.retreatEntrance = 2;
       } else if (Event_GetFlag(0xa2b)) {
-        gMainRoutineWork.retreatScene = (s32)&SceneId_Ov661Room9;
+        gMainRoutineWork.retreatScene = (s32)&SceneId_YampiDesert9;
         gMainRoutineWork.retreatEntrance = 2;
       }
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
-    if (Event_GetFlag(0x303)) {
-      Actor_SetPosition(8, 138 << 18, 216 << 16);
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave2) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_03)) {
+      Actor_SetPosition(8, 552, 216);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 98, 13);
     } else {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 12);
     }
-    if (!Event_GetFlag(0x302))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_02))
       Actor_SetWideSprite(64, 1);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave3) {
     if ((u16)(gMainRoutineWork.entrance - 3) <= 2) {
       REG_BG1CNT &= ~3;
       REG_BG1CNT |= 1;
@@ -950,12 +994,12 @@ s32 Scene_Initialize(void) {
     YampiDesertCave_SetLogCells(10);
     YampiDesertCave_SetLogCells(11);
     YampiDesertCave_PlaceStakes(gYampiDesertCave_Room3Stakes);
-    if (!Event_GetFlag(0x206))
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_06))
       MapGrid_CopyCellAttributes(48, 12, 1, 1, 46, 12);
-    if (Event_GetFlag(0x301))
+    if (Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetPosition(15, 0, 0);
-    if (Event_GetFlag(0x304)) {
-      Actor_SetPosition(13, 168 << 16, 184 << 16);
+    if (Event_GetFlag(FLAG_AREA_TEMP_04)) {
+      Actor_SetPosition(13, 168, 184);
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 10, 11);
     } else {
 #if TLA_PATCH_1
@@ -966,26 +1010,26 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 8, 10);
 #endif
     }
-    if (Event_GetFlag(0x305)) {
-      Actor_SetPosition(12, 154 << 18, 132 << 17);
+    if (Event_GetFlag(FLAG_AREA_TEMP_05)) {
+      Actor_SetPosition(12, 616, 264);
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 38, 16);
     } else {
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 39, 16);
     }
     if (!Event_GetFlag(65) && !Event_GetFlag(145)) {
       s32 step = FieldGameFlag_GetByte(0x278);
-      s32 placed = Event_GetFlag(0x271);
+      s32 placed = Event_GetFlag(FLAG_SCENE_TEMP_71);
 
       if (placed) {
         step = step / 32 * 2;
         Actor_SetPosition(16, 0, 0);
-        Actor_SetPosition(17, gYampiDesertCave_RipplePath[step] << 19,
-                          gYampiDesertCave_RipplePath[step + 1] << 19);
+        Actor_SetPositionFixed(17, gYampiDesertCave_RipplePath[step] << 19,
+                               gYampiDesertCave_RipplePath[step + 1] << 19);
       } else {
-        if (Event_GetFlag(0x109))
+        if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
           GameFlag_SetByte(0x278, 0);
         Task_Add(YampiDesertCave_MoveSandRipple, 0x480);
-        Event_SetFlag(0x270);
+        Event_SetFlag(FLAG_SCENE_TEMP_70);
         Actor_SetSpritePriority(16, 3);
         Actor_GetById(16)->collisionFlags = 0;
       }
@@ -997,8 +1041,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
+#undef PIXEL_PART
 #undef DEFINE_TELEPORT_FROM_MARK
 #undef DEFINE_BURST_PILLAR
 #undef FIELD_AT
@@ -1017,7 +1060,14 @@ s8 gYampiDesertCave_LogFootprints[] = {
     -32, -8, 32, 8, -8, -32, 8, 32,
 };
 
-DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
+s32 gPushLeaderSteps[] = {                                                               
+      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
+      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
+      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
+      PUSH_STEP(16, 0),                                                        
+  };
 
 s16 gYampiDesertCave_RipplePath[] = {
     101, 39, 0, 0, 97, 35, 0, 0,
@@ -1040,7 +1090,10 @@ u16 gYampiDesertCave_MarkColorsDim[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-DEFINE_G_DATA_020013B4(gYampiDesertCave_MarkCycle, 14, 9, 10, 11, 12, 13)
+u16 gYampiDesertCave_MarkCycle[] = {                                                               
+      14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  
+      11, 12, 13, 14, 9, 10, 10, 11, 12, 13, 14, 9, 9, 10, 11, 12, 13, 14,  
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1048,36 +1101,36 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(79),
-    SCENE_EXIT(1, 74, 4),
-    SCENE_EXIT(2, 81, 1),
-    SCENE_EXIT(3, 79, 6),
-    SCENE_EXIT(4, 79, 5),
-    SCENE_EXIT(5, 79, 4),
-    SCENE_EXIT(6, 79, 3),
-    SCENE_EXIT(7, 81, 8),
-    SCENE_EXIT(8, 80, 1),
-    SCENE_EXITS(80),
-    SCENE_EXIT(1, 79, 8),
-    SCENE_EXIT(2, 80, 17),
-    SCENE_EXIT(14, 81, 13),
-    SCENE_EXIT(15, 81, 12),
-    SCENE_EXIT(16, 81, 11),
-    SCENE_EXIT(17, 80, 2),
-    SCENE_EXITS(81),
-    SCENE_EXIT(1, 79, 2),
-    SCENE_EXIT(2, 81, 3),
-    SCENE_EXIT(3, 81, 2),
-    SCENE_EXIT(4, 81, 7),
-    SCENE_EXIT(5, 81, 6),
-    SCENE_EXIT(6, 81, 5),
-    SCENE_EXIT(7, 81, 4),
-    SCENE_EXIT(8, 79, 7),
-    SCENE_EXIT(9, 81, 10),
-    SCENE_EXIT(10, 81, 9),
-    SCENE_EXIT(11, 80, 16),
-    SCENE_EXIT(12, 80, 15),
-    SCENE_EXIT(13, 80, 14),
+    SCENE_EXITS(YampiDesertCave1),
+    SCENE_EXIT(1, YampiDesert8, 4),
+    SCENE_EXIT(2, YampiDesertCave3, 1),
+    SCENE_EXIT(3, YampiDesertCave1, 6),
+    SCENE_EXIT(4, YampiDesertCave1, 5),
+    SCENE_EXIT(5, YampiDesertCave1, 4),
+    SCENE_EXIT(6, YampiDesertCave1, 3),
+    SCENE_EXIT(7, YampiDesertCave3, 8),
+    SCENE_EXIT(8, YampiDesertCave2, 1),
+    SCENE_EXITS(YampiDesertCave2),
+    SCENE_EXIT(1, YampiDesertCave1, 8),
+    SCENE_EXIT(2, YampiDesertCave2, 17),
+    SCENE_EXIT(14, YampiDesertCave3, 13),
+    SCENE_EXIT(15, YampiDesertCave3, 12),
+    SCENE_EXIT(16, YampiDesertCave3, 11),
+    SCENE_EXIT(17, YampiDesertCave2, 2),
+    SCENE_EXITS(YampiDesertCave3),
+    SCENE_EXIT(1, YampiDesertCave1, 2),
+    SCENE_EXIT(2, YampiDesertCave3, 3),
+    SCENE_EXIT(3, YampiDesertCave3, 2),
+    SCENE_EXIT(4, YampiDesertCave3, 7),
+    SCENE_EXIT(5, YampiDesertCave3, 6),
+    SCENE_EXIT(6, YampiDesertCave3, 5),
+    SCENE_EXIT(7, YampiDesertCave3, 4),
+    SCENE_EXIT(8, YampiDesertCave1, 7),
+    SCENE_EXIT(9, YampiDesertCave3, 10),
+    SCENE_EXIT(10, YampiDesertCave3, 9),
+    SCENE_EXIT(11, YampiDesertCave2, 16),
+    SCENE_EXIT(12, YampiDesertCave2, 15),
+    SCENE_EXIT(13, YampiDesertCave2, 14),
     SCENE_EXITS_END,
 };
 
@@ -1086,35 +1139,43 @@ u32 gYampiDesertCave_Settle[] = {
 };
 
 struct ActorPlacement gYampiDesertCave_Placements[] = {
-    {331, CONDITION_ALWAYS, 7, PIXELS(888), 0, PIXELS(336), FACING_SOUTH, 2, 0},
-    {332, CONDITION_ALWAYS, 7, PIXELS(832), 0, PIXELS(312), FACING_SOUTH, 2, 0},
-    {332, CONDITION_ALWAYS, 7, PIXELS(912), 0, PIXELS(168), FACING_SOUTH, 2, 0},
-    {404, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(712), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(331, CONDITION_ALWAYS, 7, 888, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, 7, 832, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, 7, 912, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(404, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 struct ActorPlacement gYampiDesertCave_Room2Placements[] = {
-    {272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(552), 0,
-     PIXELS(200), FACING_SOUTH, 2, 0},
-    {177, 0x9cd, 1, PIXELS(200), 0, PIXELS(152), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, 552, 0,
+                    200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(177, 0x9cd, MOVEMENT_TYPE_STAND, 200, 0, 152, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gYampiDesertCave_Room3Placements[] = {
-    {331, CONDITION_ALWAYS, 7, PIXELS(712), 0, PIXELS(752), FACING_SOUTH, 2, 0},
-    {332, CONDITION_ALWAYS, 7, PIXELS(752), 0, PIXELS(744), FACING_SOUTH, 2, 0},
-    {331, CONDITION_ALWAYS, 7, PIXELS(728), 0, PIXELS(784), FACING_SOUTH, 2, 0},
-    {332, CONDITION_ALWAYS, 7, PIXELS(800), 0, PIXELS(760), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(632), 0,
-     PIXELS(264), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(136), 0,
-     PIXELS(168), FACING_SOUTH, 2, 0},
-    {406, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(744), 0,
-     PIXELS(200), FACING_SOUTH, 2, 0},
-    {404, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(632), FACING_SOUTH, 2, 0},
-    {251, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {243, 0x41, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(331, CONDITION_ALWAYS, 7, 712, 0, 752, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, 7, 752, 0, 744, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(331, CONDITION_ALWAYS, 7, 728, 0, 784, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, 7, 800, 0, 760, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, 632, 0,
+                    264, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, 136, 0,
+                    168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, 744, 0,
+                    200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(404, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 632,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(251, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(243, 0x41, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1125,20 +1186,21 @@ u32 gYampiDesertCave_Room3Stakes[] = {
 
 struct Trigger gYampiDesertCave_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {49, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {49, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {0x202, 42, CONDITION_ALWAYS, EVENT(YampiDesertCave_TryPushLog)},
+    {STEP_TRIGGER_WALKING, 42, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_TryPushLog)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33, 0x300,
      EVENT(YampiDesertCave_BurstRoom1Pillar)},
-    {0x9c05, 30, CONDITION_ALWAYS,
-     EVENT(YampiDesertCave_TeleportFromFirstMark)},
-    {0x9c05, 31, CONDITION_ALWAYS,
-     EVENT(YampiDesertCave_TeleportFromSecondMark)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30,
+     CONDITION_ALWAYS, EVENT(YampiDesertCave_TeleportFromFirstMark)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 31,
+     CONDITION_ALWAYS, EVENT(YampiDesertCave_TeleportFromSecondMark)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
      CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
@@ -1148,11 +1210,11 @@ struct Trigger gYampiDesertCave_Triggers[] = {
 
 struct Trigger gYampiDesertCave_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {49, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
-    {33, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_STEP, 52, 0x9cd, EVENT(YampiDesertCave_MeetGuardianOfFire)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      0x303, EVENT(YampiDesertCave_StartMovingPillar)},
@@ -1168,14 +1230,14 @@ struct Trigger gYampiDesertCave_Room2Triggers[] = {
 };
 
 struct Trigger gYampiDesertCave_Room3Triggers[] = {
-    {33, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {33, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
@@ -1183,7 +1245,8 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(YampiDesertCave_WonderAtRipple)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(YampiDesertCave_FightCrystal)},
-    {0x202, 42, CONDITION_ALWAYS, EVENT(YampiDesertCave_TryPushLog)},
+    {STEP_TRIGGER_WALKING, 42, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_TryPushLog)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33, 0x301,
      EVENT(YampiDesertCave_BurstRoom3Pillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
@@ -1194,8 +1257,10 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
      0x304, EVENT(YampiDesertCave_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x304,
      EVENT(YampiDesertCave_FinishMovingPillar)},
-    {8, 0, CONDITION_ALWAYS, EVENT(YampiDesertCave_StartMovingPillar)},
-    {9, 0, CONDITION_ALWAYS, EVENT(YampiDesertCave_FinishMovingPillar)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_StartMovingPillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x206,
      EVENT(YampiDesertCave_PoundStake)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,

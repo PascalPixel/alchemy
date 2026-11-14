@@ -1,7 +1,7 @@
 /// @file
 /// Atteka Inlet, where the party's ship lies on the southern continent, in two
 /// scenes that share this overlay: the harbour with the ship
-/// (SceneId_Ov693Room1) and the shore beside it (SceneId_Ov693Room2). Piers
+/// (SceneId_AttekaInlet1) and the shore beside it (SceneId_AttekaInlet2). Piers
 /// asks whether to set sail (AttekaInlet_AskPiersToSetSail). After Jupiter
 /// Lighthouse the shipwrights stop the party to see their handiwork fly
 /// (AttekaInlet_ShipwrightsStopTheParty), Hamma shows the ship's new wings
@@ -11,6 +11,7 @@
 /// uncovers Geode, a Venus Djinni (AttekaInlet_CycloneUncoversGeode).
 
 #include "flags.h"
+#include "system/io_reg.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -54,7 +55,7 @@ void AttekaInlet_SetUpTheShore(void);
 
 void AttekaInlet_GeodeJoins(void) {
   Djinn_JoinParty(14, 0, 15);
-  GameFlag_Clear(0x300);
+  GameFlag_Clear(FLAG_AREA_TEMP_00);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -66,14 +67,14 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov693Room1) {
+  if (scene == (s32)&SceneId_AttekaInlet1) {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       return gAttekaInlet_HarbourActorPlacementsOnceFlown;
     if (GameFlag_Get(0x9d0))
       return gAttekaInlet_HarbourActorPlacementsOnceWinged;
     return gAttekaInlet_HarbourActorPlacements;
   }
-  if (scene == (s32)&SceneId_Ov693Room2) {
+  if (scene == (s32)&SceneId_AttekaInlet2) {
     if (GameFlag_Get(0x9d0))
       return gAttekaInlet_ShoreActorPlacementsOnceWinged;
     return gAttekaInlet_ShoreActorPlacements;
@@ -86,9 +87,9 @@ extern struct Trigger gAttekaInlet_HarbourTriggers[];
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov693Room1)
+  if (scene == (s32)&SceneId_AttekaInlet1)
     return gAttekaInlet_HarbourTriggers;
-  if (scene == (s32)&SceneId_Ov693Room2)
+  if (scene == (s32)&SceneId_AttekaInlet2)
     return gAttekaInlet_ShoreTriggers;
   return gAttekaInlet_Triggers;
 }
@@ -115,7 +116,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
   } else {
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
     Event_ShowMessageAndWait(18, 0);
-    Actor_SetSpeed(18, 0x19999, 0xcccc);
+    Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
@@ -123,7 +124,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
-    GameFlag_Set(0x201);
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
     Event_End();
   }
 }
@@ -142,7 +143,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
       Actor_SetPositionAndFacing(9, 60 << 16, 362 << 16, angle << 8);
     }
     wait(1);
-    Actor_SetSpeed(9, 0x20000, 0x10000);
+    Actor_SetSpeed(9, 2);
     Actor_Jump(9, 6, 0);
     Actor_MoveToAndWait(9, 64, 336);
     Actor_WalkToAndWait(9, 70, 308);
@@ -153,26 +154,26 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
       Actor_SetPositionAndFacing(10, 94 << 16, 272 << 16, angle << 7);
     }
     wait(1);
-    Actor_SetSpeed(10, 0x20000, 0x10000);
+    Actor_SetSpeed(10, 2);
     Actor_Jump(10, 6, 0);
     Actor_MoveToAndWait(10, 90, 288);
     Actor_WalkToAndWaitById(10, 80, 316);
     Actor_FaceDirectionById(10, FACING_EAST);
-    Actor_GetById(9)->velocityY = 0x40000;
+    Actor_GetById(9)->velocityY = px(4);
     Event_Wait(10);
     Event_SetMessageId((s32)MsgWhereDoYouThink);
-    Event_ShowMessage(0x4009, 0);
-    Actor_ShowEmoteById(10, 265, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 9, 0);
+    Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     Event_ShowMessageAndWait(10, 0);
-    Actor_FaceDirection(9, 0x3000, 0);
-    Event_ShowMessage(0x4009, 0);
-    Actor_FaceDirectionAndWait(10, 0xb000);
+    Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 9, 0);
+    Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHWEST);
     Actor_SetModeById(10, 3);
     Event_ShowMessageAndWait(10, 0);
     Actor_ArmCallback(10, FACING_EAST, 0);
-    Actor_ShowEmoteById(9, 264, 0);
+    Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_ArmCallback(9, FACING_EAST, 20);
-    Event_ShowMessageAndWait(0x4009, 0);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 9, 0);
     Event_ShowMessageAndWait(10, 0);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 3, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 19);
@@ -190,57 +191,58 @@ void AttekaInlet_HammaShowsTheWings(void) {
   if (GameFlag_Get(0x9d0)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_MoveTo(-1, -1, -1, 0);
-    Camera_SetSpeedParameters(0x26666, 0x4ccc);
-    FieldCamera_MoveTo(PIXELS(520), -1, PIXELS(372), 1);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+    FieldCamera_SetSpeed(2.4);
+    FieldCamera_MoveTo(520, CAMERA_KEEP, 372, 1);
     FieldCamera_WaitForArrival();
-    Actor_ShowEmote(23, 264, 0);
-    Actor_FaceDirection(23, 0x3000, 20);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+    Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 20);
     Event_SetMessageId((s32)MsgIVeBeenWaiting);
     Event_ShowMessageAndWait(23, 0);
-    Actor_FaceDirectionAndWait(23, 0xb000);
-    Event_ShowMessage(0x2017, 0);
+    Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 23, 0);
     FieldCamera_GetActor()->motionFlags = 0;
-    FieldCamera_SetSpeed(0x4cccc, 0x9999);
-    FieldCamera_MoveTo(PIXELS(440), PIXELS(32), PIXELS(368), 1);
+    FieldCamera_SetSpeed(4.8);
+    FieldCamera_MoveTo(440, 32, 368, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(40);
-    FieldCamera_MoveTo(PIXELS(432), PIXELS(32), PIXELS(232), 1);
+    FieldCamera_MoveTo(432, 32, 232, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(40);
-    Camera_SetSpeedParameters(0x4cccc, 0x9999);
-    FieldCamera_MoveWithinMapBounds(PIXELS(520), PIXELS(32), PIXELS(372), 1);
+    FieldCamera_SetSpeed(4.8);
+    FieldCamera_MoveWithinMapBounds(px(520), px(32), px(372), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
-    Actor_FaceDirectionAndWait(23, 0x3000);
+    Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
-    Actor_ShowEmote(23, 265, 20);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     Event_ShowMessageAndWait(23, 0);
     Actor_SetModeById(23, 4);
     Event_ShowMessageAndWait(23, 0);
     Event_ShowMessageAndWait(23, 0);
-    Actor_FaceDirectionAndWait(23, 0xb000);
-    Event_ShowMessageAndWait(0x2017, 0);
-    Actor_FaceDirectionAndWait(23, 0x3000);
+    Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 23, 0);
+    Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
     Event_ShowMessageAndWait(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
     Actor_SetModeById(23, 4);
     Event_ShowMessageAndWait(23, 0);
-    Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 257, 40);
-    Actor_ShowEmoteById(23, 265, 20);
+    Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+    Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     Event_ShowMessageAndWait(23, 0);
-    Actor_ShowEmoteById(23, 264, 20);
+    Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     Event_ShowMessageAndWait(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
-    Actor_SetSpeedParameters(23, 0xcccc, 0x6666);
+    Actor_SetSpeed(23, 0.8);
     Actor_GetById(23)->actionFlags &= ~1;
     Actor_WalkToAndWaitById(23, 504, 360);
     Event_Wait(1);
     Actor_GetById(23)->actionFlags |= 1;
-    Actor_FaceDirectionById(23, 0x3000);
+    Actor_FaceDirectionById(23, FACING_SOUTH_SOUTHEAST);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
     GameFlag_Set(FLAG_HAMMA_SHOWED_THE_WINGS);
@@ -260,9 +262,9 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
-  Actor_SetSpeed(18, 0xcccc, 0x6666);
+  Actor_SetSpeed(18, 0.8);
   Actor_WalkToAndWaitById(18, 532, 248);
-  Actor_FaceDirectionById(18, 0x3000);
+  Actor_FaceDirectionById(18, FACING_SOUTH_SOUTHEAST);
   Event_SetMessageId(MsgAreWeSetting);
   FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
@@ -277,7 +279,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   } else {
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
     Event_ShowMessageAndWait(18, 0);
-    Actor_SetSpeed(18, 0x19999, 0xcccc);
+    Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
@@ -285,7 +287,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
-    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 528, 276);
     Event_End();
   }
@@ -294,8 +296,6 @@ void AttekaInlet_PiersAsksToSetSail(void) {
 void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
                                  s32 destX, s32 destY, s32 layer);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                            s32 destY, s32 layer) {
   TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, layer);
@@ -325,7 +325,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
     Actor_SetHorizontalPositionWithTerrain(14, 120 << 16, 376 << 16);
     wait(1);
     Actor_Jump(14, 4, 10);
-    GameFlag_Set(0x300);
+    GameFlag_Set(FLAG_AREA_TEMP_00);
     if (moved)
       Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
     Event_End();
@@ -358,24 +358,23 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   angle = 0xd000;
-  Actor_SetHorizontalPositionAndAngleWithTerrain(24, PIXELS(504), PIXELS(460),
-                                                 angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(24, px(504), px(460), angle);
   wait(1);
   Event_SetMessageId((s32)MsgHeyWait2);
   Event_ShowMessageAndWait(24, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(23, 0x3000, 0);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
+  Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(380), 1);
-  Actor_SetSpeed(24, 0x19999, 0xcccc);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 380, 1);
+  Actor_SetSpeed(24, 1.6);
   Actor_WalkToAndWait(24, 520, 432);
   Actor_WalkToAndWait(24, 520, 388);
-  Actor_FaceDirection(23, 0x3000, 0);
+  Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
   Event_ShowMessageAndWait(24, 0);
-  Actor_ShowEmoteById(23, 256, 10);
+  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(24, 265, 0);
+  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_ShowMessageAndWait(24, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
   Actor_FaceDirectionById(24, angle);
@@ -384,27 +383,27 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_Wait(1);
   Actor_GetById(24)->actionFlags |= 1;
   Motion_SetVarCbAndRefresh(24, 2);
-  Actor_SetHorizontalPositionWithTerrain(65, PIXELS(520), PIXELS(380));
+  Actor_SetHorizontalPositionWithTerrain(65, px(520), px(380));
   wait(1);
   Actor_GetById(24)->actionFlags &= ~1;
   Actor_WalkToAndWait(24, 520, 388);
   Event_Wait(1);
   Actor_GetById(24)->actionFlags |= 1;
   Event_Wait(10);
-  Actor_FaceDirection(24, 0xb000, 10);
+  Actor_FaceDirection(24, FACING_NORTH_NORTHWEST, 10);
   Motion_SetModeAndWaitAnimation(24, 3);
   Actor_WalkToAndWait(24, 520, 434);
-  FieldCamera_MoveWithinMapBounds(PIXELS(512), -1, PIXELS(348), 1);
+  FieldCamera_MoveWithinMapBounds(px(512), -1, px(348), 1);
   Actor_WalkToAndWait(24, 504, 460);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Actor_FaceDirectionById(23, angle);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmoteById(23, 265, 0);
+  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_ShowMessageAndWait(23, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
-  Actor_ShowEmoteById(23, 264, 0);
+  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Event_ShowMessageAndWait(23, 0);
   GameFlag_Set(FLAG_HAMMETS_GIFT_DELIVERED);
   Event_End();
@@ -435,30 +434,30 @@ void AttekaInlet_RotateWaterColors(void) {
     s16 saved;
     s32 index;
 
-    saved = *(volatile u16 *)0x05000172;
+    saved = BG_PLTT_COLOR(11, 9);
     index = 9;
   first:
-    palette = (u16 *)0x05000160;
+    palette = (u16 *)&BG_PLTT_COLOR(11, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 4)
       goto first;
-    *(volatile u16 *)0x05000168 = saved;
+    BG_PLTT_COLOR(11, 4) = saved;
   }
   if ((*Ram_FrameCount & 7) == 0) {
     volatile u16 *palette;
     s16 saved;
     s32 index;
 
-    saved = *(volatile u16 *)0x0500017e;
+    saved = BG_PLTT_COLOR(11, 15);
     index = 15;
   second:
-    palette = (u16 *)0x05000160;
+    palette = (u16 *)&BG_PLTT_COLOR(11, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 12)
       goto second;
-    *(volatile u16 *)0x05000178 = saved;
+    BG_PLTT_COLOR(11, 12) = saved;
   }
 }
 
@@ -469,23 +468,23 @@ void AttekaInlet_OpenDoorAndEnter(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
   Event_Wait(8);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(*(s16 *)(work + 340));
+  Import_EventSetExitRequest(((struct EventWork *)work)->exit);
 }
 
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov693Room1)
+  if (scene == (s32)&SceneId_AttekaInlet1)
     AttekaInlet_SetUpTheHarbour();
-  else if (scene == (s32)&SceneId_Ov693Room2)
+  else if (scene == (s32)&SceneId_AttekaInlet2)
     AttekaInlet_SetUpTheShore();
   return 0;
 }
@@ -493,7 +492,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov693Room1 && GameFlag_Get(0x9d0)) {
+  if (scene == (s32)&SceneId_AttekaInlet1 && GameFlag_Get(0x9d0)) {
     MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);
@@ -504,10 +503,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 static __inline__ void Task_Add_(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each
-   * call's own constants, as The Broken Seal's scene layer does; as direct
-   * calls to Task_Add, 28 of 107 instructions of AttekaInlet_SetUpTheHarbour
-   * differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
   Task_Add(func, priority);
 }
 
@@ -535,7 +531,7 @@ void AttekaInlet_SetUpTheHarbour(void) {
     if (GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS)) {
       s32 speed = 0xc0;
 
-      Actor_SetPositionAndFacing(23, PIXELS(504), PIXELS(360), speed << 6);
+      Actor_SetPositionAndFacing(23, px(504), px(360), speed << 6);
     }
     Actor_WatchAndSetScript(19, party->currentOwner);
     Actor_WatchAndSetScript(20, party->currentOwner);
@@ -546,7 +542,7 @@ void AttekaInlet_SetUpTheHarbour(void) {
 
 void AttekaInlet_SetUpTheShore(void) {
   if (gMainRoutineWork.entrance == 3)
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
@@ -560,8 +556,8 @@ void AttekaInlet_SetUpTheShore(void) {
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 21);
     wait(1);
   }
-  if (GameFlag_Get(0x300))
-    Actor_SetPosition(14, 120 << 16, 376 << 16);
+  if (GameFlag_Get(FLAG_AREA_TEMP_00))
+    Actor_SetPosition(14, 120, 376);
   {
     s32 priority = 0x480;
 
@@ -575,10 +571,18 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(234),      SCENE_EXIT(1, 40, 1),  SCENE_EXIT(2, 235, 1),
-    SCENE_EXIT(3, 235, 5), SCENE_EXIT(4, 2, 52),  SCENE_EXITS(235),
-    SCENE_EXIT(1, 234, 2), SCENE_EXIT(2, 2, 53),  SCENE_EXIT(3, 237, 21),
-    SCENE_EXIT(4, 235, 4), SCENE_EXIT(5, 234, 3), SCENE_EXIT(6, 2, 53),
+    SCENE_EXITS(AttekaInlet1),
+    SCENE_EXIT(1, LemurianShip1, 1),
+    SCENE_EXIT(2, AttekaInlet2, 1),
+    SCENE_EXIT(3, AttekaInlet2, 5),
+    SCENE_EXIT(4, WorldMap, 52),
+    SCENE_EXITS(AttekaInlet2),
+    SCENE_EXIT(1, AttekaInlet1, 2),
+    SCENE_EXIT(2, WorldMap, 53),
+    SCENE_EXIT(3, Contigo2, 21),
+    SCENE_EXIT(4, AttekaInlet2, 4),
+    SCENE_EXIT(5, AttekaInlet1, 3),
+    SCENE_EXIT(6, WorldMap, 53),
     SCENE_EXITS_END,
 };
 
@@ -586,58 +590,108 @@ struct ActorPlacement gAttekaInlet_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020011AC(gAttekaInlet_HarbourActorPlacements, 0x980000, 0x1280000,
-                       0x500000, 0x1300000, 0xd00000, 0x1180000, 1, 0xb80000,
-                       0xe00000, 0x14000)
+u32 gAttekaInlet_HarbourActorPlacements[] = {
+    0xffff014d, 7, 0x580000,  0, 0x1780000, 0x24000,
+    0xffff014d, 7, 0xd80000,  0, 0x1480000, 0x1024000,
+    0xffff014d, 7, 0xa80000,  0, 0xb80000,  0x1024000,
+    0xffff014d, 7, 0x1e80000, 0, 0x1980000, 0x1024000,
+    0xffff014d, 7, 0x2280000, 0, 0x1a80000, 0x1024000,
+    0xffff0073, 1, 0x980000,  0, 0x1280000, 0x12000,
+    0xffff0073, 1, 0x500000,  0, 0x1300000, 0x1c000,
+    0xffff0074, 1, 0xd00000,  0, 0x1180000, 0x18000,
+    0xffff006a, 1, 0xb80000,  0, 0xe00000,  0x14000,
+    0x190a01a4, 1, 0x1d00000, 0, 0x1080000, 0x20000,
+    0xffff0038, 1, 0,         0, 0,         0x4000,
+    0xffff,     0, 0,         0, 0,         0,
+};
 
 struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[] = {
-    {333, CONDITION_ALWAYS, 7, PIXELS(88), 0, PIXELS(376), FACING_SOUTH, 2, 0},
-    {333, CONDITION_ALWAYS, 7, PIXELS(216), 0, PIXELS(328), FACING_SOUTH, 2, 1},
-    {333, CONDITION_ALWAYS, 7, PIXELS(168), 0, PIXELS(184), FACING_SOUTH, 2, 1},
-    {333, CONDITION_ALWAYS, 7, PIXELS(488), 0, PIXELS(408), FACING_SOUTH, 2, 1},
-    {333, CONDITION_ALWAYS, 7, PIXELS(552), 0, PIXELS(424), FACING_SOUTH, 2, 1},
-    {115, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(168), FACING_SOUTHEAST, 1,
-     0},
-    {115, CONDITION_ALWAYS, 1, PIXELS(55), 0, PIXELS(234), FACING_NORTH, 1, 0},
-    {116, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_WEST, 1, 0},
-    {106, CONDITION_ALWAYS, 1, PIXELS(260), 0, PIXELS(158), FACING_SOUTH, 1, 0},
-    {420, IF_FLAG_SET(0x90a), 1, PIXELS(464), 0, PIXELS(264), FACING_EAST, 2,
-     0},
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
-    {202, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(424), FACING_EAST, 3, 0},
-    {202, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(424), FACING_WEST, 3, 0},
-    {202, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(408), FACING_EAST, 3, 0},
-    {202, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(408), FACING_EAST, 3, 0},
-    {59, CONDITION_ALWAYS, 1, PIXELS(516), 0, PIXELS(360),
-     FACING_SOUTH + FACING_STEP, 3, 0},
-    {79, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 88, 0, 376, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 216, 0, 328, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 168, 0, 184, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 488, 0, 408, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 552, 0, 424, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 168,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 55, 0, 234,
+                    FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 260, 0, 158,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(420, IF_FLAG_SET(0x90a), MOVEMENT_TYPE_STAND, 464, 0, 264,
+                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 424,
+                    FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 424,
+                    FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408,
+                    FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 408,
+                    FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(59, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 516, 0, 360,
+                    FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH,
+                    0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020011AC(gAttekaInlet_HarbourActorPlacementsOnceFlown, 0xa20000,
-                       0x12c0000, 0x6f0000, 0x1470000, 0, 0, 3, 0xcc0000,
-                       0xcc0000, 0x4000)
+u32 gAttekaInlet_HarbourActorPlacementsOnceFlown[] = {
+    0xffff014d, 7, 0x580000,  0, 0x1780000, 0x24000,
+    0xffff014d, 7, 0xd80000,  0, 0x1480000, 0x1024000,
+    0xffff014d, 7, 0xa80000,  0, 0xb80000,  0x1024000,
+    0xffff014d, 7, 0x1e80000, 0, 0x1980000, 0x1024000,
+    0xffff014d, 7, 0x2280000, 0, 0x1a80000, 0x1024000,
+    0xffff0073, 1, 0xa20000,  0, 0x12c0000, 0x12000,
+    0xffff0073, 1, 0x6f0000,  0, 0x1470000, 0x1c000,
+    0xffff0074, 1, 0,         0, 0,         0x18000,
+    0xffff006a, 3, 0xcc0000,  0, 0xcc0000,  0x4000,
+    0x190a01a4, 1, 0x1d00000, 0, 0x1080000, 0x20000,
+    0xffff0038, 1, 0,         0, 0,         0x4000,
+    0xffff,     0, 0,         0, 0,         0,
+};
 
 struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[] = {
-    {116, CONDITION_ALWAYS, 3, PIXELS(264), 0, PIXELS(352), FACING_WEST, 0, 0},
-    {79, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
-    {79, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
-    {202, CONDITION_ALWAYS, 1, PIXELS(380), 0, PIXELS(280), FACING_SOUTH, 1, 0},
-    {420, IF_FLAG_SET(0x90a), 1, PIXELS(464), 0, PIXELS(264), FACING_EAST, 2,
-     0},
-    {329, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(392), FACING_SOUTH, 2, 0},
-    {243, 0x3f, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 264, 0,
+                    352, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 380, 0, 280,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(420, IF_FLAG_SET(0x90a), MOVEMENT_TYPE_STAND, 464, 0, 264,
+                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 392,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(243, 0x3f, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAttekaInlet_ShoreActorPlacements[] = {
-    {116, CONDITION_ALWAYS, 3, 0, 0, 0, FACING_WEST, 0, 0},
-    {79, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
-    {79, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
-    {202, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 1, 0},
-    {420, IF_FLAG_SET(0x90a), 1, 0, 0, 0, FACING_EAST, 2, 0},
-    {329, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(392), FACING_SOUTH, 2, 0},
-    {243, 0x3f, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 0, 0, 0,
+                    FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(420, IF_FLAG_SET(0x90a), MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 392,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(243, 0x3f, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -646,7 +700,8 @@ struct Trigger gAttekaInlet_Triggers[] = {
 };
 
 struct Trigger gAttekaInlet_HarbourTriggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(AttekaInlet_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+     EVENT(AttekaInlet_OpenDoorAndEnter)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 10, FLAG_HAMMA_SHOWED_THE_WINGS,
@@ -703,13 +758,14 @@ struct Trigger gAttekaInlet_HarbourTriggers[] = {
 struct Trigger gAttekaInlet_ShoreTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0xc401, 3, CONDITION_ALWAYS, 3},
-    {0xc401, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_STEP, 10, FLAG_SHIPWRIGHTS_STOPPED_PARTY,
      EVENT(AttekaInlet_ShipwrightsStopTheParty)},
-    {0x400, 14, CONDITION_ALWAYS, EVENT(AttekaInlet_GeodeJoins)},
+    {TALK_TRIGGER_FACING(FACING_EAST), 14, CONDITION_ALWAYS,
+     EVENT(AttekaInlet_GeodeJoins)},
     {TRIGGER_TALK, 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgEveryoneSWaiting)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAllOfOur)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_SET_OUT_WITH_WINGS,

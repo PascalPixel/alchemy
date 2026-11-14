@@ -4,6 +4,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
@@ -12,8 +13,10 @@
 #define FRAMES_PER_SECOND 60
 
 /* VIEW(menus): variable gLinkPeerSignatures as struct LinkSignature
- * gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]; not
- * tried: gLinkPeerSignatures's declaration holds a FAKEMATCH tag. */
+ * gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]; tried
+ * as the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/window/window/link_timer.c:82: `gLinkPeerSignatures__menus'
+ * undeclared (first use in this function). */
 extern struct LinkSignature
     gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
 
@@ -109,7 +112,7 @@ void UpdateLinkSessionCountdown(void) {
 
     seconds = __divsi3(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
-      Sound_PlayFar(108);
+      Sound_PlayFar(SE_TRIPLE_TONE_LOW);
 
     if (state->displayHandle != 0)
       Text_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);

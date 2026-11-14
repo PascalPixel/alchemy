@@ -69,21 +69,29 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS(157, 157, 2, 157, 1, 155, 3, 4, 155, 5)
+u32 gSceneExits[] = {
+    SCENE_EXITS(ApojiiIslandsCave),
+    SCENE_EXIT_UNLESS(1, ApojiiIslandsCave, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ApojiiIslandsCave, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ApojiiIslands2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ApojiiIslands2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ApojiiIslands2, 5, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gActorPlacements[] = {
-    {307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_FOLIAGE),
-     (s32)gApojiiIslandsCave_FoliageScript, PIXELS(120), 0, PIXELS(608),
-     FACING_NORTH, 2, 0},
-    {307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_FOLIAGE),
-     (s32)gApojiiIslandsCave_FoliageScript, PIXELS(184), 0, PIXELS(592),
-     FACING_NORTH, 2, 0},
-    {307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_FOLIAGE),
-     (s32)gApojiiIslandsCave_FoliageScript, PIXELS(216), 0, PIXELS(592),
-     FACING_NORTH, 2, 0},
-    {307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_FOLIAGE),
-     (s32)gApojiiIslandsCave_FoliageScript, PIXELS(280), 0, PIXELS(640),
-     FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_FOLIAGE),
+                    (s32)gApojiiIslandsCave_FoliageScript, 120, 0, 608,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_FOLIAGE),
+                    (s32)gApojiiIslandsCave_FoliageScript, 184, 0, 592,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_FOLIAGE),
+                    (s32)gApojiiIslandsCave_FoliageScript, 216, 0, 592,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_FOLIAGE),
+                    (s32)gApojiiIslandsCave_FoliageScript, 280, 0, 640,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

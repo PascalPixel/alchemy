@@ -57,23 +57,7 @@ struct FieldObject {
   struct ObjectSpriteInfo *sprite;
 };
 
-/* VIEW(shop): routine Inventory_EquipFar as void Inventory_EquipFar(s32 owner,
- * s32 slot); gamepak/far_call/game.h has s32 Inventory_EquipFar(s32 owner, s32
- * slot). */
-extern void Inventory_EquipFar__shop(s32 owner,
-                                     s32 slot) __asm__("Inventory_EquipFar");
-/* VIEW(shop): routine Actor_GetByIdFar as void *Actor_GetByIdFar(s32 id);
- * gamepak/far_call/field_sequence.h has struct Actor *Actor_GetByIdFar(s32 id).
- */
-extern void *Actor_GetByIdFar__shop(s32 id) __asm__("Actor_GetByIdFar");
 void WindowSprite_RedrawSavedRectFar(void *window);
-/* VIEW(shop): routine Text_DrawMessageAsTilesFar as void
- * Text_DrawMessageAsTilesFar(s32 message, void *window, s32 x, s32 y);
- * gamepak/far_call/window.h has void Text_DrawMessageAsTilesFar(s32 message,
- * struct RenderInput *window, s32 x, s32 y). */
-extern void
-Text_DrawMessageAsTilesFar__shop(s32 message, void *window, s32 x,
-                                 s32 y) __asm__("Text_DrawMessageAsTilesFar");
 
 struct ShopCursorSprite {
   u8 unk00[5];
@@ -261,10 +245,8 @@ enum ShopAction {
 /// artifacts the shop lists and which of the keepers' lines it says.
 enum ShopType {
   SHOP_TYPE_ITEMS = 0, ///< an item shop
-  /// ★ Named from the game: "Weapons Shop" (message 4973)
   SHOP_TYPE_WEAPONS = 1,
   SHOP_TYPE_ARMOR = 2,
-  /// ★ Named from the game: "General Storekeeper" (message 4982)
   SHOP_TYPE_GENERAL_STORE = 3
 };
 

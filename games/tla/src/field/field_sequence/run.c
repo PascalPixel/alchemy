@@ -4,6 +4,8 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "flags.h"
+#include "sounds.h"
 #include "field/field_work.h"
 #include "gamepak/far_call/field.h"
 #include "gamepak/far_call/sound.h"
@@ -13,6 +15,7 @@
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
 #include "module/tla.h"
+#include "macros.h"
 
 extern u8 gMapCellBuffer[];
 
@@ -23,7 +26,7 @@ s32 Field_GetSceneAttributes(s32 scene);
  * PartyInventory_GiveItem(s32 item, s32 flags); tried as the definition's s32
  * PartyInventory_GiveItem(s32 item, s32 unused), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:1612: `PartyInventory_GiveItem'
+ * games/tla/src/field/field_sequence/run.c:229: `PartyInventory_GiveItem'
  * undeclared (first use in this function). */
 s32 PartyInventory_GiveItem__field_sequence(s32 item) __asm__(
     "PartyInventory_GiveItem");
@@ -90,7 +93,7 @@ s32 FieldSequence_Run(void) {
   gMainRoutineWork.unk2c3 = 0;
   Task_ResetAll();
   Djinn_ResolvePending(0);
-  if (gMainRoutineWork.map == (s32)&SceneId_Ov64a) {
+  if (gMainRoutineWork.map == (s32)&SceneId_Clear) {
     WorldMap_InitializePerspectiveFar();
     gMainRoutineWork.unk244[0] = 1;
     mode = 3;
@@ -101,7 +104,7 @@ s32 FieldSequence_Run(void) {
     Encounter_SelectMapZones(1);
   }
   work->eventMode = mode;
-  if (!GameFlag_Get(265))
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     gData_02001000[0x194c] = 0;
   else
     TileCopies_Restore();
@@ -112,7 +115,7 @@ s32 FieldSequence_Run(void) {
   BattleMap_ApplySceneEntranceView();
   Actor_ResetForLeader(OVERLAY_CALL(7));
   Field_PlaceTreasureSpots();
-  if (GameFlag_Get(265))
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     Actor_Restore();
   if (gMainRoutineWork.pendingDjinnEvent != 0)
     Djinn_RestoreActorAfterBattle();
@@ -138,7 +141,7 @@ s32 FieldSequence_Run(void) {
     GameFlag_Set(324);
   }
   work->previousCell = gMapCellBuffer;
-  if (!GameFlag_Get(265)) {
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Scene_SetRestartPoint();
     HAZARD.limit = 16;
     HAZARD.mode = 0;
@@ -147,9 +150,8 @@ s32 FieldSequence_Run(void) {
     gMainRoutineWork.cloaked = 0;
   }
   FieldPsynergy_ResumeCloakCheck();
-  /* FAKEMATCH(signature): Field_GetSceneAttributes declared returning s32,
-   * though it returns s16; as s16, 17 of 1300 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(signature): field_GetSceneAttributes declared returning s32,
+   * though it returns s16. */
   value = Field_GetSceneAttributes(gMainRoutineWork.scene);
   work->sceneAttributeHigh = (value >> 4) & 15;
   work->sceneAttributeLow = value & 15;
@@ -167,7 +169,7 @@ s32 FieldSequence_Run(void) {
     work->warp = 0;
     goto done;
   }
-  GameFlag_Clear(265);
+  GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
   if (Field_CountRequests() == 0) {
     value = work->transitionActive;
     if (value == 0) {
@@ -198,13 +200,9 @@ s32 FieldSequence_Run(void) {
         s32 zero = 0;
 
         Teleport_PlaySparksAndFade();
-        // (s16): the id compared as the field's own width; without it, 79 of
-        // 1300 instructions differ in tla-en.
         if (ARRIVAL.scene != (s16)(s32)&SceneId_WorldMap)
           goto clearOwner;
-        /* FAKEMATCH(barrier): an empty asm clobbering r0, so the entrance's
-         * offset 0x2c0 is built afresh, not added to the scene's 0x2be in r0;
-         * without it, 21 of 1300 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm clobbering r0. */
         asm("" : : : "r0");
         if ((value = FlagEntries_GetValue(ARRIVAL.entrance)) & 16)
         clearOwner:
@@ -256,9 +254,7 @@ s32 FieldSequence_Run(void) {
     GameFlag_Set(260);
     leader = WorldMap_Unfreeze();
     Actor_StartIdleFar(leader);
-    party->x = leader->x;
-    party->y = 0;
-    party->z = leader->z;
+    SET_POSITION(party, leader->x, 0, leader->z);
     party->heading = leader->facing;
     *turn = leader->terrainId;
     while (Field_CountRequests() != 0) {
@@ -282,7 +278,7 @@ s32 FieldSequence_Run(void) {
               Actor_SelectAnimationFar(leader, 36);
             else
               Actor_SelectAnimationFar(leader, 19);
-            Sound_PlayFar(59);
+            Sound_PlayFar(MUS_059);
             FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated, 1);
             unit = Unit_Get(*leaderId);
             unit->hp = 1;
@@ -400,11 +396,11 @@ s32 FieldSequence_Run(void) {
       } else if (work->menu != 0) {
         AreaNameWindow_HideFar();
         Leader_StopMoving();
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         WorldMap_Freeze();
         GameFlag_Set(262);
-        if (gDebugMode && (*(volatile u32 *)&gInput.held & 2) != 0 &&
-            ((*(volatile u32 *)&gInput.held & 4) != 0)) {
+        if (gDebugMode && (*(volatile u32 *)&gInput.held & KEY_B) != 0 &&
+            ((*(volatile u32 *)&gInput.held & KEY_SELECT) != 0)) {
           DebugFlagEditor_RunFar();
         } else if (GameFlag_Get(263)) {
           work->raisedEvent = 250;
@@ -446,13 +442,13 @@ s32 FieldSequence_Run(void) {
         WorldMap_ReloadPendingAreaGraphics();
         work->item = 0;
       } else if (work->start != 0) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Leader_StopMoving();
         WorldMap_Freeze();
         GameFlag_Set(262);
-        if (*(volatile u8 *)&gDebugMode && (gInput.held & 2)) {
+        if (*(volatile u8 *)&gDebugMode && (gInput.held & KEY_B)) {
           DebugSceneSelect_RunFar();
-        } else if (*(volatile u8 *)&gDebugMode && (gInput.held & 0x200)) {
+        } else if (*(volatile u8 *)&gDebugMode && (gInput.held & KEY_L)) {
           PaletteEditor_Run();
         } else if (GameFlag_Get(263)) {
           work->raisedEvent = 250;
@@ -493,8 +489,6 @@ s32 FieldSequence_Run(void) {
       wait(1);
       leader = WorldMap_Unfreeze();
       if (gDebugMode == 0 || !GameFlag_Get(355)) {
-        // unk66 read signed (ldrsh), as its other readers read it; as
-        // leader->unk66 == 0, 39 of 1300 instructions differ in tla-en.
         if (*pending == 0 ||
             (leader->timer == 0 && *(s16 *)&leader->unk66 == 0))
           Field_UpdateWalking(leader->terrainId, leader->x, leader->y,
@@ -517,7 +511,7 @@ done:
 /* VIEW(field_sequence): tag struct Object as struct Object__field_sequence;
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:1908: structure has no member named
+ * games/tla/src/field/field_sequence/run.c:527: structure has no member named
  * `pos'. */
 struct Object__field_sequence {
   u8 pad0[6];
@@ -548,7 +542,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     {
       s32 *position = probePosition.coordinates;
 
-      Vector_AddPolarOffset(0x100000, leader->angle, position);
+      Vector_AddPolarOffset(px(16), leader->angle, position);
     }
     if ((s8)workBytes[0x18a] == 3) {
       s32 x, z;
@@ -611,10 +605,9 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
       return 0;
   }
 
-  if (!GameFlag_Get(0x109)) {
-    gMainRoutineWork.x = entry->x << 16;
-    gMainRoutineWork.y = entry->y << 16;
-    gMainRoutineWork.z = entry->z << 16;
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+    SET_POSITION(&gMainRoutineWork, entry->x << 16, entry->y << 16,
+                 entry->z << 16);
     gMainRoutineWork.heading = entry->facing;
     gMainRoutineWork.turn = 0;
   }
@@ -629,10 +622,10 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   if (entry->cameraBottom != -1)
     map->maxZ = entry->cameraBottom << 16;
 
-  if (map->minX + (240 << 16) > map->maxX)
-    map->minX = map->maxX - (240 << 16);
-  if (map->minZ + (160 << 16) > map->maxZ)
-    map->minZ = map->maxZ - (160 << 16);
+  if (map->minX + px(240) > map->maxX)
+    map->minX = map->maxX - px(240);
+  if (map->minZ + px(160) > map->maxZ)
+    map->minZ = map->maxZ - px(160);
   return 1;
 }
 
@@ -666,16 +659,14 @@ s32 Field_PlaceAtEntrance(void) {
     if (*(s8 *)cursor == -1) {
       *angle = 0x4000;
       {
-        // A halfword constant through a plain pointer comes from the pool.
+        /* FAKEMATCH(temporary): the zero in a local of its own. */
         s32 zero = 0;
         *turn = zero;
       }
       return 0;
     }
     if (*(s8 *)cursor == entrance) {
-      /* FAKEMATCH(barrier): an empty asm reading work keeps it live across the
-       * loop in r6, so entrance takes r7; without it, 14 of 211 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading work. */
       asm("" : : "r"(work));
       cursor++;
       x = Stream_ReadS16(&cursor);
@@ -685,13 +676,13 @@ s32 Field_PlaceAtEntrance(void) {
       height = MapGrid_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
       flags = *cursor;
       base = (s32)gData_0202e000;
-      if (!GameFlag_Get(0x109)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         gMainRoutineWork.x = xFixed;
         gMainRoutineWork.z = zFixed;
         *angle = (flags & 15) << 12;
         *turn = 0;
         if (flags & 16)
-          gMainRoutineWork.y = 0x80000;
+          gMainRoutineWork.y = px(8);
       }
       if (flags & 32)
         return 1;
@@ -718,10 +709,10 @@ s32 Field_PlaceAtEntrance(void) {
             map->minZ = top << 20;
             map->maxX = right << 20;
             map->maxZ = bottom << 20;
-            if (map->minX + (240 << 16) > map->maxX)
-              map->minX = map->maxX - (240 << 16);
-            if (map->minZ + (160 << 16) > map->maxZ)
-              map->minZ = map->maxZ - (160 << 16);
+            if (map->minX + px(240) > map->maxX)
+              map->minX = map->maxX - px(240);
+            if (map->minZ + px(160) > map->maxZ)
+              map->minZ = map->maxZ - px(160);
             break;
           }
         }

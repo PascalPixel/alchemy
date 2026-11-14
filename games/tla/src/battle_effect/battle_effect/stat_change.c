@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 /// (kind 210); Kindle (kind 223); kind 46 is used by no ability.
@@ -66,9 +68,7 @@ void BattleEffect_RunStatBoostMode10(struct BattleEffectArgument *effect) {
 #define FLARES_PER_MEMBER 64
 
 static inline CopyWordsFn CopyWordsRoutine(void) {
-  /* FAKEMATCH(wrapper): the routine fetched through this inline; as direct
-   * calls to Iwram_CopyWords, 4 of 1146 instructions of
-   * BattleEffect_RunStatBoost differ in tla-en. */
+  /* FAKEMATCH(wrapper): the routine fetched through this inline. */
   return Iwram_CopyWordsEntry;
 }
 
@@ -96,9 +96,6 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   // Holds 0 for the whole function: the center's coordinates are stored from
   // it.
   s32 zero = 0;
-  // Each holds COMPOSITE_FLIP_X for the whole function, one for each of the
-  // Djinni's builds: reload rebuilds the 4 at each xor, and the two xors stay
-  // apart.
   s32 flipX = COMPOSITE_FLIP_X;
   s32 flipX2 = COMPOSITE_FLIP_X;
   s32 frame;
@@ -218,9 +215,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   for (i = 0; i != 512; i++) {
     struct EffectStep *flare = &FLARES[i];
 
-    flare->x = (Random16() % 200 - 100) << 14;
-    flare->y = (Random16() % 200 - 100) << 15;
-    flare->z = (Random16() % 200 - 100) << 14;
+    SET_POSITION(flare, (Random16() % 200 - 100) << 14,
+                 (Random16() % 200 - 100) << 15,
+                 (Random16() % 200 - 100) << 14);
     flare->variant = 0;
   }
 
@@ -248,7 +245,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
     s32 prelude;
 
     if (frame == 0)
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     if (mode == 6 && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette01);
     if (mode == 11 && (frame & 3) == 0)
@@ -286,7 +283,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           BattleUnit_GetEffectHeightFar(effect->actors[member]) * 2 / 3;
 
       if (frame == member * 8 + 80)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       // The lights turn about two thirds of the target's height.
@@ -303,8 +300,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
-          /* FAKEMATCH(barrier): an empty asm through mode keeps it in a high
-           * register; without it, 2 of 1146 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm through mode. */
           __asm__("" : "+h"(mode));
           LOAD_BLITTER(draw[0], flags, BLIT_MAX);
           BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, flags,
@@ -313,8 +309,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
             void **slot = &Ram_HeapSlots->unkb8[1];
 
             /* FAKEMATCH(barrier): an empty asm through slot hides that it holds
-             * the heap slot's address; as draw[1] = Ram_HeapSlots->unkb8[1], 32
-             * of 1146 instructions differ in tla-en. */
+             * the heap slot's address. */
             __asm__("" : "=r"(slot) : "0"(slot));
             draw[1] = (DrawRectangle)*slot;
           }
@@ -372,9 +367,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
         s32 cel;
 
-        // An empty once-only block: its loop notes end CSE's block here, so the
-        // burst reads screen from the stack, not through the pointer passed to
-        // EffectPosition_ProjectPoint.
+        /* FAKEMATCH(dead): a once-only block. */
         do {
         } while (0);
         cel = (frame - member * 8 - 52) / 4 % 6;
@@ -413,8 +406,6 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           u8 *picture;    // the cel, drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
 
-          // The lower half's flags are taken before the first entry is
-          // fetched, which leaves the first entry r8 and the second sl.
           BattleEffect_BuildBlitter(BLITTER_SLOT, 7, 7, flags, BLIT_MAX);
           lowerFlags = flags | COMPOSITE_FLIP_Y;
           draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -508,9 +499,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
     palette = (s32)&ResourceId_PinkBurstSheet;
   else if (mode == 3) {
     palette = (s32)&ResourceId_GlowOrbSheet;
-    /* FAKEMATCH(barrier): an empty asm keeps the mode-3 arm apart from the
-     * identical mode-1 arm; without it, 8 of 553 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm. */
     asm("");
   } else if (mode == 1)
     palette = (s32)&ResourceId_GlowOrbSheet;
@@ -610,7 +599,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
         }
         // frame - j * 4 is time; this spelling matches here and below.
         if (frame - j * 4 == 24)
-          Sound_PlayFar(143);
+          Sound_PlayFar(SE_CRACK);
 
         // The shards fly for 36 frames, a shade darker every four.
         if (time >= 24 && time <= 60) {

@@ -13,6 +13,7 @@
 #include "../field/field_effect/move.c"
 
 #include "flags.h"
+#include "system/io_reg.h"
 #include "field/field.h"
 #include "types.h"
 #include "system/main_routine_work.h"
@@ -44,7 +45,6 @@
 #include "shared/gabomba_statue_chamber.h"
 #include "system/task.h"
 #include "shared/tables.h"
-#include "shared/map_cells.h"
 #include "system/heap_release.h"
 #include "module/field/field.h"
 #include "module/field/field_effect.h"
@@ -157,9 +157,7 @@ s32 Func_0200028c(struct Wanderer *actor) {
     turned = &actor->turned;
     if (*turned != 0) {
       *turned = 0;
-      /* FAKEMATCH(dead): an empty once-only block, so the flag is cleared
-       * before the facing is addressed; without it, 2 of 35 instructions differ
-       * in tla-en. */
+      /* FAKEMATCH(dead): an empty once-only block. */
       do {
       } while (0);
       facing = &actor->facingA;
@@ -184,17 +182,17 @@ extern u32 gData_02005eec[];
 const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov671Room7)
+  if (scene == (s32)&SceneId_GabombaStatue7)
     return gData_02005dfc;
-  if (scene == (s32)&SceneId_Ov671Room1)
+  if (scene == (s32)&SceneId_GabombaStatue1)
     return gData_02005e2c;
-  if (scene == (s32)&SceneId_Ov671Room2)
+  if (scene == (s32)&SceneId_GabombaStatue2)
     return gData_02005e4c;
-  if (scene == (s32)&SceneId_Ov671Room3)
+  if (scene == (s32)&SceneId_GabombaStatue3)
     return gData_02005e8c;
-  if (scene == (s32)&SceneId_Ov671Room4)
+  if (scene == (s32)&SceneId_GabombaStatue4)
     return gData_02005ecc;
-  if (scene == (s32)&SceneId_Ov671Room5)
+  if (scene == (s32)&SceneId_GabombaStatue5)
     return gData_02005eec;
   return NULL;
 }
@@ -212,7 +210,7 @@ s32 Func_02000364(struct Actor *actor) {
 /* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:218: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:216: structure has no member named
  * `phase'. */
 struct Orbiter__gabomba_statue {
   u8 unk00[6];
@@ -241,7 +239,7 @@ void Func_02000398(struct Orbiter__gabomba_statue *actor, s32 *x, s32 *z) {
   SET_VECTOR(position, (actor->centerX + 16) << 16, 0x100000,
              actor->centerZ << 16);
   turn = gData_02005af0 * 0x3000 + angle;
-  FieldVector_AddPolarOffset(0xd0000, turn + 0x8000, position);
+  FieldVector_AddPolarOffset(px(13), turn + 0x8000, position);
   *x = position[0];
   *z = position[2];
 }
@@ -254,7 +252,7 @@ s32 Func_02000408(struct Orbiter__gabomba_statue *actor) {
   actor->flags23 = 0;
   SET_POSITION(actor, (actor->centerX + 16) << 16, 0x100000,
                actor->centerZ << 16);
-  FieldVector_AddPolarOffset(0xd0000, angle + 0x8000, &actor->x);
+  FieldVector_AddPolarOffset(px(13), angle + 0x8000, &actor->x);
   next = *phase + gData_02005af0;
   if (next < 0)
     next = 179;
@@ -294,10 +292,10 @@ s32 Func_0200047c(struct Actor *object) {
     u8 *phase = &OBJECT_BYTE(object, 98);
 
     object->x = owner->x;
-    object->y = owner->y + 0x100000;
+    object->y = owner->y + px(16);
     object->z = owner->z;
     object->facing = *phase << 8;
-    FieldVector_AddPolarOffset(0x60000, *phase << 8, &object->x);
+    FieldVector_AddPolarOffset(px(6), *phase << 8, &object->x);
     *phase += 16;
   }
   return 1;
@@ -306,29 +304,29 @@ s32 Func_0200047c(struct Actor *object) {
 extern struct ActorPlacement gGabombaStatue_Placements[];
 extern struct ActorPlacement gGabombaStatue_Room1Placements[];
 extern struct ActorPlacement gGabombaStatue_Room2Placements[];
-extern s16 gGabombaStatue_Room3Placements[];
-extern s16 gGabombaStatue_Room4Placements[];
-extern s16 gGabombaStatue_Room5Placements[];
+extern struct ActorPlacement gGabombaStatue_Room3Placements[];
+extern struct ActorPlacement gGabombaStatue_Room4Placements[];
+extern struct ActorPlacement gGabombaStatue_Room5Placements[];
 extern struct ActorPlacement gGabombaStatue_Room6Placements[];
-extern s16 gGabombaStatue_Room7Placements[];
+extern struct ActorPlacement gGabombaStatue_Room7Placements[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
   const u8 *table = gGabombaStatue_Placements;
 
-  if (scene == (s32)&SceneId_Ov671Room1)
+  if (scene == (s32)&SceneId_GabombaStatue1)
     table = gGabombaStatue_Room1Placements;
-  else if (scene == (s32)&SceneId_Ov671Room2)
+  else if (scene == (s32)&SceneId_GabombaStatue2)
     table = gGabombaStatue_Room2Placements;
-  else if (scene == (s32)&SceneId_Ov671Room3)
+  else if (scene == (s32)&SceneId_GabombaStatue3)
     table = gGabombaStatue_Room3Placements;
-  else if (scene == (s32)&SceneId_Ov671Room4)
+  else if (scene == (s32)&SceneId_GabombaStatue4)
     table = gGabombaStatue_Room4Placements;
-  else if (scene == (s32)&SceneId_Ov671Room5)
+  else if (scene == (s32)&SceneId_GabombaStatue5)
     table = gGabombaStatue_Room5Placements;
-  else if (scene == (s32)&SceneId_Ov671Room6)
+  else if (scene == (s32)&SceneId_GabombaStatue6)
     table = gGabombaStatue_Room6Placements;
-  else if (scene == (s32)&SceneId_Ov671Room7)
+  else if (scene == (s32)&SceneId_GabombaStatue7)
     table = gGabombaStatue_Room7Placements;
   return table;
 }
@@ -375,10 +373,8 @@ void GabombaStatue_LashRope(void) {
   if (Rope_GetState(0) == 1) {
     direction = gData_02005af0;
     Func_020020f0(0);
-    Event_SetFlag(515);
-    /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it, so it is
-     * built in a register (movs, strh); as the constant 0 stored directly, 11
-     * of 40 instructions differ in tla-en. */
+    Event_SetFlag(FLAG_SCENE_TEMP_03);
+    /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it. */
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;
     i = 0;
   loop:
@@ -417,10 +413,9 @@ struct Orbiter__find_near *Func_02000624(struct Orbiter__find_near *origin,
 
   position[0] = origin->x;
   position[2] = origin->z;
-  /* FAKEMATCH(temporary): the facing read into a local before the call; as
-   * origin->facing in the call, 9 of 63 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the facing read into a local before the call. */
   facing = origin->facing;
-  FieldVector_AddPolarOffset(0x100000, facing, position);
+  FieldVector_AddPolarOffset(px(16), facing, position);
   for (i = 8; i < 64; i++) {
     struct Orbiter__find_near *object =
         ((struct Orbiter__find_near *)Actor_Get(i));
@@ -443,14 +438,15 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   saved = *flags;
   Actor_SelectAnimation(object, 6);
   System_Wait(6);
-  Event_PlaySound(152);
+  Event_PlaySound(SE_JUMP);
   Actor_SelectAnimation(object, 7);
-  object->speedLimit = 0x30000;
-  object->acceleration = 0x20000;
+  object->speedLimit = px(3);
+  object->acceleration = px(2);
   object->velocityY = velocity;
   *flags &= 0x7e;
   Actor_SetSpriteFlags(object, 0);
-  FieldActor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
+  FieldActor_SetMoveTargetFixed(object, object->x + dx, object->y,
+                                object->z + dz);
   FieldActor_WaitForMove(object);
   *flags = saved;
   Actor_SelectAnimation(object, 6);
@@ -489,7 +485,7 @@ void Func_02000784(void) {
   table = Func_020005b4(actor, 357);
   turn = gData_02005af0 * step;
   if (table != 0) {
-    if (table->y + 0x100000 > actor->y)
+    if (table->y + px(16) > actor->y)
       return;
     if (table->facing == 0x8000)
       turn = -turn;
@@ -550,10 +546,10 @@ void Func_02000978(void) {
 
       if (found->facing == 0x8000)
         dx = -dx;
-      if (found->z - actor->z < -0x20000)
-        actor->z = found->z + 0x20000;
-      if (found->z - actor->z > 0x20000)
-        actor->z = found->z - 0x20000;
+      if (found->z - actor->z < -px(2))
+        actor->z = found->z + px(2);
+      if (found->z - actor->z > px(2))
+        actor->z = found->z - px(2);
       x = actor->x + dx;
       actor->x = x;
       foundX = found->x;
@@ -583,11 +579,12 @@ void Func_02000a20(struct Actor *object) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y = PIXELS(6);
+  object->y = px(6);
   object->z = 0xf741cf;
   object->facing = FACING_SOUTH;
   party = &gMainRoutineWork;
-  Actor_SetAttachedEffect(party->currentOwner, 258);
+  Actor_SetAttachedEffect(party->currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAnimation(party->currentOwner, 27);
   FieldEvent_Wait(30);
   Actor_SetAnimation(party->currentOwner, 28);
@@ -598,7 +595,7 @@ void Func_02000a20(struct Actor *object) {
     object->y -= 0x18000;
     System_Wait(1);
     if (i == 10)
-      Event_PlaySound(204);
+      Event_PlaySound(SE_DUST_PUFF);
     if (i == 20) {
       ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
       Event_FinishScreenTransition();
@@ -609,9 +606,9 @@ void Func_02000a20(struct Actor *object) {
 // Moves the controlled character with the moving platforms (Func_020005b4 finds
 // the one under it, 360 forward and 361 back): it stays within 2 pixels of the
 // platform's x and is carried along z by the speed in gData_02005af0; past 20
-// pixels from the platform it steps off (Func_020006ac). In Ov671Room4 at cell
-// (28, 15) or (30, 15) it ends the ride (Func_02000a20) and runs exit 5 or 6
-// (Import_EventSetExitRequest).
+// pixels from the platform it steps off (Func_020006ac). In GabombaStatue4 at
+// cell (28, 15) or (30, 15) it ends the ride (Func_02000a20) and runs exit 5 or
+// 6 (Import_EventSetExitRequest).
 void Func_02000ad4(void) {
   struct Actor *actor, *platform;
   s32 speed, d, sign, x, z, platformZ, offset;
@@ -622,10 +619,10 @@ void Func_02000ad4(void) {
   speed = gData_02005af0 << 15;
   platform = Func_020005b4(actor, 360);
   if (platform != 0) {
-    if (platform->x - actor->x < -0x20000)
-      actor->x = platform->x + 0x20000;
-    if (platform->x - actor->x > 0x20000)
-      actor->x = platform->x - 0x20000;
+    if (platform->x - actor->x < -px(2))
+      actor->x = platform->x + px(2);
+    if (platform->x - actor->x > px(2))
+      actor->x = platform->x - px(2);
     z = actor->z + speed;
     actor->z = z;
     platformZ = platform->z;
@@ -644,10 +641,10 @@ void Func_02000ad4(void) {
   platform = Func_020005b4(actor, 361);
   if (platform == 0)
     return;
-  if (platform->x - actor->x < -0x20000)
-    actor->x = platform->x + 0x20000;
-  if (platform->x - actor->x > 0x20000)
-    actor->x = platform->x - 0x20000;
+  if (platform->x - actor->x < -px(2))
+    actor->x = platform->x + px(2);
+  if (platform->x - actor->x > px(2))
+    actor->x = platform->x - px(2);
   z = actor->z - speed;
   actor->z = z;
   platformZ = platform->z;
@@ -662,7 +659,7 @@ void Func_02000ad4(void) {
     }
     Func_020006ac(actor, 0, (sign * 3) << 18, 0x20000);
   }
-  if (gMainRoutineWork.scene != (s32)&SceneId_Ov671Room4)
+  if (gMainRoutineWork.scene != (s32)&SceneId_GabombaStatue4)
     return;
   x = actor->x >> 20;
   if (actor->z >> 20 != 15)
@@ -720,13 +717,14 @@ void Func_02000c8c(void) {
 void Func_02000cf0(struct Actor *object) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  Actor_SetPosition(39, 164 << 17, 148 << 17);
+  FieldCamera_SetSpeed(1);
+  Actor_SetPosition(39, 328, 296);
   FieldEvent_Wait(30);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(15);
   FieldActor_WatchAndSetScript(gMainRoutineWork.currentOwner, 39);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 30);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   EventCamera_FollowActor(39, 1);
   FieldEvent_Wait(30);
   Actor_Get(39)->priorityFlags |= 0x20;
@@ -738,7 +736,7 @@ void Func_02000cf0(struct Actor *object) {
   FieldEvent_Wait(20);
   Actor_FaceActor(39, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(10);
-  Event_PlaySound(262);
+  Event_PlaySound(SE_VOICE_GIRL_3);
   {
     s32 a = 256, b = 30;
 
@@ -749,35 +747,35 @@ void Func_02000cf0(struct Actor *object) {
   FieldEvent_Wait(2);
   Actor_FaceDirection(39, FACING_WEST, 0);
   FieldEvent_Wait(15);
-  Event_PlaySound(152);
-  Actor_Get(39)->velocityY = PIXELS(4);
-  Actor_SetSpeed(39, 0x40000, 0x20000);
+  Event_PlaySound(SE_JUMP);
+  Actor_Get(39)->velocityY = px(4);
+  Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 312, 200);
-  Event_PlaySound(152);
-  Actor_Get(39)->velocityY = PIXELS(6);
-  Actor_SetSpeed(39, 0x40000, 0x20000);
+  Event_PlaySound(SE_JUMP);
+  Actor_Get(39)->velocityY = px(6);
+  Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 312, 168);
-  Actor_SetSpeed(39, 0x20000, 0x10000);
+  Actor_SetSpeed(39, 2);
   Actor_WalkToAndWait(39, 328, 152);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldEvent_Wait(15);
-  Event_PlaySound(152);
-  Actor_Get(39)->velocityY = PIXELS(6);
-  Actor_SetSpeed(39, 0x40000, 0x20000);
+  Event_PlaySound(SE_JUMP);
+  Actor_Get(39)->velocityY = px(6);
+  Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 360, 152);
   FieldEvent_Wait(15);
-  Event_PlaySound(152);
-  Actor_Get(39)->velocityY = PIXELS(6);
-  Actor_SetSpeed(39, 0x20000, 0x10000);
+  Event_PlaySound(SE_JUMP);
+  Actor_Get(39)->velocityY = px(6);
+  Actor_SetSpeed(39, 2);
   Actor_WalkToAndWait(39, 360, 184);
-  Actor_SetSpeed(39, 0x20000, 0x10000);
+  Actor_SetSpeed(39, 2);
   Actor_WalkToAndWait(39, 376, 184);
   Actor_WalkToAndWait(39, 392, 200);
   Actor_WalkToAndWait(39, 408, 184);
   FieldEvent_Wait(15);
-  Event_PlaySound(152);
-  Actor_Get(39)->velocityY = PIXELS(6);
-  Actor_SetSpeed(39, 0x40000, 0x20000);
+  Event_PlaySound(SE_JUMP);
+  Actor_Get(39)->velocityY = px(6);
+  Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 440, 184);
   Actor_SetPosition(39, 0, 0);
   Event_SetFlag(0xa6c);
@@ -809,17 +807,17 @@ void Func_02000f6c(void) {
 void GabombaStatue_HearTheOffering(void) {
   s32 result;
 
-  Event_SetFlag(0x205);
+  Event_SetFlag(FLAG_SCENE_TEMP_05);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Func_0200533c();
   FieldEvent_Wait(40);
   FieldEvent_SetMessageId(MsgGabombaAcceptOffering);
   Event_ShowMessage(24, 0);
-  FieldCamera_MoveTo(PIXELS(392), -1, PIXELS(256), 1);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 256, 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(220);
+  Event_PlaySound(SE_SHIMMER);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
@@ -832,14 +830,14 @@ void GabombaStatue_HearTheOffering(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(10);
   System_Wait(20);
-  Event_PlaySound(130);
+  Event_PlaySound(SE_PSYNERGY_START);
   FieldActor_SetSpriteColor(Actor_Get(9), 7);
   FieldActor_SetSpriteColor(Actor_Get(10), 7);
   System_Wait(8);
   FieldActor_SetSpriteColor(Actor_Get(10), 3);
   FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
-  Event_PlaySound(11);
+  Event_PlaySound(MUS_011);
   result = Func_02004d48(11, 1);
   ObjectTable_Snapshot();
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
@@ -874,19 +872,19 @@ const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
   const u8 *table = gGabombaStatue_Triggers;
 
-  if (scene == (s32)&SceneId_Ov671Room1)
+  if (scene == (s32)&SceneId_GabombaStatue1)
     table = gGabombaStatue_Room1Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room2)
+  else if (scene == (s32)&SceneId_GabombaStatue2)
     table = gGabombaStatue_Room2Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room3)
+  else if (scene == (s32)&SceneId_GabombaStatue3)
     table = gGabombaStatue_Room3Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room4)
+  else if (scene == (s32)&SceneId_GabombaStatue4)
     table = gGabombaStatue_Room4Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room5)
+  else if (scene == (s32)&SceneId_GabombaStatue5)
     table = gGabombaStatue_Room5Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room6)
+  else if (scene == (s32)&SceneId_GabombaStatue6)
     table = gGabombaStatue_Room6Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room7)
+  else if (scene == (s32)&SceneId_GabombaStatue7)
     table = gGabombaStatue_Room7Triggers;
   return table;
 }
@@ -899,16 +897,16 @@ void Func_020011bc(s32 x, s32 z) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x, z);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
-  FieldActor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
+  FieldActor_SetMoveTargetFixed(object, x << 16, px(-12), z << 16);
   FieldActor_WaitForMove(object);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(work->exit);
@@ -921,11 +919,11 @@ void Func_020011bc(s32 x, s32 z) {
     s32 z = leader->z >> 20;                                                   \
                                                                                \
     if (z == n1) {                                                             \
-      if (x == n2 && (gInput.held & 16) == 0)                                  \
+      if (x == n2 && (gInput.held & KEY_RIGHT) == 0)                           \
         return;                                                                \
-      if (x == n3 && (gInput.held & 32) == 0)                                  \
+      if (x == n3 && (gInput.held & KEY_LEFT) == 0)                            \
         return;                                                                \
-    } else if (x == n4 && z == n5 && (gInput.held & 64) == 0) {                \
+    } else if (x == n4 && z == n5 && (gInput.held & KEY_UP) == 0) {            \
       return;                                                                  \
     }                                                                          \
     Func_020011bc(n6, n7);                                                     \
@@ -942,14 +940,14 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(Func_02001284, 11, 18, 20, 19, 12, 312,
     s32 z = leader->z >> 20;                                                   \
                                                                                \
     if (x == n1) {                                                             \
-      if (z == n2 && (gInput.held & 128) == 0)                                 \
+      if (z == n2 && (gInput.held & KEY_DOWN) == 0)                            \
         return;                                                                \
-      if (z == n3 && (gInput.held & 64) == 0)                                  \
+      if (z == n3 && (gInput.held & KEY_UP) == 0)                              \
         return;                                                                \
     } else if (z == n4) {                                                      \
-      if (x == n5 && (gInput.held & 16) == 0)                                  \
+      if (x == n5 && (gInput.held & KEY_RIGHT) == 0)                           \
         return;                                                                \
-      if (x == n6 && (gInput.held & 32) == 0)                                  \
+      if (x == n6 && (gInput.held & KEY_LEFT) == 0)                            \
         return;                                                                \
     }                                                                          \
     Func_020011bc(n7, n8);                                                     \
@@ -964,9 +962,9 @@ void Func_02001364(void) {
   s32 z = leader->z >> 20;
 
   if (z == 7) {
-    if (x == 32 && (gInput.held & 16) == 0)
+    if (x == 32 && (gInput.held & KEY_RIGHT) == 0)
       return;
-  } else if (x == 33 && z == 8 && (gInput.held & 64) == 0) {
+  } else if (x == 33 && z == 8 && (gInput.held & KEY_UP) == 0) {
     return;
   }
   Func_020011bc(536, 112);
@@ -978,14 +976,14 @@ void Func_020013bc(void) {
   s32 z = leader->z >> 20;
 
   if (z == 13) {
-    if (x == 5 && (gInput.held & 16) == 0)
+    if (x == 5 && (gInput.held & KEY_RIGHT) == 0)
       return;
-    if (x == 7 && (gInput.held & 32) == 0)
+    if (x == 7 && (gInput.held & KEY_LEFT) == 0)
       return;
   } else if (x == 6) {
-    if (z == 12 && (gInput.held & 128) == 0)
+    if (z == 12 && (gInput.held & KEY_DOWN) == 0)
       return;
-    if (z == 14 && (gInput.held & 64) == 0)
+    if (z == 14 && (gInput.held & KEY_UP) == 0)
       return;
   }
   Func_020011bc(104, 208);
@@ -997,11 +995,11 @@ void Func_02001430(void) {
   s32 z = leader->z >> 20;
 
   if (x == 42) {
-    if (z == 12 && (gInput.held & 128) == 0)
+    if (z == 12 && (gInput.held & KEY_DOWN) == 0)
       return;
-    if (z == 14 && (gInput.held & 64) == 0)
+    if (z == 14 && (gInput.held & KEY_UP) == 0)
       return;
-  } else if (x == 43 && z == 13 && (gInput.held & 16) == 0) {
+  } else if (x == 43 && z == 13 && (gInput.held & KEY_RIGHT) == 0) {
     return;
   }
   Func_020011bc(680, 208);
@@ -1016,9 +1014,9 @@ void Func_02001564(void) {
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
-  if (x == 42 && z == 10 && (gInput.held & 64) == 0)
+  if (x == 42 && z == 10 && (gInput.held & KEY_UP) == 0)
     return;
-  if (x == 43 && z == 9 && (gInput.held & 32) == 0)
+  if (x == 43 && z == 9 && (gInput.held & KEY_LEFT) == 0)
     return;
   Func_020011bc(680, 146);
 }
@@ -1030,7 +1028,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28,
  * EventWork154__gabomba_statue; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, its members read exit
  * as returnEntrance, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:906: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:912: structure has no member named
  * `returnEntrance'. */
 struct EventWork154__gabomba_statue {
   u8 unk000[0x154];
@@ -1045,25 +1043,25 @@ void Func_02001630(void) {
   struct Actor *leader;
   struct EventWork154__gabomba_statue *work;
 
-  if (x == 28 && z == 9 && !(gInput.held & 0x10))
+  if (x == 28 && z == 9 && !(gInput.held & KEY_RIGHT))
     return;
-  if (x == 29 && z == 10 && !(gInput.held & 0x40))
+  if (x == 29 && z == 10 && !(gInput.held & KEY_UP))
     return;
   work = Ram_HeapSlots->eventWork;
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   leader->motionFlags = 0;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 472, 144);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
-  FieldActor_SetMoveTarget(leader, PIXELS(472), 0, PIXELS(156));
+  FieldActor_SetMoveTarget(leader, 472, 0, 156);
   FieldActor_WaitForMove(leader);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(work->exit);
@@ -1073,8 +1071,8 @@ void Func_02001630(void) {
   void name(struct Actor *actor) {                                             \
     Event_Start();                                                             \
     FieldEvent_ResolvePendingActions(0);                                       \
-    Event_PlaySound(581);                                                      \
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);           \
+    Event_PlaySound(SE_581);                                                   \
+    Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 1.6, 1.6);    \
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, n1, n2);                \
     Event_End();                                                               \
   }
@@ -1087,18 +1085,16 @@ void Func_0200176c(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(581);
+  Event_PlaySound(SE_581);
   actor->motionFlags = 0;
   speed = 0x19999;
-  /* FAKEMATCH(barrier): an empty asm on speed, so the speed is loaded before
-   * the owner, whose base is already in a register; as the plain call, 4 of 40
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm on speed. */
   asm volatile("" : "+l"(speed));
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, speed, 0x19999);
+  Actor_SetSpeedFixed(gMainRoutineWork.currentOwner, speed, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 488);
   actor->motionFlags = 3;
   FieldEvent_Wait(8);
-  Event_PlaySound(161);
+  Event_PlaySound(SE_RATTLE);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   FieldEvent_Wait(20);
   Event_End();
@@ -1113,9 +1109,9 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_02001864, 440, 248)
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_020018a8, 440, 184)
 
 void GabombaStatue_SetActorsHidden(s32 show) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaStatue1)
     Actors_SetHidden(show, 8, 1);
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room2)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_GabombaStatue2)
     Actors_SetHidden(show, 29, 2);
 }
 
@@ -1123,12 +1119,12 @@ extern s16 gData_02005d7c[];
 
 void GabombaStatue_HideActors(void) {
   GabombaStatue_SetActorsHidden(1);
-  Event_SetFlag(512);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
 }
 
 void GabombaStatue_ShowActors(void) {
   GabombaStatue_SetActorsHidden(0);
-  Event_ClearFlag(512);
+  Event_ClearFlag(FLAG_SCENE_TEMP_00);
 }
 
 void Actors_SetHidden(s32 show, s32 first, u32 count) {
@@ -1156,15 +1152,15 @@ void Func_020019d0(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   EventCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeed(0x9999, 0x1333);
-  FieldCamera_MoveTo(180 << 17, 0, 248 << 17, 1);
+  FieldCamera_SetSpeed(0.6);
+  FieldCamera_MoveTo(360, 0, 496, 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(586);
+  Event_PlaySound(SE_586);
   Func_020020f0(0);
   FieldEvent_Wait(40);
-  Event_PlaySound(582);
+  Event_PlaySound(SE_582);
   actor->motionFlags = 0;
-  actor->y = PIXELS(8);
+  actor->y = px(8);
   FieldEvent_Wait(10);
   actor->y = 0;
   FieldEvent_Wait(10);
@@ -1187,9 +1183,9 @@ void Func_02001a8c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(20);
-  Event_PlaySound(214);
+  Event_PlaySound(SE_RISING_CHIMES);
   Actor_SelectAnimation(object, 5);
-  object->scaleY = 0x10000;
+  object->scaleY = Q16_ONE;
   Event_End();
 }
 
@@ -1207,10 +1203,10 @@ void Func_02001adc(s32 id) {
 
 void Func_02001b0c(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    if (!Event_GetFlag(512))
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
       GabombaStatue_ShowActors();
   } else {
-    Event_SetFlag(512);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
 #define DEFINE_GABOMBA_STATUE_RAISE_ACTORS(name, n1, n2)                       \
@@ -1224,7 +1220,7 @@ void Func_02001b0c(void) {
                                                                                \
       Func_02001adc(id);                                                       \
       object->motionFlags = 0;                                                 \
-      object->y = PIXELS(36);                                                  \
+      object->y = px(36);                                                      \
       i++;                                                                     \
     }                                                                          \
     if (i < n2)                                                                \
@@ -1241,7 +1237,7 @@ void Func_02001b98(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 i;
 
-  if (Event_GetFlag(262) || *(s16 *)(event + 358) != 0) {
+  if (Event_GetFlag(FLAG_MENU_OPEN) || *(s16 *)(event + 358) != 0) {
     open = 1;
     value = 0;
   }
@@ -1400,7 +1396,7 @@ void Func_020020f0(s32 direction) {
 
   gData_02005af0 = direction;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov671Room2) {
+  if (scene == (s32)&SceneId_GabombaStatue2) {
     Func_020020b0(14, direction, 0);
     Func_020020b0(21, direction, 1);
     Func_020020b0(26, direction, 2);
@@ -1410,29 +1406,29 @@ void Func_020020f0(s32 direction) {
       MapGrid_CopyCellAttributes(23, 21, 1, 3, 23, 9);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(24, 21, 1, 3, 23, 9);
-  } else if (scene == (s32)&SceneId_Ov671Room3) {
+  } else if (scene == (s32)&SceneId_GabombaStatue3) {
     Func_020020b0(8, direction, 0);
     Func_020020b0(15, direction, 1);
     Func_020020b0(20, direction, 2);
     Func_020020b0(25, direction, 3);
     Func_020020b0(29, direction, 4);
-  } else if (scene == (s32)&SceneId_Ov671Room4) {
+  } else if (scene == (s32)&SceneId_GabombaStatue4) {
     Func_020020b0(8, direction, 0);
     Func_020020b0(21, direction, 1);
     Func_020020b0(29, direction, 2);
     Func_020020b0(35, direction, 3);
     Func_020020b0(38, direction, 4);
-  } else if (scene == (s32)&SceneId_Ov671Room5) {
+  } else if (scene == (s32)&SceneId_GabombaStatue5) {
     Func_020020b0(10, direction, 0);
     Func_020020b0(12, direction, 1);
     if (direction == 0)
       MapGrid_CopyCellAttributes(34, 12, 1, 3, 27, 12);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(35, 12, 1, 3, 27, 12);
-  } else if (scene == (s32)&SceneId_Ov671Room6) {
+  } else if (scene == (s32)&SceneId_GabombaStatue6) {
     Actor_SetAnimation(13, 5);
     Actor_SetSpriteFlags(Actor_Get(13), 0);
-  } else if (scene == (s32)&SceneId_Ov671Room7) {
+  } else if (scene == (s32)&SceneId_GabombaStatue7) {
     Func_020020b0(8, direction, 0);
     Func_020020b0(9, direction, 1);
     Func_020020b0(10, direction, 2);
@@ -1491,17 +1487,17 @@ void Func_02002394(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y = 0x820000;
-  actor->gravity = 0x8000;
+  actor->y = px(130);
+  actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -1524,15 +1520,17 @@ void Func_02002394(void) {
                       velocity[2], 0x1090001, &options);
     i++;
   } while (i <= 16);
-  Event_PlaySound(188);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Event_PlaySound(SE_THUMP);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
-  actor->gravity = 0x10000;
-  actor->bounce = 0x4000;
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  actor->gravity = px(1);
+  actor->bounce = Q16_ONE / 4;
   System_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
@@ -1560,7 +1558,7 @@ static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
 void GabombaStatue_FocusEnergies(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   EventCamera_GetActor()->motionFlags = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1572,11 +1570,11 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   System_Wait(1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetSpeed(5, 0xcccc, 0x6666);
-  Actor_SetSpeed(6, 0xcccc, 0x6666);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
-  Actor_SetSpeed(23, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+  Actor_SetSpeed(5, 0.8);
+  Actor_SetSpeed(6, 0.8);
+  Actor_SetSpeed(7, 0.8);
+  Actor_SetSpeed(23, 0.8);
   Actor_SetScript(23, gData_02005ba4);
   System_Wait(10);
   Actor_SetScript(gMainRoutineWork.currentOwner, gData_02005af4);
@@ -1584,15 +1582,15 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_SetScript(7, gData_02005b60);
   FieldActor_RefreshSelectorById(23);
   FieldEvent_Wait(20);
-  FieldCamera_SetSpeed(0x13333, 0x2666);
-  FieldCamera_MoveTo(PIXELS(434), -1, PIXELS(286), 1);
-  Actor_SetSpeed(23, 0x13333, 0x9999);
+  FieldCamera_SetSpeed(1.2);
+  FieldCamera_MoveTo(434, CAMERA_KEEP, 286, 1);
+  Actor_SetSpeed(23, 1.2);
   Actor_RunScriptAndWait(23, gData_02005be8);
   FieldEvent_Wait(40);
   Actor_FaceDirectionAndWait(23, FACING_NORTH + FACING_STEP);
   Event_ShowMessage(23, 0);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(PIXELS(434), -1, PIXELS(168), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(434, CAMERA_KEEP, 168, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
@@ -1624,25 +1622,25 @@ void Func_020027cc(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  Event_PlaySound(78);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   speed = 0x4000;
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(348),
-                             PIXELS(312), speed);
-  Actor_SetPositionAndFacing(7, PIXELS(330), PIXELS(312), speed);
+  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(348), px(312),
+                             speed);
+  Actor_SetPositionAndFacing(7, px(330), px(312), speed);
   {
     s32 slow = 0x3000;
 
-    Actor_SetPositionAndFacing(23, PIXELS(432), PIXELS(312), slow);
+    Actor_SetPositionAndFacing(23, px(432), px(312), slow);
   }
-  Actor_SetPositionAndFacing(6, PIXELS(448), PIXELS(312), speed);
-  Actor_SetPositionAndFacing(5, PIXELS(468), PIXELS(312), speed);
+  Actor_SetPositionAndFacing(6, px(448), px(312), speed);
+  Actor_SetPositionAndFacing(5, px(468), px(312), speed);
   System_Wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
-  Event_PlaySound(220);
+  Event_PlaySound(SE_SHIMMER);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
@@ -1653,7 +1651,8 @@ void Func_020027cc(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(10);
   System_Wait(20);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 256, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Func_0200578c_ArgsFirst(5, 256, 0);
   Func_0200578c_ArgsFirst(6, 256, 0);
   Func_0200578c_ArgsFirst(7, 256, 0);
@@ -1663,7 +1662,7 @@ void Func_020027cc(void) {
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(7, FACING_NORTH, 0);
   Actor_FaceDirection(23, FACING_NORTHWEST + FACING_STEP, 60);
-  Event_PlaySound(130);
+  Event_PlaySound(SE_PSYNERGY_START);
   FieldActor_SetSpriteColor(Actor_Get(9), 7);
   FieldActor_SetSpriteColor(Actor_Get(10), 7);
   System_Wait(8);
@@ -1681,7 +1680,7 @@ void Func_020027cc(void) {
   Actor_SetScript(5, gData_02005ca0);
   Actor_SetScript(6, gData_02005ca0);
   Actor_SetScript(23, gData_02005ca0);
-  Event_PlaySound(11);
+  Event_PlaySound(MUS_011);
   Func_02004d48(11, 0);
   FieldEvent_Wait(80);
   Event_SetFlag(0x8f7);
@@ -1699,7 +1698,7 @@ void GabombaStatue_SeeHowItWorks(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   {
     s32 leader = gMainRoutineWork.currentOwner;
 
@@ -1723,98 +1722,99 @@ void GabombaStatue_SeeHowItWorks(void) {
   FieldEvent_SetMessageId(MsgGabombaUnderstandsChannel);
   Event_ShowMessage(23, 0);
   EventCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirectionAndWait(6, 0x8000);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(6, 3);
-  Event_ShowMessage(0x4006, 0);
-  ((void *)Event_OpenMessage(0x6005, 0));
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
+  ((void *)Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 5,
+                             0));
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
     Func_0200578c_ArgsFirst(7, 256, 20);
-    Actor_SetSpeed(7, 0x20000, 0x10000);
+    Actor_SetSpeed(7, 2);
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
     Actor_WalkToAndWait(7, 364, 308);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
-    Actor_FaceDirectionAndWait(7, 0x6000);
-    Event_ShowMessage(0x6007, 0);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 7, 0);
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
   } else {
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
-    Actor_SetSpeed(7, 0x20000, 0x10000);
+    Actor_SetSpeed(7, 2);
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
     Actor_WalkToAndWait(7, 364, 308);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
-    Actor_FaceDirectionAndWait(7, 0x6000);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
     Actor_SetAnimation(7, 3);
     Event_ShowMessage(cue, 0);
   }
-  Actor_FaceDirectionAndWait(23, 0x8000);
+  Actor_FaceDirectionAndWait(23, FACING_WEST);
   Actor_SetAnimationAndWait(23, 4);
-  Event_ShowMessage(0x6017, 0);
-  Actor_FaceDirection(7, 0, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
   Func_0200578c_ArgsFirst(7, 257, 40);
-  Event_ShowMessage(0x6017, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
   Actor_SetAnimationAndWait(7, 3);
   Func_0200578c_ArgsFirst(23, 265, 20);
-  Event_ShowMessage(0x6017, 0);
-  Event_ShowMessage(0x4007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Func_0200578c_ArgsFirst(7, 256, 40);
-  Event_ShowMessage(0x4007, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Actor_SetAnimation(23, 3);
-  Event_ShowMessage(0x4017, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 23, 0);
   Func_0200578c_ArgsFirst(7, 265, 10);
-  Event_ShowMessage(0x4007, 0);
-  Actor_SetSpeed(6, 0xcccc, 0x6666);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
+  Actor_SetSpeed(6, 0.8);
   Actor_WalkToAndWait(6, 440, 296);
-  Actor_FaceDirectionAndWait(6, 0x8000);
+  Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimationAndWait(6, 3);
-  Event_ShowMessage(0x4006, 0);
-  Actor_FaceDirection(7, 0xe000, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
+  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Func_0200578c_ArgsFirst(7, 261, 0);
-  Actor_FaceDirection(6, 0x2000, 0);
-  Actor_FaceDirection(5, 0xa000, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 80);
+  Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 80);
   Func_0200578c_ArgsFirst(7, 261, 40);
-  Actor_FaceDirectionAndWait(7, 0);
-  Event_ShowMessage(0x4007, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirectionAndWait(6, 0x8000);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimation(23, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimationAndWait(6, 3);
   Actor_SetAnimationAndWait(7, 3);
-  Actor_FaceDirectionAndWait(23, 0xb000);
+  Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
   Event_ShowMessage(23, 0);
   Func_0200578c_ArgsFirst(23, 257, 0);
-  Actor_FaceDirection(23, 0xd000, 20);
-  Actor_FaceDirectionAndWait(23, 0xb000);
+  Actor_FaceDirection(23, FACING_NORTH_NORTHEAST, 20);
+  Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
   Event_ShowMessage(23, 0);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(196 << 17, -1, 176 << 16, 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(23, 0);
   Event_ShowMessage(6, 0);
   Event_ShowMessage(23, 0);
   Event_ShowMessage(7, 0);
-  Event_ShowMessage(0x2005, 0);
-  FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(23, 3);
   Event_ShowMessage(23, 0);
-  Actor_FaceDirectionAndWait(23, 0x8000);
+  Actor_FaceDirectionAndWait(23, FACING_WEST);
   Event_ShowMessage(23, 0);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
-  Actor_SetSpeed(6, 0x19999, 0xcccc);
-  Actor_SetSpeed(23, 0x19999, 0xcccc);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  Actor_SetSpeed(5, 1.6);
+  Actor_SetSpeed(6, 1.6);
+  Actor_SetSpeed(23, 1.6);
+  Actor_SetSpeed(7, 0.8);
   Actor_SetScript(7, gData_02005c40);
   Actor_SetScript(23, gData_02005c40);
   Actor_SetScript(6, gData_02005c40);
@@ -1837,7 +1837,7 @@ void GabombaStatue_SawEnergyFlow(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Func_020048a4(19, 11, gData_02005d8c[index], 16);
   Actor_SetAnimation(15, 5);
   Actor_SetPosition(11, 0, 0);
@@ -1852,22 +1852,22 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_SetPosition(21, 0, 0);
   Actor_SetPosition(22, 0, 0);
   System_Wait(1);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(182), 0);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 182, 0);
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   south = FACING_SOUTH;
-  Actor_SetPositionAndFacing(5, PIXELS(472), PIXELS(216), south);
+  Actor_SetPositionAndFacing(5, px(472), px(216), south);
   facing = FACING_SOUTHEAST + FACING_STEP;
-  Actor_SetPositionAndFacing(24, PIXELS(472), PIXELS(200), facing);
+  Actor_SetPositionAndFacing(24, px(472), px(200), facing);
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldCamera_SetSpeed(0x13333, 0x2666);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(312), 1);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(24, 0x10000, 0x8000);
+  FieldCamera_SetSpeed(1.2);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 312, 1);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(24, 1);
   Actor_SetScript(5, gData_02005ccc);
   Actor_RunScriptAndWait(24, gData_02005d24);
   FieldEvent_SetMessageId(MsgGabombaSawEnergyFlow);
@@ -1877,7 +1877,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_FaceDirectionAndWait(5, FACING_EAST);
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(272), 1);
+  FieldCamera_MoveTo(414, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(5, 0);
   Func_02004f40(&x, &z);
@@ -1890,35 +1890,35 @@ void GabombaStatue_SawEnergyFlow(void) {
   System_Wait(1);
   actor = Actor_Get(5);
   actor->facing = ArcTan2(spark->z - actor->z, spark->x - actor->x);
-  FieldCamera_MoveTo(spark->x, -1, spark->z, 1);
+  FieldCamera_MoveToFixed(spark->x, -1, spark->z, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(5, 0);
   Actor_Release(spark);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(304), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   Event_ShowMessage(5, 0);
-  Actor_SetAttachedEffect(24, 258);
+  Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(24, 0);
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(472),
-                             PIXELS(204), south);
-  Actor_SetPositionAndFacing(7, PIXELS(440), PIXELS(204), south);
-  Actor_SetPositionAndFacing(23, PIXELS(456), PIXELS(204), facing);
-  Actor_SetPositionAndFacing(6, PIXELS(488), PIXELS(204), south);
+  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(472), px(204),
+                             south);
+  Actor_SetPositionAndFacing(7, px(440), px(204), south);
+  Actor_SetPositionAndFacing(23, px(456), px(204), facing);
+  Actor_SetPositionAndFacing(6, px(488), px(204), south);
   System_Wait(1);
   Event_ShowMessage(23, 0);
   Actor_FaceDirection(24, FACING_NORTH + FACING_STEP, 0);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(264), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 264, 1);
   FieldCamera_WaitForArrival();
   FieldActor_Jump(24, 4, 10);
-  Event_ShowMessage(0x4018, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 24, 0);
   Actor_SetAnimationAndWait(7, 4);
-  Event_ShowMessage(0x8007, 0);
-  Actor_ShowEmote(24, 257, 40);
-  Event_ShowMessage(0x8006, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 7, 0);
+  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 6, 0);
   Actor_SetAnimation(23, 4);
-  Event_ShowMessage(0x9017, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 23, 0);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0, 0);
@@ -1951,8 +1951,8 @@ s32 Scene_Initialize(void) {
   s16 scene;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
-  if (gMainRoutineWork.scene != (s32)&SceneId_Ov671Room1) {
-    if (Event_GetFlag(515))
+  if (gMainRoutineWork.scene != (s32)&SceneId_GabombaStatue1) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       Func_020020f0(0);
     else if (Event_GetFlag(0x8cd))
       Func_020020f0(-1);
@@ -1962,25 +1962,25 @@ s32 Scene_Initialize(void) {
   }
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov671Room1) {
+  if (scene == (s32)&SceneId_GabombaStatue1) {
     GabombaStatue_InitializeRoom1();
-  } else if (scene == (s32)&SceneId_Ov671Room2) {
+  } else if (scene == (s32)&SceneId_GabombaStatue2) {
     MapGrid_CopyCellAttributes(15, 68, 8, 3, 15, 4);
     GabombaStatue_InitializeRoom2();
-  } else if (scene == (s32)&SceneId_Ov671Room3) {
+  } else if (scene == (s32)&SceneId_GabombaStatue3) {
     GabombaStatue_InitializeRoom3();
-  } else if (scene == (s32)&SceneId_Ov671Room5) {
+  } else if (scene == (s32)&SceneId_GabombaStatue5) {
     GabombaStatue_InitializeRoom5();
-  } else if (scene == (s32)&SceneId_Ov671Room6) {
+  } else if (scene == (s32)&SceneId_GabombaStatue6) {
     GabombaStatue_InitializeRoom6();
-  } else if (scene == (s32)&SceneId_Ov671Room7) {
+  } else if (scene == (s32)&SceneId_GabombaStatue7) {
     GabombaStatue_InitializeRoom7();
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room7 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaStatue7 &&
       gMainRoutineWork.entrance == 1 &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_ClearFlag(0x8cd);
@@ -1992,8 +1992,6 @@ s32 Scene_PrepareMap(void) {
 
 void GabombaStatue_InitializeRoom1(void) { Func_02001b38(); }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
   Func_0200583c(index, flag, a, b);
 }
@@ -2006,7 +2004,7 @@ void GabombaStatue_InitializeRoom2(void) {
   }
   Func_020053bc(gData_02005d7c);
   if (!Event_GetFlag(0x8ce) || !Event_GetFlag(0x8cf))
-    Actor_Get(26)->y = PIXELS(16);
+    Actor_Get(26)->y = px(16);
   Rope_Initialize();
   Exit_Set(0, 513, 8, 9);
   Exit_Set(1, 514, 10, 11);
@@ -2022,7 +2020,7 @@ void GabombaStatue_InitializeRoom3(void) {
     if ((u16)(entrance - 7) <= 1)
       Func_02002394();
     if (gMainRoutineWork.entrance == 7)
-      Event_SetFlag(0x204);
+      Event_SetFlag(FLAG_SCENE_TEMP_04);
   }
 }
 
@@ -2100,7 +2098,8 @@ L_0200b6f2:
   Func_020053ac();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16), 0);
+  FieldCamera_MoveToFixed(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16),
+                          0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   Event_End();
@@ -2155,7 +2154,7 @@ L_0200b7e4:
     goto L_0200b84a;
   GabombaStatue_FixTheChannel();
 L_0200b84a:
-  Event_ClearFlag(0x12f);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_End();
 L_0200b856:
 }
@@ -2198,8 +2197,6 @@ void GabombaStatue_InitializeRoom7(void) {
   }
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void *Mem_Alloc(s32 size) { return Heap_Alloc(size); }
 
 void Func_020038ac(void) {
@@ -2282,8 +2279,7 @@ s32 Func_02003a64(s32 value) {
   struct PuzzleCell *cell;
 
   state->count = value - 1;
-  /* FAKEMATCH(dead): the form kept; as no such test, 580 of 629 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): the form kept. */
   {
     s32 mark = state->cells[0].occupied;
     if (mark & 0x100) {
@@ -2318,8 +2314,7 @@ retry:
 draw_row:
   col = 0;
 draw_col:
-  /* FAKEMATCH(temporary): the form kept; as plain arguments, 231 of 629
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept. */
   {
     s32 drawn = state->cells[row * 11 + col].kind;
     s32 drawZ, drawX = state->originX;
@@ -2495,8 +2490,7 @@ turn_col:
       break;
     }
   }
-  /* FAKEMATCH(temporary): the form kept; as plain arguments, 12 of 629
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept. */
   {
     s32 drawZ, drawX = state->originX;
     drawZ = state->originZ + row;
@@ -2664,9 +2658,7 @@ void Func_02004270(s32 x, s32 z, s32 kind, s32 state) {
   {
     s32 column = x;
 
-    /* FAKEMATCH(barrier): an empty asm on column that names the cell table, so
-     * the table is loaded before x is added; without it, 9 of 10 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on column that names the cell table. */
     asm("" : "+l"(column) : "l"(gSceneState.cells));
     i = z * 11 + column;
   }
@@ -2705,8 +2697,7 @@ nextColumn:
           s32 z = state->originZ;
 
           /* FAKEMATCH(temporary): the origins read into x and z before the
-           * column and row are added; as plain arguments, 12 of 119
-           * instructions differ in tla-en. */
+           * column and row are added. */
           x += column;
           z += row;
           MapGrid_CopyCells(0, 11, 1, 1, x, z);
@@ -2715,12 +2706,9 @@ nextColumn:
       } else {
         object->x = 0;
         object->z = 0;
-        // A byte store of the cell's last byte: sched2 orders it behind the
-        // next load's constant only as a char access.
         ((u8 *)cell)[3] = 1;
         /* FAKEMATCH(temporary): kind and the origins read before the column and
-         * row are added; as plain arguments, 37 of 119 instructions differ in
-         * tla-en. */
+         * row are added. */
         kind = cell->kind;
         mapX = state->originX;
         mapZ = state->originZ;
@@ -2747,9 +2735,7 @@ u8 Func_02004380(s32 x, s32 z, s32 direction) {
   {
     s32 column = x;
 
-    /* FAKEMATCH(barrier): an empty asm on column that names the cell table, so
-     * the table is loaded before x is added; without it, 12 of 13 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on column that names the cell table. */
     asm("" : "+l"(column) : "l"(gSceneState.cells));
     i = z * 11 + column;
   }
@@ -2766,7 +2752,7 @@ void Func_020043a4(s32 value, s32 row) {
   if (value == 1) {
     Func_02004288(gSceneState.firstId, 1);
     Actor_SelectAnimation(object, 6);
-    object->scaleY = 0x10000;
+    object->scaleY = Q16_ONE;
   }
 }
 
@@ -2832,7 +2818,7 @@ void Func_02004530(void) {
     MapGrid_CopyCellsLayered(1, 13, 1, 1, state->originX + 3,
                              state->originZ - 2);
     if (state->statuesReady != 0) {
-      Event_PlaySound(248);
+      Event_PlaySound(SE_248);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Func_020044b4(3);
@@ -2869,7 +2855,7 @@ void Func_02004620(void) {
     MapGrid_CopyCellsLayered(0, 13, 1, 1, state->originX + 7,
                              state->originZ - 2);
     if (state->statuesReady != 0) {
-      Event_PlaySound(248);
+      Event_PlaySound(SE_248);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Func_020044b4(2);
@@ -2919,7 +2905,7 @@ void Func_02004710(void) {
     s32 px = piece->x;
     if (px != 0) {
       s32 x = px - scrollX;
-      s32 y = piece->y + 0x100000;
+      s32 y = piece->y + px(16);
       s32 pz = piece->z;
       s32 z = pz - scrollZ;
       s32 sy = z - y;
@@ -2969,12 +2955,12 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
 /* VIEW(puzzle_turn): routine gData_02006f38 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02006f38[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:2982: `gData_02006f38__puzzle_turn'
+ * games/tla/src/scene/gabomba_statue.c:2990: `gData_02006f38__puzzle_turn'
  * undeclared (first use in this function). */
 /* VIEW(puzzle_turn): routine gData_02006ec0 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA u32
  * gData_02006ec0[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3104: `gData_02006ec0' undeclared (first
+ * games/tla/src/scene/gabomba_statue.c:3112: `gData_02006ec0' undeclared (first
  * use in this function). */
 extern const u8 gData_02006f38__puzzle_turn[] __asm__("gData_02006f38");
 extern const u8 gData_02006ec0__puzzle_turn[] __asm__("gData_02006ec0");
@@ -3006,7 +2992,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
   if (goal == 2) {
     heading = row = col = 0;
     if (((u8 *)ball)[99] == 1) {
-      Sound_Play(204);
+      Sound_Play(SE_DUST_PUFF);
       Actor_StartScript(ball, gData_02006f38);
       ((u8 *)ball)[99] = goal;
     }
@@ -3118,7 +3104,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
       if (x >> 20 == 24 && z >> 20 == 14) {
         ((u8 *)ball)[99] = 7;
       } else {
-        Sound_Play(204);
+        Sound_Play(SE_DUST_PUFF);
         Actor_StartScript(ball, gData_02006f38);
         ((u8 *)ball)[99] = 2;
       }
@@ -3130,7 +3116,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
   default:
     heading = row = col = 0;
     if (((u8 *)ball)[99] == 1) {
-      Sound_Play(132);
+      Sound_Play(SE_WATER);
       Actor_StartScript(ball, gData_02006ec0);
       ((u8 *)ball)[99] = 2;
     }
@@ -3155,7 +3141,7 @@ done:
  * it has another declaration; tried as the definition's void
  * Func_02004938(struct Actor *ball, s32 step), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3178: too many arguments to function
+ * games/tla/src/scene/gabomba_statue.c:3189: too many arguments to function
  * `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 
@@ -3172,9 +3158,8 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  /* FAKEMATCH(signature): Actor_StartIdle, Actor_StartIdleFar's veneer,
-   * called without the actor it reads from r0; as
-   * Actor_StartIdle(actor), 73 of 230 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): Actor_StartIdle, Actor_StartIdleFar's veneer, called
+   * without the actor it reads from r0. */
   Actor_StartIdle();
   Actor_SelectAnimation(actor, 2);
   id = second;
@@ -3328,7 +3313,7 @@ s32 Func_02005020(s32 time) {
     *ringing = 1;
   } else if (*ringing) {
     if (clock->timer != 0)
-      Event_PlaySound(236);
+      Event_PlaySound(SE_COLOSSO_COUNTDOWN);
     *ringing = second;
   }
   if (second <= 19) {
@@ -3486,7 +3471,33 @@ void Func_020053bc(const u16 *entry) {
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Statue_Sink, Func_020054ac)
+void Statue_Sink(u16 *list, s32 mode, s32 count) {
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+
+  while (*list != 0xffff) {
+    u32 entry = *list;
+    s32 id = work->objectId;
+
+    if (id == entry) {
+      struct Actor *object = Actor_GetById(id);
+      s32 a;
+      s32 flag;
+
+      list++;
+      a = list[0];
+      flag = list[1];
+      if (count < 8)
+        object->scaleY -= 0x1f00;
+      if (mode == 1) {
+        GameFlag_Set(flag);
+        Func_020054ac(id, a, flag, object->terrainId);
+        object->scaleY = Q16_ONE;
+      }
+      break;
+    }
+    list += 3;
+  }
+}
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);
@@ -3495,8 +3506,7 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   cell += Actor_GetCellIndex(object);
   if (Event_GetFlag(flag)) {
     /* FAKEMATCH(temporary): the flags read into a local before the cell store
-     * and a local holding 2, so the flags are ORed into the register that holds
-     * 2; as one priorityFlags |= 2, 8 of 75 instructions differ in tla-en. */
+     * and a local holding 2. */
     u8 flags = object->priorityFlags;
     s32 bits;
 
@@ -3532,11 +3542,26 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
 }
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 u32 gData_02005910[] = {
     0x20007, 512, 0x20003, 0x20004, 516, 515,
@@ -3598,15 +3623,25 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
 
 LATE_DATA s32 gData_02005af0 = 0;
 
-LATE_DATA DEFINE_G_DATA_02002F1C(gData_02005af4, 472, 184)
+LATE_DATA u32 gData_02005af4[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(px(472), 0, px(184)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-LATE_DATA DEFINE_G_DATA_02005B1C(gData_02005b1c, 488)
+LATE_DATA u32 gData_02005b1c[] = {                                                               
+      SC_ARG(2),  SC_MOVE(px(488), 0, px(176)), SC_SYNC,    SC_ARG(1),  
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(1), SC_END,     
+  };
 
-LATE_DATA DEFINE_G_DATA_02005B1C(gData_02005b60, 456)
+LATE_DATA u32 gData_02005b60[] = {                                                               
+      SC_ARG(2),  SC_MOVE(px(456), 0, px(176)), SC_SYNC,    SC_ARG(1),  
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(1), SC_END,     
+  };
 
 LATE_DATA u32 gData_02005ba4[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(464), 0, PIXELS(208)),
+    SC_MOVE(px(464), 0, px(208)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -3617,9 +3652,9 @@ LATE_DATA u32 gData_02005ba4[] = {
 
 LATE_DATA u32 gData_02005be8[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(432), 0, PIXELS(286)),
+    SC_MOVE(px(432), 0, px(286)),
     SC_SYNC,
-    SC_MOVE(PIXELS(432), 0, PIXELS(312)),
+    SC_MOVE(px(432), 0, px(312)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -3634,15 +3669,19 @@ LATE_DATA u32 gData_02005c40[] = {
     17,
 };
 
-LATE_DATA DEFINE_G_DATA_02005C74(gData_02005c74, 0xe000)
+LATE_DATA s32 gData_02005c74[] = {                                                               
+      22, 35, 0xc000, 22, 36, 0xe000, 22, 40, 0, 46, (s32)Func_0200028c,           
+  };
 
-LATE_DATA DEFINE_G_DATA_02005C74(gData_02005ca0, 0xa000)
+LATE_DATA s32 gData_02005ca0[] = {                                                               
+      22, 35, 0xc000, 22, 36, 0xa000, 22, 40, 0, 46, (s32)Func_0200028c,           
+  };
 
 LATE_DATA u32 gData_02005ccc[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(472), 0, PIXELS(308)),
+    SC_MOVE(px(472), 0, px(308)),
     SC_SYNC,
-    SC_MOVE(PIXELS(440), 0, PIXELS(312)),
+    SC_MOVE(px(440), 0, px(312)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -3653,9 +3692,9 @@ LATE_DATA u32 gData_02005ccc[] = {
 
 LATE_DATA u32 gData_02005d24[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(472), 0, PIXELS(308)),
+    SC_MOVE(px(472), 0, px(308)),
     SC_SYNC,
-    SC_MOVE(PIXELS(460), 0, PIXELS(312)),
+    SC_MOVE(px(460), 0, px(312)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -3715,46 +3754,46 @@ LATE_DATA u32 gData_02005eec[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(123),
-    SCENE_EXIT_IF(1, 111, 3, 0x86b),
-    SCENE_EXIT_IF(1, 114, 3, -1),
-    SCENE_EXIT_IF(2, 115, 1, -1),
-    SCENE_EXITS(115),
-    SCENE_EXIT(1, 123, 2),
-    SCENE_EXIT(2, 116, 1),
-    SCENE_EXITS(116),
-    SCENE_EXIT(1, 115, 2),
-    SCENE_EXIT(2, 117, 1),
-    SCENE_EXIT(3, 117, 2),
-    SCENE_EXIT(4, 117, 3),
-    SCENE_EXITS(117),
-    SCENE_EXIT(1, 116, 2),
-    SCENE_EXIT(2, 116, 3),
-    SCENE_EXIT(3, 116, 4),
-    SCENE_EXIT(4, 118, 1),
-    SCENE_EXIT(5, 118, 2),
-    SCENE_EXIT(6, 118, 3),
-    SCENE_EXITS(118),
-    SCENE_EXIT(1, 117, 4),
-    SCENE_EXIT(2, 117, 5),
-    SCENE_EXIT(3, 117, 6),
-    SCENE_EXIT(4, 119, 1),
-    SCENE_EXIT(5, 117, 7),
-    SCENE_EXIT(6, 117, 8),
-    SCENE_EXITS(119),
-    SCENE_EXIT(1, 118, 4),
-    SCENE_EXIT(2, 120, 1),
-    SCENE_EXITS(121),
-    SCENE_EXIT(1, 120, 2),
-    SCENE_EXIT(10, 125, 10),
-    SCENE_EXIT(11, 125, 11),
-    SCENE_EXIT(12, 114, 11),
-    SCENE_EXIT(13, 114, 12),
-    SCENE_EXIT(14, 114, 13),
-    SCENE_EXIT(15, 114, 14),
-    SCENE_EXIT(16, 114, 15),
-    SCENE_EXIT(17, 125, 10),
-    SCENE_EXIT(18, 120, 6),
+    SCENE_EXITS(GabombaStatue7),
+    SCENE_EXIT_UNLESS(1, Kibombo2, 3, 0x86b),
+    SCENE_EXIT_UNLESS(1, Kibombo5, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GabombaStatue1, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GabombaStatue1),
+    SCENE_EXIT(1, GabombaStatue7, 2),
+    SCENE_EXIT(2, GabombaStatue2, 1),
+    SCENE_EXITS(GabombaStatue2),
+    SCENE_EXIT(1, GabombaStatue1, 2),
+    SCENE_EXIT(2, GabombaStatue3, 1),
+    SCENE_EXIT(3, GabombaStatue3, 2),
+    SCENE_EXIT(4, GabombaStatue3, 3),
+    SCENE_EXITS(GabombaStatue3),
+    SCENE_EXIT(1, GabombaStatue2, 2),
+    SCENE_EXIT(2, GabombaStatue2, 3),
+    SCENE_EXIT(3, GabombaStatue2, 4),
+    SCENE_EXIT(4, GabombaStatue4, 1),
+    SCENE_EXIT(5, GabombaStatue4, 2),
+    SCENE_EXIT(6, GabombaStatue4, 3),
+    SCENE_EXITS(GabombaStatue4),
+    SCENE_EXIT(1, GabombaStatue3, 4),
+    SCENE_EXIT(2, GabombaStatue3, 5),
+    SCENE_EXIT(3, GabombaStatue3, 6),
+    SCENE_EXIT(4, GabombaStatue5, 1),
+    SCENE_EXIT(5, GabombaStatue3, 7),
+    SCENE_EXIT(6, GabombaStatue3, 8),
+    SCENE_EXITS(GabombaStatue5),
+    SCENE_EXIT(1, GabombaStatue4, 4),
+    SCENE_EXIT(2, GabombaStatueChamber1, 1),
+    SCENE_EXITS(GabombaStatue6),
+    SCENE_EXIT(1, GabombaStatueChamber1, 2),
+    SCENE_EXIT(10, Kibombo6, 10),
+    SCENE_EXIT(11, Kibombo6, 11),
+    SCENE_EXIT(12, Kibombo5, 11),
+    SCENE_EXIT(13, Kibombo5, 12),
+    SCENE_EXIT(14, Kibombo5, 13),
+    SCENE_EXIT(15, Kibombo5, 14),
+    SCENE_EXIT(16, Kibombo5, 15),
+    SCENE_EXIT(17, Kibombo6, 10),
+    SCENE_EXIT(18, GabombaStatueChamber1, 6),
     SCENE_EXITS_END,
 };
 
@@ -3769,146 +3808,111 @@ LATE_DATA s32 gData_02005fc8[] = {
 };
 
 LATE_DATA struct ActorPlacement gGabombaStatue_Room1Placements[] = {
-    {337, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(248), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gGabombaStatue_Room2Placements[] = {
-    {407, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(88), FACING_EAST, 2, 0},
-    {407, CONDITION_ALWAYS, (s32)gData_02005fc8, PIXELS(328), 0, PIXELS(88), FACING_EAST, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(152), FACING_EAST, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(152), FACING_EAST, 2, 0},
-    {406, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(488), FACING_EAST, 2, 0},
-    {406, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(488), FACING_EAST, 2, 0},
-    {358, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(72), FACING_EAST, 2, 0},
-    {358, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(72), FACING_WEST, 2, 1},
-    {358, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(168), FACING_EAST, 2, 1},
-    {358, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(248), FACING_EAST, 2, 1},
-    {358, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(248), FACING_EAST, 2, 1},
-    {358, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(520), FACING_EAST, 2, 1},
-    {358, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(552), FACING_EAST, 2, 1},
-    {357, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(88), FACING_WEST, 2, 0},
-    {357, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(200), FACING_WEST, 2, 1},
-    {357, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(216), FACING_WEST, 2, 1},
-    {357, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(552), FACING_WEST, 2, 1},
-    {357, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(488), FACING_WEST, 2, 1},
-    {357, CONDITION_ALWAYS, (s32)gData_02005fbc, PIXELS(360), 0, PIXELS(488), FACING_EAST, 2, 0},
-    {362, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(168), FACING_WEST, 2, 0},
-    {362, CONDITION_ALWAYS, 1, PIXELS(400), 0, PIXELS(168), FACING_EAST, 2, 1},
-    {337, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(168), FACING_SOUTH, 2, 0},
-    {337, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(168), FACING_SOUTH, 2, 1},
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 88, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gData_02005fc8, 328, 0, 88, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 488, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 488, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 72, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 72, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 168, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 248, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 248, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 520, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 552, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 88, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 200, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 552, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 488, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, (s32)gData_02005fbc, 360, 0, 488, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 168, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 168, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gGabombaStatue_Room3Placements[] = {
-    358, -1, 1, 0, 0, 56, 0, 0,
-    0, 168, 0, 2, 358, -1, 1, 0,
-    0, 152, 0, 0, 0, 152, 0x8000, 258,
-    358, -1, 1, 0, 0, 136, 0, 0,
-    0, 200, 0, 258, 358, -1, 1, 0,
-    0, 344, 0, 0, 0, 120, 0, 258,
-    358, -1, 1, 0, 0, 488, 0, 0,
-    0, 216, 0, 258, 358, -1, 1, 0,
-    0, 632, 0, 0, 0, 152, 0, 258,
-    358, -1, 1, 0, 0, 728, 0, 0,
-    0, 264, 0x8000, 258, 357, -1, 1, 0,
-    0, 56, 0, 0, 0, 232, 0, 2,
-    357, -1, 1, 0, 0, 248, 0, 0,
-    0, 168, 0, 258, 357, -1, 1, 0,
-    0, 264, 0, 0, 0, 248, 0x8000, 258,
-    357, -1, 1, 0, 0, 488, 0, 0,
-    0, 168, 0, 258, 357, -1, 1, 0,
-    0, 712, 0, 0, 0, 200, 0, 258,
-    359, -1, 1, 0, 0, 88, 0, 0,
-    0, 184, 0, 2, 359, -1, 1, 0,
-    0, 104, 0, 0, 0, 264, 0x8000, 258,
-    359, -1, 1, 0, 0, 408, 0, 0,
-    0, 296, 0, 258, 359, -1, 1, 0,
-    0, 664, 0, 0, 0, 168, 0, 258,
-    359, -1, 1, 0, 0, 664, 0, 0,
-    0, 248, 0, 258, 360, -1, 1, 0,
-    0, 152, 0, 0, 0, 232, 0, 2,
-    360, -1, 1, 0, 0, 296, 0, 0,
-    0, 216, 0, 258, 360, -1, 1, 0,
-    0, 360, 0, 0, 0, 248, 0, 258,
-    360, -1, 1, 0, 0, 632, 0, 0,
-    0, 216, 0, 258, 361, -1, 1, 0,
-    0, 424, 0, 0, 0, 136, 0, 2,
-    361, -1, 1, 0, 0, 472, 0, 0,
-    0, 248, 0, 258, 407, -1, 1, 0,
-    0, 424, 0, 0, 0, 200, 0x4000, 2,
-    407, -1, 1, 0, 0, 376, 0, 0,
-    0, 200, 0x4000, 258, 243, 57, 1, 0,
-    0, 504, 0, 0, 0, 216, 0x4000, 0,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+LATE_DATA struct ActorPlacement gGabombaStatue_Room3Placements[] = {
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 168, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 200, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 120, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 216, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 152, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 264, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 168, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 248, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 168, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 200, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 184, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 264, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 296, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 168, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 248, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(360, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(360, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 216, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(360, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 248, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(360, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 216, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(361, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 136, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(361, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 248, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(243, 0x39, MOVEMENT_TYPE_STAND, 504, 0, 216, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gGabombaStatue_Room4Placements[] = {
-    358, -1, 1, 0, 0, 56, 0, 0,
-    0, 152, 0, 2, 358, -1, 1, 0,
-    0, 40, 0, 0, 0, 184, 0x8000, 258,
-    358, -1, 1, 0, 0, 136, 0, 0,
-    0, 168, 0x8000, 258, 358, -1, 1, 0,
-    0, 312, 0, 0, 0, 120, 0x8000, 258,
-    358, -1, 1, 0, 0, 360, 0, 0,
-    0, 152, 0, 258, 358, -1, 1, 0,
-    0, 360, 0, 0, 0, 184, 0x8000, 258,
-    358, -1, 1, 0, 0, 440, 0, 0,
-    0, 184, 0, 258, 358, -1, 1, 0,
-    0, 488, 0, 0, 0, 136, 0, 258,
-    358, -1, 1, 0, 0, 520, 0, 0,
-    0, 136, 0x8000, 258, 358, -1, 1, 0,
-    0, 344, 0, 0, 0, 312, 0, 258,
-    358, -1, 1, 0, 0, 328, 0, 0,
-    0, 408, 0, 258, 358, -1, 1, 0,
-    0, 680, 0, 0, 0, 232, 0x8000, 258,
-    358, -1, 1, 0, 0, 728, 0, 0,
-    0, 248, 0x8000, 258, 357, -1, 1, 0,
-    0, 72, 0, 0, 0, 232, 0, 2,
-    357, -1, 1, 0, 0, 312, 0, 0,
-    0, 152, 0, 258, 357, -1, 1, 0,
-    0, 392, 0, 0, 0, 184, 0, 258,
-    357, -1, 1, 0, 0, 440, 0, 0,
-    0, 136, 0x8000, 258, 357, -1, 1, 0,
-    0, 328, 0, 0, 0, 376, 0x8000, 258,
-    357, -1, 1, 0, 0, 392, 0, 0,
-    0, 424, 0, 258, 357, -1, 1, 0,
-    0, 648, 0, 0, 0, 168, 0x8000, 258,
-    357, -1, 1, 0, 0, 680, 0, 0,
-    0, 264, 0, 258, 359, -1, 1, 0,
-    0, 200, 0, 0, 0, 232, 0, 2,
-    359, -1, 1, 0, 0, 312, 0, 0,
-    0, 200, 0x8000, 258, 359, -1, 1, 0,
-    0, 520, 0, 0, 0, 168, 0, 258,
-    359, -1, 1, 0, 0, 376, 0, 0,
-    0, 328, 0, 258, 359, -1, 1, 0,
-    0, 712, 0, 0, 0, 200, 0x8000, 258,
-    360, -1, 1, 0, 0, 120, 0, 0,
-    0, 248, 0, 2, 360, -1, 1, 0,
-    0, 152, 0, 0, 0, 200, 0, 258,
-    360, -1, 1, 0, 0, 568, 0, 0,
-    0, 216, 0, 258, 361, -1, 1, 0,
-    0, 456, 0, 0, 0, 216, 0, 2,
-    361, -1, 1, 0, 0, 488, 0, 0,
-    0, 216, 0, 258, 132, 0xa6c, 1, 0,
-    0, 0, 0, 0, 0, 0, 0xc000, 2,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+LATE_DATA struct ActorPlacement gGabombaStatue_Room4Placements[] = {
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 184, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 168, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 120, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 152, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 184, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 184, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 136, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 136, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 408, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 232, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(358, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 248, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 152, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 184, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 136, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 376, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 424, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 168, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(357, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 264, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 200, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 168, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 328, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 200, FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(360, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 248, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(360, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 200, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(360, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 216, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(361, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 216, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(361, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 216, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(132, 0xa6c, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gGabombaStatue_Room5Placements[] = {
-    407, -1, 1, 0, 0, 312, 0, 0,
-    0, 232, 0, 2, 407, -1, 1, 0,
-    0, 360, 0, 0, 0, 232, 0, 2,
-    359, -1, 1, 0, 0, 392, 0, 0,
-    0, 152, 0, 2, 359, -1, 1, 0,
-    0, 360, 0, 0, 0, 296, 0, 258,
-    362, -1, 1, 0, 0, 416, 0, 0,
-    0, 216, 0x8000, 2, 362, -1, 1, 0,
-    0, 464, 0, 0, 0, 216, 0, 258,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+LATE_DATA struct ActorPlacement gGabombaStatue_Room5Placements[] = {
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(359, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 296, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 216, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 464, 0, 216, FACING_EAST, TALK_FACING_KEEP, 1),
+    {SCENE_TABLE_END},
 };
 
 LATE_DATA s32 gData_0200e88c[] = {
@@ -3917,39 +3921,36 @@ LATE_DATA s32 gData_0200e88c[] = {
 };
 
 LATE_DATA struct ActorPlacement gGabombaStatue_Room6Placements[] = {
-    {376, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(232), FACING_SOUTH, 2, 0},
-    {374, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(296), FACING_SOUTH, 2, 0},
-    {374, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(296), FACING_SOUTH, 2, 0},
-    {349, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {349, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {349, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {349, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {406, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(152), FACING_SOUTH, 2, 0},
-    {411, CONDITION_ALWAYS, 1, 0, PIXELS(8), 0, FACING_SOUTH, 2, 0},
-    {411, CONDITION_ALWAYS, 1, 0, PIXELS(8), 0, FACING_SOUTH, 2, 1},
-    {411, CONDITION_ALWAYS, 1, 0, PIXELS(8), 0, FACING_SOUTH, 2, 1},
-    {411, CONDITION_ALWAYS, 1, 0, PIXELS(8), 0, FACING_SOUTH, 2, 1},
-    {411, CONDITION_ALWAYS, 1, 0, PIXELS(8), 0, FACING_SOUTH, 2, 1},
-    {411, CONDITION_ALWAYS, 1, 0, PIXELS(8), 0, FACING_SOUTH, 2, 1},
-    {411, CONDITION_ALWAYS, 1, 0, PIXELS(8), 0, FACING_SOUTH, 2, 1},
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {26, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(430), FACING_SOUTH, 2, 0},
-    {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {7, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(376, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(374, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(374, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(349, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(349, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(349, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(349, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(26, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 430, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gGabombaStatue_Room7Placements[] = {
-    362, -1, 1, 0, 0, 616, 0, 0,
-    0, 288, 0, 2, 362, -1, 1, 0,
-    0, 616, 0, 0, 0, 336, 0, 258,
-    362, -1, 1, 0, 0, 392, 0, 0,
-    0, 392, 0, 258, 362, -1, 1, 0,
-    0, 128, 0, 0, 0, 456, 0, 258,
-    362, -1, 1, 0, 0, 176, 0, 0,
-    0, 456, 0x8000, 258, -1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
+LATE_DATA struct ActorPlacement gGabombaStatue_Room7Placements[] = {
+    ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 288, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 336, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 392, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 456, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(362, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 456, FACING_WEST, TALK_FACING_KEEP, 1),
+    {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gGabombaStatue_Placements[] = {
@@ -3964,12 +3965,12 @@ LATE_DATA s8 gData_02006b38[] = {
 };
 
 LATE_DATA struct Trigger gGabombaStatue_Room1Triggers[] = {
-    {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001284)},
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(Func_02001284)},
     {TRIGGER_TABLE_END},
 };
 
 LATE_DATA struct Trigger gGabombaStatue_Room2Triggers[] = {
-    {0x202, 1, CONDITION_ALWAYS, EVENT(Func_020012ec)},
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(Func_020012ec)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020017dc)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_02001820)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x201, EVENT(GabombaStatue_LashRope)},
@@ -3981,48 +3982,48 @@ LATE_DATA struct Trigger gGabombaStatue_Room2Triggers[] = {
 };
 
 LATE_DATA struct Trigger gGabombaStatue_Room3Triggers[] = {
-    {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001364)},
-    {0x202, 2, CONDITION_ALWAYS, EVENT(Func_020013bc)},
-    {0x202, 3, CONDITION_ALWAYS, EVENT(Func_02001430)},
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(Func_02001364)},
+    {STEP_TRIGGER_WALKING, 2, CONDITION_ALWAYS, EVENT(Func_020013bc)},
+    {STEP_TRIGGER_WALKING, 3, CONDITION_ALWAYS, EVENT(Func_02001430)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02000740)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02000784)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(Func_02000978)},
     {TRIGGER_STEP, 83, CONDITION_ALWAYS, EVENT(Func_02000ad4)},
-    {0x602, 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {0x8602, 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {0xc602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
-    {0x4602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 31, 0x201, 0},
     {TRIGGER_TALK, 33, IF_FLAG_SET(0x204), EVENT(GabombaStatue_FightSteel)},
     {TRIGGER_TABLE_END},
 };
 
 LATE_DATA struct Trigger gGabombaStatue_Room4Triggers[] = {
-    {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001498)},
-    {0x202, 2, CONDITION_ALWAYS, EVENT(Func_02001500)},
-    {0x202, 3, CONDITION_ALWAYS, EVENT(Func_02001564)},
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(Func_02001498)},
+    {STEP_TRIGGER_WALKING, 2, CONDITION_ALWAYS, EVENT(Func_02001500)},
+    {STEP_TRIGGER_WALKING, 3, CONDITION_ALWAYS, EVENT(Func_02001564)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02000740)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02000784)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(Func_02000978)},
     {TRIGGER_STEP, 83, CONDITION_ALWAYS, EVENT(Func_02000ad4)},
-    {0x602, 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {0x8602, 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {0xc602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
-    {0x4602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
     {TRIGGER_STEP, 77, 0xa6c, EVENT(Func_02000cf0)},
     {TRIGGER_TABLE_END},
 };
 
 LATE_DATA struct Trigger gGabombaStatue_Room5Triggers[] = {
-    {0x202, 1, CONDITION_ALWAYS, EVENT(Func_020015b8)},
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(Func_020015b8)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02000740)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02000784)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(Func_02000978)},
     {TRIGGER_STEP, 83, CONDITION_ALWAYS, EVENT(Func_02000ad4)},
-    {0x602, 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {0x8602, 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {0xc602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
-    {0x4602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 84, CONDITION_ALWAYS, EVENT(Func_02000c38)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02001864)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_020018a8)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, CONDITION_ALWAYS, 0},
@@ -4030,7 +4031,7 @@ LATE_DATA struct Trigger gGabombaStatue_Room5Triggers[] = {
 };
 
 LATE_DATA struct Trigger gGabombaStatue_Room6Triggers[] = {
-    {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001630)},
+    {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(Func_02001630)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_020045d8)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02004530)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(Func_020046c8)},

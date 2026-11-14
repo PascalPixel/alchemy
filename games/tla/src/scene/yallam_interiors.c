@@ -4,6 +4,7 @@
 /// let him reach Taopo Swamp.
 
 #include "battle/battle.h"
+#include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -108,9 +109,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov677Room1)
+  if (scene == (s32)&SceneId_YallamInteriors1)
     return gYallamInteriors_Room1Placements;
-  if (scene == (s32)&SceneId_Ov677Room2)
+  if (scene == (s32)&SceneId_YallamInteriors2)
     return gYallamInteriors_Room2Placements;
   return gYallamInteriors_Placements;
 }
@@ -128,7 +129,7 @@ s32 YallamInteriors_MindReadSunshine(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgYallamInteriors37);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors33);
@@ -142,7 +143,7 @@ s32 YallamInteriors_MindReadSunshinesWife(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgYallamInteriors38);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors34);
@@ -156,7 +157,7 @@ s32 YallamInteriors_MindReadSunshinesChild(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgYallamInteriors39);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors35);
@@ -172,7 +173,7 @@ s32 YallamInteriors_TalkToSunshinesChild(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgYallamInteriors36);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors32);
@@ -212,9 +213,9 @@ s32 YallamInteriors_MindReadItemMerchant(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov677Room1)
+  if (scene == (s32)&SceneId_YallamInteriors1)
     return gYallamInteriors_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov677Room2)
+  if (scene == (s32)&SceneId_YallamInteriors2)
     return gYallamInteriors_Room2Triggers;
   return gYallamInteriors_Triggers;
 }
@@ -302,7 +303,7 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Inn_CheckIn(7, actor);
-    Event_ClearFlag(0x301);
+    Event_ClearFlag(FLAG_AREA_TEMP_01);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -377,7 +378,7 @@ void YallamInteriors_TalkToSunshine(void) {
 
   if (YallamInteriors_PartyHasForgeMaterial())
     Event_SetFlag(0x10f);
-  else if (!Event_GetFlag(0x301) && !Forge_GetItem())
+  else if (!Event_GetFlag(FLAG_AREA_TEMP_01) && !Forge_GetItem())
     Event_ClearFlag(0x10f);
 
   if (!Event_GetFlag(0x10f)) {
@@ -392,7 +393,7 @@ void YallamInteriors_TalkToSunshine(void) {
       Event_SetMessageId(message + 2);
     }
     Event_ShowMessage(14, 0);
-  } else if (Event_GetFlag(0x301)) {
+  } else if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgICanTWait);
     Event_ShowMessage(14, 0);
   } else if (Forge_GetItem()) {
@@ -410,13 +411,13 @@ void YallamInteriors_TalkToSunshine(void) {
                            1);
       Actor_SetDestination(gMainRoutineWork.currentOwner, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
       Actor_SetDestination(14, 504, 408);
       Actor_WaitForMoveById(14);
       Actor_FaceActor(14, gMainRoutineWork.currentOwner, 0);
       Forge_Run(14);
       if (Forge_GetItem()) {
-        Actor_SetSpeed(14, 0x6666, 0x3333);
+        Actor_SetSpeed(14, 0.4);
         Actor_WalkTo(14, 568, 408);
         Actor_WaitForMoveById(14);
         Actor_WalkTo(14, 568, 360);
@@ -436,7 +437,7 @@ void YallamInteriors_TalkToSunshine(void) {
 #if TLA_PATCH_1
         Actor_SetPosition(17, 0, 0);
 #endif
-        Event_SetFlag(0x301);
+        Event_SetFlag(FLAG_AREA_TEMP_01);
       } else {
         Actor_SetDestination(14, 491, 398);
         Actor_WaitForMoveById(14);
@@ -461,7 +462,7 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
     Event_SetMessageId((s32)MsgThisThisIs);
     Event_ShowMessage(actor, 0);
-  } else if (Event_GetFlag(0x301)) {
+  } else if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgItTakesOur);
     Event_ShowMessage(actor, 0);
   } else if (Forge_GetItem()) {
@@ -509,10 +510,10 @@ s32 Scene_Initialize(void) {
 
     scene = party->scene;
   }
-  if (scene == (s32)&SceneId_Ov677Room1) {
-    if (Event_GetFlag(0x301)) {
-      Actor_SetPosition(14, PIXELS(600), PIXELS(360));
-      Actor_SetPosition(16, PIXELS(632), PIXELS(346));
+  if (scene == (s32)&SceneId_YallamInteriors1) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
+      Actor_SetPosition(14, 600, 360);
+      Actor_SetPosition(16, 632, 346);
       Actor_FaceDirection(16, FACING_SOUTH, 0);
 #if TLA_PATCH_1
       Actor_SetPosition(17, 0, 0);
@@ -524,7 +525,7 @@ s32 Scene_Initialize(void) {
                          0);
     Actor_SetSpritePriority(11, 2);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov677Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YallamInteriors2) {
     FieldEffect_StartBlankOverlay(0);
     Actor_SetSpritePriority(12, 2);
     ((struct YallamInteriorsObject *)Actor_GetById(12))->collisionFlags |= 4;
@@ -566,15 +567,15 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(141),
-    SCENE_EXIT_IF(1, 139, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 139, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 139, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 139, 4, EXIT_FLAG_NONE),
-    SCENE_EXITS(142),
-    SCENE_EXIT_IF(1, 139, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 139, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 139, 5, EXIT_FLAG_NONE),
+    SCENE_EXITS(YallamInteriors1),
+    SCENE_EXIT_UNLESS(1, Yallam1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Yallam1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Yallam1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Yallam1, 4, EXIT_FLAG_NONE),
+    SCENE_EXITS(YallamInteriors2),
+    SCENE_EXIT_UNLESS(1, Yallam1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Yallam1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Yallam1, 5, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -585,24 +586,31 @@ struct ActorPlacement gYallamInteriors_Placements[] = {
 
 struct ActorPlacement gYallamInteriors_Room1Placements[] = {
 #if !TLA_PATCH_2
-    {115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(136), FACING_SOUTHWEST, 1,
-     0},
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 136,
+                    FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 #else
-    {115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(140), FACING_SOUTHWEST, 1,
-     0},
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 140,
+                    FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 #endif
-    {116, CONDITION_ALWAYS, (s32)gYallamInteriors_SongLoverWanders, PIXELS(88),
-     0, PIXELS(104), FACING_EAST, 0, 0},
-    {114, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(88), FACING_SOUTHEAST, 1,
-     0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(454), 0, PIXELS(120), FACING_SOUTHEAST, 1,
-     0},
-    {134, CONDITION_ALWAYS, 1, PIXELS(294), 0, PIXELS(408), FACING_SOUTH, 1, 0},
-    {135, CONDITION_ALWAYS, 2, PIXELS(184), 0, PIXELS(392), FACING_SOUTH, 0, 0},
-    {104, CONDITION_ALWAYS, 1, PIXELS(491), 0, PIXELS(398), FACING_SOUTH, 2, 0},
-    {107, CONDITION_ALWAYS, 1, PIXELS(560), 0, PIXELS(440), FACING_WEST, 1, 0},
-    {115, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(346), FACING_NORTH, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(506), 0, PIXELS(398), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS,
+                    (s32)gYallamInteriors_SongLoverWanders, 88, 0, 104,
+                    FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 88,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 454, 0, 120,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 294, 0, 408,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 392,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(104, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 491, 0, 398,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 440,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 346,
+                    FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 506, 0, 398,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -610,14 +618,14 @@ struct ActorPlacement gYallamInteriors_Room1Placements[] = {
 
 // clang-format off
 struct ActorPlacement gYallamInteriors_Room2Placements[] = {
-    {112, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(188), FACING_EAST, 1, 0},
-    {113, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(152), FACING_SOUTH, 1, 0},
-    {108, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(405), FACING_SOUTH, 1, 0},
-    {109, CONDITION_ALWAYS, 1, PIXELS(112), 0, PIXELS(405), FACING_SOUTH, 1, 0},
-    {110, CONDITION_ALWAYS, 1, PIXELS(348), 0, PIXELS(405), FACING_SOUTH, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(408), FACING_SOUTH, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(112), 0, PIXELS(408), FACING_SOUTH, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(348), 0, PIXELS(408), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 188, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 405, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 405, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 405, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -667,7 +675,8 @@ struct Trigger gYallamInteriors_Room1Triggers[] = {
      EVENT(YallamInteriors_MindReadSunshinesChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      EVENT(YallamInteriors_MindReadSunshine)},
-    {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgYallamInteriors40))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgYallamInteriors40))},
     {TRIGGER_TABLE_END},
 };
 

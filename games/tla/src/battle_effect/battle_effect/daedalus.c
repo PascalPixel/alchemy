@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 struct Model;
 
@@ -126,10 +128,10 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 2) {
     work->shakeFrames = 0;
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
   } else if (mode == 1 || mode == 3) {
     work->shakeFrames = 8;
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
   } else {
     work->shakeFrames = 32;
   }
@@ -144,7 +146,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
     if (frame == 24)
       BattlePlayback_StartFar(0);
     if (frame == 8 && mode == 0)
-      Sound_PlayFar(126);
+      Sound_PlayFar(SE_RECOVERY);
 
     // Cels 0, 1 and 2 four frames each, then 1 and 2 by turns.
     if (frame < 32) {
@@ -214,8 +216,8 @@ typedef volatile s32 vs32;
 /* VIEW(f17e698): tag struct Particle as struct Particle__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47770: structure has no member
- * named `timer'. */
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:540: structure has no
+ * member named `timer'. */
 typedef struct Particle__f17e698 {
   s32 x;
   s32 y;
@@ -280,8 +282,8 @@ typedef struct Bitmap {
 /* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47663: structure has no member
- * named `transferMode'. */
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:434: structure has no
+ * member named `transferMode'. */
 struct SummonWork__f17e698 {
   Particle particles[48];
   u8 unk0540[0x1c0];
@@ -321,8 +323,8 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 /* VIEW(f17e698): tag struct SystemWork as struct SystemWork__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47662: structure has no member
- * named `map'. */
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:433: structure has no
+ * member named `map'. */
 struct SystemWork__f17e698 {
   u8 unk00[0x24];
   s32 *bank;
@@ -345,12 +347,6 @@ struct SystemWork__f17e698 {
 
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
-/* VIEW(f17e698): variable gInput as extern struct InputState__f17e698 gInput;
- * input.h has extern struct InputState gInput; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47927: `gInput__f17e698'
- * undeclared (first use in this function). */
-extern struct InputState gInput__f17e698 __asm__("gInput");
 
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_ForestCanopyTiles;
@@ -387,17 +383,6 @@ void RagingHeat_FillGradientCanvas(void);
 
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
-/* VIEW(f17e698): routine EffectSprite_CreateWithTiles as struct SpriteObject
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
- * attributes); the definition has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags); tried as the definition's struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags), which the object already declares, BattleEffect_RunDaedalus moves: 4
- * of 3898 instructions in tla-ja. */
-extern struct SpriteObject *EffectSprite_CreateWithTiles__f17e698(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 /* VIEW(f17e698): routine EffectSprite_Acquire as Sprite
  * *EffectSprite_Acquire(s32, s32, u32, s32); the definition has struct
  * EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value); tried as
@@ -496,7 +481,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       targets[0] = 255;
       BattleActor_SpawnObjectsForListFar(targets, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-      for (col = (u16 *)0x050000c0, i = 0; i != 128; i++, col++) {
+      for (col = (u16 *)(BG_PLTT + 6 * 16), i = 0; i != 128; i++, col++) {
         s32 mid;
         s32 s;
 
@@ -536,9 +521,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         mp = (u8 *)(v + (s32)map);
         do {
           v = ((u8 *)work)[gBattleEffect_MoteCells[n] + i + off];
-          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load;
-           * as w = 32 at its declaration before the loops, 56 of 3921
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load.
+           */
           w = 32;
           if (v != 0) {
             v = v - j * 4 - 40;
@@ -550,13 +534,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_ForestCanopyTiles);
-      Iwram_CopyWords((void *)0x050003e0, src, 32);
+      Iwram_CopyWords((void *)(OBJ_PLTT + 15 * 16), src, 32);
       src += 32;
       Decompress_TaggedLz(src, work->frames);
       for (j = 0; j != 2; j++) {
         for (i = 0; i != 8; i++) {
-          obj =
-              EffectSprite_CreateWithTiles__f17e698(32, 32, 0x80000000, 0xf000);
+          obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xf000);
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords(
@@ -571,43 +554,40 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_BronzeAutomatonTiles);
-      Iwram_CopyWords((void *)0x05000200, src, 0x1c0);
+      Iwram_CopyWords((void *)OBJ_PLTT, src, 0x1c0);
       src += 0x1c0;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       for (i = 0; i != 21; i++) {
-        obj = EffectSprite_CreateWithTiles__f17e698(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
         obj->priority = 3;
         work->sprites[i + 18] = obj;
         Iwram_CopyWords(
             (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
             DECODE_BUFFER + i * 0x400, 0x400);
       }
-      obj = EffectSprite_CreateWithTiles__f17e698(32, 64, 0xc000a000, 0);
+      obj = EffectSprite_CreateWithTiles(32, 64, 0xc000a000, 0);
       // Once-only: the store alone in its block.
       do {
         work->sprites[i + 18] = obj;
       } while (0);
       obj->priority = 3;
       /* FAKEMATCH(barrier): an asm operand cuts i, known 21, from the copy's
-       * source; as DECODE_BUFFER + i * 0x400 with no asm, 2 of 3921
-       * instructions differ in tla-en. */
+       * source. */
       __asm__("" : "=r"(i) : "0"(i));
       Iwram_CopyWords(
           (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
           DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
-      Iwram_CopyWords((void *)0x050003c0, src, 32);
+      Iwram_CopyWords((void *)(OBJ_PLTT + 14 * 16), src, 32);
       src += 32;
       Decompress_TaggedLz(src, DECODE_BUFFER);
-      obj = EffectSprite_CreateWithTiles__f17e698(16, 8, 0x4000, 0xe000);
+      obj = EffectSprite_CreateWithTiles(16, 8, 0x4000, 0xe000);
       obj->priority = 1;
       work->sprites[41] = obj;
       Iwram_CopyWords(
           (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
           DECODE_BUFFER, 0x100);
-      /* FAKEMATCH(barrier): an empty asm keeps the call before the loop's
-       * hoisted constants; as no asm, 6 of 3921 instructions differ in tla-en.
-       */
+      /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
       for (i = 0; i != 15; i++) {
         work->sprites[42 + i] =
@@ -625,7 +605,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
       scale = Data_08196ed0;
       pos.w = 0;
-      pos.y = 0xff0000;
+      pos.y = px(255);
       waveScroll += 0x8000;
       waveX = waveScroll + camera;
       if (waveX > 0x1fffff) {
@@ -657,12 +637,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             obj = work->sprites[k];
             v = work->particles[row + (wavePhase + 64 + i) % 8].timer;
           }
-          // The tile through the attributes alone: as obj->tile, the store
-          // would also stand for the sprite's 32-bit scale and pos.x's read
-          // would wait for it (2 of 3921 instructions differ in tla-en).
           ((struct SpriteAttributes *)obj)->tile = v & 0x3ff;
           if (pos.x > 0xffffff)
-            pos.x -= 0x1200000;
+            pos.x -= px(288);
           Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos,
                                             &scale, 0);
         }
@@ -686,7 +663,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
     HeapSlot_Release(104);
     Iwram_Clear(dest, 0x3c00);
-    Iwram_Clear((void *)0x06004000, 0x4000);
+    Iwram_Clear((void *)BG_CHAR_BLOCK(1), 0x4000);
     *(vu16 *)0x0400000c = 0x786;
     *(vu16 *)0x04000020 = 0x80;
     *(s32 *)0x04000028 = 0;
@@ -705,14 +682,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     pixels = DECODE_BUFFER;
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
     Iwram_CopyWords(
-        (void *)0x05000000,
+        (void *)BG_PLTT,
         (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet), 128);
     work->transferMode = 2;
     work->transferValue = 50;
     *(vu16 *)0x04000052 = 0x1010;
     *(vu16 *)0x04000050 = 0x3f44;
     for (i = 0; i != 224; i++) {
-      pal = (u16 *)0x05000200 + i;
+      pal = (u16 *)OBJ_PLTT + i;
       if (((*pal >> 5) & 0x1f) == 31)
         break;
     }
@@ -720,14 +697,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       PARTICLES[i].timer = -1;
 
     frame = 0;
-    if (!(gInput__f17e698.held & 2) && !(gInput__f17e698.repeat & 1)) {
+    if (!(gInput.held & KEY_B) && !(gInput.repeat & KEY_A)) {
     phase2:
       if (frame == 0) {
         *(vu16 *)0x04000020 = 0x100;
         *pal = 0x190b;
         shipY = -0x1d0000;
         camera = 0;
-        work->sprites[39]->rotation = 0xc000;
+        work->sprites[39]->rotation = TRIG_TURN * 3 / 4;
         work->sprites[38]->rotation = 0;
         work->sprites[31]->rotation = 0;
         work->particles[20].x = 0;
@@ -745,7 +722,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         work->particles[21].vx = -0x10000;
         work->particles[21].vy = 0;
         work->particles[21].timer = 0;
-        work->particles[22].x = 0xa00000;
+        work->particles[22].x = px(160);
         work->particles[22].y = 0;
         work->particles[22].vx = 0;
         work->particles[22].vy = 0;
@@ -802,7 +779,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       if (frame == 280) {
         Iwram_CopyWords(
-            (void *)0x05000000,
+            (void *)BG_PLTT,
             (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
             128);
         work->particles[20].timer = 1;
@@ -893,21 +870,21 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         swayY = -swayY;
       swayY -= shipY * 2;
       pos2.w = 0;
-      pos2.y = 0xff0000;
+      pos2.y = px(255);
       for (i = 0; i != 5; i++) {
         if (frame == Data_08199582[i]) {
           work->shake = 23;
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         }
       }
       if (frame == 510)
-        Sound_PlayFar(186);
+        Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
       if (frame == 568) {
         work->shake = 10;
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       }
       if (frame == 578)
-        Sound_PlayFar(163);
+        Sound_PlayFar(SE_163);
       for (i = 0; i != 16; i++) {
         Particle *p;
 
@@ -932,7 +909,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           q->vy = 0;
         }
         if (work->particles[20].timer == (i & 7) * 6 + 10) {
-          Sound_PlayFar(138);
+          Sound_PlayFar(SE_ITEM_BREAK);
           p->timer = 1;
           p->x += swayX;
           p->y += swayY - (Data_081994f0[work->shake] << 16);
@@ -1003,7 +980,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         if (frame > 602)
           BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
         if (frame == 570) {
-          p->x = 0x980000;
+          p->x = px(152);
           p->y = ((92 - Data_081994f0[work->shake]) << 16) + swayY;
           p->timer = 1;
           p->vx = -0x40000;
@@ -1044,8 +1021,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             q->timer = 0;
             q->vx = ((Random16() & 31) + 16) << 12;
             q->vy = (-Random16() | ~15) << 14;
-            q->x = 0x580000;
-            q->y = 0x800000;
+            q->x = px(88);
+            q->y = px(128);
           }
           prevCamera = camera;
           {
@@ -1151,7 +1128,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(camera + 0x20000, 0x80000, 0);
           Transform_ApplyRoll(0x4300);
-          Transform_ApplyPitch(-0x800);
+          Transform_ApplyPitch(-TRIG_TURN / 32);
           SceneTransform_ApplyUniformScale((v << 14) + 0x4180);
           Render_TransformVertices(gData_08199210, buffer, 4);
           Render_DrawModelList(beam);
@@ -1184,8 +1161,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           }
         }
       }
-      scale2.x = 0x10000;
-      scale2.y = 0x10000;
+      scale2.x = Q16_ONE;
+      scale2.y = Q16_ONE;
       work->sprites[21]->priority = 2;
       work->sprites[22]->priority = 2;
       work->sprites[23]->priority = 2;
@@ -1295,7 +1272,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
                   work->particles[row + (wavePhase + 64 + i) % 8].timer & 0x3ff;
             }
             if (pos2.x > 0xffffff)
-              pos2.x -= 0x1200000;
+              pos2.x -= px(288);
             Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos2,
                                               &scale2, 0);
           }
@@ -1348,8 +1325,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->transferPending = 1;
       wait(1);
       frame++;
-      if (frame != 800 && !(gInput__f17e698.held & 2) &&
-          !(gInput__f17e698.repeat & 1))
+      if (frame != 800 && !(gInput.held & KEY_B) && !(gInput.repeat & KEY_A))
         goto phase2;
     }
 
@@ -1361,9 +1337,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Sprite_DestroyFar(work->sprites[i]);
     bank[21] = VramCache_AllocEntry(128);
     Palette_LoadBasicSpriteColors();
-    Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010,
+    Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
             (vu32 *)0x040000d4);
-    *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+    *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
     work->transferMode = 2;
     work->transferValue = 50;
     *(s32 *)0x04000028 = 0;
@@ -1390,7 +1366,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           (const void *)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
       CopyFunc copy = IWRAM_COPY_WORDS_LINKED;
 
-      copy((void *)0x05000000, colors, 128);
+      copy((void *)BG_PLTT, colors, 128);
     }
 
     for (frame = 0; frame != 109; frame++) {
@@ -1401,9 +1377,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         i = 0;
         radius = 0;
         for (; i != 16; i++) {
-          /* FAKEMATCH(dead): a store nothing reads; its test reloads work
-           * once before z is read; without it, 53 of 3921 instructions differ
-           * in tla-en. */
+          /* FAKEMATCH(dead): a store nothing reads. */
           if (work == NULL)
             k = 0;
           p = &work->particles[i];
@@ -1425,7 +1399,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       scale3 = Data_08196ee0;
       pos3.w = 0;
-      pos3.y = 0xff0000;
+      pos3.y = px(255);
       for (i = 0; i != 16; i++) {
         Particle *p;
 
@@ -1445,14 +1419,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
               q = &PARTICLES[i * 8 + j];
               speed = (Random16() & 31) + 32;
-              angle = (Random16() & 0x7fff) + 0x4000;
+              angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
               q->x = p->x / 2;
               q->y = p->y;
               q->vx = Trig_Sin(angle) * speed >> 4;
               q->vy = Trig_Cos(angle) * speed >> 4;
               q->timer = 0;
             }
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
             for (j = 0; j != arg->count; j++) {
               BattleEffect_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000,
                                             100);
@@ -1563,8 +1537,8 @@ extern const u8 Data_081995ec[]; // the seven strike frames
 /* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:48946: structure has no member
- * named `x'. */
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:1719: structure has no
+ * member named `x'. */
 struct PlacementSource__f17e698 {
   s32 x;
   s32 y;
@@ -1576,7 +1550,7 @@ extern const u8 gData_081991b0[]; // their corners
 /* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep
  * gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest
  * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:48951: request for member
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:1652: request for member
  * `variant' in something not a structure or union. */
 extern struct EffectStep
     gData_02014000__f17e698[] __asm__("gData_02014000"); // the sparks
@@ -1607,8 +1581,6 @@ struct SummonObject {
 void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: the second blitter gives the stack frame its sp+24 (as one, every
-  // slot above it moves: 36 of 575 differ in tla-en).
   DrawRectangle draw[2];
   struct ModelTexture texture;
   s32 request[4];
@@ -1630,9 +1602,11 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   BattleEffect_ConfigureEffectDisplay();
   REG_WIN0V = 0x1080;
-  REG_WININ = 0x2737;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_SpawnObjects(1, 0x296, 3);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
@@ -1660,7 +1634,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     }
     if (frame == 56) {
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     for (i = 0; i != 7; i++) {
       if (frame == Data_081995ec[i]) {
@@ -1670,7 +1644,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 7);
         }
         work->shakeFrames = 4;
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       }
     }
 
@@ -1702,8 +1676,6 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         for (; j != 8; j++, spark++) {
           s32 speed;
           s32 angle;
-          // The mask set first and the random number masked in (as
-          // Random16() & 31, 23 of 575 instructions differ in tla-en).
           speed = 31;
           speed &= Random16();
           angle = Random16();
@@ -1750,7 +1722,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         request[0] = (136 - t / 16) << 16;
         request[2] = ((t / 2) << 16) + 0x400000;
       } else {
-        request[0] = 136 << 16;
+        request[0] = px(136);
         request[2] = 0x400000;
       }
       Render_ApplyProjectedPlacementFar(work->objects[0], request, &source.x,
@@ -1766,13 +1738,9 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       struct EffectStep *ring;
       u8 *cells;
 
-      /* FAKEMATCH(temporary): the disc's x copied into the loop counter i;
-       * as discX passed directly, 10 of 575 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the disc's x copied into the loop counter i. */
       i = discX;
       size = 128;
-      // cells holds the cell buffer, set again before each call; as
-      // gMapCellBuffer passed directly, 56 of 575 instructions differ in
-      // tla-en.
       if (grow <= 64) {
         size = grow * 2;
         cells = gMapCellBuffer;
@@ -1820,9 +1788,9 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3((k << 17) + ringX + ringOffset,
                                         discY - ((k + 2) << 16) + ringOffset,
                                         0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(ring->x);
-          SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + 0x10000,
+          SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + TRIG_TURN,
                                      0x20000, 0x10000);
           Render_TransformVertices(gData_081991b0, vertices, 4);
           Render_DrawModelList(model);

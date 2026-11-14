@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/menu.h"
 #include "module/shop/shop.h"
@@ -43,14 +44,14 @@ s32 Shop_ChooseMember(void) {
       Shop_DrawMemberItems(shop->itemWindow, unitId);
       redraw = 0;
     }
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       wait(1);
       if (Inventory_CountFar(unitId) == 0) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         continue;
       }
       WindowSprite_PrepareForRedrawFar(listWindow);
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       if (shop->partyAction == 1) {
         Shop_SelectSell(unitId);
       } else if (shop->partyAction == 3) {
@@ -63,8 +64,8 @@ s32 Shop_ChooseMember(void) {
       shop->cursor.anchor->active = 4;
       shop->mode = 12;
       redraw = 2;
-    } else if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    } else if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     } else {
@@ -72,9 +73,7 @@ s32 Shop_ChooseMember(void) {
       wait(1);
     }
   }
-  /* FAKEMATCH(barrier): an empty asm clobbering r8 at the loop exit, which
-   * keeps listWindow (live here) out of r8 and leaves it to unitId (dead
-   * here); without it, 24 of 205 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm clobbering r8 at the loop exit. */
   __asm__("" : : : "r8");
   ItemIconGrid_SetVisible(0);
   Menu_ReleaseEntryObjectsFar();
@@ -149,28 +148,24 @@ s32 Shop_SelectSell(s32 unitId) {
                              Forge_GetMaterialChance(itemId), 3);
         Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
       }
-      if (gInput.pressed & 1) {
-        Sound_PlayFar(112);
+      if (gInput.pressed & KEY_A) {
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
-      if (gInput.pressed & 2) {
-        Sound_PlayFar(113);
+      if (gInput.pressed & KEY_B) {
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         break;
       }
-      if (gInput.held & 4) {
+      if (gInput.held & KEY_SELECT) {
         u32 item = unit->inventory[slot];
 
-        Sound_PlayFar(126);
+        Sound_PlayFar(SE_RECOVERY);
         window = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
         ItemMenu_DrawItemDetailsFar(window, item);
-        // Through a byte pointer the store may alias any memory, so the
-        // input address saved across the calls is restored after it, as
-        // the native does; as shop->detailsHidden = 0, the restore moves
-        // above it (6 of 374 instructions differ in tla-en).
         *(u8 *)&shop->detailsHidden = 0;
-        while (gInput.held & 4)
+        while (gInput.held & KEY_SELECT)
           wait(1);
         shop->detailsHidden = 1;
         Window_CloseFar(window, 2);
@@ -187,34 +182,34 @@ s32 Shop_SelectSell(s32 unitId) {
         continue;
 #endif
       } else {
-        if (gInput.repeat & 32) {
-          Sound_PlayFar(111);
+        if (gInput.repeat & KEY_LEFT) {
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           slot--;
           slot = (inventoryCount + slot) % inventoryCount;
           redraw = 1;
         }
-        if (gInput.repeat & 16) {
-          Sound_PlayFar(111);
+        if (gInput.repeat & KEY_RIGHT) {
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           slot++;
           slot = (inventoryCount + slot) % inventoryCount;
           redraw = 1;
         }
-        if (gInput.repeat & 64) {
+        if (gInput.repeat & KEY_UP) {
           slot -= 5;
           if (slot < 0)
             slot += 15;
           while (slot >= inventoryCount)
             slot -= 5;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
         }
-        if (gInput.repeat & 128) {
+        if (gInput.repeat & KEY_DOWN) {
           slot += 5;
           if (slot >= inventoryCount)
             slot -= 15;
           while (slot < 0)
             slot += 5;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
         }
         wait(1);
@@ -311,8 +306,6 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop;
 
   shop = Ram_HeapSlots->menuRuntime;
-  // The inner block gives its locals their pseudos after the item id's
-  // offset, which puts the stack slots in the ROM's order.
   {
     struct BattleUnit *unit = Unit_Get(unitId);
     s32 itemId = unit->inventory[slot] & 0x1ff;
@@ -359,7 +352,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
       Shop_ShowKeeperMessageHidingCursor(message);
       return;
     }
-    Sound_PlayFar(102);
+    Sound_PlayFar(SE_SHOP_SELL);
     for (i = 0; i < count; i++)
       Inventory_DiscardFar(unitId, slot);
     Unit_RefreshPsynergyFar(unitId);

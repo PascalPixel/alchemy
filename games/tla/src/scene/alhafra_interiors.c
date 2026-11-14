@@ -67,8 +67,10 @@ void Event_StartScreenTransition(void);
 // ---- this overlay
 
 extern struct ActorPlacement gActorPlacements[];
-extern s16 gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[];
-extern s16 gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[];
+extern struct ActorPlacement
+    gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[];
+extern struct ActorPlacement
+    gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[];
 extern struct Trigger gAlhafraInteriors_Triggers[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[];
@@ -91,36 +93,35 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// Stepping into Alhafra's inn the first time: Felix walks up to Alex, who
 /// says he too is resting here while he looks for a boat
 /// (FLAG_ALHAFRA_MET_ALEX).
-/// ★ Named from the game: "So, you've finally come." (MsgAlhafraInteriors31)
 void AlhafraInteriors_MeetAlex(void) {
   Event_SetFlag(FLAG_ALHAFRA_MET_ALEX);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors31);
-  FieldCamera_MoveToActorById(0x1f, 1);
+  FieldCamera_MoveToActorById(31, 1);
   Actor_WalkToAndWait(4, 452, 335);
-  Actor_FaceDirection(4, 0x8000, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(31, 0x2000, 0);
+  Actor_FaceDirection(31, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(31, 4);
-  FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_RunRepeatedMotion(31, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
-  Actor_FaceDirection(31, 0xc000, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
+  Actor_FaceDirection(31, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
@@ -164,61 +165,57 @@ void AlhafraInteriors_TalkToHealer(s32 actor) {
 }
 
 /// The lady of the house, worn out by her houseguests.
-/// ★ Named from the game: "Augh! With all these demanding houseguests, I feel
-/// like I've lost control of my own house!" (MsgAlhafraInteriors06)
 void AlhafraInteriors_TalkToHostess(s32 a0) {
-  Actor_ShowEmote(a0, 0x107, 0x1e);
+  Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors06);
   Event_ShowMessage(a0, 0);
 }
 
 /// The old couple who lost their house in the wave ask the lady of the house
 /// for tea, once (flag 0x8b1).
-/// ★ Named from the game: "Sorry to bother you, but we'd like some tea."
-/// (MsgAlhafraInteriors07)
 void AlhafraInteriors_GuestsAskForTea(void) {
   Event_SetFlag(0x8b1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 152, 328);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors07);
-  Actor_FaceDirection(14, 0, 0);
+  Actor_FaceDirection(14, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0xe, 0, 0xa);
-  Actor_FaceDirection(15, 0x8000, 0);
+  FieldEvent_ShowMessageThenWait(14, 0, 10);
+  Actor_FaceDirection(15, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(15, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0xf, 0, 0xa);
-  Actor_SetSpeed(14, 0x8000, 0x4000);
+  FieldEvent_ShowMessageThenWait(15, 0, 10);
+  Actor_SetSpeed(14, 0.5);
   Actor_WalkByAndWait(14, -32, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0xe, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(14, 0, 10);
   Actor_RunRepeatedMotion(13, 2);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(13, 0, 0);
+  Actor_FaceDirection(13, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(0xd, 0x107, 0x1e);
-  FieldEvent_ShowMessageThenWait(0xd, 0, 0xa);
+  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  FieldEvent_ShowMessageThenWait(13, 0, 10);
   FieldActor_StartRepeatedMotion(14, 3);
-  Actor_SetAttachedEffect(0xe, 0x102);
+  Actor_SetAttachedEffect(14, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(15, 3);
-  Actor_SetAttachedEffect(0xf, 0x102);
+  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_RunRepeatedMotion(13, 2);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(13, 0xb000, 0);
+  Actor_FaceDirection(13, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0xd, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(13, 0, 10);
   FieldEvent_Wait(10);
   Actor_WalkToAndWait(14, 152, 312);
   FieldEvent_Wait(10);
   Actor_SetAnimation(15, 4);
   Actor_SetAnimationAndWait(14, 4);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(14, 0x3000, 0);
-  Actor_FaceDirection(15, 0x4000, 0);
+  Actor_FaceDirection(14, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(15, FACING_SOUTH, 0);
   Event_End();
 }
 
@@ -227,7 +224,7 @@ void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
   Actor_FaceEachOther(a0, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors08);
   Event_ShowMessage(a0, 0);
-  Actor_FaceDirection(14, 0x3000, 0);
+  Actor_FaceDirection(14, FACING_SOUTH_SOUTHEAST, 0);
 }
 
 /// Mind Read on Alex: he turns to the party and asks them to stop.
@@ -235,7 +232,7 @@ void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
   Actor_FaceEachOther(a1, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors48);
   Event_ShowMessage(a1, 0);
-  Actor_FaceDirection(a1, 0xe000, 0);
+  Actor_FaceDirection(a1, FACING_NORTHEAST, 0);
 }
 
 /// The master of the house tells that the town has started rebuilding, once
@@ -245,7 +242,7 @@ void AlhafraInteriors_HostTellsOfRepairs(s32 a0) {
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors55);
   Event_ShowMessage(a0, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(a0, 0x108, 0x1e);
+  Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessage(a0, 0);
 }
 
@@ -313,15 +310,15 @@ s32 Scene_Initialize(void) {
   Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
   Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    if (Actor_Get(gMainRoutineWork.currentOwner)->x >= 0x2000000)
-      Event_SetFlag(0x200);
+    if (Actor_Get(gMainRoutineWork.currentOwner)->x >= px(512))
+      Event_SetFlag(FLAG_SCENE_TEMP_00);
     else
-      Event_ClearFlag(0x200);
-    if (Event_GetFlag(0x200) &&
+      Event_ClearFlag(FLAG_SCENE_TEMP_00);
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00) &&
         Event_GetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) &&
         !Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
-      Actor_SetPosition(31, PIXELS(376), PIXELS(316));
-      Actor_SetPosition(32, PIXELS(392), PIXELS(344));
+      Actor_SetPosition(31, 376, 316);
+      Actor_SetPosition(32, 392, 344);
     } else {
       Actor_SetPosition(31, 0, 0);
       Actor_SetPosition(32, 0, 0);
@@ -388,7 +385,7 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
   } else {
 #if TLA_PATCH_1 /* The Japanese edition does not check 0x200. */
-    if (!Event_GetFlag(0x200)) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     } else
 #endif
     {
@@ -398,49 +395,49 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldEvent_SetMessageId((s32)MsgAlhafraInteriors120);
       Actor_WalkToAndWait(4, 504, 328);
       Actor_FaceDirectionAndWait(4, FACING_WEST);
-      FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(328), 1);
+      FieldCamera_MoveTo(408, CAMERA_KEEP, 328, 1);
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(10);
       Actor_RunRepeatedMotion(31, 2);
       FieldEvent_Wait(5);
-      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
-      Actor_ShowEmote(0x20, 0x100, 0x1e);
-      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
-      Actor_ShowEmote(0x1f, 0x109, 0x1e);
-      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
-      Actor_ShowEmote(0x20, 0x102, 0x1e);
-      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
+      FieldEvent_ShowMessageThenWait(31, 0, 5);
+      Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+      FieldEvent_ShowMessageThenWait(32, 0, 5);
+      Actor_ShowEmote(31, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      FieldEvent_ShowMessageThenWait(31, 0, 5);
+      Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+      FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
+      FieldEvent_ShowMessageThenWait(31, 0, 5);
       FieldActor_Jump(32, 6, 15);
       FieldActor_Jump(32, 6, 23);
-      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
+      FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
-      Actor_ShowEmote(0x20, 0x109, 0x1e);
-      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
+      FieldEvent_ShowMessageThenWait(31, 0, 5);
+      Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_RunRepeatedMotion(31, 2);
       FieldEvent_Wait(5);
-      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
+      FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
-      Actor_FaceDirectionAndWait(31, 0xd000);
+      FieldEvent_ShowMessageThenWait(32, 0, 5);
+      Actor_FaceDirectionAndWait(31, FACING_NORTH_NORTHEAST);
       FieldEvent_Wait(15);
-      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
+      FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
-      Actor_FaceDirectionAndWait(31, 0x3000);
+      FieldEvent_ShowMessageThenWait(32, 0, 5);
+      Actor_FaceDirectionAndWait(31, FACING_SOUTH_SOUTHEAST);
       FieldEvent_Wait(15);
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(20);
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(20);
-      Actor_SetSpeed(31, 0x10000, 0x8000);
-      Actor_SetSpeed(32, 0x10000, 0x8000);
+      Actor_SetSpeed(31, 1);
+      Actor_SetSpeed(32, 1);
       FieldActor_SetSpritePriority(31, 2);
       FieldActor_SetSpritePriority(32, 2);
       EventCamera_FollowActor(32, 1);
@@ -474,12 +471,12 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldActor_SetSpritePriority(32, 3);
       FieldActor_RefreshSelectorById(32);
       FieldActor_Stop(4);
-      FieldCamera_MoveTo(-1, -1, -1, 0);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetPosition(32, 0, 0);
-      Event_PlaySound(0x7b);
+      Event_PlaySound(SE_MAP_EXIT);
       FieldActor_RefreshSelectorById(31);
       Actor_SetPosition(31, 0, 0);
-      Event_PlaySound(0x7b);
+      Event_PlaySound(SE_MAP_EXIT);
       FieldEvent_Wait(10);
       Event_End();
     }
@@ -499,153 +496,135 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(96),
-    SCENE_EXIT_IF(1, 95, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 95, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 95, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 95, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 95, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(20, 96, 20, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(21, 96, 21, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(22, 96, 22, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(23, 96, 23, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(24, 96, 24, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(25, 96, 25, CONDITION_ALWAYS),
+    SCENE_EXITS(AlhafraInteriors),
+    SCENE_EXIT_UNLESS(1, Alhafra1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Alhafra1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Alhafra1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Alhafra1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Alhafra1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(20, AlhafraInteriors, 20, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(21, AlhafraInteriors, 21, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(22, AlhafraInteriors, 22, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(23, AlhafraInteriors, 23, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(24, AlhafraInteriors, 24, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(25, AlhafraInteriors, 25, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {110, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(88), FACING_SOUTH, 1, 0},
-    {202, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(544), FACING_SOUTH, 1, 0},
-    {115, CONDITION_ALWAYS, 2, PIXELS(184), 0, PIXELS(104), FACING_SOUTH, 0, 0},
-    {116, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(104), FACING_WEST, 0, 0},
-    {114, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(344), FACING_NORTHEAST, 1, 0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(312), FACING_NORTHWEST + FACING_STEP, 2, 0},
-    {112, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(312), FACING_SOUTHEAST, 2, 0},
-    {113, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(312), FACING_SOUTH, 1, 0},
-    {199, CONDITION_ALWAYS, 1, PIXELS(664), 0, PIXELS(84), FACING_SOUTH, 1, 0},
-    {209, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(152), FACING_EAST, 0, 0},
-    {115, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(120), FACING_NORTHWEST, 0, 0},
-    {116, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(280), FACING_SOUTHWEST, 0, 0},
-    {211, CONDITION_ALWAYS, 1, PIXELS(762), 0, PIXELS(84), FACING_NORTH, 1, 0},
-    {115, CONDITION_ALWAYS, 2, PIXELS(864), 0, PIXELS(120), FACING_SOUTH, 0, 0},
-    {116, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(136), FACING_EAST, 0, 0},
-    {191, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(152), FACING_NORTH, 1, 0},
-    {186, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(112), FACING_SOUTH, 1, 0},
-    {114, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(520), FACING_SOUTHEAST, 1, 0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(536), FACING_NORTHWEST, 0, 0},
-    {191, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(552), FACING_NORTHEAST, 0, 0},
-    {186, CONDITION_ALWAYS, 1, PIXELS(544), 0, PIXELS(544), FACING_SOUTH, 0, 0},
-    {112, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, 0, 0},
-    {113, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(360), FACING_WEST, 0, 0},
-    {57, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(312), FACING_NORTHEAST, 1, 0},
+    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 344, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 312, FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 312, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 312, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 84, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(209, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 152, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 280, FACING_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(211, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 762, 0, 84, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 864, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 136, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 152, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 112, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 520, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 536, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 552, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 544, 0, 544, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 344, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 360, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
-s16 gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[] = {
-    110, -1, 1, 0, 0, 488, 0, 0,
-    0, 88, FACING_SOUTH, 1, 202, -1, 1, 0,
-    0, 160, 0, 0, 0, 544, FACING_SOUTH, 1,
-    115, -1, 2, 0, 0, 184, 0, 0,
-    0, 104, FACING_SOUTH, 0, 116, -1, 1, 0,
-    0, 72, 0, 0, 0, 104, FACING_WEST, 0,
-    114, -1, 1, 0, 0, 72, 0, 0,
-    0, 344, FACING_NORTHEAST, 0, 128, -1, 1, 0,
-    0, 88, 0, 0, 0, 312, 0xb000, 1,
-    112, -1, 1, 0, 0, 152, 0, 0,
-    0, 312, FACING_SOUTHEAST, 1, 113, -1, 1, 0,
-    0, 176, 0, 0, 0, 312, FACING_SOUTH, 1,
-    199, -1, 1, 0, 0, 664, 0, 0,
-    0, 84, FACING_SOUTH, 1, 209, -1, 1, 0,
-    0, 648, 0, 0, 0, 152, 0, 0,
-    115, -1, 1, 0, 0, 648, 0, 0,
-    0, 120, FACING_NORTHWEST, 0, 116, -1, 2, 0,
-    0, 864, 0, 0, 0, 120, FACING_SOUTH, 0,
-    211, -1, 1, 0, 0, 762, 0, 0,
-    0, 84, FACING_NORTH, 1, 115, -1, 2, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTH, 1,
-    116, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, 0, 1, 191, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_NORTH, 1,
-    186, -1, 1, 0, 0, 712, 0, 0,
-    0, 136, 0, 1, 114, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTHEAST, 1,
-    128, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_NORTHWEST, 0, 191, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_NORTHEAST, 0,
-    186, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_SOUTH, 1, 112, -1, 1, 0,
-    0, 512, 0, 0, 0, 536, 0x5000, 0,
-    113, -1, 1, 0, 0, 504, 0, 0,
-    0, 552, FACING_NORTHWEST, 0, 57, -1, 1, 0,
-    0, 376, 0, 0, 0, 312, FACING_NORTHEAST, 1,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct ActorPlacement gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[] = {
+    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 344, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 312, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 312, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 312, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 84, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(209, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 152, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 864, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(211, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 762, 0, 84, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 512, 0, 536, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 552, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    {SCENE_TABLE_END},
 };
 
-s16 gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[] = {
-    110, -1, 1, 0, 0, 488, 0, 0,
-    0, 88, FACING_SOUTH, 1, 202, -1, 1, 0,
-    0, 160, 0, 0, 0, 544, FACING_SOUTH, 1,
-    115, -1, 2, 0, 0, 184, 0, 0,
-    0, 104, FACING_SOUTH, 0, 116, -1, 1, 0,
-    0, 72, 0, 0, 0, 104, FACING_WEST, 0,
-    114, -1, 1, 0, 0, 72, 0, 0,
-    0, 344, FACING_NORTHEAST, 0, 128, -1, 1, 0,
-    0, 88, 0, 0, 0, 312, 0xb000, 0,
-    112, -1, 1, 0, 0, 152, 0, 0,
-    0, 312, FACING_SOUTHEAST, 0, 113, -1, 1, 0,
-    0, 176, 0, 0, 0, 312, FACING_SOUTH, 0,
-    199, -1, 1, 0, 0, 664, 0, 0,
-    0, 84, FACING_SOUTH, 1, 209, -1, 1, 0,
-    0, 648, 0, 0, 0, 152, 0, 0,
-    115, -1, 1, 0, 0, 648, 0, 0,
-    0, 120, FACING_NORTHWEST, 0, 116, -1, 2, 0,
-    0, 864, 0, 0, 0, 120, FACING_SOUTH, 0,
-    211, -1, 1, 0, 0, 762, 0, 0,
-    0, 84, FACING_NORTH, 1, 115, -1, 2, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTH, 1,
-    116, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, 0, 1, 191, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_NORTH, 1,
-    186, -1, 1, 0, 0, 712, 0, 0,
-    0, 136, 0, 0, 114, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTHEAST, 1,
-    128, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_NORTHWEST, 0, 191, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_NORTHEAST, 0,
-    186, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_SOUTH, 1, 112, -1, 1, 0,
-    0, 512, 0, 0, 0, 536, 0x5000, 0,
-    113, -1, 1, 0, 0, 504, 0, 0,
-    0, 552, FACING_NORTHWEST, 0, 224, -1, 1, 0,
-    0, 376, 0, 0, 0, 316, 0x3000, 0,
-    225, -1, 1, 0, 0, 392, 0, 0,
-    0, 344, 0xb000, 0, -1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
+struct ActorPlacement gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[] = {
+    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 344, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 312, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 312, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 312, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 84, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(209, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 152, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 864, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(211, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 762, 0, 84, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 136, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 512, 0, 536, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 552, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 316, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(225, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 344, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
+    {SCENE_TABLE_END},
 };
 // clang-format on
 
 struct Trigger gAlhafraInteriors_Triggers[] = {
-    {0x4401, 1, CONDITION_ALWAYS, 1},
-    {0x4401, 2, CONDITION_ALWAYS, 2},
-    {0x4401, 5, CONDITION_ALWAYS, 5},
-    {0x4401, 6, CONDITION_ALWAYS, 6},
-    {0x4401, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
     {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
     {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToItemMerchant)},
-    {0xc400, 16, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToInnkeeper)},
-    {0xc400, 9, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHealer)},
-    {0x173, 214, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors121)},
-    {0x173, 215, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors122)},
-    {0x173, 216, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors123)},
-    {0x173, 217, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors124)},
-    {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors125)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToItemMerchant)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 16, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToInnkeeper)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToHealer)},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 214, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors121))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 215, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors122))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 216, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors123))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 217, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors124))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
     {TRIGGER_STEP, 30, FLAG_ALHAFRA_MET_ALEX, EVENT(AlhafraInteriors_MeetAlex)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors01)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors02)},
@@ -727,25 +706,33 @@ struct Trigger gAlhafraInteriors_Triggers[] = {
 };
 
 struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[] = {
-    {0x4401, 1, CONDITION_ALWAYS, 1},
-    {0x4401, 2, CONDITION_ALWAYS, 2},
-    {0x4401, 5, CONDITION_ALWAYS, 5},
-    {0x4401, 6, CONDITION_ALWAYS, 6},
-    {0x4401, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
     {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
     {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToItemMerchant)},
-    {0xc400, 16, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToInnkeeper)},
-    {0xc400, 9, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHealer)},
-    {0x173, 214, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors121)},
-    {0x173, 215, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors122)},
-    {0x173, 216, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors123)},
-    {0x173, 217, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors124)},
-    {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors125)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToItemMerchant)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 16, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToInnkeeper)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToHealer)},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 214, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors121))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 215, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors122))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 216, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors123))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 217, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors124))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
     {TRIGGER_TALK, 30, IF_FLAG_SET(FLAG_ALEX_LEFT_ALHAFRA),
      MSGNO(MsgAlhafraInteriors84)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30,
@@ -807,25 +794,33 @@ struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[] = {
 };
 
 struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[] = {
-    {0x4401, 1, CONDITION_ALWAYS, 1},
-    {0x4401, 2, CONDITION_ALWAYS, 2},
-    {0x4401, 5, CONDITION_ALWAYS, 5},
-    {0x4401, 6, CONDITION_ALWAYS, 6},
-    {0x4401, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
     {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
     {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToItemMerchant)},
-    {0xc400, 16, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToInnkeeper)},
-    {0xc400, 9, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHealer)},
-    {0x173, 214, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors121)},
-    {0x173, 215, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors122)},
-    {0x173, 216, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors123)},
-    {0x173, 217, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors124)},
-    {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors125)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToItemMerchant)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 16, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToInnkeeper)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToHealer)},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 214, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors121))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 215, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors122))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 216, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors123))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 217, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors124))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
     {TRIGGER_STEP, 31, IF_FLAG_SET(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE),
      EVENT(AlhafraInteriors_OverhearCrossboneIsleTale)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors88)},

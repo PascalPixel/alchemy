@@ -240,7 +240,7 @@ ask:
   unitData = Unit_Get(unit);
   Item_GetDirect(unitData->items[slot]);
   Actor_SetItemIcon(Actor_Get(18), unitData->items[slot]);
-  Actor_SetPosition(18, 0x2a00000, 0x680000);
+  Actor_SetPosition(18, 672, 104);
   FieldEvent_Wait(60);
   MessageArgument_Push(unitData->items[slot], 2);
   Message_ShowCentered(MsgPlacedOnThe, 1);
@@ -269,7 +269,7 @@ read:
   PaletteFade_ApplyTarget(0x40250d, 1);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(120);
-  Event_PlaySound(11);
+  Event_PlaySound(MUS_011);
   Actor_SetAnimation(10, 5);
   Actor_WaitForAnimationChange(10);
   DANCE_TO(664);
@@ -280,30 +280,31 @@ read:
   FieldEvent_Wait(30);
   DANCE_TO(680);
   FieldActor_Jump(10, 4, 90);
-  DANCE_TO(0x2a0);
+  DANCE_TO(672);
   FieldActor_Jump(10, 4, 30);
   FieldActor_Jump(10, 4, 30);
   Actor_SetAnimation(10, 5);
   Actor_SetAnimation(10, 0);
-  Event_PlaySound(11);
+  Event_PlaySound(MUS_011);
   PaletteFade_ApplyTarget(0x10000, 1);
   PaletteFade_Interpolate(30);
-  Actor_SetPosition(20, 0x2a00000, 0x680000);
-  Event_PlaySound(0x90);
+  Actor_SetPosition(20, 672, 104);
+  Event_PlaySound(SE_CLATTER);
   Actor_SetAnimation(20, 2);
   Actor_WaitForAnimationChange(20);
   Actor_SetPosition(20, 0, 0);
   FieldEvent_Wait(4);
-  Actor_SetPosition(19, 0x2a00000, 0x680000);
+  Actor_SetPosition(19, 672, 104);
   Actor_SetAnimation(19, 4);
   Actor_WaitForAnimationChange(19);
   FieldEvent_Wait(15);
   Actor_SetPosition(19, 0, 0);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 258, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner, EMOTE_IN_FRONT | EMOTE_WINCE,
+                  0);
   FieldEvent_Wait(60);
-  Event_PlaySound(10);
-  Actor_ShowEmote(10, 0x100, 60);
+  Event_PlaySound(MUS_010);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessage(10, 0);
   unitData = Unit_Get(unit);
   info = Item_GetDirect(unitData->items[slot]);
@@ -551,7 +552,6 @@ s32 NaribweInteriors_ProngsHeld(void) {
       FieldPartyInventory_FindMember(440) != -1 &&
       FieldPartyInventory_FindMember(441) != -1)
     return 17;
-  // No remaining combinations: the native falls off the end without a value.
 }
 
 /// One past the last Djinni of an element group found, skipping the ones never
@@ -798,24 +798,24 @@ s32 Scene_Initialize(void) {
 
   object = Actor_Get(18);
   object->motionFlags = 0;
-  object->y = -0x40000;
-  object->terrainHeight = -0x40000;
+  object->y = -px(4);
+  object->terrainHeight = -px(4);
   Actor_Get(18)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(18, 1);
   Actor_SetPosition(18, 0, 0);
 
   object = Actor_Get(19);
   object->motionFlags = 0;
-  object->y = 0xc0000;
-  object->terrainHeight = 0xc0000;
+  object->y = px(12);
+  object->terrainHeight = px(12);
   Actor_Get(19)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(19, 1);
   Actor_SetPosition(19, 0, 0);
 
   object = Actor_Get(20);
   object->motionFlags = 0;
-  object->y = 0xc0000;
-  object->terrainHeight = 0xc0000;
+  object->y = px(12);
+  object->terrainHeight = px(12);
   Actor_Get(20)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(20, 1);
   Actor_SetPosition(20, 0, 0);
@@ -833,26 +833,45 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_4(106, 105, 106, 7, 6)
+u32 gSceneExits[] = {
+    SCENE_EXITS(NaribweInteriors),
+    SCENE_EXIT_UNLESS(1, Naribwe, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Naribwe, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Naribwe, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Naribwe, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Naribwe, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, NaribweInteriors, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, NaribweInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gActorPlacements[] = {
-    {115, CONDITION_ALWAYS, 2, PIXELS(120), 0, PIXELS(104), FACING_SOUTHWEST, 1,
-     0},
-    {116, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(360), FACING_SOUTHEAST, 1,
-     0},
-    {25, CONDITION_ALWAYS, 1, PIXELS(672), 0, PIXELS(94), FACING_SOUTH, 1, 0},
-    {106, CONDITION_ALWAYS, 1, PIXELS(651), 0, PIXELS(106), FACING_SOUTHEAST, 1,
-     0},
-    {107, CONDITION_ALWAYS, 1, PIXELS(693), 0, PIXELS(106), FACING_SOUTH, 1, 0},
-    {108, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(104), FACING_SOUTH, 1, 0},
-    {109, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(104), FACING_SOUTH, 1, 0},
-    {108, CONDITION_ALWAYS, 2, PIXELS(424), 0, PIXELS(360), FACING_SOUTHWEST, 1,
-     0},
-    {135, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(368), FACING_SOUTH, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(672), 0, PIXELS(112), FACING_SOUTH, 0, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(672), 0, PIXELS(104), FACING_SOUTH, 0, 0},
-    {262, CONDITION_ALWAYS, 1, PIXELS(672), 0, PIXELS(104), FACING_SOUTH, 0, 0},
-    {285, CONDITION_ALWAYS, 1, PIXELS(672), 0, PIXELS(104), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 120, 0, 104,
+                    FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 360,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(25, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 94,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 651, 0, 106,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 693, 0, 106,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 424, 0, 360,
+                    FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 368,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 112,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(262, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(285, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

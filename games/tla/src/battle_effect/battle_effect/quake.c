@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Battle effect kind 1, the quake: rock pillars rise under the targets. The
 // Broken Seal's BattleEffect_RunQuake, call for call.
@@ -49,7 +50,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
                              work->sheet + ROCK_OFFSET, 1, 1);
 
   // Copy the background's characters and cut the band out of them.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x8000);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != PILLAR_W; col++) {
@@ -77,7 +78,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   heights = gRockWall_Heights;
   work->shakeFrames = 128;
-  Sound_PlayFar(141);
+  Sound_PlayFar(SE_RUMBLE);
 
   for (frame = 0; frame != gQuake_Timings[effect->variant][TIMING_FRAMES];
        frame++) {
@@ -121,7 +122,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
           screen.x += xOffset;
           if (screen.x >= column * PILLAR_W + 8 &&
               screen.x <= column * PILLAR_W + 8 + PILLAR_W && screen.y >= top) {
-            object->velocityY = 12 << 16; // 12 pixels a frame upward
+            object->velocityY = px(12); // 12 pixels a frame upward
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)

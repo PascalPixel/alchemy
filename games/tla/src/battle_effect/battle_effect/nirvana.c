@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 // Nirvana's ring of sparks.
 
@@ -48,15 +51,13 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  Iwram_CopyWordsEntry((void *)0x05000000,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
                        128);
   object = BattleObject_GetFar(effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   orb = work->particles;
-  orb->x = object->x;
-  orb->y = object->y + half;
-  orb->z = object->z;
+  SET_POSITION(orb, object->x, object->y + half, object->z);
   orb->velocityX = 0;
   orb->velocityY = 0;
   orb->velocityZ = 0;
@@ -66,7 +67,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != 80; frame++) {
     struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
@@ -94,7 +95,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
         if (i <= 11)
           Transform_ApplyPitch(frame << 9);
         else
-          Transform_ApplyPitch((frame << 9) + 0x4000);
+          Transform_ApplyPitch((frame << 9) + TRIG_TURN / 4);
         Transform_ApplyRoll(i * 5461 + (frame << 10));
         SceneTransform_ApplyPosition3(0, Trig_Sin(frame * 409) << 6, 0);
         point[0] = 0;
@@ -138,9 +139,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
 
 // The pixel half of a 16.16 fixed-point value.
 static inline s16 *Fixed_Halves(s32 *value) {
-  /* FAKEMATCH(wrapper): the halves read through this inline; as the cast ((s16
-   * *)&v)[1], 324 of 374 instructions of BattleEffect_RunStoneJustice differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): the halves read through this inline. */
   return (s16 *)value;
 }
 #define HI(v) (Fixed_Halves(&(v))[1])
@@ -213,9 +212,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     EffectPosition_ProjectScaledBattler(effect->actor, &userPosition);
     EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPosition);
     if (frame == 0)
-      Sound_PlayFar(157);
+      Sound_PlayFar(SE_GATE_MOVE);
     if (frame == 64)
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
 
     // Frame 0: the boulders stand in a column 2 pixels apart, on the
     // user's side of the canvas, and are thrown upward at random speeds.
@@ -282,9 +281,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       rock->velocityZ += rock->z;
       if (frame > i / 2 + 64) {
         if (effect->side == 0)
-          rock->velocityX -= 0x8000;
+          rock->velocityX -= px(1) / 2;
         else
-          rock->velocityX += 0x8000;
+          rock->velocityX += px(1) / 2;
         if (rock->z > 1)
           rock->z--;
       }
@@ -297,10 +296,10 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     if (hit == 1) {
       if (cueTimer == 0) {
         cueTimer = 8;
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
       }
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 2 << 16, 4 << 16,
-                                    2 << 16, 150);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, px(2), px(4), px(2),
+                                    150);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
       work->shakeFrames = 2;
     }
@@ -374,7 +373,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x0c10;
+  REG_BLDALPHA = BLEND_ALPHA(16, 12);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
@@ -401,7 +400,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
 
         for (i = 0, spark = work->particles; i != SPARKS; i++, spark++) {
           s32 speed = (Random16() & 0xff) + 256;
-          s32 angle = (Random16() & 0x7fff) + 0x4000;
+          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           spark->x = position.x << 16;
           spark->y = (96 - (Random16() & 31)) << 16;
@@ -418,9 +417,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
           s32 speed = (Random16() & 127) + 128;
           s32 angle = Random16() & 0x7fff;
 
-          mote->x = target->x;
-          mote->y = 52 << 16;
-          mote->z = target->z;
+          SET_POSITION(mote, target->x, px(52), target->z);
           mote->velocityY = ((Random16() & 0xff) - 128) << 9;
           mote->velocityX = (Trig_Sin(angle) * speed) >> 7;
           mote->velocityZ = (Trig_Cos(angle) * speed) >> 7;
@@ -432,20 +429,20 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     // The cues: the burst, the target thrown up 32 pixels, the user's
     // glow, the drain and the target's fall.
     if (frame == 4)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 10) {
       work->shakeFrames = 8;
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 80);
       target->verticalMotionStrength = 0;
-      target->y = 32 << 16;
+      target->y = px(32);
     }
     if (frame == 80)
       target->verticalMotionStrength = 0xab85;
     if (frame == 24)
       BattleEffect_TintBattler(effect->actor, -1, 3, -1, 0);
     if (frame == 40)
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     if (frame == 32)
       BattlePlayback_StartFar(134);
     if (frame == 64)
@@ -554,8 +551,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
               userX = -userX;
             // Gone once it has passed the user on the user's side of x = 0.
             /* FAKEMATCH(dead): each arm stores its test in sameSide, never
-             * read; as user->x < 0 ? mote->x < 0 : mote->x >= 0, 37 of 589
-             * instructions differ in tla-en. */
+             * read. */
             if (moteX >= userX && (user->x < 0 ? (sameSide = mote->x < 0)
                                                : (sameSide = mote->x >= 0)))
               mote->variant = -1;
@@ -700,9 +696,9 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   }
   BattleEffect_RunDjinniEntrance(effect, (effect->side << 4) | 0x101, screenA,
                                  screenB);
-  Iwram_ClearWords((void *)0x06004000, 0x3c00);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Iwram_ClearWordsEntry(canvas, 0x3c00);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2PA = 0x100;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   work->transferMode = 2;
@@ -760,7 +756,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
               height = Data_08198b7a[row] + (Random16() & 3);
               radius = Data_08198b82[row] + (Random16() & 3);
             }
-            angle = (column << 13) + 0x1000;
+            angle = (column << 13) + TRIG_TURN / 16;
             VERTICES[row * 8 + column].x = (Trig_Sin(angle) * radius) >> 16;
             VERTICES[row * 8 + column].y = -height;
             VERTICES[row * 8 + column].z = (Trig_Cos(angle) * radius) >> 16;
@@ -853,9 +849,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             s32 speed = (Random16() & 1023) + 1024;
             s32 angle = Random16() & 0xffff;
 
-            p->x = target->x;
-            p->y = 0;
-            p->z = target->z;
+            SET_POSITION(p, target->x, 0, target->z);
             p->velocityX = (Trig_Sin(angle) * speed) >> 9;
             p->velocityY = 0;
             p->velocityZ = (Trig_Cos(angle) * speed) >> 9;
@@ -890,16 +884,16 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
                     dropScreen.y - 30, 40, 40);
       }
       if (frame == 4) {
-        Sound_PlayFar(156);
+        Sound_PlayFar(SE_SWITCH_MECHANISM);
       }
       if (frame == 30) {
-        Sound_PlayFar(139);
+        Sound_PlayFar(SE_139);
       }
       if (frame == 60) {
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       }
       if (frame == 64) {
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         BattlePlayback_StartFar(-1);
       }
       if (frame == 30) {
@@ -937,7 +931,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         caster->acceleration = speed;
         caster->speedLimit = speed;
         caster->snapToTarget = 1;
-        caster->velocityY = 0x60000;
+        caster->velocityY = px(6);
         caster->gravity = 0x13333;
         caster->bounce = 0;
         caster->actionFlags = 1;
@@ -948,15 +942,16 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
 
       if (frame > 63) {
         if (frame == 64) {
-          Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           for (i = 0; i != 64; i++) {
             struct EffectStep *p = &work->particles[i];
             s32 angle = (i & 7) << 13;
             s32 ring;
 
-            p->x = target->x + ((Trig_Sin(angle) * (ring = i / 8)) << 2);
-            p->y = ((Random16() & 0xffff) << 2) - ((ring * 5) << 17) + 0x400000;
-            p->z = target->z + ((Trig_Cos(angle) * ring) << 2);
+            SET_POSITION(
+                p, target->x + ((Trig_Sin(angle) * (ring = i / 8)) << 2),
+                ((Random16() & 0xffff) << 2) - ((ring * 5) << 17) + 0x400000,
+                target->z + ((Trig_Cos(angle) * ring) << 2));
             p->velocityX = ((Random16() & 0xffff) << 1) + 0x10000;
             p->velocityY = ((Random16() & 0xffff) - 12768) * 3;
             p->velocityZ = ((Random16() & 0xffff) - 0x8000) << 1;
@@ -985,14 +980,13 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyPosition3(p->x, p->y, p->z);
             Transform_ApplyPitch(angle);
             Transform_ApplyRoll(angle);
-            SceneTransform_ApplyUniformScale(0x10000);
+            SceneTransform_ApplyUniformScale(Q16_ONE);
             Render_ProjectVertices(Data_081991a4, vertices, 3);
             Render_DrawModelList(model);
             Transform_Pop();
           }
         }
       }
-      // Two compares in the native, not one merged range check.
       if (frame < 64) {
         if (frame > 25) {
           s32 scale;

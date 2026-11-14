@@ -38,7 +38,6 @@ struct Bubble {
   s32 x;
   s32 y;
   s32 z;
-  // volatile: the listing reads age again after the OAM stores.
   volatile s32 age;
   u32 oam[3];
 };
@@ -81,8 +80,6 @@ extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_Room1Triggers[];
 extern struct Trigger gAquaRock_Room2Triggers[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void GameFlag_ClearBit_(s32 flag) { GameFlag_Clear(flag); }
@@ -116,9 +113,7 @@ static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
-#include "shared/actors.h"
 #include "event_work.h"
-#include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -235,9 +230,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov67bRoom1)
+  if (scene == (s32)&SceneId_AquaRock1)
     return gData_02002e30;
-  if (scene == (s32)&SceneId_Ov67bRoom2)
+  if (scene == (s32)&SceneId_AquaRock2)
     return gData_02002e60;
   return 0;
 }
@@ -283,8 +278,7 @@ found:
   coordinate = p->y;
   Actor_SetMoveTarget(object, p->x, coordinate, p->z);
 end:
-  /* FAKEMATCH(temporary): the form kept; as return 0, 22 of 107 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept. */
   x = 0;
   return x;
 }
@@ -300,7 +294,7 @@ void Func_02000468(struct Actor *object) {
 
 s32 Func_02000478(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
-  object->speedLimit = 0x10000;
+  object->speedLimit = px(1);
   object->acceleration = 0xccc;
   object->collisionFlags = 0;
   object->update = (void (*)(void))Func_02000468;
@@ -310,18 +304,18 @@ s32 Func_02000478(struct Actor *object) {
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov67bRoom1)
+  if (scene == (s32)&SceneId_AquaRock1)
     return gAquaRock_Room1Placements;
-  if (scene == (s32)&SceneId_Ov67bRoom2)
+  if (scene == (s32)&SceneId_AquaRock2)
     return gAquaRock_Room2Placements;
   return gAquaRock_Placements;
 }
 
 void Func_020004e4(struct Actor *object) {
   if (Map_GetTerrainHeight(0, object->x, object->z) > object->y)
-    object->y += 0x20000;
+    object->y += px(2);
   else
-    object->z -= 0x20000;
+    object->z -= px(2);
   if (object->y >> 20 == 23)
     Actor_Release(object);
   if (object->z >> 20 == 48)
@@ -398,35 +392,35 @@ void Func_02000740(void) {
   if (GameFlag_Get(0x104))
     return;
   if (gData_02003204 <= 149) {
-    if (GameFlag_Get(0x320))
-      GameFlag_Set(0x200);
+    if (GameFlag_Get(FLAG_AREA_TEMP_20))
+      GameFlag_Set(FLAG_SCENE_TEMP_00);
     else
-      GameFlag_Clear(0x200);
+      GameFlag_Clear(FLAG_SCENE_TEMP_00);
   } else {
-    GameFlag_Set(0x200);
+    GameFlag_Set(FLAG_SCENE_TEMP_00);
   }
   if (++gData_02003204 > 239)
     gData_02003204 = 0;
   if (gData_02003208 <= 149) {
-    if (GameFlag_Get(0x321))
-      GameFlag_Set(0x201);
+    if (GameFlag_Get(FLAG_AREA_TEMP_21))
+      GameFlag_Set(FLAG_SCENE_TEMP_01);
     else
-      GameFlag_Clear(0x201);
+      GameFlag_Clear(FLAG_SCENE_TEMP_01);
   } else {
-    GameFlag_Set(0x201);
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
   }
   if (++gData_02003208 > 239)
     gData_02003208 = 0;
   if (gData_0200320c <= 149)
-    GameFlag_Clear(0x202);
+    GameFlag_Clear(FLAG_SCENE_TEMP_02);
   else
-    GameFlag_Set(0x202);
+    GameFlag_Set(FLAG_SCENE_TEMP_02);
   if (++gData_0200320c > 239)
     gData_0200320c = 0;
   if (gData_02003210 <= 149)
-    GameFlag_Clear(0x203);
+    GameFlag_Clear(FLAG_SCENE_TEMP_03);
   else
-    GameFlag_Set(0x203);
+    GameFlag_Set(FLAG_SCENE_TEMP_03);
   if (++gData_02003210 > 239)
     gData_02003210 = 0;
 }
@@ -459,18 +453,17 @@ void Func_02000844(void) {
   UNK02003450_SET(entry, 96, 93, 108, 93, 107, 26, 43, 90, 15, 0x203);
   entry++;
   UNK02003450_SET(entry, 116, 95, 122, 95, 96, 32, 32, 96, 13, 0x1a6b);
-  if (GameFlag_Get(0x320))
-    GameFlag_Set(0x200);
+  if (GameFlag_Get(FLAG_AREA_TEMP_20))
+    GameFlag_Set(FLAG_SCENE_TEMP_00);
   else
-    GameFlag_Clear(0x200);
-  if (GameFlag_Get(0x321))
-    GameFlag_Set(0x201);
+    GameFlag_Clear(FLAG_SCENE_TEMP_00);
+  if (GameFlag_Get(FLAG_AREA_TEMP_21))
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
   else
-    GameFlag_Clear(0x201);
-  /* FAKEMATCH(temporary): each copy's five varying arguments held in locals
-   * of their own scope; as direct calls with the arguments written in,
-   * 188 of 307 instructions differ in tla-en. */
-  if (GameFlag_Get(0x200)) {
+    GameFlag_Clear(FLAG_SCENE_TEMP_01);
+  /* FAKEMATCH(temporary): each copy's five varying arguments held in locals of
+   * their own scope. */
+  if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
     struct Unk02003450 *opened = &Data_02003450[0];
     {
       s32 srcX = opened->unk00 + 3, srcY = opened->unk02,
@@ -486,7 +479,7 @@ void Func_02000844(void) {
     opened->unk16[0] = 9999;
     opened->unk14 = 1;
   }
-  if (GameFlag_Get(0x201)) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
     struct Unk02003450 *opened = &Data_02003450[1];
     {
       s32 srcX = opened->unk00 + 3, srcY = opened->unk02,
@@ -506,9 +499,14 @@ void Func_02000844(void) {
   Task_Add(Func_02000580, TASK_PASS_VBLANK);
 }
 
-DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
+#include "shared/actor_flicker_child.h"
 
-DEFINE_ACTOR_FLICKER_CHILD(Func_02000b34, 6)
+void Func_02000b34(struct Actor *object) {
+  if (gFrameCount & 2)
+    Actor_SetSpriteColorMode(object, 6);
+  else
+    Actor_SetSpriteColorMode(object, 0);
+}
 
 void Func_02000b58(struct Actor *object) {
   Actor_SetSpriteColorMode(object, 0);
@@ -586,17 +584,17 @@ void Func_02000cd8(s32 unused, s32 id) {
     GameFlag_SetByte(0x310, column);
     GameFlag_SetByte(0x318, row);
     GameFlag_ClearBit_(0x320);
-    GameFlag_Clear(0x321);
+    GameFlag_Clear(FLAG_AREA_TEMP_21);
     if (column == 7 && row == 35)
-      GameFlag_Set(0x320);
+      GameFlag_Set(FLAG_AREA_TEMP_20);
     if (column == 15 && row == 35)
-      GameFlag_Set(0x321);
+      GameFlag_Set(FLAG_AREA_TEMP_21);
   } else if (id == 25) {
     struct Actor *object = Actor_GetById(25);
 
     if (object->x >> 20 == 32) {
       wait(30);
-      object->z += 0x10000;
+      object->z += px(1);
       GameFlag_Set(0x950);
     }
   }
@@ -625,18 +623,19 @@ void Func_02000d80(void) {
     owner = gMainRoutineWork.currentOwner;
     carried = work->object;
     leader = Actor_GetById(owner);
-    if (gMainRoutineWork.scene == (s32)&SceneId_Ov67bRoom1 &&
+    if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&
         leader->terrainHeight == 0)
       return;
     ahead.x = leader->x;
     ahead.y = leader->y;
-    ahead.z = leader->z + 0x20000;
+    ahead.z = leader->z + px(2);
     result = MapGrid_CheckCollision(leader, &ahead);
     if ((gFrameCount & 4) == 0)
       Func_02001d30(leader);
     if (result < 0) {
-      Actor_SetAttachedEffect(owner, 258);
-      Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - 0x80000);
+      Actor_SetAttachedEffect(owner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+      Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - px(8));
       Actor_SelectAnimation(leader, 7);
       Actor_WaitForMove(leader);
       do
@@ -649,10 +648,10 @@ void Func_02000d80(void) {
     }
     ahead.x = leader->x;
     ahead.y = leader->y;
-    ahead.z = leader->z - 0x80000;
+    ahead.z = leader->z - px(8);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
-      if (gMainRoutineWork.scene != (s32)&SceneId_Ov67bRoom1)
+      if (gMainRoutineWork.scene != (s32)&SceneId_AquaRock1)
         return;
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -662,7 +661,7 @@ void Func_02000d80(void) {
       Func_02001d30(leader);
       Event_Wait(5);
       for (i = 59; i >= 0; i--) {
-        leader->y += 0x20000;
+        leader->y += px(2);
         leader->facing += 0x1000;
         if (Random16() <= 0xfff)
           Func_02001d30(leader);
@@ -685,8 +684,8 @@ void Func_02000d80(void) {
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
-    carried->z += -0x20000;
-    leader->z += -0x20000;
+    carried->z += -px(2);
+    leader->z += -px(2);
   } else
     Func_02001e00();
 }
@@ -705,7 +704,7 @@ void Func_02000f8c(void) {
 
   if (gMainRoutineWork.renderMode == 2) {
     col = object->x >> 20;
-    row = (object->z - object->y - 0xc0000) >> 20;
+    row = (object->z - object->y - px(12)) >> 20;
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
       work->field16a = 44;
   } else {
@@ -733,7 +732,8 @@ void Func_0200106c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 257);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(object, 40);
   object->motionFlags = 3;
   for (i = 0; i < 180; i++) {
@@ -743,7 +743,7 @@ void Func_0200106c(void) {
   }
   state = &gMainRoutineWork;
   object->gravity = saved;
-  FieldEffect_SetAttached(state->currentOwner, 0);
+  FieldEffect_SetAttached(state->currentOwner, ATTACHED_EFFECT_REMOVE);
   Actor_SetSpriteFlags(object, 1);
   Actor_SelectAnimation(object, 1);
   state->renderMode = 0;
@@ -773,7 +773,7 @@ DEFINE_AQUA_ROCK_SET_MOVED(Func_02001164, 44, 44, 46, 0x223)
                                                                                \
     if (column == 53) {                                                        \
       wait(30);                                                                \
-      object->z += 0x10000;                                                    \
+      object->z += px(1);                                                      \
       GameFlag_Set(n1);                                                        \
       Map_CopyCellAttributeRect(54, 58, 1, 1, column, n2);                     \
     }                                                                          \
@@ -795,7 +795,7 @@ void Func_02001224(s32 unused, s32 id) {
   object->update = (void (*)(void))Actor_FlickerChild;
   wait(30);
   Func_02002834(8);
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   for (i = 3; i >= 0; i--) {
     BattleEffect_ApplyColorToTargetBuffer(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
@@ -818,17 +818,17 @@ void Func_02001224(s32 unused, s32 id) {
   Func_02002a20_(0x10000, 0);
   PaletteFade_StartInterpolation(30);
   Event_Wait(15);
-  Camera_SetSpeedParameters(0x10000, 0x2000);
-  FieldCamera_MoveWithinMapBounds(PIXELS(248), -PIXELS(32), PIXELS(760), 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveWithinMapBounds(px(248), -px(32), px(760), 1);
   FieldCamera_WaitForArrival();
-  Actor_SetHorizontalPositionWithTerrain(15, PIXELS(264), PIXELS(792));
+  Actor_SetHorizontalPositionWithTerrain(15, px(264), px(792));
   Actor_SetSpriteFlags(Actor_GetById(15), 0);
   Actor_GetById(15)->collisionFlags = 0;
   Actor_GetById(15)->priorityFlags |= 2;
   Actor_GetById(15)->update = (void (*)(void))Actor_EmitWaterDrop;
   Event_Wait(30);
   for (i = 5; i >= 0; i--) {
-    Sound_Play(623);
+    Sound_Play(SE_623);
     wait(10);
   }
   Event_Wait(30);
@@ -838,9 +838,9 @@ void Func_02001224(s32 unused, s32 id) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov67bRoom1)
+  if (scene == (s32)&SceneId_AquaRock1)
     return gAquaRock_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov67bRoom2)
+  if (scene == (s32)&SceneId_AquaRock2)
     return gAquaRock_Room2Triggers;
   return gAquaRock_Triggers;
 }
@@ -868,16 +868,16 @@ void Func_02001460(void) {
   s32 up;
   struct MainRoutineWork *state;
 
-  Sound_Play(612);
+  Sound_Play(SE_612);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y = -0x100000;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+  object->y = -px(16);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
   for (i = 15; i >= 0; i--) {
-    object->y += 0x10000;
+    object->y += px(1);
     angle = object->facing;
     angle += 0x2000;
     object->facing = angle;
@@ -885,9 +885,9 @@ void Func_02001460(void) {
   }
   Func_02001d30(object);
   object->motionFlags = saved;
-  object->velocityY = 0x80000;
+  object->velocityY = px(8);
   Actor_SetSpriteFlags(object, 1);
-  up = gInput.held & 0x40;
+  up = gInput.held & KEY_UP;
   state = &gMainRoutineWork;
   if (up)
     Actor_MoveToAndWaitById(state->currentOwner, 264, 760);
@@ -907,10 +907,10 @@ void Func_0200153c(void) {
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y = -0x400000;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+  object->y = -px(64);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
   for (i = 23; i >= 0; i--) {
-    object->y += 0x20000;
+    object->y += px(2);
     angle = object->facing;
     angle += 0x2000;
     object->facing = angle;
@@ -918,7 +918,7 @@ void Func_0200153c(void) {
   }
   Func_02001d30(object);
   object->motionFlags = saved;
-  object->velocityY = 0xc0000;
+  object->velocityY = px(12);
   Actor_SetSpriteFlags(object, 1);
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 680, 912);
   Event_End();
@@ -964,19 +964,17 @@ void Func_0200169c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(184);
-  // Two goto loops: the ROM loads the zero and the update address on each pass,
-  // which loop.c hoists out of for loops (differ 18).
+  Sound_Play(SE_184);
   i = 17;
 scatter:
   {
     struct Actor *object = Actor_GetById(i);
 
-    object->speedLimit = 0x4000;
+    object->speedLimit = px(1) / 4;
     object->acceleration = 0x400;
     object->update = (void (*)(void))Func_020015e8;
     object->timer = Random16();
@@ -998,7 +996,7 @@ settle:
   Actor_GetById(i)->update = (void (*)(void))Func_02001630;
   if (++i <= 21)
     goto settle;
-  Sound_Play(298);
+  Sound_Play(SE_298);
   Event_Wait(60);
   {
     struct Actor *object = Actor_GetById(21);
@@ -1009,7 +1007,7 @@ settle:
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
-  GameFlag_Clear(0x12f);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Import_EventSetExitRequest(77);
   Event_End();
   GameFlag_Set(0x955);
@@ -1023,11 +1021,11 @@ s32 Scene_Initialize(void) {
   s16 *entrance;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_Ov67bRoom1;
+  gMainRoutineWork.retreatScene = (s32)&SceneId_AquaRock1;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;
-  Scene_QueueMusic(170);
-  if (scene == (s32)&SceneId_Ov67bRoom1) {
+  Scene_QueueMusic(SE_170);
+  if (scene == (s32)&SceneId_AquaRock1) {
     Actor_SetSpriteColor(Actor_GetById(8), 4);
     Actor_SetSpriteColor(Actor_GetById(9), 4);
     Actor_SetSpriteColor(Actor_GetById(10), 4);
@@ -1055,8 +1053,7 @@ s32 Scene_Initialize(void) {
       Actor_SetModeById(id, 0);
     }
     if (GameFlag_Get(0x950))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 25, PIXELS(520),
-            PIXELS(584));
+      Actor_SetPositionFixed(25, px(520), px(584));
     x = GameFlag_GetByte(0x310);
     z = GameFlag_GetByte(0x318);
     if (z != 0)
@@ -1081,48 +1078,41 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 5)
       Func_0200169c();
     if (GameFlag_Get(0x955)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 17, PIXELS(392),
-            PIXELS(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 18, PIXELS(424),
-            PIXELS(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 19, PIXELS(456),
-            PIXELS(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 20, PIXELS(488),
-            PIXELS(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 21, PIXELS(520),
-            PIXELS(824));
-      Call6(Map_CopyCellAttributeRect, 64, 66, 9, 3, 24, 53);
-      Call6(Map_CopyCellsRect, 64, 66, 11, 7, 87, 50);
+      Actor_SetPositionFixed(17, px(392), px(824));
+      Actor_SetPositionFixed(18, px(424), px(824));
+      Actor_SetPositionFixed(19, px(456), px(824));
+      Actor_SetPositionFixed(20, px(488), px(824));
+      Actor_SetPositionFixed(21, px(520), px(824));
+      MapGrid_CopyCellAttributes(64, 66, 9, 3, 24, 53);
+      MapGrid_CopyCells(64, 66, 11, 7, 87, 50);
       Actor_GetById(21)->update = Func_02001670;
     }
     if (GameFlag_Get(0xa6b)) {
-      Call6(Map_CopyCellAttributeRect, 62, 41, 1, 2, 33, 41);
-      MapGrid_CopyCellPictureCellsRect(116, 95, 3, 13, 0x60, 0x20);
-      Call6(MapGrid_CopyCellPictureCellsRect, 122, 95, 3, 13, 0x20, 0x60);
+      MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
+      MapGrid_CopyCellPictureCellsRect(116, 95, 3, 13, 96, 32);
+      MapGrid_CopyCellsLayered(122, 95, 3, 13, 0x20, 0x60);
       Func_02001f60(12);
     }
     Func_02000844();
     if (gMainRoutineWork.entrance == 4)
       Func_02002158();
-  } else if (scene == (s32)&SceneId_Ov67bRoom2) {
+  } else if (scene == (s32)&SceneId_AquaRock2) {
     Actor_SetSpriteFlags(Actor_GetById(14), 0);
-    if (GameFlag_Get(545))
-      Call6(Map_CopyCellAttributeRect, 42, 32, 1, 1, 44, 32);
-    if (GameFlag_Get(546))
-      Call6(Map_CopyCellAttributeRect, 48, 32, 1, 1, 46, 32);
-    if (GameFlag_Get(547))
-      Call6(Map_CopyCellAttributeRect, 44, 44, 1, 1, 46, 44);
+    if (GameFlag_Get(FLAG_SCENE_TEMP_21))
+      MapGrid_CopyCellAttributes(42, 32, 1, 1, 44, 32);
+    if (GameFlag_Get(FLAG_SCENE_TEMP_22))
+      MapGrid_CopyCellAttributes(48, 32, 1, 1, 46, 32);
+    if (GameFlag_Get(FLAG_SCENE_TEMP_23))
+      MapGrid_CopyCellAttributes(44, 44, 1, 1, 46, 44);
     Actor_SetModeById(12, 2);
     if (GameFlag_Get(0x951)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(856),
-            PIXELS(840));
-      Call6(Map_CopyCellAttributeRect, 54, 58, 1, 1, 53, 52);
+      Actor_SetPositionFixed(12, px(856), px(840));
+      MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 52);
     }
     Actor_SetModeById(13, 2);
     if (GameFlag_Get(0x952)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 13, PIXELS(856),
-            PIXELS(936));
-      Call6(Map_CopyCellAttributeRect, 54, 58, 1, 1, 53, 58);
+      Actor_SetPositionFixed(13, px(856), px(936));
+      MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 58);
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
       Func_02002550();
@@ -1144,14 +1134,14 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(0xa69)) {
         Func_020025a8(8);
         Func_02002834(8);
-        Actor_SetHorizontalPositionWithTerrain(15, PIXELS(264), PIXELS(792));
+        Actor_SetHorizontalPositionWithTerrain(15, px(264), px(792));
         Actor_SetSpriteFlags(Actor_GetById(15), 0);
         Actor_GetById(15)->collisionFlags = 0;
         Actor_GetById(15)->priorityFlags |= 2;
         Actor_GetById(15)->update = Actor_EmitWaterDrop;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
-        MapGrid_CopyCellPictureCellsRect(0x40, 68, 5, 13, 14, 94);
+        MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
         Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
       }
     }
@@ -1169,8 +1159,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02001d30(struct Actor *object) {
-  struct Actor *child = Import_ActorCreate(14, object->x, object->y + 0x40000,
-                                           object->z + 0x40000);
+  struct Actor *child =
+      Import_ActorCreate(14, object->x, object->y + px(4), object->z + px(4));
   struct FieldSprite *parentSprite = object->sprite;
 
   if (child != 0) {
@@ -1187,7 +1177,7 @@ void Func_02001d30(struct Actor *object) {
   }
 }
 
-DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
+#include "shared/actor_emit_water_drop.h"
 
 void Func_02001e00(void) {
   struct Actor *anchor;
@@ -1203,18 +1193,19 @@ void Func_02001e00(void) {
     anchor = work->object;
   }
   leader = Actor_GetById(owner);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov67bRoom1 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&
       leader->terrainHeight == 0)
     return;
   position[0] = leader->x;
   position[1] = leader->y;
-  position[2] = leader->z + 0x20000;
+  position[2] = leader->z + px(2);
   result = MapGrid_CheckCollision(leader, position);
   if ((gFrameCount & 4) == 0)
     Func_02001d30(leader);
   if (result < 0) {
-    Actor_SetAttachedEffect(owner, 0x102);
-    Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
+    Actor_SetAttachedEffect(owner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + px(8));
     Actor_SelectAnimation(leader, 49);
     Actor_WaitForMove(leader);
     do {
@@ -1227,7 +1218,7 @@ void Func_02001e00(void) {
   }
   position[0] = leader->x;
   position[1] = leader->y;
-  position[2] = leader->z + 0x80000;
+  position[2] = leader->z + px(8);
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
@@ -1243,8 +1234,8 @@ void Func_02001e00(void) {
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  anchor->z += 0x20000;
-  leader->z += 0x20000;
+  anchor->z += px(2);
+  leader->z += px(2);
   leader->facing = 0x4000;
 }
 
@@ -1271,9 +1262,9 @@ void Func_02001f90(s32 arg0) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   object->motionFlags = 0;
   object->priorityFlags |= 0x20;
-  Sound_Play(215);
+  Sound_Play(SE_SPLASH_SMALL);
   Actor_SelectAnimation(object, 18);
-  Sound_Play(612);
+  Sound_Play(SE_612);
   for (i = 0; i < 60; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
@@ -1292,7 +1283,7 @@ void Func_02001f90(s32 arg0) {
 // Every other frame, emits particle 7 (5 on every other such frame) from the
 // object, 26 pixels up, swaying with the frame count and drifting by a random
 // amount.
-DEFINE_ACTOR_EMIT_MIST(Actor_EmitMist)
+#include "shared/actor_emit_mist.h"
 
 void Func_020020bc(s32 entrance) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1300,7 +1291,7 @@ void Func_020020bc(s32 entrance) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(228);
+  Sound_Play(SE_SPARKLING_PASSAGE);
   leader->update = (void (*)(void))Actor_EmitMist;
   leader->motionFlags = 0;
   leader->speedLimit = 0x3333;
@@ -1325,7 +1316,7 @@ void Func_02002158(void) {
   if (flag == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = flag;
     Actor_SetHorizontalPositionWithTerrain(*owner, ((s16 *)&leader->x)[1] << 16,
                                            (((s16 *)&leader->z)[1] << 16) -
@@ -1333,9 +1324,9 @@ void Func_02002158(void) {
     Actor_SetSpriteColor(Actor_GetById(*owner), 9);
     Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
-    Sound_Play(228);
+    Sound_Play(SE_SPARKLING_PASSAGE);
     leader->update = (void (*)(void))Actor_EmitMist;
-    Actor_SetSpeedParameters(*owner, 0x6666, 0x3333);
+    Actor_SetSpeed(*owner, 0.4);
     Actor_WalkByAndWaitById(*owner, 0, 8);
     Actor_SetSpriteColor(Actor_GetById(*owner), 0);
     Actor_SetSpriteFlags(Actor_GetById(*owner), 1);
@@ -1448,9 +1439,9 @@ void Func_020023c0(void) {
   for (i = 63; i >= 0; i--, bubble++) {
     if (bubble->x != 0) {
       if (Map_GetTerrainHeight(0, bubble->x, bubble->z) < bubble->y)
-        bubble->y -= 0x20000;
+        bubble->y -= px(2);
       else
-        bubble->z += 0x20000;
+        bubble->z += px(2);
       if (bubble->y >> 20 == -4)
         bubble->x = 0;
       if (bubble->z >> 20 == 50)
@@ -1497,8 +1488,6 @@ void Func_02002550(void) {
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 0x100, buffer);
   Heap_Release(buffer);
-  // Use a value-returning call; a void declaration changes argument order
-  // (differ 2).
   ((s32 (*)(void *, s32))Task_Add)(Func_02002534, 0x480);
 }
 
@@ -1516,7 +1505,7 @@ void Func_020025a8(s32 id) {
   }
 }
 
-DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gGroundParticleFrames)
+#include "shared/ground_particles_draw.h"
 
 // Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 // decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
@@ -1684,7 +1673,20 @@ u32 gWaterDropScript[] = {
 #undef EFFECT_SPRITE_PRIORITY
 
 // clang-format off
-LATE_DATA DEFINE_G_DATA_02001F18(gGroundParticleFrames)
+LATE_DATA s16 gGroundParticleFrames[] = {                                                               
+      -8,  -12,  20,  0,   1,    -8,  -12,  20,  0,    1,   -8,   -12,         
+      20,  0,    1,   -8,  -12,  16,  0,    1,   -8,   -12, 16,   0,           
+      1,   -8,   -12, 12,  0,    1,   -8,   -12, 8,    0,   1,    0,           
+      -32, 0,    2,   2,   8,    -48, 0,    2,   2,    16,  -64,  0,           
+      2,   2,    24,  -80, 0,    2,   2,    32,  -96,  0,   2,    2,           
+      40,  -112, 0,   2,   2,    48,  -128, 0,   2,    2,   56,   -144,        
+      0,   2,    2,   64,  -160, 0,   2,    2,   -2,   12,  -4,   12,          
+      -6,  12,   -8,  8,   -10,  8,   -12,  8,   -14,  8,   -16,  8,           
+      -19, 4,    -21, 4,   -24,  4,   -27,  4,   -30,  4,   -33,  4,           
+      -36, 4,    -40, 4,   -44,  4,   -48,  0,   -52,  0,   -56,  0,           
+      -60, 0,    -64, 0,   -68,  0,   -72,  0,   -76,  0,   -80,  0,           
+      -85, 0,    -90, 0,   -95,  0,   -100, 0,   -110, 0,   -120, 0,           
+  };
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gData_02002a78,
@@ -1712,20 +1714,20 @@ LATE_DATA s16 gData_02002e60[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(158),
-    SCENE_EXIT(1, 2, 37),
-    SCENE_EXIT(2, 159, 2),
-    SCENE_EXIT(3, 159, 3),
-    SCENE_EXIT(4, 163, 1),
-    SCENE_EXIT(6, 159, 6),
-    SCENE_EXIT(77, 154, 1),
-    SCENE_EXITS(159),
-    SCENE_EXIT(1, 165, 13),
-    SCENE_EXIT(2, 158, 2),
-    SCENE_EXIT(3, 158, 3),
-    SCENE_EXIT(4, 159, 5),
-    SCENE_EXIT(5, 159, 4),
-    SCENE_EXIT(7, 158, 7),
+    SCENE_EXITS(AquaRock1),
+    SCENE_EXIT(1, WorldMap, 37),
+    SCENE_EXIT(2, AquaRock2, 2),
+    SCENE_EXIT(3, AquaRock2, 3),
+    SCENE_EXIT(4, AquaRockInside4, 1),
+    SCENE_EXIT(6, AquaRock2, 6),
+    SCENE_EXIT(77, ApojiiIslands1, 1),
+    SCENE_EXITS(AquaRock2),
+    SCENE_EXIT(1, AquaRockInside6, 13),
+    SCENE_EXIT(2, AquaRock1, 2),
+    SCENE_EXIT(3, AquaRock1, 3),
+    SCENE_EXIT(4, AquaRock2, 5),
+    SCENE_EXIT(5, AquaRock2, 4),
+    SCENE_EXIT(7, AquaRock1, 7),
     SCENE_EXITS_END,
 };
 
@@ -1734,40 +1736,40 @@ LATE_DATA struct ActorPlacement gAquaRock_Placements[] = {
 };
 
 LATE_DATA struct ActorPlacement gAquaRock_Room1Placements[] = {
-    {380, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(551), FACING_SOUTH, 2, 0},
-    {380, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(551), FACING_SOUTH, 2, 0},
-    {380, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(615), FACING_SOUTH, 2, 0},
-    {380, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(615), FACING_SOUTH, 2, 0},
-    {380, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(647), FACING_SOUTH, 2, 0},
-    {380, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(647), FACING_SOUTH, 2, 0},
-    {380, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(679), FACING_SOUTH, 2, 0},
-    {380, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(823), FACING_SOUTH, 2, 0},
-    {380, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(927), FACING_SOUTH, 2, 1},
-    {380, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(879), FACING_SOUTH, 2, 1},
-    {380, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(863), FACING_SOUTH, 2, 1},
-    {380, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(847), FACING_SOUTH, 2, 1},
-    {380, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(863), FACING_SOUTH, 2, 1},
-    {380, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(879), FACING_SOUTH, 2, 1},
-    {380, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(847), FACING_SOUTH, 2, 1},
-    {380, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(959), FACING_SOUTH, 2, 1},
-    {272, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(552), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(584), FACING_SOUTH, 2, 0},
-    {383, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(600), FACING_SOUTH, 2, 0},
-    {401, CONDITION_ALWAYS, (s32)gData_02002b2c, PIXELS(376), 0, PIXELS(960), FACING_SOUTH, 2, 0},
-    {401, CONDITION_ALWAYS, (s32)gData_02002b2c, PIXELS(136), 0, PIXELS(904), FACING_SOUTH, 2, 0},
-    {401, CONDITION_ALWAYS, (s32)gData_02002bb4, PIXELS(144), 0, PIXELS(912), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 551, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 551, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 615, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 615, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 647, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 647, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 679, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 823, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 927, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 879, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 863, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 847, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 863, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 879, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 847, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 959, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(401, CONDITION_ALWAYS, (s32)gData_02002b2c, 376, 0, 960, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(401, CONDITION_ALWAYS, (s32)gData_02002b2c, 136, 0, 904, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(401, CONDITION_ALWAYS, (s32)gData_02002bb4, 144, 0, 912, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gAquaRock_Room2Placements[] = {
-    {383, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(584), FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(520), FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(520), FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(712), FACING_SOUTH, 2, 0},
-    {292, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(840), FACING_SOUTH, 2, 0},
-    {292, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(936), FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(936), FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(292, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(292, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 936, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 936, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1785,7 +1787,7 @@ LATE_DATA struct Trigger gAquaRock_Triggers[] = {
 
 LATE_DATA struct Trigger gAquaRock_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc402, 4, CONDITION_ALWAYS, EVENT(Func_020020bc)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Func_020020bc)},
     {TRIGGER_STEP, 30, 0x320, EVENT(Func_02000f8c)},
     {TRIGGER_STEP, 31, 0x321, EVENT(Func_02000f8c)},
     {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(Func_02000f8c)},
@@ -1797,7 +1799,7 @@ LATE_DATA struct Trigger gAquaRock_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 26, 0xa68, EVENT(Func_02000b68)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 24, CONDITION_ALWAYS, EVENT(Func_02000cd8)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 25, 0x950, EVENT(Func_02000cd8)},
-    {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02000cd8)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02000cd8)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1814,7 +1816,7 @@ LATE_DATA struct Trigger gAquaRock_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x223, EVENT(Func_02001164)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x951, EVENT(Func_0200119c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x952, EVENT(Func_020011e0)},
-    {0x9, 0, 0x952, EVENT(Func_020011e0)},
+    {TRIGGER_PUSHED, 0, 0x952, EVENT(Func_020011e0)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa69, EVENT(Func_02001224)},
     {TRIGGER_TABLE_END},
 };

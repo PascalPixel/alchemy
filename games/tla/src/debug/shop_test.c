@@ -3,6 +3,8 @@
 /// order.
 
 #include "battle/battle.h"
+#include "system/io_reg.h"
+#include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -44,8 +46,7 @@ void Test_ReceiveFlint(s32 message, s32 count) {
   s32 typed;
   volatile struct InputState *input;
 
-  /* FAKEMATCH(volatile): the input read through a volatile pointer; as a plain
-   * pointer, 31 of 94 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the input read through a volatile pointer. */
   window = Portrait_OpenWindow(206, 0, 0, 0);
   i = 0;
   if (i >= count)
@@ -59,13 +60,12 @@ loop:
   frames = 0;
   if (INPUT_HELD & 3)
     goto shown;
-wait:
-  wait(1);
-  frames++;
-  if (frames > 59)
-    goto shown;
-  if (!(INPUT_HELD & 3))
-    goto wait;
+  do {
+    wait(1);
+    frames++;
+    if (frames > 59)
+      goto shown;
+  } while (!(INPUT_HELD & 3));
   for (;;) {
   shown:
     typed = Message_AllTyped();
@@ -78,9 +78,9 @@ wait:
     wait(1);
   }
   frames = 0;
-  if (input->held & 2)
+  if (input->held & KEY_B)
     goto done;
-  if (!(input->held & 1))
+  if (!(input->held & KEY_A))
     goto hold;
   goto next;
 hold:
@@ -89,9 +89,9 @@ hold:
   if (frames > 9)
     goto next;
   input = (volatile struct InputState *)&gInput;
-  if (input->held & 2)
+  if (input->held & KEY_B)
     goto done;
-  if (!(input->held & 1))
+  if (!(input->held & KEY_A))
     goto hold;
 next:
   message++;
@@ -250,9 +250,7 @@ void Party_RemoveMember(s32 owner);
 
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline where the next
-   * call adds the same item, so the item is built again, as the ROM has it;
-   * where a direct call would keep it in r5; as direct Inventory_AddItem
-   * calls, 24 of 134 instructions differ in tla-en. */
+   * call adds the same item. */
   Inventory_AddItem(owner, item);
 }
 
@@ -353,8 +351,8 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(322),
-    SCENE_EXIT(20, 322, 2),
+    SCENE_EXITS(PsynergyTest),
+    SCENE_EXIT(20, PsynergyTest, 2),
     SCENE_EXITS_END,
 };
 
@@ -436,7 +434,7 @@ void Inventory_Break(s32 owner, s32 slot);
 /* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition
  * *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried
  * as the definition's void Func_02000d48(struct Actor *shot), it does not
- * compile in tla-ja: games/tla/src/debug/shop_test.c:436: conflicting types for
+ * compile in tla-ja: games/tla/src/debug/shop_test.c:434: conflicting types for
  * `Func_02000d48'. */
 extern struct ItemDefinition *
 Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
@@ -618,20 +616,20 @@ void Func_02000748(void) {
       Text_DrawNumberInWindow(unit[15], 0, window, 72, 48);
     }
     wait(1);
-    if ((gInput.pressed & 8) || (gInput.pressed & 4)) {
+    if ((gInput.pressed & KEY_START) || (gInput.pressed & KEY_SELECT)) {
       Func_02000704(5);
-      Sound_Play(93);
+      Sound_Play(MUS_093);
       redraw = 1;
     }
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       Func_02000704(1);
-      Sound_Play(91);
+      Sound_Play(MUS_091);
       redraw = 1;
     }
-    if (gInput.pressed & 2)
+    if (gInput.pressed & KEY_B)
       break;
   }
-  Sound_Play(113);
+  Sound_Play(SE_MENU_CANCEL);
   Window_Close(window, 2);
 }
 
@@ -667,9 +665,11 @@ void Func_02000848(void) {
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
   details = Window_Create(0, 8, 13, 10, 2);
-  Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
-  Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
-  Sound_Play(112);
+  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 14 * 16), 0x80000010,
+          REG_DMA3);
+  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238), 0x80000001,
+          REG_DMA3);
+  Sound_Play(SE_MENU_CONFIRM);
   wait(1);
   while (1) {
     if (redraw) {
@@ -688,52 +688,52 @@ void Func_02000848(void) {
       }
     }
     wait(1);
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (PartyInventory_Add(item) == -1) {
-        Sound_Play(113);
+        Sound_Play(SE_MENU_CANCEL);
         break;
       }
-      Sound_Play(175);
+      Sound_Play(SE_NOTE_HIGH);
     }
-    if (gInput.pressed & 2) {
-      Sound_Play(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_Play(SE_MENU_CANCEL);
       break;
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       step = 1;
       item++;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       step = -1;
       item--;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       step = 1;
       item += 10;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       step = -1;
       item -= 10;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x100) {
+    if (gInput.repeat & KEY_R) {
       step = 1;
       item += 30;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x200) {
+    if (gInput.repeat & KEY_L) {
       step = -1;
       item -= 30;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (step == -1) {
       for (item = (item + ITEM_COUNT) % entryCount;
@@ -791,7 +791,7 @@ void Func_02000b50(s32 mode, s32 id, s32 x, s32 z) {
   object = Actor_GetById(id);
   if (mode == 2) {
     Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
-    object->y = 0x200000;
+    object->y = px(32);
     object->motionFlags = 3;
     object->gravity = 0x170a;
     wait(50);
@@ -820,18 +820,15 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       s32 scale;
 
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
       while (object->scaleX < Q16_ONE) {
         wait(1);
         scale = object->scaleX + 0x51e;
         {
-          /* FAKEMATCH(temporary): the turn is added as a word, so its step
-           * is built inside the loop as in the native; as
-           * object->angle += 0x1000, 22 of 86 instructions differ in
-           * tla-en. */
-          s32 angle = object->facing + 0x1000;
+          /* FAKEMATCH(temporary): the turn is added as a word. */
+          s32 angle = object->facing + TRIG_TURN / 16;
 
           object->facing = angle;
         }
@@ -841,7 +838,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
       object->facing =
-          Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x8000;
+          Actor_GetById(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
       Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }

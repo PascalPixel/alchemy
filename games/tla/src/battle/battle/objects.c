@@ -7,6 +7,7 @@
 #include "module/battle/battle.h"
 #include "gamepak/far_call/field.h"
 #include "module/system/system.h"
+#include "macros.h"
 
 /// Builds a battle object's status icon flags from its unit: poison
 /// (1) or deadly poison (2), delusion (0x20), stun (4, not for nine large
@@ -353,8 +354,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   unitIndex = 0;
   if (unitIds[unitIndex] != 255) {
     for (;;) {
-      /* FAKEMATCH(pin): slot held in r5; as a plain local, 27 of 273
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(pin): slot held in r5. */
       register struct BattleObj *slot asm("r5");
 
       object = 0;
@@ -482,7 +482,6 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   }
 }
 
-// BattleObject_Get, as the native expands it here.
 static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
   u8 *work = (u8 *)Ram_HeapSlots->battleWork;
   struct BattleObj *slots = ((struct BattleWork *)work)->slots;
@@ -541,16 +540,16 @@ s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
  * *, void *); transform.h has void Transform_ApplyLookAt(s32 *eye, s32
  * *target); tried as the definition's void Transform_ApplyLookAt(s32 *eye, s32
  * *target), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle/battle.c:3150: void value not ignored as it ought to be.
- */
+ * games/tla/src/battle/battle/objects.c:554: void value not ignored as it ought
+ * to be. */
 extern s32
 Transform_ApplyLookAt__battle(void *, void *) __asm__("Transform_ApplyLookAt");
 /* VIEW(battle): routine Transform_SetLookAt as s32 Transform_SetLookAt(void *,
  * void *); transform.h has void Transform_SetLookAt(s32 *eye, s32 *target);
  * tried as the definition's void Transform_SetLookAt(s32 *eye, s32 *target),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle/battle.c:3152: void value not ignored as it ought to be.
- */
+ * games/tla/src/battle/battle/objects.c:556: void value not ignored as it ought
+ * to be. */
 extern s32 Transform_SetLookAt__battle(void *,
                                        void *) __asm__("Transform_SetLookAt");
 
@@ -620,9 +619,7 @@ void Camera_InitializeDefaultTransform(void) {
   Transform_ApplyYaw((s16)state->yaw);
   Transform_ApplyPitch((s16)state->pitch);
 
-  transfer.x = 0;
-  transfer.y = 0;
-  transfer.z = state->distance;
+  SET_POSITION(&transfer, 0, 0, state->distance);
   Iwram_TransformVector(&transfer, (s32 *)state);
 }
 

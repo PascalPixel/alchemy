@@ -4,6 +4,9 @@
 /// houses' doors and the treasure Scoop digs up.
 
 #include "shared/tables.h"
+#include "flags.h"
+#include "system/io_reg.h"
+#include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -87,7 +90,7 @@ void Loho_MeetLull(void) { Djinn_JoinParty(19, 3, 16); }
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const u32 *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Loho2)
     return gLoho_Regions;
   return 0;
 }
@@ -95,7 +98,7 @@ const u32 *Scene_GetRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Loho2)
     return gLoho_Room2Placements;
   return gLoho_Placements;
 }
@@ -168,16 +171,16 @@ approach:
     goto turned;
   if (i == 0)
     goto fromEast;
-  Actor_WalkToAndWait(4, 0x1d7, 0x15a);
+  Actor_WalkToAndWait(4, 471, 346);
   goto turned;
 fromEast:
-  Actor_WalkToAndWait(4, 0x1fa, 0x15a);
+  Actor_WalkToAndWait(4, 506, 346);
 turned:
   if (i == 0)
     goto fromNorth;
   goto fromSouth;
 fromNorth:
-  Actor_WalkToAndWait(4, 0x1fa, 0x175);
+  Actor_WalkToAndWait(4, 506, 373);
   goto inPlace;
 start:
   i = 0;
@@ -200,35 +203,35 @@ placed:
   if (v_r2 == 0)
     goto approach;
 inPlace:
-  FieldCamera_MoveTo(0x1e80000, -1, 0x1740000, 1);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 372, 1);
   Event_SetFlag(0xa5f);
-  Actor_MoveToAndWait(4, 0x1e7, 0x179);
-  Actor_FaceDirectionAndWait(4, 0xc000);
+  Actor_MoveToAndWait(4, 487, 377);
+  Actor_FaceDirectionAndWait(4, FACING_NORTH);
   Event_Wait(30);
-  Event_PlaySound(140);
+  Event_PlaySound(SE_SPIN);
   FieldActor_StartRepeatedMotion(16, 2);
   FieldActor_StartRepeatedMotion(18, 2);
   Actor_RunRepeatedMotion(17, 2);
   Actor_FaceActor(16, 4, 0);
   Actor_FaceActor(17, 4, 0);
-  Actor_FaceDirection(18, 0x5000, 0);
+  Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(25);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_WalkByAndWait(4, 24, 12);
-  Actor_FaceDirectionAndWait(4, 0xc000);
+  Actor_FaceDirectionAndWait(4, FACING_NORTH);
   Event_Wait(30);
-  Event_PlaySound(144);
-  FieldActor_ShowItemIconById(21, 0x1cc);
-  Actor_SetPosition(21, 0x1e80000, 0x14a0000);
+  Event_PlaySound(SE_CLATTER);
+  FieldActor_ShowItemIconById(21, ITEM_MAGMA_BALL);
+  Actor_SetPosition(21, 488, 330);
   Actor_SetDestinationOffset(20, 0, 8);
-  Actor_SetSpeed(21, 0x30000, 0x18000);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
-  Actor_SetDestination(21, 0x1e8, 0x12c);
-  FieldCamera_MoveTo(0x1e80000, -1, 0x1340000, 1);
+  Actor_SetSpeed(21, 3);
+  MapGrid_SetShake(2, 2, 1);
+  Actor_SetDestination(21, 488, 300);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 308, 1);
   Actor_WaitForMoveById(21);
   Actor_SetPosition(21, 0, 0);
-  MapGrid_SetShake(0x70000, 0x70000, 0x10000);
+  MapGrid_SetShake(7, 7, 1);
   table = (struct LohoSpark *)Heap_AllocEwram(0x600);
   p = (struct LohoSpark *)Heap_Alloc(0x1000);
   t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
@@ -244,12 +247,11 @@ seedSparks:
   p = (struct LohoSpark *)((s32)p + 16);
   if (i >= 0)
     goto seedSparks;
-  Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
-          (volatile u32 *)0x40000d4);
+  Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0,
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   i = 0;
-  /* FAKEMATCH(dead): this test that never passes, with its edge into the loop,
-   * which combine folds away; as the loop entered only at its top, 28 of 1050
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): this test that never passes, with its edge into the loop.
+   */
   if (((entry & 255) >> 8) == 0)
     goto frame;
   i = 1;
@@ -257,12 +259,12 @@ seedSparks:
 frame:
   if ((31 & i) != 0)
     goto checkFlash;
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
 checkFlash:
   if (i != 30)
     goto sparks;
   ScreenFade_ToWhite(90);
-  Event_PlaySound(141);
+  Event_PlaySound(SE_RUMBLE);
 sparks:
   p = table;
 spark:
@@ -278,7 +280,6 @@ spark:
   t51 |= 240;
   p->sprite.bytes[5] = t51 & -13;
 drawSpark:
-  // Through long: read as s32, PRE merges this with the read after the call.
   value = *(long *)&p->age;
   if (value < 0)
     goto ageSpark;
@@ -301,116 +302,116 @@ nextSpark:
     goto frame;
   VramCache_FreeEntry(entry);
   Heap_Release(table);
-  FieldCamera_MoveTo(0x1e80000, -1, 0x1860000, 1);
-  Actor_SetPositionAndFacing(14, 0xf80000, 0x1e00000, 0);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 390, 1);
+  Actor_SetPositionAndFacing(14, px(248), px(480), FACING_EAST);
   Loho_DrawBrokenWall();
-  MapGrid_SetShake(0, 0, 0x10000);
-  Event_PlaySound(0x186);
+  MapGrid_SetShake(0, 0, 1);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(180);
   ScreenFade_FromWhite(120);
   Event_SetMessageId((s32)MsgLoho28);
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);
-  Actor_FaceDirectionAndWait(18, 0x8000);
+  Actor_FaceDirectionAndWait(18, FACING_WEST);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(17, 0x2000, 0);
+  Actor_FaceDirection(17, FACING_SOUTHEAST, 0);
   Actor_SetAnimation(17, 3);
   Actor_SetAnimation(16, 3);
   Event_Wait(30);
-  FieldActor_ShowEmote(17, 0x102, 35);
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   Event_ShowMessage(17, 0);
-  FieldActor_ShowEmote(16, 0x107, 35);
+  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 35);
   Actor_WalkByAndWait(16, -12, 24);
   Actor_RunRepeatedMotion(16, 2);
   Event_ShowMessage(16, 0);
   Actor_SetAnimation(4, 3);
-  Actor_FaceDirectionAndWait(18, 0xb000);
+  Actor_FaceDirectionAndWait(18, FACING_NORTH_NORTHWEST);
   Event_Wait(30);
-  FieldActor_ShowEmote(18, 0x100, 35);
+  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 35);
   Event_ShowMessage(18, 0);
-  FieldActor_ShowEmote(16, 0x101, 0);
-  FieldActor_ShowEmote(17, 0x101, 35);
+  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
   Actor_FaceActor(16, 18, 0);
-  Actor_FaceDirection(17, 0x2000, 0);
+  Actor_FaceDirection(17, FACING_SOUTHEAST, 0);
   Event_Wait(60);
-  Actor_FaceDirection(18, 0x8000, 0);
+  Actor_FaceDirection(18, FACING_WEST, 0);
   Event_Wait(60);
-  FieldActor_ShowEmote(18, 0x105, 50);
-  FieldActor_ShowEmote(18, 0x102, 35);
+  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
+  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   Event_ShowMessage(18, 0);
   Actor_FaceEachOther(16, 17, 0);
   Event_Wait(40);
-  Actor_FaceDirection(16, 0xc000, 0);
-  Actor_FaceDirection(17, 0xc000, 0);
-  Actor_FaceDirection(18, 0xb000, 0);
-  FieldCamera_MoveTo(0x1e80000, -1, 0x1460000, 1);
+  Actor_FaceDirection(16, FACING_NORTH, 0);
+  Actor_FaceDirection(17, FACING_NORTH, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHWEST, 0);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 326, 1);
   Event_Wait(60);
-  FieldActor_ShowEmote(16, 0x100, 0);
-  FieldActor_ShowEmote(17, 0x100, 50);
-  FieldActor_ShowEmote(17, 0x102, 35);
+  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
   Event_ShowMessage(16, 0);
   Actor_FaceActor(18, 4, 0);
-  FieldActor_ShowEmote(18, 0x109, 35);
-  FieldCamera_MoveTo(0x1e80000, -1, 0x16e0000, 1);
+  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 35);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 366, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(18, 0x5000, 0);
+  Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
   Event_ShowMessage(18, 0);
-  Actor_SetSpeed(17, 0xcccc, 0x6666);
+  Actor_SetSpeed(17, 0.8);
   Actor_WalkBy(17, 0, 16);
   Actor_WaitForMoveById(17);
-  Actor_FaceDirectionAndWait(17, 0x2000);
+  Actor_FaceDirectionAndWait(17, FACING_SOUTHEAST);
   Actor_SetAnimation(17, 4);
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
   Event_ShowMessage(16, 0);
   Actor_SetAnimation(18, 3);
-  Actor_FaceDirection(17, 0x3000, 0);
+  Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
   Event_ShowMessage(17, 0);
-  FieldActor_ShowEmote(4, 0x102, 35);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   Event_Wait(60);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, 0x4000);
+  Actor_FaceDirectionAndWait(16, FACING_SOUTH);
   Event_Wait(20);
   Actor_RunRepeatedMotion(16, 2);
   Event_ShowMessage(16, 0);
-  FieldActor_ShowEmote(18, 0x105, 0);
-  FieldActor_ShowEmote(17, 0x105, 0);
-  FieldActor_ShowEmote(16, 0x105, 60);
-  FieldActor_ShowEmote(18, 0x106, 35);
+  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
   Event_ShowMessage(18, 0);
   Actor_SetAnimation(17, 3);
   Event_Wait(40);
-  FieldActor_ShowEmote(17, 0x106, 35);
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
   Event_Wait(30);
-  FieldCamera_SetSpeed(0x8000, 0x1000);
-  FieldCamera_MoveTo(0x21e0000, -1, 0x1000000, 1);
+  FieldCamera_SetSpeed(0.5);
+  FieldCamera_MoveTo(542, CAMERA_KEEP, 256, 1);
   zero = 0;
   t147 = Actor_GetById(16);
   t147->motionFlags = zero;
-  Actor_SetSpeed(16, 0x18000, 0xc000);
+  Actor_SetSpeed(16, 1.5);
   Actor_SetScript(16, (s32)gLoho_FirstMinerGoesToWall);
-  Actor_SetSpeed(18, 0x8000, 0x4000);
+  Actor_SetSpeed(18, 0.5);
   Actor_SetScript(18, (s32)gLoho_SecondMinerStepsUp);
-  Actor_SetSpeed(17, 0x6666, 0x3333);
+  Actor_SetSpeed(17, 0.4);
   Actor_SetScript(17, (s32)gLoho_ThirdMinerStepsUp);
   Actor_RefreshSelectorById(16);
-  Actor_FaceDirectionAndWait(16, 0x6000);
+  Actor_FaceDirectionAndWait(16, FACING_SOUTHWEST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, 0x8000);
+  Actor_FaceDirectionAndWait(16, FACING_WEST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, 0xa000);
+  Actor_FaceDirectionAndWait(16, FACING_NORTHWEST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, 0xe000);
+  Actor_FaceDirectionAndWait(16, FACING_NORTHEAST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, 0);
+  Actor_FaceDirectionAndWait(16, FACING_EAST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, 0x2000);
+  Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, 0x5000);
+  Actor_FaceDirectionAndWait(16, FACING_SOUTH_SOUTHWEST);
   Event_Wait(40);
   Actor_SetAnimation(16, 3);
   Event_Wait(60);
@@ -425,10 +426,10 @@ askCannon:
   Actor_SetAnimation(17, 3);
   Event_Wait(30);
   Actor_FaceActor(17, 4, 0);
-  Actor_SetSpeed(16, 0x10000, 0x8000);
+  Actor_SetSpeed(16, 1);
   Actor_SetScript(16, (s32)gLoho_FirstMinerWalksBack);
-  FieldCamera_SetSpeed(0x1cccc, 0x3999);
-  FieldCamera_MoveTo(0x21e0000, -1, 0x15e0000, 1);
+  FieldCamera_SetSpeed(1.8);
+  FieldCamera_MoveTo(542, CAMERA_KEEP, 350, 1);
   FieldCamera_WaitForArrival();
   Event_OpenMessage(17, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0))
@@ -440,7 +441,7 @@ askCannon:
   FIELD_AT(t189, u16, 452) = (t190 + 1);
   goto crewLeaves;
 fromSouth:
-  Actor_WalkToAndWait(4, 0x1d7, 0x175);
+  Actor_WalkToAndWait(4, 471, 373);
   goto inPlace;
 answeredNo:
   Actor_SetAnimation(18, 4);
@@ -453,50 +454,50 @@ answeredNo:
 crewLeaves:
   Actor_WalkBy(18, 0, 24);
   Actor_WalkByAndWait(17, 0, 24);
-  Actor_FaceDirection(17, 0, 0);
-  Actor_FaceDirection(18, 0xd000, 0);
+  Actor_FaceDirection(17, FACING_EAST, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Actor_RefreshSelectorById(16);
   Actor_SetScript(16, (s32)gLoho_FirstMinerFetchesCannon);
   Actor_RefreshSelectorById(16);
-  Actor_FaceDirection(18, 0xc000, 0);
-  Actor_FaceDirection(17, 0, 0);
-  Actor_FaceDirection(16, 0x6000, 0);
+  Actor_FaceDirection(18, FACING_NORTH, 0);
+  Actor_FaceDirection(17, FACING_EAST, 0);
+  Actor_FaceDirection(16, FACING_SOUTHWEST, 0);
   Event_Wait(50);
   Actor_SetAnimation(18, 3);
   Actor_SetAnimation(17, 3);
   Actor_SetAnimation(16, 3);
   Event_Wait(60);
   FieldActor_WatchAndSetScript(4, 16);
-  Actor_WalkTo(18, 0x1f8, 0x172);
-  Actor_WalkTo(17, 0x1f8, 0x160);
+  Actor_WalkTo(18, 504, 370);
+  Actor_WalkTo(17, 504, 352);
   Actor_SetScript(16, (s32)gLoho_FirstMinerReturns);
   Actor_WaitForMoveById(17);
   Actor_WaitForMoveById(18);
   Actor_RefreshSelectorById(16);
-  Actor_FaceDirectionAndWait(16, 0);
-  Actor_SetSpeed(16, 0x4ccc, 0x2666);
-  Actor_SetSpeed(17, 0x4ccc, 0x2666);
-  Actor_SetSpeed(18, 0x4ccc, 0x2666);
+  Actor_FaceDirectionAndWait(16, FACING_EAST);
+  Actor_SetSpeed(16, 0.3);
+  Actor_SetSpeed(17, 0.3);
+  Actor_SetSpeed(18, 0.3);
   Event_Wait(40);
-  Actor_SetSpeed(20, 0x1999, 0xccc);
+  Actor_SetSpeed(20, 0.1);
   t226 = Actor_GetById(20);
   t226->motionFlags = 0;
   Actor_SetScript(20, (s32)gLoho_ForemanComes);
   Actor_RefreshSelectorById(20);
-  Actor_SetSpeed(20, 0x4ccc, 0x2666);
-  FieldCamera_SetSpeed(0x4ccc, 0x999);
-  FieldCamera_MoveTo(0x1cc0000, -1, 0x15e0000, 1);
+  Actor_SetSpeed(20, 0.3);
+  FieldCamera_SetSpeed(0.3);
+  FieldCamera_MoveTo(460, CAMERA_KEEP, 350, 1);
   Event_Wait(30);
   t233 = Actor_GetById(16);
   t233->actionFlags &= 254;
-  Actor_WalkBy(18, -0x28, -0x14);
-  Actor_WalkBy(17, -0x28, -0x14);
-  Actor_WalkBy(16, -0x28, -0x14);
-  Actor_WalkByAndWait(20, -0x28, -0x14);
-  Actor_WalkBy(18, -0x8a, 0);
-  Actor_WalkBy(17, -0x8a, 0);
-  Actor_WalkBy(16, -0x8a, 0);
-  Actor_WalkByAndWait(20, -0x8a, 0);
+  Actor_WalkBy(18, -40, -20);
+  Actor_WalkBy(17, -40, -20);
+  Actor_WalkBy(16, -40, -20);
+  Actor_WalkByAndWait(20, -40, -20);
+  Actor_WalkBy(18, -138, 0);
+  Actor_WalkBy(17, -138, 0);
+  Actor_WalkBy(16, -138, 0);
+  Actor_WalkByAndWait(20, -138, 0);
   Actor_SetPosition(16, 0, 0);
   Actor_SetPosition(18, 0, 0);
   Actor_SetPosition(17, 0, 0);
@@ -543,16 +544,16 @@ DEFINE_SCOOP_TREASURE(Loho_ScoopThirdTreasure, 66, 2)
 /// Lift raises the rock (flag 0x201), and the Golem Core under it shows until
 /// it is dug up (flag 0xff7).
 void Loho_LiftRock(void) {
-  Event_SetFlag(0x201);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
   Actor_GetById(22)->collisionFlags &= 0xfe;
   if (Event_GetFlag(0xff7) == 0)
-    Actor_SetPosition(66, PIXELS(520), PIXELS(136));
+    Actor_SetPosition(66, 520, 136);
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Loho1)
     return gLoho_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Loho2)
     return gLoho_Room2Triggers;
   return gLoho_Triggers;
 }
@@ -570,8 +571,7 @@ void Loho_ReadInnSign(void) {
 void Loho_TalkToInnkeeper(void) {
   s32 count = 8;
 
-  /* FAKEMATCH(barrier): the empty asm on count, so the second argument is set
-   * first; as the constant argument 8, 2 of 5 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm on count. */
   asm("" : "+l"(count));
   Inn_CheckIn(13, count);
 }
@@ -579,7 +579,7 @@ void Loho_TalkToInnkeeper(void) {
 /// "Commerce really took off when we started this mining colony in Loho."
 void Loho_TalkAboutCommerce(void) {
   Actor_GetById(gMainRoutineWork.currentOwner);
-  if (Event_GetFlag(800)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_20)) {
     Shop_Run(30, 8);
   } else {
     if (Event_GetFlag(0xa5f))
@@ -609,16 +609,16 @@ void Loho_TalkAboutCannon(s32 actor) {
 
 void Loho_VillagerStepsAsideNorth(void) {
   Actor_SetScript(8, gLoho_VillagerMovesNorth);
-  Event_SetFlag(800);
+  Event_SetFlag(FLAG_AREA_TEMP_20);
 }
 
 void Loho_VillagerStepsAsideWest(void) {
   Actor_SetScript(8, gLoho_VillagerMovesWest);
-  Event_SetFlag(800);
+  Event_SetFlag(FLAG_AREA_TEMP_20);
 }
 
 void Loho_VillagerStepsBack(void) {
-  Event_ClearFlag(800);
+  Event_ClearFlag(FLAG_AREA_TEMP_20);
   Actor_SetScript(8, gLoho_VillagerReturns);
 }
 
@@ -632,9 +632,6 @@ void Loho_OpenDoorAndEnter(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  // The loop is written with goto so that it carries no loop notes: the bytes
-  // rebuild the zero on every pass, and a for loop hoists it and moves the work
-  // pointer (differ 4).
   i = 8;
 loop:
   {
@@ -647,12 +644,12 @@ loop:
   if ((u32)i <= 63)
     goto loop;
   work = (u8 *)&((struct EventWork154 *)work)->returnEntrance;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_Wait(6);
   Import_EventSetExitRequest(*(s16 *)work);
   Event_FinishScreenTransition();
@@ -664,14 +661,12 @@ void Loho_EnterDoor(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH(dead): an empty once-only block, so gMainRoutineWork loads
-   * before the event work; as no block, one row is reordered, 2 of 31
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
   Actor_SetAnimation(party->currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Event_PlaySound(123);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
+  Event_PlaySound(SE_MAP_EXIT);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Import_EventSetExitRequest(work->returnEntrance);
 }
@@ -680,9 +675,9 @@ void Loho_ClimbDownLadder(void) {
   s32 value = ((struct EventWork154 *)Ram_HeapSlots->eventWork)->returnEntrance;
 
   if (value == 2)
-    Actor_SetPosition(8, PIXELS(144), PIXELS(224));
+    Actor_SetPosition(8, 144, 224);
   else
-    Actor_SetPosition(8, PIXELS(224), PIXELS(224));
+    Actor_SetPosition(8, 224, 224);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(10);
   Actor_GetById(4)->actionFlags &= 0xfe;
@@ -695,7 +690,7 @@ void Loho_ClimbDownLadder(void) {
   Actor_WaitForMoveById(4);
   Actor_SetAnimation(4, 10);
   Event_Wait(14);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(value);
   Event_End();
 }
@@ -745,12 +740,12 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1) {
-    if (!Event_GetFlag(0x300))
+  if (gMainRoutineWork.scene == (s32)&SceneId_Loho1) {
+    if (!Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetWideSprite(64, 0);
-    if (!Event_GetFlag(0x301))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetWideSprite(65, 1);
-    if (!Event_GetFlag(0x302))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_02))
       Actor_SetWideSprite(66, 1);
     Loho_SetUpTown();
   } else {
@@ -758,15 +753,15 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(0xa5f)) {
     Actor_SetPosition(20, 0, 0);
-    Actor_SetPositionAndFacing(14, PIXELS(248), PIXELS(480), FACING_EAST);
+    Actor_SetPositionAndFacing(14, px(248), px(480), FACING_EAST);
     if (!Event_GetFlag(0x90a)) {
       Actor_SetPosition(17, 0, 0);
       Actor_SetPosition(16, 0, 0);
       Actor_SetPosition(18, 0, 0);
     } else {
-      Loho_PlaceFacing(16, PIXELS(459), PIXELS(254), FACING_NORTHEAST);
-      Loho_PlaceFacing(18, PIXELS(442), PIXELS(203), FACING_WEST);
-      Loho_PlaceFacing(17, PIXELS(490), PIXELS(188), FACING_SOUTHEAST);
+      Loho_PlaceFacing(16, px(459), px(254), FACING_NORTHEAST);
+      Loho_PlaceFacing(18, px(442), px(203), FACING_WEST);
+      Loho_PlaceFacing(17, px(490), px(188), FACING_SOUTHEAST);
       Actor_GetById(17)->timer = Actor_GetById(17)->x >> 16;
       Actor_GetById(17)->unk66 = Actor_GetById(17)->z >> 16;
       Actor_SetScript(17, 2);
@@ -776,8 +771,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1 &&
-      Event_GetFlag(0xa5f))
+  if (gMainRoutineWork.scene == (s32)&SceneId_Loho1 && Event_GetFlag(0xa5f))
     Loho_DrawBrokenWall();
   return 0;
 }
@@ -797,7 +791,7 @@ u32 gLoho_FirstMinerGoesToWall[] = {
 s32 gLoho_SecondMinerStepsUp[] = {
     SC_WAIT(50),
     SC_ARG(2),
-    SC_MOVE_BY(PIXELS(4), 0, PIXELS(-40)),
+    SC_MOVE_BY(px(4), 0, px(-40)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -806,9 +800,9 @@ s32 gLoho_SecondMinerStepsUp[] = {
 s32 gLoho_ThirdMinerStepsUp[] = {
     SC_WAIT(70),
     SC_ARG(2),
-    SC_MOVE_BY(0, 0, PIXELS(-40)),
+    SC_MOVE_BY(0, 0, px(-40)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(512), PIXELS(303)),
+    SC_MOVE_XZ(px(512), px(303)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -822,12 +816,12 @@ u32 gLoho_FirstMinerWalksBack[] = {
 };
 
 u32 gLoho_FirstMinerFetchesCannon[] = {
-    SC_POSITION(PIXELS(583), 0, PIXELS(327)),
+    SC_POSITION(px(583), 0, px(327)),
     SC_SET(SW_MOTION, 0),
-    SC_POSITION(PIXELS(583), 0, PIXELS(300)),
-    SC_MOVE_XZ(PIXELS(583), PIXELS(327)),
+    SC_POSITION(px(583), 0, px(300)),
+    SC_MOVE_XZ(px(583), px(327)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(554), PIXELS(332)),
+    SC_MOVE_XZ(px(554), px(332)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -835,16 +829,16 @@ u32 gLoho_FirstMinerFetchesCannon[] = {
 
 u32 gLoho_FirstMinerReturns[] = {
     SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(472), PIXELS(331)),
+    SC_MOVE_XZ(px(472), px(331)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(472), PIXELS(361)),
+    SC_MOVE_XZ(px(472), px(361)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
 };
 
 s32 gLoho_ForemanComes[] = {
-    SC_MOVE_BY(0, PIXELS(2), 0),
+    SC_MOVE_BY(0, px(2), 0),
     SC_SYNC,
     SC_END,
     SC_ARG(5),
@@ -872,7 +866,7 @@ u32 gLoho_VillagerPaces[] = {
 
 u32 gLoho_VillagerReturns[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(128), 0, PIXELS(120)),
+    SC_MOVE(px(128), 0, px(120)),
     SC_SYNC,
     SC_ARG(1),
     SC_LABEL(1),
@@ -888,9 +882,23 @@ u32 gLoho_VillagerReturns[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_020017A4(gLoho_VillagerMovesWest, 128, 144)
+u32 gLoho_VillagerMovesWest[] = {                                                               
+      SC_SET(SW_SPEED, 0xe666),                                                
+      SC_ARG(2),                                                               
+      SC_MOVE(px(128), 0, px(144)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_020017A4(gLoho_VillagerMovesNorth, 159, 128)
+u32 gLoho_VillagerMovesNorth[] = {                                                               
+      SC_SET(SW_SPEED, 0xe666),                                                
+      SC_ARG(2),                                                               
+      SC_MOVE(px(159), 0, px(128)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_END,                                                                  
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -903,53 +911,53 @@ u32 gLoho_Regions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(266),
-    SCENE_EXIT_IF(1, 267, 1, -1),
-    SCENE_EXIT_IF(2, 267, 2, -1),
-    SCENE_EXIT_IF(3, 267, 3, -1),
-    SCENE_EXIT_IF(4, 267, 4, -1),
-    SCENE_EXIT_IF(5, 267, 5, -1),
-    SCENE_EXIT_IF(6, 267, 6, -1),
-    SCENE_EXIT_IF(8, 267, 6, -1),
-    SCENE_EXIT_IF(9, 267, 6, -1),
-    SCENE_EXIT_IF(7, 2, 59, -1),
-    SCENE_EXITS(267),
-    SCENE_EXIT_IF(1, 266, 1, -1),
-    SCENE_EXIT_IF(2, 266, 2, -1),
-    SCENE_EXIT_IF(3, 266, 3, -1),
-    SCENE_EXIT_IF(4, 266, 4, -1),
-    SCENE_EXIT_IF(5, 266, 5, -1),
-    SCENE_EXIT_IF(6, 266, 6, -1),
-    SCENE_EXIT_IF(7, 267, 8, -1),
-    SCENE_EXIT_IF(8, 267, 7, -1),
-    SCENE_EXIT_IF(9, 267, 10, -1),
-    SCENE_EXIT_IF(10, 267, 9, -1),
+    SCENE_EXITS(Loho1),
+    SCENE_EXIT_UNLESS(1, Loho2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Loho2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Loho2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Loho2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Loho2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Loho2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, Loho2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, Loho2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, WorldMap, 59, EXIT_FLAG_NONE),
+    SCENE_EXITS(Loho2),
+    SCENE_EXIT_UNLESS(1, Loho1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Loho1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Loho1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Loho1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Loho1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Loho1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Loho2, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, Loho2, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, Loho2, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, Loho2, 9, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gLoho_Placements[] = {
-    {221, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(304), FACING_SOUTHWEST, 1, 0},
-    {221, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(392), FACING_SOUTHEAST, 1, 0},
-    {221, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(264), FACING_WEST, 1, 0},
-    {154, CONDITION_ALWAYS, 1, PIXELS(320), 0, PIXELS(320), FACING_NORTH, 1, 0},
-    {221, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(416), FACING_NORTHWEST, 1, 0},
-    {221, CONDITION_ALWAYS, 2, PIXELS(88), 0, PIXELS(568), FACING_NORTH, 1, 0},
-    {221, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(544), FACING_EAST, 1, 0},
-    {154, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(544), FACING_NORTH, 1, 0},
-    {221, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(336), FACING_NORTHWEST, 1, 0},
-    {154, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(336), FACING_EAST, 1, 0},
-    {221, CONDITION_ALWAYS, 1, PIXELS(528), 0, PIXELS(360), FACING_WEST, 1, 0},
-    {246, 0x7c, 1, PIXELS(232), 0, PIXELS(248), FACING_SOUTH, 0, 0},
-    {421, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(360), FACING_NORTH, 1, 0},
-    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(136), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 304, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 392, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 264, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(154, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 320, 0, 320, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 416, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 568, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 544, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(154, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 544, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 336, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(154, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 336, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 360, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(246, 0x7c, MOVEMENT_TYPE_STAND, 232, 0, 248, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(421, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 360, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 136, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gLoho_Room2Placements[] = {
-    {130, CONDITION_ALWAYS, (s32)gLoho_VillagerPaces, PIXELS(128), 0, PIXELS(120), FACING_NORTHWEST, 1, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(120), FACING_SOUTH, 1, 0},
-    {202, CONDITION_ALWAYS, 1, PIXELS(448), 0, PIXELS(408), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(130, CONDITION_ALWAYS, (s32)gLoho_VillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -958,14 +966,14 @@ struct Trigger gLoho_Triggers[] = {
 };
 
 struct Trigger gLoho_Room1Triggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Loho_OpenDoorAndEnter)},
-    {0x4602, 6, CONDITION_ALWAYS, EVENT(Loho_TurnAndClimbDownLadder)},
-    {0x8602, 8, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingWest)},
-    {0x602, 9, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Loho_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 6, CONDITION_ALWAYS, EVENT(Loho_TurnAndClimbDownLadder)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 8, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 9, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingEast)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, 8, 0x1a5f, MSGNO(MsgLoho29)},
     {TRIGGER_TALK, 9, 0x1a5f, MSGNO(MsgLoho30)},
@@ -1012,8 +1020,8 @@ struct Trigger gLoho_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLoho24)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLoho25)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLoho26)},
-    {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLoho58))},
-    {0x1cc14, 20, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLoho58))},
+    {USE_ITEM_ON_ACTOR(ITEM_MAGMA_BALL), 20, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Loho_MeetLull)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 101, 0x300, EVENT(Loho_ScoopFirstTreasure)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 102, 0x301, EVENT(Loho_ScoopSecondTreasure)},
@@ -1033,8 +1041,8 @@ struct Trigger gLoho_Room2Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {0xc402, 20, 0x320, EVENT(Loho_VillagerStepsAsideWest)},
-    {0x8402, 22, 0x320, EVENT(Loho_VillagerStepsAsideNorth)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), 20, 0x320, EVENT(Loho_VillagerStepsAsideWest)},
+    {STEP_TRIGGER_FACING(FACING_WEST), 22, 0x320, EVENT(Loho_VillagerStepsAsideNorth)},
     {TRIGGER_STEP, 21, 0x1320, EVENT(Loho_VillagerStepsBack)},
     {TRIGGER_STEP, 23, 0x1320, EVENT(Loho_VillagerStepsBack)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCommerce)},

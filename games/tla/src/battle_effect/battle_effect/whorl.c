@@ -4,6 +4,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -135,7 +138,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
     frames = 38;
     BattleEffect_RunDjinniEntrance(effect, (effect->side << 4) | 163, screen,
                                    point);
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
   } else if (mode == 2 || mode == 4) {
     s32 *caster = BattleObject_GetFar(effect->actor)->object;
 
@@ -167,7 +171,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
                                Ram_MapCellBuffer + 0x5000, 1, 0);
     frames = 52;
   } else {
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
     frames = 52;
   }
   if (!effect->side) {
@@ -176,7 +181,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
     BattleEffect_LoadBlitter(SLOT_BLITTER, 23);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
@@ -209,10 +214,10 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
   if (frames != 0) {
     do {
       if (frame == 0) {
-        Sound_PlayFar(199);
+        Sound_PlayFar(SE_199);
       }
       if (frame == 32) {
-        Sound_PlayFar(206);
+        Sound_PlayFar(SE_CURSE_FALL);
       }
       if (frame == 0) {
         target[2] = work->particles[63].x;
@@ -225,9 +230,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
             struct EffectStep *q = &work->particles[i];
 
             if (effect->side == 1) {
-              q->x = 0xc80000;
+              q->x = px(200);
             } else {
-              q->x = -0xc80000;
+              q->x = -px(200);
             }
             q->y = ((Random16() & 127) - 64) << 16;
             q->z = ((Random16() & 127) - 64) << 16;
@@ -240,9 +245,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
             struct EffectStep *q = work->particles;
 
             for (i = 0; i != 63; i++, q++) {
-              q->x = point[0];
-              q->y = ((Random16() & 31) << 16) + 0x400000;
-              q->z = 0;
+              SET_POSITION(q, point[0], ((Random16() & 31) << 16) + 0x400000,
+                           0);
               q->velocityX = ((Random16() & 63) + 64) << 13;
               if (q->x > 0) {
                 q->velocityX = -q->velocityX;
@@ -267,9 +271,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           pos[1] = pos[1] + (frame << 18) - 0x700000;
         }
         {
-          /* FAKEMATCH(temporary): out stands in for screen's address, so
-           * point's address stays out of r5 and k gets it; as screen, 18 of
-           * 1748 instructions differ in tla-en. */
+          /* FAKEMATCH(temporary): out stands in for screen's address. */
           s32 *out = screen;
 
           pos[2] = point[2];
@@ -486,11 +488,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           Transform_Push();
           SceneTransform_ApplyPosition3(0, ((y - i * 8) << 16) + 0x300000, 0);
           if (effect->side == 1) {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Transform_ApplyRoll((i << 10) + 256);
           Transform_ApplyPitch((i << 13) - (frame << 11));
-          SceneTransform_ApplyScale3(0x21770, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(0x21770, Q16_ONE, Q16_ONE);
           Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
           Transform_Pop();
@@ -518,9 +520,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
               Transform_Reset();
               SceneTransform_ApplyPosition3((apos.x / 2 - 64) << 16,
                                             (apos.y - 64) << 16, 0);
-              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-              Transform_ApplyRoll((i << 14) + 0x2000);
-              Transform_ApplyPitch(-0x1000);
+              SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+              Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+              Transform_ApplyPitch(-TRIG_TURN / 16);
               Transform_ApplyYaw(frame << 12);
               SceneTransform_ApplyUniformScale(s);
               Render_TransformVertices(gData_08199210, vertices, 4);
@@ -531,14 +533,14 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
       } else if (mode == 3) {
         EffectPosition_ProjectScaledBattler(effect->actor, &spos);
         if (frame == 8) {
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         }
         if (frame == 16) {
           BattlePlayback_StartFar(134);
         }
         for (i = 0; i != effect->count; i++) {
           if (frame == i * 4 + 16) {
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x70000,
                                           100);
             BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
@@ -559,11 +561,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           SceneTransform_ApplyPosition3((spos.x / 2 - 64) << 16,
                                         (spos.y << 16) - 0x340000, 0);
           if (effect->side == 1) {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Transform_ApplyPitch(i << 15);
           Transform_ApplyRoll((Trig_Sin((frame + i * 8) << 11) << 11) >> 16);
-          SceneTransform_ApplyScale3(0x14e20, 0x8000, 0x10000);
+          SceneTransform_ApplyScale3(0x14e20, Q16_ONE / 2, Q16_ONE);
           Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
         }
@@ -578,7 +580,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
         }
         if (shade > -64) {
           model->shade = shade;
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           gCameraSceneParameters[3] = 60;
           if (mode == 0) {
             model->scrollU = (frame << 3) & 127;
@@ -591,7 +593,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           for (i = 0; i != 3; i++) {
             Transform_Push();
             if (effect->side == 1) {
-              Transform_ApplyYaw(0x8000);
+              Transform_ApplyYaw(TRIG_TURN / 2);
             }
             Transform_ApplyRoll((i << 10) + 3096);
             if (mode != 1) {
@@ -599,7 +601,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
             } else {
               Transform_ApplyPitch((i << 13) - (frame << 11));
             }
-            SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
+            SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
             Render_ProjectVertices(gMapCellBuffer, vertices, 66);
             Render_DrawModelList(model);
             Transform_Pop();

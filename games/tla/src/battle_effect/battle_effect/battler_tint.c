@@ -3,28 +3,25 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/field.h"
 
 /* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[];
- * bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the 2
- * declarations' extern struct FxBgScroll gBgScroll[], it does not compile in
- * tla-ja: games/tla/src/battle_effect/battle_effect.c:11642: conflicting types
- * for `gBgScroll'. */
+ * bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the
+ * object declares it, BattleEffect_SetupBlendedDisplay moves: 1 of 57
+ * instructions in tla-ja. */
 extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
 
 /* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static
  * __inline__ void FillWords_(void *destination, s32 size, u32 value) {
- * Iwram_FillWords(destination, size, value); }; tried with the definition the
- * rest of the object has, BattleEffect_SetupBlendedDisplay moves: 10 of 57
- * instructions in tla-ja. */
+ * Iwram_FillWords(destination, size, value); }; not tried: FillWords_'s
+ * definition holds a FAKEMATCH tag. */
 static __inline__ void FillWords___f14cca8(void *destination, s32 size,
                                            u32 value) {
-  // The call in a once-only block, so the entry loads before the size; as
-  // the plain call, 6 of 59 instructions of BattleEffect_SetupBlendedDisplay
-  // differ in tla-en.
+  /* FAKEMATCH(dead): the call in a once-only block. */
   do {
     Iwram_FillWordsEntry(destination, size, value);
   } while (0);
@@ -34,20 +31,21 @@ void BattleEffect_SetupBlendedDisplay(void) {
   u8 *battle = Ram_HeapSlots->battleWork;
   void *buffer = Ram_HeapSlots->battleFxWork[1];
 
-  REG_DISPCNT = 1;
+  REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll__f14cca8[0].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-  /* FAKEMATCH(wrapper): both fills through FillWords_, which sets each call's
-   * own size anew; as direct Iwram_FillWords calls, 43 of 59 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(wrapper): both fills through FillWords_. */
   FillWords___f14cca8(buffer, 0x4000, 0);
-  FillWords___f14cca8((void *)0x06004000, 0x4000, 0);
+  FillWords___f14cca8((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
   wait(1);
-  REG_BLDALPHA = 0x100e;
-  REG_BLDCNT = 0x3f46;
-  REG_DISPCNT = 0x7741;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDCNT =
+      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   gCameraSceneParameters[4] = 120;
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
 
 struct FxGroup {

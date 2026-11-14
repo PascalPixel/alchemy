@@ -8,6 +8,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "system/affine.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
@@ -60,25 +61,32 @@
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 /* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile
- * u16 gLinkStatus; not tried: gLinkStatus's declaration holds a FAKEMATCH tag.
- */
+ * u16 gLinkStatus; tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/window/window/icon_menu.c:188:
+ * `gLinkStatus__menus' undeclared (first use in this function). */
 extern u16 gLinkStatus__menus __asm__("gLinkStatus");
 /* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16
  * gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature
- * gLinkPeerSignatures[]; not tried: gLinkPeerSignatures's declaration holds a
- * FAKEMATCH tag. */
+ * gLinkPeerSignatures[]; tried as the rest of the object declares it, it does
+ * not compile in tla-ja: games/tla/src/window/window/icon_menu.c:178:
+ * `gLinkPeerSignatures__battle_party_commands' undeclared (first use in this
+ * function). */
 extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__(
     "gLinkPeerSignatures");
 /* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8
  * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
- * gMainRoutineWork; not tried: gMainRoutineWork's declaration holds a FAKEMATCH
- * tag. */
+ * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
+ * it does not compile in tla-ja: games/tla/src/window/window/icon_menu.c:76:
+ * conflicting types for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__battle_party_commands[] __asm__("gMainRoutineWork");
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 /* VIEW(menus): routine BattleDjinnMenu_Run as s32 BattleDjinnMenu_Run(s32
  * member, s32 unused); window/screens has s32 BattleDjinnMenu_Run(s32 member)
- * {; not tried: BattleDjinnMenu_Run's declaration holds a FAKEMATCH tag. */
+ * {; tried as the definition's s32 BattleDjinnMenu_Run(s32 member), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/src/window/window/icon_menu.c:593: too many arguments to function
+ * `BattleDjinnMenu_Run'. */
 s32 BattleDjinnMenu_Run__menus(s32 member,
                                s32 unused) __asm__("BattleDjinnMenu_Run");
 #define BattleDjinnMenu_Run BattleDjinnMenu_Run__menus
@@ -141,7 +149,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   // Default: set again before each round's forced actions.
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
-  Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
+  Graphics_ExpandVramTilesByColorTable((u16 *)BG_SCREEN_BLOCK(12));
   Link_DrawPageArrows(0x06006680);
   Menu_BuildLocalizedPatternTiles();
   state->swappedUnit = -1;
@@ -258,7 +266,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     }
     // Command 49: choose a party place, then the reserve member for it.
     if (mode == 49) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
     choose_place:
       mode = BattleTarget_RunSelection(0, 2, 1, 8);
       if (mode == -1)
@@ -277,7 +285,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       s32 side;
       s32 count;
 
-      if (gDebugMode != 0 && (gInput.held & 8))
+      if (gDebugMode != 0 && (gInput.held & KEY_START))
         side = 2;
       else
         side = 1;
@@ -307,7 +315,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     }
     if (mode != 14)
       break;
-    Sound_PlayFar(154);
+    Sound_PlayFar(SE_CAST);
     commandIndex = 0;
     if (commandIndex >= commandCount)
       break;
@@ -403,7 +411,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_DrawMessageAsTiles((s32)MsgCommandName, commandWindow,
                                 ATTACK_NAME_X, 0);
         COMMAND_ICON_X(state) = 64;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
         Window_Close(commandWindow, 1);
         if (mode == -1)
@@ -425,7 +433,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 cnt;
         s32 entryValue;
 
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         SET_CURSOR(mode, mode, mode);
       psynergy_menu:
@@ -465,9 +473,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
-        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after mov r1, r10 (constant 40); without it, 18 of 1907
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): counted as 4 bytes. */
         __asm__ volatile("");
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
@@ -489,7 +495,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           Window_SetTilemapEntry(commandWindow, ability->element + 0x5001, 15,
                                  0, 0);
         command->range = cost;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
                                          Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
@@ -510,7 +516,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 j;
         s32 n;
 
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         SET_CURSOR(0, 0, 0);
       summon_menu:
         COMMAND_ICON_X(state) = SUMMON_MENU_ICON_X;
@@ -535,14 +541,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         ok = j == 4;
         COMMAND_ICON_X(state) = SUMMON_CHOSEN_ICON_X;
-        // Written through a u32 pointer, not the union: these stores then no
-        // longer conflict with the load of state, which sched2 needs to order
-        // eors first.
         ((u32 *)&iconSprite->oam)[0] = 0x40000400;
         ((u32 *)&iconSprite->oam)[1] = 0;
-        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after mov r1, r11 (constant 56); without it, 22 of 1907
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): counted as 4 bytes. */
         __asm__ volatile("");
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
@@ -564,9 +565,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           }
         }
         if (ok != 0)
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
         else
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
         mode = BattleTarget_RunSelection(actorId, ability->targetMode,
                                          ability->range,
                                          Battle_ClassifyEntryKind(ability));
@@ -593,7 +594,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 element;
         s32 index;
 
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         SET_CURSOR(0, 0, 0);
       djinn_menu:
         COMMAND_ICON_X(state) = DJINN_MENU_ICON_X;
@@ -617,7 +618,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                   commandWindow, 16, 0);
           command->range = cost;
           wait(1);
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
                                            Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
@@ -645,7 +646,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_SetColor(15);
         command->range = 1;
         wait(1);
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
         Window_Close(commandWindow, 1);
         if (mode == -1)
@@ -666,7 +667,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 entryValue;
         s32 selection;
 
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         SET_CURSOR(mode, mode, mode);
       item_menu:
@@ -718,9 +719,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandWindow = Window_Create(9, 17, ITEM_WINDOW_WIDTH, 3, 6);
         COMMAND_ICON_X(state) = 48;
         iconSprite->oam.word.attr01 = 0x40000400;
-        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after strb r3, [r5, #4] (constant 48); without it, 12 of 1907
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): counted as 4 bytes. */
         __asm__ volatile("");
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
@@ -732,7 +731,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                     (s32)MsgItemName,
                                 commandWindow, 24, 0);
         command->range = cost;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
                                          Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
@@ -750,7 +749,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
 
-      Sound_PlayFar(110);
+      Sound_PlayFar(SE_CHIME);
       command->unitId = actorId;
       {
         s32 priority = unit->agi;
@@ -852,13 +851,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 // pulses the selected icon with one affine matrix, draws the others plain,
 // and while the screen transition runs widens window 1 over the icon row.
 
-/* VIEW(menus): variable gWindowSprite_BounceScales as const u16
- * gWindowSprite_BounceScales[]; module/window/scales.h has const u16
- * gWindowSprite_BounceScales[32]; not tried: gWindowSprite_BounceScales's
- * declaration holds a FAKEMATCH tag. */
-extern const u16
-    gWindowSprite_BounceScales__menus[] __asm__("gWindowSprite_BounceScales");
-
 // The transition's byte after its fields; while it is set the window lines
 // are left alone.
 #define TRANSITION_BUSY(state) (((s8 *)(state))[0x53f])
@@ -891,7 +883,7 @@ void IconMenu_DrawIcons(void) {
 
   work = Ram_HeapSlots->menuSelectWork;
   sprite = work->entries;
-  scale = gWindowSprite_BounceScales__menus[(gFrameCount * 2) & 31];
+  scale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
   buffers = Ram_HeapSlots->screenTransition;
   scale = (scale - 256) / 4 + 304;
   effect.scaleX = scale;
@@ -983,8 +975,6 @@ void IconMenu_DrawIcons(void) {
     edge <<= 8;
     line = &window->lines[136].span;
     for (i = 136; i <= 159; i++) {
-      // start is reused for the mask; as (*line & 0xff), 194 of 386
-      // instructions differ in tla-en.
       start = 0xff;
       *line = (*line & start) | edge;
       line += 2;
@@ -1064,24 +1054,24 @@ redraw:
   for (;;) {
     wait(1);
     if (gInput.pressed & KEY_A) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       return work->selection;
     }
     if (gInput.pressed & KEY_B) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
     if (gInput.pressed & KEY_START) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
     if ((gInput.repeat & KEY_LEFT) || (gInput.repeat & KEY_UP)) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       work->selection--;
       if (work->selection < 0)
         work->selection = work->count - 1;
     } else if ((gInput.repeat & KEY_RIGHT) || (gInput.repeat & KEY_DOWN)) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       work->selection++;
       if (work->selection >= work->count)
         work->selection = 0;
@@ -1090,11 +1080,6 @@ redraw:
     goto redraw;
   }
 }
-
-/// The menu sounds.
-// Named as The Broken Seal's sounds.h names them (SE_MENU_*).
-#define SOUND_MENU_CURSOR_MOVE 111
-#define SOUND_MENU_CONFIRM 112
 
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
   if (diff >= 0)
@@ -1151,13 +1136,13 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
       break;
 
     state->selection = (s16)((u16)state->selection + step);
-    Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     delay = 0;
     pos += step;
   }
 
   wait(48);
-  Sound_PlayFar(SOUND_MENU_CONFIRM);
+  Sound_PlayFar(SE_MENU_CONFIRM);
   return goal;
 }
 
@@ -1790,8 +1775,6 @@ void DebugSceneSelect_Schedule(void) {
   Task_Add(DebugSceneSelect_Run, TASK_PASS_VBLANK);
 }
 #undef AFFINE_EFFECT_SLOT
-#undef SOUND_MENU_CURSOR_MOVE
-#undef SOUND_MENU_CONFIRM
 #undef Resource_DecodeByteLzInRam
 #undef LABEL_RIGHT
 #undef HELP_X

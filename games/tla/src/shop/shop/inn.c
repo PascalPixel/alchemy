@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "module/shop/shop.h"
 
@@ -60,7 +61,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   state = Ram_HeapSlots->menuRuntime;
   state->active = 1;
 
-  object = Actor_GetByIdFar__shop(objectId);
+  object = Actor_GetByIdFar(objectId);
   state->resourceId = *object->component->resourceId;
   win = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
 
@@ -83,7 +84,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
     Window_CloseFar(win, 2);
     Inn_PlaySleep(amount);
 
-    object = Actor_GetByIdFar__shop(objectId);
+    object = Actor_GetByIdFar(objectId);
     state->resourceId = *object->component->resourceId;
     win = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
     Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_REST_COMPLETE);
@@ -119,7 +120,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   wait(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
-  Sound_PlayFar(86);
+  Sound_PlayFar(MUS_086);
   Sound_WaitForJingle();
   wait(10);
   Event_StartScreenTransitionFar();

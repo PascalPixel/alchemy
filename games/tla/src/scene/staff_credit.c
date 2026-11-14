@@ -1,6 +1,5 @@
 /// @file
-#include "shared/actors.h"
-#include "shared/flight.h"
+#include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -133,7 +132,6 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
       s32 column = cornerColumn - x;
       s32 row = cornerRow - y;
       u8 *cell;
-      // row << 6 is row * 64, spelled as the shift it matches with.
       cell = &grid[(row << 6) + column];
       cell[0] = level;
       if (column < lastColumn)
@@ -167,7 +165,7 @@ extern u16 gData_02003d8e[];
 extern s8 gData_02003d9c[][2];
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
-  FieldCamera_MoveTo(x, -1, z, mode);
+  FieldCamera_MoveToFixed(x, -1, z, mode);
 }
 
 void Func_0200020c(s32 stage) {
@@ -183,7 +181,7 @@ void Func_0200020c(s32 stage) {
   Actor_SetPosition(8, 0, 0);
   gData_02003dbe = 0;
   wait(1);
-  Event_ClearFlag(0x109);
+  Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   palette = stage;
   buffer = Heap_AllocEwram(0x6000);
@@ -213,10 +211,7 @@ void Func_0200020c(s32 stage) {
       if (frame == length - 59)
         FieldEffect_ScheduleRatioTransition(gData_02003d70[stage], 60);
     }
-    if (frame >= gData_02003d84[stage] - 64)
-    // Pointer arithmetic folds gData_02003d88 + 1 into one literal, as the
-    // native does; indexed as [stage + 1] the 1 is added at run time.
-    {
+    if (frame >= gData_02003d84[stage] - 64) {
       u16 *turn = (u16 *)&map->unk11c;
       u8 *step = gData_02003d88 + 1;
 
@@ -237,8 +232,8 @@ void Func_0200020c(s32 stage) {
   } else {
     u16 *tiles = (u16 *)buffer;
 
-    IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(Data_020020bc + palette * 32),
-                        0x80000010);
+    IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
+                        (u32)(Data_020020bc + palette * 32), 0x80000010);
     {
       void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWordsEntry;
       s32 size = 0x2000;
@@ -267,19 +262,21 @@ void Func_0200020c(s32 stage) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Task_Add(Func_0200005c, 0x480);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   for (frame = 0; frame != 172; frame++) {
     if (frame == 0) {
       if (stage == 4) {
         gBgScroll[0].x = 8;
         gBgScroll[0].y = frame;
-        IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)Data_0200213c, 0x80000010);
-        IO_WRITE_QUEUE_PUSH(0x050001e0, (u32)gData_0200215c, 0x80000010);
+        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0), (u32)Data_0200213c,
+                            0x80000010);
+        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(15, 0), (u32)gData_0200215c,
+                            0x80000010);
       } else {
         gBgScroll[0].x = gData_02003d9c[stage][0];
         gBgScroll[0].y = gData_02003d9c[stage][1];
-        IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(Data_020020bc + palette * 32),
-                            0x80000010);
+        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
+                            (u32)(Data_020020bc + palette * 32), 0x80000010);
       }
     }
     if (stage == 4) {
@@ -298,7 +295,7 @@ void Func_0200020c(s32 stage) {
         z = -0x1e0000;
         x0 = -0x320000;
 
-        Actor_SetPosition(8, (top << 16) + x0, (left << 16) + z);
+        Actor_SetPositionFixed(8, (top << 16) + x0, (left << 16) + z);
       }
       Actor_SetBlendMode(Actor_GetById(8), 1);
       Actor_SetAnimation(8, 0);
@@ -346,11 +343,11 @@ void Func_0200020c(s32 stage) {
         IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + 0x5200), 0x84000140);
       if (frame > 153) {
         gData_02003dbc = 0;
-        Func_020000c0((u16 *)0x05000000, 256, -2, -2, -2);
-        Func_020000c0((u16 *)0x05000200, 256, -2, -2, -2);
+        Func_020000c0((u16 *)&BG_PLTT_COLOR(0, 0), 256, -2, -2, -2);
+        Func_020000c0((u16 *)&OBJ_PLTT_COLOR(0, 0), 256, -2, -2, -2);
       } else if (frame > 79 && (frame & 1)) {
-        Func_020000c0((u16 *)0x05000000, 256, 1, 1, 1);
-        Func_020000c0((u16 *)0x05000200, 256, 1, 1, 1);
+        Func_020000c0((u16 *)&BG_PLTT_COLOR(0, 0), 256, 1, 1, 1);
+        Func_020000c0((u16 *)&OBJ_PLTT_COLOR(0, 0), 256, 1, 1, 1);
       }
     } else if (frame >= 0) {
       grid = buffer + 0x2000;
@@ -364,9 +361,6 @@ void Func_0200020c(s32 stage) {
         u8 *fill;
 
         Func_02000138(grid, frame + 8, 0x10000);
-        // goto loops: the native jumps to the block-row and block tests and
-        // recomputes grid + x * 2 + base + i in every pass; with the pair loop
-        // as a for, differ 623 and gap 169.
         by = 0;
         rowBase = 0;
         goto blockRowTest;
@@ -427,9 +421,9 @@ void Func_0200020c(s32 stage) {
       if (frame == 138)
         gData_02003dbe = 1;
       if (frame > 64 && (frame & 1))
-        Func_020000c0((u16 *)0x050001c0, 16, 1, 1, 1);
+        Func_020000c0((u16 *)&BG_PLTT_COLOR(14, 0), 16, 1, 1, 1);
       if (frame > 140)
-        Func_020000c0((u16 *)0x050001c0, 16, -2, -2, -2);
+        Func_020000c0((u16 *)&BG_PLTT_COLOR(14, 0), 16, -2, -2, -2);
       if (late <= 95)
         gBgScroll[0].y++;
     }
@@ -437,11 +431,11 @@ void Func_0200020c(s32 stage) {
   }
   FieldTask_Remove(Func_0200005c);
   if (stage != 4) {
-    FieldCamera_SetSpeed(0x60000, 0xc000);
+    FieldCamera_SetSpeed(6);
     WorldMap_ReloadPendingAreaGraphics();
     Camera_MoveWithinMapBounds_(gData_02003d48[stage][0] << 16,
                                 gData_02003d48[stage][1] << 16, 1);
-    FieldEffect_ScheduleRatioTransition(0xb333, 60);
+    FieldEffect_ScheduleRatioTransition(45875, 60);
     for (frame = 0; frame != 124;) {
       map->yaw += 0xffe0;
       if (frame == 60) {
@@ -458,65 +452,66 @@ void Func_0200020c(s32 stage) {
   }
   Heap_Release(buffer);
   DebugText_Clear();
-  IoWriteQueue_Store16(0x04000052, gData_02003dbc);
-  IoWriteQueue_Store16(0x04000050, 0);
-  Event_SetFlag(0x101);
+  IoWriteQueue_Store16((u32)&REG_BLDALPHA, gData_02003dbc);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
+  Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
 void WorldMap_StartPlacedActors(void);
 
 /// Chooses where the credits go next by the entrance they were entered from:
 /// entrances 0 to 5 run resource FarCall00A with 2 to 7 and continue, 2 to 6
-/// after Func_0200020c's stage 0 to 4; entrance 6 leaves for SceneId_Ov6b4.
+/// after Func_0200020c's stage 0 to 4; entrance 6 leaves for
+/// SceneId_MtAlephSummit.
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
-  Event_SetFlag(0x144);
+  Event_SetFlag(FLAG_RETREAT_BLOCKED);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0;
   work->delay = 16;
   System_Wait(1);
-  FieldCamera_SetSpeed(0x80000, 0x10000);
-  Event_ClearFlag(0x12f);
+  FieldCamera_SetSpeed(8);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   WorldMap_StartPlacedActors();
   switch (gMainRoutineWork.entrance) {
   case 0:
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(2);
-    Event_SetDestination((s32)&SceneId_Ov6b4, 2);
+    Event_SetDestination((s32)&SceneId_MtAlephSummit, 2);
     break;
   case 1:
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(3);
-    Event_SetDestination((s32)&SceneId_Ov64c, 2);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 2);
     break;
   case 2:
     Func_0200020c(0);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(4);
-    Event_SetDestination((s32)&SceneId_Ov64c, 3);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 3);
     break;
   case 3:
     Func_0200020c(1);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(5);
-    Event_SetDestination((s32)&SceneId_Ov64c, 4);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 4);
     break;
   case 4:
     Func_0200020c(2);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(6);
-    Event_SetDestination((s32)&SceneId_Ov64c, 5);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 5);
     break;
   case 5:
     Func_0200020c(3);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(7);
-    Event_SetDestination((s32)&SceneId_Ov64c, 6);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 6);
     break;
   case 6:
     Func_0200020c(4);
-    Event_SetDestination((s32)&SceneId_Ov6b4, 3);
+    Event_SetDestination((s32)&SceneId_MtAlephSummit, 3);
     break;
   }
   return 0;
@@ -524,28 +519,52 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
+#include "shared/tile_sprite_reset.h"
 
 #include "shared/world_map_objects.c"
 
-DEFINE_ACTOR_FLICKER(Func_020011f4, WorldMap_SpawnSparkPair)
+void Func_020011f4(struct Actor *object) {
+  if ((gFrameCount & 2) != 0) {
+    Actor_SetSpriteColorMode(object, 7);
+  } else {
+    Actor_SetSpriteColorMode(object, 0);
+  }
+  if ((gFrameCount & 15) == 0) {
+    WorldMap_SpawnSparkPair(object);
+  }
+}
 
 /* VIEW(first): routine gData_02003db8 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA
- * DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, TileSprite_Reset, 17, 0)
- * LATE_DATA u32 gData_02003db8[], it does not compile in tla-ja:
- * games/tla/src/scene/staff_credit.c:529: `gData_02003db8' undeclared (first
- * use in this function). */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02003db8[],
+ * it does not compile in tla-ja: games/tla/src/scene/staff_credit.c:540:
+ * `gData_02003db8' undeclared (first use in this function). */
 extern s32 gData_02003db8__first __asm__("gData_02003db8");
 #define gData_02003db8 gData_02003db8__first
 
-DEFINE_ACTOR_CYCLE_CHILD_VALUES(Actor_CycleChildValues, gData_02002eac,
-                                gData_02003db8, WorldMap_SpawnParticle)
+void Actor_CycleChildValues(struct Actor *object) {
+  if (gFrameCount & 1) {
+    Actor_SetSpriteColorMode(object, gData_02002eac[gData_02003db8]);
+    gData_02003db8 = (gData_02003db8 + 1) & 3;
+  }
+  if (!(gFrameCount & 3)) {
+    WorldMap_SpawnParticle(object);
+  }
+}
 
-DEFINE_ACTOR_SET_FLIGHT_MODE(Actor_SetFlightMode, Func_020011f4,
-                             Actor_CycleChildValues)
+void Actor_SetFlightMode(struct Actor *object, s32 mode) {
+  if (mode == 0) {
+    object->update = 0;
+    Actor_SetSpriteColorMode(object, 0);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
+  } else if (mode == 1) {
+    object->update = (void (*)(void))Func_020011f4;
+  } else {
+    object->update = (void (*)(void))Actor_CycleChildValues;
+    Event_PlaySound(SE_291);
+  }
+}
 
-DEFINE_LEADER_SEARCH(Leader_Search, Actor_SetFlightMode, WorldMap_GetBlockPlace)
+#include "shared/leader_search.h"
 
 void Func_020012f8(void) {
   Actor_SetFlightMode(Actor_Get(FieldParty_GetLeaderActor()), 0);
@@ -567,15 +586,11 @@ void Func_0200130c(void) {
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
-   * arguments up in their own order: z is shifted before the -1 starts; as
-   * direct FieldCamera_MoveWithinMapBounds calls, 6 of 66 instructions differ
-   * in tla-en. */
-  FieldCamera_MoveTo(x, y, z, mode);
+  FieldCamera_MoveToFixed(x, y, z, mode);
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
-DEFINE_CAMERA_JITTER(StaffCredit_JitterTransitionCamera)
+#include "shared/camera_jitter.h"
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -585,25 +600,24 @@ void Func_02001400(s32 mode) {
   u32 level;
 
   /* FAKEMATCH(temporary): the blend level is read into level, a u32 local,
-   * before each IoWriteQueue_Store16 call; as IoWriteQueue_Store16(0x04000052,
-   * gData_02003fc0), 4 of 593 instructions differ in tla-en. */
+   * before each IoWriteQueue_Store16 call. */
   System_Wait(1);
-  Event_ClearFlag(0x109);
+  Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (mode == 2) {
-    MapGrid_SetShake(0x20000, 0x30000, 0x10000);
-    Event_PlaySound(141);
+    MapGrid_SetShake(2, 3, 1);
+    Event_PlaySound(SE_RUMBLE);
   }
   WorldMap_Freeze();
   buffer = Heap_AllocEwram(0x4000);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
   Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
-  IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
-                      0x80000010);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
+                      (u32)(gWorldMapPalettes + mode * 32), 0x80000010);
   {
     struct IoWriteQueue *q = &gIoWriteQueue;
     u32 saved;
@@ -624,7 +638,7 @@ void Func_02001400(s32 mode) {
   Task_AddFrame(Func_0200130c, 0x480);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   gData_02003fc0 = 0xe00;
   PUSH_PICTURE(0x3480);
   FieldEvent_Wait(2);
@@ -664,8 +678,8 @@ void Func_02001400(s32 mode) {
   gData_02003fc0 = 0xc00;
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
-    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
-    Event_PlaySound(141);
+    MapGrid_SetShake(2, 2, 1);
+    Event_PlaySound(SE_RUMBLE);
     gData_02003fc0 = 0xd00;
     FieldEvent_Wait(4);
     gData_02003fc0 = 0xe00;
@@ -677,8 +691,8 @@ void Func_02001400(s32 mode) {
     FieldTask_Remove(Func_0200130c);
     DebugText_Clear();
     level = gData_02003fc0;
-    IoWriteQueue_Store16(0x04000052, level);
-    IoWriteQueue_Store16(0x04000050, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, level);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   } else {
     gData_02003fc0 = 0xd00;
     FieldEvent_Wait(4);
@@ -691,22 +705,38 @@ void Func_02001400(s32 mode) {
     FieldTask_Remove(Func_0200130c);
     DebugText_Clear();
     level = gData_02003fc0;
-    IoWriteQueue_Store16(0x04000052, level);
-    IoWriteQueue_Store16(0x04000050, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, level);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
   Heap_Release(buffer);
-  Event_SetFlag(0x101);
+  Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
-DEFINE_ACTOR_FLICKER(Func_0200199c, Func_02001ad0)
+void Func_0200199c(struct Actor *object) {
+  if ((gFrameCount & 2) != 0) {
+    Actor_SetSpriteColorMode(object, 7);
+  } else {
+    Actor_SetSpriteColorMode(object, 0);
+  }
+  if ((gFrameCount & 15) == 0) {
+    Func_02001ad0(object);
+  }
+}
 
-DEFINE_ACTOR_ANIMATE_AND_EMIT(Actor_AnimateAndEmit, Func_02001ad0)
+void Actor_AnimateAndEmit(struct Actor *object) {
+  u32 frame = gFrameCount;
 
-DEFINE_ACTOR_ANIMATE(Actor_Animate)
+  if (frame & 1)
+    Actor_SetSpriteColorMode(object, (frame >> 1) % 6);
+  if ((gFrameCount & 15) == 0)
+    Func_02001ad0(object);
+}
 
-DEFINE_ACTOR_GROW_UP(Actor_GrowUp, Actor_Release)
+#include "shared/actor_animate.h"
 
-DEFINE_ACTOR_GROW_DOWN(Actor_GrowDown, Actor_Release)
+#include "shared/actor_grow_up.h"
+
+#include "shared/actor_grow_down.h"
 
 void Func_02001ad0(struct Actor *parent) {
   struct Actor *pair[2];
@@ -729,10 +759,7 @@ void Func_02001ad0(struct Actor *parent) {
         sprite->nextFrame = 0;
         VramCache_FreeEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
-        /* FAKEMATCH(signature): the sprite written through LinkedSpriteView,
-         * which splits the byte at 0x11 and attribute 1's bits 14-15 that
-         * FieldSprite leaves whole; as sprite->unk11 |= 1, flipX = 0 and
-         * flipY = 1, 44 of 120 instructions differ in tla-en. */
+        /* FAKEMATCH(signature): the sprite written through LinkedSpriteView. */
         ((struct LinkedSpriteView *)sprite)->retainCacheEntry = 1;
         sprite->tile =
             (gResourceTableEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
@@ -763,8 +790,99 @@ void Func_02001ad0(struct Actor *parent) {
 extern s16 gData_02003fc4;
 extern u8 gData_02003fd8[][32];
 
-DEFINE_GAUGE_DRAW(Gauge_Draw, gData_02003fc4, gData_02003fd8, gData_020040d8,
-                  gData_02003fc6)
+void Gauge_Draw(s32 progress) {
+  s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
+  s32 kind = 0;
+  s32 count, base, i;
+
+  if (progress != 0)
+    kind = 100;
+  if (level <= 15 && (gFrameCount & 15) <= 1)
+    kind = 200;
+  if (level <= 7 && (gFrameCount & 7) <= 1)
+    kind = 200;
+  if (kind + level == gData_02003fc4)
+    return;
+  gData_02003fc4 = kind + level;
+  Iwram_ClearWords((s32)(gData_02003fd8), (s32)(0x100));
+  {
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+
+    if (kind == 0) {
+      copy(gData_02003fd8, gData_020040d8[8], 0x80);
+      goto done;
+    }
+    if (kind == 100)
+      copy(gData_02003fd8, gData_020040d8[4], 0x80);
+    else
+      copy(gData_02003fd8, gData_020040d8[8], 0x80);
+  }
+  base = 0;
+  count = level;
+  if (count > 7) {
+    Iwram_CopyWordsEntry(gData_02003fd8, gData_020040d8, 32);
+    base = 8;
+    count -= 8;
+  }
+  if (level > 15) {
+    Iwram_CopyWordsEntry(gData_02003fd8[1], gData_020040d8[1], 32);
+    count = level;
+    base = 16;
+    count -= 16;
+  }
+  if (level > 23) {
+    Iwram_CopyWordsEntry(gData_02003fd8[2], gData_020040d8[2], 32);
+    count = level;
+    base = 24;
+    count -= 24;
+  }
+  if (level > 30) {
+    Iwram_CopyWordsEntry(gData_02003fd8[3], gData_020040d8[3], 32);
+    base = 0;
+    count = 0;
+  }
+  if (count != 0) {
+    i = 0;
+    if (i >= count)
+      goto done;
+  loop:
+    {
+      s32 j;
+      u8 *source = &gData_020040d8[base / 8][4] + i / 2;
+      u8 *dest = &gData_02003fd8[base / 8][4] + i / 2;
+      /* FAKEMATCH(barrier): the empty asm on dest changes its allocation
+       * rank. */
+      asm("" : "=r"(dest) : "0"(dest));
+
+      j = 2;
+      if ((i & 1) == 0) {
+        j = 1;
+      even:
+        *dest = (*dest & 240) | (*source & 15);
+        j++;
+        source += 4;
+        dest += 4;
+        if (j > 3)
+          goto next;
+        goto even;
+      } else {
+      oddLoop:
+        *dest = (*dest & 15) | (*source & 240);
+        j--;
+        source += 4;
+        dest += 4;
+        if (j >= 0)
+          goto oddLoop;
+      }
+    }
+  next:
+    i++;
+    if (i < count)
+      goto loop;
+  }
+done:
+  Vram_Load(gData_02003fc6, 0x100, gData_02003fd8);
+}
 
 extern u32 gInput;
 extern s16 gData_02003fc8;
@@ -778,7 +896,8 @@ void Func_02001d90(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
+  if ((gInput & 3) != 0 && Event_GetFlag(FLAG_MENU_OPEN) == 0 &&
+      leader->y > px(4)) {
     if (--gData_02003fc8 <= 0) {
       Party_DrainPp(1);
       gData_02003fc8 = 10;
@@ -798,11 +917,21 @@ void Func_02001d90(void) {
   Oam_AddSpriteAtDepthClamped(Data_02003fcc, 255);
 }
 
-DEFINE_GAUGE_INIT(Gauge_Init, gData_020040d8, gData_02003fc6, gData_02003fc4,
-                  gData_02003fc8, Func_02001d90)
+void Gauge_Init(void) {
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_020040d8);
+  gData_02003fc6 = VramCache_FindFreeEntry();
+  Vram_Load(gData_02003fc6, 0x100, 0);
+  gData_02003fc4 = -1;
+  gData_02003fc8 = 10;
+  Task_AddFrame(Func_02001d90, TASK_PASS_VBLANK - 10);
+}
 
-DEFINE_GAUGE_END(Gauge_End, gData_020040d8, gData_02003fc6, gData_02003fc4,
-                 Func_02001d90)
+void Gauge_End(void) {
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_020040d8);
+  VramCache_FreeEntry(gData_02003fc6);
+  gData_02003fc4 = -1;
+  FieldTask_Remove(Func_02001d90);
+}
 
 s32 gWorldMap_SparkScript[] = {
     46,
@@ -920,8 +1049,8 @@ LATE_DATA u32 gSceneExits[] = {
 };
 
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
-    {666, CONDITION_ALWAYS, 1, PIXELS(9020), 0, PIXELS(882), FACING_NORTHWEST,
-     0, 0},
+    ACTOR_PLACEMENT(666, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9020, 0, 882,
+                    FACING_NORTHWEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -967,9 +1096,13 @@ LATE_DATA s8 gData_02003d9c[][2] = {
     {22, -4}, {8, -8}, {2, -28}, {14, 12}, {8, 8}, {0, 0},
 };
 
-LATE_DATA DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, TileSprite_Reset,
-                                 17, 0)
+LATE_DATA s32 gWorldMap_PlacedActorScript[] = {
+    46,
+    (s32)TileSprite_Reset,
+    17,
+    0,
+};
 
-    LATE_DATA u32 gData_02003db8[] = {
-        0,
+LATE_DATA u32 gData_02003db8[] = {
+    0,
 };

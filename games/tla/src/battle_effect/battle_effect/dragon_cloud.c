@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 // Dragon Cloud (effect kind 49): a puff arc rises over the user, then a
 // dragon's head flies the path from frame 18, trailing fading copies of
@@ -38,7 +41,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   y = 0;
   graphics = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The pillar sheet, and nine copies of its cell, each darker than the last,
   // for the trail.
@@ -61,9 +64,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
                              &work->sheet[0x3c00], 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapCellBuffer, 1, 0);
-  /* FAKEMATCH(wrapper): the copy routine fetched through Iwram_GetCopyWords,
-   * so the call loads its address before its arguments; as Iwram_CopyWords
-   * called directly, 2 of 1123 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the copy routine fetched through Iwram_GetCopyWords. */
   if (effect->variant == 1)
     Iwram_GetCopyWords()(
         (void *)BG_PLTT,
@@ -78,9 +79,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   object = BattleObject_GetFar(effect->actors[0])->object;
   for (i = 0; i != 56; i++) {
     step = &work->particles[8 + i];
-    step->x = object->x;
-    step->y = 0;
-    step->z = object->z;
+    SET_POSITION(step, object->x, 0, object->z);
     if (i >= Data_08199d5c[effect->variant]) {
       step->velocityX = ((Random16() & 63) - 32) << 14;
       step->velocityY = (Random16() & 63) << 12;
@@ -89,9 +88,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       step->velocityY = (Random16() & 63) << 13;
     }
     step->velocityZ = ((Random16() & 63) - 32) << 14;
-    /* FAKEMATCH(dead): an empty once-only block that keeps the variant's 1 and
-     * i's step after velocityZ's store; without it, 4 of 1123 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     step->variant = 1;
@@ -103,9 +100,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     SPARKS[i].variant = -1;
   for (i = 0; i != 128; i++) {
     step = &SPARKS[i];
-    step->x = object->x;
-    step->y = 0;
-    step->z = object->z;
+    SET_POSITION(step, object->x, 0, object->z);
     step->velocityX = ((Random16() & 63) - 32) << 14;
     step->velocityY = (Random16() & 63) << 12;
     step->velocityZ = ((Random16() & 63) - 32) << 14;
@@ -113,15 +108,14 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   }
 
   // The eight puffs, on an arc over the user, each two frames after the last.
-  for (i = 0, angle = -0x4000; i != 8; angle += 0x1000, i++) {
+  for (i = 0, angle = -TRIG_TURN / 4; i != 8; angle += TRIG_TURN / 16, i++) {
     step = &work->particles[i];
     if (effect->side == 1)
       step->x = (Trig_Sin(angle) * 24 >> 16) + 88;
     else
       step->x = (-(Trig_Sin(angle) * 24) >> 16) + 16;
     step->y = (Trig_Cos(angle) * 16 >> 16) + 40;
-    /* FAKEMATCH(dead): an empty once-only block that keeps the y store ahead of
-     * the variant's; without it, 2 of 1123 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     step->variant = -(i * 2);
@@ -138,9 +132,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
         BattlePlayback_StartFar(145);
     }
     if (frame == 0)
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     if (frame == 50)
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
 
     // For 64 frames the camera turns away from the user's side.
     if (effect->side == 0) {
@@ -159,8 +153,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       s32 offset;
 
       offset = gBattleEffect_PuffArcCells[cell];
-      /* FAKEMATCH(dead): width, read from the puff table and never used; as no
-       * width, 523 of 1123 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): width, read from the puff table and never used. */
       width = gData_08197467[cell];
       draw[0](canvas, &work->sheet[offset + 0x3c00],
               56 - gData_08197467[cell] / 2,
@@ -180,9 +173,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           s32 force;
 
           step = &SPARKS[128 + i];
-          step->x = 0x3c0000;
-          step->y = 0x6c0000;
-          angle = (Random16() & 0x7fff) + 0x4000;
+          step->x = px(60);
+          step->y = px(108);
+          angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
           force = (Random16() & 255) + 127;
           step->velocityX = (Trig_Sin(angle) * force) >> 7;
           step->velocityY = (Trig_Cos(angle) * force) >> 5;

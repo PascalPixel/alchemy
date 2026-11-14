@@ -292,17 +292,17 @@ struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
   if (object != NULL) {
     Actor_SetPositionAndResetMotion(object, x, y, z);
     object->script = (s32 *)gActorScript_EndScript;
-    object->speedLimit = 0x20000;
+    object->speedLimit = px(2);
     object->step = 0;
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
-    object->acceleration = 0x10000;
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
+    object->acceleration = px(1);
     object->motionFlags = 3;
-    object->gravity = 0x10000;
+    object->gravity = px(1);
     object->bounce = 0x4000;
     object->collisionFlags = 0;
     object->actionFlags = 1;
-    object->facing = 0x4000;
+    object->facing = TRIG_TURN / 4;
     object->unk4c = 0;
     object->timer = x / 65536;
     object->unk66 = z / 65536;
@@ -497,8 +497,8 @@ void Actor_StartIdle(struct Actor *object) {
 void Actor_StartCamera(struct Actor *object, struct Actor *watched) {
   Actor_StartScript(object, gActor_CameraScript);
   if (watched != NULL) {
-    object->acceleration = 0x8000;
-    object->speedLimit = 0x40000;
+    object->acceleration = px(1) / 2;
+    object->speedLimit = px(4);
     object->watchedObject = watched;
     object->timer = 0;
   }
@@ -560,8 +560,8 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
 /* VIEW(resource_slot): tag struct IconSprite as struct
  * IconSprite__resource_slot; item_icon.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:2172: dereferencing pointer to incomplete type.
- */
+ * games/tla/src/field/field/actors.c:579: dereferencing pointer to incomplete
+ * type. */
 struct IconSprite__resource_slot {
   u8 unk00[4];
   struct RenderOam oam;
@@ -705,10 +705,7 @@ void ActorSystem_PlaceSprites(void) {
   viewZ = view[1] & 0xffff0000;
   system = Ram_HeapSlots->objectSystem;
   originY = map->origin[1];
-  // The decoder's copy in a once-only block, as in
-  // ObjectSystem_UpdateCameraFixed, keeps the first call's arguments after the
-  // followed point's height; as a plain call, 6 of 606 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the decoder's copy in a once-only block. */
   do {
     Dma_Set(
         Render_DecodePictureCode,
@@ -759,9 +756,7 @@ void ActorSystem_PlaceSprites(void) {
           middlePriority = 0;
           if (!(*priorityFlags & 32)) {
             /* FAKEMATCH(temporary): the base priority read through a
-             * function-scope pointer, which gives the two spills at sp+12 and
-             * sp+16 their order; as priority = BASE_PRIORITY(map), 8 of 606
-             * instructions differ in tla-en. */
+             * function-scope pointer. */
             basePriority = &BASE_PRIORITY(map);
             priority = *basePriority;
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
@@ -851,9 +846,9 @@ void ActorSystem_PlaceSprites(void) {
           point.groundHeight += 0xfec00000;
         }
         if (*priorityFlags & 4) {
-          point.height += 0x1400000;
-          point.y += 0x1400000;
-          point.groundHeight += 0x1400000;
+          point.height += px(320);
+          point.y += px(320);
+          point.groundHeight += px(320);
         }
         if (*priorityFlags & 8)
           Render_ApplyProjectedPlacementAtDepth(sprite, &point, scale.values,
@@ -941,9 +936,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   // Unused: gives the stack frame its 12 bytes.
   struct CameraPoint unused;
 
-  // The decoder's copy in a once-only block makes the stack frame before the
-  // first call's arguments; as a plain call, 6 of 93 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the decoder's copy in a once-only block. */
   do {
     Dma_Set(
         Render_DecodePictureCode,
@@ -977,8 +970,6 @@ void ObjectSystem_UpdateCameraFixed(void) {
   }
   HeapSlot_Release(80);
 }
-
-// Object scripts: move the instruction cursor and control byte54.
 
 #include "field/script.h"
 

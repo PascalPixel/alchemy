@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -90,7 +91,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, spraySheet, 1,
                              0);
@@ -117,9 +118,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
         }
         Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet,
                                    1, 0);
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
         work->shakeFrames = 4;
-        // Set once: reload rebuilds each of these at its use (see the header).
         halfWidth = 48;
         width = 96;
         sheet = gData_02014000;
@@ -216,7 +216,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
         for (i = 0, drop = drops; i != OCEAN_DROPS; i++, drop++) {
           if (drop->variant == -1) {
             drop->x = ((Random16() & 31) + target.x / 2 - 16) << 16;
-            drop->y = 0x6c0000;
+            drop->y = px(108);
             drop->velocityX = ((Random16() & 63) - 32) << 14;
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;

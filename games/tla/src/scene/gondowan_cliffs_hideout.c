@@ -3,6 +3,7 @@
 /// until flag 2219 is set.
 
 #include "field/field.h"
+#include "flags.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -40,7 +41,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Get(2219))
+  if (GameFlag_Get(FLAG_BRIGGS_CAUGHT))
     return gPlacementsWithoutWarriors;
   return gPlacementsWithWarriors;
 }
@@ -50,11 +51,11 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 /// Felix walks in on the four warriors: they jump, turn to him and talk over
 /// one another, once, until the scene's flag 2447 is set.
 void GondowanCliffsHideout_WarriorsAreFound(void) {
-  if (!GameFlag_Get(2219)) {
+  if (!GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);
-    Camera_SetSpeedParameters(0x10000, 0x2000);
+    FieldCamera_SetSpeed(1);
     FieldCamera_FollowActor(8, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceActorById(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
@@ -62,9 +63,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
       s32 half = 129;
       s32 id = ACTOR_WARRIOR_FROM_KIBOMBO;
 
-      /* FAKEMATCH(barrier): an empty asm on half and id, so the actor is set
-       * between the halves of the value; without it, 2 of 84 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on half and id. */
       asm("" : "+l"(half), "+l"(id));
       FieldEffect_SetAttached(id, half << 1);
     }
@@ -117,15 +116,15 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(104),
-    SCENE_EXIT_IF(1, 102, 3, -1),
+    SCENE_EXITS(GondowanCliffsHideout),
+    SCENE_EXIT_UNLESS(1, GondowanCliffs, 3, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 // clang-format off
 struct ActorPlacement gPlacementsWithWarriors[] = {
-    {410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
-    {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {83, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_WEST, 0, 2},
     {83, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 0, 2},
     {83, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 0, 2},
@@ -136,8 +135,8 @@ struct ActorPlacement gPlacementsWithWarriors[] = {
 
 // clang-format off
 struct ActorPlacement gPlacementsWithoutWarriors[] = {
-    {410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
-    {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

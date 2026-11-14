@@ -73,22 +73,10 @@ void MapGrid_WaitForShakeToSettle(void) {
 
   work = (s32 *)Ram_HeapSlots->mapWork;
   cnt = 0;
-  if (work[1] > 255 || work[2] > 255) {
-    goto body;
-  body:
+  while (cnt < 300 && (work[1] > 255 || work[2] > 255)) {
     wait(1);
-    ++cnt;
-    if (cnt >= 300) {
-      goto done;
-    }
-    if (work[1] > 255) {
-      goto body;
-    }
-    if (work[2] > 255) {
-      goto body;
-    }
+    cnt++;
   }
-done:
   work[3] = 0;
 }
 
@@ -125,9 +113,7 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   vector[0] = position[0];
   vector[1] = zero;
   vector[2] = position[2];
-  /* FAKEMATCH(wrapper): the call through this file's inline; as the direct
-   * Iwram_TransformVector macro call, 41 of 132 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): the call through this file's inline. */
   Iwram_TransformVector(vector, result);
   height = result[1] - Iwram_MulQ16(result[2], pitchSlope);
   nearZ = -gCameraSceneParameters[0];

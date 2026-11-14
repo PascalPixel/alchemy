@@ -4,6 +4,7 @@
 
 #include "shared/tables.h"
 #include "types.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "actor.h"
 #include "field/event_inline.h"
@@ -157,11 +158,11 @@ void IzumoInteriors_AskAfterSusa(void) {
     Event_SetMessageId((s32)MsgSusaSNot);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
-    Actor_ShowEmoteById(8, 265, 0);
+    Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
-    Actor_ShowEmoteById(8, 261, 0);
+    Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
@@ -234,7 +235,7 @@ void IzumoInteriors_ReadUzumesMind(void) {
     Event_ShowMessageAndWait(15, 0);
     if (GameFlag_Get(0x923)) {
       LeaderAnimate(256, 30);
-      Actor_ShowEmoteById(15, 259, 30);
+      Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
       Event_ShowMessageAndWait(15, 0);
       LeaderAnimate(258, 30);
       Actor_SetModeById(15, 4);
@@ -299,7 +300,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(PIXELS(143), -1, PIXELS(560), 1);
+  FieldCamera_MoveTo(143, CAMERA_KEEP, 560, 1);
   party = (s32)&gMainRoutineWork;
   if (mode == 0) {
     Actor_WalkToAndWait(*(s32 *)(party + 532), 184, 568);
@@ -308,40 +309,40 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   }
   FieldEvent_Wait(15);
   FieldEvent_SetMessageId((s32)MsgWarriorsAppearedFrom);
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_SetAnimation(22, 3);
-  Event_ShowMessage(0x8016, 0);
-  Actor_ShowEmote(15, 0x100, 30);
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimation(22, 3);
   FieldEvent_Wait(15);
-  Event_ShowMessage(0x8016, 0);
-  Actor_ShowEmote(15, 0x103, 30);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   FieldActor_StartRepeatedMotion(22, 3);
-  Actor_SetAttachedEffect(22, 0x102);
+  Actor_SetAttachedEffect(22, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x8016, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
   Actor_FaceDirection(20, FACING_EAST, 30);
   Actor_SetAnimation(20, 4);
-  Event_ShowMessage(0x8014, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   FieldEvent_Wait(30);
   Actor_FaceDirection(15, FACING_WEST, 30);
   Actor_SetAnimation(15, 3);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_SetAnimation(22, 3);
   FieldEvent_Wait(15);
-  Event_ShowMessage(0x8016, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
   FieldActor_StartRepeatedMotion(20, 2);
   FieldEvent_Wait(15);
-  Event_ShowMessage(0x8014, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_FaceActor(15, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(30);
   Actor_SetDestinationOffset(15, 0, 16);
   FieldActor_WaitForMoveById(15);
   FieldEvent_Wait(15);
-  Actor_ShowEmote(15, 0x100, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   if (mode == 0) {
     Actor_WalkToAndWait(15, 168, 536);
   } else {
@@ -351,28 +352,30 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Actor_FaceActor(20, *(s32 *)owner, 0);
-  Event_ShowMessage(0x800f, 0);
-  Actor_ShowEmote(15, 0x107, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldActor_Jump(22, 4, 0);
-  Actor_SetAttachedEffect(22, 0x101);
+  Actor_SetAttachedEffect(22,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   FieldEvent_Wait(30);
   Actor_FaceDirection(20, FACING_SOUTH, 30);
-  Actor_ShowEmote(20, 0x101, 30);
-  Event_ShowMessage(0x8014, 0);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_FaceActor(22, 20, 0);
-  Actor_SetAttachedEffect(22, 0x100);
+  Actor_SetAttachedEffect(22,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Event_ShowMessage(22, 0);
   FieldEvent_Wait(30);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldActor_StartRepeatedMotion(20, 2);
   FieldEvent_Wait(30);
   Actor_FaceActor(20, *(s32 *)owner, 0);
-  Event_ShowMessage(0x8014, 0);
-  Actor_ShowEmote(15, 0x108, 30);
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_WalkTo(15, 144, 520);
   FieldActor_WaitForMoveById(15);
   Actor_FaceDirection(15, FACING_SOUTH, 0);
@@ -400,7 +403,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldActor_LaunchFromLeader(7, -8, 24, FACING_NORTH);
   FieldActor_LaunchFromLeader(23, -24, 24, FACING_NORTH);
   FieldEvent_Wait(60);
-  Event_ShowMessage(0x8014, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_SetAnimation(23, 3);
   FieldEvent_Wait(30);
   Event_ShowMessage(23, 0);
@@ -432,12 +435,12 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessage(23, 0);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x8014, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_SetAnimation(6, 3);
   FieldEvent_Wait(30);
   Event_ShowMessage(6, 0);
-  Actor_ShowEmote(15, 0x101, 30);
-  Event_ShowMessage(0x800f, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_FaceEachOther(15, 20, 0);
   FieldEvent_Wait(60);
   Actor_FaceActor(15, *(s32 *)owner, 0);
@@ -445,7 +448,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Actor_SetAnimation(20, 4);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x8014, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_FaceActor(*(s32 *)owner, 23, 0);
   Actor_FaceActor(5, 23, 0);
   Actor_FaceActor(6, 23, 0);
@@ -456,10 +459,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActor(23, 15, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(23, 0);
-  Actor_ShowEmote(15, 0x100, 0);
-  Actor_ShowEmote(20, 0x100, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_FaceActor(*(s32 *)owner, 15, 0);
   Actor_FaceActor(5, 15, 0);
   Actor_FaceActor(6, 15, 0);
@@ -471,8 +474,8 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(23, 3);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(15, 0x102, 30);
-  Event_ShowMessage(0x800f, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldEvent_Wait(60);
   Actor_FaceDirection(15, FACING_EAST, 0);
   FieldEvent_Wait(30);
@@ -480,12 +483,12 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Actor_FaceDirection(15, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x800f, 0);
-  Actor_ShowEmote(*(s32 *)owner, 0x100, 0);
-  Actor_ShowEmote(5, 0x100, 0);
-  Actor_ShowEmote(6, 0x100, 0);
-  Actor_ShowEmote(7, 0x100, 0);
-  Actor_ShowEmote(23, 0x100, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
+  Actor_ShowEmote(*(s32 *)owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(5, 1);
   FieldEvent_Wait(15);
@@ -494,15 +497,15 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Actor_FaceActor(15, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x800f, 0);
-  Actor_ShowEmote(20, 0x101, 30);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_Wait(30);
-  Event_OpenMessage(0x8014, 0);
+  Event_OpenMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 1) {
     FieldEvent_SetMessageId((s32)MsgIThoughtSo);
-    Actor_ShowEmote(20, 0x100, 30);
-    Event_ShowMessage(0x8014, 0);
+    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
     Actor_SetAnimation(6, 3);
     Actor_SetAnimation(5, 3);
     FieldEvent_Wait(30);
@@ -515,7 +518,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_SetMessageId((s32)MsgSoYouCall);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x8014, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_SetAnimation(*(s32 *)owner, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(6, 3);
@@ -525,13 +528,13 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetAnimation(15, 3);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(60);
-  Actor_ShowEmote(20, 0x101, 30);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(20, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x8014, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   FieldEvent_Wait(90);
   Event_ShowMessage(21, 0);
-  Actor_SetPosition(21, PIXELS(144), PIXELS(680));
+  Actor_SetPosition(21, 144, 680);
   Actor_FaceActor(*(s32 *)owner, 21, 0);
   Actor_FaceActor(5, 21, 0);
   Actor_FaceActor(6, 21, 0);
@@ -539,12 +542,12 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActor(23, 21, 0);
   Actor_FaceActor(22, 21, 0);
   FieldEvent_Wait(120);
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldEvent_Wait(30);
   EventCamera_FollowActor(21, 1);
   FieldEvent_Wait(120);
-  Actor_SetSpeed(21, 0x9999, 0x4ccc);
-  Actor_SetSpeedParameters(21, 0x9999, 0x4ccc);
+  Actor_SetSpeed(21, 0.6);
+  Actor_SetSpeed(21, 0.6);
   Actor_GetById(21)->priorityFlags &= ~1;
   Actor_WalkTo(21, 144, 648);
   if (mode == 0) {
@@ -671,7 +674,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(15);
   Event_ShowMessageAndWait(20, 0);
   Event_Wait(15);
-  Actor_ShowEmote(20, 0x108, 30);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(20, 0);
   Actor_FaceActorById(21, 20, 0);
   Event_Wait(30);
@@ -695,14 +698,14 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(7, 3);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
-  Actor_ShowEmote(15, 0x101, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(15, 0);
   Actor_FaceActorById(21, *(s32 *)owner, 0);
   Event_ShowMessageAndWait(21, 0);
   Actor_FaceActorById(15, *(s32 *)owner, 0);
   Actor_FaceActorById(20, *(s32 *)owner, 0);
   Event_Wait(30);
-  Actor_ShowEmoteById(*(s32 *)owner, 0x102, 30);
+  Actor_ShowEmoteById(*(s32 *)owner, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
@@ -711,26 +714,26 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   Actor_SetModeById(23, 3);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(15, 0x101, 0);
-  Actor_ShowEmote(20, 0x101, 0);
-  Actor_ShowEmote(21, 0x101, 0);
-  Actor_ShowEmote(22, 0x101, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(30);
-  Actor_ShowEmote(23, 0x100, 30);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(21, 0x101, 30);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(21, 0);
   Actor_FaceActorById(23, 21, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmoteById(20, 0x106, 30);
+  Actor_ShowEmoteById(20, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   Event_ShowMessageAndWait(20, 0);
-  Actor_ShowEmote(23, 0x108, 30);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(15, 0x101, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(15, 0);
   Actor_FaceActorById(7, 23, 0);
   Event_Wait(30);
@@ -738,14 +741,14 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActorById(23, 7, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
-  Actor_ShowEmoteById(15, 0x101, 30);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActorById(23, 15, 0);
   Actor_FaceActorById(7, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(15, 0);
-  Actor_ShowEmote(6, 0x108, 30);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(6, 0);
-  Actor_ShowEmoteById(21, 0x100, 30);
+  Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageAndWait(21, 0);
   Actor_SetModeById(5, 3);
   Event_Wait(30);
@@ -764,7 +767,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
     Event_SetMessageId((s32)MsgRegardlessOfYour);
-    Actor_ShowEmoteById(15, 0x108, 30);
+    Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     Event_ShowMessageAndWait(15, 0);
   } else {
     Event_SetMessageId((s32)MsgYouTookPity);
@@ -776,7 +779,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
   Actor_FaceActorById(15, 23, 0);
-  Actor_ShowEmoteById(15, 0x101, 30);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
@@ -795,15 +798,15 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(6, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(6, 0);
-  Actor_ShowEmote(5, 0x108, 30);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmoteById(15, 0x100, 30);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_Wait(15);
   Actor_FaceActorById(15, 21, 0);
   Event_ShowMessageAndWait(15, 0);
-  Actor_ShowEmoteById(21, 0x108, 30);
+  Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(21, 0);
-  Actor_ShowEmoteById(6, 0x106, 30);
+  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Actor_FaceActorById(6, *(s32 *)owner, 0);
@@ -831,7 +834,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   message = (s32)MsgIDisagree2;
   Event_SetMessageId(message);
   Actor_FaceActorById(23, 21, 0);
-  Actor_ShowEmoteById(23, 0x101, 30);
+  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
@@ -885,7 +888,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActorById(20, *(s32 *)owner, 0);
   Actor_StartRepeatedMotion(21, 1);
   Event_Wait(15);
-  Actor_ShowEmote(21, 0x105, 30);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Actor_FaceActorById(23, *(s32 *)owner, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
@@ -904,9 +907,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(7, 3);
   Actor_SetModeById(*(s32 *)owner, 3);
   Event_Wait(30);
-  Actor_ShowEmote(15, 0x100, 0);
-  Actor_ShowEmote(20, 0x100, 0);
-  Actor_ShowEmoteById(21, 0x100, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(20, 0);
   Actor_FaceActorById(*(s32 *)owner, 15, 0);
@@ -916,7 +919,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmoteById(15, 0x109, 30);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(5, 3);
   Event_Wait(30);
@@ -924,7 +927,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(20, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(20, 0);
-  Actor_ShowEmoteById(6, 0x105, 0);
+  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(6, 0);
   Actor_FaceActorById(6, 5, 0);
@@ -991,7 +994,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_WaitForMoveById(23);
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   GameFlag_Set(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
-  GameFlag_Set(0x350);
+  GameFlag_Set(FLAG_AREA_TEMP_50);
   Event_End();
 }
 
@@ -1021,7 +1024,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 144, 536);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Event_Wait(15);
-  Actor_ShowEmote(15, 0x100, 60);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_OpenMessage(15, 0);
   if (!Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0)) {
     Event_SetMessageId(((s32)&MsgAhCouldIt + 1));
@@ -1030,18 +1033,18 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
     Event_SetMessageId(((s32)&MsgAhCouldIt + 2));
     Event_ShowMessageAndWait(15, 0);
   }
-  Actor_ShowEmoteById(15, 0x109, 60);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 60);
   Event_SetMessageId((s32)&MsgAgainYouHave);
   Event_ShowMessageAndWait(15, 0);
-  Actor_ShowEmote(15, 0x105, 120);
-  Actor_ShowEmoteById(15, 0x106, 60);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Event_ShowMessageAndWait(15, 0);
   BattleEffect_StartArcEffect();
   t21 = ((s32)Actor_GetById(15));
   BattleEffect_SetObjectUpdateMode(t21, 2);
-  Sound_Play(201);
+  Sound_Play(SE_ASCEND);
   Event_Wait(60);
-  Actor_SetPosition(24, PIXELS(144), PIXELS(520));
+  Actor_SetPosition(24, 144, 520);
   Actor_Jump(24, 6, 0);
   Actor_SetDestination(24, 160, 520);
   Actor_WaitForMoveById(24);
@@ -1091,12 +1094,12 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   if (gMainRoutineWork.entrance != 7)
-    Event_ClearFlag(0x350);
+    Event_ClearFlag(FLAG_AREA_TEMP_50);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       !GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7) {
-    Event_PlaySound(7);
-    Actor_SetPosition(22, 0x900000, 0x2380000);
+    Event_PlaySound(MUS_007);
+    Actor_SetPosition(22, 144, 568);
     Actor_SetPosition(21, 0, 0);
     Actor_SetPosition(16, 0, 0);
     Actor_SetPosition(17, 0, 0);
@@ -1105,8 +1108,8 @@ s32 Scene_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
-      gMainRoutineWork.entrance == 7 && GameFlag_Get(0x350)) {
-    Event_PlaySound(7);
+      gMainRoutineWork.entrance == 7 && GameFlag_Get(FLAG_AREA_TEMP_50)) {
+    Event_PlaySound(MUS_007);
     Actor_SetPosition(16, 0, 0);
     Actor_SetPosition(17, 0, 0);
     Actor_SetPosition(18, 0, 0);
@@ -1114,7 +1117,8 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 5 && !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     Actor_SetAnimation(17, 5);
-    Actor_SetAttachedEffect(17, 0x101);
+    Actor_SetAttachedEffect(17,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   }
   if (gMainRoutineWork.entrance == 7 && !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     struct Actor *object;
@@ -1133,13 +1137,241 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern s32 gIzumoInteriors_BounceScript[];
 
-DEFINE_G_DATA_02002324(gIzumoInteriors_FirstPacerScript,
-                       IzumoInteriors_IsFirstPacerClear, 0x700000, 0x880000,
-                       0x8000, 0)
+s32 gIzumoInteriors_FirstPacerScript[] = {
+    22,
+    30,
+    129,
+    22,
+    16,
+    0x3333,
+    22,
+    21,
+    0x6666,
+    22,
+    15,
+    0x9999,
+    22,
+    31,
+    2,
+    22,
+    3,
+    0x4000,
+    (s32)0x80010000,
+    46,
+    (s32)IzumoInteriors_IsFirstPacerClear,
+    4,
+    0x700000,
+    0,
+    0x2700000,
+    1,
+    4,
+    0x700000,
+    0,
+    0x2580000,
+    1,
+    4,
+    0x880000,
+    0,
+    0x2580000,
+    1,
+    4,
+    0x880000,
+    0,
+    0x2700000,
+    1,
+    22,
+    3,
+    0x8000,
+    0,
+    5,
+    22,
+    3,
+    0xc000,
+    0,
+    5,
+    22,
+    3,
+    0,
+    0,
+    5,
+    22,
+    3,
+    0x4000,
+    0,
+    5,
+    23,
+    6,
+    0x40000,
+    0,
+    30,
+    4,
+    0x700000,
+    0,
+    0x2700000,
+    1,
+    4,
+    0x880000,
+    0,
+    0x2580000,
+    1,
+    4,
+    0x700000,
+    0,
+    0x2580000,
+    1,
+    4,
+    0x880000,
+    0,
+    0x2700000,
+    1,
+    22,
+    3,
+    0x8000,
+    0,
+    5,
+    22,
+    3,
+    0xc000,
+    0,
+    5,
+    22,
+    3,
+    0,
+    0,
+    5,
+    22,
+    3,
+    0x4000,
+    0,
+    5,
+    23,
+    6,
+    0x40000,
+    0,
+    30,
+    13,
+    0xffff,
+    (s32)0xc0010000,
+    -1,
+};
 
-DEFINE_G_DATA_02002324(gIzumoInteriors_SecondPacerScript,
-                       IzumoInteriors_IsSecondPacerClear, 0xb00000, 0x980000, 0,
-                       0x8000)
+s32 gIzumoInteriors_SecondPacerScript[] = {
+    22,
+    30,
+    129,
+    22,
+    16,
+    0x3333,
+    22,
+    21,
+    0x6666,
+    22,
+    15,
+    0x9999,
+    22,
+    31,
+    2,
+    22,
+    3,
+    0x4000,
+    (s32)0x80010000,
+    46,
+    (s32)IzumoInteriors_IsSecondPacerClear,
+    4,
+    0xb00000,
+    0,
+    0x2700000,
+    1,
+    4,
+    0xb00000,
+    0,
+    0x2580000,
+    1,
+    4,
+    0x980000,
+    0,
+    0x2580000,
+    1,
+    4,
+    0x980000,
+    0,
+    0x2700000,
+    1,
+    22,
+    3,
+    0,
+    0,
+    5,
+    22,
+    3,
+    0xc000,
+    0,
+    5,
+    22,
+    3,
+    0x8000,
+    0,
+    5,
+    22,
+    3,
+    0x4000,
+    0,
+    5,
+    23,
+    6,
+    0x40000,
+    0,
+    30,
+    4,
+    0xb00000,
+    0,
+    0x2700000,
+    1,
+    4,
+    0x980000,
+    0,
+    0x2580000,
+    1,
+    4,
+    0xb00000,
+    0,
+    0x2580000,
+    1,
+    4,
+    0x980000,
+    0,
+    0x2700000,
+    1,
+    22,
+    3,
+    0,
+    0,
+    5,
+    22,
+    3,
+    0xc000,
+    0,
+    5,
+    22,
+    3,
+    0x8000,
+    0,
+    5,
+    22,
+    3,
+    0x4000,
+    0,
+    5,
+    23,
+    6,
+    0x40000,
+    0,
+    30,
+    13,
+    0xffff,
+    (s32)0xc0010000,
+    -1,
+};
 
 // clang-format off
 s32 gIzumoInteriors_RockingScript[] = {
@@ -1215,7 +1447,7 @@ s32 gIzumoInteriors_BounceScript[] = {
     SC_SET(SW_SPEED, 0x6666),
     SC_ARG(0),
     SC_LABEL(1),
-    SC_SET(SW_Y, PIXELS(4)),
+    SC_SET(SW_Y, px(4)),
     SC_WAIT(30),
     SC_END,
 };
@@ -1227,73 +1459,73 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(170),
-    SCENE_EXIT_IF(1, 171, 2, -1),
-    SCENE_EXIT_IF(2, 171, 3, -1),
-    SCENE_EXIT_IF(3, 171, 4, -1),
-    SCENE_EXIT_IF(4, 171, 5, -1),
-    SCENE_EXIT_IF(5, 171, 6, -1),
-    SCENE_EXIT_IF(6, 171, 7, -1),
-    SCENE_EXIT_IF(7, 171, 8, -1),
+    SCENE_EXITS(IzumoInteriors),
+    SCENE_EXIT_UNLESS(1, Izumo, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Izumo, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Izumo, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Izumo, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Izumo, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Izumo, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Izumo, 8, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 // clang-format off
 struct ActorPlacement gIzumoInteriors_ActorPlacements[] = {
-    {120, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(120), FACING_SOUTHEAST, 1, 0},
-    {120, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(152), FACING_NORTHWEST, 1, 0},
-    {120, CONDITION_ALWAYS, 2, PIXELS(88), 0, PIXELS(88), FACING_EAST, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(96), FACING_SOUTH, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(80), FACING_SOUTH, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(384), 0, PIXELS(104), FACING_SOUTH, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(84), FACING_SOUTHEAST, 1, 0},
-    {125, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(136), FACING_NORTHWEST, 1, 0},
-    {125, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(120), FACING_SOUTHEAST, 1, 0},
-    {32, CONDITION_ALWAYS, (s32)gIzumoInteriors_BounceScript, PIXELS(352), 0, PIXELS(328), FACING_SOUTH, 1, 0},
-    {121, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(362), FACING_SOUTH, 1, 0},
-    {118, CONDITION_ALWAYS, 1, PIXELS(108), 0, PIXELS(320), FACING_SOUTHEAST, 1, 0},
-    {119, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(104), FACING_SOUTH, 1, 0},
-    {123, CONDITION_ALWAYS, 2, PIXELS(632), 0, PIXELS(88), FACING_EAST, 1, 0},
-    {201, CONDITION_ALWAYS, 1, PIXELS(560), 0, PIXELS(328), FACING_SOUTH, 0, 0},
-    {127, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, PIXELS(504), 0, PIXELS(360), FACING_SOUTHWEST, 2, 0},
-    {127, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(392), FACING_NORTHWEST, 1, 0},
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 96, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 80, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 84, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(125, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(125, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(32, CONDITION_ALWAYS, (s32)gIzumoInteriors_BounceScript, 352, 0, 328, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(121, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(119, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(123, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, 504, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 392, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 // clang-format off
 struct ActorPlacement gIzumoInteriors_SusasHouseActorPlacements[] = {
-    {30, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(520), FACING_SOUTH, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gIzumoInteriors_FirstPacerScript, PIXELS(136), 0, PIXELS(624), FACING_EAST, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gIzumoInteriors_SecondPacerScript, PIXELS(152), 0, PIXELS(624), FACING_WEST, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(90), 0, PIXELS(622), FACING_WEST, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(198), 0, PIXELS(622), FACING_EAST, 1, 0},
+    ACTOR_PLACEMENT(30, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, (s32)gIzumoInteriors_FirstPacerScript, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, (s32)gIzumoInteriors_SecondPacerScript, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 622, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 198, 0, 622, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 // clang-format off
 struct ActorPlacement gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain[] = {
-    {121, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(362), FACING_SOUTH, 1, 0},
-    {118, CONDITION_ALWAYS, 1, PIXELS(108), 0, PIXELS(320), FACING_SOUTHEAST, 1, 0},
-    {119, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(104), FACING_SOUTH, 1, 0},
-    {123, CONDITION_ALWAYS, 2, PIXELS(632), 0, PIXELS(88), FACING_EAST, 1, 0},
-    {201, CONDITION_ALWAYS, 1, PIXELS(560), 0, PIXELS(328), FACING_SOUTH, 0, 0},
-    {127, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, PIXELS(600), 0, PIXELS(360), FACING_WEST, 2, 0},
-    {127, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(376), FACING_NORTHEAST, 1, 0},
-    {30, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(520), FACING_SOUTH, 2, 0},
-    {120, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(624), FACING_EAST, 1, 0},
-    {120, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(624), FACING_WEST, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(616), FACING_NORTHEAST, 1, 0},
-    {124, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(616), FACING_NORTHWEST, 1, 0},
-    {32, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(520), FACING_SOUTH, 1, 0},
-    {29, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(552), FACING_NORTH, 1, 0},
-    {117, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {7, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {6, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {245, 0x63, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(121, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(119, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(123, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, 600, 0, 360, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(30, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 616, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 616, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(32, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(29, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 552, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(245, 0x63, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -1439,7 +1671,7 @@ struct Trigger gIzumoInteriors_TriggersOnceTheSerpentIsSlain[] = {
      MSGNO(MsgIfSDescendants)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgIMNo)},
-    {0x1c314, 15, FLAG_UZUME_HAS_THE_DOLL,
+    {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), 15, FLAG_UZUME_HAS_THE_DOLL,
      EVENT(IzumoInteriors_GiveUzumeTheDoll)},
     {TRIGGER_TABLE_END},
 };

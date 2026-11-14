@@ -200,36 +200,23 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
  * CharacterDefinition gCharacter_DefinitionTable[] = {; tried as the
  * definition's extern const struct CharacterDefinition
  * gCharacter_DefinitionTable[], it does not compile in tla-ja:
- * games/tla/src/game/game.c:2199: `gCharacter_DefinitionTable' undeclared
+ * games/tla/src/game/game/levels.c:202: `gCharacter_DefinitionTable' undeclared
  * (first use in this function). */
 extern struct OwnerGrowthRecord
     gCharacter_DefinitionTable__game[8] __asm__("gCharacter_DefinitionTable");
 #define gCharacter_DefinitionTable gCharacter_DefinitionTable__game
 
 struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
-  s32 stride = sizeof(struct OwnerGrowthRecord);
-  u8 *base;
+  struct OwnerGrowthRecord *base;
 
-  /* FAKEMATCH(barrier): the row width used by an empty asm, so it is built
-   * before the table's address is loaded from the pool; as no asm, 2 of 5
-   * instructions differ in tla-en. */
-  asm("" : : "r"(stride));
-  base = (u8 *)gCharacter_DefinitionTable;
-  /* FAKEMATCH(barrier): the row width and the table held at an empty asm, so
-   * both are live before the row offset is multiplied; as no asm, 2 of 5
-   * instructions differ in tla-en. */
-  asm("" : "+r"(stride), "+r"(base));
-  /* FAKEMATCH(signature): the address summed as an integer, which keeps the
-   * multiply's and the add's lifetimes; as pointer addition, base + index *
-   * stride, 7 of 5 instructions differ in tla-en (the draft has 6 and shares
-   * 2). */
-  return (struct OwnerGrowthRecord *)(index * stride + (u32)base);
+  base = (struct OwnerGrowthRecord *)gCharacter_DefinitionTable;
+  return &base[index];
 }
 
 /* VIEW(game): variable gData_080b2340 as s32 gData_080b2340[];
  * game/artifact_slots has const s32 gData_080b2340[9] = {0, 1, 2, 3, 4, 5, 6,
  * 7, -1}; tried as the definition's extern const s32 gData_080b2340[9], it does
- * not compile in tla-ja: games/tla/src/game/game.c:2221: `gData_080b2340'
+ * not compile in tla-ja: games/tla/src/game/game/levels.c:222: `gData_080b2340'
  * undeclared (first use in this function). */
 extern s32 gData_080b2340__game[] __asm__("gData_080b2340");
 #define gData_080b2340 gData_080b2340__game
@@ -294,8 +281,8 @@ void Unit_LevelNoOp(void) {}
  * gCharacter_LevelExpTable[]; game/experience_table has const u32
  * gCharacter_LevelExpTable[] = {; tried as the definition's extern const u32
  * gCharacter_LevelExpTable[], it does not compile in tla-ja:
- * games/tla/src/game/game.c:2285: `gCharacter_LevelExpTable' undeclared (first
- * use in this function). */
+ * games/tla/src/game/game/levels.c:290: `gCharacter_LevelExpTable' undeclared
+ * (first use in this function). */
 extern u32 gCharacter_LevelExpTable__game[] __asm__("gCharacter_LevelExpTable");
 #define gCharacter_LevelExpTable gCharacter_LevelExpTable__game
 
@@ -389,8 +376,6 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *res) {
     st->baseTurns = 1;
     st->base20 = 0;
     st->base21 = 0;
-    // Called as returning a value, where the definition returns nothing: the
-    // stores before it are scheduled as they are only then.
     ((s32 (*)(s32))Unit_RefreshPsynergy)(owner);
     Unit_Calculate(owner);
   }

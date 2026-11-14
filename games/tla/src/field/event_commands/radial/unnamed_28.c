@@ -4,6 +4,9 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct RingMote {
   s32 x;
@@ -92,18 +95,15 @@ void FieldPsynergy_Unnamed28(void) {
     {
       s32 (*fill)(void *, s32, u32);
 
-      // An empty once-only loop, and the fill routine's entry in a local, load
-      // the entry ahead of the size's constant; as a direct Iwram_FillWords
-      // call, 10 of 563 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       fill = Iwram_FillWordsEntry;
-      fill((void *)0x06002000, 0x800, 0);
+      fill((void *)BG_SCREEN_BLOCK(4), 0x800, 0);
     }
 
-    // The picture's release and allocation in a once-only block, which ends
-    // scheduling at both sides; without it, 8 of 563 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(dead): the picture's release and allocation in a once-only
+     * block. */
     do {
       HeapSlot_Release(96);
       picture = HeapSlot_AllocEwram(96, 0x2000);
@@ -111,14 +111,13 @@ void FieldPsynergy_Unnamed28(void) {
     Iwram_FillWordsEntry(picture, 0x2000, 0);
 
     wait(1);
-    Dma_Set(picture, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
-            REG_DMA3);
+    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0),
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
     {
       s32 control;
 
       control = 0x480;
-      // An empty once-only loop keeps the register's address after the
-      // control value; without it, 2 of 563 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       REG_BG0CNT = control;
@@ -166,16 +165,14 @@ void FieldPsynergy_Unnamed28(void) {
         if (mote->timer == 0) {
           s32 heading = angle + ((i & 1) << 15);
 
-          mote->x = caster->x;
-          mote->y = caster->y + 0x100000;
-          mote->z = caster->z;
-          Vector_AddPolarOffset(0x370000, heading, &mote->x);
+          SET_POSITION(mote, caster->x, caster->y + 0x100000, caster->z);
+          Vector_AddPolarOffset(px(55), heading, &mote->x);
           Vector_AddPolarOffset(Random16() * 6, Random16(), &mote->x);
         }
         if ((u32)mote->timer <= 15) {
           sprite->oam.index = tile + (mote->timer & 3) * 2;
           EffectSprite_DrawAtWorldPosition(sprite, mote);
-          mote->y += -0x10000;
+          mote->y += -px(1);
         }
         mote->timer++;
         if (repeat && mote->timer == 16)
@@ -214,8 +211,8 @@ void FieldPsynergy_Unnamed28(void) {
 
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingArcs),
                         picture);
-    Dma_Set(picture, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
-            REG_DMA3);
+    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0),
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data1ED), work);
     {
       s32 heading;
@@ -235,13 +232,13 @@ void FieldPsynergy_Unnamed28(void) {
         sprite->oam.priority = 0;
         sprite->oam.palette256 = 0;
         sprite->oam.palette = 15;
-        sprite->angle = heading + 0x4000;
+        sprite->angle = heading + TRIG_TURN / 4;
         place = position;
         place[0] = scene->mainObject->x;
         place[1] = scene->mainObject->y + 0x100000;
         place[2] = scene->mainObject->z;
         Camera_WorldToScreen(place);
-        Vector_AddPolarOffset(0x400000, heading, place);
+        Vector_AddPolarOffset(px(64), heading, place);
         mote->x = place[0];
         mote->y = place[2];
         mote->timer = -i;
@@ -273,8 +270,8 @@ struct BurstMote {
 /* VIEW(f0e82cc): tag struct BurstWork as struct BurstWork__f0e82cc; f0e2c38.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:6871: structure has no member
- * named `motes'. */
+ * games/tla/src/field/event_commands/radial/unnamed_28.c:337: structure has no
+ * member named `motes'. */
 struct BurstWork__f0e82cc {
   u8 unk0000[0x1000];
   struct EffectSprite sprites[64];
@@ -319,10 +316,9 @@ void FieldPsynergy_EndUnnamed28(void) {
   event->unkcae = 0;
   Task_Remove(FieldPsynergy_UpdateUnnamed28);
   wait(1);
-  // A once-only block: its end holds the order around it (as plain
-  // statements, 6 of 226 differ in tla-en).
+  /* FAKEMATCH(dead): a once-only block. */
   do {
-    Sound_PlayFar(167);
+    Sound_PlayFar(SE_MAP_TRANSITION);
     {
       s32 (*fill)(void *, s32, u32);
       // A once-only block: the fill's entry loads ahead of the size (as a
@@ -330,13 +326,12 @@ void FieldPsynergy_EndUnnamed28(void) {
       do {
       } while (0);
       fill = Iwram_FillWordsEntry;
-      fill((void *)0x06002000, 0x500, 0xf000f000);
+      fill((void *)BG_SCREEN_BLOCK(4), 0x500, 0xf000f000);
     }
     Window_LoadGraphics();
   } while (0);
   {
-    // A local that holds one constant: the control word is built with a
-    // shift; stored as a constant it loads from the pool (60 of 226 differ).
+    /* FAKEMATCH(temporary): the control word in a local of its own. */
     s32 control = 0x400;
 
     REG_BG0CNT = control;
@@ -355,9 +350,7 @@ void FieldPsynergy_EndUnnamed28(void) {
   sprite = work->sprites;
   for (; i < 64; i++, sprite++, mote++) {
     angle = Random16();
-    mote->x = actor->x;
-    mote->y = actor->y + 0x100000;
-    mote->z = actor->z;
+    SET_POSITION(mote, actor->x, actor->y + 0x100000, actor->z);
     Vector_AddPolarOffset(Random16() * 4 + 0x340000, angle, &mote->x);
     mote->vx = 0;
     mote->vy = -0x40000;
@@ -377,9 +370,7 @@ void FieldPsynergy_EndUnnamed28(void) {
     mote = work->motes;
     spark = work->sprites;
     for (i = 63; i >= 0; i--, spark++, mote++) {
-      /* FAKEMATCH(barrier): an empty asm that opens the loop's body, which
-       * keeps the index's 0xfffffc00 mask loaded inside the loop rather than
-       * hoisted to r9; without it, 36 of 226 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that opens the loop's body. */
       asm("");
       if (mote->timer >= 0) {
         spark->oam.index = tile + (mote->timer & 3) * 2;
@@ -440,36 +431,31 @@ void ViewMove_Start(s32 direction) {
 #if TLA_PATCH_1
   if (*(s32 *)map->unk0fc != 0) {
     if (direction & VIEW_MOVE_X) {
-      MapGrid_SetScreenShakeFar(0x30000, 0, 0x10000);
+      MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      MapGrid_SetScreenShakeFar(0, 0x30000, 0x10000);
+      MapGrid_SetScreenShakeFar(0, px(3), Q16_ONE);
       return;
     }
   }
 #endif
   if (event->controlMode == 3) {
     if (direction & VIEW_MOVE_X) {
-      MapGrid_SetScreenShakeFar(0x30000, 0, 0x10000);
+      MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      MapGrid_SetScreenShakeFar(0, 0x30000, 0x10000);
+      MapGrid_SetScreenShakeFar(0, px(3), Q16_ONE);
       return;
     }
   }
 
-  /* FAKEMATCH(barrier): an empty asm before the bounds are fetched, the first
-   * of three that lengthen viewX's and viewZ's lives so the allocator ranks
-   * them below the bounds; without it, 33 of 157 instructions differ in
-   * tla-ja. */
+  /* FAKEMATCH(barrier): an empty asm before the bounds are fetched. */
   __asm__("");
-  /* FAKEMATCH(barrier): the second; without it, 33 of 157 instructions differ
-   * in tla-ja. */
+  /* FAKEMATCH(barrier): a second empty asm. */
   __asm__("");
-  /* FAKEMATCH(barrier): the third; without it, 33 of 157 instructions differ
-   * in tla-ja. */
+  /* FAKEMATCH(barrier): a third empty asm. */
   __asm__("");
   Map_GetHeaderSizeFar(gMainRoutineWork.map, &bounds);
   minX = bounds.minX;
@@ -480,9 +466,7 @@ void ViewMove_Start(s32 direction) {
   right = maxX * 8;
   top = minZ * 8;
   bottom = maxZ * 8;
-  work->x = center->x;
-  work->y = center->y;
-  work->z = center->z;
+  SET_POSITION(work, center->x, center->y, center->z);
 
   work->edgeX = 0;
   if (viewX < left + VIEW_EDGE_MARGIN)
@@ -561,16 +545,14 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
     z = work->z;
   }
 
-  center->x = x;
-  center->y = work->y;
-  center->z = z;
+  SET_POSITION(center, x, work->y, z);
 }
 
 /* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc;
  * f0e2c38.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:7113: structure has no member
- * named `firstObjectId'. */
+ * games/tla/src/field/event_commands/radial/unnamed_28.c:572: structure has no
+ * member named `firstObjectId'. */
 struct EffectScene__f0e82cc {
   u8 unk00[0x18];
   s16 firstObjectId;

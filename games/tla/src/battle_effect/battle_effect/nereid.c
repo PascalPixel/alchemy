@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
@@ -44,7 +46,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   // spray band and the fire column into the work sheet, the sparks into the
   // sheet slot, and the transfer at three quarters.
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
@@ -67,10 +69,10 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
 
     // The formation enters from (256, 88), moving left and up.
     rise = 0;
-    focus.x = 256 << 16;
-    focus.y = 88 << 16;
-    velocity.x = -(16 << 16);
-    velocity.y = -(4 << 16);
+    focus.x = px(256);
+    focus.y = px(88);
+    velocity.x = -px(16);
+    velocity.y = -px(4);
     for (k = 0; k != 64; k++)
       work->particles[k].variant = -1;
     for (k = 0; k != 16; k++) {
@@ -92,7 +94,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION_RESOURCE, 2);
 
     for (frame = 0; frame != 124; frame++) {
-      if ((gInput.repeat & 3) && frame > 32 && frame <= 97)
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
         frame = 98;
       if (frame == 120)
         BattlePlayback_StartFar(134);
@@ -106,8 +108,8 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         focus.y += velocity.y;
         velocity.x = velocity.x * 58 / 64;
         velocity.y = velocity.y * 56 / 64;
-        if (focus.x < 120 << 16)
-          velocity.x += 0x8000;
+        if (focus.x < px(120))
+          velocity.x += px(1) / 2;
       }
       BattleEffect_PlaceFormationObjects(1, focus.x, focus.y);
 
@@ -149,11 +151,11 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 0)
-        Sound_PlayFar(164);
+        Sound_PlayFar(SE_SCATTER);
       if (frame == 32)
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       if (frame == 80)
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
 
       // Three columns of fire scroll up while the sparks burst.
       if (frame >= 32 && frame < 80) {
@@ -204,7 +206,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;
           if (frame > 80)
-            spark->velocityY += -0x8000;
+            spark->velocityY += -(px(1) / 2);
           else
             spark->velocityY += Data_08197998[k & 3];
           spark->velocityX = spark->velocityX * 62 / 64;
@@ -227,7 +229,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
                   BattleObject_GetFar(effect->actors[k])->object;
 
               BattleEffect_TintBattler(effect->actors[k], 7, 5, -1, 0);
-              target->velocityY = 0x48000;
+              target->velocityY = px(9) / 2;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)

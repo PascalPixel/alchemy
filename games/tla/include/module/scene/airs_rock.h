@@ -81,8 +81,8 @@ void Func_02002b88(void);
 
 struct Actor;
 
-extern char SceneId_Ov663Room1;
-extern char SceneId_Ov663Room2;
-extern char SceneId_Ov663Room3;
+extern char SceneId_AirsRock1;
+extern char SceneId_AirsRock2;
+extern char SceneId_AirsRock3;
 
 #endif

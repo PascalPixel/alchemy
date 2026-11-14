@@ -1,4 +1,5 @@
 #include "types.h"
+#include "fixed_math.h"
 #include "system/main_routine_work.h"
 #include "system/field_effect.h"
 #include "field/event.h"
@@ -26,5 +27,5 @@ void Effect_AdvanceMotionAndSpin(union FieldObject *object) {
   scaleRateX = effect->scaleRateX;
   effect->scaleX += scaleRateX;
   effect->scaleY += effect->scaleRateY;
-  effect->sprite->rotation += 0x1000;
+  effect->sprite->rotation += TRIG_TURN / 16;
 }

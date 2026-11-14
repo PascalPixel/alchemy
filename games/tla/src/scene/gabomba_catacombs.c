@@ -39,14 +39,12 @@ void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
 extern u32 gData_0200128c[];
 
-extern char SceneId_Ov673Room1;
-extern char SceneId_Ov673Room2;
-extern char SceneId_Ov673Room3;
-extern char SceneId_Ov673Room4;
-extern char SceneId_Ov673Room5;
+extern char SceneId_GabombaCatacombs1;
+extern char SceneId_GabombaCatacombs2;
+extern char SceneId_GabombaCatacombs3;
+extern char SceneId_GabombaCatacombs4;
+extern char SceneId_GabombaCatacombs5;
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001274_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   Cyclone_CopyTouchedCells(a, b, c, d, e, f, g);
@@ -99,7 +97,8 @@ void Actor_DepartInRing(s32 id);
   do {                                                                         \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);             \
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner,                     \
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
   } while (0)
 
 void GabombaCatacombs_FightMud(void) { Field_RequestDjinnBattle(8, 10); }
@@ -121,11 +120,11 @@ void Func_02000100(void) {
 
   Func_02001274_(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Get(0xf53) == 0) {
-    Actor_SetPosition(64, PIXELS(392), PIXELS(344));
+    Actor_SetPosition(64, 392, 344);
     if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
       LEADER_HOP();
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);
-      leader->velocityY = PIXELS(6);
+      leader->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -150,11 +149,11 @@ void Func_020001d4(void) { Import_EventSetExitRequest(5); }
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
                                                                                \
     Func_02001274_(n1, n2, 0, n3, 3, 56, n4);                                  \
-    Actor_SetPosition(n5, PIXELS(n6), PIXELS(n7));                             \
+    Actor_SetPosition(n5, n6, n7);                                             \
     if (leader->x >> 20 == n8 && leader->z >> 20 == n9) {                      \
       LEADER_HOP();                                                            \
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);    \
-      leader->velocityY = PIXELS(6);                                           \
+      leader->velocityY = px(6);                                               \
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);                    \
       Event_End();                                                             \
     }                                                                          \
@@ -170,13 +169,14 @@ void Func_020002e0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
-  Actor_SetPosition(10, PIXELS(152), PIXELS(264));
+  Actor_SetPosition(10, 152, 264);
   if (leader->x >> 20 == 9 && leader->z >> 20 == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, -16, 0);
-    leader->velocityY = PIXELS(6);
+    leader->velocityY = px(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Event_End();
   }
@@ -198,13 +198,14 @@ void Func_02000564(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(16, 13, 0, 4, 8, 61, 52);
-  Actor_SetPosition(8, PIXELS(280), PIXELS(296));
+  Actor_SetPosition(8, 280, 296);
   if (leader->x >> 20 == 17 && leader->z >> 20 == 18) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
-    leader->velocityY = PIXELS(6);
+    leader->velocityY = px(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Event_End();
   }
@@ -271,7 +272,7 @@ void Func_020008a0(struct Actor *object, s32 dz) {
   MapGrid_CheckCollision(object, &position);
   position.x = object->x;
   position.y = object->y;
-  position.z = object->z + 0x80000;
+  position.z = object->z + px(8);
   if (MapGrid_CheckCollision(object, &position) <= 0) {
     position.x = object->x + 0x5b333;
     position.y = object->y;
@@ -293,16 +294,16 @@ void Func_0200094c(void) {
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
-    steam = ((struct Actor *)Import_ActorCreate(
-        14, leader->x, leader->y + 0x60000, leader->z));
+    steam = ((struct Actor *)Import_ActorCreate(14, leader->x,
+                                                leader->y + px(6), leader->z));
     if (steam) {
       Actor_SetSpriteFlags(steam, 0);
       Actor_SelectAnimation(steam, 1);
       Actor_StartScript(steam, gData_0200128c);
     }
-    Sound_Play(0x26f);
+    Sound_Play(SE_623);
   }
-  Func_020008a0(leader, 0xd999);
+  Func_020008a0(leader, 55705);
 }
 
 s32 Func_020009bc(struct Actor *object) {
@@ -319,7 +320,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 
 void Func_020009d4(void) {
   struct Actor *follower = Actor_GetById(9);
-  struct Actor *statue = Actor_GetById(0x40);
+  struct Actor *statue = Actor_GetById(64);
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
   struct Actor *glow, *leader;
   s32 speed;
@@ -329,25 +330,25 @@ void Func_020009d4(void) {
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x403108, 1);
   PaletteFade_StartInterpolation(60);
-  FieldCamera_MoveTo(0xa80000, -1, 0x9e0000, 1);
-  Sound_Play(26);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 158, 1);
+  Sound_Play(MUS_026);
   Event_Wait(60);
   Actor_SetModeById(8, 2);
-  Sound_Play(0x240);
+  Sound_Play(SE_576);
   Event_Wait(60);
   Event_SetMessageId((s32)MsgByReachingThis);
   work += 0x1c4;
   TALK();
-  Actor_SetPosition(0x40, 0xa80000, 0x980000);
+  Actor_SetPosition(64, 168, 152);
   statue->motionFlags = 6;
-  statue->terrainHeight += 0x100000;
-  Sound_Play(220);
+  statue->terrainHeight += px(16);
+  Sound_Play(SE_SHIMMER);
   glow = ((struct Actor *)Import_ActorCreate(412, 0, 0, 0));
   Actor_StartScript(glow, gFieldEffect_MediumScript);
   Actor_SetSpriteColorMode(glow, 1);
   glow->motionFlags = 0;
   glow->x = statue->x;
-  glow->y = statue->y + 0x80000;
+  glow->y = statue->y + px(8);
   glow->z = statue->z;
   glow->terrainHeight = statue->terrainHeight;
   glow->update = Func_020009bc;
@@ -364,35 +365,37 @@ void Func_020009d4(void) {
   follower->speedLimit = speed;
   Actor_SetDestinationById(9, 184, 188);
   Actor_WaitForMoveById(9);
-  Actor_FaceDirection(9, 0x8000, 0);
+  Actor_FaceDirection(9, FACING_WEST, 0);
   Event_ShowMessageAndWait(9, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   TALK();
-  Actor_ShowEmoteById(9, 258, 0);
-  Actor_FaceDirection(9, 0xb000, 0);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(9, 0);
   TALK();
-  Actor_ShowEmote(9, 261, 0);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(30);
   TALK();
-  Actor_ShowEmoteById(9, 265, 0);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(9, 0);
   TALK();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_ArmCallback(9, 0x8000, 0);
   Event_Wait(10);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-  Actor_ShowEmoteById(9, 257, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
   TALK();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
-  Actor_FaceDirection(9, 0xb000, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 261, 0);
-  Actor_ShowEmoteById(9, 261, 0);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(60);
   TALK();
   Event_Wait(40);
@@ -424,13 +427,13 @@ void Func_02000d90(void) {
   struct Actor *object = Actor_GetById(64);
 
   if (object != NULL && object->x != 0)
-    Scene_TalkToActor(0x1040);
+    Scene_TalkToActor(4160);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1)
     return (const struct SceneRegion *)gData_02001310;
   return 0;
 }
@@ -440,29 +443,29 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct Trigger gGabombaCatacombs_Triggers[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs2)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs3)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs4)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs5)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room5Placements;
   return (const struct ActorPlacement *)gGabombaCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1)
     return gGabombaCatacombs_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs2)
     return gGabombaCatacombs_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs3)
     return gGabombaCatacombs_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs4)
     return gGabombaCatacombs_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs5)
     return gGabombaCatacombs_Room5Triggers;
   return gGabombaCatacombs_Triggers;
 }
@@ -473,7 +476,7 @@ const struct Trigger *Scene_GetEvents(void) {
 #define CATACOMBS_SCREEN_EFFECT 516
 #endif
 
-extern char SceneId_Ov671Room7, SceneId_Ov672Room1;
+extern char SceneId_GabombaStatue7, SceneId_GabombaStatueChamber1;
 void FieldEffect_StartBlankOverlay(s32 a);
 
 s32 Scene_Initialize(void) {
@@ -483,45 +486,46 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       CATACOMBS_SCREEN_EFFECT;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {
     if (GameFlag_Get(0xa27)) {
-      gMainRoutineWork.retreatScene = (s32)&SceneId_Ov671Room7;
+      gMainRoutineWork.retreatScene = (s32)&SceneId_GabombaStatue7;
       gMainRoutineWork.retreatEntrance = entrance;
     } else if (GameFlag_Get(0xa28)) {
-      gMainRoutineWork.retreatScene = (s32)&SceneId_Ov672Room1;
+      gMainRoutineWork.retreatScene = (s32)&SceneId_GabombaStatueChamber1;
       gMainRoutineWork.retreatEntrance = 3;
     }
   }
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-      gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2 &&
+      gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs2 &&
       gMainRoutineWork.entrance > 2)
     Actor_DepartInRing(gMainRoutineWork.currentOwner);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3) {
-    if (GameFlag_Get(0x200))
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs3) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_00))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
-    if (GameFlag_Get(513))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_01))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
-    if (GameFlag_Get(514))
-      MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 0x10);
-    if (GameFlag_Get(515))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_02))
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 16);
+    if (GameFlag_Get(FLAG_SCENE_TEMP_03))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
-    if (GameFlag_Get(516))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_04))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
-    if (GameFlag_Get(517))
-      MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 0x10);
-    if (GameFlag_Get(518))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_05))
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 16);
+    if (GameFlag_Get(FLAG_SCENE_TEMP_06))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 && GameFlag_Get(0x200))
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs5 &&
+      GameFlag_Get(FLAG_SCENE_TEMP_00))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs4 &&
       GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    statue = Actor_GetById(0x40);
-    Actor_SetPosition(0x40, 0xa80000, 0x980000);
+    statue = Actor_GetById(64);
+    Actor_SetPosition(64, 168, 152);
     statue->motionFlags = 6;
-    statue->terrainHeight += 0x100000;
+    statue->terrainHeight += px(16);
   }
   return 0;
 }
@@ -533,7 +537,12 @@ u32 gData_0200128c[] = {
     0, 15, 3, 0, 1, 38,
 };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -546,23 +555,23 @@ u32 gData_02001310[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(126),
-    SCENE_EXIT(1, 124, 2),
-    SCENE_EXIT(2, 127, 1),
-    SCENE_EXIT(3, 127, 3),
-    SCENE_EXIT(4, 127, 4),
-    SCENE_EXIT(5, 127, 5),
-    SCENE_EXITS(127),
-    SCENE_EXIT(1, 126, 2),
-    SCENE_EXIT(2, 128, 1),
-    SCENE_EXITS(128),
-    SCENE_EXIT(1, 127, 2),
-    SCENE_EXIT(2, 130, 1),
-    SCENE_EXITS(129),
-    SCENE_EXIT(1, 130, 2),
-    SCENE_EXITS(130),
-    SCENE_EXIT(1, 128, 2),
-    SCENE_EXIT(2, 129, 1),
+    SCENE_EXITS(GabombaCatacombs1),
+    SCENE_EXIT(1, GabombaStatueChamber3, 2),
+    SCENE_EXIT(2, GabombaCatacombs2, 1),
+    SCENE_EXIT(3, GabombaCatacombs2, 3),
+    SCENE_EXIT(4, GabombaCatacombs2, 4),
+    SCENE_EXIT(5, GabombaCatacombs2, 5),
+    SCENE_EXITS(GabombaCatacombs2),
+    SCENE_EXIT(1, GabombaCatacombs1, 2),
+    SCENE_EXIT(2, GabombaCatacombs3, 1),
+    SCENE_EXITS(GabombaCatacombs3),
+    SCENE_EXIT(1, GabombaCatacombs2, 2),
+    SCENE_EXIT(2, GabombaCatacombs5, 1),
+    SCENE_EXITS(GabombaCatacombs4),
+    SCENE_EXIT(1, GabombaCatacombs5, 2),
+    SCENE_EXITS(GabombaCatacombs5),
+    SCENE_EXIT(1, GabombaCatacombs3, 2),
+    SCENE_EXIT(2, GabombaCatacombs4, 1),
     SCENE_EXITS_END,
 };
 
@@ -575,22 +584,31 @@ struct ActorPlacement gGabombaCatacombs_Room1Placements[] = {
 };
 
 struct ActorPlacement gGabombaCatacombs_Room2Placements[] = {
-    {243, 0x3a, 1, PIXELS(728), 0, PIXELS(312), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(243, 0x3a, MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020013D8(gGabombaCatacombs_Room3Placements, 290, 0, 0, 0, 290, 0, 0, 0, 0)
+struct ActorPlacement gGabombaCatacombs_Room3Placements[] = {                                             
+      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {SCENE_TABLE_END},                                                       
+  };
 
 struct ActorPlacement gGabombaCatacombs_Room4Placements[] = {
-    {375, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(152), FACING_SOUTH, 2, 0},
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {386, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(184), FACING_SOUTH, 2, 0},
-    {386, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(375, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gGabombaCatacombs_Room5Placements[] = {
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -600,7 +618,7 @@ struct Trigger gGabombaCatacombs_Triggers[] = {
 };
 
 struct Trigger gGabombaCatacombs_Room1Triggers[] = {
-    {0x31, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
      CONDITION_ALWAYS, EVENT(Func_02000044)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
@@ -613,15 +631,16 @@ struct Trigger gGabombaCatacombs_Room1Triggers[] = {
 };
 
 struct Trigger gGabombaCatacombs_Room2Triggers[] = {
-    {0x21, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(GabombaCatacombs_FightMud)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_FightMud)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGabombaCatacombs_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x31, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Func_0200066c)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -657,7 +676,7 @@ struct Trigger gGabombaCatacombs_Room3Triggers[] = {
 };
 
 struct Trigger gGabombaCatacombs_Room4Triggers[] = {
-    {0x31, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 40, 0x9ce, EVENT(Func_020009d4)},
     {TRIGGER_TALK, 8, 0xf93, EVENT(Func_02000d90)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
@@ -668,8 +687,8 @@ struct Trigger gGabombaCatacombs_Room4Triggers[] = {
 };
 
 struct Trigger gGabombaCatacombs_Room5Triggers[] = {
-    {0x21, 1, CONDITION_ALWAYS, 1},
-    {0x21, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40,
      CONDITION_ALWAYS, EVENT(Func_020000a0)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,

@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -108,9 +111,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   s32 i;
-  /* FAKEMATCH(dead): seven locals nothing uses, which raise camera's
-   * register number so gcse's hash puts camera->pos after frame << 8; as no
-   * locals, 8 of 828 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): seven locals nothing uses. */
   s32 unused1;
   s32 unused2;
   s32 unused3;
@@ -146,7 +147,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C4, work->sheet + 0x1000, 0,
@@ -177,16 +178,10 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   }
 
   frame = 0;
-  /* FAKEMATCH(dead): pos first takes the camera's look-at point, a store the
-   * loop's pos = &screen overwrites, so gcse copies camera->pos from here
-   * instead of inserting it after pos in the loop's preheader; without it, 16
-   * of 828 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): pos first takes the camera's look-at point. */
   pos = (struct EffectPosition *)camera->pos;
   /* FAKEMATCH(dead): the texture's address, computed as center's address
-   * less 8 so the bolts still take texture's own address first (their
-   * bit-field stores then stay one word), stored in vertices, which is set
-   * again before any read, so gcse copies it from here ahead of pos in the
-   * loop's preheader; without it, 8 of 828 instructions differ in tla-en. */
+   * less 8. */
   vertices = (s16 *)((s32)&center - 8);
   for (pos = &screen; frame != LIGHT_SURGE_FRAMES; frame++) {
     if (frame == 64) {
@@ -211,12 +206,12 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
 
         fall->x = Trig_Sin(angle) * radius;
         fall->z = Trig_Cos(angle) * radius;
-        fall->y = 0x6e0000;
+        fall->y = px(110);
         radius = (Random16() & 31) + 4;
         fall->velocityX = target->x + Trig_Sin(angle) * radius;
         z = target->z + Trig_Cos(angle) * radius;
         fall->velocityZ = z;
-        fall->velocityY = -0x80000;
+        fall->velocityY = -(px(8));
         fall->velocityX = (fall->velocityX - fall->x) / 6;
         fall->velocityY = (-0x80000 - fall->y) / 6;
         fall->velocityZ = (z - fall->z) / 6;
@@ -322,9 +317,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         head[1] = bolt->y + bolt->velocityY * (bolt->variant - 12);
         head[2] = bolt->z + bolt->velocityZ * (bolt->variant - 12);
         if (bolt->variant == 16) {
-          glow->x = head[0];
-          glow->y = head[1];
-          glow->z = head[2];
+          SET_POSITION(glow, head[0], head[1], head[2]);
           glow->velocityX = (Random16() & 15) + 8;
           glow->variant = 0;
         }
@@ -348,13 +341,11 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         head[2] = bolt->z + bolt->velocityZ * 6;
       }
       if (bolt->variant == 6) {
-        flash->x = head[0];
-        flash->y = head[1];
-        flash->z = head[2];
+        SET_POSITION(flash, head[0], head[1], head[2]);
         flash->velocityX = (Random16() & 7) + 24;
         flash->variant = 0;
         work->shakeFrames = 4;
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
       }
@@ -375,23 +366,20 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       model->kind = 6;
       model->mesh = Data_08199244;
       for (i = 0; i != 4; i++) {
-        s32 sway = Trig_Sin((frame << 8) + 0x1000);
-        s32 x =
-            ((center.x / 2 - 64) << 16) -
-            (Data_08198c10[i] * sway / 0x10000) * Trig_Sin((s16)camera->yaw);
-        s32 z =
-            -((Data_08198c10[i] * sway / 0x10000) * Trig_Cos((s16)camera->yaw));
+        s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
+        s32 x = ((center.x / 2 - 64) << 16) -
+                (Data_08198c10[i] * sway / (TRIG_TURN)) *
+                    Trig_Sin((s16)camera->yaw);
+        s32 z = -((Data_08198c10[i] * sway / (TRIG_TURN)) *
+                  Trig_Cos((s16)camera->yaw));
         s32 growth;
         u32 scale;
 
-        /* FAKEMATCH(dead): a store both arms below overwrite; its test builds
-         * 300 in a reload register, the one pick before frame's reload that
-         * sends it to r1; without it, 10 of 828 instructions differ in
-         * tla-en. */
+        /* FAKEMATCH(dead): a store both arms below overwrite. */
         if (i == 300)
           growth = 0;
         if (frame <= 47) {
-          growth = Trig_Sin((frame << 9) - 0x2000);
+          growth = Trig_Sin((frame << 9) - TRIG_TURN / 8);
         } else {
           growth = 0x10000;
         }
@@ -413,9 +401,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     }
     Heap_Release(model);
     Heap_Release(vertices);
-    /* FAKEMATCH(dead): a read of shade the compiler folds to nothing, which
-     * keeps shade in its stack slot; as a plain 4, 283 of 828 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): a read of shade the compiler folds to nothing. */
     BattleCamera_Shake(4 + ((shade & 255) >> 8), 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;

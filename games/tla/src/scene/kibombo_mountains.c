@@ -6,8 +6,7 @@
 /// (KibomboMountains_FightWaft).
 
 #include "flags.h"
-#include "shared/map_cells.h"
-#include "shared/actors.h"
+#include "item_ids.h"
 #include "field/field.h"
 #include "types.h"
 #include "actor.h"
@@ -85,7 +84,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-DEFINE_ACTOR_BOB(Actor_Bob)
+#include "shared/actor_bob.h"
 
 extern struct ActorPlacement gKibomboMountains_Placements[];
 extern struct ActorPlacement gKibomboMountains_Room1Placements[];
@@ -94,22 +93,29 @@ extern struct ActorPlacement gKibomboMountains_Room2Placements[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov66fRoom1)
+  if (scene == (s32)&SceneId_KibomboMountains1)
     return gKibomboMountains_Room1Placements;
-  if (scene == (s32)&SceneId_Ov66fRoom2)
+  if (scene == (s32)&SceneId_KibomboMountains2)
     return gKibomboMountains_Room2Placements;
   return gKibomboMountains_Placements;
 }
 
-DEFINE_PILLAR_SET_MOVED(Pillar_SetMoved, 11, 24, 32, 22, 0x221)
+void Pillar_SetMoved(void) {
+  struct Actor *object = Actor_Get(11);
+
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
+  Event_SetFlag(0x221);
+}
 
 void Func_02000124(void) {
   MapGrid_CopyCellAttributes(30, 35, 1, 1, 28, 34);
   MapGrid_CopyCellAttributes(30, 34, 1, 1, 28, 33);
-  Event_SetFlag(0x222);
+  Event_SetFlag(FLAG_SCENE_TEMP_22);
 }
 
-DEFINE_ACTOR_WAIT_TO_LAND(Actor_WaitToLand)
+#include "shared/actor_wait_to_land.h"
 
 void Func_02000190(s32 unused, s32 id) {
   if (id == 15)
@@ -131,25 +137,25 @@ void Func_020001a0(s32 unused, s32 id) {
     s32 z;
     s32 cell;
 
-    if (!Event_GetFlag(0x223) && (x = block->x >> 20) == 47 &&
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_23) && (x = block->x >> 20) == 47 &&
         (z = block->z >> 20) == 28) {
       Actor_WaitToLand(14);
       MapGrid_CopyCellAttributes(49, 28, 1, 1, x, z);
-      Event_SetFlag(0x223);
+      Event_SetFlag(FLAG_SCENE_TEMP_23);
       Actor_SetSpritePriority(14, 2);
       other = Actor_GetById(10);
       cell = other->z >> 20;
       if (cell == 27) {
-        Sound_Play(257);
+        Sound_Play(SE_VOICE_ANIMAL_2);
         other->z = 220 << 17;
       } else if (cell == 28 || cell == 29) {
-        Sound_Play(258);
+        Sound_Play(SE_VOICE_ANIMAL_3);
         other->z = 236 << 17;
       }
       if (block->z < other->z)
-        Event_SetFlag(0x201);
+        Event_SetFlag(FLAG_SCENE_TEMP_01);
       else
-        Event_SetFlag(0x203);
+        Event_SetFlag(FLAG_SCENE_TEMP_03);
     } else {
       Actor_SetSpritePriority(id, 1);
     }
@@ -158,29 +164,30 @@ void Func_020001a0(s32 unused, s32 id) {
     struct Actor *block = Actor_GetById(15);
     struct Actor *other;
 
-    if (!Event_GetFlag(0x224) && block->x >> 20 == 53 && block->z >> 20 == 36) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_24) && block->x >> 20 == 53 &&
+        block->z >> 20 == 36) {
       s32 dx;
 
       Actor_WaitToLand(15);
       Actor_SetSpritePriority(15, 2);
       other = Actor_GetById(9);
       dx = block->x - other->x;
-      if (dx >= 0 ? dx < 0x80000 : other->x - block->x < 0x80000) {
+      if (dx >= 0 ? dx < 0x80000 : other->x - block->x < px(8)) {
         other->motionFlags = 0;
-        other->speedLimit = 0x10000;
-        FieldActor_SetMoveTarget(other, block->x, block->y, block->z);
+        other->speedLimit = px(1);
+        FieldActor_SetMoveTargetFixed(other, block->x, block->y, block->z);
         FieldActor_WaitForMove(other);
         Actor_StartScript(block, gData_02001404);
         Actor_StartIdle(other);
         other->x = 0;
         other->z = 0;
-        Event_SetFlag(0x200);
+        Event_SetFlag(FLAG_SCENE_TEMP_00);
       } else {
-        Call3((void (*)())Iwram_CopyWordsEntry, (s32)&saved, (s32)other, 128);
+        Iwram_CopyWords((s32)&saved, (s32)other, 128);
         Actor_ResetTargetsAndVelocity(9);
         FieldActor_Jump(9, 4, 0);
         FieldEvent_Wait(30);
-        Actor_ShowEmote(9, 257, 0);
+        Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
         Actor_FaceActor(9, 15, 0);
         FieldEvent_Wait(60);
         Actor_SetAnimationAndWait(9, 4);
@@ -190,7 +197,7 @@ void Func_020001a0(s32 unused, s32 id) {
           Iwram_CopyWordsEntry(other, from, 128);
         }
         MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
-        Event_SetFlag(0x224);
+        Event_SetFlag(FLAG_SCENE_TEMP_24);
       }
     }
   }
@@ -201,17 +208,18 @@ void Func_0200036c(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetDestination(17, 764, 384);
   Actor_MoveToAndWait(16, 746, 380);
-  Actor_Get(17)->velocityY = PIXELS(4);
+  Actor_Get(17)->velocityY = px(4);
   FieldActor_WaitForMoveById(17);
   Actor_Get(17)->priorityFlags |= 2;
-  if (!Event_GetFlag(0x8ff) && !Event_GetFlag(0x201)) {
+  if (!Event_GetFlag(0x8ff) && !Event_GetFlag(FLAG_SCENE_TEMP_01)) {
     FieldActor_Stop(10);
     Actor_MoveToAndWait(10, 764, 388);
     Actor_SetDestination(17, 764, 376);
     Actor_WalkToAndWait(10, 764, 380);
     Actor_SetAnimation(10, 4);
-    Actor_SetAttachedEffect(10, 257);
-    Event_SetFlag(0x202);
+    Actor_SetAttachedEffect(10,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+    Event_SetFlag(FLAG_SCENE_TEMP_02);
   }
   Event_End();
 }
@@ -220,9 +228,23 @@ void Func_02000428(void) { GameFlag_Set(0x882); }
 
 void Func_02000438(void) { Field_TryJumpForward(); }
 
-DEFINE_PILLAR_SET_MOVED(Func_02000440, 18, 6, 16, 4, 0x210)
+void Func_02000440(void) {
+  struct Actor *object = Actor_Get(18);
 
-DEFINE_PILLAR_SET_MOVED(Func_02000478, 19, 8, 30, 10, 0x211)
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
+  Event_SetFlag(0x210);
+}
+
+void Func_02000478(void) {
+  struct Actor *object = Actor_Get(19);
+
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
+  Event_SetFlag(0x211);
+}
 
 void Func_020004b0(s32 unused, s32 cell) {
   if (cell == 16 || cell == 17)
@@ -288,11 +310,11 @@ extern s16 gKibomboMountains_Room3Triggers[];
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov66fRoom1)
+  if (scene == (s32)&SceneId_KibomboMountains1)
     return gKibomboMountains_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov66fRoom2)
+  if (scene == (s32)&SceneId_KibomboMountains2)
     return gKibomboMountains_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov66fRoom3)
+  if (scene == (s32)&SceneId_KibomboMountains3)
     return gKibomboMountains_Room3Triggers;
   return gKibomboMountains_Triggers;
 }
@@ -316,55 +338,56 @@ s32 Scene_Initialize(void) {
       EVENT_WORK_VALUE;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov66fRoom1) {
+  if (scene == (s32)&SceneId_KibomboMountains1) {
     Actor_SetSpritePriority(18, 1);
     Actor_SetSpritePriority(19, 1);
     Actor_SetSpriteFlags(Actor_GetById(19), 0);
     Actor_GetById(19)->collisionFlags = 0;
     Actor_GetById(19)->priorityFlags |= 2;
     Actor_GetById(12)->collisionFlags = 0;
-    if (GameFlag_Get(0x222)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_22)) {
       Map_CopyCellAttributeRect(30, 35, 1, 1, 28, 34);
       Map_CopyCellAttributeRect(30, 34, 1, 1, 28, 33);
     }
-    if (GameFlag_Get(0x221))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_21))
       MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
-    if (GameFlag_Get(0x223))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_23))
       MapGrid_CopyCellAttributes(49, 28, 1, 1, 47, 28);
     else
       Actor_SetSpritePriority(14, 1);
-    if (GameFlag_Get(0x224))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_24))
       MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
-    flag = GameFlag_Get(0x202);
+    flag = GameFlag_Get(FLAG_SCENE_TEMP_02);
     if (flag == 0) {
       struct Actor *lift;
 
       Actor_GetById(16)->priorityFlags |= 0x80;
       lift = Actor_GetById(17);
       lift->priorityFlags |= 0x40;
-      lift->y = 0xe00000;
-      lift->terrainHeight = 0xe00000;
+      lift->y = px(224);
+      lift->terrainHeight = px(224);
       lift->collisionFlags = flag;
     } else {
-      Actor_SetAttachedEffect(10, 257);
+      Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT |
+                                      ATTACHED_EFFECT_ATTACH);
     }
-    Actor_ShowItemIconById(17, 231);
+    Actor_ShowItemIconById(17, ITEM_BONE);
     if (GameFlag_Get(0x882))
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     else
-      Actor_GetById(13)->scaleY = 0x14000;
-  } else if (scene == (s32)&SceneId_Ov66fRoom2) {
+      Actor_GetById(13)->scaleY = Q16_ONE * 5 / 4;
+  } else if (scene == (s32)&SceneId_KibomboMountains2) {
     Actor_SetSpritePriority(8, 1);
     Actor_SetSpritePriority(9, 1);
     Rope_Initialize();
     Rope_Place(0, 0x9e8, 8, 9);
-    if (GameFlag_Get(0x210))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_10))
       MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
-    if (GameFlag_Get(0x211))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_11))
       MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
     if (GameFlag_Get(0x8e7)) {
       object = Actor_GetById(20);
-      Actor_SetPosition(20, 0x480000, 0x1c80000);
+      Actor_SetPosition(20, 72, 456);
       object->motionFlags = 0;
       height = Map_GetTerrainHeight(0, object->x, object->z);
       object->terrainHeight = height;
@@ -373,7 +396,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(0x8e8)) {
       object = Actor_GetById(13);
-      Actor_SetPosition(13, 0x1c80000, 0x1e80000);
+      Actor_SetPosition(13, 456, 488);
       object->motionFlags = 0;
       height = Map_GetTerrainHeight(0, object->x, object->z);
       object->terrainHeight = height;
@@ -399,9 +422,9 @@ void Func_02000960(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgIsTheWay);
-  Actor_SetPosition(27, PIXELS(312), PIXELS(304));
+  Actor_SetPosition(27, 312, 304);
   Event_ShowMessage(27, 0);
-  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(392), 1);
+  FieldCamera_MoveTo(256, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   Actor_ResetTargetsAndVelocity(11);
   Actor_FaceActor(11, 27, 0);
@@ -414,13 +437,13 @@ void Func_02000960(void) {
   Actor_SetAnimationAndWait(27, 4);
   Event_ShowMessage(27, 0);
   Event_ShowMessage(27, 0);
-  Actor_ShowEmote(11, 258, 30);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessage(11, 0);
-  Actor_ShowEmote(27, 256, 30);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(27, 0);
   Actor_SetAnimationAndWait(11, 3);
   Event_ShowMessage(11, 0);
-  Actor_ShowEmote(27, 258, 30);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessage(27, 0);
   Actor_WalkToAndWait(27, 264, 312);
   Actor_WalkTo(27, 360, 312);
@@ -441,8 +464,8 @@ void Func_02000ad4(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   Actor_SelectAnimation(object, 1);
-  object->acceleration = 0x4000;
-  object->speedLimit = 0x8000;
+  object->acceleration = px(1) / 4;
+  object->speedLimit = px(1) / 2;
 }
 
 void Func_02000af0(void) {
@@ -450,12 +473,12 @@ void Func_02000af0(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetPosition(23, PIXELS(248), PIXELS(472));
-  Actor_SetPosition(24, PIXELS(264), PIXELS(472));
-  Actor_SetPosition(25, PIXELS(235), PIXELS(483));
-  Actor_SetPosition(26, PIXELS(232), PIXELS(496));
-  Actor_SetPosition(27, PIXELS(277), PIXELS(483));
-  Actor_SetPosition(28, PIXELS(280), PIXELS(496));
+  Actor_SetPosition(23, 248, 472);
+  Actor_SetPosition(24, 264, 472);
+  Actor_SetPosition(25, 235, 483);
+  Actor_SetPosition(26, 232, 496);
+  Actor_SetPosition(27, 277, 483);
+  Actor_SetPosition(28, 280, 496);
   Func_02000ad4(owner);
   Func_02000ad4(23);
   Func_02000ad4(24);
@@ -466,19 +489,19 @@ void Func_02000af0(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId(MsgHereTheIntruder);
-  Actor_ShowEmote(27, 259, 30);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   Event_ShowMessage(27, 0);
   Actor_FaceActor(27, 25, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(25, 3);
   Actor_FaceActor(27, owner, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(27, 263, 30);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(27, 0);
   Actor_SetAnimationAndWait(27, 3);
   Event_ShowMessage(27, 0);
   Actor_FaceActor(25, 23, 0);
-  Actor_ShowEmote(25, 256, 30);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(25, 0);
   Actor_WalkTo(23, 248, 536);
   FieldEvent_Wait(1);
@@ -515,12 +538,12 @@ void Func_02000af0(void) {
   Actor_SetPosition(27, 0, 0);
   Actor_SetPosition(28, 0, 0);
   Event_End();
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
 }
 
 void Func_02000d80(void) {
-  s32 moved = Event_GetFlag(0x300);
-  s32 scene = (s32)&SceneId_Ov66fRoom2;
+  s32 moved = Event_GetFlag(FLAG_AREA_TEMP_00);
+  s32 scene = (s32)&SceneId_KibomboMountains2;
 
   if (moved)
     Event_SetDestination(scene, 9);
@@ -534,15 +557,17 @@ void Func_02000da8(s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_ResetTargetsAndVelocity(id);
-  Actor_ShowEmote(id, 0x100, 30);
+  Actor_ShowEmote(id, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(id, owner, 20);
   FieldEvent_SetMessageId(MsgGuardsAnIntruder);
   Event_ShowMessage(id, 0);
-  Actor_SetAttachedEffect(owner, 0x101);
+  Actor_SetAttachedEffect(owner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(id, 4);
   FieldEvent_Wait(30);
   Event_ShowMessage(id, 0);
-  Actor_SetAttachedEffect(owner, 0x100);
+  Actor_SetAttachedEffect(owner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Func_02000d80();
   Event_End();
 }
@@ -553,15 +578,17 @@ void Func_02000e28(s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_Stop(id);
-  Actor_ShowEmote(id, 0x100, 30);
+  Actor_ShowEmote(id, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(id, owner, 20);
   FieldEvent_SetMessageId(MsgGrrrrrRrrruffRrufff);
   Event_ShowMessage(id, 0);
-  Actor_SetAttachedEffect(owner, 0x101);
+  Actor_SetAttachedEffect(owner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(id, 4);
   FieldEvent_Wait(30);
   Event_ShowMessage(8, 0);
-  Actor_SetAttachedEffect(owner, 0x100);
+  Actor_SetAttachedEffect(owner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Func_02000d80();
   Event_End();
 }
@@ -604,22 +631,22 @@ void Func_02000f84(void) { Func_02000da8(8); }
 void Func_02000f90(void) { Func_02000da8(8); }
 
 void Func_02000f9c(void) {
-  if (!Event_GetFlag(514) && !Event_GetFlag(513))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_02) && !Event_GetFlag(FLAG_SCENE_TEMP_01))
     Func_02000e28(10);
 }
 
 void Func_02000fc4(void) {
-  if (!Event_GetFlag(512))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
     Func_02000da8(9);
 }
 
 void Func_02000fdc(void) {
-  if (!Event_GetFlag(512))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
     Func_02000da8(9);
 }
 
 void Func_02000ff4(void) {
-  if (!Event_GetFlag(515) && !Event_GetFlag(514))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_03) && !Event_GetFlag(FLAG_SCENE_TEMP_02))
     Func_02000e28(10);
 }
 
@@ -640,7 +667,7 @@ u32 gData_020011a4[] = {
     SC_END,
     SC_ARG(0),
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, PIXELS(24)),
+    SC_ADD(SW_Y, px(24)),
     SC_END,
 };
 
@@ -650,23 +677,23 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(107),
-    SCENE_EXIT_IF(1, 2, 26, -1),
-    SCENE_EXIT_IF(2, 108, 2, -1),
-    SCENE_EXIT_IF(3, 108, 3, -1),
-    SCENE_EXIT_IF(4, 108, 4, -1),
-    SCENE_EXIT_IF(5, 109, 1, -1),
-    SCENE_EXIT_IF(6, 109, 2, -1),
-    SCENE_EXIT_IF(7, 109, 3, -1),
-    SCENE_EXITS(108),
-    SCENE_EXIT_IF(1, 2, 25, -1),
-    SCENE_EXIT_IF(2, 107, 2, -1),
-    SCENE_EXIT_IF(3, 107, 3, -1),
-    SCENE_EXIT_IF(4, 107, 4, -1),
-    SCENE_EXITS(109),
-    SCENE_EXIT_IF(1, 107, 5, -1),
-    SCENE_EXIT_IF(2, 107, 6, -1),
-    SCENE_EXIT_IF(3, 107, 7, -1),
+    SCENE_EXITS(KibomboMountains1),
+    SCENE_EXIT_UNLESS(1, WorldMap, 26, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, KibomboMountains2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, KibomboMountains2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, KibomboMountains2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, KibomboMountains3, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, KibomboMountains3, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, KibomboMountains3, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(KibomboMountains2),
+    SCENE_EXIT_UNLESS(1, WorldMap, 25, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, KibomboMountains1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, KibomboMountains1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, KibomboMountains1, 4, EXIT_FLAG_NONE),
+    SCENE_EXITS(KibomboMountains3),
+    SCENE_EXIT_UNLESS(1, KibomboMountains1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, KibomboMountains1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, KibomboMountains1, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -696,7 +723,30 @@ u32 gData_020012ac[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-DEFINE_G_DATA_02001334(gData_02001334, 856, 584, 792)
+u32 gData_02001334[] = {                                                               
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_ARG(2),                                                               
+      SC_MOVE(px(856), 0, px(584)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),                       
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(px(792), 0, px(584)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 s32 gData_02001404[] = {
     SC_CALL(Actor_Bob),
@@ -708,91 +758,137 @@ u32 gData_02001410[] = {
     SC_SET(SW_ACCEL, 0x4000),
     SC_SET(SW_COLLISION, 129),
     SC_ARG(3),
-    SC_SET(SW_VELOCITY_Y, PIXELS(3)),
-    SC_MOVE(PIXELS(760), 0, PIXELS(488)),
+    SC_SET(SW_VELOCITY_Y, px(3)),
+    SC_MOVE(px(760), 0, px(488)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(764), 0, PIXELS(472)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(764), 0, px(472)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(760), 0, PIXELS(456)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(760), 0, px(456)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(764), 0, PIXELS(440)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(764), 0, px(440)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(760), 0, PIXELS(424)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(760), 0, px(424)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(764), 0, PIXELS(408)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(764), 0, px(408)),
     SC_SYNC,
-    SC_MOVE(PIXELS(760), 0, PIXELS(392)),
+    SC_MOVE(px(760), 0, px(392)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(3)),
-    SC_MOVE(PIXELS(764), 0, PIXELS(408)),
+    SC_SET(SW_VELOCITY_Y, px(3)),
+    SC_MOVE(px(764), 0, px(408)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(760), 0, PIXELS(424)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(760), 0, px(424)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(764), 0, PIXELS(440)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(764), 0, px(440)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(760), 0, PIXELS(456)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(760), 0, px(456)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(764), 0, PIXELS(472)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(764), 0, px(472)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, PIXELS(2)),
-    SC_MOVE(PIXELS(760), 0, PIXELS(488)),
+    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_MOVE(px(760), 0, px(488)),
     SC_SYNC,
-    SC_MOVE(PIXELS(764), 0, PIXELS(504)),
+    SC_MOVE(px(764), 0, px(504)),
     SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 struct ActorPlacement gKibomboMountains_Room1Placements[] = {
-    {83, 0x8ff, (s32)gData_020012ac, PIXELS(616), 0, PIXELS(328), FACING_NORTH, 2, 0},
-    {83, 0x8ff, (s32)gData_02001334, PIXELS(824), 0, PIXELS(584), FACING_NORTH, 2, 0},
-    {189, 0x8ff, (s32)gData_02001410, PIXELS(760), 0, PIXELS(488), FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(520), FACING_NORTH, 2, 0},
-    {299, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(544), FACING_NORTH, 2, 0},
-    {307, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(320), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gData_02001284, PIXELS(712), 0, PIXELS(472), FACING_NORTH, 2, 0},
-    {287, CONDITION_ALWAYS, (s32)gData_02001284, PIXELS(888), 0, PIXELS(552), FACING_NORTH, 2, 0},
-    {288, CONDITION_ALWAYS, 1, PIXELS(732), 0, PIXELS(376), FACING_NORTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(732), 0, PIXELS(376), FACING_NORTH, 2, 0},
-    {246, 0x76, 1, PIXELS(440), 0, PIXELS(472), FACING_SOUTH, 0, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(584), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(83, 0x8ff, (s32)gData_020012ac, 616, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, 0x8ff, (s32)gData_02001334, 824, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(189, 0x8ff, (s32)gData_02001410, 760, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 520, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(299, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gData_02001284, 712, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gData_02001284, 888, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(288, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 732, 0, 376, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 732, 0, 376, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(246, 0x76, MOVEMENT_TYPE_STAND, 440, 0, 472, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02001334(gData_02001728, 184, 296, 248)
+u32 gData_02001728[] = {                                                               
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_ARG(2),                                                               
+      SC_MOVE(px(184), 0, px(296)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),                       
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(px(248), 0, px(296)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
-DEFINE_G_DATA_02001334(gData_020017f8, 248, 448, 264)
+u32 gData_020017f8[] = {                                                               
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_ARG(2),                                                               
+      SC_MOVE(px(248), 0, px(448)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),                       
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(px(264), 0, px(448)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 struct ActorPlacement gKibomboMountains_Room2Placements[] = {
-    {407, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(200), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(200), FACING_NORTH, 2, 0},
-    {83, 0x8ff, (s32)gData_02001728, PIXELS(200), 0, PIXELS(296), FACING_SOUTH, 2, 0},
-    {83, 0x8ff, (s32)gData_020017f8, PIXELS(248), 0, PIXELS(456), FACING_SOUTH, 2, 0},
-    {83, 0x8ff, (s32)gData_020012ac, PIXELS(424), 0, PIXELS(232), FACING_SOUTH, 2, 0},
-    {250, CONDITION_ALWAYS, (s32)gData_02001284, PIXELS(456), 0, PIXELS(472), FACING_NORTH, 2, 0},
-    {287, CONDITION_ALWAYS, (s32)gData_02001284, PIXELS(136), 0, PIXELS(296), FACING_NORTH, 2, 0},
-    {287, CONDITION_ALWAYS, (s32)gData_02001284, PIXELS(312), 0, PIXELS(248), FACING_NORTH, 2, 1},
-    {287, CONDITION_ALWAYS, (s32)gData_02001284, PIXELS(328), 0, PIXELS(552), FACING_NORTH, 2, 1},
-    {287, CONDITION_ALWAYS, (s32)gData_02001284, PIXELS(440), 0, PIXELS(536), FACING_NORTH, 2, 1},
-    {290, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(264), FACING_NORTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(488), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gData_02001284, PIXELS(88), 0, PIXELS(456), FACING_NORTH, 2, 0},
-    {305, CONDITION_ALWAYS, (s32)gData_020011a4, PIXELS(232), 0, PIXELS(536), FACING_WEST, 2, 0},
-    {305, CONDITION_ALWAYS, (s32)gData_020011a4, PIXELS(280), 0, PIXELS(536), FACING_EAST, 2, 1},
-    {83, CONDITION_ALWAYS, (s32)gData_020012ac, 0, 0, 0, 0x3f00, 2, 0},
-    {83, CONDITION_ALWAYS, (s32)gData_02001334, 0, 0, 0, 0x4100, 2, 0},
-    {83, CONDITION_ALWAYS, (s32)gData_020012ac, 0, 0, 0, FACING_EAST, 2, 0},
-    {83, CONDITION_ALWAYS, (s32)gData_02001334, 0, 0, 0, FACING_EAST, 2, 0},
-    {83, CONDITION_ALWAYS, (s32)gData_020012ac, 0, 0, 0, FACING_WEST, 2, 0},
-    {83, CONDITION_ALWAYS, (s32)gData_02001334, 0, 0, 0, FACING_WEST, 2, 0},
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, 0x8ff, (s32)gData_02001728, 200, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, 0x8ff, (s32)gData_020017f8, 248, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, 0x8ff, (s32)gData_020012ac, 424, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(250, CONDITION_ALWAYS, (s32)gData_02001284, 456, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gData_02001284, 136, 0, 296, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gData_02001284, 312, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gData_02001284, 328, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gData_02001284, 440, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 264, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gData_02001284, 88, 0, 456, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(305, CONDITION_ALWAYS, (s32)gData_020011a4, 232, 0, 536, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(305, CONDITION_ALWAYS, (s32)gData_020011a4, 280, 0, 536, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gData_020012ac, 0, 0, 0, 0x3f00, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gData_02001334, 0, 0, 0, 0x4100, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gData_020012ac, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gData_02001334, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gData_020012ac, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gData_02001334, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -805,18 +901,18 @@ struct Trigger gKibomboMountains_Room1Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0xce01, 5, CONDITION_ALWAYS, 5},
-    {0xce01, 6, IF_FLAG_SET(0x882), 6},
-    {0xce01, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 6, IF_FLAG_SET(0x882), 6},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_STEP, 20, 0x8ff, EVENT(Func_02000f84)},
     {TRIGGER_STEP, 21, 0x8ff, EVENT(Func_02000f90)},
     {TRIGGER_STEP, 22, 0x8ff, EVENT(Func_02000f9c)},
     {TRIGGER_STEP, 23, 0x8ff, EVENT(Func_02000fc4)},
     {TRIGGER_STEP, 24, 0x8ff, EVENT(Func_02000fdc)},
     {TRIGGER_STEP, 25, 0x8ff, EVENT(Func_02000ff4)},
-    {0x8602, 33, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000190)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_020001a0)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT(Func_02000438)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_02000190)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_020001a0)},
     {TRIGGER_TALK, 10, IF_FLAG_SET(0x202), MSGNO(MsgSniffSniffLick)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x202), MSGNO(MsgABoneThat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgThisRockIs)},
@@ -846,8 +942,8 @@ struct Trigger gKibomboMountains_Room2Triggers[] = {
     {TRIGGER_STEP, 34, 0x880, EVENT(Func_02000960)},
     {TRIGGER_STEP, 35, 0x8ff, EVENT(Func_02000f58)},
     {TRIGGER_STEP, 36, 0x8ff, EVENT(Func_02000f78)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_020004b0)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_0200051c)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_020004b0)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_0200051c)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x9e8, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, 0x210, EVENT(Func_02000440)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, 0x211, EVENT(Func_02000478)},

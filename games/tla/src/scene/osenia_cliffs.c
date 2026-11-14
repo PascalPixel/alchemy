@@ -15,6 +15,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "system/io_reg.h"
 #include "scene_tables.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
@@ -25,9 +26,6 @@
 extern u32 gOseniaCliffs_PaletteCycleStep[];
 
 #ifdef MODERN
-// The rope routine is called with no prototype in scope, as its bytes need:
-// called as returning int, the two post ids load before the first argument.
-// A current GCC gets it here.
 void Rope_Tie(s32 a, s32 b, s32 c);
 #endif
 
@@ -41,14 +39,8 @@ void OseniaCliffs_CyclePalette(void);
 
 /// The actors, numbering the rows of gActorPlacements.
 enum OseniaCliffsActorId {
-  /// ★ Named from the game: "This is a Champa boat... You can see their mark
-  /// on the flag there." (MsgMadraChampaBoat)
   ACTOR_VILLAGER_CHAMPA_BOAT = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Wait, if this is the Champa ship, then that must
-  /// mean Piers isn't a Champa!" (MsgMadraSailorNotChampa)
   ACTOR_VILLAGER_NOT_CHAMPA,
-  /// ★ Named from the game: "Look at all the damage... That wave must have
-  /// been gigantic..." (MsgMadraWaveDamage)
   ACTOR_VILLAGER_WAVE_DAMAGE,
   /// The posts of the first rope, tied as the scene starts.
   ACTOR_FIRST_ROPE_POST,
@@ -69,9 +61,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 #ifdef MODERN
-// The rope routine is called with no prototype in scope, as its bytes need:
-// called as returning int, the two post ids load before the first argument.
-// A current GCC gets it here.
 void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
 
@@ -100,8 +89,7 @@ s32 Scene_Initialize(void) {
     u32 bit = 32;
 
     /* FAKEMATCH(barrier): the asm on the bit builds it in the register it ORs
-     * into, as the native does, where without it the OR goes into the loaded
-     * byte; as *flags |= 32, 4 of 55 instructions differ in tla-en. */
+     * into. */
     __asm__("" : "+l"(bit));
     *flags = bit | value;
   }
@@ -115,9 +103,7 @@ s32 Scene_Initialize(void) {
 
     a0 = 1;
     /* FAKEMATCH(barrier): the asm on the first argument keeps its load right
-     * after the first half of flag + 0xff, where without it it loads last; as
-     * Rope_Place(1, flag + 0xff, 13, 14), 2 of 55 instructions differ in
-     * tla-en. */
+     * after the first half of flag + 0xff, where without it it loads last. */
     asm volatile("" : "+l"(a0));
     Rope_Place(a0, flag + 0xff, 13, 14);
   }
@@ -135,11 +121,11 @@ void OseniaCliffs_CyclePalette(void) {
     if (gOseniaCliffs_PaletteCycleStep[0] == 8)
       gOseniaCliffs_PaletteCycleStep[0] = 0;
     i = gOseniaCliffs_PaletteCycleStep[0]++;
-    colors = (u16 *)0x05000180;
-    *(u16 *)0x050000c2 = colors[i];
-    *(u16 *)0x050000c4 = colors[(i + 1) & 7];
-    *(u16 *)0x050000c6 = colors[(i + 2) & 7];
-    *(u16 *)0x050000c8 = colors[(i + 3) & 7];
+    colors = (u16 *)&BG_PLTT_COLOR(12, 0);
+    BG_PLTT_COLOR(6, 1) = colors[i];
+    BG_PLTT_COLOR(6, 2) = colors[(i + 1) & 7];
+    BG_PLTT_COLOR(6, 3) = colors[(i + 2) & 7];
+    BG_PLTT_COLOR(6, 4) = colors[(i + 3) & 7];
   }
 }
 
@@ -156,16 +142,28 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_5(54, 12, 2, 13)
+u32 gSceneExits[] = {
+    SCENE_EXITS(OseniaCliffs),
+    SCENE_EXIT_UNLESS(1, WorldMap, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, WorldMap, 13, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gActorPlacements[] = {
-    {192, 0x8ff, 1, PIXELS(200), 0, PIXELS(226), FACING_EAST, 1, 0},
-    {187, 0x8ff, 1, PIXELS(259), 0, PIXELS(312), FACING_NORTH, 1, 0},
-    {190, 0x8ff, 1, PIXELS(242), 0, PIXELS(313), FACING_NORTH, 1, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(240), 0, PIXELS(184), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(184), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(104), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(104), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(192, 0x8ff, MOVEMENT_TYPE_STAND, 200, 0, 226, FACING_EAST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(187, 0x8ff, MOVEMENT_TYPE_STAND, 259, 0, 312, FACING_NORTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(190, 0x8ff, MOVEMENT_TYPE_STAND, 242, 0, 313, FACING_NORTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 184,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 104,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 104,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

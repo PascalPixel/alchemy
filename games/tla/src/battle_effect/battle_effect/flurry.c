@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 void BattleEffect_RunRansack(struct EffectStep *step) {
   BattleEffect_RunBurstScene(step, 0);
@@ -117,7 +119,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->prelude == 1)
     BattleEffect_RunDjinniEntrance(effect, PREPARE(7, effect->side, 2), screen,
                                    otherPoint);
@@ -165,8 +167,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 
   // The caster closes in; variant 12 lunges further and waits.
   if (variant == 12) {
-    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8,
-                                   0x60000);
+    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, px(6));
     wait(7);
   } else {
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 4, 0);
@@ -187,9 +188,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   for (i = 0; i != MOTE_COUNT; i++) {
     struct EffectStep *mote = &MOTES[i];
 
-    mote->x = target->x;
-    mote->y = target->y + 0x190000;
-    mote->z = target->z;
+    SET_POSITION(mote, target->x, target->y + 0x190000, target->z);
     mote->velocityX = (Random16() & 255) << 12;
     mote->velocityY = ((Random16() & 255) - 127) << 12;
     mote->velocityZ = ((Random16() & 255) - 127) << 12;
@@ -201,9 +200,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   for (i = 0; i != 64; i++) {
     struct EffectStep *puff = &work->particles[i];
 
-    puff->x = (targetPos.x / 2) << 16;
-    puff->y = 0x580000;
-    puff->z = 0;
+    SET_POSITION(puff, (targetPos.x / 2) << 16, px(88), 0);
     puff->velocityX = ((Random16() & 255) - 128) << 9;
     puff->velocityY = ((Random16() & 255) - 128) << 9;
     puff->variant = -i;
@@ -219,7 +216,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
     for (i = 0; i != 160; i++)
       *lines++ = (0x60000 - Trig_Sin((frame + i) * 0x800) * 6) >> 10;
     if (variant == 10 && frame == 8)
-      Sound_PlayFar(221);
+      Sound_PlayFar(SE_RISE_WITH_SPARKS);
     blows = RECORD(RECORD_BLOWS);
     EffectPosition_ProjectScaledBattler(effect->actor, &actorPos);
     actorPos.x /= 2;
@@ -242,8 +239,6 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                                                      COMPOSITE_FLIP));
     }
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    // The slot read through an offset struct: as unkb8[1], 8 of 989
-    // instructions differ.
     draw[1] = ((struct {
                 u8 before[188];
                 DrawRectangle draw;
@@ -276,7 +271,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
       // The hit; the last blow ends the run.
       if (frame == start + 2) {
         if (RECORD(RECORD_FILL) == 1)
-          Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
         if (i == blows - 1) {
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
@@ -286,7 +281,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
           if (i & 1)
             BattleMotion_ApplyKnockbackFar(effect->actors[0], 7);
           work->shakeFrames = 4;
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         }
         for (j = 0; j != RECORD(RECORD_MOTES); j++)
           MOTES[i * 32 + j].variant = (Random16() & 7) + 15;
@@ -309,8 +304,6 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
         HEAP_BLITTER_ALTERNATE,
         BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    // The slot read through an offset struct: as unkb8[1], 8 of 989
-    // instructions differ.
     draw[1] = ((struct {
                 u8 before[188];
                 DrawRectangle draw;
@@ -351,9 +344,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                   gData_08197498[cel] / 2;
           u32 flip = Random16();
 
-          // An empty once-only loop ends CSE's block, so the two reads of each
-          // size table's address stay apart; without it, 397 of 989
-          // instructions differ in tla-en.
+          /* FAKEMATCH(dead): an empty once-only loop. */
           do {
           } while (0);
           BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,

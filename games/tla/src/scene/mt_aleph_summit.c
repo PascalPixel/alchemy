@@ -49,7 +49,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-extern char SceneId_Ov6b3;
+extern char SceneId_Epilogue;
 
 void FieldCamera_WaitForArrival(void);
 
@@ -210,8 +210,8 @@ loop:
 /// A task: the palette at 0x05000082 pulses brighter and darker than its
 /// source at 0x050000c2 with the frame count.
 void MtAlephSummit_PulseColors(void) {
-  u16 *src = (u16 *)0x050000c2;
-  u16 *dst = (u16 *)0x05000082;
+  u16 *src = (u16 *)&BG_PLTT_COLOR(6, 1);
+  u16 *dst = (u16 *)&BG_PLTT_COLOR(4, 1);
   s32 delta = (Math_Sin((gFrameCount << 11) >> 1) * 2) >> 16;
   s32 i = 0;
 
@@ -243,11 +243,26 @@ next:
 }
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 // clang-format on
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -267,10 +282,10 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {57, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(344), FACING_NORTHWEST, 0,
-     0},
-    {311, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(24), FACING_SOUTHEAST, 0,
-     0},
+    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 344,
+                    FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(311, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 24,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -326,7 +341,7 @@ next:
 /* VIEW(s0478): tag struct EventWorkView as struct EventWorkView__s0478;
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mt_aleph_summit.c:358: dereferencing pointer to
+ * games/tla/src/scene/mt_aleph_summit.c:373: dereferencing pointer to
  * incomplete type. */
 struct EventWorkView__s0478 {
   u8 unk000[0x1ac];
@@ -357,11 +372,11 @@ s32 Scene_Initialize(void) {
   Actor_SetPosition(4, 0, 0);
   mode = gMainRoutineWork.entrance;
   if (mode == 10) {
-    Event_SetDestination((s32)&SceneId_Ov64c, 72);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 72);
   } else if (mode == 2) {
-    FieldCamera_MoveTo(0x1000000, -1, 0x800000, 0);
-    FieldCamera_SetSpeed(0x10000, 0x2000);
-    Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(8), 0);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 128, 0);
+    FieldCamera_SetSpeed(1);
+    Actor_SetSpriteFlags((s32)(s32)Actor_Get(8), 0);
     Actor_SetAnimation(8, 12);
     Actor_SetAnimationSpeedById(8, 8);
     ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
@@ -372,26 +387,26 @@ s32 Scene_Initialize(void) {
     REG_BG3CNT |= 2;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    FieldCamera_MoveTo(0x1000000, -1, 0x13e0000, 1);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 318, 1);
     FieldCamera_WaitForArrival();
-    FieldCamera_MoveTo(0x13c0000, -1, 0x13e0000, 1);
+    FieldCamera_MoveTo(316, CAMERA_KEEP, 318, 1);
     FieldCamera_WaitForArrival();
     i = 0;
   L1:
     if (i == 3) {
-      FieldCamera_SetSpeed(0x1999, 0x333);
-      FieldCamera_MoveTo(0x13c0000, -1, 0x12c0000, 1);
+      FieldCamera_SetSpeed(0.1);
+      FieldCamera_MoveTo(316, CAMERA_KEEP, 300, 1);
     }
-    ACTOR(8)->z -= 0x10000;
+    ACTOR(8)->z -= px(1);
     System_Wait(30);
     i++;
     if (i != 10)
       goto L1;
     Actor_SetAnimationSpeedById(8, 0);
-    Call3((void (*)())Iwram_CopyWordsEntry, (s32)buffer, 0x5000008, 14);
+    Iwram_CopyWords((s32)buffer, 0x5000008, 14);
     j = 0;
   L2:
-    out = (u16 *)0x500000e;
+    out = (u16 *)&BG_PLTT_COLOR(0, 7);
     color = out;
     i = 0;
   L3:
@@ -420,40 +435,40 @@ s32 Scene_Initialize(void) {
     j++;
     if (j != 10)
       goto L2;
-    Actor_ShowEmote(8, 0x102, 0);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     System_Wait(30);
     FieldEvent_SetMessageId(MsgGoldenSunFormation);
-    Event_ShowMessage(0x4008, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     System_Wait(30);
     Actor_RunRepeatedMotion(8, 2);
-    Event_ShowMessage(0x4008, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     Actor_SetAnimationSpeedById(8, 32);
     i = 0;
   L4:
     if (i == 16) {
-      FieldCamera_MoveTo(0x13c0000, -1, 0x800000, 1);
-      FieldCamera_SetSpeed(0x20000, 0x4000);
+      FieldCamera_MoveTo(316, CAMERA_KEEP, 128, 1);
+      FieldCamera_SetSpeed(2);
     }
     if (i == 19)
       Event_FinishScreenTransition();
-    ACTOR(8)->z -= 0x20000;
+    ACTOR(8)->z -= px(2);
     System_Wait(8);
     i++;
     if (i != 20)
       goto L4;
-    Event_SetDestination((s32)&SceneId_Ov64c, 1);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 1);
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
     block = slots->block32;
     Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
-    FieldCamera_MoveTo(0x1000000, -1, 0x900000, 0);
-    FieldCamera_SetSpeed(0x10000, 0x2000);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 144, 0);
+    FieldCamera_SetSpeed(1);
     Actor_SetAnimation(8, 14);
     object = ACTOR(8);
     scale = 0;
     object->facing = scale;
-    ACTOR(8)->x = 0xf80000;
-    ACTOR(8)->z = 0x980000;
+    ACTOR(8)->x = px(248);
+    ACTOR(8)->z = px(152);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x27f, 0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000, 0x20000);
     REG_DISPCNT &= 0xfdff;
@@ -466,7 +481,7 @@ s32 Scene_Initialize(void) {
     REG_DISPCNT &= 0xfdff;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    MapGrid_SetShake(0x40000, 0x40000, 0x10000);
+    MapGrid_SetShake(4, 4, 1);
     i = 0;
   L5:
     gBgScroll[2].y += 8;
@@ -476,7 +491,7 @@ s32 Scene_Initialize(void) {
       goto L5;
     Actor_SetAnimation(8, 15);
     System_Wait(60);
-    Event_PlaySound(212);
+    Event_PlaySound(SE_POWER_UP);
     REG_BG1CNT &= 0xfffc;
     REG_BG1CNT |= 1;
     REG_BLDCNT = 0x3f42;
@@ -484,11 +499,11 @@ s32 Scene_Initialize(void) {
     j = 0;
   L6:
     if (j == 16) {
-      Event_PlaySound(140);
+      Event_PlaySound(SE_SPIN);
       Actor_SetAnimation(8, 16);
     }
     if (j == 51) {
-      Event_PlaySound(107);
+      Event_PlaySound(SE_TREMOR);
       Iwram_CopyWordsEntry(buffer, (void *)0x5000000, 0x1c0);
       Iwram_CopyWordsEntry(block + 0xf80, block + 0x1040, 96);
     }
@@ -501,106 +516,107 @@ s32 Scene_Initialize(void) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, value | 0x1000, 0x20000);
     }
     if (j >= 20 && j <= 51)
-      MtAlephSummit_StepColorsToward((u16 *)0x5000080, (u16 *)0x50000c0, 16);
+      MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(4, 0),
+                                     (u16 *)&BG_PLTT_COLOR(6, 0), 16);
     if (j > 49)
-      Call3((void (*)())MtAlephSummit_ShiftColors, (u16 *)0x5000000, 224, 1);
+      MtAlephSummit_ShiftColors((u16 *)&BG_PLTT_COLOR(0, 0), 224, 1);
     System_Wait(4);
     j++;
     if (j != 84)
       goto L6;
     FieldActor_SetSpritePriority(8, 3);
-    MapGrid_SetShake(-1, -1, 0xe666);
-    Event_PlaySound(0x186);
-    FieldCamera_MoveTo(0x1000000, -1, 0x13e0000, 0);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 318, 0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, (REG_BG1CNT & ~3) | 3, 0x20000);
-    Event_PlaySound(212);
+    Event_PlaySound(SE_POWER_UP);
     System_Wait(1);
     Task_AddFrame(MtAlephSummit_PulseColors, 0x480);
     j = 0;
   L7:
-    MtAlephSummit_StepColorsToward((u16 *)0x5000000, buffer, 224);
+    MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(0, 0), buffer, 224);
     System_Wait(4);
     j++;
     if (j != 32)
       goto L7;
     FieldActor_SetSpritePriority(8, 1);
     Actor_SetAnimation(8, 1);
-    FieldCamera_MoveTo(0x1000000, -1, 0x800000, 1);
-    FieldCamera_SetSpeed(0x10000, 0x2000);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 128, 1);
+    FieldCamera_SetSpeed(1);
     FieldCamera_WaitForArrival();
-    Actor_SetSpeed(8, 0x4ccc, 0x2666);
+    Actor_SetSpeed(8, 0.3);
     Actor_WalkToAndWait(8, 248, 128);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_SetMessageId(MsgGoldenSunEternalLifeAndPower);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
-    Actor_FaceDirection(8, 0x4000, 0);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
+    Actor_FaceDirection(8, FACING_SOUTH, 0);
     FieldEvent_Wait(30);
     Actor_SetAnimation(8, 14);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(8, 15);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 150);
-    Actor_ShowEmote(8, 0x101, 30);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 150);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_SetAnimation(8, 1);
-    Actor_FaceDirection(8, 0x6000, 0);
+    Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
     FieldEvent_Wait(10);
-    Actor_FaceDirection(8, 0x2000, 0);
+    Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
     FieldEvent_Wait(10);
-    Actor_FaceDirection(8, 0x6000, 0);
+    Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
     FieldEvent_Wait(10);
-    Actor_FaceDirection(8, 0x2000, 0);
+    Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
     FieldEvent_Wait(10);
-    Actor_FaceDirection(8, 0x4000, 0);
+    Actor_FaceDirection(8, FACING_SOUTH, 0);
     FieldEvent_Wait(50);
     Actor_SetAnimation(8, 15);
     FieldEvent_Wait(50);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldEvent_Wait(50);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(9), 0);
+    Actor_SetSpriteFlags((s32)(s32)Actor_Get(9), 0);
     Actor_WalkToAndWait(9, 216, 96);
-    Actor_FaceDirection(8, 0x2000, 0);
-    Actor_ShowEmote(8, 0x102, 30);
+    Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_SetMessageId((MsgGoldenSunEternalLifeAndPower + 4));
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
-    Event_PlaySound(0x2d2);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
+    Event_PlaySound(MUS_722);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_SetAnimation(8, 1);
-    Actor_FaceDirection(8, 0xa000, 0);
-    Actor_ShowEmote(8, 0x100, 30);
+    Actor_FaceDirection(8, FACING_NORTHWEST, 0);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     ACTOR(8)->actionFlags &= ~1;
-    Actor_WalkTo(8, 0x100, 136);
-    Actor_SetSpeed(8, 0x9999, 0x4ccc);
+    Actor_WalkTo(8, 256, 136);
+    Actor_SetSpeed(8, 0.6);
     FieldEvent_Wait(20);
     Actor_SetAnimation(8, 1);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 4);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     message = MsgGoldenSunEternalLifeAndPower;
     Actor_SetAnimation(9, 5);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
-    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldEvent_Wait(20);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 6);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
-    Actor_ShowEmote(8, 0x107, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     message += 12;
     FieldEvent_SetMessageId(message);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(8, 13);
     BattleEffect_StartArcEffect();
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(8), 2);
-    Event_PlaySound(178);
+    Event_PlaySound(SE_178);
     Field_StartColorTransition(8, 0x4084);
     FieldEvent_Wait(20);
     Actor_SetAnimation(9, 3);
-    Actor_SetSpeed(9, 0x1999, 0xccc);
+    Actor_SetSpeed(9, 0.1);
     j = 0;
   L8:
     if (j & 1) {
@@ -621,8 +637,8 @@ s32 Scene_Initialize(void) {
     j++;
     if (j != 4)
       goto L8;
-    Actor_ShowEmote(8, 0x108, 30);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldEvent_Wait(10);
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(8), 0);
     BattleEffect_WaitForArcGroups();
@@ -631,8 +647,8 @@ s32 Scene_Initialize(void) {
     BattleEffect_StartArcEffect();
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(9), 2);
     System_Wait(30);
-    Event_PlaySound(212);
-    MapGrid_SetShake(0x100000, 0x100000, 0x10000);
+    Event_PlaySound(SE_POWER_UP);
+    MapGrid_SetShake(16, 16, 1);
     i = 0;
   L10:
     PaletteFade_ApplyTarget(0x10005, 1);
@@ -649,18 +665,18 @@ s32 Scene_Initialize(void) {
     Field_StartPaletteTransition(1);
     Field_StartColorTransition(8, 0x1110);
     FieldEvent_Wait(20);
-    Actor_SetSpeed(8, 0x80000, 0x40000);
+    Actor_SetSpeed(8, 8);
     MtAlephSummit_ScatterDustRing(128, 8);
     ACTOR(8)->actionFlags &= ~1;
-    Actor_WalkTo(8, 0x118, 160);
+    Actor_WalkTo(8, 280, 160);
     Actor_SetAnimation(8, 17);
-    Event_PlaySound(134);
+    Event_PlaySound(SE_HEAVY_IMPACT);
     FieldEvent_Wait(2);
     MtAlephSummit_ScatterDustRing(128, 8);
     FieldEvent_Wait(2);
     MtAlephSummit_ScatterDustRing(128, 8);
     FieldEvent_Wait(56);
-    Event_PlaySound(178);
+    Event_PlaySound(SE_178);
     i = 0;
     ACTOR(8)->motionFlags = i;
   L11:
@@ -673,10 +689,10 @@ s32 Scene_Initialize(void) {
       goto L11;
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     i = 0;
   L12:
-    ACTOR(8)->y += 0x10000;
+    ACTOR(8)->y += px(1);
     FieldEvent_Wait(1);
     i++;
     if (i != 32)
@@ -689,33 +705,33 @@ s32 Scene_Initialize(void) {
     i++;
     if (i != 5)
       goto L13;
-    MtAlephSummit_ScatterDustRing(0x100, 16);
+    MtAlephSummit_ScatterDustRing(256, 16);
     Actor_SetAnimation(8, 17);
-    Event_PlaySound(145);
-    MapGrid_SetShake(0x100000, 0x100000, 0x10000);
+    Event_PlaySound(SE_CRASH);
+    MapGrid_SetShake(16, 16, 1);
     FieldEvent_Wait(10);
-    MapGrid_SetShake(-1, -1, 0xe666);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(9), 0);
     BattleEffect_WaitForArcGroups();
     BattleEffect_EndArcEffect();
-    Event_PlaySound(0x186);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
     Actor_SetAnimation(9, 4);
     Field_StartPaletteTransition(32);
     FieldEvent_Wait(10);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 3);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_SetAnimation(8, 18);
     FieldEvent_Wait(10);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldEvent_Wait(120);
-    Event_PlaySound(107);
+    Event_PlaySound(SE_TREMOR);
     i = 0;
   L14:
-    MapGrid_SetShake((i << 16) + 0x10000, (i << 16) + 0x10000, 0x10000);
+    MapGrid_SetShakeFixed((i << 16) + 0x10000, (i << 16) + 0x10000, 0x10000);
     FieldEvent_Wait(8);
     i++;
     if (i != 2)
@@ -724,17 +740,17 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(60);
     Actor_SetAnimation(9, 7);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
-    Actor_ShowEmote(8, 0x101, 30);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 8);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     for (i = 0, j = 0x20000; i != 4; i++, j += 0x10000) {
-      MapGrid_SetShake(j, j, 0x10000);
+      MapGrid_SetShakeFixed(j, j, 0x10000);
       FieldEvent_Wait(8);
     }
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 3);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_RunRepeatedMotion(8, 2);
@@ -743,16 +759,16 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     FieldEvent_Wait(10);
     slots = (struct HeapSlots *)Ram_HeapSlots->mapWork;
-    MapGrid_SetShake(0x100000, 0x100000, 0x10000);
+    MapGrid_SetShake(16, 16, 1);
     j = 0;
     scale = -0x1e000;
   L16:
     if (j == 20)
       Actor_SetAnimation(9, 7);
     if (j >= 30 && j <= 46) {
-      ACTOR(9)->scaleX = 0x10000 - scale;
+      ACTOR(9)->scaleX = Q16_ONE - scale;
       ACTOR(9)->scaleY = scale + 0x10000;
-      ACTOR(9)->z -= 0x20000;
+      ACTOR(9)->z -= px(2);
     }
     if (j == 47)
       Actor_SetPosition(9, 0, 0);
@@ -761,25 +777,25 @@ s32 Scene_Initialize(void) {
       PaletteFade_Interpolate(64);
     }
     FIELD(slots, 332) -= 0x10000;
-    ACTOR(8)->z += 0x10000;
+    ACTOR(8)->z += px(1);
     System_Wait(1);
     j++;
     scale += 0x1000;
     if (j != 128)
       goto L16;
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_Wait(32);
-    Event_PlaySound(208);
+    Event_PlaySound(SE_BANE_ESCAPE);
     FieldEvent_Wait(120);
     FieldTask_Remove(MtAlephSummit_PulseColors);
     PaletteFade_ApplyTarget(0x7fff, 0);
     PaletteFade_Interpolate(1);
     System_Wait(1);
-    Event_PlaySound(0x186);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
     PaletteFade_ApplyTarget(0, 0);
     PaletteFade_Interpolate(120);
-    System_Wait(0x12c);
-    Event_SetDestination((s32)&SceneId_Ov6b3, 1);
+    System_Wait(300);
+    Event_SetDestination((s32)&SceneId_Epilogue, 1);
   } else {
     ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
     Event_StartScreenTransition();
@@ -791,11 +807,11 @@ s32 Scene_Initialize(void) {
       if (*held & 1)
         break;
       if (j == 0) {
-        Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(8), 0);
+        Actor_SetSpriteFlags((s32)(s32)Actor_Get(8), 0);
         Actor_SetAnimation(8, 12);
       }
     }
-    Event_SetDestination((s32)&SceneId_Ov64c, 0);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 0);
   }
   Heap_Release(buffer);
   return 0;

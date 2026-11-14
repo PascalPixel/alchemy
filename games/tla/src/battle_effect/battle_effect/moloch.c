@@ -4,6 +4,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -85,7 +88,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   graphics = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -100,16 +103,16 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     struct Point2D focus;
     s32 frame;
 
-    focus.x = 128 << 16;
-    focus.y = 64 << 16;
+    focus.x = px(128);
+    focus.y = px(64);
     BattleEffect_SelectLivingTargets(work->effect);
     wait(1);
     BattleEffect_SpawnObjects(12, 654, 2);
 
     frame = 0;
     do {
-      if ((gInput.repeat & 3) && frame <= 231 && frame > 15) {
-        Sound_PlayFar(144);
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 231 && frame > 15) {
+        Sound_PlayFar(SE_CLATTER);
         frame = SUMMON16_SKIP_TO;
       }
 
@@ -133,7 +136,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         for (i = 0; i != 16; i++) {
           flame = &work->particles[i];
           flame->x = (i * 3 + i + 44) << 16;
-          flame->y = 72 << 16;
+          flame->y = px(72);
           flame->velocityX = 0;
           flame->velocityY = -((Random16() & 3) + 2) << 16;
           flame->velocityZ = 0;
@@ -143,10 +146,10 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         // The embers of the closing glow start at (54, 56).
         for (i = 0; i != 16; i++) {
           flame = &work->particles[24 + i];
-          flame->x = 54 << 16;
-          flame->y = 56 << 16;
+          flame->x = px(54);
+          flame->y = px(56);
           flame->variant = i * -2;
-          flame->velocityX = -(((Random16() & 3) << 16) + (2 << 16));
+          flame->velocityX = -(((Random16() & 3) << 16) + px(2));
           flame->velocityY = -(Random16() & 3) << 15;
         }
       }
@@ -168,42 +171,42 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
                 HI(mote->y) <= 113) {
               s32 dx;
 
-              mote->velocityX = ((Random16() & 63) << 16) + (56 << 16);
+              mote->velocityX = ((Random16() & 63) << 16) + px(56);
               dx = mote->velocityX - mote->x;
-              mote->velocityX = dx / (((114 << 16) - mote->y) / (size << 14));
+              mote->velocityX = dx / ((px(114) - mote->y) / (size << 14));
             }
 
             // Frames 142-161: they swirl about the centre line.
             if ((u32)(frame - 142) <= 19) {
-              s32 distance = mote->x - (96 << 16);
+              s32 distance = mote->x - px(96);
               s32 pull;
 
               if (distance < 0)
                 distance = -distance;
               pull = (mote->y / 2 - distance + (s32)((Random16() & 31) << 16) +
-                      (96 << 16)) /
+                      px(96)) /
                      32;
-              if (mote->x < 96 << 16 && pull > 0)
+              if (mote->x < px(96) && pull > 0)
                 pull = -pull;
-              if (mote->x > 96 << 16 && pull < 0)
+              if (mote->x > px(96) && pull < 0)
                 pull = -pull;
               mote->velocityX += pull / 8;
             }
 
             mote->x += mote->velocityX + Trig_Sin(mote->y >> 5) / 5;
             mote->y += mote->velocityY + (size << 14);
-            if (mote->y > 114 << 16) {
+            if (mote->y > px(114)) {
               if (frame > 215) {
                 // Late motes fly back in from the right.
                 mote->variant = 0;
-                mote->x = 120 << 16;
+                mote->x = px(120);
                 mote->y = ((Random16() & 127) - 32) << 16;
                 mote->velocityX = ((Random16() & 3) - 8) << 16;
                 mote->velocityY = 0;
               } else {
                 mote->variant = Random16() & 255;
                 mote->x = ((Random16() & 255) - 64) << 16;
-                mote->y = -8 << 16;
+                mote->y = -px(8);
                 mote->velocityX = 0;
                 mote->velocityY = 0;
               }
@@ -214,8 +217,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
 
           // Frames 217-245: the wind turns.
           if ((u32)(frame - 217) <= 28) {
-            mote->velocityX -= 0x2000;
-            mote->velocityY += 0x2000;
+            mote->velocityX -= px(1) / 8;
+            mote->velocityY += px(1) / 8;
           }
         }
       }
@@ -234,7 +237,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
             }
             if (++flame->variant == 24) {
               flame->x = (i * 3 + i + 44) << 16;
-              flame->y = 72 << 16;
+              flame->y = px(72);
               flame->variant = 0;
               flame->velocityY = -((Random16() & 3) + 2) << 16;
               flame->velocityZ = 0;
@@ -244,10 +247,10 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
                 flame->velocityZ = 2;
             }
             if (frame == 136) {
-              if (flame->x < 80 << 16)
-                flame->velocityX -= 4 << 16;
+              if (flame->x < px(80))
+                flame->velocityX -= px(4);
               else
-                flame->velocityX += 4 << 16;
+                flame->velocityX += px(4);
             }
           }
         }
@@ -265,9 +268,9 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
               flame->y += flame->velocityY;
             }
             if (++flame->variant == 24) {
-              flame->x = 54 << 16;
-              flame->y = 56 << 16;
-              flame->velocityX = -(((Random16() & 3) << 16) + (2 << 16));
+              flame->x = px(54);
+              flame->y = px(56);
+              flame->velocityX = -(((Random16() & 3) << 16) + px(2));
               flame->variant = 0;
             }
           }
@@ -295,7 +298,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
 
           if (frame <= start)
             continue;
-          scale = (frame - start) * Data_08199f38[i] * 2000 + 0x8000;
+          scale = (frame - start) * Data_08199f38[i] * 2000 + Q16_ONE / 2;
           shade = (start - frame) * 8 + 56;
           if (shade > 0)
             shade = 0;
@@ -303,7 +306,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
             continue;
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(16 << 16, Data_08199f3c[i] << 16, 0);
+          SceneTransform_ApplyPosition3(px(16), Data_08199f3c[i] << 16, 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
@@ -331,15 +334,15 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         work->shakeFrames = 2;
 
       if (frame == 32)
-        Sound_PlayFar(246);
+        Sound_PlayFar(SE_GLITTER);
       if (frame == 90)
-        Sound_PlayFar(225);
+        Sound_PlayFar(SE_225);
       if (frame == 140)
-        Sound_PlayFar(154);
+        Sound_PlayFar(SE_CAST);
       if (frame == 200)
-        Sound_PlayFar(208);
+        Sound_PlayFar(SE_BANE_ESCAPE);
       if (frame == 232)
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
 
       // Frames 256-271 brighten the whole screen to white; at 272 the battle
       // phase resumes and the canvas fades back.
@@ -463,17 +466,11 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
   // The trail: particles of size 8 (6 for a small drop), half a size apart.
   size = 8 - small * 2;
   half = size / 2;
-  // A goto loop: loop.c leaves it alone, so y + i * half multiplies on every
-  // pass and the table entry and frame / 2 * 0x302 are recomputed; as a for
-  // loop, 111 of 120 instructions differ in tla-en. The argument x - size / 2
-  // is not one GCSE carries out of the loop (as x - half, 83 differ).
   i = 1;
   trailY = y + i * half;
   if (trailY > 112)
     return;
 next:
-  // The offset grouped before the sheet base: ungrouped, 2 instructions
-  // differ (the base is added before the product).
   draw[0](canvas,
           work->sheet + (gBattleEffect_MoteCells[size - 1] + frame / 2 * 0x302),
           x - size / 2, trailY, size, size * 2);
@@ -522,9 +519,7 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   vertices[4].y = height;
 
   Transform_Reset();
-  position.x = (x << 16) - (63 << 16);
-  position.y = (63 - height) << 16;
-  position.z = 0;
+  SET_POSITION(&position, (x << 16) - px(63), (63 - height) << 16, 0);
   SceneTransform_ApplyPosition(&position);
 
   model->kind = 4;
@@ -715,8 +710,8 @@ extern const u8 Data_0819a160[];
  * *EffectSprite_Acquire(s32 kind, s32 value) {; tried as the definition's
  * struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:63274: too many arguments to
- * function `EffectSprite_Acquire'. */
+ * games/tla/src/battle_effect/battle_effect/moloch.c:1348: too many arguments
+ * to function `EffectSprite_Acquire'. */
 struct IrisSprite *
 EffectSprite_Acquire__summon_effects(s32 width, s32 height, u32 shape,
                                      s32 mode) __asm__("EffectSprite_Acquire");
@@ -797,15 +792,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 196;
       else if (t <= 23)
         offset = 98;
-      /* FAKEMATCH(dead): t * 4 / 3 into dead, which flow deletes once PRE has
-       * copied t * 4 into the join ahead of ring and blit; without it, 700 of
-       * 4851 instructions of BattleEffect_RunIris differ in tla-en. */
+      /* FAKEMATCH(dead): t * 4 / 3 into dead. */
       dead = t * 4;
       dead /= 3;
       ring = sprites + offset;
-      /* FAKEMATCH(temporary): draw copied into blit for the ring's draws; as
-       * draw called directly, 1126 of 4851 instructions of
-       * BattleEffect_RunIris differ in tla-en. */
+      /* FAKEMATCH(temporary): draw copied into blit for the ring's draws. */
       blit = draw;
       for (spoke = 0; spoke != 8; spoke++) {
         s32 px;
@@ -832,15 +823,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 394;
       else if (t <= 23)
         offset = 344;
-      /* FAKEMATCH(dead): t * 4 / 3 into dead, as in the large splash's arm;
-       * without it, 698 of 4851 instructions of BattleEffect_RunIris differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): t * 4 / 3 into dead, as in the large splash's arm. */
       dead = t * 4;
       dead /= 3;
       ring = sprites + offset;
-      /* FAKEMATCH(temporary): draw copied into blit for the ring's draws; as
-       * draw called directly, 1120 of 4851 instructions of
-       * BattleEffect_RunIris differ in tla-en. */
+      /* FAKEMATCH(temporary): draw copied into blit for the ring's draws. */
       blit = draw;
       for (spoke = 0; spoke != 8; spoke++) {
         s32 px;
@@ -1043,7 +1030,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           place[1] = place[0] = work->particles[i].velocityZ;
           place[2] = 0;
           SceneTransform_ApplyScale(place);
-          work->particles[i].velocityZ += 0x2000;
+          work->particles[i].velocityZ += px(1) / 8;
           model->kind = 4;
           model->texture = &texture;
           model->mesh = Data_08199f98;
@@ -1081,10 +1068,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 off;
   u8 *dst;
   u8 *tiles;
-  /* FAKEMATCH(dead): 284 locals nothing uses (any count from 275 to 294
-   * does), which number the later pseudos so PRE's spilled registers take
-   * their frame slots in order; as no locals, 34 of 4851 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): 284 locals nothing uses (any count from 275 to 294 does).
+   */
   UNUSED s32 z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14,
       z15, z16, z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29,
       z30, z31, z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44,
@@ -1116,30 +1101,32 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   work->transferMode = 0;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  REG_DISPCNT = 0x7741;
-  REG_BG2CNT = 0x784;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
-  Iwram_FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
   work->transferPending = 1;
   wait(1);
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = 2;
   work->transferValue = 75;
   savedZoom = camera[27];
   if (effect->side == 0) {
-    s32 yaw = 0x4000;
+    s32 yaw = TRIG_TURN / 4;
 
     camera[27] = yaw;
   } else {
-    s32 yaw = 0xc000;
+    s32 yaw = TRIG_TURN * 3 / 4;
 
     camera[27] = yaw;
   }
@@ -1161,12 +1148,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   for (;;) {
     motesMask = 31;
     // A or B: skips the opening, or the rest of the scene.
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       if (frame <= 175) {
         frame = 176;
       } else if ((u32)(frame - 177) <= 268) {
-        REG_BLDALPHA = 0x1010;
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        REG_BLDALPHA = BLEND_ALPHA(16, 16);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->transferPending = 1;
         wait(1);
         if (frame <= 386) {
@@ -1179,7 +1166,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
         frame = 446;
       } else {
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->transferPending = 1;
         wait(1);
         break;
@@ -1189,35 +1176,35 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       break;
 
     if (frame == 0)
-      Sound_PlayFar(206);
+      Sound_PlayFar(SE_CURSE_FALL);
     for (i = 0; i != 11; i++)
       if (frame == Data_08199fbc[i])
-        Sound_PlayFar(130);
+        Sound_PlayFar(SE_PSYNERGY_START);
     if (frame == 175)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     for (i = 0; i != 5; i++)
       if (frame == Data_08199fc8[i])
-        Sound_PlayFar(209);
+        Sound_PlayFar(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
     for (i = 0; i != 6; i++)
       if (frame == Data_08199fd2[i])
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
     if (frame == 369)
-      Sound_PlayFar(206);
+      Sound_PlayFar(SE_CURSE_FALL);
     for (i = 0; i != 6; i++)
       if (frame == 644 + i * 12)
-        Sound_PlayFar(104);
+        Sound_PlayFar(SE_104);
     if (frame == 755)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     for (i = 0; i != 6; i++)
       if (frame == 759 + i * 9)
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
     if (frame == 820)
-      Sound_PlayFar(208);
+      Sound_PlayFar(SE_BANE_ESCAPE);
 
     // The opening: the circle and the streaks.
     if (frame == 0) {
-      scene->x = 0x3c0000;
-      scene->y = 0x800000;
+      scene->x = px(60);
+      scene->y = px(128);
       scene->radius = 0xc0000;
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = streaks[i];
@@ -1228,8 +1215,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s->speed = Data_0819a01a[i];
         s->unk10 = 0;
         for (j = 1; j != 10; j++) {
-          STREAK(i, j).x = 0x960000;
-          STREAK(i, j).y = 0x960000;
+          STREAK(i, j).x = px(150);
+          STREAK(i, j).y = px(150);
         }
       }
       work->transferMode = 2;
@@ -1266,7 +1253,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
       }
       if (frame <= 71) {
-        scene->y -= 0x10000;
+        scene->y -= px(1);
         scene->radius -= 0x1000;
         if (!(frame & 15)) {
           {
@@ -1303,8 +1290,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
                 b++;
               {
                 /* FAKEMATCH(temporary): the colour copied into a u16 before its
-                 * store; as *fade++ = b << 10 | g << 5 | r, 171 of 4851
-                 * instructions differ in tla-en. */
+                 * store. */
                 u16 v = b << 10 | g << 5 | r;
 
                 *fade++ = v;
@@ -1321,8 +1307,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Canvas_BlitAtFoot(work->sheet, scene->xPixels, scene->yPixels, size);
       }
       if (frame == 175) {
-        REG_BG2CNT = 0x785;
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                     BGCNT_SCREEN_BASE(7);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         Iwram_FillWords(FADE_PLTT, 0x100, 0x7fff7fff);
       }
     }
@@ -1332,7 +1319,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       u8 *colors;
       struct VramBlockCacheEntry *table;
 
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       work->transferPending = 1;
       wait(1);
       battle[0x867] = 1;
@@ -1516,8 +1503,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The drops: their frames, the sparks' cells and the spray.
     if (frame == 230) {
-      REG_BLDALPHA = 0x1010;
-      REG_BG2CNT = 0x784;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       for (i = 1; i != 8; i++) {
         s32 next;
 
@@ -1626,12 +1613,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         for (j = 0; j != 8; j++)
           work->sheet[0x30a + i * 16 + j] = work->sheet[0x3ef + i * 8 - j];
       }
-      REG_BLDALPHA = 0x1008;
+      REG_BLDALPHA = BLEND_ALPHA(8, 16);
     }
     if ((u32)(frame - 414) <= 7) {
-      /* FAKEMATCH(temporary): the blend level copied into alpha; as
-       * REG_BLDALPHA = (frame - 406) | 0x1000, 14 of 4851 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(temporary): the blend level copied into alpha. */
       s32 alpha = frame - 406;
       REG_BLDALPHA = alpha | 0x1000;
     }
@@ -1683,7 +1668,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       if (frame == 422) {
         work->transferMode = 0;
         work->transferValue = 0;
-        REG_BLDALPHA = 0x1010;
+        REG_BLDALPHA = BLEND_ALPHA(16, 16);
       }
     }
     if ((u32)(frame - 423) <= 19) {
@@ -1698,19 +1683,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
       top = 120;
       first = top - step * 8;
-      /* FAKEMATCH(dead): off set to 0, which nothing reads before the loop sets
-       * it; without it, 168 of 4851 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): off set to 0. */
       off = 0;
-      /* FAKEMATCH(temporary): the band's first row passed to i through first;
-       * as i = top - step * 8, 168 of 4851 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the band's first row passed to i through first.
+       */
       i = first;
       top = i;
       for (; i != top + 40 && (v = (i - top) * 2, i <= 127); i++) {
         if (i >= 0) {
-          /* FAKEMATCH(dead): i / 3 into dead, which flow deletes; its call puts
-           * the band's loop over loop.c's threshold, which then keeps
-           * (i - top) * 2; without it, 191 of 4851 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(dead): i / 3 into dead, which flow deletes. */
           dead = i / 3;
           if (v > 63)
             v = 63;
@@ -1754,7 +1735,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The fountain: the second backdrop, the motes and the light shafts.
     if (frame == 446) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       Transform_Reset();
       BattleBackground_LoadFar(1, (s32)&ResourceId_StarfieldFlareBackdrop, 0);
       off = 0x302;
@@ -1927,12 +1908,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           s32 n = FindFreeParticle();
 
           if (n != -1) {
-            work->particles[n].x = 0x200000;
+            work->particles[n].x = px(32);
             if (frame <= 509)
               work->particles[n].x += (Random16() & 63) << 16;
             else
               work->particles[n].x += (Random16() & motesMask) << 16;
-            work->particles[n].y = 0x7f0000;
+            work->particles[n].y = px(127);
             work->particles[n].velocityX = (Random16() & 15) << 12;
             work->particles[n].velocityY =
                 -0x8000 - ((Random16() & 31) * 7 << 11);
@@ -2019,7 +2000,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 755) <= 2 || frame == 781)
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     if (frame == 754) {
       s32 white;
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32,
@@ -2130,7 +2111,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (n != -1) {
           s32 spin = Random16() & 3;
 
-          work->particles[n].x = 0x600000;
+          work->particles[n].x = px(96);
           work->particles[n].y = ((Random16() & 7) << 16) + 0x240000;
           work->particles[n].z = frame;
           work->particles[n].velocityX =
@@ -2146,7 +2127,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           work->particles[n].z = frame;
           work->particles[n].velocityX = -((Random16() & 15) << 13);
           work->particles[n].velocityY = (Random16() & 15) << 14;
-          work->particles[n].velocityZ = 0x8000;
+          work->particles[n].velocityZ = px(1) / 2;
           work->particles[n].variant = ((Random16() & 3) + 1) | 0x110;
         }
       }
@@ -2175,8 +2156,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             b++;
           {
             /* FAKEMATCH(temporary): the colour copied into a u16 before its
-             * store; as *fade++ = b << 10 | g << 5 | r, 171 of 4851
-             * instructions differ in tla-en. */
+             * store. */
             u16 v = b << 10 | g << 5 | r;
 
             *fade++ = v;
@@ -2192,7 +2172,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   camera[27] = savedZoom;
   HeapSlot_Release(SLOT_BLITTER);
   Iris_RestoreBattle();
-  Iwram_FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
   work->transferPending = 1;
@@ -2291,8 +2271,6 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
       *cx += 64 << 16;
       *cy += 64 << 16;
 
-      // Sort the corners by y. bx[1] is *by and cx[1] is *cy: the y swaps
-      // store b's and c's y through their x pointers, as the native does.
       if (*ay > *by) {
         XOR_SWAP(*ax, *bx);
         *ay ^= *by;
@@ -2548,9 +2526,7 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
           uA += duA;
           vA += dvA;
           /* FAKEMATCH(dead): edge B's values stepped on though nothing reads
-           * them again; flow deletes both, and cse2 then stores uv[0] to uB
-           * ahead of uA; without them, 4 of 966 instructions differ in
-           * tla-en. */
+           * them again. */
           uB += duB;
           vB += dvB;
         }
@@ -2754,8 +2730,6 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   u32 frame[34];
 
   src = BattleEffect_PatchTemplateCode;
-  // dst is reused for the block's size; as HeapSlot_Alloc(slot, 436), 31 of
-  // 597 instructions differ in tla-en.
   dst = (u32 *)436;
   dst = HeapSlot_Alloc(slot, (s32)dst);
 
@@ -2975,20 +2949,17 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     PUT(src[1]);
   }
   src += 2;
-  // An empty once-only loop keeps the step before the size's load; without
-  // it, 2 of 597 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
 
   {
     u32 words = (u32)runSize / 4;
-    /* FAKEMATCH(pin): count fixed in r2, where the rounded size is built; as a
-     * plain local, 35 of 597 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): count fixed in r2, where the rounded size is built. */
     register s32 count __asm__("r2") = words * 4;
     s32 size = count;
 
-    /* FAKEMATCH(barrier): an empty asm that keeps words alive past count's
-     * set; without it, 6 of 597 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm. */
     __asm__("" : : "r"(words));
     Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), REG_DMA3);
     dst = (u32 *)((u8 *)dst + size);
@@ -3022,8 +2993,7 @@ void RamCode_RunKernel0(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32);
   u32 size;
 
-  // The size's load in a once-only block keeps it after the parameters are
-  // copied; as a plain assignment, 4 of 31 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the size's load in a once-only block. */
   do {
     size = (u32)Data_081380acCodeSize;
   } while (0);
@@ -3045,8 +3015,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count) {
   void (*routine)(const void *, void *, s32);
   u32 size;
 
-  // The size's load in a once-only block keeps it after the parameters are
-  // copied; as a plain assignment, 4 of 36 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the size's load in a once-only block. */
   do {
     size = (u32)Data_0813b9a0CodeSize;
   } while (0);
@@ -3184,10 +3153,6 @@ extern u8 Data_0813ae14CodeWords[];
 extern u8 Data_0813b2ecCodeWords[];
 
 /// Copies a kernel whose DMA control is a word of its own.
-// Kernels 8, 9 and 10 read it from the pool, one word each, two of them equal
-// yet stored twice, so it is a symbol of each kernel: written
-// 0x84000000 | (size >> 2) the two fold into one pool entry, and as a number
-// the size is built in three instructions.
 #define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
   {                                                                            \
     (to) = Heap_Alloc((u32)(bytes));                                           \

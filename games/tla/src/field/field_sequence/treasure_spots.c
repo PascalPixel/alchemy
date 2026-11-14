@@ -3,6 +3,8 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/field/field_sequence.h"
 
 void Actor_SnapToTerrain(void *object) {
@@ -125,8 +127,8 @@ void Field_PlaceTreasureSpots(void) {
         if (GameFlag_Get(flag))
           Actor_SelectAnimationFar(object, 2);
         Actor_StartIdleFar(object);
-        object->timer = object->x / 0x10000;
-        object->unk66 = object->z / 0x10000;
+        object->timer = object->x / Q16_ONE;
+        object->unk66 = object->z / Q16_ONE;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
         work->objects[i] = object;
@@ -148,8 +150,8 @@ void Field_PlaceTreasureSpots(void) {
 /* VIEW(field_sequence): tag struct ObjectSprite as struct
  * ObjectSprite__field_sequence; module/field/field.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence.c:4041: structure has no member
- * named `yOffset'. */
+ * tla-ja: games/tla/src/field/field_sequence/treasure_spots.c:167: structure
+ * has no member named `yOffset'. */
 struct ObjectSprite__field_sequence {
   u8 unk00[5];
   u8 attr0High;
@@ -252,7 +254,7 @@ void Actor_ShakeAngle(u32 objectId) {
 
 void ObjectEvent_SetMode5WithCue(u32 objectId) {
   Actor_SelectAnimationFar(ObjectTable_Get(objectId), 5);
-  Sound_PlayFar(125);
+  Sound_PlayFar(SE_CHEST_CLOSE);
   wait(12);
 }
 
@@ -262,16 +264,16 @@ void ObjectEvent_Spring(u32 objectId) {
   object = ObjectTable_Get(objectId);
   wait(18);
   Actor_SelectAnimationFar(object, 7);
-  Sound_PlayFar(146);
+  Sound_PlayFar(SE_ENEMY_CRY);
   if (object != 0) {
-    object->velocityY = 0x80000;
+    object->velocityY = px(8);
     Actor_SetSpriteFlagsFar(object, 1);
   }
 }
 
 void ObjectEvent_SetMode4WithCue(u32 objectId) {
   Actor_SelectAnimationFar(ObjectTable_Get(objectId), 4);
-  Sound_PlayFar(124);
+  Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }
 
@@ -281,7 +283,7 @@ void ObjectEvent_SetMode2(u32 objectId) {
 
 void ObjectEvent_SetMode6WithCue(u32 objectId) {
   Actor_SelectAnimationFar(ObjectTable_Get(objectId), 6);
-  Sound_PlayFar(124);
+  Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }
 
@@ -296,7 +298,7 @@ void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
  * ObjectEvent_PlaceOnGround(s32 object, s32 x, s32 z); tried as the
  * definition's void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:70: conflicting types for
+ * games/tla/include/field/event.h:84: conflicting types for
  * `ObjectEvent_PlaceOnGround'. */
 void ObjectEvent_PlaceOnGround__field_sequence(
     u32 objectId, s32 x, s32 z) __asm__("ObjectEvent_PlaceOnGround");

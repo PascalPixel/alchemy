@@ -3,6 +3,8 @@
 /// order.
 
 #include "battle/battle.h"
+#include "flags.h"
+#include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -25,6 +27,7 @@
 #include "system/vector3.h"
 #include "inventory.h"
 #include "graphics/uiflow.h"
+#include "macros.h"
 
 struct Actor;
 struct SparkleSprite;
@@ -195,10 +198,7 @@ void Func_02000224(void) {
 }
 
 static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, so -100 is built
-   * again before each call, as the ROM has it, where a direct call would keep
-   * it in r5 for the next call; as a direct Unit_AddHp call, 10 of 53
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
   Unit_AddHp(owner, delta);
 }
 
@@ -341,8 +341,6 @@ void Func_02000604(void) {
   TileCopies_CopyTouchedCells(34, 26, 5, 4, a, b, c);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                      s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
@@ -350,10 +348,12 @@ static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 
 void Func_02000624(void) {
   Map_CopyCells(34, 26, 5, 4, 2, 10, 0);
-  Event_SetDestination((s32)&SceneId_Ov6b8Room1, 6);
+  Event_SetDestination((s32)&SceneId_PsynergyTest, 6);
 }
 
-void Func_02000650(void) { Event_SetDestination((s32)&SceneId_Ov6b8Room1, 8); }
+void Func_02000650(void) {
+  Event_SetDestination((s32)&SceneId_PsynergyTest, 8);
+}
 
 /* VIEW(psynergy_test): variable gData_020017b0 as u8 gData_020017b0[];
  * module/tla.h has s32 gData_020017b0; tried as the rest of the object declares
@@ -367,7 +367,7 @@ void Func_02000660(void) {
 }
 
 void Func_02000688(s32 actor) {
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_DAILA_PSY_CRYSTAL_DUG);
   Func_0200092c(actor, 36, 28, 1, 1, 10, 10);
 }
 
@@ -444,12 +444,12 @@ s32 Func_0200079c(void) {
   Call3((void (*)())Actor_FallOverWithAnimationById, 9, 0x8000, 0);
   Call2((void (*)())Actor_FallOverById, 10, 0x8000);
   Actor_FallOverById(12, 0);
-  if (Event_GetFlag(0x300))
+  if (Event_GetFlag(FLAG_DAILA_PSY_CRYSTAL_DUG))
     MapGrid_CopyCells(36, 28, 1, 1, 10, 10);
   if (Event_GetFlag(0x301))
-    Actor_SetPosition(18, 184 << 16, 184 << 16);
-  if (Event_GetFlag(0x302) && !Event_GetFlag(0x310))
-    Actor_SetPosition(19, 200 << 16, 200 << 16);
+    Actor_SetPosition(18, 184, 184);
+  if (Event_GetFlag(0x302) && !Event_GetFlag(FLAG_GAROH_NIGHT))
+    Actor_SetPosition(19, 200, 200);
   Actor_SetItemIcon(Actor_Get(19), 50);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -488,7 +488,7 @@ void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 1) {
-    Actor_SetPosition(id, x << 16, z << 16);
+    Actor_SetPositionFixed(id, x << 16, z << 16);
     object->scaleX = 0;
     object->scaleY = 0;
   }
@@ -511,8 +511,8 @@ void Func_020009c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   object0 = Actor_Get(arg1);
   if (arg0 != 2)
     goto L_02008a06;
-  Actor_SetPosition(arg1, (arg2 << 16), (arg3 << 16));
-  object0->y = 0x200000;
+  Actor_SetPositionFixed(arg1, px(arg2), px(arg3));
+  object0->y = px(32);
   object0->motionFlags = 3;
   object0->gravity = 0x170a;
   System_Wait(50);
@@ -540,18 +540,15 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       s32 scale;
 
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
       while (object->scaleX < Q16_ONE) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
         {
-          /* FAKEMATCH(temporary): the turn is added as a word, so its step
-           * is built inside the loop as in the native; as
-           * object->angle += 0x1000, 22 of 86 instructions differ in
-           * tla-en. */
-          s32 angle = object->facing + 0x1000;
+          /* FAKEMATCH(temporary): the turn is added as a word. */
+          s32 angle = object->facing + TRIG_TURN / 16;
 
           object->facing = angle;
         }
@@ -561,7 +558,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
       object->facing =
-          Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x8000;
+          Actor_Get(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
       Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }
@@ -582,7 +579,7 @@ void Func_02000ad0(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Event_PlaySound(0x256);
+      Event_PlaySound(SE_598);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }
@@ -601,9 +598,8 @@ void Func_02000ad0(struct Actor *object) {
       if (work->unka0[i] <= 31) {
         struct Vector3 *p = &position;
 
-        p->x = object->x;
-        p->y = object->y + (work->unka0[i] << 16);
-        p->z = object->z;
+        SET_POSITION(p, object->x, object->y + (work->unka0[i] << 16),
+                     object->z);
         Camera_WorldToScreen(p);
         x = p->x;
         j = 0;
@@ -678,8 +674,8 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(322),
-    SCENE_EXIT(20, 322, 2),
+    SCENE_EXITS(PsynergyTest),
+    SCENE_EXIT(20, PsynergyTest, 2),
     SCENE_EXITS_END,
 };
 
@@ -813,7 +809,7 @@ struct Trigger gSceneEvents[] = {
 /* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c;
  * psynergy_test.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:849: structure has no member named
+ * games/tla/src/debug/psynergy_test.c:850: structure has no member named
  * `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
@@ -831,7 +827,7 @@ struct SparkleSprite__s0c4c {
 /* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c;
  * psynergy_test.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:839: incompatible types in assignment. */
+ * games/tla/src/debug/psynergy_test.c:841: incompatible types in assignment. */
 struct SparkleWork__s0c4c {
   struct SparkleSprite__s0c4c sprites[4];
   u16 unka0;

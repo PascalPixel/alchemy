@@ -8,7 +8,8 @@
 /// Agatio arrive (Madra_MeetKarst), and the town takes other placements and
 /// triggers.
 
-#include "shared/actors.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -105,7 +106,7 @@ next:
     goto next;
   trigger = &work->value154;
   index = *trigger - 1;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   {
     s32 x = gMadra_Doors[index].x;
     s32 y = gMadra_Doors[index].y;
@@ -132,7 +133,7 @@ void Madra_TalkToWeaponMerchant(s32 arg) {
   }
   if (Event_GetFlag(0x8ff))
     Event_SetMessageId((s32)&MsgItLooksLikeThe);
-  else if (Event_GetFlag(0x8ab))
+  else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     Event_SetMessageId((s32)&MsgTheArmorerAnd);
   else
     Event_SetMessageId((s32)&MsgAfterTheChampa);
@@ -149,7 +150,7 @@ void Madra_TalkToArmorMerchant(s32 arg) {
   }
   if (Event_GetFlag(0x8ff))
     Event_SetMessageId((s32)&MsgPeopleAreSaying);
-  else if (Event_GetFlag(0x8ab))
+  else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     Event_SetMessageId((s32)&MsgIKnewThere);
   else
     Event_SetMessageId((s32)&MsgOwOwOw);
@@ -166,7 +167,7 @@ void Madra_TalkToItemMerchant(s32 arg) {
   }
   if (Event_GetFlag(0x8ff))
     Event_SetMessageId((s32)&MsgMyBoyfriendShin);
-  else if (Event_GetFlag(0x8ab))
+  else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     Event_SetMessageId((s32)&MsgAllMyInjuries);
   else
     Event_SetMessageId((s32)&MsgMySisterWas);
@@ -189,10 +190,10 @@ void Madra_KarstAsksAboutMenardi(void) {
   Event_SetMessageId(MsgHaveYouBy);
   Event_OpenMessage(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    FieldActor_ShowEmote(33, 0x103, 30);
+    FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
     Event_OpenMessage(33, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-      FieldActor_ShowEmote(33, 0x103, 30);
+      FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
       Event_ShowMessageThenWait(33, 0, 10);
     } else {
       Madra_KarstSendsPartyAway();
@@ -220,7 +221,7 @@ void Madra_MindReadKarst(void) {
   Event_SetMessageId((s32)MsgUsingPsynergyOn);
   Actor_RunRepeatedMotion(33, 2);
   Event_Wait(20);
-  FieldActor_ShowEmote(33, 0x108, 30);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageThenWait(33, 0, 10);
   Actor_SetAnimationAndWait(33, 4);
   Event_Wait(10);
@@ -231,14 +232,14 @@ void Madra_MindReadKarst(void) {
 /// party hears Karst call for her sister.
 /// "Where could Menardi have gone? Where are you, my sister?"
 void Madra_KarstCallsForMenardi(void) {
-  if (Event_GetFlag(0x20f) == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_0F) == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldActor_ShowEmote(33, 0x105, 30);
+    FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
     Event_SetMessageId((s32)&MsgWhereCouldMenardi);
     Event_ShowMessageThenWait(33, 0, 10);
     Event_End();
-    Event_SetFlag(0x20f);
+    Event_SetFlag(FLAG_SCENE_TEMP_0F);
   }
 }
 
@@ -266,16 +267,16 @@ void Madra_AskComingThroughHole(void) {
   s32 msg;
 
   Actor_FaceActor(26, 4, 0);
-  if (Event_GetFlag(0x281)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_81)) {
     Event_SetMessageId((s32)&MsgYeahWellWe);
   } else {
     msg = (s32)&MsgYouCominThrough;
     Event_SetMessageId(msg);
     Event_OpenMessage(26, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
-      Event_SetFlag(0x281);
+      Event_SetFlag(FLAG_SCENE_TEMP_81);
       Event_Wait(10);
-      FieldActor_ShowEmote(26, 0x102, 0);
+      FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
       Event_SetMessageId(msg + 1);
     } else {
       Event_Wait(20);
@@ -292,16 +293,16 @@ void Madra_AskComingThroughSealedHole(void) {
   s32 msg;
 
   Actor_FaceActor(26, 4, 0);
-  if (Event_GetFlag(0x281)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_81)) {
     Event_SetMessageId((s32)&MsgYeahUhWe);
   } else {
     msg = (s32)&MsgOhUhYou;
     Event_SetMessageId(msg);
     Event_OpenMessage(26, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
-      Event_SetFlag(0x281);
+      Event_SetFlag(FLAG_SCENE_TEMP_81);
       Event_Wait(10);
-      FieldActor_ShowEmote(26, 0x102, 0);
+      FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
       Event_SetMessageId(msg + 1);
     } else {
       Event_Wait(20);
@@ -323,18 +324,18 @@ static inline void Madra_PlaceFacing(s32 actorId, s32 x, s32 z, u16 facing) {
 /// down into the catacombs.
 void Madra_WorkerBlocksHole(void) {
   if (Event_GetFlag(0x910)) {
-    Event_PlaySound(123);
+    Event_PlaySound(SE_MAP_EXIT);
     Import_EventSetExitRequest(16);
-  } else if (!Event_GetFlag(0x280)) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_80)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Madra_PlaceFacing(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
-    Actor_GetById(4)->velocityY = PIXELS(5);
-    Actor_SetSpeed(4, 0x20000, 0x10000);
+    Madra_PlaceFacing(26, px(744), px(257), FACING_SOUTH);
+    Actor_GetById(4)->velocityY = px(5);
+    Actor_SetSpeed(4, 2);
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
-    Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
-    Event_SetFlag(0x280);
+    Madra_PlaceFacing(4, px(720), px(244), FACING_SOUTHEAST);
+    Event_SetFlag(FLAG_SCENE_TEMP_80);
     Madra_AskComingThroughHole();
     Event_End();
   }
@@ -342,16 +343,16 @@ void Madra_WorkerBlocksHole(void) {
 
 /// After the raid, the worker pops up out of the hole he is sealing.
 void Madra_WorkerBlocksSealedHole(void) {
-  if (!Event_GetFlag(0x280)) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_80)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Madra_PlaceFacing(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
-    Actor_GetById(4)->velocityY = PIXELS(5);
-    Actor_SetSpeed(4, 0x20000, 0x10000);
+    Madra_PlaceFacing(26, px(744), px(256), FACING_SOUTH);
+    Actor_GetById(4)->velocityY = px(5);
+    Actor_SetSpeed(4, 2);
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
-    Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
-    Event_SetFlag(0x280);
+    Madra_PlaceFacing(4, px(720), px(244), FACING_SOUTHEAST);
+    Event_SetFlag(FLAG_SCENE_TEMP_80);
     Madra_AskComingThroughSealedHole();
     Event_End();
   }
@@ -360,7 +361,7 @@ void Madra_WorkerBlocksSealedHole(void) {
 const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
     return gMadra_TriggersOnReturn;
-  if (Event_GetFlag(0x8ab))
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gMadra_TriggersAfterRaid;
   return gMadra_TriggersBeforeRaid;
 }
@@ -397,13 +398,13 @@ s32 Scene_Initialize(void) {
       sprite->unk11 = (sprite->unk11 & 3) | 32;
     }
     ((struct FieldSprite *)Actor_GetById(26)->sprite)->unk19 = 1;
-    if (Event_GetFlag(0x8ff) == 0 && Event_GetFlag(0x8ab) != 0) {
+    if (Event_GetFlag(0x8ff) == 0 && Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
       Actor_SetPosition(27, 0, 0);
       Actor_SetPosition(28, 0, 0);
-      if (Event_GetFlag(0x280) == 0)
+      if (Event_GetFlag(FLAG_SCENE_TEMP_80) == 0)
         Actor_SetPosition(26, 0, 0);
     } else if (Event_GetFlag(0x8ff) != 0 || Event_GetFlag(0x910) != 0 ||
-               Event_GetFlag(0x280) == 0) {
+               Event_GetFlag(FLAG_SCENE_TEMP_80) == 0) {
       Actor_SetPosition(26, 0, 0);
     }
   }
@@ -451,7 +452,7 @@ void Madra_AskAboutBriggs(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x8ab)) {
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     msg = (s32)&MsgHeyMisterAre;
     Event_SetMessageId(msg);
     Event_OpenMessage(8, 0);
@@ -464,7 +465,7 @@ void Madra_AskAboutBriggs(void) {
     }
     Event_ShowMessage(8, 0);
   } else {
-    if (Event_GetFlag(0x300) == 0)
+    if (Event_GetFlag(FLAG_AREA_TEMP_00) == 0)
       Actor_FaceActor(14, 4, 0);
     msg = (s32)&MsgDidYouCome;
     Event_SetMessageId(msg);
@@ -479,7 +480,7 @@ void Madra_AskAboutBriggs(void) {
     Event_ShowMessage(8, 0);
   }
   Actor_FaceDirection(14, FACING_SOUTH, 0);
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
   Event_End();
 }
 
@@ -488,7 +489,7 @@ void Madra_MindReadBriggsFan(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x8ab)) {
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     msg = (s32)&MsgHeyMisterAre;
     Event_SetMessageId(msg);
     Event_OpenMessage(8, 0);
@@ -501,7 +502,7 @@ void Madra_MindReadBriggsFan(void) {
     }
     Event_ShowMessage(8, 0);
   } else {
-    if (Event_GetFlag(0x300) == 0) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_00) == 0) {
       x = 0x100;
       z = 30;
       FieldActor_ShowEmote(14, x, z);
@@ -520,7 +521,7 @@ void Madra_MindReadBriggsFan(void) {
     Event_ShowMessage(8, 0);
   }
   Actor_FaceDirection(14, FACING_SOUTH, 0);
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
   Event_End();
 }
 
@@ -535,7 +536,7 @@ void Madra_AskAboutJenna(void) {
   flags = 0;
   Event_OpenMessage(11, flags);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Event_SetFlag(0x301);
+    Event_SetFlag(FLAG_AREA_TEMP_01);
     Event_ShowMessage(11, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
@@ -573,7 +574,7 @@ void Madra_InspectPartyAtGate(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgYouThereHold);
   Event_ShowMessageThenWait(24, 0, 2);
-  FieldCamera_MoveTo(238 << 17, -1, 210 << 17, 1);
+  FieldCamera_MoveTo(476, CAMERA_KEEP, 420, 1);
   Actor_WalkBy(25, 3, 8);
   Actor_WalkByAndWait(24, -3, 8);
   Actor_WaitForMoveById(25);
@@ -640,19 +641,19 @@ void Madra_InspectPartyAtGate(void) {
   Actor_WalkToAndWait(25, 475, 400);
   Actor_WalkByAndWait(25, -16, 0);
   Actor_GetById(25)->priorityFlags |= 1;
-  FieldCamera_MoveTo(238 << 17, -1, 198 << 17, 1);
+  FieldCamera_MoveTo(476, CAMERA_KEEP, 396, 1);
   Actor_WalkToAndWait(25, 459, 416);
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   Event_Wait(10);
-  FieldActor_ShowEmote(32, 0x101, 50);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Event_ShowMessageThenWait(32, 0, 2);
   Event_Wait(10);
   Actor_RunRepeatedMotion(24, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(24, 0, 2);
   Event_Wait(10);
-  FieldActor_ShowEmote(32, 0x100, 0);
-  FieldActor_ShowEmote(4, 0x100, 50);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Event_Wait(20);
   Actor_SetAnimationAndWait(25, 4);
   Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
@@ -663,9 +664,9 @@ void Madra_InspectPartyAtGate(void) {
   Event_Wait(10);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_FaceDirection(32, FACING_NORTH, 0);
-  FieldActor_ShowEmote(25, 0x109, 50);
+  FieldActor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 50);
   Event_ShowMessageThenWait(24, 0, 2);
-  FieldActor_ShowEmote(25, 0x103, 20);
+  FieldActor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
   Event_ShowMessageThenWait(25, 0, 2);
   Event_Wait(10);
@@ -673,8 +674,8 @@ void Madra_InspectPartyAtGate(void) {
   Event_Wait(30);
   Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
   Event_ShowMessageThenWait(24, 0, 2);
-  Actor_SetSpeed(24, 0x4ccc, 0x2666);
-  Actor_SetSpeed(25, 0x4ccc, 0x2666);
+  Actor_SetSpeed(24, 0.3);
+  Actor_SetSpeed(25, 0.3);
   Actor_WalkBy(24, 3, -8);
   Actor_WalkBy(25, -3, -8);
   Actor_WaitForMoveById(24);
@@ -705,13 +706,13 @@ void Madra_GrantPassageToOsenia(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
+  FieldCamera_MoveWithinMapBounds(px(124), -1, px(420), 1);
   FieldCamera_WaitForArrival();
-  Actor_SetSpeed(33, 0xcccc, 0x6666);
-  Actor_SetSpeed(34, 0xcccc, 0x6666);
+  Actor_SetSpeed(33, 0.8);
+  Actor_SetSpeed(34, 0.8);
   Event_StartScreenTransition();
-  Actor_SetPosition(33, PIXELS(172), PIXELS(332));
-  Actor_SetHorizontalPositionWithTerrain(34, PIXELS(172), PIXELS(324));
+  Actor_SetPosition(33, 172, 332);
+  Actor_SetHorizontalPositionWithTerrain(34, px(172), px(324));
   Event_SetMessageId(MsgHasEscaped2);
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(33, 0, 10);
@@ -732,8 +733,8 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   Actor_FaceDirection(34, FACING_NORTH, 0);
-  Actor_SetAttachedEffect(34, 258);
-  Actor_SetAttachedEffect(33, 258);
+  Actor_SetAttachedEffect(34, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(33, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
   Motion_SetModeAndWaitAnimation(34, 3);
   Motion_SetModeAndWaitAnimation(33, 3);
@@ -742,16 +743,16 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   Actor_WalkTo(34, 102, 340);
   Actor_WaitForMoveById(33);
-  Actor_SetPosition(33, PIXELS(4), PIXELS(4));
+  Actor_SetPosition(33, 4, 4);
   Actor_WaitForMoveById(34);
-  Actor_SetPosition(34, PIXELS(4), PIXELS(4));
+  Actor_SetPosition(34, 4, 4);
   Actor_ArmCallback(4, FACING_NORTHEAST, 0);
   Event_Wait(40);
-  FieldActor_ShowEmote(4, 258, 30);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_Wait(40);
   Event_Wait(120);
-  Actor_SetPosition(33, PIXELS(102), PIXELS(340));
-  Actor_SetPosition(34, PIXELS(102), PIXELS(340));
+  Actor_SetPosition(33, 102, 340);
+  Actor_SetPosition(34, 102, 340);
   Actor_WalkToAndWait(34, 100, 364);
   Actor_WalkTo(34, 124, 380);
   Actor_WalkToAndWait(33, 100, 380);
@@ -762,7 +763,7 @@ void Madra_GrantPassageToOsenia(void) {
   Actor_FaceActorById(4, 33, 0);
   Actor_FaceDirection(34, FACING_NORTH, 0);
   Actor_FaceDirection(33, FACING_NORTH, 0);
-  FieldActor_ShowEmote(33, 258, 30);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessageThenWait(33, 0, 10);
   Actor_FaceActorById(34, 33, 0);
   Motion_SetModeAndWaitAnimation(34, 3);
@@ -776,7 +777,7 @@ void Madra_GrantPassageToOsenia(void) {
   Motion_SetModeAndWaitAnimation(34, 3);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 10);
-  FieldActor_ShowEmote(33, 258, 30);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessageThenWait(33, 0, 10);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   Actor_ArmCallback(34, FACING_NORTH, 0);
@@ -790,7 +791,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   Actor_ArmCallback(33, FACING_WEST, 0);
   Event_Wait(20);
-  FieldActor_ShowEmote(33, 257, 30);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(33, 0, 10);
   Event_ShowMessageThenWait(33, 0, 10);
   Motion_SetVarCbAndRefresh(34, 2);
@@ -805,12 +806,12 @@ void Madra_GrantPassageToOsenia(void) {
   Actor_FaceActorById(33, 4, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(33, 0, 10);
-  FieldActor_ShowEmote(4, 261, 30);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Motion_SetVarCbAndRefresh(34, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 10);
   Event_Wait(20);
-  FieldActor_ShowEmote(33, 262, 30);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_ShowMessageThenWait(33, 0, 10);
@@ -827,7 +828,7 @@ void Madra_GrantPassageToOsenia(void) {
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
-  FieldActor_ShowEmote(34, 258, 30);
+  FieldActor_ShowEmote(34, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
@@ -868,7 +869,7 @@ void Madra_StopPartyAfterRaid(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgHeyYouLot);
   Event_ShowMessageThenWait(24, 0, 2);
-  FieldCamera_MoveTo(PIXELS(476), -1, PIXELS(400), 1);
+  FieldCamera_MoveTo(476, CAMERA_KEEP, 400, 1);
   Actor_WalkByAndWait(24, -3, 8);
   Actor_WalkToAndWait(4, 472, 426);
   Event_Wait(10);
@@ -884,21 +885,21 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_FaceDirection(4, FACING_EAST, 0);
   Actor_FaceDirection(32, FACING_WEST, 0);
   Event_Wait(20);
-  FieldActor_ShowEmote(32, 0x101, 30);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(32, 0);
   Actor_SetAnimationAndWait(4, 4);
   Actor_FaceDirectionAndWait(24, FACING_SOUTH + FACING_STEP);
   Actor_SetAnimationAndWait(24, 4);
   Event_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
-  FieldActor_ShowEmote(32, 0x103, 0);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_Jump(32, 6, 15);
   Actor_Jump(32, 6, 23);
   Event_ShowMessage(32, 0);
-  FieldActor_ShowEmote(4, 0x100, 30);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(4, 24, 0);
   Event_Wait(20);
-  FieldActor_ShowEmote(32, 0x100, 30);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirectionAndWait(32, FACING_NORTH + FACING_STEP);
   Event_ShowMessage(32, 0);
   Actor_FaceDirectionAndWait(25, FACING_SOUTHEAST);
@@ -922,7 +923,7 @@ void Madra_StopPartyAfterRaid(void) {
   Event_Wait(20);
   Actor_FaceDirectionAndWait(32, FACING_NORTHWEST + FACING_STEP);
   Event_ShowMessage(32, 0);
-  FieldActor_ShowEmote(25, 0x102, 30);
+  FieldActor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessageThenWait(25, 0, 10);
   Actor_RunRepeatedMotion(24, 2);
   Event_Wait(20);
@@ -951,18 +952,18 @@ void Madra_StopPartyAfterRaid(void) {
   Event_Wait(20);
   Event_ShowMessage(32, 0);
   Event_Wait(40);
-  FieldActor_ShowEmote(24, 0x101, 30);
+  FieldActor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(24, FACING_WEST, 0);
   Event_Wait(20);
   Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(4, FACING_NORTHWEST + FACING_STEP, 0);
-  FieldActor_ShowEmote(25, 0x102, 30);
+  FieldActor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetAnimationAndWait(25, 4);
   Event_Wait(10);
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   Event_ShowMessageThenWait(25, 0, 10);
-  FieldActor_ShowEmote(32, 0x101, 0);
-  FieldActor_ShowEmote(4, 0x101, 30);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(32, 0);
   Actor_FaceDirectionAndWait(24, FACING_SOUTH + FACING_STEP);
   Actor_SetAnimationAndWait(24, 4);
@@ -971,8 +972,8 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_SetAnimationAndWait(25, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(25, 0, 10);
-  Actor_SetSpeed(24, 0x4ccc, 0x2666);
-  Actor_SetSpeed(25, 0x4ccc, 0x2666);
+  Actor_SetSpeed(24, 0.3);
+  Actor_SetSpeed(25, 0.3);
   Actor_WalkBy(24, 3, -8);
   Actor_WalkBy(25, -3, -8);
   Actor_WaitForMoveById(24);
@@ -997,8 +998,6 @@ void Madra_StopPartyAfterRaid(void) {
   Event_End();
 }
 
-// The macro's do-while starts each mode change's own scheduling region; as
-// plain calls, 88 of 1565 instructions differ in tla-en.
 #define SET_MODE(id, mode)                                                     \
   do {                                                                         \
     Actor_SetAnimation(id, mode);                                              \
@@ -1036,8 +1035,7 @@ void Madra_MeetKarst(void) {
   Actor_WalkByAndWaitById(34, 0, 4);
   SET_MODE(34, 3);
   /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
-   * scheduling region; as a plain call, whose message call then loads its
-   * arguments in the other order, 2 of 1565 instructions differ in tla-en. */
+   * scheduling region. */
   do {
     Event_Wait(20);
   } while (0);
@@ -1073,13 +1071,13 @@ void Madra_MeetKarst(void) {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Event_ShowMessageThenWait(34, 0, 0);
   }
-  FieldActor_ShowEmote(34, 0x102, 30);
+  FieldActor_ShowEmote(34, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessageThenWait(34, 0, 0);
   SET_MODE(34, 3);
   Event_Wait(20);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 0);
-  FieldActor_ShowEmote(6, 0x102, 30);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceActorById(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
@@ -1089,14 +1087,14 @@ void Madra_MeetKarst(void) {
   Event_Wait(33);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
-  FieldActor_ShowEmote(34, 0x100, 30);
+  FieldActor_ShowEmote(34, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 0);
   Actor_WalkByAndWaitById(34, 16, 8);
   Actor_FaceDirection(34, FACING_SOUTH, 0);
   if (PartyInventory_FindRoom(210) >= 0) {
-    ItemDisplay_ShowItem(210, 3);
-    PartyInventory_GiveItem(210, 0);
+    ItemDisplay_ShowItem(ITEM_CYCLONE_CHIP, 3);
+    PartyInventory_GiveItem(ITEM_CYCLONE_CHIP, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Actor_ArmCallback(4, FACING_NORTH, 0);
     GameFlag_Set(0x918);
@@ -1113,12 +1111,12 @@ void Madra_MeetKarst(void) {
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     Actor_WalkByAndWait(34, -16, 0);
     Actor_FaceDirectionAndWait(34, FACING_SOUTH);
-    Actor_SetPosition(66, PIXELS(192), PIXELS(256));
+    Actor_SetPosition(66, 192, 256);
     *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) = count;
   }
   Actor_WalkByAndWait(34, -16, -8);
   Actor_FaceDirectionAndWait(34, FACING_SOUTH);
-  FieldActor_ShowEmote(34, 0x105, 30);
+  FieldActor_ShowEmote(34, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Event_ShowMessageThenWait(34, 0, 0);
   SET_MODE(34, 3);
   Event_Wait(20);
@@ -1141,12 +1139,12 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
   Event_ShowMessageAndWait(33, 0);
-  Sound_Play(78);
-  FieldActor_ShowEmote(4, 0x101, 0);
-  FieldActor_ShowEmote(5, 0x101, 0);
-  FieldActor_ShowEmote(7, 0x101, 0);
-  FieldActor_ShowEmote(6, 0x101, 0);
-  FieldActor_ShowEmote(32, 0x101, 30);
+  Sound_Play(SOUND_FADE_OUT_BGM);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActorById(4, 33, 0);
   Actor_FaceActorById(7, 33, 0);
   Actor_FaceActorById(6, 33, 0);
@@ -1155,14 +1153,14 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   FieldCamera_FollowActor(33, 1);
   Event_Wait(60);
-  Sound_Play(36);
-  FieldActor_ShowEmote(33, 0x107, 30);
+  Sound_Play(MUS_036);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessageAndWait(33, 0);
   Actor_FaceDirection(33, FACING_WEST, 0);
   Actor_TurnToFaceEachOther(6, 5, 0);
   Actor_TurnToFaceEachOther(7, 32, 0);
   Event_Wait(40);
-  FieldActor_ShowEmote(4, 0x102, 30);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
@@ -1176,20 +1174,20 @@ void Madra_MeetKarst(void) {
   Actor_FaceDirectionById(33, FACING_EAST);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
-  FieldActor_ShowEmote(6, 0x102, 30);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceActorById(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
-  FieldActor_ShowEmote(5, 0x100, 30);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageAndWait(5, 0);
-  FieldActor_ShowEmote(33, 0x107, 30);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessageAndWait(33, 0);
   Actor_FaceActorById(33, 4, 0);
   Event_Wait(20);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
     Event_ShowMessageAndWait(33, 0);
-    FieldActor_ShowEmote(4, 0x102, 30);
+    FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_Wait(40);
     SET_MODE(33, 3);
     Event_Wait(20);
@@ -1204,7 +1202,7 @@ void Madra_MeetKarst(void) {
     SET_MODE(6, 4);
     Event_Wait(33);
     Event_Wait(20);
-    FieldActor_ShowEmote(33, 0x109, 30);
+    FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     Event_ShowMessageAndWait(33, 0);
   } else {
     Event_SetMessageId(MsgICanTBelieveIt);
@@ -1218,7 +1216,7 @@ void Madra_MeetKarst(void) {
     SET_MODE(6, 4);
     Event_Wait(33);
     Event_Wait(20);
-    FieldActor_ShowEmote(6, 0x109, 30);
+    FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     Event_ShowMessageAndWait(33, 0);
   }
   Event_SetMessageId(MsgWhoIsThis);
@@ -1236,17 +1234,17 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
-  FieldActor_ShowEmote(4, 0x109, 0);
-  FieldActor_ShowEmote(5, 0x109, 0);
-  FieldActor_ShowEmote(6, 0x109, 0);
-  FieldActor_ShowEmote(32, 0x109, 30);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_Wait(60);
-  FieldActor_ShowEmote(33, 0x106, 30);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   Event_ShowMessageThenWait(33, 0, 0);
-  FieldActor_ShowEmote(4, 0x102, 0);
-  FieldActor_ShowEmote(5, 0x102, 0);
-  FieldActor_ShowEmote(6, 0x102, 0);
-  FieldActor_ShowEmote(32, 0x102, 30);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   SET_MODE(33, 3);
   Event_Wait(20);
   Event_Wait(20);
@@ -1254,7 +1252,7 @@ void Madra_MeetKarst(void) {
   Actor_ArmCallback(33, FACING_EAST, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
-  FieldActor_ShowEmote(32, 0x100, 30);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageAndWait(32, 0);
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
@@ -1263,14 +1261,14 @@ void Madra_MeetKarst(void) {
   Event_Wait(33);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
-  FieldActor_ShowEmote(4, 0x103, 0);
-  FieldActor_ShowEmote(6, 0x103, 0);
-  FieldActor_ShowEmote(5, 0x103, 0);
-  FieldActor_ShowEmote(7, 0x103, 30);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   Actor_FaceDirection(33, FACING_WEST, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
-  FieldActor_ShowEmote(33, 0x108, 30);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(33, 0);
   Motion_SetVarCbAndRefresh(4, 2);
   Event_Wait(20);
@@ -1285,12 +1283,12 @@ void Madra_MeetKarst(void) {
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
-  FieldActor_ShowEmote(4, 0x100, 0);
-  FieldActor_ShowEmote(7, 0x100, 0);
-  FieldActor_ShowEmote(5, 0x100, 0);
-  FieldActor_ShowEmote(6, 0x100, 0);
-  FieldActor_ShowEmote(4, 0x100, 30);
-  FieldActor_ShowEmote(33, 0x101, 30);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(33, 0);
   Actor_FaceDirectionById(33, FACING_EAST);
   Event_Wait(20);
@@ -1310,15 +1308,15 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    FieldActor_ShowEmote(33, 0x108, 30);
+    FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     Event_ShowMessageThenWait(33, 0, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
-    FieldActor_ShowEmote(33, 0x103, 30);
+    FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Event_ShowMessageThenWait(33, 0, 0);
   }
-  FieldActor_ShowEmote(32, 0x102, 30);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   SET_MODE(32, 4);
   Event_Wait(33);
   SET_MODE(32, 4);
@@ -1334,20 +1332,20 @@ void Madra_MeetKarst(void) {
   Actor_ArmCallback(33, FACING_EAST, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
-  Sound_Play(78);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Sound_Play(SOUND_FADE_OUT_BGM);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_WalkByAndWaitById(33, 24, 24);
   Actor_WalkByAndWaitById(33, 132, 0);
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
   Scene_PlayMusic();
   FieldCamera_FollowActor(4, 1);
-  FieldActor_ShowEmote(6, 0x102, 30);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessageAndWait(6, 0);
   SET_MODE(5, 3);
   Event_Wait(20);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
-  FieldActor_ShowEmote(7, 0x101, 30);
+  FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActorById(7, 4, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(7, 0, 0);
@@ -1367,7 +1365,7 @@ void Madra_MeetKarst(void) {
   Actor_FaceDirection(32, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
-  FieldActor_ShowEmote(7, 0x101, 20);
+  FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceActorById(7, 32, 0);
   Actor_FaceActorById(4, 32, 0);
   Actor_FaceActorById(6, 32, 0);
@@ -1393,11 +1391,11 @@ void Madra_MeetKarst(void) {
   Event_ShowMessageAndWait(32, 0);
   Actor_SetSpriteColor(Actor_GetById(5), 0);
   Event_Wait(20);
-  FieldActor_ShowEmote(5, 0x100, 30);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActorById(5, 32, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
-  FieldActor_ShowEmote(6, 0x108, 30);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(6, 0);
   Actor_SetSpriteColor(Actor_GetById(5), 10);
   Actor_FaceActorById(5, 6, 0);
@@ -1429,7 +1427,7 @@ void Madra_MeetKarst(void) {
   SET_MODE(5, 3);
   Event_Wait(20);
   Event_Wait(20);
-  FieldActor_ShowEmote(32, 0x108, 30);
+  FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(32, 0);
   SET_MODE(6, 3);
   SET_MODE(7, 3);
@@ -1450,12 +1448,11 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   SET_MODE(32, 3);
   /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
-   * scheduling region; as a plain call, whose speed call then loads its
-   * arguments in the other order, 2 of 1565 instructions differ in tla-en. */
+   * scheduling region. */
   do {
     Event_Wait(20);
   } while (0);
-  Actor_SetSpeed(32, 0x00013333, 0x9999);
+  Actor_SetSpeed(32, 1.2);
   SET_MODE(32, 2);
   object = Actor_GetById(4);
   if (object != NULL)
@@ -1463,21 +1460,21 @@ void Madra_MeetKarst(void) {
                              ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
-  Actor_SetSpeed(5, 0x00013333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   SET_MODE(5, 2);
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_SetDestinationById(5, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
-  Actor_SetSpeed(6, 0x00013333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   SET_MODE(6, 2);
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_SetDestinationById(6, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
-  Actor_SetSpeed(7, 0x00013333, 0x9999);
+  Actor_SetSpeed(7, 1.2);
   SET_MODE(7, 2);
   object = Actor_GetById(4);
   if (object != NULL)
@@ -1514,7 +1511,7 @@ void Madra_ClimbDownLadder(void) {
   Actor_WaitForMoveById(4);
   Actor_SetAnimation(4, 10);
   Event_Wait(10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(next);
   Event_End();
 }
@@ -1541,10 +1538,20 @@ UNUSED void Madra_StepOntoLadderFacingWest(void) {
 
 /// Unused: the leader turns north on the spot and climbs down; no trigger runs
 /// it.
-UNUSED DEFINE_SCENE_TURN_ACTOR_AND_RUN(Madra_TurnAndClimbDownLadder,
-                                       Madra_ClimbDownLadder)
+UNUSED void Madra_TurnAndClimbDownLadder(void) {
+  s32 id, a;
 
-    void Madra_EnterDoor(void);
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  a = 192;
+  id = 4;
+  /* FAKEMATCH(barrier): the id held at an empty asm. */
+  __asm__ volatile("" : "+r"(id));
+  Actor_ArmCallback(id, a << 8, 0);
+  Madra_ClimbDownLadder();
+}
+
+void Madra_EnterDoor(void);
 void Madra_KarstAsksAboutMenardi(void);
 void Madra_WorkerBlocksHole(void);
 void Madra_AskAboutJenna(void);
@@ -1556,88 +1563,88 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(44),
-    SCENE_EXIT_IF(1, 46, 1, -1),
-    SCENE_EXIT_IF(2, 45, 1, -1),
-    SCENE_EXIT_IF(3, 45, 2, -1),
-    SCENE_EXIT_IF(4, 45, 8, -1),
-    SCENE_EXIT_IF(5, 45, 10, -1),
-    SCENE_EXIT_IF(6, 45, 15, -1),
-    SCENE_EXIT_IF(7, 45, 5, -1),
-    SCENE_EXIT_IF(8, 45, 9, -1),
-    SCENE_EXIT_IF(9, 45, 20, -1),
-    SCENE_EXIT_IF(10, 46, 2, -1),
-    SCENE_EXIT_IF(11, 2, 9, -1),
-    SCENE_EXIT_IF(15, 48, 1, -1),
-    SCENE_EXIT_IF(16, 48, 3, -1),
+    SCENE_EXITS(Madra),
+    SCENE_EXIT_UNLESS(1, MadraInteriors2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, MadraInteriors1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, MadraInteriors1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, MadraInteriors1, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, MadraInteriors1, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, MadraInteriors1, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, MadraInteriors1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, MadraInteriors1, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, MadraInteriors1, 20, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, MadraInteriors2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, WorldMap, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, MadraCatacombs2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, MadraCatacombs2, 3, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 // clang-format off
 struct ActorPlacement gMadra_Placements[] = {
-    {71, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, 1, 0},
-    {72, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(392), FACING_NORTH, 1, 0},
-    {73, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(360), FACING_SOUTH, 1, 0},
-    {74, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(440), FACING_NORTHWEST, 1, 0},
-    {75, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(280), FACING_SOUTH, 1, 0},
-    {76, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(384), FACING_NORTH, 1, 0},
-    {77, CONDITION_ALWAYS, 1, PIXELS(274), 0, PIXELS(510), FACING_SOUTH, 1, 0},
-    {78, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(376), FACING_NORTH, 1, 0},
-    {75, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(264), FACING_SOUTHEAST, 1, 0},
-    {73, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(232), FACING_SOUTH, 0, 0},
-    {224, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(296), FACING_EAST, 1, 0},
-    {78, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(259), FACING_SOUTH, 1, 0},
-    {71, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(472), FACING_NORTHEAST, 1, 0},
-    {72, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(440), FACING_NORTH, 1, 0},
-    {187, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(360), FACING_SOUTH + FACING_STEP, 1, 0},
-    {187, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(360), FACING_SOUTH + FACING_STEP, 1, 0},
-    {71, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(408), FACING_SOUTH, 1, 0},
-    {71, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(408), FACING_SOUTH, 1, 0},
-    {71, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(248), FACING_NORTH, 0, 0},
-    {187, 0x1911, 1, PIXELS(112), 0, PIXELS(440), FACING_NORTH, 1, 0},
-    {192, 0x1911, 1, PIXELS(88), 0, PIXELS(440), FACING_NORTH, 1, 0},
-    {205, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(272), FACING_SOUTH, 1, 0},
-    {206, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(256), FACING_SOUTH, 1, 0},
-    {198, 0x18ab, 1, PIXELS(280), 0, PIXELS(256), FACING_SOUTH, 1, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {200, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {88, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {186, 0x8ab, 1, PIXELS(280), 0, PIXELS(256), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 296, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 280, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 384, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 274, 0, 510, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 264, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 259, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 360, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 360, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 248, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(187, 0x1911, MOVEMENT_TYPE_STAND, 112, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(192, 0x1911, MOVEMENT_TYPE_STAND, 88, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(205, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(206, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(198, 0x18ab, MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(200, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(186, 0x8ab, MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gMadra_PlacementsOnReturn[] = {
-    {71, CONDITION_ALWAYS, 1, PIXELS(150), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, 1, 0},
-    {72, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(392), FACING_NORTH, 1, 0},
-    {73, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(360), FACING_SOUTH, 1, 0},
-    {74, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(440), FACING_NORTHWEST, 1, 0},
-    {75, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(280), FACING_SOUTH, 1, 0},
-    {76, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(392), FACING_NORTH, 1, 0},
-    {77, CONDITION_ALWAYS, 1, PIXELS(274), 0, PIXELS(510), FACING_SOUTH, 1, 0},
-    {78, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(376), FACING_NORTH, 1, 0},
-    {75, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(264), FACING_SOUTH, 1, 0},
-    {73, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(232), FACING_SOUTH, 0, 0},
-    {224, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(296), FACING_SOUTH + FACING_STEP, 1, 0},
-    {78, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(259), FACING_SOUTH, 1, 0},
-    {71, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(472), FACING_NORTHEAST, 1, 0},
-    {72, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(440), FACING_NORTHWEST, 1, 0},
-    {187, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, 1, 0},
-    {187, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, 1, 0},
-    {71, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(408), FACING_SOUTH, 1, 0},
-    {71, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(408), FACING_SOUTH, 1, 0},
-    {71, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 0, 0},
-    {187, 0x1911, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {192, 0x1911, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {205, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(272), FACING_SOUTH, 1, 0},
-    {206, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(256), FACING_SOUTH, 1, 0},
-    {198, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(256), FACING_SOUTH, 1, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {23, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(276), FACING_SOUTHEAST, 1, 0},
-    {20, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
-    {238, CONDITION_ALWAYS, 2, PIXELS(112), 0, PIXELS(393), FACING_SOUTH, 1, 0},
-    {7, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 0, 0},
-    {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 0, 0},
-    {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 0, 0},
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 150, 0, 344, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 280, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 274, 0, 510, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 264, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 296, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 259, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(187, 0x1911, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(192, 0x1911, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(205, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(206, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(198, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 276, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(238, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 393, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1666,16 +1673,25 @@ struct MadraPlacement gMadra_Doors[] = {
 };
 
 struct Trigger gMadra_TriggersBeforeRaid[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Madra_WorkerBlocksHole)},
@@ -1762,16 +1778,25 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
 };
 
 struct Trigger gMadra_TriggersAfterRaid[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Madra_WorkerBlocksSealedHole)},
@@ -1848,16 +1873,25 @@ struct Trigger gMadra_TriggersAfterRaid[] = {
 };
 
 struct Trigger gMadra_TriggersOnReturn[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+     EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_STEP, 21, 0x98e, EVENT(Madra_KarstCallsForMenardi)},

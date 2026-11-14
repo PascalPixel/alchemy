@@ -10,13 +10,13 @@
 
 struct SoundWork;
 
-extern const u8 gSound_Cgb3LevelCodes[];
-extern const s16 gSound_CgbFrequencySteps[];
-extern const u8 gSound_CgbPitchCodes[];
-extern const u16 gSound_PcmSamplesPerVBlank[];
-extern const u8 gSound_NoisePitchCodes[];
-extern u32 gSound_PcmFrequencySteps[];
-extern u8 gSound_PcmPitchCodes[];
+extern const u8 gCgb3Vol[];
+extern const s16 gCgbFreqTable[];
+extern const u8 gCgbScaleTable[];
+extern const u16 gPcmSamplesPerVBlankTable[];
+extern const u8 gNoiseTable[];
+extern u32 gFreqTable[];
+extern u8 gScaleTable[];
 extern struct SoundWork gSound_Work;
 extern u8 gSound_WorkBytes[];
 void DummyFunc(void);

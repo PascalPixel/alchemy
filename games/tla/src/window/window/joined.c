@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
 
@@ -31,8 +32,8 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
  * x, s32 y, u16 *spacing, s32 flags) {; tried as the definition's struct
  * UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
  * u16 *spacing, s32 flags), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/window/window.c:12538: too few arguments to
- * function `Message_Start'. */
+ * compile in tla-ja: games/tla/src/window/window/joined.c:77: too few arguments
+ * to function `Message_Start'. */
 s32 Message_Start__screens() __asm__("Message_Start");
 #define Message_Start Message_Start__screens
 #endif
@@ -46,8 +47,6 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 tile, slot;
   s32 id;
   s32 text;
-  // One zero for every 0 stored or passed below, as the Broken Seal's form
-  // keeps it; as literal 0s, 58 of 124 instructions differ in tla-en.
   u32 zero;
   s32 *p;
 
@@ -87,7 +86,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     Message_Start(window, text, 36, 2, zero);
 #endif
 
-    Sound_PlayFar(81);
+    Sound_PlayFar(MUS_081);
 
     do {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
@@ -144,7 +143,7 @@ void Party_ShowJoinedMessage(s32 member) {
 #else
     Message_Start(window, Message_DecodeMode1((s32)MsgJoinedParty), 36, 2, 0);
 #endif
-    Sound_PlayFar(81);
+    Sound_PlayFar(MUS_081);
     do {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
       // function; UBFIX calls it through its declared type.
@@ -215,7 +214,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
                   0);
 #endif
 
-    Sound_PlayFar(81);
+    Sound_PlayFar(MUS_081);
 
     do {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
@@ -284,10 +283,11 @@ void Summon_ShowLearnedMessage(s32 summon) {
 #else
   Message_Start(window, entries, 0, 2, 0);
 #endif
-  Sound_PlayFar(81);
+  Sound_PlayFar(MUS_081);
   do
     wait(1);
-  while (Sound_GetBgmRestoreDelayFar() != 0 && (gInput.pressed & 0x303) == 0);
+  while (Sound_GetBgmRestoreDelayFar() != 0 &&
+         (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
   Window_Close(window, 2);
   wait(1);
 
@@ -324,7 +324,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
 #endif
   do
     wait(1);
-  while ((gInput.pressed & 0x303) == 0);
+  while ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
   Window_Close(window, 2);
   wait(1);
   VramCache_FreeEntry(resource);

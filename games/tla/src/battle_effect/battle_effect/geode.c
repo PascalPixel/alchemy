@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 struct MeshTriangle;
 struct Model;
@@ -102,8 +104,11 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   BattleEffect_RunDjinniEntrance(effect, (effect->side << 4) | 0xc0, screenA,
                                  screenB);
   BattleEffect_ConfigureEffectDisplay();
-  REG_WININ = 0x3537;
-  REG_WINOUT = 0x3f31;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR |
+               WINOUT_WINOBJ_ALL;
   transition[4] = 1;
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(
@@ -116,7 +121,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
                                                         COMPOSITE_FLIP_X));
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
   work->transferMode = 1;
   work->transferValue = 0;
@@ -139,7 +144,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     for (i = 0; i <= 119; i++) {
       for (x = 0; x <= 2047; x += 64) {
         Iwram_CopyWordsEntry(
-            cell, (u8 *)0x06008000 + (((i / 8) << 8) + (i & 7)) * 8 + x, 8);
+            cell, (u8 *)BG_CHAR_BLOCK(2) + (((i / 8) << 8) + (i & 7)) * 8 + x,
+            8);
         cell += 8;
       }
     }
@@ -203,7 +209,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       gBgScroll[1].x = 64 - source.x;
       REG_BG1CNT &= 0xfffc;
       REG_BG1CNT |= 1;
-      REG_BG2CNT = 0x784;
+      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     }
     if (frame == 35) {
       Task_Remove(Display_ApplyBg2Affine);
@@ -334,8 +340,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       Heap_Release(model);
     }
     if (frame == 48) {
-      Sound_PlayFar(145);
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Sound_PlayFar(SE_CRASH);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 64) {
       BattlePlayback_StartFar(134);
@@ -363,7 +369,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
         if (frame <= start) {
           continue;
         }
-        scale = (((frame - start) * Data_08198b56[i] * 125) << 4) + 0x8000;
+        scale = (((frame - start) * Data_08198b56[i] * 125) << 4) + Q16_ONE / 2;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;

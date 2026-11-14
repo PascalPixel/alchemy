@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 #include "gamepak/far_call/field.h"
@@ -177,7 +178,7 @@ void BattlePlayback_Run(void) {
             events->actorId = events->queue.operands[eventIndex];
             BattleEnemy_RecordDefeat(events->actorId, events->flags);
             BattleUnit_ClearStatuses(events->actorId);
-            unit = Unit_Get__f11f66c(events->actorId);
+            unit = Unit_Get(events->actorId);
             for (recordIndex = 0;
                  (record =
                       GetMotionRecord(BattleObject_Get(events->actorId)->object,
@@ -247,21 +248,19 @@ void BattlePlayback_Run(void) {
       IoWriteQueue_SetBits16(0x0400004a, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
-      /* FAKEMATCH(barrier): an empty asm after x is stored, so prompt's copy
-       * (mov r1, r9) comes before x's (mov r2, r8); without it, 4 of 844
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm after x is stored. */
       asm("");
       prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
       x = window->x * 8 + (offset->x >> 8) + 4;
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
-      // The held keys reread through a volatile pointer for the last test, a
-      // load apart from the B test's; as gInput.held, 16 of 844 instructions
-      // differ in tla-en.
-      if ((gInput.held & 2) || (gInput.pendingPressed & 0x303) ||
+      /* FAKEMATCH(volatile): the held keys reread through a volatile pointer
+       * for the last test. */
+      if ((gInput.held & KEY_B) ||
+          (gInput.pendingPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (KEYS_HELD & 0x303))) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_DISPATCH;
         events->timer = 0;
       } else {
@@ -298,8 +297,7 @@ void BattlePlayback_Run(void) {
 
         if (events->timer == 0 && events->flags != 0) {
           s32 kind = BattleSprite_GetDefeatSound(
-              ((struct BattleUnit *)Unit_Get__f11f66c(events->actorId))
-                  ->enemyId);
+              ((struct BattleUnit *)Unit_Get(events->actorId))->enemyId);
 
           if (kind >= 0) {
             kind--;
@@ -313,8 +311,7 @@ void BattlePlayback_Run(void) {
           events->timer = 0;
         if (events->timer == 0) {
           s32 kind = BattleSprite_GetDefeatSound(
-              ((struct BattleUnit *)Unit_Get__f11f66c(events->actorId))
-                  ->enemyId);
+              ((struct BattleUnit *)Unit_Get(events->actorId))->enemyId);
 
           if (kind >= 0)
             Sound_PlayFar(146 + kind);

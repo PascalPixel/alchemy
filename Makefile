@@ -285,14 +285,15 @@ $(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 # An overlay's import table: a far-call stub for each main-image routine
 # its code calls and does not define, copied from the game's list of them,
 # imports.inc, in the list's order. The overlay's script places it as
-# "*/imports.o".
+# "*/imports.o". It is rewritten when the overlay's objects or its script
+# change, so an object leaving the overlay takes its calls' stubs with it.
 IMPORT_LIST := games/$(GAME)/src/system/overlay/imports.inc
 # The far-call macros the list includes.
 VENEER_tbs := games/tbs/src/gamepak/far_call/veneer.inc
 VENEER_tla := games/tla/src/gamepak/far_call/veneer.s
 OVERLAY_IMPORTS = $(BUILD)/overlays/$*/imports.o
 .SECONDEXPANSION:
-$(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $(IMPORT_LIST)
+$(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_DEPS) $(IMPORT_LIST)
 	@mkdir -p $(@D)
 	{ $(NM) -g --defined-only $(OVERLAY_OBJS_$*) | awk 'NF == 3 { print "own", $$3 }'; \
 	  $(NM) -u $(OVERLAY_OBJS_$*) | awk '{ print "calls", $$NF }'; } | \

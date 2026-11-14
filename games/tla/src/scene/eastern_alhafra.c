@@ -1,5 +1,4 @@
 /// @file
-#include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -26,13 +25,11 @@
 #include "call.h"
 #include "field_sprite.h"
 #include "scene_ids.h"
-#include "shared/push.h"
 #include "system/task.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "graphics/resource.h"
 #include "system/vector3.h"
-#include "shared/map_cells.h"
 #include "module/field/field.h"
 #include "field_event.h"
 
@@ -118,7 +115,7 @@ void Tightrope_Initialize(void);
 void MapGrid_SetAttributeBAt();
 
 extern s16 gData_02004d0c[];
-extern s16 gEasternAlhafra_Placements[];
+extern struct ActorPlacement gEasternAlhafra_Placements[];
 extern s16 gData_02004fe4[];
 
 s32 Actor_HasArrived();
@@ -159,14 +156,14 @@ void Func_020000c8(s32 mode, s32 arg) {
   if (mode == 1) {
     a = Actor_Get(19);
     b = Actor_Get(21);
-    a->speedLimit = 0x40000;
-    a->acceleration = 0x8000;
-    b->acceleration = 0x8000;
-    b->speedLimit = 0x40000;
-    FieldActor_SetPositionAndResetMotion(a, 0x1e80000, a->y, 0x1380000);
-    FieldActor_SetMoveTarget(a, 0x1b80000, 0, 0x1380000);
-    FieldActor_SetPositionAndResetMotion(b, 0x1e80000, b->y, 0x1380000);
-    FieldActor_SetMoveTarget(b, 0x1b80000, 0, 0x1780000);
+    a->speedLimit = px(4);
+    a->acceleration = px(1) / 2;
+    b->acceleration = px(1) / 2;
+    b->speedLimit = px(4);
+    FieldActor_SetPositionAndResetMotion(a, px(488), a->y, px(312));
+    FieldActor_SetMoveTarget(a, 440, 0, 312);
+    FieldActor_SetPositionAndResetMotion(b, px(488), b->y, px(312));
+    FieldActor_SetMoveTarget(b, 440, 0, 376);
     Tightrope_Release(1);
     Tightrope_Release(2);
     i = 0;
@@ -198,9 +195,9 @@ void Func_02000190(s32 unused, s32 id) {
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 34 && z == 32 && leaderX == 33)
-      FieldMapGrid_SetCellBehavior(0x2100000, 0x2000000, 2, 255);
+      FieldMapGrid_SetCellBehavior(px(528), px(512), 2, 255);
     if (x == 33 && z == 32 && leaderX == 32)
-      FieldMapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 255);
+      FieldMapGrid_SetCellBehavior(px(512), px(512), 2, 255);
   }
 }
 
@@ -226,8 +223,8 @@ void Func_02000200(s32 mode, s32 id) {
   hit = 0;
   z = object->z >> 20;
   if (id == 10) {
-    FieldMapGrid_SetCellBehavior(0x2100000, 0x2000000, 2, 0);
-    FieldMapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 0);
+    FieldMapGrid_SetCellBehavior(px(528), px(512), 2, 0);
+    FieldMapGrid_SetCellBehavior(px(512), px(512), 2, 0);
   }
   if (x == 31 && z == 32) {
     Event_SetFlag(0x8a0);
@@ -247,16 +244,16 @@ void Func_02000200(s32 mode, s32 id) {
   }
   if (hit) {
     if (id != 10)
-      Event_PlaySound(310);
+      Event_PlaySound(SE_310);
     object->gravity = 0x170a;
     object->motionFlags = 3;
     Actor_SetSpriteFlags(Actor_Get(id), 1);
     System_Wait(5);
     for (i = 0; i < 60 && object->y > 0; i++)
       System_Wait(1);
-    Event_PlaySound(298);
+    Event_PlaySound(SE_298);
     System_Wait(1);
-    Event_PlaySound(240);
+    Event_PlaySound(SE_LOG_FALL);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
     Actor_SelectAnimation(object, 4);
@@ -267,7 +264,7 @@ void Func_02000200(s32 mode, s32 id) {
     spark->scaleX = 0xa666;
     Actor_SelectAnimation(spark, 1);
     Actor_SetSpriteFlags(spark, 0);
-    Event_PlaySound(154);
+    Event_PlaySound(SE_CAST);
     System_Wait(5);
     i++;
     if (i <= 2)
@@ -282,15 +279,15 @@ void Func_02000200(s32 mode, s32 id) {
 
 void Func_02000394(s32 unused, s32 id) {
   Func_02000190(unused, id);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1e00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1f00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x2000000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1d00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1e00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1f00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x2000000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
+  FieldMapGrid_SetCellBehavior(px(320), px(464), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(320), px(480), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(320), px(496), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(320), px(512), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(352), px(464), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(352), px(480), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(352), px(496), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(352), px(512), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(336), px(528), 2, 0);
 }
 
 void Func_0200042c(s32 mode, s32 id) {
@@ -305,17 +302,17 @@ void Func_0200042c(s32 mode, s32 id) {
   open = 0;
   if (x == 21 && z == 33)
     open = 1;
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1e00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1f00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x2000000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1d00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1e00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1f00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x2000000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 255);
+  FieldMapGrid_SetCellBehavior(px(320), px(464), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(320), px(480), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(320), px(496), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(320), px(512), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(352), px(464), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(352), px(480), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(352), px(496), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(352), px(512), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(336), px(528), 2, 255);
   if (open)
-    FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(560), 1);
+    FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
   Func_02000200(mode, id);
   if (open)
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
@@ -349,14 +346,14 @@ void Func_02000514(void) {
       Event_SetFlag(0x8a6);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(560), 1);
+      FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
       Func_020044c4__s0514(unk);
-      MapGrid_SetCellBehavior(actor15->x - PIXELS(24), actor15->z, 0, 0);
-      MapGrid_SetCellBehavior(actor15->x + PIXELS(8), actor15->z, 0, 0);
-      MapGrid_SetCellBehavior(actor15->x - PIXELS(24), actor15->z, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x - PIXELS(8), actor15->z, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x + PIXELS(8), actor15->z, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x + PIXELS(24), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 0, 0);
+      MapGrid_SetCellBehavior(actor15->x + px(8), actor15->z, 0, 0);
+      MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x - px(8), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x + px(8), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x + px(24), actor15->z, 2, 0);
       Actor_SetAnimation(15, 3);
       Actor_SetDestinationOffset(15, 0, 16);
       FieldEvent_Wait(20);
@@ -370,7 +367,7 @@ void Func_02000514(void) {
         } while (i <= 59 && actor15->y > 0);
       }
       Func_02000fa4();
-      Event_PlaySound(240);
+      Event_PlaySound(SE_LOG_FALL);
       Actor_SetAnimation(15, 8);
       FieldEvent_Wait(60);
       EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
@@ -400,7 +397,7 @@ void Func_02000730(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgWhatSYour);
-  Actor_ShowEmote(22, 0x101, 40);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceActor(22, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(22, 0, 10);
@@ -459,10 +456,10 @@ void EasternAlhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
                                      s32 unused) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(step->script, step->x, step->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(10);
@@ -564,22 +561,22 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 flag;
 
-  *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;
+  ((struct EventWork *)EVENT_WORK)->screenEffect = 0x100;
   Func_02000af8();
   OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
     if (Event_GetFlag(0x905) != 0 &&
         Event_GetFlag(FLAG_ALHAFRA_SHIP_GONE) == 0) {
-      Actor_SetPosition(30, PIXELS(184), PIXELS(616));
-      Actor_SetPosition(31, PIXELS(136), PIXELS(600));
-      Actor_SetPosition(28, PIXELS(168), PIXELS(584));
+      Actor_SetPosition(30, 184, 616);
+      Actor_SetPosition(31, 136, 600);
+      Actor_SetPosition(28, 168, 584);
       Actor_FaceDirection(28, FACING_SOUTH, 0);
       Actor_FallOverWithAnimationById(30, 0, 13);
       Call3(Actor_FallOverWithAnimationById, 31, 0x8000, 13);
       Actor_FallOverWithAnimationById(28, 0, 13);
-      Actor_SetPosition(25, PIXELS(112), PIXELS(432));
-      Actor_SetPosition(27, PIXELS(176), PIXELS(408));
-      Actor_SetPosition(29, PIXELS(152), PIXELS(376));
+      Actor_SetPosition(25, 112, 432);
+      Actor_SetPosition(27, 176, 408);
+      Actor_SetPosition(29, 152, 376);
       Actor_FaceDirection(29, FACING_SOUTH, 0);
       FieldActor_SetSpriteRotationById(25, 0x4000);
       Actor_SetSpriteFlags((s32)Actor_Get(25), 0);
@@ -605,11 +602,11 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 99) {
     gMainRoutineWork.secondary = 1;
     gMainRoutineWork.entrance = 1;
-    Actor_SetPosition(4, PIXELS(136), PIXELS(552));
-    Actor_SetPosition(26, PIXELS(120), PIXELS(552));
-    Actor_SetPosition(30, PIXELS(184), PIXELS(616));
-    Actor_SetPosition(31, PIXELS(136), PIXELS(600));
-    Actor_SetPosition(28, PIXELS(160), PIXELS(584));
+    Actor_SetPosition(4, 136, 552);
+    Actor_SetPosition(26, 120, 552);
+    Actor_SetPosition(30, 184, 616);
+    Actor_SetPosition(31, 136, 600);
+    Actor_SetPosition(28, 160, 584);
     FieldActor_SetSpriteRotationById(30, 0x4000);
     Actor_SetSpriteFlags(Actor_Get(30), 0);
     FieldActor_SetSpriteRotationById(31, 0xc000);
@@ -619,14 +616,14 @@ s32 Scene_Initialize(void) {
     FieldActor_SetSpritePriority(27, 2);
     FieldActor_SetSpritePriority(25, 2);
     FieldActor_SetSpritePriority(29, 2);
-    Actor_SetPosition(25, PIXELS(160), PIXELS(392));
-    Actor_SetPosition(27, PIXELS(176), PIXELS(408));
-    Actor_SetPosition(29, PIXELS(152), PIXELS(376));
+    Actor_SetPosition(25, 160, 392);
+    Actor_SetPosition(27, 176, 408);
+    Actor_SetPosition(29, 152, 376);
     FieldActor_SetSpriteRotationById(27, 0xc000);
     Actor_SetSpriteFlags(Actor_Get(27), 0);
     FieldActor_SetSpriteRotationById(29, 0x4000);
     Actor_SetSpriteFlags(Actor_Get(29), 0);
-    Actor_FaceDirection(25, 0xd000, 0);
+    Actor_FaceDirection(25, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(29, FACING_SOUTH, 0);
     Actor_SetAnimation(27, 13);
     Actor_SetAnimation(29, 13);
@@ -651,22 +648,20 @@ s32 Scene_Initialize(void) {
   flag = Event_GetFlag(0x8a2);
   if (flag == 0) {
     object = OBJECT(18);
-    /* FAKEMATCH(dead): the solid bit set in a once-only block, which lays out
-     * the branch over it as the native does; as the plain statement, 18 of 467
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the solid bit set in a once-only block. */
     do {
       object->collisionFlags |= 8;
     } while (0);
     object = OBJECT(19);
     object->motionFlags = flag;
-    object->y = 0x100000;
+    object->y = px(16);
     Tightrope_Place(1, 18, 19);
     Tightrope_Settle(1);
     object = OBJECT(20);
     object->collisionFlags |= 8;
     object = OBJECT(21);
     object->motionFlags = flag;
-    object->y = 0x100000;
+    object->y = px(16);
     Tightrope_Place(2, 20, 21);
   }
   Actor_SetSpriteFlags(Actor_Get(16), 0);
@@ -697,16 +692,16 @@ void Func_02000fa4(void) {
 
   if (Event_GetFlag(0x8a6)) {
     object = Actor_Get(15);
-    Actor_SetPosition(15, PIXELS(336), PIXELS(536));
+    Actor_SetPosition(15, 336, 536);
     Actor_SetAnimation(15, 4);
     object->priorityFlags |= 2;
     object->motionFlags = 2;
     object->velocityY = 0;
-    object->y = -0x40000;
-    object->terrainHeight = -0x40000;
-    FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
-    FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
-    FieldMapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
+    object->y = -px(4);
+    object->terrainHeight = -px(4);
+    FieldMapGrid_SetCellBehavior(px(336), px(528), 2, 0);
+    FieldMapGrid_SetCellBehavior(px(336), px(528), 0, 0);
+    FieldMapGrid_SetCellBehavior(px(352), px(528), 0, 0);
   }
   if (Event_GetFlag(0x8a4)) {
     Actor_SetPosition(16, 0, 0);
@@ -716,12 +711,11 @@ void Func_02000fa4(void) {
   }
   if (Event_GetFlag(0x8a0)) {
     object = Actor_Get(10);
-    Actor_SetPosition(10, PIXELS(504), PIXELS(520));
+    Actor_SetPosition(10, 504, 520);
     Actor_SetAnimation(10, 2);
     object->collisionFlags = 0;
-    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-     * as the listing orders it; without it, 4 of 168 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
+     */
     do {
     } while (0);
     object->priorityFlags |= 2;
@@ -730,12 +724,11 @@ void Func_02000fa4(void) {
   }
   if (Event_GetFlag(0x8a1)) {
     object = Actor_Get(11);
-    Actor_SetPosition(11, PIXELS(408), PIXELS(536));
+    Actor_SetPosition(11, 408, 536);
     Actor_SetAnimation(11, 2);
     object->collisionFlags = 0;
-    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-     * as the listing orders it; without it, 4 of 168 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
+     */
     do {
     } while (0);
     object->priorityFlags |= 2;
@@ -755,7 +748,7 @@ void Func_0200112c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgItSIt);
-  FieldCamera_SetSpeed(0x40000, 0x8000);
+  FieldCamera_SetSpeed(4);
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_WalkToAndWait(4, 232, 392);
   FieldActor_LaunchFromLeader(26, 0, -16, 0x2000);
@@ -778,7 +771,7 @@ void Func_0200112c(void) {
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_FaceDirection(22, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(24, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(25, 0x5000, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   EventCamera_MoveToActor(11, 1);
   FieldCamera_WaitForArrival();
@@ -800,7 +793,7 @@ void Func_0200112c(void) {
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_FaceDirection(22, FACING_EAST, 0);
-  Actor_FaceDirection(23, 0xd000, 0);
+  Actor_FaceDirection(23, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
   EventCamera_MoveToActor(14, 1);
   FieldCamera_WaitForArrival();
@@ -809,12 +802,12 @@ void Func_0200112c(void) {
   EventCamera_MoveToActor(22, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Actor_ShowEmote(22, 0x107, 40);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   FieldEvent_ShowMessageThenWait(22, 0, 10);
-  FieldCamera_MoveTo(PIXELS(488), 0, PIXELS(416), 1);
+  FieldCamera_MoveTo(488, 0, 416, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_ShowEmote(23, 0x102, 50);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceDirection(23, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(23, 0, 10);
@@ -822,23 +815,23 @@ void Func_0200112c(void) {
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(25, 0x102);
+  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  FieldCamera_MoveTo(PIXELS(392), PIXELS(16), PIXELS(416), 1);
+  FieldCamera_MoveTo(392, 16, 416, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(24, 4);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(23, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(22, 0x105, 0);
-  Actor_ShowEmote(23, 0x105, 0);
-  Actor_ShowEmote(25, 0x105, 50);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(25, 0x5000, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(25, 0, 20);
   Actor_SetAnimation(22, 3);
@@ -846,14 +839,14 @@ void Func_0200112c(void) {
   Actor_SetAnimationAndWait(24, 3);
   FieldEvent_Wait(20);
   Actor_FaceDirection(22, FACING_EAST, 0);
-  Actor_FaceDirection(23, 0x5000, 0);
+  Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(24, FACING_NORTH, 0);
   Actor_FaceDirection(25, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
   EventCamera_MoveToActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   Actor_SetAnimation(5, 2);
   object0 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object0 != 0) {
@@ -862,7 +855,7 @@ void Func_0200112c(void) {
   }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   Actor_SetAnimation(6, 2);
   object1 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object1 != 0) {
@@ -871,7 +864,7 @@ void Func_0200112c(void) {
   }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
-  Actor_SetSpeed(26, 0x13333, 0x9999);
+  Actor_SetSpeed(26, 1.2);
   Actor_SetAnimation(26, 2);
   object2 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object2 != 0) {
@@ -924,7 +917,7 @@ void Func_02001574(void) {
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(6, 0x102, 30);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 10);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   FieldEvent_Wait(10);
@@ -936,11 +929,11 @@ void Func_02001574(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(26, 0x106, 30);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   result3 = Event_GetFlag(7);
   if (result3 != 0) {
-    Actor_SetSpeed(7, 0x13333, 0x9999);
+    Actor_SetSpeed(7, 1.2);
     Actor_SetAnimation(7, 2);
     object4 = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object4 != 0) {
@@ -950,7 +943,7 @@ void Func_02001574(void) {
     FieldActor_WaitForMoveById(7);
     Actor_SetPosition(7, 0, 0);
   }
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   Actor_SetAnimation(5, 2);
   object5 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object5 != 0) {
@@ -959,7 +952,7 @@ void Func_02001574(void) {
   }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   Actor_SetAnimation(6, 2);
   object6 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object6 != 0) {
@@ -968,7 +961,7 @@ void Func_02001574(void) {
   }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
-  Actor_SetSpeed(26, 0x13333, 0x9999);
+  Actor_SetSpeed(26, 1.2);
   Actor_SetAnimation(26, 2);
   object7 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object7 != 0) {
@@ -1004,7 +997,7 @@ void Func_020017ec(void) {
     FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
   }
   FieldActor_WaitForMoveById(6);
-  Actor_FaceDirection(4, 0xc000, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(26, 2);
   FieldEvent_Wait(10);
@@ -1012,7 +1005,7 @@ void Func_020017ec(void) {
   result1 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result1 == 0) {
     FieldEvent_Wait(20);
-    Actor_ShowEmote(6, 0x100, 30);
+    Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
     Actor_FaceDirection(4, FACING_NORTHEAST, 0);
     Actor_FaceDirection(5, FACING_NORTH, 0);
@@ -1034,25 +1027,25 @@ void Func_020017ec(void) {
   if (result2 != 0) {
     Actor_FaceDirection(4, FACING_NORTH, 0);
     Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-    Actor_FaceDirectionAndWait(6, 0x8000);
+    Actor_FaceDirectionAndWait(6, FACING_WEST);
     FieldEvent_Wait(10);
   } else {
     ((s32 (*)())Actor_ShowEmoteById)(26, 0x102, 30);
     FieldEvent_ShowMessageThenWait(26, 0, 10);
     Actor_FaceDirection(4, FACING_NORTH, 0);
     Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-    Actor_FaceDirection(6, 0x8000, 0);
+    Actor_FaceDirection(6, FACING_WEST, 0);
     FieldEvent_Wait(30);
-    Actor_ShowEmote(26, 0x101, 30);
+    Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_SetAnimationAndWait(26, 4);
     FieldEvent_ShowMessageThenWait(26, 0, 10);
     ((s32 (*)())Actor_ShowEmoteById)(26, 0x109, 30);
     FieldEvent_ShowMessageThenWait(26, 0, 10);
     Actor_FaceDirection(5, FACING_NORTH, 0);
-    Actor_FaceDirection(6, 0x4000, 0);
+    Actor_FaceDirection(6, FACING_SOUTH, 0);
     FieldEvent_Wait(40);
     Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-    Actor_FaceDirection(6, 0x8000, 0);
+    Actor_FaceDirection(6, FACING_WEST, 0);
     FieldEvent_Wait(10);
     Actor_SetAnimationAndWait(26, 4);
     FieldEvent_ShowMessageThenWait(26, 0, 10);
@@ -1068,7 +1061,7 @@ void Func_020017ec(void) {
   FieldEvent_Wait(10);
   result3 = Event_GetFlag(7);
   if (result3 != 0) {
-    Actor_SetSpeed(7, 0x13333, 0x9999);
+    Actor_SetSpeed(7, 1.2);
     Actor_SetAnimation(7, 2);
     object4 = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object4 != 0) {
@@ -1078,7 +1071,7 @@ void Func_020017ec(void) {
     FieldActor_WaitForMoveById(7);
     Actor_SetPosition(7, 0, 0);
   }
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   Actor_SetAnimation(5, 2);
   object5 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object5 != 0) {
@@ -1087,7 +1080,7 @@ void Func_020017ec(void) {
   }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   Actor_SetAnimation(6, 2);
   object6 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object6 != 0) {
@@ -1096,7 +1089,7 @@ void Func_020017ec(void) {
   }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
-  Actor_SetSpeed(26, 0x13333, 0x9999);
+  Actor_SetSpeed(26, 1.2);
   Actor_SetAnimation(26, 2);
   object7 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object7 != 0) {
@@ -1128,9 +1121,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     Actor_SetSpritePriorityDirect(object, 1);
     object->motionFlags = 0;
     {
-      /* FAKEMATCH(signature): the timer copied into an s64 local, so it loads
-       * before the pooled zero for nextFrame; as object->unk5e = timer, 2 of 35
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(signature): the timer copied into an s64 local. */
       s64 wide = timer;
 
       object->unk5e = wide;
@@ -1154,21 +1145,21 @@ extern s32 Func_02001b9c__s1bf4(s32 x, s32 y, s32 z, s32 rotation,
 void Func_02001bf4(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z,
-                       0x1000, 15);
-  Event_PlaySound(151);
+  Func_02001b9c__s1bf4(object->x + px(8), object->y + px(28), object->z, 0x1000,
+                       15);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z,
-                       0xf000, 15);
-  Event_PlaySound(151);
+  Func_02001b9c__s1bf4(object->x - px(8), object->y + px(28), object->z, 0xf000,
+                       15);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z,
-                       0x1000, 15);
-  Event_PlaySound(151);
+  Func_02001b9c__s1bf4(object->x + px(8), object->y + px(28), object->z, 0x1000,
+                       15);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z,
-                       0xf000, 15);
-  Event_PlaySound(151);
+  Func_02001b9c__s1bf4(object->x - px(8), object->y + px(28), object->z, 0xf000,
+                       15);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
 
@@ -1188,38 +1179,38 @@ void Func_02001cb0(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgHeyThatBlock);
-  Actor_SetSpeed(28, 0x2cccc, 0x16666);
-  Actor_SetSpeed(29, 0x2cccc, 0x16666);
-  Actor_SetSpeed(23, 0x1cccc, 0xe666);
-  Actor_SetSpeed(24, 0x1cccc, 0xe666);
-  Actor_SetPosition(28, PIXELS(328), PIXELS(616));
+  Actor_SetSpeed(28, 2.8);
+  Actor_SetSpeed(29, 2.8);
+  Actor_SetSpeed(23, 1.8);
+  Actor_SetSpeed(24, 1.8);
+  Actor_SetPosition(28, 328, 616);
   Actor_FaceDirection(28, FACING_NORTHEAST, 0);
-  Actor_SetPosition(29, PIXELS(296), PIXELS(616));
+  Actor_SetPosition(29, 296, 616);
   Actor_FaceDirection(29, FACING_NORTHEAST, 0);
-  FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   {
     s32 mode = 1;
 
-    FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(632), mode);
+    FieldCamera_MoveTo(328, CAMERA_KEEP, 632, mode);
   }
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(0x1c, 0x102);
+  Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Func_02004b6c_(0x1d, 0x102, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceDirection(28, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(28, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceDirection(29, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(29, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceDirection(29, FACING_WEST, 0);
   FieldEvent_Wait(10);
   Actor_WalkBy(28, -160, 0);
@@ -1227,17 +1218,17 @@ void Func_02001cb0(void) {
   Actor_SetPosition(28, 0, 0);
   Actor_SetPosition(29, 0, 0);
   FieldEvent_Wait(30);
-  Actor_SetPosition(23, PIXELS(264), PIXELS(384));
+  Actor_SetPosition(23, 264, 384);
   Actor_FaceDirection(23, FACING_EAST, 0);
-  Actor_SetPosition(24, PIXELS(280), PIXELS(392));
+  Actor_SetPosition(24, 280, 392);
   Actor_FaceDirection(24, FACING_EAST, 0);
-  Actor_SetPosition(4, PIXELS(232), PIXELS(384));
+  Actor_SetPosition(4, 232, 384);
   Actor_FaceDirection(4, FACING_EAST, 0);
-  FieldEvent_ShowMessageThenWait(0x18, 0, 0xa);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
-  FieldEvent_ShowMessageThenWait(0x18, 0, 0xa);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
-  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(392), 1);
+  FieldEvent_ShowMessageThenWait(24, 0, 10);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
+  FieldEvent_ShowMessageThenWait(24, 0, 10);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
+  FieldCamera_MoveTo(264, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(23, -16, 0);
@@ -1247,27 +1238,27 @@ void Func_02001cb0(void) {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(23, 3);
     FieldEvent_Wait(10);
-    FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(23, 0, 10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(23, 4);
     FieldEvent_Wait(10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(23, 0, 10);
   }
   Actor_FaceDirection(23, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(24, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
   Func_02004b6c_(0x18, 0x108, 0x2d);
   FieldActor_Jump(24, 6, 15);
   FieldActor_Jump(24, 6, 23);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(23, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_SetAnimationAndWait(24, 3);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(24, 3);
@@ -1288,7 +1279,8 @@ void Func_02001cb0(void) {
 }
 
 /// Only once flag 0x8a7 is set: the scene that opens with MsgIStillJust, which
-/// sets flag 0x905 and ends by sending the party to SceneId_Ov667, entrance 81.
+/// sets flag 0x905 and ends by sending the party to SceneId_AlhafraManor,
+/// entrance 81.
 void Func_02002048(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;
@@ -1296,23 +1288,23 @@ void Func_02002048(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgIStillJust);
-  FieldCamera_SetSpeed(0x40000, 0x8000);
-  Actor_SetPosition(25, PIXELS(56), PIXELS(632));
+  FieldCamera_SetSpeed(4);
+  Actor_SetPosition(25, 56, 632);
   Actor_FaceDirection(25, FACING_EAST, 0);
-  Actor_SetPosition(27, PIXELS(56), PIXELS(648));
+  Actor_SetPosition(27, 56, 648);
   Actor_FaceDirection(27, FACING_EAST, 0);
-  Actor_SetPosition(28, PIXELS(48), PIXELS(616));
+  Actor_SetPosition(28, 48, 616);
   Actor_FaceDirection(28, FACING_EAST, 0);
-  Actor_SetPosition(29, PIXELS(32), PIXELS(608));
+  Actor_SetPosition(29, 32, 608);
   Actor_FaceDirection(29, FACING_EAST, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
-  FieldCamera_MoveTo(PIXELS(144), -1, PIXELS(664), 1);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldCamera_MoveTo(144, CAMERA_KEEP, 664, 1);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(28, 0x10000, 0x8000);
-  Actor_SetSpeed(29, 0x10000, 0x8000);
-  Actor_SetSpeed(25, 0x10000, 0x8000);
-  Actor_SetSpeed(27, 0x10000, 0x8000);
+  Actor_SetSpeed(28, 1);
+  Actor_SetSpeed(29, 1);
+  Actor_SetSpeed(25, 1);
+  Actor_SetSpeed(27, 1);
   Actor_WalkBy(25, 32, 0);
   Actor_WalkBy(27, 32, 0);
   Actor_WalkBy(28, 24, 24);
@@ -1325,26 +1317,26 @@ void Func_02002048(void) {
   FieldEvent_Wait(10);
   Func_02004b6c_(0x1c, 0x107, 0);
   Func_02004b6c_(0x1c, 0x107, 0x28);
-  Actor_SetSpeed(28, 0x30000, 0x18000);
-  Actor_SetSpeed(29, 0x30000, 0x18000);
+  Actor_SetSpeed(28, 3);
+  Actor_SetSpeed(29, 3);
   Actor_SetScript(28, gData_020054f4);
   Actor_SetScript(29, gData_0200556c);
   FieldActor_RefreshSelectorById(28);
   FieldActor_RefreshSelectorById(29);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(28, 2);
-  FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(28, 0, 10);
   FieldActor_Jump(29, 6, 15);
   FieldActor_Jump(29, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
-  Actor_SetSpeed(28, 0x19999, 0xcccc);
-  Actor_SetSpeed(29, 0x19999, 0xcccc);
-  Actor_SetSpeed(25, 0x19999, 0xcccc);
-  Actor_SetSpeed(27, 0x19999, 0xcccc);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
+  Actor_SetSpeed(28, 1.6);
+  Actor_SetSpeed(29, 1.6);
+  Actor_SetSpeed(25, 1.6);
+  Actor_SetSpeed(27, 1.6);
   FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(0x19, 0x102);
+  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(27, 3);
-  Actor_SetAttachedEffect(0x1b, 0x102);
+  Actor_SetAttachedEffect(27, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_SetScript(28, gData_0200d5d0);
   Actor_SetScript(29, gData_02005620);
@@ -1362,35 +1354,35 @@ void Func_02002048(void) {
   FieldActor_RefreshSelectorById(29);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(0x19, 0x102);
+  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(27, 3);
-  Actor_SetAttachedEffect(0x1b, 0x102);
+  Actor_SetAttachedEffect(27, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  FieldCamera_SetSpeed(0x60000, 0xc000);
-  FieldCamera_MoveTo(PIXELS(384), -1, PIXELS(480), 1);
+  FieldCamera_SetSpeed(6);
+  FieldCamera_MoveTo(384, CAMERA_KEEP, 480, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
-  FieldCamera_SetSpeed(0x60000, 0xc000);
-  FieldCamera_MoveTo(PIXELS(480), -1, PIXELS(344), 1);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldCamera_SetSpeed(6);
+  FieldCamera_MoveTo(480, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
-  FieldCamera_SetSpeed(0x60000, 0xc000);
-  FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(456), 1);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldCamera_SetSpeed(6);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 456, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
-  FieldCamera_SetSpeed(0x60000, 0xc000);
-  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(616), 1);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldCamera_SetSpeed(6);
+  FieldCamera_MoveTo(192, CAMERA_KEEP, 616, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Func_02004b6c_(0x19, 0x102, 0x1e);
   Actor_FaceDirection(25, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
-  Actor_FaceDirection(28, 0x3000, 0);
-  Actor_FaceDirection(29, 0x5000, 0);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  Actor_FaceDirection(28, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(29, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimation(28, 3);
   Actor_SetAnimationAndWait(29, 3);
@@ -1398,104 +1390,104 @@ void Func_02002048(void) {
   Actor_FaceDirection(27, FACING_WEST, 0);
   FieldEvent_Wait(30);
   Func_02004b6c_(0x1b, 0x108, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1b, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_FaceDirection(25, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_SetAnimation(28, 3);
   Actor_SetAnimationAndWait(29, 3);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(25, 0xd000, 0);
-  Actor_FaceDirection(27, 0xb000, 0);
+  Actor_FaceDirection(25, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
   Func_02004b6c_(0x19, 0x101, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(0x1c, 0x102);
+  Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(29, 3);
-  Actor_SetAttachedEffect(0x1d, 0x102);
+  Actor_SetAttachedEffect(29, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(28, 0xb000, 0);
-  Actor_FaceDirection(29, 0xb000, 0);
+  Actor_FaceDirection(28, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(29, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
   Func_02004b6c_(0x1c, 0x100, 0);
   Func_02004b6c_(0x1d, 0x100, 0x28);
-  Actor_FaceDirection(25, 0xb000, 0);
-  Actor_FaceDirection(27, 0xb000, 0);
+  Actor_FaceDirection(25, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(PIXELS(144), -1, PIXELS(544), 1);
+  FieldCamera_MoveTo(144, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Func_02004b6c_(4, 0x102, 0x1e);
-  Actor_SetSpeed(25, 0x18000, 0xc000);
-  Actor_SetSpeed(27, 0x18000, 0xc000);
+  Actor_SetSpeed(25, 1.5);
+  Actor_SetSpeed(27, 1.5);
   Actor_WalkBy(25, -32, -32);
   Actor_WalkByAndWait(27, -32, -32);
   Actor_WalkBy(25, 0, -24);
   Actor_WalkByAndWait(27, 0, -24);
   FieldActor_WaitForMoveById(25);
-  Actor_FaceDirection(25, 0xd000, 0);
-  Actor_FaceDirection(27, 0xb000, 0);
+  Actor_FaceDirection(25, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Func_02004b6c_(0x19, 0x100, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_WalkToAndWait(4, 136, 520);
-  FieldActor_LaunchFromLeader(0x1a, 0x10, 0, 0x5000);
+  FieldActor_LaunchFromLeader(26, 16, 0, 0x5000);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   FieldActor_WaitForMoveById(26);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(26, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_SetAnimationAndWait(26, 4);
-  FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
   Func_02004b6c_(0x19, 0x109, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_FaceDirection(26, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
   Actor_RunRepeatedMotion(27, 2);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(26, 0x5000, 0);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(27, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1b, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(27, 0, 10);
   Func_02004b6c_(0x19, 0x100, 0x1e);
   Actor_FaceDirection(25, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
-  Actor_FaceDirection(27, 0x3000, 0);
-  Actor_FaceDirection(25, 0x3000, 0);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  Actor_FaceDirection(27, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldActor_Jump(25, 6, 15);
   FieldActor_Jump(25, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(29, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0x14);
+  FieldEvent_ShowMessageThenWait(25, 0, 20);
   Actor_WalkBy(28, 0, 64);
   Actor_WalkBy(29, 0, 64);
   FieldEvent_Wait(60);
   Actor_SetPosition(28, 0, 0);
   Actor_SetPosition(29, 0, 0);
-  Actor_FaceDirection(27, 0xb000, 0);
-  Actor_FaceDirection(25, 0xd000, 0);
+  Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(25, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
   FieldMessage_ShowAtActor_(0x19, 0);
@@ -1504,7 +1496,7 @@ void Func_02002048(void) {
     Actor_FaceDirection(26, FACING_WEST, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(26, 4);
-    FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   } else {
     FieldEvent_Wait(30);
@@ -1513,7 +1505,7 @@ void Func_02002048(void) {
     Actor_SetAnimationAndWait(26, 3);
     FieldEvent_Wait(10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
   }
   Actor_FaceDirection(4, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1522,15 +1514,15 @@ void Func_02002048(void) {
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(30);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
-  Actor_FaceDirection(26, 0x3000, 0);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(25, 0x3000, 0);
-  Actor_FaceDirection(27, 0x3000, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(27, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(4, 0xcccc, 0x6666);
-  Actor_SetSpeed(26, 0xcccc, 0x6666);
-  Actor_SetSpeed(25, 0xcccc, 0x6666);
-  Actor_SetSpeed(27, 0xcccc, 0x6666);
+  Actor_SetSpeed(4, 0.8);
+  Actor_SetSpeed(26, 0.8);
+  Actor_SetSpeed(25, 0.8);
+  Actor_SetSpeed(27, 0.8);
   Actor_GetById(4)->motionFlags = 0;
   Actor_GetById(26)->motionFlags = 0;
   Actor_GetById(25)->motionFlags = 0;
@@ -1547,13 +1539,13 @@ void Func_02002048(void) {
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Call2((void (*)())Event_SetDestination, (s32)&SceneId_Ov667, 81);
+  Event_SetDestination((s32)&SceneId_AlhafraManor, 81);
   Event_End();
 }
 
 /// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which
 /// sets flags FLAG_ALHAFRA_SHIP_GONE and FLAG_BRIGGS_SAILED_FROM_ALHAFRA and
-/// ends by sending the party to SceneId_Ov668Room1, entrance 99.
+/// ends by sending the party to SceneId_EasternAlhafra1, entrance 99.
 void Func_02002a08(void) {
   struct MapWork *map;
   s32 i;
@@ -1566,38 +1558,38 @@ void Func_02002a08(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgBriggs2);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_WalkToAndWait(4, 136, 552);
-  FieldActor_LaunchFromLeader(0x1a, -0x10, 0, 0xa000);
+  FieldActor_LaunchFromLeader(26, -16, 0, 0xa000);
   Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldActor_WaitForMoveById(26);
   FieldEvent_Wait(20);
   Func_02004b6c_(0x1a, 0x100, 0x1e);
-  FieldCamera_MoveTo(PIXELS(176), -1, PIXELS(392), 1);
+  FieldCamera_MoveTo(176, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_RunRepeatedMotion(27, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1b, 0, 0xa);
-  Actor_SetPosition(22, PIXELS(224), PIXELS(8));
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(27, 0, 10);
+  Actor_SetPosition(22, 224, 8);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   Ram_HeapSlots->mapWork->minX = 0;
   Ram_HeapSlots->mapWork->maxX = 0x4000000;
   Ram_HeapSlots->mapWork->minZ = 0;
   Ram_HeapSlots->mapWork->maxZ = 0x4000000;
-  FieldCamera_SetSpeed(0x40000, 0x8000);
-  FieldCamera_MoveTo(PIXELS(208), -1, PIXELS(168), 1);
+  FieldCamera_SetSpeed(4);
+  FieldCamera_MoveTo(208, CAMERA_KEEP, 168, 1);
   FieldEvent_Wait(50);
-  Event_PlaySound(0x4e);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_FinishScreenTransition();
-  PaletteFade_Interpolate(0x10);
+  PaletteFade_Interpolate(16);
   Event_WaitTransitionFrames();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldEvent_Wait(10);
-  FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(664), 0);
+  FieldCamera_MoveTo(808, CAMERA_KEEP, 664, 0);
   {
     struct Actor *center =
         ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
@@ -1608,28 +1600,28 @@ void Func_02002a08(void) {
   FieldEvent_Wait(50);
   FieldActor_SetSpritePriority(22, 1);
   FieldActor_SetSpritePriority(23, 1);
-  Actor_SetSpeed(23, 0x13333, 0x9999);
-  Actor_SetSpeed(22, 0x13333, 0x9999);
-  Actor_SetPosition(22, PIXELS(792), PIXELS(856));
-  Actor_SetPosition(23, PIXELS(824), PIXELS(856));
-  Actor_SetPosition(26, PIXELS(744), PIXELS(1016));
-  Actor_SetPosition(25, PIXELS(744), PIXELS(1016));
-  Event_PlaySound(0x23);
+  Actor_SetSpeed(23, 1.2);
+  Actor_SetSpeed(22, 1.2);
+  Actor_SetPosition(22, 792, 856);
+  Actor_SetPosition(23, 824, 856);
+  Actor_SetPosition(26, 744, 1016);
+  Actor_SetPosition(25, 744, 1016);
+  Event_PlaySound(MUS_035);
   PaletteFade_ApplyTarget(0x10000, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(30);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(848), 1);
+  FieldCamera_SetSpeed(2);
+  FieldCamera_MoveTo(808, CAMERA_KEEP, 848, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_Jump(22, 6, 15);
   FieldActor_Jump(22, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_SetAnimationAndWait(23, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_ArmCallback(22, FACING_EAST, 0);
   Actor_FaceDirection(23, FACING_WEST, 0);
   FieldEvent_Wait(25);
@@ -1637,30 +1629,30 @@ void Func_02002a08(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(23, 3);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(22, 0x5000, 0);
-  Actor_FaceDirection(23, 0x5000, 0);
+  Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
-  FieldEvent_ShowMessageThenWait(0x1a, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
+  FieldEvent_ShowMessageThenWait(26, 0, 10);
   Func_02004b6c_(0x17, 0x100, 0);
   Func_02004b6c_(0x16, 0x100, 0x32);
   FieldActor_StartRepeatedMotion(22, 3);
-  Actor_SetAttachedEffect(0x16, 0x102);
+  Actor_SetAttachedEffect(22, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_WalkByAndWait(22, 0, 16);
   FieldEvent_Wait(20);
   Func_02004b6c_(0x16, 0x102, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_WalkByAndWait(23, 0, 16);
   Actor_FaceDirection(23, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Func_02004b6c_(0x17, 0x109, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
-  Actor_FaceDirection(23, 0x5000, 0);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
+  Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(50);
   Actor_FaceDirection(23, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_ArmCallback(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Func_02004b6c_(0x16, 0x101, 0x2d);
@@ -1672,13 +1664,13 @@ void Func_02002a08(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
-  Actor_FaceDirection(23, 0x5000, 0);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
+  Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(50);
   Actor_ArmCallback(23, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Func_02004b6c_(0x17, 0x108, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
   Func_02004b6c_(0x16, 0x101, 0x32);
   Actor_WalkByAndWait(22, 0, 32);
   FieldEvent_Wait(30);
@@ -1688,73 +1680,71 @@ void Func_02002a08(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   Func_02004b6c_(0x17, 0x109, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
-  Actor_FaceDirection(22, 0x5000, 0);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
+  Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  Func_02001bf4(0x16);
-  Event_PlaySound(0x67);
+  Func_02001bf4(22);
+  Event_PlaySound(SE_CURSE);
   Func_02004b6c_(0x16, 0x105, 0x32);
   Actor_ArmCallback(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(23, 4);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
-  Actor_FaceDirection(22, 0x5000, 0);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
+  Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  Func_02001bf4(0x16);
+  Func_02001bf4(22);
   Func_02004b6c_(0x16, 0x106, 0x32);
   Actor_ArmCallback(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   Func_02004b6c_(0x17, 0x109, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_RunRepeatedMotion(22, 2);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(20);
-  Actor_FaceDirectionAndWait(22, 0x5000);
+  Actor_FaceDirectionAndWait(22, FACING_SOUTH_SOUTHWEST);
   Actor_SetAnimation(22, 7);
   FieldEvent_Wait(20);
   Actor_SetAnimation(22, 6);
   FieldEvent_Wait(5);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldActor_Jump(23, 6, 15);
   FieldActor_Jump(23, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
   Func_02004b6c_(0x16, 0x102, 0x32);
   Actor_SetAnimation(22, 7);
   FieldEvent_Wait(20);
   Actor_SetAnimation(22, 1);
   Actor_ArmCallback(22, FACING_EAST, 0);
   FieldEvent_Wait(15);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   Func_02004b6c_(0x17, 0x103, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(23, 0, 10);
   Func_02004b6c_(0x16, 0x106, 0x28);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_WalkByAndWait(22, 0, 8);
   Actor_WalkByAndWait(22, 10, 16);
-  Actor_FaceDirection(23, 0x5000, 0);
+  Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   Actor_WalkByAndWait(22, 6, 16);
   Actor_ArmCallback(22, 0x5000, 0);
   FieldEvent_Wait(10);
   FieldActor_Jump(22, 6, 15);
   FieldActor_Jump(22, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x4016, 0, 0xa);
-  FieldEvent_ShowMessageThenWait(0x1a, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 22, 0, 10);
+  FieldEvent_ShowMessageThenWait(26, 0, 10);
   Func_02004b6c_(0x16, 0x108, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x4016, 0, 0x14);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 22, 0, 20);
   Actor_SetAnimation(22, 8);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldActor_Jump(22, 7, 0);
   i = 15;
 turn:
-  // The angle, through s16: as the u16 field its halfword zero is shared with
-  // the motion-flag stores below and loads from the pool (differ 19 more).
   ((s16 *)Actor_GetById(22))[3] -= 0x1000;
   i--;
   System_Wait(1);
@@ -1762,7 +1752,7 @@ turn:
     goto turn;
   Actor_SetAnimation(22, 5);
   FieldEvent_Wait(7);
-  FieldEvent_ShowMessageThenWait(0x16, 0, 0x14);
+  FieldEvent_ShowMessageThenWait(22, 0, 20);
   Func_02004b6c_(0x17, 0x108, 0x32);
   Actor_WalkByAndWait(23, 0, 36);
   FieldEvent_Wait(15);
@@ -1770,7 +1760,7 @@ turn:
   FieldEvent_Wait(20);
   FieldActor_Jump(23, 6, 15);
   FieldActor_Jump(23, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x4017, 0, 0xf);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 23, 0, 15);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(22, 3);
@@ -1794,11 +1784,11 @@ scroll:
   System_Wait(1);
   if (i >= 0)
     goto scroll;
-  Event_PlaySound(0x4e);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(30);
   Event_End();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  Event_SetDestination((s32)&SceneId_Ov668Room1, 99);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  Event_SetDestination((s32)&SceneId_EasternAlhafra1, 99);
 }
 
 /// The scene that opens with MsgWhatYouLet; either answer to each of its two
@@ -1807,7 +1797,7 @@ void Func_02003274(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhatYouLet);
-  FieldCamera_MoveTo(PIXELS(152), -1, PIXELS(272), 0);
+  FieldCamera_MoveTo(152, CAMERA_KEEP, 272, 0);
   {
     struct Actor *center =
         ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
@@ -1820,24 +1810,24 @@ void Func_02003274(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(15);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
-  FieldCamera_MoveTo(PIXELS(152), -1, PIXELS(392), 1);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldCamera_MoveTo(152, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Func_02004b6c_(0x19, 0x103, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
-  Actor_FaceDirection(25, 0x5000, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   FieldActor_Jump(25, 6, 15);
   FieldActor_Jump(25, 6, 23);
   FieldEvent_Wait(10);
   Func_02004b6c_(0x19, 0x109, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
-  Actor_FaceDirection(25, 0xd000, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  Actor_FaceDirection(25, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Func_02004b6c_(0x19, 0x100, 0x1e);
-  Actor_SetSpeed(25, 0xb333, 0x5999);
+  Actor_SetSpeed(25, 0.7);
   Actor_GetById(25)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(25, 0, 8);
   FieldEvent_Wait(1);
@@ -1845,15 +1835,15 @@ void Func_02003274(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(25, 0x26666, 0x13333);
+  Actor_SetSpeed(25, 2.4);
   Actor_GetById(25)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(25, 0, -16);
   FieldEvent_Wait(1);
   Actor_GetById(25)->actionFlags |= 1;
   Actor_GetById(25)->actionFlags &= 0xfe;
   Actor_WalkBy(25, 0, 8);
-  Event_PlaySound(0x85);
-  Actor_SetSpeed(29, 0x26666, 0x13333);
+  Event_PlaySound(SE_IMPACT);
+  Actor_SetSpeed(29, 2.4);
   Actor_GetById(29)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(29, 0, -4);
   FieldEvent_Wait(1);
@@ -1881,28 +1871,28 @@ void Func_02003274(void) {
   Actor_GetById(29)->facing = 0x3000;
   FieldEvent_Wait(20);
   Actor_GetById(25)->actionFlags |= 1;
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
-  Actor_SetPosition(29, PIXELS(168), PIXELS(368));
-  FieldActor_SetSpriteRotationById(0x1d, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  Actor_SetPosition(29, 168, 368);
+  FieldActor_SetSpriteRotationById(29, 0);
   Actor_SetSpriteFlags(Actor_GetById(29), 1);
-  Actor_FaceDirection(29, 0x5000, 0);
+  Actor_FaceDirection(29, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_Jump(29, 6, 40);
   Func_02004b6c_(0x1d, 0x102, 0x28);
   Actor_ArmCallback(25, 0x3000, 0);
   FieldEvent_Wait(30);
-  Actor_SetSpeed(25, 0xb333, 0x5999);
+  Actor_SetSpeed(25, 0.7);
   Actor_GetById(25)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(25, 0, -8);
   FieldEvent_Wait(1);
   Actor_GetById(25)->actionFlags |= 1;
   FieldEvent_Wait(20);
-  Actor_SetSpeed(25, 0x26666, 0x13333);
+  Actor_SetSpeed(25, 2.4);
   Actor_GetById(25)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(25, 0, 16);
   FieldEvent_Wait(1);
   Actor_GetById(25)->actionFlags |= 1;
-  Event_PlaySound(0x85);
-  Actor_SetSpeed(29, 0x26666, 0x13333);
+  Event_PlaySound(SE_IMPACT);
+  Actor_SetSpeed(29, 2.4);
   Actor_GetById(27)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(27, 0, 3);
   FieldEvent_Wait(1);
@@ -1929,9 +1919,9 @@ void Func_02003274(void) {
   Actor_GetById(27)->actionFlags |= 1;
   Actor_GetById(27)->facing = 0x5000;
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
-  Actor_SetPosition(27, PIXELS(168), PIXELS(424));
-  FieldActor_SetSpriteRotationById(0x1b, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  Actor_SetPosition(27, 168, 424);
+  FieldActor_SetSpriteRotationById(27, 0);
   Actor_SetSpriteFlags(Actor_GetById(27), 1);
   Actor_GetById(27)->facing = 0xb000;
   FieldActor_Jump(27, 6, 40);
@@ -1939,25 +1929,25 @@ void Func_02003274(void) {
   Actor_ArmCallback(25, 0xd000, 0);
   FieldEvent_Wait(30);
   Func_02004b6c_(0x19, 0x107, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Func_02004b6c_(0x1d, 0x109, 0x32);
   Actor_ArmCallback(25, 0x3000, 0);
   FieldEvent_Wait(30);
   Func_02004b6c_(0x19, 0x107, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Func_02004b6c_(0x1b, 0x102, 0x32);
   Actor_SetAnimation(25, 5);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_ArmCallback(29, 0x3000, 0);
   Actor_ArmCallback(27, 0xd000, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(29, 3);
-  Actor_SetAttachedEffect(0x1d, 0x102);
+  Actor_SetAttachedEffect(29, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(27, 3);
-  Actor_SetAttachedEffect(0x1b, 0x102);
+  Actor_SetAttachedEffect(27, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_SetSpeed(29, 0x1cccc, 0xe666);
+  Actor_SetSpeed(29, 1.8);
   Actor_WalkByAndWait(29, 16, 16);
   Actor_WalkByAndWait(29, 0, 40);
   Actor_ArmCallback(29, 0xb000, 0);
@@ -1966,16 +1956,16 @@ void Func_02003274(void) {
   FieldEvent_Wait(30);
   Actor_ArmCallback(29, 0xb000, 0);
   Actor_ArmCallback(27, 0xb000, 0);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_SetAnimation(27, 3);
   Actor_SetAnimationAndWait(29, 3);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(25, 0xcccc, 0x6666);
-  Actor_SetSpeed(27, 0xcccc, 0x6666);
-  Actor_SetSpeed(29, 0xcccc, 0x6666);
-  Actor_SetSpeed(28, 0xcccc, 0x6666);
-  Actor_SetSpeed(30, 0xcccc, 0x6666);
-  Actor_SetSpeed(31, 0xcccc, 0x6666);
+  Actor_SetSpeed(25, 0.8);
+  Actor_SetSpeed(27, 0.8);
+  Actor_SetSpeed(29, 0.8);
+  Actor_SetSpeed(28, 0.8);
+  Actor_SetSpeed(30, 0.8);
+  Actor_SetSpeed(31, 0.8);
   EventCamera_FollowActor(25, 1);
   Actor_WalkByAndWait(25, -16, 16);
   Actor_WalkByAndWait(25, 0, 16);
@@ -1993,50 +1983,51 @@ void Func_02003274(void) {
   Actor_ArmCallback(25, 0x5000, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 4);
-  FieldEvent_ShowMessageThenWait(0x6019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 25, 0, 10);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(26, 3);
-  Actor_SetAttachedEffect(0x1a, 0x102);
+  Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_WalkBy(27, 0, 64);
   Actor_WalkBy(29, 0, 64);
   Actor_WalkByAndWait(25, 0, 64);
   Func_02004b6c_(0x19, 0x106, 0x28);
-  FieldEvent_ShowMessageThenWait(0x2019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 25, 0, 10);
   Actor_ArmCallback(26, 0x3000, 0);
   Actor_ArmCallback(4, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x2019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 25, 0, 10);
   Actor_WalkByAndWait(25, 0, 16);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldActor_StartRepeatedMotion(30, 2);
   FieldActor_StartRepeatedMotion(31, 2);
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(20);
-  Actor_SetPosition(28, PIXELS(176), PIXELS(592));
-  FieldActor_SetSpriteRotationById(0x1c, 0);
+  Actor_SetPosition(28, 176, 592);
+  FieldActor_SetSpriteRotationById(28, 0);
   Actor_SetSpriteFlags(Actor_GetById(28), 1);
   FieldActor_Jump(28, 6, 20);
   Actor_ArmCallback(28, FACING_WEST, 0);
-  Actor_SetPosition(31, PIXELS(128), PIXELS(608));
-  FieldActor_SetSpriteRotationById(0x1f, 0);
+  Actor_SetPosition(31, 128, 608);
+  FieldActor_SetSpriteRotationById(31, 0);
   Actor_SetSpriteFlags(Actor_GetById(31), 1);
   FieldActor_Jump(31, 6, 20);
   Actor_ArmCallback(31, 0xd000, 0);
-  Actor_SetPosition(30, PIXELS(192), PIXELS(616));
-  FieldActor_SetSpriteRotationById(0x1e, 0);
+  Actor_SetPosition(30, 192, 616);
+  FieldActor_SetSpriteRotationById(30, 0);
   Actor_SetSpriteFlags(Actor_GetById(30), 1);
   FieldActor_Jump(30, 6, 20);
   Actor_ArmCallback(30, 0xb000, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(25, 4);
-  FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_SetAnimation(30, 3);
   Actor_SetAnimation(31, 3);
   Actor_SetAnimationAndWait(28, 3);
@@ -2072,21 +2063,21 @@ void Func_02003274(void) {
   FieldMessage_ShowAtActor_(0x1a, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(20);
-    FieldEvent_ShowMessageThenWait(0x1a, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   } else {
     FieldEvent_Wait(40);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    FieldEvent_ShowMessageThenWait(0x1a, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
   }
-  Actor_SetSpeed(26, 0xcccc, 0x6666);
+  Actor_SetSpeed(26, 0.8);
   Actor_WalkByAndWait(26, 0, -16);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_ArmCallback(26, 0xd000, 0);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(26, 2);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1a, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(26, 0, 10);
   Actor_WalkByAndWait(26, 0, 16);
   Actor_FaceDirection(4, FACING_WEST, 0);
   Actor_ArmCallback(26, FACING_EAST, 0);
@@ -2094,19 +2085,19 @@ void Func_02003274(void) {
   FieldMessage_ShowAtActor_(0x1a, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
     FieldEvent_Wait(40);
-    FieldEvent_ShowMessageThenWait(0x1a, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
     Actor_SetAnimationAndWait(26, 3);
     FieldEvent_Wait(10);
-    FieldEvent_ShowMessageThenWait(0x1a, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
   } else {
     FieldEvent_Wait(20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
-    FieldEvent_ShowMessageThenWait(0x1a, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
   }
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(26, 0x13333, 0x9999);
+  Actor_SetSpeed(26, 1.2);
   Actor_SetAnimation(26, 2);
   {
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -2122,8 +2113,7 @@ void Func_02003274(void) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling,
-                                EffectSprite_DrawAtWorldPosition)
+#include "shared/particles_update_falling.h"
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -2138,11 +2128,10 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-DEFINE_ROCKS_SPAWN(Rocks_Spawn)
+#include "shared/rocks_spawn.h"
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Task_Add forwarded inline. */
   Task_Add(func, priority);
 }
 
@@ -2213,7 +2202,6 @@ s32 Func_020040ec(s32 id) {
   s32 fromX, fromZ;
   s32 width, height, x, z;
 
-  // A goto loop: a C loop is strength-reduced, which the original's is not.
   if ((u16)kind != gPushKinds[(u16)i]) {
   again:
     next = (i + 1) * 65536;
@@ -2245,7 +2233,7 @@ s32 Func_020040ec(s32 id) {
 
 #include "../field/map/cellfill.c"
 
-extern s32 gPushDirectionSteps[];
+extern s32 gPushLeaderSteps[];
 
 static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
                                         struct Vector3 *cell) {
@@ -2272,7 +2260,7 @@ s32 Func_02004240(struct PushState *push) {
         (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
     height =
         (Abs(gPushFootprints[kind][1]) + Abs(gPushFootprints[kind][3])) >> 4;
-    offset = gPushDirectionSteps[direction];
+    offset = gPushLeaderSteps[direction];
     dx = offset & 0xffff0000;
     dz = offset << 16;
     push->unk14 = 0;
@@ -2287,13 +2275,12 @@ s32 Func_02004240(struct PushState *push) {
       for (j = 0; j < height; j++) {
         cell.x = push->x + (gPushFootprints[kind][0] << 16);
         for (i = 0; i < width; i++) {
-          /* FAKEMATCH(wrapper): the call through CallFunc_02004a64; as a direct
-           * call, 2 of 171 instructions differ in tla-en. */
+          /* FAKEMATCH(wrapper): the call through CallFunc_02004a64. */
           if (CallFunc_02004a64(actor, &cell) == 2)
             goto blocked;
-          cell.x += 0x100000;
+          cell.x += px(16);
         }
-        cell.z += 0x100000;
+        cell.z += px(16);
       }
       push->x += dx;
       steps++;
@@ -2316,10 +2303,9 @@ s32 Func_02004240(struct PushState *push) {
 }
 
 /// The whole-pixel half of a 16.16 coordinate.
-#define PIXELS(v) (((s16 *)&(v))[1])
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
-DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
-                              gPushDirectionSteps, gPushFootprints)
+#include "shared/push_target_find_ahead.h"
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -2362,7 +2348,7 @@ void Func_020044c4(struct PushTarget target) {
             ABS(gPushFootprints[footprint][3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
   System_Wait(15);
   {
@@ -2377,15 +2363,15 @@ void Func_020044c4(struct PushTarget target) {
     Actor_SelectAnimation(object, 3);
   else
     Actor_SelectAnimation(object, 2);
-  Event_PlaySound(239);
-  Actor_SetSpeed(target.id, 0x8000, 0x1999);
-  FieldActor_SetMoveTarget(object, target.x, target.y, target.z);
+  Event_PlaySound(SE_HEAVY_MOVE);
+  Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
+  FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
-                             (gPushDirectionSteps[direction] << 16) >> 31,
-                             (gPushDirectionSteps[direction] << 16) >> 17);
+                             (gPushLeaderSteps[direction] << 16) >> 31,
+                             (gPushLeaderSteps[direction] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -2394,8 +2380,8 @@ void Func_020044c4(struct PushTarget target) {
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(298);
-  Event_PlaySound(213);
+  Event_PlaySound(SE_298);
+  Event_PlaySound(SE_HEAVY_STOP);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Actor_SelectAnimation(object, 1);
   target.x = target.x + (gPushFootprints[footprint][0] << 16);
@@ -2417,8 +2403,7 @@ void Func_020044c4(struct PushTarget target) {
   Event_NoOp();
 }
 
-DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
-                                 gPushKinds, MapGrid_CheckCollision)
+#include "shared/actor_stop_at_push_target.h"
 
 void Func_020047fc(const u16 *list) {
   const u16 *spec;
@@ -2451,17 +2436,15 @@ next:
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Statue_Sink, Actor_SetCellOpen)
+#include "shared/statue_sink.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+#include "shared/actor_set_cell_open.h"
 
 #undef ABS
 #undef EVENT_WORK
 #undef OBJECT
 #undef FIELD_AT
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
+#undef PIXEL_PART
 #include "text/msg_ids.h"
 
 void Func_02000958(void);
@@ -2476,7 +2459,7 @@ s8 gPushFootprints[][4] = {
     {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
-s32 gPushDirectionSteps[] = {
+s32 gPushLeaderSteps[] = {
     0x100000, 0x100000, 0x100000, 0x10, 0x10, 0x10,
     0x10, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff0,
     0xfff0, 0xfff0, 0xfff0, 0x100000, 0xffff000a,
@@ -2496,48 +2479,36 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(98),
-    SCENE_EXIT_IF(1, 95, 11, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 99, 1, CONDITION_ALWAYS),
+    SCENE_EXITS(EasternAlhafra1),
+    SCENE_EXIT_UNLESS(1, Alhafra1, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, EasternAlhafraShip, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
-s16 gEasternAlhafra_Placements[] = {
-    407, -1, 1, 0, 0, 280, 0, 0,
-    0, 232, FACING_SOUTH, 2, 407, -1, 1, 0,
-    0, 376, 0, 0, 0, 232, FACING_SOUTH, 258,
-    287, -1, 1, 0, 0, 552, 0, 0,
-    0, 520, FACING_SOUTH, 2, 287, -1, 1, 0,
-    0, 408, 0, 0, 0, 520, FACING_SOUTH, 2,
-    489, -1, 1, 0, 0, 344, 0, 0,
-    0, 312, FACING_SOUTH, 2, 489, -1, 1, 0,
-    0, 440, 0, 0, 0, 312, FACING_SOUTH, 2,
-    406, -1, 1, 0, 0, 488, 0, 0,
-    0, 312, FACING_SOUTH, 2, 258, -1, 7, 0,
-    0, 336, 0, 0, 0, 456, FACING_SOUTH, 2,
-    467, -1, 1, 0, 0, 344, 0, 0,
-    0, 472, FACING_SOUTH, 2, 467, -1, 1, 0,
-    0, 440, 0, 0, 0, 456, FACING_SOUTH, 2,
-    489, -1, 7, 0, 0, 444, 0, 0,
-    0, 312, FACING_SOUTH, 2, 489, -1, 7, 0,
-    0, 482, 0, 0, 0, 312, FACING_SOUTH, 2,
-    489, -1, 7, 0, 0, 444, 0, 0,
-    0, 376, FACING_SOUTH, 2, 489, -1, 7, 0,
-    0, 492, 0, 0, 0, 312, FACING_SOUTH, 2,
-    39, -1, 1, 0, 0, 312, 0, 0,
-    0, 440, 0, 2, 39, -1, 1, 0,
-    0, 440, 0, 0, 0, 424, 0x5000, 1,
-    39, -1, 1, 0, 0, 344, 0, 0,
-    0, 488, FACING_NORTH, 1, 39, -1, 1, 0,
-    0, 440, 0, 0, 0, 376, FACING_NORTHEAST, 1,
-    5, -1, 1, 0, 0, 8, 0, 0,
-    0, 8, FACING_NORTH, 2, 6, -1, 1, 0,
-    0, 8, 0, 0, 0, 8, FACING_NORTH, 2,
-    7, -1, 1, 0, 0, 8, 0, 0,
-    0, 8, FACING_NORTH, 2, 56, -1, 1, 0,
-    0, 8, 0, 0, 0, 8, FACING_NORTH, 2,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct ActorPlacement gEasternAlhafra_Placements[] = {
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(258, CONDITION_ALWAYS, 7, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 482, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 492, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 424, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 488, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 s16 gData_02004fe4[] = {
@@ -2596,7 +2567,7 @@ s32 gData_02005290[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000940)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000730)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1046, 0x8a8, EVENT(Func_02000730)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgWePaidBig)},
@@ -2623,21 +2594,21 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x8a4, EVENT(Func_0200042c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, 0x8a5, EVENT(Func_02000190)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, 0x8a5, EVENT(Func_02000200)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000190)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000200)},
-    {0xc602, 12, CONDITION_ALWAYS, EVENT(Func_020006ec)},
-    {0x4602, 12, CONDITION_ALWAYS, EVENT(Func_020006ec)},
-    {0xc602, 13, CONDITION_ALWAYS, EVENT(Func_020006ec)},
-    {0xc602, 11, CONDITION_ALWAYS, EVENT(Func_02000514)},
-    {0x4602, 11, CONDITION_ALWAYS, EVENT(Func_02000514)},
-    {0xa602, 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {0xb602, 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {0x2602, 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {0x3602, 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {0xa602, 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {0xb602, 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {0x2602, 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {0x3602, 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_02000190)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02000200)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Func_020006ec)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(Func_020006ec)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Func_020006ec)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Func_02000514)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(Func_02000514)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_02000838)},
     {TRIGGER_STEP, 21, 0x905, EVENT(Func_02002048)},
     {TRIGGER_STEP, 22, FLAG_ALHAFRA_SHIP_GONE, EVENT(Func_02002a08)},

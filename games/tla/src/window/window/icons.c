@@ -40,8 +40,9 @@ void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountItemIcons(void);
 
 /* VIEW(window): routine Ability_Get as u8 *Ability_Get(s32);
- * battle/battle_system.h has struct BattleAct *Ability_Get(s32 abilityId); not
- * tried: Ability_Get's declaration holds a FAKEMATCH tag. */
+ * battle/battle_system.h has struct BattleAct *Ability_Get(s32 abilityId);
+ * tried as the rest of the object declares it, Ability_RequestGlyph moves: 2 of
+ * 21 instructions in tla-ja. */
 u8 *Ability_Get__window(s32) __asm__("Ability_Get");
 #define Ability_Get Ability_Get__window
 
@@ -325,8 +326,7 @@ void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
   {
     u32 size;
 
-    // The size's load in a once-only block keeps it after both arguments are
-    // saved; as a plain assignment, 4 of 82 instructions differ in tla-en.
+    /* FAKEMATCH(dead): the size's load in a once-only block. */
     do {
       size = (u32)Tile_Decompress4bppCodeSize;
     } while (0);

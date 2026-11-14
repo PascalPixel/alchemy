@@ -4,7 +4,7 @@
 /// the water's rippling scroll and cycling colours.
 
 #include "shared/tables.h"
-#include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 #include "system/iwram_call.h"
 #include "actor.h"
@@ -45,9 +45,27 @@ extern u32 gLemuria_SecondWalkerPaces[];
 extern s16 gLemuria_DoorOpening[];
 extern s16 gLemuria_WideDoorOpening[];
 
-DEFINE_POSITION_DISTANCE(Lemuria_Distance)
+#include "shared/position_distance.h"
 
-DEFINE_ACTOR_IS_FACING_NEAR(Actor_IsFacingNear, Lemuria_Distance)
+s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
+  s32 result = 0;
+  s32 *to;
+  s32 *from;
+
+  to = &other->x;
+  from = &self->x;
+  if (Position_Distance(to, from) < range) {
+    u32 angle = (u16)ArcTan2(other->z - self->z, *to - *from);
+    u32 left = (angle - 0x1000) & 0xf000;
+    u32 right = (angle + 0x1000) & 0xf000;
+    u32 ahead = angle & 0xf000;
+    u32 facing = self->facing & 0xf000;
+
+    if (ahead == facing || right == facing || left == facing)
+      result = 1;
+  }
+  return result;
+}
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
@@ -71,7 +89,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   if (self->timer == 1)
     goto near;
   other = Actor_Get(gMainRoutineWork.currentOwner);
-  if (Lemuria_Distance(&self->x, &other->x) <= 11)
+  if (Position_Distance(&self->x, &other->x) <= 11)
     goto far;
   if (Actor_IsFacingNear(self, self->watchedObject, 18) != 0)
     goto near;
@@ -118,7 +136,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Lemuria_PoseActor12(void) {
-  Actor_SetPosition(12, PIXELS(488), PIXELS(1256));
+  Actor_SetPosition(12, 488, 1256);
   Actor_SetFirstSpriteAnimation(Actor_Get(12), 157);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_WEST, 0);
@@ -130,10 +148,10 @@ void Lemuria_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
@@ -257,13 +275,14 @@ void Lemuria_DigFifthSpot(void) {
 
   Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
   if (Event_GetFlag(0xfbb) == 0) {
-    Actor_SetPosition(69, PIXELS(808), PIXELS(1176));
+    Actor_SetPosition(69, 808, 1176);
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
-      leader->velocityY = PIXELS(6);
+      leader->velocityY = px(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -276,7 +295,7 @@ void Lemuria_LeaveForAncientLemuria(void) {
   struct MainRoutineWork *party;
 
   Teleport_PlaySparksAndFade();
-  Event_SetDestination((s32)&SceneId_Ov68b, 2);
+  Event_SetDestination((s32)&SceneId_Lemuria, 2);
   party = &gMainRoutineWork;
 
   party->unk2c2 = 2;
@@ -290,17 +309,13 @@ void Lemuria_GrowVine(void) {
   s32 old;
 
   flag = 0x900;
-  /* FAKEMATCH(barrier): the empty asm on flag, so the flag's high part is
-   * shifted before the two coordinates start; as the plain constant, the shift
-   * comes after them, 2 of 33 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm on flag. */
   asm volatile("" : "+l"(flag));
   x = 0x3580000;
   z = 0x3f80000;
   Event_SetFlag(flag + 0x63);
   value = MapGrid_GetAttributeBAt(x, z, 0);
-  /* FAKEMATCH(temporary): the first z copied to old, so the second z starts
-   * before the first store call's arguments; as z reassigned after that call,
-   * its shift comes late, 2 of 33 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the first z copied to old. */
   old = z;
   z = 0x4080000;
   MapGrid_SetAttributeBAt(x, old, 0, value | 64);
@@ -348,7 +363,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   s32 v5;
   struct Actor *object;
 
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y > PIXELS(96) ||
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y > px(96) ||
       Event_GetFlag(0x969)) {
     FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x15a), s16, 0) = 1;
     return;
@@ -362,24 +377,24 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgAreYouKids);
-  Actor_SetPosition(12, PIXELS(872), PIXELS(880));
+  Actor_SetPosition(12, 872, 880);
   object = Actor_Get(12);
   Actor_SetFirstSpriteAnimation(object, 43);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(776), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 776, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_ShowEmote(12, 0x109, 30);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_SetAnimationAndWait(12, 4);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(856), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 856, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(928), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 928, 1);
   FieldCamera_WaitForArrival();
   v5 = Party_FindOwnerWithAction(133);
   if (v5 != -1 || Event_GetFlag(0x962))
@@ -389,25 +404,25 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Actor_WalkToAndWait(4, 856, 952);
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(4, 0x105, 60);
-  FieldCamera_MoveTo(PIXELS(872), v5, PIXELS(792), 1);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  FieldCamera_MoveToFixed(px(872), v5, px(792), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_ShowEmote(12, 0x101, 30);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveTo(PIXELS(872), v5, PIXELS(856), 1);
+  FieldCamera_MoveToFixed(px(872), v5, px(856), 1);
   FieldActor_Jump(12, 4, 0);
   Actor_WalkToAndWait(12, 872, 912);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(12, 0x10000, 0x8000);
+  Actor_SetSpeed(12, 1);
   Actor_WalkByAndWait(12, -32, 0);
   Actor_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP);
-  FieldCamera_MoveTo(PIXELS(848), v5, PIXELS(904), 1);
+  FieldCamera_MoveToFixed(px(848), v5, px(904), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
-  Actor_SetPosition(28, PIXELS(840), PIXELS(920));
-  Actor_SetPosition(27, PIXELS(840), PIXELS(936));
+  Actor_SetPosition(28, 840, 920);
+  Actor_SetPosition(27, 840, 936);
   Value3((s32 (*)())Rope_Coil, 1, 28, 27);
   Rope_Lash(1, 28, 27);
   FieldEvent_Wait(30);
@@ -430,7 +445,7 @@ void Lemuria_DrinkFromSpring(void) {
 
   if (y < 0x5a0000) {
     Message_ShowCentered((s32)MsgAndTheOthers, 1);
-    Event_PlaySound(126);
+    Event_PlaySound(SE_RECOVERY);
     Party_RestoreHpPp(1);
   } else {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
@@ -451,7 +466,7 @@ void Lemuria_OfferSpringLuck(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgDoYouWish);
-  Actor_ShowEmote(30, 0x100, 30);
+  Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(30, gMainRoutineWork.currentOwner, 0);
   FieldActor_RefreshSelectorById(30);
   FieldEvent_Wait(5);
@@ -467,7 +482,7 @@ void Lemuria_OfferSpringLuck(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 464, 1040);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
     FieldEvent_Wait(5);
-    Actor_SetSpeed(30, 0x13333, 0x9999);
+    Actor_SetSpeed(30, 1.2);
     Actor_WalkToAndWait(30, 440, 1048);
     Event_SetFlag(0x908);
   }
@@ -520,9 +535,7 @@ void Lemuria_StartRippleDma(void) {
   volatile u16 *scroll;
   volatile u16 *dma;
 
-  /* FAKEMATCH(barrier): the empty asm reading first, so the first line's load
-   * comes before the register address is built; as no asm, the load follows
-   * it, 6 of 34 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm reading first. */
   __asm__("" : : "r"(first));
   scroll = &REG_BG2HOFS;
   *scroll = first;
@@ -575,22 +588,22 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(29, 3);
   Actor_Get(21)->update = Lemuria_TakeLeaderLayer;
   Actor_SetAnimation(22, 3);
-  Actor_SetPosition(18, PIXELS(40), PIXELS(952));
+  Actor_SetPosition(18, 40, 952);
   Actor_SetScript(18, (s32)&gLemuria_FirstWalkerPaces);
   actor = Actor_Get(18);
   actor->watchedObject = Actor_Get(19);
   actor->update = Lemuria_NoticeLeader;
-  Actor_SetPosition(19, PIXELS(88), PIXELS(904));
+  Actor_SetPosition(19, 88, 904);
   Actor_SetScript(19, (s32)&gLemuria_SecondWalkerPaces);
   actor = Actor_Get(19);
   actor->watchedObject = Actor_Get(18);
   actor->update = Lemuria_NoticeLeader;
   if (Event_GetFlag(0x908)) {
-    Actor_SetPosition(30, PIXELS(440), PIXELS(1048));
+    Actor_SetPosition(30, 440, 1048);
   }
   if (Event_GetFlag(0x964) && !Event_GetFlag(0x969)) {
-    Actor_SetPosition(24, PIXELS(456), PIXELS(520));
-    Actor_SetPosition(25, PIXELS(472), PIXELS(520));
+    Actor_SetPosition(24, 456, 520);
+    Actor_SetPosition(25, 472, 520);
   }
   if (!Event_GetFlag(0x969)) {
     Actor_SetPosition(26, 0, 0);
@@ -598,7 +611,7 @@ s32 Scene_Initialize(void) {
     Actor_Get(26)->update = Lemuria_TakeLeaderLayer;
   }
   if (Event_GetFlag(0x966) && !Event_GetFlag(0x969)) {
-    Actor_SetPosition(7, PIXELS(56), PIXELS(1016));
+    Actor_SetPosition(7, 56, 1016);
     Actor_SetAnimation(7, 9);
   }
   Rope_Initialize();
@@ -608,8 +621,8 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(0x96f)) {
     FieldActor_SetSpritePriority(28, 2);
     FieldActor_SetSpritePriority(27, 2);
-    Actor_SetPosition(28, PIXELS(840), PIXELS(920));
-    Actor_SetPosition(27, PIXELS(840), PIXELS(936));
+    Actor_SetPosition(28, 840, 920);
+    Actor_SetPosition(27, 840, 936);
     Call4(Rope_Place, 1, 0x96f, 28, 27);
   }
   Actor_SetSpriteFlags(Actor_Get(28), 0);
@@ -617,16 +630,16 @@ s32 Scene_Initialize(void) {
     HangingVine_Place(10, 1);
     Lemuria_GrowVine();
   }
-  if (!Event_GetFlag(0x303)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_03)) {
     Actor_SetWideSprite(67, 0);
   }
-  if (!Event_GetFlag(0x304)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
     Actor_SetWideSprite(68, 0);
   }
-  if (!Event_GetFlag(0x306)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_06)) {
     Actor_SetWideSprite(70, 0);
   }
-  if (!Event_GetFlag(0x307)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_07)) {
     Actor_SetWideSprite(71, 0);
   }
   if (Event_GetFlag(0x966)) {
@@ -634,8 +647,8 @@ s32 Scene_Initialize(void) {
   }
   actor = Actor_Get(31);
   actor->motionFlags = 0;
-  actor->terrainHeight = PIXELS(64);
-  actor->y = PIXELS(64);
+  actor->terrainHeight = px(64);
+  actor->y = px(64);
   return 0;
 }
 
@@ -669,20 +682,20 @@ void Lemuria_AdmirePalace(s32 id) {
   }
   FieldActor_WaitForMoveById(12);
   FieldActor_WatchAndSetScript(4, 12);
-  Actor_SetSpeed(12, 0x10000, 0x8000);
+  Actor_SetSpeed(12, 1);
   EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 464, 952);
   Actor_FaceDirectionAndWait(12, a);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(12, 0x100, 30);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_FaceDirectionAndWait(12, b);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(12, 0x100, 30);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_WalkToAndWait(12, 464, 784);
   FieldEvent_Wait(10);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldActor_Jump(12, 6, 15);
   FieldActor_Jump(12, 6, 23);
   FieldEvent_Wait(10);
@@ -691,12 +704,12 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   FieldEvent_Wait(20);
   FieldActor_SetSpritePriority(4, 1);
-  Actor_SetPosition(4, PIXELS(464), PIXELS(856));
+  Actor_SetPosition(4, 464, 856);
   Actor_WalkToAndWait(4, 464, 796);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -724,7 +737,7 @@ void Lemuria_KeepLookingAround(void) {
   FieldActor_WaitForMoveById(12);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -753,20 +766,20 @@ void Lemuria_MarvelAtCity(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgThisPlaceIs);
-  Actor_SetSpeed(24, 0x10000, 0x8000);
-  Actor_SetSpeed(25, 0x10000, 0x8000);
+  Actor_SetSpeed(24, 1);
+  Actor_SetSpeed(25, 1);
   Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
   Actor_WalkToAndWait(4, 472, 568);
   FieldActor_LaunchFromLeader(12, -16, 0, FACING_NORTH + FACING_STEP);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldActor_WaitForMoveById(12);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(544), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_Jump(12, 6, 15);
   FieldActor_Jump(12, 6, 23);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_ShowEmote(24, 0x100, 40);
+  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_WalkByAndWait(24, 16, 0);
   Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldEvent_Wait(20);
@@ -783,14 +796,14 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldActor_SetSpritePriority(25, 2);
   Actor_WalkByAndWait(25, 16, 0);
   Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_WalkByAndWait(25, -8, 0);
   Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -806,7 +819,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(24, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(24, 0x101, 30);
+  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   FieldActor_LaunchFromLeader(7, -8, -16, FACING_NORTH);
   FieldActor_WaitForMoveById(7);
@@ -815,9 +828,9 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldActor_StartRepeatedMotion(24, 3);
-  Actor_SetAttachedEffect(24, 0x102);
+  Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(25, 0x102);
+  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(45);
   Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);
@@ -833,30 +846,30 @@ void Lemuria_MarvelAtCity(void) {
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  Actor_ShowEmote(7, 0x101, 30);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
-  Actor_ShowEmote(7, 0x102, 40);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(12, 0x101, 30);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(12, 0x100, 60);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   FieldActor_WatchAndSetScript(4, 12);
   FieldActor_WatchAndSetScript(7, 12);
   FieldActor_WatchAndSetScript(24, 12);
   FieldActor_WatchAndSetScript(25, 12);
-  Actor_SetSpeed(12, 0x10000, 0x8000);
+  Actor_SetSpeed(12, 1);
   EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 424, 600);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(PIXELS(400), -1, PIXELS(648), 1);
+  FieldCamera_MoveTo(400, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -878,17 +891,17 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(40);
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(40);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(288), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(528), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 528, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
   EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 456, 568);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(544), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(4, FACING_WEST, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
@@ -897,7 +910,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_SetSpeed(7, 0xb333, 0x5999);
+  Actor_SetSpeed(7, 0.7);
   Actor_WalkByAndWait(7, 8, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   FieldEvent_Wait(10);
@@ -932,7 +945,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(7, 0x102, 40);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
@@ -946,9 +959,9 @@ void Lemuria_MarvelAtCity(void) {
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_ShowEmote(7, 0x109, 30);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(12, 0x100, 30);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldActor_Jump(12, 6, 15);
   FieldActor_Jump(12, 6, 23);
@@ -969,8 +982,8 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(12, 0x101, 0);
-  Actor_ShowEmote(4, 0x101, 40);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_SetAnimationAndWait(7, 4);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
@@ -980,7 +993,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  Actor_ShowEmote(7, 0x109, 45);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
   Actor_WalkByAndWait(7, -16, 0);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(10);
@@ -1004,14 +1017,14 @@ void Lemuria_MarvelAtCity(void) {
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(10);
   Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_SetSpeed(7, 0x13333, 0x9999);
+  Actor_SetSpeed(7, 1.2);
   Actor_SetAnimation(7, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_SetDestination(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -1030,9 +1043,37 @@ void Lemuria_TakeLeaderLayer(void) { Actor_TakeLeaderLayer(); }
 extern s16 gLemuria_ThirdDoorOpening[];
 
 // clang-format off
-DEFINE_G_DATA_02001D84(gLemuria_FirstWalkerPaces, 40, 952, 904, 88)
+u32 gLemuria_FirstWalkerPaces[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_SET(SW_SPEED, 0x10000),                                               
+      SC_SET(SW_ACCEL, 0x10000),                                               
+      SC_LABEL(1),                                                             
+      SC_MOVE(px(40), 0, px(952)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(px(40), 0, px(904)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(px(88), 0, px(904)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(px(88), 0, px(952)),                                      
+      SC_SYNC,                                                                 
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+  };
 
-DEFINE_G_DATA_02001D84(gLemuria_SecondWalkerPaces, 88, 904, 952, 40)
+u32 gLemuria_SecondWalkerPaces[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_SET(SW_SPEED, 0x10000),                                               
+      SC_SET(SW_ACCEL, 0x10000),                                               
+      SC_LABEL(1),                                                             
+      SC_MOVE(px(88), 0, px(904)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(px(88), 0, px(952)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(px(40), 0, px(952)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(px(40), 0, px(904)),                                      
+      SC_SYNC,                                                                 
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 460, 0, 550, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1040,47 +1081,47 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(202),
-    SCENE_EXIT_IF(1, 203, 1, -1),
-    SCENE_EXIT_IF(2, 203, 2, -1),
-    SCENE_EXIT_IF(3, 203, 3, -1),
-    SCENE_EXIT_IF(4, 201, 3, -1),
-    SCENE_EXIT_IF(5, 205, 1, -1),
-    SCENE_EXIT_IF(12, 203, 12, -1),
-    SCENE_EXIT_IF(15, 203, 15, -1),
-    SCENE_EXIT_IF(16, 203, 16, -1),
-    SCENE_EXIT_IF(11, 204, 1, -1),
-    SCENE_EXIT_IF(10, 204, 10, -1),
-    SCENE_EXIT_IF(17, 204, 17, -1),
+    SCENE_EXITS(Lemuria),
+    SCENE_EXIT_UNLESS(1, LemuriaInteriors, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, LemuriaInteriors, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LemuriaInteriors, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AncientLemuria, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, LemuriaSpring, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, LemuriaInteriors, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, LemuriaInteriors, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, LemuriaInteriors, 16, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, LemuriaPalace, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, LemuriaPalace, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(17, LemuriaPalace, 17, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {407, CONDITION_ALWAYS, 1, PIXELS(952), 0, PIXELS(920), FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(904), 0, PIXELS(920), FACING_SOUTH, 2, 1},
-    {372, CONDITION_ALWAYS, 1, PIXELS(856), 0, PIXELS(1016), FACING_SOUTH, 2, 0},
-    {450, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(880), FACING_SOUTH, 2, 0},
-    {157, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(1256), FACING_WEST, 1, 0},
-    {156, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(1040), FACING_SOUTH, 1, 0},
-    {160, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(1064), FACING_SOUTH, 1, 0},
-    {165, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(856), FACING_SOUTH + FACING_STEP, 1, 0},
-    {164, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(920), FACING_WEST, 1, 0},
-    {166, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(920), FACING_SOUTH + FACING_STEP, 1, 0},
-    {167, CONDITION_ALWAYS, 1, PIXELS(40), 0, PIXELS(952), FACING_NORTH, 2, 0},
-    {168, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(904), FACING_SOUTH, 2, 0},
-    {216, CONDITION_ALWAYS, 2, PIXELS(80), 0, PIXELS(1104), FACING_SOUTH, 0, 0},
-    {189, CONDITION_ALWAYS, 2, PIXELS(392), 0, PIXELS(712), FACING_SOUTH, 0, 0},
-    {80, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(1080), FACING_EAST, 2, 0},
-    {203, CONDITION_ALWAYS, 2, PIXELS(864), 0, PIXELS(984), FACING_SOUTH, 0, 0},
-    {231, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(520), FACING_SOUTHEAST + FACING_STEP, 1, 0},
-    {231, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(520), FACING_SOUTH + FACING_STEP, 1, 0},
-    {166, CONDITION_ALWAYS, 2, PIXELS(552), 0, PIXELS(440), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 952, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 856, 0, 1016, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 880, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 1256, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(156, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 1040, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(160, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 1064, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(165, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 856, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(164, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 920, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(166, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 920, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(167, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 952, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(168, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 904, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(216, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 80, 0, 1104, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(189, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 712, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(80, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 1080, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(203, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 864, 0, 984, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 520, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 520, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(166, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 552, 0, 440, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {7, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_NORTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
-    {407, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {157, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(1008), FACING_WEST, 1, 0},
-    {160, CONDITION_ALWAYS, 1, PIXELS(464), 0, PIXELS(1016), FACING_NORTH + FACING_STEP, 2, 0},
-    {489, CONDITION_ALWAYS, 7, PIXELS(488), 0, PIXELS(984), FACING_WEST, 2, 0},
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 1008, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(160, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 464, 0, 1016, FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 488, 0, 984, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1114,16 +1155,23 @@ struct WarpTarget gLemuria_Door10 = {(s32)gLemuria_WideDoorOpening, 28, 13};
 struct WarpTarget gLemuria_Door16 = {(s32)gLemuria_DoorOpening, 54, 50};
 
 struct Trigger gSceneEvents[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
-    {49, 4, CONDITION_ALWAYS, 4},
-    {0xc401, 5, 0x1908, 5},
-    {0xc602, 12, 0x1966, EVENT(Lemuria_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+     EVENT(Lemuria_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Lemuria_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(Lemuria_EnterDoor)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 5, 0x1908, 5},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, 0x1966,
+     EVENT(Lemuria_EnterDoor)},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {0xc602, 16, 0x1969, EVENT(Lemuria_EnterDoor)},
-    {0xc602, 11, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, 0x1969,
+     EVENT(Lemuria_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
+     EVENT(Lemuria_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+     EVENT(Lemuria_EnterDoor)},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_STEP, 20, 0x964, EVENT(Lemuria_MarvelAtCity)},
     {TRIGGER_STEP, 21, 0x964, EVENT(Lemuria_AdmirePalace)},
@@ -1188,7 +1236,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTheSenateHolds)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
      MSGNO(MsgITrustThe)},
-    {0xc400, 11, CONDITION_ALWAYS, MSGNO(MsgHouseOfThe)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 11, CONDITION_ALWAYS,
+     MSGNO(MsgHouseOfThe)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgDrinkingFromThis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
      MSGNO(MsgTheseTurtlesHave)},

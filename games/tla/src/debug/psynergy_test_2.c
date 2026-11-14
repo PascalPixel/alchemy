@@ -121,23 +121,22 @@ void Func_0200015c(void) {
   s32 step = -0x8000;
 
   i = 63;
-next:
-  if ((u32)particle->age <= 19) {
-    u16 *base = &work->tile;
-    s32 mask = 7;
-    s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
-    s32 attr = sprite->attr;
+  do {
+    if ((u32)particle->age <= 19) {
+      u16 *base = &work->tile;
+      s32 mask = 7;
+      s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
+      s32 attr = sprite->attr;
 
-    sprite->attr = (attr & ~0x3ff) | tile;
-    EffectSprite_DrawAtWorldPosition(sprite, particle);
-    BattleEffect_StepVector3(particle, 63, step);
-    particle->age++;
-  }
-  i--;
-  sprite++;
-  particle++;
-  if (i >= 0)
-    goto next;
+      sprite->attr = (attr & ~0x3ff) | tile;
+      EffectSprite_DrawAtWorldPosition(sprite, particle);
+      BattleEffect_StepVector3(particle, 63, step);
+      particle->age++;
+    }
+    i--;
+    sprite++;
+    particle++;
+  } while (i >= 0);
 }
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -148,8 +147,8 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(322),
-    SCENE_EXIT(20, 322, 2),
+    SCENE_EXITS(PsynergyTest),
+    SCENE_EXIT(20, PsynergyTest, 2),
     SCENE_EXITS_END,
 };
 
@@ -237,8 +236,7 @@ void EffectSprite_Init(struct RockSprite *sprite, s32 width, s32 height,
                        u32 attributes, s32 tile);
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Task_Add forwarded inline. */
   Task_Add(func, priority);
 }
 
@@ -295,7 +293,7 @@ void Func_020003a8(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 1) {
-    Actor_SetPosition(id, x << 16, z << 16);
+    Actor_SetPositionFixed(id, x << 16, z << 16);
     object->scaleX = 0;
     object->scaleY = 0;
   }
@@ -317,8 +315,8 @@ void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 2) {
-    Actor_SetPosition(id, x << 16, z << 16);
-    object->y = 0x200000;
+    Actor_SetPositionFixed(id, px(x), px(z));
+    object->y = px(32);
     object->motionFlags = 3;
     object->gravity = 0x170a;
     System_Wait(50);
@@ -345,18 +343,15 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       s32 scale;
 
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
       while (object->scaleX < Q16_ONE) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
         {
-          /* FAKEMATCH(temporary): the turn is added as a word, so its step
-           * is built inside the loop as in the native; as
-           * object->angle += 0x1000, 22 of 86 instructions differ in
-           * tla-en. */
-          s32 angle = object->facing + 0x1000;
+          /* FAKEMATCH(temporary): the turn is added as a word. */
+          s32 angle = object->facing + TRIG_TURN / 16;
 
           object->facing = angle;
         }
@@ -366,7 +361,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
       object->facing =
-          Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x8000;
+          Actor_Get(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
       Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }

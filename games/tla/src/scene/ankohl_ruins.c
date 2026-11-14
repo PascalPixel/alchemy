@@ -28,8 +28,6 @@ void AnkohlRuins_RaiseFirstSand(void);
 void AnkohlRuins_RaiseSecondSand(void);
 void Func_02001f7c(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
@@ -121,17 +119,15 @@ extern u32 gData_0200307c[];
 extern u32 gData_0200309c[];
 
 const struct ActorPlacement *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
     return (const struct ActorPlacement *)gData_0200307c;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
     return (const struct ActorPlacement *)gData_0200309c;
   return 0;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }
@@ -139,7 +135,7 @@ static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
 void Func_02000384(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_Start(gMainRoutineWork.currentOwner, 6, 0x1000);
-  Event_PlaySound(0x136);
+  Event_PlaySound(SE_310);
   Event_SetFlag(0x122);
   FieldEvent_SetExitRequest(13);
 }
@@ -154,7 +150,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-// The Japanese form is the older revision and is still on its listing.
 #if TLA_PATCH_1
 
 struct LandingEventWork {
@@ -171,17 +166,17 @@ void Func_02000418(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   ((struct LandingEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -202,15 +197,17 @@ loop:
   i++;
   if (i <= 16)
     goto loop;
-  Event_PlaySound(188);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Event_PlaySound(SE_THUMP);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
-  leader->gravity = 0x10000;
-  leader->bounce = 0x4000;
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  leader->gravity = px(1);
+  leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   ((struct LandingEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;
@@ -224,7 +221,7 @@ s32 Func_020005c0(struct Actor *object) {
   ((struct FieldSprite *)object->sprite)->priority = 2;
   object->priorityFlags &= 0xfe;
   object->motionFlags = 0;
-  object->y -= 0x40000;
+  object->y -= px(4);
   return 0;
 }
 
@@ -238,19 +235,19 @@ extern struct ActorPlacement gAnkohlRuins_Room6Placements[];
 extern struct ActorPlacement gAnkohlRuins_Room8Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
     return gAnkohlRuins_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
     return gAnkohlRuins_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3)
     return gAnkohlRuins_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4)
     return gAnkohlRuins_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
     return gAnkohlRuins_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins6)
     return gAnkohlRuins_Room6Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
     return gAnkohlRuins_Room8Placements;
   return gAnkohlRuins_Placements;
 }
@@ -267,13 +264,13 @@ void Func_020006b4(void) {
 // them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
 // rows that flag 0x205 opens (always, in Japanese).
 void Func_020006d0(s32 unused, s32 id) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
     if (id == 8) {
       AnkohlRuins_Call2dfc(4, 68, 1, 1, 4, 69);
       AnkohlRuins_Call2dfc(3, 68, 1, 1, 3, 70);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4) {
     if (id == 19) {
       AnkohlRuins_Call2dfc(35, 72, 1, 1, 38, 72);
       AnkohlRuins_Call2dfc(36, 72, 1, 1, 37, 73);
@@ -283,13 +280,13 @@ void Func_020006d0(s32 unused, s32 id) {
     if (id == 18)
       AnkohlRuins_Call2dfc(39, 93, 1, 1, 40, 93);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3) {
     if (id == 8) {
       AnkohlRuins_Call2dfc(32, 69, 1, 1, 32, 70);
       AnkohlRuins_Call2dfc(33, 69, 1, 1, 33, 71);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(17, 85, 1, 1, 17, 83);
       AnkohlRuins_Call2dfc(19, 84, 1, 1, 18, 82);
@@ -298,7 +295,7 @@ void Func_020006d0(s32 unused, s32 id) {
 #if !TLA_PATCH_1
     if (id == 9)
 #else
-    if (id == 9 && Event_GetFlag(0x205))
+    if (id == 9 && Event_GetFlag(FLAG_SCENE_TEMP_05))
 #endif
       AnkohlRuins_Call2df4(35, 98, 3, 5, 25, 98);
   }
@@ -310,7 +307,7 @@ void Func_020006d0(s32 unused, s32 id) {
 void Func_02000850(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1) {
+  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
     if (object->x >> 20 == 4) {
       AnkohlRuins_Call2dfc(4, 68, 1, 1, 2, 69);
       Event_SetFlag(0x9c6);
@@ -318,7 +315,7 @@ void Func_02000850(s32 unused, s32 id) {
     AnkohlRuins_Call2dfc(3, 68, 1, 1, 4, 69);
     AnkohlRuins_Call2dfc(3, 69, 1, 1, 3, 70);
   }
-  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3) {
+  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3) {
     MapGrid_CopyCellAttributes(32, 71, 1, 1, 33, 71);
     AnkohlRuins_Call2dfc(31, 70, 1, 1, 32, 70);
     if (object->x >> 20 == 32) {
@@ -326,7 +323,7 @@ void Func_02000850(s32 unused, s32 id) {
       Event_SetFlag(0x9c7);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4) {
     if (id == 8) {
       AnkohlRuins_Call2dfc(3, 114, 1, 1, 3, 113);
       if (object->x >> 20 == 2)
@@ -346,7 +343,7 @@ void Func_02000850(s32 unused, s32 id) {
       }
     }
   }
-  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5) {
+  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5) {
     MapGrid_CopyCellAttributes(16, 83, 1, 1, 17, 83);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 18, 82);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 19, 83);
@@ -365,7 +362,7 @@ void Func_02000a68(s32 unused, s32 objectId) {
   if (object->z >> 20 == 31) {
     object->motionFlags = 3;
     Actor_SetSpritePriorityDirect(object, 3);
-    Event_PlaySound(204);
+    Event_PlaySound(SE_DUST_PUFF);
     while (frames != 0) {
       System_Wait(1);
       if (object->velocityY == 0)
@@ -395,24 +392,20 @@ void Func_02000a68(s32 unused, s32 objectId) {
 // them ten frames later; Func_02000100 of Gaia Rock is the same function.
 void Func_02000b30(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first; as a
-   * plain pointer, 17 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first. */
   register u8 *flags asm("r2");
   u8 *held;
-  /* FAKEMATCH(pin): the counter in r6 and the object in r5; as a plain
-   * counter, 12 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the counter in r6 and the object in r5. */
   register s32 frames asm("r6");
 
   flags = (u8 *)85;
-  /* FAKEMATCH(barrier): keeps 85 in a register, so it is added to the object
-   * rather than the object copied and 85 added; without it, 4 of 32
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): keeps 85 in a register. */
   asm("" : "+r"(flags));
   flags += (s32)object;
   *flags = 3;
   frames = 60;
   /* FAKEMATCH(temporary): the address copied to r8 for the calls after the
-   * counter starts; as one variable, 9 of 32 instructions differ in tla-en. */
+   * counter starts. */
   held = flags;
   while (frames != 0) {
     System_Wait(1);
@@ -477,45 +470,43 @@ void Func_02000c24(s32 unused, s32 id) {
 
   if (id == 9 && column == 12 && row == 45) {
     Event_SetFlag(0x9d9);
-    Call2((void (*)())Func_02000b30, 9, 181);
+    Func_02000b30(9, 181);
   }
   if (id == 10 && column == 14 && row == 45) {
     Event_SetFlag(0x9da);
-    Call2((void (*)())Func_02000b30, 10, 181);
+    Func_02000b30(10, 181);
   }
   if (!GameFlag_Get(0x9da) || !GameFlag_Get(0x9d9))
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
-  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(770), 1);
+  MapGrid_SetShake(2, 2, 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 770, 1);
   FieldEvent_Wait(15);
-  Event_PlaySound(202);
+  Event_PlaySound(SE_FLAME_FLARE);
   toColumn = 12;
   highRow = 111;
   MapGrid_CopyCellsLayered(12, 91, 3, 1, toColumn, highRow);
   FieldEvent_Wait(60);
-  Event_PlaySound(0x23f);
+  Event_PlaySound(SE_575);
   lowRow = 47;
   MapGrid_CopyCells(16, 27, 3, 2, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 2, toColumn, highRow);
   rise = -40;
-  // The last argument is also kept for the later calls, as the native keeps
-  // the 3 it stores.
   Func_02000b78(3, 15, 200, rise, 0x2e8, kind = 3);
   MapGrid_CopyCells(16, 27, 3, 3, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 3, toColumn, highRow);
-  Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x2f8, kind);
+  Func_02000b78(3, 10, 200, rise, 0x2f8, kind);
   MapGrid_CopyCells(16, 27, 3, 4, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 4, toColumn, highRow);
-  Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x308, kind);
+  Func_02000b78(3, 10, 200, rise, 0x308, kind);
   MapGrid_CopyCells(16, 27, 3, 5, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 5, toColumn, highRow);
-  Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x318, kind);
+  Func_02000b78(3, 10, 200, rise, 0x318, kind);
   MapGrid_CopyCells(16, 27, 3, 6, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 6, toColumn, highRow);
-  MapGrid_SetShake(-1, -1, 0xe666);
-  Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x328, kind);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+  Func_02000b78(3, 10, 200, rise, 0x328, kind);
   MapGrid_CopyCells(16, 27, 3, 13, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 13, toColumn, highRow);
   Event_End();
@@ -536,12 +527,12 @@ void Func_02000e60(s32 unused, s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(15);
-  Event_PlaySound(202);
+  Event_PlaySound(SE_FLAME_FLARE);
   AnkohlRuins_Call2df4(29, 70, 3, 1, 12, 71);
-  AnkohlRuins_CamBounds(PIXELS(216), -1, PIXELS(120), 1);
+  AnkohlRuins_CamBounds(px(216), -1, px(120), 1);
   AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
   FieldEvent_Wait(60);
-  Event_PlaySound(0x23f);
+  Event_PlaySound(SE_575);
   MapGrid_CopyCells(35, 6, 7, 2, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 2, 10, 71);
   Func_02000b78(6, 10, 200, -40, 124, 3);
@@ -570,20 +561,20 @@ void Func_0200104c(s32 unused, s32 id) {
 
   if (id == 10 && x == 15 && z == 24) {
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
-    object->y -= 0x20000;
+    object->y -= px(2);
     FieldEvent_Wait(1);
-    object->y -= 0x20000;
+    object->y -= px(2);
     FieldEvent_Wait(1);
-    object->y -= 0x40000;
+    object->y -= px(4);
     FieldEvent_Wait(1);
-    object->y -= 0x80000;
+    object->y -= px(8);
     FieldEvent_Wait(1);
     Actor_SetAnimation(9, 3);
     Actor_SetPosition(10, 0, 0);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     FieldEvent_Wait(45);
     Actor_SetAnimation(9, 4);
-    Event_PlaySound(564);
+    Event_PlaySound(SE_564);
     Event_SetFlag(0x9dd);
   }
 }
@@ -619,7 +610,7 @@ void Func_020010f4(void) {
     return;
   position[0] = leader->x;
   position[1] = leader->y;
-  position[2] = leader->z + 0x80000;
+  position[2] = leader->z + px(8);
   if (MapGrid_CheckCollision(leader, position) < 0)
     work->unk154 = 66;
   leader->z += 0x8000;
@@ -632,7 +623,8 @@ void Func_020011c0(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 0);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   object->motionFlags = 0;
   object->actionFlags = 0;
   {
@@ -642,10 +634,11 @@ void Func_020011c0(void) {
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, zero, 8);
   }
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 256, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(10);
   AnkohlRuins_CamBounds(-1, -1, -1, 0);
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   Func_02000b30(gMainRoutineWork.currentOwner, 188);
   object->actionFlags = 1;
   Event_End();
@@ -659,11 +652,11 @@ void Func_0200124c(s32 a, s32 id) {
 }
 
 void Func_02001264(s32 a, s32 id) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
     Event_SetFlag(id + 0x97f);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
     Event_SetFlag(id + 0x995);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4)
     Event_SetFlag(id + 0x996);
 }
 
@@ -685,7 +678,7 @@ void AnkohlRuins_DrawSand(void) {
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
-  if (Event_GetFlag(0x205) == 0 && work->level < 0x200000) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_05) == 0 && work->level < 0x200000) {
     for (i = 0; i <= 7; i++) {
       u32 kind = sprite->kind;
       s32 x = sprite->x;
@@ -766,7 +759,7 @@ fill:
   work->unk08 = ((s32 *)layer->unk08)[0];
   work->unk0c = ((s32 *)layer->unk08)[1];
   /* FAKEMATCH(dead): the once-only block builds the value after the stores
-   * before it; as a plain store, 6 of 179 instructions differ in tla-en. */
+   * before it. */
   do {
     s32 winout = 0x1b1f;
 
@@ -775,28 +768,28 @@ fill:
   REG_DISPCNT |= 0x8000;
   Task_AddFrame(AnkohlRuins_DrawSand, 0x480);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2) {
-    sprite->x = 0x280000;
+    sprite->x = px(40);
     sprite->kind = 1;
     sprite->y = 0;
-    sprite->z = 0x780000;
+    sprite->z = px(120);
     sprite++;
-    sprite->x = 0x380000;
+    sprite->x = px(56);
     sprite->kind = 1;
     sprite->y = 0;
-    sprite->z = 0x780000;
+    sprite->z = px(120);
     sprite++;
-    sprite->x = 0xd80000;
+    sprite->x = px(216);
     sprite->y = 0;
-    sprite->z = 0x780000;
+    sprite->z = px(120);
     sprite->kind = 2;
     sprite++;
-    sprite->x = 0xe80000;
+    sprite->x = px(232);
     sprite->y = 0;
-    sprite->z = 0x780000;
+    sprite->z = px(120);
     sprite->kind = 2;
     sprite++;
-    sprite->x = 0xb80000;
-    sprite->z = 0x580000;
+    sprite->x = px(184);
+    sprite->z = px(88);
     sprite->y = 0;
     sprite->kind = 4;
     sprite++;
@@ -804,28 +797,28 @@ fill:
   // Spelled through a pointer: a member read is copied up into the arm above.
   if (*(s16 *)&gMainRoutineWork.entrance == 3 ||
       *(s16 *)&gMainRoutineWork.entrance == 4) {
-    sprite->x = 0x280000;
-    sprite->z = 0x1b80000;
+    sprite->x = px(40);
+    sprite->z = px(440);
     sprite->y = 0;
     sprite->kind = 1;
     sprite++;
-    sprite->x = 0x380000;
-    sprite->z = 0x1b80000;
+    sprite->x = px(56);
+    sprite->z = px(440);
     sprite->y = 0;
     sprite->kind = 1;
     sprite++;
-    sprite->x = 0xd80000;
+    sprite->x = px(216);
     sprite->y = 0;
-    sprite->z = 0x1980000;
+    sprite->z = px(408);
     sprite->kind = 0;
     sprite++;
-    sprite->x = 0xe80000;
+    sprite->x = px(232);
     sprite->y = 0;
-    sprite->z = 0x1980000;
+    sprite->z = px(408);
     sprite->kind = 1;
     sprite++;
-    sprite->x = 0x480000;
-    sprite->z = 0x1780000;
+    sprite->x = px(72);
+    sprite->z = px(376);
     sprite->y = 0;
     sprite->kind = 4;
   }
@@ -863,7 +856,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   leader->motionFlags = 0;
   AnkohlRuins_Call2e24(0x40000, 0x40000, 0x10000);
   FieldEvent_Wait(30);
-  Event_PlaySound(0x22c);
+  Event_PlaySound(SE_556);
   AnkohlRuins_Call2df4(22, 66, 3, 1, 7, 66);
   AnkohlRuins_Call2df4(22, 1, 3, 5, 7, 1);
   for (i = 0; i <= 15; i++) {
@@ -895,7 +888,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
     Task_AddFrame(AnkohlRuins_CountSandTime, 0x480);
   } else {
     MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, 5);
-    Event_SetFlag(0x204);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
     Event_ClearFlag(0x17d);
   }
   AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 66);
@@ -945,7 +938,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   leader->motionFlags = 0;
   AnkohlRuins_Call2e24(0x50000, 0x50000, 0x10000);
   FieldEvent_Wait(30);
-  Event_PlaySound(0x22c);
+  Event_PlaySound(SE_556);
   AnkohlRuins_Call2df4(22, 66, 3, 1, 7, 84);
   AnkohlRuins_Call2df4(22, 1, 3, 5, 7, 19);
   for (i = 0; i <= 15; i++) {
@@ -977,7 +970,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
     Task_AddFrame(AnkohlRuins_CountSandTime, 0x480);
   } else {
     MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, 23);
-    Event_SetFlag(0x204);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
     Event_ClearFlag(0x17d);
   }
   AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
@@ -1014,9 +1007,9 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
 
   if (done == 0) {
     FieldEvent_ResolvePendingActions(0);
-    Event_PlaySound(584);
+    Event_PlaySound(SE_584);
     FieldEvent_Wait(15);
-    Event_PlaySound(202);
+    Event_PlaySound(SE_FLAME_FLARE);
     MapGrid_CopyCells(18, 66, 3, 1, 7, 66);
     AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
     FieldEvent_Wait(15);
@@ -1027,7 +1020,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     gAnkohlRuins_SandRoom = 1;
     Event_SetFlag(381);
     AnkohlRuins_RaiseFirstSand();
-    Event_SetFlag(0x202);
+    Event_SetFlag(FLAG_SCENE_TEMP_02);
   }
 }
 
@@ -1035,12 +1028,12 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
   void name(void) {                                                            \
     if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \
       Event_SetFlag(n1);                                                       \
-      Event_PlaySound(584);                                                    \
+      Event_PlaySound(SE_584);                                                 \
       Event_Start();                                                           \
       FieldEvent_ResolvePendingActions(0);                                     \
       MapGrid_CopyCells(26, 70, 1, 3, n2, n3);                                 \
       FieldEvent_Wait(20);                                                     \
-      Event_PlaySound(181);                                                    \
+      Event_PlaySound(SE_BOOM);                                                \
       MapGrid_CopyCells(26, 67, 1, 3, n2, n3);                                 \
       MapGrid_CopyCellAttributes(n4, n5, 1, 1, n2, n5);                        \
       Event_End();                                                             \
@@ -1054,9 +1047,9 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
 
   if (done == 0) {
     FieldEvent_ResolvePendingActions(0);
-    Event_PlaySound(584);
+    Event_PlaySound(SE_584);
     FieldEvent_Wait(15);
-    Event_PlaySound(202);
+    Event_PlaySound(SE_FLAME_FLARE);
     AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
     AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
     FieldEvent_Wait(15);
@@ -1067,7 +1060,7 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
     gAnkohlRuins_SandRoom = 2;
     Event_SetFlag(381);
     AnkohlRuins_RaiseSecondSand();
-    Event_SetFlag(0x203);
+    Event_SetFlag(FLAG_SCENE_TEMP_03);
   }
 }
 
@@ -1093,18 +1086,17 @@ void Func_02001f7c(void) {
   raft->z += 0xcccc;
   column = leader->x >> 20;
   if (gMainRoutineWork.renderMode != 5 && column > 12 && column <= 15) {
-    /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's
-     * z before the leader's in the second test; as leader, 16 of 167
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's z
+     * before the leader's in the second test. */
     struct Actor *player = leader;
 
-    if (raft->z + 0x180000 >= player->z && player->z >= raft->z) {
-      player->z = raft->z + 0x180000;
-      rider->z = raft->z + 0x180000;
+    if (raft->z + px(24) >= player->z && player->z >= raft->z) {
+      player->z = raft->z + px(24);
+      rider->z = raft->z + px(24);
     }
-    if (raft->z >= player->z && player->z >= raft->z - 0x100000) {
-      player->z = raft->z - 0x100000;
-      rider->z = raft->z - 0x100000;
+    if (raft->z >= player->z && player->z >= raft->z - px(16)) {
+      player->z = raft->z - px(16);
+      rider->z = raft->z - px(16);
     }
   }
   row = raft->z >> 20;
@@ -1120,10 +1112,10 @@ void Func_02001f7c(void) {
     FieldTask_Remove(Func_02001f7c);
     AnkohlRuins_Call2e24(-1, -1, 0xe666);
     AnkohlRuins_Call2dfc(41, 48, 3, 2, 13, 41);
-    Event_SetFlag(0x201);
+    Event_SetFlag(FLAG_SCENE_TEMP_01);
     Event_ClearFlag(0x17d);
-    Event_ClearFlag(0x161);
-    Event_PlaySound(208);
+    Event_ClearFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
+    Event_PlaySound(SE_BANE_ESCAPE);
   }
 }
 
@@ -1136,10 +1128,10 @@ void Func_020020fc(void) {
     if (found == -1) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Event_PlaySound(207);
+      Event_PlaySound(SE_RUSH);
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
       FieldEvent_Wait(10);
-      FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(392), 1);
+      FieldCamera_MoveTo(232, CAMERA_KEEP, 392, 1);
       FieldCamera_WaitForArrival();
       Task_AddFrame(Func_02001f7c, TASK_PASS_VBLANK);
       FieldEvent_Wait(40);
@@ -1148,7 +1140,7 @@ void Func_020020fc(void) {
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
       Event_SetFlag(381);
-      Event_SetFlag(353);
+      Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
       Event_End();
     }
   }
@@ -1166,7 +1158,7 @@ void Func_020021d4(void) {
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
       Event_SetFlag(381);
-      Event_SetFlag(353);
+      Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
       Event_End();
     }
   }
@@ -1181,8 +1173,6 @@ extern struct Trigger gAnkohlRuins_Room5Triggers[];
 extern struct Trigger gAnkohlRuins_Room6Triggers[];
 extern struct Trigger gAnkohlRuins_Room8Triggers[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   Map_CopyCellsRect(a, b, c, d, e, f);
 }
@@ -1192,7 +1182,7 @@ void Func_02002260(void) {
 
   if (object->x >> 20 == 26 && object->z >> 20 == 35) {
     Event_SetFlag(0x9db);
-    Event_PlaySound(204);
+    Event_PlaySound(SE_DUST_PUFF);
     Func_02000b30(9, 0);
     Actor_SetPosition(9, 0, 0);
     ObjectTable_Snapshot();
@@ -1205,7 +1195,7 @@ void Func_02002260(void) {
 
 void Func_020022a8(void) {
 #if TLA_PATCH_1 /* The Japanese edition does not touch flag 0x205. */
-  Event_SetFlag(0x205);
+  Event_SetFlag(FLAG_SCENE_TEMP_05);
 #endif
   MapGrid_CopyCells(35, 34, 3, 5, 25, 34);
   MapGrid_CopyCells(35, 98, 3, 3, 25, 98);
@@ -1213,30 +1203,30 @@ void Func_020022a8(void) {
 
 void Func_020022e0(void) {
 #if TLA_PATCH_1
-  Event_ClearFlag(0x205);
+  Event_ClearFlag(FLAG_SCENE_TEMP_05);
 #endif
   MapGrid_CopyCells(40, 34, 3, 5, 25, 34);
   MapGrid_CopyCells(40, 98, 3, 3, 25, 98);
 }
 
-void Func_02002318(void) { GameFlag_Set(0x205); }
+void Func_02002318(void) { GameFlag_Set(FLAG_SCENE_TEMP_05); }
 
-void Func_02002328(void) { GameFlag_Clear(0x205); }
+void Func_02002328(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
     return gAnkohlRuins_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
     return gAnkohlRuins_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3)
     return gAnkohlRuins_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4)
     return gAnkohlRuins_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
     return gAnkohlRuins_Room5Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins6)
     return gAnkohlRuins_Room6Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
     return gAnkohlRuins_Room8Triggers;
   return gAnkohlRuins_Triggers;
 }
@@ -1304,8 +1294,8 @@ s32 Scene_Initialize(s32 a0) {
   s32 scene = work->scene;
   struct Actor *object;
 
-  if (scene == (s32)&SceneId_Ov686Room1) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+  if (scene == (s32)&SceneId_AnkohlRuins1) {
+    FieldEffect_StartBlankOverlay(0);
     if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
     if (GameFlag_Get(0x9d3))
@@ -1349,10 +1339,10 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x99d))
       Actor_SetPosition(30, 0, 0);
     if (GameFlag_Get(0x9c6)) {
-      Actor_SetPosition(8, 0x480000, 0x580000);
+      Actor_SetPosition(8, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room2) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins2) {
     if (GameFlag_Get(0x99e))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x99f))
@@ -1364,30 +1354,30 @@ s32 Scene_Initialize(s32 a0) {
 
       object = Actor_GetById(8);
       object->motionFlags = 3;
-      Actor_SetPosition(8, 0xc80000, 0x580000);
+      Actor_SetPosition(8, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
       MapGrid_CopyCells(35, 70, 7, 16, width, 71);
       if (work->entrance == 6 || work->entrance == 17 || work->entrance == 15)
-        Event_PlaySound(0x23f);
+        Event_PlaySound(SE_575);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room3) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins3) {
     if (GameFlag_Get(0x9c7)) {
-      Actor_SetPosition(8, 0x2080000, 0x680000);
+      Actor_SetPosition(8, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
     if (GameFlag_Get(0x9dd)) {
       Actor_SetPosition(10, 0, 0);
       Actor_SetAnimation(9, 4);
     }
-    if (GameFlag_Get(0x201)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
       s32 width = 13;
 
       MapGrid_CopyCellAttributes(13, 30, 3, 2, width, 24);
       MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
       MapGrid_CopyCellAttributes(41, 48, 3, 2, width, 41);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room4) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins4) {
     if (GameFlag_Get(0x9a1))
       Actor_SetPosition(11, 0, 0);
     if (GameFlag_Get(0x9a2))
@@ -1403,30 +1393,30 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x9a7))
       Actor_SetPosition(17, 0, 0);
     if (GameFlag_Get(0x9c8))
-      Actor_SetPosition(8, 0x280000, 0x3080000);
+      Actor_SetPosition(8, 40, 776);
     if (GameFlag_Get(0x9c9))
-      Actor_SetPosition(18, 0x2780000, 0x1c80000);
+      Actor_SetPosition(18, 632, 456);
     if (GameFlag_Get(0x9ca)) {
-      Actor_SetPosition(19, 0x2680000, 0x880000);
+      Actor_SetPosition(19, 616, 136);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
     if (GameFlag_Get(0x9d9)) {
       object = Actor_GetById(9);
       object->motionFlags = 3;
-      Actor_SetPosition(9, 0xc80000, 0x2d80000);
+      Actor_SetPosition(9, 200, 728);
     }
     if (GameFlag_Get(0x9da)) {
       object = Actor_GetById(10);
-      Actor_SetPosition(10, 0xe80000, 0x2d80000);
+      Actor_SetPosition(10, 232, 728);
       object->motionFlags = 3;
     } else if (GameFlag_Get(0x9db) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Actor_SetPosition(10, 0x1480000, 0x2f80000);
+      Actor_SetPosition(10, 328, 760);
     }
     if (GameFlag_Get(0x9da) && GameFlag_Get(0x9d9)) {
       s32 width;
 
       if ((u16)(gMainRoutineWork.entrance - 13) <= 4)
-        Event_PlaySound(0x23f);
+        Event_PlaySound(SE_575);
       width = 12;
       MapGrid_CopyCells(16, 27, 3, 13, width, 47);
       MapGrid_CopyCells(16, 91, 3, 13, width, 111);
@@ -1446,14 +1436,14 @@ s32 Scene_Initialize(s32 a0) {
 
         Event_Start();
         FieldEvent_ResolvePendingActions(0);
-        FieldCamera_MoveTo(-1, -1, -1, 0);
+        FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
         Actor_SetPosition(late->currentOwner, 0, 0);
         Actor_SetPosition(10, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
         object = Actor_GetById(10);
-        Actor_SetPosition(10, 0x1480000, 0x2f80000);
-        object->y += 0x800000;
+        Actor_SetPosition(10, 328, 760);
+        object->y += px(128);
         frames = 60;
         object->motionFlags = 3;
         for (; frames != 0; frames--) {
@@ -1461,7 +1451,7 @@ s32 Scene_Initialize(s32 a0) {
           if (object->velocityY > -1)
             break;
         }
-        Event_PlaySound(188);
+        Event_PlaySound(SE_THUMP);
         FieldEvent_Wait(60);
         Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
         FieldEvent_SetExitRequest(20);
@@ -1469,19 +1459,19 @@ s32 Scene_Initialize(s32 a0) {
     }
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
       goto task;
-  } else if (scene == (s32)&SceneId_Ov686Room5) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins5) {
     if (GameFlag_Get(0x9db))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x9cb)) {
-      Actor_SetPosition(8, 0x1180000, 0x1380000);
+      Actor_SetPosition(8, 280, 312);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 || work->entrance == 12) {
-      Event_PlaySound(0x23f);
+      Event_PlaySound(SE_575);
     task:
       Task_AddFrame(Func_020010f4, 0x480);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room6) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins6) {
     s16 *entrance = &work->entrance;
 
     if (work->entrance <= 4)
@@ -1498,7 +1488,8 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
       MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
     }
-    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && GameFlag_Get(0x204)) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+        GameFlag_Get(FLAG_SCENE_TEMP_04)) {
       s32 level = 0x200000;
 
       gAnkohlRuins_Sand.level = level;
@@ -1541,12 +1532,12 @@ s32 Scene_Initialize(s32 a0) {
       FieldEvent_Wait(1);
       Map_CenterOnFollowedPoint();
     }
-  } else if (scene == (s32)&SceneId_Ov686Room8) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins8) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;
-      object->terrainHeight = 0x480000;
-      object->y = 0x480000;
+      object->terrainHeight = px(72);
+      object->y = px(72);
       object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }
@@ -1576,8 +1567,8 @@ s32 Scene_Initialize(s32 a0) {
   s32 scene = work->scene;
   struct Actor *object;
 
-  if (scene == (s32)&SceneId_Ov686Room1) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+  if (scene == (s32)&SceneId_AnkohlRuins1) {
+    FieldEffect_StartBlankOverlay(0);
     if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
     if (GameFlag_Get(0x9d3))
@@ -1621,10 +1612,10 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x99d))
       Actor_SetPosition(30, 0, 0);
     if (GameFlag_Get(0x9c6)) {
-      Actor_SetPosition(8, 0x480000, 0x580000);
+      Actor_SetPosition(8, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room2) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins2) {
     if (GameFlag_Get(0x99e))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x99f))
@@ -1636,30 +1627,30 @@ s32 Scene_Initialize(s32 a0) {
 
       object = Actor_GetById(8);
       object->motionFlags = 3;
-      Actor_SetPosition(8, 0xc80000, 0x580000);
+      Actor_SetPosition(8, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
       MapGrid_CopyCells(35, 70, 7, 16, width, 71);
       if (work->entrance == 6 || work->entrance == 17 || work->entrance == 15)
-        Event_PlaySound(0x23f);
+        Event_PlaySound(SE_575);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room3) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins3) {
     if (GameFlag_Get(0x9c7)) {
-      Actor_SetPosition(8, 0x2080000, 0x680000);
+      Actor_SetPosition(8, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
     if (GameFlag_Get(0x9dd)) {
       Actor_SetPosition(10, 0, 0);
       Actor_SetAnimation(9, 4);
     }
-    if (GameFlag_Get(0x201)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
       s32 width = 13;
 
       MapGrid_CopyCellAttributes(13, 30, 3, 2, width, 24);
       MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
       MapGrid_CopyCellAttributes(41, 48, 3, 2, width, 41);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room4) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins4) {
     if (GameFlag_Get(0x9a1))
       Actor_SetPosition(11, 0, 0);
     if (GameFlag_Get(0x9a2))
@@ -1675,30 +1666,30 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x9a7))
       Actor_SetPosition(17, 0, 0);
     if (GameFlag_Get(0x9c8))
-      Actor_SetPosition(8, 0x280000, 0x3080000);
+      Actor_SetPosition(8, 40, 776);
     if (GameFlag_Get(0x9c9))
-      Actor_SetPosition(18, 0x2780000, 0x1c80000);
+      Actor_SetPosition(18, 632, 456);
     if (GameFlag_Get(0x9ca)) {
-      Actor_SetPosition(19, 0x2680000, 0x880000);
+      Actor_SetPosition(19, 616, 136);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
     if (GameFlag_Get(0x9d9)) {
       object = Actor_GetById(9);
       object->motionFlags = 3;
-      Actor_SetPosition(9, 0xc80000, 0x2d80000);
+      Actor_SetPosition(9, 200, 728);
     }
     if (GameFlag_Get(0x9da)) {
       object = Actor_GetById(10);
-      Actor_SetPosition(10, 0xe80000, 0x2d80000);
+      Actor_SetPosition(10, 232, 728);
       object->motionFlags = 3;
     } else if (GameFlag_Get(0x9db) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Actor_SetPosition(10, 0x1480000, 0x2f80000);
+      Actor_SetPosition(10, 328, 760);
     }
     if (GameFlag_Get(0x9da) && GameFlag_Get(0x9d9)) {
       s32 width;
 
       if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
-        Event_PlaySound(0x23f);
+        Event_PlaySound(SE_575);
       width = 12;
       MapGrid_CopyCells(16, 27, 3, 13, width, 47);
       MapGrid_CopyCells(16, 91, 3, 13, width, 111);
@@ -1711,14 +1702,14 @@ s32 Scene_Initialize(s32 a0) {
 
         Event_Start();
         FieldEvent_ResolvePendingActions(0);
-        FieldCamera_MoveTo(-1, -1, -1, 0);
+        FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
         Actor_SetPosition(late->currentOwner, 0, 0);
         Actor_SetPosition(10, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
         object = Actor_GetById(10);
-        Actor_SetPosition(10, 0x1480000, 0x2f80000);
-        object->y += 0x800000;
+        Actor_SetPosition(10, 328, 760);
+        object->y += px(128);
         frames = 60;
         object->motionFlags = 3;
         for (; frames != 0; frames--) {
@@ -1726,7 +1717,7 @@ s32 Scene_Initialize(s32 a0) {
           if (object->velocityY > -1)
             break;
         }
-        Event_PlaySound(188);
+        Event_PlaySound(SE_THUMP);
         FieldEvent_Wait(60);
         Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
         FieldEvent_SetExitRequest(20);
@@ -1734,19 +1725,19 @@ s32 Scene_Initialize(s32 a0) {
     }
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
       goto task;
-  } else if (scene == (s32)&SceneId_Ov686Room5) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins5) {
     if (GameFlag_Get(0x9db))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x9cb)) {
-      Actor_SetPosition(8, 0x1180000, 0x1380000);
+      Actor_SetPosition(8, 280, 312);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 || work->entrance == 12) {
-      Event_PlaySound(0x23f);
+      Event_PlaySound(SE_575);
     task:
       Task_AddFrame(Func_020010f4, 0x480);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room6) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins6) {
     s16 *entrance = &work->entrance;
 
     if (work->entrance <= 4)
@@ -1763,7 +1754,8 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
       MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
     }
-    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && GameFlag_Get(0x204)) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+        GameFlag_Get(FLAG_SCENE_TEMP_04)) {
       s32 level = 0x200000;
 
       gAnkohlRuins_Sand.level = level;
@@ -1806,12 +1798,12 @@ s32 Scene_Initialize(s32 a0) {
       FieldEvent_Wait(1);
       Map_CenterOnFollowedPoint();
     }
-  } else if (scene == (s32)&SceneId_Ov686Room8) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins8) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;
-      object->terrainHeight = 0x480000;
-      object->y = 0x480000;
+      object->terrainHeight = px(72);
+      object->y = px(72);
       object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }
@@ -1882,112 +1874,112 @@ u32 gData_0200309c[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(195),
-    SCENE_EXIT(1, 2, 41),
-    SCENE_EXIT(2, 189, 1),
-    SCENE_EXITS(189),
-    SCENE_EXIT(1, 195, 2),
-    SCENE_EXIT(2, 189, 11),
-    SCENE_EXIT(3, 189, 5),
-    SCENE_EXIT(4, 189, 6),
-    SCENE_EXIT(5, 189, 3),
-    SCENE_EXIT(6, 189, 4),
-    SCENE_EXIT(7, 190, 1),
-    SCENE_EXIT(8, 189, 12),
-    SCENE_EXIT(9, 189, 10),
-    SCENE_EXIT(10, 189, 9),
-    SCENE_EXIT(11, 189, 2),
-    SCENE_EXIT(12, 189, 8),
-    SCENE_EXIT(13, 189, 20),
-    SCENE_EXIT(14, 189, 21),
-    SCENE_EXIT(15, 189, 22),
-    SCENE_EXIT(16, 194, 23),
-    SCENE_EXIT(17, 189, 24),
-    SCENE_EXIT(18, 189, 25),
-    SCENE_EXIT(19, 193, 26),
-    SCENE_EXIT(20, 189, 13),
-    SCENE_EXIT(21, 189, 14),
-    SCENE_EXIT(22, 189, 15),
-    SCENE_EXIT(24, 189, 17),
-    SCENE_EXIT(25, 189, 18),
-    SCENE_EXIT(27, 189, 30),
-    SCENE_EXIT(29, 189, 31),
-    SCENE_EXIT(30, 189, 27),
-    SCENE_EXIT(31, 189, 29),
-    SCENE_EXIT(32, 190, 3),
-    SCENE_EXIT(33, 190, 2),
-    SCENE_EXITS(190),
-    SCENE_EXIT(1, 189, 7),
-    SCENE_EXIT(2, 189, 33),
-    SCENE_EXIT(3, 189, 32),
-    SCENE_EXIT(4, 194, 28),
-    SCENE_EXIT(6, 191, 9),
-    SCENE_EXIT(7, 191, 4),
-    SCENE_EXIT(10, 191, 3),
-    SCENE_EXIT(11, 190, 12),
-    SCENE_EXIT(12, 190, 11),
-    SCENE_EXIT(14, 190, 15),
-    SCENE_EXIT(15, 190, 14),
-    SCENE_EXIT(16, 190, 17),
-    SCENE_EXIT(17, 190, 16),
-    SCENE_EXIT(18, 192, 13),
-    SCENE_EXIT(19, 192, 10),
-    SCENE_EXITS(191),
-    SCENE_EXIT(1, 192, 1),
-    SCENE_EXIT(2, 192, 9),
-    SCENE_EXIT(3, 190, 10),
-    SCENE_EXIT(4, 190, 7),
-    SCENE_EXIT(5, 191, 8),
-    SCENE_EXIT(6, 191, 10),
-    SCENE_EXIT(7, 194, 1),
-    SCENE_EXIT(8, 191, 5),
-    SCENE_EXIT(9, 190, 6),
-    SCENE_EXIT(10, 191, 6),
-    SCENE_EXIT(11, 192, 5),
-    SCENE_EXIT(12, 192, 6),
-    SCENE_EXITS(192),
-    SCENE_EXIT(1, 191, 1),
-    SCENE_EXIT(2, 193, 8),
-    SCENE_EXIT(3, 192, 14),
-    SCENE_EXIT(4, 193, 7),
-    SCENE_EXIT(5, 191, 11),
-    SCENE_EXIT(6, 191, 12),
-    SCENE_EXIT(7, 194, 4),
-    SCENE_EXIT(8, 192, 11),
-    SCENE_EXIT(9, 191, 2),
-    SCENE_EXIT(10, 190, 19),
-    SCENE_EXIT(11, 192, 8),
-    SCENE_EXIT(12, 194, 3),
-    SCENE_EXIT(13, 190, 18),
-    SCENE_EXIT(14, 192, 3),
-    SCENE_EXIT(15, 193, 4),
-    SCENE_EXIT(16, 193, 3),
-    SCENE_EXIT(20, 193, 4),
-    SCENE_EXITS(193),
-    SCENE_EXIT(1, 193, 2),
-    SCENE_EXIT(2, 193, 1),
-    SCENE_EXIT(3, 192, 16),
-    SCENE_EXIT(4, 192, 15),
-    SCENE_EXIT(5, 193, 6),
-    SCENE_EXIT(6, 193, 5),
-    SCENE_EXIT(7, 192, 4),
-    SCENE_EXIT(8, 192, 2),
-    SCENE_EXIT(9, 194, 2),
-    SCENE_EXIT(10, 193, 11),
-    SCENE_EXIT(11, 193, 10),
-    SCENE_EXIT(12, 196, 1),
-    SCENE_EXIT(13, 192, 17),
-    SCENE_EXIT(20, 192, 20),
-    SCENE_EXIT(26, 189, 19),
-    SCENE_EXITS(194),
-    SCENE_EXIT(1, 191, 7),
-    SCENE_EXIT(2, 193, 9),
-    SCENE_EXIT(3, 192, 12),
-    SCENE_EXIT(4, 192, 7),
-    SCENE_EXIT(23, 189, 16),
-    SCENE_EXIT(28, 190, 4),
-    SCENE_EXITS(196),
-    SCENE_EXIT(1, 193, 12),
+    SCENE_EXITS(AnkohlRuins7),
+    SCENE_EXIT(1, WorldMap, 41),
+    SCENE_EXIT(2, AnkohlRuins1, 1),
+    SCENE_EXITS(AnkohlRuins1),
+    SCENE_EXIT(1, AnkohlRuins7, 2),
+    SCENE_EXIT(2, AnkohlRuins1, 11),
+    SCENE_EXIT(3, AnkohlRuins1, 5),
+    SCENE_EXIT(4, AnkohlRuins1, 6),
+    SCENE_EXIT(5, AnkohlRuins1, 3),
+    SCENE_EXIT(6, AnkohlRuins1, 4),
+    SCENE_EXIT(7, AnkohlRuins2, 1),
+    SCENE_EXIT(8, AnkohlRuins1, 12),
+    SCENE_EXIT(9, AnkohlRuins1, 10),
+    SCENE_EXIT(10, AnkohlRuins1, 9),
+    SCENE_EXIT(11, AnkohlRuins1, 2),
+    SCENE_EXIT(12, AnkohlRuins1, 8),
+    SCENE_EXIT(13, AnkohlRuins1, 20),
+    SCENE_EXIT(14, AnkohlRuins1, 21),
+    SCENE_EXIT(15, AnkohlRuins1, 22),
+    SCENE_EXIT(16, AnkohlRuins6, 23),
+    SCENE_EXIT(17, AnkohlRuins1, 24),
+    SCENE_EXIT(18, AnkohlRuins1, 25),
+    SCENE_EXIT(19, AnkohlRuins5, 26),
+    SCENE_EXIT(20, AnkohlRuins1, 13),
+    SCENE_EXIT(21, AnkohlRuins1, 14),
+    SCENE_EXIT(22, AnkohlRuins1, 15),
+    SCENE_EXIT(24, AnkohlRuins1, 17),
+    SCENE_EXIT(25, AnkohlRuins1, 18),
+    SCENE_EXIT(27, AnkohlRuins1, 30),
+    SCENE_EXIT(29, AnkohlRuins1, 31),
+    SCENE_EXIT(30, AnkohlRuins1, 27),
+    SCENE_EXIT(31, AnkohlRuins1, 29),
+    SCENE_EXIT(32, AnkohlRuins2, 3),
+    SCENE_EXIT(33, AnkohlRuins2, 2),
+    SCENE_EXITS(AnkohlRuins2),
+    SCENE_EXIT(1, AnkohlRuins1, 7),
+    SCENE_EXIT(2, AnkohlRuins1, 33),
+    SCENE_EXIT(3, AnkohlRuins1, 32),
+    SCENE_EXIT(4, AnkohlRuins6, 28),
+    SCENE_EXIT(6, AnkohlRuins3, 9),
+    SCENE_EXIT(7, AnkohlRuins3, 4),
+    SCENE_EXIT(10, AnkohlRuins3, 3),
+    SCENE_EXIT(11, AnkohlRuins2, 12),
+    SCENE_EXIT(12, AnkohlRuins2, 11),
+    SCENE_EXIT(14, AnkohlRuins2, 15),
+    SCENE_EXIT(15, AnkohlRuins2, 14),
+    SCENE_EXIT(16, AnkohlRuins2, 17),
+    SCENE_EXIT(17, AnkohlRuins2, 16),
+    SCENE_EXIT(18, AnkohlRuins4, 13),
+    SCENE_EXIT(19, AnkohlRuins4, 10),
+    SCENE_EXITS(AnkohlRuins3),
+    SCENE_EXIT(1, AnkohlRuins4, 1),
+    SCENE_EXIT(2, AnkohlRuins4, 9),
+    SCENE_EXIT(3, AnkohlRuins2, 10),
+    SCENE_EXIT(4, AnkohlRuins2, 7),
+    SCENE_EXIT(5, AnkohlRuins3, 8),
+    SCENE_EXIT(6, AnkohlRuins3, 10),
+    SCENE_EXIT(7, AnkohlRuins6, 1),
+    SCENE_EXIT(8, AnkohlRuins3, 5),
+    SCENE_EXIT(9, AnkohlRuins2, 6),
+    SCENE_EXIT(10, AnkohlRuins3, 6),
+    SCENE_EXIT(11, AnkohlRuins4, 5),
+    SCENE_EXIT(12, AnkohlRuins4, 6),
+    SCENE_EXITS(AnkohlRuins4),
+    SCENE_EXIT(1, AnkohlRuins3, 1),
+    SCENE_EXIT(2, AnkohlRuins5, 8),
+    SCENE_EXIT(3, AnkohlRuins4, 14),
+    SCENE_EXIT(4, AnkohlRuins5, 7),
+    SCENE_EXIT(5, AnkohlRuins3, 11),
+    SCENE_EXIT(6, AnkohlRuins3, 12),
+    SCENE_EXIT(7, AnkohlRuins6, 4),
+    SCENE_EXIT(8, AnkohlRuins4, 11),
+    SCENE_EXIT(9, AnkohlRuins3, 2),
+    SCENE_EXIT(10, AnkohlRuins2, 19),
+    SCENE_EXIT(11, AnkohlRuins4, 8),
+    SCENE_EXIT(12, AnkohlRuins6, 3),
+    SCENE_EXIT(13, AnkohlRuins2, 18),
+    SCENE_EXIT(14, AnkohlRuins4, 3),
+    SCENE_EXIT(15, AnkohlRuins5, 4),
+    SCENE_EXIT(16, AnkohlRuins5, 3),
+    SCENE_EXIT(20, AnkohlRuins5, 4),
+    SCENE_EXITS(AnkohlRuins5),
+    SCENE_EXIT(1, AnkohlRuins5, 2),
+    SCENE_EXIT(2, AnkohlRuins5, 1),
+    SCENE_EXIT(3, AnkohlRuins4, 16),
+    SCENE_EXIT(4, AnkohlRuins4, 15),
+    SCENE_EXIT(5, AnkohlRuins5, 6),
+    SCENE_EXIT(6, AnkohlRuins5, 5),
+    SCENE_EXIT(7, AnkohlRuins4, 4),
+    SCENE_EXIT(8, AnkohlRuins4, 2),
+    SCENE_EXIT(9, AnkohlRuins6, 2),
+    SCENE_EXIT(10, AnkohlRuins5, 11),
+    SCENE_EXIT(11, AnkohlRuins5, 10),
+    SCENE_EXIT(12, AnkohlRuins8, 1),
+    SCENE_EXIT(13, AnkohlRuins4, 17),
+    SCENE_EXIT(20, AnkohlRuins4, 20),
+    SCENE_EXIT(26, AnkohlRuins1, 19),
+    SCENE_EXITS(AnkohlRuins6),
+    SCENE_EXIT(1, AnkohlRuins3, 7),
+    SCENE_EXIT(2, AnkohlRuins5, 9),
+    SCENE_EXIT(3, AnkohlRuins4, 12),
+    SCENE_EXIT(4, AnkohlRuins4, 7),
+    SCENE_EXIT(23, AnkohlRuins1, 16),
+    SCENE_EXIT(28, AnkohlRuins2, 4),
+    SCENE_EXITS(AnkohlRuins8),
+    SCENE_EXIT(1, AnkohlRuins5, 12),
     SCENE_EXITS_END,
 };
 
@@ -2013,66 +2005,66 @@ struct ActorPlacement gAnkohlRuins_Placements[] = {
 };
 
 struct ActorPlacement gAnkohlRuins_Room1Placements[] = {
-    {272, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(88), FACING_SOUTH, 2, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
-    {392, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(488), FACING_SOUTH, 2, 0},
-    {392, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(488), FACING_SOUTH, 2, 0},
-    {392, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(488), FACING_SOUTH, 2, 0},
-    {392, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {392, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(488), FACING_SOUTH, 2, 0},
-    {392, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(488), FACING_SOUTH, 2, 0},
-    {392, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(488), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(456), 0, PIXELS(840), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(696), 0, PIXELS(840), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(536), 0, PIXELS(728), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(568), 0, PIXELS(728), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(600), 0, PIXELS(728), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(648), 0, PIXELS(248), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(584), 0, PIXELS(56), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(168), 0, PIXELS(920), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(264), 0, PIXELS(920), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(296), 0, PIXELS(744), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(184), 0, PIXELS(744), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(840), 0, PIXELS(424), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(936), 0, PIXELS(424), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(856), 0, PIXELS(616), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 456, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 696, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 536, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 568, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 600, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 648, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 584, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 168, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 264, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 296, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 184, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 840, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 936, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 856, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_Room2Placements[] = {
-    {391, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(120), 0, PIXELS(88), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(472), 0, PIXELS(776), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(520), 0, PIXELS(776), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(600), 0, PIXELS(776), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gData_02003280, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 472, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 520, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 600, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_Room3Placements[] = {
-    {272, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(104), FACING_SOUTH, 2, 0},
-    {390, CONDITION_ALWAYS, (s32)gData_02003290, PIXELS(232), 0, PIXELS(392), FACING_SOUTH, 2, 0},
-    {393, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(296), 0, PIXELS(392), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(390, CONDITION_ALWAYS, (s32)gData_02003290, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gData_02003280, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_Room4Placements[] = {
-    {272, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(776), FACING_SOUTH, 2, 0},
-    {391, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(104), 0, PIXELS(760), FACING_SOUTH, 2, 0},
-    {393, CONDITION_ALWAYS, (s32)gData_02003280, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(424), 0, PIXELS(120), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(504), 0, PIXELS(120), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(712), 0, PIXELS(120), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(792), 0, PIXELS(120), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(648), 0, PIXELS(920), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(728), 0, PIXELS(920), FACING_SOUTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(808), 0, PIXELS(920), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(456), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(136), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gData_02003280, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gData_02003280, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 504, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 712, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 792, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 648, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 728, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 808, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_Room5Placements[] = {
-    {272, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(312), FACING_SOUTH, 2, 0},
-    {393, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(440), 0, PIXELS(584), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gData_02003280, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2107,7 +2099,7 @@ struct Trigger gAnkohlRuins_Room1Triggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {0x21, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
@@ -2128,14 +2120,14 @@ struct Trigger gAnkohlRuins_Room1Triggers[] = {
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
     {TRIGGER_EXIT, 26, CONDITION_ALWAYS, 26},
     {TRIGGER_EXIT, 27, CONDITION_ALWAYS, 27},
-    {0x21, 28, CONDITION_ALWAYS, 28},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 28, CONDITION_ALWAYS, 28},
     {TRIGGER_EXIT, 29, CONDITION_ALWAYS, 29},
     {TRIGGER_EXIT, 30, CONDITION_ALWAYS, 30},
     {TRIGGER_EXIT, 31, CONDITION_ALWAYS, 31},
-    {0x21, 32, CONDITION_ALWAYS, 32},
-    {0x21, 33, CONDITION_ALWAYS, 33},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 32, CONDITION_ALWAYS, 32},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 33, CONDITION_ALWAYS, 33},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c6, EVENT(Func_02000850)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9c6, EVENT(Func_020006d0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c6, EVENT(Func_020006d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9d2, EVENT(Func_02000a68)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9d3, EVENT(Func_02000a68)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x9d4, EVENT(Func_02000a68)},
@@ -2163,24 +2155,24 @@ struct Trigger gAnkohlRuins_Room1Triggers[] = {
 };
 
 struct Trigger gAnkohlRuins_Room2Triggers[] = {
-    {0x31, 1, CONDITION_ALWAYS, 1},
-    {0x31, 2, CONDITION_ALWAYS, 2},
-    {0x31, 3, CONDITION_ALWAYS, 3},
-    {0x31, 4, CONDITION_ALWAYS, 4},
-    {0x21, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {0x21, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
-    {0x21, 19, CONDITION_ALWAYS, 19},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 19, CONDITION_ALWAYS, 19},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9dc, EVENT(Func_02000e60)},
-    {0x9, 8, 0x9dc, EVENT(Func_02000e60)},
+    {TRIGGER_PUSHED, 8, 0x9dc, EVENT(Func_02000e60)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02001264)},
@@ -2190,46 +2182,46 @@ struct Trigger gAnkohlRuins_Room2Triggers[] = {
 };
 
 struct Trigger gAnkohlRuins_Room3Triggers[] = {
-    {0x21, 1, CONDITION_ALWAYS, 1},
-    {0x21, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {0x31, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Func_020020fc)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_020021d4)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9c7, EVENT(Func_020006d0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c7, EVENT(Func_020006d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c7, EVENT(Func_02000850)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9dd, EVENT(Func_0200104c)},
-    {0x9, 10, 0x9dd, EVENT(Func_0200104c)},
+    {TRIGGER_PUSHED, 10, 0x9dd, EVENT(Func_0200104c)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAnkohlRuins_Room4Triggers[] = {
-    {0x31, 1, CONDITION_ALWAYS, 1},
-    {0x21, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0x21, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {0x31, 9, CONDITION_ALWAYS, 9},
-    {0x31, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {0x21, 15, CONDITION_ALWAYS, 15},
-    {0x21, 16, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, EVENT(Func_02001264)},
@@ -2237,14 +2229,14 @@ struct Trigger gAnkohlRuins_Room4Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 16, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {0x9, 0, CONDITION_ALWAYS, EVENT(Func_0200124c)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_0200124c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT(Func_02000c24)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02000c24)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9c8, EVENT(Func_020006d0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c8, EVENT(Func_020006d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c8, EVENT(Func_02000850)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 18, 0x9c9, EVENT(Func_020006d0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, 0x9c9, EVENT(Func_020006d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, 0x9c9, EVENT(Func_02000850)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 19, 0x9ca, EVENT(Func_020006d0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, 0x9ca, EVENT(Func_020006d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x9ca, EVENT(Func_02000850)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
@@ -2254,21 +2246,21 @@ struct Trigger gAnkohlRuins_Room4Triggers[] = {
 struct Trigger gAnkohlRuins_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x31, 3, CONDITION_ALWAYS, 3},
-    {0x31, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {0x31, 7, CONDITION_ALWAYS, 7},
-    {0x31, 8, CONDITION_ALWAYS, 8},
-    {0x31, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {0x4602, 13, CONDITION_ALWAYS, EVENT(Func_02000384)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(Func_02000384)},
     {TRIGGER_EXIT, 26, CONDITION_ALWAYS, 26},
     {TRIGGER_STEP, 66, CONDITION_ALWAYS, EVENT(Func_020011c0)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9cb, EVENT(Func_020006d0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9cb, EVENT(Func_020006d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9cb, EVENT(Func_02000850)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 9, 0x9db, EVENT(Func_020006d0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x9db, EVENT(Func_020006d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x9db, EVENT(Func_02002260)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_020022a8)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020022e0)},
@@ -2279,11 +2271,11 @@ struct Trigger gAnkohlRuins_Room5Triggers[] = {
 
 struct Trigger gAnkohlRuins_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x21, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
-    {0x21, 28, CONDITION_ALWAYS, 28},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 28, CONDITION_ALWAYS, 28},
     {TRIGGER_STEP, 40, 0x202, EVENT(AnkohlRuins_PressFirstSandSwitch)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_02001ddc)},
     {TRIGGER_STEP, 42, 0x203, EVENT(AnkohlRuins_PressSecondSandSwitch)},

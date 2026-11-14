@@ -373,8 +373,7 @@ s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
   struct ItemDefinition *item;
   s32 result;
 
-  /* FAKEMATCH(temporary): the mask built in the local it masks into; as raw &
-   * ITEM_ID_MASK, 8 of 33 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the mask built in the local it masks into. */
   item_id = ITEM_ID_MASK;
   item_id &= raw;
   item = Item_GetDirect(item_id);
@@ -395,8 +394,7 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   struct ItemDefinition *item;
   s32 result;
 
-  /* FAKEMATCH(temporary): the mask built in the local it masks into; as raw &
-   * ITEM_ID_MASK, 8 of 39 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the mask built in the local it masks into. */
   item_id = ITEM_ID_MASK;
   item_id &= raw;
   item = Item_GetDirect(item_id);
@@ -482,8 +480,8 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
 /* VIEW(game): variable gData_080b1f40 as u16 gData_080b1f40[];
  * game/artifact_slots has const u16 gData_080b1f40[512] = {; tried as the
  * definition's extern const u16 gData_080b1f40[512], it does not compile in
- * tla-ja: games/tla/src/game/game.c:1936: `gData_080b1f40' undeclared (first
- * use in this function). */
+ * tla-ja: games/tla/src/game/game/inventory.c:484: `gData_080b1f40' undeclared
+ * (first use in this function). */
 extern u16 gData_080b1f40__game[] __asm__("gData_080b1f40");
 #define gData_080b1f40 gData_080b1f40__game
 
@@ -493,9 +491,8 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   u16 *table = gData_080b1f40;
   u16 counter;
 
-  /* FAKEMATCH(temporary): the index masked and doubled apart in the local
-   * that held the mask, which keeps the table the base register; as
-   * table[itemId & ITEM_ID_MASK], 4 of 16 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the index masked and doubled apart in the local that
+   * held the mask. */
   index &= itemId;
   index <<= 1;
   counter = *(u16 *)((u8 *)table + index);

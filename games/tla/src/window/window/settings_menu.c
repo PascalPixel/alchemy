@@ -3,6 +3,8 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
   s32 r = rgb[0] * scale_r >> 16;
@@ -60,7 +62,7 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   GLOW_COLOR_SET(7, Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa));
   GLOW_COLOR_SET(8, Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333));
   GLOW_COLOR_SET(9, Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555));
-  GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777));
+  GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, Q16_ONE, 0x17777));
 }
 
 struct OptionMarkerOutput {
@@ -197,9 +199,11 @@ extern u8 MsgAutoSleepLabel[];
 /* VIEW(window): routine CommandIcon_Create as void *CommandIcon_Create(s32
  * frame, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY);
  * window/screens has struct WindowSprite *CommandIcon_Create(s32 arg0, s32
- * arg1, struct RenderInput *arg2, s32 arg3, s32 arg4) {; tried with no
- * declaration of its own, it does not compile with a current GCC (make modern):
- * conflicting types. */
+ * arg1, struct RenderInput *arg2, s32 arg3, s32 arg4) {; tried as the
+ * definition's struct WindowSprite *CommandIcon_Create(s32 arg0, s32 arg1,
+ * struct RenderInput *arg2, s32 arg3, s32 arg4), it does not compile in tla-ja
+ * (make modern): games/tla/include/system/task.h:53:23: note: expected
+ * 'TaskFunc' {aka 'void (*)(void)'} but argument is of type 'int'. */
 void *CommandIcon_Create__window(s32 frame, s32 flags,
                                  struct RenderInput *input, s32 offsetX,
                                  s32 offsetY) __asm__("CommandIcon_Create");
@@ -207,8 +211,6 @@ void *CommandIcon_Create__window(s32 frame, s32 flags,
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
-// The option screen's work (heap slot 0xd0), as The Broken Seal's
-// workspace_options.h lays it out; the listing's offsets agree.
 struct OptionCursorMove {
   struct WindowSprite *anchor;
   u16 x;
@@ -514,7 +516,7 @@ s32 SettingsMenu_Run(void) {
     wait(1);
 
     if (PRESSED & 4) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
       if (work->preset > 5)
@@ -525,30 +527,30 @@ s32 SettingsMenu_Run(void) {
     }
     if (PRESSED & 9) {
       result = 0;
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if (PRESSED & 2) {
       result = -1;
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       break;
     }
-    if (gInput.repeat & 64) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_UP) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption--;
       redraw = 1;
-    } else if (gInput.repeat & 128) {
-      Sound_PlayFar(111);
+    } else if (gInput.repeat & KEY_DOWN) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption++;
       redraw = 1;
     } else {
-      if (gInput.repeat & 32) {
-        Sound_PlayFar(111);
+      if (gInput.repeat & KEY_LEFT) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]--;
         redraw = 1;
       }
-      if (gInput.repeat & 16) {
-        Sound_PlayFar(111);
+      if (gInput.repeat & KEY_RIGHT) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]++;
         redraw = 1;
       }
@@ -793,22 +795,22 @@ s32 PauseMenu_Choose(s32 initial) {
     wait(1);
     if (KEYS_PRESSED & 1) {
       result = selected;
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if (KEYS_PRESSED & 10) {
       result = -1;
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       break;
     }
-    if (gInput.repeat & 64) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_UP) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selected--;
       redraw = 1;
       continue;
     }
-    if (gInput.repeat & 128) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_DOWN) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selected++;
       redraw = 1;
       continue;
@@ -816,12 +818,12 @@ s32 PauseMenu_Choose(s32 initial) {
     if (gDebugMode != 0) {
       if (KEYS_PRESSED & 0x100) {
         result = 20;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
       if (KEYS_PRESSED & 0x200) {
         result = 21;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
     }

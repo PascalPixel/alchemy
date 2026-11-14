@@ -3,6 +3,8 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
@@ -62,9 +64,7 @@ s32 Shop_SelectBuy(void) {
   s32 unitId;
   s32 capacitySlot;
   s32 removedCount;
-  /* FAKEMATCH(dead): both A-button tests also store into key, which nothing
-   * reads; as if (gInput.pressed & 1) at both, 8 of 540 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(dead): both A-button tests also store into key. */
   s32 key;
 
   shop->itemWindow = 0;
@@ -95,18 +95,18 @@ next_page:
       Shop_DrawItemPrice(priceWindow, itemId, (u16)stockDefinition->price, 0);
       redraw = 0;
     }
-    if (key = gInput.pressed & 1) {
+    if (key = gInput.pressed & KEY_A) {
       selected = selectionIndex;
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       selectionResult = 0;
       break;
     }
-    if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
-    if (gInput.held & 4) {
+    if (gInput.held & KEY_SELECT) {
       s32 held;
       void *window;
 #if !TLA_PATCH_1
@@ -121,14 +121,14 @@ next_page:
       heldItem = stockIds[selectionIndex];
       held = PartyInventory_CountItemFar(heldItem);
 #endif
-      Sound_PlayFar(126);
+      Sound_PlayFar(SE_RECOVERY);
       window = Window_CreateFar(HELD_WINDOW_X, 3, HELD_WINDOW_WIDTH, 10, 2);
 #if TLA_PATCH_1
       ItemMenu_DrawItemDetailsWithCountFar(window, stockCount, held);
 #else
       ItemMenu_DrawItemDetailsWithCountFar(window, heldItem, held);
 #endif
-      while (gInput.held & 4)
+      while (gInput.held & KEY_SELECT)
         wait(1);
       Window_CloseFar(window, 2);
       Shop_DrawStock(stockWindow, selectionIndex);
@@ -185,12 +185,12 @@ next_page:
       else
         Shop_DrawEquipComparison(itemWindow, unitId, shop->selectedItem);
     }
-    if (key = gInput.pressed & 1) {
+    if (key = gInput.pressed & KEY_A) {
       redraw = 2;
       WindowSprite_PrepareForRedrawFar(partyWindow);
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         MessageArgument_PushFar(unitId, 1);
         MessageArgument_PushFar(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == 15)
@@ -201,7 +201,7 @@ next_page:
       }
       Inventory_RemoveFar(unitId, capacitySlot);
       if ((u16)selectedDefinition->price > (u32)gMainRoutineWork.coins) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         Shop_ShowKeeperMessageHidingCursor((s32)MsgBuyNotEnoughMoney);
         purchaseResult = -1;
         break;
@@ -214,7 +214,7 @@ next_page:
           continue;
         }
       }
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       wait(1);
       quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
@@ -225,8 +225,8 @@ next_page:
       purchaseResult = 0;
       break;
     }
-    if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       purchaseResult = -1;
       break;
     }
@@ -313,7 +313,6 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
           icon->animStep = highlightFrame;
           icon->sentinel = 253;
         }
-        // Read unsigned (ldrh), as the buy screen reads the price elsewhere.
         icon =
             Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
         icon->sentinel = 251;
@@ -334,12 +333,12 @@ void Shop_DrawMoney(void) {
 #if LANGUAGE == LANGUAGE_JAPANESE
     // "Coins" (MsgCoins) after the count, two messages before MsgYourCoins.
     message = (s32)MsgYourCoins;
-    Text_DrawMessageAsTilesFar__shop(message, window, 0, 0);
+    Text_DrawMessageAsTilesFar(message, window, 0, 0);
     message -= 2;
     Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)window, 0, 8);
-    Text_DrawMessageAsTilesFar__shop(message, window, 48, 8);
+    Text_DrawMessageAsTilesFar(message, window, 48, 8);
 #else
-    Text_DrawMessageAsTilesFar__shop((s32)MsgYourCoins, window, 0, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgYourCoins, window, 0, 0);
     Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)window, 32, 8);
 #endif
   }
@@ -366,9 +365,6 @@ void Shop_DrawMoney(void) {
 
 /// Draws the shop item's name and price, or its cannot-buy or not-broken note;
 /// kind 3 draws the item condition message numbered by the price instead.
-// The twin of ☀️'s Shop_DrawItemPrice (games/tbs/src/shop/shop.c), in the
-// twin's goto layout, with kind 3 added. It matches with the switch on the
-// kind as the twin has it (if-gotos give differ 46).
 void Shop_DrawItemPrice(s32 window, s32 itemId, s32 price, s32 priceKind) {
   s32 labelMessage;
 
@@ -376,23 +372,22 @@ void Shop_DrawItemPrice(s32 window, s32 itemId, s32 price, s32 priceKind) {
     return;
   goto draw;
 cannot_buy:
-  Text_DrawMessageAsTilesFar__shop((s32)MsgCannotBuyThat, window,
-                                   SHOP_PRICE_LABEL_X, 8);
+  Text_DrawMessageAsTilesFar((s32)MsgCannotBuyThat, window, SHOP_PRICE_LABEL_X,
+                             8);
   return;
 not_broken:
-  Text_DrawMessageAsTilesFar__shop((s32)MsgNotBroken, window,
-                                   SHOP_PRICE_LABEL_X, 8);
+  Text_DrawMessageAsTilesFar((s32)MsgNotBroken, window, SHOP_PRICE_LABEL_X, 8);
   return;
 show_price:
   labelMessage = (s32)MsgPrice;
-  Text_DrawMessageAsTilesFar__shop(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
+  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
   labelMessage -= 3;
   Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
-  Text_DrawMessageAsTilesFar__shop(labelMessage, window, SHOP_PRICE_COINS_X, 8);
+  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_COINS_X, 8);
   return;
 draw:
   WindowSprite_RedrawSavedRectFar(window);
-  Text_DrawMessageAsTilesFar__shop(itemId + (s32)MsgItemName, window, 0, 0);
+  Text_DrawMessageAsTilesFar(itemId + (s32)MsgItemName, window, 0, 0);
   if (price == 0) {
     switch (priceKind) {
     case 1:
@@ -403,8 +398,7 @@ draw:
   }
   // MsgItemCondition starts a list: "----------", "Processed", "Rusted".
   if (priceKind == 3)
-    Text_DrawMessageAsTilesFar__shop(price + (s32)MsgItemCondition, window, 8,
-                                     8);
+    Text_DrawMessageAsTilesFar(price + (s32)MsgItemCondition, window, 8, 8);
   else
     goto show_price;
 }
@@ -435,7 +429,7 @@ void Shop_DrawMessage(s32 win, s32 message) {
     wait(1);
 #endif
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-    Text_DrawMessageAsTilesFar__shop(message, win, 0, 0);
+    Text_DrawMessageAsTilesFar(message, win, 0, 0);
 #else
     Text_DrawMessageFar(message, win, 0, 0);
 #endif
@@ -477,7 +471,7 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
           Animation_ApplyChildArgumentFar(figure, 30);
         else
           Animation_ApplyChildArgumentFar(figure, 1);
-        shop->partyMemberScale[i] = 0x10000;
+        shop->partyMemberScale[i] = Q16_ONE;
         if (!Item_IsCompatibleWithUnitFar(owner, itemId))
           shop->partyMemberScale[i] = 0xcccc;
       }
@@ -551,20 +545,15 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
     Text_DrawNumberInWindowFar(without[i], 3, window, 32, i * 16);
     if (without[i] != with[i])
       Text_DrawNumberInWindowFar(with[i], 3, window, 72, i * 16);
-    Text_DrawMessageAsTilesFar__shop((s32)MsgShopStatLabel + i, window, 0,
-                                     i * 16);
+    Text_DrawMessageAsTilesFar((s32)MsgShopStatLabel + i, window, 0, i * 16);
     Window_DrawDividerLineFar(window, 0, i * 2 + 2, 13, i * 2 + 2);
   }
   if (replaced != -1)
-    Text_DrawMessageAsTilesFar__shop(replaced + (s32)MsgItemName, window, 0,
-                                     48);
+    Text_DrawMessageAsTilesFar(replaced + (s32)MsgItemName, window, 0, 48);
 }
 
 /// Shows how many of an item the member already carries and draws the
 /// member's inventory icons through ItemIconGrid_ShowInventory at (8, 8).
-// The twin of ☀️'s Shop_DrawUnitItem (games/tbs/src/shop/shop.c), whose icon
-// loop ⚓️ moved into that helper. It matches with the twin's quantityOffset
-// local (differ 10 with the offset inside the read).
 void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
   u8 *unitBytes;
   s32 slot;
@@ -578,9 +567,9 @@ void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
       quantityOffset = slot * 2 + 216;
       MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1,
                               5);
-      Text_DrawMessageAsTilesFar__shop((s32)MsgYouHave, window, 0, 0);
+      Text_DrawMessageAsTilesFar((s32)MsgYouHave, window, 0, 0);
     } else {
-      Text_DrawMessageAsTilesFar__shop((s32)MsgShopNoneInStock, window, 0, 0);
+      Text_DrawMessageAsTilesFar((s32)MsgShopNoneInStock, window, 0, 0);
     }
     ItemIconGrid_ShowInventory(window, 8, 8, unitId);
   }
@@ -715,23 +704,23 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           slot, OUTPUT_SIZE_32X8, (struct RenderInput *)window, 32, 0);
       sprite->tile += 4;
       for (;;) {
-        if (gInput.pressed & 1) {
-          Sound_PlayFar(112);
+        if (gInput.pressed & KEY_A) {
+          Sound_PlayFar(SE_MENU_CONFIRM);
           result = count + 1;
           break;
         }
-        if (gInput.pressed & 2) {
-          Sound_PlayFar(113);
+        if (gInput.pressed & KEY_B) {
+          Sound_PlayFar(SE_MENU_CANCEL);
           result = -1;
           break;
         }
-        if (gInput.repeat & 0x20) {
-          Sound_PlayFar(111);
+        if (gInput.repeat & KEY_LEFT) {
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           changed = 1;
           count--;
         }
-        if (gInput.repeat & 0x10) {
-          Sound_PlayFar(111);
+        if (gInput.repeat & KEY_RIGHT) {
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           changed = 1;
           count++;
         }
@@ -742,9 +731,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           QuantityBar_Fill(30, 14, buffer);
           QuantityBar_Fill(minimum + maximum, 0, buffer);
           QuantityBar_Fill(minimum + count + 1, 10, buffer);
-          /* FAKEMATCH(temporary): the quantity in its own local before the
-           * last fill; as result = count + 1 after VramCache_Load, 28 of 192
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(temporary): the quantity in its own local before the last
+           * fill. */
           selected = count + 1;
           QuantityBar_Fill(minimum, 2, buffer);
           VramCache_Load(slot, 0x100, buffer);
@@ -753,13 +741,13 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
 #if LANGUAGE == LANGUAGE_JAPANESE
           // MsgPiece, the counter after the count, written as the message after
           // MsgCoins: the coins label below then shares its literal-pool word.
-          Text_DrawMessageAsTilesFar__shop((s32)MsgCoins + 1, window,
-                                           QUANTITY_PIECE_X, 0);
+          Text_DrawMessageAsTilesFar((s32)MsgCoins + 1, window,
+                                     QUANTITY_PIECE_X, 0);
 #endif
           Text_DrawNumberInWindowFar(price * result, 6, window,
                                      QUANTITY_PRICE_X, 0);
-          Text_DrawMessageAsTilesFar__shop((s32)MsgCoins, window,
-                                           QUANTITY_COINS_X, 0);
+          Text_DrawMessageAsTilesFar((s32)MsgCoins, window, QUANTITY_COINS_X,
+                                     0);
         }
         wait(1);
       }
@@ -783,7 +771,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   item = Item_GetDirectFar(itemId);
   addedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
-  Sound_PlayFar(101);
+  Sound_PlayFar(SE_SHOP_PURCHASE);
   if (addedSlot < remaining) {
     do {
       addedSlot = Inventory_AddItemFar(unitId, itemId);
@@ -831,13 +819,13 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (Shop_AskYesNo(0) != 0)
     return 0;
 
-  Inventory_EquipFar__shop(unitId, slot);
+  Inventory_EquipFar(unitId, slot);
   window = shop->itemWindow;
   if (window != 0)
     Shop_DrawMemberItems(window, unitId);
 
   if (info->flags & 1) {
-    Sound_PlayFar(103);
+    Sound_PlayFar(SE_CURSE);
     Message_CloseFinishedWindowsFar();
     {
       s32 x = 8;

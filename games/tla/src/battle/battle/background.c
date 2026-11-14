@@ -5,6 +5,8 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "battle_effect_work.h"
+#include "fixed_math.h"
 #include "module/battle/presentation.h"
 #include "module/system/system.h"
 
@@ -16,16 +18,13 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   u32 ime;
   u32 *slot;
 
-  // The save in a once-only block loads REG_IME's address after the stack
-  // frame is made, and a loop on a zero local stores it through slot before
-  // IME is cleared; without them, 8 of 54 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the save in a once-only block loads REG_IME's address
+   * after the stack frame is made. */
   do {
     u16 *imeReg;
     s32 once;
 
-    /* FAKEMATCH(temporary): a pointer to ime, which keeps the save in a stack
-     * slot stored through r6; as ime directly, 33 of 54 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(temporary): a pointer to ime. */
     slot = &ime;
     imeReg = (u16 *)&REG_IME;
     once = 0;
@@ -40,7 +39,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
     Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
             REG_DMA3);
   } else {
-    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
+    ColorBuffer_Scale(palette, (u16 *)(BG_PLTT + 6 * 16),
                       screen->brightness = 0x10000 - level * 1092, 128);
   }
   {
@@ -69,7 +68,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
 
   if (fade == 0x80) {
     struct BattleWork *work;
@@ -87,7 +86,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
     work = Ram_HeapSlots->battleWork;
     source = work->palette;
-    destination = (u16 *)0x050000c0;
+    destination = (u16 *)(BG_PLTT + 6 * 16);
 
     for (i = 0; i != 128; i++) {
       s32 red = source[i] & 31;
@@ -109,17 +108,15 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
       destination[i] = (blue << 10) | (green << 5) | red;
     }
   }
-  Graphics_BuildSequentialTileTable((void *)0x06003800);
-  BattleTransition_BuildTilemap((void *)0x0600f800);
+  Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
 }
 
 void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(40, 0x2a0);
   struct BattlePresentationTransition *work = Ram_HeapSlots->transitionWork;
 
-  // An empty once-only loop after the work's load keeps the fill's entry
-  // ahead of the size's copy; without it, 4 of 18 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop after the work's load. */
   do {
   } while (0);
   Iwram_FillWordsEntry(block, 0x2a0, 0);
@@ -144,34 +141,32 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
     u32 offset = 0x100;
     void *vram;
 
-    /* FAKEMATCH(dead): two updates that cancel, under a test that emits
-     * nothing, end a CSE block so the VRAM address loads before the data's
-     * add; without them, 2 of 137 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): two updates that cancel. */
     if (session) {
       offset++;
       offset--;
     }
-    vram = (void *)0x06008000;
+    vram = (void *)BG_CHAR_BLOCK(2);
     decode(data + offset, vram);
   }
   Heap_Release(decode);
   palette = session->palette;
   Dma_Set(data, palette, 0x84000040, REG_DMA3);
   if (level >= 0)
-    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
+    ColorBuffer_Scale(palette, (u16 *)(BG_PLTT + 6 * 16),
                       session->brightness = 0x10000 - level * 1092, 128);
   if (session->keepBackdropPalette == 0) {
-    Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
-    *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+    Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010, REG_DMA3);
+    *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   }
-  Graphics_BuildSequentialTileTable((void *)0x06003800);
-  BattleTransition_BuildTilemap((void *)0x0600f800);
+  Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
   Iwram_ClearWordsEntry((void *)0x0600ffc0, 64);
   if (view->mode == 0)
     Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
   view->mode = mode;
   if (mode == 1)
-    REG_BG1CNT = 0x1f83;
+    REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
 }
 
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
@@ -193,8 +188,6 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
 
   horizon = 0x800;
   wrap = 0;
-  // ratio is reused for Q16_ONE, the scale test's and the call's; as the
-  // constant in both, 2 of 199 instructions differ in tla-en.
   ratio = Q16_ONE;
   if (scale >= ratio) {
     wrap = 0x2000;
@@ -214,8 +207,8 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   affine->pb = 0;
   affine->pc = 0;
   affine->pd = step;
-  x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - 0x10000));
-  y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - 0x10000));
+  x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - Q16_ONE));
+  y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - Q16_ONE));
   affine->x = ((x + 0x7fff) >> 8) + offsetX + horizon;
   affine->y = ((y + 0x7fff) >> 8) + offsetY - 0x1000;
   groundEndLine =
@@ -281,7 +274,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
+  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
   half = scale * 0xff;
   width = half * 2;
@@ -323,9 +316,8 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Transform_ApplyYaw((s16)scene->yaw);
   Transform_ApplyPitch((s16)scene->pitch);
   {
-    /* FAKEMATCH(pin): the camera pinned to r1, copied before the bound
-     * stores; as Iwram_TransformVector(renderBounds, (s32 *)scene), 2 of
-     * 111 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the camera pinned to r1, copied before the bound stores.
+     */
     register s32 *camera asm("r1") = (s32 *)scene;
 
     renderBounds[0] = 0;
@@ -339,7 +331,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
+  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
   half = scale * 0xff;
   width = half * 2;
@@ -396,7 +388,9 @@ void BattleBackground_FadeAlphaIn(void) {
 }
 
 /// Unused: sets BLDCNT to brighten every layer and the backdrop.
-UNUSED void Battle_BrightenAllLayers(void) { REG_BLDCNT = 0xbf; }
+UNUSED void Battle_BrightenAllLayers(void) {
+  REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
+}
 
 s32 Battle_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
 
@@ -463,35 +457,34 @@ struct DebugBattleWork {
 /// held picks DEBUG_VALUE_SELECT and R held 399; otherwise value comes back
 /// unchanged.
 s32 Battle_AdjustDebugValue(s32 value) {
-  if (gInput.held & 8) {
+  if (gInput.held & KEY_START) {
     while (1) {
       struct DebugBattleWork *work =
           (struct DebugBattleWork *)Ram_HeapSlots->battleWork;
 
-      if (gInput.repeat & 0x20)
+      if (gInput.repeat & KEY_LEFT)
         work->debugValue--;
-      if (gInput.repeat & 0x10)
+      if (gInput.repeat & KEY_RIGHT)
         work->debugValue++;
-      if (gInput.repeat & 0x200)
+      if (gInput.repeat & KEY_L)
         work->debugValue -= 100;
-      if (gInput.repeat & 0x100)
+      if (gInput.repeat & KEY_R)
         work->debugValue += 100;
-      if (gInput.repeat & 0x40)
+      if (gInput.repeat & KEY_UP)
         work->debugValue -= 10;
-      if (gInput.repeat & 0x80)
+      if (gInput.repeat & KEY_DOWN)
         work->debugValue += 10;
-      if (gInput.pressed & 1) {
+      if (gInput.pressed & KEY_A) {
         value = work->debugValue;
         break;
       }
       wait(1);
     }
   }
-  if (gInput.held & 4)
+  if (gInput.held & KEY_SELECT)
     value = DEBUG_VALUE_SELECT;
-  // The held keys reread through a volatile pointer, a load apart from the
-  // Select test's; as gInput.held, 11 of 114 instructions differ in tla-en.
-  if (*(volatile u32 *)&gInput.held & 0x100)
+  /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
+  if (*(volatile u32 *)&gInput.held & KEY_R)
     value = 399;
   return value;
 }
@@ -596,7 +589,7 @@ void Graphics_AdvancePaletteCycle(void) {
 
       if (level > 16)
         level = 16;
-      REG_BLDCNT = 0x3f40;
+      REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = ((0x10 - level) << 8) | level;
       battle->highlightStep++;
     } else if (battle->highlightMode == 4) {
@@ -604,19 +597,19 @@ void Graphics_AdvancePaletteCycle(void) {
 
       if (level > 16)
         level = 16;
-      REG_BLDCNT = 0x3f40;
+      REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = (level << 8) | (0x10 - level);
       battle->highlightStep++;
     } else if (battle->highlightMode == 2) {
-      REG_BLDCNT = 0x3f40;
+      REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       REG_BLDALPHA =
           (gBattleEffect_HighlightBlendRamp[battle->highlightStep] << 8) |
           (0x10 - gBattleEffect_HighlightBlendRamp[battle->highlightStep]);
       battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
     } else if (battle->highlightMode != 0) {
-      REG_BLDCNT = 0x3f90;
-      REG_BLDALPHA = 0x10;
+      REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
+      REG_BLDALPHA = BLEND_ALPHA(16, 0);
       REG_BLDY = gBattleEffect_HighlightBlendRamp[battle->highlightStep];
       battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
@@ -644,7 +637,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
     battle->highlightMode = mode;
     battle->highlightStep = 0;
     REG_BLDY = 0;
-    Io_Write16(16, &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
 
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)activeActors);
     for (i = 0; i < count; i++)
@@ -749,11 +742,8 @@ void ElementGlow_UpdateStarField(void) {
       if (dist <= 0xfff) {
         spark->life = 0;
       } else {
-        scale = Iwram_RatioMulQ14(dist, 0x10000);
+        scale = Iwram_RatioMulQ14(dist, Q16_ONE);
         spark->life--;
-        // The multiply's entry held in a local keeps its address ahead of the
-        // cursor and the axis count; called directly, 2 of 267 instructions
-        // differ in tla-en.
         mul = Iwram_MulQ16;
         pos = spark->pos;
         for (k = 2; k >= 0; k--) {
@@ -803,9 +793,7 @@ void ElementGlow_UpdateStarField(void) {
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
-      /* FAKEMATCH(dead): an empty once-only block after the age's store, so
-       * Data_08129830's address loads after it; without it, 2 of 267
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an empty once-only block after the age's store. */
       do {
       } while (0);
       draw(dest, (u8 *)work + Data_08129830[phase], ringX + 48, ringY + 48, 32,
@@ -827,7 +815,8 @@ s32 ElementGlow_UploadStarField(void) {
 
     if (*active != 0) {
       *active = 0;
-      return ColorBuffer_ScaleThreeQuarters(source, (void *)0x06004000, 0x4000);
+      return ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
+                                            Q16_ONE / 4);
     }
   }
   return (s32)source;
@@ -843,10 +832,6 @@ s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
                                  s32 flags, s32 mode);
 
-// The rings' vectors go through these two polar helpers, as the native
-// rebuilds 0x200 at each call (movs, lsls) and keeps only the radius and the
-// multiply's entry in registers; written out, loop.c hoists 0x200 too (81 of
-// 255 differ, 2026-11-08).
 static __inline__ s32 PolarX(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Cos(angle), radius);
 }
@@ -872,7 +857,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
 
   ((s32 *)Ram_HeapSlots->transitionWork)[2] = 1;
   work = HeapSlot_AllocEwram(92, sizeof *work);
-  HeapSlot_Alloc(96, 0x4000);
+  HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   for (i = 0; i < 16; i++) {
     s32 angle = Random16();
     u32 radius = Random16() + 0x10000;
@@ -926,8 +911,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     break;
   }
   Dma_Set(data, (void *)BG_PLTT, 0x84000000 | 32, REG_DMA3);
-  // A once-only block, as in The Broken Seal: it keeps the zero ahead of the
-  // BG2X address, which reload derives from the DMA register's (8 without it).
+  /* FAKEMATCH(dead): a once-only block. */
   do {
     zero = 0;
     REG_BG2X = zero;
@@ -937,9 +921,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(0x100, &REG_BG2PD);
-  /* FAKEMATCH(dead): a never-taken five-argument call, which reserves the
-   * frame's outgoing argument word below mode; as no call, 10 of 255
-   * instructions differ in tla-en (6 with an unused u8[4] in its place). */
+  /* FAKEMATCH(dead): a never-taken five-argument call. */
   if (0)
     BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(104, 0x03);
@@ -953,7 +935,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
 /// ElementGlow_Play once mode 0's field has played. Returns Task_Remove's
 /// result, which the caller does not read.
 s32 ElementGlow_End(s32 unused) {
-  Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   HeapSlot_Release(96);
@@ -1000,15 +982,15 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
 
   wait(1);
   BattleBackground_SetMode(1, session->background, 0);
-  Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
   IoWriteQueue_Store16(0x04000000, 0x3741);
   IoWriteQueue_Store16(0x0400000c, 0x784);
   IoWriteQueue_Store16(0x04000050, 0x3f44);
   wait(1);
   Io_Write16(240, &REG_WIN0H);
   Io_Write16(0x1088, &REG_WIN0V);
-  Io_Write16(63, &REG_WININ);
-  Io_Write16(17, &REG_WINOUT);
+  Io_Write16(WININ_WIN0_ALL, &REG_WININ);
+  Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == 0) {
     IoWriteQueue_Store16(0x04000052, 0x100e);
     ElementGlow_InitializeStarField(kind);
@@ -1017,7 +999,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleFxWork[0];
       if (frame <= 24)
-        ColorBuffer_Scale(session->palette, (u16 *)0x050000c0,
+        ColorBuffer_Scale(session->palette, (u16 *)(BG_PLTT + 6 * 16),
                           *brightness = 0x10000 - frame * 1092, 128);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
       work->originX = (64 - pos->x) << 8;

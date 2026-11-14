@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 // Field Psynergy kind 19 on a chosen object (FieldPsynergy_Dispatch's
 // case 19): FieldPsynergy_Tremor's sideways sway, stronger, with the object's
@@ -18,8 +19,6 @@
 #define SWAY_RAMP 0x1999   // 0.1 pixels a frame
 #define SWAY_SHAKE 0x40000 // sprites shake only past this
 #define SWAY_HOLD_FRAMES 40
-
-#define SE_SWAY 152
 
 enum {
   SWAY_GROW,
@@ -50,8 +49,8 @@ struct ShakeWork {
 /* VIEW(psynergy): tag struct ObjectSprite as struct ObjectSprite__psynergy;
  * module/field/field.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:7222: redefinition of `struct
- * ObjectSprite'. */
+ * games/tla/src/field/event_commands/radial/tremor.c:49: redefinition of
+ * `struct ObjectSprite'. */
 #define ObjectSprite ObjectSprite__psynergy
 struct ObjectSprite {
   u8 unk00[0x12];
@@ -65,8 +64,10 @@ struct ObjectSprite {
 };
 
 /* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0;
- * f0e2c38.c has another definition; not tried: struct EffectScene__f0e8db0 was
- * not found. */
+ * f0e2c38.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/tremor.c:83: structure has no
+ * member named `target'. */
 struct EffectScene__f0e8db0 {
   u8 unk00[0x10];
   void *mainObject;
@@ -144,7 +145,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   frames = 0;
   do {
     if ((frameCount & 15) == 15)
-      Sound_PlayFar(SE_SWAY);
+      Sound_PlayFar(SE_JUMP);
 
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {
@@ -261,7 +262,7 @@ void FieldPsynergy_Tremor(void) {
   frames = 0;
   do {
     if ((frameCount & 15) == 15)
-      Sound_PlayFar(SE_SWAY);
+      Sound_PlayFar(SE_JUMP);
 
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {
@@ -343,6 +344,5 @@ void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
 #undef SWAY_RAMP
 #undef SWAY_SHAKE
 #undef SWAY_HOLD_FRAMES
-#undef SE_SWAY
 #undef VIEW_MOVE_WORK_SIZE
 #undef SWAY_SHAKE_FRAMES

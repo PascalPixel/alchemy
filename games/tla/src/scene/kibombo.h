@@ -69,8 +69,6 @@ void FlagBlock_PlaceAll(const void *script);
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Actor_WaitForMove(struct Actor *object);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Kibombo_ObjTurn(s32 actor, s32 angle) {
   Actor_FaceDirectionById(actor, angle);
 }
@@ -78,8 +76,7 @@ static inline void Kibombo_ObjTurn(s32 actor, s32 angle) {
 static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): the blend start reaches the main image through this
-   * inline; as a direct call to Map_CopyCellAttributeRect, 4 of 25
-   * instructions differ in tla-en (Kibombo_UncoverVent). */
+   * inline. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 

@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct Model;
 
@@ -97,7 +100,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
                        128);
-  REG_BLDALPHA = 0x100e;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
   if (effect->side == 1) {
     BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   } else {
@@ -123,9 +126,8 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
           s32 angle = Random16();
           s32 radius = (Random16() & 63) + 80;
 
-          shard->x = target->x + ((Trig_Sin(angle) * radius) >> 1);
-          shard->y = 0x80000;
-          shard->z = (Trig_Cos(angle) * radius) >> 1;
+          SET_POSITION(shard, target->x + ((Trig_Sin(angle) * radius) >> 1),
+                       px(8), (Trig_Cos(angle) * radius) >> 1);
           shard->velocityX = Random16();
           shard->velocityY = (Random16() & 0xffff) + 0x40000;
           shard->velocityZ = (Random16() & 7) + 4;
@@ -163,7 +165,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
             screen.x >>= 1;
             width = shard->velocityZ;
             width += Trig_Sin(shard->velocityX) * width / 2 >> 16;
-            shard->velocityX += 0x400;
+            shard->velocityX += px(1) / 64;
             width *= 2;
             if ((u32)(width - 2) <= 61) {
               s32 cell = (width - 2) / 2;
@@ -184,7 +186,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
 
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 4 + 64) {
-          Sound_PlayFar(126);
+          Sound_PlayFar(SE_RECOVERY);
           BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 24);
         }
       }
@@ -204,7 +206,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
         texture.logHeight = 7;
         texture.pixels = gData_02014000;
         if (frame > 15) {
-          s32 scale = (frame << 12) - 0x10000;
+          s32 scale = (frame << 12) - Q16_ONE;
 
           if (scale > 0x1bd50) {
             scale = 0x1bd50;

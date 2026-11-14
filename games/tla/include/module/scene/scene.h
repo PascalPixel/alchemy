@@ -29,8 +29,7 @@ struct MotionView {
   u32 flags : 8;
 };
 
-/// A map cell, or a step between cells, kept as one 8-byte pair: written by the
-/// word, it keeps the native's store before the travel loop.
+/// A map cell, or a step between cells, kept as one 8-byte pair.
 struct Cell {
   s32 x, z;
 };
@@ -392,10 +391,7 @@ struct EventWorkCbc {
   struct Actor *active;
 };
 
-// One-field views: the terminator's read and the shape store are memory of
-// their own to sched2, which sinks them past the cell stores; plain reads and
-// stores keep their order. A struct is padded to 4 bytes here, so the pointers
-// stay plain.
+/* FAKEMATCH(signature): one-field views of the list's terminator and shape. */
 struct ListedActor {
   u16 id;
 };
@@ -1186,44 +1182,44 @@ extern u8 gField_CachedTilesC[];
 
 // The scene's setup: places its actors, then plays what the entrance it was
 // reached by calls for.
-extern char SceneId_Ov688;
+extern char SceneId_LemuriaEntrance;
 
-extern char SceneId_Ov6A6Room2;
+extern char SceneId_Loho2;
 
-extern char SceneId_Ov65aRoom1;
-extern char SceneId_Ov65aRoom2;
-extern char SceneId_Ov65aRoom3;
-extern char SceneId_Ov65aRoom4;
-extern char SceneId_Ov65aRoom5;
-extern char SceneId_Ov65aRoom6;
+extern char SceneId_MadraCatacombs1;
+extern char SceneId_MadraCatacombs2;
+extern char SceneId_MadraCatacombs3;
+extern char SceneId_MadraCatacombs4;
+extern char SceneId_MadraCatacombs5;
+extern char SceneId_MadraCatacombs6;
 
 void Func_02001e80(s32 value);
 
 // The cell stampers keep their last cell and the block they copy.
 
-extern char SceneId_Ov6ACRoom3;
+extern char SceneId_MarsLighthouseRoomM3;
 
-extern char SceneId_Ov6aaRoom1;
-extern char SceneId_Ov6aaRoom2;
-extern char SceneId_Ov6aaRoom3;
-extern char SceneId_Ov6aaRoom4;
-extern char SceneId_Ov6aaRoom5;
-extern char SceneId_Ov6aaRoom6;
-extern char SceneId_Ov6aaRoom7;
+extern char SceneId_MarsLighthouseEntrance1;
+extern char SceneId_MarsLighthouseEntrance2;
+extern char SceneId_MarsLighthouseEntrance3;
+extern char SceneId_MarsLighthouseEntrance4;
+extern char SceneId_MarsLighthouseEntrance5;
+extern char SceneId_MarsLighthouseEntrance6;
+extern char SceneId_MarsLighthouseEntrance7;
 
-extern char SceneId_Ov6adRoom1;
-extern char SceneId_Ov6adRoom2;
-extern char SceneId_Ov6adRoom3;
-extern char SceneId_Ov6adRoom4;
+extern char SceneId_MarsLighthouseRoomF1;
+extern char SceneId_MarsLighthouseRoomF2;
+extern char SceneId_MarsLighthouseRoomF3;
+extern char SceneId_MarsLighthouseRoomF4;
 
-extern char SceneId_Ov6ACRoom6;
-extern char SceneId_Ov6ACRoom1;
+extern char SceneId_MarsLighthouseRoomM6;
+extern char SceneId_MarsLighthouseRoomM1;
 
 void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-extern char SceneId_Ov64c;
+extern char SceneId_StaffCredit;
 
-extern char SceneId_Ov6a7Room1;
+extern char SceneId_NorthernReaches;
 extern char ResourceId_FieldEffectIceShard;
 
 extern char ResourceId_FarCall00A;
@@ -1236,13 +1232,13 @@ extern char SceneId_SuhallaGate2;
 extern char SceneId_SuhallaGate3;
 extern char SceneId_SuhallaGate1;
 
-extern char SceneId_Ov650;
+extern char SceneId_Idejima;
 extern char ResourceId_FarCall00B;
 
-extern char SceneId_Ov676Room1;
-extern char SceneId_Ov676Room2;
+extern char SceneId_Yallam1;
+extern char SceneId_Yallam2;
 
-extern char SceneId_Ov664Room4;
+extern char SceneId_AirsRockInside4;
 
 struct SparkSprite__jupiter_lighthouse_room_5;
 struct Vector3;
@@ -1279,6 +1275,6 @@ struct FieldPart {
   s16 kind;
 };
 
-extern char SceneId_Ov6b5;
+extern char SceneId_Lobby;
 
 #endif

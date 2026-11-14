@@ -10,10 +10,9 @@
 /// (Daila_MeetAlex). Six puddles (sprite 290) lie in its streets: Parch dries
 /// one for the visit (Daila_ParchFirstPuddle to Daila_ParchSixthPuddle) and
 /// Frost freezes one into a pillar of ice to stand on (Scene_RaiseHeldActor,
-/// gDaila_PuddleFrozenFlags). Scoop on one spot digs up a Psy Crystal
+/// gDailaInteriors_PillarFrozenFlags). Scoop on one spot digs up a Psy Crystal
 /// (Daila_DigUpPsyCrystal).
 
-#include "shared/actors.h"
 #include "event_work.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -44,35 +43,23 @@
 #define FLAG_DAILA_FIFTH_PUDDLE_PARCHED 0x214
 #define FLAG_DAILA_SIXTH_PUDDLE_PARCHED 0x215
 // The first of six flags, one for each of Daila2's puddles that Frost has
-// frozen into a pillar for this visit, by gDaila_PuddleFrozenFlags.
+// frozen into a pillar for this visit, by gDailaInteriors_PillarFrozenFlags.
 #define FLAG_DAILA_PUDDLE_FROZEN_FIRST 0x216
 
 /// The people and puddles the events move, numbering the rows of
 /// gDaila2ActorPlacements (Daila1's rows to ACTOR_LAST_VILLAGER are alike).
 enum DailaActorId {
-  /// ★ Named from the game: "You don't look familiar. Have you been to Daila
-  /// before?" (MsgDailaBeenBefore)
   ACTOR_GREETER = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Didn't it feel like all of Indra moved when that
-  /// wave hit?" (MsgDailaIndraMoved)
   ACTOR_INDRA_MOVED_MAN,
-  /// ★ Named from the game: "I bet you thought it was the wave that knocked me
-  /// over and hurt my hip, huh?" (MsgDailaHurtHip)
   ACTOR_FALLEN_OLD_MAN = ACTOR_FIRST_PLACED + 4,
   /// The innkeeper, across the counter to the west.
-  /// ★ Named from the game: "I haven't seen Tavi and Riki around lately..."
-  /// (MsgDailaTaviRikiWorry)
   ACTOR_INNKEEPER = ACTOR_FIRST_PLACED + 13,
-  /// ★ Named from what the player sees: a puddle of seawater that Frost turns
-  /// into a pillar of ice (puddle.png)
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
   ACTOR_THIRD_PUDDLE,
   ACTOR_FOURTH_PUDDLE,
   ACTOR_FIFTH_PUDDLE,
-  /// ★ Named from the game: "Alex... Where did you go?" (MsgDailaFelixCall)
   ACTOR_ALEX,
-  /// ★ Named from the game: "That's what Kraden said..." (MsgDailaFelixCall)
   ACTOR_KRADEN,
   /// After Jenna's and Sheba's rows, which place the party's own actors.
   ACTOR_SIXTH_PUDDLE
@@ -88,7 +75,7 @@ extern struct ActorPlacement gDaila1ActorPlacements[];
 extern struct ActorPlacement gDaila2ActorPlacements[];
 extern struct Trigger gDaila1Triggers[];
 extern struct Trigger gDaila2Triggers[];
-extern s16 gDaila_PuddleFrozenFlags[];
+extern s16 gDailaInteriors_PillarFrozenFlags[];
 extern s32 gDaila_FallenOldManScript[];
 extern u32 gDaila_PuddleChildScript[];
 void Field_TryJumpForward(void);
@@ -100,9 +87,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gDailaEntrances; }
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, as in the scene
-   * layer of The Broken Seal; as a direct call, which shifts 0x300 before
-   * the actor is loaded, 2 of 6 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through the inline. */
   Actor_ReturnHome(mode, actor, flag);
 }
 
@@ -127,10 +112,10 @@ void Daila_EnterDoor(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   Event_Wait(10);
@@ -279,8 +264,6 @@ static inline void Actor_JoinLeader(s32 actor) {
 
 /// Alex waits for the party in the street, says the mayor sent him to look for
 /// a boat in Madra, turns down their company and leaves.
-/// ★ Named from the game: "Well, well... Our happy little family is back
-/// together again." (MsgDailaFelixCall)
 void Daila_MeetAlex(void) {
   s32 msg;
 
@@ -301,7 +284,7 @@ void Daila_MeetAlex(void) {
   Actor_MoveToAndWait(ACTOR_ALEX, 472, 280);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_ShowEmoteById(ACTOR_ALEX, 256, 0);
+  Actor_ShowEmoteById(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 8, 16, 0xa000);
@@ -310,7 +293,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Event_Wait(30);
-  Actor_ShowEmote(ACTOR_JENNA, 259, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Event_Wait(30);
@@ -362,7 +345,7 @@ void Daila_MeetAlex(void) {
     Event_SetMessageId(msg + 11);
     Event_ShowMessageAndWait(ACTOR_ALEX, 0);
     Event_Wait(60);
-    Actor_ShowEmoteById(ACTOR_JENNA, 259, 0);
+    Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Event_Wait(60);
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_ALEX, 0);
     Event_ShowMessageAndWait(ACTOR_JENNA, 0);
@@ -387,7 +370,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Event_Wait(60);
-  Actor_ShowEmoteById(ACTOR_KRADEN, 258, 0);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_Wait(60);
@@ -415,7 +398,7 @@ void Daila_MeetAlex(void) {
   Actor_Jump(ACTOR_JENNA, 4, 20);
   Actor_Jump(ACTOR_JENNA, 4, 20);
   Event_Wait(30);
-  Actor_ShowEmoteById(ACTOR_JENNA, 259, 0);
+  Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Event_Wait(60);
@@ -476,15 +459,14 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17, 31,
 
 void Actor_SetWideSprite(s32 actor, s32 flag);
 
-DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
-                              gDaila_PuddleFrozenFlags)
+#include "shared/scene_raise_held_actor.h"
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila1)
     Actor_FallOverById(12, 0);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
-    FlagBlock_PlaceAll(gDaila_PuddleFrozenFlags);
+    FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
   Actor_SetSpritePriority(21, 1);
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2 &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
@@ -514,7 +496,7 @@ s32 Scene_PrepareMap(void) {
 void Daila_JumpForward(void) { Field_TryJumpForward(); }
 
 // clang-format off
-s16 gDaila_PuddleFrozenFlags[] = {
+s16 gDailaInteriors_PillarFrozenFlags[] = {
     ACTOR_FIRST_PUDDLE,  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 0,
     ACTOR_SECOND_PUDDLE, FLAG_DAILA_PUDDLE_FROZEN_FIRST + 1,
     ACTOR_THIRD_PUDDLE,  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 2,
@@ -577,60 +559,86 @@ s32 gDaila2Exits[] = {
 // clang-format on
 
 struct ActorPlacement gDaila1ActorPlacements[] = {
-    {115, CONDITION_ALWAYS, 2, PIXELS(40), 0, PIXELS(280), FACING_EAST, 1, 0},
-    {116, CONDITION_ALWAYS, 3, PIXELS(264), 0, PIXELS(232), FACING_SOUTH, 1, 0},
-    {114, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(376), FACING_EAST, 1, 0},
-    {143, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(312), FACING_WEST, 1, 0},
-    {112, CONDITION_ALWAYS, (s32)gDaila_FallenOldManScript, PIXELS(360), 0,
-     PIXELS(344), FACING_SOUTH, 2, 0},
-    {140, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(424), FACING_NORTH, 1, 0},
-    {146, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(456), FACING_SOUTH, 1, 0},
-    {147, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(456), FACING_SOUTH, 1, 0},
-    {224, CONDITION_ALWAYS, 3, PIXELS(376), 0, PIXELS(472), FACING_SOUTH, 1, 0},
-    {224, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(312), FACING_SOUTHEAST, 1,
-     0},
-    {187, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(184),
-     FACING_SOUTH + FACING_STEP, 1, 0},
-    {146, CONDITION_ALWAYS, (s32)gDaila_PuddleChildScript, PIXELS(584), 0,
-     PIXELS(384), FACING_SOUTH, 2, 0},
-    {147, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(328), FACING_SOUTH, 1, 0},
-    {110, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(424), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 40, 0, 280,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 264, 0,
+                    232, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0,
+                    376, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(143, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 312,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, (s32)gDaila_FallenOldManScript, 360,
+                    0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 424,
+                    FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 456,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 376, 0,
+                    472, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 312,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 184,
+                    FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, (s32)gDaila_PuddleChildScript, 584,
+                    0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 328,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 424,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gDaila2ActorPlacements[] = {
-    {115, CONDITION_ALWAYS, 2, PIXELS(40), 0, PIXELS(280), FACING_EAST, 1, 0},
-    {116, CONDITION_ALWAYS, 3, PIXELS(264), 0, PIXELS(232), FACING_SOUTH, 1, 0},
-    {114, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(376), FACING_EAST, 1, 0},
-    {143, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(312), FACING_WEST, 1, 0},
-    {139, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(344), FACING_SOUTH, 0, 0},
-    {140, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(424), FACING_NORTH, 1, 0},
-    {146, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(456), FACING_EAST, 1, 0},
-    {147, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(456), FACING_WEST, 1, 0},
-    {224, CONDITION_ALWAYS, 3, PIXELS(376), 0, PIXELS(472), FACING_SOUTH, 1, 0},
-    {224, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(312), FACING_SOUTHEAST, 1,
-     0},
-    {187, CONDITION_ALWAYS, 3, PIXELS(120), 0, PIXELS(216), FACING_WEST, 1, 0},
-    {146, CONDITION_ALWAYS, (s32)gDaila_PuddleChildScript, PIXELS(584), 0,
-     PIXELS(384), FACING_SOUTH, 2, 0},
-    {147, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(344), FACING_WEST, 1, 0},
-    {110, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(424), FACING_SOUTH, 1, 0},
-    {290, FLAG_DAILA_FIRST_PUDDLE_PARCHED, 1, PIXELS(184), 0, PIXELS(312),
-     FACING_SOUTH, 2, 0},
-    {290, FLAG_DAILA_SECOND_PUDDLE_PARCHED, 1, PIXELS(424), 0, PIXELS(328),
-     FACING_SOUTH, 2, 0},
-    {290, FLAG_DAILA_THIRD_PUDDLE_PARCHED, 1, PIXELS(472), 0, PIXELS(376),
-     FACING_SOUTH, 2, 0},
-    {290, FLAG_DAILA_FOURTH_PUDDLE_PARCHED, 1, PIXELS(296), 0, PIXELS(184),
-     FACING_SOUTH, 2, 0},
-    {290, FLAG_DAILA_FIFTH_PUDDLE_PARCHED, 1, PIXELS(504), 0, PIXELS(280),
-     FACING_SOUTH, 2, 0},
-    {57, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {290, FLAG_DAILA_SIXTH_PUDDLE_PARCHED, 1, PIXELS(280), 0, PIXELS(376),
-     FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 40, 0, 280,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 264, 0,
+                    232, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0,
+                    376, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(143, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 312,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(139, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 344,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 424,
+                    FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 456,
+                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 376, 0,
+                    472, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 312,
+                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0,
+                    216, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, (s32)gDaila_PuddleChildScript, 584,
+                    0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 344,
+                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 424,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(290, FLAG_DAILA_FIRST_PUDDLE_PARCHED, MOVEMENT_TYPE_STAND,
+                    184, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, FLAG_DAILA_SECOND_PUDDLE_PARCHED, MOVEMENT_TYPE_STAND,
+                    424, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, FLAG_DAILA_THIRD_PUDDLE_PARCHED, MOVEMENT_TYPE_STAND,
+                    472, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, FLAG_DAILA_FOURTH_PUDDLE_PARCHED, MOVEMENT_TYPE_STAND,
+                    296, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, FLAG_DAILA_FIFTH_PUDDLE_PARCHED, MOVEMENT_TYPE_STAND,
+                    504, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, FLAG_DAILA_SIXTH_PUDDLE_PARCHED, MOVEMENT_TYPE_STAND,
+                    280, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -691,7 +699,8 @@ struct Trigger gDaila1Triggers[] = {
      MSGNO(MsgFieldBleccchThisWatersSaaalty)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgFieldImSureThoseTwoWentTo)},
-    {0x1f3, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgDailaWellSeawater)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgDailaWellSeawater))},
     {TRIGGER_TABLE_END},
 };
 
@@ -706,10 +715,14 @@ struct Trigger gDaila2Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Daila_MeetAlex)},
-    {0x4602, 30, CONDITION_ALWAYS, EVENT(Daila_JumpForward)},
-    {0x602, 31, CONDITION_ALWAYS, EVENT(Daila_JumpForward)},
-    {0x8602, 32, CONDITION_ALWAYS, EVENT(Daila_JumpForward)},
-    {0xc602, 33, CONDITION_ALWAYS, EVENT(Daila_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS,
+     EVENT(Daila_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
+     EVENT(Daila_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
+     EVENT(Daila_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS,
+     EVENT(Daila_JumpForward)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFieldAfterThatWaveHitIWas)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFieldSureAreALotOfTravelers)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS,
@@ -785,6 +798,7 @@ struct Trigger gDaila2Triggers[] = {
      FLAG_DAILA_PUDDLE_FROZEN_FIRST + 5, EVENT(Scene_RaiseHeldActor)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100,
      FLAG_DAILA_PSY_CRYSTAL_DUG, EVENT(Daila_DigUpPsyCrystal)},
-    {0x1f3, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgDailaWellSeawater)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgDailaWellSeawater))},
     {TRIGGER_TABLE_END},
 };

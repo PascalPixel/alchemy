@@ -14,7 +14,6 @@
 /// data/gondowan_cliffs.c, which the overlay links after the field's tiles.
 
 #include "shared/tables.h"
-#include "shared/actors.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -33,7 +32,6 @@
 #include "scene_tables.h"
 #include "objcmd.h"
 #include "flags.h"
-#include "shared/map_cells.h"
 #include "map.h"
 #include "event_work.h"
 #include "system/heap_release.h"
@@ -51,7 +49,7 @@
 extern s16 gGondowanCliffs_Entrances[];
 extern struct ActorPlacement gGondowanCliffs_PassEntrances[];
 
-DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
+#include "shared/tile_sprite_reset.h"
 
 void GondowanCliffs_FightKindle(void) { Field_RequestDjinnBattle(21, 49); }
 
@@ -75,18 +73,33 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 // clang-format on
 
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
+#include "shared/scene_create_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -192,17 +205,17 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
       actor->targetX = 0x80000000;
     }
     actor->update = GondowanCliffs_RollPillar;
-    Actor_SetSpeed(id, 0x30000, 0x18000);
+    Actor_SetSpeed(id, 3);
     Actor_SetDestination(id, 1193, 530);
     actor->gravity = 0xcccc;
     actor->motionFlags = 3;
     actor->terrainId = 0;
     FieldActor_WaitForMoveById(id);
     GondowanCliffs_WaitToLand(actor, 0);
-    Event_PlaySound(188);
-    MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-    Event_PlaySound(141);
-    MapGrid_SetShake(-1, -1, 0xe666);
+    Event_PlaySound(SE_THUMP);
+    MapGrid_SetShake(5, 5, 1);
+    Event_PlaySound(SE_RUMBLE);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     ((struct FieldSprite *)actor->sprite)->rotation = 0x1000;
     // Cleared through a word: as a function pointer the store sinks below the
     // effect options.
@@ -216,7 +229,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
                       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                           EFFECT_SCALE_TO_TARGET,
                       &options);
-    Event_PlaySound(154);
+    Event_PlaySound(SE_CAST);
     Actor_SetAnimation(id, 3);
     FieldMapGrid_WaitForShakeToSettle();
     Actor_GetById(15)->priorityFlags |= 2;
@@ -225,16 +238,15 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
   Event_End();
 }
 
-DEFINE_PILLAR_SET_MOVED(GondowanCliffs_FreezeFirstPuddle, 12, 79, 28, 81,
-                        FLAG_FIRST_PUDDLE_FROZEN)
+#include "shared/pillar_set_moved.h"
 
 void GondowanCliffs_FreezeSecondPuddle(void) {
   struct Actor *object = Actor_Get(13);
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
-  object->terrainHeight = PIXELS(32);
-  object->y = PIXELS(32);
+  object->terrainHeight = px(32);
+  object->y = px(32);
   MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
   Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
 }
@@ -249,7 +261,7 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
   if (cell == 30) {
     object = Actor_Get(17);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-    Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
+    Actor_SetPosition(17, 1912, 728);
     object->terrainHeight = object->y =
         Map_GetTerrainHeight(0, object->x, object->z);
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG);
@@ -268,7 +280,7 @@ void GondowanCliffs_TalkToDog(void) {
   out[0] = object->x;
   out[1] = object->y;
   out[2] = object->z;
-  FieldVector_AddPolarOffset(0x100000, object->facing, out);
+  FieldVector_AddPolarOffset(px(16), object->facing, out);
   if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
   } else {
@@ -320,8 +332,7 @@ void GondowanCliffs_SetUpPass(void) {
   }
   Tightrope_Initialize();
   Value3((s32 (*)())Tightrope_Place, 0, 9, 10);
-  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)gGondowanCliffs_SavedWaterColors,
-         0x05000018, 8);
+  Iwram_CopyWords((s32)gGondowanCliffs_SavedWaterColors, 0x05000018, 8);
   Task_AddFrame(GondowanCliffs_CycleWaterColors, 0x480);
 }
 
@@ -359,7 +370,8 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_FaceActor(6, 5, 0);
   Event_ShowMessage(6, 0);
   FieldActor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(22, 3);
   Event_ShowMessage(22, 0);
@@ -376,7 +388,7 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_SetPosition(5, 0, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 528, 488);
   Event_FinishScreenTransition();
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 512, 488);
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(1);
@@ -413,14 +425,14 @@ s32 Scene_Initialize(void) {
     goto done;
   Rope_Initialize();
   Rope_Place(0, 0x200, 10, 11);
-  if (GameFlag_Get(0x8ab)) {
+  if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Tightrope_Initialize();
     Tightrope_Place(0, 8, 9);
   }
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
     Actor_SetPosition(14, 0, 0);
   else
-    Actor_GetById(14)->scaleY = 0x14000;
+    Actor_GetById(14)->scaleY = Q16_ONE * 5 / 4;
   if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
   if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
@@ -430,7 +442,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
     actor = Actor_GetById(17);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-    Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
+    Actor_SetPosition(17, 1912, 728);
     height = Map_GetTerrainHeight(0, actor->x, actor->z);
     actor->y = height;
     actor->terrainHeight = height;
@@ -438,7 +450,7 @@ s32 Scene_Initialize(void) {
   Actor_SetAnimation(16, 4);
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {
     MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
-    Actor_SetPosition(15, PIXELS(1193), PIXELS(530));
+    Actor_SetPosition(15, 1193, 530);
     Actor_GetById(15)->priorityFlags |= 2;
     Actor_GetById(15)->collisionFlags = 0;
     Actor_SetAnimation(15, 2);
@@ -462,7 +474,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 // The whole-pixel half of a 16.16 coordinate.
-#define PIXELS(v) (((s16 *)&(v))[1])
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 // The swinging actors' callback, the same as Yampi Desert's platforms: for each
 // of the 16 entries it moves the actor on its timer, writes its height to the
@@ -489,11 +501,11 @@ void Geysers_Update(void) {
     if (object->x == 0 && object->z == 0)
       continue;
     if (entry->timer == entry->riseAt) {
-      Sound_Play(206);
+      Sound_Play(SE_CURSE_FALL);
       entry->step = 4;
     }
     if (entry->timer == entry->fallAt) {
-      Sound_Play(395);
+      Sound_Play(SOUND_FADE_OUT_SE5);
       entry->step = -8;
     }
     if (entry->step != 0) {
@@ -515,7 +527,7 @@ void Geysers_Update(void) {
     }
     index = (object->x >> 20) + (object->z >> 20) * 128;
     terrain[index] = (u8)work->value + i;
-    *collision = ((PIXELS(object->y) + entry->height) / 8) << 8;
+    *collision = ((PIXEL_PART(object->y) + entry->height) / 8) << 8;
     cell = &cells[index];
     if (entry->step != 0)
       cell->attributeB = 0;
@@ -573,8 +585,6 @@ void Geysers_Draw(void) {
       continue;
     actor = Actor_GetById(swing->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
-    // A goto loop: the native moves nothing out of it; as a for loop, loop.c
-    // hoists the sprite's third word (skeleton gap 64).
     h = 0;
     if (h >= swing->height)
       goto top;
@@ -611,9 +621,7 @@ void Geysers_Draw(void) {
     z = actor->z - scrollZ - lift;
     screenY = z - y;
     x = (x >> 16) - 8;
-    /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and
-     * again for the sum; as a direct call, 276 of 252 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(wrapper): forwarded. */
     screenY =
         ((screenY +
           Value2((s32 (*)())Iwram_MulQ16, -0x20000, Trig_Sin(swing->phase)) +
@@ -640,7 +648,7 @@ void Geysers_Start(s32 unused, s32 value) {
   void *buffer;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
+    Iwram_ClearWords((s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
   Decompress_TaggedLz(gField_Tiles64D, buffer);
   work->entry = VramCache_FindFreeEntry();
@@ -700,8 +708,7 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef EFFECT_SPRITE_PRIORITY
 #undef FLAG_FIRST_PUDDLE_FROZEN
 #undef FLAG_SECOND_PUDDLE_FROZEN
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
+#undef PIXEL_PART
 
 // @file
 // The Gondowan Cliffs' tables, which the scene's getters return.
@@ -739,47 +746,47 @@ LATE_DATA s16 gGondowanCliffs_Entrances[] = {
 };
 
 LATE_DATA struct ActorPlacement gGondowanCliffs_PassEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0x40000118, PIXELS(-1), -0x1, 0xffff, 0, 0},
+    {0, CONDITION_ALWAYS, 168, 0x40000118, px(-1), -0x1, 0xffff, 0, 0},
     {SCENE_TABLE_END},
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(102),
-    SCENE_EXIT_IF(1, 2, 21, -1),
-    SCENE_EXIT_IF(2, 2, 22, -1),
-    SCENE_EXIT_IF(3, 104, 1, -1),
-    SCENE_EXITS(103),
-    SCENE_EXIT_IF(1, 2, 85, -1),
-    SCENE_EXIT_IF(2, 2, 86, -1),
+    SCENE_EXITS(GondowanCliffs),
+    SCENE_EXIT_UNLESS(1, WorldMap, 21, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, WorldMap, 22, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GondowanCliffsHideout, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GondowanCliffsPass),
+    SCENE_EXIT_UNLESS(1, WorldMap, 85, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, WorldMap, 86, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 LATE_DATA struct ActorPlacement gGondowanCliffs_ActorPlacements[] = {
-    {407, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(232), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(904), 0, PIXELS(232), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(1560), 0, PIXELS(760), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(1624), 0, PIXELS(760), FACING_NORTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(1304), 0, PIXELS(456), FACING_SOUTH, 0, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(1880), 0, PIXELS(568), FACING_SOUTH, 0, 0},
-    {307, CONDITION_ALWAYS, 1, PIXELS(1576), 0, PIXELS(672), FACING_NORTH, 2, 0},
-    {273, CONDITION_ALWAYS, 1, PIXELS(1232), 0, PIXELS(544), FACING_SOUTH, 2, 0},
-    {189, CONDITION_ALWAYS, 1, PIXELS(1928), 0, PIXELS(728), FACING_WEST, 2, 0},
-    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
-    {83, 0x8ab, 1, PIXELS(888), 0, PIXELS(200), FACING_WEST, 1, 0},
-    {83, 0x8ab, 1, PIXELS(888), 0, PIXELS(232), FACING_WEST, 1, 0},
-    {424, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, 1, PIXELS(816), 0, PIXELS(232), FACING_WEST, 2, 0},
-    {245, 0x61, 1, PIXELS(1336), 0, PIXELS(648), FACING_SOUTH, 0, 0},
-    {5, IF_FLAG_SET(0x8f3), 1, 0, 0, 0, FACING_EAST, 0, 0},
-    {6, IF_FLAG_SET(0x8f3), 1, 0, 0, 0, FACING_EAST, 0, 0},
-    {56, IF_FLAG_SET(0x8f3), 1, 0, 0, 0, FACING_EAST, 0, 0},
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1560, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1624, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1304, 0, 456, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1880, 0, 568, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1576, 0, 672, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(273, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1232, 0, 544, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(189, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1928, 0, 728, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(83, 0x8ab, MOVEMENT_TYPE_STAND, 888, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(83, 0x8ab, MOVEMENT_TYPE_STAND, 888, 0, 232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(424, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 816, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(245, 0x61, MOVEMENT_TYPE_STAND, 1336, 0, 648, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(5, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(6, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(56, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gGondowanCliffs_PassActorPlacements[] = {
-    {8, CONDITION_ALWAYS, (s32)gGondowanCliffs_ResetTileSpriteScript, PIXELS(330), 0, PIXELS(79), FACING_EAST, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(232), FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(232), FACING_NORTH, 2, 0},
-    {424, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, 1, PIXELS(304), 0, PIXELS(232), FACING_WEST, 2, 0},
+    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gGondowanCliffs_ResetTileSpriteScript, 330, 0, 79, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 304, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

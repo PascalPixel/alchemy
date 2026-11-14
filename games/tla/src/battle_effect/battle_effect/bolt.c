@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 
 #define BOLT_INTERVAL 8
 
@@ -57,7 +58,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
     // The sky flashes as each bolt starts.
     for (i = 0; i != effect->count; i++) {
       if (frame == i * BOLT_INTERVAL)
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
     }
 
     for (i = 0; i != effect->count; i++) {
@@ -89,7 +90,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           for (j = 0; j != gBolt_Counts[effect->variant * 4]; j++) {
             struct EffectStep *spark = &SPARKS[i * SPARKS_PER_TARGET + j];
             s32 speed = (Random16() & 0x1ff) + 64;
-            s32 angle = (Random16() & 0x7fff) - 0x4000;
+            s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
             spark->x = pos.x << 16;
             spark->y = GROUND_Y << 16;
@@ -117,9 +118,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           x -= gData_08197492[kind] >> 1;
           flip = Random16();
 
-          // An empty once-only loop ends CSE's block, so the two reads of each
-          // size table's address stay apart; without it, 172 of 552
-          // instructions differ in tla-en.
+          /* FAKEMATCH(dead): an empty once-only loop. */
           do {
           } while (0);
           BattleEffect_BuildBlitter(188, 7, 7,
@@ -143,7 +142,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
         BattleEffectKernels_IntegrateVector2(spark, 60, 0x1000);
         if (spark->y > GROUND_Y << 16) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((spark->x >= 0 && spark->x < 127 << 16) && spark->y >= 0) {
+        } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {
           s32 size = spark->variant / 16 + 1;
           s32 x = spark->x >> 16;
           s32 y = spark->y >> 16;

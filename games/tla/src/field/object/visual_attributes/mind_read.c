@@ -5,6 +5,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 
 #include "system/io_reg.h"
 #include "game/game.h"
@@ -88,13 +89,13 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       }
       to.z = target->z;
       if (sprite->orientation == 0x8000) {
-        to.y -= 0x180000;
+        to.y -= px(24);
       } else if (sprite->orientation == 0x4000) {
-        to.x += 0x60000;
-        to.y -= 0xc0000;
+        to.x += px(6);
+        to.y -= px(12);
       } else if (sprite->orientation == 0xc000) {
-        to.x -= 0x60000;
-        to.y -= 0xc0000;
+        to.x -= px(6);
+        to.y -= px(12);
       }
       object = Actor_CreateFar(677, to.x, to.y, to.z);
       if (object != NULL) {
@@ -114,7 +115,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
 
   if (work->counter != 99) {
     if (work->counter == 0)
-      Sound_PlayFar(130);
+      Sound_PlayFar(SE_PSYNERGY_START);
     if (++work->counter > 60)
       work->counter = 0;
   }
@@ -131,7 +132,6 @@ void FieldEffect_ArmBg0HBlankDma(void) {
     dma[5] &= 0xc5ff; // Clear start timing and repeat.
     dma[5] &= 0x7fff; // Stop.
     (void)dma[5];
-    // One halfword per HBlank, repeating with destination reload.
     Dma_Set(lines, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
             (volatile u32 *)dma);
   }
@@ -170,7 +170,7 @@ void FieldEffect_AdvanceHueCycle(void) {
   work->red = (r / 4 + 4) & 31;
   work->green = (g / 4 + 4) & 31;
   work->blue = (b / 4 + 4) & 31;
-  limit = 359 << 16;
+  limit = px(359);
   if ((u32)((work->hue += 4) << 16) > limit)
     work->hue = 0;
 }
@@ -247,9 +247,7 @@ void FieldEffect_UpdateMoveHand(struct ItemBreakFragmentSource *src) {
 
   // Emit the particle with a y offset of 8-24 and a random direction
   // at radius 0-48 from the main object.
-  pos.x = src->x;
-  pos.y = src->y - (Random16() << 4) - 0x80000;
-  pos.z = src->z;
+  SET_POSITION(&pos, src->x, src->y - (Random16() << 4) - 0x80000, src->z);
   dist = Random16() * 3;
   dist <<= 4;
   Vector_AddPolarOffset(dist, Random16(), &pos);
@@ -278,8 +276,8 @@ struct PendingEvent;
  * BattleEffect_GetCycledTableWord(void); tried as the definition's u16
  * BattleEffect_GetCycledTableWord(void), which the object already declares, it
  * does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:8265: too many arguments to
- * function `BattleEffect_GetCycledTableWord'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:355: too many
+ * arguments to function `BattleEffect_GetCycledTableWord'. */
 extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__(
     "BattleEffect_GetCycledTableWord");
 /* VIEW(mind_read): routine Actor_ApplyRandomChildValues as void
@@ -287,8 +285,8 @@ extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__(
  * Actor_ApplyRandomChildValues(struct Actor *owner) {; tried as the
  * definition's void Actor_ApplyRandomChildValues(struct Actor *owner), which
  * the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:8890: conflicting types for
- * `Actor_ApplyRandomChildValues'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:960: conflicting
+ * types for `Actor_ApplyRandomChildValues'. */
 void Actor_ApplyRandomChildValues__mind_read(void) __asm__(
     "Actor_ApplyRandomChildValues");
 #define Actor_ApplyRandomChildValues Actor_ApplyRandomChildValues__mind_read
@@ -324,9 +322,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   angle = (u16)scene->angle + TRIG_TURN / 2;
   moved = 0;
   /* FAKEMATCH(temporary): a byte pointer standing in for target->terrainId at
-   * the save and the restore, whose stack slot then comes after pushed's and
-   * event's; as target->terrainId, 18 of 444 instructions differ in tla-en.
-   */
+   * the save and the restore. */
   layer = &target->terrainId;
   savedLayer = *layer;
   pushed = 0;
@@ -345,13 +341,11 @@ void FieldPsynergy_SteerPushedTarget(void) {
       Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
                                 Scene_SelectPsynergyTarget(scene->fieldKind));
   pusher->watchedObject = target;
-  position.x = target->x;
-  position.y = target->y + (16 << 16);
-  position.z = target->z;
-  Vector_AddPolarOffset(16 << 16, angle, &position);
+  SET_POSITION(&position, target->x, target->y + px(16), target->z);
+  Vector_AddPolarOffset(px(16), angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
   FieldEffect_SnapScaleToFull(pusher);
-  pusher->speedLimit = 4 << 16;
+  pusher->speedLimit = px(4);
   pusher->acceleration = Q16_ONE / 2;
   pusher->motionFlags = 4;
   target->update = Actor_ApplyRandomChildValues;
@@ -359,13 +353,12 @@ void FieldPsynergy_SteerPushedTarget(void) {
   target->acceleration = 0x3333;
   target->actionFlags = moved;
   // Through target rather than layer, which keeps moved's load after the
-  // acceleration's value is built; through layer, 2 of 444 instructions differ
-  // in tla-en.
   target->terrainId = 2;
   while (1) {
     wait(1);
     // The mode read as a signed byte, which the test against 0 does not change.
-    if ((s8)scene->mode == 0 && (gInput.pressed & 0x303))
+    if ((s8)scene->mode == 0 &&
+        (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)))
       break;
 
     direction = (u16)BattleEffect_GetCycledTableWord__f0dd054(gInput.held);
@@ -377,10 +370,8 @@ void FieldPsynergy_SteerPushedTarget(void) {
       if (direction == 0xffff)
         break;
     } else if (direction == 0xffff) {
-      position.x = target->x;
-      position.y = target->y + (16 << 16);
-      position.z = target->z;
-      Vector_AddPolarOffset(16 << 16, angle, &position);
+      SET_POSITION(&position, target->x, target->y + px(16), target->z);
+      Vector_AddPolarOffset(px(16), angle, &position);
       Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
       Actor_SelectAnimationFar(pusher, 1);
       pusher->velocityX = 0;
@@ -389,25 +380,19 @@ void FieldPsynergy_SteerPushedTarget(void) {
       continue;
     }
 
-    position.x = target->x;
-    position.y = target->y + (16 << 16);
-    position.z = target->z;
-    Vector_AddPolarOffset(16 << 16, angle, &position);
-    Vector_AddPolarOffset(2 << 16, direction, &position);
+    SET_POSITION(&position, target->x, target->y + px(16), target->z);
+    Vector_AddPolarOffset(px(16), angle, &position);
+    Vector_AddPolarOffset(px(2), direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
     Actor_WaitForMoveFar(pusher);
-    position.x = target->x;
-    position.y = target->y;
-    position.z = target->z;
-    Vector_AddPolarOffset(16 << 16, direction, &position);
-    beyond.x = target->x;
-    beyond.y = target->y;
-    beyond.z = target->z;
-    Vector_AddPolarOffset(32 << 16, direction, &beyond);
+    SET_POSITION(&position, target->x, target->y, target->z);
+    Vector_AddPolarOffset(px(16), direction, &position);
+    SET_POSITION(&beyond, target->x, target->y, target->z);
+    Vector_AddPolarOffset(px(32), direction, &beyond);
     if (MapGrid_CheckCollisionFar(target, &position) > 0) {
       Actor_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       continue;
     }
     hit = ActorScript_FindOverlappingEntryFar(target, &position);
@@ -415,7 +400,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
       if (hit != user) {
         Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
       cellX = user->x & MOVE_CELL_MASK;
@@ -424,7 +409,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
           cellZ == (position.z & MOVE_CELL_MASK)) {
         Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
@@ -433,14 +418,14 @@ void FieldPsynergy_SteerPushedTarget(void) {
             0) {
           Actor_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
-            Sound_PlayFar(114);
+            Sound_PlayFar(SE_MENU_ERROR);
           continue;
         }
         moved = 1;
       }
     }
 
-    Sound_PlayFar(175);
+    Sound_PlayFar(SE_NOTE_HIGH);
     pushed = 1;
     x = position.x;
     z = position.z;
@@ -454,9 +439,8 @@ void FieldPsynergy_SteerPushedTarget(void) {
     pusher->motionFlags = 0;
     pusher->speedLimit = 0x3333;
     pusher->acceleration = 0x3333;
-    Vector_AddPolarOffset(16 << 16, direction, &position);
-    Actor_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
-                           position.z);
+    Vector_AddPolarOffset(px(16), direction, &position);
+    Actor_SetMoveTargetFar(pusher, position.x, position.y + px(16), position.z);
     if (moved == 1) {
       Actor_GetById(scene->firstObjectId)->actionFlags &= 0xfe;
       user->speedLimit = 0x3333;
@@ -487,9 +471,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   BattleEffect_StopMainActor();
   if (moved == 1) {
     /* FAKEMATCH(temporary): a byte pointer standing in for the actor's
-     * actionFlags, which loads them into r3 and the 1 into r2; as
-     * Actor_GetById(...)->actionFlags |= 1, 4 of 444 instructions differ in
-     * tla-en. */
+     * actionFlags. */
     userFlags = &Actor_GetById(scene->firstObjectId)->actionFlags;
     *userFlags |= 1;
   }
@@ -510,10 +492,10 @@ next_state:
     position.x = effect->originX;
     position.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
+    Vector_AddPolarOffset(px(30), (u16)angle, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = 0x40000;
+    effect->acceleration = px(4);
     effect->maxSpeed = 0x40000;
     effect->limitTurnStep = state;
     (*statePointer)++;
@@ -568,8 +550,6 @@ void FieldPsynergy_Move(void) {
 
 extern const s32 gFieldEffect_FragmentScript[];
 
-#define SE_ITEM_BREAK 138
-
 /// The Broken Seal's FieldEffect_SpawnMoveHand with this game's objects
 /// 278 and 673: spawns the breaking item above object and eight fragments
 /// that scatter from it.
@@ -584,31 +564,31 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   u32 spread;
   u32 jitter;
 
-  angle = (source->facing + 0x2000) & 0xc000;
-  parent = Actor_Spawn(278, source->x, source->y + (16 << 16), source->z);
+  angle = (source->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
+  parent = Actor_Spawn(278, source->x, source->y + px(16), source->z);
   if (parent == 0)
     return 0;
-  parent->scaleY = 0x4000;
-  parent->scaleX = 0x4000;
+  parent->scaleY = Q16_ONE / 4;
+  parent->scaleX = Q16_ONE / 4;
   parent->update = FieldEffect_UpdateMoveHand;
-  parent->speedLimit = 2 << 16;
-  parent->acceleration = 2 << 16;
+  parent->speedLimit = px(2);
+  parent->acceleration = px(2);
   parent->motionFlags = 0;
   Actor_SelectAnimationFar(parent, 3);
-  Actor_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
+  Actor_SetTargetPositionFromMagnitudeAngle(parent, px(16), angle);
 
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
-    child = Actor_Spawn(673, source->x, source->y + (16 << 16), source->z);
+    child = Actor_Spawn(673, source->x, source->y + px(16), source->z);
     if (child != 0) {
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       speed = Random16() + Q16_ONE;
-      child->acceleration = 1 << 16;
+      child->acceleration = px(1);
       child->speedLimit = speed;
       child->motionFlags = 2;
       child->gravity = 0x51e;
       spread = Random16();
       child->velocityY = spread - Random16();
-      radius = Random16() * 24 + (8 << 16);
+      radius = Random16() * 24 + px(8);
       jitter = Random16();
       Actor_SetTargetPositionFromMagnitudeAngle(
           child, radius, ((jitter - Random16()) >> 3) + source->facing);
@@ -648,10 +628,10 @@ void UpdateRisingParticleBurst(void *object) {
   s32 dist;
   u32 spread;
 
-  Sound_PlayFar(154);
+  Sound_PlayFar(SE_CAST);
   for (i = 30; i >= 0; i--) {
-    src->y += 1 << 16;
-    src->facing += 0x2000; // 1/8 turn
+    src->y += px(1);
+    src->facing += TRIG_TURN / 8; // 1/8 turn
     src->scaleX += -Q16_ONE / 32;
     src->scaleY += -Q16_ONE / 32;
     wait(1);
@@ -673,11 +653,11 @@ void UpdateRisingParticleBurst(void *object) {
       spread = Random16();
       child->velocityY = spread - Random16();
       dist = Random16() * 24;
-      dist += 8 << 16;
+      dist += px(8);
       Actor_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }
-  Sound_PlayFar(131);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_ReleaseFar(src);
 }
 
@@ -720,7 +700,6 @@ void FieldPsynergy_WatchLeaderDistance(void) {
     *slot = request;
   }
 }
-#undef SE_ITEM_BREAK
 #include "field/event.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
@@ -730,14 +709,13 @@ void FieldPsynergy_WatchLeaderDistance(void) {
  * BattleEffect_RunBusyWaitDelay(void); tried as the definition's void
  * BattleEffect_RunBusyWaitDelay(void), which the object already declares, it
  * does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:8647: too many arguments to
- * function `BattleEffect_RunBusyWaitDelay'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:722: too many
+ * arguments to function `BattleEffect_RunBusyWaitDelay'. */
 extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__(
     "BattleEffect_RunBusyWaitDelay");
 
 #define REVEAL_EVENT_START 0x50000005 // the Reveal event, stage 5
 #define REVEAL_FRAMES 600
-#define SE_REVEAL 131
 
 // Reveal: open a circle of the transition on the caster, wash the screen
 // plain, run the Reveal event that matches, then show the markers nearby
@@ -769,13 +747,10 @@ void FieldPsynergy_Reveal(void) {
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,
                            scene->secondObjectId);
-  // Leave the centre (in pixels) and the time in the event work, and put
-  // up the markers nearby.
-  // The cue and the active flag in a once-only block keep active's store
-  // before the centre's reload; as plain statements, 4 of 137 instructions
-  // differ in tla-en.
+  /* FAKEMATCH(dead): leave the centre (in pixels) and the time in the event
+   * work. */
   do {
-    Sound_PlayFar(SE_REVEAL);
+    Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     event->active = 1;
   } while (0);
   event->centreX = transition->centreX / Q16_ONE;
@@ -800,7 +775,7 @@ void FieldPsynergy_EndReveal(void) {
   void *pending;
 
   if (event->active != 0) {
-    Sound_PlayFar(167);
+    Sound_PlayFar(SE_MAP_TRANSITION);
     Task_Remove(FieldPsynergy_WatchLeaderDistance);
     event->active = 0;
     event->frames = 0;
@@ -857,7 +832,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     target->collisionFlags = 0;
     target->priorityFlags |= 2;
     wait(10);
-    Sound_PlayFar(126);
+    Sound_PlayFar(SE_RECOVERY);
     wait(40);
   } else if (kind == 1) {
     struct BurstParticleVector position;
@@ -885,7 +860,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     HangingVine_Hang(scene->secondObjectId, 1);
   } else {
     wait(10);
-    Sound_PlayFar(126);
+    Sound_PlayFar(SE_RECOVERY);
   }
   FieldPsynergy_FadeFromCastColor();
 }
@@ -897,7 +872,7 @@ void FieldPsynergy_Growth(void) {
   s32 entryCount;
 
   FieldEffect_SpawnBurstParticleField();
-  Sound_PlayFar(134);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
   p = &position;
   entryCount = 4;
   do {
@@ -939,11 +914,11 @@ void FieldEffect_SpawnBurstParticleField(void) {
     struct BurstParticleVisual *child;
     s32 dist;
 
-    if (*(u16 *)&work->angle == 0x4000) {
+    if (*(u16 *)&work->angle == TRIG_TURN / 4) {
       pos[0] = user->x;
       pos[1] = user->y + 0xa0000;
       pos[2] = user->z;
-    } else if (*(u16 *)&work->angle == 0xc000) {
+    } else if (*(u16 *)&work->angle == TRIG_TURN * 3 / 4) {
       pos[0] = user->x;
       pos[1] = user->y + 0x180000;
       pos[2] = user->z;
@@ -951,7 +926,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       pos[0] = user->x;
       pos[1] = user->y + 0xa0000;
       pos[2] = user->z;
-      Vector_AddPolarOffset(0xa0000, *(u16 *)&work->angle, pos);
+      Vector_AddPolarOffset(px(10), *(u16 *)&work->angle, pos);
     }
 
     obj = Actor_Spawn(672, pos[0], pos[1], pos[2]);
@@ -966,8 +941,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
     if (obj != 0) {
       ((s32 *)obj)[7] = 0xb333;
       ((s32 *)obj)[6] = 0xb333;
-      obj->acceleration = 0x18000;
-      obj->speedLimit = 0x18000;
+      obj->acceleration = px(3) / 2;
+      obj->speedLimit = px(3) / 2;
       obj->motionFlags = 0;
       Actor_SetSpriteColorModeFar(obj, 11);
       Actor_SelectAnimationFar(obj, 7);
@@ -978,13 +953,13 @@ void FieldEffect_SpawnBurstParticleField(void) {
       p[0] = work->x;
       p[1] = work->y;
       p[2] = work->z;
-      if (*(u16 *)&work->angle == 0xc000)
-        Vector_AddPolarOffset(0xe0000, *(u16 *)&work->angle, p);
+      if (*(u16 *)&work->angle == TRIG_TURN * 3 / 4)
+        Vector_AddPolarOffset(px(14), *(u16 *)&work->angle, p);
       dist = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset(dist, Random16(), p);
       Actor_SetMoveTargetFar(obj, p[0], p[1], p[2]);
     }
-    Sound_PlayFar(131);
+    Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     wait(2);
   }
   wait(8);
@@ -1028,13 +1003,13 @@ void FieldPsynergy_LiftOnTarget(void) {
   for (index = 0; index < 2; index++) {
     void *anchor = anchors[index];
     if (anchor != 0)
-      Actor_SetTargetPositionFromMagnitudeAngle(anchor, 0xe0000,
+      Actor_SetTargetPositionFromMagnitudeAngle(anchor, px(14),
                                                 *(u16 *)((u8 *)anchor + 6));
   }
 
   Actor_WaitForMoveFar(anchors[0]);
   ((struct EffectChild *)child)->callback = Actor_ApplyRandomChildValues;
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   ((struct EffectChild *)child)->flag = 4;
 
   startY = ((struct EffectChild *)child)->y;
@@ -1042,7 +1017,7 @@ void FieldPsynergy_LiftOnTarget(void) {
     do {
       *(s32 *)((u8 *)anchors[0] + 0xc) += 0x4000;
       *(s32 *)((u8 *)anchors[1] + 0xc) += 0x4000;
-      ((struct EffectChild *)child)->y += 0x4000;
+      ((struct EffectChild *)child)->y += px(1) / 4;
       wait(1);
     } while (((struct EffectChild *)child)->y <= startY + 0x200000);
   }
@@ -1065,9 +1040,7 @@ void FieldPsynergy_Lift(void) {
 
   work = Ram_HeapSlots->effectWork;
   FieldPsynergy_FadeToCastColor();
-  pos.x = work->x;
-  pos.y = work->y + 0x100000;
-  pos.z = work->z;
+  SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
   pair[0] = FieldEffect_SpawnLiftHand(pos.x + 0x200000, pos.y, pos.z, 0x8000);
   pair[1] = FieldEffect_SpawnLiftHand(pos.x - 0x200000, pos.y, pos.z, 0);
 
@@ -1076,20 +1049,18 @@ void FieldPsynergy_Lift(void) {
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, px(24), obj->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);
-  Sound_PlayFar(134);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
-    pos.x = work->x;
-    pos.y = work->y + 0x100000;
-    pos.z = work->z;
+    SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
     obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
       obj->speedLimit = Random16() + 0x20000;
-      obj->acceleration = 0x20000;
+      obj->acceleration = px(2);
       obj->motionFlags = 0;
       dist = Random16() * 24 + 0x80000;
       Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
@@ -1107,11 +1078,11 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *object;
   s32 scale;
 
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   object = Actor_Spawn(278, x, y, z);
   if (object != NULL) {
-    object->scaleX = object->scaleY = 0x4000;
-    object->acceleration = object->speedLimit = 0x30000;
+    object->scaleX = object->scaleY = Q16_ONE / 4;
+    object->acceleration = object->speedLimit = px(3);
     ((struct FieldSprite *)object->sprite)->priority = 0;
     Actor_SelectAnimationFar(object, 3);
     scale = object->scaleX;
@@ -1120,7 +1091,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
         scale += 0x800;
         object->scaleY = scale;
         object->scaleX = scale;
-        object->facing += 0x2000;
+        object->facing += TRIG_TURN / 8;
         wait(1);
         scale = object->scaleX;
       } while (scale <= 0xffff);
@@ -1133,8 +1104,8 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
 /* VIEW(mind_read): tag struct EffectPosition as struct
  * EffectPosition__mind_read; field/effect_step.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/object/visual_attributes.c:9032: redefinition of
- * `struct EffectPosition'. */
+ * tla-ja: games/tla/src/field/object/visual_attributes/mind_read.c:1104:
+ * redefinition of `struct EffectPosition'. */
 #define EffectPosition EffectPosition__mind_read
 struct EffectPosition {
   s32 x;
@@ -1145,8 +1116,8 @@ struct EffectPosition {
 /* VIEW(mind_read): tag struct EffectWork as struct EffectWork__mind_read;
  * field/event_commands/scene has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:9040: redefinition of `struct
- * EffectWork'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1116: redefinition
+ * of `struct EffectWork'. */
 #define EffectWork EffectWork__mind_read
 struct EffectWork {
   u16 angle;
@@ -1164,11 +1135,11 @@ again:
   if (state == 0) {
     value.x = effect->sourceX;
     value.z = effect->sourceZ;
-    Vector_AddPolarOffset(0x190000, (u16)Random16(), &value);
+    Vector_AddPolarOffset(px(25), (u16)Random16(), &value);
     effect->x = value.x;
     effect->z = value.z;
-    effect->velocityZ = 0x30000;
-    effect->velocityX = 0x30000;
+    effect->velocityZ = px(3);
+    effect->velocityX = px(3);
     effect->enabled = 0;
     effect->state++;
     return;
@@ -1185,12 +1156,10 @@ again:
   if (state == 2) {
     struct EffectTarget *target = work->target;
 
-    value.x = target->x;
-    value.y = target->y + 0x100000;
-    value.z = target->z;
-    Vector_AddPolarOffset(0x80000, work->angle, &value);
+    SET_POSITION(&value, target->x, target->y + 0x100000, target->z);
+    Vector_AddPolarOffset(px(8), work->angle, &value);
     Camera_WorldToScreen(&value);
-    Vector_AddPolarOffset(0x40000, Random16(), &value);
+    Vector_AddPolarOffset(px(4), Random16(), &value);
     effect->x = value.x;
     effect->z = value.z;
     effect->scale = 0x800;
@@ -1211,11 +1180,9 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
   struct Actor *frag;
   s32 i;
 
-  Sound_PlayFar(134);
-  pos.x = src->x;
-  pos.y = src->y;
-  pos.z = src->z;
-  obj = Actor_Spawn(671, pos.x, pos.y - (32 << 16), pos.z);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
+  SET_POSITION(&pos, src->x, src->y, src->z);
+  obj = Actor_Spawn(671, pos.x, pos.y - px(32), pos.z);
   if (obj != NULL) {
     obj->motionFlags = 0;
     ((struct ParticleTimer *)obj)->timer = 20;
@@ -1226,11 +1193,11 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
     frag = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (frag != NULL) {
       Actor_StartScriptFar(frag, gFieldEffect_FragmentScript);
-      frag->speedLimit = Random16() + (1 << 16);
-      frag->acceleration = 1 << 16;
+      frag->speedLimit = Random16() + px(1);
+      frag->acceleration = px(1);
       frag->motionFlags = 0;
-      Actor_SetTargetPositionFromMagnitudeAngle(
-          frag, Random16() * 24 + (8 << 16), Random16());
+      Actor_SetTargetPositionFromMagnitudeAngle(frag, Random16() * 24 + px(8),
+                                                Random16());
     }
   }
   return 0;
@@ -1238,8 +1205,11 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
 
 /* VIEW(f0dd820): routine FieldPsynergy_Force as void FieldPsynergy_Force(struct
  * BattleEffectArgument *effect); the definition has void
- * FieldPsynergy_Force(void); not tried: FieldPsynergy_Force's bound declaration
- * was not found. */
+ * FieldPsynergy_Force(void); tried as the definition's void
+ * FieldPsynergy_Force(void), which the object already declares, it does not
+ * compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1209: too many
+ * arguments to function `FieldPsynergy_Force'. */
 extern void Func_080de21c__f0dd820(struct BattleEffectArgument *effect) __asm__(
     "FieldPsynergy_Force");
 
@@ -1251,12 +1221,6 @@ void FieldPsynergy_ForceOnTarget(struct BattleEffectArgument *effect) {
 #include "module/field/event_commands.h"
 
 void *Sprite_ShareVramCacheEntry(void *src, void *alt);
-/* VIEW(f0de21c): routine FieldEffect_UpdateRadialBurst as void
- * FieldEffect_UpdateRadialBurst(struct FieldParticle *slot); the definition has
- * void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect); not
- * tried: FieldEffect_UpdateRadialBurst's bound declaration was not found. */
-extern void Func_080de060__f0de21c(struct FieldParticle *slot) __asm__(
-    "FieldEffect_UpdateRadialBurst");
 
 // Twelve sparks burst over the user, two frames apart; a ball grows in
 // front of it and flies off with three trailing copies, and the target is
@@ -1279,17 +1243,15 @@ void FieldPsynergy_Force(void) {
   scene = Ram_HeapSlots->effectWork;
   target = scene->child;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   slot = scene->slots;
 
   for (i = 0; i <= 11; i++) {
     source = scene->mainObject;
-    pos.x = source->x;
-    pos.y = source->y + 0x100000;
-    pos.z = source->z;
+    SET_POSITION(&pos, source->x, source->y + 0x100000, source->z);
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
-    FieldParticle_SetCallback(slot, Func_080de060__f0de21c);
+    FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, 9);
     slot->scaleY = 0xb333;
@@ -1299,25 +1261,23 @@ void FieldPsynergy_Force(void) {
   }
 
   source = scene->mainObject;
-  pos.x = source->x;
-  pos.y = source->y + 0x100000;
-  pos.z = source->z;
-  Vector_AddPolarOffset(0x80000, scene->angle, &pos);
+  SET_POSITION(&pos, source->x, source->y + 0x100000, source->z);
+  Vector_AddPolarOffset(px(8), scene->angle, &pos);
   object = Actor_Spawn(278, pos.x, pos.y, pos.z);
   if (object == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
-  object->scaleY = 0x4000;
-  object->scaleX = 0x4000;
+  object->scaleY = Q16_ONE / 4;
+  object->scaleX = Q16_ONE / 4;
   object->facing = scene->angle;
-  object->speedLimit = 0x40000;
-  object->acceleration = 0x40000;
+  object->speedLimit = px(4);
+  object->acceleration = px(4);
   object->motionFlags = 0;
   Actor_SelectAnimationFar(object, 5);
   Actor_SetSpriteColorModeFar(object, 3);
   scale = object->scaleX;
-  if (scale < 0x10000) {
+  if (scale < Q16_ONE) {
     do {
       scale += 0x500;
       object->scaleY = scale;
@@ -1335,8 +1295,8 @@ void FieldPsynergy_Force(void) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
       copy->facing = scene->angle;
-      copy->speedLimit = 0x40000;
-      copy->acceleration = 0x40000;
+      copy->speedLimit = px(4);
+      copy->acceleration = px(4);
       copy->motionFlags = 0;
       Actor_SelectAnimationFar(copy, 5);
       Actor_SetSpriteColorModeFar(copy, 2);
@@ -1347,14 +1307,10 @@ void FieldPsynergy_Force(void) {
 
   if (scene->enabled != 0) {
     source = scene->mainObject;
-    pos.x = source->x;
-    pos.y = source->y + 0x100000;
-    pos.z = source->z;
-    Vector_AddPolarOffset(0x380000, scene->angle, &pos);
+    SET_POSITION(&pos, source->x, source->y + 0x100000, source->z);
+    Vector_AddPolarOffset(px(56), scene->angle, &pos);
   } else {
-    pos.x = scene->x;
-    pos.y = scene->y + 0x100000;
-    pos.z = scene->z;
+    SET_POSITION(&pos, scene->x, scene->y + 0x100000, scene->z);
   }
   Actor_SetMoveTargetFar(object, pos.x, pos.y, pos.z);
   Actor_StartScriptFar(object, gData_080f0ef8);
@@ -1372,15 +1328,13 @@ void FieldPsynergy_Force(void) {
 
   if (target != NULL && scene->childMode == 0) {
     if (scene->childOption != 0)
-      target->velocityY = 0x80000;
-    pos.x = target->x;
-    pos.y = target->y;
-    pos.z = target->z;
-    Vector_AddPolarOffset(0x100000, scene->angle, &pos);
+      target->velocityY = px(8);
+    SET_POSITION(&pos, target->x, target->y, target->z);
+    Vector_AddPolarOffset(px(16), scene->angle, &pos);
     if (MapGrid_CheckCollisionFar(target, &pos) == 0 &&
         ActorScript_CheckOverlapFar(target, &pos) == 0) {
-      target->acceleration = 0x10000;
-      target->speedLimit = 0x10000;
+      target->acceleration = px(1);
+      target->speedLimit = px(1);
       Actor_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
     }
   }
@@ -1413,10 +1367,10 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *object) {
   s32 scale;
 
   if (object != NULL) {
-    scale = object->scaleX - 0x1000;
-    object->scaleY -= 0x1000;
+    scale = object->scaleX - Q16_ONE / 16;
+    object->scaleY -= Q16_ONE / 16;
     object->scaleX = scale;
-    if (scale <= 0x1000)
+    if (scale <= Q16_ONE / 16)
       Actor_StartScriptFar((struct Actor *)object,
                            (u32)gBattleEffect_SharedParticleScript);
   }
@@ -1432,9 +1386,8 @@ void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
     particle->timer = count;
     life = count;
     if (life != 0) {
-      pos.x = particle->targetX;
-      pos.y = particle->targetY;
-      pos.z = particle->targetZ;
+      SET_POSITION(&pos, particle->targetX, particle->targetY,
+                   particle->targetZ);
       Vector_AddPolarOffset(life << 17, (s16)particle->unk66 + (life << 11),
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
@@ -1454,9 +1407,8 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
     particle->timer = count;
     life = count;
     if (life != 0) {
-      pos.x = particle->targetX;
-      pos.y = particle->targetY;
-      pos.z = particle->targetZ;
+      SET_POSITION(&pos, particle->targetX, particle->targetY,
+                   particle->targetZ);
       Vector_AddPolarOffset(life << 17, (s16)particle->unk66 - (life << 11),
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
@@ -1494,7 +1446,7 @@ void FieldPsynergy_Frost(void) {
   scene = Ram_HeapSlots->effectWork;
   target = scene->child;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(115);
+  Sound_PlayFar(SE_ICE);
 
   p = &pos;
   cnt = 15;
@@ -1504,7 +1456,7 @@ void FieldPsynergy_Frost(void) {
       u32 scale;
       s32 dist;
 
-      scale = (Random16() >> 1) + 0x8000;
+      scale = (Random16() >> 1) + Q16_ONE / 2;
       particle->scaleY = scale;
       particle->scaleX = scale;
       if ((Random16() & 1) != 0)
@@ -1520,7 +1472,7 @@ void FieldPsynergy_Frost(void) {
       Actor_SetSpriteColorModeFar((struct Actor *)particle, 9);
 
       SET_POSITION(p, scene->x, scene->y, scene->z);
-      dist = (Random16() << 2) + (2 << 16);
+      dist = (Random16() << 2) + px(2);
       Vector_AddPolarOffset(dist, Random16(), p);
       particle->targetX = p->x;
       particle->targetY = p->y;
@@ -1532,11 +1484,11 @@ void FieldPsynergy_Frost(void) {
   } while (cnt >= 0);
 
   wait(10);
-  Sound_PlayFar(115);
+  Sound_PlayFar(SE_ICE);
   wait(50);
 
   if (target != NULL && scene->enabled == 0) {
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
 
     cnt = 7;
     do {
@@ -1548,7 +1500,7 @@ void FieldPsynergy_Frost(void) {
     } while (cnt >= 0);
 
     if (scene->childOption == 0) {
-      Sound_PlayFar(220);
+      Sound_PlayFar(SE_SHIMMER);
       Actor_SelectAnimationFar(target, 2);
     }
 
@@ -1615,17 +1567,17 @@ void FieldEffect_RunSparkEmitter(struct SparkObject *obj) {
   scene = Ram_HeapSlots->effectWork;
   phase = &obj->phase;
   if (*phase != -1) {
-    s32 amplitude = 6 << 16;
+    s32 amplitude = px(6);
 
-    obj->x = scene->x + Iwram_MulQ16(amplitude, Trig_Sin(*phase << 10));
-    obj->y = scene->y + (16 << 16);
-    obj->z = scene->z;
+    SET_POSITION(obj,
+                 scene->x + Iwram_MulQ16(amplitude, Trig_Sin(*phase << 10)),
+                 scene->y + px(16), scene->z);
     (*phase)++;
     *phase = (*phase + 64) % 64;
   }
   if (gFrameCount % 3 == 0) {
     pos[0] = obj->x;
-    pos[1] = obj->y + (2 << 16);
+    pos[1] = obj->y + px(2);
     pos[2] = obj->z;
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Actor_Spawn(673, pos[0], pos[1], pos[2]);
@@ -1678,7 +1630,7 @@ void FieldPsynergy_Ply(void) {
   }
 
   marker = last->vramBlock;
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   wait(110);
 
   target = Actor_Spawn(296, 0, 0, 0);
@@ -1691,13 +1643,11 @@ void FieldPsynergy_Ply(void) {
     Actor_SetSpriteColorModeFar(target, 7);
   }
 
-  Sound_PlayFar(131);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(12);
   if (target != 0) {
     for (i = 0; i < 30; i++) {
-      /* FAKEMATCH(temporary): a redundant copy keeps object as a second
-       * register copy of the centre object (r5 beside r6); without it, 123 of
-       * 188 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): a redundant copy. */
       target = object;
       if (i & 3)
         Actor_SetSpriteColorModeFar(object, 9);
@@ -1708,7 +1658,7 @@ void FieldPsynergy_Ply(void) {
   }
 
   Actor_SetSpriteColorModeFar(object, 0);
-  Sound_PlayFar(84);
+  Sound_PlayFar(MUS_084);
   if (object != 0) {
     target->update = (void (*)(void))FieldEffect_RunSparkEmitter;
     target->timer = 0;
@@ -1720,10 +1670,10 @@ void FieldPsynergy_Ply(void) {
 
   if (target != 0) {
     target->timer = -1;
-    target->speedLimit = 0x50000;
+    target->speedLimit = px(5);
     target->acceleration = 0x6666;
     target->actionFlags = 0;
-    Actor_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
+    Actor_SetTargetPositionFromMagnitudeAngle(target, px(192), 0xe800);
     Actor_WaitForMoveFar(target);
     Actor_ReleaseFar(target);
   }
@@ -1737,8 +1687,8 @@ void FieldPsynergy_Ply(void) {
 /* VIEW(f0de21c): tag struct EventWork as struct EventWork__f0de21c;
  * event_work.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:9646: structure has no member
- * named `state'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1706: structure has
+ * no member named `state'. */
 struct EventWork__f0de21c {
   u8 unk000[0x166];
   u16 state;
@@ -1748,8 +1698,9 @@ struct EventWork__f0de21c {
  * x, s32 z, s32 layer); field/object/visual_attributes has s32
  * MapGrid_IsCloakCell(s32 x, s32 z) {; tried as the definition's s32
  * MapGrid_IsCloakCell(s32 x, s32 z), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:9646:
- * too many arguments to function `MapGrid_IsCloakCell'. */
+ * not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1704: too many
+ * arguments to function `MapGrid_IsCloakCell'. */
 s32 MapGrid_IsCloakCell__mind_read(s32 x, s32 z,
                                    s32 layer) __asm__("MapGrid_IsCloakCell");
 #define MapGrid_IsCloakCell MapGrid_IsCloakCell__mind_read
@@ -1764,8 +1715,6 @@ void FieldEffect_CheckCloakTile(void) {
     event->state = 0x2092;
 }
 
-#define SE_CLOAK_END 154
-
 // The caster's palette while it flickers.
 #define CLOAK_FLICKER_PALETTE 7
 
@@ -1779,7 +1728,7 @@ void FieldPsynergy_EndCloak(void) {
   struct AnimationEntry *entry = sprite->entries[0];
   u32 i;
 
-  Sound_PlayFar(SE_CLOAK_END);
+  Sound_PlayFar(SE_CAST);
   Task_Remove(FieldEffect_CheckCloakTile);
   Actor_SelectAnimationFar((struct Actor *)caster, 0);
   caster->hook = 0;

@@ -289,8 +289,9 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void MessageArgument_ClearAll(void);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 /* VIEW(window): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unitId);
- * owner_state.h has void *Unit_Get(s32 owner); not tried: Unit_Get's
- * declaration holds a FAKEMATCH tag. */
+ * owner_state.h has void *Unit_Get(s32 owner); tried as the definition's void
+ * *Unit_Get(s32 owner), which the object already declares, Message_Decode
+ * (gone) moves: 1065 of 1065 instructions in tla-ja. */
 struct BattleUnit *Unit_Get__window(s32 unitId) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__window
 
@@ -830,9 +831,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #define WINDOW_BATTLE_MESSAGE 2
 
 // An enemy's id is 8 above its name's place after MsgEnemyName.
-/// ★ Named from the game: "Mystery Man" (MsgEnemyName + 344)
 #define ENEMY_MYSTERY_MAN 352
-/// ★ Named from the game: "Mystery Woman" (MsgEnemyName + 347)
 #define ENEMY_MYSTERY_WOMAN 355
 
 extern u8 MsgWaitingForOpponent[];

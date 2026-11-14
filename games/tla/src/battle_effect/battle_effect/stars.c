@@ -3,8 +3,11 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
+#include "macros.h"
 
 #define BOLT_COUNT 3
 #define RING_POINTS 10
@@ -65,9 +68,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   source = ACTOR(effect->actor);
   target = ACTOR(effect->actors[0]);
   for (i = 0, point = work->particles; i != BOLT_COUNT; i++) {
-    point->x = source->x;
-    point->y = source->y + 0x280000;
-    point->z = source->z;
+    SET_POSITION(point, source->x, source->y + 0x280000, source->z);
     if (i == 0)
       point->velocityX = (target->x - point->x) / 12;
     else
@@ -113,10 +114,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
 
           Transform_Push();
           Transform_ApplyRoll((frame - start) << 10);
-          Transform_ApplyYaw(0x4000);
-          scale[0] = ((frame - start) << 12) + 0x1000;
-          if (scale[0] > 0x10000)
-            scale[0] = 0x10000;
+          Transform_ApplyYaw(TRIG_TURN / 4);
+          scale[0] = ((frame - start) << 12) + Q16_ONE / 16;
+          if (scale[0] > Q16_ONE)
+            scale[0] = Q16_ONE;
           scale[1] = scale[0];
           scale[2] = scale[0];
           SceneTransform_ApplyScale(scale);
@@ -159,9 +160,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         // target is thrown back 40 pixels and up, and flashes; the third ring
         // begins the results instead.
         if (frame == start + i + 10) {
-          target->acceleration = 0x20000;
-          target->speedLimit = 0x80000;
-          target->velocityY = 0x50000;
+          target->acceleration = px(2);
+          target->speedLimit = px(8);
+          target->velocityY = px(5);
           target->gravity = 0xab85;
           target->actionFlags = 0;
           Actor_StartIdleFar(target);
@@ -172,7 +173,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           if (i == 2) {
             BattlePlayback_StartFar(134);
           } else {
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
           }
           work->shakeFrames = 4;
@@ -247,9 +248,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   for (i = 0, point = work->particles; i != STAR_COUNT; i++) {
     s32 delay = i * 8;
 
-    point->x = source->x / 2;
-    point->y = source->y + 0x780000;
-    point->z = source->z;
+    SET_POSITION(point, source->x / 2, source->y + 0x780000, source->z);
     point->velocityX =
         (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
     point->velocityY = (target->y - point->y + 0x140000) / 12;
@@ -314,7 +313,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
           star->velocityX /= 2;
           star->velocityZ /= 2;
           work->shakeFrames = 4;
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
           for (j = 0; j != effect->count; j++)
             BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 8);
         }

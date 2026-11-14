@@ -208,9 +208,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       entry->tile.value = 0;
       entry->attributes.bits.x = (s16)window->x * 8 + x;
       entry->attributes.bits.y = (s16)window->y * 8 + y;
-      /* FAKEMATCH(dead): advancing and restoring the captured pointer keeps
-       * the window chain in r9; as no pair, 32 of 80 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): advancing and restoring the captured pointer. */
       window++;
       window--;
       entry->tile.bits.index =

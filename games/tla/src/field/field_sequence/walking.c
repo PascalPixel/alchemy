@@ -4,11 +4,15 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "flags.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
 #include "gamepak/far_call/field.h"
 #include "gamepak/far_call/game.h"
 #include "system/ram_buffer.h"
+#include "macros.h"
 
 /// Unused: returns 0.
 UNUSED s32 FieldSequence_ReturnZero(void) { return 0; }
@@ -48,7 +52,7 @@ s32 Field_CountRequests(void) {
 void Field_UpdateHoverReady(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  if (GameFlag_Get(0x8df) && Party_FindOwnerWithActionFar(153) != -1)
+  if (GameFlag_Get(FLAG_SHIP_FLIES) && Party_FindOwnerWithActionFar(153) != -1)
     work[0xd39] = 1;
   else
     work[0xd39] = 0;
@@ -66,7 +70,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Vector_AddPolarOffset(0x100000, object->facing, position);
+  Vector_AddPolarOffset(px(16), object->facing, position);
   if (block->mode == 3) {
     s32 x, z;
 
@@ -96,12 +100,9 @@ s32 Field_GetCollisionUnderLeader(void) {
 
   if (object == NULL)
     return 0;
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  SET_POSITION(&position, object->x, object->y, object->z);
   if (block->mode == 3) {
     // The block table at its fixed address: as the linked gMapBlocks it loads
-    // after the cell index is summed, into r2 (4 of 69 instructions differ).
     cell =
         (struct MapCell *)Ram_MapBlocks +
         (((position.x / 0x200000) & 31) + ((position.z / 0x200000) & 31) * 32);
@@ -150,7 +151,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
         x < REGION_FIXED(maxX) && z >= REGION_FIXED(minZ) &&
         z < REGION_FIXED(maxZ)) {
       runtime->countdown = (u16)selectedValue;
-      Sound_PlayFar(123);
+      Sound_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
@@ -220,7 +221,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
 
   if ((gPartyStep.renderMode <= 1 || gPartyStep.renderMode == 6 ||
        gPartyStep.renderMode == 7) &&
-      leader != NULL && leader->targetX != (s32)0x80000000) {
+      leader != NULL && leader->targetX != TARGET_UNSET) {
     zone = 0;
     speed = leader->speedLimit;
     if (GameFlag_Get(0x167))
@@ -240,18 +241,18 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     distance = work->walkingDistance + step;
     work->walkingDistance = distance;
     if (distance > 0xffff) {
-      amount = distance / 0x10000;
+      amount = distance / Q16_ONE;
       work->walkingDistance = distance & 0xffff;
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
-        Sound_PlayFar(139);
+        Sound_PlayFar(SE_139);
       Party_ClearUnusableShortcuts();
       partyHurt = Party_ApplyPoisonDamage();
     }
 
     if (gPartyStep.hazardMode == 0 && (attributes & 8)) {
       if (work->previousCell->attributeB & 8)
-        gPartyStep.hazardSteps += leader->speedLimit / 0x10000;
+        gPartyStep.hazardSteps += leader->speedLimit / Q16_ONE;
       else
         gPartyStep.hazardSteps = gPartyStep.hazardLimit / 2;
     }
@@ -314,11 +315,11 @@ void Party_AddHp(s32 amount, s32 scaled) {
     BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
     PaletteFade_StartInterpolation(4);
     if (amount < -10)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     else
-      Sound_PlayFar(133);
+      Sound_PlayFar(SE_IMPACT);
   } else {
-    Sound_PlayFar(126);
+    Sound_PlayFar(SE_RECOVERY);
   }
   count = Party_CountMembersFar();
   for (i = 0; i < count; i++) {
@@ -383,7 +384,7 @@ s32 Party_ApplyPoisonDamage(void) {
   if (result != 0) {
     BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
     PaletteFade_StartInterpolation(4);
-    Sound_PlayFar(133);
+    Sound_PlayFar(SE_IMPACT);
   }
 
   return result;

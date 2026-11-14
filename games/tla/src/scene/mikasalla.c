@@ -1,13 +1,13 @@
 /// @file
 /// Mikasalla, the village in the far south of Osenia, and the tunnels under
-/// it, in two scenes that share this overlay (SceneId_Ov65dRoom1, the village,
-/// and SceneId_Ov65dRoom2, the tunnels).
+/// it, in two scenes that share this overlay (SceneId_Mikasalla1, the village,
+/// and SceneId_Mikasalla2, the tunnels).
 ///
 /// Scoop digs up a ladder by the sheep (Mikasalla_DigUpLadder); the tunnels
 /// lead to the inn's back yard, where Spark the Mars Djinni joins the party
 /// (Mikasalla_MeetSpark).
 
-#include "shared/actors.h"
+#include "flags.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -42,36 +42,17 @@ extern s32 gMikasalla_SheepPaces[];
 
 /// The village's actors, numbering the rows of gMikasalla_VillagePlacements.
 enum MikasallaActorId {
-  /// ★ Named from the game: "It's been a long time since we had any visitors
-  /// in Mikasalla." (MsgFieldItSBeenALong)
   ACTOR_VILLAGER_NO_VISITORS = ACTOR_FIRST_PLACED,
   /// Mikasalla_AskLookingForSomeone's villager.
-  /// ★ Named from the game: "Are you looking for someone?"
-  /// (MsgFieldAreYouLookingForSomeone)
   ACTOR_VILLAGER_LOOKING_FOR_SOMEONE,
-  /// ★ Named from the game: "I went out to investigate after the
-  /// earthquake..." (MsgFieldIWentOutToInvestigate)
   ACTOR_VILLAGER_AFTER_EARTHQUAKE,
-  /// ★ Named from the game: "If you're going deeper into Osenia, you'd better
-  /// be ready for trouble." (MsgFieldIfYouReGoingDeeper)
   ACTOR_VILLAGER_DEEPER_INTO_OSENIA,
-  /// ★ Named from the game: "In the heart of Osenia lies a sacred place, Air's
-  /// Rock..." (MsgFieldInTheHeartOfOsenia)
   ACTOR_VILLAGER_AIRS_ROCK,
-  /// ★ Named from the game: "If you want to go into the heart of Osenia, there
-  /// are two ways..." (MsgFieldIfYouWantToGo)
   ACTOR_VILLAGER_TWO_WAYS,
-  /// ★ Named from the game: "If you look across the ocean to the south, you
-  /// can see Tundaria." (MsgFieldIfYouLookAcrossThe)
   ACTOR_VILLAGER_TUNDARIA,
-  /// ★ Named from the game: "A town called Garoh lies to the east of us..."
-  /// (MsgFieldATownCalledGarohLies)
   ACTOR_VILLAGER_GAROH,
-  /// ★ Named from the game: "Buk buk buk..." (MsgFieldBukBukBuk)
   ACTOR_CHICKEN,
-  /// ★ Named from the game: "Bah! Baaaaaaa!" (MsgFieldBahBaaaaaaa)
   ACTOR_SHEEP,
-  /// ★ Named from the game: "Spark" (Mikasalla_MeetSpark's Djinni)
   ACTOR_SPARK
 };
 
@@ -80,7 +61,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov65dRoom2)
+  if (scene == (s32)&SceneId_Mikasalla2)
     return gMikasalla_TunnelRegions;
   return 0;
 }
@@ -90,7 +71,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov65dRoom1)
+  if (scene == (s32)&SceneId_Mikasalla1)
     return gMikasalla_VillagePlacements;
   return gMikasalla_TunnelPlacements;
 }
@@ -104,7 +85,7 @@ extern u8 MsgFieldAreYouLookingForSomeone[];
 /* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mikasalla.c:129: invalid use of undefined type `struct
+ * games/tla/src/scene/mikasalla.c:110: invalid use of undefined type `struct
  * WarpEntry'. */
 struct WarpEntry__mikasalla {
   s32 map;
@@ -134,11 +115,11 @@ void Mikasalla_EnterDoor(void) {
   }
   choice = (s16 *)(work + 340);
   index = *choice;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gMikasalla_Doors[index].map, gMikasalla_Doors[index].x,
                        gMikasalla_Doors[index].z);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
 
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
@@ -159,7 +140,7 @@ void Mikasalla_MeetSpark(void) { Djinn_JoinParty(ACTOR_SPARK, 2, 8); }
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov65dRoom2)
+  if (scene == (s32)&SceneId_Mikasalla2)
     return gMikasalla_TunnelTriggers;
   return gMikasalla_VillageTriggers;
 }
@@ -199,7 +180,7 @@ void Mikasalla_DigUpLadder(void) {
 /// ground, once a visit (flag 0x200), as Scene_PrepareMap redraws them on a
 /// return.
 void Mikasalla_CastParch(void) {
-  if (Event_GetFlag(0x200) == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_00) == 0) {
     Map_SetLayerEntryFlag(0);
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
@@ -212,7 +193,7 @@ void Mikasalla_CastParch(void) {
     MapGrid_CopyCells(28, 90, 2, 2, 19, 91);
     MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
     MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
 
@@ -228,16 +209,13 @@ s32 Scene_PrepareMap(void) {
 
   object = Actor_GetById(16);
   flags = object->priorityFlags & ~1;
-  // Once-only: the once-only block holds the store below gMainRoutineWork's
-  // address load, which sched2 otherwise puts above the ands (differ 2 with the
-  // plain statement).
   do {
     party = &gMainRoutineWork;
   } while (0);
   object->priorityFlags = flags;
   Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
-  if (party->scene == (s32)&SceneId_Ov65dRoom2) {
-    if (Event_GetFlag(0x200)) {
+  if (party->scene == (s32)&SceneId_Mikasalla2) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       Map_SetLayerEntryFlag(0);
       Map_SetLayerEntryFlag(1);
       Map_SetLayerEntryFlag(2);
@@ -264,7 +242,7 @@ void Mikasalla_ClimbDownLadder(void) {
   s32 exit;
   s32 drop;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65dRoom1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Mikasalla1) {
     exit = 12;
     drop = 17;
   } else {
@@ -283,7 +261,7 @@ void Mikasalla_ClimbDownLadder(void) {
   Actor_WaitForMoveById(4);
   Actor_SetAnimation(4, 10);
   Event_Wait(10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(exit);
   Event_End();
 }
@@ -305,8 +283,7 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
 }
 
 /// Stepping onto a ladder top facing south, the leader turns and climbs down.
-DEFINE_SCENE_TURN_ACTOR_AND_RUN(Mikasalla_TurnAndClimbDownLadder,
-                                Mikasalla_ClimbDownLadder)
+#include "shared/scene_turn_actor_and_run.h"
 
 void Mikasalla_StepOntoLadderFacingNorth(void) {
   s32 x = ((s16 *)&Actor_GetById(4)->x)[1];
@@ -372,44 +349,226 @@ s16 gMikasalla_TunnelRegions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(55),
-    SCENE_EXIT_IF(1, 57, 1, -1),
-    SCENE_EXIT_IF(2, 57, 2, -1),
-    SCENE_EXIT_IF(3, 57, 3, -1),
-    SCENE_EXIT_IF(4, 57, 4, -1),
-    SCENE_EXIT_IF(5, 58, 1, -1),
-    SCENE_EXIT_IF(6, 2, 14, -1),
-    SCENE_EXIT_IF(7, 55, 9, -1),
-    SCENE_EXIT_IF(8, 55, 10, -1),
-    SCENE_EXIT_IF(9, 55, 7, -1),
-    SCENE_EXIT_IF(10, 55, 8, -1),
-    SCENE_EXIT_IF(11, 56, 4, -1),
-    SCENE_EXIT_IF(12, 56, 1, -1),
-    SCENE_EXITS(56),
-    SCENE_EXIT_IF(1, 55, 12, -1),
-    SCENE_EXIT_IF(2, 56, 3, -1),
-    SCENE_EXIT_IF(3, 56, 2, -1),
-    SCENE_EXIT_IF(4, 55, 11, -1),
+    SCENE_EXITS(Mikasalla1),
+    SCENE_EXIT_UNLESS(1, MikasallaInteriors1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, MikasallaInteriors1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, MikasallaInteriors1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, MikasallaInteriors1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, MikasallaInteriors2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, WorldMap, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Mikasalla1, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, Mikasalla1, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, Mikasalla1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, Mikasalla1, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, Mikasalla2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, Mikasalla2, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(Mikasalla2),
+    SCENE_EXIT_UNLESS(1, Mikasalla1, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Mikasalla2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Mikasalla2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Mikasalla1, 11, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 /// The chicken and the sheep pace back and forth, squashing as they turn.
-DEFINE_G_DATA_02000850(gMikasalla_ChickenPaces, 0x9999, 120, 648, 72)
+s32 gMikasalla_ChickenPaces[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x3333),                                                
+      SC_SET(SW_SPEED, 0x9999),                                                    
+      SC_LABEL(1),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(px(120), 0, px(648)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
+      SC_ADD(SW_FACING, -0x8000),                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ARG(2),                                                               
+      SC_MOVE(px(72), 0, px(648)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
+      SC_ADD(SW_FACING, -0x8000),                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02000850(gMikasalla_SheepPaces, 0x4ccc, 88, 680, 120)
+s32 gMikasalla_SheepPaces[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x3333),                                                
+      SC_SET(SW_SPEED, 0x4ccc),                                                    
+      SC_LABEL(1),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(px(88), 0, px(680)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
+      SC_ADD(SW_FACING, -0x8000),                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ARG(2),                                                               
+      SC_MOVE(px(120), 0, px(680)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
+      SC_ADD(SW_FACING, -0x8000),                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, 0x2000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x2000),                                              
+      SC_ADD(SW_SCALE_Y, -4096),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, 0x1000),                                              
+      SC_ADD(SW_SCALE_Y, -2048),                                               
+      SC_WAIT(4),                                                              
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
 struct ActorPlacement gMikasalla_VillagePlacements[] = {
-    {71, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(552), FACING_SOUTH, 1, 0},
-    {72, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(600), FACING_SOUTH, 3, 0},
-    {73, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(504), FACING_SOUTH, 1, 0},
-    {74, CONDITION_ALWAYS, 2, PIXELS(264), 0, PIXELS(680), FACING_NORTH, 0, 0},
-    {75, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(664), FACING_SOUTH + FACING_STEP, 1, 0},
-    {76, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(680), FACING_NORTHEAST, 1, 0},
-    {77, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(632), FACING_NORTHWEST, 1, 0},
-    {78, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(616), FACING_SOUTHEAST, 1, 0},
-    {203, CONDITION_ALWAYS, (s32)gMikasalla_ChickenPaces, PIXELS(72), 0, PIXELS(648), FACING_EAST, 0, 0},
-    {81, CONDITION_ALWAYS, (s32)gMikasalla_SheepPaces, PIXELS(120), 0, PIXELS(680), FACING_WEST, 0, 0},
-    {245, 0x60, 1, PIXELS(312), 0, PIXELS(168), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 552, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 264, 0, 680, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 664, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 680, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 632, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 616, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(203, CONDITION_ALWAYS, (s32)gMikasalla_ChickenPaces, 72, 0, 648, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(81, CONDITION_ALWAYS, (s32)gMikasalla_SheepPaces, 120, 0, 680, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(245, 0x60, MOVEMENT_TYPE_STAND, 312, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -420,11 +579,11 @@ struct ActorPlacement gMikasalla_TunnelPlacements[] = {
 
 // clang-format off
 struct Trigger gMikasalla_VillageTriggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
@@ -432,9 +591,9 @@ struct Trigger gMikasalla_VillageTriggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {0x4602, 30, CONDITION_ALWAYS, EVENT(Mikasalla_TurnAndClimbDownLadder)},
-    {0x602, 31, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
-    {0x8602, 32, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(Mikasalla_TurnAndClimbDownLadder)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
     {TRIGGER_TALK, ACTOR_VILLAGER_NO_VISITORS, CONDITION_ALWAYS, MSGNO(MsgFieldItSBeenALong)},
     {TRIGGER_TALK, ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, CONDITION_ALWAYS, EVENT(Mikasalla_AskLookingForSomeone)},
     {TRIGGER_TALK, ACTOR_VILLAGER_AFTER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgFieldIWentOutToInvestigate)},
@@ -456,7 +615,7 @@ struct Trigger gMikasalla_VillageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHICKEN, CONDITION_ALWAYS, MSGNO(MsgFieldTheGroundHereIsSo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEEP, CONDITION_ALWAYS, MSGNO(MsgFieldOhYeahMmmIJust)},
     {TRIGGER_TALK, ACTOR_SPARK, CONDITION_ALWAYS, EVENT(Mikasalla_MeetSpark)},
-    {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldItSCompletelyFullOf))},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldItSCompletelyFullOf))},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, CONDITION_ALWAYS, EVENT(Mikasalla_DigUpLadder)},
     {TRIGGER_TABLE_END},
 };
@@ -465,11 +624,16 @@ struct Trigger gMikasalla_VillageTriggers[] = {
 struct Trigger gMikasalla_TunnelTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0x4602, 30, CONDITION_ALWAYS, EVENT(Mikasalla_TurnAndClimbDownLadder)},
-    {0x602, 31, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
-    {0x8602, 32, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
-    {0xc602, 33, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingNorth)},
-    {0xc602, 34, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderAhead)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS,
+     EVENT(Mikasalla_TurnAndClimbDownLadder)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
+     EVENT(Mikasalla_StepOntoLadderFacingEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
+     EVENT(Mikasalla_StepOntoLadderFacingWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS,
+     EVENT(Mikasalla_StepOntoLadderFacingNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS,
+     EVENT(Mikasalla_StepOntoLadderAhead)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, 0x200,
      EVENT(Mikasalla_CastParch)},
     {TRIGGER_TABLE_END},

@@ -6,6 +6,8 @@
 /// household welcomes him home.
 
 #include "shared/tables.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -74,7 +76,7 @@ void MadraInteriors_InterrogatePiers(void);
 #include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors2)
     return gMadraInteriors_SecondRoomsPlacements;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailPlacements;
@@ -117,7 +119,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
     // Before patch 1 there is no choice prompt.
     if (Event_GetFlag(0x8ff))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors155);
-    else if (Event_GetFlag(0x8ab))
+    else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors87);
     else
       FieldEvent_SetMessageId((s32)MsgMadraInteriors39);
@@ -138,7 +140,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
       }
       Event_ShowMessage(22, 0);
     } else {
-      if (Event_GetFlag(0x8ab))
+      if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
         FieldEvent_SetMessageId((s32)MsgMadraInteriors87);
       else
         FieldEvent_SetMessageId((s32)MsgMadraInteriors39);
@@ -158,7 +160,7 @@ void MadraInteriors_TalkToHealer(s32 actor) {
   } else {
     if (Event_GetFlag(0x8ff))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors149);
-    else if (Event_GetFlag(0x8ab))
+    else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors81);
     else
       FieldEvent_SetMessageId((s32)MsgMadraInteriors33);
@@ -185,14 +187,14 @@ void MadraInteriors_TalkToMushroomLover(void) {
   s32 msg;
 
   if (Event_GetFlag(0x98a)) {
-    if (Event_GetFlag(0x310))
+    if (Event_GetFlag(FLAG_AREA_TEMP_10))
       msg = (s32)MsgMadraInteriors111;
     else
       msg = (s32)MsgMadraInteriors118;
     FieldEvent_SetMessageId(msg);
     Event_ShowMessage(10, 0);
   } else {
-    if (Event_GetFlag(0x210)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_10)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors116);
       Event_ShowMessage(10, 0);
     } else {
@@ -206,14 +208,14 @@ void MadraInteriors_TalkToMushroomLover(void) {
 /// His wife, who cooks them.
 void MadraInteriors_TalkToMushroomCook(void) {
   if (Event_GetFlag(0x98a)) {
-    if (Event_GetFlag(0x310)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_10)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors112);
       Event_ShowMessage(11, 0);
     } else {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors119);
       Event_ShowMessage(11, 0);
     }
-  } else if (Event_GetFlag(0x210)) {
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_10)) {
     FieldEvent_SetMessageId((s32)MsgMadraInteriors117);
     Event_ShowMessage(11, 0);
   } else {
@@ -224,7 +226,7 @@ void MadraInteriors_TalkToMushroomCook(void) {
 
 void MadraInteriors_MindReadMushroomLover(void) {
   if (Event_GetFlag(0x98a)) {
-    if (Event_GetFlag(0x310)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_10)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors113);
       Event_ShowMessage(10, 0);
     } else {
@@ -232,7 +234,7 @@ void MadraInteriors_MindReadMushroomLover(void) {
       Event_ShowMessage(10, 0);
     }
   } else {
-    s32 flag = Event_GetFlag(0x210);
+    s32 flag = Event_GetFlag(FLAG_SCENE_TEMP_10);
     s32 msg = (s32)MsgMadraInteriors108;
 
     if (flag) {
@@ -247,7 +249,7 @@ void MadraInteriors_MindReadMushroomLover(void) {
 
 void MadraInteriors_MindReadMushroomCook(void) {
   if (Event_GetFlag(0x98a)) {
-    if (Event_GetFlag(0x310)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_10)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors114);
       Event_ShowMessage(11, 0);
     } else {
@@ -255,7 +257,7 @@ void MadraInteriors_MindReadMushroomCook(void) {
       Event_ShowMessage(11, 0);
     }
   } else {
-    s32 flag = Event_GetFlag(0x210);
+    s32 flag = Event_GetFlag(FLAG_SCENE_TEMP_10);
     s32 msg = (s32)MsgMadraInteriors109;
 
     if (flag) {
@@ -272,15 +274,15 @@ void MadraInteriors_MindReadMushroomCook(void) {
 /// he saw made by thinking.
 /// "Uhhhnnn... UHHHNNN!"
 void MadraInteriors_TalkToIllMan(void) {
-  if (!Event_GetFlag(0x211)) {
-    Event_SetFlag(0x211);
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_11)) {
+    Event_SetFlag(FLAG_SCENE_TEMP_11);
     FieldEvent_SetMessageId((s32)MsgUhhhnnnUhhhnnn2);
     Actor_WalkByAndWait(14, -12, 0);
     FieldEvent_Wait(20);
     Actor_RunRepeatedMotion(14, 2);
     FieldEvent_Wait(20);
     Event_ShowMessage(14, 0);
-    FieldActor_ShowEmote(14, 265, 30);
+    FieldActor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_Wait(20);
     Actor_WalkByAndWait(14, 12, 0);
     Actor_FaceActor(14, 4, 0);
@@ -293,13 +295,13 @@ void MadraInteriors_TalkToIllMan(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors2)
     return gMadraInteriors_SecondRoomsTriggers;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailTriggers;
   if (Event_GetFlag(0x8ff))
     return gMadraInteriors_TriggersOnReturn;
-  if (Event_GetFlag(0x8ab))
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gMadraInteriors_TriggersAfterRaid;
   return gMadraInteriors_TriggersBeforeRaid;
 }
@@ -307,8 +309,8 @@ const struct Trigger *Scene_GetEvents(void) {
 /// The Black Crystal (item 242) sits on the elder's mantel until it is stolen
 /// (flag 0x8ab), after which its actor is put out of sight.
 void MadraInteriors_PlaceBlackCrystal(void) {
-  if (Event_GetFlag(0x8ab)) {
-    Actor_SetPosition(26, PIXELS(888), PIXELS(8));
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
+    Actor_SetPosition(26, 888, 8);
   } else {
     Actor_SetItemIcon(Actor_Get(26), 242);
     Actor_SetSpriteFlags(Actor_Get(26), 0);
@@ -325,7 +327,7 @@ static inline void MadraInteriors_PlaceFacing(s32 actorId, s32 x, s32 z,
 /// The jail on entrance 20: Piers' interrogation the first time, then his
 /// interrogators by the story flags.
 void MadraInteriors_SetUpJail(void) {
-  if (!Event_GetFlag(0x8ab)) {
+  if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 0xd4c) = 3;
     if (!Event_GetFlag(0x911)) {
       MadraInteriors_InterrogatePiers();
@@ -334,12 +336,12 @@ void MadraInteriors_SetUpJail(void) {
       Actor_SetPosition(10, 0, 0);
     }
   } else if (Event_GetFlag(0x8ff)) {
-    MadraInteriors_PlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHEAST);
-    MadraInteriors_PlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
+    MadraInteriors_PlaceFacing(9, px(515), px(841), FACING_NORTHEAST);
+    MadraInteriors_PlaceFacing(10, px(472), px(877), FACING_NORTH);
     Actor_SetPosition(8, 0, 0);
   } else {
-    MadraInteriors_PlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHWEST);
-    MadraInteriors_PlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
+    MadraInteriors_PlaceFacing(9, px(515), px(841), FACING_NORTHWEST);
+    MadraInteriors_PlaceFacing(10, px(472), px(877), FACING_NORTH);
     Actor_SetPosition(8, 0, 0);
   }
 }
@@ -359,7 +361,7 @@ s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors1) {
     event = Ram_HeapSlots->eventWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
     if (!Event_GetFlag(0x821)) {
@@ -369,15 +371,15 @@ s32 Scene_Initialize(void) {
       FieldActor_SetSpriteColor(Actor_Get(29), 3);
       FieldActor_SetSpriteColor(Actor_Get(30), 5);
     }
-    if (Event_GetFlag(0x8ab)) {
+    if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       MapGrid_CopyCellsLayered(2, 110, 16, 10, 16, 64);
       MapGrid_CopyCellAttributes(2, 46, 16, 10, 16, 0);
     }
   }
   if (gMainRoutineWork.entrance == 20)
     MadraInteriors_SetUpJail();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2) {
-    if (Event_GetFlag(0x8ab)) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors2) {
+    if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       Actor_SetPosition(10, 0, 0);
     } else {
       Actor_SetSpriteRotationById(10, 0xc000);
@@ -443,11 +445,11 @@ void MadraInteriors_InterrogatePiers(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(8, 1);
-  Actor_SetPosition(4, PIXELS(400), PIXELS(888));
-  FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(848), 1);
+  Actor_SetPosition(4, 400, 888);
+  FieldCamera_MoveTo(408, CAMERA_KEEP, 848, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  Actor_SetSpeed(7, 0.8);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors28);
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   Actor_WalkToAndWait(4, 396, 869);
@@ -459,12 +461,12 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirection(11, FACING_NORTHEAST, 0);
   FieldEvent_Wait(10);
-  FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(820), 1);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 820, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(9, 0x107, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(7, 4);
@@ -476,24 +478,24 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(7, 4);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  FieldActor_ShowEmote(9, 0x103, 0);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   object0 = Actor_Get(9);
   object0->actionFlags &= 254;
   for (i = 2; i >= 0; i--) {
     Actor_WalkByAndWait(9, 0, -8);
-    Event_PlaySound(134);
+    Event_PlaySound(SE_HEAVY_IMPACT);
     Actor_WalkByAndWait(9, 0, 8);
   }
   object1 = Actor_Get(9);
   object1->actionFlags |= 1;
   FieldEvent_Wait(30);
-  Actor_ShowEmote(7, 0x102, 30);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmote(7, 0x107, 30);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(9, 0x108, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   Actor_FaceActor(10, 9, 0);
   FieldEvent_Wait(20);
@@ -506,7 +508,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(7, 4);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  FieldActor_ShowEmote(9, 0x107, 20);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   Actor_FaceDirectionAndWait(9, FACING_NORTH);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   Actor_RunRepeatedMotion(7, 2);
@@ -516,7 +518,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_FaceDirection(9, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmote(10, 0x102, 30);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldEvent_Wait(20);
@@ -524,7 +526,7 @@ void MadraInteriors_InterrogatePiers(void) {
   BattleEffect_LoadActionEffectResources(24, 1);
   FieldPsynergy_SetupActorPair(7, 8);
   EventObject_Initialize();
-  Actor_ShowEmote(9, 0x101, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(9, 7, 0);
   Actor_FaceActor(10, 7, 0);
   object2 = Actor_Get(9);
@@ -536,9 +538,9 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   FieldActor_Stop(9);
   object3 = Actor_Get(9);
-  object3->scaleX = 0x10000;
+  object3->scaleX = Q16_ONE;
   object4 = Actor_Get(9);
-  object4->scaleY = 0x10000;
+  object4->scaleY = Q16_ONE;
   FieldEvent_Wait(4);
   object5 = Actor_Get(9);
   object5->motionFlags = 2;
@@ -547,7 +549,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_SetDestinationOffset(9, -8, 0);
   Actor_SetScript(9, gMadraInteriors_InterrogatorTopples);
   FieldActor_RefreshSelectorById(9);
-  Event_PlaySound(127);
+  Event_PlaySound(SE_LANDING_THUD);
   FieldEvent_Wait(60);
   object7 = Actor_Get(9);
   object7->actionFlags = (object7->actionFlags | 1);
@@ -562,7 +564,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(10, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(10, 0x100, 30);
+  FieldActor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
@@ -594,9 +596,9 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldActor_WatchAndSetScript(4, 10);
   FieldActor_WatchAndSetScript(11, 10);
   FieldEvent_ShowMessageThenWait(10, 0, 10);
-  Actor_ShowEmote(7, 0x105, 30);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(10, 0x102, 30);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_WalkByAndWait(10, -16, 16);
   FieldEvent_ShowMessageThenWait(10, 0, 1);
   Actor_SetAnimationAndWait(7, 4);
@@ -722,14 +724,14 @@ void MadraInteriors_GiveHealingFungus(void) {
   struct Actor *object;
 
   Event_SetFlag(0x98a);
-  Event_SetFlag(0x310);
+  Event_SetFlag(FLAG_AREA_TEMP_10);
   PartyInventory_Remove(0x1c0);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(11, 0x6666, 0x3333);
+  Actor_SetSpeed(11, 0.4);
   Actor_WalkTo(11, 410, 109);
   object = Actor_Get(4);
-  if (object->z > 0x5f0000)
+  if (object->z > px(95))
     Actor_WalkToAndWait(4, object->x / 0x10000, 95);
   Actor_WalkToAndWait(4, 362, 95);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);
@@ -737,9 +739,9 @@ void MadraInteriors_GiveHealingFungus(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors110);
   Actor_FaceActor(10, 4, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(10, 0x102, 30);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(10, 0, 10);
-  Actor_ShowEmote(11, 0x100, 3);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 3);
   Actor_WalkToAndWait(11, 378, 109);
   Actor_FaceDirection(11, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
@@ -748,17 +750,17 @@ void MadraInteriors_GiveHealingFungus(void) {
   FieldEvent_Wait(20);
   Actor_FaceActor(10, 4, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(10, 0x108, 30);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(11, 0x102, 30);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   Actor_FaceActor(10, 11, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(10, 0x101, 30);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(20);
@@ -769,11 +771,11 @@ void MadraInteriors_GiveHealingFungus(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(11, FACING_WEST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(11, 0x106, 30);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   FieldActor_Stop(25);
-  Actor_SetSpeed(10, 0x8000, 0x4000);
-  Actor_SetSpeed(11, 0x8000, 0x4000);
-  Actor_SetSpeed(25, 0x8000, 0x4000);
+  Actor_SetSpeed(10, 0.5);
+  Actor_SetSpeed(11, 0.5);
+  Actor_SetSpeed(25, 0.5);
   Actor_SetScript(11, (s32)gMadraInteriors_WifeWalksToBackRoom);
   Actor_SetScript(4, (s32)gMadraInteriors_LeaderStepsAside);
   FieldEvent_Wait(60);
@@ -812,25 +814,25 @@ void MadraInteriors_GiveHealingFungus(void) {
 void MadraInteriors_GiveLaughingFungus(void) {
   struct Actor *object0;
 
-  Event_SetFlag(0x210);
+  Event_SetFlag(FLAG_SCENE_TEMP_10);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object0 = Actor_Get(4);
-  if (object0->z > 0x5f0000)
+  if (object0->z > px(95))
     Actor_WalkToAndWait(4, object0->x / 0x10000, 95);
   Actor_WalkToAndWait(4, 362, 95);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors110);
   Actor_FaceActor(10, 4, 0);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(10, 0x102, 30);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(10, 0, 5);
-  Actor_ShowEmote(11, 0x100, 3);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 3);
   Actor_FaceActor(11, 4, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors115);
-  Actor_ShowEmote(10, 0x100, 30);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirectionAndWait(10, FACING_EAST);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(10, 0, 5);
@@ -838,7 +840,7 @@ void MadraInteriors_GiveLaughingFungus(void) {
   FieldEvent_Wait(20);
   Actor_FaceActor(10, 4, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(10, 0x105, 0);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(10, 0, 5);
   Actor_FaceActor(11, 4, 0);
@@ -855,7 +857,7 @@ void MadraInteriors_GiveLaughingFungus(void) {
 static inline void MadraInteriors_WalkIntoLeader(s32 actorId) {
   struct Actor *leader;
 
-  Actor_SetSpeed(actorId, 0x13333, 0x9999);
+  Actor_SetSpeed(actorId, 1.2);
   Actor_SetAnimation(actorId, 2);
   leader = Actor_Get(4);
   if (leader != NULL)
@@ -874,7 +876,7 @@ void MadraInteriors_WelcomePiersHome(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors126);
-  Actor_ShowEmote(28, 0x100, 30);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(28, 4, 0);
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceActor(15, 4, 0);
@@ -891,9 +893,9 @@ void MadraInteriors_WelcomePiersHome(void) {
   FieldActor_LaunchFromLeader(6, -8, 16, FACING_SOUTHWEST);
   FieldActor_LaunchFromLeader(7, -24, 16, FACING_SOUTHWEST);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(15, 0x100, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(15, 0, 10);
-  Actor_ShowEmote(27, 0x100, 30);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_Wait(20);
   Actor_FaceDirection(27, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -902,7 +904,7 @@ void MadraInteriors_WelcomePiersHome(void) {
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(27, 0x109, 30);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_FaceEachOther(7, 4, 0);
   FieldEvent_Wait(30);
@@ -917,23 +919,23 @@ void MadraInteriors_WelcomePiersHome(void) {
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(28, 0x102, 30);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_OpenMessage(28, 0);
   result0 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result0 != 0)
     goto answeredNo;
-  Actor_ShowEmote(27, 0x108, 30);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(15, 0x108, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(15, 0, 10);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 3;
   goto answered;
 answeredNo:
-  Actor_ShowEmote(15, 0x102, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Func_02001ef8();
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 3;
   FieldEvent_ShowMessageThenWait(27, 0, 10);
@@ -942,7 +944,7 @@ answeredNo:
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldActor_StartRepeatedMotion(15, 3);
-  Actor_SetAttachedEffect(15, 0x102);
+  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   FieldEvent_ShowMessageThenWait(15, 0, 10);
 answered:
@@ -1002,17 +1004,17 @@ void MadraInteriors_SayGoodbyeAgain(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(15, 0x100, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(15, 0, 10);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(27, 0x102, 30);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(31, 0, 10);
-  Actor_ShowEmote(5, 0x108, 30);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(5, 0, 10);
   Actor_SetAnimationAndWait(17, 3);
   FieldEvent_Wait(20);
@@ -1045,11 +1047,11 @@ void MadraInteriors_AskToStayLonger(void) {
   Actor_FaceDirectionAndWait(5, FACING_NORTH);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(17, 0x101, 30);
+  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(7, 17, 0);
-  Actor_ShowEmote(7, 0x108, 30);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(31, 0x102, 30);
+  Actor_ShowEmote(31, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceActor(31, 7, 0);
   FieldEvent_ShowMessageThenWait(31, 0, 10);
   Actor_FaceActor(7, 31, 0);
@@ -1061,19 +1063,19 @@ void MadraInteriors_AskToStayLonger(void) {
   Actor_FaceActor(6, 7, 0);
   Actor_FaceActor(5, 7, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(6, 0x101, 30);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 10);
   Actor_FaceActor(7, 6, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(4, 0x101, 30);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(7, 4, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(5, 0x109, 30);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(5, 0, 10);
   Actor_SetAnimationAndWait(7, 4);
   FieldEvent_Wait(20);
@@ -1090,19 +1092,19 @@ void MadraInteriors_AskToStayLonger(void) {
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Event_SetFlag(0x981);
-  Actor_ShowEmote(15, 0x100, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(15, 0, 10);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_FaceDirection(4, FACING_SOUTHWEST, 0);
-  Actor_ShowEmote(27, 0x102, 30);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(31, 0, 10);
-  Actor_ShowEmote(5, 0x108, 30);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceDirection(5, FACING_WEST, 0);
   FieldEvent_ShowMessageThenWait(5, 0, 10);
   Actor_SetAnimationAndWait(17, 3);
@@ -1122,9 +1124,9 @@ void MadraInteriors_AskToStayLonger(void) {
 /// after them, as they fetch the Djinni for the Healing Fungus.
 u32 gMadraInteriors_WifeWalksToBackRoom[] = {
     SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(356), PIXELS(72)),
+    SC_MOVE_XZ(px(356), px(72)),
     SC_SYNC,
-    SC_MOVE(PIXELS(324), 0, PIXELS(73)),
+    SC_MOVE(px(324), 0, px(73)),
     SC_SYNC,
     SC_CMD_03,
     SC_END,
@@ -1132,7 +1134,7 @@ u32 gMadraInteriors_WifeWalksToBackRoom[] = {
 
 u32 gMadraInteriors_LeaderStepsAside[] = {
     SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(339), PIXELS(111)),
+    SC_MOVE_XZ(px(339), px(111)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTHWEST),
@@ -1143,25 +1145,57 @@ u32 gMadraInteriors_LeaderStepsAside[] = {
 
 u32 gMadraInteriors_OldManWalksToBackRoom[] = {
     SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(356), PIXELS(72)),
+    SC_MOVE_XZ(px(356), px(72)),
     SC_SYNC,
-    SC_MOVE(PIXELS(324), 0, PIXELS(73)),
+    SC_MOVE(px(324), 0, px(73)),
     SC_SYNC,
     SC_CMD_03,
     SC_END,
 };
 
-DEFINE_G_DATA_02001FC4(gMadraInteriors_WifeComesBack, 109)
+u32 gMadraInteriors_WifeComesBack[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_POSITION(px(327), 0, px(71)),                                 
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_MOVE(px(352), 0, px(72)),                                     
+      SC_SYNC,                                                                 
+      SC_MOVE_XZ(px(373), px(109)),                                     
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(10),                                                             
+      SC_SET(SW_FACING, FACING_SOUTHWEST),                                     
+      SC_WAIT(10),                                                             
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(10),                                                             
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02001FC4(gMadraInteriors_OldManComesBack, 97)
+u32 gMadraInteriors_OldManComesBack[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_POSITION(px(327), 0, px(71)),                                 
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_MOVE(px(352), 0, px(72)),                                     
+      SC_SYNC,                                                                 
+      SC_MOVE_XZ(px(373), px(97)),                                     
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(10),                                                             
+      SC_SET(SW_FACING, FACING_SOUTHWEST),                                     
+      SC_WAIT(10),                                                             
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(10),                                                             
+      SC_END,                                                                  
+  };
 
 u32 gMadraInteriors_CharFollows[] = {
     SC_ARG(2),
-    SC_POSITION(PIXELS(327), PIXELS(24), PIXELS(71)),
+    SC_POSITION(px(327), px(24), px(71)),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_MOVE(PIXELS(352), 0, PIXELS(72)),
+    SC_MOVE(px(352), 0, px(72)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(373), PIXELS(97)),
+    SC_MOVE_XZ(px(373), px(97)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTH),
@@ -1179,106 +1213,106 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(45),
-    SCENE_EXIT_IF(1, 44, 2, -1),
-    SCENE_EXIT_IF(2, 44, 3, -1),
-    SCENE_EXIT_IF(3, 45, 4, -1),
-    SCENE_EXIT_IF(4, 45, 3, -1),
-    SCENE_EXIT_IF(5, 44, 7, -1),
-    SCENE_EXIT_IF(6, 45, 7, -1),
-    SCENE_EXIT_IF(7, 45, 6, -1),
-    SCENE_EXIT_IF(8, 44, 4, -1),
-    SCENE_EXIT_IF(9, 44, 8, -1),
-    SCENE_EXIT_IF(10, 44, 5, -1),
-    SCENE_EXIT_IF(11, 45, 12, -1),
-    SCENE_EXIT_IF(12, 45, 11, -1),
-    SCENE_EXIT_IF(13, 45, 14, -1),
-    SCENE_EXIT_IF(14, 45, 13, -1),
-    SCENE_EXIT_IF(15, 44, 6, -1),
-    SCENE_EXIT_IF(20, 44, 9, -1),
-    SCENE_EXITS(46),
-    SCENE_EXIT_IF(1, 44, 1, -1),
-    SCENE_EXIT_IF(2, 44, 10, -1),
+    SCENE_EXITS(MadraInteriors1),
+    SCENE_EXIT_UNLESS(1, Madra, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Madra, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, MadraInteriors1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, MadraInteriors1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Madra, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, MadraInteriors1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, MadraInteriors1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, Madra, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, Madra, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, Madra, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, MadraInteriors1, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, MadraInteriors1, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, MadraInteriors1, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, MadraInteriors1, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, Madra, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(20, Madra, 9, EXIT_FLAG_NONE),
+    SCENE_EXITS(MadraInteriors2),
+    SCENE_EXIT_UNLESS(1, Madra, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Madra, 10, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gMadraInteriors_Placements[] = {
-    {73, -1, 3, PIXELS(184), PIXELS(0), PIXELS(120), 0x4000, 1, 0},
-    {74, -1, 1, PIXELS(72), PIXELS(0), PIXELS(112), 0x2000, 1, 0},
-    {75, -1, 1, PIXELS(360), PIXELS(0), PIXELS(109), 0x4000, 1, 0},
-    {76, -1, 1, PIXELS(440), PIXELS(0), PIXELS(96), 0x6000, 1, 0},
-    {224, -1, 1, PIXELS(120), PIXELS(0), PIXELS(296), 0xa000, 1, 0},
-    {225, -1, 1, PIXELS(72), PIXELS(0), PIXELS(384), 0x4000, 1, 0},
-    {74, -1, 1, PIXELS(616), PIXELS(0), PIXELS(112), 0x2000, 1, 0},
-    {200, -1, 1, PIXELS(640), PIXELS(0), PIXELS(152), 0xa000, 1, 0},
-    {76, -1, 1, PIXELS(615), PIXELS(0), PIXELS(311), 0x5000, 1, 0},
-    {191, -1, 1, PIXELS(728), PIXELS(0), PIXELS(364), 0xc000, 1, 0},
-    {186, -1, 1, PIXELS(744), PIXELS(0), PIXELS(348), 0x4000, 1, 0},
-    {202, -1, 1, PIXELS(160), PIXELS(0), PIXELS(556), 0x4000, 1, 0},
-    {74, -1, 1, PIXELS(120), PIXELS(0), PIXELS(624), 0xe000, 1, 0},
-    {76, -1, 1, PIXELS(184), PIXELS(0), PIXELS(648), 0xa000, 1, 0},
-    {199, -1, 1, PIXELS(604), PIXELS(0), PIXELS(548), 0x2000, 1, 0},
-    {209, -1, 3, PIXELS(432), PIXELS(0), PIXELS(616), 0xe000, 1, 0},
-    {72, -1, 1, PIXELS(568), PIXELS(0), PIXELS(518), 0xe000, 1, 0},
-    {245, 98, 2, PIXELS(368), PIXELS(0), PIXELS(320), 0x4000, 0, 0},
-    {0x1e9, -1, 1, PIXELS(600), PIXELS(0), PIXELS(56), 0x4000, 2, 0},
-    {238, -1, 1, PIXELS(676), PIXELS(0), PIXELS(762), 0x8000, 1, 0},
-    {238, -1, 1, PIXELS(730), PIXELS(0), PIXELS(712), 0x4000, 1, 0},
-    {239, 0x8ab, 1, PIXELS(847), PIXELS(0), PIXELS(711), 0x2000, 1, 0},
-    {239, 0x8ab, 1, PIXELS(906), PIXELS(0), PIXELS(760), 0, 1, 0},
-    {-1, 0, 0, PIXELS(0), PIXELS(0), PIXELS(0), 0, 0, 0},
+    ACTOR_PLACEMENT(73, -1, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, 0x4000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, -1, MOVEMENT_TYPE_STAND, 72, 0, 112, 0x2000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, -1, MOVEMENT_TYPE_STAND, 360, 0, 109, 0x4000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, -1, MOVEMENT_TYPE_STAND, 440, 0, 96, 0x6000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(224, -1, MOVEMENT_TYPE_STAND, 120, 0, 296, 0xa000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(225, -1, MOVEMENT_TYPE_STAND, 72, 0, 384, 0x4000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, -1, MOVEMENT_TYPE_STAND, 616, 0, 112, 0x2000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(200, -1, MOVEMENT_TYPE_STAND, 640, 0, 152, 0xa000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, -1, MOVEMENT_TYPE_STAND, 615, 0, 311, 0x5000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(191, -1, MOVEMENT_TYPE_STAND, 728, 0, 364, 0xc000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(186, -1, MOVEMENT_TYPE_STAND, 744, 0, 348, 0x4000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(202, -1, MOVEMENT_TYPE_STAND, 160, 0, 556, 0x4000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, -1, MOVEMENT_TYPE_STAND, 120, 0, 624, 0xe000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, -1, MOVEMENT_TYPE_STAND, 184, 0, 648, 0xa000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(199, -1, MOVEMENT_TYPE_STAND, 604, 0, 548, 0x2000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(209, -1, MOVEMENT_TYPE_WANDER_NEAR, 432, 0, 616, 0xe000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, -1, MOVEMENT_TYPE_STAND, 568, 0, 518, 0xe000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(245, 98, MOVEMENT_TYPE_WANDER, 368, 0, 320, 0x4000, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(0x1e9, -1, MOVEMENT_TYPE_STAND, 600, 0, 56, 0x4000, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(238, -1, MOVEMENT_TYPE_STAND, 676, 0, 762, 0x8000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(238, -1, MOVEMENT_TYPE_STAND, 730, 0, 712, 0x4000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(239, 0x8ab, MOVEMENT_TYPE_STAND, 847, 0, 711, 0x2000, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(239, 0x8ab, MOVEMENT_TYPE_STAND, 906, 0, 760, 0, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(-1, 0, 0, 0, 0, 0, 0, TALK_FACING_PARTY, 0),
 };
 
 struct ActorPlacement gMadraInteriors_PlacementsOnReturn[] = {
-    {73, CONDITION_ALWAYS, 3, PIXELS(184), 0, PIXELS(120), FACING_SOUTH, 1, 0},
-    {74, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(112), FACING_SOUTHEAST, 1, 0},
-    {75, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(109), FACING_SOUTH, 1, 0},
-    {76, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(96), FACING_SOUTHWEST, 1, 0},
-    {224, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(296), FACING_NORTHWEST, 1, 0},
-    {225, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(384), FACING_SOUTH, 1, 0},
-    {74, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(88), FACING_NORTHEAST, 0, 0},
-    {200, CONDITION_ALWAYS, 1, PIXELS(640), 0, PIXELS(152), FACING_NORTHWEST, 0, 0},
-    {76, CONDITION_ALWAYS, 1, PIXELS(620), 0, PIXELS(152), FACING_NORTHEAST, 0, 0},
-    {191, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(152), FACING_NORTH, 0, 0},
-    {186, CONDITION_ALWAYS, 1, PIXELS(696), 0, PIXELS(136), FACING_SOUTH, 0, 0},
-    {202, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(552), FACING_SOUTH, 1, 0},
-    {74, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(624), FACING_NORTHEAST, 1, 0},
-    {76, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(648), FACING_NORTHWEST, 1, 0},
-    {199, CONDITION_ALWAYS, 1, PIXELS(604), 0, PIXELS(548), FACING_SOUTHEAST, 1, 0},
-    {209, CONDITION_ALWAYS, 3, PIXELS(432), 0, PIXELS(616), FACING_NORTHEAST, 1, 0},
-    {72, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(518), FACING_NORTHEAST, 1, 0},
-    {245, 0x62, 2, PIXELS(368), 0, PIXELS(320), FACING_SOUTH, 0, 0},
-    {489, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(56), FACING_SOUTH, 2, 0},
-    {19, CONDITION_ALWAYS, 1, PIXELS(614), 0, PIXELS(111), FACING_SOUTHEAST, 0, 0},
-    {20, CONDITION_ALWAYS, 1, PIXELS(636), 0, PIXELS(111), FACING_SOUTH + FACING_STEP, 0, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(1288), 0, PIXELS(8), FACING_WEST, 0, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(1288), 0, PIXELS(8), FACING_WEST, 0, 0},
-    {56, CONDITION_ALWAYS, 1, PIXELS(1288), 0, PIXELS(8), FACING_WEST, 0, 0},
-    {7, CONDITION_ALWAYS, 1, PIXELS(1288), 0, PIXELS(8), FACING_NORTH, 0, 0},
-    {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 0, 0},
-    {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 0, 0},
-    {238, CONDITION_ALWAYS, 1, PIXELS(676), 0, PIXELS(762), FACING_WEST, 1, 0},
-    {238, CONDITION_ALWAYS, 1, PIXELS(730), 0, PIXELS(712), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 109, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 96, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 296, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(225, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 384, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 88, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(200, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 640, 0, 152, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 620, 0, 152, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 152, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 552, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 624, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 648, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 604, 0, 548, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(209, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 432, 0, 616, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 518, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(245, 0x62, MOVEMENT_TYPE_WANDER, 368, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(19, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 614, 0, 111, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 636, 0, 111, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1288, 0, 8, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1288, 0, 8, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1288, 0, 8, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1288, 0, 8, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(238, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 676, 0, 762, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(238, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 730, 0, 712, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gMadraInteriors_JailPlacements[] = {
-    {290, CONDITION_ALWAYS, 1, PIXELS(528), 0, PIXELS(840), FACING_NORTH, 1, 0},
-    {192, CONDITION_ALWAYS, 1, PIXELS(522), 0, PIXELS(840), FACING_NORTH, 1, 0},
-    {187, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(840), FACING_NORTH, 1, 0},
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_WEST, 0, 0},
-    {7, 0x8ab, 1, PIXELS(504), 0, PIXELS(808), FACING_NORTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, PIXELS(362), 0, PIXELS(847), FACING_NORTH, 2, 0},
-    {187, 0x18ff, 1, PIXELS(394), 0, PIXELS(863), FACING_NORTHWEST, 1, 0},
-    {187, 0x18ff, 1, PIXELS(396), 0, PIXELS(848), FACING_WEST, 2, 0},
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 840, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(192, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 522, 0, 840, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 840, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(7, 0x8ab, MOVEMENT_TYPE_STAND, 504, 0, 808, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 362, 0, 847, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(187, 0x18ff, MOVEMENT_TYPE_STAND, 394, 0, 863, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(187, 0x18ff, MOVEMENT_TYPE_STAND, 396, 0, 848, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gMadraInteriors_SecondRoomsPlacements[] = {
-    {71, CONDITION_ALWAYS, 1, PIXELS(192), 0, PIXELS(128), FACING_EAST, 1, 0},
-    {72, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(192), FACING_SOUTH, 1, 0},
-    {198, CONDITION_ALWAYS, 1, PIXELS(356), 0, PIXELS(109), FACING_SOUTH, 2, 0},
-    {186, 0x18ab, 1, PIXELS(357), 0, PIXELS(131), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 128, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 192, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(198, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 356, 0, 109, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(186, 0x18ab, MOVEMENT_TYPE_STAND, 357, 0, 131, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1303,7 +1337,7 @@ struct Trigger gMadraInteriors_TriggersBeforeRaid[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors05)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(MadraInteriors_AskWillWeBeSafe)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors09)},
-    {0xc400, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors10)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors10)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors13)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors14)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors17)},
@@ -1343,11 +1377,11 @@ struct Trigger gMadraInteriors_TriggersBeforeRaid[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors48)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors167)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors168)},
-    {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
-    {0x173, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
-    {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
-    {0x173, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors172))},
-    {0x173, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors173))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors172))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors173))},
     {TRIGGER_TABLE_END},
 };
 
@@ -1355,9 +1389,9 @@ struct Trigger gMadraInteriors_JailTriggers[] = {
     {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
     {TRIGGER_TALK, 9, 0x18ff, MSGNO(MsgMadraInteriors143)},
     {TRIGGER_TALK, 10, 0x18ff, MSGNO(MsgMadraInteriors144)},
-    {0xc400, 13, 0x18ff, MSGNO(MsgWhenAndHis)},
-    {0xa400, 13, 0x18ff, MSGNO(MsgWhenAndHis)},
-    {0x8400, 13, 0x18ff, MSGNO(MsgWhenAndHis)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 13, 0x18ff, MSGNO(MsgWhenAndHis)},
+    {TALK_TRIGGER_FACING(FACING_NORTHWEST), 13, 0x18ff, MSGNO(MsgWhenAndHis)},
+    {TALK_TRIGGER_FACING(FACING_WEST), 13, 0x18ff, MSGNO(MsgWhenAndHis)},
     {TRIGGER_TALK, 14, 0x18ff, EVENT(MadraInteriors_TalkToIllMan)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors75)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors76)},
@@ -1394,7 +1428,7 @@ struct Trigger gMadraInteriors_SecondRoomsTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors32)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x8ff, MSGNO(MsgMadraInteriors80)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors148)},
-    {0x173, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors174))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors174))},
     {TRIGGER_TABLE_END},
 };
 
@@ -1455,11 +1489,11 @@ struct Trigger gMadraInteriors_TriggersAfterRaid[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors94)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors95)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors96)},
-    {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
-    {0x173, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
-    {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
-    {0x173, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors172))},
-    {0x173, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors173))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors172))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors173))},
     {TRIGGER_TABLE_END},
 };
 
@@ -1525,18 +1559,24 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors162)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors163)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors164)},
-    {0x1c014, 10, 0x98a, EVENT(MadraInteriors_GiveHealingFungus)},
-    {0x1c114, 10, 0x98a, EVENT(MadraInteriors_GiveLaughingFungus)},
-    {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
-    {0x173, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
-    {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
-    {0x173, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors172))},
-    {0x173, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors173))},
+    {USE_ITEM_ON_ACTOR(ITEM_HEALING_FUNGUS), 10, 0x98a, EVENT(MadraInteriors_GiveHealingFungus)},
+    {USE_ITEM_ON_ACTOR(ITEM_LAUGHING_FUNGUS), 10, 0x98a, EVENT(MadraInteriors_GiveLaughingFungus)},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors172))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors173))},
     {TRIGGER_TABLE_END},
 };
 
 /// The interrogators walk out of the jail once Piers has been questioned.
-DEFINE_G_DATA_020033C8(gMadraInteriors_InterrogatorsLeave, 408, 872, 904, 408, 920)
+u32 gMadraInteriors_InterrogatorsLeave[] = {                                                               
+      SC_ARG(2), SC_MOVE(px(408), 0, px(872)),                           
+      SC_SYNC,   SC_MOVE(px(408), 0, px(904)),                           
+      SC_SYNC,   SC_MOVE(px(408), 0, px(920)),                           
+      SC_SYNC,   SC_ARG(1),                                                    
+      SC_END,                                                                  
+  };
 
 /// The interrogator topples over, a quarter turn in eight frames.
 s32 gMadraInteriors_InterrogatorTopples[] = {
@@ -1564,44 +1604,44 @@ s32 gMadraInteriors_InterrogatorLifted[] = {
     SC_SET(SW_MOTION, 0),
     SC_WAIT(100),
     SC_WAIT(36),
-    SC_ADD(SW_Y, PIXELS(3)),
+    SC_ADD(SW_Y, px(3)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(5)),
-    SC_ADD(SW_X, PIXELS(1)),
+    SC_ADD(SW_Y, px(5)),
+    SC_ADD(SW_X, px(1)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(4)),
+    SC_ADD(SW_Y, px(4)),
     SC_WAIT(9),
     SC_SET(SW_FACING, FACING_WEST),
-    SC_ADD(SW_X, PIXELS(1)),
-    SC_ADD(SW_Y, PIXELS(5)),
+    SC_ADD(SW_X, px(1)),
+    SC_ADD(SW_Y, px(5)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(4)),
+    SC_ADD(SW_Y, px(4)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(4)),
-    SC_ADD(SW_X, PIXELS(1)),
+    SC_ADD(SW_Y, px(4)),
+    SC_ADD(SW_X, px(1)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(4)),
+    SC_ADD(SW_Y, px(4)),
     SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ADD(SW_X, PIXELS(1)),
+    SC_ADD(SW_X, px(1)),
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, px(-1)),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -4096),
     SC_WAIT(2),
-    SC_ADD(SW_Y, PIXELS(1)),
+    SC_ADD(SW_Y, px(1)),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -2048),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, px(-1)),
     SC_WAIT(4),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -4096),
     SC_WAIT(2),
-    SC_ADD(SW_Y, PIXELS(1)),
+    SC_ADD(SW_Y, px(1)),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -2048),

@@ -18,6 +18,8 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "system/io_reg.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "field/event_inline.h"
@@ -34,7 +36,7 @@
 #include "system/frame.h"
 
 struct Actor;
-extern s16 gChampa_ActorPlacementsOnceBriggsSailed[];
+extern struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[];
 extern s32 gChampa_Doors[];
 s32 Event_PickUpItem();
 extern struct Trigger gChampa_Triggers[];
@@ -67,7 +69,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern s16 gChampa_ActorPlacements[];
+extern struct ActorPlacement gChampa_ActorPlacements[];
 
 const s16 *Scene_GetPlacements(void) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
@@ -80,8 +82,6 @@ void Champa_ShrinkIntoDoorway(struct Actor *object) {
   object->scaleY += -1536;
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
   Actor_CenterOnColumn(id, column, offset);
 }
@@ -98,9 +98,9 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
@@ -134,7 +134,7 @@ void Champa_RevealTreasureSpot(void) {
 
   TreasureSpot_SetPosition(0x40, 0x1880000, 0x2380000);
   Actor_Get(64)->motionFlags = 0;
-  Actor_Get(64)->y = 0x200000;
+  Actor_Get(64)->y = px(32);
 }
 
 void Champa_HideTreasureSpot(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
@@ -147,26 +147,26 @@ void Champa_SailorsSpotFelix(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgChampa49);
-  Actor_FaceDirection(32, 0x3000, 0);
+  Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_Jump(32, 6, 20);
-  FieldEvent_ShowMessageThenWait(0x20, 0, 5);
-  FieldCamera_MoveTo(PIXELS(176), -1, PIXELS(256), 1);
+  FieldEvent_ShowMessageThenWait(32, 0, 5);
+  FieldCamera_MoveTo(176, CAMERA_KEEP, 256, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldActor_StartRepeatedMotion(32, 3);
-  Actor_SetAttachedEffect(0x20, 0x102);
+  Actor_SetAttachedEffect(32, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_FaceDirectionAndWait(33, FACING_EAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(0x21, 0x101, 0x23);
-  Actor_FaceDirectionAndWait(33, 0x3000);
+  Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
+  Actor_FaceDirectionAndWait(33, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(0x21, 0x100, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x21, 0, 5);
+  Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  FieldEvent_ShowMessageThenWait(33, 0, 5);
   FieldActor_Jump(32, 6, 0);
   FieldActor_Jump(33, 6, 0);
-  Actor_SetSpeed(32, 0x1cccc, 0xe666);
-  Actor_SetSpeed(33, 0x1cccc, 0xe666);
+  Actor_SetSpeed(32, 1.8);
+  Actor_SetSpeed(33, 1.8);
   Actor_Get(32)->actionFlags &= 0xfe;
   Actor_WalkBy(32, 0, -16);
   Actor_Get(33)->actionFlags &= 0xfe;
@@ -174,32 +174,32 @@ void Champa_SailorsSpotFelix(void) {
   FieldEvent_Wait(1);
   Actor_Get(33)->actionFlags |= 1;
   FieldEvent_Wait(15);
-  Actor_ShowEmote(0x20, 0x109, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x20, 0, 5);
-  Actor_FaceDirection(32, 0xb000, 0);
-  Actor_FaceDirectionAndWait(33, 0xd000);
+  Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  FieldEvent_ShowMessageThenWait(32, 0, 5);
+  Actor_FaceDirection(32, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionAndWait(33, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(5);
-  FieldEvent_ShowMessageThenWait(0x8021, 0, 5);
-  FieldEvent_ShowMessageThenWait(0x22, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 33, 0, 5);
+  FieldEvent_ShowMessageThenWait(34, 0, 5);
   FieldActor_WatchAndSetScript(32, 34);
   FieldActor_WatchAndSetScript(33, 34);
-  Actor_SetSpeed(34, 0x13333, 0x9999);
+  Actor_SetSpeed(34, 1.2);
   Actor_WalkByAndWait(34, 0, 32);
-  Actor_FaceDirectionAndWait(34, 0x3000);
-  FieldCamera_MoveTo(PIXELS(208), -1, PIXELS(296), 1);
+  Actor_FaceDirectionAndWait(34, FACING_SOUTH_SOUTHEAST);
+  FieldCamera_MoveTo(208, CAMERA_KEEP, 296, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
   FieldActor_Jump(34, 6, 15);
   FieldActor_Jump(34, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x22, 0, 5);
+  FieldEvent_ShowMessageThenWait(34, 0, 5);
   FieldActor_Jump(34, 6, 20);
-  Actor_SetSpeed(34, 0x20000, 0x10000);
+  Actor_SetSpeed(34, 2);
   Actor_WalkByAndWait(34, 0, -48);
-  Actor_FaceDirection(32, 0xb000, 0);
-  Actor_FaceDirection(33, 0xd000, 0);
+  Actor_FaceDirection(32, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(33, FACING_NORTH_NORTHEAST, 0);
   Actor_SetPosition(34, 0, 0);
-  Actor_SetSpeed(32, 0x20000, 0x10000);
-  Actor_SetSpeed(33, 0x20000, 0x10000);
+  Actor_SetSpeed(32, 2);
+  Actor_SetSpeed(33, 2);
   Actor_WalkByAndWait(32, -16, -16);
   Actor_WalkBy(33, 16, -16);
   Actor_WalkByAndWait(32, 0, -16);
@@ -212,8 +212,8 @@ void Champa_SailorsSpotFelix(void) {
 void Champa_TalkToPracticingBoy(s32 actor) {
   struct Actor *object = Actor_Get(actor);
 
-  object->scaleY = 0x10000;
-  object->scaleX = 0x10000;
+  object->scaleY = Q16_ONE;
+  object->scaleX = Q16_ONE;
   FieldEvent_SetMessageId((s32)MsgChampa07);
   Event_ShowMessage(actor, 0);
   Actor_FaceDirectionAndWait(actor, FACING_EAST);
@@ -302,11 +302,11 @@ void Champa_TakeFeizhisGift(s32 a0) {
 }
 
 void Champa_FeizhiHoldsHerGift(void) {
-  FieldActor_ShowItemIconById(31, 415);
+  FieldActor_ShowItemIconById(31, ITEM_GOLDEN_RING);
   {
     s32 facing = FACING_NORTH;
 
-    Actor_SetPositionAndFacing(31, PIXELS(312), PIXELS(593), facing);
+    Actor_SetPositionAndFacing(31, px(312), px(593), facing);
   }
   Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
@@ -330,9 +330,9 @@ void Champa_FeizhiArrives(void) {
       {
         s32 angle = 0xc000;
 
-        Actor_SetPositionAndFacing(29, PIXELS(314), PIXELS(679), angle);
+        Actor_SetPositionAndFacing(29, px(314), px(679), angle);
       }
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
       Actor_WalkToAndWait(4, 314, 580);
       Actor_FaceDirection(4, FACING_SOUTH, 0);
       FieldEvent_Wait(10);
@@ -340,33 +340,31 @@ void Champa_FeizhiArrives(void) {
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(40);
       Actor_WalkToAndWait(29, 314, 624);
-      Actor_ShowEmote(0x1d, 0x101, 0x1e);
-      Event_OpenMessage(0x1d, 0);
+      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+      Event_OpenMessage(29, 0);
       if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
-        FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+        FieldEvent_ShowMessageThenWait(29, 0, 5);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
             (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
       } else {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
             (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
-        FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+        FieldEvent_ShowMessageThenWait(29, 0, 5);
       }
-      Actor_ShowEmote(0x1d, 0x109, 0x1e);
-      FieldActor_LaunchFromLeader(0x1e, 0x10, 0, 0x4000);
+      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      FieldActor_LaunchFromLeader(30, 16, 0, 0x4000);
       FieldActor_WaitForMoveById(30);
       FieldEvent_Wait(20);
       {
-        /* FAKEMATCH(pin): the emote pinned to r1, so that it loads before the
-         * actor as the native has; as the plain argument 0x101 through the
-         * inline, 2 of 414 instructions differ in tla-en. */
+        /* FAKEMATCH(pin): the emote pinned to r1. */
         register s32 emote asm("r1") = 0x101;
 
-        Actor_ShowEmote(0x1e, emote, 0x1e);
+        Actor_ShowEmote(30, emote, 30);
       }
-      FieldEvent_ShowMessageThenWait(0x1e, 0, 5);
+      FieldEvent_ShowMessageThenWait(30, 0, 5);
       Actor_RunRepeatedMotion(29, 2);
       FieldEvent_Wait(5);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
       Actor_SetAnimationAndWait(30, 3);
       FieldEvent_Wait(10);
       Actor_FaceDirectionAndWait(29, FACING_SOUTH);
@@ -376,80 +374,76 @@ void Champa_FeizhiArrives(void) {
       Actor_FaceDirectionAndWait(29, FACING_SOUTH);
       FieldEvent_Wait(20);
       Actor_FaceDirectionAndWait(29, FACING_NORTH);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
       Actor_FaceEachOther(30, 4, 0);
       FieldEvent_Wait(40);
       Actor_FaceDirection(30, FACING_SOUTH, 0);
       Actor_FaceDirection(4, FACING_SOUTH, 0);
       FieldEvent_Wait(20);
       Actor_SetAnimationAndWait(30, 4);
-      FieldEvent_ShowMessageThenWait(0x1e, 0, 5);
-      Actor_ShowEmote(0x1d, 0x107, 0x1e);
+      FieldEvent_ShowMessageThenWait(30, 0, 5);
+      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
       FieldActor_Jump(29, 2, 0);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
-      Actor_ShowEmote(0x1e, 0x101, 0x1e);
-      FieldEvent_ShowMessageThenWait(0x1e, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
+      Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+      FieldEvent_ShowMessageThenWait(30, 0, 5);
       Actor_RunRepeatedMotion(29, 2);
       FieldEvent_Wait(5);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
       {
         s32 b = 0x108, c = 0x1e;
-        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm, so
-         * the first argument is set last, as the native schedule has it; as no
-         * asm, 18 of 414 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
-        Actor_ShowEmote(0x1e, b, c);
+        Actor_ShowEmote(30, b, c);
       }
-      FieldEvent_ShowMessageThenWait(0x1e, 0, 5);
-      Actor_ShowEmote(0x1d, 0x102, 0x14);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+      FieldEvent_ShowMessageThenWait(30, 0, 5);
+      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
       Actor_SetAnimationAndWait(30, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(0x1e, 0, 5);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+      FieldEvent_ShowMessageThenWait(30, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
       Actor_FaceDirectionAndWait(29, FACING_SOUTH);
       FieldEvent_Wait(10);
       {
         s32 b = 0x108, c = 0x1e;
-        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm, so
-         * the first argument is set last, as the native schedule has it; as no
-         * asm, 12 of 414 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
-        Actor_ShowEmote(0x1e, b, c);
+        Actor_ShowEmote(30, b, c);
       }
-      FieldEvent_ShowMessageThenWait(0x1e, 0, 5);
+      FieldEvent_ShowMessageThenWait(30, 0, 5);
       Actor_FaceDirectionAndWait(29, FACING_NORTH);
       FieldEvent_Wait(10);
-      Actor_ShowEmote(0x1d, 0x108, 0x1e);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
       Actor_SetAnimationAndWait(30, 3);
       FieldEvent_Wait(10);
       Actor_RunRepeatedMotion(29, 2);
       FieldEvent_Wait(5);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
       Champa_FeizhiHoldsHerGift();
       Actor_FaceEachOther(30, 4, 0);
       FieldEvent_Wait(40);
       Actor_FaceDirection(30, FACING_SOUTH, 0);
       Actor_FaceDirection(4, FACING_SOUTH, 0);
       FieldEvent_Wait(20);
-      FieldEvent_ShowMessageThenWait(0x1e, 0, 5);
+      FieldEvent_ShowMessageThenWait(30, 0, 5);
       Actor_SetAnimationAndWait(29, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
-      Actor_ShowEmote(0x1e, 0x100, 0x1e);
-      FieldEvent_ShowMessageThenWait(0x1e, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
+      Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+      FieldEvent_ShowMessageThenWait(30, 0, 5);
       Actor_SetAnimationAndWait(29, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
+      FieldEvent_ShowMessageThenWait(29, 0, 5);
       Actor_SetAnimation(4, 3);
       Actor_SetAnimationAndWait(30, 3);
       FieldEvent_Wait(10);
       Actor_SetAnimationAndWait(29, 3);
       FieldEvent_Wait(10);
       EventCamera_FollowActor(4, 1);
-      Actor_SetSpeed(29, 0x13333, 0x9999);
+      Actor_SetSpeed(29, 1.2);
       Actor_WalkBy(29, 0, 100);
       FieldEvent_Wait(10);
       Actor_FaceEachOther(4, 30, 0);
@@ -479,33 +473,33 @@ void Champa_RotatePaletteColors(void) {
     s16 saved;
     s32 index;
 
-    saved = *(volatile u16 *)0x0500007c;
+    saved = BG_PLTT_COLOR(3, 14);
     index = 14;
   first:
-    palette = (volatile u16 *)0x05000060;
+    palette = (volatile u16 *)&BG_PLTT_COLOR(3, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto first;
-    *(volatile u16 *)0x05000062 = saved;
-    saved = *(volatile u16 *)0x0500009c;
+    BG_PLTT_COLOR(3, 1) = saved;
+    saved = BG_PLTT_COLOR(4, 14);
     index = 14;
   second:
-    palette = (volatile u16 *)0x05000080;
+    palette = (volatile u16 *)&BG_PLTT_COLOR(4, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto second;
-    *(volatile u16 *)0x05000082 = saved;
-    saved = *(volatile u16 *)0x050000bc;
+    BG_PLTT_COLOR(4, 1) = saved;
+    saved = BG_PLTT_COLOR(5, 14);
     index = 14;
   third:
-    palette = (volatile u16 *)0x050000a0;
+    palette = (volatile u16 *)&BG_PLTT_COLOR(5, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto third;
-    *(volatile u16 *)0x050000a2 = saved;
+    BG_PLTT_COLOR(5, 1) = saved;
   }
 }
 
@@ -519,8 +513,8 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(((s32)Actor_Get(10)), 0);
   Actor_SetSpriteFlags(((s32)Actor_Get(11)), 0);
   FieldActor_SetSpritePriority(13, 3);
-  Actor_Get(23)->scaleX = 0x8000;
-  Actor_Get(23)->scaleY = 0x8000;
+  Actor_Get(23)->scaleX = Q16_ONE / 2;
+  Actor_Get(23)->scaleY = Q16_ONE / 2;
   Tightrope_Initialize();
   Tightrope_Place(0, 8, 9);
   Map_SetLayerEntryFlag(3);
@@ -545,7 +539,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
 
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
-    MapGrid_CopyCellsLayered(0xb, 0x33, 5, 4, 0x10, 0x17);
+    MapGrid_CopyCellsLayered(11, 51, 5, 4, 16, 23);
     MapGrid_CopyCellAttributes(11, 51, 5, 6, 16, 23);
   }
   return 0;
@@ -585,17 +579,17 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
 
   y = first->y;
   Champa_SpawnGlareSpark(first->x, y + rise, first->z, 0x1000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   y = second->y;
   Champa_SpawnGlareSpark(second->x, y + rise, second->z, 0xf000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(first->x, first->y + rise, first->z, 0x1000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(second->x, second->y + rise, second->z, 0xf000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
 
@@ -607,7 +601,7 @@ void Champa_ShowTwoMessages(s32 firstId, s32 firstX, s32 firstY, s32 firstA,
                             s32 secondY, s32 secondA, s32 secondB,
                             volatile s32 frames) {
   /* FAKEMATCH(volatile): the frames volatile, read from their stack slot at
-   * each use; as s32 frames, 44 of 79 instructions differ in tla-en. */
+   * each use. */
   struct ChampaEventWork *work = Ram_HeapSlots->eventWork;
   s32 first = Actor_GetSpriteById(firstId);
   s32 second = Actor_GetSpriteById(secondId);
@@ -620,8 +614,7 @@ void Champa_ShowTwoMessages(s32 firstId, s32 firstX, s32 firstY, s32 firstA,
       System_Wait(frames);
   }
   /* FAKEMATCH(volatile): the counter's second store and the second x both
-   * volatile, so x is loaded after the store; as work->message++ and s32
-   * secondX, 4 of 79 instructions differ in tla-en. */
+   * volatile. */
   Message_OpenWindow((*(volatile s16 *)&work->message)++, secondX, secondY,
                      Speaker_GetVoice(second) << 16);
   Portrait_OpenWindow(second, 0, secondA, secondB);
@@ -642,8 +635,6 @@ void Champa_CloseTwoMessages(s32 a0, s32 a1) {
 
 void Champa_ApproachTheCliff(void) { GameFlag_Set(FLAG_NEAR_THE_CLIFF); }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   FieldMessage_ShowAtActor(speaker, flags);
 }
@@ -657,78 +648,78 @@ void Champa_CatchUpWithBriggs(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgChampa25);
-  Actor_SetSpeed(25, 0xcccc, 0x6666);
-  Actor_SetSpeed(26, 0x10000, 0x8000);
-  Actor_SetSpeed(27, 0x10000, 0x8000);
-  Actor_SetPosition(25, 0x1380000, 0x2080000);
-  Actor_SetPosition(26, 0x1c80000, 0x2680000);
-  Actor_SetPosition(27, 0xa80000, 0x2680000);
-  Event_PlaySound(0x4e);
-  Event_ShowMessage(0x19, 0);
-  Actor_ShowEmote(4, 0x101, 0x14);
+  Actor_SetSpeed(25, 0.8);
+  Actor_SetSpeed(26, 1);
+  Actor_SetSpeed(27, 1);
+  Actor_SetPosition(25, 312, 520);
+  Actor_SetPosition(26, 456, 616);
+  Actor_SetPosition(27, 168, 616);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Event_ShowMessage(25, 0);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_WalkToAndWait(4, 312, 616);
-  FieldCamera_MoveTo(0x1380000, -1, 0x2580000, 1);
+  FieldCamera_MoveTo(312, CAMERA_KEEP, 600, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
-  Event_PlaySound(0x27);
+  Event_PlaySound(MUS_039);
   Actor_WalkToAndWait(25, 304, 576);
   FieldEvent_Wait(5);
   FieldActor_LaunchFromLeader(7, -16, 0, 0xc000);
-  FieldActor_LaunchFromLeader(5, 0, 0x10, 0xc000);
-  FieldActor_LaunchFromLeader(6, -16, 0x10, 0xc000);
-  FieldActor_LaunchFromLeader(0x1c, -32, 0, 0xd000);
+  FieldActor_LaunchFromLeader(5, 0, 16, 0xc000);
+  FieldActor_LaunchFromLeader(6, -16, 16, 0xc000);
+  FieldActor_LaunchFromLeader(28, -32, 0, 0xd000);
   FieldActor_WaitForMoveById(28);
-  Actor_ShowEmote(6, 0x100, 0x1e);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(6, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
-  Actor_FaceDirectionAndWait(7, 0);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
   Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(28, 0);
+  Actor_FaceDirectionAndWait(28, FACING_EAST);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x1c, 0);
-  Actor_FaceDirection(28, 0xd000, 0);
-  Actor_FaceDirectionAndWait(7, 0xc000);
-  Actor_ShowEmote(7, 0x100, 0x1e);
+  Event_ShowMessage(28, 0);
+  Actor_FaceDirection(28, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirectionAndWait(7, FACING_NORTH);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(0x19, 0x101, 0x1e);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Champa_MessageOpen(0x2019, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(15);
-    Event_ShowMessage(0x2019, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
         (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
   } else {
     FieldEvent_Wait(35);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
         (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
-    Event_ShowMessage(0x2019, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   }
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirectionAndWait(4, 0x8000);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(4, FACING_WEST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(7, 0x101, 0);
-  Actor_ShowEmote(4, 0x101, 0);
-  Actor_ShowEmote(0x1c, 0x101, 0x32);
-  Actor_ShowEmote(5, 0x107, 0x1e);
-  Event_ShowMessage(0x2005, 0);
-  Actor_FaceDirection(28, 0xd000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirectionAndWait(4, 0xc000);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_FaceDirection(28, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(4, FACING_NORTH);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(25, 0x3000);
-  Actor_ShowEmote(0x19, 0x109, 0x1e);
-  Event_ShowMessage(0x2019, 0);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   FieldEvent_Wait(5);
-  Event_OpenMessage(0x2019, 0);
-  Actor_FaceDirection(6, 0xe000, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirectionAndWait(28, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_EAST);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(6, 3);
     FieldEvent_Wait(10);
-    Actor_FaceDirectionAndWait(6, 0xc000);
+    Actor_FaceDirectionAndWait(6, FACING_NORTH);
     FieldEvent_Wait(10);
     Event_ShowMessage(6, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
@@ -737,426 +728,426 @@ void Champa_CatchUpWithBriggs(void) {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(6, 3);
     FieldEvent_Wait(10);
-    Actor_FaceDirectionAndWait(6, 0xc000);
+    Actor_FaceDirectionAndWait(6, FACING_NORTH);
     FieldEvent_Wait(10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
         (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
     Event_ShowMessage(6, 0);
   }
-  Actor_FaceDirectionAndWait(25, 0x5000);
-  Actor_ShowEmote(0x19, 0x105, 0x1e);
-  Event_ShowMessage(0x2019, 0);
-  Actor_FaceDirection(4, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirectionAndWait(28, 0xd000);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
   Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(0x1c, 0);
-  Event_ShowMessage(0x1a, 0);
+  Event_ShowMessage(28, 0);
+  Event_ShowMessage(26, 0);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(5, 3);
-  Actor_SetAttachedEffect(5, 0x102);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(7, 3);
-  Actor_SetAttachedEffect(7, 0x102);
+  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(0x1c, 0x102);
+  Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(25, 0x3000, 0);
-  Actor_FaceDirection(4, 0, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirectionAndWait(28, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_EAST);
   Actor_WalkToAndWait(26, 344, 616);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(4, 0x102, 0);
-  Actor_ShowEmote(5, 0x102, 0);
-  Actor_ShowEmote(6, 0x102, 0);
-  Actor_ShowEmote(7, 0x102, 0);
-  Actor_ShowEmote(0x1c, 0x102, 0x1e);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_RunRepeatedMotion(6, 2);
   Event_ShowMessage(6, 0);
   Actor_SetAnimationAndWait(26, 3);
-  Event_ShowMessage(0x1a, 0);
-  Actor_FaceDirectionAndWait(5, 0xc000);
-  Event_ShowMessage(0x2005, 0);
-  Actor_ShowEmote(0x19, 0x108, 0x1e);
-  Event_ShowMessage(0x2019, 0);
-  Event_ShowMessage(0x1b, 0);
+  Event_ShowMessage(26, 0);
+  Actor_FaceDirectionAndWait(5, FACING_NORTH);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Event_ShowMessage(27, 0);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(5, 3);
-  Actor_SetAttachedEffect(5, 0x102);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(7, 3);
-  Actor_SetAttachedEffect(7, 0x102);
+  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(0x1c, 0x102);
+  Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(25, 0x5000, 0);
-  Actor_FaceDirection(4, 0x8000, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(6, 0x8000, 0);
-  Actor_FaceDirection(7, 0x8000, 0);
-  Actor_FaceDirectionAndWait(28, 0x8000);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_WEST);
   Actor_WalkToAndWait(27, 232, 616);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(4, 0x101, 0);
-  Actor_ShowEmote(5, 0x101, 0);
-  Actor_ShowEmote(6, 0x101, 0);
-  Actor_ShowEmote(7, 0x101, 0);
-  Actor_ShowEmote(0x1c, 0x101, 0x3c);
-  Actor_ShowEmote(0x19, 0x101, 0x1e);
-  Event_ShowMessage(0x2019, 0);
-  Actor_FaceDirectionAndWait(26, 0xb000);
-  Event_ShowMessage(0x1a, 0);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHWEST);
+  Event_ShowMessage(26, 0);
   Actor_WalkByAndWait(27, 16, 0);
-  Event_ShowMessage(0x1b, 0);
+  Event_ShowMessage(27, 0);
   FieldActor_Jump(27, 4, 25);
-  Event_ShowMessage(0x1b, 0);
-  Actor_FaceDirectionAndWait(27, 0xd000);
-  Event_ShowMessage(0x1b, 0);
+  Event_ShowMessage(27, 0);
+  Actor_FaceDirectionAndWait(27, FACING_NORTH_NORTHEAST);
+  Event_ShowMessage(27, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(15);
-  Event_ShowMessage(0x2019, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirectionAndWait(6, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(6, FACING_EAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(6, 0x103, 0);
-  Actor_ShowEmote(5, 0x103, 0x32);
-  Actor_FaceDirectionAndWait(25, 0x3000);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
-  Actor_FaceDirection(4, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirectionAndWait(28, 0xd000);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(25, 0x5000);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(0x19, 0x108, 0x1e);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(7, 0x100, 0x1e);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(7, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(0x19, 0x105, 0x1e);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(0x1c, 0x106, 0x2a);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 42);
   Actor_WalkByAndWait(28, 0, -16);
-  Actor_FaceDirectionAndWait(28, 0xd000);
-  Event_ShowMessage(0x1c, 0);
-  Actor_FaceDirectionAndWait(25, 0xd000);
+  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
+  Event_ShowMessage(28, 0);
+  Actor_FaceDirectionAndWait(25, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(5, 0x107, 0x1e);
-  Event_ShowMessage(0x2005, 0);
-  Actor_ShowEmote(0x19, 0x109, 0x1e);
-  Actor_FaceDirectionAndWait(25, 0x3000);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(6, 0x101, 0x1e);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(6, 0);
-  Actor_FaceDirectionAndWait(25, 0x5000);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_RunRepeatedMotion(7, 2);
   Event_ShowMessage(7, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2019, 0);
-  Actor_SetSpeed(28, 0x10000, 0x8000);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_SetSpeed(28, 1);
   Actor_WalkByAndWait(28, 8, -8);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(0x1c, 0x108, 0x1e);
-  Event_ShowMessage(0x1c, 0);
-  Actor_SetSpeed(25, 0x10000, 0x8000);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(28, 0);
+  Actor_SetSpeed(25, 1);
   Actor_Get(25)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(25, -7, 7);
   FieldEvent_Wait(1);
   Actor_Get(25)->actionFlags |= 1;
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(25, 0x5000);
-  Actor_ShowEmote(0x19, 0x108, 0x28);
-  Event_ShowMessage(0x2019, 0);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(0x1c, 0x105, 0x32);
-  Actor_ShowEmote(5, 0x105, 0x1e);
-  Event_ShowMessage(0x2005, 0);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(0x19, 0x102);
+  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(26, 2);
-  Actor_FaceDirectionAndWait(26, 0xb000);
-  Event_ShowMessage(0x1a, 0);
-  Actor_SetSpeed(25, 0x9999, 0x4ccc);
-  Actor_FaceDirectionAndWait(25, 0);
+  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHWEST);
+  Event_ShowMessage(26, 0);
+  Actor_SetSpeed(25, 0.6);
+  Actor_FaceDirectionAndWait(25, FACING_EAST);
   Actor_WalkBy(25, 8, 0);
-  Actor_FaceDirectionAndWait(25, 0x3000);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(0x1b, 0x101, 0x1e);
-  Event_ShowMessage(0x1b, 0);
-  Actor_FaceDirectionAndWait(25, 0x5000);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(0x1a, 0x105, 0x1e);
-  Event_ShowMessage(0x1a, 0);
-  Actor_FaceDirectionAndWait(25, 0x3000);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(27, 0);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(26, 0);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(0x1b, 0x102, 0x1e);
-  Actor_FaceDirectionAndWait(27, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_FaceDirectionAndWait(27, FACING_EAST);
   FieldEvent_Wait(5);
-  Event_ShowMessage(0x1b, 0);
-  Actor_FaceDirection(4, 0x8000, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirectionAndWait(7, 0);
+  Event_ShowMessage(27, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
   FieldEvent_Wait(30);
-  Actor_SetSpeed(28, 0x9999, 0x4ccc);
-  Actor_FaceDirectionAndWait(28, 0x5000);
+  Actor_SetSpeed(28, 0.6);
+  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(2);
   Actor_Get(28)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(28, -8, 8);
   FieldEvent_Wait(1);
   Actor_Get(28)->actionFlags |= 1;
-  Actor_FaceDirectionAndWait(28, 0x5000);
+  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
   Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(0x201c, 0);
-  Actor_ShowEmote(0x1a, 0x103, 0x2a);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 28, 0);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 42);
   FieldActor_Jump(26, 6, 15);
   FieldActor_Jump(26, 6, 23);
-  Event_ShowMessage(0x1a, 0);
-  Actor_FaceDirection(4, 0, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirectionAndWait(28, 0);
+  Event_ShowMessage(26, 0);
+  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_EAST);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(26, 0x8000);
-  Event_ShowMessage(0x1a, 0);
+  Actor_FaceDirectionAndWait(26, FACING_WEST);
+  Event_ShowMessage(26, 0);
   FieldActor_Jump(27, 6, 15);
   FieldActor_Jump(27, 6, 23);
-  Event_ShowMessage(0x1b, 0);
-  Actor_SetSpeed(26, 0x1cccc, 0xe666);
+  Event_ShowMessage(27, 0);
+  Actor_SetSpeed(26, 1.8);
   Actor_WalkByAndWait(26, -12, 0);
   FieldEvent_Wait(5);
-  Event_ShowMessage(0x1a, 0);
-  Actor_ShowEmote(4, 0x102, 0);
-  Actor_ShowEmote(5, 0x102, 0);
-  Actor_ShowEmote(6, 0x102, 0);
-  Actor_ShowEmote(7, 0x102, 0);
-  Actor_ShowEmote(0x1c, 0x102, 0x2d);
-  Actor_SetSpeed(27, 0x1cccc, 0xe666);
+  Event_ShowMessage(26, 0);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 45);
+  Actor_SetSpeed(27, 1.8);
   Actor_WalkByAndWait(27, 12, 0);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(0x1b, 0x108, 0x1e);
-  Event_ShowMessage(0x1b, 0);
-  Actor_ShowEmote(6, 0x100, 0x14);
-  Actor_FaceDirectionAndWait(6, 0x8000);
-  Event_ShowMessage(0x2006, 0);
-  Actor_ShowEmote(0x19, 0x108, 0x1e);
-  Event_ShowMessage(0x2019, 0);
-  Actor_FaceDirection(26, 0xb000, 0);
-  Actor_FaceDirection(27, 0xd000, 0);
-  Actor_FaceDirection(4, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirectionAndWait(28, 0xd000);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(27, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_FaceDirectionAndWait(6, FACING_WEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(27, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(0x1a, 0x107, 0x1e);
-  Event_ShowMessage(0x1a, 0);
-  Actor_FaceDirection(4, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirection(5, 0xe000, 0);
-  Actor_FaceDirection(6, 0xe000, 0);
-  Actor_FaceDirection(25, 0x3000, 0);
-  Actor_FaceDirectionAndWait(28, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessage(26, 0);
+  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_EAST);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(0x1b, 0x103, 0x2a);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 42);
   FieldActor_Jump(27, 6, 15);
   FieldActor_Jump(27, 6, 23);
-  Event_ShowMessage(0x1b, 0);
-  Actor_FaceDirection(4, 0x8000, 0);
-  Actor_FaceDirection(7, 0x8000, 0);
-  Actor_FaceDirection(5, 0xa000, 0);
-  Actor_FaceDirection(6, 0xa000, 0);
-  Actor_FaceDirection(25, 0x5000, 0);
-  Actor_FaceDirectionAndWait(28, 0x5000);
+  Event_ShowMessage(27, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_RunRepeatedMotion(26, 2);
-  Actor_FaceDirectionAndWait(26, 0xb000);
-  Event_ShowMessage(0x1a, 0);
-  Actor_FaceDirection(4, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirection(5, 0xe000, 0);
-  Actor_FaceDirection(6, 0xe000, 0);
-  Actor_FaceDirection(25, 0x3000, 0);
-  Actor_FaceDirectionAndWait(28, 0);
+  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHWEST);
+  Event_ShowMessage(26, 0);
+  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_EAST);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(0x19, 0x109, 0x1e);
-  Event_ShowMessage(0x2019, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_RunRepeatedMotion(27, 2);
-  Event_ShowMessage(0x1b, 0);
-  Actor_FaceDirection(4, 0x8000, 0);
-  Actor_FaceDirection(7, 0x8000, 0);
-  Actor_FaceDirection(5, 0xa000, 0);
-  Actor_FaceDirection(6, 0xa000, 0);
-  Actor_FaceDirection(25, 0x5000, 0);
-  Actor_FaceDirectionAndWait(28, 0x5000);
+  Event_ShowMessage(27, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(15);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(25);
   Actor_RunRepeatedMotion(26, 2);
-  Event_ShowMessage(0x1a, 0);
-  Actor_FaceDirectionAndWait(25, 0x3000);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(26, 0);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(27, 2);
-  Event_ShowMessage(0x1b, 0);
-  Actor_FaceDirectionAndWait(25, 0x5000);
+  Event_ShowMessage(27, 0);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
-  Actor_FaceDirection(4, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirectionAndWait(28, 0xd000);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(5, 0x101, 0x1e);
-  Event_ShowMessage(0x2005, 0);
-  Actor_FaceDirectionAndWait(25, 0x3000);
-  Actor_ShowEmote(0x19, 0x108, 0x1e);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(6, 0x107, 0x1e);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(6, 0);
-  Actor_FaceDirectionAndWait(25, 0x5000);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_RunRepeatedMotion(7, 2);
   Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(25, 0xd000);
+  Actor_FaceDirectionAndWait(25, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(15);
-  Actor_ShowEmote(0x19, 0x108, 0x1e);
-  Event_ShowMessage(0x2019, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_SetAnimationAndWait(26, 3);
-  Event_ShowMessage(0x1a, 0);
-  Actor_FaceDirectionAndWait(25, 0x3000);
+  Event_ShowMessage(26, 0);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(27, 2);
-  Event_ShowMessage(0x1b, 0);
-  Actor_FaceDirectionAndWait(27, 0);
-  Event_ShowMessage(0x1b, 0);
-  Actor_FaceDirection(4, 0x8000, 0);
-  Actor_FaceDirection(7, 0x8000, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(6, 0x8000, 0);
-  Actor_FaceDirectionAndWait(28, 0x8000);
+  Event_ShowMessage(27, 0);
+  Actor_FaceDirectionAndWait(27, FACING_EAST);
+  Event_ShowMessage(27, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_WEST);
   FieldEvent_Wait(20);
   FieldActor_WatchAndSetScript(4, 27);
   FieldActor_WatchAndSetScript(7, 27);
   FieldActor_WatchAndSetScript(5, 27);
   FieldActor_WatchAndSetScript(6, 27);
   FieldActor_WatchAndSetScript(28, 27);
-  Actor_SetSpeed(27, 0x10000, 0x8000);
+  Actor_SetSpeed(27, 1);
   Actor_WalkByAndWait(27, 20, 0);
   Actor_WalkByAndWait(27, 2, 32);
   Actor_WalkByAndWait(27, 32, 32);
   Actor_WalkByAndWait(27, 0, 32);
-  Actor_FaceDirectionAndWait(26, 0x8000);
+  Actor_FaceDirectionAndWait(26, FACING_WEST);
   Actor_SetAnimationAndWait(26, 3);
-  Event_ShowMessage(0x1a, 0);
-  Actor_FaceDirection(4, 0, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirectionAndWait(28, 0);
+  Event_ShowMessage(26, 0);
+  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(28, FACING_EAST);
   FieldEvent_Wait(20);
   FieldActor_WatchAndSetScript(4, 26);
   FieldActor_WatchAndSetScript(7, 26);
   FieldActor_WatchAndSetScript(5, 26);
   FieldActor_WatchAndSetScript(6, 26);
   FieldActor_WatchAndSetScript(28, 26);
-  Actor_SetSpeed(26, 0x10000, 0x8000);
+  Actor_SetSpeed(26, 1);
   Actor_WalkByAndWait(26, 0, 32);
   Actor_WalkByAndWait(26, -20, 24);
   Actor_WalkByAndWait(26, 0, 48);
-  Actor_FaceDirection(4, 0xc000, 0);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xc000, 0);
-  Actor_FaceDirectionAndWait(28, 0xd000);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(20);
   Actor_SetPosition(26, 0, 0);
   Actor_SetPosition(27, 0, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   FieldActor_WatchAndSetScript(4, 25);
   FieldActor_WatchAndSetScript(7, 25);
   FieldActor_WatchAndSetScript(5, 25);
   FieldActor_WatchAndSetScript(6, 25);
   FieldActor_WatchAndSetScript(28, 25);
-  Actor_SetSpeed(25, 0x10000, 0x8000);
+  Actor_SetSpeed(25, 1);
   Actor_WalkByAndWait(25, 22, 24);
   EventCamera_FollowActor(25, 1);
   Actor_WalkByAndWait(25, 0, 32);
   Actor_WalkByAndWait(25, -16, 16);
   Actor_WalkByAndWait(25, 0, 8);
-  Actor_ShowEmote(0x19, 0x100, 0x28);
-  Actor_FaceDirectionAndWait(25, 0xb000);
-  FieldCamera_MoveTo(0x1300000, -1, 0x2880000, 1);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_FaceDirectionAndWait(25, FACING_NORTH_NORTHWEST);
+  FieldCamera_MoveTo(304, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(28, 0x10000, 0x8000);
+  Actor_SetSpeed(28, 1);
   Actor_WalkByAndWait(28, 0, 32);
-  Actor_FaceDirectionAndWait(28, 0x3000);
+  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(0x1c, 0);
-  Actor_ShowEmote(0x1c, 0x101, 0x1e);
-  Event_ShowMessage(0x1c, 0);
+  Event_ShowMessage(28, 0);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(28, 0);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
-  Actor_ShowEmote(0x1c, 0x107, 0x1e);
-  Event_ShowMessage(0x1c, 0);
-  Actor_ShowEmote(0x19, 0x108, 0x1e);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessage(28, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(0x1c, 0x102);
+  Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(4, 0x8000, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(6, 0, 0);
-  Actor_FaceDirectionAndWait(7, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(4, 0x4000, 0);
-  Actor_FaceDirection(5, 0x4000, 0);
-  Actor_FaceDirection(6, 0x4000, 0);
-  Actor_FaceDirectionAndWait(7, 0x4000);
+  Actor_FaceDirection(4, FACING_SOUTH, 0);
+  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(6, FACING_SOUTH, 0);
+  Actor_FaceDirectionAndWait(7, FACING_SOUTH);
   FieldEvent_Wait(25);
-  Actor_SetSpeed(28, 0x6666, 0x3333);
+  Actor_SetSpeed(28, 0.4);
   Actor_Get(28)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(28, 0, -24);
   FieldEvent_Wait(1);
@@ -1164,174 +1155,174 @@ void Champa_CatchUpWithBriggs(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(28, 8);
   FieldEvent_Wait(30);
-  Event_ShowMessage(0x1c, 0);
+  Event_ShowMessage(28, 0);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
-  Actor_FaceDirectionAndWait(6, 0x4000);
-  Actor_ShowEmote(6, 0x107, 0x1e);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirectionAndWait(6, FACING_SOUTH);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(6, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(25);
   Actor_RunRepeatedMotion(5, 2);
-  Event_ShowMessage(0x2005, 0);
-  Actor_ShowEmote(0x19, 0x105, 0x1e);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
-  Actor_FaceDirection(4, 0x8000, 0);
-  Actor_FaceDirectionAndWait(7, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(4, 0x4000, 0);
-  Actor_FaceDirectionAndWait(7, 0x4000);
+  Actor_FaceDirection(4, FACING_SOUTH, 0);
+  Actor_FaceDirectionAndWait(7, FACING_SOUTH);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(4, 0x101, 0);
-  Actor_ShowEmote(7, 0x101, 0x1e);
+  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(7, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(0x2019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_RunRepeatedMotion(6, 2);
   Event_ShowMessage(6, 0);
-  Actor_ShowEmote(0x19, 0x108, 0x1e);
-  Event_ShowMessage(0x2019, 0);
-  Actor_FaceDirectionAndWait(25, 0x5000);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2019, 0);
-  Event_PlaySound(0x4e);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_WalkByAndWait(25, 0, 80);
   Actor_SetPosition(25, 0, 0);
   FieldEvent_Wait(30);
-  FieldCamera_MoveTo(0x1300000, -1, 0x2700000, 1);
+  FieldCamera_MoveTo(304, CAMERA_KEEP, 624, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Event_PlaySound(3);
-  Actor_ShowEmote(5, 0x107, 0x1e);
-  Event_ShowMessage(0x2005, 0);
-  Actor_ShowEmote(6, 0x103, 0x1e);
+  Event_PlaySound(MUS_003);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   Event_ShowMessage(6, 0);
-  Actor_ShowEmote(7, 0x109, 0x1e);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(6, 0xc000);
+  Actor_FaceDirectionAndWait(6, FACING_NORTH);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(6, 0x101, 0x1e);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(6, 0);
   Actor_RunRepeatedMotion(7, 2);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(5, 0x100, 0x1e);
-  Actor_FaceDirection(4, 0x6000, 0);
-  Actor_FaceDirectionAndWait(5, 0xa000);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(4, FACING_SOUTHWEST, 0);
+  Actor_FaceDirectionAndWait(5, FACING_NORTHWEST);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2005, 0);
-  Actor_ShowEmote(6, 0x100, 0x1e);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(6, 0);
   Actor_SetAnimation(28, 1);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(28, 0xcccc, 0x6666);
+  Actor_SetSpeed(28, 0.8);
   Actor_WalkByAndWait(28, 0, 16);
-  Actor_FaceDirectionAndWait(28, 0);
+  Actor_FaceDirectionAndWait(28, FACING_EAST);
   FieldEvent_Wait(5);
   Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(0x1c, 0);
-  Actor_FaceDirection(4, 0x8000, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(6, 0x8000, 0);
-  Actor_FaceDirectionAndWait(7, 0x8000);
+  Event_ShowMessage(28, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(7, FACING_WEST);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(0x1c, 0);
-  Actor_ShowEmote(7, 0x100, 0x1e);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(28, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(0x1c, 0);
+  Event_ShowMessage(28, 0);
   FieldActor_StartRepeatedMotion(7, 3);
-  Actor_SetAttachedEffect(7, 0x102);
+  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(45);
-  Actor_ShowEmote(5, 0x101, 0x1e);
-  Event_ShowMessage(0x2005, 0);
-  Actor_ShowEmote(6, 0x101, 0x1e);
-  Event_ShowMessage(0x2006, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(6, 1);
   FieldEvent_Wait(25);
-  Call2(Champa_JennaAndShebaGlare, 5, 6);
-  Actor_ShowEmote(5, 0x101, 0);
-  Actor_ShowEmote(6, 0x101, 0x28);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirectionAndWait(6, 0x8000);
+  Champa_JennaAndShebaGlare(5, 6);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(6, FACING_WEST);
   FieldEvent_Wait(10);
   Actor_SetAnimation(5, 4);
   Actor_SetAnimationAndWait(6, 4);
   FieldEvent_ShowTwoMessagesAndWait(5, 5, 5, 0x12, 8, 6, 6, 0xe, 8, 9, 0);
   Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(0x1c, 0);
+  Event_ShowMessage(28, 0);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirectionAndWait(6, 0xe000);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(6, FACING_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(5, 0x107, 0);
-  Actor_ShowEmote(6, 0x107, 0x1e);
-  Call11(Champa_ShowTwoMessages, 5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
-  Actor_FaceDirectionAndWait(4, 0x6000);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Champa_ShowTwoMessages(5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
+  Actor_FaceDirectionAndWait(4, FACING_SOUTHWEST);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Champa_CloseTwoMessages(5, 6);
     FieldEvent_Wait(15);
-    Actor_ShowEmote(0x1c, 0x102, 0x1e);
-    Event_ShowMessage(0x1c, 0);
+    Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    Event_ShowMessage(28, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
         (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
   } else {
     Champa_CloseTwoMessages(5, 6);
     FieldEvent_Wait(35);
-    Actor_ShowEmote(0x1c, 0x105, 0x1e);
+    Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
         (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
-    Event_ShowMessage(0x1c, 0);
+    Event_ShowMessage(28, 0);
   }
-  Actor_FaceDirection(4, 0x8000, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirectionAndWait(6, 0x8000);
+  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(6, FACING_WEST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(5, 0x107, 0);
-  Actor_ShowEmote(6, 0x107, 0x2d);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SCOWL, 45);
   Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(0x1c, 0);
+  Event_ShowMessage(28, 0);
   FieldActor_Jump(5, 6, 15);
   FieldActor_Jump(5, 6, 23);
-  Event_ShowMessage(0x2005, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(0x1c, 0);
+  Event_ShowMessage(28, 0);
   FieldActor_Jump(6, 6, 15);
   FieldActor_Jump(6, 6, 23);
-  Event_ShowMessage(0x2006, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
   Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(0x1c, 0);
+  Event_ShowMessage(28, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(0x1c, 0x101, 0x28);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_WalkByAndWait(28, 0, -8);
-  Actor_FaceDirectionAndWait(28, 0);
+  Actor_FaceDirectionAndWait(28, FACING_EAST);
   FieldEvent_Wait(5);
-  Event_ShowMessage(0x1c, 0);
-  Actor_ShowEmote(7, 0x108, 0x1e);
-  Event_ShowMessage(0x2007, 0);
-  Actor_ShowEmote(0x1c, 0x102, 0x1e);
-  Event_ShowMessage(0x1c, 0);
+  Event_ShowMessage(28, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Event_ShowMessage(28, 0);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(0x1c, 0x101, 0x2d);
+  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 45);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(5, 0xc000, 0);
-  Actor_FaceDirection(6, 0xe000, 0);
-  Actor_FaceDirectionAndWait(7, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(15);
@@ -1340,22 +1331,22 @@ void Champa_CatchUpWithBriggs(void) {
   Actor_SetAnimation(7, 3);
   Actor_SetAnimationAndWait(28, 3);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   Actor_SetAnimation(5, 2);
   Actor_HeadToward(5, gMainRoutineWork.currentOwner);
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   Actor_SetAnimation(6, 2);
   Actor_HeadToward(6, gMainRoutineWork.currentOwner);
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
-  Actor_SetSpeed(7, 0x13333, 0x9999);
+  Actor_SetSpeed(7, 1.2);
   Actor_SetAnimation(7, 2);
   Actor_HeadToward(7, gMainRoutineWork.currentOwner);
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
-  Actor_SetSpeed(28, 0x13333, 0x9999);
+  Actor_SetSpeed(28, 1.2);
   Actor_SetAnimation(28, 2);
   Actor_HeadToward(28, gMainRoutineWork.currentOwner);
   FieldActor_WaitForMoveById(28);
@@ -1369,115 +1360,85 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(182),
-    SCENE_EXIT_IF(1, 183, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 183, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 183, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 183, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 183, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 183, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 184, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 185, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 2, 40, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(10, 186, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(11, 187, 19, CONDITION_ALWAYS),
+    SCENE_EXITS(Champa1),
+    SCENE_EXIT_UNLESS(1, ChampaInteriors, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ChampaInteriors, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ChampaInteriors, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ChampaInteriors, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ChampaInteriors, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, ChampaInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, ChampaSanctum, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, ChampaCliffCaves1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, WorldMap, 40, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, ChampaCliffCaves2, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, ChampaCliffCaves3, 19, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 // clang-format off
-s16 gChampa_ActorPlacements[] = {
-    407, -1, 1, 0, 0, 200, 0, 0,
-    0, 408, FACING_SOUTH, 2, 407, -1, 1, 0,
-    0, 344, 0, 0, 0, 408, FACING_SOUTH, 258,
-    461, -1, 1, 0, 0, 240, 0, 0,
-    0, 456, FACING_SOUTH, 2, 461, -1, 1, 0,
-    0, 368, 0, 0, 0, 456, FACING_SOUTH, 258,
-    115, -1, 2, 0, 0, 296, 0, 0,
-    0, 408, FACING_WEST, 0, 116, -1, 1, 0,
-    0, 168, 0, 0, 0, 392, 0x3000, 1,
-    114, -1, 2, 0, 0, 328, 0, 0,
-    0, 312, 0x5000, 0, 128, -1, 2, 0,
-    0, 432, 0, 0, 0, 312, FACING_WEST, 0,
-    112, -1, 1, 0, 0, 328, 0, 0,
-    0, 280, FACING_WEST, 1, 113, -1, 1, 0,
-    0, 312, 0, 0, 0, 280, 0, 1,
-    136, -1, 8, 0, 0, 440, 0, 0,
-    0, 392, 0, 1, 138, -1, 1, 0,
-    0, 440, 0, 0, 0, 408, 0, 0,
-    39, -1, 1, 0, 0, 216, 0, 0,
-    0, 280, 0, 1, 39, -1, 1, 0,
-    0, 216, 0, 0, 0, 296, 0, 1,
-    39, -1, 1, 0, 0, 248, 0, 0,
-    0, 280, FACING_WEST, 1, 255, -1, 1, 0,
-    0, 456, 0, 0, 0, 392, FACING_WEST, 1,
-    116, -1, 1, 0, 0, 904, 0, 0,
-    0, 344, 0x3000, 1, 57, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTH, 1,
-    23, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_SOUTH, 1, 33, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTH, 1,
-    56, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_NORTH, 2, 5, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTH, 2,
-    6, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_SOUTH, 2, 7, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_NORTH, 2,
-    63, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, FACING_NORTH, 2, 56, -1, 1, 0,
-    0, 0, 0, 0, 0, 0, FACING_NORTH, 2,
-    489, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, FACING_NORTH, 2, -1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
+struct ActorPlacement gChampa_ActorPlacements[] = {
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(461, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(461, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 296, 0, 408, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 328, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 432, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, 8, 440, 0, 392, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 408, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(255, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 344, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(33, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(63, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
-s16 gChampa_ActorPlacementsOnceBriggsSailed[] = {
-    407, -1, 1, 0, 0, 200, 0, 0,
-    0, 408, FACING_SOUTH, 2, 407, -1, 1, 0,
-    0, 344, 0, 0, 0, 408, FACING_SOUTH, 258,
-    461, -1, 1, 0, 0, 240, 0, 0,
-    0, 456, FACING_SOUTH, 2, 461, -1, 1, 0,
-    0, 368, 0, 0, 0, 456, FACING_SOUTH, 258,
-    115, -1, 1, 0, 0, 264, 0, 0,
-    0, 424, 0x3000, 1, 116, -1, 1, 0,
-    0, 168, 0, 0, 0, 392, 0x3000, 1,
-    114, -1, 2, 0, 0, 328, 0, 0,
-    0, 312, 0x5000, 0, 128, -1, 2, 0,
-    0, 432, 0, 0, 0, 312, FACING_WEST, 0,
-    112, -1, 1, 0, 0, 328, 0, 0,
-    0, 280, FACING_WEST, 1, 113, -1, 1, 0,
-    0, 312, 0, 0, 0, 280, 0, 1,
-    136, -1, 1, 0, 0, 328, 0, 0,
-    0, 400, 0x5000, 0, 138, -1, 1, 0,
-    0, 424, 0, 0, 0, 392, FACING_WEST, 0,
-    39, -1, 1, 0, 0, 264, 0, 0,
-    0, 392, 0x3000, 1, 39, -1, 1, 0,
-    0, 272, 0, 0, 0, 472, 0xb000, 1,
-    39, -1, 1, 0, 0, 320, 0, 0,
-    0, 472, 0xd000, 1, 255, -1, 1, 0,
-    0, 456, 0, 0, 0, 392, FACING_WEST, 1,
-    116, -1, 1, 0, 0, 904, 0, 0,
-    0, 344, 0x3000, 1, 57, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTH, 1,
-    23, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_SOUTH, 1, 33, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTH, 1,
-    56, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_NORTH, 2, 5, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_SOUTH, 2,
-    6, -1, 1, 0, 0, -56, 0, 0,
-    0, -56, FACING_SOUTH, 2, 7, -1, 1, 0,
-    0, -56, 0, 0, 0, -56, FACING_NORTH, 2,
-    63, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, FACING_NORTH, 2, 56, -1, 1, 0,
-    0, 0, 0, 0, 0, 0, FACING_NORTH, 2,
-    489, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, FACING_NORTH, 2, 39, -1, 1, 0,
-    0, 184, 0, 0, 0, 296, 0xb000, 3,
-    39, -1, 1, 0, 0, 152, 0, 0,
-    0, 296, 0xd000, 3, 16, -1, 1, 0,
-    0, 168, 0, 0, 0, 264, 0x5000, 1,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[] = {
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(461, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(461, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 424, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 328, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 432, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 400, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 392, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 272, 0, 472, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 320, 0, 472, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(255, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 344, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(33, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(63, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 296, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 296, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(16, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 264, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    {SCENE_TABLE_END},
 };
 
 s16 gChampa_NoDoorEdit[] = {
@@ -1490,22 +1451,37 @@ s16 gChampa_DoorEdit[] = {
 };
 // clang-format on
 
-DEFINE_G_DATA_0200064C(gChampa_Doors, gChampa_DoorEdit, 0x9001d,
-                       gChampa_NoDoorEdit, 0)
+s32 gChampa_Doors[] = {
+    (s32)gChampa_DoorEdit,
+    0x9001d,
+    (s32)gChampa_NoDoorEdit,
+    0,
+};
 
 struct Trigger gChampa_Triggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 11, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc403, 24, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgChampa53)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 24, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgChampa53))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Champa_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -1555,18 +1531,29 @@ struct Trigger gChampa_Triggers[] = {
 };
 
 struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc602, 11, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
-    {0xc403, 24, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgChampa53)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
+     EVENT(Champa_EnterDoor)},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 24, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgChampa53))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Champa_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,

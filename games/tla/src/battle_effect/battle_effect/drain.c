@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 // Break's ice shards (effect kind 43).
 
@@ -62,9 +64,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
     struct EffectPosition *position;
 
     offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
-    /* FAKEMATCH(temporary): position holds &screen; as
-     * EffectPosition_ProjectPoint(point, &screen), 12 of 337 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(temporary): position holds &screen. */
     position = &screen;
     object = BattleObject_GetFar(effect->actors[member])->object;
     height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
@@ -104,7 +104,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
       offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
       // The target's cue: a chime and a flash.
       if (frame == member * 20) {
-        Sound_PlayFar(143);
+        Sound_PlayFar(SE_CRACK);
         BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 20);
       }
       // Its shards fly, and go out once they fall past y = 112.
@@ -206,9 +206,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];
       s32 speed;
 
-      mote->x = object->x;
-      mote->y = object->y + half;
-      mote->z = object->z;
+      SET_POSITION(mote, object->x, object->y + half, object->z);
       mote->velocityX = ((Random16() & 0xff) - 128) << 10;
       mote->velocityY = ((Random16() & 0xff) - 128) << 10;
       mote->velocityZ = (speed = (Random16() & 0xff) - 128) << 10;
@@ -233,7 +231,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
 
       *color++ = ((21 - i / 3) << 10) | blue;
     }
-    REG_BLDALPHA = 0x610;
+    REG_BLDALPHA = BLEND_ALPHA(16, 6);
     work->transferMode = 2;
     work->transferValue = 50;
   } else {
@@ -242,7 +240,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
     work->transferValue = 0x04040404;
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
     struct MotionObject *user;

@@ -3,9 +3,10 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 #undef HIT_FRAME
-#undef SE_HIT
 
 #define SHARD_COUNT 64
 #define STREAK_PICTURE_BYTES (48 * 72)
@@ -19,7 +20,6 @@
 #define BURST_FRAME 16 // the burst on the target, until frame 47
 
 #define PHASE_RESULTS 134
-#define SE_HIT 212
 
 extern char ResourceId_FireStreakSheet;
 extern char ResourceId_FireBurstSheet;
@@ -75,9 +75,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   do {
     struct EffectStep *seed = &work->particles[i];
 
-    seed->x = target->x;
-    seed->y = target->y;
-    seed->z = target->z;
+    SET_POSITION(seed, target->x, target->y, target->z);
     seed->velocityX = (Random16() & 255) << 11;
     seed->velocityY = ((Random16() & 255) - 127) << 12;
     seed->velocityZ = ((Random16() & 255) - 127) << 12;
@@ -96,7 +94,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     if (frame == HIT_FRAME)
       BattlePlayback_StartFar(PHASE_RESULTS);
     if (effect->variant != 0 && frame == HIT_FRAME)
-      Sound_PlayFar(SE_HIT);
+      Sound_PlayFar(SE_POWER_UP);
 
     // The streak, drawn from the user toward the target.
     EffectPosition_ProjectScaledBattler(effect->actor, &user);
@@ -142,7 +140,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       HeapSlot_Release(HEAP_BLITTER);
     }
     if (frame == HIT_FRAME)
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
 
     // The shards, projected from the battle camera.
     Transform_Reset();

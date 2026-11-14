@@ -5,6 +5,10 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "gamepak/far_call/field.h"
+#include "macros.h"
 
 #include "module/field/event_commands.h"
 
@@ -66,7 +70,7 @@ void FieldEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   effect->angle += 0xfff0;
   if (effect->pause != 0) {
     effect->pause--;
-    effect->angle += 0x800;
+    effect->angle += TRIG_TURN / 32;
   } else if ((Random16() << 5) >> 16 == 0) {
     effect->pause = ((Random16() << 4) >> 16) + 8;
   }
@@ -93,13 +97,13 @@ void FieldEffect_CircleAnchor(struct OrbitEffect *effect) {
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
   effect->x = anchor->x + dx;
   effect->z = anchor->z + dz;
-  effect->angle += 0x800;
+  effect->angle += TRIG_TURN / 32;
   if (++effect->timer == 121) {
     effect->update = FieldEffect_WanderAroundAnchor;
     effect->timer = 0;
     effect->pause = 0;
     effect->speed = 0x1999;
-    effect->scale = 0x30000;
+    effect->scale = Q16_ONE * 3;
     effect->angle = Random16();
   }
 }
@@ -113,7 +117,7 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
   scale = object->scaleX - 0x80;
   object->scaleY = scale;
   object->scaleX = scale;
-  if (scale < 0x8000) {
+  if (scale < Q16_ONE / 2) {
     Actor_SetPositionAndResetMotionFar(object, 0, 0, 0);
     object->update = 0;
   }
@@ -132,8 +136,6 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object);
 
 #define ORB_OBJECT 280
 #define MOTE_OBJECT 308
-#define SE_ORB_ARRIVES 207
-#define SE_ORB_FADES 136
 
 // The two targets ⚓️ treats apart, by their first animation.
 #define TARGET_ANIMATION_A 372
@@ -169,12 +171,8 @@ void FieldPsynergy_Whirlwind(void) {
       kind = ORB_HANDOFF;
   }
 
-  from.x = caster->x;
-  from.y = caster->y;
-  from.z = caster->z;
-  to.x = scene->x;
-  to.y = scene->y - (4 << 16);
-  to.z = scene->z;
+  SET_POSITION(&from, caster->x, caster->y, caster->z);
+  SET_POSITION(&to, scene->x, scene->y - px(4), scene->z);
   orb = Actor_Spawn(ORB_OBJECT, 0, 0, 0);
   if (orb == 0)
     return;
@@ -185,10 +183,10 @@ void FieldPsynergy_Whirlwind(void) {
   do {
     s32 scale;
 
-    orb->x = from.x + (to.x - from.x) * step / 10;
-    orb->y = from.y + (to.y - from.y) * step / 10;
-    orb->z = from.z + (to.z - from.z) * step / 10;
-    scale = step * 0x10ccc / 10 + 0x4000; // from 0.25 to 1.3
+    SET_POSITION(orb, from.x + (to.x - from.x) * step / 10,
+                 from.y + (to.y - from.y) * step / 10,
+                 from.z + (to.z - from.z) * step / 10);
+    scale = step * 0x10ccc / 10 + Q16_ONE / 4; // from 0.25 to 1.3
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -196,12 +194,12 @@ void FieldPsynergy_Whirlwind(void) {
   } while (step < frames);
   orb->scaleX = 0x1b333; // 1.7 wide
   orb->scaleY = 0x14ccc; // 1.3 high
-  Sound_PlayFar(SE_ORB_ARRIVES);
+  Sound_PlayFar(SE_RUSH);
 
   if (kind == ORB_PLAIN) {
     Actor_SelectAnimationFar(orb, 1);
     wait(30);
-    Sound_PlayFar(SE_ORB_FADES);
+    Sound_PlayFar(SE_WHOOSH);
     Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_ORBITING) {
@@ -213,10 +211,8 @@ void FieldPsynergy_Whirlwind(void) {
     for (i = 0; i <= 15; i++) {
       s32 distance;
 
-      position.x = orb->x;
-      position.y = orb->y + i * 0xcccc + (4 << 16);
-      position.z = orb->z;
-      distance = Random16() * 5 + (3 << 16);
+      SET_POSITION(&position, orb->x, orb->y + i * 0xcccc + px(4), orb->z);
+      distance = Random16() * 5 + px(3);
       Vector_AddPolarOffset(distance, Random16(), &position);
       mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                position.y, position.z);
@@ -233,7 +229,7 @@ void FieldPsynergy_Whirlwind(void) {
     wait(120);
     Actor_SelectAnimationFar(orb, 1);
     wait(30);
-    Sound_PlayFar(SE_ORB_FADES);
+    Sound_PlayFar(SE_WHOOSH);
     Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_WANDER || kind == ORB_HANDOFF) {
@@ -244,11 +240,9 @@ void FieldPsynergy_Whirlwind(void) {
       for (i = 0; i <= 15; i++) {
         s32 distance;
 
-        position.x = orb->x;
-        position.y = orb->y + i * 0xcccc + (4 << 16);
-        position.z = orb->z;
+        SET_POSITION(&position, orb->x, orb->y + i * 0xcccc + px(4), orb->z);
         distance = Random16() * 5;
-        distance += 3 << 16;
+        distance += px(3);
         Vector_AddPolarOffset(distance, Random16(), &position);
         mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                  position.y, position.z);
@@ -257,7 +251,7 @@ void FieldPsynergy_Whirlwind(void) {
           mote->timer = 20 + i * -2;
           mote->pause = 0;
           mote->speed = 0x1999;
-          mote->scale = 3 << 16;
+          mote->scale = Q16_ONE * 3;
           mote->angle = Random16();
         }
       }
@@ -274,15 +268,13 @@ void FieldPsynergy_Whirlwind(void) {
 }
 #undef ORB_OBJECT
 #undef MOTE_OBJECT
-#undef SE_ORB_ARRIVES
-#undef SE_ORB_FADES
 #undef TARGET_ANIMATION_A
 #undef TARGET_ANIMATION_B
 
 void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   if (object->age == 80) {
     object->update = 0;
-    Sound_PlayFar(136);
+    Sound_PlayFar(SE_WHOOSH);
   }
   object->age++;
 }
@@ -302,11 +294,11 @@ top:
     pos.x = effect->originX;
     pos.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset(Random16() * 30 + (40 << 16), (u16)angle, &pos);
+    Vector_AddPolarOffset(Random16() * 30 + px(40), (u16)angle, &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->acceleration = 4 << 16;
-    effect->maxSpeed = 4 << 16;
+    effect->acceleration = px(4);
+    effect->maxSpeed = px(4);
     effect->limitTurnStep = state;
     *st = *st + 1;
     return;
@@ -318,11 +310,9 @@ top:
     goto top;
   }
   if (state == 2) {
-    pos.x = scene->x;
-    pos.y = scene->y + (8 << 16);
-    pos.z = scene->z;
+    SET_POSITION(&pos, scene->x, scene->y + px(8), scene->z);
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+    Vector_AddPolarOffset(px(4), Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->maxTurnStep = 0x1000;
@@ -359,20 +349,16 @@ void FieldPsynergy_Halt(void) {
     return;
 
   FieldPsynergy_FadeToCastColor();
-  from.x = user->x;
-  from.y = user->y + (16 << 16);
-  from.z = user->z;
-  to.x = scene->x;
-  to.y = scene->y + (8 << 16);
-  to.z = scene->z;
+  SET_POSITION(&from, user->x, user->y + px(16), user->z);
+  SET_POSITION(&to, scene->x, scene->y + px(8), scene->z);
   for (;;) {
     s32 steps = 11;
     s32 scale;
 
-    obj->x = from.x + (to.x - from.x) * step / 10;
-    obj->y = from.y + (to.y - from.y) * step / 10;
-    obj->z = from.z + (to.z - from.z) * step / 10;
-    scale = BattleEffect_Interpolate(Q16_ONE, 0x4000, step);
+    SET_POSITION(obj, from.x + (to.x - from.x) * step / 10,
+                 from.y + (to.y - from.y) * step / 10,
+                 from.z + (to.z - from.z) * step / 10);
+    scale = BattleEffect_Interpolate(Q16_ONE, Q16_ONE / 4, step);
     obj->scaleX = scale;
     obj->scaleY = scale;
     wait(1);
@@ -383,30 +369,26 @@ void FieldPsynergy_Halt(void) {
 
   wait(5);
   Actor_SelectAnimationFar(obj, 1);
-  Sound_PlayFar(108);
+  Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   wait(10);
-  Sound_PlayFar(108);
+  Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   wait(10);
-  Sound_PlayFar(108);
+  Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   wait(10);
-  Sound_PlayFar(109);
+  Sound_PlayFar(SE_TRIPLE_TONE_HIGH);
 
   slot = &((struct FallbackScene *)scene)->slots[0];
   for (i = 0; i < 16; i++) {
-    pos.x = obj->x;
-    pos.y = obj->y + (8 << 16);
-    pos.z = obj->z;
+    SET_POSITION(&pos, obj->x, obj->y + px(8), obj->z);
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+    Vector_AddPolarOffset(px(4), Random16(), &pos);
     FieldParticle_Initialize(slot, 673, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateHaltParticle);
     Animation_ApplyChildValuesToRecordFar(slot->object, 7);
     slot++;
   }
 
-  pos.x = obj->x;
-  pos.y = obj->y + (8 << 16);
-  pos.z = obj->z;
+  SET_POSITION(&pos, obj->x, obj->y + px(8), obj->z);
   wait(8);
   Actor_ReleaseFar(obj);
   wait(4);
@@ -489,27 +471,20 @@ void FieldPsynergy_Catch(void) {
   s32 index;
   s32 steps = 11;
 
-  origin.x = mainObject->x;
-  origin.y = mainObject->y + 0x100000;
-  origin.z = mainObject->z;
+  SET_POSITION(&origin, mainObject->x, mainObject->y + 0x100000, mainObject->z);
   if (scene->enabled) {
-    target.x = mainObject->x;
-    target.y = mainObject->y + 0x200000;
-    target.z = mainObject->z;
-    Vector_AddPolarOffset(0x200000, scene->angle, &target.x);
+    SET_POSITION(&target, mainObject->x, mainObject->y + 0x200000,
+                 mainObject->z);
+    Vector_AddPolarOffset(px(32), scene->angle, &target.x);
   } else {
-    target.x = scene->x;
-    target.y = scene->y + 0x200000;
-    target.z = scene->z;
+    SET_POSITION(&target, scene->x, scene->y + 0x200000, scene->z);
   }
-  spawn.x = scene->x;
-  spawn.y = scene->y + 0x200000;
-  spawn.z = scene->z;
+  SET_POSITION(&spawn, scene->x, scene->y + 0x200000, scene->z);
   object = Actor_Spawn(278, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   object->facing = mainObject->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
@@ -519,10 +494,10 @@ void FieldPsynergy_Catch(void) {
   do {
     s32 scale;
 
-    object->x = origin.x + (target.x - origin.x) * step / 10;
-    object->y = origin.y + (target.y - origin.y) * step / 10;
-    object->z = origin.z + (target.z - origin.z) * step / 10;
-    scale = Interpolate(0x4000, Q16_ONE, step);
+    SET_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
+                 origin.y + (target.y - origin.y) * step / 10,
+                 origin.z + (target.z - origin.z) * step / 10);
+    scale = Interpolate(Q16_ONE / 4, Q16_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);
@@ -532,29 +507,28 @@ void FieldPsynergy_Catch(void) {
   Actor_SelectAnimationFar(object, 6);
   wait(15);
   for (index = 0; index < 10; index++) {
-    object->y -= 0x20000;
+    object->y -= px(2);
     wait(1);
   }
   Actor_SelectAnimationFar(object, 5);
-  Sound_PlayFar(132);
+  Sound_PlayFar(SE_WATER);
   if (secondary != 0)
-    Actor_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y,
-                                       -0x90000);
+    Actor_SetPositionAndResetMotionFar(secondary, -px(9), secondary->y, -px(9));
   wait(20);
   for (index = 0; index < 13; index++) {
-    object->y += 0x18000;
+    object->y += px(3) / 2;
     wait(1);
   }
   wait(10);
-  Sound_PlayFar(114);
+  Sound_PlayFar(SE_MENU_ERROR);
   step = 0;
   do {
     s32 scale;
 
-    object->x = target.x + (origin.x - target.x) * step / 10;
-    object->y = target.y + (origin.y - target.y) * step / 10;
-    object->z = target.z + (origin.z - target.z) * step / 10;
-    scale = Interpolate(Q16_ONE, 0x4000, step);
+    SET_POSITION(object, target.x + (origin.x - target.x) * step / 10,
+                 target.y + (origin.y - target.y) * step / 10,
+                 target.z + (origin.z - target.z) * step / 10);
+    scale = Interpolate(Q16_ONE, Q16_ONE / 4, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);
@@ -585,9 +559,7 @@ void FieldPsynergy_UpdateLash(void) {
     s32 speed;
 
     particle = &work->particles[work->next];
-    particle->x = object->x;
-    particle->y = object->y;
-    particle->z = object->z;
+    SET_POSITION(particle, object->x, object->y, object->z);
     distance = Random16() * 12 + 0x40000;
     Vector_AddPolarOffset(distance, Random16(), particle);
     particle->velocityX = 0;
@@ -646,9 +618,7 @@ void FieldPsynergy_UpdateLash(void) {
     if (work->timer == 0)
       work->flash = 1;
     Rope_GetEndNodePosition(event->target, &position);
-    object->x = position.x;
-    object->y = position.y - 0x40000;
-    object->z = position.z;
+    SET_POSITION(object, position.x, position.y - 0x40000, position.z);
     if (work->hit != 0) {
       work->phase++;
       work->timer = -1;
@@ -680,8 +650,8 @@ void FieldPsynergy_UpdateLash(void) {
 /* VIEW(radial): tag struct EffectSceneWork as struct EffectSceneWork__radial;
  * module/field/event_commands.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:760: structure has no member
- * named `failed'. */
+ * games/tla/src/field/event_commands/radial/radial_effects.c:661: structure has
+ * no member named `failed'. */
 struct EffectSceneWork__radial {
   u8 unk00[0x20];
   u8 failed;
@@ -700,8 +670,7 @@ void FieldPsynergy_LashOnTarget(s32 value) {
     work->failed = 1;
   } else {
     state->valueD32 = value;
-    // An empty once-only loop keeps the first result's load after the value's
-    // store; without it, 4 of 34 instructions differ in tla-en.
+    /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
     state->valueD33 = first;
@@ -726,8 +695,8 @@ void FieldPsynergy_Lash(void) {
   s32 i;
 
   if (scene->child != 0) {
-    scene->y += 0x40000;
-    scene->z += 0x40000;
+    scene->y += px(4);
+    scene->z += px(4);
   }
   FieldPsynergy_FadeToCastColor();
   object = Actor_Spawn(363, 0, 0, 0);
@@ -737,7 +706,7 @@ void FieldPsynergy_Lash(void) {
     if (caster->priorityFlags & 0x20)
       object->priorityFlags |= 0x20;
     Actor_SelectAnimationFar(object, 0);
-    Sound_PlayFar(138);
+    Sound_PlayFar(SE_ITEM_BREAK);
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
                         work);
     slotA = VramCache_FindFreeEntry();
@@ -756,10 +725,8 @@ void FieldPsynergy_Lash(void) {
       sprite->oam.priority = 0;
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
-      particle->x = object->x;
-      particle->y = object->y;
-      particle->z = object->z;
-      Vector_AddPolarOffset(0xc0000, Random16(), particle);
+      SET_POSITION(particle, object->x, object->y, object->z);
+      Vector_AddPolarOffset(px(12), Random16(), particle);
       particle->timer = -1;
       sprite++;
       particle++;
@@ -770,10 +737,10 @@ void FieldPsynergy_Lash(void) {
     Actor_SelectAnimationFar(object, 1);
     wait(10);
     for (i = 15; i >= 0; i--) {
-      object->y += -0x20000;
+      object->y += -px(2);
       wait(1);
     }
-    Sound_PlayFar(132);
+    Sound_PlayFar(SE_WATER);
     if (scene->enabled != 0) {
       for (i = 15; i >= 0; i--)
         BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
@@ -789,10 +756,10 @@ void FieldPsynergy_Lash(void) {
       Task_Add(FieldPsynergy_UpdateLash, 0x480);
       while (work->phase != 999) {
         if (work->flash == 1) {
-          Sound_PlayFar(0x200);
+          Sound_PlayFar(SE_512);
           Rope_Lash(event->target, event->targetY, event->targetZ);
           work->hit = 1;
-          Sound_PlayFar(395);
+          Sound_PlayFar(SOUND_FADE_OUT_SE5);
         }
         wait(1);
       }
@@ -810,7 +777,7 @@ void FieldEffect_UpdateSpinAngle(struct Actor *object) {
   u32 step;
 
   step = object->timer * 0x50;
-  object->facing += step + 0x1000;
+  object->facing += step + TRIG_TURN / 16;
   if (step < 0x1000)
     object->timer++;
 }
@@ -826,8 +793,8 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
   obj->scaleY += step;
   scaleX = obj->scaleX;
   scale = scaleX + step;
-  obj->facing += 0x2000;
-  obj->y += 1 << 16;
+  obj->facing += TRIG_TURN / 8;
+  obj->y += px(1);
   obj->scaleX = scale;
   if ((s32)scale < 0x3000) {
     obj->animationKind = 0;
@@ -853,7 +820,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
     Camera_WorldToScreen(arg);
 
     slot->x = slot->originX = pos.x;
-    slot->z = slot->originZ = pos.z + (8 << 16);
+    slot->z = slot->originZ = pos.z + px(8);
 
     r = Random16();
     Vector_AddPolarOffset(
@@ -862,13 +829,13 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
 
     slot->targetX = pos.x;
     slot->targetZ = pos.z;
-    slot->acceleration = 5 << 16;
-    slot->maxSpeed = 5 << 16;
+    slot->acceleration = px(5);
+    slot->maxSpeed = px(5);
     slot->limitTurnStep = state;
     slot->state++;
 
     if ((gFrameCount & 2) != 0)
-      Sound_PlayFar(246);
+      Sound_PlayFar(SE_GLITTER);
   } else if (state == 1) {
     if (FieldParticle_HasPendingTarget(slot) == 0)
       slot->state--;
@@ -910,11 +877,11 @@ void FieldPsynergy_Retreat(void) {
   Actor_ArmCallback(scene->firstObjectId, 0x4000, 0);
   wait(30);
   obj->update = Actor_ApplyRandomChildValues;
-  Sound_PlayFar(131);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_SelectAnimationFar(obj, 28);
   wait(40);
 
-  Sound_PlayFar(220);
+  Sound_PlayFar(SE_SHIMMER);
   Actor_SetSpriteColorModeFar(obj, 0);
   Actor_SelectAnimationFar(obj, 3);
   obj->update = FieldEffect_UpdateSpinAngle;
@@ -925,9 +892,7 @@ void FieldPsynergy_Retreat(void) {
   obj->motionFlags = 0;
   obj->update = FieldEffect_UpdateRetreatCaster;
   obj->targetX = EFFECT_NO_TARGET;
-  pos.x = obj->x;
-  pos.y = obj->y;
-  pos.z = obj->z;
+  SET_POSITION(&pos, obj->x, obj->y, obj->z);
   Camera_WorldToScreen(&pos);
   i = 0;
   slot = scene->slots;
@@ -973,7 +938,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->watchedObject;
-  if (party->map == (s32)&SceneId_Ov64a)
+  if (party->map == (s32)&SceneId_Clear)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y;
@@ -987,9 +952,8 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
     scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = scale;
-  particle->x = source->x;
-  particle->y = y - 0x20000;
-  particle->z = source->z + ((0x10000 - scale) * 5) + 0x90000;
+  SET_POSITION(particle, source->x, y - 0x20000,
+               source->z + ((Q16_ONE - scale) * 5) + 0x90000);
 }
 
 void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
@@ -1001,7 +965,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->watchedObject;
-  if (party->map == (s32)&SceneId_Ov64a)
+  if (party->map == (s32)&SceneId_Clear)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y;
@@ -1015,20 +979,9 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
     scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = -scale;
-  particle->x = source->x;
-  particle->y = y - 0x20000;
-  particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
+  SET_POSITION(particle, source->x, y - 0x20000,
+               source->z - ((Q16_ONE - scale) * 5) + 0x100000);
 }
-
-/* VIEW(radial): routine Actor_CreateFar as struct ArcObject
- * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); gamepak/far_call/field.h has
- * struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); tried as the
- * rest of the object declares it, it does not compile in tla-ja (make modern):
- * games/tla/src/field/event_commands/radial.c:79:13: note:
- * 'FieldEffect_AdvanceMotion' declared here. */
-struct ArcObject *Actor_CreateFar__radial(s32 kind, s32 x, s32 y,
-                                          s32 z) __asm__("Actor_CreateFar");
-#define Actor_CreateFar Actor_CreateFar__radial
 
 void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
   u8 *work = Ram_HeapSlots->effectWork;
@@ -1078,7 +1031,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
 #include "text/msg_ids.h"
 
 /// The caster during Avoid (FieldPsynergy_Avoid): sheds a pair of falling
-/// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1.
+/// arcs every 5 frames (7 in scene Clear), and spins in phase 1.
 // As ☀️'s function of the same name.
 void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject *caster) {
   s16 phase;
@@ -1089,7 +1042,7 @@ void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject *caster) {
   elapsedFrames = (s16)caster->step++;
   party = &gMainRoutineWork;
 
-  if (party->map == (s32)&SceneId_Ov64a) {
+  if (party->map == (s32)&SceneId_Clear) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {
@@ -1134,8 +1087,6 @@ void FieldPsynergy_Avoid(void) {
   flags = group->flags;
   slot = VramCache_FindFreeEntry();
   scene->arcTileSlot = slot;
-  // tiles holds the picture's address, loaded between the slot's two shifts;
-  // as the address in the call, 2 of 156 instructions differ in tla-en.
   tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 0x100, tiles);
   gMainRoutineWork.avoidDistance = 0x09600000;
@@ -1144,7 +1095,7 @@ void FieldPsynergy_Avoid(void) {
   object->callback = FieldEffect_UpdateAvoidCaster;
   object->phase = 0;
   object->step = 0;
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   wait(15);
   object->phase = 1;
   wait(10);
@@ -1172,21 +1123,19 @@ void FieldPsynergy_Avoid(void) {
       entry->param = 0;
     }
     if (count == 15)
-      Sound_PlayFar(174);
+      Sound_PlayFar(SE_NOTE_MID);
     wait(1);
   }
   {
-    /* FAKEMATCH(temporary): the flags restored through a pointer of their
-     * own, which sets the param's 0 after the flags' copy; as group->flags =
-     * flags, 2 of 156 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the flags restored through a pointer of their own.
+     */
     u8 *restore = &group->flags;
 
     *restore = flags;
   }
   group->dirty = 1;
   entry->param = 0;
-  // An empty once-only loop keeps the wait's argument after the param store;
-  // without it, 2 of 156 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
   wait(1);
@@ -1263,8 +1212,8 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 /* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:1374: structure has no member
- * named `x'. */
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1237: structure
+ * has no member named `x'. */
 struct ArcSprite__f0e150c {
   u8 unk00[12];
   s32 x;
@@ -1378,10 +1327,10 @@ again:
   case 1:
     if (work->timer == 0) {
       sprite = &work->arrow;
-      sprite->scaleX = sprite->scaleY = 0x10000;
+      sprite->scaleX = sprite->scaleY = Q16_ONE;
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset(0x2666, scene->angle + 0x8000, pos);
+      Vector_AddPolarOffset(0x2666, scene->angle + TRIG_TURN / 2, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -1392,7 +1341,7 @@ again:
     if (work->timer == 56) {
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset(0x50000, scene->angle, pos);
+      Vector_AddPolarOffset(px(5), scene->angle, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -1453,7 +1402,7 @@ again:
     }
     motion = &work->arrowMotion;
     pos[0] = pos[1] = pos[2] = 0;
-    Vector_AddPolarOffset(0x20000, scene->angle, pos);
+    Vector_AddPolarOffset(px(2), scene->angle, pos);
     motion->velocityX = pos[0];
     motion->velocityY = pos[1];
     motion->velocityZ = pos[2];
@@ -1470,7 +1419,7 @@ again:
         memcpy(wobble, Data_080f0f34, sizeof(wobble));
         memcpy(fade, Data_080f0f54, sizeof(fade));
         w = wobble[work->timer & 7];
-        sprite->angle = scene->angle + w * fade[work->timer / 8] / 0x10000;
+        sprite->angle = scene->angle + w * fade[work->timer / 8] / (TRIG_TURN);
       }
       if (work->timer == 32)
         work->bowShrinking = 1;
@@ -1499,9 +1448,9 @@ again:
     sprite = &work->bow;
     sprite->scaleX += 0x400;
     sprite->scaleY = sprite->scaleX;
-    sprite->angle += 0x2000;
-    if (sprite->scaleX >= 0x10000) {
-      sprite->scaleX = sprite->scaleY = 0x10000;
+    sprite->angle += TRIG_TURN / 8;
+    if (sprite->scaleX >= Q16_ONE) {
+      sprite->scaleX = sprite->scaleY = Q16_ONE;
       sprite->angle = scene->angle;
       work->bowGrowing = 0;
     }
@@ -1510,7 +1459,7 @@ again:
     sprite = &work->bow;
     sprite->scaleX += -0x400;
     sprite->scaleY = sprite->scaleX;
-    sprite->angle += 0x2000;
+    sprite->angle += TRIG_TURN / 8;
     if (sprite->scaleX <= 0x6665) {
       sprite->scaleX = sprite->scaleY = 0;
       work->bowShrinking = 0;
@@ -1580,8 +1529,8 @@ again:
 
         speed = (Random16() & 255) + 256;
         angle = (Random16() & 0x1fff) + 0x7000;
-        motion->x = 0x3c0000;
-        motion->y = 0x1c0000;
+        motion->x = px(60);
+        motion->y = px(28);
         motion->velocityX = Trig_Cos(angle) * speed >> 6;
         motion->velocityY = Trig_Sin(angle) * speed >> 6;
       }
@@ -1591,9 +1540,7 @@ again:
         BattleEffect_DrawCanvasBlock(Data_080eda0c + (motion->delay & 1) * 64,
                                      x, (s16)(motion->y >> 16), 8, 8);
         BattleEffect_IntegrateVector2(&motion->x, 60, 0);
-        /* FAKEMATCH(barrier): an empty asm after the step, which keeps the
-         * picture's address add after the y's load for the draw; without it,
-         * 2 of 923 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm after the step. */
         asm("");
       }
       motion->delay++;
@@ -1607,7 +1554,7 @@ again:
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
-  Vector_AddPolarOffset(-0x240000, scene->angle, pos);
+  Vector_AddPolarOffset(-px(36), scene->angle, pos);
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
@@ -1668,10 +1615,8 @@ void FieldPsynergy_Unnamed29(void) {
   pos[0] = scene->mainObject->x;
   pos[2] = scene->mainObject->z;
   motion = &work->bowMotion;
-  Vector_AddPolarOffset(0x80000, scene->angle, pos);
-  motion->x = pos[0];
-  motion->y = 0x100000;
-  motion->z = pos[2];
+  Vector_AddPolarOffset(px(8), scene->angle, pos);
+  SET_POSITION(motion, pos[0], px(16), pos[2]);
 
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FlamingArrow),
                       work->tiles);
@@ -1690,10 +1635,8 @@ void FieldPsynergy_Unnamed29(void) {
   pos[0] = scene->mainObject->x;
   pos[2] = scene->mainObject->z;
   motion = &work->arrowMotion;
-  Vector_AddPolarOffset(0x120000, scene->angle, pos);
-  motion->x = pos[0];
-  motion->y = 0x100000;
-  motion->z = pos[2];
+  Vector_AddPolarOffset(px(18), scene->angle, pos);
+  SET_POSITION(motion, pos[0], px(16), pos[2]);
   HeapSlot_Release(96);
 
   BattleEffect_StartCanvasSprite();
@@ -1710,7 +1653,7 @@ void FieldPsynergy_Unnamed29(void) {
   work->target[0] = scene->mainObject->x;
   work->target[1] = scene->mainObject->y;
   work->target[2] = scene->mainObject->z;
-  Vector_AddPolarOffset(0x500000, scene->angle, work->target);
+  Vector_AddPolarOffset(px(80), scene->angle, work->target);
 
   palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
   for (i = 0; i < 16; i++) {
@@ -1722,7 +1665,7 @@ void FieldPsynergy_Unnamed29(void) {
     palette++;
   }
 
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
   work->bowGrowing = 0;
   work->bowShrinking = 0;
@@ -1853,9 +1796,7 @@ void FieldPsynergy_RunTouchedEvents(void) {
   }
 
   for (i = 0; ids[i] != -1; i++) {
-    /* FAKEMATCH(wrapper): ids[Index(i)], through an inline that returns i,
-     * so the id is read before the kind; as ids[i], 18 of 160 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(wrapper): ids[Index(i)], through an inline that returns i. */
     s32 event =
         Scene_FindPsynergyTrigger(0x50000005, work->kind, ids[Index(i)]);
 
@@ -1866,8 +1807,9 @@ void FieldPsynergy_RunTouchedEvents(void) {
 
 /* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:1978:
- * structure has no member named `unk02'. */
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1835: structure
+ * has no member named `unk02'. */
 struct MapCell__f0e150c {
   u8 unk00[2];
   u8 unk02;
@@ -1918,15 +1860,16 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
 /* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c
  * has extern struct TouchCopies gData_02001000; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:2009: incompatible types in
- * initialization. */
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1875: incompatible
+ * types in initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
 /* VIEW(f0e2718): routine MapGrid_GetCellAt as struct MapCell
  * *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); f0e150c has struct
  * MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); tried as the
  * definition's struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer), it
- * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2002:
- * conflicting types for `MapGrid_GetCellAt'. */
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1866: conflicting
+ * types for `MapGrid_GetCellAt'. */
 extern struct MapCell *
 MapGrid_GetCellAt__f0e2718(s32 x, s32 z,
                            s32 layer) __asm__("MapGrid_GetCellAt");

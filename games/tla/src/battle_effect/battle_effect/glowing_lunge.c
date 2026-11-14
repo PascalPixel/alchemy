@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 
 struct Model;
 
@@ -21,8 +22,8 @@ struct Model;
 /* VIEW(f17e0c0): tag struct Texture as struct Texture__f17e0c0;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47117: structure has no member
- * named `logWidth'. */
+ * games/tla/src/battle_effect/battle_effect/glowing_lunge.c:243: structure has
+ * no member named `logWidth'. */
 struct Texture__f17e0c0 {
   u8 logWidth;
   u8 logHeight;
@@ -35,8 +36,8 @@ struct Texture__f17e0c0 {
 /* VIEW(f17e0c0): tag struct RenderPrimitive as struct RenderPrimitive__f17e0c0;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47088: structure has no member
- * named `brightness'. */
+ * games/tla/src/battle_effect/battle_effect/glowing_lunge.c:214: structure has
+ * no member named `brightness'. */
 struct RenderPrimitive__f17e0c0 {
   s32 kind;
   s32 unk04;
@@ -130,7 +131,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
   s32 resource;
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
@@ -181,10 +182,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         spark->x = targetObject->x;
         if (spark->x < 0)
-          spark->x += -8 << 16;
+          spark->x += -px(8);
         else
-          spark->x += 8 << 16;
-        spark->y = targetObject->y + (14 << 16);
+          spark->x += px(8);
+        spark->y = targetObject->y + px(14);
         spark->z = targetObject->z;
         spark->velocityX = (Random16() & 511) << 11;
         spark->velocityY = ((Random16() & 255) - 64) << 11;
@@ -197,10 +198,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
         struct EffectStep *burst = &work->particles[i];
         burst->x = targetObject->x;
         if (burst->x < 0)
-          burst->x += -8 << 16;
+          burst->x += -px(8);
         else
-          burst->x += 8 << 16;
-        burst->y = targetObject->y + (14 << 16);
+          burst->x += px(8);
+        burst->y = targetObject->y + px(14);
         burst->z = targetObject->z;
         burst->velocityX = ((Random16() & 511) - 256) << 10;
         burst->velocityY = ((Random16() & 255) - 64) << 10;
@@ -226,13 +227,13 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
     quad->brightness = brightness;
     if (frame < LUNGE_STREAK_FRAMES) {
       Transform_Reset();
-      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+      SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       SceneTransform_ApplyPosition3((caster.x - 128) << 16,
                                     (caster.y - 88) << 16, 0);
       SceneTransform_ApplyScale3(Data_081994b8[mode] << 1,
                                  Data_081994b8[mode] << 1, Data_081994b8[mode]);
       if (effect->side == 1)
-        Transform_ApplyYaw(0x8000);
+        Transform_ApplyYaw(TRIG_TURN / 2);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(quad);
     }
@@ -243,7 +244,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
     if (frame >= LUNGE_HIT_FRAME &&
         frame < LUNGE_HIT_FRAME + LUNGE_FLASH_FRAMES) {
       if (mode == 4)
-        scale = (flashFrame << 12) + 0x1000;
+        scale = (flashFrame << 12) + Q16_ONE / 16;
       else
         scale = flashFrame * 3048 + 3048;
       brightness = 32 - flashFrame * 8;
@@ -256,7 +257,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
       quad->kind = 7;
       quad->faces = gData_08199364;
       Transform_Reset();
-      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+      SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       if (effect->side == 0)
         SceneTransform_ApplyPosition3((target.x - 144) << 16,
                                       (target.y - 84) << 16, 0);
@@ -288,9 +289,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
 
       Transform_Reset();
       spark = gData_02014000;
-      /* FAKEMATCH(barrier): an empty asm on spark, which ranks it over the
-       * screen pointer; with spark set after the look-at and no asm, 2 of 601
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on spark. */
       __asm__("" : "=r"(spark) : "0"(spark));
       Transform_SetLookAt(camera, camera + 3);
       for (i = 0; i != SPARK_COUNT; i++, spark++) {

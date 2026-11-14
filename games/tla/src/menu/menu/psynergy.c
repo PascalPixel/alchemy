@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 s32 PsynergyMenu_IsActionRestricted(s32 no);
 
@@ -36,8 +37,8 @@ s32 PsynergyMenu_Run(void) {
   Window_InitializeWork(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
-  Iwram_CopyWords(savedTiles, (void *)0x06004000, 0x2000);
-  Iwram_FillWords((void *)0x06004000, 0x2000, 0x33333333);
+  Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), 0x2000);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
   screen->partyCount = Party_ListMembersFar(screen->ownerIds);
@@ -67,7 +68,7 @@ s32 PsynergyMenu_Run(void) {
 #if TLA_PATCH_2
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)0x06004000, savedTiles, 0x2000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles, 0x2000);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(savedTiles);
   wait(1);
@@ -157,9 +158,8 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
-      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 its
-       * own register, as The Broken Seal's twin; as if (chosen == -1) setting
-       * done and useResult, 12 of 344 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 its own
+       * register. */
       if (chosen == -1)
         cancelled = chosen;
       if (((u32)chosen ^ (u32)cancelled) == 0) {
@@ -181,10 +181,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         {
           struct PsynergyMenuState *savedWork = menu;
 
-          /* FAKEMATCH(dead): menu cleared and restored under a false test, so
-           * the mode's offset is built from its own constant, as The Broken
-           * Seal's twin; without the two tests, 45 of 344 instructions differ
-           * in tla-en. */
+          /* FAKEMATCH(dead): menu cleared and restored under a false test. */
           if (done)
             menu = NULL;
           if (done)
@@ -282,10 +279,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         void *window;
         s32 target = menu->memberIds[1];
 
-        /* FAKEMATCH(temporary): the target read before the window, as the
-         * native orders the call's arguments; as StatusPanel_Draw(menu->
-         * statusWindow, menu->memberIds[1], 0, 0), 2 of 344 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(temporary): the target read before the window. */
         window = menu->statusWindow;
         StatusPanel_Draw(window, target, 0, 0);
         {
@@ -299,7 +293,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage(menu->useResult + (s32)MsgItemUseResult, 0, -1);
       } else {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage(menu->useResult + (s32)MsgItemUseResult, useResult,
                              useResult);
@@ -343,8 +337,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   struct BattleAct *psynergy;
   s32 diff;
   s32 ret;
-  /* FAKEMATCH(pin): the action fixed to r3; as a plain local, 8 of 34
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the action fixed to r3. */
   register u32 action asm("r3");
 
   menu = Ram_HeapSlots->menuRuntime;
@@ -495,11 +488,11 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     wait(1);
     if (KEYS_PRESSED & 1) {
       if (menu->psynergyCount) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = ownerIds[selection];
         break;
       }
-      Sound_PlayFar(114);
+      Sound_PlayFar(SE_MENU_ERROR);
     }
     if ((KEYS_PRESSED & 0x200) || (KEYS_PRESSED & 0x100)) {
       result = ownerIds[selection];
@@ -513,14 +506,14 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
       shortcutCount = fieldCount;
       if (shortcutCount == 0) {
         menu->mode = shortcutCount;
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       } else {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
     }
     if (KEYS_PRESSED & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -616,13 +609,13 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
-    if (gInput.pressed & 1) {
-      Sound_PlayFar(112);
+    if (gInput.pressed & KEY_A) {
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = menu->ownerIds[selection];
       break;
     }
-    if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -1157,7 +1150,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       wait(1);
       previous = state.selectedIndex;
 
-      if ((gInput.held & 4) == 0)
+      if ((gInput.held & KEY_SELECT) == 0)
         moved = PagedList_HandleInput(0, state.entryCount, 5, &state.row,
                                       &state.page);
       else
@@ -1172,22 +1165,22 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         changed = 0;
 
       if (menu->mode == 0) {
-        if ((gInput.pressed & 4) && shortcutHelp == 0) {
+        if ((gInput.pressed & KEY_SELECT) && shortcutHelp == 0) {
           ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                 OWNER_ACTION_ID_MASK);
           if (ability->unk04[2] == 0) {
-            Sound_PlayFar(114);
+            Sound_PlayFar(SE_MENU_ERROR);
           } else {
-            Sound_PlayFar(174);
+            Sound_PlayFar(SE_NOTE_MID);
             shortcutHelp = 1;
             menu->flags |= 2;
             Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
             Text_DrawMessageAsTilesFar(MsgShortcutHelp, window, 0, 88);
           }
         }
-        /* FAKEMATCH(volatile): held read afresh for this test; as plain
-         * gInput.held, 85 of 762 instructions differ in tla-en. */
-        if ((*(volatile u32 *)&gInput.held & 4) == 0 && shortcutHelp == 1) {
+        /* FAKEMATCH(volatile): held read afresh for this test. */
+        if ((*(volatile u32 *)&gInput.held & KEY_SELECT) == 0 &&
+            shortcutHelp == 1) {
           shortcutHelp = 0;
           menu->flags &= ~2;
           Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
@@ -1196,9 +1189,9 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         }
       }
 
-      if (gInput.pressed & 1) {
+      if (gInput.pressed & KEY_A) {
         if (menu->mode != 0) {
-          Sound_PlayFar(130);
+          Sound_PlayFar(SE_PSYNERGY_START);
           result = menu->psynergies[state.selectedIndex];
           done = 1;
           break;
@@ -1206,15 +1199,15 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         if (menu->psynergies[state.selectedIndex] != 0) {
           if (PsynergyMenu_IsActionRestricted(
                   menu->psynergies[state.selectedIndex]) != 0) {
-            Sound_PlayFar(114);
+            Sound_PlayFar(SE_MENU_ERROR);
             continue;
           }
           ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                 OWNER_ACTION_ID_MASK);
           if (ability->ppCost > owner->pp) {
-            Sound_PlayFar(114);
+            Sound_PlayFar(SE_MENU_ERROR);
           } else {
-            Sound_PlayFar(173);
+            Sound_PlayFar(SE_NOTE_LOW);
             result = menu->psynergies[state.selectedIndex];
             done = 1;
             break;
@@ -1222,23 +1215,23 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         }
       }
 
-      if (gInput.pressed & 2) {
-        Sound_PlayFar(113);
+      if (gInput.pressed & KEY_B) {
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
 
-      if (((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) &&
-          (gInput.held & 4) == 0) {
+      if (((gInput.repeat & KEY_R) || (gInput.repeat & KEY_L)) &&
+          (gInput.held & KEY_SELECT) == 0) {
         member = menu->tabIndex[paneIndex];
         ownerCount = menu->memberCount;
         listMode = menu->mode != 0 ? 1 : 2;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         menu->selectedIndexByOwner[menu->memberIds[paneIndex]] =
             state.selectedIndex;
         do {
-          if (gInput.repeat & 0x100)
+          if (gInput.repeat & KEY_R)
             member++;
           else
             member--;
@@ -1259,15 +1252,15 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         break;
       }
 
-      if ((gInput.pressed & 0x200) && (gInput.held & 4)) {
+      if ((gInput.pressed & KEY_L) && (gInput.held & KEY_SELECT)) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
         } else if (PsynergyMenu_SetShortcut(
                        menu->memberIds[paneIndex],
                        menu->psynergies[state.selectedIndex], 0) != 0) {
-          Sound_PlayFar(130);
+          Sound_PlayFar(SE_PSYNERGY_START);
           result = menu->psynergies[state.selectedIndex];
           menu->mode = 1;
           done = 1;
@@ -1275,15 +1268,15 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         }
       }
 
-      if ((gInput.pressed & 0x100) && (gInput.held & 4)) {
+      if ((gInput.pressed & KEY_R) && (gInput.held & KEY_SELECT)) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
         } else if (PsynergyMenu_SetShortcut(
                        menu->memberIds[paneIndex],
                        menu->psynergies[state.selectedIndex], 1) != 0) {
-          Sound_PlayFar(130);
+          Sound_PlayFar(SE_PSYNERGY_START);
           result = menu->psynergies[state.selectedIndex];
           menu->mode = 2;
           done = 1;

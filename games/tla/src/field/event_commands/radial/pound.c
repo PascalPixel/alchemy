@@ -3,12 +3,14 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 /* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c;
  * f0e2c38.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:4853: structure has no member
- * named `velocityX'. */
+ * games/tla/src/field/event_commands/radial/pound.c:195: structure has no
+ * member named `velocityX'. */
 struct ShineParticle__f0e5d5c {
   s32 x;
   s32 y;
@@ -22,8 +24,8 @@ struct ShineParticle__f0e5d5c {
 /* VIEW(f0e5d5c): tag struct ShineWork as struct ShineWork__f0e5d5c; f0e2c38.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:4822: structure has no member
- * named `glow'. */
+ * games/tla/src/field/event_commands/radial/pound.c:164: structure has no
+ * member named `glow'. */
 struct ShineWork__f0e5d5c {
   u8 tiles[0x1000];
   struct ShineParticle__f0e5d5c particles[32];
@@ -38,8 +40,9 @@ struct ShineWork__f0e5d5c {
 
 /* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:4739:
- * structure has no member named `facing'. */
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/pound.c:88: structure has no member
+ * named `facing'. */
 struct FxScene__f0e5d5c {
   u16 facing;
   u16 angle;
@@ -103,15 +106,10 @@ void FieldPsynergy_Pound(void) {
 
   lift = 0x200000;
   if (child == NULL) {
-    scene->x = caster->x;
-    scene->y = caster->y;
-    scene->z = caster->z;
+    SET_POSITION(scene, caster->x, caster->y, caster->z);
     Vector_AddPolarOffset(lift, scene->facing, &scene->x);
   } else if (child->motionFlags & 4) {
-    /* FAKEMATCH(dead): lift cleared under a test of the ground's height, a
-     * store the line after next overwrites, which sends scene to r4 and the
-     * 0x200000 to r0 for the y store; without it, 12 of 639 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): lift cleared under a test of the ground's height. */
     if (child->terrainHeight == 300)
       lift = 0;
     scene->y = child->terrainHeight;
@@ -140,7 +138,7 @@ void FieldPsynergy_Pound(void) {
   }
 
   FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   shine = Actor_Spawn(352, 0, 0, 0);
   work->object = shine;
   if (shine == NULL)
@@ -204,7 +202,7 @@ void FieldPsynergy_Pound(void) {
     pos[0] = scene->x;
     pos[1] = scene->y;
     pos[2] = scene->z;
-    Vector_AddPolarOffset(0x40000, angle, pos);
+    Vector_AddPolarOffset(px(4), angle, pos);
     Camera_WorldToScreen(pos);
     particle->x = pos[0];
     particle->y = pos[2];
@@ -224,7 +222,7 @@ void FieldPsynergy_Pound(void) {
   wait(15);
   rise = 24;
   do {
-    shine->y += 0x8000;
+    shine->y += px(1) / 2;
     rise--;
     wait(1);
   } while (rise >= 0);
@@ -239,7 +237,7 @@ void FieldPsynergy_Pound(void) {
     Task_Remove(BattleEffect_SinkAndShrinkObject);
     for (j = 15; j >= 0; j--)
       BattleEffect_SpawnScatterParticle(shine->x, shine->y, shine->z);
-    Sound_PlayFar(114);
+    Sound_PlayFar(SE_MENU_ERROR);
     wait(1);
   } else {
     pending =
@@ -259,7 +257,7 @@ void FieldPsynergy_Pound(void) {
     }
     Task_Remove(FieldPsynergy_UpdatePound);
     wait(10);
-    Sound_PlayFar(114);
+    Sound_PlayFar(SE_MENU_ERROR);
     FieldPsynergy_ShrinkToCaster(shine, shine->x, shine->y, shine->z);
   }
   Actor_ReleaseFar(shine);

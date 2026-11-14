@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct MeshTriangle;
@@ -40,12 +42,8 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(ability_effects): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model *model); battle_effect/summon_effects has
- * void Render_DrawModelList(struct Model *model); tried as the definition's
- * void Render_DrawModelList(struct Model *model), which the object already
- * declares, BattleEffect_RunUlysses moves: 2 of 1912 instructions,
- * BattleEffect_RunAzul moves: 4 of 2201 instructions,
- * BattleEffect_RunCastingImpact moves: 9 of 7568 instructions, 42 more in
- * tla-ja. */
+ * void Render_DrawModelList(struct Model *model); not tried:
+ * Render_DrawModelList's bound declaration was not found. */
 void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
@@ -132,7 +130,6 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 /// Meteor Blow.
-/// ★ Named from the game: "Meteor Blow" (message 02130)
 void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -203,18 +200,20 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 240;
   wait(1);
   IWRAM_FILL_WORDS(map, 0x8000, 0x01010101);
-  Iwram_CopyWordsEntry((void *)0x06008000, map, 0x7800);
+  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, 0x7800);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(1, 0x28a, 1);
   REG_BLDCNT = blank;
   REG_BG2PA = 0x100;
-  REG_BG1CNT = 0x1f81;
-  REG_BG2CNT = 0x2787;
-  IWRAM_FILL_WORDS(canvas, 0x4000, 0);
-  Iwram_CopyWordsEntry((void *)0x06004000, canvas, 0x4000);
+  REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+  REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
+  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 3200);
-  REG_BLDCNT = 0x3f46;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDCNT =
+      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   projected = work->sheet + 0x5740;
   meshA = work->sheet + 0x5f40;
   triangles = work->sheet + 0x6340;
@@ -226,7 +225,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   x = 0;
   z = 0;
   size = 0;
-  scale = 0x10000;
+  scale = Q16_ONE;
   Mesh_BuildGrid(triangles, 2, 16, 32, 2);
   for (offset = 0, frame = 0, angle0 = 0; frame != 16;
        angle0 += 1092, offset += 8, frame++) {
@@ -243,7 +242,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       v[1] = y;
       c = (Trig_Cos(j << 13) * r) >> 16;
       j++;
-      // A once-only block keeps j's reload after the multiply.
+      /* FAKEMATCH(dead): a once-only block. */
       do {
         v[2] = c;
       } while (0);
@@ -280,7 +279,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   }
 
   // The flight through the stars.
-  for (frame = 0; frame != 160 && !(gInput.repeat & 1) && !(gInput.repeat & 2);
+  for (frame = 0;
+       frame != 160 && !(gInput.repeat & KEY_A) && !(gInput.repeat & KEY_B);
        frame++) {
     s32 fade;
     s32 speed;
@@ -292,17 +292,17 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       pitch = 0xd00;
       yaw = 0x2500;
       work->frame = 8;
-      Sound_PlayFar(162);
+      Sound_PlayFar(SE_162);
     }
     if (frame == 120) {
-      Sound_PlayFar(163);
+      Sound_PlayFar(SE_163);
     }
     fade = frame - 96;
     if ((u32)fade <= 16) {
       REG_BLDALPHA = (16 - fade) | 0x1000;
     }
     if (frame == 115) {
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
     }
     if (frame == 116) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
@@ -318,7 +318,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       for (i = 0; i != 64; i++) {
         work->particles[i].variant = -1;
       }
-      scale = 0x10000;
+      scale = Q16_ONE;
     }
     // DEAD: frame never reaches 1600 here; the source keeps the test.
     if (frame <= 1599) {
@@ -388,15 +388,15 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(scale, scale, scale);
       }
       i = 0;
-      angle = -0x4000;
+      angle = -TRIG_TURN / 4;
       scroll = frame * 2;
       for (; i != 5; i++) {
         model->scrollV = ~scroll & 127;
         Transform_Reset();
         SceneTransform_ApplyPosition3(-0x20000, -0x400000, 0);
-        SceneTransform_ApplyScale3(42000, 0x24650, 0x10000);
+        SceneTransform_ApplyScale3(42000, 0x24650, Q16_ONE);
         SceneTransform_ApplyScale3(scale, scale, scale);
-        Transform_ApplyRoll(0x8000);
+        Transform_ApplyRoll(TRIG_TURN / 2);
         Transform_ApplyYaw(angle);
         Render_TransformVertices(meshA, projected, 32);
         Render_DrawModelList(model);
@@ -507,10 +507,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BG2Y = -0x1000;
-  REG_BLDALPHA = 0x1010;
-  REG_BG2CNT = 0x784;
-  REG_WININ = 0x2737;
-  REG_WINOUT = 0x721;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 |
+               WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2;
   REG_WIN0V = 0x107c;
   REG_WIN1V = 0x88;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
@@ -575,30 +578,27 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       i = 0;
       half = (hx / 2) << 16;
       /* FAKEMATCH(dead): updates of hx that cancel out end the shard's halving
-       * here, so GCSE does not carry its sign on to the hoop's hx / 2;
-       * without them, 392 of 1556 instructions differ in tla-en. */
+       * here. */
       hx++;
       hx--;
       for (; i != count; i++, p++) {
         s32 r;
         s32 a;
 
-        /* FAKEMATCH(dead): updates of count, the shard count and the radius's
-         * base, that cancel out and keep GCSE from folding 256 into the radius
-         * add; without them, 74 of 1556 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): updates of count. */
         count++;
         count--;
         r = (Random16() & 511) + count;
         a = (Random16() & 0x7fff) + 0x4000;
 
         p->x = half;
-        p->y = 0x720000;
+        p->y = px(114);
         p->velocityX = (Trig_Sin(a) * r) >> 6;
         p->velocityY = (Trig_Cos(a) * r * 2) >> 6;
         p->variant = (Random16() & 7) + 24;
       }
       work->shakeFrames = 4;
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       for (i = 0; i != effect->count; i++) {
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
@@ -621,7 +621,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     i = 0;
     back = -step;
     angle = step;
-    for (; i != 4; i++, back += 0x2000, angle += 0x2000) {
+    for (; i != 4; i++, back += TRIG_TURN / 8, angle += TRIG_TURN / 8) {
       s32 start = Data_08199e8c[i] + 16;
 
       if (frame > start) {
@@ -652,8 +652,6 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     texture2.pixels = work->sheet + 0x5000;
     texture2.logWidth = 7;
     texture2.logHeight = 7;
-    // hx / 2 written out: as hx / 2 it would share the hoop's sign through
-    // GCSE, and through a copy of hx combine would add the sign first.
     half = ((hx + (s32)((u32)hx >> 31)) >> 1) - 64;
     for (i = 0; i != 3; i++) {
       s32 start = Data_08199e98[i] + 8;

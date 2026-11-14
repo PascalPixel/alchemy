@@ -67,13 +67,14 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   // below the line the IRQ handler picks.
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  *(u16 *)0x05000000 = 0;
-  *(u16 *)0x05000002 = 0;
+  *(u16 *)BG_PLTT = 0;
+  *(u16 *)(BG_PLTT + 1) = 0;
   Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_FRAME);
   Irq_SetHandler(2, 0, BattleEffect_SetBg2AffineScaleHalf);
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_WININ = 0x2137;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(1, 0);
   REG_WIN0H = 0xf0f0;
   BattleEffect_SelectLivingTargets(work->effect);
@@ -81,7 +82,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   {
     u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_SeaSerpentTiles);
-    Iwram_CopyWords((void *)0x05000200, sheet, 0x200);
+    Iwram_CopyWords((void *)OBJ_PLTT, sheet, 0x200);
     sheet += 0x200;
     Decompress_TaggedLz(sheet, tiles);
     for (i = 0; i != 8; i++) {
@@ -103,14 +104,16 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + 0x4e20, 0, 0);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // The serpent starts low on the right, rising to the left.
-  REG_BLDCNT = 0x3f44;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   openStep = 1;
   serpentX = 140 << 17;
-  serpentY = 200 << 16;
+  serpentY = px(200);
   serpentVX = -0x40000;
   serpentVY = -0x80000;
   savedScrollX = gBgScroll[1].x;
@@ -122,7 +125,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(188, 19);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
   // The glints wait on a wide arc above; the first spray fountains up from
   // the bottom.
@@ -152,13 +155,13 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 24)
-      Sound_PlayFar(SE_RISE);
+      Sound_PlayFar(SE_162);
     if (frame == 76)
-      Sound_PlayFar(SE_SPRAY);
+      Sound_PlayFar(SE_SCATTER);
     if (frame == 154)
-      Sound_PlayFar(SE_GATHER);
+      Sound_PlayFar(SE_SWIRL);
     if (frame == 222)
-      Sound_PlayFar(SE_BREATH);
+      Sound_PlayFar(SE_CRASH);
 
     // The window opens: each column's edge from its own noise, the edge
     // moving faster each frame.
@@ -406,7 +409,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
               32);
     work->transferPending = 1;
     wait(1);
-  } while (++frame != 244 && (frame <= 16 || !(gInput.repeat & 3)));
+  } while (++frame != 244 &&
+           (frame <= 16 || !(gInput.repeat & (KEY_A | KEY_B))));
 
   // Act two: restore the display; a pillar waits above each target.
   gBgScroll[1].x = savedScrollX;
@@ -414,9 +418,9 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   Irq_SetHandler(2, 0, 0);
   BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)0x05000200, (void *)0x050000a0, 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
           (volatile u32 *)0x040000d4);
-  *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   Task_Remove(BattleEffect_ResetBg2Pa);
   REG_WIN0H = 0xf0;
   work->transferMode = 2;
@@ -435,9 +439,9 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
-  Sound_PlayFar(SE_PILLARS);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   frame = 0;
   do {
@@ -447,7 +451,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     for (i = 0; i != 5; i++) {
       pillar = &work->particles[i];
       if (frame == i * 16 + 7)
-        Sound_PlayFar(SE_PILLAR);
+        Sound_PlayFar(SE_CAST);
       if (frame >= i * 16 && pillar->variant <= 31) {
         s32 wobble = frame * 16 % 104;
 

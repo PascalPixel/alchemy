@@ -3,14 +3,12 @@
 /// overlay: the Wind Stones Whirlwind strengthens, the walls and ledges of the
 /// climb, and the way into the rock itself (airs_rock_inside.c).
 
-#include "shared/actors.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
 #include "module/scene/airs_rock.h"
 #include "system/ram_buffer.h"
 #include "flags.h"
-#include "shared/map_cells.h"
 #include "system/main_routine_work.h"
 #include "field/field.h"
 #include "event_work.h"
@@ -44,7 +42,7 @@
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
+#include "shared/scene_create_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -109,7 +107,36 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 
 void Actor_PlaceMovedBlock(s32 id);
 
-DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells, Func_02000348)
+void Blocks_MarkCells(u16 *ids) {
+  struct Actor *object;
+  u8 *blocked;
+  struct MapWork *map;
+  struct MapCell **cells;
+  struct MapCell *cell;
+  s32 x, z;
+
+  while (*ids != 0xffff) {
+    object = Actor_Get(*ids);
+    blocked = &object->blockMarked;
+    *blocked = 0;
+    if (Func_02000348(0, object->x >> 20, object->z >> 20) & 0x40) {
+      map = Ram_HeapSlots->mapWork;
+      if (map == NULL)
+        return;
+      cells = &map->layers[2].cells;
+      z = (object->z - object->y) >> 20;
+      x = object->x >> 20;
+      cell = *cells;
+      cell += x + ((z + 1) << 7);
+      cell->collisionCode = 255;
+      cell = *cells;
+      cell += x + ((z - 1) << 7);
+      cell->collisionCode = 255;
+      *blocked = 1;
+    }
+    ids++;
+  }
+}
 
 void Func_02000468(struct Unk_02000468 *unk) {
   struct MapWork *map;
@@ -118,8 +145,7 @@ void Func_02000468(struct Unk_02000468 *unk) {
     map = Ram_HeapSlots->mapWork;
     if (map != NULL) {
       struct MapCell **cells = &map->layers[2].cells;
-      /* FAKEMATCH(dead): cell's initial value, overwritten unread; as a plain
-         declaration, 14 of 40 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): cell's initial value, overwritten unread. */
       struct MapCell *cell = *cells;
       s32 x = unk->x >> 20;
       s32 row = (unk->z - unk->y) >> 20;
@@ -142,9 +168,9 @@ extern s16 gData_02003f44[];
 s16 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov663Room1)
+  if (scene == (s32)&SceneId_AirsRock1)
     return gData_02003e84;
-  if (scene == (s32)&SceneId_Ov663Room2)
+  if (scene == (s32)&SceneId_AirsRock2)
     return gData_02003ec4;
   return gData_02003f44;
 }
@@ -154,9 +180,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov663Room1)
+  if (scene == (s32)&SceneId_AirsRock1)
     return gAirsRock_Room1Placements;
-  if (scene == (s32)&SceneId_Ov663Room2)
+  if (scene == (s32)&SceneId_AirsRock2)
     return gAirsRock_Room2Placements;
   return gAirsRock_Placements;
 }
@@ -180,17 +206,17 @@ s32 Map_ClearLayerEntryFlag();
 void Func_02000568(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(0x9e);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   Map_ClearLayerEntryFlag(0);
   FieldEvent_Wait(45);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 312, 680);
   FieldEvent_Wait(5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Event_PlaySound(0x7b);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(4);
   Event_End();
 }
@@ -202,9 +228,9 @@ void Func_020005ec(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if ((object->x >> 20) == 0x1f) {
-    Event_SetFlag(0x310);
+    Event_SetFlag(FLAG_AREA_TEMP_10);
   } else {
-    Event_ClearFlag(0x310);
+    Event_ClearFlag(FLAG_AREA_TEMP_10);
   }
   Event_End();
 }
@@ -222,12 +248,12 @@ void Func_02000620(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if ((object->x >> 20) == 32) {
-    Event_SetFlag(0x311);
+    Event_SetFlag(FLAG_AREA_TEMP_11);
     value &= 0xff;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);
   } else {
-    Event_ClearFlag(0x311);
+    Event_ClearFlag(FLAG_AREA_TEMP_11);
     value = (value & 0xff) | 0xff00;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);
@@ -258,38 +284,38 @@ void Func_02000700(void) {
   s32 z = leader->z;
   u32 i;
 
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Actor_SelectAnimation(leader, 6);
   System_Wait(10);
   Actor_SelectAnimation(leader, 1);
   Actor_SetSpriteFlags(leader, 0);
   leader->motionFlags |= 2;
-  leader->velocityY = 0x40000;
-  FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0xc0000);
+  leader->velocityY = px(4);
+  FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y, z + 0xc0000);
   System_Wait(6);
-  Event_PlaySound(217);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x5000, 0);
+  Event_PlaySound(SE_FLOOR_SWITCH);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH_SOUTHWEST, 0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
-    leader->y += -0x20000;
+    leader->y += -px(2);
     leader->targetY = leader->y;
     System_Wait(1);
   }
   leader->motionFlags = 3;
-  leader->velocityY = 0x30000;
-  FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0x100000);
+  leader->velocityY = px(3);
+  FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y, z + 0x100000);
   FieldActor_WaitForMove(leader);
   Actor_SetSpriteFlags(leader, 1);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_NoOp();
 }
 
 const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov663Room1)
+  if (scene == (s32)&SceneId_AirsRock1)
     return gAirsRock_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov663Room2)
+  if (scene == (s32)&SceneId_AirsRock2)
     return gAirsRock_Room2Triggers;
   return gAirsRock_Triggers;
 }
@@ -370,14 +396,12 @@ void Func_0200095c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(207);
+  Sound_Play(SE_RUSH);
   gust = FieldActor_Create(280, leader->x, leader->y, leader->z);
   Actor_SelectAnimation(gust, 2);
   Actor_SetSpriteFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
-  // Stored through a bit field view: its alias set frees the load after it, as
-  // the native orders it (as gust->motionFlags, 2 of 632 differ in tla-en).
   ((struct MotionView *)gust)->flags = flag;
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)effect->target->sprite)->priority;
@@ -406,7 +430,6 @@ void Func_0200095c(void) {
       spark->update = Func_02000840;
     }
     if (gFrameCount & 1) {
-      // 655, not 455: 200 << 1 + 255 in the listing.
       gust->scaleX += 655;
       gust->scaleY += 655;
       Actor_SetSpriteColor(effect->target, 15);
@@ -416,7 +439,7 @@ void Func_0200095c(void) {
     Event_Wait(1);
   }
   Actor_SetSpriteColor(effect->target, 0);
-  Sound_Play(136);
+  Sound_Play(SE_WHOOSH);
   cell.x = effect->target->x >> 20;
   cell.z = effect->target->z >> 20;
   angle = (leader->facing + 0x2000) & 0xc000;
@@ -438,11 +461,12 @@ void Func_0200095c(void) {
   ((struct FieldSprite *)gust->sprite)->priority = 1;
   cell.x = newX;
   cell.z = newZ;
-  gust->speedLimit = 0x40000;
-  gust->acceleration = 0x40000;
+  gust->speedLimit = px(4);
+  gust->acceleration = px(4);
   Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
-  FieldCamera_SetSpeed(0x50000, 0x50000);
-  FieldCamera_MoveTo((s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
+  FieldCamera_SetSpeedAndAcceleration(5, 5);
+  FieldCamera_MoveToFixed((s32)(newX << 16), (s32)(-1), (s32)(newZ << 16),
+                          (s32)(1));
   while (Actor_HasArrived(gust) == 0) {
     if ((gFrameCount & 1) == 0) {
       leaves.priority = 1;
@@ -458,21 +482,21 @@ void Func_0200095c(void) {
     Event_Wait(1);
   }
   if (hit == 255) {
-    Sound_Play(136);
+    Sound_Play(SE_WHOOSH);
   } else {
     cell.x = ((s16 *)&gust->x)[1] + delta.x * 48;
     cell.z = ((s16 *)&gust->z)[1] + delta.z * 48;
-    gust->speedLimit = 0x8000;
-    gust->acceleration = 0x8000;
+    gust->speedLimit = px(1) / 2;
+    gust->acceleration = px(1) / 2;
     Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
-    Sound_Play(235);
+    Sound_Play(SE_235);
     hit -= 30;
     while (Actor_HasArrived(gust) == 0) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + 0x10000;
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
-        velocity.y = 0x10000;
+        velocity.y = px(1);
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
         FieldEffect_Spawn(gust->x, gust->y, gust->z, velocity.x, velocity.y,
                           velocity.z,
@@ -514,7 +538,7 @@ void Func_0200095c(void) {
                           cell.z, 1, 1);
       Map_CenterOnFollowedPoint();
     }
-    Sound_Play(298);
+    Sound_Play(SE_298);
     Event_SetFlag(flag + 0x850);
   }
   gust->acceleration = 0;
@@ -524,7 +548,7 @@ void Func_0200095c(void) {
   gust->targetX = 0;
   for (i = 0; i != 8; i++) {
     gust->scaleX -= 0x2666;
-    gust->scaleY -= 0x4000;
+    gust->scaleY -= Q16_ONE / 4;
     gust->y += 0x38000;
     Event_Wait(1);
   }
@@ -550,10 +574,10 @@ void Func_02000f9c(struct Actor *object) {
   object->x += object->bounce;
   object->z += object->unk4c;
   if ((object->x >> 19) <= 39) {
-    object->bounce += 0x18000;
+    object->bounce += Q16_ONE * 3 / 2;
     scale = object->scaleX + 0xccc;
   } else {
-    object->bounce -= 0x18000;
+    object->bounce -= Q16_ONE * 3 / 2;
     scale = object->scaleX - 0x51e;
   }
   object->scaleX = scale;
@@ -584,9 +608,9 @@ void Func_02001010(void) {
   REG_DISPCNT &= ~0x100;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                       buffer);
-  Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
-  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
-          (volatile u32 *)0x040000d4);
+  Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
+  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, DMA_COPY_WORDS(208),
+          REG_DMA3);
   Heap_Release(buffer);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   FieldActor_SetSpritePriority(8, 1);
@@ -612,14 +636,13 @@ offset:
   cell = buffer;
   i = 0;
 row:
-  Dma_Set(cell, (void *)(0x600200f + (i << 6)), 0x84000008,
-          (volatile u32 *)0x040000d4);
+  Dma_Set(cell, (void *)(0x600200f + (i << 6)), DMA_COPY_WORDS(8), REG_DMA3);
   i++;
   cell += 16;
   if (i != 18)
     goto row;
   Heap_Release(buffer);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   ((u8 *)Actor_Get(8))[98] = 9;
   ((u8 *)Actor_Get(8))[99] = 1;
   Actor_Get(8)->update = Func_0200092c;
@@ -636,7 +659,7 @@ row:
       ((struct ObjBits *)spark)->flags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
-      spark->gravity = 0x18000;
+      spark->gravity = px(3) / 2;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -649,15 +672,15 @@ row:
   }
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(0x14a0000, -1, 0x490000, 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(330, CAMERA_KEEP, 73, 1);
   FieldCamera_WaitForArrival();
   Task_AddFrame(Func_02000ef4, 0xc80);
-  Event_PlaySound(163);
+  Event_PlaySound(SE_163);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= 0x100;
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   i = 0;
 glow:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
@@ -669,7 +692,7 @@ glow:
   FieldEvent_Wait(60);
   REG_BLDALPHA = 15;
   REG_BLDCNT = 0xc42;
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   {
     u32 j = 0;
 
@@ -702,8 +725,8 @@ glow:
   FieldEvent_Wait(1);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
-  MapGrid_SetShake(-1, -1, 0xe666);
-  Event_PlaySound(390);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   ((u8 *)Actor_Get(8))[98] = 6;
   i = 0;
 fade:
@@ -763,8 +786,8 @@ void Func_02001560(void) {
   motion = &leader->motionFlags;
   *motion = 4;
   Actor_SetSpriteFlags(leader, 0);
-  GameFlag_Set(0x250);
-  Sound_Play(137);
+  GameFlag_Set(FLAG_SCENE_TEMP_50);
+  Sound_Play(SE_137);
   riding = (u8 *)ride + 99;
   rise = 0;
   while (*riding != 0) {
@@ -777,7 +800,7 @@ void Func_02001560(void) {
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
-  Sound_Play(0x120);
+  Sound_Play(SE_288);
   facing = ride->facing;
   if (facing == 0xc000) {
     rider = ride->watchedObject;
@@ -790,19 +813,19 @@ void Func_02001560(void) {
     leader->z = (((leader->z >> 19) & ~1) + 1) << 19;
   waiting:
     moved = 0;
-    if (gInput.held & 0x40) {
+    if (gInput.held & KEY_UP) {
       dx = 0;
       dz = 0xfff00000;
       leader->facing = 0xc000;
       moved = 1;
     }
-    if (gInput.held & 0x10) {
+    if (gInput.held & KEY_RIGHT) {
       dx = 0x100000;
       dz = 0;
       leader->facing = dz;
       moved = 1;
     }
-    if (gInput.held & 0x20) {
+    if (gInput.held & KEY_LEFT) {
       dx = 0xfff00000;
       leader->facing = 0x8000;
       dz = 0;
@@ -841,15 +864,16 @@ void Func_02001560(void) {
     leader->terrainHeight = height;
     Actor_SelectAnimation(leader, 6);
     wait(6);
-    Sound_Play(152);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
-    leader->speedLimit = 0x20000;
-    leader->acceleration = 0x8000;
-    leader->velocityY = 0x40000;
+    leader->speedLimit = px(2);
+    leader->acceleration = px(1) / 2;
+    leader->velocityY = px(4);
     *motion = 2;
     leader->priorityFlags = 1;
     leader->terrainId = ((u8 *)rider)[98];
-    FieldActor_SetMoveTarget(leader, leader->x + dx, leader->y, leader->z + dz);
+    FieldActor_SetMoveTargetFixed(leader, leader->x + dx, leader->y,
+                                  leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
@@ -860,32 +884,32 @@ void Func_02001560(void) {
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
     still = 0;
     Actor_SetSpriteFlags(leader, 1);
-    leader->velocityY = 0x60000;
+    leader->velocityY = px(6);
     leader->priorityFlags = 1;
     *motion = 3;
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     dust = FieldCamera_GetActor();
-    dust->speedLimit = 0x80000;
-    dust->acceleration = 0x10000;
+    dust->speedLimit = px(8);
+    dust->acceleration = px(1);
     dust->motionFlags = still;
-    FieldActor_SetMoveTarget(dust, leader->x,
-                             Map_GetTerrainHeight(0, leader->x, leader->z),
-                             leader->z);
+    FieldActor_SetMoveTargetFixed(dust, leader->x,
+                                  Map_GetTerrainHeight(0, leader->x, leader->z),
+                                  leader->z);
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(dust);
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  Event_ClearFlag(0x250);
+  Event_ClearFlag(FLAG_SCENE_TEMP_50);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   wait(10);
   Event_End();
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/position_flat_distance.h"
 
-DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
+#include "shared/position_distance_above.h"
 
 extern u32 gData_02003de0[];
 extern u32 gData_02003dcc[];
@@ -983,15 +1007,13 @@ void Func_02001b54(struct Actor *object) {
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
     return;
   if (object->timer == 240) {
-    if (!Event_GetFlag(0x250))
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_50))
       Event_PlayCueNearFocus(object, 202);
     if (object->facing == 0xc000) {
       position.x = object->x;
       position.z = object->z;
     } else {
-      /* FAKEMATCH(wrapper): forwarded, so each product builds its own constant
-       * and they share the routine's address; as direct calls, 106 of 153
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(wrapper): forwarded. */
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                       Trig_Cos(object->facing));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
@@ -1010,7 +1032,7 @@ void Func_02001b54(struct Actor *object) {
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    FieldEffect_Spawn(position.x, object->y, position.z - 0x60000, 0, 0, 0,
+    FieldEffect_Spawn(position.x, object->y, position.z - px(6), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->timer++;
@@ -1025,8 +1047,10 @@ void Func_02001ca4(void) {
 
 /* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void
  * Actor_PlaceMovedBlock(void); module/scene/scene.h has void
- * Actor_PlaceMovedBlock(s32 id); not tried: Actor_PlaceMovedBlock's bound
- * declaration was not found. */
+ * Actor_PlaceMovedBlock(s32 id); tried as the definition's void
+ * Actor_PlaceMovedBlock(void), which the object already declares, it does not
+ * compile in tla-ja (airs_rock.c): games/tla/src/scene/airs_rock.c:1056: too
+ * few arguments to function `Actor_PlaceMovedBlock'. */
 extern void Func_02003cc0__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 
 void Func_02001cc8(void) {
@@ -1043,7 +1067,7 @@ void Func_02001cc8(void) {
     object->motionFlags = 3;
     OverlayObject_WaitUntilIdle(object);
     OverlayObject_WaitUntilIdle(object);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     object->motionFlags = 0;
     object->terrainId = 0;
   }
@@ -1117,11 +1141,11 @@ void Func_02001dc4(s32 x, s32 z) {
     scatter.x = Iwram_MulQ16(Trig_Cos(scatter.y << 12), radius);
     scatter.z = Iwram_MulQ16(Math_Sin(scatter.y << 12), radius);
     ((struct FieldSprite *)rock->sprite)->priority = 1;
-    FieldActor_SetMoveTarget(rock, rock->x + scatter.x, rock->y,
-                             rock->z + scatter.z);
+    FieldActor_SetMoveTargetFixed(rock, rock->x + scatter.x, rock->y,
+                                  rock->z + scatter.z);
   }
-  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-  MapGrid_SetShake(shakeA, shakeA, shakeC);
+  MapGrid_SetShake(5, 7, 1);
+  MapGrid_SetShakeFixed(shakeA, shakeA, shakeC);
 }
 
 // The pillar of light in Air's Rock, overlay 664's Func_02003654 with object
@@ -1140,8 +1164,7 @@ void Func_02001f7c(void) {
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   /* FAKEMATCH(dead): BG0CNT's value in a once-only block of its own, built
-   * before its address; as a plain block, 2 of 520 instructions differ in
-   * tla-en. */
+   * before its address. */
   do {
     s32 control = BGCNT_SCREEN_BASE(4);
 
@@ -1173,7 +1196,7 @@ row:
   if (i != 16)
     goto row;
   Heap_Release(buffer);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   ((u8 *)Actor_Get(14))[98] = 9;
   ((u8 *)Actor_Get(14))[99] = 1;
   Actor_Get(14)->update = Func_0200092c;
@@ -1184,17 +1207,14 @@ row:
       {
         s32 priority = ((s8 *)Actor_Get(14)->sprite)[9] & 12;
 
-        /* FAKEMATCH(temporary): the sprite held in the row pointer; as
-         * spark->animation, 20 of 520 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): the sprite held in the row pointer. */
         cell = spark->sprite;
         ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
       }
-      // Through the bit-field views the flags' load is issued before the
-      // priority store, as the native does; as plain bytes it waits for it.
       ((struct ObjectPriorityByte *)spark)->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
-      spark->gravity = 0x18000;
+      spark->gravity = px(3) / 2;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -1210,8 +1230,8 @@ row:
   PaletteFade_Interpolate(60);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(216), 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(536, CAMERA_KEEP, 216, 1);
   FieldCamera_WaitForArrival();
   Actor_Get(14)->update = 0;
   FieldActor_SetSpriteColor(Actor_Get(14), 6);
@@ -1220,7 +1240,7 @@ row:
   gBgScroll[0].x = 0xff88;
   gBgScroll[0].y = 0x10;
   System_Wait(30);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
@@ -1243,7 +1263,7 @@ fade1:
   gBgScroll[0].x = 0xffac;
   gBgScroll[0].y = 0;
   System_Wait(1);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
@@ -1262,7 +1282,7 @@ fade2:
   i++;
   if (i != 32)
     goto fade2;
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
@@ -1373,9 +1393,9 @@ void Func_020026b8(void) {
   REG_DISPCNT &= ~0x100;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                       buffer);
-  Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
-  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
-          (volatile u32 *)0x040000d4);
+  Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
+  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, DMA_COPY_WORDS(208),
+          REG_DMA3);
   Heap_Release(buffer);
   {
     s32 control = 0x40e;
@@ -1397,12 +1417,11 @@ void Func_020026b8(void) {
   }
   cell = buffer;
   for (i = 0; i != 18; i++) {
-    Dma_Set(cell, (void *)(0x600200f + (i << 6)), 0x84000008,
-            (volatile u32 *)0x040000d4);
+    Dma_Set(cell, (void *)(0x600200f + (i << 6)), DMA_COPY_WORDS(8), REG_DMA3);
     cell += 16;
   }
   Heap_Release(buffer);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   ((u8 *)Actor_Get(12))[98] = 9;
   ((u8 *)Actor_Get(12))[99] = 1;
   Actor_Get(12)->update = Func_0200092c;
@@ -1421,7 +1440,7 @@ void Func_020026b8(void) {
       ((struct ObjBits *)spark)->flags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
-      spark->gravity = 0x18000;
+      spark->gravity = px(3) / 2;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -1434,8 +1453,8 @@ void Func_020026b8(void) {
   }
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(0x980000, -1, 0x900000, 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(152, CAMERA_KEEP, 144, 1);
   FieldCamera_WaitForArrival();
   FieldTask_Remove(Func_020024b0);
   REG_BG1CNT &= ~3;
@@ -1448,9 +1467,9 @@ void Func_020026b8(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(8);
   Task_AddFrame(Func_0200257c, 0xc80);
-  Event_PlaySound(163);
+  Event_PlaySound(SE_163);
   REG_DISPCNT |= 0x100;
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   z = 0xffff8000;
   for (i = 0x4000; i != 0x48000; i += 0x400, z += 0xfffffc00) {
     beam[6] = i;
@@ -1469,10 +1488,10 @@ void Func_020026b8(void) {
   }
   REG_DISPCNT &= ~0x200;
   System_Wait(30);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   REG_BLDALPHA = 0x10;
   REG_BLDCNT = 0x3f41;
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   ((u8 *)Actor_Get(12))[98] = 6;
   for (i = 0; i != 129; i++) {
     REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
@@ -1512,7 +1531,7 @@ void Func_02002b88(void) {
   s32 level;
 
   actor->priorityFlags |= 32;
-  level = ((actor->y + 0x200000) >> 16) / 112;
+  level = ((actor->y + px(32)) >> 16) / 112;
   if (gData_02004698 != level) {
     switch (level) {
     case 3:
@@ -1532,7 +1551,7 @@ void Func_02002b88(void) {
   }
 }
 
-DEFINE_LEADER_LIFT(Leader_Lift)
+#include "shared/leader_lift.h"
 
 #define LEADER() Actor_GetById(gMainRoutineWork.currentOwner)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))
@@ -1554,10 +1573,10 @@ s32 Scene_Initialize(void) {
   volatile struct DmaRegisters *dma;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_Ov663Room1;
+  gMainRoutineWork.retreatScene = (s32)&SceneId_AirsRock1;
   gMainRoutineWork.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov663Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRock1) {
     switch (gMainRoutineWork.entrance) {
     case 2:
     case 3:
@@ -1565,69 +1584,69 @@ s32 Scene_Initialize(void) {
       Leader_Lift(0x580000);
     }
     if (GameFlag_Get(0x850)) {
-      MapGrid_CopyCellsTo(0x40, 0, 113, 11, 3, 3);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 113, 12);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 49, 12);
+      MapGrid_CopyCellsTo(64, 0, 113, 11, 3, 3);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 113, 12);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 49, 12);
     }
     if (GameFlag_Get(0x851)) {
-      MapGrid_CopyCellsTo(0x40, 0, 70, 39, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 70, 40);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 6, 40);
+      MapGrid_CopyCellsTo(64, 0, 70, 39, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 70, 40);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 6, 40);
     }
     if (GameFlag_Get(0x852)) {
-      MapGrid_CopyCellsTo(0x40, 0, 103, 38, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 103, 39);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 39, 39);
+      MapGrid_CopyCellsTo(64, 0, 103, 38, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 103, 39);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 39, 39);
     }
     if (GameFlag_Get(0x853)) {
-      MapGrid_CopyCellsTo(0x40, 0, 87, 43, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 87, 44);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 23, 44);
+      MapGrid_CopyCellsTo(64, 0, 87, 43, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 87, 44);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 23, 44);
     }
     if (GameFlag_Get(0x854)) {
-      MapGrid_CopyCellsTo(0x40, 0, 70, 52, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 70, 52);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 6, 53);
+      MapGrid_CopyCellsTo(64, 0, 70, 52, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 70, 52);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 6, 53);
     }
     if (GameFlag_Get(0x855)) {
-      MapGrid_CopyCellsTo(0x40, 0, 79, 49, 3, 3);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 79, 50);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 15, 50);
+      MapGrid_CopyCellsTo(64, 0, 79, 49, 3, 3);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 79, 50);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 15, 50);
     }
     if (GameFlag_Get(0x856)) {
-      MapGrid_CopyCellsTo(0x40, 0, 103, 0x30, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 103, 49);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 39, 49);
+      MapGrid_CopyCellsTo(64, 0, 103, 48, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 103, 49);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 39, 49);
     }
     if (GameFlag_Get(0x857)) {
-      MapGrid_CopyCellsTo(0x40, 0, 111, 52, 3, 3);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 111, 53);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 47, 53);
+      MapGrid_CopyCellsTo(64, 0, 111, 52, 3, 3);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 111, 53);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 47, 53);
     }
     if (GameFlag_Get(0x858)) {
       MapGrid_CopyCellsTo(68, 0, 79, 0, 11, 10);
-      MapGrid_CopyCellAttributes(38, 9, 1, 1, 0x10, 9);
+      MapGrid_CopyCellAttributes(38, 9, 1, 1, 16, 9);
       MapGrid_CopyCellAttributes(38, 9, 1, 1, 24, 9);
       Actor_SetSpriteColor(Actor_GetById(8), 6);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov663Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRock2) {
     switch (gMainRoutineWork.entrance) {
     case 3:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffb80000);
       goto swaying;
     case 1:
     case 2:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffd80000);
       goto swaying;
     case 5:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        LEADER()->x += 0x300000;
-        LEADER()->y += 0x100000;
+        LEADER()->x += px(48);
+        LEADER()->y += px(16);
       }
     case 6:
       Leader_Lift(0x380000);
@@ -1638,29 +1657,29 @@ s32 Scene_Initialize(void) {
       SWAY(10, 0);
       SWAY(11, 60);
       if (GameFlag_Get(0x85f))
-        Actor_SetPosition(12, 0x1080000, 0x2b80000);
+        Actor_SetPosition(12, 264, 696);
       if (GameFlag_Get(0x860))
-        Actor_SetPosition(13, 0x2d80000, 0x2d80000);
+        Actor_SetPosition(13, 728, 728);
       if (GameFlag_Get(0x861))
-        Actor_SetPosition(15, 0x1580000, 0x3080000);
+        Actor_SetPosition(15, 344, 776);
       if (GameFlag_Get(0x862))
-        Actor_SetPosition(0x10, 0x2780000, 0x3180000);
+        Actor_SetPosition(16, 632, 792);
       Actor_PlaceBlocks(gData_02003d94);
       Blocks_MarkCells(gData_02003d94);
       FlagBlock_PlaceAll(gData_02003e4c);
       break;
     case 11:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        LEADER()->x += 0x100000;
+        LEADER()->x += px(16);
         LEADER()->y += 0xfff00000;
       }
     case 10:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffc80000);
     case 12:
       if (GameFlag_Get(0x887))
-        Actor_SetPosition(22, 0x3180000, 0x1280000);
+        Actor_SetPosition(22, 792, 296);
       Actor_PlaceBlocks(gData_02003d94);
       Blocks_MarkCells(gData_02003d94);
       HANG(17, 0x100000, 60);
@@ -1678,7 +1697,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov663Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRock3) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -1700,16 +1719,16 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(Actor_GetById(9), 0);
       Actor_GetById(10)->terrainId = 2;
       Actor_SetSpritePriority(10, 1);
-      Actor_GetById(10)->y = 0xd00000;
+      Actor_GetById(10)->y = px(208);
       Actor_GetById(10)->terrainHeight = Actor_GetById(10)->y;
       Actor_GetById(11)->terrainId = 2;
       Actor_SetSpritePriority(11, 1);
-      Actor_GetById(11)->y = 0xd00000;
+      Actor_GetById(11)->y = px(208);
       Actor_GetById(11)->terrainHeight = Actor_GetById(11)->y;
-      if (GameFlag_Get(0x310))
-        Actor_SetPosition(10, 0x1f80000, 0x3680000);
-      if (GameFlag_Get(785))
-        Actor_SetPosition(11, 0x2080000, 0x3680000);
+      if (GameFlag_Get(FLAG_AREA_TEMP_10))
+        Actor_SetPosition(10, 504, 872);
+      if (GameFlag_Get(FLAG_AREA_TEMP_11))
+        Actor_SetPosition(11, 520, 872);
       Func_02000620();
       beam = (s32 *)Ram_HeapSlots->mapWork;
       beam = (s32 *)((u8 *)beam + 0x178);
@@ -1722,7 +1741,7 @@ s32 Scene_Initialize(void) {
       break;
     case 6:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->y += 0x180000;
+        LEADER()->y += px(24);
     case 7:
       Leader_Lift(0x480000);
     case 4:
@@ -1732,12 +1751,12 @@ s32 Scene_Initialize(void) {
     case 8:
     case 9:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffe80000);
       goto beam;
     case 10:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->x += 0x300000;
+        LEADER()->x += px(48);
     case 11:
       Leader_Lift(0x900000);
     beam:
@@ -1750,7 +1769,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(12)->priorityFlags |= 2;
       FieldEffect_StartBlankOverlay(0);
       if (GameFlag_Get(0x879))
-        Actor_SetPosition(13, 0xb80000, 0x1180000);
+        Actor_SetPosition(13, 184, 280);
       if (!GameFlag_Get(0x87a)) {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
         REG_BLDALPHA = 0x1008;
@@ -1783,7 +1802,7 @@ s32 Scene_Initialize(void) {
         LEADER()->y += 0xffe00000;
     case 13:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffd00000);
     case 14:
       beam = (s32 *)Ram_HeapSlots->mapWork;
@@ -1951,48 +1970,48 @@ s16 gData_02003f44[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(82),
-    SCENE_EXIT_IF(1, 2, 16, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 83, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 83, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 83, 3, CONDITION_ALWAYS),
-    SCENE_EXITS(83),
-    SCENE_EXIT_IF(1, 82, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 82, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 82, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 85, 10, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 83, 10, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 83, 11, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 83, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 83, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 84, 1, CONDITION_ALWAYS),
-    SCENE_EXITS(84),
-    SCENE_EXIT_IF(1, 83, 12, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 84, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 84, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 84, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 84, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 84, 8, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 84, 9, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 84, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 84, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(10, 84, 8, 0x87a),
-    SCENE_EXIT_IF(11, 84, 9, 0x87a),
-    SCENE_EXIT_IF(10, 84, 12, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(11, 84, 13, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(12, 84, 10, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(13, 84, 11, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(14, 86, 1, CONDITION_ALWAYS),
+    SCENE_EXITS(AirsRock1),
+    SCENE_EXIT_UNLESS(1, WorldMap, 16, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AirsRock2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AirsRock2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AirsRock2, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(AirsRock2),
+    SCENE_EXIT_UNLESS(1, AirsRock1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AirsRock1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AirsRock1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AirsRockInside1, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AirsRock2, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AirsRock2, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AirsRock2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AirsRock2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AirsRock3, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(AirsRock3),
+    SCENE_EXIT_UNLESS(1, AirsRock2, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AirsRock3, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AirsRock3, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AirsRock3, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AirsRock3, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AirsRock3, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AirsRock3, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AirsRock3, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AirsRock3, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, AirsRock3, 8, 0x87a),
+    SCENE_EXIT_UNLESS(11, AirsRock3, 9, 0x87a),
+    SCENE_EXIT_UNLESS(10, AirsRock3, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, AirsRock3, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, AirsRock3, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, AirsRock3, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, AirsRockInside2, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 struct ActorPlacement gAirsRock_Room1Placements[] = {
-    {382, CONDITION_ALWAYS, 7, PIXELS(328), 0, PIXELS(184), FACING_SOUTH, 2, 0},
-    {325, CONDITION_ALWAYS, (s32)gData_02003dac, PIXELS(920), 0, PIXELS(200), FACING_SOUTH, 2, 0},
-    {325, CONDITION_ALWAYS, (s32)gData_02003dac, PIXELS(104), 0, PIXELS(760), FACING_SOUTH, 2, 0},
-    {325, CONDITION_ALWAYS, (s32)gData_02003dac, PIXELS(376), 0, PIXELS(808), FACING_SOUTH, 2, 0},
-    {325, CONDITION_ALWAYS, (s32)gData_02003dac, PIXELS(632), 0, PIXELS(888), FACING_SOUTH, 2, 0},
-    {325, CONDITION_ALWAYS, (s32)gData_02003dac, PIXELS(872), 0, PIXELS(856), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(382, CONDITION_ALWAYS, 7, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gData_02003dac, 920, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gData_02003dac, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gData_02003dac, 376, 0, 808, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gData_02003dac, 632, 0, 888, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gData_02003dac, 872, 0, 856, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2006,65 +2025,65 @@ struct ActorPlacement gAirsRock_Room2Placements[] = {
     {290, CONDITION_ALWAYS, 1, 0x8, 0, 0, FACING_SOUTH, 2, 2},
     {272, CONDITION_ALWAYS, 1, 0x9, 0, 0, FACING_SOUTH, 2, 2},
     {272, CONDITION_ALWAYS, 1, 0xa, 0, 0, FACING_SOUTH, 2, 2},
-    {377, CONDITION_ALWAYS, 7, PIXELS(536), 0, PIXELS(296), FACING_EAST, 2, 0},
-    {377, CONDITION_ALWAYS, 7, PIXELS(680), 0, PIXELS(296), FACING_WEST, 2, 0},
-    {377, CONDITION_ALWAYS, 7, PIXELS(536), 0, PIXELS(296), FACING_EAST, 2, 0},
-    {377, CONDITION_ALWAYS, 7, PIXELS(648), 0, PIXELS(296), FACING_WEST, 2, 0},
-    {377, CONDITION_ALWAYS, 7, PIXELS(712), 0, PIXELS(312), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, 7, 536, 0, 296, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, 7, 680, 0, 296, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, 7, 536, 0, 296, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, 7, 648, 0, 296, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, 7, 712, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
     {272, CONDITION_ALWAYS, 1, 0xb, 0, 0, FACING_SOUTH, 2, 2},
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAirsRock_Placements[] = {
-    {377, CONDITION_ALWAYS, 7, PIXELS(536), 0, PIXELS(904), FACING_NORTH, 2, 0},
-    {377, CONDITION_ALWAYS, 7, PIXELS(712), 0, PIXELS(904), FACING_NORTH, 2, 1},
-    {272, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(872), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(872), FACING_NORTH, 2, 1},
-    {382, CONDITION_ALWAYS, 7, PIXELS(152), 0, PIXELS(216), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(280), FACING_NORTH, 2, 0},
-    {382, CONDITION_ALWAYS, 7, PIXELS(536), 0, PIXELS(120), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, 7, 536, 0, 904, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(377, CONDITION_ALWAYS, 7, 712, 0, 904, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(382, CONDITION_ALWAYS, 7, 152, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(382, CONDITION_ALWAYS, 7, 536, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct Trigger gAirsRock_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Func_02000548)},
-    {0x80004e15, 8, 0x858, EVENT(Func_02000824)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, 1), 8, 0x858, EVENT(Func_02000830)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 8, 0x858, EVENT(Func_02000824)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x858, EVENT(Func_02000830)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, 0x858, EVENT(Func_02001010)},
-    {0x80004e15, 9, CONDITION_ALWAYS, EVENT(Func_02000824)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, 1), 9, CONDITION_ALWAYS, EVENT(Func_02000830)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 9, CONDITION_ALWAYS, EVENT(Func_02000824)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(Func_02000830)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(Func_0200095c)},
-    {0x80004e15, 10, CONDITION_ALWAYS, EVENT(Func_02000824)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, 1), 10, CONDITION_ALWAYS, EVENT(Func_02000830)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 10, CONDITION_ALWAYS, EVENT(Func_02000824)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(Func_02000830)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(Func_0200095c)},
-    {0x80004e15, 11, CONDITION_ALWAYS, EVENT(Func_02000824)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, 1), 11, CONDITION_ALWAYS, EVENT(Func_02000830)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 11, CONDITION_ALWAYS, EVENT(Func_02000824)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(Func_02000830)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_0200095c)},
-    {0x80004e15, 12, CONDITION_ALWAYS, EVENT(Func_02000824)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, 1), 12, CONDITION_ALWAYS, EVENT(Func_02000830)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 12, CONDITION_ALWAYS, EVENT(Func_02000824)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(Func_02000830)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(Func_0200095c)},
-    {0x80004e15, 13, CONDITION_ALWAYS, EVENT(Func_02000824)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, 1), 13, CONDITION_ALWAYS, EVENT(Func_02000830)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 13, CONDITION_ALWAYS, EVENT(Func_02000824)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(Func_02000830)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, EVENT(Func_0200095c)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAirsRock_Room2Triggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000568)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Func_02000568)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 9},
-    {0x8, 0, CONDITION_ALWAYS, EVENT(Func_02001ca4)},
-    {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02001cc8)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 12, 0x85f, EVENT(Func_02001ca4)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_02001ca4)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02001cc8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0x85f, EVENT(Func_02001ca4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x85f, EVENT(Func_02001cc8)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 13, 0x860, EVENT(Func_02001ca4)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, 0x860, EVENT(Func_02001ca4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x860, EVENT(Func_02001cc8)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 15, 0x861, EVENT(Func_02001ca4)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, 0x861, EVENT(Func_02001ca4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x861, EVENT(Func_02001cc8)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 16, 0x862, EVENT(Func_02001ca4)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x862, EVENT(Func_02001ca4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x862, EVENT(Func_02001cc8)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x200, EVENT(Func_02001da8)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 22, 0x887, EVENT(Func_02001ca4)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 22, 0x887, EVENT(Func_02001ca4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, 0x887, EVENT(Func_02001cc8)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02001560)},
     {TRIGGER_TABLE_END},
@@ -2076,16 +2095,16 @@ struct Trigger gAirsRock_Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {0x31, 6, CONDITION_ALWAYS, 14},
-    {0x4602, 20, CONDITION_ALWAYS, EVENT(Func_02000700)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 14},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT(Func_02000700)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_020005ec)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02000620)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x879, EVENT(Func_020006d4)},
-    {0x80004e15, 12, 0x87a, EVENT(Func_02000824)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, 1), 12, 0x87a, EVENT(Func_02000830)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 12, 0x87a, EVENT(Func_02000824)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 12, 0x87a, EVENT(Func_02000830)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, 0x87a, EVENT(Func_020026b8)},
-    {0x80004e15, 14, 0x87b, EVENT(Func_02000824)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, 1), 14, 0x87b, EVENT(Func_02000830)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 14, 0x87b, EVENT(Func_02000824)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 14, 0x87b, EVENT(Func_02000830)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, 0x87b, EVENT(Func_02001f7c)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02001560)},
     {TRIGGER_TABLE_END},

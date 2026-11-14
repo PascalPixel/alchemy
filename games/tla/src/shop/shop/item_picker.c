@@ -4,6 +4,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "module/shop/shop.h"
 #include "gamepak/far_call/menu.h"
 #include "gamepak/far_call/game.h"
@@ -11,7 +12,6 @@
 /// Runs the forge: the smith's line, then a party member's materials to
 /// forge, until the player leaves. `objectId` is the actor whose portrait the
 /// messages show. Called through the far-call table; returns 0.
-/// ★ Named from the game: "Sunshine's smithy" (message 4879)
 s32 Forge_Run(s32 objectId) {
   struct ShopRuntime *shop;
   struct WindowSprite *icon;
@@ -24,8 +24,7 @@ s32 Forge_Run(s32 objectId) {
   shop->shopType = 1;
   shop->partyAction = 4;
   shop->keeperResource =
-      *((struct FieldObject *)Actor_GetByIdFar__shop(objectId))
-           ->sprite->portrait;
+      *((struct FieldObject *)Actor_GetByIdFar(objectId))->sprite->portrait;
   window = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   icon->sentinel = 255;
@@ -62,8 +61,7 @@ s32 Forge_OfferItem(s32 unitId, s32 slot) {
   u32 raw = unit->inventory[slot];
   s32 item;
   s32 chance;
-  /* FAKEMATCH(pin): result held in r8; as a plain local, 16 of 78
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): result held in r8. */
   register s32 result asm("r8");
 
   item = 0x1ff;
@@ -148,13 +146,13 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       redraw = 0;
     }
     wait(1);
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (Inventory_CountFar(unitId) == 0) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         continue;
       }
       WindowSprite_PrepareForRedrawFar(listWindow);
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       slot = ItemPicker_SelectItem(unitId);
       if (slot == -1) {
         shop->cursor.anchor->active = 4;
@@ -166,8 +164,8 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       *outSlot = slot;
       result = 0;
       break;
-    } else if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    } else if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       *outUnit = -1;
       *outSlot = -1;
       result = -1;
@@ -246,14 +244,14 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
     }
     wait(1);
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       wait(1);
       if (shop->itemMode == 0)
         flags = Inventory_CheckDiscardFar(unitId, slot);
       else
         flags = Inventory_CheckUnequipFar(unitId, slot);
       if (flags == 0) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = slot;
         break;
       }
@@ -261,26 +259,26 @@ s32 ItemPicker_SelectItem(s32 unitId) {
         Message_OpenWindowFar((s32)MsgCannotRemoveIt, 8, 1, 0);
       else if (flags & 2)
         Message_OpenWindowFar((s32)MsgCannotDropIt, 8, 1, 0);
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       while (Message_AllTypedFar() == 0)
         wait(1);
       Message_CloseFinishedWindowsFar();
       continue;
     }
-    if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
-    if (gInput.held & 4) {
+    if (gInput.held & KEY_SELECT) {
       u32 item = unit->inventory[slot];
       void *details;
 
-      Sound_PlayFar(126);
+      Sound_PlayFar(SE_RECOVERY);
       details = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
       ItemMenu_DrawItemDetailsFar(details, item);
       shop->detailsHidden = 0;
-      while (gInput.held & 4)
+      while (gInput.held & KEY_SELECT)
         wait(1);
       shop->detailsHidden = 1;
       Window_CloseFar(details, 2);
@@ -297,34 +295,34 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 #endif
       continue;
     }
-    if (gInput.repeat & 32) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_LEFT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       slot--;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
-    if (gInput.repeat & 16) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_RIGHT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       slot++;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
-    if (gInput.repeat & 64) {
+    if (gInput.repeat & KEY_UP) {
       slot -= 5;
       if (slot < 0)
         slot += 15;
       while (slot >= inventoryCount)
         slot -= 5;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
-    if (gInput.repeat & 128) {
+    if (gInput.repeat & KEY_DOWN) {
       slot += 5;
       if (slot >= inventoryCount)
         slot -= 15;
       while (slot < 0)
         slot += 5;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
   }
@@ -376,25 +374,24 @@ void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot) {
   if (window == 0)
     return;
   WindowSprite_RedrawSavedRectFar(window);
-  Text_DrawMessageAsTilesFar__shop(item + (s32)MsgItemName, window, 0, 0);
+  Text_DrawMessageAsTilesFar(item + (s32)MsgItemName, window, 0, 0);
   if (shop->itemMode == 0)
     flags = Inventory_CheckDiscardFar(unitId, slot);
   else
     flags = Inventory_CheckUnequipFar(unitId, slot);
   if (flags & 2) {
-    Text_DrawMessageAsTilesFar__shop((s32)MsgCannotDrop, window,
-                                     SHOP_PRICE_NOTE_X, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgCannotDrop, window, SHOP_PRICE_NOTE_X,
+                               8);
   } else if (flags & 1) {
-    Text_DrawMessageAsTilesFar__shop((s32)MsgCannotRemove, window,
-                                     SHOP_PRICE_NOTE_X, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgCannotRemove, window, SHOP_PRICE_NOTE_X,
+                               8);
   } else if (shop->itemMode == 0) {
     price = Shop_SalePrice(unit->inventory[slot]) * quantity;
     message = (s32)MsgPriceHeading;
-    Text_DrawMessageAsTilesFar__shop(message, window, 8, 8);
+    Text_DrawMessageAsTilesFar(message, window, 8, 8);
     Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
     // Five messages before the price heading: MsgCoins.
-    Text_DrawMessageAsTilesFar__shop(message - 5, window, SHOP_PRICE_COINS_X,
-                                     8);
+    Text_DrawMessageAsTilesFar(message - 5, window, SHOP_PRICE_COINS_X, 8);
   }
 }
 
@@ -429,8 +426,6 @@ void ItemIconGrid_Initialize(void) {
 
   for (i = ICON_COUNT - 1; i >= 0; i--)
     work->resources[i] = ICON_NONE;
-  // The zero in a local of its own sets the registers of the loop before it;
-  // as a plain 0, 28 of 29 instructions differ in tla-en.
   {
     s32 value = 0;
     work->active = value;

@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "module/system/system.h"
 #include "version.h"
 #include "gamepak/far_call/game.h"
@@ -141,7 +142,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     Window_Close(navigation->timerWindow, 1);
     navigation->timerWindow = (void *)page;
   }
-  Sound_PlayFar(112);
+  Sound_PlayFar(SE_MENU_CONFIRM);
 
   for (i = 4; i >= 0; i--)
     cursor.groupPositions[i] = 0;
@@ -183,9 +184,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     if (redraw != 0)
       Portrait_Load(member, portraitSlot);
     sprite->oam.word.attr01 = 0x80000400;
-    /* FAKEMATCH(dead): an empty once-only block, so the sprite word is stored
-     * straight after its load; as no block, 10 of 3111 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     sprite->oam.word.attr23 = 0;
@@ -229,7 +228,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                          statusWindow->height, 15);
 
     // A turns the page; each list page starts its own group at the top.
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       page = (page + 1) % 4;
       cursor.group = page + 3;
       cursor.groupPositions[page + 3] = 0;
@@ -239,15 +238,15 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       else
         cursor.helpEntry = page;
       redraw = 1;
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
     }
 
     if (statusCount != 0) {
       if ((u32)cursor.group <= 1) {
         groupPosition = cursor.groupPositions[cursor.group];
-        if (keys & 0x80) {
+        if (keys & KEY_DOWN) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
             groupPosition = 0;
@@ -256,9 +255,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               groupPosition = cursor.groupPositions[cursor.group];
             }
           }
-        } else if (keys & 0x40) {
+        } else if (keys & KEY_UP) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition--;
           if (groupPosition < 0) {
             groupPosition = cursor.groupSize - 1;
@@ -267,11 +266,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               groupPosition = cursor.groupPositions[cursor.group];
             }
           }
-        } else if (keys & 0x30) {
+        } else if (keys & KEYS_HORIZONTAL) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           cursor.group ^= 2;
-          if (gInput.repeat & 0x20)
+          if (gInput.repeat & KEY_LEFT)
             groupPosition = statusCount - 1;
           else
             groupPosition = 0;
@@ -284,49 +283,49 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (groupPosition < 0) {
           cursor.group = 0;
           groupPosition = cursor.groupPositions[0];
-        } else if (keys & 0x10) {
+        } else if (keys & KEY_RIGHT) {
           keys = 0;
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
             cursor.group = 0;
             groupPosition = cursor.groupPositions[0];
           }
-          Sound_PlayFar(111);
-        } else if (keys & 0x20) {
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+        } else if (keys & KEY_LEFT) {
           keys = 0;
           groupPosition--;
           if (groupPosition < 0) {
             cursor.group = 0;
             groupPosition = cursor.groupPositions[0];
           }
-          Sound_PlayFar(111);
-        } else if (keys & 0xc0) {
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+        } else if (keys & KEYS_VERTICAL) {
           keys = 0;
           cursor.group = 0;
           groupPosition = cursor.groupPositions[0];
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         cursor.groupPositions[cursor.group] = groupPosition;
       } else if (cursor.group == 3 || cursor.group == 5) {
         // Four rows a page: up and down step, left and right turn the page.
         groupPosition = cursor.groupPositions[cursor.group];
-        if (keys & 0x80) {
+        if (keys & KEY_DOWN) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition++;
           if (groupPosition >= cursor.groupSize)
             groupPosition = 0;
-        } else if (keys & 0x40) {
+        } else if (keys & KEY_UP) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition--;
           if (groupPosition < 0)
             groupPosition = cursor.groupSize - 1;
-        } else if (keys & 0x10) {
+        } else if (keys & KEY_RIGHT) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition += 4;
           if (groupPosition >= cursor.groupSize) {
@@ -335,9 +334,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             else
               groupPosition = cursor.groupSize - 1;
           }
-        } else if (keys & 0x20) {
+        } else if (keys & KEY_LEFT) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition -= 4;
           if (groupPosition < 0)
@@ -352,30 +351,30 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         // Three Djinn a column.
         s32 djinnPosition = cursor.groupPositions[cursor.group];
 
-        if (keys & 0x80) {
+        if (keys & KEY_DOWN) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition++;
           if (djinnPosition >= cursor.groupSize)
             djinnPosition = 0;
-        } else if (keys & 0x40) {
+        } else if (keys & KEY_UP) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition--;
           if (djinnPosition < 0)
             djinnPosition = cursor.groupSize - 1;
-        } else if (keys & 0x10) {
+        } else if (keys & KEY_RIGHT) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition += 3;
           if (djinnPosition >= cursor.groupSize)
             djinnPosition = djinnPosition % 3;
-        } else if (keys & 0x20) {
+        } else if (keys & KEY_LEFT) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition -= 3;
           if (djinnPosition < 0)
@@ -480,8 +479,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 = 0x40000400;
     cursorSprite.oam.word.attr23 = 0;
     /* FAKEMATCH(barrier): an empty asm stores the sprite words straight after
-     * their load, before the call's arguments; as no asm, 16 of 3111
-     * instructions differ in tla-en. */
+     * their load. */
     asm("");
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
@@ -565,8 +563,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
         /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
-         * fill loop's test; as no asm, 2 of 3111 instructions differ in tla-en.
-         */
+         * fill loop's test. */
         asm("");
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
@@ -650,8 +647,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
           /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
-           * fill loop's test; as no asm, 2 of 3111 instructions differ in
-           * tla-en. */
+           * fill loop's test. */
           asm("");
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
@@ -762,10 +758,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           Text_SetColor(15);
         }
       }
-      /* FAKEMATCH(dead): a never-true arm, pages 1 and 3's scroll marks
-       * with this page's 0; gcse folds it away but sizes its table with the
-       * arm's insns, which orders the hoisted addresses' stack slots; as no
-       * arm, 62 of 3111 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): a never-true arm, pages 1 and 3's scroll marks with
+       * this page's 0. */
       if (released > 4)
         SUMMARY_DRAW_PAGE_MARKS(statusWindow, released, rowBase);
       work->dirty = 1;
@@ -1039,9 +1033,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           break;
         }
         MessageArgument_Push(helpValue, 5);
-        /* FAKEMATCH(dead): an empty once-only block between the two calls, so
-         * movs r2, #128 leads statusKind's reload; as no block, 2 of 3111
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): an empty once-only block between the two calls. */
         do {
         } while (0);
         Message_CopyExpanded(statusKind + (s32)MsgNormalStatus, helpText,
@@ -1073,9 +1065,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       slot = statusSlots;
       for (i = 0, entry = gResourceTableEntries, iconX = 112; i <= 10; i++) {
         sprite->oam.word.attr01 = 0x40000400;
-        /* FAKEMATCH(dead): an empty once-only block, so the sprite word is
-         * stored straight after its load; as no block, 14 of 3111 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(dead): an empty once-only block. */
         do {
         } while (0);
         sprite->oam.word.attr23 = 0;
@@ -1095,9 +1085,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             iconRow = 0;
              i <= 3; i++) {
           sprite->oam.word.attr01 = 0x40000400;
-          /* FAKEMATCH(dead): an empty once-only block, so the sprite word is
-           * stored straight after its load; as no block, 2 of 3111
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): an empty once-only block. */
           do {
           } while (0);
           sprite->oam.word.attr23 = 0;
@@ -1113,23 +1101,23 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         }
       }
     }
-    if (NAVIGATION->timer == 0 || (gInput.pressed & 2))
+    if (NAVIGATION->timer == 0 || (gInput.pressed & KEY_B))
       break;
     if (listCount != 0) {
-      if (keys & 0x100) {
+      if (keys & KEY_R) {
         memberIndex++;
         if (memberIndex >= listCount)
           memberIndex = 0;
         member = list[memberIndex];
         redraw = 1;
-        Sound_PlayFar(111);
-      } else if (keys & 0x200) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+      } else if (keys & KEY_L) {
         memberIndex--;
         if (memberIndex < 0)
           memberIndex = listCount - 1;
         member = list[memberIndex];
         redraw = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }
     wait(1);

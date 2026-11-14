@@ -4,6 +4,8 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 struct ItemMenuBlocks {
   u8 unk000[0x4ee];
@@ -82,9 +84,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
     resource = (u16)data->resourceSlots[1];
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
   if (object == 0) {
-    /* FAKEMATCH(dead): a test whose two arms are alike, which keeps the
-     * arguments' lifetimes through CSE, as in The Broken Seal; as a plain
-     * return -1, 20 of 38 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (variant || xx)
       return -1;
     else
@@ -116,9 +116,7 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
   }
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
   if (object == 0) {
-    /* FAKEMATCH(dead): a test whose two arms are alike, which keeps the
-     * arguments' lifetimes through CSE, as in The Broken Seal; as a plain
-     * return -1, 26 of 42 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (v || x)
       return -1;
     else
@@ -136,26 +134,26 @@ s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
   s32 old = *cursor;
   s32 pos = old;
 
-  if (input->repeat & 0x20) {
+  if (input->repeat & KEY_LEFT) {
     pos--;
     pos = (pos + count) % count;
   }
-  if (input->repeat & 0x10) {
+  if (input->repeat & KEY_RIGHT) {
     pos++;
     pos = (pos + count) % count;
   }
-  if (input->repeat & 0x40) {
+  if (input->repeat & KEY_UP) {
     if (pos - columns >= 0)
       pos -= columns;
   }
-  if (input->repeat & 0x80) {
+  if (input->repeat & KEY_DOWN) {
     if (pos + columns < (columns + count - 1) / columns * columns)
       pos += columns;
     if (pos > count - 1)
       pos = count - 1;
   }
   if (old != pos) {
-    Sound_PlayFar(111);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     result = 1;
   }
   if (old / columns * columns != pos / columns * columns)
@@ -253,7 +251,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
         transform[2] = (menu->y[i] << 16) + top;
         transform[3] = 0;
         Render_ApplyProjectedPlacementAtDepthFar(menu->objects[i], transform,
-                                                 scale, 0x4000, 250);
+                                                 scale, Q16_ONE / 4, 250);
       }
     }
   }
@@ -470,7 +468,7 @@ void DjinnFigures_InitializeTopRow(void) {
     menu->objects[i] = object;
     menu->x[i] = 16;
     menu->y[i] = 200;
-    menu->scale[i] = 0x10000;
+    menu->scale[i] = Q16_ONE;
     menu->frame[i] = 0x4000;
   }
   menu->transformsActive = 1;
@@ -562,8 +560,7 @@ void MenuIcon_LoadSlots(void) {
     if (entry <= 95) {
       u32 *attributes;
 
-      // As ids[i] the table and index combine into one walking pointer; the
-      // byte offset kept apart is what matches.
+      /* FAKEMATCH(temporary): the table read at a byte offset of its own. */
       Resource_LoadByModeIntoSlotFar(8, *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = &slot->attributes;
       *attributes++ = 0x40000000;
@@ -598,10 +595,7 @@ struct MenuSlotAttr {
 
 void MenuIcon_SetSlot(s32 index, u32 x, s32 mode) {
   u8 *menu = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH(temporary): the offset as a local of its own, which adds the row
-   * and the field offset before the work pointer, as in the shop's
-   * ItemIconGrid_SetPosition; as a plain field address, (struct MenuSlotAttr
-   * *)(menu + 0xbd0) + index, 6 of 21 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the offset as a local of its own. */
   s32 offset =
       index * sizeof(struct MenuSlotAttr) + 0xbd0; /* slots[index] + 4 */
   struct MenuSlotAttr *slot = (struct MenuSlotAttr *)(menu + offset);

@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -103,12 +106,6 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_WhiteSpikesTiles;
 extern u8 gMapCellBuffer[];
-/* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698
- * has extern struct EffectStep gData_02014000[]; tried as the rest of the
- * object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:53207: `gData_02014000__f1843fc'
- * undeclared (first use in this function). */
-extern u8 gData_02014000__f1843fc[] __asm__("gData_02014000");
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern u8 Data_02016000[];
@@ -151,17 +148,6 @@ extern const s16 Data_081999f2[];
 
 void VramBlock_Reset93Far(void);
 void VramBlock_Load93Far(void);
-/* VIEW(f1843fc): routine EffectSprite_CreateWithTiles as struct SpriteObject
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
- * attributes); the definition has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags); tried as the definition's struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags), which the object already declares, BattleEffect_RunCatastrophe moves:
- * 4 of 4547 instructions in tla-ja. */
-extern struct SpriteObject *EffectSprite_CreateWithTiles__f1843fc(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 /* VIEW(f1843fc): routine EffectSprite_Acquire as struct SpriteObject
  * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); f17e698
  * has Sprite *EffectSprite_Acquire(s32, s32, u32, s32); tried as the
@@ -268,10 +254,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   transition[4] = 1;
   gBgScroll[1].x = 0;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   {
-    u16 *map = (u16 *)0x0600f800;
+    u16 *map = (u16 *)BG_SCREEN_BLOCK(31);
 
     {
       s32 i;
@@ -306,7 +292,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != 24; cells += 1024, i++) {
-      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80002000, 0);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
       obj->priority = 2;
       work->objects[i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
@@ -338,7 +324,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
-      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80000000, 0xc000);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xc000);
       obj->priority = 1;
       work->objects[34 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -353,7 +339,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
-      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80000000, 0xd000);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xd000);
       obj->priority = 1;
       work->objects[39 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -368,7 +354,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 6; cells += 512, i++) {
-      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80000000, 0xe000);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xe000);
       obj->priority = 1;
       work->objects[44 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -405,17 +391,18 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
       Palette_BrightenSavedBattleBg(v, v, v);
     }
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       break;
     }
     if (frame == 0) {
-      REG_BG2CNT = 0x786;
+      REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                   BGCNT_SCREEN_BASE(7);
       for (i = 3; i != 64; i++) {
         work->particles[i].variant = -1;
       }
     }
     if (frame == 440) {
-      REG_BG2CNT = 0x784;
+      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     }
     if (frame <= 369) {
       camZ = (frame * 334 / 379 << 16) + -0x11a0000;
@@ -473,16 +460,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         cueTimer = Data_0819978c[cueIndex];
         switch (cueIndex & 3) {
         case 0:
-          Sound_PlayFar(227);
+          Sound_PlayFar(SE_TOPPLE);
           break;
         case 1:
-          Sound_PlayFar(171);
+          Sound_PlayFar(SE_THUNDER);
           break;
         case 2:
-          Sound_PlayFar(208);
+          Sound_PlayFar(SE_BANE_ESCAPE);
           break;
         case 3:
-          Sound_PlayFar(172);
+          Sound_PlayFar(SE_THUNDER_LOUD);
           break;
         }
       }
@@ -724,7 +711,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyPosition3((Data_08199824[i] - 48) << 16,
                                       (Data_0819982b[i] - 44) << 16, 0);
         Transform_ApplyRoll(0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
       }
@@ -769,13 +756,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 324) {
-      Sound_PlayFar(206);
+      Sound_PlayFar(SE_CURSE_FALL);
     }
     if (frame == 560) {
-      Sound_PlayFar(220);
+      Sound_PlayFar(SE_SHIMMER);
     }
     if (frame == 602) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
     texture.logWidth = 5;
     texture.logHeight = 7;
@@ -810,13 +797,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 y;
 
           if (a != 0) {
-            p->x = Data_0819985c[n] << 3;
-            p->y = Data_08199880[n] << 3;
-            p->z = a << 8;
+            SET_POSITION(p, Data_0819985c[n] << 3, Data_08199880[n] << 3,
+                         a << 8);
           }
-          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is
-           * rebuilt; as the plain sum, 3369 of 4580 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(barrier): idx held through an empty asm. */
           __asm__("" : "=r"(idx) : "0"(idx));
           p->velocityY = Data_081998f2[idx + off];
           p->velocityZ = Data_0819995e[idx + off];
@@ -836,13 +820,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           blit[0](canvas, src, x, y, w, h);
           switch (i) {
           case 0:
-            Sound_PlayFar(186);
+            Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
             break;
           case 1:
-            Sound_PlayFar(187);
+            Sound_PlayFar(SE_FALLING_LIGHT);
             break;
           case 2:
-            Sound_PlayFar(222);
+            Sound_PlayFar(SE_222);
             break;
           }
           {
@@ -885,9 +869,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                                           ((p->y / 8 - 64) << 16) + camZ + sway,
                                           0);
           }
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(p->z);
-          SceneTransform_ApplyScale3(0x40000, 85536, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE * 4, 85536, Q16_ONE / 2);
           Render_TransformVertices(Data_081991d0, verts, 4);
           Render_DrawModelList(model);
           p->y += p->velocityY * 2;
@@ -896,13 +880,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 602) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 630) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x1f1f1f1f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(31));
     }
     if (frame == 634) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x1f1f1f1f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(31));
     }
     if ((u32)(frame - 552) <= 43) {
       p = work->particles;
@@ -914,9 +898,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       Transform_Reset();
       SceneTransform_ApplyPosition3((span - drift) / 2 + 0x40000,
                                     camZ + 0xcc0000, 0);
-      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
+      SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
       Transform_ApplyRoll(p->y);
-      SceneTransform_ApplyScale3(0x40000, 85536, 0x8000);
+      SceneTransform_ApplyScale3(Q16_ONE * 4, 85536, Q16_ONE / 2);
       Render_TransformVertices(Data_081991d0, verts, 4);
       Render_DrawModelList(model);
     }
@@ -944,16 +928,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       for (i = 0; i != n; i++) {
         struct EffectStep *p4 = &work->particles[i];
 
-        p4->x = (Random16() % spread - spread / 2) << 16;
-        p4->y = camZ + 0xc80000;
-        p4->z = ((base + i) % 3 << 12) + 0x2000;
+        SET_POSITION(p4, (Random16() % spread - spread / 2) << 16,
+                     camZ + 0xc80000, ((base + i) % 3 << 12) + 0x2000);
         texture.pixels = work->sheet + p4->z;
         Transform_Reset();
         SceneTransform_ApplyPosition3(0x10000, p4->y, 0);
-        SceneTransform_ApplyScale3(sx, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(sx, Q16_ONE, Q16_ONE / 2);
         SceneTransform_ApplyPosition3(p4->x, 0, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x20000, 0x10000);
-        Transform_ApplyRoll(0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE * 2, Q16_ONE);
+        Transform_ApplyRoll(TRIG_TURN / 2);
         Render_TransformVertices(Data_081991d0, verts, 4);
         Render_DrawModelList(model);
       }
@@ -995,7 +978,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Transform_Reset();
         b = span - drift;
         SceneTransform_ApplyPosition3(b / 2 + 0x50000, camZ + 0xe60000, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyPitch(18768);
         a = -frame;
         a <<= 10;
@@ -1048,7 +1031,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             }
             SceneTransform_ApplyPosition3(
                 ((b + (s32)((u32)b >> 31)) >> 1) + 0x50000, camZ + 0xdc0000, 0);
-            SceneTransform_ApplyScale3(0x10000, 32000, 0x10000);
+            SceneTransform_ApplyScale3(Q16_ONE, 32000, Q16_ONE);
             Transform_ApplyRoll(frame << 11);
             SceneTransform_ApplyUniformScale(s);
             Render_TransformVertices(Data_081991e0, verts, 4);
@@ -1073,7 +1056,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         texture.logHeight = 7;
         Transform_Reset();
         SceneTransform_ApplyPosition3(0x10000, -0x100000, 0);
-        SceneTransform_ApplyScale3(0x10000, 32000, 0x10000);
+        SceneTransform_ApplyScale3(Q16_ONE, 32000, Q16_ONE);
         Transform_ApplyRoll(frame << 10);
         SceneTransform_ApplyUniformScale(s);
         Render_TransformVertices(Data_081991e0, verts, 4);
@@ -1121,7 +1104,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -16, -16);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cellBuffer, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
@@ -1161,10 +1144,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     work->transferMode = 2;
     work->transferValue = 50;
     frame = 0;
-    if (!(gInput.repeat & 3)) {
+    if (!(gInput.repeat & (KEY_A | KEY_B))) {
       do {
         if (frame == 0) {
-          Iwram_FillWordsEntry(canvas, 0x4000, 0);
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, 0);
           rise = -0x400000;
           Palette_BrightenSavedBattleBg(0, -16, -16);
           work->transferMode = 2;
@@ -1202,11 +1185,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
         if (frame == 82) {
           work->shakeFrames = 8;
-          Sound_PlayFar(208);
-          IWRAM_FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+          Sound_PlayFar(SE_BANE_ESCAPE);
+          IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         }
         if (frame == 96) {
-          Sound_PlayFar(104);
+          Sound_PlayFar(SE_104);
         }
         if (frame == 128) {
           u16 *c;
@@ -1257,8 +1240,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 s32 at = gBattleEffect_GlintCells[n];
 
                 /* FAKEMATCH(dead): an empty once-only block between the
-                 * picture's offset and the draw; as no block, 536 of 4580
-                 * instructions differ in tla-en. */
+                 * picture's offset and the draw. */
                 do {
                 } while (0);
                 ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
@@ -1295,7 +1277,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           texture2.pixels = Data_02011000;
           Transform_Reset();
           SceneTransform_ApplyPosition3(-0x20000, rise, 0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyPitch(18768);
           a = frame << 9;
           Transform_ApplyRoll(a);
@@ -1360,7 +1342,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 texture2.logHeight = 7;
                 Transform_Reset();
                 SceneTransform_ApplyPosition3(0, 0x100000, 0);
-                SceneTransform_ApplyScale3(0x10000, 32000, 0x10000);
+                SceneTransform_ApplyScale3(Q16_ONE, 32000, Q16_ONE);
                 Transform_ApplyRoll(frame << 10);
                 SceneTransform_ApplyUniformScale(s);
                 Render_TransformVertices(Data_081991e0, verts2, 4);
@@ -1387,7 +1369,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
         for (i = 0; i != 8; i++) {
           if (frame == 128 + i * 4) {
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
           }
         }
         p = work->particles;
@@ -1404,7 +1386,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             Transform_Reset();
             Transform_ApplyRoll(p->z);
             p->z += p->velocityZ;
-            SceneTransform_ApplyScale3(s << 2, s, 0x10000);
+            SceneTransform_ApplyScale3(s << 2, s, Q16_ONE);
             Render_TransformVertices(gData_081991b0, verts2, 4);
             Render_DrawModelList(model2);
           }
@@ -1422,9 +1404,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               s32 angle = i * 1365;
               s32 rr = (a & 31) + 32;
 
-              p->x = (Trig_Sin(angle) * rr >> 16) + 60;
-              p->y = (Trig_Cos(angle) * rr >> 16) + 60;
-              p->z = (Random16() & 3) + 5;
+              SET_POSITION(p, (Trig_Sin(angle) * rr >> 16) + 60,
+                           (Trig_Cos(angle) * rr >> 16) + 60,
+                           (Random16() & 3) + 5);
               p->variant = -(Random16() & 15);
             }
           }
@@ -1459,7 +1441,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         work->transferPending = 1;
         wait(1);
         frame++;
-      } while (frame != 160 && !(gInput.repeat & 3));
+      } while (frame != 160 && !(gInput.repeat & (KEY_A | KEY_B)));
     }
   }
   {
@@ -1474,7 +1456,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     bolts = Ram_MapCellBuffer + 0x4000;
     slide = 0;
     slideStep = 0;
-    Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+    Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     work->transferPending = 1;
     wait(1);
     gBgScroll[1].x = savedScroll;
@@ -1490,14 +1472,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, bolts, 1,
                                0);
     Render_BuildQuadStrip(Data_02012000, 4, 32, 11);
-    REG_BG2CNT = 0x784;
+    REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     frame = 0;
     do {
-      if ((gInput.repeat & 3) && frame > 2 && frame <= 87) {
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 2 && frame <= 87) {
         frame = 88;
       }
       if (frame == 88) {
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->transferMode = 3;
         work->transferValue = 0x02020202;
         gBgScroll[1].x = savedScroll;
@@ -1506,7 +1488,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         BattlePlayback_StartFar(134);
       }
       if (frame == 0) {
-        IWRAM_FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+        IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->scrollStepX = -16;
         gCameraSceneParameters[3] = -968;
         gCameraSceneParameters[4] = 120;
@@ -1544,8 +1526,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             s32 speed;
 
             q->x = (pos.x / 2) << 16;
-            q->y = 0x500000;
-            angle = (Random16() & 0x7fff) + 0x4000;
+            q->y = px(80);
+            angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
             speed = (Random16() & 127) + 128;
             q->velocityX = Trig_Sin(angle) * speed >> 5;
             q->velocityY = Trig_Cos(angle) * speed >> 4;
@@ -1553,7 +1535,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           }
         }
         work->shakeFrames = 16;
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       }
       if ((u32)(frame - 72) <= 15) {
         work->transferMode = 4;
@@ -1576,7 +1558,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
           q->x = sum << 16;
           q->y = (Random16() % 112 + 4) << 16;
-          angle = (Random16() & 0x7fff) + 0x8000;
+          angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
           speed = (Random16() & 127) + 128;
           q->velocityX = Trig_Sin(angle) * speed >> 6;
           q->velocityY = Trig_Cos(angle) * speed >> 6;
@@ -1612,9 +1594,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
           for (i = 0, x = 0, v = (struct MeshVertex *)(off + (s32)cellBuffer);
                i != 2; i++, x += 10, v++) {
-            v->x = x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5;
-            v->y = y;
-            v->z = z;
+            SET_POSITION(
+                v, x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5,
+                y, z);
           }
           jitter = jitter + (Random16() & 7) - 4;
           y -= 6;
@@ -1644,14 +1626,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model3->mesh = strip;
         model3->scrollU = (frame << 3) & 127;
         Transform_Reset();
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         a = frame * 3 * 127 * 16;
         b = frame << 13;
         c = Trig_Sin(a);
         SceneTransform_ApplyPosition3(slide, (c << 5) + Trig_Cos(b) * 24, 0);
         SceneTransform_ApplyUniformScale(55536);
         Transform_Push();
-        Transform_ApplyRoll(0x4000);
+        Transform_ApplyRoll(TRIG_TURN / 4);
         SceneTransform_ApplyUniformScale(0x42ee0);
         Render_TransformVertices(cellBuffer, quads, 24);
         Render_DrawModelList(model3);
@@ -1663,7 +1645,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         texture3.pixels = work->sheet + 0x800;
         SceneTransform_ApplyPosition3(
             -0x20000, (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
-        Transform_ApplyRoll(-0x800);
+        Transform_ApplyRoll(-TRIG_TURN / 32);
         {
           s32 s0 = Trig_Sin(a);
           s32 y0 = (s0 << 5) + Trig_Cos(b) * 24;
@@ -1676,7 +1658,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           y1 = (s1 << 5) + Trig_Cos(b) * 24;
           Transform_ApplyRoll((y0 - y1) / 512 + -0x400);
         }
-        SceneTransform_ApplyScale3(0x21170, 105536, 0x10000);
+        SceneTransform_ApplyScale3(0x21170, 105536, Q16_ONE);
         Render_TransformVertices(Data_081991e0, quads, 4);
         Render_DrawModelList(model3);
         Heap_Release(model3);
@@ -1695,16 +1677,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 work->shakeFrames = 4;
                 switch (i & 3) {
                 case 0:
-                  Sound_PlayFar(227);
+                  Sound_PlayFar(SE_TOPPLE);
                   break;
                 case 1:
-                  Sound_PlayFar(171);
+                  Sound_PlayFar(SE_THUNDER);
                   break;
                 case 2:
-                  Sound_PlayFar(208);
+                  Sound_PlayFar(SE_BANE_ESCAPE);
                   break;
                 case 3:
-                  Sound_PlayFar(172);
+                  Sound_PlayFar(SE_THUNDER_LOUD);
                   break;
                 }
                 j = 0;
@@ -1714,8 +1696,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                   s32 speed;
 
                   q->x = p2->x << 16;
-                  q->y = 0x680000;
-                  angle = (Random16() & 0x7fff) + 0x4000;
+                  q->y = px(104);
+                  angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
                   speed = (Random16() & 127) + 128;
                   q->velocityX = Trig_Sin(angle) * speed >> 5;
                   q->velocityY = Trig_Cos(angle) * speed >> 4;
@@ -1723,7 +1705,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 }
               }
               if (frame >= lim && frame < lim + 8) {
-                u8 *src = gData_02014000__f1843fc;
+                u8 *src = gData_02014000;
 
                 blit[0](canvas, ((p2->variant / 2) & 3) * 2880 + src,
                         p2->x - 12, 0, 24, 120);

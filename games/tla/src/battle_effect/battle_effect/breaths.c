@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -41,13 +43,11 @@ struct ModelTexture__f18bc98 {
   u8 *pixels;
 };
 
-// One entry of a model list, as Render_AllocateModelList allocates them and
-// Render_DrawModelList draws them.
 /* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:57349: structure has no member
- * named `vertices'. */
+ * games/tla/src/battle_effect/battle_effect/breaths.c:368: structure has no
+ * member named `vertices'. */
 struct Model__f18bc98 {
   s32 kind;
   s32 next;
@@ -192,7 +192,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // A clipped MAX blitter facing the targets, and a clipped additive one.
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->side == 0)
     BattleEffect_LoadBlitter(
         HEAP_SLOT_BLITTER,
@@ -387,7 +387,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         if (mode != BREATH_ROLLING_FLAME) {
           s32 growth = 10192;
           s32 age = frame - Data_08199d9b[mode];
-          s32 scale = age * growth + 0x8000;
+          s32 scale = age * growth + Q16_ONE / 2;
           s32 alpha = 128 - age * 8;
 
           if (effect->variant == 0)
@@ -405,9 +405,9 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
               if (mode == BREATH_BLAST) {
                 SceneTransform_ApplyPosition3((mouthX - 64) << 16,
                                               (mouthY - 64) << 16, 0);
-                SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
-                Transform_ApplyRoll((i << 14) + 0x2000);
-                Transform_ApplyPitch(-0x1000);
+                SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
+                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyPitch(-TRIG_TURN / 16);
               } else {
                 if (effect->side == 0)
                   SceneTransform_ApplyPosition3((mouthX - 72) << 16,
@@ -416,7 +416,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                   SceneTransform_ApplyPosition3((mouthX - 56) << 16,
                                                 (mouthY - 64) << 16, 0);
                 Transform_ApplyYaw(0x32c8);
-                Transform_ApplyPitch(0x4000);
+                Transform_ApplyPitch(TRIG_TURN / 4);
               }
               if (mode == BREATH_PIKE)
                 scale /= 2;
@@ -467,7 +467,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                 }
                 SceneTransform_ApplyScale3(scale, scale, scale);
                 Transform_ApplyYaw(0x36b0);
-                Transform_ApplyPitch(0x4000);
+                Transform_ApplyPitch(TRIG_TURN / 4);
                 Transform_ApplyYaw(frame << 10);
                 Render_TransformVertices(Data_08198cac, vertices, 32);
                 Render_DrawModelList(model);
@@ -493,13 +493,13 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           Transform_Reset();
           SceneTransform_ApplyPosition3((mouthX - 64) << 16,
                                         (mouthY - 64) << 16, 0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;
           if (effect->side == 1)
             angle = -angle;
           Transform_ApplyRoll(angle);
-          SceneTransform_ApplyScale3(0x40000, 0x20000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE * 2, Q16_ONE);
           Render_TransformVertices(Data_081991c0, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -509,20 +509,20 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
 
       if (mode == BREATH_BEAM) {
         if (frame == 0)
-          Sound_PlayFar(140);
+          Sound_PlayFar(SE_SPIN);
       } else if (mode == BREATH_PIKE) {
         if (frame == 2)
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
       }
 
       if (mode == BREATH_BLAST) {
         // Blast Breath strikes each target in turn, every fourth frame.
         if (frame == 0) {
           work->shakeFrames = 8;
-          Sound_PlayFar(221);
+          Sound_PlayFar(SE_RISE_WITH_SPARKS);
         }
         if (frame == 16) {
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
           BattlePlayback_StartFar(134);
         }
         for (i = 0; i != effect->count; i++) {
@@ -546,7 +546,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         }
         work->shakeFrames = 8;
         BattlePlayback_StartFar(144);
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       BattleCamera_Shake(8, 8);
       BattleEffect_CountDownBattlerTints();
@@ -598,8 +598,6 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   u8 *cells = Ram_MapCellBuffer;
-  // The blitter pair, as a two-word array one DImode pseudo: it takes r6 and
-  // r7, the second unused, which is why r7 is saved and effect spilled.
   DrawRectangle draw[2];
   s32 flags;
   s32 frame;
@@ -617,10 +615,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
     if (effect->side != 0)
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
   }
-  /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing; its
-   * return-register clobber issues in the mode store's second cycle, so the
-   * flags move is picked before r1 and r2; as a void function, or without the
-   * call, 2 of 303 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing. */
   Nothing();
   BattleEffect_BuildBlitter(HEAP_SLOT_BLITTER, 7, 7, flags, BLIT_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -631,27 +626,27 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
                              0);
   if (mode == 0) {
     Iwram_CopyWordsEntry(
-        (void *)0x05000000,
+        (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
-    REG_BLDALPHA = 0x810;
+    REG_BLDALPHA = BLEND_ALPHA(16, 8);
     work->transferMode = 2;
     work->transferValue = 50;
   } else {
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
     work->transferMode = 2;
     work->transferValue = 75;
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The caster closes in on the target.
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, 0x40000);
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, px(4));
 
   for (frame = 0; frame != 32; frame++) {
     if (frame == 0)
       EffectPosition_ProjectBattler(effect->actors[0],
                                     (struct EffectPosition *)position);
     if (frame == 8)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
 
     // Frame 12: the hit. Echo Cut throws the target up.
     if (frame == 12) {
@@ -680,7 +675,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
           draw[0](canvas, work->sheet, x, y, 120, 120);
           break;
         case 1:
-          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           break;
         case 2:
           draw[0](canvas, cells, x - 4, y, 128, 128);
@@ -695,7 +690,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
       } else {
         switch (step) {
         case 1:
-          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           break;
         case 0:
           draw[0](canvas, work->sheet, x, y, 120, 120);

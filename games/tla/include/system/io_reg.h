@@ -153,8 +153,8 @@ enum DisplayControl {
 #define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
 
 /// Stores an RGB colour, built in a local of its own, as the palette routines
-/// several scenes copy store each colour (scene/shared/effects.h and three
-/// copies of its palette cycle). The name is ours.
+/// several scenes copy store each colour (scene/shared/palette_cycle_fade.h and
+/// its kin).
 #define SET_RGB(lvalue, r, g, b)                                               \
   do {                                                                         \
     int rgb = ((b) << 10) | ((g) << 5) | (r);                                  \

@@ -33,13 +33,6 @@
 
 #include "field_sequence/screen_transition.c"
 
-// The event commands, as The Broken Seal's event_commands.c begins: the
-// commands events run (waits, received items, questions and destinations), the
-// battles and destinations an event requests, and the commands on actors. Here
-// the ROM breaks The Broken Seal's object in three: object/step_angle.c, which
-// an overlay links too, follows this object, and the rest of the commands are
-// still separate files. These parts see the names below as they were matched.
-
 /* VIEW(event_commands): routine GameFlag_GetByte as u8 GameFlag_GetByte(s32
  * flag); field/event.h has s32 GameFlag_GetByte(s32 flag); tried as the
  * definition's u8 GameFlag_GetByte(s32 flag), which the object already
@@ -54,7 +47,7 @@ u8 GameFlag_GetByte__event_commands(s32 flag) __asm__("GameFlag_GetByte");
  * s32 x, s32 z); tried as the definition's void
  * Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z), which the
  * object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:54: conflicting types for
+ * games/tla/src/field/field_sequence.c:50: conflicting types for
  * `Actor_SetHorizontalPositionWithTerrain'. */
 void Actor_SetHorizontalPositionWithTerrain__event_commands(
     u32 objectId, s32 x,

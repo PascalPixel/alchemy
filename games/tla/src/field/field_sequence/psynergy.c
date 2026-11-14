@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "flags.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 
@@ -43,7 +44,8 @@ s32 Field_UsePsynergy(u32 code) {
       return 0;
     }
     if (abilityId == 153) {
-      if (gMainRoutineWork.ownerOverride != 0 && GameFlag_Get(0x8df)) {
+      if (gMainRoutineWork.ownerOverride != 0 &&
+          GameFlag_Get(FLAG_SHIP_FLIES)) {
         GameFlag_Set(327);
         ((struct EventWork *)event)->unk16a = 253;
         return 0;

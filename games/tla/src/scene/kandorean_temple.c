@@ -4,7 +4,7 @@
 #include "../field/field_effect/move.c"
 /// @file
 /// The Kandorean Temple of Master Poi, south-west of Daila, in nine rooms that
-/// share this overlay (SceneId_Ov653Room1 to SceneId_Ov653Room9).
+/// share this overlay (SceneId_KandoreanTemple1 to SceneId_KandoreanTemple9).
 ///
 /// Its gate is shut for the meditation (KandoreanTemple_StartGate): Kraden
 /// spots a suspicious wall and the party finds a hidden way in through a cave
@@ -31,6 +31,7 @@
 /// lifts.
 
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -83,15 +84,15 @@ void KandoreanTemple_StartRoom6(void);
 void KandoreanTemple_StartFogRoom(void);
 void KandoreanTemple_StartGate(void);
 void KandoreanTemple_StartPoisHall(void);
-extern char SceneId_Ov653Room1;
-extern char SceneId_Ov653Room2;
-extern char SceneId_Ov653Room3;
-extern char SceneId_Ov653Room4;
-extern char SceneId_Ov653Room5;
-extern char SceneId_Ov653Room6;
-extern char SceneId_Ov653Room7;
-extern char SceneId_Ov653Room8;
-extern char SceneId_Ov653Room9;
+extern char SceneId_KandoreanTemple1;
+extern char SceneId_KandoreanTemple2;
+extern char SceneId_KandoreanTemple3;
+extern char SceneId_KandoreanTemple4;
+extern char SceneId_KandoreanTemple5;
+extern char SceneId_KandoreanTemple6;
+extern char SceneId_KandoreanTemple7;
+extern char SceneId_KandoreanTemple8;
+extern char SceneId_KandoreanTemple9;
 void KandoreanTemple_ShrinkColumn(s32 id, s32 dy, s32 scale);
 void Scene_QueueMusic(s32 a);
 void Rope_Initialize(void);
@@ -115,8 +116,6 @@ extern u32 gKandoreanTemple_LookAroundScript[];
 extern s16 gKandoreanTemple_BlockActors[];
 extern s16 gKandoreanTemple_PillarActors[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
                                                   s32 flags) {
   Actor_SetSpriteFlags(object, flags);
@@ -133,11 +132,7 @@ static __inline__ void Actor_SetPositionAndResetMotion_(struct Actor *object,
 
 static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  /* FAKEMATCH(wrapper): the call through this inline, whose parameters give
-   * each stack argument its own register, as in The Broken Seal's scene layer;
-   * as a direct call to TileCopies_CopyTouchedCells, which builds them all in
-   * r3, 8 of 15 instructions differ in tla-en
-   * (KandoreanTemple_CycloneFirstPatch). */
+  /* FAKEMATCH(wrapper): the call through this inline. */
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
@@ -268,7 +263,7 @@ s32 KandoreanTemple_MeditateRestlessly(struct Actor *object) {
   if (object->timer != 0) {
     object->timer--;
   } else {
-    Actor_ShowEmoteById((s16)object->unk66, 0x105, 0);
+    Actor_ShowEmoteById((s16)object->unk66, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     object->timer = ((Random16() * 240) >> 16) + 240;
   }
   return 1;
@@ -279,7 +274,7 @@ u32 __umodsi3(u32 a, u32 b);
 s32 KandoreanTemple_LevitateStudentBob(struct Actor *object) {
   switch (object->timer) {
   case 6:
-    object->scaleX -= 0x4000;
+    object->scaleX -= Q16_ONE / 4;
     {
       s32 scale = object->scaleY;
 
@@ -287,16 +282,16 @@ s32 KandoreanTemple_LevitateStudentBob(struct Actor *object) {
     }
     break;
   case 4:
-    object->scaleX += 0x2000;
-    object->scaleY -= 0x1000;
+    object->scaleX += Q16_ONE / 8;
+    object->scaleY -= Q16_ONE / 16;
     break;
   case 2:
-    object->scaleX += 0x1000;
+    object->scaleX += Q16_ONE / 16;
     object->scaleY -= 0x800;
     break;
   case 0:
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
     object->timer = Random16() % 90 + 60;
     break;
   }
@@ -320,9 +315,9 @@ extern u32 gKandoreanTemple_ChestbeaterRoomRegions[];
 u32 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov653Room3)
+  if (scene == (s32)&SceneId_KandoreanTemple3)
     return gKandoreanTemple_ChestbeaterRoomRegions;
-  if (scene == (s32)&SceneId_Ov653Room5)
+  if (scene == (s32)&SceneId_KandoreanTemple5)
     return gKandoreanTemple_Room5Regions;
   return 0;
 }
@@ -338,15 +333,15 @@ extern struct ActorPlacement gKandoreanTemple_FogRoomPlacements[];
 void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov653Room1)
+  if (scene == (s32)&SceneId_KandoreanTemple1)
     return gKandoreanTemple_LiftRoomPlacements;
-  if (scene == (s32)&SceneId_Ov653Room3)
+  if (scene == (s32)&SceneId_KandoreanTemple3)
     return gKandoreanTemple_ChestbeaterRoomPlacements;
-  if (scene == (s32)&SceneId_Ov653Room4)
+  if (scene == (s32)&SceneId_KandoreanTemple4)
     return gKandoreanTemple_VentRoomPlacements;
-  if (scene == (s32)&SceneId_Ov653Room7)
+  if (scene == (s32)&SceneId_KandoreanTemple7)
     return gKandoreanTemple_FogRoomPlacements;
-  if (scene == (s32)&SceneId_Ov653Room8) {
+  if (scene == (s32)&SceneId_KandoreanTemple8) {
     if (GameFlag_Get(0x849)) {
       gKandoreanTemple_GatePlacements[3].talkFacing = 0;
       gKandoreanTemple_GatePlacements[4].talkFacing = 0;
@@ -354,11 +349,11 @@ void *Scene_GetPlacements(void) {
     }
     return gKandoreanTemple_GatePlacements;
   }
-  if (scene == (s32)&SceneId_Ov653Room9) {
+  if (scene == (s32)&SceneId_KandoreanTemple9) {
     if (GameFlag_Get(0x849)) {
       gKandoreanTemple_PoisHallPlacements[5].talkFacing = 3;
-      gKandoreanTemple_PoisHallPlacements[6].x = 0x1700000;
-      gKandoreanTemple_PoisHallPlacements[6].z = 0x2b60000;
+      gKandoreanTemple_PoisHallPlacements[6].x = px(368);
+      gKandoreanTemple_PoisHallPlacements[6].z = px(694);
       gKandoreanTemple_PoisHallPlacements[7].talkFacing = 1;
     }
     return gKandoreanTemple_PoisHallPlacements;
@@ -370,7 +365,7 @@ void KandoreanTemple_KradenSuspectsTheWall(void) {
   struct Actor *object;
 
   if (GameFlag_Get(0x842) == 0) {
-    GameFlag_Set(0x230);
+    GameFlag_Set(FLAG_SCENE_TEMP_30);
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_WalkToAndWaitById(4, 104, 252);
@@ -385,7 +380,7 @@ void KandoreanTemple_KradenSuspectsTheWall(void) {
     Actor_SetModeById(14, 3);
     Motion_SetModeAndWaitAnimation(4, 3);
     Event_Wait(20);
-    Actor_SetSpeed(14, 0x13333, 0x9999);
+    Actor_SetSpeed(14, 1.2);
     Actor_SetModeById(14, 2);
     object = Actor_GetById(4);
     if (object)
@@ -410,23 +405,23 @@ extern struct Trigger gKandoreanTemple_PoisHallEvents[];
 void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov653Room1)
+  if (scene == (s32)&SceneId_KandoreanTemple1)
     return gKandoreanTemple_LiftRoomEvents;
-  if (scene == (s32)&SceneId_Ov653Room2)
+  if (scene == (s32)&SceneId_KandoreanTemple2)
     return gKandoreanTemple_Room2Events;
-  if (scene == (s32)&SceneId_Ov653Room3)
+  if (scene == (s32)&SceneId_KandoreanTemple3)
     return gKandoreanTemple_ChestbeaterRoomEvents;
-  if (scene == (s32)&SceneId_Ov653Room4)
+  if (scene == (s32)&SceneId_KandoreanTemple4)
     return gKandoreanTemple_VentRoomEvents;
-  if (scene == (s32)&SceneId_Ov653Room5)
+  if (scene == (s32)&SceneId_KandoreanTemple5)
     return gKandoreanTemple_Room5Events;
-  if (scene == (s32)&SceneId_Ov653Room6)
+  if (scene == (s32)&SceneId_KandoreanTemple6)
     return gKandoreanTemple_Room6Events;
-  if (scene == (s32)&SceneId_Ov653Room7)
+  if (scene == (s32)&SceneId_KandoreanTemple7)
     return gKandoreanTemple_FogRoomEvents;
-  if (scene == (s32)&SceneId_Ov653Room8)
+  if (scene == (s32)&SceneId_KandoreanTemple8)
     return gKandoreanTemple_GateEvents;
-  if (scene == (s32)&SceneId_Ov653Room9)
+  if (scene == (s32)&SceneId_KandoreanTemple9)
     return gKandoreanTemple_PoisHallEvents;
   return gKandoreanTemple_Events;
 }
@@ -479,22 +474,22 @@ void KandoreanTemple_PushThroughTheSteam(void) {
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
-    steam = ((struct Actor *)Import_ActorCreate(
-        14, leader->x, leader->y + 0x60000, leader->z));
+    steam = ((struct Actor *)Import_ActorCreate(14, leader->x,
+                                                leader->y + px(6), leader->z));
     if (steam) {
       Actor_SetSpriteFlags(steam, 0);
       Actor_SelectAnimation(steam, 1);
       Actor_StartScript(steam, gKandoreanTemple_StreamPuffScript);
     }
   }
-  KandoreanTemple_PushNorth(leader, 0xd999);
+  KandoreanTemple_PushNorth(leader, 55705);
 }
 
 /* VIEW(kandorean_temple): tag struct EventWork1cc as struct
  * EventWork1cc__kandorean_temple; module/tla.h has another definition; tried
  * with the definition the rest of the object has, its members read focus as
- * object, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:497: dereferencing pointer to
+ * object, it does not compile in tla-ja (kandorean_temple.c):
+ * games/tla/src/scene/kandorean_temple.c:492: dereferencing pointer to
  * incomplete type. */
 struct EventWork1cc__kandorean_temple {
   u8 unk000[0x1cc];
@@ -513,7 +508,7 @@ void KandoreanTemple_PushNorth(struct Actor *object, s32 dz) {
   MapGrid_CheckCollision(object, position);
   position[0] = object->x;
   position[1] = object->y;
-  position[2] = object->z + 0x80000;
+  position[2] = object->z + px(8);
   if (MapGrid_CheckCollision(object, position) > 0)
     return;
   position[0] = object->x + 0x5b333;
@@ -531,11 +526,10 @@ void KandoreanTemple_PushNorth(struct Actor *object, s32 dz) {
 }
 
 s32 KandoreanTemple_IsOverActor(struct Actor *a, struct Actor *b) {
-  s32 left = b->x - 0xc0000;
-  s32 right = b->x + 0xc0000;
+  s32 left = b->x - px(12);
+  s32 right = b->x + px(12);
 
-  if (a->x > left && a->x < right && a->z > b->z - 0x80000 &&
-      a->z < b->z + 0x80000)
+  if (a->x > left && a->x < right && a->z > b->z - px(8) && a->z < b->z + px(8))
     return 1;
   return 0;
 }
@@ -625,9 +619,7 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
   object->z += vz;
   object->bounce = vx - vx / 18;
   object->unk4c = vz - vz / 16;
-  /* FAKEMATCH(dead): an empty once-only block, so the Z speed is stored before
-   * the scale rate loads, as in KandoreanTemple_UpdateVentSteam; without it, 2
-   * of 97 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
   rate = object->speedLimit;
@@ -635,15 +627,11 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
   sprite = object->sprite;
   object->scaleX = scale + rate;
   {
-    /* FAKEMATCH(pin): the call's first argument pinned to r0, so it is copied
-     * before the Y scale store; as a plain local, copied after the action's
-     * halfword load, 4 of 97 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the call's first argument pinned to r0. */
     register struct Actor *first asm("r0") = object;
 
     object->scaleY += object->acceleration;
-    /* FAKEMATCH(dead): an empty once-only block, so the Y scale is stored
-     * before the action is addressed, as in KandoreanTemple_UpdateVentSteam;
-     * without it, 2 of 97 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     sprite->rotation += object->timer;
@@ -663,8 +651,8 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
 }
 
 void KandoreanTemple_BlowStreamSteam(void) {
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(
-      0x11d, 0x2b80000, 0x1c0000, 0x9c0000));
+  struct Actor *object =
+      ((struct Actor *)Import_ActorCreate(0x11d, px(696), px(28), px(156)));
 
   if (object) {
     s32 timer;
@@ -734,14 +722,12 @@ void KandoreanTemple_BlowStream(void) {
 
 void KandoreanTemple_LowerLeftColumn(s32 id) {
   Actor_GetById(id)->scaleY = 0x800;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(id), PIXELS(216), 0,
-                                   PIXELS(216));
+  Actor_SetPositionAndResetMotion_(Actor_GetById(id), px(216), 0, px(216));
 }
 
 void KandoreanTemple_LowerRightColumn(s32 id) {
   Actor_GetById(id)->scaleY = 0x800;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(id), PIXELS(376), 0,
-                                   PIXELS(248));
+  Actor_SetPositionAndResetMotion_(Actor_GetById(id), px(376), 0, px(248));
 }
 
 void KandoreanTemple_GrowColumn(s32 id, s32 dy, s32 scale) {
@@ -761,13 +747,13 @@ void KandoreanTemple_ShrinkColumn(s32 id, s32 dy, s32 scale) {
 }
 
 s32 KandoreanTemple_IsLeftVentBlocked(void) {
-  if (GameFlag_Get(0x20a) || GameFlag_Get(0x300))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_0A) || GameFlag_Get(FLAG_AREA_TEMP_00))
     return 1;
   return 0;
 }
 
 s32 KandoreanTemple_IsRightVentBlocked(void) {
-  if (GameFlag_Get(0x20a) || GameFlag_Get(0x301))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_0A) || GameFlag_Get(FLAG_AREA_TEMP_01))
     return 1;
   return 0;
 }
@@ -781,26 +767,23 @@ void KandoreanTemple_StartLeftVent(void) {
   Actor_SetModeById(9, 0);
   Actor_SetSpritePriority(9, 2);
   Actor_GetById(9)->priorityFlags &= ~2;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(9), PIXELS(216), PIXELS(8),
-                                   PIXELS(216));
-  if (GameFlag_Get(0x208)) {
+  Actor_SetPositionAndResetMotion_(Actor_GetById(9), px(216), px(8), px(216));
+  if (GameFlag_Get(FLAG_SCENE_TEMP_08)) {
     Actor_SetModeById(9, 4);
     Actor_SetPositionAndResetMotion_(
-        Actor_GetById(gMainRoutineWork.currentOwner), PIXELS(216), PIXELS(12),
-        PIXELS(216));
+        Actor_GetById(gMainRoutineWork.currentOwner), px(216), px(12), px(216));
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
-  Actor_GetById(11)->scaleY = 0x10000;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(11), PIXELS(216), 0,
-                                   PIXELS(216));
+  Actor_GetById(11)->scaleY = Q16_ONE;
+  Actor_SetPositionAndResetMotion_(Actor_GetById(11), px(216), 0, px(216));
   KandoreanTemple_LowerLeftColumn(13);
   KandoreanTemple_LowerLeftColumn(14);
-  if (GameFlag_Get(0x301)) {
+  if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
     KandoreanTemple_LowerLeftColumn(15);
     KandoreanTemple_LowerLeftColumn(16);
   }
   gKandoreanTemple_LeftVentBlowing = 1;
-  Event_SetFlag(0x20c);
+  Event_SetFlag(FLAG_SCENE_TEMP_0C);
 }
 
 void KandoreanTemple_StartRightVent(void) {
@@ -812,26 +795,23 @@ void KandoreanTemple_StartRightVent(void) {
   Actor_SetModeById(10, 0);
   Actor_SetSpritePriority(10, 2);
   Actor_GetById(10)->priorityFlags &= ~2;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(10), PIXELS(376), PIXELS(8),
-                                   PIXELS(248));
-  if (GameFlag_Get(0x209)) {
+  Actor_SetPositionAndResetMotion_(Actor_GetById(10), px(376), px(8), px(248));
+  if (GameFlag_Get(FLAG_SCENE_TEMP_09)) {
     Actor_SetModeById(10, 4);
     Actor_SetPositionAndResetMotion_(
-        Actor_GetById(gMainRoutineWork.currentOwner), PIXELS(376), PIXELS(12),
-        PIXELS(248));
+        Actor_GetById(gMainRoutineWork.currentOwner), px(376), px(12), px(248));
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
-  Actor_GetById(12)->scaleY = 0x10000;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(12), PIXELS(376), 0,
-                                   PIXELS(248));
+  Actor_GetById(12)->scaleY = Q16_ONE;
+  Actor_SetPositionAndResetMotion_(Actor_GetById(12), px(376), 0, px(248));
   KandoreanTemple_LowerRightColumn(17);
   KandoreanTemple_LowerRightColumn(18);
-  if (GameFlag_Get(0x300)) {
+  if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
     KandoreanTemple_LowerRightColumn(19);
     KandoreanTemple_LowerRightColumn(20);
   }
   gKandoreanTemple_RightVentBlowing = 1;
-  Event_SetFlag(0x20d);
+  Event_SetFlag(FLAG_SCENE_TEMP_0D);
 }
 
 void KandoreanTemple_RunLeftVent(void) {
@@ -858,7 +838,7 @@ void KandoreanTemple_RunLeftVent(void) {
   timerEnd = 2999;
   if (*timer <= timerEnd) {
     statue = Actor_GetById(9);
-    flag = GameFlag_Get(0x301);
+    flag = GameFlag_Get(FLAG_AREA_TEMP_01);
     t = *timer;
     if (flag) {
       if (t <= 316) {
@@ -867,10 +847,10 @@ void KandoreanTemple_RunLeftVent(void) {
         KandoreanTemple_GrowColumn(11, 0x20000, limit);
         KandoreanTemple_GrowColumn(13, 0x18000, limit);
         KandoreanTemple_GrowColumn(14, 0x10000, limit);
-        KandoreanTemple_GrowColumn(15, 0x8000, limit);
+        KandoreanTemple_GrowColumn(15, 32768, limit);
         KandoreanTemple_GrowColumn(16, 0, limit);
       } else if (t < 600) {
-        if (GameFlag_Get(0x208) && *timer == 400) {
+        if (GameFlag_Get(FLAG_SCENE_TEMP_08) && *timer == 400) {
           MapGrid_CopyCellAttributes(22, 0, 1, 1, 13, 13);
           Task_Remove(KandoreanTemple_RunLeftVent);
         }
@@ -882,7 +862,7 @@ void KandoreanTemple_RunLeftVent(void) {
         if (*phase == 0) {
           gKandoreanTemple_LeftVentBlowing = 0;
           *timer = 999;
-          GameFlag_Clear(0x20c);
+          GameFlag_Clear(FLAG_SCENE_TEMP_0C);
         }
         statue->y += Trig_Sin(*phase) >> 1;
         *phase += 0x1000;
@@ -892,7 +872,7 @@ void KandoreanTemple_RunLeftVent(void) {
         KandoreanTemple_ShrinkColumn(11, 0x30000, limit);
         KandoreanTemple_ShrinkColumn(13, 0x24000, limit);
         KandoreanTemple_ShrinkColumn(14, 0x18000, limit);
-        KandoreanTemple_ShrinkColumn(15, 0xc000, limit);
+        KandoreanTemple_ShrinkColumn(15, 49152, limit);
         KandoreanTemple_ShrinkColumn(16, 0, limit);
         if (Actor_GetById(16)->scaleY <= limit)
           *timer = timerEnd;
@@ -902,7 +882,7 @@ void KandoreanTemple_RunLeftVent(void) {
         statue->y += 0x27999;
         limit = 0x1000;
         KandoreanTemple_GrowColumn(11, 0x10000, limit);
-        KandoreanTemple_GrowColumn(13, 0x8000, limit);
+        KandoreanTemple_GrowColumn(13, 32768, limit);
         KandoreanTemple_GrowColumn(14, 0, limit);
       } else if (t < 600) {
         phase = &gKandoreanTemple_LeftBobPhase;
@@ -913,7 +893,7 @@ void KandoreanTemple_RunLeftVent(void) {
         if (*phase == 0) {
           gKandoreanTemple_LeftVentBlowing = 0;
           *timer = 999;
-          GameFlag_Clear(0x20c);
+          GameFlag_Clear(FLAG_SCENE_TEMP_0C);
         }
         statue->y += Trig_Sin(*phase) >> 1;
         *phase += 0x1000;
@@ -921,16 +901,16 @@ void KandoreanTemple_RunLeftVent(void) {
         statue->y += -0x3b666;
         limit = 0x1800;
         KandoreanTemple_ShrinkColumn(11, 0x18000, limit);
-        KandoreanTemple_ShrinkColumn(13, 0xc000, limit);
+        KandoreanTemple_ShrinkColumn(13, 49152, limit);
         KandoreanTemple_ShrinkColumn(14, 0, limit);
         if (Actor_GetById(14)->scaleY <= limit)
           *timer = timerEnd;
       }
     }
-    if (GameFlag_Get(0x208) == 0)
+    if (GameFlag_Get(FLAG_SCENE_TEMP_08) == 0)
       goto count;
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
-    leader->y = statue->y + 0x40000;
+    leader->y = statue->y + px(4);
     leader->targetY = 0x80000000;
     leader->velocityY = 0;
     goto count;
@@ -944,11 +924,10 @@ void KandoreanTemple_RunLeftVent(void) {
     Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
     Actor_SetModeById(9, 1);
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(9), 0xd80000, 0,
-                                         0xd80000);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(9), px(216), 0, px(216));
     Actor_GetById(9)->priorityFlags |= 2;
     Actor_SetSpritePriority(9, 3);
-    if (GameFlag_Get(0x208)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_08)) {
       leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
       Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
@@ -997,7 +976,7 @@ void KandoreanTemple_RunRightVent(void) {
     last = 2999;
     if (t <= last) {
       statue = Actor_GetById(10);
-      raised = GameFlag_Get(0x300);
+      raised = GameFlag_Get(FLAG_AREA_TEMP_00);
       t = *timer;
       if (raised) {
         if (t <= 316) {
@@ -1006,10 +985,10 @@ void KandoreanTemple_RunRightVent(void) {
           KandoreanTemple_GrowColumn(12, 0x20000, limit);
           KandoreanTemple_GrowColumn(17, 0x18000, limit);
           KandoreanTemple_GrowColumn(18, 0x10000, limit);
-          KandoreanTemple_GrowColumn(19, 0x8000, limit);
+          KandoreanTemple_GrowColumn(19, 32768, limit);
           KandoreanTemple_GrowColumn(20, 0, limit);
         } else if (t < 600) {
-          if (GameFlag_Get(0x209) && *timer == 400) {
+          if (GameFlag_Get(FLAG_SCENE_TEMP_09) && *timer == 400) {
             MapGrid_CopyCellAttributes(23, 0, 1, 1, 23, 15);
             Task_Remove(KandoreanTemple_RunRightVent);
           }
@@ -1020,7 +999,7 @@ void KandoreanTemple_RunRightVent(void) {
           if (*phase == 0) {
             gKandoreanTemple_RightVentBlowing = 0;
             *timer = 999;
-            GameFlag_Clear(0x20d);
+            GameFlag_Clear(FLAG_SCENE_TEMP_0D);
           }
           BOB(statue, phase);
         } else {
@@ -1029,7 +1008,7 @@ void KandoreanTemple_RunRightVent(void) {
           KandoreanTemple_ShrinkColumn(12, 0x30000, limit);
           KandoreanTemple_ShrinkColumn(17, 0x24000, limit);
           KandoreanTemple_ShrinkColumn(18, 0x18000, limit);
-          KandoreanTemple_ShrinkColumn(19, 0xc000, limit);
+          KandoreanTemple_ShrinkColumn(19, 49152, limit);
           KandoreanTemple_ShrinkColumn(20, 0, limit);
           if (Actor_GetById(20)->scaleY <= limit)
             *timer = last;
@@ -1039,7 +1018,7 @@ void KandoreanTemple_RunRightVent(void) {
           statue->y += 0x27999;
           limit = 0x1000;
           KandoreanTemple_GrowColumn(12, 0x10000, limit);
-          KandoreanTemple_GrowColumn(17, 0x8000, limit);
+          KandoreanTemple_GrowColumn(17, 32768, limit);
           KandoreanTemple_GrowColumn(18, 0, limit);
         } else if (t < 600) {
           phase = &gKandoreanTemple_RightBobPhase;
@@ -1049,22 +1028,22 @@ void KandoreanTemple_RunRightVent(void) {
           if (*phase == 0) {
             gKandoreanTemple_RightVentBlowing = 0;
             *timer = 999;
-            GameFlag_Clear(0x20d);
+            GameFlag_Clear(FLAG_SCENE_TEMP_0D);
           }
           BOB(statue, phase);
         } else {
           statue->y += -0x3b666;
           limit = 0x1800;
           KandoreanTemple_ShrinkColumn(12, 0x18000, limit);
-          KandoreanTemple_ShrinkColumn(17, 0xc000, limit);
+          KandoreanTemple_ShrinkColumn(17, 49152, limit);
           KandoreanTemple_ShrinkColumn(18, 0, limit);
           if (Actor_GetById(18)->scaleY <= limit)
             *timer = last;
         }
       }
-      if (GameFlag_Get(0x209)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_09)) {
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
-        leader->y = statue->y + 0x40000;
+        leader->y = statue->y + px(4);
         leader->targetY = 0x80000000;
         leader->velocityY = 0;
       }
@@ -1077,11 +1056,11 @@ void KandoreanTemple_RunRightVent(void) {
       Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
       Actor_SetModeById(10, 1);
-      FieldActor_SetPositionAndResetMotion(Actor_GetById(10), 0x1780000, 0,
-                                           0xf80000);
+      FieldActor_SetPositionAndResetMotion(Actor_GetById(10), px(376), 0,
+                                           px(248));
       Actor_GetById(10)->priorityFlags |= 2;
       Actor_SetSpritePriority(10, 3);
-      if (GameFlag_Get(0x209)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_09)) {
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
         Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
         Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
@@ -1105,11 +1084,11 @@ void KandoreanTemple_RunWestLift(void) {
   s32 *timer = &gKandoreanTemple_LeftTimer;
 
   if (*timer == 300) {
-    Scene_QueueMusic(162);
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(13), PIXELS(440),
-                                         PIXELS(-20), PIXELS(204));
-    Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(440), PIXELS(-20),
-                                    PIXELS(200));
+    Scene_QueueMusic(SE_162);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(13), px(440), px(-20),
+                                         px(204));
+    Actor_SetPositionAndResetMotion(Actor_GetById(15), px(440), px(-20),
+                                    px(200));
     Actor_SetSpritePriority(13, 3);
     Actor_SetSpritePriority(15, 3);
     base->priorityFlags |= 2;
@@ -1117,11 +1096,9 @@ void KandoreanTemple_RunWestLift(void) {
     Actor_SetModeById(13, 0);
     Actor_SetModeById(15, 2);
   } else if ((u32)(*timer - 301) <= 1698) {
-    lift->y += PIXELS(4);
-    KandoreanTemple_GrowColumn(15, 0x4ccc, 0x4ccc);
-    // y read as long, another alias set than the reads around it: GCSE then
-    // keeps the reload after this call; as lift->y, 2 instructions move.
-    if (*(long *)&lift->y > -0x50000)
+    lift->y += px(4);
+    KandoreanTemple_GrowColumn(15, 19660, 0x4ccc);
+    if (*(long *)&lift->y > -px(5))
       Actor_SetSpritePriority(13, 2);
     if (lift->y >= 0) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 27, 12);
@@ -1135,7 +1112,7 @@ void KandoreanTemple_RunWestLift(void) {
     if (*timer == 2280)
       MapGrid_CopyCellAttributes(27, 10, 1, 1, 27, 12);
     if (*timer > 2300 && *phase == 0) {
-      if (GameFlag_Get(0x208)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_08)) {
         MapGrid_CopyCellAttributes(21, 0, 1, 1, 27, 12);
         Task_Remove(KandoreanTemple_RunWestLift);
       } else {
@@ -1143,19 +1120,17 @@ void KandoreanTemple_RunWestLift(void) {
       }
     }
   } else {
-    lift->y += PIXELS(-4);
-    KandoreanTemple_ShrinkColumn(15, 0x4ccc, 0x4ccc);
+    lift->y += px(-4);
+    KandoreanTemple_ShrinkColumn(15, 19660, 0x4ccc);
     // y read as long, as above.
-    if (*(long *)&lift->y < -0x50000)
+    if (*(long *)&lift->y < -px(5))
       Actor_SetSpritePriority(13, 3);
-    if (lift->y <= -0x140000) {
+    if (lift->y <= -px(20)) {
 
-      /* FAKEMATCH(temporary): the timer pointer's own address taken, which
-       * orders the stack arguments of the 2280 call as the native does; as
-       * *timer = 0, 6 of 193 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the timer pointer's own address taken. */
       s32 **timerRef = &timer;
 
-      Scene_QueueMusic(245);
+      Scene_QueueMusic(SE_245);
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
       **timerRef = 0;
@@ -1170,11 +1145,11 @@ void KandoreanTemple_RunEastLift(void) {
   s32 *timer = &gKandoreanTemple_RightTimer;
 
   if (*timer == 300) {
-    Scene_QueueMusic(162);
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(14), PIXELS(600),
-                                         PIXELS(-20), PIXELS(236));
-    Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(600), PIXELS(-20),
-                                    PIXELS(232));
+    Scene_QueueMusic(SE_162);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(14), px(600), px(-20),
+                                         px(236));
+    Actor_SetPositionAndResetMotion(Actor_GetById(16), px(600), px(-20),
+                                    px(232));
     Actor_SetSpritePriority(14, 3);
     Actor_SetSpritePriority(16, 3);
     base->priorityFlags |= 2;
@@ -1182,11 +1157,9 @@ void KandoreanTemple_RunEastLift(void) {
     Actor_SetModeById(14, 0);
     Actor_SetModeById(16, 2);
   } else if ((u32)(*timer - 301) <= 1698) {
-    lift->y += PIXELS(4);
-    KandoreanTemple_GrowColumn(16, 0x4ccc, 0x4ccc);
-    // y read as long, another alias set than the reads around it: GCSE then
-    // keeps the reload after this call; as lift->y, 2 instructions move.
-    if (*(long *)&lift->y > -0x50000)
+    lift->y += px(4);
+    KandoreanTemple_GrowColumn(16, 19660, 0x4ccc);
+    if (*(long *)&lift->y > -px(5))
       Actor_SetSpritePriority(14, 2);
     if (lift->y >= 0) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 14);
@@ -1200,7 +1173,7 @@ void KandoreanTemple_RunEastLift(void) {
     if (*timer == 2280)
       MapGrid_CopyCellAttributes(37, 12, 1, 1, 37, 14);
     if (*timer > 2300 && *phase == 0) {
-      if (GameFlag_Get(0x209)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_09)) {
         MapGrid_CopyCellAttributes(22, 0, 1, 1, 37, 14);
         Task_Remove(KandoreanTemple_RunEastLift);
       } else {
@@ -1208,19 +1181,17 @@ void KandoreanTemple_RunEastLift(void) {
       }
     }
   } else {
-    lift->y += PIXELS(-4);
-    KandoreanTemple_ShrinkColumn(16, 0x4ccc, 0x4ccc);
+    lift->y += px(-4);
+    KandoreanTemple_ShrinkColumn(16, 19660, 0x4ccc);
     // y read as long, as above.
-    if (*(long *)&lift->y < -0x50000)
+    if (*(long *)&lift->y < -px(5))
       Actor_SetSpritePriority(14, 3);
-    if (lift->y <= -0x140000) {
+    if (lift->y <= -px(20)) {
 
-      /* FAKEMATCH(temporary): the timer pointer's own address taken, which
-       * orders the stack arguments of the 2280 call as the native does; as
-       * *timer = 0, 6 of 193 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the timer pointer's own address taken. */
       s32 **timerRef = &timer;
 
-      Scene_QueueMusic(245);
+      Scene_QueueMusic(SE_245);
       Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
       **timerRef = 0;
@@ -1238,37 +1209,39 @@ void KandoreanTemple_WatchVentPlatforms(void) {
   cellZ = leader->z >> 20;
   onCell = 0;
   if (cellX == 13 && cellZ == 13) {
-    Event_SetFlag(0x208);
+    Event_SetFlag(FLAG_SCENE_TEMP_08);
     onCell = 1;
   } else {
-    Event_ClearFlag(0x208);
+    Event_ClearFlag(FLAG_SCENE_TEMP_08);
   }
   if (cellX == 23 && cellZ == 15) {
-    Event_SetFlag(0x209);
+    Event_SetFlag(FLAG_SCENE_TEMP_09);
     onCell = 1;
   } else {
-    Event_ClearFlag(0x209);
+    Event_ClearFlag(FLAG_SCENE_TEMP_09);
   }
   if (onCell)
     Event_SetFlag(0x17d);
   else
     Event_ClearFlag(0x17d);
   if (gKandoreanTemple_LeftVentBlowing != 0 && leader->y == 0 &&
-      leader->x > 0x11c0000 && leader->x < 0x1340000 && leader->z < 0xc80000 &&
-      !Event_GetFlag(0x20b))
+      leader->x > px(284) && leader->x < px(308) && leader->z < px(200) &&
+      !Event_GetFlag(FLAG_SCENE_TEMP_0B))
     KandoreanTemple_PushNorth(leader, 0x26666);
   if (gKandoreanTemple_RightVentBlowing != 0 && leader->y == 0 &&
-      leader->x > 0x14a0000 && leader->x <= 0x165ffff && leader->z < 0xd80000 &&
-      !Event_GetFlag(0x20b))
+      leader->x > px(330) && leader->x <= 0x165ffff && leader->z < px(216) &&
+      !Event_GetFlag(FLAG_SCENE_TEMP_0B))
     KandoreanTemple_PushNorth(leader, 0x39999);
-  if (Event_GetFlag(0x20e)) {
-    if (!Event_GetFlag(0x20c) && !Event_GetFlag(0x20d)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_0E)) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_0C) &&
+        !Event_GetFlag(FLAG_SCENE_TEMP_0D)) {
       Scene_QueueMusic(-1);
-      Event_ClearFlag(0x20e);
+      Event_ClearFlag(FLAG_SCENE_TEMP_0E);
     }
-  } else if (Event_GetFlag(0x20c) || Event_GetFlag(0x20d)) {
-    Scene_QueueMusic(162);
-    Event_SetFlag(0x20e);
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_0C) ||
+             Event_GetFlag(FLAG_SCENE_TEMP_0D)) {
+    Scene_QueueMusic(SE_162);
+    Event_SetFlag(FLAG_SCENE_TEMP_0E);
   }
 }
 
@@ -1280,7 +1253,7 @@ void KandoreanTemple_WatchLifts(void) {
   s32 cellZ = z >> 20;
   s32 riding = 0;
 
-  if (leader->y > 0x100000)
+  if (leader->y > px(16))
     return;
   if ((u32)(x - 0x1900000) > 0xf00000)
     return;
@@ -1292,7 +1265,7 @@ void KandoreanTemple_WatchLifts(void) {
     Actor_SetModeById(13, 4);
     leader->motionFlags = riding;
     leader->y = lift->y;
-    GameFlag_Set(0x208);
+    GameFlag_Set(FLAG_SCENE_TEMP_08);
     riding = 1;
   }
   if (cellX == 37 && cellZ == 14) {
@@ -1301,7 +1274,7 @@ void KandoreanTemple_WatchLifts(void) {
     Actor_SetModeById(14, 4);
     leader->motionFlags = 0;
     leader->y = lift->y;
-    GameFlag_Set(0x209);
+    GameFlag_Set(FLAG_SCENE_TEMP_09);
     riding = 1;
   }
   if (riding) {
@@ -1312,16 +1285,16 @@ void KandoreanTemple_WatchLifts(void) {
   Actor_SetModeById(14, 0);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   leader->motionFlags = 3;
-  GameFlag_Clear(0x208);
-  GameFlag_Clear(0x209);
+  GameFlag_Clear(FLAG_SCENE_TEMP_08);
+  GameFlag_Clear(FLAG_SCENE_TEMP_09);
   GameFlag_Clear(0x17d);
 }
 
 /* VIEW(kandorean_temple): tag struct MapCell as struct
  * MapCell__kandorean_temple; map.h has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:1334: arithmetic on pointer to an
- * incomplete type. */
+ * definition the rest of the object has, it does not compile in tla-ja
+ * (kandorean_temple.c): games/tla/src/scene/kandorean_temple.c:1312: arithmetic
+ * on pointer to an incomplete type. */
 struct MapCell__kandorean_temple {
   u8 unk0[2];
   u8 unk2;
@@ -1405,12 +1378,12 @@ void KandoreanTemple_AskWhoPassedTheTest(void) {
 }
 
 void KandoreanTemple_ReadTheGateStudent(void) {
-  Actor_ShowEmoteById(9, 0x100, 0);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   KandoreanTemple_AskAboutPoi();
 }
 
 void KandoreanTemple_ReadTheGuard(void) {
-  Actor_ShowEmoteById(10, 0x100, 0);
+  Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   KandoreanTemple_TellOfTheMeditation();
 }
 
@@ -1423,32 +1396,30 @@ void KandoreanTemple_ClimbDownTheWell(void) {
   s32 zero;
 
   if (z == 5) {
-    if (x == 9 && (gInput.held & 16) == 0)
+    if (x == 9 && (gInput.held & KEY_RIGHT) == 0)
       return;
-    if (x == 11 && (gInput.held & 32) == 0)
+    if (x == 11 && (gInput.held & KEY_LEFT) == 0)
       return;
-  } else if (x == 10 && z == 6 && (gInput.held & 64) == 0) {
+  } else if (x == 10 && z == 6 && (gInput.held & KEY_UP) == 0) {
     return;
   }
   Event_Start();
   Event_ResolvePendingActions(0);
   /* FAKEMATCH(temporary): the flags address and the zero held in locals, with
-   * gMainRoutineWork's address taken in the block below, so the byte store
-   * follows the address load; as leader->motionFlags = 0, which stores first,
-   * 2 of 92 instructions differ in tla-en. */
+   * gMainRoutineWork's address taken in the block below. */
   flags = &leader->motionFlags;
   zero = 0;
   party = &gMainRoutineWork;
   *flags = zero;
-  Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(party->currentOwner, 1);
   Actor_WalkToAndWaitById(party->currentOwner, 168, 80);
   Actor_FaceDirectionById(party->currentOwner, FACING_NORTH);
   Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
-  Actor_SetMoveTarget(leader, PIXELS(168), PIXELS(-12), PIXELS(80));
+  Actor_SetMoveTarget(leader, px(168), px(-12), px(80));
   Actor_WaitForMove(leader);
   Actor_SetModeById(party->currentOwner, 10);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(8);
@@ -1459,24 +1430,24 @@ void KandoreanTemple_OpenTheTrapdoor(void) {
   wait(10);
   MapGrid_CopyCellPictureIndicesRect(39, 41, 24, 38, 2, 2);
   wait(20);
-  GameFlag_Set(0x212);
+  GameFlag_Set(FLAG_SCENE_TEMP_12);
 }
 
 void KandoreanTemple_DropThroughTheTrapdoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 400, 648);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
-  if (GameFlag_Get(0x212) == 0) {
-    Sound_Play(188);
+  if (GameFlag_Get(FLAG_SCENE_TEMP_12) == 0) {
+    Sound_Play(SE_THUMP);
     KandoreanTemple_OpenTheTrapdoor();
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
   Actor_WalkToById(gMainRoutineWork.currentOwner, 400, 640);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(9);
@@ -1495,12 +1466,12 @@ void KandoreanTemple_SlipIntoTheCrack(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   for (i = 0; i < 8; i++) {
-    leader->z += PIXELS(1);
+    leader->z += px(1);
     wait(1);
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
   for (i = 0; i < 8; i++) {
-    leader->y -= PIXELS(1);
+    leader->y -= px(1);
     wait(1);
   }
   Event_FinishScreenTransition();
@@ -1517,17 +1488,17 @@ void KandoreanTemple_FinishMovingBlock(void) {
 
   Actor_PlaceMovedBlock();
   if (x == 43)
-    GameFlag_Set(0x211);
+    GameFlag_Set(FLAG_SCENE_TEMP_11);
   else
-    GameFlag_Clear(0x211);
+    GameFlag_Clear(FLAG_SCENE_TEMP_11);
   if (x != 39)
     MapGrid_CopyCellAttributes(39, 0, 1, 1, 39, 10);
 }
 
 void KandoreanTemple_StartMovingPillar(void) {
   if ((u32)((Actor_GetById(8)->x >> 20) - 15) > 6)
-    GameFlag_Set(0x20a);
-  GameFlag_Set(0x20b);
+    GameFlag_Set(FLAG_SCENE_TEMP_0A);
+  GameFlag_Set(FLAG_SCENE_TEMP_0B);
   Actor_LiftTargetBlock(gKandoreanTemple_PillarActors);
 }
 
@@ -1538,20 +1509,20 @@ void KandoreanTemple_FinishMovingPillar(void) {
 
   Actor_PlaceMovedBlock();
   if (x == 13 && z == 13)
-    GameFlag_Set(0x300);
+    GameFlag_Set(FLAG_AREA_TEMP_00);
   else
-    GameFlag_Clear(0x300);
+    GameFlag_Clear(FLAG_AREA_TEMP_00);
   if (x == 23 && z == 15)
-    GameFlag_Set(0x301);
+    GameFlag_Set(FLAG_AREA_TEMP_01);
   else
-    GameFlag_Clear(0x301);
-  GameFlag_Clear(0x20a);
-  GameFlag_Clear(0x20b);
+    GameFlag_Clear(FLAG_AREA_TEMP_01);
+  GameFlag_Clear(FLAG_SCENE_TEMP_0A);
+  GameFlag_Clear(FLAG_SCENE_TEMP_0B);
 }
 
 void KandoreanTemple_StartMovingPot(void) {
-  GameFlag_Clear(0x302);
-  GameFlag_Clear(0x303);
+  GameFlag_Clear(FLAG_AREA_TEMP_02);
+  GameFlag_Clear(FLAG_AREA_TEMP_03);
   Actor_LiftTargetBlock(gKandoreanTemple_PillarActors);
 }
 
@@ -1560,12 +1531,12 @@ void KandoreanTemple_FinishMovingPot(void) {
 
   Actor_PlaceMovedBlock();
   if (x == 19) {
-    GameFlag_Set(0x302);
-    GameFlag_Set(0x304);
+    GameFlag_Set(FLAG_AREA_TEMP_02);
+    GameFlag_Set(FLAG_AREA_TEMP_04);
     Map_CopyCellAttributeRect(0, 0, 3, 3, x, 28);
   } else if (x == 21) {
-    GameFlag_Set(0x303);
-    GameFlag_Set(0x304);
+    GameFlag_Set(FLAG_AREA_TEMP_03);
+    GameFlag_Set(FLAG_AREA_TEMP_04);
     MapGrid_CopyCellAttributes(0, 4, 3, 3, 19, 28);
   }
 }
@@ -1575,10 +1546,11 @@ void KandoreanTemple_TouchTheHotFloor(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 20);
-  Sound_Play(132);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Sound_Play(SE_WATER);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 10);
-  leader->velocityY = PIXELS(6);
+  leader->velocityY = px(6);
   wait(20);
   while (leader->velocityY != 0)
     wait(1);
@@ -1589,11 +1561,11 @@ void KandoreanTemple_TouchTheHotFloor(void) {
 void KandoreanTemple_OpenTheWellPassage(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
   MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   wait(10);
-  GameFlag_Set(0x212);
+  GameFlag_Set(FLAG_SCENE_TEMP_12);
   Event_End();
 }
 
@@ -1615,7 +1587,7 @@ void KandoreanTemple_FindTheHiddenPassage(void) {
   Actor_SetModeById(14, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
   Event_Wait(20);
-  Actor_SetSpeed(14, 0x13333, 0x9999);
+  Actor_SetSpeed(14, 1.2);
   Actor_SetModeById(14, 2);
   object = Actor_GetById(4);
   if (object)
@@ -1636,54 +1608,54 @@ void KandoreanTemple_ReceiveLash(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   ((void (*)())Actor_ArmCallback)(12, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple08);
-  Event_ShowMessage(0x800c, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 12, 0);
   Actor_SetAnimation(12, 3);
-  Event_ShowMessage(0x800c, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_SetAnimation(12, 3);
-  Event_ShowMessage(0x800c, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_SetAnimation(12, 4);
-  Event_ShowMessage(0x800c, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimationAndWait(12, 3);
-  Event_ShowMessage(0x800c, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, (u16)angle, 10);
   if (gKandoreanTemple_LashPebble != 0)
     ItemDisplay_ShowPicture(gKandoreanTemple_LashPebble, 3);
-  Party_GiveItem(198, 0);
+  Party_GiveItem(ITEM_LASH_PEBBLE, 0);
   if (gKandoreanTemple_LashPebble != 0)
     Actor_Release(gKandoreanTemple_LashPebble);
   Actor_SetAnimation(12, 4);
-  Event_ShowMessage(0x800c, 0);
-  FieldCamera_SetSpeed(0x6666, 0xccc);
-  FieldCamera_MoveTo(0x1a80000, 0, 0x1900000, 1);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveTo(424, 0, 400, 1);
   object = Actor_GetById(12);
   sprite = object->sprite;
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 424, 376);
   FieldActor_SetSpritePriority(12, 1);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   FieldActor_Jump(12, 4, 0);
   Actor_MoveToAndWait(12, 444, 376);
   Actor_SetAnimation(12, 7);
   object->scaleX = 0xffff0000;
   sprite->rotation = 0xe000;
   object->motionFlags = 0;
-  object->y += 0x40000;
+  object->y += px(4);
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
-  Actor_SetSpeed(12, 0x6666, 0x3333);
-  FieldActor_SetMoveTarget(object, 0x1ec0000, 0x80000, 0x1780000);
+  Actor_SetSpeed(12, 0.4);
+  FieldActor_SetMoveTarget(object, 492, 8, 376);
   FieldActor_WaitForMoveById(12);
   object->motionFlags = 3;
   object->terrainHeight = 0;
-  object->scaleX = 0x10000;
+  object->scaleX = Q16_ONE;
   sprite->rotation = 0;
   Actor_SetAnimation(12, 1);
   Actor_SetSpriteFlags(Actor_GetById(12), 1);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   FieldActor_Jump(12, 4, 0);
   Actor_MoveToAndWait(12, 504, 376);
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 496, 394);
   Actor_WalkToAndWait(12, 432, 394);
   FieldActor_WatchAndSetScript(12, gMainRoutineWork.currentOwner);
@@ -1705,32 +1677,29 @@ void KandoreanTemple_StepOutFromThePole(void) {
 void KandoreanTemple_FightChestbeaters(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(174), 1);
+  FieldCamera_MoveWithinMapBounds(px(328), -1, px(174), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 328, 174);
   Motion_SetVarCbAndRefresh(11, 2);
-  Sound_Play(146);
+  Sound_Play(SE_ENEMY_CRY);
   Actor_SetModeById(11, 2);
-  Actor_GetById(11)->velocityY = PIXELS(4);
+  Actor_GetById(11)->velocityY = px(4);
   Event_Wait(10);
-  Sound_Play(146);
+  Sound_Play(SE_ENEMY_CRY);
   Actor_SetModeById(12, 2);
   Actor_SetModeById(13, 2);
-  Actor_GetById(12)->velocityY = PIXELS(6);
-  Actor_GetById(13)->velocityY = PIXELS(6);
+  Actor_GetById(12)->velocityY = px(6);
+  Actor_GetById(13)->velocityY = px(6);
   Actor_SetDestinationById(12, 300, 164);
   Actor_MoveToAndWaitById(13, 356, 164);
   Event_Wait(40);
-  /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
-   * scheduling block before the battle rule is set, so the last position
-   * call's r1 is shifted before r2 is loaded; without it, 2 of 87
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
   gMainRoutineWork.battleRule24b = 2;
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov653Room3, 3);
+  Event_SetAfterBattleDestination((s32)&SceneId_KandoreanTemple3, 3);
   Field_RequestBattleFromEncounterTable(9, 4);
   Event_End();
 }
@@ -1760,23 +1729,23 @@ s32 Scene_Initialize(void) {
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov653Room1)
+  if (scene == (s32)&SceneId_KandoreanTemple1)
     KandoreanTemple_StartLiftRoom();
-  else if (scene == (s32)&SceneId_Ov653Room2)
+  else if (scene == (s32)&SceneId_KandoreanTemple2)
     KandoreanTemple_StartRoom2();
-  else if (scene == (s32)&SceneId_Ov653Room3)
+  else if (scene == (s32)&SceneId_KandoreanTemple3)
     KandoreanTemple_StartChestbeaterRoom();
-  else if (scene == (s32)&SceneId_Ov653Room4)
+  else if (scene == (s32)&SceneId_KandoreanTemple4)
     KandoreanTemple_StartVentRoom();
-  else if (scene == (s32)&SceneId_Ov653Room5)
+  else if (scene == (s32)&SceneId_KandoreanTemple5)
     KandoreanTemple_StartRoom5();
-  else if (scene == (s32)&SceneId_Ov653Room6)
+  else if (scene == (s32)&SceneId_KandoreanTemple6)
     KandoreanTemple_StartRoom6();
-  else if (scene == (s32)&SceneId_Ov653Room7)
+  else if (scene == (s32)&SceneId_KandoreanTemple7)
     KandoreanTemple_StartFogRoom();
-  else if (scene == (s32)&SceneId_Ov653Room8)
+  else if (scene == (s32)&SceneId_KandoreanTemple8)
     KandoreanTemple_StartGate();
-  else if (scene == (s32)&SceneId_Ov653Room9)
+  else if (scene == (s32)&SceneId_KandoreanTemple9)
     KandoreanTemple_StartPoisHall();
   return 0;
 }
@@ -1794,7 +1763,7 @@ void KandoreanTemple_StartLiftRoom(void) {
   Actor_PlaceBlocks(gKandoreanTemple_BlockActors);
   REG_BLDALPHA = 0xc08;
   REG_BLDCNT = 0x3f10;
-  Scene_QueueMusic(245);
+  Scene_QueueMusic(SE_245);
   Task_Add(KandoreanTemple_BlowStream, TASK_PASS_VBLANK);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
@@ -1814,9 +1783,9 @@ void KandoreanTemple_StartLiftRoom(void) {
     else if (gMainRoutineWork.entrance == 6)
       KandoreanTemple_ArriveOnEastLift();
   }
-  if (GameFlag_Get(0x301))
+  if (GameFlag_Get(FLAG_AREA_TEMP_01))
     Task_Add(KandoreanTemple_RunWestLift, TASK_PASS_VBLANK);
-  else if (GameFlag_Get(0x300))
+  else if (GameFlag_Get(FLAG_AREA_TEMP_00))
     Task_Add(KandoreanTemple_RunEastLift, TASK_PASS_VBLANK);
   Task_Add(KandoreanTemple_WatchLifts, TASK_PASS_VBLANK);
   FieldEffect_StartBlankOverlay(0);
@@ -1826,7 +1795,7 @@ void KandoreanTemple_StartRoom2(void) {
   FieldEffect_StartBlankOverlay(0);
 #if TLA_PATCH_1 /* From patch 1. */
   if (gMainRoutineWork.entrance == 1)
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
 
@@ -1838,11 +1807,11 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
   Actor_SetModeById(9, 2);
   object = Actor_GetById(8);
   object->motionFlags = 0;
-  if (GameFlag_Get(0x302)) {
+  if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
     Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1380000, 0x200000,
                                      0x1d80000);
     MapGrid_CopyCellAttributes(0, 0, 3, 3, 19, 28);
-  } else if (GameFlag_Get(0x303)) {
+  } else if (GameFlag_Get(FLAG_AREA_TEMP_03)) {
     Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1580000, 0x200000,
                                      0x1d80000);
     MapGrid_CopyCellAttributes(0, 4, 3, 3, 19, 28);
@@ -1866,7 +1835,7 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance == 2) {
-      Actor_GetById(gMainRoutineWork.currentOwner)->y = 0x400000;
+      Actor_GetById(gMainRoutineWork.currentOwner)->y = px(64);
     } else if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x92d) == 0) {
       Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -1876,7 +1845,7 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
   }
 #if TLA_PATCH_1
   if (gMainRoutineWork.entrance == 2)
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
 
@@ -1889,30 +1858,30 @@ void KandoreanTemple_StartVentRoom(void) {
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     t2 = ((s32)Actor_GetById(9));
-    FieldActor_SetPositionAndResetMotion(t2, PIXELS(216), 0, PIXELS(216));
+    FieldActor_SetPositionAndResetMotion(t2, px(216), 0, px(216));
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
     t9 = ((s32)Actor_GetById(10));
-    Actor_SetPositionAndResetMotion(t9, PIXELS(376), 0, PIXELS(248));
+    Actor_SetPositionAndResetMotion(t9, px(376), 0, px(248));
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
-    GameFlag_Clear(0x20e);
-    GameFlag_Clear(0x20c);
-    GameFlag_Clear(0x20d);
+    GameFlag_Clear(FLAG_SCENE_TEMP_0E);
+    GameFlag_Clear(FLAG_SCENE_TEMP_0C);
+    GameFlag_Clear(FLAG_SCENE_TEMP_0D);
   }
-  if (GameFlag_Get(0x300)) {
-    Actor_SetPosition(8, PIXELS(216), PIXELS(216));
+  if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
+    Actor_SetPosition(8, 216, 216);
     goto L_0200ad0a;
   }
-  if (!GameFlag_Get(0x301))
+  if (!GameFlag_Get(FLAG_AREA_TEMP_01))
     goto L_0200ad0a;
-  Actor_SetPosition(8, PIXELS(376), PIXELS(248));
+  Actor_SetPosition(8, 376, 248);
 L_0200ad0a:
   (*(s16 *)0x4000052) = 0xc08;
   (*(s16 *)0x4000050) = 0x3f10;
@@ -2003,17 +1972,17 @@ void KandoreanTemple_LandFromAbove(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = 3;
   Event_Wait(24);
   options.palette = 7;
@@ -2033,15 +2002,17 @@ void KandoreanTemple_LandFromAbove(void) {
     FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
                       velocity[2], 0x01090001, &options);
   }
-  Sound_Play(188);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
+  Sound_Play(SE_THUMP);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
-  leader->gravity = 0x10000;
-  leader->bounce = 0x4000;
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  leader->gravity = px(1);
+  leader->bounce = Q16_ONE / 4;
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
@@ -2060,15 +2031,15 @@ void KandoreanTemple_RiseOnLeftVent(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   leader->motionFlags = 0;
   wait(1);
-  GameFlag_Set(0x208);
-  GameFlag_Clear(0x209);
-  GameFlag_Set(0x301);
-  GameFlag_Clear(0x300);
-  Sound_Play(162);
+  GameFlag_Set(FLAG_SCENE_TEMP_08);
+  GameFlag_Clear(FLAG_SCENE_TEMP_09);
+  GameFlag_Set(FLAG_AREA_TEMP_01);
+  GameFlag_Clear(FLAG_AREA_TEMP_00);
+  Sound_Play(SE_162);
   KandoreanTemple_StartLeftVent();
   i = 0;
   do {
@@ -2079,7 +2050,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
     KandoreanTemple_GrowColumn(11, 0x20000, limit);
     KandoreanTemple_GrowColumn(13, 0x18000, limit);
     KandoreanTemple_GrowColumn(14, 0x10000, limit);
-    KandoreanTemple_GrowColumn(15, 0x8000, limit);
+    KandoreanTemple_GrowColumn(15, 32768, limit);
     KandoreanTemple_GrowColumn(16, 0, limit);
     next = i;
     next++;
@@ -2100,15 +2071,15 @@ void KandoreanTemple_RiseOnLeftVent(void) {
     KandoreanTemple_ShrinkColumn(n1, 0x30000, limit);                          \
     KandoreanTemple_ShrinkColumn(n2, 0x24000, limit);                          \
     KandoreanTemple_ShrinkColumn(n3, 0x18000, limit);                          \
-    KandoreanTemple_ShrinkColumn(n4, 0xc000, limit);                           \
+    KandoreanTemple_ShrinkColumn(n4, 49152, limit);                            \
     KandoreanTemple_ShrinkColumn(n5, 0, limit);                                \
     wait(1);                                                                   \
   } while (Actor_GetById(n5)->scaleY > limit);
 
   DEFINE_KANDOREAN_TEMPLE_SINK_STEP(11, 13, 14, 15, 16)
   gKandoreanTemple_LeftVentBlowing = 0;
-  GameFlag_Clear(0x20c);
-  Sound_Play(390);
+  GameFlag_Clear(FLAG_SCENE_TEMP_0C);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
@@ -2137,15 +2108,15 @@ void KandoreanTemple_RiseOnRightVent(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   leader->motionFlags = 0;
   wait(1);
-  GameFlag_Clear(0x208);
-  GameFlag_Set(0x209);
-  GameFlag_Clear(0x301);
-  GameFlag_Set(0x300);
-  Sound_Play(162);
+  GameFlag_Clear(FLAG_SCENE_TEMP_08);
+  GameFlag_Set(FLAG_SCENE_TEMP_09);
+  GameFlag_Clear(FLAG_AREA_TEMP_01);
+  GameFlag_Set(FLAG_AREA_TEMP_00);
+  Sound_Play(SE_162);
   KandoreanTemple_StartRightVent();
   i = 0;
   do {
@@ -2156,7 +2127,7 @@ void KandoreanTemple_RiseOnRightVent(void) {
     KandoreanTemple_GrowColumn(12, 0x20000, limit);
     KandoreanTemple_GrowColumn(17, 0x18000, limit);
     KandoreanTemple_GrowColumn(18, 0x10000, limit);
-    KandoreanTemple_GrowColumn(19, 0x8000, limit);
+    KandoreanTemple_GrowColumn(19, 32768, limit);
     KandoreanTemple_GrowColumn(20, 0, limit);
     next = i;
     next++;
@@ -2170,8 +2141,8 @@ void KandoreanTemple_RiseOnRightVent(void) {
   Event_Wait(10);
   DEFINE_KANDOREAN_TEMPLE_SINK_STEP(12, 17, 18, 19, 20)
   gKandoreanTemple_RightVentBlowing = 0;
-  GameFlag_Clear(0x20d);
-  Sound_Play(390);
+  GameFlag_Clear(FLAG_SCENE_TEMP_0D);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
@@ -2221,13 +2192,14 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 16);
   for (i = 0; i <= 7; i++) {
     Actor_SetPositionAndResetMotion(object, object->x, object->y,
-                                    object->z + PIXELS(3));
+                                    object->z + px(3));
     wait(1);
   }
   Event_Wait(20);
   party = &gMainRoutineWork;
   object->facing = FACING_SOUTH;
-  FieldEffect_SetAttached(party->currentOwner, 258);
+  FieldEffect_SetAttached(party->currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetModeById(party->currentOwner, 27);
   Event_Wait(30);
   Actor_SetModeById(party->currentOwner, 28);
@@ -2240,10 +2212,10 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
       object->scaleX = scale + -0x400;
     }
     object->scaleY += -0x400;
-    object->y += -0x20000;
+    object->y += -px(2);
     wait(1);
     if (i == 10)
-      Sound_Play(204);
+      Sound_Play(SE_DUST_PUFF);
     if (i == 20) {
       ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
       Event_FinishScreenTransition();
@@ -2261,19 +2233,19 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    Scene_QueueMusic(162);                                                     \
-    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    Scene_QueueMusic(SE_162);                                                  \
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     wait(1);                                                                   \
     leader->motionFlags = 0;                                                   \
     Actor_SetPositionAndResetMotion_(                                          \
-        Actor_GetById(gMainRoutineWork.currentOwner), PIXELS(n3), PIXELS(-20), \
-        PIXELS(n4));                                                           \
+        Actor_GetById(gMainRoutineWork.currentOwner), px(n3), px(-20),         \
+        px(n4));                                                               \
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),   \
                                0);                                             \
-    Actor_SetPositionAndResetMotion_(Actor_GetById(n1), PIXELS(n3),            \
-                                     PIXELS(-20), PIXELS(n5));                 \
-    Actor_SetPositionAndResetMotion_(Actor_GetById(n2), PIXELS(n3),            \
-                                     PIXELS(-20), PIXELS(n4));                 \
+    Actor_SetPositionAndResetMotion_(Actor_GetById(n1), px(n3), px(-20),       \
+                                     px(n5));                                  \
+    Actor_SetPositionAndResetMotion_(Actor_GetById(n2), px(n3), px(-20),       \
+                                     px(n4));                                  \
     Actor_SetSpritePriority(n1, 2);                                            \
     Actor_SetSpritePriority(n2, 3);                                            \
     {                                                                          \
@@ -2290,9 +2262,9 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     Event_WaitTransitionFrames();                                              \
     /* A goto loop, as in KandoreanTemple_RideWestLiftUp. */                   \
   rise:                                                                        \
-    first->y += PIXELS(4);                                                     \
-    leader->y += PIXELS(4);                                                    \
-    KandoreanTemple_GrowColumn(n2, 0x4ccc, 0x4ccc);                            \
+    first->y += px(4);                                                         \
+    leader->y += px(4);                                                        \
+    KandoreanTemple_GrowColumn(n2, 19660, 0x4ccc);                             \
     wait(1);                                                                   \
     if (first->y < 0)                                                          \
       goto rise;                                                               \
@@ -2315,13 +2287,11 @@ void KandoreanTemple_RideWestLiftUp(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  // A goto loop: as a do-while, loop.c hoists the scale constant into r6
-  // (differ 19).
 rise:
-  object->y -= PIXELS(4);
-  KandoreanTemple_ShrinkColumn(15, 0x4ccc, 0x4ccc);
+  object->y -= px(4);
+  KandoreanTemple_ShrinkColumn(15, 19660, 0x4ccc);
   wait(1);
-  if (object->y > -0x140000)
+  if (object->y > -px(20))
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
@@ -2336,12 +2306,11 @@ void KandoreanTemple_RideEastLiftUp(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  // A goto loop, as in KandoreanTemple_RideWestLiftUp.
 rise:
-  object->y -= PIXELS(4);
-  KandoreanTemple_ShrinkColumn(16, 0x4ccc, 0x4ccc);
+  object->y -= px(4);
+  KandoreanTemple_ShrinkColumn(16, 19660, 0x4ccc);
   wait(1);
-  if (object->y > -0x140000)
+  if (object->y > -px(20))
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
@@ -2358,7 +2327,7 @@ void KandoreanTemple_StartRoom5(void) {
   FieldEffect_StartBlankOverlay(0);
 #if TLA_PATCH_1
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2)
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
 
@@ -2366,7 +2335,7 @@ void KandoreanTemple_StartRoom6(void) {
   struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
 
   gKandoreanTemple_SteamCounter = 0;
-  Scene_QueueMusic(170);
+  Scene_QueueMusic(SE_170);
   map->mode = 1;
   FieldEffect_StartBlankOverlay(0);
 }
@@ -2405,41 +2374,41 @@ void KandoreanTemple_StartGate(void) {
     MapGrid_CopyCellAttributes(2, 0, 2, 3, 17, 24);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-    Actor_SetPositionAndFacing(11, PIXELS(374), PIXELS(282), FACING_EAST);
+    Actor_SetPositionAndFacing(11, px(374), px(282), FACING_EAST);
     {
       s32 angle = 0xd000;
 
-      Actor_SetPositionAndFacing(12, PIXELS(272), PIXELS(296), angle);
+      Actor_SetPositionAndFacing(12, px(272), px(296), angle);
     }
     {
       s32 angle = 0x3000;
 
-      Actor_SetPositionAndFacing(13, PIXELS(216), PIXELS(264), angle);
+      Actor_SetPositionAndFacing(13, px(216), px(264), angle);
     }
   } else {
     KandoreanTemple_StartMeditating(11, 0);
     KandoreanTemple_StartMeditating(12, 240);
     KandoreanTemple_StartMeditating(13, 480);
   }
-  if (GameFlag_Get(0x212)) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_12)) {
     MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
     MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   }
 #if TLA_PATCH_1 /* From patch 1. */
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 4)
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
 
 void KandoreanTemple_PlaceTheLevitator(void) {
-  if (Event_GetFlag(0x210) == 0) {
-    Event_SetFlag(0x210);
+  if (Event_GetFlag(FLAG_SCENE_TEMP_10) == 0) {
+    Event_SetFlag(FLAG_SCENE_TEMP_10);
     Func_020053a8_(1, 0x210, 10, 11);
   }
   {
     s32 angle = 0x3000;
 
-    Actor_SetPositionAndFacing(12, PIXELS(392), PIXELS(360), angle);
+    Actor_SetPositionAndFacing(12, px(392), px(360), angle);
   }
 }
 
@@ -2461,7 +2430,7 @@ void KandoreanTemple_StartPoisHall(void) {
     if (GameFlag_Get(0x84a)) {
       s32 angle = 0x5000;
 
-      Actor_SetPositionAndFacing(12, PIXELS(432), PIXELS(394), angle);
+      Actor_SetPositionAndFacing(12, px(432), px(394), angle);
     } else {
       KandoreanTemple_CreateLashPebble();
       if (GameFlag_Get(0x849))
@@ -2470,14 +2439,14 @@ void KandoreanTemple_StartPoisHall(void) {
   }
   if ((gMainRoutineWork.entrance >= 1 && gMainRoutineWork.entrance <= 3) ||
       gMainRoutineWork.entrance == 9) {
-    if (GameFlag_Get(0x212))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_12))
       KandoreanTemple_OpenTheTrapdoor();
     if (GameFlag_Get(0x849)) {
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       {
         s32 facing = FACING_NORTHWEST + FACING_STEP;
 
-        Actor_SetPositionAndFacing(15, PIXELS(408), PIXELS(664), facing);
+        Actor_SetPositionAndFacing(15, px(408), px(664), facing);
       }
     } else if (GameFlag_Get(0x848)) {
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -2496,7 +2465,7 @@ void KandoreanTemple_StartPoisHall(void) {
   }
 #if TLA_PATCH_1 /* From patch 1. */
   if (gMainRoutineWork.entrance >= 8 && gMainRoutineWork.entrance <= 9)
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
 
@@ -2527,7 +2496,7 @@ void KandoreanTemple_TestTheStudents(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
@@ -2535,16 +2504,16 @@ void KandoreanTemple_TestTheStudents(void) {
   wait(1);
   Event_StartScreenTransition();
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 400, 752);
-  Camera_SetSpeedParameters(0x4cccc, 0x9999);
-  FieldCamera_MoveWithinMapBounds(0x1b40000, 0x480000, 0x2980000, 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveWithinMapBounds(px(436), px(72), px(664), 1);
   FieldCamera_WaitForArrival();
   Actor_Jump(12, 4, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple04);
   Event_ShowMessageAndWait(12, 0);
-  FieldCamera_MoveWithinMapBounds(0x1c80000, 0, 0x2b00000, 1);
+  FieldCamera_MoveWithinMapBounds(px(456), 0, px(688), 1);
   FieldCamera_WaitForArrival();
   Motion_SetVarCbAndRefresh(13, 2);
-  Sound_Play(131);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
   Actor_ConfigureSpriteColor(13, 0x100);
   Event_Wait(20);
   Actor_ConfigureSpriteColor(13, 0);
@@ -2561,48 +2530,49 @@ rise13:
     goto rise13;
   KandoreanTemple_Wobble(sprite, 32, 32);
   Event_Wait(20);
-  Actor_SetAttachedEffect(13, 0x102);
+  Actor_SetAttachedEffect(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   KandoreanTemple_Wobble(sprite, 32, -64);
   KandoreanTemple_Wobble(sprite, 32, 64);
   KandoreanTemple_Wobble(sprite, 64, 32);
-  FieldEffect_SetAttached(13, 0x102);
+  FieldEffect_SetAttached(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   object->motionFlags = 3;
   Event_Wait(5);
-  Sound_Play(159);
-  object->velocityY = 0x30000;
+  Sound_Play(SE_DOOR_CLOSE);
+  object->velocityY = px(3);
   sprite->rotation = 0;
   Event_Wait(60);
   Event_ShowMessageAndWait(13, 0);
-  FieldCamera_MoveTo(0x1b40000, 0x480000, 0x2980000, 1);
+  FieldCamera_MoveTo(436, 72, 664, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 476, 664);
-  Actor_FaceDirection(12, 0x3000, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetModeById(12, 4);
-  Event_ShowMessageAndWait(0x100c, 0);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 12, 0);
   Actor_WalkToAndWait(12, 474, 664);
   Actor_WalkToAndWait(12, 472, 648);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-  Camera_SetSpeedParameters(0x13333, 0x2666);
-  FieldCamera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
+  FieldCamera_SetSpeed(1.2);
+  FieldCamera_MoveWithinMapBounds(px(364), px(72), px(664), 1);
   FieldCamera_WaitForArrival();
   Actor_SetHorizontalPositionWithTerrain(12, 0x1480000, 0x2880000);
   wait(1);
   Actor_WalkToAndWait(12, 326, 664);
   Actor_WalkToAndWait(12, 320, 664);
-  Actor_FaceDirection(12, 0x5000, 0);
-  Event_ShowMessageAndWait(0x200c, 0);
-  Camera_SetSpeedParameters(0x4cccc, 0x9999);
-  FieldCamera_MoveWithinMapBounds(0x1560000, 0, 0x2b00000, 1);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 12, 0);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveWithinMapBounds(px(342), 0, px(688), 1);
   FieldCamera_WaitForArrival();
   Motion_SetVarCbAndRefresh(14, 2);
-  Sound_Play(131);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
   Actor_ConfigureSpriteColor(14, 0x100);
   Event_Wait(20);
   Actor_ConfigureSpriteColor(14, 0);
   Event_Wait(20);
-  Actor_SetAttachedEffect(14, 0x101);
+  Actor_SetAttachedEffect(14,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   object = Actor_GetById(14);
   object->motionFlags = 0;
   i = 0;
@@ -2612,27 +2582,28 @@ rise14:
   i++;
   if (i <= 63)
     goto rise14;
-  KandoreanTemple_Sway(object, 64, 0x1000);
-  KandoreanTemple_Sway(object, 128, -0x1000);
-  KandoreanTemple_Sway(object, 128, 0x1000);
-  KandoreanTemple_Sway(object, 64, -0x1000);
+  KandoreanTemple_Sway(object, 64, 4096);
+  KandoreanTemple_Sway(object, 128, -4096);
+  KandoreanTemple_Sway(object, 128, 4096);
+  KandoreanTemple_Sway(object, 64, -4096);
   Event_Wait(20);
-  Actor_SetAttachedEffect(14, 0x100);
+  Actor_SetAttachedEffect(14,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   object->motionFlags = 3;
   Event_Wait(5);
-  Sound_Play(159);
-  object->velocityY = 0x30000;
+  Sound_Play(SE_DOOR_CLOSE);
+  object->velocityY = px(3);
   Event_Wait(60);
   Event_ShowMessageAndWait(14, 0);
-  FieldCamera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
+  FieldCamera_MoveWithinMapBounds(px(364), px(72), px(664), 1);
   FieldCamera_WaitForArrival();
-  Event_ShowMessageAndWait(0x200c, 0);
-  Actor_FaceDirection(12, 0x3000, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 12, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 10);
   Event_ShowMessageAndWait(12, 0);
-  FieldCamera_MoveWithinMapBounds(0x1900000, 0, 0x2b00000, 1);
+  FieldCamera_MoveWithinMapBounds(px(400), 0, px(688), 1);
   FieldCamera_WaitForArrival();
   Motion_SetVarCbAndRefresh(15, 2);
-  Sound_Play(131);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
   Actor_ConfigureSpriteColor(15, 0x100);
   Event_Wait(20);
   Actor_ConfigureSpriteColor(15, 0);
@@ -2663,38 +2634,38 @@ fall15:
   if (i <= 63)
     goto fall15;
   Event_Wait(20);
-  Actor_ShowEmoteById(15, 0x108, 0);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Event_ShowMessageThenWait(15, 0, 20);
-  Event_ShowMessageAndWait(0x100c, 0);
-  Actor_ShowEmoteById(15, 0x103, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 12, 0);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_SetModeById(15, 1);
   Actor_Jump(15, 4, 0);
-  Actor_FaceDirection(15, 0xb000, 20);
-  Event_ShowMessageAndWait(0x400f, 0);
-  FieldCamera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
+  Actor_FaceDirection(15, FACING_NORTH_NORTHWEST, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 15, 0);
+  FieldCamera_MoveWithinMapBounds(px(364), px(72), px(664), 1);
   FieldCamera_WaitForArrival();
-  Actor_ShowEmoteById(12, 0x102, 20);
-  Event_ShowMessage(0x800c, 0);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Event_ShowMessageAndWait(15, 0);
-  Actor_FaceDirection(12, 0xb000, 40);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 40);
   Actor_SetModeById(12, 4);
-  Event_ShowMessage(0x800c, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Event_ShowMessageAndWait(15, 0);
-  Actor_ShowEmoteById(12, 0x105, 80);
-  Event_ShowMessage(0x800c, 0);
-  Actor_FaceDirection(12, 0x3000, 20);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetModeById(12, 3);
-  Event_ShowMessageAndWait(0x800c, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_WalkToAndWait(12, 326, 664);
   Actor_WalkToAndWaitById(12, 328, 648);
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
   Actor_SetSpriteColor(Actor_GetById(12), 15);
-  Actor_SetPosition(12, 0x1b80000, 0x2580000);
-  FieldCamera_MoveTo(0x1900000, 0, 0x2b00000, 1);
-  Actor_SetSpeed(15, 0xcccc, 0x6666);
+  Actor_SetPosition(12, 440, 600);
+  FieldCamera_MoveTo(400, 0, 688, 1);
+  Actor_SetSpeed(15, 0.8);
   Actor_WalkToAndWait(15, 400, 644);
   Event_Wait(20);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   KandoreanTemple_OpenTheTrapdoor();
   Event_ShowMessageAndWait(12, 0);
   Task_Remove(KandoreanTemple_MatchLiftPriority);
@@ -2703,7 +2674,7 @@ fall15:
   Actor_WalkToAndWait(15, 400, 640);
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-  FieldCamera_MoveWithinMapBounds(0x1900000, 0, 0x2f00000, 1);
+  FieldCamera_MoveWithinMapBounds(px(400), 0, px(752), 1);
   FieldCamera_WaitForArrival();
   Task_Add(KandoreanTemple_MatchLiftPriority, 0x480);
   Event_End();
@@ -2713,43 +2684,43 @@ fall15:
 void KandoreanTemple_PraiseTheLevitator(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
-                                         PIXELS(328), PIXELS(360));
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, px(328),
+                                         px(360));
   {
     s32 facing = FACING_SOUTH + FACING_STEP;
 
-    Actor_SetPositionAndFacing(12, PIXELS(472), PIXELS(408), facing);
+    Actor_SetPositionAndFacing(12, px(472), px(408), facing);
   }
   Actor_GetById(16)->facing = 0xc000;
   wait(1);
   Event_StartScreenTransition();
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 328, 392);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveWithinMapBounds(PIXELS(408), -1, PIXELS(400), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveWithinMapBounds(px(408), -1, px(400), 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 376, 408);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(12, 1);
   Event_SetMessageId((s32)&MsgKandoreanTemple05);
   Event_ShowMessageAndWait(12, 0);
   Actor_FaceDirection(12, FACING_WEST, 20);
-  Actor_ShowEmoteById(12, 256, 0);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_SetSpeed(12, 1.6);
   Actor_WalkToAndWait(12, 456, 408);
   Event_ShowMessageAndWait(12, 0);
   Actor_MoveToObject(16, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeed(16, 0xcccc, 0x6666);
+  Actor_SetSpeed(16, 0.8);
   Actor_WalkToAndWait(16, 376, 392);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST + FACING_STEP, 40);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_ArmCallback(16, FACING_EAST, 20);
-  Actor_SetAttachedEffect(12, 258);
+  Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(12, 0);
-  Actor_ShowEmoteById(16, 265, 0);
+  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
   Event_ShowMessageAndWait(16, 0);
@@ -2770,24 +2741,24 @@ void KandoreanTemple_FindTheRopeOnTheFloor(void) {
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 514;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetHorizontalPositionWithTerrain(12, PIXELS(472), PIXELS(648));
+  Actor_SetHorizontalPositionWithTerrain(12, px(472), px(648));
   wait(1);
   Actor_WalkToAndWait(12, 472, 664);
   Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 20);
   Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 0);
-  Camera_SetSpeedParameters(0x4cccc, 0x9999);
-  FieldCamera_MoveWithinMapBounds(PIXELS(456), PIXELS(40), PIXELS(664), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveWithinMapBounds(px(456), px(40), px(664), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   Event_SetMessageId((s32)&MsgKandoreanTemple06);
-  Event_ShowMessageAndWait(0x800c, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_WalkToAndWait(12, 472, 648);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -2795,10 +2766,10 @@ void KandoreanTemple_FindTheRopeOnTheFloor(void) {
 }
 
 void KandoreanTemple_StudentWalksUp(void) {
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   Actor_WalkToAndWait(12, 496, 392);
   Actor_FaceDirection(12, FACING_WEST, 0);
-  Event_ShowMessageAndWait(0x400c, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 12, 0);
 }
 
 #define WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
@@ -2810,35 +2781,35 @@ void KandoreanTemple_MeetPoi(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
-  Actor_SetPositionAndFacing(16, 0x1780000, 0x1880000, 0);
-  Actor_SetHorizontalPositionAndAngleWithTerrain(gMainRoutineWork.currentOwner,
-                                                 0x1780000, 0x1980000, 0);
+  Actor_SetPositionAndFacing(16, px(376), px(392), FACING_EAST);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(
+      gMainRoutineWork.currentOwner, 0x1780000, 0x1980000, FACING_EAST);
   {
     s32 angle = 0xb000;
-    Actor_SetPositionAndFacing(12, 0x1d80000, 0x1c60000, angle);
+    Actor_SetPositionAndFacing(12, px(472), px(454), angle);
   }
   WORK->screenEffect = 0x202;
   Event_StartScreenTransition();
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_WalkToAndWait(12, 464, 428);
   Actor_WalkToAndWait(12, 432, 408);
-  Actor_FaceDirection(12, 0x8000, 0);
-  FieldEffect_SetAttached(12, 0x102);
+  Actor_FaceDirection(12, FACING_WEST, 0);
+  FieldEffect_SetAttached(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_SetMessageId((s32)&MsgKandoreanTemple07);
   Event_ShowMessageAndWait(12, 0);
-  Actor_ShowEmoteById(12, 0x105, 40);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessageAndWait(12, 0);
   Actor_ArmCallback(12, 0, 40);
   Event_ShowMessageAndWait(12, 0);
   Event_ShowMessageAndWait(16, 0);
   Motion_SetVarCbAndRefresh(12, 2);
-  Actor_FaceDirection(12, 0x8000, 20);
+  Actor_FaceDirection(12, FACING_WEST, 20);
   Actor_SetModeById(12, 4);
   Event_ShowMessageAndWait(12, 0);
-  Actor_FaceDirection(16, 0x3000, 10);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
   Event_OpenMessage(16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
@@ -2852,39 +2823,39 @@ void KandoreanTemple_MeetPoi(void) {
   }
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_ArmCallback(16, 0, 0);
-  Actor_ShowEmote(16, 0x101, 20);
+  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessageAndWait(16, 0);
-  Actor_SetAttachedEffect(12, 0x102);
+  Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(12, 0);
   Actor_SetModeById(16, 3);
   Event_ShowMessageThenWait(16, 0, 40);
-  Actor_FaceDirection(12, 0x5000, 40);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 40);
   Event_ShowMessageAndWait(12, 0);
-  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 40);
-  Actor_FaceDirection(12, 0x8000, 20);
+  Actor_FaceDirection(12, FACING_WEST, 20);
   Actor_SetModeById(12, 3);
   Event_ShowMessageAndWait(12, 0);
   Actor_ArmCallback(16, 0, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  Actor_ShowEmoteById(16, 0x101, 0);
+  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessageAndWait(16, 0);
   Actor_SetModeById(12, 3);
   Event_ShowMessageAndWait(12, 0);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveWithinMapBounds(0x1a80000, 0x100000, 0x1800000, 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetSpeed(16, 0xcccc, 0x6666);
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveWithinMapBounds(px(424), px(16), px(384), 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+  Actor_SetSpeed(16, 0.8);
+  Actor_SetSpeed(12, 0.8);
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                             gKandoreanTemple_PoiWalksOutScript);
   Actor_SetMovementTypeById(16, gKandoreanTemple_StudentWalksAsideScript);
   Actor_SetMovementTypeAndWaitById(12, gKandoreanTemple_StudentWalksAwayScript);
   Event_Wait(40);
   KandoreanTemple_CastLash();
-  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 20);
-  Event_OpenMessage(0x5010, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     KandoreanTemple_StudentWalksUp();
     WORK->messageId++;
@@ -2895,91 +2866,90 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_ArmCallback(16, 0, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_SetModeById(12, 3);
-  Event_ShowMessage(0x400c, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 12, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   Motion_SetModeAndWaitAnimation(16, 3);
-  Event_ShowMessage(0x400c, 0);
-  Actor_ShowEmoteById(16, 0x100, 40);
-  Event_ShowMessage(0x5010, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 12, 0);
+  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16, 0);
   Actor_SetModeById(12, 3);
-  Event_ShowMessage(0x400c, 0);
-  Actor_FaceDirection(16, 0x3000, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 12, 0);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 0);
-  Event_OpenMessage(0x5010, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetModeById(12, 3);
-    Event_ShowMessageAndWait(0x400c, 0);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 12, 0);
     Actor_ArmCallback(16, 0, 0);
-    Actor_ShowEmoteById(16, 0x107, 20);
-    Event_ShowMessageAndWait(0x5010, 0);
+    Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16,
+                             0);
     WORK->messageId += 2;
   } else {
     WORK->messageId += 2;
     Actor_SetModeById(12, 4);
-    Event_ShowMessageAndWait(0x400c, 0);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 12, 0);
     Actor_ArmCallback(16, 0, 0);
-    Actor_ShowEmoteById(16, 0x107, 20);
-    Event_ShowMessageAndWait(0x5010, 0);
+    Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16,
+                             0);
   }
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  FieldCamera_MoveTo(0x1a80000, 0, 0x1900000, 1);
-  FieldCamera_SetSpeed(0x9999, 0x1333);
-  Actor_SetSpeed(12, 0x9999, 0x4ccc);
+  FieldCamera_MoveTo(424, 0, 400, 1);
+  FieldCamera_SetSpeed(0.6);
+  Actor_SetSpeed(12, 0.6);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 12);
   Actor_WatchAndSetScript(16, 12);
   Actor_WalkToAndWait(12, 488, 416);
   Actor_WalkToAndWait(12, 472, 432);
-  Actor_FaceDirection(12, 0x5000, 0);
-  Event_ShowMessage(0x400c, 0);
-  Event_ShowMessageThenWait(0x1010, 0, 80);
-  Actor_ShowEmoteById(12, 0x108, 0);
-  Actor_FaceDirection(12, 0xb000, 20);
-  Event_ShowMessage(0x400c, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 12, 0);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 16, 0, 80);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 20);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 12, 0);
   Actor_SetModeById(12, 3);
-  Event_ShowMessageAndWait(0x400c, 0);
-  FieldCamera_MoveTo(0x1a80000, 0x100000, 0x1800000, 1);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 12, 0);
+  FieldCamera_MoveTo(424, 16, 384, 1);
+  Actor_SetSpeed(12, 1.2);
   Actor_WalkToAndWait(12, 488, 416);
   Actor_WalkToAndWait(12, 504, 376);
   Actor_ArmCallback(12, 0x8000, 20);
   object = Actor_GetById(12);
   sprite = object->sprite;
   Actor_SetSpritePriority(12, 1);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   Actor_Jump(12, 4, 0);
   Actor_MoveToAndWait(12, 492, 376);
   Actor_SetModeById(12, 7);
   object->scaleX = 0xffff0000;
   sprite->rotation = 0xe000;
-  /* FAKEMATCH(temporary): the motion flags written through a byte pointer, so
-   * the store may alias the rotation and stays after it; as
-   * object->motionFlags, which keeps the struct's alias set, 51 of 783
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the motion flags written through a byte pointer. */
   flags = &object->motionFlags;
   *flags = 0;
-  object->y += 0x40000;
+  object->y += px(4);
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
-  Actor_SetSpeed(12, 0x6666, 0x3333);
+  Actor_SetSpeed(12, 0.4);
   Actor_SetMoveTarget((s32)object, 0x1bc0000, 0x280000, 0x1780000);
   Actor_WaitForMoveById(12);
   *flags = 3;
   Actor_SetSpriteFlags(Actor_GetById(12), 1);
   sprite->rotation = 0;
-  object->scaleX = 0x10000;
-  object->terrainHeight = 0x200000;
+  object->scaleX = Q16_ONE;
+  object->terrainHeight = px(32);
   Actor_SetModeById(12, 1);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   Actor_Jump(12, 4, 0);
   Actor_MoveToAndWait(12, 424, 376);
-  FieldCamera_MoveWithinMapBounds(0x1980000, 0x100000, 0x1900000, 1);
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  FieldCamera_MoveWithinMapBounds(px(408), px(16), px(400), 1);
+  Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 392, 360);
-  Actor_FaceDirection(12, 0x3000, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetSpritePriority(12, 2);
   Actor_Stop(16);
   Actor_Stop(gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   Motion_SetModeAndWaitAnimation(16, 3);
@@ -3003,8 +2973,8 @@ void KandoreanTemple_MeetPoi(void) {
 void KandoreanTemple_CreateLashPebble(void) {
   struct Actor **slot = &gKandoreanTemple_LashPebble;
   s32 zero = 0;
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(
-      0x1e9, 0x1980000, 0x280000, 0x1580000));
+  struct Actor *object =
+      ((struct Actor *)Import_ActorCreate(0x1e9, px(408), px(40), px(344)));
 
   *slot = object;
   if (object) {
@@ -3018,7 +2988,7 @@ void KandoreanTemple_CreateLashPebble(void) {
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     buffer = HeapSlot_Alloc(68, 0x608);
-    Icon_DrawItem(198);
+    Icon_DrawItem(ITEM_LASH_PEBBLE);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
   }
@@ -3030,7 +3000,7 @@ void KandoreanTemple_LowerTheLadder(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Sound_Play(121);
+  Sound_Play(SE_SCUFFLE);
   MapGrid_CopyCellPictureIndicesRect(41, 0, 20, 0, 1, 1);
   Event_Wait(10);
   MapGrid_CopyCellPictureIndicesRect(41, 1, 20, 1, 1, 1);
@@ -3050,11 +3020,26 @@ void KandoreanTemple_ReceiveLash(void);
 extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 s32 gKandoreanTemple_SteamScript[] = {
     0,
@@ -3119,7 +3104,7 @@ s32 gKandoreanTemple_LevitateScript[] = {
 
 u32 gKandoreanTemple_PoiWalksOutScript[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(456), 0, PIXELS(408)),
+    SC_MOVE(px(456), 0, px(408)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -3127,13 +3112,18 @@ u32 gKandoreanTemple_PoiWalksOutScript[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02002FCC(gKandoreanTemple_StudentWalksAsideScript, 440, 392, 1)
+u32 gKandoreanTemple_StudentWalksAsideScript[] = {                                                               
+      SC_ARG(2),   SC_MOVE(px(440), 0, px(392)),                         
+      SC_SYNC,     SC_ARG(1),                                                  
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),              
+      SC_WAIT(1), SC_END,                                                     
+  };
 
 u32 gKandoreanTemple_StudentWalksAwayScript[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(496), 0, PIXELS(392)),
+    SC_MOVE(px(496), 0, px(392)),
     SC_SYNC,
-    SC_MOVE(PIXELS(504), 0, PIXELS(376)),
+    SC_MOVE(px(504), 0, px(376)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_WEST),
@@ -3143,13 +3133,13 @@ u32 gKandoreanTemple_StudentWalksAwayScript[] = {
 
 s32 gKandoreanTemple_LevitateHighScript[] = {
     SC_CALL(KandoreanTemple_PlaceLevitatingStudent),
-    SC_SET(SW_Y, PIXELS(88)),
+    SC_SET(SW_Y, px(88)),
     SC_END,
 };
 
 s32 gKandoreanTemple_LevitateLowScript[] = {
     SC_CALL(KandoreanTemple_PlaceLevitatingStudent),
-    SC_SET(SW_Y, PIXELS(44)),
+    SC_SET(SW_Y, px(44)),
     SC_END,
 };
 
@@ -3174,55 +3164,55 @@ u32 gKandoreanTemple_Room5Regions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(14),
-    SCENE_EXIT(1, 20, 1),
-    SCENE_EXIT(2, 20, 3),
-    SCENE_EXIT(3, 19, 1),
-    SCENE_EXIT(4, 17, 2),
-    SCENE_EXIT(5, 17, 5),
-    SCENE_EXIT(6, 17, 3),
-    SCENE_EXIT(7, 17, 4),
-    SCENE_EXITS(15),
-    SCENE_EXIT(1, 22, 9),
-    SCENE_EXIT(2, 20, 4),
-    SCENE_EXIT(3, 16, 1),
-    SCENE_EXIT(4, 20, 2),
-    SCENE_EXITS(16),
-    SCENE_EXIT(1, 15, 3),
-    SCENE_EXIT(2, 22, 8),
-    SCENE_EXITS(17),
-    SCENE_EXIT(1, 19, 2),
-    SCENE_EXIT(2, 14, 4),
-    SCENE_EXIT(3, 14, 5),
-    SCENE_EXIT(4, 14, 6),
-    SCENE_EXITS(18),
-    SCENE_EXIT(1, 21, 3),
-    SCENE_EXIT(2, 21, 4),
-    SCENE_EXITS(19),
-    SCENE_EXIT(1, 14, 3),
-    SCENE_EXIT(2, 17, 1),
-    SCENE_EXITS(20),
-    SCENE_EXIT(1, 14, 1),
-    SCENE_EXIT(2, 15, 4),
-    SCENE_EXIT(3, 14, 2),
-    SCENE_EXIT(4, 15, 2),
-    SCENE_EXITS(21),
-    SCENE_EXIT(1, 2, 4),
-    SCENE_EXIT(2, 22, 1),
-    SCENE_EXIT(3, 18, 1),
-    SCENE_EXIT(4, 18, 2),
-    SCENE_EXITS(22),
-    SCENE_EXIT(1, 21, 2),
-    SCENE_EXIT(2, 22, 4),
-    SCENE_EXIT(3, 22, 5),
-    SCENE_EXIT(4, 22, 2),
-    SCENE_EXIT(5, 22, 3),
-    SCENE_EXIT(6, 22, 7),
-    SCENE_EXIT(7, 22, 6),
-    SCENE_EXIT(8, 16, 2),
-    SCENE_EXIT(9, 15, 1),
-    SCENE_EXIT(13, 22, 13),
-    SCENE_EXIT(14, 22, 14),
+    SCENE_EXITS(KandoreanTemple1),
+    SCENE_EXIT(1, KandoreanTemple7, 1),
+    SCENE_EXIT(2, KandoreanTemple7, 3),
+    SCENE_EXIT(3, KandoreanTemple6, 1),
+    SCENE_EXIT(4, KandoreanTemple4, 2),
+    SCENE_EXIT(5, KandoreanTemple4, 5),
+    SCENE_EXIT(6, KandoreanTemple4, 3),
+    SCENE_EXIT(7, KandoreanTemple4, 4),
+    SCENE_EXITS(KandoreanTemple2),
+    SCENE_EXIT(1, KandoreanTemple9, 9),
+    SCENE_EXIT(2, KandoreanTemple7, 4),
+    SCENE_EXIT(3, KandoreanTemple3, 1),
+    SCENE_EXIT(4, KandoreanTemple7, 2),
+    SCENE_EXITS(KandoreanTemple3),
+    SCENE_EXIT(1, KandoreanTemple2, 3),
+    SCENE_EXIT(2, KandoreanTemple9, 8),
+    SCENE_EXITS(KandoreanTemple4),
+    SCENE_EXIT(1, KandoreanTemple6, 2),
+    SCENE_EXIT(2, KandoreanTemple1, 4),
+    SCENE_EXIT(3, KandoreanTemple1, 5),
+    SCENE_EXIT(4, KandoreanTemple1, 6),
+    SCENE_EXITS(KandoreanTemple5),
+    SCENE_EXIT(1, KandoreanTemple8, 3),
+    SCENE_EXIT(2, KandoreanTemple8, 4),
+    SCENE_EXITS(KandoreanTemple6),
+    SCENE_EXIT(1, KandoreanTemple1, 3),
+    SCENE_EXIT(2, KandoreanTemple4, 1),
+    SCENE_EXITS(KandoreanTemple7),
+    SCENE_EXIT(1, KandoreanTemple1, 1),
+    SCENE_EXIT(2, KandoreanTemple2, 4),
+    SCENE_EXIT(3, KandoreanTemple1, 2),
+    SCENE_EXIT(4, KandoreanTemple2, 2),
+    SCENE_EXITS(KandoreanTemple8),
+    SCENE_EXIT(1, WorldMap, 4),
+    SCENE_EXIT(2, KandoreanTemple9, 1),
+    SCENE_EXIT(3, KandoreanTemple5, 1),
+    SCENE_EXIT(4, KandoreanTemple5, 2),
+    SCENE_EXITS(KandoreanTemple9),
+    SCENE_EXIT(1, KandoreanTemple8, 2),
+    SCENE_EXIT(2, KandoreanTemple9, 4),
+    SCENE_EXIT(3, KandoreanTemple9, 5),
+    SCENE_EXIT(4, KandoreanTemple9, 2),
+    SCENE_EXIT(5, KandoreanTemple9, 3),
+    SCENE_EXIT(6, KandoreanTemple9, 7),
+    SCENE_EXIT(7, KandoreanTemple9, 6),
+    SCENE_EXIT(8, KandoreanTemple3, 2),
+    SCENE_EXIT(9, KandoreanTemple2, 1),
+    SCENE_EXIT(13, KandoreanTemple9, 13),
+    SCENE_EXIT(14, KandoreanTemple9, 14),
     SCENE_EXITS_END,
 };
 
@@ -3230,15 +3220,26 @@ struct ActorPlacement gKandoreanTemple_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020057C0(gKandoreanTemple_LiftRoomPlacements, 407, 1, 2, 3, 4, 272, 5, 351)
+struct ActorPlacement gKandoreanTemple_LiftRoomPlacements[] = {                                             
+      {407, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},                
+      {407, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 3},                
+      {407, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 2, 3},                
+      {407, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_SOUTH, 2, 3},                
+      {272, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_SOUTH, 2, 2},                
+      {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {SCENE_TABLE_END},                                                       
+  };
 
 struct ActorPlacement gKandoreanTemple_ChestbeaterRoomPlacements[] = {
     {368, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
     {368, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
-    {450, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(504), FACING_SOUTH, 2, 0},
-    {184, CONDITION_ALWAYS, 7, PIXELS(328), 0, PIXELS(152), FACING_SOUTH, 2, 0},
-    {184, CONDITION_ALWAYS, 7, PIXELS(296), 0, PIXELS(140), FACING_SOUTH, 2, 0},
-    {184, CONDITION_ALWAYS, 7, PIXELS(360), 0, PIXELS(140), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(184, CONDITION_ALWAYS, 7, 328, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(184, CONDITION_ALWAYS, 7, 296, 0, 140, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(184, CONDITION_ALWAYS, 7, 360, 0, 140, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3246,53 +3247,53 @@ struct ActorPlacement gKandoreanTemple_VentRoomPlacements[] = {
     {272, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
     {351, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_WEST, 2, 2},
     {351, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_EAST, 2, 2},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(351, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gKandoreanTemple_FogRoomPlacements[] = {
     {407, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
     {407, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 3},
-    {91, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(340), FACING_SOUTH, 2, 0},
-    {244, 0x4b, 1, PIXELS(632), 0, PIXELS(280), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 340, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(244, 0x4b, MOVEMENT_TYPE_STAND, 632, 0, 280, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gKandoreanTemple_GatePlacements[] = {
-    {307, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(224), FACING_SOUTH, 2, 0},
-    {91, CONDITION_ALWAYS, (s32)gKandoreanTemple_LookAroundScript, PIXELS(264), 0, PIXELS(424), FACING_SOUTHEAST + FACING_STEP, 1, 0},
-    {91, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(424), FACING_SOUTH + FACING_STEP, 1, 0},
-    {91, CONDITION_ALWAYS, 1, PIXELS(334), 0, PIXELS(317), FACING_SOUTHEAST + FACING_STEP, 2, 0},
-    {91, CONDITION_ALWAYS, 1, PIXELS(284), 0, PIXELS(328), FACING_SOUTHEAST + FACING_STEP, 2, 0},
-    {91, CONDITION_ALWAYS, 1, PIXELS(246), 0, PIXELS(318), FACING_SOUTH + FACING_STEP, 2, 0},
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 224, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(91, CONDITION_ALWAYS, (s32)gKandoreanTemple_LookAroundScript, 264, 0, 424, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 424, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 334, 0, 317, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 284, 0, 328, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 246, 0, 318, FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gKandoreanTemple_PoisHallPlacements[] = {
-    {407, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(676), FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(676), FACING_SOUTH, 2, 1},
-    {407, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(376), FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(376), FACING_SOUTH, 2, 1},
-    {21, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(664), FACING_SOUTH, 3, 0},
-    {91, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(696), FACING_SOUTH, 2, 0},
-    {91, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(696), FACING_SOUTH, 2, 0},
-    {91, CONDITION_ALWAYS, 1, PIXELS(400), 0, PIXELS(712), FACING_SOUTH, 2, 0},
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {306, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateHighScript, PIXELS(439), 0, PIXELS(672), FACING_SOUTH, 2, 0},
-    {306, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateHighScript, PIXELS(359), 0, PIXELS(672), FACING_SOUTH, 2, 0},
-    {306, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateLowScript, PIXELS(412), 0, PIXELS(324), FACING_SOUTH, 2, 0},
-    {306, CONDITION_ALWAYS, (s32)gKandoreanTemple_StandStillScript, PIXELS(90), 0, PIXELS(230), FACING_SOUTH, 2, 0},
-    {306, CONDITION_ALWAYS, (s32)gKandoreanTemple_StandStillScript, PIXELS(174), 0, PIXELS(72), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 676, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 676, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 664, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateHighScript, 439, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateHighScript, 359, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateLowScript, 412, 0, 324, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_StandStillScript, 90, 0, 230, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_StandStillScript, 174, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3303,10 +3304,10 @@ struct Trigger gKandoreanTemple_Events[] = {
 struct Trigger gKandoreanTemple_LiftRoomEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x31, 3, CONDITION_ALWAYS, 3},
-    {0x31, 4, CONDITION_ALWAYS, 4},
-    {8, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingBlock)},
-    {9, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingBlock)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
     {TRIGGER_STEP, 10, 0x211, EVENT(KandoreanTemple_SinkIntoTheSteam)},
@@ -3323,12 +3324,12 @@ s16 gKandoreanTemple_Room2Events[] = {
 };
 
 struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[] = {
-    {0x31, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x304, EVENT(KandoreanTemple_StartMovingPot)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x304, EVENT(KandoreanTemple_FinishMovingPot)},
-    {0x602, 10, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
-    {0xc602, 11, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
-    {0x8602, 12, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(KandoreanTemple_ReadPoisSign)},
     {TRIGGER_STEP, 6, 0x92d, EVENT(KandoreanTemple_FightChestbeaters)},
     {TRIGGER_TABLE_END},
@@ -3336,9 +3337,9 @@ struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[] = {
 
 struct Trigger gKandoreanTemple_VentRoomEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x21, 2, CONDITION_ALWAYS, 2},
-    {8, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingPillar)},
-    {9, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingPillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveBySteamExit3)},
@@ -3347,13 +3348,13 @@ struct Trigger gKandoreanTemple_VentRoomEvents[] = {
 };
 
 struct Trigger gKandoreanTemple_Room5Events[] = {
-    {0x21, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
 
 struct Trigger gKandoreanTemple_Room6Events[] = {
-    {0x21, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_PushThroughTheSteam)},
@@ -3362,9 +3363,9 @@ struct Trigger gKandoreanTemple_Room6Events[] = {
 
 struct Trigger gKandoreanTemple_FogRoomEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x21, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0x21, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x20f, 0},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(KandoreanTemple_FightFog)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS,
@@ -3380,12 +3381,16 @@ struct Trigger gKandoreanTemple_FogRoomEvents[] = {
 struct Trigger gKandoreanTemple_GateEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x31, 3, CONDITION_ALWAYS, 3},
-    {0x4602, 6, CONDITION_ALWAYS, EVENT(KandoreanTemple_SlipIntoTheCrack)},
-    {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKandoreanTemple13))},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 6, CONDITION_ALWAYS,
+     EVENT(KandoreanTemple_SlipIntoTheCrack)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgKandoreanTemple13))},
     {TRIGGER_STEP, 20, 0x230, EVENT(KandoreanTemple_KradenSuspectsTheWall)},
-    {0x4602, 4, 0x212, EVENT(KandoreanTemple_OpenTheWellPassage)},
-    {0xc602, 5, 0x212, EVENT(KandoreanTemple_OpenTheWellPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 4, 0x212,
+     EVENT(KandoreanTemple_OpenTheWellPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, 0x212,
+     EVENT(KandoreanTemple_OpenTheWellPassage)},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TryTheLockedDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS,
@@ -3443,8 +3448,8 @@ struct Trigger gKandoreanTemple_PoisHallEvents[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {0x202, 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheWell)},
-    {0xc602, 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_DropThroughTheTrapdoor)},
+    {STEP_TRIGGER_WALKING, 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheWell)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_DropThroughTheTrapdoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x20f, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, 0x210, 0},
     {TRIGGER_TALK, 13, 0x849, MSGNO(MsgFieldHeWentInBeforeMeWhat)},

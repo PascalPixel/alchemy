@@ -3,6 +3,8 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
@@ -140,7 +142,7 @@ s32 Sanctum_Run(s32 unitId) {
   shop->partyAction = listWindow;
 
   shop->keeperResource =
-      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar__shop(unitId) + 80) + 40);
+      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(unitId) + 80) + 40);
 
   listWindow = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {
@@ -206,28 +208,6 @@ s32 Sanctum_Run(s32 unitId) {
 #define SERVICE_PRICE_WINDOW_WIDTH 23
 #endif
 
-// One source for all six editions: every local takes its default at the
-// top, in this order, and memberIndex is zeroed again after the windows.
-// How the listing's zeros come out of the defaults:
-// - listWindow's NULL comes first, so cse stores memberIndex's first 0 from
-//   listWindow's register, r11. A store from a high register is reloaded
-//   through a low one, the function's first reload, so r0: reload registers
-//   go round r0 to r3 from one instruction to the next, which is why redraw's
-//   1 then takes r1 and the 0x507 offset r2. listWindow is set again before
-//   any read, so its own mov from r0 is deleted after reload; only
-//   movs r0, #0 and the store remain.
-// - In Italian priceWindow's NULL is the second zero. cse1 stores it for the
-//   second memberIndex = 0 while its uses in the loop still exist; gcse then
-//   turns those uses into constants, which leaves it local to the first
-//   block and alive across the three calls: local-alloc gives it r5, ahead
-//   of global's choice for shop. unitId's 0 beside it is reloaded as a copy
-//   of r5, and both, with chooseAgain's 0, sink below the last call in
-//   sched2.
-// - With a price window the second store's zero is a temporary of its own,
-//   local to the first block across its four calls: local-alloc gives it r6
-//   (r5 holds the windows' style, 2), which leaves global one register short,
-//   so chooseAgain and priceWindow go to the stack and chooseAgain's 0 is
-//   stored from r6.
 s32 Sanctum_RunPartyService(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   void *priceWindow;
@@ -248,13 +228,7 @@ s32 Sanctum_RunPartyService(void) {
   unitId = 0;
   chooseAgain = 0;
   redraw = 1;
-  {
-    s8 *partyAction = &shop->partyAction;
-    /* FAKEMATCH(temporary): partyAction read through a pointer to it, so
-     * memberIndex's 0 is stored before it is read; as serviceKind =
-     * shop->partyAction, 4 of 297 instructions differ in tla-en. */
-    serviceKind = *partyAction;
-  }
+  serviceKind = shop->partyAction;
   Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
 
   listWindow = Window_CreateFar(1, 12, 13, 3, 2);
@@ -274,87 +248,79 @@ s32 Sanctum_RunPartyService(void) {
   }
 
   redraw = 2;
-loop:
-  if (chooseAgain != 0) {
-    chooseAgain = 0;
-    Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
-    redraw = 2;
-    memberIndex = 0;
-    while (memberIndex < shop->partyMemberCount) {
+  for (;;) {
+    if (chooseAgain != 0) {
+      chooseAgain = 0;
+      Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
+      redraw = 2;
+      memberIndex = 0;
+      while (memberIndex < shop->partyMemberCount) {
+        unitId = shop->partyMemberIds[memberIndex];
+        if (Sanctum_NeedsService(unitId, serviceKind) != 0)
+          break;
+        memberIndex++;
+      }
+    }
+
+    if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
-      if (Sanctum_NeedsService(unitId, serviceKind) != 0)
-        break;
-      memberIndex++;
+      MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
+      shop->mode = 3;
+      if (redraw == 2) {
+        Menu_CreateOwnerEntryObjectsFar(memberIndex / 4 * 4);
+        wait(1);
+      }
+      Sanctum_HighlightMembers(listWindow, memberIndex);
+      Sanctum_DrawFee(priceWindow, unitId);
+      redraw = 0;
     }
-  }
 
-  if (redraw != 0) {
-    unitId = shop->partyMemberIds[memberIndex];
-    MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
-    shop->mode = 3;
-    if (redraw == 2) {
-      Menu_CreateOwnerEntryObjectsFar(memberIndex / 4 * 4);
+    if ((gInput.pressed & KEY_A) != 0) {
       wait(1);
+      price = Sanctum_ServicePrice(unitId, serviceKind);
+      if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
+        Sound_PlayFar(SE_MENU_CANCEL);
+        continue;
+      }
+      WindowSprite_PrepareForRedrawFar(listWindow);
+      MessageArgument_PushFar(unitId, 1);
+      MessageArgument_PushFar(price, 5);
+      messageBase = (s32)MsgReviving;
+      Sanctum_ShowKeeperMessage(messageBase);
+      if (Sanctum_AskYesNo(0) != 0) {
+        Sanctum_ShowKeeperMessageHidingCursor(messageBase + 2);
+        chooseAgain = 1;
+        continue;
+      }
+      if ((u32)price > gMainRoutineWork.coins) {
+        Sound_PlayFar(SE_MENU_CANCEL);
+        Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
+        chooseAgain = 1;
+        continue;
+      }
+      MessageArgument_PushFar(unitId, 1);
+      Sanctum_ShowKeeperMessage(messageBase + 3);
+      Message_CloseFinishedWindowsFar();
+      Sanctum_ApplyService(unitId, serviceKind);
+      Sanctum_RunMemberIconBurst(memberIndex % 4);
+      Party_AdjustCoinsFar(-price);
+      Shop_DrawMoney();
+      MessageArgument_PushFar(unitId, 1);
+      Sanctum_ShowKeeperMessage(messageBase + 4);
+      if (Sanctum_CountMembersInNeed() != 0) {
+        chooseAgain = 1;
+        continue;
+      }
+      break;
     }
-    Sanctum_HighlightMembers(listWindow, memberIndex);
-    Sanctum_DrawFee(priceWindow, unitId);
-    redraw = 0;
-  }
-
-  if ((gInput.pressed & 1) != 0) {
+    if ((gInput.pressed & KEY_B) != 0) {
+      Sound_PlayFar(SE_MENU_CANCEL);
+      break;
+    }
+    redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4);
     wait(1);
-    price = Sanctum_ServicePrice(unitId, serviceKind);
-    if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
-      Sound_PlayFar(113);
-      goto loop;
-    }
-    WindowSprite_PrepareForRedrawFar(listWindow);
-    MessageArgument_PushFar(unitId, 1);
-    MessageArgument_PushFar(price, 5);
-    messageBase = (s32)MsgReviving;
-    Sanctum_ShowKeeperMessage(messageBase);
-    if (Sanctum_AskYesNo(0) != 0) {
-      Sanctum_ShowKeeperMessageHidingCursor(messageBase + 2);
-      chooseAgain = 1;
-      goto loop;
-    }
-    if ((u32)price > gMainRoutineWork.coins) {
-      Sound_PlayFar(113);
-      Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
-      chooseAgain = 1;
-      goto loop;
-    }
-    MessageArgument_PushFar(unitId, 1);
-    Sanctum_ShowKeeperMessage(messageBase + 3);
-    Message_CloseFinishedWindowsFar();
-    Sanctum_ApplyService(unitId, serviceKind);
-    Sanctum_RunMemberIconBurst(memberIndex % 4);
-    Party_AdjustCoinsFar(-price);
-    Shop_DrawMoney();
-    MessageArgument_PushFar(unitId, 1);
-    Sanctum_ShowKeeperMessage(messageBase + 4);
-    if (Sanctum_CountMembersInNeed() != 0) {
-      chooseAgain = 1;
-      goto loop;
-    }
-    goto done;
   }
-  if ((gInput.pressed & 2) != 0) {
-    Sound_PlayFar(113);
-    goto done;
-  }
-  {
-    s32 count = shop->partyMemberCount;
-    /* FAKEMATCH(temporary): the member count read into a local of its own, so
-     * it loads before memberIndex's address is set; as
-     * MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4), 2 of 297
-     * instructions differ in tla-en. */
-    redraw = MenuGrid_MoveCursor(&memberIndex, count, 4);
-  }
-  wait(1);
-  goto loop;
 
-done:
   Menu_ReleaseEntryObjectsFar();
   Window_CloseFar(priceWindow, 2);
   Window_CloseFar(listWindow, 2);
@@ -439,8 +405,6 @@ void Sanctum_HighlightMembers(void *window, s32 selected) {
 }
 
 /// Shows the selected member's service price, or that no treatment is needed.
-// As ☀️'s Sanctum_DrawFee. The service kind's variable takes the message
-// once the kind is no longer needed, as the native's register does.
 void Sanctum_DrawFee(s32 window, s32 unitId) {
   s32 kindOrMessage;
   s32 price;
@@ -478,14 +442,14 @@ void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *effect) {
   if (state == 0) {
     position.x = effect->sourceX;
     position.z = effect->sourceZ;
-    Vector_AddPolarOffset(0x280000, Random16(), &position);
+    Vector_AddPolarOffset(px(40), Random16(), &position);
     FieldParticle_SetPositionFar(effect, position.x, position.z);
     position.x = effect->sourceX;
     position.z = effect->sourceZ;
-    Vector_AddPolarOffset(0x40000, Random16(), &position);
+    Vector_AddPolarOffset(px(4), Random16(), &position);
     effect->x = position.x;
     effect->z = position.z;
-    effect->velocity = 0x20000;
+    effect->velocity = px(2);
     effect->acceleration = 0x6666;
     effect->flag = state;
     *statePointer = (u8)*statePointer + 1;
@@ -536,7 +500,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Task_Add(Sanctum_UpdateBurst, callbackPriority);
 
   position.x = shop->partyMemberX[member] << 16;
-  position.z = (shop->partyMemberY[member] << 16) - (12 << 16);
+  position.z = (shop->partyMemberY[member] << 16) - px(12);
 
   effectIndex = 0;
   effect = shop->effects;
@@ -571,7 +535,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   wait(20);
-  Sound_PlayFar(126);
+  Sound_PlayFar(SE_RECOVERY);
   shop->burstMember = -1;
   Animation_ApplyChildValuesToRecordFar(shop->partyMemberIcons[member], 0);
   wait(20);

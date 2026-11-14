@@ -21,6 +21,8 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "system/io_reg.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "event_work.h"
@@ -64,18 +66,14 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /// Actors the events move; the placement tables give each id its own person.
 enum AlhafraActorId {
   /// A Champa sailor watching the road before Briggs is caught.
-  /// ★ Named from the game: "That guy looked like the mayor of Madra... I'd
-  /// better go tell the others!" (MsgAlhafra28)
   ACTOR_LOOKOUT = ACTOR_FIRST_PLACED + 17,
   /// The boy too hungry to move, once Briggs is caught.
-  /// ★ Named from the game: "I'm so hungry I can't even move..."
-  /// (MsgAlhafra65)
   ACTOR_HUNGRY_BOY = ACTOR_FIRST_PLACED + 19
 };
 
-extern s16 gAlhafra_ActorPlacements[];
-extern s16 gAlhafra_ActorPlacementsOnceBriggsIsCaught[];
-extern s16 gAlhafra_ActorPlacementsOnceTheShipIsStolen[];
+extern struct ActorPlacement gAlhafra_ActorPlacements[];
+extern struct ActorPlacement gAlhafra_ActorPlacementsOnceBriggsIsCaught[];
+extern struct ActorPlacement gAlhafra_ActorPlacementsOnceTheShipIsStolen[];
 extern struct ActorPlacement gAlhafra_ActorPlacementsOnceTheMastIsCleared[];
 extern struct DoorStep gAlhafra_Doors[];
 
@@ -96,10 +94,10 @@ void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
                               s32 unused) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(step->script, step->x, step->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   Event_Wait(10);
@@ -196,16 +194,16 @@ void Alhafra_FreezePuddle(s32 a0, s32 a1) {
 
 void Alhafra_SailorToldToWork(void) {
   Event_SetMessageId((s32)MsgAlhafra50);
-  FieldEvent_ShowMessageThenWait(0x18, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_ArmCallback(19, -256, 0);
   Event_Wait(10);
-  Actor_ShowEmoteById(0x13, 0x107, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x13, 0, 0xa);
+  Actor_ShowEmoteById(19, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  FieldEvent_ShowMessageThenWait(19, 0, 10);
   FieldActor_StartRepeatedMotion(24, 3);
-  FieldEffect_SetAttached(0x18, 0x102);
+  FieldEffect_SetAttached(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(19, FACING_WEST, 0);
-  FieldEvent_ShowMessageThenWait(0x18, 0, 0);
+  FieldEvent_ShowMessageThenWait(24, 0, 0);
 }
 
 void Alhafra_GiveBreadToHungryBoy(void) {
@@ -217,14 +215,14 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Event_Wait(10);
   Actor_FaceActorById(ACTOR_HUNGRY_BOY, gMainRoutineWork.currentOwner, 0);
   Event_Wait(10);
-  Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 0xa);
-  Event_ShowMessageThenWait(-1, 0, 0xa);
+  Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 10);
+  Event_ShowMessageThenWait(-1, 0, 10);
   Actor_SetModeById(ACTOR_HUNGRY_BOY, 1);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 15);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 23);
   Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 0);
   Alhafra_TalkToHungryBoy(ACTOR_HUNGRY_BOY);
-  Actor_FaceDirection(ACTOR_HUNGRY_BOY, 0x4000, 0);
+  Actor_FaceDirection(ACTOR_HUNGRY_BOY, FACING_SOUTH, 0);
   Event_End();
 }
 
@@ -262,55 +260,55 @@ void Alhafra_FindGoldCoins(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra74);
-  FieldCamera_MoveWithinMapBounds(0x2300000, -1, 0x1f00000, 1);
+  FieldCamera_MoveWithinMapBounds(px(560), -1, px(496), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
-  Actor_FaceDirection(28, 0, 0);
-  Actor_FaceDirection(31, 0x6000, 0);
-  Actor_FaceDirection(30, 0x6000, 0);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
+  Actor_FaceDirection(28, FACING_EAST, 0);
+  Actor_FaceDirection(31, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(30, FACING_SOUTHWEST, 0);
   Actor_SetModeById(29, 5);
-  Sound_Play(0x59);
+  Sound_Play(MUS_089);
   gMainRoutineWork.currentOwner = 0x1d;
   ItemDisplay_ShowItem(0, 3);
   gMainRoutineWork.currentOwner = 4;
   Event_Wait(50);
   FieldActor_Jump(28, 6, 15);
   FieldActor_Jump(28, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_ArmCallback(29, 0x8000, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(20);
-  Actor_ShowEmoteById(0x1e, 0x108, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
-  Actor_ShowEmoteById(0x1d, 0x102, 0x28);
-  Actor_FaceDirection(29, 0x4000, 0);
+  Actor_ShowEmoteById(30, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
+  Actor_ShowEmoteById(29, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_FaceDirection(29, FACING_SOUTH, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_ArmCallback(29, 0, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(20);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x1f, 0, 0xa);
-  Actor_FaceDirection(30, 0, 0);
+  FieldEvent_ShowMessageThenWait(31, 0, 10);
+  Actor_FaceDirection(30, FACING_EAST, 0);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(20);
-  Actor_FaceDirection(31, 0x4000, 0);
+  Actor_FaceDirection(31, FACING_SOUTH, 0);
   Actor_SetAnimation(31, 6);
-  Actor_FaceDirection(30, 0xc000, 0);
+  Actor_FaceDirection(30, FACING_NORTH, 0);
   Actor_SetAnimation(30, 6);
-  Actor_FaceDirection(29, 0x4000, 0);
-  Actor_FaceDirection(28, 0xc000, 0);
+  Actor_FaceDirection(29, FACING_SOUTH, 0);
+  Actor_FaceDirection(28, FACING_NORTH, 0);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Event_End();
@@ -340,7 +338,7 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 72, 344);
       Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
       Event_Wait(10);
-      Actor_SetSpeed(actor, 0x10000, 0x8000);
+      Actor_SetSpeed(actor, 1);
       Actor_WalkToAndWait(actor, 56, 328);
       Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
       Actor_ArmCallback(actor, FACING_SOUTHEAST, 0);
@@ -422,7 +420,7 @@ s32 Scene_Initialize(void) {
       Actor_SetModeById(31, 6);
     }
     if (GameFlag_Get(FLAG_LET_INTO_CAVE)) {
-      Actor_SetPosition(12, PIXELS(56), PIXELS(328));
+      Actor_SetPosition(12, 56, 328);
       Actor_ArmCallback(12, FACING_EAST, 0);
     }
   } else {
@@ -431,7 +429,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(10, 3);
     Actor_GetById(24)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
     if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED))
-      Actor_SetPosition(14, PIXELS(536), PIXELS(760));
+      Actor_SetPosition(14, 536, 760);
     if (GameFlag_Get(FLAG_LOOKOUT_LEFT))
       Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
     FlagBlock_PlaceAllMarkingEdges((s32)&gAlhafra_Puddles);
@@ -444,26 +442,24 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
-    u16 *src = (u16 *)0x5000116;
+    u16 *src = (u16 *)&BG_PLTT_COLOR(8, 11);
 
     u32 c;
 
-    /* FAKEMATCH(dead): the four copies in a once-only block, whose end holds
-     * the order around it; as plain statements, 4 of 57 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): the four copies in a once-only block. */
     do {
       c = *src;
-      *(u16 *)0x50000f6 = c;
+      BG_PLTT_COLOR(7, 11) = c;
       src++;
       c = *src;
-      *(u16 *)0x50000f8 = c;
+      BG_PLTT_COLOR(7, 12) = c;
       src++;
       c = *src;
-      *(u16 *)0x50000fa = c;
+      BG_PLTT_COLOR(7, 13) = c;
       {
         u32 last = src[1];
 
-        *(u16 *)0x50000fc = last;
+        BG_PLTT_COLOR(7, 14) = last;
       }
     } while (0);
     MapGrid_CopyCellAttributes(37, 18, 2, 2, 37, 33);
@@ -499,51 +495,51 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra10);
-  Actor_SetSpeed(29, 0x10000, 0x8000);
-  Actor_SetSpeed(30, 0x10000, 0x8000);
-  Actor_SetSpeed(31, 0x10000, 0x8000);
-  Actor_SetSpeed(32, 0x10000, 0x8000);
-  Actor_SetSpeed(33, 0x10000, 0x8000);
-  Actor_SetSpeed(34, 0x10000, 0x8000);
-  Actor_SetSpeed(35, 0x10000, 0x8000);
-  Actor_SetSpeed(17, 0x8000, 0x4000);
-  Actor_SetSpeed(14, 0x8000, 0x4000);
+  Actor_SetSpeed(29, 1);
+  Actor_SetSpeed(30, 1);
+  Actor_SetSpeed(31, 1);
+  Actor_SetSpeed(32, 1);
+  Actor_SetSpeed(33, 1);
+  Actor_SetSpeed(34, 1);
+  Actor_SetSpeed(35, 1);
+  Actor_SetSpeed(17, 0.5);
+  Actor_SetSpeed(14, 0.5);
   if (a0 == 0x14) {
     Actor_WalkByAndWait(4, 0, -8);
   }
-  Actor_SetPosition(31, 0x1980000, 0x3680000);
-  Actor_SetPosition(32, 0x1880000, 0x3780000);
-  Event_ShowMessageThenWait(0x1f, 0, 0xa);
+  Actor_SetPosition(31, 408, 872);
+  Actor_SetPosition(32, 392, 888);
+  Event_ShowMessageThenWait(31, 0, 10);
   if (a0 == 0x14) {
-    Actor_FaceDirection(4, 0x4000, 0);
+    Actor_FaceDirection(4, FACING_SOUTH, 0);
   } else {
     Actor_ArmCallback(4, 0, 0);
   }
   Event_Wait(20);
-  FieldCamera_MoveTo(0x1900000, -1, 0x3280000, 1);
+  FieldCamera_MoveTo(400, CAMERA_KEEP, 808, 1);
   FieldCamera_WaitForArrival();
   Actor_WalkBy(31, 0, -96);
   Actor_WalkByAndWait(32, 0, -96);
   Actor_SetModeById(31, 1);
   Event_Wait(10);
-  Actor_FaceDirection(31, 0, 0);
-  Actor_FaceDirection(32, 0x8000, 0);
+  Actor_FaceDirection(31, FACING_EAST, 0);
+  Actor_FaceDirection(32, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(31, 0xa000, 0);
-  Actor_FaceDirection(32, 0xe000, 0);
+  Actor_FaceDirection(31, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(32, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(31, 0, 0);
-  Actor_FaceDirection(32, 0x8000, 0);
+  Actor_FaceDirection(31, FACING_EAST, 0);
+  Actor_FaceDirection(32, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(31, 0xa000, 0);
-  Actor_FaceDirection(32, 0xe000, 0);
+  Actor_FaceDirection(31, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(32, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(31, 0, 0);
-  Actor_SetPosition(33, 0x1880000, 0x3680000);
-  Actor_SetPosition(35, 0x1980000, 0x3680000);
-  FieldEvent_ShowMessageThenWait(0x21, 0, 0xa);
-  Actor_FaceDirection(31, 0x4000, 0);
-  Actor_FaceDirection(32, 0x3000, 0);
+  Actor_FaceDirection(31, FACING_EAST, 0);
+  Actor_SetPosition(33, 392, 872);
+  Actor_SetPosition(35, 408, 872);
+  FieldEvent_ShowMessageThenWait(33, 0, 10);
+  Actor_FaceDirection(31, FACING_SOUTH, 0);
+  Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_WalkBy(35, 0, -48);
   Actor_WalkByAndWait(33, 0, -48);
@@ -552,17 +548,17 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(31, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1f, 0, 0xa);
-  Actor_ShowEmote(33, 0x102, 30);
-  Actor_FaceDirection(33, 0x3000, 0);
+  FieldEvent_ShowMessageThenWait(31, 0, 10);
+  Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_FaceDirection(33, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(40);
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
-  Actor_FaceDirection(33, 0xc000, 0);
+  Actor_FaceDirection(33, FACING_NORTH, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x21, 0, 0xa);
-  Actor_FaceDirection(31, 0x5000, 0);
-  Actor_FaceDirection(32, 0xe000, 0);
+  FieldEvent_ShowMessageThenWait(33, 0, 10);
+  Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(32, FACING_NORTHEAST, 0);
   Event_Wait(20);
   Actor_SetAnimation(31, 3);
   Motion_SetModeAndWaitAnimation(32, 3);
@@ -570,15 +566,15 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_WalkBy(35, 32, -48);
   Actor_WalkByAndWait(33, 32, -48);
   Actor_WaitForMoveById(35);
-  Actor_FaceDirection(35, 0x5000, 0);
-  Actor_FaceDirection(33, 0x4000, 0);
+  Actor_FaceDirection(35, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(33, FACING_SOUTH, 0);
   Actor_SetSpritePriority(35, 3);
   Event_Wait(20);
-  Actor_SetPosition(34, 0x1900000, 0x3680000);
-  FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
-  Actor_FaceDirection(31, 0x4000, 0);
-  Actor_FaceDirection(32, 0x3000, 0);
-  Actor_FaceDirection(33, 0x4000, 0);
+  Actor_SetPosition(34, 400, 872);
+  FieldEvent_ShowMessageThenWait(34, 0, 10);
+  Actor_FaceDirection(31, FACING_SOUTH, 0);
+  Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(33, FACING_SOUTH, 0);
   Event_Wait(20);
   Actor_WalkByAndWait(34, 0, -32);
   Event_Wait(1);
@@ -586,18 +582,18 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(90);
   Motion_SetVarCbAndRefresh(34, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(34, 0, 10);
   Actor_WalkByAndWaitById(34, 0, -16);
   Event_Wait(1);
   Actor_SetModeById(34, 5);
   Event_Wait(60);
   Actor_WalkByAndWait(34, 8, -32);
-  Actor_FaceDirection(34, 0x4000, 0);
+  Actor_FaceDirection(34, FACING_SOUTH, 0);
   Event_Wait(1);
   Actor_SetModeById(34, 5);
   Event_Wait(30);
-  Actor_SetPosition(30, 0x1880000, 0x3680000);
-  Actor_SetPosition(29, 0x1980000, 0x3680000);
+  Actor_SetPosition(30, 392, 872);
+  Actor_SetPosition(29, 408, 872);
   Actor_WalkBy(30, 0, -32);
   Actor_WalkByAndWait(29, 0, -32);
   Actor_SetModeById(30, 1);
@@ -613,12 +609,12 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   Actor_ArmCallback(30, 0, 0);
   Event_Wait(20);
-  Actor_FaceDirection(30, 0xc000, 0);
+  Actor_FaceDirection(30, FACING_NORTH, 0);
   Event_Wait(10);
   FieldActor_Jump(30, 6, 15);
   FieldActor_Jump(30, 6, 23);
   Actor_SetAnimation(34, 1);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_SetMovementTypeById(29, (s32)gAlhafra_OfficialStepsBackScript);
   Event_Wait(20);
   Actor_WalkByAndWait(30, 0, -32);
@@ -626,26 +622,26 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_SetAnimationAndWait(29, 4);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
-  Actor_ShowEmote(0x1e, 0x102, 0x1e);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
+  Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_ArmCallback(30, 0, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_SetAnimation(29, 5);
   Actor_WalkByAndWait(30, 64, 0);
-  Actor_FaceDirection(29, 0x5000, 0);
-  Actor_FaceDirection(30, 0xe000, 0);
+  Actor_FaceDirection(29, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(30, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
   Actor_SetModeById(29, 1);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(0x1d, 0, 0xa);
+  Event_ShowMessageThenWait(29, 0, 10);
   Actor_Stop(31);
   Actor_Stop(32);
   Actor_Stop(33);
@@ -653,54 +649,54 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_Stop(35);
   Actor_SetModeById(29, 5);
   Event_Wait(50);
-  Actor_FaceDirection(31, 0x5000, 0);
-  Actor_FaceDirection(32, 0xe000, 0);
+  Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(32, FACING_NORTHEAST, 0);
   Event_Wait(40);
-  Actor_FaceDirection(31, 0x3000, 0);
-  Actor_FaceDirection(32, 0x2000, 0);
+  Actor_FaceDirection(31, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(32, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_SetMovementTypeById(14, (s32)gAlhafra_PasserbyWalksOffScript);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
-  Event_ShowMessageThenWait(0x1f, 0, 0xa);
+  Event_ShowMessageThenWait(31, 0, 10);
   Event_Wait(10);
   Actor_ArmCallback(32, 0xc000, 0);
   Event_Wait(20);
-  Actor_FaceDirection(32, 0x8000, 0);
+  Actor_FaceDirection(32, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(32, 0x4000, 0);
+  Actor_FaceDirection(32, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_FaceDirection(32, 0x8000, 0);
+  Actor_FaceDirection(32, FACING_WEST, 0);
   Event_Wait(20);
   Actor_ArmCallback(32, 0x1000, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x20, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(32, 0, 10);
   Actor_SetModeById(29, 1);
   Event_Wait(10);
-  Actor_ShowEmoteById(0x1d, 0x107, 0x1e);
-  Actor_FaceDirection(29, 0x8000, 0);
+  Actor_ShowEmoteById(29, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_FaceDirection(29, FACING_WEST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   EventCamera_FollowActor(29, 1);
   FieldCamera_WaitForArrival();
   Actor_WalkToAndWait(29, 488, 808);
-  Actor_FaceDirection(31, 0, 0);
-  Actor_FaceDirection(32, 0, 0);
-  Actor_FaceDirection(33, 0, 0);
-  Actor_FaceDirection(34, 0, 0);
-  Actor_FaceDirection(35, 0x3000, 0);
-  Actor_FaceDirection(30, 0, 0);
-  Actor_FaceDirection(29, 0xd000, 0);
+  Actor_FaceDirection(31, FACING_EAST, 0);
+  Actor_FaceDirection(32, FACING_EAST, 0);
+  Actor_FaceDirection(33, FACING_EAST, 0);
+  Actor_FaceDirection(34, FACING_EAST, 0);
+  Actor_FaceDirection(35, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(30, FACING_EAST, 0);
+  Actor_FaceDirection(29, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(29, 4);
-  FieldCamera_SetSpeed(0x40000, 0x8000);
-  FieldCamera_MoveTo(0x2880000, -1, 0x2180000, 1);
+  FieldCamera_SetSpeed(4);
+  FieldCamera_MoveTo(648, CAMERA_KEEP, 536, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
-  FieldCamera_MoveTo(0x1b80000, -1, 0x3280000, 1);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 808, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x10000, 0x2000);
+  FieldCamera_SetSpeed(1);
   Event_Wait(20);
   Actor_WalkByAndWait(33, 32, 36);
   Actor_WalkByAndWait(33, 32, 0);
@@ -708,70 +704,70 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_ArmCallback(33, 0xd000, 0);
   Event_Wait(30);
   FieldActor_StartRepeatedMotion(33, 3);
-  FieldEffect_SetAttached(0x21, 0x102);
+  FieldEffect_SetAttached(33, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
-  Actor_FaceDirection(33, 0x8000, 0);
+  Actor_FaceDirection(33, FACING_WEST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x21, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(33, 0, 10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(20);
   Actor_ArmCallback(29, 0, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x201d, 0, 0xa);
-  Actor_ShowEmoteById(0x22, 0x100, 0x28);
-  FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
-  Actor_FaceDirection(29, 0x8000, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 29, 0, 10);
+  Actor_ShowEmoteById(34, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  FieldEvent_ShowMessageThenWait(34, 0, 10);
+  Actor_FaceDirection(29, FACING_WEST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
-  Actor_FaceDirection(31, 0x5000, 0);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
+  Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
   Actor_ArmCallback(32, 0xe000, 0);
   Event_Wait(30);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x1f, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(31, 0, 10);
   Motion_SetModeAndWaitAnimation(32, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x20, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(32, 0, 10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
-  Actor_FaceDirection(31, 0x3000, 0);
-  Actor_FaceDirection(32, 0x2000, 0);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  Actor_FaceDirection(31, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(32, FACING_SOUTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
-  Actor_SetPosition(17, 0x1980000, 0x2b80000);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
+  Actor_SetPosition(17, 408, 696);
   Actor_WalkToAndWait(17, 408, 760);
   Actor_WalkToAndWait(17, 448, 792);
   Actor_WalkToAndWait(17, 448, 808);
   Actor_WalkByAndWait(30, 8, 0);
-  FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
-  Actor_ShowEmoteById(0x11, 0x101, 0x32);
-  Actor_FaceDirection(17, 0x8000, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
+  Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Actor_FaceDirection(17, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_ShowEmoteById(0x1e, 0x108, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
+  Actor_ShowEmoteById(30, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->waitMode = 0;
-  FieldEvent_ShowMessageThenWait(0x11, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(17, 0, 10);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(20);
-  Actor_SetSpeed(29, 0x8000, 0x4000);
-  Actor_SetSpeed(30, 0x8000, 0x4000);
-  Actor_SetSpeed(31, 0x8000, 0x4000);
-  Actor_SetSpeed(32, 0x8000, 0x4000);
-  Actor_SetSpeed(33, 0x8000, 0x4000);
-  Actor_SetSpeed(34, 0x8000, 0x4000);
-  Actor_SetSpeed(35, 0x8000, 0x4000);
-  Actor_SetSpeed(17, 0x8000, 0x4000);
+  Actor_SetSpeed(29, 0.5);
+  Actor_SetSpeed(30, 0.5);
+  Actor_SetSpeed(31, 0.5);
+  Actor_SetSpeed(32, 0.5);
+  Actor_SetSpeed(33, 0.5);
+  Actor_SetSpeed(34, 0.5);
+  Actor_SetSpeed(35, 0.5);
+  Actor_SetSpeed(17, 0.5);
   EventCamera_FollowActor(30, 1);
   FieldCamera_WaitForArrival();
   if (a0 == 0x15) {
@@ -842,9 +838,9 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(300);
   Actor_RefreshSelectorById(34);
   Event_Wait(50);
-  FieldCamera_MoveTo(0xf80000, -1, 0x2980000, 1);
+  FieldCamera_MoveTo(248, CAMERA_KEEP, 664, 1);
   FieldCamera_WaitForArrival();
-  FieldEvent_ShowMessageThenWait(0x11, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(17, 0, 10);
   Actor_ArmCallback(17, 0x3000, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(17, 3);
@@ -854,11 +850,11 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_WalkByAndWait(17, -16, 0);
   Actor_ArmCallback(17, 0, 0);
   Event_Wait(20);
-  Actor_FaceDirection(29, 0x8000, 0);
-  Actor_FaceDirection(31, 0x8000, 0);
-  Actor_FaceDirection(32, 0x8000, 0);
-  Actor_FaceDirection(30, 0, 0);
-  Actor_FaceDirection(33, 0, 0);
+  Actor_FaceDirection(29, FACING_WEST, 0);
+  Actor_FaceDirection(31, FACING_WEST, 0);
+  Actor_FaceDirection(32, FACING_WEST, 0);
+  Actor_FaceDirection(30, FACING_EAST, 0);
+  Actor_FaceDirection(33, FACING_EAST, 0);
   Actor_ArmCallback(34, 0, 0);
   Event_Wait(20);
   Actor_SetAnimation(30, 3);
@@ -869,19 +865,19 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetAnimation(35, 3);
   Motion_SetModeAndWaitAnimation(34, 3);
   Event_Wait(10);
-  Actor_FaceDirection(29, 0xc000, 0);
-  Actor_FaceDirection(31, 0xc000, 0);
-  Actor_FaceDirection(32, 0xc000, 0);
-  Actor_FaceDirection(30, 0xc000, 0);
-  Actor_FaceDirection(33, 0xc000, 0);
-  Actor_FaceDirection(34, 0xc000, 0);
-  Actor_SetSpeed(29, 0x1e666, 0xf333);
-  Actor_SetSpeed(30, 0x1e666, 0xf333);
-  Actor_SetSpeed(31, 0x1e666, 0xf333);
-  Actor_SetSpeed(32, 0x1e666, 0xf333);
-  Actor_SetSpeed(33, 0x1e666, 0xf333);
-  Actor_SetSpeed(34, 0x1e666, 0xf333);
-  Actor_SetSpeed(35, 0x1e666, 0xf333);
+  Actor_FaceDirection(29, FACING_NORTH, 0);
+  Actor_FaceDirection(31, FACING_NORTH, 0);
+  Actor_FaceDirection(32, FACING_NORTH, 0);
+  Actor_FaceDirection(30, FACING_NORTH, 0);
+  Actor_FaceDirection(33, FACING_NORTH, 0);
+  Actor_FaceDirection(34, FACING_NORTH, 0);
+  Actor_SetSpeed(29, 1.9);
+  Actor_SetSpeed(30, 1.9);
+  Actor_SetSpeed(31, 1.9);
+  Actor_SetSpeed(32, 1.9);
+  Actor_SetSpeed(33, 1.9);
+  Actor_SetSpeed(34, 1.9);
+  Actor_SetSpeed(35, 1.9);
   Actor_WalkBy(29, 0, -150);
   Actor_WalkBy(30, 0, -150);
   Actor_WalkBy(31, 0, -150);
@@ -911,64 +907,65 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
   if (a0 == 1) {
     FieldEvent_Wait(10);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 736);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   }
-  Actor_ShowEmote(ACTOR_LOOKOUT, 0x102, 0x1e);
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LOOKOUT, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LOOKOUT, 4);
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   if (a0 != 1) {
   } else {
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, -8, 0);
     Event_Wait(15);
     Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
-    FieldEffect_SetAttached(ACTOR_LOOKOUT, 0x102);
+    FieldEffect_SetAttached(ACTOR_LOOKOUT,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     Actor_GetById(ACTOR_LOOKOUT)->actionFlags &= 0xfe;
     Actor_WalkToAndWaitById(ACTOR_LOOKOUT, 192, 736);
     Event_Wait(1);
     Actor_GetById(ACTOR_LOOKOUT)->actionFlags |= 1;
     Event_Wait(10);
-    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
-    Actor_ShowEmote(ACTOR_LOOKOUT, 0x107, 30);
+    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
+    Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     Event_OpenMessage(ACTOR_LOOKOUT, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       Event_Wait(30);
       Motion_SetVarCbAndRefresh(ACTOR_LOOKOUT, 2);
       Event_Wait(20);
-      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
           (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
     } else {
       Event_Wait(30);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
           (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
-      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
     }
     Actor_GetById(4)->actionFlags &= 0xfe;
     Actor_WalkToAndWait(4, 152, 752);
     Event_Wait(1);
     Actor_GetById(4)->actionFlags |= 1;
-    Actor_FaceDirection(4, 0xe000, 0);
+    Actor_FaceDirection(4, FACING_NORTHEAST, 0);
     Event_Wait(20);
     Motion_SetModeAndWaitAnimation(ACTOR_LOOKOUT, 3);
     Event_Wait(10);
     Actor_ArmCallback(ACTOR_LOOKOUT, 0xe000, 0);
     Event_Wait(70);
-    Actor_ShowEmote(ACTOR_LOOKOUT, 0x100, 50);
-    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+    Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   }
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 184, 728);
   Actor_WalkByAndWait(ACTOR_LOOKOUT, 0, -110);
   if (a0 == 0) {
     Event_Wait(50);
-    Actor_SetPosition(ACTOR_LOOKOUT, 0x1080000, 0x2880000);
+    Actor_SetPosition(ACTOR_LOOKOUT, 264, 648);
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, 0, 32);
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, 150, 0);
   }
@@ -994,167 +991,126 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(95),
-    SCENE_EXIT_IF(1, 96, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 96, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 96, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 96, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 96, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 101, 8, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 2, 20, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(11, 98, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(12, 100, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(14, 97, 1, CONDITION_ALWAYS),
+    SCENE_EXITS(Alhafra1),
+    SCENE_EXIT_UNLESS(1, AlhafraInteriors, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AlhafraInteriors, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AlhafraInteriors, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AlhafraInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AlhafraInteriors, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AlhafraJail, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, WorldMap, 20, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, EasternAlhafra1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, AlhafranCave, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, AlhafraManor, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
-s16 gAlhafra_ActorPlacements[] = {
-    108, -1, 1, 0, 0, 456, 0, 0,
-    0, 544, FACING_SOUTH, 1, 109, -1, 1, 0,
-    0, 392, 0, 0, 0, 544, FACING_SOUTH, 1,
-    231, -1, 1, 0, 0, 280, 0, 0,
-    0, 280, 0, 1, 231, -1, 1, 0,
-    0, 272, 0, 0, 0, 296, 0, 1,
-    114, -1, 1, 0, 0, 72, 0, 0,
-    0, 320, FACING_SOUTH, 1, 115, -1, 1, 0,
-    0, 376, 0, 0, 0, 824, FACING_SOUTHEAST, 0,
-    116, -1, 1, 0, 0, 504, 0, 0,
-    0, 808, FACING_NORTH, 1, 114, -1, 1, 0,
-    0, 392, 0, 0, 0, 728, FACING_SOUTH, 1,
-    191, -1, 1, 0, 0, 392, 0, 0,
-    0, 744, FACING_NORTH, 1, 112, -1, 1, 0,
-    0, 248, 0, 0, 0, 664, FACING_NORTH, 1,
-    113, -1, 1, 0, 0, 296, 0, 0,
-    0, 520, FACING_NORTHWEST, 1, 128, -1, 1, 0,
-    0, 576, 0, 0, 0, 520, FACING_SOUTHEAST, 0,
-    186, -1, 1, 0, 0, 552, 0, 0,
-    0, 560, FACING_SOUTHEAST, 1, 195, -1, 1, 0,
-    0, 760, 0, 0, 0, 568, 0, 1,
-    215, -1, 1, 0, 0, 520, 0, 0,
-    0, 632, 0, 1, 224, -1, 1, 0,
-    0, 632, 0, 0, 0, 600, FACING_SOUTH, 1,
-    225, -1, 2, 0, 0, 648, 0, 0,
-    0, 568, FACING_SOUTH, 0, 39, -1, 1, 0,
-    0, 192, 0, 0, 0, 736, FACING_NORTHEAST, 2,
-    290, -1, 1, 0, 0, 504, 0, 0,
-    0, 568, FACING_SOUTH, 1, 290, -1, 1, 0,
-    0, 440, 0, 0, 0, 584, FACING_SOUTH, 1,
-    290, -1, 1, 0, 0, 712, 0, 0,
-    0, 600, FACING_SOUTH, 1, 19, -1, 1, 0,
-    0, 8, 0, 0, 0, 8, FACING_NORTH, 1,
-    20, -1, 1, 0, 0, 8, 0, 0,
-    0, 8, FACING_NORTH, 1, 88, -1, 1, 0,
-    0, 8, 0, 0, 0, 8, FACING_NORTH, 1,
-    88, -1, 1, 0, 0, 8, 0, 0,
-    0, 8, FACING_NORTH, 1, 114, -1, 1, 0,
-    0, 8, 0, 0, 0, 8, FACING_NORTH, 1,
-    112, -1, 1, 0, 0, 8, 0, 0,
-    0, 8, FACING_NORTH, 1, 93, -1, 1, 0,
-    0, 8, 0, 0, 0, 8, FACING_NORTH, 1,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct ActorPlacement gAlhafra_ActorPlacements[] = {
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 272, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 320, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 824, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 808, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 728, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 744, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 664, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 520, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 576, 0, 520, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 560, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(195, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 568, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(215, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 632, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(225, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 648, 0, 568, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 736, FACING_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 584, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(19, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    {SCENE_TABLE_END},
 };
 
-s16 gAlhafra_ActorPlacementsOnceBriggsIsCaught[] = {
-    108, -1, 1, 0, 0, 456, 0, 0,
-    0, 544, FACING_SOUTH, 1, 109, -1, 1, 0,
-    0, 392, 0, 0, 0, 544, FACING_SOUTH, 1,
-    231, -1, 1, 0, 0, 344, 0, 0,
-    0, 312, FACING_SOUTH, 0, 231, -1, 1, 0,
-    0, 296, 0, 0, 0, 312, 0x3000, 0,
-    114, -1, 1, 0, 0, 72, 0, 0,
-    0, 320, FACING_SOUTH, 0, 115, -1, 1, 0,
-    0, 376, 0, 0, 0, 824, FACING_NORTHEAST, 1,
-    116, -1, 2, 0, 0, 568, 0, 0,
-    0, 792, FACING_SOUTH, 0, 114, -1, 1, 0,
-    0, 392, 0, 0, 0, 728, FACING_SOUTH, 0,
-    191, -1, 1, 0, 0, 392, 0, 0,
-    0, 744, FACING_NORTH, 0, 112, -1, 2, 0,
-    0, 248, 0, 0, 0, 616, FACING_SOUTH, 0,
-    113, -1, 1, 0, 0, 296, 0, 0,
-    0, 520, FACING_NORTHWEST, 0, 128, -1, 1, 0,
-    0, 664, 0, 0, 0, 520, FACING_WEST, 1,
-    186, -1, 2, 0, 0, 712, 0, 0,
-    0, 600, FACING_SOUTH, 0, 195, -1, 1, 0,
-    0, 520, 0, 0, 0, 536, 0, 1,
-    215, -1, 1, 0, 0, 616, 0, 0,
-    0, 600, FACING_NORTHEAST, 0, 224, -1, 1, 0,
-    0, 728, 0, 0, 0, 504, FACING_NORTHWEST, 1,
-    225, -1, 1, 0, 0, 712, 0, 0,
-    0, 504, FACING_NORTH, 1, 115, -1, 1, 0,
-    0, 680, 0, 0, 0, 552, 0, 1,
-    116, -1, 1, 0, 0, 648, 0, 0,
-    0, 576, FACING_NORTHEAST, 1, 191, -1, 1, 0,
-    0, 536, 0, 0, 0, 616, FACING_SOUTH, 1,
-    114, -1, 1, 0, 0, 536, 0, 0,
-    0, 488, FACING_NORTH, 0, 128, -1, 1, 0,
-    0, 568, 0, 0, 0, 472, FACING_SOUTH, 0,
-    186, -1, 1, 0, 0, 600, 0, 0,
-    0, 456, FACING_NORTH, 1, 191, -1, 1, 0,
-    0, 616, 0, 0, 0, 456, FACING_SOUTH, 1,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct ActorPlacement gAlhafra_ActorPlacementsOnceBriggsIsCaught[] = {
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 312, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 824, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 568, 0, 792, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 728, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 744, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 248, 0, 616, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 520, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 520, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 712, 0, 600, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(195, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 536, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(215, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 600, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 504, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(225, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 504, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 552, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 576, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 616, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 488, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 472, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 456, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    {SCENE_TABLE_END},
 };
 
-s16 gAlhafra_ActorPlacementsOnceTheShipIsStolen[] = {
-    108, -1, 1, 0, 0, 456, 0, 0,
-    0, 544, FACING_SOUTH, 1, 109, -1, 1, 0,
-    0, 392, 0, 0, 0, 544, FACING_SOUTH, 1,
-    231, -1, 1, 0, 0, 280, 0, 0,
-    0, 280, 0, 1, 231, -1, 1, 0,
-    0, 272, 0, 0, 0, 296, 0, 1,
-    114, -1, 1, 0, 0, 56, 0, 0,
-    0, 328, 0, 1, 115, -1, 1, 0,
-    0, 376, 0, 0, 0, 824, FACING_NORTHEAST, 0,
-    116, -1, 2, 0, 0, 568, 0, 0,
-    0, 792, FACING_SOUTH, 0, 114, -1, 1, 0,
-    0, 392, 0, 0, 0, 728, FACING_SOUTH, 1,
-    191, -1, 1, 0, 0, 392, 0, 0,
-    0, 744, FACING_NORTH, 1, 112, -1, 2, 0,
-    0, 248, 0, 0, 0, 616, FACING_SOUTH, 0,
-    113, -1, 1, 0, 0, 296, 0, 0,
-    0, 520, FACING_NORTHWEST, 0, 128, -1, 1, 0,
-    0, 680, 0, 0, 0, 520, FACING_WEST, 1,
-    186, -1, 2, 0, 0, 712, 0, 0,
-    0, 600, FACING_SOUTH, 0, 195, -1, 1, 0,
-    0, 520, 0, 0, 0, 536, 0, 1,
-    215, -1, 2, 0, 0, 440, 0, 0,
-    0, 800, FACING_SOUTH, 0, 224, -1, 1, 0,
-    0, 632, 0, 0, 0, 600, FACING_SOUTH, 0,
-    225, -1, 1, 0, 0, 536, 0, 0,
-    0, 656, FACING_NORTHEAST, 0, 115, -1, 1, 0,
-    0, 680, 0, 0, 0, 552, 0, 0,
-    116, -1, 1, 0, 0, 648, 0, 0,
-    0, 568, FACING_NORTHEAST, 0, 191, -1, 1, 0,
-    0, 760, 0, 0, 0, 568, FACING_SOUTH, 1,
-    114, -1, 1, 0, 0, 536, 0, 0,
-    0, 488, FACING_NORTH, 1, 128, -1, 1, 0,
-    0, 568, 0, 0, 0, 472, FACING_SOUTH, 1,
-    186, -1, 1, 0, 0, 600, 0, 0,
-    0, 456, FACING_NORTH, 0, 191, -1, 1, 0,
-    0, 616, 0, 0, 0, 456, FACING_SOUTH, 0,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct ActorPlacement gAlhafra_ActorPlacementsOnceTheShipIsStolen[] = {
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 272, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 328, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 824, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 568, 0, 792, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 728, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 744, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 248, 0, 616, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 520, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 520, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 712, 0, 600, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(195, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 536, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(215, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 440, 0, 800, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 600, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(225, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 656, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 552, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 568, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 488, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 472, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 456, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 456, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAlhafra_ActorPlacementsOnceTheMastIsCleared[] = {
-    {115, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(552), FACING_SOUTH, 0, 0},
-    {115, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(520), FACING_SOUTHEAST + FACING_STEP, 1, 0},
-    {116, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(600), FACING_EAST, 0, 0},
-    {116, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(544), FACING_SOUTH + FACING_STEP, 1, 0},
-    {116, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(536), FACING_SOUTH + FACING_STEP, 0, 0},
-    {114, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(616), FACING_SOUTHEAST + FACING_STEP, 1, 0},
-    {114, CONDITION_ALWAYS, 1, PIXELS(560), 0, PIXELS(648), FACING_NORTH + FACING_STEP, 0, 0},
-    {114, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(320), FACING_SOUTHEAST + FACING_STEP, 0, 0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(520), FACING_SOUTHEAST + FACING_STEP, 0, 0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(568), FACING_EAST, 1, 0},
-    {128, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(600), FACING_SOUTH + FACING_STEP, 1, 0},
-    {112, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(552), FACING_EAST, 1, 0},
-    {112, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(624), FACING_EAST, 0, 0},
-    {112, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(592), FACING_EAST, 0, 0},
-    {113, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(576), FACING_EAST, 0, 0},
-    {113, CONDITION_ALWAYS, (s32)gAlhafra_LookAroundScript, PIXELS(648), 0, PIXELS(504), FACING_NORTH, 1, 0},
-    {113, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(608), FACING_EAST, 0, 0},
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 552, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 520, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 600, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 544, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 536, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 616, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 648, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 320, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 520, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 568, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 600, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 552, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 624, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 592, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 576, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, (s32)gAlhafra_LookAroundScript, 648, 0, 504, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 608, FACING_EAST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1189,22 +1145,22 @@ struct DoorStep gAlhafra_Doors[] = {
 };
 
 struct Trigger gAlhafra_Triggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 12, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 14, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc401, 97, CONDITION_ALWAYS, 7},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 97, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {0x1f3, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafra180)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafra180))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Alhafra_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
-    {0xc400, 9, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
     {TRIGGER_STEP, 18, CONDITION_ALWAYS, EVENT(Alhafra_DrawLookoutBehind)},
     {TRIGGER_STEP, 19, CONDITION_ALWAYS, EVENT(Alhafra_DrawLookoutInFront)},
     {TRIGGER_STEP, 20, FLAG_ALHAFRA_MADRANS_ARRIVED, EVENT(Alhafra_MadransArrive)},
@@ -1253,22 +1209,22 @@ struct Trigger gAlhafra_Triggers[] = {
 };
 
 struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 12, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 14, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc401, 97, CONDITION_ALWAYS, 7},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 97, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {0x1f3, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafra180)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafra180))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Alhafra_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
-    {0xc400, 9, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
     {TRIGGER_STEP, 25, FLAG_GOLD_COINS_FOUND, EVENT(Alhafra_FindGoldCoins)},
     {TRIGGER_TALK, 18, IF_FLAG_SET(0x8ff), MSGNO(MsgAlhafra94)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x8ff), MSGNO(MsgAlhafra95)},
@@ -1309,7 +1265,7 @@ struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgAlhafra67)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, FLAG_HUNGRY_BOY_FED, MSGNO(MsgAlhafra68)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgAlhafra72)},
-    {0x1c914, 27, CONDITION_ALWAYS, EVENT(Alhafra_GiveBreadToHungryBoy)},
+    {USE_ITEM_ON_ACTOR(ITEM_LARGE_BREAD), 27, CONDITION_ALWAYS, EVENT(Alhafra_GiveBreadToHungryBoy)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAlhafra73)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafra75)},
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafra77)},
@@ -1330,22 +1286,22 @@ struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[] = {
 };
 
 struct Trigger gAlhafra_TriggersOnceTheShipIsStolen[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 12, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 14, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc401, 97, CONDITION_ALWAYS, 7},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 97, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {0x1f3, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafra180)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafra180))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Alhafra_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
-    {0xc400, 9, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra170)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra171)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafra172)},
@@ -1398,18 +1354,18 @@ struct Trigger gAlhafra_TriggersOnceTheShipIsStolen[] = {
 };
 
 struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 12, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 14, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
-    {0xc401, 97, CONDITION_ALWAYS, 7},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Alhafra_EnterDoor)},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 97, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {0x1f3, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafra180)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafra180))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Alhafra_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra98)},
@@ -1462,17 +1418,27 @@ u32 gAlhafra_PasserbyWalksOffScript[] = {
     39, 1, 17,
 };
 
-DEFINE_G_DATA_02003434(gAlhafra_PasserbyLeadsFromCell21Script, 0x1b80000, 0x3200000, 0x1980000,
-    0x2f80000, 0x2f80000, 0x1980000, 0xf80000, 0x2a80000, 0xf80000, 0x2780000)
+u32 gAlhafra_PasserbyLeadsFromCell21Script[] = {                                                               
+      39,        2, 4,  0x1b80000, 0,   0x3200000, 1,  4,         0x1980000, 0, 0x2f80000,     1,  4,      
+      0x1980000, 0, 0x2f80000, 1,  4,   0x1980000, 0,  0x2a80000, 1,  4, 0xf80000,     0,  0x2a80000,     
+      1,         4, 0xf80000, 0,  0x2780000, 1,  39, 1,         22, 3, 0xd000, 17,         
+  };
 
-DEFINE_G_DATA_020034CC(gAlhafra_MayorFollowsFromCell21Script, 0x1a80000, 0x3180000, 0x1980000,
-    0x2f80000, 0x1980000, 0x2a80000, 0xf80000, 0x2a80000, 0x2980000)
+u32 gAlhafra_MayorFollowsFromCell21Script[] = {                                                               
+      39, 2,  4, 0x1a80000, 0, 0x3180000, 1,        4, 0x1980000, 0, 0x2f80000, 1, 4,  0x1980000, 0,      0x2a80000, 1,  
+      4,  0xf80000, 0, 0x2a80000, 1, 4,  0xf80000, 0, 0x2980000, 1, 39, 1, 22, 3,  0xd000, 17,     
+  };
 
-DEFINE_G_DATA_02003434(gAlhafra_OfficialFollowsFromCell21Script, 0x1b80000, 0x3280000, 0x1b80000,
-    0x3200000, 0x2f80000, 0x1980000, 0x1080000, 0x2a80000, 0x1080000, 0x2980000)
+u32 gAlhafra_OfficialFollowsFromCell21Script[] = {                                                               
+      39,        2, 4,  0x1b80000, 0,   0x3280000, 1,  4,         0x1b80000, 0, 0x3200000,     1,  4,      
+      0x1980000, 0, 0x2f80000, 1,  4,   0x1980000, 0,  0x2a80000, 1,  4, 0x1080000,     0,  0x2a80000,     
+      1,         4, 0x1080000, 0,  0x2980000, 1,  39, 1,         22, 3, 0xd000, 17,         
+  };
 
-DEFINE_G_DATA_020034CC(gAlhafra_FirstMadranFollowsFromCell21Script, 0x1b80000, 0x3280000, 0x1b80000,
-    0x3200000, 0x1980000, 0x2f80000, 0x1980000, 0x2a80000, 0x2a80000)
+u32 gAlhafra_FirstMadranFollowsFromCell21Script[] = {                                                               
+      39, 2,  4, 0x1b80000, 0, 0x3280000, 1,        4, 0x1b80000, 0, 0x3200000, 1, 4,  0x1980000, 0,      0x2f80000, 1,  
+      4,  0x1980000, 0, 0x2a80000, 1, 4,  0xf80000, 0, 0x2a80000, 1, 39, 1, 22, 3,  0xd000, 17,     
+  };
 
 u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
     39, 2, 4, 0x1980000, 0, 0x2f80000,
@@ -1481,8 +1447,10 @@ u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
     1, 22, 3, 0xd000, 17,
 };
 
-DEFINE_G_DATA_020034CC(gAlhafra_ElderFollowsFromCell21Script, 0x1980000, 0x2f80000, 0x1980000,
-    0x2a80000, 0x1180000, 0x2a80000, 0x1180000, 0x2b80000, 0x2b80000)
+u32 gAlhafra_ElderFollowsFromCell21Script[] = {                                                               
+      39, 2,  4, 0x1980000, 0, 0x2f80000, 1,        4, 0x1980000, 0, 0x2a80000, 1, 4,  0x1180000, 0,      0x2a80000, 1,  
+      4,  0x1180000, 0, 0x2b80000, 1, 4,  0xf80000, 0, 0x2b80000, 1, 39, 1, 22, 3,  0xd000, 17,     
+  };
 
 u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
     39, 2, 5, 0x100000, 0, 0,
@@ -1495,8 +1463,11 @@ u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
     17,
 };
 
-DEFINE_G_DATA_02003434(gAlhafra_SecondMadranFollowsFromCell21Script, 0x1980000, 0x2f80000, 0x1980000,
-    0x2f80000, 0x2a80000, 0x1180000, 0x1180000, 0x2b80000, 0x1000000, 0x2c80000)
+u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {                                                               
+      39,        2, 4,  0x1980000, 0,   0x2f80000, 1,  4,         0x1980000, 0, 0x2f80000,     1,  4,      
+      0x1980000, 0, 0x2a80000, 1,  4,   0x1180000, 0,  0x2a80000, 1,  4, 0x1180000,     0,  0x2b80000,     
+      1,         4, 0x1000000, 0,  0x2c80000, 1,  39, 1,         22, 3, 0xd000, 17,         
+  };
 
 s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
     39, 2, 5, 0, 0, -0x100000,

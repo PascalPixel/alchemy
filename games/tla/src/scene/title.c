@@ -84,7 +84,7 @@ s32 Title_Run(void) {
 
   if (gMainRoutineWork.entrance == 10) {
     Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-    Event_PlaySound(75);
+    Event_PlaySound(MUS_075);
     Title_RevealScreen(0);
     wait(120);
     for (frames = 0; frames <= 3599; frames++) {
@@ -96,32 +96,32 @@ s32 Title_Run(void) {
     return 0;
   }
   if (gMainRoutineWork.entrance == 8) {
-    Event_PlaySound(68);
+    Event_PlaySound(MUS_068);
     Credits_Run(1);
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);
     ScreenFade_Wait();
     Event_Wait(240);
-    Event_PlaySound(0);
+    Event_PlaySound(MUS_000);
     Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
   }
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00B);
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
-      Event_PlaySound(0);
+      Event_PlaySound(MUS_000);
       Title_ShowNintendoLogo(0);
       Title_ShowCamelotLogo(0);
       if (Save_ScanFileSummaries() > 0) {
-        Event_PlaySound(40);
+        Event_PlaySound(MUS_040);
         TitleIntro_Run(1);
         if (Title_ShowIntro(1) == 0) {
-          Event_PlaySound(78);
+          Event_PlaySound(SOUND_FADE_OUT_BGM);
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
           /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
-           * after the wait call, where sched2 would fill the call's stall
-           * with it; without it, 2 of 155 instructions differ in tla-en. */
+           * after the wait call, where sched2 would fill the call's stall with
+           * it. */
           do {
           } while (0);
           frames = 0;
@@ -139,10 +139,10 @@ s32 Title_Run(void) {
       }
       break;
     }
-    Event_SetDestination((s32)&SceneId_Ov64a, 1);
+    Event_SetDestination((s32)&SceneId_Clear, 1);
   } else {
     if (gMainRoutineWork.entrance == 2) {
-      Event_PlaySound(40);
+      Event_PlaySound(MUS_040);
       TitleIntro_Run(0);
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
@@ -150,19 +150,19 @@ s32 Title_Run(void) {
       Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
-      Event_PlaySound(75);
+      Event_PlaySound(MUS_075);
       Title_ShowIntro(0);
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderFelix();
-      Event_SetDestination((s32)&SceneId_Ov650, 13);
+      Event_SetDestination((s32)&SceneId_Idejima, 13);
     }
   }
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
   Event_Wait(60);
-  Event_PlaySound(0);
+  Event_PlaySound(MUS_000);
   return 0;
 }
 
@@ -209,9 +209,7 @@ void Title_RevealSpriteRow(void) {
   i = 0;
   y = 0x88;
   do {
-    /* FAKEMATCH(temporary): the row's y copied to n, so 0x88 is rebuilt in n's
-     * register each pass; as y used directly, which stays in r8, 20 of
-     * 70 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the row's y copied to n. */
     n = y;
     x = 232 - (18 - i) * 8;
     *w++ = 0;
@@ -252,9 +250,6 @@ void Title_RevealScreen(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
   Event_Wait(120);
-  // A goto loop: it carries no loop notes, so each pass reloads the queue and
-  // interrupt register addresses; as a for or do-while loop, 90 instructions
-  // differ in tla-en.
   i = 0;
 fade:
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - i, IO_WRITE_16);
@@ -270,9 +265,7 @@ fade:
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): the decode forwarded through this inline keeps the
-   * buffer address a constant of each call, as The Broken Seal's system call
-   * layer does; as a direct call, which keeps the address in r5, 17
-   * of 94 instructions differ in tla-en. */
+   * buffer address a constant of each call. */
   Decompress_TaggedLz(source, destination);
 }
 
@@ -298,14 +291,12 @@ void Title_LoadBackground(void) {
   Dma_Set(encodedGraphics, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   encodedGraphics += 0x1c0;
   Decode_(encodedGraphics, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800,
+  Dma_Set((void *)Ram_MapCellBuffer, BG_SCREEN_BLOCK(13),
           DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
 
   // Fill the visible 30 columns and pad each 32-entry tilemap row.
   tilemap = (u16 *)0x06003000;
   tileIndex = 0x1a0;
-  // Written with goto: as for loops, the pinned column counter keeps its exit
-  // test ahead of the loop (differ 17).
   screenY = 0;
 row:
   screenX = 0;

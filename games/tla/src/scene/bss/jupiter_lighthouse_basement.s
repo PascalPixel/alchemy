@@ -22,14 +22,14 @@ gLightSpriteCount:
 	.global gLightSpriteActors
 gLightSpriteActors:
 	.space 0x00000040
-	.global Data_02002434
-Data_02002434:
+	.global gLightSpriteOam
+gLightSpriteOam:
 	.space 0x000000c0
-	.global gData_020024f4
-gData_020024f4:
+	.global gLightSpriteLargeOam
+gLightSpriteLargeOam:
 	.space 0x00000002
-	.global gData_020024f6
-gData_020024f6:
+	.global gJupiterLighthouse_LightLevel
+gJupiterLighthouse_LightLevel:
 	.space 0x00000002
 	.global gCrackedTiles
 gCrackedTiles:

@@ -29,10 +29,10 @@ struct JupiterLighthouseRoom7Cell {
   s16 z;
 };
 
-extern s16 gData_02002c64[][2];
+extern s16 gJupiterLighthouse_Room7Spots[][2];
 
-void Func_020005e8(s32 mode);
-void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz);
+void JupiterLighthouse_SetRoom7Lights(s32 mode);
+void JupiterLighthouse_DropObject(s32 id, s32 x, s32 z, s32 dx, s32 dz);
 void Leader_CenterInCell(void);
 #include "system/main_routine_work.h"
 #include "call.h"
@@ -58,7 +58,7 @@ void Leader_CenterInCell(void);
 #include "shared/tables.h"
 #include "objcmd.h"
 
-extern s16 gData_020031c4[];
+extern s16 gJupiterLighthouse_Room7PoundTargets[];
 extern s32 gPaletteCyclePausesInEvents;
 extern s16 gLightSpriteCount;
 void JupiterLighthouse_OpenDoor(s32 value);
@@ -90,7 +90,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #include "shared/button_step_off.h"
 
-void Func_02000184(void) {
+void JupiterLighthouse_MoveAndCheckBlock(void) {
   System_Wait(10);
   JupiterLighthouse_CheckBlockOnCell();
 }
@@ -102,7 +102,7 @@ void Func_02000184(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02000194(void) {
+s32 JupiterLighthouse_FindStatueSpots(void) {
   s32 v5, v6, v7;
   struct Actor *v8;
   struct Actor *t2;
@@ -173,7 +173,7 @@ L_02008288:
   return v7;
 }
 
-s32 Func_02000290(void) {
+s32 JupiterLighthouse_CountSpotsTaken(void) {
   s32 count = 0;
 
   if (Event_GetFlag(0xa10) || Event_GetFlag(0xa12) || Event_GetFlag(0xa14))
@@ -185,7 +185,7 @@ s32 Func_02000290(void) {
 
 /// Copies the map cells and sets the cell values that flags 0xa10 to 0xa15 call
 /// for.
-void Func_020002f0(void) {
+void JupiterLighthouse_ResetRoom7(void) {
   MapGrid_CopyCellsLayered(94, 60, 9, 8, 94, 10);
   Call4((void (*)())MapGrid_SetCellHeight, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x1f00000, 0x1000000, 0, -2);
@@ -230,18 +230,18 @@ void Func_020002f0(void) {
   }
 }
 
-s32 Func_020005a0(struct Actor *actor) {
+s32 JupiterLighthouse_IsOnSpot(struct Actor *actor) {
   s32 i;
 
-  for (i = 0; gData_02002c64[i][0] != -1; i++) {
-    if (gData_02002c64[i][0] == actor->x >> 20 &&
-        gData_02002c64[i][1] == actor->z >> 20)
+  for (i = 0; gJupiterLighthouse_Room7Spots[i][0] != -1; i++) {
+    if (gJupiterLighthouse_Room7Spots[i][0] == actor->x >> 20 &&
+        gJupiterLighthouse_Room7Spots[i][1] == actor->z >> 20)
       return 1;
   }
   return 0;
 }
 
-void Func_020005e8(s32 mode) {
+void JupiterLighthouse_SetRoom7Lights(s32 mode) {
   struct Actor *object;
   s32 i, frame;
 
@@ -256,7 +256,7 @@ void Func_020005e8(s32 mode) {
       i = 0;
     L_0200864e:
       object = Actor_Get(i + 10);
-      if (Func_020005a0(object)) {
+      if (JupiterLighthouse_IsOnSpot(object)) {
         object->motionFlags = 0;
         object->y -= px(2);
       }
@@ -292,7 +292,7 @@ void Func_020005e8(s32 mode) {
       i = 0;
     L_0200870c:
       object = Actor_Get(i + 10);
-      if (Func_020005a0(object)) {
+      if (JupiterLighthouse_IsOnSpot(object)) {
         object->motionFlags = 0;
         object->y += px(2);
       }
@@ -306,7 +306,7 @@ void Func_020005e8(s32 mode) {
     i = 0;
   L_02008744:
     object = Actor_Get(i + 10);
-    if (Func_020005a0(object)) {
+    if (JupiterLighthouse_IsOnSpot(object)) {
       object->motionFlags = 4;
       object->y = 0x208000;
     }
@@ -315,7 +315,7 @@ void Func_020005e8(s32 mode) {
   }
 }
 
-void Func_02000778(s32 unused, s32 id) {
+void JupiterLighthouse_StartMovingStatue(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 20) {
@@ -326,16 +326,17 @@ void Func_02000778(s32 unused, s32 id) {
 
 // Jupiter Lighthouse room 7's push handler for objects 18 to 20: an object not
 // on the ground falls into place (sound 188). Object 18 or 19 then checks its
-// spot (Func_02000194), resets the room, plays sound 167 for the spots that
-// count, and when all is set (Func_02000290 returns 2 with flag 2582) clears
-// that flag and shows object 17 changing (sound 151) from the camera at (664,
-// 136). Object 20 on cell (8, 12) sets flag 2586, plays sound 167 and with flag
-// 2583 shows object 9 changing; off that cell it marks the cell it stands on.
+// spot (JupiterLighthouse_FindStatueSpots), resets the room, plays sound 167
+// for the spots that count, and when all is set
+// (JupiterLighthouse_CountSpotsTaken returns 2 with flag 2582) clears that flag
+// and shows object 17 changing (sound 151) from the camera at (664, 136).
+// Object 20 on cell (8, 12) sets flag 2586, plays sound 167 and with flag 2583
+// shows object 9 changing; off that cell it marks the cell it stands on.
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 
-void Func_020007a4(s32 unused, s32 id) {
+void JupiterLighthouse_PlaceStatue(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 spot;
   s32 i;
@@ -357,12 +358,12 @@ void Func_020007a4(s32 unused, s32 id) {
     object->motionFlags = 0;
   }
   if ((u32)(id - 18) <= 1) {
-    spot = Func_02000194();
+    spot = JupiterLighthouse_FindStatueSpots();
     if (spot == -1)
       return;
     Actor_SetSpriteFlags(Actor_GetById(id), 0);
     Event_Wait(30);
-    Func_020002f0();
+    JupiterLighthouse_ResetRoom7();
     if (spot == 0)
       Event_PlaySound(SE_MAP_TRANSITION);
     if (spot == 1)
@@ -373,7 +374,7 @@ void Func_020007a4(s32 unused, s32 id) {
       Event_PlaySound(SE_MAP_TRANSITION);
     Actor_Stop(gMainRoutineWork.currentOwner);
     Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
-    if (Func_02000290() != 2 || !Event_GetFlag(2582))
+    if (JupiterLighthouse_CountSpotsTaken() != 2 || !Event_GetFlag(2582))
       return;
     object = Actor_GetById(17);
     Event_ClearFlag(2582);
@@ -400,7 +401,7 @@ void Func_020007a4(s32 unused, s32 id) {
     Actor_SetSpriteFlags(Actor_GetById(20), 0);
     Event_Wait(30);
     Event_PlaySound(SE_MAP_TRANSITION);
-    Func_020005e8(1);
+    JupiterLighthouse_SetRoom7Lights(1);
     if (!Event_GetFlag(2583))
       return;
     object = Actor_GetById(9);
@@ -416,11 +417,13 @@ void Func_020007a4(s32 unused, s32 id) {
   }
 }
 
-void Func_020009d8(void) { Event_ResolvePendingActions(0); }
+void JupiterLighthouse_StartPound(void) { Event_ResolvePendingActions(0); }
 
-void Func_020009e4(s32 a, s32 b) { Func_02001a48(gData_020031c4, a, b); }
+void JupiterLighthouse_SinkPoundTarget(s32 a, s32 b) {
+  Pound_SinkTarget(gJupiterLighthouse_Room7PoundTargets, a, b);
+}
 
-void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
+void JupiterLighthouse_DropObject(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   struct Actor *object = Actor_Get(id);
 
   Actor_SetPositionFixed(id, (x << 20) + px(8), (z << 20) + px(8));
@@ -434,11 +437,12 @@ void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
 }
 
 /// Drops objects 18 and 19 once any of flags 2576 to 2581 is set: the camera
-/// moves to (592, 248), each object drops (Func_020009f8) at the spot whose
-/// flag is set ((35, 15), (31, 16) or (33, 10)), the six flags are cleared,
-/// Func_020002f0 resets the room, both objects are waited on until they land
-/// (at most 30 frames each) and stop, and the camera follows the leader again.
-void Func_02000a74(void) {
+/// moves to (592, 248), each object drops (JupiterLighthouse_DropObject) at the
+/// spot whose flag is set ((35, 15), (31, 16) or (33, 10)), the six flags are
+/// cleared, JupiterLighthouse_ResetRoom7 resets the room, both objects are
+/// waited on until they land (at most 30 frames each) and stop, and the camera
+/// follows the leader again.
+void JupiterLighthouse_DropStatuesOnSpots(void) {
   struct Actor *object;
   s32 i;
 
@@ -450,24 +454,24 @@ void Func_02000a74(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   if (Event_GetFlag(2576))
-    Func_020009f8(18, 35, 15, -16, 0);
+    JupiterLighthouse_DropObject(18, 35, 15, -16, 0);
   if (Event_GetFlag(2577))
-    Func_020009f8(19, 35, 15, -16, 0);
+    JupiterLighthouse_DropObject(19, 35, 15, -16, 0);
   if (Event_GetFlag(2578))
-    Func_020009f8(18, 31, 16, 16, 0);
+    JupiterLighthouse_DropObject(18, 31, 16, 16, 0);
   if (Event_GetFlag(2579))
-    Func_020009f8(19, 31, 16, 16, 0);
+    JupiterLighthouse_DropObject(19, 31, 16, 16, 0);
   if (Event_GetFlag(2580))
-    Func_020009f8(18, 33, 10, -16, 0);
+    JupiterLighthouse_DropObject(18, 33, 10, -16, 0);
   if (Event_GetFlag(2581))
-    Func_020009f8(19, 33, 10, -16, 0);
+    JupiterLighthouse_DropObject(19, 33, 10, -16, 0);
   Event_ClearFlag(2576);
   Event_ClearFlag(2577);
   Event_ClearFlag(2578);
   Event_ClearFlag(2579);
   Event_ClearFlag(2580);
   Event_ClearFlag(2581);
-  Func_020002f0();
+  JupiterLighthouse_ResetRoom7();
   System_Wait(2);
   object = Actor_Get(18);
   i = 0;
@@ -496,14 +500,14 @@ void Func_02000a74(void) {
   FieldCamera_WaitForArrival();
 }
 
-void Func_02000c7c(void) {
+void JupiterLighthouse_DropLastStatue(void) {
   struct Actor *object;
   s32 i;
 
   if (Event_GetFlag(0xa1a))
-    Func_020009f8(20, 8, 12, 16, 0);
+    JupiterLighthouse_DropObject(20, 8, 12, 16, 0);
   Event_ClearFlag(0xa1a);
-  Func_020005e8(1);
+  JupiterLighthouse_SetRoom7Lights(1);
   System_Wait(2);
   object = Actor_Get(20);
   for (i = 0; i < 30; i++) {
@@ -516,7 +520,7 @@ void Func_02000c7c(void) {
 
 void Leader_PushObjectAhead(void);
 
-void Func_02000cec(void) {
+void JupiterLighthouse_StepBetweenStatues(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *first = Actor_Get(18);
   struct Actor *second = Actor_Get(19);
@@ -553,7 +557,7 @@ void Func_02000cec(void) {
     Leader_PushObjectAhead();
 }
 
-void Func_02000e20(void) { Field_TryJumpForward(); }
+void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -575,7 +579,7 @@ L_02008e6e:
   FIELD_AT(t2, s32, 24) = 0xc000;
   t3 = ((s32)Actor_Get(8));
   FIELD_AT(t3, s32, 28) = 0xc000;
-  Actors_SetCellsOpen((s32)&gData_020031c4);
+  Actors_SetCellsOpen((s32)&gJupiterLighthouse_Room7PoundTargets);
   t5 = Event_GetFlag(0xa1b);
   if (t5 != 0) {
     Actor_SetPosition(16, 136, 600);
@@ -649,7 +653,8 @@ s32 Scene_PrepareMap(void) {
     Actor_SetPosition(14, 136, 328);
     Actor_SetPosition(15, 168, 328);
   }
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && Func_02000290() != 2) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
+      JupiterLighthouse_CountSpotsTaken() != 2) {
     Event_ClearFlag(0xa10);
     Event_ClearFlag(0xa12);
     Event_ClearFlag(0xa14);
@@ -657,7 +662,7 @@ s32 Scene_PrepareMap(void) {
     Event_ClearFlag(0xa13);
     Event_ClearFlag(0xa15);
   }
-  if (Func_02000290() == 2)
+  if (JupiterLighthouse_CountSpotsTaken() == 2)
     Event_ClearFlag(0xa16);
   else
     Event_SetFlag(0xa16);
@@ -668,14 +673,14 @@ s32 Scene_PrepareMap(void) {
   Actor_Get(18)->motionFlags = 0;
   Actor_Get(19)->motionFlags = 0;
   Actor_Get(20)->motionFlags = 0;
-  Func_020002f0();
+  JupiterLighthouse_ResetRoom7();
   if (!Event_GetFlag(0xa1a)) {
     object = Actor_Get(20);
     value = MapGrid_GetCellHeight(object->x, object->z, 0);
     MapGrid_SetCellHeight(object->x, object->z, 0, value + 2);
     MapGrid_SetAttributeBBitsAt(object->x, object->z, 0, 0x80);
   }
-  Func_020005e8(0);
+  JupiterLighthouse_SetRoom7Lights(0);
   return 0;
 }
 
@@ -819,14 +824,14 @@ void JupiterLighthouse_CheckBlockOnCell(void);
 
 void JupiterLighthouse_StepOffButton(void);
 
-void Func_02000184(void);
+void JupiterLighthouse_MoveAndCheckBlock(void);
 
-void Func_020009d8(void);
-void Func_02000a74(void);
+void JupiterLighthouse_StartPound(void);
+void JupiterLighthouse_DropStatuesOnSpots(void);
 
-void Func_02000c7c(void);
+void JupiterLighthouse_DropLastStatue(void);
 
-void Func_02000cec(void);
+void JupiterLighthouse_StepBetweenStatues(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
@@ -867,7 +872,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "shared/actors_set_cells_open.h"
 
 // Finds the current target's table row and shrinks it.
-void Func_02001a48(u16 *list, s32 mode, s32 count) {
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
   if (*list == 0xffff)
@@ -1050,7 +1055,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 #include "shared/cracked_tile_place_landing.h"
 
 // clang-format off
-s16 gData_02002c64[][2] = {
+s16 gJupiterLighthouse_Room7Spots[][2] = {
     {8, 16}, {10, 16}, {11, 16}, {12, 16}, {14, 16}, {15, 16}, {10, 18},
     {12, 18}, {13, 18}, {8, 20},  {10, 20}, {13, 20}, {15, 20}, {-1, 0},
 };
@@ -1058,7 +1063,7 @@ s16 gData_02002c64[][2] = {
 
 void JupiterLighthouse_FightWhorl(void);
 void JupiterLighthouse_StepOnButton(void);
-void Func_02000e20(void);
+void JupiterLighthouse_JumpForward(void);
 
 // clang-format off
 LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
@@ -1082,7 +1087,7 @@ LATE_DATA u32 gFieldEffect_LongScript[] = {
       SC_END,                                                                  
   };
 
-LATE_DATA s16 gData_020031c4[] = {
+LATE_DATA s16 gJupiterLighthouse_Room7PoundTargets[] = {
     17, 1, 0xa16, 9, 1, 0xa17, -1, 0,
 };
 
@@ -1130,34 +1135,34 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {STEP_TRIGGER_WALKING, 30, IF_FLAG_SET(0xa1a), EVENT(Func_02000e20)},
+    {STEP_TRIGGER_WALKING, 30, IF_FLAG_SET(0xa1a), EVENT(JupiterLighthouse_JumpForward)},
     {TRIGGER_STEP, 20, 0xa1b, EVENT(JupiterLighthouse_StepOnButton)},
     {TRIGGER_STEP, 21, 0xa1b, EVENT(JupiterLighthouse_StepOffButton)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 42, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 43, CONDITION_ALWAYS, EVENT(Func_02000cec)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepBetweenStatues)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepBetweenStatues)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 42, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepBetweenStatues)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepBetweenStatues)},
     {TALK_TRIGGER_FACING(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FightWhorl)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000778)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_020007a4)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000778)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_020007a4)},
-    {TRIGGER_PUSH, 35, CONDITION_ALWAYS, EVENT(Func_02000778)},
-    {TRIGGER_PUSHED, 35, CONDITION_ALWAYS, EVENT(Func_020007a4)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 20, CONDITION_ALWAYS, EVENT(Func_02000778)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT(Func_020007a4)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceStatue)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceStatue)},
+    {TRIGGER_PUSH, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingStatue)},
+    {TRIGGER_PUSHED, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceStatue)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 20, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceStatue)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0xa1b, EVENT(Func_02000184)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_FIRST), 17, 0xa16, EVENT(Func_020009d8)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0xa16, EVENT(Func_020009e4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_POUND), 17, 0xa16, EVENT(Func_02000a74)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0xa17, EVENT(Func_020009e4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_POUND), 9, 0xa17, EVENT(Func_02000c7c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0xa1b, EVENT(JupiterLighthouse_MoveAndCheckBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_FIRST), 17, 0xa16, EVENT(JupiterLighthouse_StartPound)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0xa16, EVENT(JupiterLighthouse_SinkPoundTarget)},
+    {PSYNERGY_ON_ACTOR(ABILITY_POUND), 17, 0xa16, EVENT(JupiterLighthouse_DropStatuesOnSpots)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0xa17, EVENT(JupiterLighthouse_SinkPoundTarget)},
+    {PSYNERGY_ON_ACTOR(ABILITY_POUND), 9, 0xa17, EVENT(JupiterLighthouse_DropLastStatue)},
     {TRIGGER_TABLE_END},
 };
 

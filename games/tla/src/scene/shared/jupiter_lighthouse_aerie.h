@@ -27,6 +27,6 @@ void Func_02001010(struct Actor *object);
 void Func_02002438(struct CellTarget *work, struct CellTargetEntry *entry);
 void Func_02002640(void);
 void Map_CenterOnFollowedPoint(void);
-void Func_02002b28(s32 id, s32 a);
+void Import_HangingVinePlace(s32 id, s32 a);
 
 #endif

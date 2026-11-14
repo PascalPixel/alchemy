@@ -58,15 +58,16 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
 extern struct Actor *gLightSpriteActors[];
-extern struct LightOam Data_02002434[];
+extern struct LightOam gLightSpriteOam[];
+void Import_MapGridSetCellHeight();
 
 void Leader_CenterInCell(void);
 
-void Func_02000074(void);
+void JupiterLighthouse_ClearSecondBushes(void);
 
-void Func_020000f8(void);
+void JupiterLighthouse_ClearThirdBushes(void);
 
-void Func_02000118(void);
+void JupiterLighthouse_CycloneToExit4(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
@@ -101,34 +102,41 @@ extern struct Trigger gJupiterLighthouseBasement_Room2Triggers[];
 
 void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
-static __inline__ void Func_02001d1c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                      s32 g) {
+static __inline__ void JupiterLighthouse_CopyTouchedCells(s32 a, s32 b, s32 c,
+                                                          s32 d, s32 e, s32 f,
+                                                          s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
-static __inline__ void Func_02001d44_(s32 a, s32 b, s32 c) {
+static __inline__ void JupiterLighthouse_GiveItem(s32 a, s32 b, s32 c) {
   FieldItem_JumpToLeader(a, b, c);
 }
 
-void Func_02000054(void) { Func_02001d1c_(69, 0, 4, 4, 67, 24, 1); }
+void JupiterLighthouse_ClearFirstBushes(void) {
+  JupiterLighthouse_CopyTouchedCells(69, 0, 4, 4, 67, 24, 1);
+}
 
-void Func_02000074(void) { Func_02001d1c_(64, 0, 4, 3, 89, 28, 1); }
+void JupiterLighthouse_ClearSecondBushes(void) {
+  JupiterLighthouse_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
+}
 
-void Func_02000094(void) {
-  Func_02001d1c_(64, 0, 4, 3, 89, 28, 1);
+void JupiterLighthouse_UncoverMadPlant(void) {
+  JupiterLighthouse_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
   if (!Event_GetFlag(0x9b8)) {
-    Func_02001d44_(249, 424, 488);
+    JupiterLighthouse_GiveItem(249, 424, 488);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b8;
     gMainRoutineWork.battleRule24b = 2;
     Field_RequestBattleFromEncounterTable(106, 3);
   }
 }
 
-void Func_020000f8(void) { Func_02001d1c_(69, 1, 4, 3, 108, 31, 1); }
+void JupiterLighthouse_ClearThirdBushes(void) {
+  JupiterLighthouse_CopyTouchedCells(69, 1, 4, 3, 108, 31, 1);
+}
 
-void Func_02000118(void) { Import_EventSetExitRequest(4); }
+void JupiterLighthouse_CycloneToExit4(void) { Import_EventSetExitRequest(4); }
 
-void Func_02000124(void) { Import_EventSetExitRequest(6); }
+void JupiterLighthouse_CycloneToExit6(void) { Import_EventSetExitRequest(6); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement2)
@@ -136,7 +144,7 @@ const struct Trigger *Scene_GetEvents(void) {
   return gJupiterLighthouseBasement_Triggers;
 }
 
-void Func_0200015c(struct Actor *object) {
+void JupiterLighthouse_FloatMote(struct Actor *object) {
   if (Random16() & 0xff) {
     s32 position[3];
     s32 radius;
@@ -161,7 +169,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
-void Func_020001d8(struct Actor *object) {
+void JupiterLighthouse_PauseInMenus(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
@@ -178,7 +186,7 @@ void Func_020001d8(struct Actor *object) {
     return;
   }
   if (*(s16 *)((u8 *)object + 102) == 0)
-    Func_0200015c(object);
+    JupiterLighthouse_FloatMote(object);
   (*(s16 *)((u8 *)object + 102))--;
   /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
    * scheduling block. */
@@ -188,7 +196,7 @@ void Func_020001d8(struct Actor *object) {
   object->y += object->speedLimit;
 }
 
-void Func_02000298(void) {
+void JupiterLighthouse_SpawnSparks(void) {
   s32 i;
   s32 next;
 
@@ -204,7 +212,7 @@ void Func_02000298(void) {
     object->priorityFlags = 0;
     object->speedLimit = (i << 12) + 0x8000;
     object->acceleration = (i << 12) + 0x8000;
-    object->update = (void (*)(void))Func_020001d8;
+    object->update = (void (*)(void))JupiterLighthouse_PauseInMenus;
     OBJECT_BYTE(object, 99) = i << 3;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 2);
@@ -240,7 +248,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement2) {
     REG_BLDALPHA = 0x1008;
     REG_BLDCNT = 0x3f10;
-    Func_02000298();
+    JupiterLighthouse_SpawnSparks();
   }
   return 0;
 }
@@ -291,7 +299,7 @@ void Actor_RaiseFromCell(s32 id) {
   object->y = height + 0x200000;
   object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-  Func_02001c74(object->x, object->z, 0, (height >> 19) + 6);
+  Import_MapGridSetCellHeight(object->x, object->z, 0, (height >> 19) + 6);
   MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
 }
 
@@ -305,13 +313,13 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
-extern s16 gData_020024f6;
+extern s16 gJupiterLighthouse_LightLevel;
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 #include "shared/whirlwind_spawn.h"
 
-s32 Func_02000a64(struct Actor *object) {
+s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
   struct EffectOptions params;
 
   if ((gFrameCount & 7) == 0) {
@@ -332,7 +340,7 @@ s32 Func_02000a64(struct Actor *object) {
 }
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
-extern s16 gData_020024f4;
+extern s16 gLightSpriteLargeOam;
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -344,7 +352,7 @@ void LightSprites_Draw(void) {
   viewZ = view[1] & 0xffff0000;
   tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
-  oam = Data_02002434;
+  oam = gLightSpriteOam;
 
   for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gLightSpriteActors[i];
@@ -357,8 +365,8 @@ void LightSprites_Draw(void) {
       z = actor->z - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
-      big = gData_020024f4;
-      big = gData_020024f4;
+      big = gLightSpriteLargeOam;
+      big = gLightSpriteLargeOam;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
@@ -374,10 +382,10 @@ void LightSprites_Draw(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0x40002000;
         *word = (tile + frame * 8) | 0x800;
-        if (gData_020024f6 == -1)
+        if (gJupiterLighthouse_LightLevel == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
-          oam->priority = gData_020024f6;
+          oam->priority = gJupiterLighthouse_LightLevel;
         Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       } else {
@@ -395,10 +403,10 @@ void LightSprites_Draw(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
-        if (gData_020024f6 == -1)
+        if (gJupiterLighthouse_LightLevel == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
-          oam->priority = gData_020024f6;
+          oam->priority = gJupiterLighthouse_LightLevel;
         Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       }
@@ -418,8 +426,8 @@ void LightSprites_InitA(void) {
   Heap_Release(buffer);
   Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
-  gData_020024f4 = 0;
-  gData_020024f6 = -1;
+  gLightSpriteLargeOam = 0;
+  gJupiterLighthouse_LightLevel = -1;
 }
 
 void LightSprites_InitB(void) {
@@ -432,8 +440,8 @@ void LightSprites_InitB(void) {
   Heap_Release(buffer);
   Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
-  gData_020024f4 = 0;
-  gData_020024f6 = -1;
+  gLightSpriteLargeOam = 0;
+  gJupiterLighthouse_LightLevel = -1;
 }
 
 void LightSprites_InitC(void) {
@@ -446,13 +454,15 @@ void LightSprites_InitC(void) {
   Heap_Release(buffer);
   Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
-  gData_020024f4 = 1;
-  gData_020024f6 = -1;
+  gLightSpriteLargeOam = 1;
+  gJupiterLighthouse_LightLevel = -1;
 }
 
 #include "shared/light_sprites_add.h"
 
-void Func_02001008(s32 value) { gData_020024f6 = value; }
+void JupiterLighthouse_SetLightLevel(s32 value) {
+  gJupiterLighthouse_LightLevel = value;
+}
 
 #include "../field/object/set_sprite_priority.c"
 
@@ -538,7 +548,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
-void Func_0200015c(struct Actor *object);
+void JupiterLighthouse_FloatMote(struct Actor *object);
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
@@ -569,9 +579,9 @@ void CrackedTile_Fall();
 
 #include "shared/cracked_tile_place_landing.h"
 
-void Func_02000054(void);
-void Func_02000094(void);
-void Func_02000124(void);
+void JupiterLighthouse_ClearFirstBushes(void);
+void JupiterLighthouse_UncoverMadPlant(void);
+void JupiterLighthouse_CycloneToExit6(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {                                                               
@@ -621,12 +631,12 @@ struct Trigger gJupiterLighthouseBasement_Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(Func_02000074)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(Func_020000f8)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33, CONDITION_ALWAYS, EVENT(Func_02000118)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34, CONDITION_ALWAYS, EVENT(Func_02000124)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 38, CONDITION_ALWAYS, EVENT(Func_02000094)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ClearFirstBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ClearSecondBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ClearThirdBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneToExit4)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneToExit6)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 38, CONDITION_ALWAYS, EVENT(JupiterLighthouse_UncoverMadPlant)},
     {TRIGGER_TABLE_END},
 };
 

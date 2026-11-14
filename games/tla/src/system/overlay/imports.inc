@@ -123,7 +123,7 @@
 	export Actor_SetSpritePriorityDirect, Actor_SetSpritePriorityDirectFar
 	export WorldMap_GetCollision, WorldMap_GetCollisionFar
 	export TilesetAnim_ResumeAll, TilesetAnim_ResumeAllFar
-	export Func_02001c74, MapGrid_SetCellHeightFar
+	export Import_MapGridSetCellHeight, MapGrid_SetCellHeightFar
 	export Animation_ApplyChildValue, Animation_ApplyChildValueFar
 	export MapGrid_GetTerrainKind, MapGrid_GetTerrainKindFar
 	export Actor_HasArrived, Actor_HasArrivedFar
@@ -364,7 +364,7 @@
 	export UpdateRisingParticleBurst, UpdateRisingParticleBurstFar
 	export Djinn_JoinParty, Djinn_JoinPartyFar
 	export Camera_WorldToScreen, Camera_WorldToScreenFar
-	export Func_02002b28, HangingVine_PlaceFar
+	export Import_HangingVinePlace, HangingVine_PlaceFar
 	export Event_ClearInvalidPackedValues, Party_ClearUnusableShortcutsFar
 	export Actor_LaunchFromLeader, Actor_LaunchFromLeaderFar
 	export Actor_WalkByById, Actor_WalkByByIdFar
@@ -428,7 +428,7 @@
 	export Func_02002a0c, EffectSprite_InitFar
 	export EffectSprite_Init, EffectSprite_InitFar
 	export Exit_StartStairsUp, Exit_StartStairsUpFar
-	export Func_02002b38, EffectSprite_DrawFar
+	export Import_EffectSpriteDraw, EffectSprite_DrawFar
 	export EffectSprite_DrawAtWorldPosition, EffectSprite_DrawAtWorldPositionFar
 	export EffectSprite_Draw, EffectSprite_DrawFar
 	export BattleEffect_StepVector3, BattleEffect_StepVector3Far

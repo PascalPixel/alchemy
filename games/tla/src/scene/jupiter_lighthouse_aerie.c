@@ -55,9 +55,9 @@ struct LightOam;
 
 void LightSprites_SetPriority(s32 value);
 
-void Func_0200105c(struct Actor *object);
+void JupiterLighthouse_StartBeamFlicker(struct Actor *object);
 
-void Func_020017a8(s32 a, s32 b, s32 side);
+void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side);
 void LightSprites_InitB(void);
 void LightSprites_Add(s32 id, s32 value);
 
@@ -72,7 +72,7 @@ extern char ResourceId_GoldenTrident;
 void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
                        u32 attributes, s32 tile);
 
-void Func_02001080(void);
+void JupiterLighthouse_UpdateBeam(void);
 
 extern s16 gLightSpriteCount;
 extern struct Actor *gLightSpriteActors[];
@@ -110,7 +110,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
-void Func_02002b38(struct BeamSprite *sprite);
+void Import_EffectSpriteDraw(struct BeamSprite *sprite);
 void EffectSprite_DrawAtWorldPosition(struct BeamSprite *sprite,
                                       struct BeamSpark *spark);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
@@ -125,7 +125,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(s32 mode) {
+void JupiterLighthouse_EnergizeAngels(s32 mode) {
   struct Actor *left = Actor_Get(9);
   struct Actor *right = Actor_Get(10);
   struct Actor *rider = Actor_Get(23);
@@ -156,8 +156,8 @@ void Func_02000054(s32 mode) {
   if ((u32)(mode - 2) > 1)
     return;
   FieldEvent_Wait(30);
-  Func_0200105c(left);
-  Func_0200105c(right);
+  JupiterLighthouse_StartBeamFlicker(left);
+  JupiterLighthouse_StartBeamFlicker(right);
   Event_PlaySound(SE_522);
   for (i = 255; i >= 0; i--) {
     Actor_Get(9)->y += 0x1999;
@@ -175,55 +175,63 @@ void Func_02000054(s32 mode) {
   rider->motionFlags = 4;
 }
 
-void Func_020001b4(void) {
+void JupiterLighthouse_EnergizeLeftAngel(void) {
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Func_020017a8(11, 9, 0);
+  JupiterLighthouse_StartBeam(11, 9, 0);
   FieldEvent_Wait(40);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED) == 0) {
-    Func_02000054(0);
+    JupiterLighthouse_EnergizeAngels(0);
     FieldEvent_Wait(40);
   } else {
-    Func_02000054(2);
+    JupiterLighthouse_EnergizeAngels(2);
   }
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
-  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
-  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
-  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
-  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
+  JupiterLighthouse_StopBeamFlicker(
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
+  JupiterLighthouse_StopBeamFlicker(
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
+  JupiterLighthouse_StopBeamFlicker(
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
+  JupiterLighthouse_StopBeamFlicker(
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
   FieldCamera_WaitForArrival();
   Event_End();
 }
 
-void Func_02000264(void) {
+void JupiterLighthouse_EnergizeRightAngel(void) {
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Func_020017a8(12, 10, 1);
+  JupiterLighthouse_StartBeam(12, 10, 1);
   FieldEvent_Wait(40);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) == 0) {
-    Func_02000054(1);
+    JupiterLighthouse_EnergizeAngels(1);
     FieldEvent_Wait(40);
   } else {
-    Func_02000054(3);
+    JupiterLighthouse_EnergizeAngels(3);
   }
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
-  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
-  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
-  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
-  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
+  JupiterLighthouse_StopBeamFlicker(
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
+  JupiterLighthouse_StopBeamFlicker(
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
+  JupiterLighthouse_StopBeamFlicker(
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
+  JupiterLighthouse_StopBeamFlicker(
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
   FieldCamera_WaitForArrival();
   Event_End();
 }
 
-void Func_02000314(s32 unused, s32 actor) {
+void JupiterLighthouse_StartMovingAngelBlock(s32 unused, s32 actor) {
   struct JupiterLighthouseAerieObject *object =
       ((struct JupiterLighthouseAerieObject *)Actor_Get(actor));
 
@@ -234,11 +242,12 @@ void Func_02000314(s32 unused, s32 actor) {
 // object 14 on cell (57, 12) sets its flag (2570, 2571), falls into place
 // (waited on for at most 30 frames), copies cells
 // (MapGrid_CopyCellPictureCellsRect, Map_CopyCellAttributeRect) with sounds 134
-// and 167 and runs its part (Func_020001b4, Func_02000264); off its cell it
-// only marks the cell it stands on (MapGrid_SetCellHeight). With both flags
-// set, flag 2591 is set. The fall wait is an if around a do-while.
+// and 167 and runs its part (JupiterLighthouse_EnergizeLeftAngel,
+// JupiterLighthouse_EnergizeRightAngel); off its cell it only marks the cell it
+// stands on (MapGrid_SetCellHeight). With both flags set, flag 2591 is set. The
+// fall wait is an if around a do-while.
 
-void Func_0200032c(s32 unused, s32 id) {
+void JupiterLighthouse_PlaceAngelBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 i;
 
@@ -267,7 +276,7 @@ void Func_0200032c(s32 unused, s32 id) {
       Event_PlaySound(SE_MAP_TRANSITION);
       MapGrid_CopyCellsLayered(70, 39, 1, 1, 71, 10);
       FieldEvent_Wait(20);
-      Func_020001b4();
+      JupiterLighthouse_EnergizeLeftAngel();
     } else {
       MapGrid_SetCellHeight(object->x, object->z, 0, 6);
     }
@@ -297,7 +306,7 @@ void Func_0200032c(s32 unused, s32 id) {
       Event_PlaySound(SE_MAP_TRANSITION);
       MapGrid_CopyCellsLayered(72, 39, 1, 1, 120, 10);
       FieldEvent_Wait(20);
-      Func_02000264();
+      JupiterLighthouse_EnergizeRightAngel();
     } else {
       MapGrid_SetCellHeight(object->x, object->z, 0, 6);
     }
@@ -314,8 +323,8 @@ s32 Scene_Initialize(void) {
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   JupiterLighthouse_LoadPalettesZero(0);
-  Func_02002b28(15, 1);
-  Func_02002b28(16, 1);
+  Import_HangingVinePlace(15, 1);
+  Import_HangingVinePlace(16, 1);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
   Actor_Get(17)->priorityFlags |= 128;
   Actor_Get(18)->priorityFlags |= 128;
@@ -401,7 +410,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 
 #include "shared/actor_raise_from_cell.h"
 
-void Func_02000930(void) {
+void JupiterLighthouse_RideTheBeam(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
@@ -462,8 +471,8 @@ void Func_02000930(void) {
 
 #include "shared/position_flat_distance.h"
 
-extern s32 gData_0200331c[];
-extern s32 gData_0200333c;
+extern s32 gJupiterLighthouse_BeamScript[];
+extern s32 gJupiterLighthouse_BeamSparkScript;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
@@ -541,9 +550,9 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Actor_StartScript(self, gData_0200331c);
+    Actor_StartScript(self, gJupiterLighthouse_BeamScript);
     Event_PlaySound(SE_SPARKLING_PASSAGE);
-    gData_0200333c = zero;
+    gJupiterLighthouse_BeamSparkScript = zero;
   }
 }
 
@@ -574,7 +583,7 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   return object;
 }
 
-s32 Func_02000de0(struct Actor *object) {
+s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
   struct EffectOptions spark;
   s32 frame = gFrameCount & 7;
 
@@ -597,7 +606,7 @@ s32 Func_02000de0(struct Actor *object) {
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-void Func_02001010(struct Actor *object) {
+void JupiterLighthouse_FlickerBeam(struct Actor *object) {
   u8 *fill = &gDecodeFillByte;
   u8 *step = &BYTE_AT(object, 99);
   s32 phase = *step & 3;
@@ -618,12 +627,12 @@ void Func_02001010(struct Actor *object) {
   (*step)++;
 }
 
-void Func_0200105c(struct Actor *object) {
+void JupiterLighthouse_StartBeamFlicker(struct Actor *object) {
   BYTE_AT(object, 99) = 0;
-  WORD_AT(object, 108) = (s32)Func_02001010;
+  WORD_AT(object, 108) = (s32)JupiterLighthouse_FlickerBeam;
 }
 
-void Func_02001070(struct Actor *object) {
+void JupiterLighthouse_StopBeamFlicker(struct Actor *object) {
   WORD_AT(object, 108) = 0;
   Actor_SetSpriteColorMode(object, 4);
 }
@@ -653,7 +662,7 @@ struct BeamWork {
 
 #define LERP(from, to, t, n) ((from) + ((to) - (from)) * (t) / (n))
 
-void Func_02001080(void) {
+void JupiterLighthouse_UpdateBeam(void) {
   struct BeamWork *work = Ram_HeapSlots->menuRuntime;
   struct Actor *carrier = gFieldWork->camera;
   s32 t = work->frame;
@@ -748,7 +757,7 @@ void Func_02001080(void) {
   case 4:
     if (work->frame == 0) {
       Sound_Play(SE_SHIMMER);
-      Func_0200105c(work->second);
+      JupiterLighthouse_StartBeamFlicker(work->second);
     }
     large = &work->large;
     large->scaleY = large->scaleX = large->scaleX - 0x800;
@@ -778,7 +787,7 @@ void Func_02001080(void) {
   Camera_WorldToScreen(pos);
   large->x = pos[0];
   large->z = pos[2];
-  Func_02002b38(large);
+  Import_EffectSpriteDraw(large);
   for (i = 0, spark = work->sparks, sprite = work->sprites; i <= 7;
        i++, sprite++, spark++) {
     if (spark->age == 0) {
@@ -848,7 +857,7 @@ static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
   EffectSprite_Init(sprite, pivotX, pivotY, attributes, tile);
 }
 
-void Func_020017a8(s32 a, s32 b, s32 side) {
+void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   struct BeamWork__s17a8 *work =
       HeapSlot_Alloc(220, sizeof(struct BeamWork__s17a8));
   struct Actor *carrier = gFieldWork->camera;
@@ -922,17 +931,17 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   FieldActor_SetMoveTargetFixed(carrier, work->start[0], work->start[1],
                                 work->start[2]);
   Event_PlaySound(SE_SWIRL);
-  Func_0200105c(work->first);
+  JupiterLighthouse_StartBeamFlicker(work->first);
   FieldEvent_Wait(40);
   work->side = side;
   work->step = 0;
   work->unkb02 = 0;
   work->unkb09 = 1;
   work->unkb0a = 0;
-  Task_AddFrame(Func_02001080, 0x480);
+  Task_AddFrame(JupiterLighthouse_UpdateBeam, 0x480);
   while (work->step != 999)
     System_Wait(1);
-  FieldTask_Remove(Func_02001080);
+  FieldTask_Remove(JupiterLighthouse_UpdateBeam);
   VramCache_FreeEntry(largeEntry);
   VramCache_FreeEntry(smallEntry);
   HeapSlot_Release(220);
@@ -1113,7 +1122,7 @@ s32 CrackedTiles_Step(void) {
   return 0;
 }
 
-void Func_02002888(s32 dx, s32 dz, s32 value) {
+void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gCrackedTiles;
@@ -1196,12 +1205,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(Func_02000314)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(Func_0200032c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, EVENT(Func_02000314)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(Func_0200032c)},
-    {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(Func_02000314)},
-    {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(Func_0200032c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingAngelBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceAngelBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingAngelBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceAngelBlock)},
+    {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingAngelBlock)},
+    {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceAngelBlock)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1209,7 +1218,7 @@ s32 gPaletteCycleFrame = -1;
 
 s32 gPaletteCyclePausesInEvents = 1;
 
-s32 gData_0200331c[] = {
+s32 gJupiterLighthouse_BeamScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

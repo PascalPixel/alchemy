@@ -1016,7 +1016,7 @@ void YampiDesert_HideSlideActors(void) {
 /* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
  * declared it; the joined file has another; tried as the definition's extern
  * LATE_DATA u32 gYampiDesert_FinderRunsAhead[], it does not compile in tla-ja
- * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1108:
+ * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1069:
  * `gYampiDesert_FinderRunsAhead' undeclared (first use in this function). */
 extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
     "gYampiDesert_FinderRunsAhead");
@@ -1024,7 +1024,7 @@ extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
 /* VIEW(yampi_desert): routine gYampiDesert_TravelersFollow as this part
  * declared it; the joined file has another; tried as the definition's extern
  * LATE_DATA u32 gYampiDesert_TravelersFollow[], it does not compile in tla-ja
- * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1155:
+ * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1116:
  * `gYampiDesert_TravelersFollow' undeclared (first use in this function). */
 extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
     "gYampiDesert_TravelersFollow");

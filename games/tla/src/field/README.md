@@ -221,10 +221,18 @@ those few routines into the console's fast memory and runs them there.
   tightropes and hanging vines (`chains.c`), each element's casts and the
   choice of which plays (`psynergy_dispatch.c`). The rest of `object/` is
   the placement, its scripts and tables.
+- A scene's work is one struct, `FieldWork`, in
+  [`field_work.h`](../../include/field/field_work.h): The Broken Seal's,
+  with the Psynergy state the sequel adds at its end. The field sequence,
+  the event commands and every scene read it through
+  `Ram_HeapSlots->fieldWork` or `gFieldWork`.
 - [`event_commands/radial.c`](event_commands/radial.c) is most of the
   Psynergy the sequel adds, its parts in
   [`event_commands/radial/`](event_commands/radial), and the event
-  commands' tables are the assembly rows beside it.
+  commands' tables are the assembly rows beside it. The parts share one
+  effect scene, `FxScene` in
+  [`radial_internal.h`](event_commands/radial_internal.h): the caster, the
+  target and where the Psynergy takes place.
 - `field_effect/` is the field's small effects: particles, sparkles and
   the like.
 - Some small field routines are compiled again into each scene that uses

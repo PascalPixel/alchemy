@@ -509,7 +509,7 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 /* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
  * scene/anemos_inner_sanctum/scene_tables has another definition; tried with
  * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:554: structure has no member named
+ * games/tla/src/scene/anemos_inner_sanctum.c:544: structure has no member named
  * `room'. */
 struct Work__s0ac8 {
   u8 pad[340];
@@ -1266,16 +1266,6 @@ void Func_02001c60(void) {
   FieldEvent_Wait(40);
   Func_02000158();
 }
-
-/* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938;
- * module/scene/scene.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:1312: structure has no member
- * named `value'. */
-struct EventWork154__s1938 {
-  u8 unk000[0x154];
-  s16 value;
-};
 
 extern s16 gData_020043e4[];
 extern struct MapGridCellAnimation gData_02004410[];

@@ -52,7 +52,7 @@ struct RiseObject {
 /* VIEW(champa_cliff_caves): routine gData_02003d10 as this part declared it;
  * the joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02003d10[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:202: `gData_02003d10' undeclared
+ * games/tla/src/scene/champa_cliff_caves.c:189: `gData_02003d10' undeclared
  * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d10__champa_cliff_caves __asm__("gData_02003d10");
@@ -200,7 +200,7 @@ void Func_020001f4(s32 door) {
 /* VIEW(champa_cliff_caves): routine gData_02003d18 as this part declared it;
  * the joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02003d18[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:252: `gData_02003d18' undeclared
+ * games/tla/src/scene/champa_cliff_caves.c:229: `gData_02003d18' undeclared
  * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d18__champa_cliff_caves __asm__("gData_02003d18");
@@ -934,18 +934,6 @@ void Func_0200115c(void) {
   Event_End();
 }
 
-/* VIEW(s0a34): tag struct EventTransition as struct EventTransition__s0a34;
- * champa_cliff_caves.c has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:988: structure has no member named
- * `frames'. */
-struct EventTransition__s0a34 {
-  u8 unk000[0x1ac];
-  s32 type;
-  u8 unk1b0[4];
-  s32 frames;
-};
-
 void Func_02001774(void) {
   struct FieldWork *work;
 
@@ -1589,7 +1577,7 @@ next:
 /* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1646: request for member
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1607: request for member
  * `value' in something not a structure or union. */
 struct ChampaCliffCavesWork__s2d34 {
   u8 tiles[0x1000];
@@ -1650,7 +1638,7 @@ next:
 /* VIEW(champa_cliff_caves): tag struct GlowSprite as struct
  * GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1727: structure has no
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1688: structure has no
  * member named `x'. */
 struct GlowSprite__champa_cliff_caves {
   u8 unk_0[12];
@@ -1836,7 +1824,7 @@ void Func_02003078(void) {
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1891: invalid operands to
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1852: invalid operands to
  * binary +. */
 struct ChampaCliffCavesWork__s3164 {
   u8 tiles[0x1000];

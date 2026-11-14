@@ -14,7 +14,7 @@
 /* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];
  * battle/battle.h has struct WorldMapWork gWorldMapWork; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field/tile_animation.c:123: `gWorldMapWork' has an
+ * games/tla/src/field/field/tile_animation.c:124: `gWorldMapWork' has an
  * incomplete type. */
 extern u8 gWorldMapWork__tile_animation[] __asm__("gWorldMapWork");
 #define gWorldMapWork gWorldMapWork__tile_animation
@@ -1102,7 +1102,7 @@ s32 MapGrid_IsWallAt(s32 *position) {
 /* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[];
  * module/tla.h has u32 gMapBlocks[]; tried as the rest of the object declares
  * it, it does not compile in tla-ja:
- * games/tla/src/field/field/tile_animation.c:1117: request for member `unk2' in
+ * games/tla/src/field/field/tile_animation.c:1118: request for member `unk2' in
  * something not a structure or union. */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gMapBlocks");
 

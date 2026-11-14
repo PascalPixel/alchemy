@@ -217,7 +217,7 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
 /* VIEW(world_map): variable gWorldMapWork as extern u8 gWorldMapWork[];
  * battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field/world_map.c:278: `gWorldMapWork' has an incomplete
+ * games/tla/src/field/field/world_map.c:281: `gWorldMapWork' has an incomplete
  * type. */
 extern u8 gWorldMapWork__world_map[] __asm__("gWorldMapWork");
 
@@ -361,7 +361,7 @@ void WorldMap_ApplyAffinePage(void) {
 
 /* VIEW(world_map): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has
  * extern u32 gMapBlocks[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/field/field/world_map.c:377:
+ * not compile in tla-ja: games/tla/src/field/field/world_map.c:380:
  * `gMapBlocks__world_map' undeclared (first use in this function). */
 extern u8 gMapBlocks__world_map[] __asm__("gMapBlocks");
 

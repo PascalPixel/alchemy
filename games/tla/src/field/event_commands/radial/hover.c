@@ -17,19 +17,6 @@ struct GlowScene {
   s16 kind;
 };
 
-/* VIEW(f0e9af4): tag struct GlowEvent as struct GlowEvent__f0e9af4; f0e2c38.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/hover.c:87: structure has no member
- * named `objects'. */
-struct GlowEvent__f0e9af4 {
-  u8 unk000[0x14];
-  struct Actor *objects[80];
-  u8 unk154[0xbf0];
-  s16 glow;
-  s16 glowHeld;
-};
-
 extern char ResourceId_RingOrb;
 
 s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);

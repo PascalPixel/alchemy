@@ -353,7 +353,7 @@ struct SparkWork {
 /* VIEW(jupiter_lighthouse_room_5): routine gPaletteCyclePausesInEvents as this
  * part declared it; the joined file has another; tried as the definition's
  * extern s32 gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:586:
+ * games/tla/src/scene/shared/palette_cycle_set_pauses_in_events.h:3:
  * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32 gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5 __asm__(
     "gPaletteCyclePausesInEvents");
@@ -754,7 +754,7 @@ struct Spark {
 /* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct
  * SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:800: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:794: structure has no
  * member named `x'. */
 struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk00[0x0c];
@@ -766,7 +766,7 @@ struct SparkSprite__jupiter_lighthouse_room_5 {
 /* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230;
  * jupiter_lighthouse_room_5.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:775: structure has no member
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:769: structure has no member
  * named `sparks'. */
 struct SparkWork__s1230 {
   u8 unk0000[0x400];
@@ -813,7 +813,7 @@ void Func_02001538(void) {
 /* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
  * games/tla/src/scene/jupiter_lighthouse_room_5 has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:836: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:830: structure has no
  * member named `sparks'. */
 struct SparkWork__s1650 {
   u8 tiles[0x400];

@@ -837,7 +837,7 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
 /* VIEW(s0ff4): tag union Position as union Position__s0ff4;
  * module/scene/scene.h has struct Position; tried with the definition the rest
  * of the object has, it does not compile in tla-ja (magma_rock.c):
- * games/tla/src/scene/magma_rock.c:858: `Position' defined as wrong kind of
+ * games/tla/src/scene/magma_rock.c:838: `Position' defined as wrong kind of
  * tag. */
 #define Position Position__s0ff4
 // A 16.16 position word, read whole or by halves.
@@ -874,7 +874,7 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 /* VIEW(s0ff4): tag struct MagmaRockEffectConfig as struct
  * MagmaRockEffectConfig__s0ff4; scene/magma_rock has another definition; tried
  * with the definition the rest of the object has, it does not compile in tla-ja
- * (magma_rock.c): games/tla/src/scene/magma_rock.c:894: redefinition of `struct
+ * (magma_rock.c): games/tla/src/scene/magma_rock.c:874: redefinition of `struct
  * MagmaRockEffectConfig'. */
 #define MagmaRockEffectConfig MagmaRockEffectConfig__s0ff4
 struct MagmaRockEffectConfig {
@@ -1150,7 +1150,7 @@ void Actor_SetActionById(s32 id, s32 action);
  * FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32
  * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
  * FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in
- * tla-ja (magma_rock.c): games/tla/src/scene/magma_rock.c:1170: conflicting
+ * tla-ja (magma_rock.c): games/tla/src/scene/magma_rock.c:1149: conflicting
  * types for `FieldCamera_MoveToActor'. */
 extern void Func_080d452c__s1c00(s32 a,
                                  s32 b) __asm__("FieldCamera_MoveToActor");

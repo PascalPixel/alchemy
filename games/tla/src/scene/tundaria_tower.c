@@ -1505,7 +1505,7 @@ next:
 /* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja (tundaria_tower.c):
- * games/tla/src/scene/tundaria_tower.c:1586: structure has no member named
+ * games/tla/src/scene/tundaria_tower.c:1544: structure has no member named
  * `blend'. */
 struct RockSprite__s29d0 {
   u8 unk00[5];

@@ -145,7 +145,7 @@ u8 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer) {
  * has s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior); tried
  * as the definition's u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32
  * value), which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:159: conflicting types for
+ * games/tla/include/field/event.h:161: conflicting types for
  * `MapGrid_SetCellBehavior'. */
 u8 MapGrid_SetCellBehavior__visual_attributes(
     s32 x, s32 z, s32 layer, s32 value) __asm__("MapGrid_SetCellBehavior");

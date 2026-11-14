@@ -1045,7 +1045,7 @@ void Func_02001ca4(void) {
  * Actor_PlaceMovedBlock(void); module/scene/scene.h has void
  * Actor_PlaceMovedBlock(s32 id); tried as the definition's void
  * Actor_PlaceMovedBlock(void), which the object already declares, it does not
- * compile in tla-ja (airs_rock.c): games/tla/src/scene/airs_rock.c:1056: too
+ * compile in tla-ja (airs_rock.c): games/tla/src/scene/airs_rock.c:1051: too
  * few arguments to function `Actor_PlaceMovedBlock'. */
 extern void Func_02003cc0__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 

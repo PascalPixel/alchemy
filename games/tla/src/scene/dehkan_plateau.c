@@ -463,7 +463,7 @@ void Actor_MoveToObject(s32 id, s32 target);
 /* VIEW(dehkan_plateau): routine gDehkanPlateau_PoundCube as this part declared
  * it; the joined file has another; tried as the definition's extern u32
  * gDehkanPlateau_PoundCube[], it does not compile in tla-ja (dehkan_plateau.c):
- * games/tla/src/scene/dehkan_plateau.c:1132: `gDehkanPlateau_PoundCube'
+ * games/tla/src/scene/dehkan_plateau.c:593: `gDehkanPlateau_PoundCube'
  * undeclared (first use in this function). */
 extern struct Actor *
     gData_02004420__dehkan_plateau __asm__("gDehkanPlateau_PoundCube");
@@ -724,7 +724,7 @@ void DehkanPlateau_HideRoom6Actors(void) {
 /* VIEW(dehkan_plateau): routine HeldActor_RaiseCell as this part declared it;
  * the joined file has another; tried as the definition's void
  * HeldActor_RaiseCell(void), it does not compile in tla-ja (dehkan_plateau.c):
- * games/tla/src/scene/dehkan_plateau.c:1268: too many arguments to function
+ * games/tla/src/scene/dehkan_plateau.c:729: too many arguments to function
  * `HeldActor_RaiseCell'. */
 void HeldActor_RaiseCell__dehkan_plateau(struct Actor *object) __asm__(
     "HeldActor_RaiseCell");
@@ -826,9 +826,9 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
  * void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16
  * angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32
  * actorId, s32 x, s32 z, s32 angle); tried as the definition's void
- * Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
- * s16 angle), it does not compile in tla-ja (dehkan_plateau.c):
- * games/tla/src/scene/dehkan_plateau.c:1362: conflicting types for
+ * Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s16
+ * angle), it does not compile in tla-ja (dehkan_plateau.c):
+ * games/tla/src/scene/dehkan_plateau.c:825: conflicting types for
  * `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
@@ -984,7 +984,7 @@ void Actor_DisableById(s32 id);
 /* VIEW(s2698): routine gDehkanPlateau_PoundCube as this part declared it; the
  * joined file has another; tried as the definition's extern u32
  * gDehkanPlateau_PoundCube[], it does not compile in tla-ja (dehkan_plateau.c):
- * games/tla/src/scene/dehkan_plateau.c:1766: `gDehkanPlateau_PoundCube'
+ * games/tla/src/scene/dehkan_plateau.c:1216: `gDehkanPlateau_PoundCube'
  * undeclared (first use in this function). */
 extern struct Actor *gData_02004420__s2698 __asm__("gDehkanPlateau_PoundCube");
 #define gDehkanPlateau_PoundCube gData_02004420__s2698
@@ -1363,7 +1363,7 @@ s32 Scene_Initialize(void) {
 /* VIEW(s2698): routine Func_020030c0 as this part defines it; a header the
  * joined file includes has another; tried as the rest of the object declares
  * it, it does not compile in tla-ja (dehkan_plateau.c):
- * games/tla/src/scene/dehkan_plateau.c:1917: conflicting types for
+ * games/tla/src/scene/dehkan_plateau.c:1363: conflicting types for
  * `Func_020030c0'. */
 void Func_020030c0__s2698(void) __asm__("Func_020030c0");
 void Func_020030c0__s2698(void) {
@@ -1442,7 +1442,7 @@ void DehkanPlateau_ForgetCrackOnLeaving(void);
  * s2c14 has s32 Actor_GetCellIndex(struct Actor *object); tried as the
  * definition's s32 Actor_GetCellIndex(struct Actor *object), which the object
  * already declares, it does not compile in tla-ja (dehkan_plateau.c):
- * games/tla/src/scene/dehkan_plateau.c:2058: too few arguments to function
+ * games/tla/src/scene/dehkan_plateau.c:1490: too few arguments to function
  * `Actor_GetCellIndex'. */
 extern s32 Func_02003db0__s3284(void) __asm__("Actor_GetCellIndex");
 

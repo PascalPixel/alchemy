@@ -121,7 +121,7 @@ s32 Tutorial_GetDjinnGiveMessage(void) {
 /* VIEW(battle): tag struct EncounterWork as struct EncounterWork__battle;
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/include/module/tla.h:90: redefinition of `struct EncounterWork'. */
+ * games/tla/include/module/tla.h:98: redefinition of `struct EncounterWork'. */
 #define EncounterWork EncounterWork__battle
 struct EncounterWork {
   s32 enemyGroup;
@@ -164,7 +164,7 @@ struct EncounterWork {
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
 /* VIEW(battle): variable Data_02018000 as u8 Data_02018000[]; module/tla.h has
  * u32 Data_02018000[]; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/battle/battle/run.c:254: `Data_02018000'
+ * compile in tla-ja: games/tla/src/battle/battle/run.c:255: `Data_02018000'
  * undeclared (first use in this function). */
 extern u8 Data_02018000__battle[] __asm__("Data_02018000");
 #define Data_02018000 Data_02018000__battle

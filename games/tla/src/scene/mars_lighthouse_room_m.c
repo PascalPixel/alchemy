@@ -572,7 +572,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
  * mars_lighthouse_room_m has void Actor_LaunchAhead(struct Actor *self); tried
  * as the definition's void Actor_LaunchAhead(struct Actor *self), which the
  * object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:665: too few arguments to
+ * games/tla/src/scene/mars_lighthouse_room_m.c:631: too few arguments to
  * function `Actor_LaunchAhead'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Actor_LaunchAhead");
 
@@ -667,14 +667,14 @@ s32 Scene_Initialize(void) {
 /* VIEW(s0b64): routine Func_02000058 as s32 Func_02000058(); the definition has
  * void Func_02000058(s32 id, s32 value); tried as the definition's void
  * Func_02000058(void), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:701: conflicting types for
+ * games/tla/src/scene/mars_lighthouse_room_m.c:667: conflicting types for
  * `Func_02000058'. */
 extern s32 Func_02000058__s0b64() __asm__("Func_02000058");
 /* VIEW(mars_lighthouse_room_m): routine Map_ClearLayerEntryFlag as void
  * Map_ClearLayerEntryFlag(s32 value); module/scene/scene.h has u32
  * Map_ClearLayerEntryFlag(struct FieldSprite *sprite, u32 frame); tried as the
  * definition's void Map_ClearLayerEntryFlag(u32 no), it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:707: conflicting types
+ * tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:673: conflicting types
  * for `Map_ClearLayerEntryFlag'. */
 extern void Func_02003150__mars_lighthouse_room_m(s32 value) __asm__(
     "Map_ClearLayerEntryFlag");
@@ -1669,7 +1669,7 @@ void Func_02002ad4(struct Actor *object) {
 /* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:2008: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1669: redefinition of `struct
  * Work020023c4'. */
 #define Work020023c4 Work020023c4__s2708
 struct Work020023c4 {

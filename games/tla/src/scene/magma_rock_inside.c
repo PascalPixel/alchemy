@@ -378,7 +378,7 @@ s32 GameFlag_Get();
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
  * compile in tla-ja (magma_rock_inside.c):
- * games/tla/src/scene/magma_rock_inside.c:385: too few arguments to function
+ * games/tla/src/scene/magma_rock_inside.c:383: too few arguments to function
  * `Actor_GetById'. */
 extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
 
@@ -1753,7 +1753,7 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
 /* VIEW(magma_rock_inside): tag struct Orbiter as struct
  * Orbiter__magma_rock_inside; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1760:
+ * tla-ja (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1757:
  * structure has no member named `parent'. */
 struct Orbiter__magma_rock_inside {
   u8 unk00[8];
@@ -1861,7 +1861,7 @@ extern s32 gMagmaRockInside_BlazeCasterReturnScript[];
  * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
  * *gFieldEffect_DurationScripts[] = {; tried as the definition's extern s32
  * gMagmaRockInside_BlazeWatcherReturnScript[], it does not compile in tla-ja
- * (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1996:
+ * (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1993:
  * `gMagmaRockInside_BlazeWatcherReturnScript' undeclared (first use in this
  * function). */
 extern const u8

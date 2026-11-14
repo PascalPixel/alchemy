@@ -314,7 +314,7 @@ extern struct ActorPlacement gShamanVillage_Room3Placements[];
  * scene/shaman_village/s1fec has struct ActorPlacement
  * gShamanVillage_Room2Placements[] = {; tried as the definition's extern struct
  * ActorPlacement gShamanVillage_Room2Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/shaman_village.c:326:
+ * tla-ja: games/tla/src/scene/shaman_village.c:325:
  * `gShamanVillage_Room2Placements' undeclared (first use in this function). */
 extern struct ShamanVillageSceneBlock
     gShamanVillage_Room2Placements__s00b8 __asm__(

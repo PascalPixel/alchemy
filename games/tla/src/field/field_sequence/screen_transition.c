@@ -278,7 +278,7 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
 /* VIEW(rising): tag struct EffectVisual as struct EffectVisual__rising;
  * f0cf050.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence/screen_transition.c:296: structure has no
+ * games/tla/src/field/field_sequence/screen_transition.c:295: structure has no
  * member named `flags09'. */
 struct EffectVisual__rising {
   u8 unk00[5];
@@ -2034,7 +2034,7 @@ s32 Speaker_GetActorSprite(u32 objectId) {
  * Speaker_GetActorSprite(u32 objectId); tried as the definition's s32
  * Speaker_GetActorSprite(u32 objectId), which the object already declares, it
  * does not compile in tla-ja:
- * games/tla/src/field/field_sequence/screen_transition.c:2070: too few
+ * games/tla/src/field/field_sequence/screen_transition.c:2049: too few
  * arguments to function `Speaker_GetActorSprite'. */
 extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__(
     "Speaker_GetActorSprite");

@@ -23,7 +23,7 @@ s32 MapGrid_CheckCollision__resource_slot(
 /* VIEW(f0267bc): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/field/player_control.c:253: request for member
+ * in tla-ja: games/tla/src/field/field/player_control.c:244: request for member
  * `hp' in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f0267bc(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -403,7 +403,7 @@ s32 MapGrid_CheckCollision__resource_slot(
 /* VIEW(f027064): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/field/player_control.c:651: request for member
+ * in tla-ja: games/tla/src/field/field/player_control.c:629: request for member
  * `hp' in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f027064(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);

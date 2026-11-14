@@ -264,12 +264,12 @@ void Func_02000328(void) {
 
 /* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has
  * another; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/contigo.c:850: redefinition of `struct
+ * compile in tla-ja: games/tla/src/scene/contigo.c:839: redefinition of `struct
  * TalkActor'. */
 #define TalkActor TalkActor__contigo
 /* VIEW(contigo): tag struct ContigoEventWork as this part has it; the joined
  * file has another; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/contigo.c:2130: redefinition
+ * does not compile in tla-ja: games/tla/src/scene/contigo.c:2108: redefinition
  * of `struct ContigoEventWork'. */
 #define ContigoEventWork ContigoEventWork__contigo
 #include "text/msg_ids.h"
@@ -2374,7 +2374,7 @@ void Func_02003cd8(struct Actor *object) {
 /* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2432: structure has no member named `blend'. */
+ * games/tla/src/scene/contigo.c:2410: structure has no member named `blend'. */
 struct SparkleSprite__s3e54 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2389,7 +2389,7 @@ struct SparkleSprite__s3e54 {
 
 /* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2424:
+ * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2402:
  * incompatible types in assignment. */
 struct SparkleWork__s3e54 {
   struct SparkleSprite__s3e54 sprites[4];
@@ -2433,7 +2433,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
 /* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2456: structure has no member named `unk62'. */
+ * games/tla/src/scene/contigo.c:2434: structure has no member named `unk62'. */
 struct ContigoObject__s3e54 {
   u8 unk00[0x62];
   u8 unk62;

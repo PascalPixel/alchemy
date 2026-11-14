@@ -1685,10 +1685,8 @@ void FieldPsynergy_Ply(void) {
 }
 
 /* VIEW(f0de21c): tag struct FieldWork as struct EventWork__f0de21c;
- * event_work.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes/mind_read.c:1706: structure has
- * no member named `state'. */
+ * event_work.h has another definition; not tried: struct FieldWork__f0de21c was
+ * not found. */
 struct EventWork__f0de21c {
   u8 unk000[0x166];
   u16 state;
@@ -1699,7 +1697,7 @@ struct EventWork__f0de21c {
  * MapGrid_IsCloakCell(s32 x, s32 z) {; tried as the definition's s32
  * MapGrid_IsCloakCell(s32 x, s32 z), which the object already declares, it does
  * not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes/mind_read.c:1704: too many
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1702: too many
  * arguments to function `MapGrid_IsCloakCell'. */
 s32 MapGrid_IsCloakCell__mind_read(s32 x, s32 z,
                                    s32 layer) __asm__("MapGrid_IsCloakCell");

@@ -1807,7 +1807,7 @@ void FieldPsynergy_RunTouchedEvents(void) {
 /* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/radial_effects.c:1835: structure
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1834: structure
  * has no member named `unk02'. */
 struct MapCell__f0e150c {
   u8 unk00[2];
@@ -1859,7 +1859,7 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
 /* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c
  * has extern struct TouchCopies gData_02001000; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/radial_effects.c:1875: incompatible
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1874: incompatible
  * types in initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
 /* VIEW(f0e2718): routine MapGrid_GetCellAt as struct MapCell
@@ -1867,7 +1867,7 @@ extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
  * MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); tried as the
  * definition's struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer), it
  * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/radial_effects.c:1866: conflicting
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1865: conflicting
  * types for `MapGrid_GetCellAt'. */
 extern struct MapCell *
 MapGrid_GetCellAt__f0e2718(s32 x, s32 z,

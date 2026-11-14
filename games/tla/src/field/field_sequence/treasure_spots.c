@@ -298,7 +298,7 @@ void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
  * ObjectEvent_PlaceOnGround(s32 object, s32 x, s32 z); tried as the
  * definition's void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:84: conflicting types for
+ * games/tla/include/field/event.h:85: conflicting types for
  * `ObjectEvent_PlaceOnGround'. */
 void ObjectEvent_PlaceOnGround__field_sequence(
     u32 objectId, s32 x, s32 z) __asm__("ObjectEvent_PlaceOnGround");

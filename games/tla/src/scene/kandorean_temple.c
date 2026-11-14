@@ -1268,7 +1268,7 @@ void KandoreanTemple_WatchLifts(void) {
 /* VIEW(kandorean_temple): tag struct MapCell as struct
  * MapCell__kandorean_temple; map.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja
- * (kandorean_temple.c): games/tla/src/scene/kandorean_temple.c:1312: arithmetic
+ * (kandorean_temple.c): games/tla/src/scene/kandorean_temple.c:1287: arithmetic
  * on pointer to an incomplete type. */
 struct MapCell__kandorean_temple {
   u8 unk0[2];

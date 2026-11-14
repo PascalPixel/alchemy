@@ -119,7 +119,7 @@ void Func_080d2cc4(s32 message) {
 /* VIEW(event_commands): tag struct EventWork1cc as struct
  * EventWork1cc__event_commands; module/tla.h has another definition; tried with
  * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence/requests.c:140: redefinition of `struct
+ * games/tla/src/field/field_sequence/requests.c:119: redefinition of `struct
  * EventWork1cc'. */
 #define EventWork1cc EventWork1cc__event_commands
 struct EventWork1cc {

@@ -116,9 +116,9 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
 
 /* VIEW(credits): variable gWaitForFlashWrite as u16 gWaitForFlashWrite[];
  * lucky_wheels_lzpack.h has struct LzPackWork *gWaitForFlashWrite; tried as the
- * 3 declarations' extern FlashWaitProc gWaitForFlashWrite, it does not compile
- * in tla-ja: games/tla/src/menu/credits.c:117: parse error before
- * `gWaitForFlashWrite'. */
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/menu/credits.c:162: `gWaitForFlashWrite' undeclared (first use
+ * in this function). */
 extern u16 gWaitForFlashWrite__credits[] __asm__("gWaitForFlashWrite");
 
 /// Loads a backdrop resource (its 128 colours, then its packed tiles) into

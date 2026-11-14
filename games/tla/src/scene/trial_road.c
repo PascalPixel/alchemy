@@ -533,16 +533,6 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   Event_End();
 }
 
-/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218;
- * module/tla.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:557: structure has no member named `value'.
- */
-struct EventWork15a__s0218 {
-  u8 unk000[0x15a];
-  u16 value;
-};
-
 void TrialRoad_ExamineChest(s32 id) {
   s32 flag;
 
@@ -768,7 +758,7 @@ void TrialRoad_BlowBushOffPoundPillar(void) {
 /* VIEW(s0218): routine gTrialRoad_PoundPartners as this part declared it; the
  * joined file has another; tried as the definition's extern u32
  * gTrialRoad_PoundPartners[], it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:783: `gTrialRoad_PoundPartners' undeclared
+ * games/tla/src/scene/trial_road.c:768: `gTrialRoad_PoundPartners' undeclared
  * (first use in this function). */
 extern const s8
     gTrialRoad_PoundPartners__s0218[4] __asm__("gTrialRoad_PoundPartners");
@@ -1625,7 +1615,7 @@ void TrialRoad_GaspFlees(void) {
 /* VIEW(s15a8): routine gTrialRoad_PaletteCycleRunning as this part declared it;
  * the joined file has another; tried as the definition's extern LAST_DATA u32
  * gTrialRoad_PaletteCycleRunning[], it does not compile in tla-ja
- * (trial_road.c): games/tla/src/scene/trial_road.c:1653:
+ * (trial_road.c): games/tla/src/scene/trial_road.c:1637:
  * `gTrialRoad_PaletteCycleRunning' undeclared (first use in this function). */
 extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__(
     "gTrialRoad_PaletteCycleRunning");
@@ -1658,7 +1648,7 @@ void TrialRoad_SetPaletteCycleRunning(s32 value) {
 /* VIEW(s15a8): routine gTrialRoad_PaletteCycleFrame as this part declared it;
  * the joined file has another; tried as the definition's extern LAST_DATA s32
  * gTrialRoad_PaletteCycleFrame[], it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:1667: `gTrialRoad_PaletteCycleFrame'
+ * games/tla/src/scene/trial_road.c:1651: `gTrialRoad_PaletteCycleFrame'
  * undeclared (first use in this function). */
 extern s32
     gTrialRoad_PaletteCycleFrame__s15a8 __asm__("gTrialRoad_PaletteCycleFrame");
@@ -1757,7 +1747,7 @@ void TrialRoad_SetUpPeak(void) {
  * (*gTrialRoad_StageSetUps[])(void); called through the void type, the call's
  * result register moves 2 of 84 instructions of Scene_Initialize in tla-en;
  * tried as the rest of the object declares it, it does not compile in tla-ja
- * (trial_road.c): games/tla/src/scene/trial_road.c:1773:
+ * (trial_road.c): games/tla/src/scene/trial_road.c:1757:
  * `gTrialRoad_StageSetUps' undeclared (first use in this function). */
 extern s32 (*const gTrialRoad_StageSetUps__s1fc4[])(void) __asm__(
     "gTrialRoad_StageSetUps");
@@ -3403,7 +3393,7 @@ void TrialRoad_MoveRival(void) {
 /* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0;
  * s15a8.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:3463: structure has no member named
+ * games/tla/src/scene/trial_road.c:3447: structure has no member named
  * `vramEntry'. */
 struct TrialRoadLinkWork__s51a0 {
   u32 oam[54];

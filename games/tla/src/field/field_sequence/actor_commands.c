@@ -248,7 +248,11 @@ void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
  * as void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x,
  * s32 z, s16 angle); field/event.h has s32 angle; as s32, the definition loses
  * the angle's sign extension on entry (2 of 42 instructions in tla-en): the
- * routine takes a halfword, its callers pass a word. */
+ * routine takes a halfword, its callers pass a word; tried as the definition's
+ * void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32
+ * z, s16 angle), which the object already declares, it does not compile in
+ * tla-ja: games/tla/src/field/field_sequence/actor_commands.c:248: conflicting
+ * types for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 void Actor_SetHorizontalPositionAndAngleWithTerrain__event_commands(
     s32 actorId, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
@@ -402,7 +406,7 @@ struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 /* VIEW(event_commands): tag struct ParticleSprite as struct
  * ParticleSprite__event_commands; module/tla.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence/actor_commands.c:540: redefinition
+ * tla-ja: games/tla/src/field/field_sequence/actor_commands.c:406: redefinition
  * of `struct ParticleSprite'. */
 #define ParticleSprite ParticleSprite__event_commands
 struct ParticleSprite {

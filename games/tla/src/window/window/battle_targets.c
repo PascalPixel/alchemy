@@ -39,7 +39,7 @@ s32 System_GetLanguage(void);
  * selected[2]; struct BattleWork *battle; s32 count; count =
  * BattleParty_PrepareReserveOwners...; tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/window/window/battle_targets.c:222: invalid type
+ * in tla-ja: games/tla/src/window/window/battle_targets.c:228: invalid type
  * argument of `->'. */
 extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
 /* VIEW(menus): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void

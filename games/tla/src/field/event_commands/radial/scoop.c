@@ -498,7 +498,7 @@ struct Actor *Actor_GetById(u32 objectId);
  * BattleEffect_DropObjectAtAnchor(u32 objectId); tried as the definition's void
  * BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:539: conflicting types for
+ * games/tla/src/field/event_commands/radial/scoop.c:494: conflicting types for
  * `BattleEffect_DropObjectAtAnchor'. */
 void BattleEffect_DropObjectAtAnchor__psynergy(s32 id) __asm__(
     "BattleEffect_DropObjectAtAnchor");

@@ -2684,7 +2684,7 @@ void Func_02004880(void) {}
  * scene/airs_rock_inside/airs_rock_inside has void Func_020007b4(s32 mode, s32
  * step) {; tried as the definition's void Func_020007b4(s32 mode, s32 step),
  * which the object already declares, it does not compile in tla-ja
- * (airs_rock_inside.c): games/tla/src/scene/airs_rock_inside.c:2701: too few
+ * (airs_rock_inside.c): games/tla/src/scene/airs_rock_inside.c:2694: too few
  * arguments to function `Func_020007b4'. */
 void Func_020007b4__s2cf0(void) __asm__("Func_020007b4");
 

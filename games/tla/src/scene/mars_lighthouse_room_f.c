@@ -1161,10 +1161,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 #include "shared/actor_raise_from_cell.h"
 
 /* VIEW(s167c): tag struct FieldWork as struct EventWork__s167c; event_work.h
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1179: structure has no member
- * named `unk_d46'. */
+ * has another definition; not tried: struct FieldWork__s167c was not found. */
 struct EventWork__s167c {
   u8 unk_00[0x154];
   u16 unk_154;
@@ -1543,7 +1540,7 @@ void Ride_SpawnSpark(s32 *position, s32 speed) {
 
 /* VIEW(s242c): tag struct Actor as struct Actor__s242c; actor.h has another
  * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1759:
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1629:
  * structure has no member named `flag5b'. */
 typedef struct Actor__s242c {
   u8 pad0[8];
@@ -1577,7 +1574,7 @@ typedef struct State {
  * before it has another declaration; tried as the definition's void
  * Ride_SpawnSpark(s32 *position, s32 speed), which the object already declares,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1792: too many arguments to
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1662: too many arguments to
  * function `Ride_SpawnSpark'. */
 extern void Func_020023ac__s242c() __asm__("Ride_SpawnSpark");
 

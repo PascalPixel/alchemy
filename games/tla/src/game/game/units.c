@@ -1092,7 +1092,7 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
 /* VIEW(game): variable Data_080b1290 as const s16 Data_080b1290[4][7];
  * game/experience_table has const u16 Data_080b1290[4][7] = {; tried as the
  * definition's extern const u16 Data_080b1290[4][7], it does not compile in
- * tla-ja: games/tla/src/game/game/units.c:1226: `Data_080b1290' undeclared
+ * tla-ja: games/tla/src/game/game/units.c:1144: `Data_080b1290' undeclared
  * (first use in this function). */
 extern const s16 Data_080b1290__game[4][7] __asm__("Data_080b1290");
 #define Data_080b1290 Data_080b1290__game

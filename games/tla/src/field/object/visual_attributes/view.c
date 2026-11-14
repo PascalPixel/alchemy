@@ -107,7 +107,7 @@ extern const u8 gFieldEffect_WatchedActorScript[];
  * frames); tried as the definition's struct BattleEffectWatchedObject
  * *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32 state), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:66: conflicting types for
+ * games/tla/include/field/event.h:67: conflicting types for
  * `Actor_ShowEmoteById'. */
 struct BattleEffectWatchedObject *Actor_ShowEmoteById__visual_attributes(
     s32 resourceId, s32 flags, s32 state) __asm__("Actor_ShowEmoteById");

@@ -15,7 +15,7 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
  * Camera_WorldToScreen(struct EffectVector *position); tried as the
  * definition's void Camera_WorldToScreen(struct EffectVector *position), which
  * the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/sand_sinking.c:54: conflicting
+ * games/tla/src/field/event_commands/radial/sand_sinking.c:24: conflicting
  * types for `Camera_WorldToScreen'. */
 void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
     "Camera_WorldToScreen");

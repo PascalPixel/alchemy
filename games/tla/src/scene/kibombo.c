@@ -1906,7 +1906,7 @@ void Func_020037e4(void) {
  * order); called through the definition's s32, 2 of 31 instructions move in
  * every edition; tried as the 3 declarations' void Task_Add(void(*func) (void),
  * s32 priority), it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:1914: conflicting types for `Task_Add'. */
+ * games/tla/src/scene/kibombo.c:1904: conflicting types for `Task_Add'. */
 extern void Task_AddVoid__kibombo(void (*func)(void),
                                   s32 order) __asm__("Task_Add");
 

@@ -691,17 +691,6 @@ update_object:
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 
-/* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:969: structure has no member named
- * `climbing'. */
-struct WorldEventWork__f028aac {
-  u8 unk000[0xd3a];
-  u8 terrainKind;
-  s8 climbing;
-};
-
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 

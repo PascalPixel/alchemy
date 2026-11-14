@@ -2143,7 +2143,7 @@ next:
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Event_End();
 }
 

@@ -2051,8 +2051,9 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_FaceDirection(5, FACING_WEST, 0);
     FieldEvent_Wait(10);
+    // "Flame's strength? Hey, that must mean it's finally my turn!"
     Event_ShowMessage(5, 0);
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(30);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 256, 152);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -2080,7 +2081,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Actor_FaceEachOther(gMainRoutineWork.currentOwner, 5, 0);
     FieldEvent_Wait(10);
     Actor_SetAnimation(5, 3);
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(20);
     Actor_SetSpeed(5, 1.2);
     Actor_SetAnimation(5, 2);

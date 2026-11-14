@@ -35,6 +35,7 @@
 #include "version.h"
 #include "system/frame.h"
 #include "objcmd.h"
+#include "module/scene/actor_animation.h"
 
 // Set as the stone circle's guard finds the misaligned stone back in place.
 #define FLAG_GUARD_SAW_STONE_MOVED 0x924
@@ -134,10 +135,12 @@ void Izumo_FinishMovingStone(void) {
       Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       FieldEvent_Wait(60);
       Event_SetMessageId(MsgTheMisalignedStone);
+      // "The misaligned stone! It's back in its original position! How did..."
       Event_ShowMessageAndWait(22, 0);
       FieldEvent_Wait(30);
       Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
       FieldEvent_Wait(30);
+      // "Hmmm... Either Susa or Kushinada must have moved it when I wasn't..."
       Event_ShowMessageAndWait(22, 0);
       Actor_ArmCallback(22, FACING_SOUTH, 0);
       Event_End();
@@ -283,6 +286,7 @@ void Izumo_TalkToStoneCircleGuard(s32 actor) {
   Event_ResolvePendingActions(0);
   if (GameFlag_Test_(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgCanYouImagine);
+    // "Can you imagine what it must be like to have the power to move..."
     Event_ShowMessageAndWait(actor, 0);
   } else {
     const u8 *message = MsgSeeThisRing;
@@ -306,6 +310,7 @@ void Izumo_TalkToFestivalStoneCircleGuard(s32 actor) {
   Event_ResolvePendingActions(0);
   if (GameFlag_Test_(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgButItS);
+    // "But it's a festival! Why do I have to keep guarding the stone circle?"
     Event_ShowMessageAndWait(actor, 0);
   } else {
     const u8 *message = MsgSeeThisRingOf;
@@ -460,7 +465,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   FieldEvent_Wait(30);
   // "Anyway, maybe you want to go check out the dragon again... I left..."
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(15);
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "Well, I've said what I came to say. I'm going back to Kushinada."
@@ -471,7 +476,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(15);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_SetSpeedParameters(32, 0x3333, 0x1999);
   Actor_GetById(32)->motionFlags = 0;

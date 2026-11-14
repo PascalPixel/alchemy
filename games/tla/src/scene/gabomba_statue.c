@@ -1568,7 +1568,7 @@ void GabombaStatue_LandFromFall(void) {
   actor->gravity = px(1);
   actor->bounce = Q16_ONE / 4;
   System_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   gFieldWork->transition = 0x209;
   Event_End();
 }
@@ -1785,6 +1785,7 @@ void GabombaStatue_SeeHowItWorks(void) {
     Actor_WalkToAndWait(7, 364, 308);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
+    // "I won't help them, Felix! They're the ones who stole my orb from the..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 7, 0);
     (gFieldWork->message)++;
   } else {
@@ -1796,28 +1797,37 @@ void GabombaStatue_SeeHowItWorks(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
     Actor_SetAnimation(7, 3);
+    // "I agree, Felix! Why should we help this pack of thieves?"
     Event_ShowMessage(cue, 0);
   }
   Actor_FaceDirectionAndWait(23, FACING_WEST);
   Actor_SetAnimationAndWait(23, 4);
+  // "Piers, I understand that you're angry at them, but it really is in..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
   Actor_FaceDirection(7, FACING_EAST, 0);
   GabombaStatue_ShowEmote(7, 257, 40);
+  // "Think about it, Piers... Akafubu stole the orb solely to perform..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
   Actor_SetAnimationAndWait(7, 3);
   GabombaStatue_ShowEmote(23, 265, 20);
+  // "So, what do you think he intends to do with the orb?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
+  // "He means to give it to the Great Gabomba..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   GabombaStatue_ShowEmote(7, 256, 40);
+  // "Oh! So...if his ceremony succeeds, the orb will be taken into the..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Actor_SetAnimation(23, 3);
+  // "And we're INSIDE the statue! If the ceremony succeeds, we can go..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 23, 0);
   GabombaStatue_ShowEmote(7, 265, 10);
+  // "I...don't want to help that Akafubu, but..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Actor_SetSpeed(6, 0.8);
   Actor_WalkToAndWait(6, 440, 296);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimationAndWait(6, 3);
+  // "I don't like the idea of helping him any more than you do, but if we..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   GabombaStatue_ShowEmote(7, 261, 0);
@@ -1826,33 +1836,43 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 80);
   GabombaStatue_ShowEmote(7, 261, 40);
   Actor_FaceDirectionAndWait(7, FACING_EAST);
+  // "You're right, Sheba. Let's see if we can't help him finish his..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimation(23, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimationAndWait(6, 3);
   Actor_SetAnimationAndWait(7, 3);
   Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+  // "It looks like the energy charge is supposed to run over these blocks."
   Event_ShowMessage(23, 0);
   GabombaStatue_ShowEmote(23, 257, 0);
   Actor_FaceDirection(23, FACING_NORTH_NORTHEAST, 20);
   Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+  // "If we can just move these around a little, that might be enough to..."
   Event_ShowMessage(23, 0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
+  // "Ah! There we go!"
   Event_ShowMessage(23, 0);
+  // "These panels have arrows on them... What do you think it all means?"
   Event_ShowMessage(6, 0);
+  // "Look at the directions they point... I'll bet these will rotate the..."
   Event_ShowMessage(23, 0);
+  // "But how do we set the blocks back in place?"
   Event_ShowMessage(7, 0);
+  // "Just Pound them in!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(23, 3);
+  // "Won't that do the trick?"
   Event_ShowMessage(23, 0);
   Actor_FaceDirectionAndWait(23, FACING_WEST);
+  // "We must watch the path his Psynergy takes and move the blocks..."
   Event_ShowMessage(23, 0);
   Actor_SetSpeed(5, 1.6);
   Actor_SetSpeed(6, 1.6);

@@ -1266,7 +1266,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   FieldCamera_WaitForArrival();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_ArmCallback(14, 0, 20);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(14, 3);
   Actor_SetModeById(14, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1316,7 +1316,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   ShrineOfTheSeaGod_ObjAngle(14, 0xb000);
   Event_SetMessageId((s32)MsgFieldPraiseRopeWork);
   ShrineOfTheSeaGod_MessagePut(14, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   ShrineOfTheSeaGod_MessagePut(13, 0);
   ShrineOfTheSeaGod_ObjPlace(13, 184 << 16, 168 << 16);
   ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0x8000, 0);

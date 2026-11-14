@@ -467,7 +467,7 @@ void MadraCatacombs_EnterDoorway(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Actor_SetAnimation(party->currentOwner, 2);
+  Actor_SetAnimation(party->currentOwner, ANIM_WALK);
   Actor_SetSpeed(party->currentOwner, 0.5);
   cell = object->x >> 16;
   Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,

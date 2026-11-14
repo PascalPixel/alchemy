@@ -410,7 +410,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
   FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
                              (gPushLeaderSteps[direction] << 16) >> 31,
@@ -418,7 +418,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;

@@ -124,12 +124,14 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
   FieldEvent_Wait(10);
   if (!Daila_FlagCheck(FLAG_DAILA_PRACTICE_AT_DOOR)) {
     Event_SetMessageId((s32)MsgDailaInteriorsGah);
+    // "GAH!"
     Event_ShowMessageAndWait(actor, 0);
     Actor_WalkToAndWait(actor, 360, 72);
     Actor_ArmCallback(actor, FACING_SOUTH, 0);
     GameFlag_Set(FLAG_DAILA_PRACTICE_AT_DOOR);
   } else {
     Event_SetMessageId((s32)MsgDailaInteriorsYarg);
+    // "YARG!"
     Event_ShowMessageAndWait(actor, 0);
     Actor_WalkToAndWait(actor, 392, 104);
     Actor_ArmCallback(actor, FACING_WEST, 0);
@@ -207,6 +209,7 @@ void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsSouthRoadDanger);
+    // "You folks ain't thinkin' 'bout goin' south, are ya? The roads to the..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -221,6 +224,7 @@ void DailaInteriors_TalkToArmorMerchant(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsNewTravelers);
+    // "You guys look new 'round these parts! What brings you to here?..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -237,6 +241,7 @@ void DailaInteriors_TalkToInnkeeper(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsDinnerChoice);
+    // "What should I cook for our guests tonight? I just can't decide."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -252,6 +257,7 @@ void DailaInteriors_TalkToHealer(s32 actor) {
       Event_ResolvePendingActions(0);
       msg = (s32)MsgDailaInteriorsTravelersFreeTime;
       Event_SetMessageId(msg);
+      // "Travelers! Well, I'll be! Do you have a lot of time and nowhere to..."
       FieldMessage_ShowAtActor(actor, 0);
       if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
         FieldEvent_Wait(10);
@@ -271,6 +277,7 @@ void DailaInteriors_TalkToHealer(s32 actor) {
     Event_ResolvePendingActions(0);
     msg = (s32)MsgDailaInteriorsTravelersFreeTime;
     Event_SetMessageId(msg);
+    // "Travelers! Well, I'll be! Do you have a lot of time and nowhere to go?"
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       FieldEvent_Wait(10);
@@ -294,6 +301,7 @@ void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsLeaveForMadra);
+    // "There is nothing left for you in Daila... Please be careful on your..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -308,6 +316,7 @@ void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsPirateTreasure);
+    // "Way back when, Daila used to be a hideout for a band of pirates......"
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -322,6 +331,7 @@ void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsSpaciousVillage);
+    // "We don't have a lot of people in Daila, but it's a very spacious..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -337,6 +347,7 @@ void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsFishermenWaiting);
+    // "Our fishermen still can't head out to sea... When will they start..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -349,6 +360,7 @@ void DailaInteriors_AskGoingToMadra(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaInteriorsGoingToMadra;
   Event_SetMessageId(msg);
+  // "Are you going to Madra?"
   FieldMessage_ShowAtActor(12, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
@@ -368,6 +380,7 @@ void DailaInteriors_TalkNoBoats(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaInteriorsLookingForBoat;
   Event_SetMessageId(msg);
+  // "Don't tell me you're all looking for a boat, too!"
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);

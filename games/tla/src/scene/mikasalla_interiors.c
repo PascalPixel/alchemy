@@ -119,6 +119,7 @@ void MikasallaInteriors_TalkToMerchant(s32 actor) {
     Shop_Run(13, actor);
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors11);
+    // "We only have a small shop here. I used to specialize in items... But..."
     Event_ShowMessage(actor, 0);
   }
 }
@@ -136,6 +137,7 @@ void MikasallaInteriors_TalkToInnkeeper(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors14);
+    // "You've come a long way, friends. Stay a while, and rest your feet."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -154,6 +156,7 @@ void MikasallaInteriors_AskBeenToGaroh(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17);
+    // "Have you been to Garoh?"
     Event_OpenMessage(actor, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
@@ -180,6 +183,7 @@ void MikasallaInteriors_TalkAboutIslandLife(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors29);
+    // "This little island must seem quite boring to you sophisticated..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -197,6 +201,7 @@ void MikasallaInteriors_TalkAboutFarShores(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors27);
+    // "Even out in these far-off shores, people need the services and hope..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -260,6 +265,7 @@ void MikasallaInteriors_MindReadGalahad(void) {
     MikasallaInteriors_MeetGalahad();
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors22);
+    // "I fear what might happen if the three find Isaac before I can warn..."
     Event_ShowMessage(18, 0);
   }
 }
@@ -285,10 +291,12 @@ void MikasallaInteriors_MeetGalahad(void) {
   Event_OpenMessage(18, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
+    // "You do? I must warn Sir Isaac that he is in danger most grievous......"
     Event_ShowMessage(18, 0);
     Event_SetFlag(FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC);
   } else {
     gFieldWork->message += 1;
+    // "A pity... The one I seek won a battle at Colosso, in Tolbi. He..."
     Event_ShowMessage(18, 0);
   }
   Event_SetFlag(FLAG_MIKASALLA_GALAHAD_MET);

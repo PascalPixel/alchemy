@@ -245,7 +245,7 @@ loop:
   index--;
   MapGrid_AnimateCells(gGaroh_Doors[index].steps, gGaroh_Doors[index].x,
                        gGaroh_Doors[index].y);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   {
     s32 owner = gMainRoutineWork.currentOwner;
@@ -339,7 +339,9 @@ void Garoh_HowlForDog(s32 actor) {
     FieldEvent_SetMessageId(msg);
   } else {
     FieldEvent_SetMessageId(msg);
+    // "Gaaaroooooo!"
     FieldEvent_ShowMessageThenWait(actor, 0, 10);
+    // "Gah! Whoops..."
     FieldEvent_ShowMessageThenWait(actor, 0, 10);
   }
   FieldEvent_ShowMessageThenWait(actor, 0, 10);
@@ -359,6 +361,7 @@ void Garoh_LittleWerewolfThanks(void) {
     FieldEvent_SetMessageId((s32)MsgGaroh21);
   } else {
     FieldEvent_SetMessageId((s32)MsgGaroh20);
+    // "Hey, it's you guys! Thanks for last night!"
     FieldEvent_ShowMessageThenWait(13, 0, 10);
     {
       s32 a = 0x101;
@@ -372,6 +375,7 @@ void Garoh_LittleWerewolfThanks(void) {
 
       FieldActor_ShowEmote(13, a, b);
     }
+    // "Oh, yeah... That's right... You probably don't recognize me in my..."
     FieldEvent_ShowMessageThenWait(13, 0, 5);
     {
       s32 a = 0x108;
@@ -379,6 +383,7 @@ void Garoh_LittleWerewolfThanks(void) {
 
       FieldActor_ShowEmote(13, a, b);
     }
+    // "I was in the cave with Maha! I was that little werewolf!"
     FieldEvent_ShowMessageThenWait(13, 0, 5);
   }
   FieldEvent_ShowMessageThenWait(13, 0, 10);
@@ -429,6 +434,7 @@ void Garoh_WerewolfPeersFromCrevice(void) {
     Actor_RunRepeatedMotion(21, 2);
     FieldEvent_Wait(20);
     Actor_FaceDirection(4, 224 << 8, 0);
+    // "What!? Outsiders, here?"
     FieldEvent_ShowMessageThenWait(21, 0, 10);
     FieldActor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Actor_Get(21)->actionFlags &= ~1;

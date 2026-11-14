@@ -206,7 +206,7 @@ next2:
   MapGrid_AnimateCells(gLemurianShip_Doors[found].value,
                        gLemurianShip_Doors[found].x,
                        gLemurianShip_Doors[found].z + 60);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   {
     s32 owner = gMainRoutineWork.currentOwner;
@@ -259,7 +259,7 @@ next2:
   MapGrid_AnimateCells(gLemurianShip_LowerDoors[found].value,
                        gLemurianShip_LowerDoors[found].x,
                        gLemurianShip_LowerDoors[found].z + 60);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
   Event_Wait(4);
@@ -278,7 +278,7 @@ void LemurianShip_WalkIntoPassage(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-    Actor_SetAnimation(party->currentOwner, 2);
+    Actor_SetAnimation(party->currentOwner, ANIM_WALK);
     Actor_SetSpeed(party->currentOwner, 0.5);
     x = leader->x;
     cell = x >> 16;
@@ -950,7 +950,7 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_SetAnimation(7, 3);
   // "OK, now, I must set the black orb in this pedestal."
   Event_ShowMessage(7, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_WalkToAndWait(7, 808, 148);
   Actor_RunRepeatedMotion(7, 2);
   Actor_SetSpritePriority(7, 1);

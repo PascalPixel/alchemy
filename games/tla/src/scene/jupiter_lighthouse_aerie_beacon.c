@@ -344,12 +344,14 @@ void JupiterLighthouse_KarstAndAgatioWait(void) {
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgYouReLate);
       Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+      // "You're late, Felix!"
       Event_ShowMessage(28, 0);
       Actor_SetAnimation(27, 3);
       /* FAKEMATCH(dead): an empty once-only block. */
       do {
       } while (0);
       FieldEvent_Wait(20);
+      // "Now light the beacon!"
       Event_ShowMessage(27, 0);
       Event_End();
     }
@@ -567,7 +569,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       Actor_WalkBy(4, 0, -16);
       Actor_WalkBy(7, 0, -16);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+      Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
       Actor_SetAnimation(7, 1);
       FieldEvent_Wait(50);
       Event_PlaySound(SE_RUMBLE);

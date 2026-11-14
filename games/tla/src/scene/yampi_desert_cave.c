@@ -356,7 +356,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
       w = 1;
   }
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
   offset = gPushLeaderSteps[i] << 16;
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, offset >> 31,
@@ -364,7 +364,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   if (rect.word[5] != 0)
     ((void (*)(void))rect.word[5])();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;

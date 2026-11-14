@@ -6,6 +6,7 @@
 
 #include "types.h"
 #include "field/field_coordinate.h"
+#include "module/scene/actor_animation.h"
 #include "graphics/render_input.h"
 #include "module/scene/mars_lighthouse_aerie.h"
 #include "scene_tables.h"

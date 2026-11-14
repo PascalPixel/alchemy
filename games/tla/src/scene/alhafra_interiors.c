@@ -145,6 +145,7 @@ void AlhafraInteriors_TalkToItemMerchant(s32 actor) {
     Shop_Run(9, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors14);
+    // "Don't mention the tidal wave to the other merchants... It did a lot..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -157,6 +158,7 @@ void AlhafraInteriors_TalkToInnkeeper(s32 actor) {
     Inn_CheckIn(2, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors16);
+    // "Maybe you've noticed, but a lot of folk here lost their homes in the..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -169,6 +171,7 @@ void AlhafraInteriors_TalkToHealer(s32 actor) {
     Sanctum_Run(actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors49);
+    // "In the middle of Osenia, there's a terrible village where they..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -419,35 +422,47 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldEvent_Wait(10);
       Actor_RunRepeatedMotion(31, 2);
       FieldEvent_Wait(5);
+      // "Legends said that Crossbone Isle could be found in the middle of..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+      // "Ah... Crossbone Isle... Wait, did you say "could"? Is it not there..."
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_ShowEmote(31, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      // "Well, it's still there, but there's no point in going. Someone..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+      // "What, he took all the treasure?"
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(10);
+      // "Yeah. And apparently, he even defeated the ancient ghost pirate..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       FieldActor_Jump(32, 6, 15);
       FieldActor_Jump(32, 6, 23);
+      // "What about the stories that if you beat the ghost pirate, you..."
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(10);
+      // "Well, you see, that means that Isaac is our leader now."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      // "Wow... just like that? I'll bet he's pretty tough."
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_RunRepeatedMotion(31, 2);
       FieldEvent_Wait(5);
+      // "No doubt. But you know, he must be a reliable guy, too..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(10);
+      // "You think?"
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_FaceDirectionAndWait(31, FACING_NORTH_NORTHEAST);
       FieldEvent_Wait(15);
+      // "You'd have to be to beat that ghost. That's why we're looking for..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(10);
+      // "If he's looking for a pirate crew, he can count me in!"
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_FaceDirectionAndWait(31, FACING_SOUTH_SOUTHEAST);
       FieldEvent_Wait(15);

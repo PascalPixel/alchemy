@@ -241,6 +241,7 @@ s32 Scene_Initialize(void) {
     Event_WaitTransitionFrames();
     Event_Wait(10);
     Event_SetMessageId((s32)&MsgAlhafraManor10);
+    // "From here, it just looks like a regular old rock, but from up close..."
     Event_ShowMessageAndWait(14, 0);
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }

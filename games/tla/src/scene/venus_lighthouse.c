@@ -636,10 +636,10 @@ void VenusLighthouse_FelixLeaves(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(ACTOR_JENNA, 3);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
   Actor_WalkToAndWait(ACTOR_FELIX, 664, 824);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
@@ -656,10 +656,10 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_WalkToAndWait(ACTOR_FELIX, 712, 816);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(ACTOR_JENNA, 3);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
   FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_FELIX);
   FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_FELIX);
@@ -685,9 +685,9 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_WalkToAndWait(ACTOR_KRADEN, 696, 840);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(10);
   Actor_WalkTo(ACTOR_KRADEN, 696, 920);
   FieldEvent_Wait(10);
@@ -712,7 +712,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "Once we go down those stairs, we can't get back into the lighthouse."
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
@@ -732,7 +732,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "What is it? What's wrong?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(10);
   // "I have a bad feeling... Like something terrible is going to happen."
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -747,7 +747,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   FieldEvent_Wait(10);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "How unlike you, Jenna."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
@@ -837,11 +837,11 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "I was merely surprised to hear you expressing such concern, Jenna."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "Nevertheless, I'm impressed Felix went back..."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 4);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_WalkByAndWait(ACTOR_JENNA, 0, 16);
@@ -869,7 +869,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 4);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   // "I'm not sure he has, Kraden."
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
@@ -881,7 +881,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "Who do you think you are, talking to me like that!?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "I retract my statement, my dear. Forget all about it, Jenna."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
@@ -891,7 +891,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "So tell me about this "feeling," Jenna..."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(10);
   // "I'm just... I'm not sure we should be leaving Venus Lighthouse yet..."
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -903,7 +903,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
@@ -912,7 +912,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "Alex is right. It's far too dangerous, Jenna. We would only hinder..."
@@ -936,7 +936,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "If my brother goes back and finds Isaac, they're going to end up..."
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "If the Venus Lighthouse has not yet been lit, yes. They will fight."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
@@ -950,7 +950,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
   // "He may be rash, but Felix is no fool. His good qualities outweigh..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
@@ -966,7 +966,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
   // "Why didn't I think of this before now?"
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -984,7 +984,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "I'm afraid that's not possible."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
@@ -994,7 +994,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "Alex, why?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "He is an enemy."
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
@@ -1009,7 +1009,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
   // "To light the elemental lighthouses..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
@@ -1025,7 +1025,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
   // "But fear not... They won't be able to defeat Saturos and Menardi."
   Event_ShowMessage(ACTOR_ALEX, 0);
@@ -1074,7 +1074,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "With its power, mankind worked wonders across the land..."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
   // "The lost age of man..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
@@ -1084,12 +1084,12 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "I want to see that world restored once again, and..."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(10);
   // "And what, Alex?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "We've spoken long enough already. Let us continue this another time."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
@@ -1098,7 +1098,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "We should leave the lighthouse now, before the beacon is fired..."
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   FieldEvent_Wait(20);
@@ -1113,13 +1113,13 @@ void VenusLighthouse_DoubtLeaving(void) {
   // "All right, Kraden, let's go."
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(ACTOR_ALEX, 3);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_ALEX, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   actor = (struct Actor *)Actor_Get(ACTOR_JENNA);
   if (actor != NULL)
     Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&actor->x)[1],
@@ -1127,7 +1127,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_ALEX, 1.2);
-  Actor_SetAnimation(ACTOR_ALEX, 2);
+  Actor_SetAnimation(ACTOR_ALEX, ANIM_WALK);
   actor = (struct Actor *)Actor_Get(ACTOR_JENNA);
   if (actor != NULL)
     Actor_SetDestination(ACTOR_ALEX, ((s16 *)&actor->x)[1],

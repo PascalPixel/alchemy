@@ -91,7 +91,7 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
   Event_PlaySound(SE_DOOR_OPEN);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
@@ -236,6 +236,7 @@ void Champa_TellOfBriggsTreasure(s32 actor) {
 void Champa_AskAboutAnkohlRuins(s32 actor) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     FieldEvent_SetMessageId((s32)MsgChampa30);
+    // "Briggs took a long time to return to us. You want to know why?"
     Event_OpenMessage(actor, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
@@ -248,6 +249,7 @@ void Champa_AskAboutAnkohlRuins(s32 actor) {
     Event_ShowMessage(actor, 0);
   } else {
     FieldEvent_SetMessageId((s32)MsgChampa05);
+    // "You've the look of a traveler about you... Have you been to Ankohl..."
     Event_OpenMessage(actor, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
@@ -331,6 +333,7 @@ void Champa_FeizhiArrives(void) {
 
         Actor_SetPositionAndFacing(29, px(314), px(679), angle);
       }
+      // "Isaac!"
       FieldEvent_ShowMessageThenWait(29, 0, 5);
       Actor_WalkToAndWait(4, 314, 580);
       Actor_FaceDirection(4, FACING_SOUTH, 0);
@@ -340,6 +343,7 @@ void Champa_FeizhiArrives(void) {
       FieldEvent_Wait(40);
       Actor_WalkToAndWait(29, 314, 624);
       Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+      // "Isaac, is it you? Do my eyes deceive me?"
       Event_OpenMessage(29, 0);
       if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
         FieldEvent_ShowMessageThenWait(29, 0, 5);

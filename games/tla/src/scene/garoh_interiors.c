@@ -134,6 +134,7 @@ void GarohInteriors_TalkToWeaponMerchant(s32 actor) {
       // "I'm sorry, but on nights of the full moon, we only sell claws and
       // fangs."
       Event_SetMessageId((s32)MsgGarohInteriors17);
+    // "I'm sorry, but on nights of the full moon, we only sell claws and..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -154,6 +155,7 @@ void GarohInteriors_TalkToArmorMerchant(s32 actor) {
     else
       // "Unfortunate that you should come on a night of the full moon, sir..."
       Event_SetMessageId((s32)MsgGarohInteriors19);
+    // "Unfortunate that you should come on a night of the full moon, sir......"
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -170,6 +172,7 @@ void GarohInteriors_TalkToItemMerchant(s32 actor) {
   } else if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
     // "I've heard stories about other mountains like our own Air's Rock..."
     Event_SetMessageId((s32)MsgGarohInteriors56);
+    // "I've heard stories about other mountains like our own Air's Rock......"
     Event_ShowMessageAndWait(actor, 0);
   } else {
     s32 message = (s32)MsgGarohInteriors21;
@@ -205,6 +208,7 @@ void GarohInteriors_TalkToInnkeeper(s32 actor) {
     else
       // "A clear night around here always means fair weather on the morrow..."
       Event_SetMessageId((s32)MsgGarohInteriors23);
+    // "A clear night around here always means fair weather on the morrow......"
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -227,6 +231,7 @@ void GarohInteriors_TalkToHealer(void) {
     else
       // "The people here may be different, but they certainly are nice..."
       Event_SetMessageId((s32)MsgGarohInteriors31);
+    // "The people here may be different, but they certainly are nice... And..."
     Event_ShowMessageAndWait(ACTOR_HEALER, 0);
   }
   Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTH, 0);
@@ -242,20 +247,25 @@ void GarohInteriors_AskWhatTheWanderersSeek(s32 actor) {
   // "Good evening, wanderers! Are you looking for something?"
   message = (s32)MsgGarohInteriors01;
   Event_SetMessageId(message);
+  // "Good evening, wanderers! Are you looking for something?"
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     // "Searching for werewolves, eh?"
     Event_SetMessageId(message + 2);
+    // "Searching for werewolves, eh?"
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
+      // "You don't really believe they exist, do you? If so, you'd best..."
       Event_ShowMessageAndWait(actor, 0);
     } else {
       // Past "You don't really believe they exist, do you?" to the next line.
       gFieldWork->message++;
+      // "Hehrrr... Sorry. Just thought I'd ask. We get some crazy folk..."
       Event_ShowMessageAndWait(actor, 0);
     }
   } else {
+    // "Just...staying up late, eh? Can't say I blame you, on a night like..."
     Event_ShowMessageAndWait(actor, 0);
   }
   Event_End();
@@ -271,6 +281,7 @@ void GarohInteriors_TalkToDisappointedTraveler(void) {
   else
     // "Zzzz... Zzzz... What a waste... Just a big rock..."
     Event_SetMessageId((s32)MsgGarohInteriors25);
+  // "Zzzz... Zzzz... What a waste... Just a big rock..."
   Event_ShowMessageAndWait(ACTOR_DISAPPOINTED_TRAVELER, 0);
   Event_End();
 }
@@ -285,6 +296,7 @@ void GarohInteriors_TalkToStubbornTraveler(void) {
   else
     // "Zzz... Whuzza? Whirlwind? Wind Stone? Zzzzrrrgg..."
     Event_SetMessageId((s32)MsgGarohInteriors26);
+  // "Zzz... Whuzza? Whirlwind? Wind Stone? Zzzzrrrgg..."
   Event_ShowMessageAndWait(ACTOR_STUBBORN_TRAVELER, 0);
   Event_End();
 }
@@ -299,6 +311,7 @@ void GarohInteriors_ReadDisappointedTravelersMind(void) {
   else
     // "...Climbed all over that stupid rock, and for what? Nothing!"
     Event_SetMessageId((s32)MsgGarohInteriors29);
+  // "...Climbed all over that stupid rock, and for what? Nothing!"
   Event_ShowMessageAndWait(ACTOR_DISAPPOINTED_TRAVELER, 0);
   Event_End();
 }
@@ -313,6 +326,7 @@ void GarohInteriors_ReadStubbornTravelersMind(void) {
   else
     // "That rock was huge. How was I supposed to make it spin?"
     Event_SetMessageId((s32)MsgGarohInteriors30);
+  // "That rock was huge. How was I supposed to make it spin?"
   Event_ShowMessageAndWait(ACTOR_STUBBORN_TRAVELER, 0);
   Event_End();
 }
@@ -455,7 +469,7 @@ void GarohInteriors_WakeAtInn(void) {
   // "Master Maha told us all about you. Don't you worry about the bill. It's
   // on us."
   Event_ShowMessageThenWait(ACTOR_INNKEEPER, 0, 10);
-  Motion_SetModeAndWaitAnimation(ACTOR_INNKEEPER, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_INNKEEPER, ANIM_NOD);
   Event_Wait(30);
   // "Farewell, friends."
   Event_ShowMessageThenWait(ACTOR_INNKEEPER, 0, 10);

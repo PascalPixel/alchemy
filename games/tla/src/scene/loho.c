@@ -527,6 +527,7 @@ void Loho_TalkAboutBreachedWall(void) {
     Event_SetMessageId((s32)MsgLoho32);
   else
     Event_SetMessageId((s32)MsgLoho55);
+  // "I saw some of the village men carrying the cannon out of town..."
   Event_ShowMessage(11, 0);
 }
 
@@ -535,6 +536,7 @@ void Loho_MindReadMiner(void) {
     Event_SetMessageId((s32)MsgLoho36);
   else
     Event_SetMessageId((s32)MsgLoho56);
+  // "I don't know where they were taking it, but I'm glad the cannon's..."
   Event_ShowMessage(11, 0);
 }
 
@@ -593,6 +595,7 @@ void Loho_TalkAboutCommerce(void) {
       Event_SetMessageId((s32)MsgLoho51);
     else
       Event_SetMessageId((s32)MsgLoho17);
+    // "Commerce really took off when we started this mining colony in Loho...."
     Event_ShowMessage(8, 0);
   }
 }
@@ -610,6 +613,7 @@ void Loho_TalkAboutCannon(s32 actor) {
       Event_SetMessageId((s32)MsgLoho53);
     else
       Event_SetMessageId((s32)MsgLoho19);
+    // "If you're only here for the cannon, you can forget about it."
     Event_ShowMessage(actor, 0);
   }
 }
@@ -653,7 +657,7 @@ loop:
   work = (u8 *)&((struct FieldWork *)work)->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Event_PlaySound(SE_MAP_EXIT);
@@ -671,7 +675,7 @@ void Loho_EnterDoor(void) {
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
-  Actor_SetAnimation(party->currentOwner, 2);
+  Actor_SetAnimation(party->currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Event_PlaySound(SE_MAP_EXIT);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);

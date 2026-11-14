@@ -266,7 +266,7 @@ void SuhallaGate_RuffianSpotsParty(void) {
   }
   // "Whoa there... Where'd the blue-haired guy go?"
   Event_ShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_ROAD_RUFFIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROAD_RUFFIAN, ANIM_NOD);
   Event_Wait(30);
   // "Who cares! I can handle some girl and her grandpa!"
   Event_ShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
@@ -312,13 +312,13 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_WEST_RUFFIAN, 0, 10);
   // "You two aren't going anywhere!"
   FieldEvent_ShowMessageThenWait(ACTOR_MIDDLE_RUFFIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_EAST_RUFFIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_EAST_RUFFIAN, ANIM_NOD);
   FieldEvent_Wait(30);
   // "Except with us, back to Master Iodem!"
   FieldEvent_ShowMessageThenWait(ACTOR_EAST_RUFFIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_WEST_RUFFIAN, 3);
-  Actor_SetAnimation(ACTOR_MIDDLE_RUFFIAN, 3);
-  Actor_SetAnimationAndWait(ACTOR_EAST_RUFFIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_WEST_RUFFIAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIDDLE_RUFFIAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_EAST_RUFFIAN, ANIM_NOD);
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_SuhallaGate2,
                                        ENTRANCE_AFTER_BATTLE);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance,
@@ -417,17 +417,17 @@ void SuhallaGate_AfterPunchAntBattle(void) {
   Event_WaitTransitionFrames();
   // "My! That was invigorating! He wasn't too strong..."
   Event_ShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_CAVE_KRADEN, 2);
   Event_Wait(20);
   // "I never knew fighting could be so fun! Ah, but we'd better get on to the
   // peninsula..."
   Event_ShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Event_Wait(30);
   Event_SetFlag(FLAG_GATEWAY_CAVE_PUNCH_ANT_BEATEN);
-  Actor_SetAnimation(ACTOR_CAVE_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_CAVE_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
     Actor_SetDestination(ACTOR_CAVE_KRADEN, ((s16 *)&leader->x)[1],
@@ -451,7 +451,7 @@ void SuhallaGate_PointToMeetingSpot(void) {
   // "Not that way, Jenna! The meeting spot is down this way." "We must climb
   // down here and go into that cave."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_CLIFFS_KRADEN, 0, 10);
-  Actor_SetAnimation(ACTOR_CLIFFS_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_CLIFFS_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
     Actor_SetDestination(ACTOR_CLIFFS_KRADEN, ((s16 *)&leader->x)[1],

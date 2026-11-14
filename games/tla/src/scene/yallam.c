@@ -246,7 +246,7 @@ void Yallam_EnterDoor(void) {
   index--;
   MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
                        gYallam_Doors[index].y);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   {
     s32 owner = gMainRoutineWork.currentOwner;
@@ -1432,7 +1432,7 @@ void Yallam_ShowSongGame(void) {
   Actor_WalkToAndWait(5, 312, 854);
   Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(5, 3);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimation(5, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0) {

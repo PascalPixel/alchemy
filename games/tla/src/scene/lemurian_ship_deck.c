@@ -81,7 +81,7 @@ void LemurianShipDeck_EnterCabin(void) {
       Event_PlaySound(SE_DOOR_OPEN);
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
     }
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
     FieldEvent_Wait(8);
@@ -305,48 +305,67 @@ void LemurianShipDeck_TakeTheTiller(void) {
       0) {
     Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    // "I don't think that's a good idea."
     Event_ShowMessage(9, 0);
     gFieldWork->message++;
   } else {
     Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     gFieldWork->message++;
+    // "I'm with Felix. I don't think that would be a wise course of action."
     Event_ShowMessage(9, 0);
   }
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  // "Come, now! Why not?"
   Event_ShowMessage(7, 0);
+  // "Think about the roads we have traveled to get where we are..."
   Event_ShowMessage(9, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "I can't... I was never any good at geography."
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTHEAST + FACING_STEP);
+  // "Then allow me to explain... The coastline of Angara, the continent..."
   Event_ShowMessage(9, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Oh... You don't think Piers's boat could land there?"
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH + FACING_STEP);
+  // "And as for Gondowan, I would guess the people from Lalivero..."
   Event_ShowMessage(9, 0);
+  // "He's right. Saturos and Menardi went a little wild in Lalivero, and..."
   Event_ShowMessage(6, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
+  // "Oh... But Sheba can explain the situation for us. Faran and the..."
   Event_ShowMessage(5, 0);
   Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
+  // "And then they'd make me stay in Lalivero! Would you just leave me..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
+  // "Oh yeah... Maybe that wouldn't be such a good idea after all..."
   Event_ShowMessage(5, 0);
+  // "Then it's decided!"
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "What's decided?"
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "The sea is vast... We can go wherever we please! So, let's explore a..."
   Event_ShowMessage(9, 0);
   FieldActor_Jump(6, 4, 10);
+  // "That's a great idea! We've already met werewolves and discovered new..."
   Event_ShowMessage(6, 0);
   FieldActor_Jump(5, 2, 10);
   FieldActor_Jump(5, 4, 10);
+  // "Wow! This is going to be great!"
   Event_ShowMessage(5, 0);
+  // "Hmm... The seas can be quite dangerous. It won't be my fault if..."
   Event_ShowMessage(7, 0);
   Actor_SetAnimation(9, 3);
+  // "To the open sea, Felix!"
   Event_ShowMessage(9, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -616,6 +635,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   } else {
     Actor_WaitForAnimationChange(owner);
     FieldEvent_SetMessageId(MsgLookItS + 5); // the fifth message after it
+    // "How else could it have come to be here, Felix?"
     Event_ShowMessage(9, 0);
   }
   Actor_SetAnimation(5, 4);
@@ -687,6 +707,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     Actor_WalkToAndWait(9, 416, 428);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     FieldEvent_SetMessageId(MsgWellThereS);
+    // "Well, there's no point in hanging around here all day. Let's go see..."
     Event_ShowMessage(9, 0);
     Actor_SetAnimation(9, 2);
     object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -785,7 +806,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   Event_ShowMessage(7, 0);
   Actor_WalkToAndWait(7, 386, 424);
   Actor_FaceActor(7, gMainRoutineWork.currentOwner, 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   // "Wait there a moment."
   Event_ShowMessage(7, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
@@ -1119,6 +1140,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
     FieldEvent_SetMessageId(MsgThenLetS);
     FieldActor_WaitForMoveById(7);
     Actor_Get(7)->update = 0;
+    // "Then let's waste no time! We should set out for Madra at once!"
     Event_ShowMessage(7, 0);
     Actor_SetAnimationAndWait(4, 3);
     Actor_Get(gMainRoutineWork.currentOwner)->update =

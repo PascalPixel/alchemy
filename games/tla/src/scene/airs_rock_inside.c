@@ -2666,8 +2666,9 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_ArmCallback(6, FACING_WEST, 0);
     FieldEvent_Wait(10);
+    // "Do you think I ought to touch it?"
     Event_ShowMessageAndWait(6, 0);
-    Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(30);
     Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 256, 152);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -2692,7 +2693,7 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 6, 0);
     FieldEvent_Wait(10);
     Actor_SetModeById(6, 3);
-    Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(20);
     Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
     Actor_SetModeById(6, 2);
@@ -2990,7 +2991,7 @@ void AirsRockInside_RiseOnLift(void) {
   Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - px(16));
   OverlayObject_WaitUntilIdle(leader);
   Actor_WaitForMove(leader);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_SelectAnimation(lift, 5);
   wait(12);
   Actor_Release(lift);

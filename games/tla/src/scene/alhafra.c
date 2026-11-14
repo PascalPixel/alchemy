@@ -98,7 +98,7 @@ void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   MapGrid_PlayMapEdit(step->script, step->x, step->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   Event_Wait(10);
   Import_EventSetExitRequest(countdown);
@@ -125,6 +125,7 @@ void Alhafra_AskWhetherIndraMoved(s32 actor) {
   if (Event_GetFlag(FLAG_TOLD_INDRA_MOVED) == 0) {
     msg = (s32)&MsgAlhafra03;
     Event_SetMessageId(msg);
+    // "I hear the tidal wave knocked Indra into Osenia. Is that true?"
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(msg + 1);
@@ -135,6 +136,7 @@ void Alhafra_AskWhetherIndraMoved(s32 actor) {
     Event_ShowMessageAndWait(actor, 0);
   } else {
     Event_SetMessageId((s32)&MsgAlhafra04);
+    // "I guess what those men told me was true... I'd figured they were..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -222,7 +224,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 10);
   // "The kid ate the bread."
   Event_ShowMessageThenWait(-1, 0, 10);
-  Actor_SetModeById(ACTOR_HUNGRY_BOY, 1);
+  Actor_SetModeById(ACTOR_HUNGRY_BOY, ANIM_STAND);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 15);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 23);
   // "Oh, wow, I feel so much better! Look at how much energy I've got now!"
@@ -236,26 +238,32 @@ void Alhafra_TalkToHungryBoy(s32 id) {
   if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED)) {
     gFieldWork->fieldMenu = 1;
     Event_SetMessageId(MsgAlhafra65);
+    // "I'm so hungry I can't even move..."
     Event_ShowMessageAndWait(id, 0);
   } else if (Event_GetFlag(FLAG_BOY_TOLD_OF_CAVE)) {
     Event_SetMessageId(MsgAlhafra71);
+    // "I'm feeling a lot better now thanks to you, mister. If you get any..."
     Event_ShowMessageAndWait(id, 0);
   } else {
     Event_SetMessageId(MsgAlhafra70);
     Event_Wait(10);
     Motion_SetModeAndWaitAnimation(id, 3);
+    // "Geez, mister, I don't know how I can repay you..."
     Event_ShowMessageThenWait(id, 0, 10);
     Motion_SetVarCbAndRefresh(id, 2);
+    // "Wait, I've got it! Do you like...adventures?"
     FieldMessage_ShowAtActor(id, 0);
     Event_Wait(10);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       GameFlag_Set(FLAG_BOY_TOLD_OF_CAVE);
       Event_Wait(20);
+      // "Then you totally have to go check out the caves under the mayor's..."
       Event_ShowMessageThenWait(id, 0, 10);
       gFieldWork->message++;
     } else {
       Event_Wait(30);
       gFieldWork->message++;
+      // "Really? Wow... You're so boring. Well, if you change your mind..."
       Event_ShowMessageThenWait(id, 0, 10);
     }
   }
@@ -923,10 +931,10 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
   }
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LOOKOUT, 3);
+  Actor_SetAnimationAndWait(ACTOR_LOOKOUT, ANIM_NOD);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LOOKOUT, 4);
+  Actor_SetAnimationAndWait(ACTOR_LOOKOUT, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
   FieldEvent_Wait(20);
@@ -964,7 +972,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Actor_GetById(4)->actionFlags |= 1;
     Actor_FaceDirection(4, FACING_NORTHEAST, 0);
     Event_Wait(20);
-    Motion_SetModeAndWaitAnimation(ACTOR_LOOKOUT, 3);
+    Motion_SetModeAndWaitAnimation(ACTOR_LOOKOUT, ANIM_NOD);
     Event_Wait(10);
     Actor_ArmCallback(ACTOR_LOOKOUT, 0xe000, 0);
     Event_Wait(70);

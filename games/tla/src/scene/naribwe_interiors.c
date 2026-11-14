@@ -86,6 +86,7 @@ void NaribweInteriors_RecommendFortuneTeller(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgIfYouAre);
+    // "If you are burdened with many concerns, take a weapon to the..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -100,6 +101,7 @@ void NaribweInteriors_RecommendFortuneTellerOnReturn(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgWheneverIGet);
+    // "Whenever I get customers from out of town, I always tell them the..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -114,6 +116,7 @@ void NaribweInteriors_SendToFortuneTeller(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgYouShouldVisit);
+    // "You should visit the fortune- teller while you are in our village...."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -128,6 +131,7 @@ void NaribweInteriors_SendToFortuneTellerOnReturn(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgIfYouWish);
+    // "If you wish to know anything, go to the fortune-teller. He's fast..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -143,6 +147,7 @@ void NaribweInteriors_TalkAboutCooking(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgOurCookingIs);
+    // "Our cooking is famous all across Gondowan. If you find you like it..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -157,6 +162,7 @@ void NaribweInteriors_TalkAboutTravelers(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgISeeSo);
+    // "I see so many travelers... How am I supposed to remember who Piers..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -224,12 +230,12 @@ void NaribweInteriors_ReadFortune(void) {
   FieldEvent_Wait(30);
 ask:
 #if !TLA_PATCH_1
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   // Before patch 1 the item variable first holds the choice's result.
   item = ItemPicker_RunMode1(&unit, &slot);
   if (item == -1) {
 #else
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   if (ItemPicker_RunMode1(&unit, &slot) == -1) {
 #endif
     refuse = MsgShallIGive;
@@ -386,22 +392,27 @@ void NaribweInteriors_ReadShiningItem(void) {
   switch (NaribweInteriors_NextPowerToGain()) {
   case 3:
     FieldEvent_SetMessageId((s32)MsgYouAreLost);
+    // "You are lost in your way... Another continent needs your attention..."
     Event_ShowMessage(10, 0);
     break;
   case 4:
     FieldEvent_SetMessageId((s32)MsgADistantIsle);
+    // "A distant isle lies far to the northeast... Sail there. High atop a..."
     Event_ShowMessage(10, 0);
     break;
   case 5:
     FieldEvent_SetMessageId((s32)MsgISeeA);
+    // "I see a paradise awaiting you... An island in the east. But even..."
     Event_ShowMessage(10, 0);
     break;
   case 6:
     FieldEvent_SetMessageId((s32)MsgATinyFigure);
+    // "A tiny figure stands against a wasteland wrought in snow... The..."
     Event_ShowMessage(10, 0);
     break;
   case 7:
     FieldEvent_SetMessageId((s32)MsgISeeYou);
+    // "I see you lost in mists, lost in time, lost in the seas... And..."
     Event_ShowMessage(10, 0);
     break;
   default:
@@ -437,26 +448,32 @@ void NaribweInteriors_ReadOtherItem(void) {
   switch (NaribweInteriors_NextPath()) {
   case 0:
     FieldEvent_SetMessageId((s32)MsgISeeYouInside);
+    // "I see you inside a sacred icon. By listening to the voices, you will..."
     Event_ShowMessage(10, 0);
     break;
   case 9:
     FieldEvent_SetMessageId((s32)MsgYouMustForge);
+    // "You must forge a weapon to defeat a mortal enemy. Seek out the pieces!"
     Event_ShowMessage(10, 0);
     break;
   case 10:
     FieldEvent_SetMessageId((s32)MsgYouWillRaise);
+    // "You will raise a mighty column and gain assistance where it is least..."
     Event_ShowMessage(10, 0);
     break;
   case 11:
     FieldEvent_SetMessageId((s32)MsgYouWillGain);
+    // "You will gain tremendous help from a village on the eastern reaches..."
     Event_ShowMessage(10, 0);
     break;
   case 12:
     FieldEvent_SetMessageId((s32)MsgYouHaveThe);
+    // "You have the weapon you need to defeat the sea beast. Go to the sea..."
     Event_ShowMessage(10, 0);
     break;
   case 13:
     FieldEvent_SetMessageId((s32)MsgTheObjectThat);
+    // "The object that you seek lies somewhere in the west. Why do you..."
     Event_ShowMessage(10, 0);
     break;
   }

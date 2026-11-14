@@ -26,6 +26,7 @@
 #include "actor.h"
 #include "field/event_inline.h"
 #include "objcmd.h"
+#include "module/scene/actor_animation.h"
 
 /// Set once Scoop has dug up the ladder down to the tunnels by the sheep; the
 /// village redraws it on every visit.
@@ -128,7 +129,7 @@ void Mikasalla_EnterDoor(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
 
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   if (index != 4) {
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
     Event_Wait(10);
@@ -161,6 +162,7 @@ void Mikasalla_AskLookingForSomeone(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Event_SetMessageId(msg);
+  // "Are you looking for someone?"
   Event_OpenMessage(ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);

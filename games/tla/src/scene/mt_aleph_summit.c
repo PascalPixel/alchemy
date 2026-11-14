@@ -425,9 +425,11 @@ s32 Scene_Initialize(void) {
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     System_Wait(30);
     FieldEvent_SetMessageId(MsgGoldenSunFormation);
+    // "The Golden Sun... The very quintessence of Alchemy's power! It's..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     System_Wait(30);
     Actor_RunRepeatedMotion(8, 2);
+    // "Wait for me! Please, wait! Wait until I reach the summit of Mt. Aleph!"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     Actor_SetAnimationSpeedById(8, 32);
     i = 0;
@@ -537,12 +539,15 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(5);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_SetMessageId(MsgGoldenSunEternalLifeAndPower);
+    // "At last! I have it! Eternal life...and limitless power!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_FaceDirection(8, FACING_SOUTH, 0);
     FieldEvent_Wait(30);
     Actor_SetAnimation(8, 14);
+    // "At last, the power of nature is mine to control as I will!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(8, 15);
+    // "Rise, storms! Rise up and unleash your might upon Vale and the..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 150);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_SetAnimation(8, 1);
@@ -558,6 +563,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(50);
     Actor_SetAnimation(8, 15);
     FieldEvent_Wait(50);
+    // "That's odd... I should have limitless power... So why can't I call..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldEvent_Wait(50);
     Actor_RunRepeatedMotion(8, 2);

@@ -23,6 +23,7 @@
 #include "system/frame.h"
 #include "version.h"
 #include "system/io_reg.h"
+#include "module/scene/actor_animation.h"
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
@@ -153,7 +154,7 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);

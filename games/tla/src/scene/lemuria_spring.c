@@ -243,6 +243,7 @@ prompt:
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
   message = (s32)MsgWhatWillYou;
   Event_SetMessageId(message);
+  // "What will you throw?"
   Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgCoins2;
@@ -273,6 +274,7 @@ prompt:
 full:
   if (PartyInventory_CountFreeSlots() == 0) {
     Event_SetMessageId(message + 4);
+    // "You can't carry more items. Do you still want to play?"
     Event_OpenMessage(minusOne, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
       goto end;
@@ -311,6 +313,7 @@ toss:
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     message = (s32)MsgWhatWillYou;
     Event_SetMessageId(message);
+    // "What will you throw?"
     Event_OpenMessage(-1, 0);
     window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
     text = (s32)MsgCoins2;
@@ -328,6 +331,7 @@ toss:
     if (choice == 0) {
       if (coins == 0) {
         Event_SetMessageId(message + 1);
+        // "You don't have any coins!"
         Event_ShowMessage(-1, 0);
         wait(1);
         continue;
@@ -336,6 +340,7 @@ toss:
     } else if (choice == 1) {
       if (medals == 0) {
         Event_SetMessageId(message + 2);
+        // "You have no Lucky Medals!"
         Event_ShowMessage(-1, 0);
         wait(1);
         continue;
@@ -343,6 +348,7 @@ toss:
       PartyInventory_Remove(229);
       if (PartyInventory_CountFreeSlots() == 0) {
         Event_SetMessageId(message + 4);
+        // "You can't carry more items. Do you still want to play?"
         Event_OpenMessage(-1, 0);
         if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
           goto end;
@@ -386,6 +392,7 @@ toss:
         Event_PlaySound(MUS_091);
         MessageArgument_Push(gLemuriaSpring_CoinPrizes[result], 5);
         Event_SetMessageId((s32)MsgYouWonCoin);
+        // "You won coin!"
         Event_ShowMessage((s32)minusOne, 0);
       } else {
         Event_PlaySound(SE_MENU_CANCEL);

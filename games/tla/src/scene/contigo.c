@@ -640,12 +640,15 @@ void Contigo_BabyThinks(void) {
   else
     Event_SetMessageId((s32)MsgContigo65);
   Motion_SetVarCbAndRefresh(17, 2);
+  // "Babu bawaba bibaw."
   Event_ShowMessageAndWait(17, 0);
   Actor_SetModeById(17, 1);
   FieldActor_ShowEmote(14, 259, 0);
   Actor_FaceDirection(14, FACING_WEST, 20);
+  // "It sure is drafty in this shabby old house."
   Event_ShowMessageAndWait(14, 0);
   Actor_FaceDirectionById(15, FACING_EAST);
+  // "When the Wings of Anemos are complete, let's fix the house!"
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(14, 3);
   Motion_SetModeAndWaitAnimation(15, 3);
@@ -670,6 +673,7 @@ void Contigo_TalkToItemMerchant(void) {
       Event_SetMessageId((s32)MsgContigo176);
     else
       Event_SetMessageId((s32)MsgContigo74);
+    // "The villagers are working their hardest to complete the wings and..."
     Event_ShowMessageAndWait(13, 0);
     Event_End();
   }
@@ -685,6 +689,7 @@ void Contigo_TalkToWeaponMerchant(void) {
       Event_SetMessageId((s32)MsgContigo172);
     else
       Event_SetMessageId((s32)MsgContigo70);
+    // "It was a longstanding tradition that people in Atteka would take a..."
     Event_ShowMessageAndWait(18, 0);
     Event_End();
   }
@@ -700,6 +705,7 @@ void Contigo_TalkToArmorMerchant(void) {
       Event_SetMessageId((s32)MsgContigo174);
     else
       Event_SetMessageId((s32)MsgContigo72);
+    // "Mining materials in the ruins is dangerous work, so my armor is..."
     Event_ShowMessageAndWait(19, 0);
     Event_End();
   }
@@ -717,6 +723,7 @@ void Contigo_TalkToInnkeeper(void) {
       Event_SetMessageId((s32)MsgContigo128);
     else
       Event_SetMessageId((s32)MsgContigo76);
+    // "We've had so many people coming to Contigo lately that we're full..."
     Event_ShowMessageAndWait(20, 0);
     Event_End();
   }
@@ -734,6 +741,7 @@ void Contigo_TalkToHealer(void) {
       Event_SetMessageId((s32)MsgContigo136);
     else
       Event_SetMessageId((s32)MsgContigo88);
+    // "The real miracle will be if these wings actually make a boat fly...."
     Event_ShowMessageAndWait(28, 0);
     Event_End();
   }
@@ -1169,10 +1177,12 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
   } else {
     if (tickets == 0) {
       Event_SetMessageId((s32)MsgContigo18);
+      // "Too bad... Come back after you get some tickets."
       Event_ShowMessageAndWait(18, 0);
       return;
     }
     Event_SetMessageId((s32)MsgContigo19);
+    // "Too bad... Would you like to use your tickets to keep playing?"
     FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
       Event_SetMessageId((s32)MsgContigo17);
@@ -1225,6 +1235,7 @@ void Contigo_SendToLuckyDice(void) {
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
     Event_SetMessageId((s32)MsgContigo03);
+    // "Hey! Ya don't have enough coins! Ya gotta pay to play."
     FieldMessage_ShowAtActor(14, 0);
     return;
   }
@@ -1262,6 +1273,7 @@ void Contigo_SendToSuperLuckyDice(void) {
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
     Event_SetMessageId((s32)MsgContigo34);
+    // "Sorry, pal, but you've gotta have more coins to play."
     FieldMessage_ShowAtActor(14, 0);
     return;
   }
@@ -1628,7 +1640,7 @@ void Contigo_TheReunion(void) {
   Sound_Play(MUS_705);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(7, 3);
   Actor_SetModeById(6, 3);
@@ -1735,7 +1747,7 @@ void Contigo_TheReunion(void) {
   Actor_SetModeById(1, 3);
   Actor_SetModeById(3, 3);
   Actor_SetModeById(2, 3);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(7, 3);
@@ -1803,7 +1815,7 @@ void Contigo_TheReunion(void) {
   Actor_SetModeById(1, 3);
   Actor_SetModeById(3, 3);
   Actor_SetModeById(2, 3);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Motion_SetModeAndWaitAnimation(7, 3);
@@ -1838,12 +1850,16 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
     FieldActor_ShowEmote(8, 265, 20);
     Event_SetMessageId((s32)MsgReturnedToMyNewHome);
+    // "Ah, you've returned! What brings you to my new home?"
     Event_ShowMessageAndWait(8, 0);
     Motion_SetModeAndWaitAnimation(2, 3);
+    // "Hamma..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
     Actor_SetModeById(2, 4);
+    // "You're my sister... Why didn't you tell me sooner? Why didn't you..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
     Actor_SetModeById(8, 4);
+    // "You play an important role in all this. If I'd told you, you would..."
     Event_ShowMessageAndWait(8, 0);
     Actor_FaceDirection(2, FACING_NORTHWEST, 40);
     Actor_WalkToAndWait(2, 180, 364);
@@ -1852,19 +1868,26 @@ void Contigo_ReturnToNewHome(void) {
     Event_Wait(40);
     Actor_WalkToAndWait(2, 146, 380);
     FieldActor_ShowEmote(2, 265, 20);
+    // "This place is so familiar... I feel like I've lived here my whole life."
     Event_ShowMessageAndWait(2, 0);
     FieldActor_ShowEmote(8, 259, 20);
+    // "Look at me, Ivan."
     Event_ShowMessageAndWait(8, 0);
     FieldActor_ShowEmote(2, 257, 0);
     Actor_FaceDirection(2, FACING_NORTHEAST, 40);
+    // "You're too sentimental. You would have given up your quest to find..."
     Event_ShowMessageAndWait(8, 0);
     FieldActor_ShowEmote(2, 256, 0);
+    // "What are you saying, sister?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
     Actor_SetModeById(8, 4);
+    // "No, not sister... Do not think of me as your sister until you have..."
     Event_ShowMessageAndWait(8, 0);
     Actor_SetAttachedEffect(2, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    // "W-Why?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
     FieldActor_ShowEmote(8, 265, 20);
+    // "Our world is falling into ruin..."
     Event_ShowMessageAndWait(8, 0);
     Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
     wait(1);
@@ -1872,6 +1895,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetSpeed(0, 1.2);
     Actor_WalkToAndWaitById(0, 168, 380);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
+    // "What? Hamma, what do you mean? What's happening?"
     Event_ShowMessageAndWait(0, 0);
     FieldActor_ShowEmote(8, 256, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
@@ -1885,18 +1909,23 @@ void Contigo_ReturnToNewHome(void) {
     Actor_WalkToAndWaitById(9, 182, 360);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     FieldActor_ShowEmote(9, 265, 20);
+    // "Look, I don't want to interrupt your reunion or anything, but..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
     Actor_ArmCallback(8, FACING_EAST, 0);
     Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    // "I couldn't help overhearing you say something about the world..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
     Motion_SetModeAndWaitAnimation(8, 3);
+    // "Our world requires a delicate balance of elemental forces. That..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
     FieldActor_ShowEmote(9, 257, 0);
     FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
     FieldActor_ShowEmote(0, 257, 0);
     FieldActor_ShowEmote(2, 257, 40);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+    // "Without that balance, one element might be lost beneath the others..."
     Event_ShowMessageAndWait(8, 0);
+    // "You're talking about Mars Lighthouse, right?"
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
     Actor_FaceDirectionById(8, FACING_EAST);
     Motion_SetModeAndWaitAnimation(8, 3);
@@ -1904,17 +1933,21 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 40);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
+    // "Isn't Agatio taking care of Mars Lighthouse? Everything should be..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
     FieldActor_ShowEmote(8, 259, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 20);
+    // "Agatio will not light Mars Lighthouse."
     Event_ShowMessageAndWait(8, 0);
     Actor_FaceDirection(0, FACING_NORTHEAST, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 40);
     Actor_FaceDirection(9, FACING_WEST, 0);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
+    // "You don't think he can do it?"
     Event_ShowMessageAndWait(0, 0);
     Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
+    // "No. A great power stands ready to oppose them."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
     FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 0);
     FieldActor_ShowEmote(0, 256, 0);
@@ -1922,6 +1955,7 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(9, 256, 40);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(8, 4);
+    // "They lack the power to resist that force, and they will fall before it."
     Event_ShowMessageAndWait(8, 0);
     Actor_FaceDirection(0, FACING_NORTHEAST, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
@@ -1930,16 +1964,20 @@ void Contigo_ReturnToNewHome(void) {
     FieldEffect_SetAttached(0, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(20);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
+    // "But what will happen if Mars Lighthouse isn't lit quickly enough?"
     Event_ShowMessageAndWait(0, 0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_FaceDirection(9, FACING_WEST, 0);
     Actor_FaceDirection(2, FACING_NORTHEAST, 0);
     FieldActor_ShowEmote(8, 265, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
+    // "Our world will be plunged into ice."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
     Motion_SetVarCbAndRefresh(2, 1);
+    // "But what would make that happen?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+    // "Even I do not know the answer to that question."
     Event_ShowMessageAndWait(8, 0);
     FieldActor_ShowEmote(9, 261, 20);
     Actor_FaceDirection(0, FACING_NORTHEAST, 0);
@@ -1949,15 +1987,20 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
     FieldActor_ShowEmote(2, 257, 40);
     FieldActor_ShowEmote(9, 262, 0);
+    // "Ah... Yes, given the way that the elements interact, I see..."
     Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0);
+    // "Kraden, you understand?"
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
     FieldActor_ShowEmote(9, 264, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 20);
+    // "Well, I'm only guessing... But I think it's a good guess."
     Event_ShowMessageAndWait(9, 0);
     Actor_Jump(2, 2, 10);
+    // "Quit fooling around and tell me!"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Motion_SetModeAndWaitAnimation(9, 3);
+    // "The earth is nurturing and warm. Many creatures are reared in this..."
     FieldMessage_ShowAtActor(9, 0);
     FieldActor_ShowEmote(2, 257, 0);
     Actor_FaceDirection(2, FACING_NORTHWEST, 0);
@@ -1965,16 +2008,19 @@ void Contigo_ReturnToNewHome(void) {
         0) {
       Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
       Actor_SetModeById(2, 3);
+      // "I follow you..."
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
       gFieldWork->message++;
     } else {
       Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
       gFieldWork->message++;
       Actor_SetModeById(2, 4);
+      // "It's OK, Felix... I don't really get it either, but let's see..."
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
     }
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(9, 4);
+    // "Now, think about the ocean. It is a cold place, is it not?"
     FieldMessage_ShowAtActor(9, 0);
     FieldActor_ShowEmote(0, 257, 0);
     Actor_FaceDirection(0, FACING_NORTHWEST, 0);
@@ -1982,46 +2028,60 @@ void Contigo_ReturnToNewHome(void) {
         0) {
       Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
       Actor_SetModeById(0, 3);
+      // "Yeah, it is awfully cold..."
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
       gFieldWork->message++;
     } else {
       Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
       gFieldWork->message++;
       Actor_SetModeById(0, 4);
+      // "I don't know what point he's trying to make, but I have to agree..."
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
     }
     Motion_SetModeAndWaitAnimation(9, 3);
+    // "Both lighthouses were lit, and a balance was reached."
     Event_ShowMessageAndWait(9, 0);
     FieldActor_ShowEmote(9, 265, 0);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
+    // "But with only the lighthouse of wind lit, the balance has been..."
     Event_ShowMessageAndWait(9, 0);
     Actor_SetAttachedEffect(2, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    // "I get it... Wind cools things down, but it can't heat them up..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(9, 3);
+    // "When you burn your hand on something hot, you blow on it to cool it..."
     Event_ShowMessageAndWait(9, 0);
     Actor_SetModeById(0, 3);
+    // "Right, yeah... I've always done that without thinking about it, but..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
     FieldActor_ShowEmote(8, 257, 20);
+    // "When Mercury Lighthouse was lit, this didn't happen, though. I..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     Actor_SetModeById(9, 3);
+    // "Water cannot cool things as swiftly as wind, perhaps."
     Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0);
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     FieldActor_ShowEmote(9, 265, 0);
+    // "Or maybe the combined power of water and wind is cooling things down..."
     Event_ShowMessageAndWait(9, 0);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
+    // "If what Hamma's saying is true, we'd better get moving again, Felix."
     Event_ShowMessageAndWait(0, 0);
     Actor_SetAttachedEffect(2, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
+    // "I got too worked up about seeing my sister... Sorry."
     Event_ShowMessageAndWait(2, 0);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Motion_SetModeAndWaitAnimation(8, 3);
+    // "It's all right. I'm happy that you cared so much..."
     Event_ShowMessageAndWait(8, 0);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     Actor_SetModeById(9, 3);
+    // "All right, Felix! Let's head to Mars Lighthouse!"
     Event_ShowMessageAndWait(9, 0);
-    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_SetSpeed(2, 1.2);
     Actor_SetSpeed(0, 1.2);
     Actor_SetSpeed(9, 1.2);

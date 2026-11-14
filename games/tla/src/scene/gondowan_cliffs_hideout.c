@@ -78,13 +78,14 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Event_ShowMessageAndWait(ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
     Actor_FaceActorById(ACTOR_WARRIOR_CLAIMING_TO_CAMP,
                         ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
-    Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 4);
+    Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_CLAIMING_TO_CAMP,
+                                   ANIM_SHAKE_HEAD);
     // "No one said anything about fighting yet!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 0);
     Actor_FaceActorById(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
     // "We haven't done anything to you!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 0);
-    Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_AWAITING_FRIENDS, 3);
+    Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_AWAITING_FRIENDS, ANIM_NOD);
     // "And if you think we did, then prove it!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_AWAITING_FRIENDS, 0);
     Event_End();

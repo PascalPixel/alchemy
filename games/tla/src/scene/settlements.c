@@ -645,7 +645,7 @@ loop:
   else
     MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);
   Event_PlaySound(SE_DOOR_OPEN);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
   FieldEvent_Wait(6);

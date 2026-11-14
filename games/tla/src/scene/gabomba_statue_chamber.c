@@ -321,7 +321,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x2000, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHWEST);
   Event_ShowMessageAndWait(9, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 0);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 392, 104);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
@@ -336,7 +336,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   PartyInventory_GiveItem(ITEM_BLACK_CRYSTAL, 0);
   if (gGabombaStatueChamber_ShownItem != 0)
     Actor_Release((s32)gGabombaStatueChamber_ShownItem);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x6000, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 40);
   FieldMessage_ShowAtActor(9, 0);
@@ -363,12 +363,12 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   }
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_ShowMessageAndWait(9, 0);
   Event_ShowMessageAndWait(9, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetMovementTypeById(9, gGabombaStatueChamber_PartyLeavesScript);
   Event_Wait(20);
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
@@ -752,7 +752,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP);
   // "There must be a room on the other side of this statue..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 11, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Sound_Play(MUS_000);
   {
     s32 turn = 0xd000;
@@ -802,7 +802,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_Wait(20);
   // "What is that supposed to mean?"
   Event_ShowMessageAndWait(12, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(7, 3);
@@ -942,7 +942,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_FaceDirection(7, FACING_WEST, 0);
   Actor_FaceDirection(7, FACING_WEST, 20);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimationAndWait(6, 3);

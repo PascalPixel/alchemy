@@ -172,7 +172,7 @@ next:
     MapGrid_AnimateCells(gMadra_Doors[index].data, x, y);
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   Event_Wait(10);
   Import_EventSetExitRequest(*trigger);
@@ -195,6 +195,7 @@ void Madra_TalkToWeaponMerchant(s32 arg) {
     Event_SetMessageId((s32)&MsgTheArmorerAnd);
   else
     Event_SetMessageId((s32)&MsgAfterTheChampa);
+  // "After the Champa opened the jail cells, they came over here... All..."
   Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
 }
 
@@ -212,6 +213,7 @@ void Madra_TalkToArmorMerchant(s32 arg) {
     Event_SetMessageId((s32)&MsgIKnewThere);
   else
     Event_SetMessageId((s32)&MsgOwOwOw);
+  // "Ow. Ow. Ow... I think I got a bone bruise. I hate those..."
   Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
 }
 
@@ -229,6 +231,7 @@ void Madra_TalkToItemMerchant(s32 arg) {
     Event_SetMessageId((s32)&MsgAllMyInjuries);
   else
     Event_SetMessageId((s32)&MsgMySisterWas);
+  // "My sister was hurt when the Champa attacked... She's recovering, but..."
   Event_ShowMessage(arg, 0);
 }
 
@@ -236,7 +239,7 @@ void Madra_TalkToItemMerchant(s32 arg) {
 /// "If you don't know my sister, then I have nothing to say to you."
 void Madra_KarstSendsPartyAway(void) {
   Event_SetMessageId((s32)&MsgIfYouDon);
-  Actor_SetAnimationAndWait(ACTOR_KARST, 4);
+  Actor_SetAnimationAndWait(ACTOR_KARST, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "If you don't know my sister, then I have nothing to say to you. Get..."
   Event_ShowMessageThenWait(ACTOR_KARST, 0, 10);
@@ -287,7 +290,7 @@ void Madra_MindReadKarst(void) {
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Using Psynergy on me? Are you so dense that you don't know when to..."
   Event_ShowMessageThenWait(ACTOR_KARST, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KARST, 4);
+  Actor_SetAnimationAndWait(ACTOR_KARST, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   // "I don't have time to play games with you. Now, leave me to my thoughts!"
   Event_ShowMessageThenWait(ACTOR_KARST, 0, 10);
@@ -302,6 +305,7 @@ void Madra_KarstCallsForMenardi(void) {
     Event_ResolvePendingActions(0);
     FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
     Event_SetMessageId((s32)&MsgWhereCouldMenardi);
+    // "Where could Menardi have gone? Where are you, my sister?"
     Event_ShowMessageThenWait(ACTOR_KARST, 0, 10);
     Event_End();
     Event_SetFlag(FLAG_SCENE_TEMP_0F);
@@ -337,6 +341,7 @@ void Madra_AskComingThroughHole(void) {
   } else {
     msg = (s32)&MsgYouCominThrough;
     Event_SetMessageId(msg);
+    // "You comin' through here?"
     Event_OpenMessage(ACTOR_HOLE_WORKER, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetFlag(FLAG_MADRA_TOLD_WORKER_COMING_THROUGH);
@@ -363,6 +368,7 @@ void Madra_AskComingThroughSealedHole(void) {
   } else {
     msg = (s32)&MsgOhUhYou;
     Event_SetMessageId(msg);
+    // "Oh, uh... You coming through?"
     Event_OpenMessage(ACTOR_HOLE_WORKER, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetFlag(FLAG_MADRA_TOLD_WORKER_COMING_THROUGH);
@@ -504,6 +510,7 @@ void Madra_AskAboutIceShaft(s32 actor) {
   Event_ResolvePendingActions(0);
   msg = (s32)&MsgWasIJust;
   Event_SetMessageId(msg);
+  // "Was I just dreaming when that shaft of ice appeared?"
   Event_OpenMessage(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -528,6 +535,7 @@ void Madra_AskAboutBriggs(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     msg = (s32)&MsgHeyMisterAre;
     Event_SetMessageId(msg);
+    // "Hey, mister! Are you the guy who beat up Briggs?"
     Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
@@ -542,6 +550,7 @@ void Madra_AskAboutBriggs(void) {
       Actor_FaceActor(ACTOR_BRIGGS_FAN, ACTOR_FELIX, 0);
     msg = (s32)&MsgDidYouCome;
     Event_SetMessageId(msg);
+    // "Did you come here over the Dehkan Plateau? Yeah? You must have seen..."
     Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
@@ -565,6 +574,7 @@ void Madra_MindReadBriggsFan(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     msg = (s32)&MsgHeyMisterAre;
     Event_SetMessageId(msg);
+    // "Hey, mister! Are you the guy who beat up Briggs?"
     Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
@@ -583,6 +593,7 @@ void Madra_MindReadBriggsFan(void) {
     }
     msg = (s32)&MsgDidYouCome;
     Event_SetMessageId(msg);
+    // "Did you come here over the Dehkan Plateau? Yeah? You must have seen..."
     Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
@@ -675,7 +686,7 @@ void Madra_InspectPartyAtGate(void) {
   // "What seems to be the trouble?"
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 2);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, ANIM_NOD);
   Event_Wait(20);
   // "Just wait there..."
   Event_ShowMessageThenWait(ACTOR_SECOND_GATE_GUARD, 0, 2);
@@ -684,12 +695,12 @@ void Madra_InspectPartyAtGate(void) {
   Event_Wait(10);
   Actor_FaceActor(ACTOR_SECOND_GATE_GUARD, ACTOR_GATE_GUARD, 0);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceActor(ACTOR_SECOND_GATE_GUARD, ACTOR_GATE_GUARD, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_SECOND_GATE_GUARD, ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_GATE_GUARD, FACING_SOUTH + FACING_STEP, 0);
   Actor_GetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags &= 0xfe;
@@ -705,16 +716,16 @@ void Madra_InspectPartyAtGate(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SECOND_GATE_GUARD, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, 4);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, ANIM_SHAKE_HEAD);
   // "They don't look like they're Champa..."
   Event_ShowMessageThenWait(ACTOR_SECOND_GATE_GUARD, 0, 2);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, ANIM_NOD);
   // "I agree..."
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 2);
   Actor_FaceDirectionAndWait(ACTOR_SECOND_GATE_GUARD, FACING_SOUTH);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, ANIM_NOD);
   Event_Wait(5);
   // "Sorry for the delay. You may pass."
   Event_ShowMessageThenWait(ACTOR_SECOND_GATE_GUARD, 0, 2);
@@ -740,7 +751,7 @@ void Madra_InspectPartyAtGate(void) {
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, 4);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   // "They'd come to free their leader, Briggs."
   Event_ShowMessageThenWait(ACTOR_SECOND_GATE_GUARD, 0, 2);
@@ -760,7 +771,7 @@ void Madra_InspectPartyAtGate(void) {
   // "But then, foreigners struck from the west, exploiting a weak point..."
   Event_ShowMessageThenWait(ACTOR_SECOND_GATE_GUARD, 0, 2);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 0);
   // "That's over now, though... Feel free to relax and enjoy your time..."
@@ -776,10 +787,10 @@ void Madra_InspectPartyAtGate(void) {
   Actor_FaceDirection(ACTOR_GATE_GUARD, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(20);
   Event_Wait(10);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != NULL)
     Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
@@ -833,8 +844,8 @@ void Madra_GrantPassageToOsenia(void) {
   Actor_SetAttachedEffect(ACTOR_LADY,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, 3);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADY, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, ANIM_NOD);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADY, ANIM_NOD);
   Event_Wait(20);
   Actor_WalkTo(ACTOR_LADY, 102, 340);
   Event_Wait(20);
@@ -864,7 +875,7 @@ void Madra_GrantPassageToOsenia(void) {
   // "Oh, I'm so relieved... So Piers hasn't escaped?"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
   Actor_FaceActorById(ACTOR_LADYS_GUARD, ACTOR_LADY, 0);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, ANIM_NOD);
   Event_Wait(20);
   // "If he had escaped, the elder would no longer be able to protect him."
   Event_ShowMessageThenWait(ACTOR_LADYS_GUARD, 0, 10);
@@ -874,7 +885,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   // "But...from the look of things, it seems there was a scuffle..."
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, ANIM_NOD);
   Event_Wait(20);
   // "The cell is in disarray..."
   Event_ShowMessageThenWait(ACTOR_LADYS_GUARD, 0, 10);
@@ -888,7 +899,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   // "It seems Piers is a man of many mysteries."
   Event_ShowMessageThenWait(ACTOR_LADYS_GUARD, 0, 10);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADY, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADY, ANIM_NOD);
   Event_Wait(20);
   // "Not the least of which being that boat he arrived in..."
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
@@ -907,7 +918,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_ShowMessageThenWait(ACTOR_LADYS_GUARD, 0, 10);
   Actor_FaceActorById(ACTOR_LADY, ACTOR_LADYS_GUARD, 0);
   Event_Wait(10);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADY, 4);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADY, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "It's all right... This one has such kind eyes."
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
@@ -938,34 +949,34 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   // "One requires permission to cross the bridge to Osenia, correct?"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, ANIM_NOD);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(ACTOR_LADY, 2);
   Event_Wait(20);
   // "Then I hereby grant my permission to these four travelers!"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
   FieldActor_ShowEmote(ACTOR_LADYS_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADY, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADY, ANIM_NOD);
   Event_Wait(20);
   // "Relay that message at once!"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
   Motion_SetVarCbAndRefresh(ACTOR_MAYOR, 2);
   Event_Wait(60);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADYS_GUARD, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   Actor_WalkByAndWaitById(ACTOR_LADYS_GUARD, 6, 0);
   Actor_WalkToAndWait(ACTOR_LADYS_GUARD, 164, 316);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_LADY, FACING_WEST);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADY, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADY, ANIM_NOD);
   Event_Wait(20);
   // "You may all continue your journey and cross into Osenia."
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_LADYS_GUARD, 0, 0);
-  Motion_SetModeAndWaitAnimation(ACTOR_FELIX, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(ACTOR_LADY, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_LADY, ANIM_NOD);
   Event_Wait(20);
   GameFlag_Set(0x913);
   Actor_WalkByAndWaitById(ACTOR_LADY, 30, 0);
@@ -996,7 +1007,7 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_WalkByAndWait(ACTOR_SECOND_GATE_GUARD, 3, 8);
   Actor_FaceDirectionAndWait(ACTOR_SECOND_GATE_GUARD, FACING_EAST);
-  Actor_SetAnimation(ACTOR_SECOND_GATE_GUARD, 4);
+  Actor_SetAnimation(ACTOR_SECOND_GATE_GUARD, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "Hang on, there's no need to stop them. They couldn't be involved in..."
   Event_ShowMessageThenWait(ACTOR_SECOND_GATE_GUARD, 0, 10);
@@ -1006,9 +1017,9 @@ void Madra_StopPartyAfterRaid(void) {
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "If you're talking about the pirate incident, I believe we resolved..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 4);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   Actor_FaceDirectionAndWait(ACTOR_GATE_GUARD, FACING_SOUTH + FACING_STEP);
-  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, 4);
+  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, ANIM_SHAKE_HEAD);
   // "This has nothing to do with the Champa this time, old man! This..."
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 0);
@@ -1025,7 +1036,7 @@ void Madra_StopPartyAfterRaid(void) {
   // "Wait... Did you say you were attacked again? By the Kibombo?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_SECOND_GATE_GUARD, FACING_SOUTHEAST);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, ANIM_NOD);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   Event_Wait(10);
   // "Do you know about the Kibombo?" Yes: "You must be pretty worldly,
@@ -1062,17 +1073,20 @@ void Madra_StopPartyAfterRaid(void) {
     Event_SetMessageId(MsgItWasThem);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     Event_Wait(20);
+    // "It was them, wasn't it, Felix?"
     Event_OpenMessage(ACTOR_KRADEN, 0);
     Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       Event_Wait(20);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+      // "Of course! They did seem to be acting awfully strange when we saw..."
       Event_ShowMessage(ACTOR_KRADEN, 0);
       (gFieldWork->message)++;
     } else {
       Event_Wait(20);
       (gFieldWork->message)++;
-      Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+      // "Surely you remember, Felix! The cave? Those strange men we saw in..."
       Event_ShowMessage(ACTOR_KRADEN, 0);
     }
   }
@@ -1090,7 +1104,7 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST + FACING_STEP, 0);
   FieldActor_ShowEmote(ACTOR_SECOND_GATE_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE,
                        30);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, 4);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SECOND_GATE_GUARD, FACING_SOUTHEAST, 0);
   // "Only a single black orb... Everything else was untouched."
@@ -1100,11 +1114,11 @@ void Madra_StopPartyAfterRaid(void) {
   // "A black orb..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_GATE_GUARD, FACING_SOUTH + FACING_STEP);
-  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, 4);
+  Actor_SetAnimationAndWait(ACTOR_GATE_GUARD, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   // "I'm afraid we don't have much more information than that."
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, ANIM_NOD);
   Event_Wait(10);
   // "You helped us with the Champa, so, I'll tell you what... Maybe you..."
   Event_ShowMessageThenWait(ACTOR_SECOND_GATE_GUARD, 0, 10);
@@ -1121,11 +1135,11 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(10);
   Event_SetFlag(FLAG_MADRA_RAID_QUESTIONING_DONE);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != NULL)
     Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
@@ -1178,6 +1192,7 @@ void Madra_MeetKarst(void) {
   do {
     Event_Wait(20);
   } while (0);
+  // "I believe I promised you a reward for helping with the boat, didn't I?"
   FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_FELIX, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_FELIX, 0);
@@ -1195,6 +1210,7 @@ void Madra_MeetKarst(void) {
     SET_MODE(34, 4);
     Event_Wait(33);
     Event_Wait(20);
+    // "Imagine! You came all this way to put us at ease, and I totally..."
     Event_ShowMessageAndWait(ACTOR_MAYOR, 0);
     (gFieldWork->message)++;
   } else {
@@ -1208,26 +1224,32 @@ void Madra_MeetKarst(void) {
     Event_Wait(33);
     Event_Wait(20);
     (gFieldWork->message)++;
+    // "Well, you may have forgotten, Felix, but I have not."
     Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   }
   FieldActor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Regardless, I told you that I would reward you when the boat was..."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   SET_MODE(34, 3);
   Event_Wait(20);
   Event_Wait(20);
+  // "That being the case, I'd like to give you that reward now."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_JENNA, 0);
   Event_Wait(20);
+  // "We can't accept it now, though, could we, Jenna?"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_SHEBA, 0);
   Event_Wait(20);
   SET_MODE(5, 4);
   Event_Wait(33);
   Event_Wait(20);
+  // "Madra is still in shambles from the disaster... We couldn't possibly..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   FieldActor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_Wait(20);
+  // "Nonsense! Misfortune or no, a promise is a promise!"
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   Actor_WalkByAndWaitById(ACTOR_MAYOR, 16, 8);
   Actor_FaceDirection(ACTOR_MAYOR, FACING_SOUTH, 0);
@@ -1263,7 +1285,7 @@ void Madra_MeetKarst(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
-  Actor_SetModeById(ACTOR_KRADEN, 3);
+  Actor_SetModeById(ACTOR_KRADEN, ANIM_NOD);
   SET_MODE(4, 3);
   SET_MODE(5, 3);
   SET_MODE(6, 3);
@@ -1337,7 +1359,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceActorById(ACTOR_SHEBA, ACTOR_KARST, 0);
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_KARST, 0);
     Event_Wait(40);
-    Actor_SetModeById(ACTOR_JENNA, 4);
+    Actor_SetModeById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
     SET_MODE(6, 4);
     Event_Wait(33);
     Event_Wait(20);
@@ -1352,7 +1374,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceActorById(ACTOR_SHEBA, ACTOR_KARST, 0);
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_KARST, 0);
     Event_Wait(40);
-    Actor_SetModeById(ACTOR_JENNA, 4);
+    Actor_SetModeById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
     SET_MODE(6, 4);
     Event_Wait(33);
     Event_Wait(20);

@@ -1222,7 +1222,7 @@ second:
   MapGrid_WaitForShakeToSettle();
   FieldCamera_MoveToActor__s1c00(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 4);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_SHAKE_HEAD);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
   Event_ClearFlag(FLAG_SCENE_TEMP_60);

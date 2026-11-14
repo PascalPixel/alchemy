@@ -76,7 +76,7 @@ void LemuriaPalace_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   MapGrid_AnimateCells(step->script, step->x, step->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(countdown);

@@ -577,6 +577,7 @@ void WorldMap_RefuseToRunAway(void) {
                                  FACING_NORTHEAST);
       WorldMap_Freeze();
       FieldEvent_SetMessageId((s32)MsgWeShouldnT);
+      // "We shouldn't run from Isaac anymore, Felix."
       Event_ShowMessage(5, 0);
       WorldMap_ReloadPendingAreaGraphics();
       Actor_JoinLeader(5);
@@ -597,6 +598,7 @@ void WorldMap_RefuseToRunAway(void) {
                                  FACING_NORTHEAST);
       WorldMap_Freeze();
       FieldEvent_SetMessageId((s32)MsgYouReNot);
+      // "You're not planning on running away from Isaac again, are you?"
       Event_ShowMessage(5, 0);
       WorldMap_ReloadPendingAreaGraphics();
       Actor_FaceDirection(5, west, 0);
@@ -606,10 +608,13 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
       Actor_SetAnimation(5, 4);
       WorldMap_Freeze();
+      // "We can't run anymore, Felix. I promised him that we wouldn't."
       Event_ShowMessage(5, 0);
       Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+      // "Besides, they want to talk, not fight..."
       Event_ShowMessage(5, 0);
       Actor_SetAnimation(5, 3);
+      // "They're waiting for us. Let's go to Contigo."
       Event_ShowMessage(5, 0);
       WorldMap_ReloadPendingAreaGraphics();
       Actor_JoinLeader(5);
@@ -799,8 +804,10 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(7, 7277, 7300);
     wait(1);
     FieldEvent_SetMessageId((s32)MsgIVeHeard);
+    // "I've heard tales of this..."
     Event_ShowMessage(7, 0);
     FieldEvent_Wait(20);
+    // "But I had no idea it would be so spectacular."
     Event_ShowMessage(7, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -885,6 +892,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_WaitTransitionFrames();
     WorldMap_Freeze();
     Event_SetMessageId((s32)MsgHeyWaitA);
+    // "Hey! Wait a minute!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x18ccc, 16);
@@ -920,9 +928,11 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_WaitForMoveById(21);
     Actor_WaitForMoveById(22);
     WorldMap_Freeze();
+    // "Who are you?"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
+    // "You were talking about Isaac, weren't you?"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_TurnToFaceEachOther(4, 23, 0);
     Event_Wait(30);
@@ -939,24 +949,33 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
       Actor_ArmCallback(23, a1, a2);
     }
     Event_Wait(5);
+    // "Don't play dumb... We all heard you."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "Yes, we know Isaac. What about him?"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    // "Well, why don't you tell us where we can find him?"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "Why should we tell you anything?"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    // "Isaac took good care of us when we were in Vault, and we'd like to..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "Ah, yes... Well... I'm afraid we don't know where you can find Isaac..."
     FieldEvent_ShowMessageThenWait(23, 0, 5);
+    // "Oh, is that so? Well, I guess we'll just have to give you the reward..."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_TurnToFaceEachOther(4, 23, 0);
     Event_Wait(30);
+    // "You've got a grudge against Isaac, and you're going to take it out..."
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     ARM_WEST(4);
     ARM_WEST(23);
+    // "Oh yeah, you could call it a grudge... A serious grudge."
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_WalkBy(4, 8, -8);
     Actor_WalkBy(23, -8, 8);
@@ -978,6 +997,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     }
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
+    // "But don't worry... We're just going to give you a little sample of..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     /* FAKEMATCH(dead): the native loads the scene's id after this store. */
@@ -1015,14 +1035,17 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_RunRepeatedMotion(4, 2);
     Event_Wait(5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "It looks like Isaac runs with a pretty feeble crowd..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_FaceDirectionAndWait(21, east74);
     Event_Wait(10);
+    // "Well, we have been working out. Maybe Isaac won't be so tough this..."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_FaceDirectionAndWait(22, east74);
     Event_Wait(10);
     Actor_RunRepeatedMotion(22, 2);
     Event_Wait(5);
+    // "So you think we just got a lot stronger?"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_SetAnimationAndWait(21, 3);
     Event_Wait(10);
@@ -1030,14 +1053,18 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
+    // "You let Isaac know we're looking for him!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
+    // "The band of thieves he busted in Vault are coming to repay the favor!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_SetAnimationAndWait(21, 3);
     Event_Wait(10);
+    // "And we're not messing around!"
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "Be sure you tell him! And send him this way!"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
@@ -1064,36 +1091,45 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "We lost again..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "So, boss... You, uh... You think maybe it was a mistake going after..."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "This means we're going to jail again, doesn't it?"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
+    // "Aw... Why do we have to go back to jail. I hate it there..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_FaceDirectionAndWait(21, FACING_EAST);
     Event_Wait(10);
     Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "It's not like we really hurt anyone... After all, we lost!"
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_FaceDirectionAndWait(20, FACING_WEST);
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
+    // "Yeah... And it's not like we stole anything...this time..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_FaceDirectionAndWait(22, FACING_WEST);
     Event_Wait(10);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "We're not gonna have to go to jail, are we?"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_FaceDirection(20, eastB, 0);
     Actor_FaceDirection(21, eastB, 0);
     Actor_FaceDirection(22, eastB, 0);
+    // "You're thieves!"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_SetAnimation(20, 3);
     Actor_SetAnimation(21, 3);
     Actor_SetAnimationAndWait(22, 3);
     Event_Wait(10);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "If we asked around, we could probably find a dozen reasons to have..."
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1105,14 +1141,17 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Actor_FaceDirectionAndWait(20, eastB);
     Event_Wait(20);
+    // "Are you guys, like, wandering sheriffs or something?"
     Event_OpenMessage(20, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      // "Because we could be really useful to you if you are. We know all..."
       FieldEvent_ShowMessageThenWait(20, 0, 5);
       (gFieldWork->message)++;
     } else {
       Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       (gFieldWork->message)++;
+      // "And even if you're not, we could be really useful to you......"
       FieldEvent_ShowMessageThenWait(20, 0, 5);
     }
     Actor_TurnToFaceEachOther(4, 23, 0);
@@ -1120,18 +1159,22 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirection(4, FACING_NORTH, 0);
     Actor_FaceDirection(23, FACING_NORTH, 0);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "You can't honestly believe we would let you join us!"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_RunRepeatedMotion(21, 2);
     Actor_FaceDirection(21, FACING_SOUTH_SOUTHEAST, 0);
     Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
     Event_Wait(5);
+    // "Hey, come on! We haven't done anything wrong, really! Not yet..."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_SetAnimationAndWait(22, 4);
+    // "Yeah! We didn't have enough time to do anything bad before we ran..."
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_RunRepeatedMotion(20, 2);
     Func_02000d4c();
     Event_Wait(5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "Yeah, so give us a break!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_TurnToFaceEachOther(20, 21, 0);
     Event_Wait(40);
@@ -1148,6 +1191,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirection(22, FACING_SOUTH, 0);
     Actor_FaceDirectionAndWait(20, FACING_SOUTH);
     Event_Wait(5);
+    // "So, uh... Bye! See you later!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_WalkBy(20, -32, 0);
     Actor_WalkBy(21, -32, 0);
@@ -1165,6 +1209,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirectionAndWait(4, FACING_WEST);
     Actor_SetAnimationAndWait(23, 3);
     Event_Wait(10);
+    // "Will you promise to stop following Isaac and trying to get revenge..."
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_SetAnimation(4, 3);
     Actor_SetAnimationAndWait(23, 3);
@@ -1835,48 +1880,74 @@ void WorldMap_TakeTheTiller(void) {
     WorldMap_Freeze();
     FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
     Event_Wait(40);
+    // "Take the tiller, Felix!"
     FieldEvent_ShowMessageThenWait(7, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    // "?!?"
     FieldEvent_ShowMessageThenWait(4, 0, 10);
+    // "If you hope to reach Lemuria, you'll have to learn a few things..."
     FieldEvent_ShowMessageThenWait(7, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "Kraden, shouldn't we be heading straight for Lemuria?"
     FieldEvent_ShowMessageThenWait(6, 0, 10);
+    // "Well, I suppose if we have to learn to sail, it's better to do it..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "Then I want to go to Lalivero! And Tolbi! Oh! And Vale! Can we go to..."
     FieldEvent_ShowMessageThenWait(5, 0, 10);
+    // "I'd love to see your hometown, Jenna! Shall we? Let's do it! To Vale..."
     FieldMessage_ShowAtActor(7, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      // "I don't think that's a good idea."
       FieldEvent_ShowMessageThenWait(9, 0, 10);
       gFieldWork->message++;
     } else {
       Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       gFieldWork->message++;
+      // "I'm with Felix. I don't think that would be a wise course of action."
       FieldEvent_ShowMessageThenWait(9, 0, 10);
     }
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    // "Come, now! Why not?"
     FieldEvent_ShowMessageThenWait(7, 0, 10);
+    // "Think about the roads we have traveled to get where we are..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "I can't... I was never any good at geography."
     FieldEvent_ShowMessageThenWait(6, 0, 10);
+    // "Then allow me to explain... The coastline of Angara, the continent..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    // "Oh... You don't think Piers's boat could land there?"
     FieldEvent_ShowMessageThenWait(5, 0, 10);
+    // "And as for Gondowan, I would guess the people from Lalivero..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
+    // "He's right. Saturos and Menardi went a little wild in Lalivero, and..."
     FieldEvent_ShowMessageThenWait(6, 0, 10);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "Oh... But Sheba can explain the situation for us. Faran and the..."
     FieldEvent_ShowMessageThenWait(5, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "And then they'd make me stay in Lalivero! Would you just leave me..."
     FieldEvent_ShowMessageThenWait(6, 0, 10);
+    // "Oh yeah... Maybe that wouldn't be such a good idea after all..."
     FieldEvent_ShowMessageThenWait(5, 0, 10);
+    // "Then it's decided!"
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "What's decided?"
     FieldEvent_ShowMessageThenWait(7, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "The sea is vast... We can go wherever we please! So, let's explore a..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
+    // "That's a great idea! We've already met werewolves and discovered new..."
     FieldEvent_ShowMessageThenWait(6, 0, 10);
+    // "Wow! This is going to be great!"
     FieldEvent_ShowMessageThenWait(5, 0, 10);
+    // "Hmm... The seas can be quite dangerous. It won't be my fault if..."
     FieldEvent_ShowMessageThenWait(7, 0, 10);
+    // "To the open sea, Felix!"
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
     gMainRoutineWork.renderMode = 7;

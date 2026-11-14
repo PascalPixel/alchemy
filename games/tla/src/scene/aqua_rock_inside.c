@@ -1247,7 +1247,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_FaceDirection(7, FACING_WEST, 0);
   FieldEvent_Wait(5);
   Event_ShowMessage(7, 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 184);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
@@ -1288,7 +1288,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Event_ShowMessage(7, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimation(7, 3);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_SetSpeed(7, 1.2);
   Actor_SetAnimation(7, 2);

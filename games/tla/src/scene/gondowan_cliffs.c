@@ -287,6 +287,7 @@ void GondowanCliffs_TalkToDog(void) {
     FieldEvent_ResolvePendingActions(0);
     Actor_FaceEachOther(16, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)MsgRrruffRrruff2);
+    // "Rrruff! Rrruff!"
     Event_ShowMessage(16, 0);
     Actor_FaceDirection(16, FACING_WEST, 0);
     Event_End();
@@ -374,7 +375,7 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_SetAnimationAndWait(22, 3);
   // "It looks like the majority wins! Let's go back to Kibombo and help..."
   Event_ShowMessage(22, 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimationAndWait(22, 3);

@@ -32,6 +32,7 @@
 #include "module/system/system.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
+#include "module/scene/actor_animation.h"
 
 /// Set once the party has taken the test of luck offered at the Spring of
 /// Lemuria (Lemuria_OfferSpringLuck).
@@ -167,7 +168,7 @@ void Lemuria_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
@@ -190,6 +191,7 @@ void Lemuria_EnterDoor(s32 door) {
 
   if (door == 3 && Event_GetFlag(0x96a)) {
     FieldEvent_SetMessageId((s32)&MsgTheDoorIs);
+    // "The door is locked... It sounds as if there's a raucous caucus going..."
     Event_ShowMessage(-1, 0);
     return;
   }
@@ -405,6 +407,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   if (!Event_GetFlag(0x966) ||
       Event_GetFlag(FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN)) {
     FieldEvent_SetMessageId((s32)&MsgTheDoorDoesn);
+    // "The door doesn't want to open."
     Event_ShowMessage(-1, 0);
     return;
   }
@@ -500,6 +503,7 @@ void Lemuria_OfferSpringLuck(void) {
     Actor_FaceActor(30, gMainRoutineWork.currentOwner, 0);
     FieldActor_RefreshSelectorById(30);
     FieldEvent_SetMessageId((s32)MsgYouLookLike);
+    // "You look like you're in for a spell of good luck. After all, your..."
     Event_ShowMessage(30, 0);
     Actor_FaceDirectionAndWait(30, FACING_NORTH + FACING_STEP);
     return;

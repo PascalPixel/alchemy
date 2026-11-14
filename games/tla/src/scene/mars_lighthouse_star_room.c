@@ -751,7 +751,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
         break;
       }
     }
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
     Event_SetFlag(FLAG_MARS_STAR_TAKEN);
     FieldActor_SetPositionAndResetMotion(gMarsLighthouseStarRoom_MarsStar, 0, 0,
                                          0);

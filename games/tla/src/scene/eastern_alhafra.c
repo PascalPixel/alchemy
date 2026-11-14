@@ -504,7 +504,7 @@ void EasternAlhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   MapGrid_AnimateCells(step->script, step->x, step->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(countdown);
@@ -2496,7 +2496,7 @@ void PushTarget_Push(struct PushTarget target) {
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
   FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
                              (gPushLeaderSteps[direction] << 16) >> 31,
@@ -2504,7 +2504,7 @@ void PushTarget_Push(struct PushTarget target) {
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;

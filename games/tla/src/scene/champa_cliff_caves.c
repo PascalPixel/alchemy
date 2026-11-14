@@ -188,7 +188,7 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
@@ -230,6 +230,7 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   Actor_FaceDirectionById(8, FACING_WEST);
   msg = (s32)MsgHasMyGrandson;
   Event_SetMessageId(msg);
+  // "Has my grandson returned? Has my Briggs come home?"
   FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -757,6 +758,7 @@ chosen:
       Event_SetMessageId((s32)MsgYesThereS);
     else
       Event_SetMessageId((s32)MsgTheTridentSeems);
+    // "The trident seems to have some amazing power... The legends must be..."
     Event_ShowMessageAndWait(actor, 0);
     Actor_FaceDirection(actor, 0x5000, 0);
   }
@@ -795,18 +797,22 @@ void ChampaCliffCaves_FightAvimander(void) {
   if (Flag_IsSet(0x974)) {
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
     Event_SetMessageId((s32)MsgBackForMore);
+    // "Back for more?"
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(MUS_036);
     FieldCamera_MoveWithinMapBounds(664 << 16, -1, px(256), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
+    // "I wouldn't be doing this if it weren't for Eoleo, you know."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "I'm sorry. You look like quite a nice boy, but I just can't allow..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   } else {
     Flag_Set(0x974);
     Event_SetMessageId((s32)MsgHoldItRight);
+    // "Hold it right there!"
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(MUS_036);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
@@ -815,47 +821,59 @@ void ChampaCliffCaves_FightAvimander(void) {
     Event_Wait(5);
     Actor_Jump(11, 6, 15);
     Actor_Jump(11, 6, 23);
+    // "So, Felix, you've come."
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    // "Don't assume I'll go so easy on you this time!"
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_FaceDirectionAndWait(8, 0x3000);
     Event_Wait(10);
+    // "Is that boy him? The "mighty warrior" you told me about?"
     FieldEvent_ShowMessageThenWait(8, 0, 5);
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Actor_FaceDirectionAndWait(11, 0xb000);
     Event_Wait(10);
+    // "I told you he didn't look like much, Grandma..."
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    // "Weren't you even listening to me?"
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Motion_SetModeAndWaitAnimation(8, 3);
+    // "All you told me is that his name is Felix and that he is a "mighty..."
     FieldEvent_ShowMessageThenWait(8, 0, 5);
     Actor_FaceDirectionAndWait(8, 0x8000);
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
+    // "He doesn't look like the sort of person who's interested in stealing..."
     FieldEvent_ShowMessageThenWait(8, 0, 5);
     Actor_FaceDirectionAndWait(11, 0x8000);
     Event_Wait(30);
     Actor_FaceDirectionAndWait(11, 0xb000);
     Event_Wait(10);
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "But that's not the point, Grandma!"
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Actor_FaceDirectionAndWait(11, 0x8000);
     Event_Wait(20);
     Motion_SetVarCbAndRefresh(11, 2);
     Event_Wait(5);
+    // "If you don't destroy him now, he's going to take me far away, and..."
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "Oh, now he doesn't look like the kind of boy who would do that..."
     FieldEvent_ShowMessageThenWait(8, 0, 5);
     Actor_FaceDirectionAndWait(11, 0xb000);
     Event_Wait(10);
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
     Actor_FaceDirectionAndWait(11, 0x300a);
     Event_Wait(10);
+    // "If he takes me away, poor Eoleo will be so sad! What do you say..."
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_FaceDirectionAndWait(8, 0x3000);
     Event_Wait(10);
+    // "Oh, that's just not fair. You know I can't deny my darling..."
     FieldEvent_ShowMessageThenWait(8, 0, 5);
     Actor_FaceDirectionAndWait(11, 0xb000);
     Event_Wait(10);
@@ -863,11 +881,13 @@ void ChampaCliffCaves_FightAvimander(void) {
     Event_Wait(5);
     Actor_FaceDirectionAndWait(8, 0x8000);
     Event_Wait(5);
+    // "I don't see why I should be the one to get you out of this mess, but..."
     FieldEvent_ShowMessageThenWait(8, 0, 5);
     Motion_SetModeAndWaitAnimation(11, 3);
     Event_Wait(10);
     Motion_SetModeAndWaitAnimation(11, 3);
     Event_Wait(5);
+    // "Grandma, please!"
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Actor_FaceDirectionAndWait(11, 0x8000);
     Event_Wait(5);

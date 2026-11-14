@@ -10,6 +10,7 @@
 /// play tag, the people give thanks for the beacon and the party says its
 /// farewell at the south gate before the credits.
 #include "../field/object/set_sprite_priority.c"
+#include "module/scene/actor_animation.h"
 
 #include "../field/field_effect/move.c"
 #include "types.h"
@@ -619,24 +620,32 @@ void Prox_SearchForParents(void) {
     Actor_FaceDirectionAndWait(8, FACING_EAST);
     Actor_SetAnimation(8, 4);
     FieldEvent_SetMessageId((s32)MsgProx47);
+    // "They're not here..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    // "Strange... We looked all over the village, and we can't find any..."
     Event_ShowMessage(9, 0);
     Actor_SetAnimation(8, 3);
+    // "Everyone says they've practically vanished without a trace... It's..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+    // "You don't think they..."
     Event_ShowMessage(9, 0);
     Actor_FaceDirection(8, FACING_NORTH_NORTHWEST, 40);
     Actor_FaceDirectionAndWait(8, FACING_EAST);
     Actor_SetAnimation(8, 4);
+    // "They wouldn't have gone to the lighthouse..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     Actor_SetAnimationAndWait(9, 3);
+    // "Yeah, you're probably right."
     Event_ShowMessage(9, 0);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    // "Puelle's going to be upset that we didn't follow his order to free..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     Actor_SetAnimation(9, 3);
+    // "He was clear about it, too... "When Felix returns to Prox, set his..."
     Event_ShowMessage(9, 0);
     Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
     Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHWEST);
@@ -933,7 +942,7 @@ test_wait:
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(0, FACING_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTHWEST);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimation(0, 3);
   Actor_SetAnimationAndWait(18, 3);
   Actor_FaceDirection(12, FACING_WEST, 0);
@@ -952,7 +961,7 @@ test_wait:
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(0, FACING_EAST);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimationAndWait(0, 3);
   Actor_SetScript(0, (s32)gProx_StepBackFromPuelle);
   Actor_RunScriptAndWait(18, (s32)gProx_StepBackFromPuelle);
@@ -972,7 +981,7 @@ test_wait:
   Actor_SetAnimationAndWait(10, 3);
   Actor_FaceDirectionAndWait(10, FACING_SOUTH_SOUTHWEST);
   Event_ShowMessage(10, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(11, 3);
   Event_ShowMessage(11, 0);
@@ -1216,7 +1225,7 @@ void Prox_ComeDownStairs(s32 a0) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, 8);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Prox_EndEvent();
 }
 #undef BYTE_AT
@@ -1271,7 +1280,7 @@ void Prox_GiveThanksForBeacon(void) {
   Event_ShowMessage(26, 0);
   Actor_SetAnimation(0, 3);
   Actor_SetAnimation(27, 3);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   // "By igniting Mars Lighthouse, you stopped Gaia Falls from devouring..."
@@ -1384,7 +1393,7 @@ void Prox_GiveThanksForBeacon(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 27, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(0, FACING_EAST);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimationAndWait(0, 3);
   // "You're right, Kraden... If we don't, you-know-who might start..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
@@ -1418,7 +1427,7 @@ void Prox_GiveThanksForBeacon(void) {
   // "I hadn't expected so much Psynergy to be released by the..."
   Event_ShowMessage(27, 0);
   Actor_SetAnimation(0, 3);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimation(26, 3);
   Actor_SetAnimation(25, 3);
   Actor_FaceDirection(27, FACING_WEST, 0);
@@ -1500,7 +1509,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetAnimationAndWait(26, 3);
   Event_ShowMessage(26, 0);
   Actor_SetAnimation(0, 3);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimationAndWait(27, 3);
   Actor_SetSpeed(0, 1.6);
   Actor_SetSpeed(27, 1.6);
@@ -1729,11 +1738,13 @@ void Prox_SayFarewell(void) {
     FieldActor_Jump(5, 2, 10);
     FieldActor_Jump(5, 4, 10);
     FieldEvent_SetMessageId((s32)MsgProx153);
+    // "What took you so long? Mom and Dad are tired of waiting for you..."
     Event_ShowMessage(5, 0);
     FieldCamera_SetSpeed(3.2);
     FieldCamera_MoveTo(144, CAMERA_KEEP, 228, 1);
     FieldCamera_WaitForArrival();
     FieldActor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+    // "That's not true, Felix. You take as long as you need to say farewell..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 10, 0);
     Event_PlaySound(MUS_037);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
@@ -1747,37 +1758,49 @@ void Prox_SayFarewell(void) {
     Actor_SetScript(0, (s32)gProx_IsaacStepsForward);
     Actor_RunScriptAndWait(11, (s32)gProx_KradenStepsForward);
     Actor_SetAnimationAndWait(9, 3);
+    // "Don't worry about us, Felix... Puelle and the others took good care..."
     Event_ShowMessage(9, 0);
     Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
     Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+    // "Don't tell him that! We'll be stuck here forever!"
     Event_ShowMessage(5, 0);
     Actor_FaceDirection(6, FACING_NORTHEAST, 0);
     FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+    // "You look like you're feeling back to your old self, Jenna!"
     Event_ShowMessage(6, 0);
     Actor_FaceDirectionAndWait(7, FACING_WEST);
     Actor_SetAnimationAndWait(7, 3);
     Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
+    // "You were weeping such mournful tears after the battle..."
     Event_ShowMessage(7, 0);
     Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+    // "What!? As if! You can't prove anything!"
     Event_ShowMessage(5, 0);
     Actor_SetAnimation(3, 4);
+    // "Go easy on her. You have to remember, she thought that both of her..."
     Event_ShowMessage(3, 0);
     Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHEAST);
+    // "Oh, were you crying, Jenna?"
     Event_ShowMessage(10, 0);
     Actor_FaceDirectionAndWait(5, FACING_SOUTH);
     FieldActor_Jump(5, 4, 10);
+    // "No! I said... I said I wasn't!"
     Event_ShowMessage(5, 0);
     FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     Actor_FaceDirectionAndWait(1, FACING_NORTHWEST);
+    // "Now you've got me thinking about my family... I didn't think I'd..."
     Event_ShowMessage(1, 0);
     Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
+    // "I only hope that they're all safe back in Vale..."
     Event_ShowMessage(2, 0);
     Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
     Actor_FaceDirectionAndWait(0, FACING_EAST);
+    // "I just want to be home again... I want to see how my mother is doing..."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 10);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 20);
+    // "Don't worry, Son. I'm sure Dora's doing fine. She's a strong woman."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 20);
     if (Event_GetFlag(0x824) != 0) {
       Actor_FaceDirectionAndWait(0, FACING_SOUTH);
@@ -1827,7 +1850,7 @@ void Prox_SayFarewell(void) {
     FieldActor_Jump(5, 4, 10);
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
     Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_SetAnimation(11, 3);
     Actor_SetAnimation(5, 3);
     Actor_SetAnimation(6, 3);
@@ -1950,7 +1973,7 @@ void Prox_SayFarewell(void) {
     Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
     Actor_SetAnimation(11, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_SetAnimation(0, 3);
     Actor_SetAnimation(1, 3);
     Actor_SetAnimationAndWait(5, 3);
@@ -2026,11 +2049,11 @@ void Prox_SayFarewell(void) {
                     EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     Actor_SetAnimation(0, 3);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_SetAnimation(11, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     Actor_SetAnimation(0, 3);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(20);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 20);
@@ -2049,7 +2072,7 @@ void Prox_SayFarewell(void) {
     Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
     Actor_SetAnimation(0, 3);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);

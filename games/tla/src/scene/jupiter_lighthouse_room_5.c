@@ -533,30 +533,30 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   // you're going to..." No: "Hmph. They consider you their enemy, and..."
   Event_OpenMessage(22, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
-    Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+    Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
     // "And you're sure that's all you're going to do?"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     EVENT_WORK->message++;
   } else {
-    Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+    Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
     FieldEvent_Wait(10);
     EVENT_WORK->message++;
     // "Hmph. They consider you their enemy, and yet you pity them."
     FieldEvent_ShowMessageThenWait(22, 0, 5);
   }
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
   // "I saw you watching when Isaac's friends fell into Karst's trap."
   FieldEvent_ShowMessageThenWait(22, 0, 5);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "I know you, Felix. I know that if you leave Isaac behind, you'll..."
   FieldEvent_ShowMessageThenWait(22, 0, 5);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "You're not like me. You can't simply discard someone who is no..."
   FieldEvent_ShowMessageThenWait(22, 0, 5);
   // "Well, you'd better hurry if you still hope to save them."
   FieldEvent_ShowMessageThenWait(22, 0, 5);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(68, CAMERA_KEEP, 256, 1);
   Actor_WalkByAndWait(ACTOR_ALEX, 0, 16);
@@ -565,7 +565,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   Party_RestoreHpPp(1);
   Message_ShowCentered((s16)EVENT_WORK->message++, 5);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ALEX_HEALED_THE_PARTY);

@@ -122,6 +122,7 @@ void MadraInteriors_AskWillWeBeSafe(void) {
   FieldEvent_ResolvePendingActions(0);
   msg = (s32)MsgMadraInteriors06;
   FieldEvent_SetMessageId(msg);
+  // "Indra is in direct contact with southern Gondowan... Will we be safe?"
   Event_OpenMessage(9, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
@@ -152,6 +153,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors87);
     else
       FieldEvent_SetMessageId((s32)MsgMadraInteriors39);
+    // "Earthquakes, pirate attacks... What a week!"
     Event_ShowMessage(22, 0);
 #else
     if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
@@ -173,6 +175,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
         FieldEvent_SetMessageId((s32)MsgMadraInteriors87);
       else
         FieldEvent_SetMessageId((s32)MsgMadraInteriors39);
+      // "Earthquakes, pirate attacks... What a week!"
       Event_ShowMessage(22, 0);
     }
 #endif
@@ -193,6 +196,7 @@ void MadraInteriors_TalkToHealer(s32 actor) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors81);
     else
       FieldEvent_SetMessageId((s32)MsgMadraInteriors33);
+    // "Surely this town is enduring some sort of test... We must not fail..."
     Event_ShowMessage(actor, 0);
   }
 }
@@ -222,13 +226,16 @@ void MadraInteriors_TalkToMushroomLover(void) {
     else
       msg = (s32)MsgMadraInteriors118;
     FieldEvent_SetMessageId(msg);
+    // "That mushroom was great, but I ate way too much. I don't ever want..."
     Event_ShowMessage(ACTOR_MUSHROOM_LOVER, 0);
   } else {
     if (Event_GetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors116);
+      // "Thanks for bringing this by, but it's just not the type of..."
       Event_ShowMessage(ACTOR_MUSHROOM_LOVER, 0);
     } else {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors106);
+      // "How are we to climb the cliffs between here and Gondowan? If..."
       Event_ShowMessage(ACTOR_MUSHROOM_LOVER, 0);
     }
     gFieldWork->fieldMenu = 1;
@@ -240,16 +247,20 @@ void MadraInteriors_TalkToMushroomCook(void) {
   if (Event_GetFlag(FLAG_MADRA_HEALING_FUNGUS_GIVEN)) {
     if (Event_GetFlag(FLAG_MADRA_FUNGUS_FOR_DINNER)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors112);
+      // "This here's enough of a mushroom that we'll be eating it for days!"
       Event_ShowMessage(ACTOR_MUSHROOM_COOK, 0);
     } else {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors119);
+      // "Actually, I didn't cook the mushrooms properly that night. But..."
       Event_ShowMessage(ACTOR_MUSHROOM_COOK, 0);
     }
   } else if (Event_GetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED)) {
     FieldEvent_SetMessageId((s32)MsgMadraInteriors117);
+    // "Please... Won't you please try to find the mushrooms my husband..."
     Event_ShowMessage(ACTOR_MUSHROOM_COOK, 0);
   } else {
     FieldEvent_SetMessageId((s32)MsgMadraInteriors107);
+    // "My husband relishes those rare mushrooms growing in the Gondowan..."
     Event_ShowMessage(ACTOR_MUSHROOM_COOK, 0);
   }
 }
@@ -258,9 +269,11 @@ void MadraInteriors_MindReadMushroomLover(void) {
   if (Event_GetFlag(FLAG_MADRA_HEALING_FUNGUS_GIVEN)) {
     if (Event_GetFlag(FLAG_MADRA_FUNGUS_FOR_DINNER)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors113);
+      // "The more I think about dinner tonight, the more I drool..."
       Event_ShowMessage(ACTOR_MUSHROOM_LOVER, 0);
     } else {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors120);
+      // "I don't remember mushrooms like that ever tasting bad..."
       Event_ShowMessage(ACTOR_MUSHROOM_LOVER, 0);
     }
   } else {
@@ -281,9 +294,11 @@ void MadraInteriors_MindReadMushroomCook(void) {
   if (Event_GetFlag(FLAG_MADRA_HEALING_FUNGUS_GIVEN)) {
     if (Event_GetFlag(FLAG_MADRA_FUNGUS_FOR_DINNER)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors114);
+      // "These mushrooms will make any meal taste amazing!"
       Event_ShowMessage(ACTOR_MUSHROOM_COOK, 0);
     } else {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors121);
+      // "If my husband finds out I messed up the recipe, he'll be so sad..."
       Event_ShowMessage(ACTOR_MUSHROOM_COOK, 0);
     }
   } else {
@@ -311,15 +326,18 @@ void MadraInteriors_TalkToIllMan(void) {
     FieldEvent_Wait(20);
     Actor_RunRepeatedMotion(14, 2);
     FieldEvent_Wait(20);
+    // "Uhhhnnn... UHHHNNN!"
     Event_ShowMessage(14, 0);
     FieldActor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_Wait(20);
     Actor_WalkByAndWait(14, 12, 0);
     Actor_FaceActor(14, 4, 0);
+    // "They told me that you make Psynergy by focusing your mind... I've..."
     Event_ShowMessage(14, 0);
   } else {
     FieldEvent_SetMessageId((s32)MsgMadraInteriors97);
     Actor_FaceActor(14, 4, 0);
+    // "How can anyone just create ice by thinking about it? I mean, imagine..."
     Event_ShowMessage(14, 0);
   }
 }
@@ -501,7 +519,7 @@ void MadraInteriors_InterrogatePiers(void) {
   // "Speak! Or let your silence condemn you!"
   FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_PIERS, 4);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "I told you already... I'm not a Champa."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_STERN_INTERROGATOR, 2);
@@ -510,7 +528,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
   Actor_WalkByAndWait(ACTOR_PIERS, 0, -16);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_PIERS, 4);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "The heart of the Eastern Sea... If I told you where, you'd never..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldActor_ShowEmote(ACTOR_STERN_INTERROGATOR,
@@ -542,7 +560,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_RunRepeatedMotion(ACTOR_STERN_INTERROGATOR, 2);
   FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_PIERS, 4);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldActor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_SCOWL,
                        20);
@@ -643,7 +661,7 @@ void MadraInteriors_InterrogatePiers(void) {
                   30);
   Actor_WalkByAndWait(ACTOR_ACCUSING_INTERROGATOR, -16, 16);
   FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 1);
-  Actor_SetAnimationAndWait(ACTOR_PIERS, 4);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_ACCUSING_INTERROGATOR, -16, 8);
@@ -679,17 +697,17 @@ void MadraInteriors_InterrogatePiers(void) {
   gFieldWork->message += 1;
   goto answered;
 answeredNo:
-  Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_SHAKE_HEAD);
   gFieldWork->message += 1;
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
 answered:
   Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
-  Actor_SetAnimation(ACTOR_FELIX, 3);
-  Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_SetAnimation(ACTOR_JAIL_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_JAIL_KRADEN, ANIM_WALK);
   object14 = Actor_Get(ACTOR_FELIX);
   if (object14 == 0)
     goto piersLeft;
@@ -803,14 +821,14 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_ShowEmote(ACTOR_MUSHROOM_LOVER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Did you climb all the way up those cliffs just to get that mushroom..."
   FieldEvent_ShowMessageThenWait(ACTOR_MUSHROOM_LOVER, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_MUSHROOM_COOK, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "That's the nicest thing anyone has ever done for me. I have to thank..."
   FieldEvent_ShowMessageThenWait(ACTOR_MUSHROOM_COOK, 0, 10);
   Actor_FaceActor(ACTOR_MUSHROOM_LOVER, ACTOR_MUSHROOM_COOK, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_MUSHROOM_LOVER, 3);
+  Actor_SetAnimationAndWait(ACTOR_MUSHROOM_LOVER, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_MUSHROOM_LOVER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "But what could I have that a warrior like you would want?"
@@ -852,15 +870,15 @@ void MadraInteriors_GiveHealingFungus(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_MUSHROOM_COOK, 0, 10);
   Djinn_JoinParty(25, 2, 10);
   gFieldWork->message += 1;
-  Actor_SetAnimation(ACTOR_FELIX, 1);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_STAND);
   Actor_FaceDirection(ACTOR_MUSHROOM_LOVER, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_MUSHROOM_LOVER, 3);
+  Actor_SetAnimationAndWait(ACTOR_MUSHROOM_LOVER, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   // "I can't wait for dinner tonight. Batter-fried mushrooms! Mmm!"
   FieldEvent_ShowMessageThenWait(ACTOR_MUSHROOM_LOVER, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_MUSHROOM_COOK, 3);
+  Actor_SetAnimationAndWait(ACTOR_MUSHROOM_COOK, ANIM_NOD);
   FieldEvent_Wait(20);
   // "This here's enough of a mushroom that we'll be eating it for days!"
   FieldEvent_ShowMessageThenWait(ACTOR_MUSHROOM_COOK, 0, 10);

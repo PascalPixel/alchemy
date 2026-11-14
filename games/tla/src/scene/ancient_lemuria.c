@@ -164,7 +164,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Actor_GetById(ACTOR_RIME)->priorityFlags |= 1;
   Actor_WalkToAndWaitById(ACTOR_RIME, 136, 200);
   Event_Wait(3);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Hop(0, -16);
   Hop(16, 0);
@@ -255,9 +255,11 @@ void AncientLemuria_HeadForTheDock(void) {
     Event_Wait(20);
     if (GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS))) {
       Event_SetMessageId(MsgLemuriaStayExploring);
+      // "Lost already, Felix? That's the way to the boat dock! You can't..."
       Event_ShowMessageThenWait(11, 0, 10);
     } else {
       Event_SetMessageId(MsgLemuriaStayExploringAlternate);
+      // "Lost already, Felix? That's the way to the boat dock! You can't..."
       Event_ShowMessageThenWait(11, 0, 10);
     }
     Actor_SetSpeed(11, 1.2);

@@ -105,12 +105,15 @@ done:
 void LemuriaInteriors_MindReadPiersUncle(s32 unused, s32 id) {
   if (Event_GetFlag(0x966)) {
     Event_SetMessageId((s32)MsgLemuriaInteriors12);
+    // "Lunpa has given the king tremendous aid on this matter. He will have..."
     Event_ShowMessage(id, 0);
   } else if (Event_GetFlag(0x965)) {
     Event_SetMessageId((s32)MsgLemuriaInteriors09);
+    // "Poor Piers... Being born in Lemuria and gifted with long life......"
     Event_ShowMessage(id, 0);
   } else {
     Event_SetMessageId((s32)MsgLemuriaInteriors06);
+    // "I was°what is the word?° surprised when I heard Piers had..."
     Event_ShowMessage(id, 0);
   }
 }

@@ -349,7 +349,7 @@ loop:
   actor->gravity = px(1);
   actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   gFieldWork->transition = 0x204;
   return Event_EndWithResult();
 }
@@ -925,6 +925,7 @@ void GaiaRockInside_TalkToSusa(void) {
       FieldEvent_SetMessageId((s32)MsgGaiaRockInside10);
     else
       FieldEvent_SetMessageId((s32)MsgGaiaRockInside06);
+    // "The serpent is still too strong. If only there were a way to weaken..."
     Event_ShowMessage(10, 0);
   } else {
     if (Actor_Get(9)->script == gGaiaRockInside_SerpentSettleScript)
@@ -933,6 +934,7 @@ void GaiaRockInside_TalkToSusa(void) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside03);
     Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
     FieldEvent_Wait(10);
+    // "If you understand, then get out of my way. Stand over there."
     Event_ShowMessage(10, 0);
     Actor_SetAnimationAndWait(10, 3);
     FieldEvent_Wait(10);
@@ -957,6 +959,7 @@ void GaiaRockInside_ReadSusasMind(void) {
   t2 = FieldPartyInventory_FindMember(451);
   if (t2 != -1) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
+    // "Who do they think they are? I'm the only one who can save Kushinada."
     Event_ShowMessage(10, 0);
   } else {
     object = Actor_Get(9);
@@ -965,6 +968,7 @@ void GaiaRockInside_ReadSusasMind(void) {
     }
     GaiaRockInside_SaveSusa();
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside04);
+    // "How many casks does it take to weaken this stupid serpent?"
     Event_ShowMessage(10, 0);
     GaiaRockInside_RestoreSusa();
   }
@@ -1243,11 +1247,12 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(11, FACING_EAST, 0);
   FieldEvent_SetMessageId(message + 1);
+  // "Wielder of Earth's might... That'd be you, . Touch it. Go on, don't..."
   Event_ShowMessage(11, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(11, 3);
   FieldEvent_Wait(10);

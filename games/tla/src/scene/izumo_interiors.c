@@ -109,9 +109,11 @@ void IzumoInteriors_TalkToHealer(s32 actor) {
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       Event_SetMessageId((s32)MsgNowThatPeace);
+      // "Now that peace has been restored, our island is flourishing once..."
       Event_ShowMessageAndWait(12, 0);
     } else {
       Event_SetMessageId((s32)MsgWhyWouldOur);
+      // "Why would our guardian spirit demand a sacrifice? It's..."
       Event_ShowMessageAndWait(22, 0);
     }
     Event_End();
@@ -130,6 +132,7 @@ void IzumoInteriors_TalkToInnkeeper(s32 actor) {
       Event_SetMessageId((s32)MsgBriggsFromChampa);
     else
       Event_SetMessageId((s32)MsgOfCourseI);
+    // "Of course, I knew the legend of the great serpent... Everyone does!..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -147,6 +150,7 @@ void IzumoInteriors_TalkToMerchant(s32 actor) {
       Event_SetMessageId((s32)MsgYouMustSee);
     else
       Event_SetMessageId((s32)MsgIzumoSLeaders);
+    // "Izumo's leaders have always possessed certain special powers...."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -157,18 +161,22 @@ void IzumoInteriors_AskAfterSusa(void) {
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x922)) {
     Event_SetMessageId((s32)MsgSusaSNot);
+    // "Susa's not here. I believe he went to Mt. Mikage."
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
     Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     Event_Wait(60);
+    // "He believes he can save Kushinada, and so he has gone to fight the..."
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
     Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Event_Wait(60);
+    // "He truly believes he can defeat the Great Serpent of Mikage."
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
     Actor_StartRepeatedMotion(8, 1);
     Event_Wait(60);
+    // "It's all for naught, though, as a hero will certainly appear and..."
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
     GameFlag_Set(0x922);
@@ -196,9 +204,11 @@ void IzumoInteriors_TalkToUzume(void) {
   Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   if (GameFlag_Get(FLAG_UZUME_HAS_THE_DOLL)) {
     Event_SetMessageId((s32)MsgWithThisDancing);
+    // "With this dancing doll, I can explore Mt. Mikage on my own. Take..."
     Event_ShowMessageAndWait(15, 0);
   } else {
     Event_SetMessageId((s32)MsgIfYouHave);
+    // "If you have time, won't you enjoy a little of our celebratory festival?"
     Event_ShowMessageAndWait(15, 0);
     if (PartyInventory_FindMember(451) != -1)
       FIELD_AT(work, u16, 346) = 1;
@@ -214,6 +224,7 @@ void IzumoInteriors_AskAboutMtMikage(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgTheyVeBeen;
   Event_SetMessageId(msg);
+  // "They've been saying that you went into Mt. Mikage, too... Is that true?"
   FieldMessage_ShowAtActor(16, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -232,9 +243,11 @@ void IzumoInteriors_ReadUzumesMind(void) {
   Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   if (Event_GetFlag(0x92b)) {
     Event_SetMessageId((s32)MsgTryingAgainWhat);
+    // "Trying again, Felix? What a pest. You can see my mind, but you are..."
     Event_ShowMessageAndWait(15, 0);
   } else {
     Event_SetMessageId((s32)MsgAndWhatWere);
+    // "And what were you planning to do, once you'd read my mind, hm?"
     Event_ShowMessageAndWait(15, 0);
     if (GameFlag_Get(0x923)) {
       LeaderAnimate(256, 30);
@@ -256,23 +269,29 @@ s32 IzumoInteriors_KushinadaPleads(void) {
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x925)) {
     Event_SetMessageId((s32)MsgSusaDonT);
+    // "Susa, don't come for me..."
     Event_ShowMessageAndWait(17, 0);
     Event_Wait(60);
+    // "If I see you, I'll surely lose the courage to sacrifice myself for..."
     Event_ShowMessageAndWait(17, 0);
     Event_Wait(60);
     Event_Wait(15);
+    // "If I run, Lady Uzume and all of Izumo will suffer greatly......"
     Event_ShowMessageAndWait(17, 0);
     Event_Wait(60);
     Event_Wait(15);
+    // "Lady Uzume has foretold the coming of a hero, and I believe her..."
     Event_ShowMessageAndWait(17, 0);
     Event_Wait(60);
     Actor_StartRepeatedMotion(17, 1);
     Event_Wait(30);
+    // "And so I shall remain here, until the coming of the next full..."
     Event_ShowMessageAndWait(17, 0);
     Event_Wait(60);
     Event_SetFlag(0x925);
   } else {
     Event_SetMessageId((s32)MsgSusaPleaseDon);
+    // "Susa, please... Don't try to save me."
     Event_ShowMessageAndWait(17, 0);
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
@@ -516,6 +535,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   if (answer == 1) {
     FieldEvent_SetMessageId((s32)MsgIThoughtSo);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    // "I thought so. Only those who can wield the power can see it. And you..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
     Actor_SetAnimation(6, 3);
     Actor_SetAnimation(5, 3);
@@ -524,6 +544,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     FieldEvent_Wait(15);
     Actor_SetAnimation(7, 4);
     FieldEvent_Wait(30);
+    // "Felix, there's no need to hide our abilities from them, is there?"
     Event_ShowMessage(7, 0);
   }
   FieldEvent_SetMessageId((s32)MsgSoYouCall);
@@ -783,48 +804,60 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   if (answer == 0) {
     Event_SetMessageId((s32)MsgRegardlessOfYour);
     Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "Regardless of your motives, you have saved us all."
     Event_ShowMessageAndWait(15, 0);
   } else {
     Event_SetMessageId((s32)MsgYouTookPity);
+    // "You took pity on Kushinada? You are very kind to help Susa, Felix."
     Event_ShowMessageAndWait(15, 0);
   }
   message = (s32)MsgYouReNotImplying;
   Event_SetMessageId(message);
   Actor_StartRepeatedMotion(23, 1);
   Event_Wait(30);
+  // "You're...not implying that we defeated the serpent, are you?"
   Event_ShowMessageAndWait(23, 0);
   Actor_FaceActorById(15, 23, 0);
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
+  // "It's true that we did fight the creature..."
   Event_ShowMessageAndWait(23, 0);
   Actor_FaceActorById(23, 21, 0);
   Event_Wait(30);
+  // "But without Susa's power, the battle might not have ended so happily."
   Event_ShowMessageAndWait(23, 0);
   Actor_TurnToFaceEachOther(15, 20, 0);
   Event_Wait(30);
+  // "What... What are you°"
   Event_ShowMessageAndWait(21, 0);
   Actor_SetModeById(7, 3);
   Event_Wait(30);
+  // "Susa had given the beast a lot of Dragonsbane in order to weaken it."
   Event_ShowMessageAndWait(7, 0);
   Actor_FaceDirection(15, FACING_SOUTH, 0);
   Actor_ArmCallback(20, FACING_SOUTH, 0);
   Event_Wait(30);
   Actor_SetModeById(6, 3);
   Event_Wait(30);
+  // "We could never have beaten the beast if it had not been in..."
   Event_ShowMessageAndWait(6, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "We were victorious only because Susa risked everything to weaken the..."
   Event_ShowMessageAndWait(5, 0);
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_Wait(15);
   Actor_FaceActorById(15, 21, 0);
+  // "Susa, perhaps, after all, you are..."
   Event_ShowMessageAndWait(15, 0);
   Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "No, I didn't..."
   Event_ShowMessageAndWait(21, 0);
   Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Actor_FaceActorById(6, *(s32 *)owner, 0);
+  // "Don't forget, Susa dealt the finishing blow, didn't he?"
   Event_OpenMessage(6, 0);
   Actor_FaceActorById(5, *(s32 *)owner, 0);
   Actor_FaceActorById(6, *(s32 *)owner, 0);
@@ -839,20 +872,24 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Event_SetMessageId(message + 10);
     Actor_SetModeById(21, 4);
     Event_Wait(30);
+    // "Finishing blow? All I did was stab it with the Cloud Brand."
     Event_ShowMessageAndWait(21, 0);
   } else {
     Event_SetMessageId(message + 11);
     Actor_SetModeById(21, 3);
     Event_Wait(30);
+    // "That's right. Piercing it with the Cloud Brand was hardly a..."
     Event_ShowMessageAndWait(21, 0);
   }
   message = (s32)MsgIDisagree2;
   Event_SetMessageId(message);
   Actor_FaceActorById(23, 21, 0);
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "I disagree..."
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
+  // "You weakened the serpent. You dealt the final blow. I'd say you were..."
   Event_ShowMessageAndWait(23, 0);
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
@@ -863,10 +900,12 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
+  // "So, Lady Uzume, wouldn't you say that Susa deserves the reward for..."
   Event_ShowMessageAndWait(23, 0);
   Actor_FaceActorById(15, *(s32 *)owner, 0);
   Actor_FaceActorById(23, *(s32 *)owner, 0);
   Event_Wait(30);
+  // "Even Felix agrees, don't you, Felix?"
   Event_OpenMessage(23, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
@@ -875,8 +914,11 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_SetModeById(6, 3);
     Actor_SetModeById(7, 3);
     Event_Wait(30);
+    // "I do, too."
     Event_ShowMessageAndWait(5, 0);
+    // "We weren't fighting in hopes of getting a reward, were we?"
     Event_ShowMessageAndWait(6, 0);
+    // "We'll be satisfied just learning your Psynergy."
     Event_ShowMessageAndWait(7, 0);
   } else {
     Event_SetMessageId(message + 7);
@@ -884,8 +926,11 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_SetModeById(6, 4);
     Actor_SetModeById(7, 4);
     Event_Wait(30);
+    // "Are you asking for a reward? That's just plain greedy!"
     Event_ShowMessageAndWait(5, 0);
+    // "We couldn't possibly take any sort of reward."
     Event_ShowMessageAndWait(6, 0);
+    // "Learning new Psynergy will be reward enough."
     Event_ShowMessageAndWait(7, 0);
   }
   Event_SetMessageId((s32)MsgAsYouCanSee);

@@ -1785,7 +1785,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_SetAnimation(19, 3);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Event_SetFlag(FLAG_MARS_BEACON_LIT);
   Event_PlaySound(MUS_028);
   Actor_SetSpeed(0, 0.8);

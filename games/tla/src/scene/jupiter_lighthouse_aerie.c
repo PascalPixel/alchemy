@@ -201,7 +201,7 @@ void JupiterLighthouse_EnergizeLeftAngel(void) {
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   JupiterLighthouse_StartBeam(ACTOR_LEFT_ARCHER, ACTOR_LEFT_ANGEL, 0);
   FieldEvent_Wait(40);
@@ -229,7 +229,7 @@ void JupiterLighthouse_EnergizeRightAngel(void) {
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   JupiterLighthouse_StartBeam(ACTOR_RIGHT_ARCHER, ACTOR_RIGHT_ANGEL, 1);
   FieldEvent_Wait(40);

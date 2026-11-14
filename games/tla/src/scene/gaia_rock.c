@@ -273,6 +273,7 @@ void GaiaRock_TalkToSusa(void) {
     Event_AskYesNo(20, 0);
   } else {
     FieldEvent_SetMessageId(MsgIfYouRe);
+    // "If you're going to Izumo, tell my sister that I'm still alive."
     Event_ShowMessage(20, 0);
   }
 }
@@ -280,9 +281,11 @@ void GaiaRock_TalkToSusa(void) {
 void GaiaRock_MindReadSusa(void) {
   if (Event_GetFlag(0x9ab)) {
     FieldEvent_SetMessageId(MsgKushinadaSSafe);
+    // "Kushinada's safe... She's safe! Nothing else matters."
     Event_ShowMessage(20, 0);
   } else {
     FieldEvent_SetMessageId(MsgIReallyGot);
+    // "I really got worked over, but as long as Kushinada's safe, it was..."
     Event_ShowMessage(20, 0);
   }
 }
@@ -504,6 +507,8 @@ s32 Scene_Initialize(void) {
         FieldCamera_MoveToActorById(20, 1);
         FieldEvent_Wait(30);
         FieldEvent_SetMessageId((s32)MsgIMNot);
+        // "I'm not dying... I'm just so tired... I'm going to lie down for
+        // a..."
         Event_ShowMessage(20, 0);
         FieldActor_StartRepeatedMotion(20, 2);
         FieldEvent_Wait(30);

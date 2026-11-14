@@ -1730,7 +1730,7 @@ loop:
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   Event_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
   gFieldWork->transition = 0x204;
   Event_End();
 }

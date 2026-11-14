@@ -396,7 +396,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   // "By reaching this place, you have proven your power."
   Event_ShowMessageAndWait(9, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   TALK();
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -429,7 +429,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Event_Wait(60);
   TALK();
   Event_Wait(40);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Event_Wait(40);
   Actor_SetModeById(9, 3);
   // "Akafubu has not honed his own powers, and the fault lies with him..."

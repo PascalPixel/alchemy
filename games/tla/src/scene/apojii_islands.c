@@ -472,7 +472,7 @@ void ApojiiIslands_EnterDoor(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Event_PlaySound(SE_MAP_EXIT);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(work->stepTrigger);
@@ -491,6 +491,7 @@ s32 ApojiiIslands_TalkToSon(void) {
   if (facing) {
     Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)&MsgWhyDoesMy);
+    // "Why does my father keep staring at that rock every day?"
     Event_ShowMessage(9, 0);
     Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   }
@@ -507,6 +508,7 @@ s32 ApojiiIslands_MindReadSon(void) {
   FieldEvent_ResolvePendingActions(0);
   if (facing) {
     FieldEvent_SetMessageId((s32)&MsgICanTEver);
+    // "I can't ever tell what kind of mood Mom and Dad are in. At least..."
     Event_ShowMessage(9, 0);
   }
   Event_End();
@@ -550,6 +552,7 @@ void ApojiiIslands_AskAboutWarriors(s32 actor) {
   FieldEvent_ResolvePendingActions(0);
   msg = (s32)&MsgYouGuysAren;
   FieldEvent_SetMessageId(msg);
+  // "You guys aren't the warriors who came in that boat, are you?"
   Event_OpenMessage(actor, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {

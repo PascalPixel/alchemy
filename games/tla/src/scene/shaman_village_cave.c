@@ -609,7 +609,7 @@ next:
   if (id < 64)
     goto next;
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(5);
   Event_PlaySound(SE_MAP_EXIT);

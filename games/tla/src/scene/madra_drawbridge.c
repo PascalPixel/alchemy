@@ -23,6 +23,7 @@
 #include "actor.h"
 #include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
+#include "module/scene/actor_animation.h"
 
 /// What games/tla/src/field/map/ declares for the files that use it, written
 /// once.
@@ -63,7 +64,7 @@ void MadraDrawbridge_AskGoingToOsenia(void) {
   // No: "Then get lost, pal. These parts can be dangerous..."
   Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
+    Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
     // "You'll have to head back to town and get a permit! Just go to the..."
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   } else {
@@ -105,8 +106,10 @@ void MadraDrawbridge_BlockBridge(void) {
       Event_SetMessageId((s32)MsgMadraNeedEldersPermission);
       Event_Wait(10);
       Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
+      // "If you wanna cross here, you'll need permission from the town elder!"
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
+      Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, ANIM_NOD);
+      // "Without permission, ain't no one's gonna cross this bridge, no..."
       Event_ShowMessage(ACTOR_WEST_GUARD, 0);
       Event_SetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION);
       Event_End();
@@ -122,10 +125,10 @@ void MadraDrawbridge_GreetPermittedParty(void) {
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
   FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
   // "Yeah, we heard about you already. If you're going to Osenia, you'd..."
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
-  Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
+  Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, ANIM_NOD);
   // "Alhafra is up along the northeast of Osenia... You'll see it eventually."
   Event_ShowMessage(ACTOR_WEST_GUARD, 0);
   Event_SetFlag(0x916);

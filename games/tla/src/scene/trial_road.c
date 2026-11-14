@@ -1040,12 +1040,12 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_SetMoveTarget(object, (toX << 20) + 0x80000, 0,
                       z = (toZ << 20) + 0x80000);
   Event_Wait(6);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.2);
   Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, dx << 3,
                                  dz << 3);
   Event_Wait(24);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_WaitForMove(object);
   if (toX <= 17) {
     Actor_SelectAnimation(object, 1);

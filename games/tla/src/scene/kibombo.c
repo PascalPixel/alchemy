@@ -11,6 +11,7 @@
 
 #include "flags.h"
 #include "item_ids.h"
+#include "module/scene/actor_animation.h"
 
 /// Set once the party has found the dead end by the statue and turned back
 /// (Kibombo_DeadEndByTheStatue).
@@ -218,6 +219,7 @@ void Kibombo_OpenWeaponShop(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgTheWeaponsI);
+    // "The weapons I sell in this shop are ones we do not use in Kibombo...."
     Event_ShowMessageAndWait(20, 0);
     Event_End();
   }
@@ -230,6 +232,7 @@ void Kibombo_OpenArmorShop(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgTheOnlyDefenses);
+    // "The only defenses we Kibombo need are our shields and our war paint...."
     Event_ShowMessageAndWait(21, 0);
     Event_End();
   }
@@ -242,6 +245,7 @@ void Kibombo_OpenItemShop(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgIMSorryBut);
+    // "I'm sorry, but the Kibombo spearhead poison is a tribal secret, used..."
     Event_ShowMessageAndWait(22, 0);
     Event_End();
   }
@@ -254,6 +258,7 @@ void Kibombo_OpenInn(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDonTWorryAbout);
+    // "Don't worry about the beds here... We used to have insect problems..."
     Event_ShowMessageAndWait(23, 0);
     Event_End();
   }
@@ -266,6 +271,7 @@ void Kibombo_OpenSanctum(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboSPeace);
+    // "Kibombo's peace is restored now that the ceremony has reached its..."
     Event_ShowMessageAndWait(25, 0);
     Event_End();
   }
@@ -284,7 +290,9 @@ void Kibombo_TalkForeignCeremony(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgOhOhMy);
+    // "Oh... Oh my... I've heard of ceremonies like these... Foreign..."
     Event_ShowMessageThenWait(36, 0, 40);
+    // "Hmm?"
     Event_ShowMessageAndWait(36, 0);
     Actor_FaceActorById(36, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
@@ -595,7 +603,7 @@ void Kibombo_PiersThanksParty(void) {
   // "You've come to help me get my orb back? Thank you, all of you!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 7, 0);
   Kibombo_ObjTurn(7, FACING_WEST);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(7, 3);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
   Actor_SetModeById(7, 2);
@@ -831,7 +839,7 @@ void Kibombo_PiersJoinsParty(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 5, 0);
   Motion_SetModeAndWaitAnimation(7, 3);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetModeById(26, 3);
   Actor_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(6, 3);
@@ -1091,7 +1099,7 @@ void Kibombo_PiersJoinsParty(void) {
   Motion_SetModeAndWaitAnimation(7, 3);
   Actor_SetSpeed(7, 0.4);
   Actor_WalkToAndWaitById(7, 40, 350);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Motion_SetModeAndWaitAnimation(26, 3);
@@ -1227,7 +1235,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.4);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 280, 188);
   Actor_SetModeById(26, 1);
@@ -1275,7 +1283,7 @@ ask:
   Actor_FaceDirectionById(26, FACING_EAST);
   Event_ShowMessageAndWait(26, 0);
   Event_ShowMessageAndWait(26, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_WatchAndSetScript(5, gMainRoutineWork.currentOwner);
   Actor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
   Actor_WatchAndSetScript(26, gMainRoutineWork.currentOwner);
@@ -1379,7 +1387,7 @@ ask:
   Event_ShowMessageAndWait(26, 0);
   Actor_SetModeById(26, 3);
   Event_ShowMessageAndWait(26, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Motion_SetModeAndWaitAnimation(7, 3);
@@ -2063,7 +2071,7 @@ void Kibombo_EnterDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   x = leader->x;
   px = x >> 16;
@@ -2300,11 +2308,11 @@ void Kibombo_CeremonyBegins(void) {
   // "It looks like the initiation ceremony is beginning."
   Event_ShowMessageAndWait(26, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 20);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetModeById(26, 4);
   // "I'm not sure what will happen, but we'd better hurry, Felix."
   Event_ShowMessageAndWait(26, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(26, 3);
   Actor_SetModeById(26, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -2784,7 +2792,7 @@ void Kibombo_CeremonyEnds(void) {
   Kibombo_ObjArm(10, FACING_NORTH + FACING_STEP, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 10);
   Actor_SetModeById(10, 3);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_Jump(8, 4, 10);
   Kibombo_MessagePut(0x2008, 0);
   Actor_FaceDirectionById(9, FACING_EAST);
@@ -2817,7 +2825,7 @@ void Kibombo_CeremonyEnds(void) {
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_WEST);
   Actor_SetModeById(10, 3);
   Event_ShowMessageAndWait(10, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Kibombo_ObjSpeed(10, 0xcccc, 0x6666);
   Actor_SetModeById(10, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);

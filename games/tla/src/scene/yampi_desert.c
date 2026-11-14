@@ -1284,7 +1284,7 @@ void YampiDesert_DropScoopGem(void) {
     wait(1);
     Actor_Release(object);
   }
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
   GameFlag_Set(FLAG_KING_SCORPION_BEATEN);
   Event_End();
 }

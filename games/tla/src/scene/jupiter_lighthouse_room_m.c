@@ -337,7 +337,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     FieldEvent_Wait(40);
     PaletteCycle_SetPausesInEvents(0);
     JupiterLighthouse_FlashSky();
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
     Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
     FieldActor_StartRepeatedMotion(4, 3);
     Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -490,25 +490,30 @@ void JupiterLighthouse_TalkToReunitedParty(s32 actor) {
   case 0:
     Actor_RunRepeatedMotion(0, 2);
     FieldEvent_SetMessageId(MsgNoWhyAre);
+    // "Felix... No! Why are you helping them?"
     Event_ShowMessage(0, 0);
     break;
   case 2:
     Actor_RunRepeatedMotion(2, 2);
     FieldEvent_SetMessageId(MsgDonTWorry);
+    // "Don't worry about us... Help Garet and Mia first."
     Event_ShowMessage(2, 0);
     break;
   case 28:
     FieldEvent_SetMessageId(MsgWeHaveTo);
+    // "We have to help Garet. He can't hold on for much longer."
     Event_ShowMessage(28, 0);
     break;
   case 5:
     FieldEvent_SetMessageId(MsgIDonT);
+    // "Isaac! I don't know how you survived that attack, but I'm so glad..."
     Event_ShowMessage(5, 0);
     break;
   case 6:
     Actor_SetAnimation(6, 4);
     FieldEvent_Wait(33);
     FieldEvent_SetMessageId(MsgYouVeBeen);
+    // "Ivan... You've been injured. Don't worry about the others. Let's..."
     Event_ShowMessage(6, 0);
     break;
   }

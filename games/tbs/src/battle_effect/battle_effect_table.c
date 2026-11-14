@@ -497,8 +497,9 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
     [BATTLE_EFFECT_DRAGON_CLOUD - 1] =
         BattleEffect_RunDragonCloud, // battle_effect_dragon_cloud.c: Dragon
                                      // Cloud
-    [BATTLE_EFFECT_DEMON_NIGHT - 1] = BattleEffect_RunDemonNight, // battle_effect_gathering_lights.c:
-                                                                  // Demon Night
+    [BATTLE_EFFECT_DEMON_NIGHT - 1] =
+        BattleEffect_RunDemonNight, // battle_effect_gathering_lights.c:
+                                    // Demon Night
     [BATTLE_EFFECT_HELM_SPLITTER - 1] =
         BattleEffect_RunHelmSplitter, // battle_effect_helm_splitter.c: Helm
                                       // Splitter
@@ -610,16 +611,18 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
                                      // Chiller
     [BATTLE_EFFECT_RAPID_SMASH - 1] =
         BattleEffect_RunGust, // battle_effect_flurry.c: Gust
-    [BATTLE_EFFECT_BONE_CHARGE - 1] = BattleEffect_RunBoneCharge, // battle_effect_rushing_strike.c:
-                                                                  // Bone Charge
+    [BATTLE_EFFECT_BONE_CHARGE - 1] =
+        BattleEffect_RunBoneCharge, // battle_effect_rushing_strike.c:
+                                    // Bone Charge
     [BATTLE_EFFECT_MYSTIC_FLAME - 1] =
         BattleEffect_RunMysticFlame, // battle_effect_target_motes.c: Mystic
                                      // Flame
     [BATTLE_EFFECT_NUMBING_STING - 1] =
         BattleEffect_RunNumbingSting, // battle_effect_target_strike.c: Numbing
                                       // Sting
-    [BATTLE_EFFECT_BRUTE_FORCE - 1] = BattleEffect_RunBruteForce, // battle_effect_rushing_strike.c:
-                                                                  // Brute Force
+    [BATTLE_EFFECT_BRUTE_FORCE - 1] =
+        BattleEffect_RunBruteForce, // battle_effect_rushing_strike.c:
+                                    // Brute Force
     [BATTLE_EFFECT_STICKY_GOO - 1] =
         BattleEffect_RunStickyGoo, // battle_effect_lobbed_shells.c: Sticky Goo
     [BATTLE_EFFECT_CANNIBAL_FANG - 1] =
@@ -646,8 +649,9 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
     [BATTLE_EFFECT_ELECTRIC_BITE - 1] =
         BattleEffect_RunElectricBite, // battle_effect_target_strike.c: Electric
                                       // Bite
-    [BATTLE_EFFECT_POISON_TAIL - 1] = BattleEffect_RunPoisonTail, // battle_effect_target_strike.c:
-                                                                  // Poison Tail
+    [BATTLE_EFFECT_POISON_TAIL - 1] =
+        BattleEffect_RunPoisonTail, // battle_effect_target_strike.c:
+                                    // Poison Tail
     [BATTLE_EFFECT_ONSLAUGHT - 1] =
         BattleEffect_RunOnslaught, // battle_effect_rushing_strike.c: Onslaught
     [BATTLE_EFFECT_VAMPIRIC_FANG - 1] =
@@ -660,10 +664,12 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
     [BATTLE_EFFECT_ROTTEN_BLOOD - 1] =
         BattleEffect_RunRottenBlood, // battle_effect_lobbed_shells.c: Rotten
                                      // Blood
-    [BATTLE_EFFECT_DOUBLE_FANG - 1] = BattleEffect_RunDoubleFang, // battle_effect_target_strike.c:
-                                                                  // Double Fang
-    [BATTLE_EFFECT_MORTAL_BLOW - 1] = BattleEffect_RunMortalBlow, // battle_effect_target_strike.c:
-                                                                  // Mortal Blow
+    [BATTLE_EFFECT_DOUBLE_FANG - 1] =
+        BattleEffect_RunDoubleFang, // battle_effect_target_strike.c:
+                                    // Double Fang
+    [BATTLE_EFFECT_MORTAL_BLOW - 1] =
+        BattleEffect_RunMortalBlow, // battle_effect_target_strike.c:
+                                    // Mortal Blow
     [BATTLE_EFFECT_FREEBITE_RUSH - 1] =
         BattleEffect_RunFreebiteRush, // battle_effect_flurry.c: Freebite Rush
     [BATTLE_EFFECT_TWIN_BEAKS - 1] =
@@ -689,8 +695,9 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
     [BATTLE_EFFECT_HEARTRENDER - 1] =
         BattleEffect_RunHeartrender, // battle_effect_target_motes.c:
                                      // Heartrender
-    [BATTLE_EFFECT_MAD_SPATTER - 1] = BattleEffect_RunMadSpatter, // battle_effect_lobbed_shells.c:
-                                                                  // Mad Spatter
+    [BATTLE_EFFECT_MAD_SPATTER - 1] =
+        BattleEffect_RunMadSpatter, // battle_effect_lobbed_shells.c:
+                                    // Mad Spatter
     [BATTLE_EFFECT_SPASM - 1] =
         BattleEffect_RunSpasm, // battle_effect_mirrored_wall.c: Spasm
     [BATTLE_EFFECT_SLEEP_STAR - 1] =
@@ -714,8 +721,9 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
     [BATTLE_EFFECT_SPINNING_BEAT - 1] =
         BattleEffect_RunSpinningBeat, // battle_effect_spider_web.c: Spinning
                                       // Beat
-    [BATTLE_EFFECT_OUTER_SPACE - 1] = BattleEffect_RunOuterSpace, // battle_effect_particle_streams.c:
-                                                                  // Outer Space
+    [BATTLE_EFFECT_OUTER_SPACE - 1] =
+        BattleEffect_RunOuterSpace, // battle_effect_particle_streams.c:
+                                    // Outer Space
     [BATTLE_EFFECT_DRAGON_DRIVER - 1] =
         BattleEffect_RunDragonDriver, // battle_effect_tiamat.c: Dragon Driver
     [BATTLE_EFFECT_DRAIN_FANG - 1] =

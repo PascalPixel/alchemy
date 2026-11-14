@@ -162,7 +162,6 @@ extern u16 gValePlaza_DoorOpens[];
 #include "field/speaker.h"
 #include "field/field_psynergy_work.h"
 
-
 #include "field/map_grid_scroll.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"

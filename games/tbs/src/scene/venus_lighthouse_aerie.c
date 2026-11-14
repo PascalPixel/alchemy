@@ -107,7 +107,6 @@ extern s32 gVenusLighthouseAerie_BesideParticleScript[];
 /// The Lighthouse Aerie's actors; its entrances and exits are in
 /// scene_exits.h.
 
-
 /// The aerie's actors, in the order of its actor placements;
 /// Garet, Ivan, Mia and Sheba keep their character numbers.
 enum {

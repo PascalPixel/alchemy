@@ -183,7 +183,7 @@ void Func_020001a0(s32 unused, s32 id) {
         other->z = 0;
         Event_SetFlag(FLAG_SCENE_TEMP_00);
       } else {
-        Call3((void (*)())Iwram_CopyWordsEntry, (s32)&saved, (s32)other, 128);
+        Iwram_CopyWords((s32)&saved, (s32)other, 128);
         Actor_ResetTargetsAndVelocity(9);
         FieldActor_Jump(9, 4, 0);
         FieldEvent_Wait(30);

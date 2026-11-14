@@ -807,7 +807,7 @@ void Gauge_Draw(s32 progress) {
   if (kind + level == gData_02003fc4)
     return;
   gData_02003fc4 = kind + level;
-  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(gData_02003fd8), (s32)(0x100));
+  Iwram_ClearWords((s32)(gData_02003fd8), (s32)(0x100));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 

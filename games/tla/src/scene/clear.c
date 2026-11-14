@@ -302,8 +302,7 @@ void StatusScreen_Run(void);
 #endif
 
 /// Swaps the map cell buffer out around a password or link screen.
-#define COPY_CELLS(to, from)                                                   \
-  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)(to), (s32)(from), 0x3000)
+#define COPY_CELLS(to, from) Iwram_CopyWords((s32)(to), (s32)(from), 0x3000)
 #define SAVE_CELLS()                                                           \
   u8 *cells = gSaveBuffer;                                                     \
                                                                                \

@@ -1081,30 +1081,30 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Event_SetMessageId((s32)MsgHeyLookUp);
   Actor_Stop(9);
   wait(1);
-  Value3((s32 (*)())Actor_ShowEmoteById, 9, 0x100, 0);
-  Call3((void (*)())Actor_ArmCallback, 9, 0, 20);
+  Actor_ShowEmote(9, 0x100, 0);
+  Actor_FaceDirection(9, 0, 20);
   Event_ShowMessageAndWait(9, 0);
   Actor_Stop(8);
   wait(1);
-  Call3((void (*)())Actor_ArmCallback, 8, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 10, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 11, 0xd000, 0);
-  Call3((void (*)())Actor_ArmCallback, 12, 0xd000, 0);
-  Call3((void (*)())Actor_ArmCallback, 13, 0xd000, 0);
-  Call3((void (*)())Actor_ArmCallback, 14, 0xd000, 0);
+  Actor_FaceDirection(8, 0, 0);
+  Actor_FaceDirection(10, 0, 0);
+  Actor_FaceDirection(11, 0xd000, 0);
+  Actor_FaceDirection(12, 0xd000, 0);
+  Actor_FaceDirection(13, 0xd000, 0);
+  Actor_FaceDirection(14, 0xd000, 0);
   owner = (s32 *)&gMainRoutineWork;
   owner += 133;
-  Call3((void (*)())Actor_ShowEmoteById, *owner, 0x100, 0);
-  Call3((void (*)())Actor_ArmCallback, *owner, 0x8000, 0);
+  FieldActor_ShowEmote(*owner, 0x100, 0);
+  Actor_FaceDirection(*owner, 0x8000, 0);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
-  Call2((void (*)())Camera_SetSpeedParameters, 0x19999, 0x3333);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
+  FieldCamera_SetSpeedFixed(0x19999, 0x3333);
+  FieldCamera_MoveToFixed(0xd40000, 0, 0xd40000, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessageAndWait(12, 0);
-  Call3((void (*)())Actor_ArmCallback, 11, 0, 10);
+  Actor_FaceDirection(11, 0, 10);
   Event_ShowMessageAndWait(11, 0);
-  Call3((void (*)())Actor_ArmCallback, 13, 0xb000, 0);
-  Call3((void (*)())Actor_ArmCallback, 14, 0x5000, 20);
+  Actor_FaceDirection(13, 0xb000, 0);
+  Actor_FaceDirection(14, 0x5000, 20);
   Actor_Jump(14, 4, 40);
   Motion_SetModeAndWaitAnimation(13, 3);
   Motion_SetModeAndWaitAnimation(14, 3);
@@ -1114,11 +1114,10 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_WatchAndSetScript(11, 14);
   Actor_WatchAndSetScript(12, 14);
   Actor_WatchAndSetScript(13, 14);
-  Call3((void (*)())Actor_SetSpeedParameters, 13, 0x10000, 0x8000);
+  Actor_SetSpeedFixed(13, 0x10000, 0x8000);
   Actor_SetMovementTypeById(14, (s32)gYampiDesert_FinderRunsAhead);
-  Call2((void (*)())Camera_SetSpeedParameters, 0xcccc, 0x1999);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000,
-        1);
+  FieldCamera_SetSpeedFixed(0xcccc, 0x1999);
+  FieldCamera_MoveToFixed(0xf00000, -1, 0x1040000, 1);
   FieldCamera_WaitForArrival();
   Actor_Stop(8);
   Actor_Stop(9);
@@ -1126,41 +1125,41 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_Stop(11);
   Actor_Stop(12);
   Actor_Stop(13);
-  Call2((void (*)())Camera_SetSpeedParameters, 0x26666, 0x4ccc);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xd40000, -1, 0xd40000, 1);
+  FieldCamera_SetSpeedFixed(0x26666, 0x4ccc);
+  FieldCamera_MoveToFixed(0xd40000, -1, 0xd40000, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Call3((void (*)())Actor_ArmCallback, 8, 0xd000, 0);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 20);
+  Actor_FaceDirection(8, 0xd000, 0);
+  Actor_FaceDirection(9, 0x5000, 20);
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageAndWait(8, 0);
   Actor_Jump(10, 4, 0);
-  Call3((void (*)())Actor_ArmCallback, 10, 0, 0);
+  Actor_FaceDirection(10, 0, 0);
   Actor_SetModeById(10, 4);
   Event_ShowMessageAndWait(10, 0);
-  Call3((void (*)())Actor_ArmCallback, 8, 0x8000, 0);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x8000, 0);
-  Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x102, 0);
+  Actor_FaceDirection(8, 0x8000, 0);
+  Actor_FaceDirection(9, 0x8000, 0);
+  Actor_ShowEmote(8, 0x102, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Event_ShowMessageAndWait(14, 0);
-  Call3((void (*)())Actor_ArmCallback, 8, 0xd000, 0);
-  Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
-  Call3((void (*)())Actor_ArmCallback, 11, 0xd000, 0);
-  Call3((void (*)())Actor_ArmCallback, 12, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 13, 0x8000, 20);
+  Actor_FaceDirection(8, 0xd000, 0);
+  Actor_FaceDirection(10, 0x3000, 0);
+  Actor_FaceDirection(11, 0xd000, 0);
+  Actor_FaceDirection(12, 0, 0);
+  Actor_FaceDirection(13, 0x8000, 20);
   Actor_SetModeById(8, 3);
   Actor_SetModeById(9, 3);
   Actor_SetModeById(10, 3);
   Actor_SetModeById(11, 3);
   Actor_SetModeById(12, 3);
   Motion_SetModeAndWaitAnimation(13, 3);
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, 0xcccc);
-  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
-  Call3((void (*)())Actor_SetSpeedParameters, 11, 0x19999, 0xcccc);
-  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x19999, 0xcccc);
-  Call3((void (*)())Actor_SetSpeedParameters, 13, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(8, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(9, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(10, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(11, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(12, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(13, 0x19999, 0xcccc);
   Actor_WatchAndSetScript(*owner, 13);
   {
     s32 path = (s32)gYampiDesert_TravelersFollow;
@@ -1168,9 +1167,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
     Actor_SetMovementTypeById(13, path);
     FieldEvent_Wait(10);
     Actor_SetMovementTypeById(12, path);
-    Call2((void (*)())Camera_SetSpeedParameters, 0x6666, 0xccc);
-    Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xf00000, -1, 0x1180000,
-          1);
+    FieldCamera_SetSpeedFixed(0x6666, 0xccc);
+    FieldCamera_MoveToFixed(0xf00000, -1, 0x1180000, 1);
     Actor_SetMovementTypeById(8, path);
     FieldEvent_Wait(10);
     Actor_SetMovementTypeById(9, path);
@@ -1558,8 +1556,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
 
   switch (*state) {
   case 0:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 140 << 17, 0,
-          200 << 16);
+    FieldActor_SetMoveTargetFixed((s32)object, 140 << 17, 0, 200 << 16);
     *state = 1;
     break;
   case 1:
@@ -1567,8 +1564,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
       *state = 2;
     break;
   case 2:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 140 << 17, 0,
-          132 << 17);
+    FieldActor_SetMoveTargetFixed((s32)object, 140 << 17, 0, 132 << 17);
     *state = 3;
     break;
   case 3:
@@ -1576,8 +1572,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
       *state = 4;
     break;
   case 4:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0,
-          132 << 17);
+    FieldActor_SetMoveTargetFixed((s32)object, 184 << 16, 0, 132 << 17);
     *state = 5;
     break;
   case 5:
@@ -1585,8 +1580,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
       *state = 6;
     break;
   case 6:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0,
-          248 << 16);
+    FieldActor_SetMoveTargetFixed((s32)object, 184 << 16, 0, 248 << 16);
     *state = 7;
     break;
   case 7:
@@ -1600,8 +1594,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
     }
     break;
   case 8:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0,
-          200 << 16);
+    FieldActor_SetMoveTargetFixed((s32)object, 184 << 16, 0, 200 << 16);
     *state = 9;
     break;
   case 9:
@@ -1644,7 +1637,7 @@ void YampiDesert_SetUpRoom4Scorpion(void) {
 // Sends the object toward a point and moves to the next state.
 #define WALK(state_, x, z)                                                     \
   case state_:                                                                 \
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, x, 0, z);              \
+    FieldActor_SetMoveTargetFixed((s32)object, x, 0, z);                       \
     *state = state_ + 1;                                                       \
     break;
 
@@ -1697,8 +1690,7 @@ void YampiDesert_ScorpionRoamsRoom5(struct Actor *object) {
     ARRIVE(19, 0)
   case 32:
     YampiDesert_ClearRaisedEvent();
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 148 << 17, 0,
-          186 << 18);
+    FieldActor_SetMoveTargetFixed((s32)object, 148 << 17, 0, 186 << 18);
     *state = 33;
     break;
     ARRIVE(33, 34)
@@ -1749,7 +1741,7 @@ void YampiDesert_SetUpRoom5Scorpion(void) {
 #define WALK_ON(state_, x, z)                                                  \
   case state_:                                                                 \
     YampiDesert_ClearRaisedEvent();                                            \
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, x, 0, z);              \
+    FieldActor_SetMoveTargetFixed((s32)object, x, 0, z);                       \
     *state = state_ + 1;                                                       \
     break;
 
@@ -2575,7 +2567,7 @@ void YampiDesert_StartRisingSand(s32 unused, s32 value) {
   void *buffer;
 
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-    Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
+    Iwram_ClearWords((s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
   Decompress_TaggedLz(gField_Tiles64D, buffer);
   work->entry = VramCache_FindFreeEntry();

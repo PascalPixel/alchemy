@@ -215,8 +215,7 @@ void Func_020003e8(void) {
   if (*(s8 *)(work + 0xca4) != 0)
     return;
   if (gData_020024c4 == -1) {
-    Call3((void (*)())Iwram_CopyWordsEntry, Data_02002958, (void *)0x05000060,
-          32);
+    Iwram_CopyWords(Data_02002958, (void *)0x05000060, 32);
     Iwram_CopyWordsEntry(Data_02002978, Data_02002958, 32);
     Iwram_CopyWordsEntry(gData_02002998, (void *)0x05000080, 32);
     Iwram_CopyWordsEntry(gData_020029b8, gData_02002998, 32);
@@ -252,7 +251,7 @@ void Func_02000540(void) {
   if (busy != 0)
     return;
   if (gData_020024c8 == -1) {
-    Call3((void (*)())Iwram_CopyWordsEntry, (s32)Data_020029d8, 0x05000060, 32);
+    Iwram_CopyWords((s32)Data_020029d8, 0x05000060, 32);
     Iwram_CopyWordsEntry(Data_020029f8, Data_020029d8, 32);
     Iwram_CopyWordsEntry(Data_02002a18, (void *)0x050001a0, 32);
     Iwram_CopyWordsEntry(Data_02002a38, Data_02002a18, 32);

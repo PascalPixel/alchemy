@@ -332,8 +332,7 @@ void GondowanCliffs_SetUpPass(void) {
   }
   Tightrope_Initialize();
   Value3((s32 (*)())Tightrope_Place, 0, 9, 10);
-  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)gGondowanCliffs_SavedWaterColors,
-         0x05000018, 8);
+  Iwram_CopyWords((s32)gGondowanCliffs_SavedWaterColors, 0x05000018, 8);
   Task_AddFrame(GondowanCliffs_CycleWaterColors, 0x480);
 }
 
@@ -649,7 +648,7 @@ void Geysers_Start(s32 unused, s32 value) {
   void *buffer;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
+    Iwram_ClearWords((s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
   Decompress_TaggedLz(gField_Tiles64D, buffer);
   work->entry = VramCache_FindFreeEntry();

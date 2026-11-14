@@ -403,7 +403,7 @@ s32 Scene_Initialize(void) {
     if (i != 10)
       goto L1;
     Actor_SetAnimationSpeedById(8, 0);
-    Call3((void (*)())Iwram_CopyWordsEntry, (s32)buffer, 0x5000008, 14);
+    Iwram_CopyWords((s32)buffer, 0x5000008, 14);
     j = 0;
   L2:
     out = (u16 *)&BG_PLTT_COLOR(0, 7);

@@ -357,7 +357,7 @@ void Func_020008a8(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(0x944);
-  Call6((void (*)())Map_CopyCellAttributeRect, 11, 22, 3, 2, 20, 22);
+  MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
   object->gravity = px(1) / 2;
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
@@ -452,7 +452,7 @@ void Func_02000b3c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
+  FieldCamera_MoveToFixed(-1, -1, -1, 0);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   leader->facing = 0x4000;
   Event_Wait(10);
@@ -561,7 +561,7 @@ void Func_02000de4(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_12);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
-    Call6((void (*)())Map_CopyCellAttributeRect, 43, 41, 3, 3, 53, 37);
+    MapGrid_CopyCellAttributes(43, 41, 3, 3, 53, 37);
     if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 20 == 38) {
       s16 angle = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
       s32 owner = gMainRoutineWork.currentOwner;
@@ -579,7 +579,7 @@ void Func_02000e78(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_12);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
-    Call6((void (*)())Map_CopyCellAttributeRect, 43, 37, 3, 3, 53, 37);
+    MapGrid_CopyCellAttributes(43, 37, 3, 3, 53, 37);
     if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 20 > 38)
       MapCell_SetAttributes(0, 54, 37, 0x1f00);
     else
@@ -596,7 +596,7 @@ void Func_02000f0c(s32 step) {
   case 1:
     MapGrid_CopyCellPictureIndicesRect(18, 97, 6, 97, 3, 4);
     MapGrid_CopyCellPictureIndicesRect(82, 34, 70, 34, 3, 2);
-    Call6((void (*)())Map_CopyCellAttributeRect, 7, 36, 1, 1, 7, 35);
+    MapGrid_CopyCellAttributes(7, 36, 1, 1, 7, 35);
     GameFlag_Set(0x94b);
     break;
   case 2:
@@ -623,7 +623,7 @@ void Func_02000fb8(s32 mode, s32 cue) {
   }
   if (mode == 1) {
     MapGrid_CopyCellPictureIndicesRect(13, 26, 13, 16, 3, 3);
-    Call6((void (*)())Map_CopyCellAttributeRect, 13, 26, 3, 3, 13, 16);
+    MapGrid_CopyCellAttributes(13, 26, 3, 3, 13, 16);
     GameFlag_Set(0x948);
   }
   if (mode == 2)
@@ -984,7 +984,7 @@ void TundariaTower_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (work->actionCounter != 0) {
-    Call1((void (*)())GameFlag_Set, 0x106);
+    Event_SetFlag(0x106);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
     GameFlag_Clear(FLAG_MENU_OPEN);

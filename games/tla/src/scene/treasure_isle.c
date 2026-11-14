@@ -445,8 +445,7 @@ void TreasureIsle_CycleWaterColors(void) {
   if (busy != 0)
     return;
   if (gTreasureIsle_ColorCycleFrame[0] == -1) {
-    Call3((void (*)())Iwram_CopyWordsEntry, gTreasureIsle_SavedBgColors,
-          (void *)0x05000060, 32);
+    Iwram_CopyWords(gTreasureIsle_SavedBgColors, (void *)0x05000060, 32);
     Iwram_CopyWordsEntry((void *)gTreasureIsle_BgColors,
                          gTreasureIsle_SavedBgColors, 32);
     Iwram_CopyWordsEntry((void *)gTreasureIsle_SavedObjColors,

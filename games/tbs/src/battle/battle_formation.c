@@ -306,8 +306,7 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
   s32 terminatorIndex;
   u8 nameByte;
 
-  enemyIndex = 0;
-  for (; enemyIndex <= 5; enemyIndex++) {
+  for (enemyIndex = 0; enemyIndex <= 5; enemyIndex++) {
     unit = Unit_GetFar(enemyIndex + FIRST_ENEMY_UNIT);
     nameByte = unit->side;
     if (nameByte != BATTLE_SIDE_ENEMY)

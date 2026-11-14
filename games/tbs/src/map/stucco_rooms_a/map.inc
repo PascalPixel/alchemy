@@ -41,20 +41,20 @@ Field_StuccoRoomsA:
 	treasure_spot 24, 40, 102
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set52Palette
-Tileset_Set52Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_52/palette.gbapal.lz"
+	.global Tileset_StuccoRoomsAPalette
+Tileset_StuccoRoomsAPalette:
+	.incbin "games/tbs/src/graphics/tileset/stucco_rooms_a/palette.gbapal.lz"
 	.byte 0xc0	@ PACKER: left in the buffer by Field_StuccoRoomsA+0x1c7
-	.global Tileset_Set52TilesA
-Tileset_Set52TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_52/tiles_a.4bpp.mtf"
-	.global Tileset_Set52TilesB
-Tileset_Set52TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_52/tiles_b.4bpp.mtf"
-	.global Tileset_Set52TilesC
-Tileset_Set52TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_52/tiles_c.4bpp.mtf"
-	.global Tileset_Set52TilesD
-Tileset_Set52TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_52/tiles_d.4bpp.mtf"
+	.global Tileset_StuccoRoomsATilesA
+Tileset_StuccoRoomsATilesA:
+	.incbin "games/tbs/src/graphics/tileset/stucco_rooms_a/tiles_a.4bpp.mtf"
+	.global Tileset_StuccoRoomsATilesB
+Tileset_StuccoRoomsATilesB:
+	.incbin "games/tbs/src/graphics/tileset/stucco_rooms_a/tiles_b.4bpp.mtf"
+	.global Tileset_StuccoRoomsATilesC
+Tileset_StuccoRoomsATilesC:
+	.incbin "games/tbs/src/graphics/tileset/stucco_rooms_a/tiles_c.4bpp.mtf"
+	.global Tileset_StuccoRoomsATilesD
+Tileset_StuccoRoomsATilesD:
+	.incbin "games/tbs/src/graphics/tileset/stucco_rooms_a/tiles_d.4bpp.mtf"
 	.balign 4, 0

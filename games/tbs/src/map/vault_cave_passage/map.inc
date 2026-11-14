@@ -29,23 +29,23 @@ Field_VaultCavePassage:
 	treasure_spot 16, 47, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set20Palette
-Tileset_Set20Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_20/palette.gbapal.lz"
+	.global Tileset_VaultCavePassagePalette
+Tileset_VaultCavePassagePalette:
+	.incbin "games/tbs/src/graphics/tileset/vault_cave_passage/palette.gbapal.lz"
 	.byte 0xe2, 0x17	@ PACKER: left in the buffer by Field_VaultCavePassage+0x19a
-	.global Tileset_Set20TilesA
-Tileset_Set20TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_20/tiles_a.4bpp.mtf"
+	.global Tileset_VaultCavePassageTilesA
+Tileset_VaultCavePassageTilesA:
+	.incbin "games/tbs/src/graphics/tileset/vault_cave_passage/tiles_a.4bpp.mtf"
 	.balign 4, 0
-	.global Tileset_Set20TilesB
-Tileset_Set20TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_20/tiles_b.4bpp.mtf"
+	.global Tileset_VaultCavePassageTilesB
+Tileset_VaultCavePassageTilesB:
+	.incbin "games/tbs/src/graphics/tileset/vault_cave_passage/tiles_b.4bpp.mtf"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global Tileset_Set20TilesC
-Tileset_Set20TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_20/tiles_c.4bpp.mtf"
-	.global Tileset_Set20TilesD
-Tileset_Set20TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_20/tiles_d.4bpp.mtf"
-	.byte 0xc6, 0x39	@ PACKER: left in the buffer by Tileset_Set20TilesB+0x1a36
+	.global Tileset_VaultCavePassageTilesC
+Tileset_VaultCavePassageTilesC:
+	.incbin "games/tbs/src/graphics/tileset/vault_cave_passage/tiles_c.4bpp.mtf"
+	.global Tileset_VaultCavePassageTilesD
+Tileset_VaultCavePassageTilesD:
+	.incbin "games/tbs/src/graphics/tileset/vault_cave_passage/tiles_d.4bpp.mtf"
+	.byte 0xc6, 0x39	@ PACKER: left in the buffer by Tileset_VaultCavePassageTilesB+0x1a36
 	.balign 4, 0

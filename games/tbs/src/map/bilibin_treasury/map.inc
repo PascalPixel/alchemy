@@ -28,12 +28,12 @@ Field_BilibinTreasury:
 .LField_BilibinTreasury_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set25Palette
-Tileset_Set25Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_25/palette.gbapal.lz"
+	.global Tileset_BilibinTreasuryPalette
+Tileset_BilibinTreasuryPalette:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_treasury/palette.gbapal.lz"
 	.byte 0xf3	@ PACKER: left in the buffer by Field_BilibinTreasury+0x15f
-	.global Tileset_Set25TilesA
-Tileset_Set25TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_25/tiles_a.4bpp.mtf"
+	.global Tileset_BilibinTreasuryTilesA
+Tileset_BilibinTreasuryTilesA:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_treasury/tiles_a.4bpp.mtf"
 	.byte 0x06	@ PACKER: left in the buffer by Field_CottageRoomsC+0x1c57
 	.balign 4, 0

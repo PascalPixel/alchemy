@@ -29,11 +29,11 @@ Field_FuchinTempleGrounds:
 	treasure_spot 24, 17, 110
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set44Palette
-Tileset_Set44Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_44/palette.gbapal.lz"
+	.global Tileset_MercuryLighthousePalette
+Tileset_MercuryLighthousePalette:
+	.incbin "games/tbs/src/graphics/tileset/mercury_lighthouse/palette.gbapal.lz"
 	.byte 0x32, 0xc8	@ PACKER: left in the buffer by Field_FuchinTempleGrounds+0x1be
-	.global Tileset_Set44TilesA
-Tileset_Set44TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_44/tiles_a.4bpp.mtf"
+	.global Tileset_MercuryLighthouseTilesA
+Tileset_MercuryLighthouseTilesA:
+	.incbin "games/tbs/src/graphics/tileset/mercury_lighthouse/tiles_a.4bpp.mtf"
 	.balign 4, 0

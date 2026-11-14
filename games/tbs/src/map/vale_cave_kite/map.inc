@@ -30,19 +30,19 @@ Field_ValeCaveKite:
 	treasure_spot 46, 10, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set22Palette
-Tileset_Set22Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_22/palette.gbapal.lz"
-	.global Tileset_Set22TilesA
-Tileset_Set22TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_22/tiles_a.4bpp.mtf"
-	.byte 0x04, 0x1c, 0xf2	@ PACKER: left in the buffer by Tileset_Set21TilesA+0x2b3d
-	.global Tileset_Set22TilesB
-Tileset_Set22TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_22/tiles_b.4bpp.mtf"
-	.byte 0xf9	@ PACKER: left in the buffer by Tileset_Set22TilesA+0x1dcf
-	.global Tileset_Set22TilesC
-Tileset_Set22TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_22/tiles_c.4bpp.mtf"
-	.byte 0xf0	@ PACKER: left in the buffer by Tileset_Set22TilesB+0x13f
+	.global Tileset_ValeCaveKitePalette
+Tileset_ValeCaveKitePalette:
+	.incbin "games/tbs/src/graphics/tileset/vale_cave_kite/palette.gbapal.lz"
+	.global Tileset_ValeCaveKiteTilesA
+Tileset_ValeCaveKiteTilesA:
+	.incbin "games/tbs/src/graphics/tileset/vale_cave_kite/tiles_a.4bpp.mtf"
+	.byte 0x04, 0x1c, 0xf2	@ PACKER: left in the buffer by Tileset_ValeCaveMouthTilesA+0x2b3d
+	.global Tileset_ValeCaveKiteTilesB
+Tileset_ValeCaveKiteTilesB:
+	.incbin "games/tbs/src/graphics/tileset/vale_cave_kite/tiles_b.4bpp.mtf"
+	.byte 0xf9	@ PACKER: left in the buffer by Tileset_ValeCaveKiteTilesA+0x1dcf
+	.global Tileset_ValeCaveKiteTilesC
+Tileset_ValeCaveKiteTilesC:
+	.incbin "games/tbs/src/graphics/tileset/vale_cave_kite/tiles_c.4bpp.mtf"
+	.byte 0xf0	@ PACKER: left in the buffer by Tileset_ValeCaveKiteTilesB+0x13f
 	.balign 4, 0

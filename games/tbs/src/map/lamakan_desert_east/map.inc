@@ -27,23 +27,23 @@ Field_LamakanDesertEast:
 	treasure_spot 16, 55, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set50Palette
-Tileset_Set50Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_50/palette.gbapal.lz"
-	.global Tileset_Set50TilesA
-Tileset_Set50TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_50/tiles_a.4bpp.mtf"
+	.global Tileset_LamakanDesertEastPalette
+Tileset_LamakanDesertEastPalette:
+	.incbin "games/tbs/src/graphics/tileset/lamakan_desert_east/palette.gbapal.lz"
+	.global Tileset_LamakanDesertEastTilesA
+Tileset_LamakanDesertEastTilesA:
+	.incbin "games/tbs/src/graphics/tileset/lamakan_desert_east/tiles_a.4bpp.mtf"
 	.byte 0x54	@ PACKER: left in the buffer by Field_LamaTemple+0x28ef
-	.global Tileset_Set50TilesB
-Tileset_Set50TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_50/tiles_b.4bpp.mtf"
-	.byte 0x9c, 0x52	@ PACKER: left in the buffer by Tileset_Set50TilesA+0x220a
-	.global Tileset_Set50TilesC
-Tileset_Set50TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_50/tiles_c.4bpp.mtf"
-	.byte 0x96	@ PACKER: left in the buffer by Tileset_Set50TilesB+0x13f
-	.global Tileset_Set50TilesD
-Tileset_Set50TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_50/tiles_d.4bpp.mtf"
-	.byte 0xc0, 0x84	@ PACKER: left in the buffer by Tileset_Set50TilesB+0x1a16
+	.global Tileset_LamakanDesertEastTilesB
+Tileset_LamakanDesertEastTilesB:
+	.incbin "games/tbs/src/graphics/tileset/lamakan_desert_east/tiles_b.4bpp.mtf"
+	.byte 0x9c, 0x52	@ PACKER: left in the buffer by Tileset_LamakanDesertEastTilesA+0x220a
+	.global Tileset_LamakanDesertEastTilesC
+Tileset_LamakanDesertEastTilesC:
+	.incbin "games/tbs/src/graphics/tileset/lamakan_desert_east/tiles_c.4bpp.mtf"
+	.byte 0x96	@ PACKER: left in the buffer by Tileset_LamakanDesertEastTilesB+0x13f
+	.global Tileset_LamakanDesertEastTilesD
+Tileset_LamakanDesertEastTilesD:
+	.incbin "games/tbs/src/graphics/tileset/lamakan_desert_east/tiles_d.4bpp.mtf"
+	.byte 0xc0, 0x84	@ PACKER: left in the buffer by Tileset_LamakanDesertEastTilesB+0x1a16
 	.balign 4, 0

@@ -36,23 +36,23 @@ Field_IceRooms:
 	treasure_spot 16, 46, 102
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set42Palette
-Tileset_Set42Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_42/palette.gbapal.lz"
+	.global Tileset_IceRoomsPalette
+Tileset_IceRoomsPalette:
+	.incbin "games/tbs/src/graphics/tileset/ice_rooms/palette.gbapal.lz"
 	.byte 0x1f	@ PACKER: left in the buffer by Field_IceRooms+0x1c7
-	.global Tileset_Set42TilesA
-Tileset_Set42TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_a.4bpp.mtf"
+	.global Tileset_IceRoomsTilesA
+Tileset_IceRoomsTilesA:
+	.incbin "games/tbs/src/graphics/tileset/ice_rooms/tiles_a.4bpp.mtf"
 	.byte 0x47, 0x90, 0x0e	@ PACKER: left in the buffer by Tileset_BilibinCaveIceTilesA+0x2901
-	.global Tileset_Set42TilesB
-Tileset_Set42TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_b.4bpp.mtf"
-	.global Tileset_Set42TilesC
-Tileset_Set42TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_c.4bpp.mtf"
-	.byte 0xc3, 0x73, 0x89	@ PACKER: left in the buffer by Tileset_Set42TilesB+0x1c59
-	.global Tileset_Set42TilesD
-Tileset_Set42TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_d.4bpp.mtf"
-	.byte 0xc4, 0x83	@ PACKER: left in the buffer by Tileset_Set42TilesC+0x156e
+	.global Tileset_IceRoomsTilesB
+Tileset_IceRoomsTilesB:
+	.incbin "games/tbs/src/graphics/tileset/ice_rooms/tiles_b.4bpp.mtf"
+	.global Tileset_IceRoomsTilesC
+Tileset_IceRoomsTilesC:
+	.incbin "games/tbs/src/graphics/tileset/ice_rooms/tiles_c.4bpp.mtf"
+	.byte 0xc3, 0x73, 0x89	@ PACKER: left in the buffer by Tileset_IceRoomsTilesB+0x1c59
+	.global Tileset_IceRoomsTilesD
+Tileset_IceRoomsTilesD:
+	.incbin "games/tbs/src/graphics/tileset/ice_rooms/tiles_d.4bpp.mtf"
+	.byte 0xc4, 0x83	@ PACKER: left in the buffer by Tileset_IceRoomsTilesC+0x156e
 	.balign 4, 0

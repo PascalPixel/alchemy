@@ -30,22 +30,22 @@ Field_Kolima:
 	treasure_spot 13, 23, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set29Palette
-Tileset_Set29Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_29/palette.gbapal.lz"
+	.global Tileset_KolimaPalette
+Tileset_KolimaPalette:
+	.incbin "games/tbs/src/graphics/tileset/kolima/palette.gbapal.lz"
 	.byte 0xc0, 0x23	@ PACKER: left in the buffer by Field_Kolima+0x182
-	.global Tileset_Set29TilesA
-Tileset_Set29TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_29/tiles_a.4bpp.mtf"
-	.global Tileset_Set29TilesB
-Tileset_Set29TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_29/tiles_b.4bpp.mtf"
-	.global Tileset_Set29TilesC
-Tileset_Set29TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_29/tiles_c.4bpp.mtf"
-	.byte 0xba	@ PACKER: left in the buffer by Tileset_Set29TilesA+0x2847
-	.global Tileset_Set29TilesD
-Tileset_Set29TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_29/tiles_d.4bpp.mtf"
-	.byte 0x68, 0x18, 0x2a	@ PACKER: left in the buffer by Tileset_Set29TilesC+0x509
+	.global Tileset_KolimaTilesA
+Tileset_KolimaTilesA:
+	.incbin "games/tbs/src/graphics/tileset/kolima/tiles_a.4bpp.mtf"
+	.global Tileset_KolimaTilesB
+Tileset_KolimaTilesB:
+	.incbin "games/tbs/src/graphics/tileset/kolima/tiles_b.4bpp.mtf"
+	.global Tileset_KolimaTilesC
+Tileset_KolimaTilesC:
+	.incbin "games/tbs/src/graphics/tileset/kolima/tiles_c.4bpp.mtf"
+	.byte 0xba	@ PACKER: left in the buffer by Tileset_KolimaTilesA+0x2847
+	.global Tileset_KolimaTilesD
+Tileset_KolimaTilesD:
+	.incbin "games/tbs/src/graphics/tileset/kolima/tiles_d.4bpp.mtf"
+	.byte 0x68, 0x18, 0x2a	@ PACKER: left in the buffer by Tileset_KolimaTilesC+0x509
 	.balign 4, 0

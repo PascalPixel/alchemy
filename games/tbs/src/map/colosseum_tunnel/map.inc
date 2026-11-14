@@ -28,24 +28,24 @@ Field_ColosseumTunnel:
 .LField_ColosseumTunnel_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set59Palette
-Tileset_Set59Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_59/palette.gbapal.lz"
+	.global Tileset_ColosseumTunnelPalette
+Tileset_ColosseumTunnelPalette:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_tunnel/palette.gbapal.lz"
 	.byte 0x8e, 0x89	@ PACKER: left in the buffer by Field_ColosseumTunnel+0x166
-	.global Tileset_Set59TilesA
-Tileset_Set59TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_59/tiles_a.4bpp.mtf"
+	.global Tileset_ColosseumTunnelTilesA
+Tileset_ColosseumTunnelTilesA:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_tunnel/tiles_a.4bpp.mtf"
 	.byte 0xe0	@ PACKER: left in the buffer by Field_BabiPalace+0x2a13
-	.global Tileset_Set59TilesB
-Tileset_Set59TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_59/tiles_b.4bpp.mtf"
-	.byte 0x8c, 0xba	@ PACKER: left in the buffer by Tileset_Set59TilesA+0x1c3e
-	.global Tileset_Set59TilesC
-Tileset_Set59TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_59/tiles_c.4bpp.mtf"
-	.byte 0xc6	@ PACKER: left in the buffer by Tileset_Set59TilesB+0x4bb
-	.global Tileset_Set59TilesD
-Tileset_Set59TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_59/tiles_d.4bpp.mtf"
-	.byte 0x58	@ PACKER: left in the buffer by Tileset_Set59TilesB+0x1377
+	.global Tileset_ColosseumTunnelTilesB
+Tileset_ColosseumTunnelTilesB:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_tunnel/tiles_b.4bpp.mtf"
+	.byte 0x8c, 0xba	@ PACKER: left in the buffer by Tileset_ColosseumTunnelTilesA+0x1c3e
+	.global Tileset_ColosseumTunnelTilesC
+Tileset_ColosseumTunnelTilesC:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_tunnel/tiles_c.4bpp.mtf"
+	.byte 0xc6	@ PACKER: left in the buffer by Tileset_ColosseumTunnelTilesB+0x4bb
+	.global Tileset_ColosseumTunnelTilesD
+Tileset_ColosseumTunnelTilesD:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_tunnel/tiles_d.4bpp.mtf"
+	.byte 0x58	@ PACKER: left in the buffer by Tileset_ColosseumTunnelTilesB+0x1377
 	.balign 4, 0

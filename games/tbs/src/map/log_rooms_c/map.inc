@@ -45,5 +45,5 @@ Tileset_LogRoomsCPalette:
 	.global Tileset_LogRoomsCTilesA
 Tileset_LogRoomsCTilesA:
 	.incbin "games/tbs/src/graphics/tileset/log_rooms_c/tiles_a.4bpp.mtf"
-	.byte 0x21, 0x2e	@ PACKER: left in the buffer by Tileset_Set29TilesC+0x1902
+	.byte 0x21, 0x2e	@ PACKER: left in the buffer by Tileset_KolimaTilesC+0x1902
 	.balign 4, 0

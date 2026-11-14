@@ -26,18 +26,18 @@ Field_KalayDocks:
 	treasure_spot 53, 56, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set54Palette
-Tileset_Set54Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_54/palette.gbapal.lz"
+	.global Tileset_KalayDocksPalette
+Tileset_KalayDocksPalette:
+	.incbin "games/tbs/src/graphics/tileset/kalay_docks/palette.gbapal.lz"
 	.byte 0x2a, 0x91, 0x1b	@ PACKER: left in the buffer by Field_KalayDocks+0x1a5
-	.global Tileset_Set54TilesA
-Tileset_Set54TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_54/tiles_a.4bpp.mtf"
-	.global Tileset_Set54TilesB
-Tileset_Set54TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_54/tiles_b.4bpp.mtf"
-	.byte 0x83	@ PACKER: left in the buffer by Tileset_Set54TilesA+0x23e3
-	.global Tileset_Set54TilesC
-Tileset_Set54TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_54/tiles_c.4bpp.mtf"
+	.global Tileset_KalayDocksTilesA
+Tileset_KalayDocksTilesA:
+	.incbin "games/tbs/src/graphics/tileset/kalay_docks/tiles_a.4bpp.mtf"
+	.global Tileset_KalayDocksTilesB
+Tileset_KalayDocksTilesB:
+	.incbin "games/tbs/src/graphics/tileset/kalay_docks/tiles_b.4bpp.mtf"
+	.byte 0x83	@ PACKER: left in the buffer by Tileset_KalayDocksTilesA+0x23e3
+	.global Tileset_KalayDocksTilesC
+Tileset_KalayDocksTilesC:
+	.incbin "games/tbs/src/graphics/tileset/kalay_docks/tiles_c.4bpp.mtf"
 	.balign 4, 0

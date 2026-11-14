@@ -26,12 +26,12 @@ Field_BilibinCaveRapier:
 	treasure_spot 35, 28, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set39Palette
-Tileset_Set39Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_39/palette.gbapal.lz"
+	.global Tileset_BilibinCaveRapierPalette
+Tileset_BilibinCaveRapierPalette:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_cave_rapier/palette.gbapal.lz"
 	.byte 0xdc, 0x32	@ PACKER: left in the buffer by Field_BilibinCaveRapier+0x18e
-	.global Tileset_Set39TilesA
-Tileset_Set39TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_39/tiles_a.4bpp.mtf"
+	.global Tileset_BilibinCaveRapierTilesA
+Tileset_BilibinCaveRapierTilesA:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_cave_rapier/tiles_a.4bpp.mtf"
 	.byte 0x71	@ PACKER: left in the buffer by Tileset_TretTreeBranchTilesC+0x22b7
 	.balign 4, 0

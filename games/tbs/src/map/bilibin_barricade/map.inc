@@ -113,7 +113,7 @@ Tileset_BilibinBarricadePalette:
 	.global Tileset_BilibinBarricadeTilesA
 Tileset_BilibinBarricadeTilesA:
 	.incbin "games/tbs/src/graphics/tileset/bilibin_barricade/tiles_a.4bpp.mtf"
-	.byte 0x9e	@ PACKER: left in the buffer by Tileset_Set23TilesA+0x2b3b
+	.byte 0x9e	@ PACKER: left in the buffer by Tileset_BilibinTilesA+0x2b3b
 	.global Tileset_BilibinBarricadeTilesB
 Tileset_BilibinBarricadeTilesB:
 	.incbin "games/tbs/src/graphics/tileset/bilibin_barricade/tiles_b.4bpp.mtf"

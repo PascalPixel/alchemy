@@ -32,9 +32,9 @@ Field_BabiLighthouseEntry:
 	treasure_spot 43, 30, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette44
-Tileset_Palette44:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_44.gbapal.lz"
+	.global Tileset_PaletteBabiLighthouseEntry
+Tileset_PaletteBabiLighthouseEntry:
+	.incbin "games/tbs/src/graphics/tileset/palettes/babi_lighthouse_entry.gbapal.lz"
 	.byte 0x32	@ PACKER: left in the buffer by Field_BabiLighthouseEntry+0x173
 	.global Tileset_Palette45
 Tileset_Palette45:

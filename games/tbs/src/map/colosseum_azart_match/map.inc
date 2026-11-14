@@ -37,7 +37,7 @@ Tileset_ColosseumAzartMatchPalette:
 	.global Tileset_ColosseumAzartMatchTilesA
 Tileset_ColosseumAzartMatchTilesA:
 	.incbin "games/tbs/src/graphics/tileset/colosseum_azart_match/tiles_a.4bpp.mtf"
-	.byte 0x63	@ PACKER: left in the buffer by Tileset_Set59TilesA+0x29df
+	.byte 0x63	@ PACKER: left in the buffer by Tileset_ColosseumTunnelTilesA+0x29df
 	.global Tileset_ColosseumAzartMatchTilesB
 Tileset_ColosseumAzartMatchTilesB:
 	.incbin "games/tbs/src/graphics/tileset/colosseum_azart_match/tiles_b.4bpp.mtf"

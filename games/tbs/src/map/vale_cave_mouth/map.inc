@@ -28,24 +28,24 @@ Field_ValeCaveMouth:
 .LField_ValeCaveMouth_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set21Palette
-Tileset_Set21Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_21/palette.gbapal.lz"
+	.global Tileset_ValeCaveMouthPalette
+Tileset_ValeCaveMouthPalette:
+	.incbin "games/tbs/src/graphics/tileset/vale_cave_mouth/palette.gbapal.lz"
 	.byte 0x98, 0x49	@ PACKER: left in the buffer by Field_ValeCaveMouth+0x19a
-	.global Tileset_Set21TilesA
-Tileset_Set21TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_21/tiles_a.4bpp.mtf"
+	.global Tileset_ValeCaveMouthTilesA
+Tileset_ValeCaveMouthTilesA:
+	.incbin "games/tbs/src/graphics/tileset/vale_cave_mouth/tiles_a.4bpp.mtf"
 	.byte 0xdc, 0x06, 0xaa	@ PACKER: left in the buffer by Field_VaultCaveMouth+0x2bad
-	.global Tileset_Set21TilesB
-Tileset_Set21TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_21/tiles_b.4bpp.mtf"
-	.byte 0xf1, 0xe8, 0x05	@ PACKER: left in the buffer by Tileset_Set21TilesA+0x20d1
-	.global Tileset_Set21TilesC
-Tileset_Set21TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_21/tiles_c.4bpp.mtf"
-	.byte 0x83, 0x38	@ PACKER: left in the buffer by Tileset_Set21TilesB+0x2056
-	.global Tileset_Set21TilesD
-Tileset_Set21TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_21/tiles_d.4bpp.mtf"
-	.byte 0x7c, 0x2f	@ PACKER: left in the buffer by Tileset_Set21TilesC+0x1cea
+	.global Tileset_ValeCaveMouthTilesB
+Tileset_ValeCaveMouthTilesB:
+	.incbin "games/tbs/src/graphics/tileset/vale_cave_mouth/tiles_b.4bpp.mtf"
+	.byte 0xf1, 0xe8, 0x05	@ PACKER: left in the buffer by Tileset_ValeCaveMouthTilesA+0x20d1
+	.global Tileset_ValeCaveMouthTilesC
+Tileset_ValeCaveMouthTilesC:
+	.incbin "games/tbs/src/graphics/tileset/vale_cave_mouth/tiles_c.4bpp.mtf"
+	.byte 0x83, 0x38	@ PACKER: left in the buffer by Tileset_ValeCaveMouthTilesB+0x2056
+	.global Tileset_ValeCaveMouthTilesD
+Tileset_ValeCaveMouthTilesD:
+	.incbin "games/tbs/src/graphics/tileset/vale_cave_mouth/tiles_d.4bpp.mtf"
+	.byte 0x7c, 0x2f	@ PACKER: left in the buffer by Tileset_ValeCaveMouthTilesC+0x1cea
 	.balign 4, 0

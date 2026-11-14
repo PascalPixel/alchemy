@@ -30,22 +30,22 @@ Field_Bilibin:
 	treasure_spot 9, 19, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set23Palette
-Tileset_Set23Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_23/palette.gbapal.lz"
+	.global Tileset_BilibinPalette
+Tileset_BilibinPalette:
+	.incbin "games/tbs/src/graphics/tileset/bilibin/palette.gbapal.lz"
 	.balign 4, 0
-	.global Tileset_Set23TilesA
-Tileset_Set23TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_23/tiles_a.4bpp.mtf"
+	.global Tileset_BilibinTilesA
+Tileset_BilibinTilesA:
+	.incbin "games/tbs/src/graphics/tileset/bilibin/tiles_a.4bpp.mtf"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global Tileset_Set23TilesB
-Tileset_Set23TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_23/tiles_b.4bpp.mtf"
-	.byte 0xa6, 0x09, 0x9b	@ PACKER: left in the buffer by Tileset_Set23TilesA+0x28c5
-	.global Tileset_Set23TilesC
-Tileset_Set23TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_23/tiles_c.4bpp.mtf"
-	.global Tileset_Set23TilesD
-Tileset_Set23TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_23/tiles_d.4bpp.mtf"
+	.global Tileset_BilibinTilesB
+Tileset_BilibinTilesB:
+	.incbin "games/tbs/src/graphics/tileset/bilibin/tiles_b.4bpp.mtf"
+	.byte 0xa6, 0x09, 0x9b	@ PACKER: left in the buffer by Tileset_BilibinTilesA+0x28c5
+	.global Tileset_BilibinTilesC
+Tileset_BilibinTilesC:
+	.incbin "games/tbs/src/graphics/tileset/bilibin/tiles_c.4bpp.mtf"
+	.global Tileset_BilibinTilesD
+Tileset_BilibinTilesD:
+	.incbin "games/tbs/src/graphics/tileset/bilibin/tiles_d.4bpp.mtf"
 	.balign 4, 0

@@ -114,22 +114,22 @@ Field_Vale:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Tileset_Set01Palette
-Tileset_Set01Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_01/palette.gbapal.lz"
+	.global Tileset_ValePalette
+Tileset_ValePalette:
+	.incbin "games/tbs/src/graphics/tileset/vale/palette.gbapal.lz"
 	.byte 0xb3	@ PACKER: left in the buffer by Field_Vale+0x193
-	.global Tileset_Set01TilesA
-Tileset_Set01TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_01/tiles_a.4bpp.mtf"
+	.global Tileset_ValeTilesA
+Tileset_ValeTilesA:
+	.incbin "games/tbs/src/graphics/tileset/vale/tiles_a.4bpp.mtf"
 	.byte 0x97	@ PACKER: left in the buffer by Field_Vale+0x2c53
-	.global Tileset_Set01TilesB
-Tileset_Set01TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_01/tiles_b.4bpp.mtf"
-	.global Tileset_Set01TilesC
-Tileset_Set01TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_01/tiles_c.4bpp.mtf"
-	.global Tileset_Set01TilesD
-Tileset_Set01TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_01/tiles_d.4bpp.mtf"
-	.byte 0x8f	@ PACKER: left in the buffer by Tileset_Set01TilesC+0x1ecb
+	.global Tileset_ValeTilesB
+Tileset_ValeTilesB:
+	.incbin "games/tbs/src/graphics/tileset/vale/tiles_b.4bpp.mtf"
+	.global Tileset_ValeTilesC
+Tileset_ValeTilesC:
+	.incbin "games/tbs/src/graphics/tileset/vale/tiles_c.4bpp.mtf"
+	.global Tileset_ValeTilesD
+Tileset_ValeTilesD:
+	.incbin "games/tbs/src/graphics/tileset/vale/tiles_d.4bpp.mtf"
+	.byte 0x8f	@ PACKER: left in the buffer by Tileset_ValeTilesC+0x1ecb
 	.balign 4, 0

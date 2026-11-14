@@ -94,23 +94,23 @@ Field_McCoyPalaceGrounds:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Tileset_Set27Palette
-Tileset_Set27Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_27/palette.gbapal.lz"
+	.global Tileset_McCoyPalaceGroundsPalette
+Tileset_McCoyPalaceGroundsPalette:
+	.incbin "games/tbs/src/graphics/tileset/mccoy_palace_grounds/palette.gbapal.lz"
 	.byte 0x8c, 0xda, 0xd6	@ PACKER: left in the buffer by Field_McCoyPalaceGrounds+0x1a9
-	.global Tileset_Set27TilesA
-Tileset_Set27TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_27/tiles_a.4bpp.mtf"
-	.byte 0x60, 0xcf, 0x83	@ PACKER: left in the buffer by Tileset_Set23TilesA+0x2d91
-	.global Tileset_Set27TilesB
-Tileset_Set27TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_27/tiles_b.4bpp.mtf"
-	.global Tileset_Set27TilesC
-Tileset_Set27TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_27/tiles_c.4bpp.mtf"
-	.byte 0xb0, 0x3e	@ PACKER: left in the buffer by Tileset_Set27TilesB+0x197a
-	.global Tileset_Set27TilesD
-Tileset_Set27TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_27/tiles_d.4bpp.mtf"
-	.byte 0xa9	@ PACKER: left in the buffer by Tileset_Set27TilesC+0x13f
+	.global Tileset_McCoyPalaceGroundsTilesA
+Tileset_McCoyPalaceGroundsTilesA:
+	.incbin "games/tbs/src/graphics/tileset/mccoy_palace_grounds/tiles_a.4bpp.mtf"
+	.byte 0x60, 0xcf, 0x83	@ PACKER: left in the buffer by Tileset_BilibinTilesA+0x2d91
+	.global Tileset_McCoyPalaceGroundsTilesB
+Tileset_McCoyPalaceGroundsTilesB:
+	.incbin "games/tbs/src/graphics/tileset/mccoy_palace_grounds/tiles_b.4bpp.mtf"
+	.global Tileset_McCoyPalaceGroundsTilesC
+Tileset_McCoyPalaceGroundsTilesC:
+	.incbin "games/tbs/src/graphics/tileset/mccoy_palace_grounds/tiles_c.4bpp.mtf"
+	.byte 0xb0, 0x3e	@ PACKER: left in the buffer by Tileset_McCoyPalaceGroundsTilesB+0x197a
+	.global Tileset_McCoyPalaceGroundsTilesD
+Tileset_McCoyPalaceGroundsTilesD:
+	.incbin "games/tbs/src/graphics/tileset/mccoy_palace_grounds/tiles_d.4bpp.mtf"
+	.byte 0xa9	@ PACKER: left in the buffer by Tileset_McCoyPalaceGroundsTilesC+0x13f
 	.balign 4, 0

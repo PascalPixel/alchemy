@@ -36,11 +36,11 @@ Tileset_ShipRoomsPalette:
 	.global Tileset_ShipRoomsTilesA
 Tileset_ShipRoomsTilesA:
 	.incbin "games/tbs/src/graphics/tileset/ship_rooms/tiles_a.4bpp.mtf"
-	.byte 0xc0, 0xbe, 0xc0	@ PACKER: left in the buffer by Tileset_Set56TilesC+0x13f1
+	.byte 0xc0, 0xbe, 0xc0	@ PACKER: left in the buffer by Tileset_TolbiShipDeckTilesC+0x13f1
 	.global Tileset_ShipRoomsTilesB
 Tileset_ShipRoomsTilesB:
 	.incbin "games/tbs/src/graphics/tileset/ship_rooms/tiles_b.4bpp.mtf"
-	.byte 0x21, 0xcf, 0x49	@ PACKER: left in the buffer by Tileset_Set56TilesC+0x1795
+	.byte 0x21, 0xcf, 0x49	@ PACKER: left in the buffer by Tileset_TolbiShipDeckTilesC+0x1795
 	.global Tileset_ShipRoomsTilesC
 Tileset_ShipRoomsTilesC:
 	.incbin "games/tbs/src/graphics/tileset/ship_rooms/tiles_c.4bpp.mtf"

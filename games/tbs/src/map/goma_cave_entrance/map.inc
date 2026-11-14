@@ -28,20 +28,20 @@ Field_GomaCaveEntrance:
 .LField_GomaCaveEntrance_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set17Palette
-Tileset_Set17Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_17/palette.gbapal.lz"
-	.global Tileset_Set17TilesA
-Tileset_Set17TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_17/tiles_a.4bpp.mtf"
+	.global Tileset_GomaCaveEntrancePalette
+Tileset_GomaCaveEntrancePalette:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_entrance/palette.gbapal.lz"
+	.global Tileset_GomaCaveEntranceTilesA
+Tileset_GomaCaveEntranceTilesA:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_entrance/tiles_a.4bpp.mtf"
 	.byte 0xe1, 0xe8, 0xf4	@ PACKER: left in the buffer by Field_CottageRoomsB+0x2d51
-	.global Tileset_Set17TilesB
-Tileset_Set17TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_17/tiles_b.4bpp.mtf"
-	.global Tileset_Set17TilesC
-Tileset_Set17TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_17/tiles_c.4bpp.mtf"
-	.global Tileset_Set17TilesD
-Tileset_Set17TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_17/tiles_d.4bpp.mtf"
+	.global Tileset_GomaCaveEntranceTilesB
+Tileset_GomaCaveEntranceTilesB:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_entrance/tiles_b.4bpp.mtf"
+	.global Tileset_GomaCaveEntranceTilesC
+Tileset_GomaCaveEntranceTilesC:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_entrance/tiles_c.4bpp.mtf"
+	.global Tileset_GomaCaveEntranceTilesD
+Tileset_GomaCaveEntranceTilesD:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_entrance/tiles_d.4bpp.mtf"
 	.balign 4, 0

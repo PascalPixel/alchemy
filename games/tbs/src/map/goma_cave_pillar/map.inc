@@ -30,21 +30,21 @@ Field_GomaCavePillar:
 	treasure_spot 41, 13, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set19Palette
-Tileset_Set19Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_19/palette.gbapal.lz"
-	.global Tileset_Set19TilesA
-Tileset_Set19TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_19/tiles_a.4bpp.mtf"
-	.byte 0x12, 0x00	@ PACKER: left in the buffer by Tileset_Set17TilesA+0x2c16
-	.global Tileset_Set19TilesB
-Tileset_Set19TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_19/tiles_b.4bpp.mtf"
-	.byte 0x27, 0x88	@ PACKER: left in the buffer by Tileset_Set19TilesA+0x20fa
-	.global Tileset_Set19TilesC
-Tileset_Set19TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_19/tiles_c.4bpp.mtf"
-	.global Tileset_Set19TilesD
-Tileset_Set19TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_19/tiles_d.4bpp.mtf"
+	.global Tileset_GomaCavePillarPalette
+Tileset_GomaCavePillarPalette:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pillar/palette.gbapal.lz"
+	.global Tileset_GomaCavePillarTilesA
+Tileset_GomaCavePillarTilesA:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pillar/tiles_a.4bpp.mtf"
+	.byte 0x12, 0x00	@ PACKER: left in the buffer by Tileset_GomaCaveEntranceTilesA+0x2c16
+	.global Tileset_GomaCavePillarTilesB
+Tileset_GomaCavePillarTilesB:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pillar/tiles_b.4bpp.mtf"
+	.byte 0x27, 0x88	@ PACKER: left in the buffer by Tileset_GomaCavePillarTilesA+0x20fa
+	.global Tileset_GomaCavePillarTilesC
+Tileset_GomaCavePillarTilesC:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pillar/tiles_c.4bpp.mtf"
+	.global Tileset_GomaCavePillarTilesD
+Tileset_GomaCavePillarTilesD:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pillar/tiles_d.4bpp.mtf"
 	.balign 4, 0

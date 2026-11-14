@@ -32,23 +32,23 @@ Field_Map108:
 	treasure_spot 55, 43, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set58Palette
-Tileset_Set58Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_58/palette.gbapal.lz"
+	.global Tileset_Map108Palette
+Tileset_Map108Palette:
+	.incbin "games/tbs/src/graphics/tileset/map_108/palette.gbapal.lz"
 	.byte 0xbe, 0xee	@ PACKER: left in the buffer by Field_Map108+0x186
-	.global Tileset_Set58TilesA
-Tileset_Set58TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_58/tiles_a.4bpp.mtf"
-	.global Tileset_Set58TilesB
-Tileset_Set58TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_58/tiles_b.4bpp.mtf"
-	.byte 0x08, 0xe8	@ PACKER: left in the buffer by Tileset_Set54TilesA+0x2672
-	.global Tileset_Set58TilesC
-Tileset_Set58TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_58/tiles_c.4bpp.mtf"
-	.byte 0xfe	@ PACKER: left in the buffer by Tileset_Set58TilesB+0x153
-	.global Tileset_Set58TilesD
-Tileset_Set58TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_58/tiles_d.4bpp.mtf"
-	.byte 0xff	@ PACKER: left in the buffer by Tileset_Set58TilesC+0x13f
+	.global Tileset_Map108TilesA
+Tileset_Map108TilesA:
+	.incbin "games/tbs/src/graphics/tileset/map_108/tiles_a.4bpp.mtf"
+	.global Tileset_Map108TilesB
+Tileset_Map108TilesB:
+	.incbin "games/tbs/src/graphics/tileset/map_108/tiles_b.4bpp.mtf"
+	.byte 0x08, 0xe8	@ PACKER: left in the buffer by Tileset_KalayDocksTilesA+0x2672
+	.global Tileset_Map108TilesC
+Tileset_Map108TilesC:
+	.incbin "games/tbs/src/graphics/tileset/map_108/tiles_c.4bpp.mtf"
+	.byte 0xfe	@ PACKER: left in the buffer by Tileset_Map108TilesB+0x153
+	.global Tileset_Map108TilesD
+Tileset_Map108TilesD:
+	.incbin "games/tbs/src/graphics/tileset/map_108/tiles_d.4bpp.mtf"
+	.byte 0xff	@ PACKER: left in the buffer by Tileset_Map108TilesC+0x13f
 	.balign 4, 0

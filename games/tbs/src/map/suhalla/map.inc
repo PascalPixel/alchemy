@@ -27,12 +27,12 @@ Field_Suhalla:
 	treasure_spot 13, 4, 101
 	treasure_spot 1, 14, 102
 	treasure_spots_end
-	.global Tileset_Set64Palette
-Tileset_Set64Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_64/palette.gbapal.lz"
-	.global Tileset_Set64TilesA
-Tileset_Set64TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_64/tiles_a.4bpp.mtf"
+	.global Tileset_SuhallaPalette
+Tileset_SuhallaPalette:
+	.incbin "games/tbs/src/graphics/tileset/suhalla/palette.gbapal.lz"
+	.global Tileset_SuhallaTilesA
+Tileset_SuhallaTilesA:
+	.incbin "games/tbs/src/graphics/tileset/suhalla/tiles_a.4bpp.mtf"
 	.ifdef TBS_EDITION_JA
 	.byte 0xd8	@ PACKER: left in the buffer by Field_SuhallaDesertSouth+0x2617
 	.else
@@ -42,15 +42,15 @@ Tileset_Set64TilesA:
 	.byte 0x80	@ PACKER: left in the buffer by Field_SuhallaDesertSouth+0x2617
 	.endif
 	.endif
-	.global Tileset_Set64TilesB
-Tileset_Set64TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_64/tiles_b.4bpp.mtf"
-	.global Tileset_Set64TilesC
-Tileset_Set64TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_64/tiles_c.4bpp.mtf"
-	.byte 0x00, 0x14	@ PACKER: left in the buffer by Tileset_Set64TilesB+0x106a
-	.global Tileset_Set64TilesD
-Tileset_Set64TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_64/tiles_d.4bpp.mtf"
-	.byte 0x81, 0x79	@ PACKER: left in the buffer by Tileset_Set64TilesB+0x1a26
+	.global Tileset_SuhallaTilesB
+Tileset_SuhallaTilesB:
+	.incbin "games/tbs/src/graphics/tileset/suhalla/tiles_b.4bpp.mtf"
+	.global Tileset_SuhallaTilesC
+Tileset_SuhallaTilesC:
+	.incbin "games/tbs/src/graphics/tileset/suhalla/tiles_c.4bpp.mtf"
+	.byte 0x00, 0x14	@ PACKER: left in the buffer by Tileset_SuhallaTilesB+0x106a
+	.global Tileset_SuhallaTilesD
+Tileset_SuhallaTilesD:
+	.incbin "games/tbs/src/graphics/tileset/suhalla/tiles_d.4bpp.mtf"
+	.byte 0x81, 0x79	@ PACKER: left in the buffer by Tileset_SuhallaTilesB+0x1a26
 	.balign 4, 0

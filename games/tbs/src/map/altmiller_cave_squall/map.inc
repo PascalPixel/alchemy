@@ -148,8 +148,8 @@ Field_AltmillerCaveSquall:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Tileset_Palette32
-Tileset_Palette32:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_32.gbapal.lz"
+	.global Tileset_PaletteAltmillerCave
+Tileset_PaletteAltmillerCave:
+	.incbin "games/tbs/src/graphics/tileset/palettes/altmiller_cave.gbapal.lz"
 	.byte 0xf9, 0x56	@ PACKER: left in the buffer by Field_AltmillerCaveSquall+0x16a
 	.balign 4, 0

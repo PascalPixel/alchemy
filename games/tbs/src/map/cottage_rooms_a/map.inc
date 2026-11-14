@@ -50,22 +50,22 @@ Field_CottageRoomsA:
 	treasure_spot 27, 52, 103
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set04Palette
-Tileset_Set04Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_04/palette.gbapal.lz"
-	.global Tileset_Set04TilesA
-Tileset_Set04TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_04/tiles_a.4bpp.mtf"
-	.global Tileset_Set04TilesB
-Tileset_Set04TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_04/tiles_b.4bpp.mtf"
+	.global Tileset_CottageRoomsAPalette
+Tileset_CottageRoomsAPalette:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_a/palette.gbapal.lz"
+	.global Tileset_CottageRoomsATilesA
+Tileset_CottageRoomsATilesA:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_a/tiles_a.4bpp.mtf"
+	.global Tileset_CottageRoomsATilesB
+Tileset_CottageRoomsATilesB:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_a/tiles_b.4bpp.mtf"
 	.byte 0x02, 0xf6, 0x07	@ PACKER: left in the buffer by Field_CottageRoomsA+0x253d
-	.global Tileset_Set04TilesC
-Tileset_Set04TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_04/tiles_c.4bpp.mtf"
-	.byte 0x86, 0xb4	@ PACKER: left in the buffer by Tileset_Set04TilesB+0x15fa
-	.global Tileset_Set04TilesD
-Tileset_Set04TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_04/tiles_d.4bpp.mtf"
-	.byte 0x3c	@ PACKER: left in the buffer by Tileset_Set04TilesC+0x12c7
+	.global Tileset_CottageRoomsATilesC
+Tileset_CottageRoomsATilesC:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_a/tiles_c.4bpp.mtf"
+	.byte 0x86, 0xb4	@ PACKER: left in the buffer by Tileset_CottageRoomsATilesB+0x15fa
+	.global Tileset_CottageRoomsATilesD
+Tileset_CottageRoomsATilesD:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_a/tiles_d.4bpp.mtf"
+	.byte 0x3c	@ PACKER: left in the buffer by Tileset_CottageRoomsATilesC+0x12c7
 	.balign 4, 0

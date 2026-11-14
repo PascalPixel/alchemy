@@ -28,8 +28,8 @@ Field_AltmillerCaveEntrance:
 .LField_AltmillerCaveEntrance_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette31
-Tileset_Palette31:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_31.gbapal.lz"
+	.global Tileset_PaletteAltmillerCaveEntrance
+Tileset_PaletteAltmillerCaveEntrance:
+	.incbin "games/tbs/src/graphics/tileset/palettes/altmiller_cave_entrance.gbapal.lz"
 	.byte 0xc8, 0x1f, 0x81	@ PACKER: left in the buffer by Field_AltmillerCaveEntrance+0x159
 	.balign 4, 0

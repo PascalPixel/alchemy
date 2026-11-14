@@ -38,15 +38,15 @@ Field_CottageRoomsC:
 	treasure_spot 5, 45, 200
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set24Palette
-Tileset_Set24Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_24/palette.gbapal.lz"
-	.global Tileset_Set24TilesA
-Tileset_Set24TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_24/tiles_a.4bpp.mtf"
+	.global Tileset_CottageRoomsCPalette
+Tileset_CottageRoomsCPalette:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_c/palette.gbapal.lz"
+	.global Tileset_CottageRoomsCTilesA
+Tileset_CottageRoomsCTilesA:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_c/tiles_a.4bpp.mtf"
 	.byte 0x07	@ PACKER: left in the buffer by Field_CottageRoomsC+0x16fb
-	.global Tileset_Set24TilesB
-Tileset_Set24TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_24/tiles_b.4bpp.mtf"
-	.byte 0x00, 0x3f	@ PACKER: left in the buffer by Tileset_Set24TilesA+0x8fe
+	.global Tileset_CottageRoomsCTilesB
+Tileset_CottageRoomsCTilesB:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_c/tiles_b.4bpp.mtf"
+	.byte 0x00, 0x3f	@ PACKER: left in the buffer by Tileset_CottageRoomsCTilesA+0x8fe
 	.balign 4, 0

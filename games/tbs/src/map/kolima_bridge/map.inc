@@ -118,23 +118,23 @@ Field_KolimaBridge:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Tileset_Set31Palette
-Tileset_Set31Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_31/palette.gbapal.lz"
+	.global Tileset_KolimaBridgePalette
+Tileset_KolimaBridgePalette:
+	.incbin "games/tbs/src/graphics/tileset/kolima_bridge/palette.gbapal.lz"
 	.byte 0x9e, 0x99, 0xb7	@ PACKER: left in the buffer by Field_KolimaBridge+0x17d
-	.global Tileset_Set31TilesA
-Tileset_Set31TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_31/tiles_a.4bpp.mtf"
-	.global Tileset_Set31TilesB
-Tileset_Set31TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_31/tiles_b.4bpp.mtf"
-	.byte 0x4d, 0x0c, 0x83	@ PACKER: left in the buffer by Tileset_Set31TilesA+0x1d6d
-	.global Tileset_Set31TilesC
-Tileset_Set31TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_31/tiles_c.4bpp.mtf"
-	.byte 0xfa, 0x80	@ PACKER: left in the buffer by Tileset_Set31TilesB+0x1042
-	.global Tileset_Set31TilesD
-Tileset_Set31TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_31/tiles_d.4bpp.mtf"
-	.byte 0x1f, 0xf8	@ PACKER: left in the buffer by Tileset_Set31TilesC+0xe22
+	.global Tileset_KolimaBridgeTilesA
+Tileset_KolimaBridgeTilesA:
+	.incbin "games/tbs/src/graphics/tileset/kolima_bridge/tiles_a.4bpp.mtf"
+	.global Tileset_KolimaBridgeTilesB
+Tileset_KolimaBridgeTilesB:
+	.incbin "games/tbs/src/graphics/tileset/kolima_bridge/tiles_b.4bpp.mtf"
+	.byte 0x4d, 0x0c, 0x83	@ PACKER: left in the buffer by Tileset_KolimaBridgeTilesA+0x1d6d
+	.global Tileset_KolimaBridgeTilesC
+Tileset_KolimaBridgeTilesC:
+	.incbin "games/tbs/src/graphics/tileset/kolima_bridge/tiles_c.4bpp.mtf"
+	.byte 0xfa, 0x80	@ PACKER: left in the buffer by Tileset_KolimaBridgeTilesB+0x1042
+	.global Tileset_KolimaBridgeTilesD
+Tileset_KolimaBridgeTilesD:
+	.incbin "games/tbs/src/graphics/tileset/kolima_bridge/tiles_d.4bpp.mtf"
+	.byte 0x1f, 0xf8	@ PACKER: left in the buffer by Tileset_KolimaBridgeTilesC+0xe22
 	.balign 4, 0

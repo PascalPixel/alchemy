@@ -38,23 +38,23 @@ Field_VaultLogRooms:
 	treasure_spot 29, 43, 103
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set15Palette
-Tileset_Set15Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_15/palette.gbapal.lz"
-	.global Tileset_Set15TilesA
-Tileset_Set15TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_15/tiles_a.4bpp.mtf"
+	.global Tileset_VaultLogRoomsPalette
+Tileset_VaultLogRoomsPalette:
+	.incbin "games/tbs/src/graphics/tileset/vault_log_rooms/palette.gbapal.lz"
+	.global Tileset_VaultLogRoomsTilesA
+Tileset_VaultLogRoomsTilesA:
+	.incbin "games/tbs/src/graphics/tileset/vault_log_rooms/tiles_a.4bpp.mtf"
 	.byte 0x80, 0x36, 0x05	@ PACKER: left in the buffer by Field_VaultLogRooms+0x1c29
-	.global Tileset_Set15TilesB
-Tileset_Set15TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_15/tiles_b.4bpp.mtf"
+	.global Tileset_VaultLogRoomsTilesB
+Tileset_VaultLogRoomsTilesB:
+	.incbin "games/tbs/src/graphics/tileset/vault_log_rooms/tiles_b.4bpp.mtf"
 	.byte 0x3b	@ PACKER: left in the buffer by Field_VaultLogRooms+0x2547
-	.global Tileset_Set15TilesC
-Tileset_Set15TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_15/tiles_c.4bpp.mtf"
-	.byte 0x00, 0xa5	@ PACKER: left in the buffer by Tileset_Set15TilesB+0x12ca
-	.global Tileset_Set15TilesD
-Tileset_Set15TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_15/tiles_d.4bpp.mtf"
-	.byte 0x6f	@ PACKER: left in the buffer by Tileset_Set15TilesC+0xcaf
+	.global Tileset_VaultLogRoomsTilesC
+Tileset_VaultLogRoomsTilesC:
+	.incbin "games/tbs/src/graphics/tileset/vault_log_rooms/tiles_c.4bpp.mtf"
+	.byte 0x00, 0xa5	@ PACKER: left in the buffer by Tileset_VaultLogRoomsTilesB+0x12ca
+	.global Tileset_VaultLogRoomsTilesD
+Tileset_VaultLogRoomsTilesD:
+	.incbin "games/tbs/src/graphics/tileset/vault_log_rooms/tiles_d.4bpp.mtf"
+	.byte 0x6f	@ PACKER: left in the buffer by Tileset_VaultLogRoomsTilesC+0xcaf
 	.balign 4, 0

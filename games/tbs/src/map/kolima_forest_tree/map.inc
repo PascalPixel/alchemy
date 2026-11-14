@@ -29,7 +29,7 @@ Tileset_KolimaForestTreePalette:
 	.global Tileset_KolimaForestTreeTilesA
 Tileset_KolimaForestTreeTilesA:
 	.incbin "games/tbs/src/graphics/tileset/kolima_forest_tree/tiles_a.4bpp.mtf"
-	.byte 0x07, 0xf0	@ PACKER: left in the buffer by Tileset_Set34TilesA+0x2bae
+	.byte 0x07, 0xf0	@ PACKER: left in the buffer by Tileset_KolimaForestFloodgateTilesA+0x2bae
 	.global Tileset_KolimaForestTreeTilesB
 Tileset_KolimaForestTreeTilesB:
 	.incbin "games/tbs/src/graphics/tileset/kolima_forest_tree/tiles_b.4bpp.mtf"

@@ -29,22 +29,22 @@ Field_SolSanctumLunaSolRooms:
 	treasure_spot 3, 15, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set08Palette
-Tileset_Set08Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_08/palette.gbapal.lz"
+	.global Tileset_SolSanctumLunaSolRoomsPalette
+Tileset_SolSanctumLunaSolRoomsPalette:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_luna_sol_rooms/palette.gbapal.lz"
 	.byte 0xcf, 0x83, 0x07	@ PACKER: left in the buffer by Field_SolSanctumLunaSolRooms+0x159
-	.global Tileset_Set08TilesA
-Tileset_Set08TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_08/tiles_a.4bpp.mtf"
-	.global Tileset_Set08TilesB
-Tileset_Set08TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_08/tiles_b.4bpp.mtf"
-	.byte 0x18	@ PACKER: left in the buffer by Tileset_Set08TilesA+0x1a4b
-	.global Tileset_Set08TilesC
-Tileset_Set08TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_08/tiles_c.4bpp.mtf"
-	.global Tileset_Set08TilesD
-Tileset_Set08TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_08/tiles_d.4bpp.mtf"
-	.byte 0xe1, 0x71	@ PACKER: left in the buffer by Tileset_Set08TilesC+0x842
+	.global Tileset_SolSanctumLunaSolRoomsTilesA
+Tileset_SolSanctumLunaSolRoomsTilesA:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_luna_sol_rooms/tiles_a.4bpp.mtf"
+	.global Tileset_SolSanctumLunaSolRoomsTilesB
+Tileset_SolSanctumLunaSolRoomsTilesB:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_luna_sol_rooms/tiles_b.4bpp.mtf"
+	.byte 0x18	@ PACKER: left in the buffer by Tileset_SolSanctumLunaSolRoomsTilesA+0x1a4b
+	.global Tileset_SolSanctumLunaSolRoomsTilesC
+Tileset_SolSanctumLunaSolRoomsTilesC:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_luna_sol_rooms/tiles_c.4bpp.mtf"
+	.global Tileset_SolSanctumLunaSolRoomsTilesD
+Tileset_SolSanctumLunaSolRoomsTilesD:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_luna_sol_rooms/tiles_d.4bpp.mtf"
+	.byte 0xe1, 0x71	@ PACKER: left in the buffer by Tileset_SolSanctumLunaSolRoomsTilesC+0x842
 	.balign 4, 0

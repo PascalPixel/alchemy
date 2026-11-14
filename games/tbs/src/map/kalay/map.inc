@@ -30,24 +30,24 @@ Field_Kalay:
 	treasure_spot 5, 25, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set51Palette
-Tileset_Set51Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_51/palette.gbapal.lz"
+	.global Tileset_KalayPalette
+Tileset_KalayPalette:
+	.incbin "games/tbs/src/graphics/tileset/kalay/palette.gbapal.lz"
 	.byte 0x94	@ PACKER: left in the buffer by Field_Kalay+0x17b
 	.balign 4, 0
-	.global Tileset_Set51TilesA
-Tileset_Set51TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_51/tiles_a.4bpp.mtf"
+	.global Tileset_KalayTilesA
+Tileset_KalayTilesA:
+	.incbin "games/tbs/src/graphics/tileset/kalay/tiles_a.4bpp.mtf"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global Tileset_Set51TilesB
-Tileset_Set51TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_51/tiles_b.4bpp.mtf"
+	.global Tileset_KalayTilesB
+Tileset_KalayTilesB:
+	.incbin "games/tbs/src/graphics/tileset/kalay/tiles_b.4bpp.mtf"
 	.byte 0xd1, 0xbc	@ PACKER: left in the buffer by Field_LamakanDesertManticore+0x2776
-	.global Tileset_Set51TilesC
-Tileset_Set51TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_51/tiles_c.4bpp.mtf"
-	.byte 0x24, 0xda, 0xbb	@ PACKER: left in the buffer by Tileset_Set51TilesB+0x1865
-	.global Tileset_Set51TilesD
-Tileset_Set51TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_51/tiles_d.4bpp.mtf"
+	.global Tileset_KalayTilesC
+Tileset_KalayTilesC:
+	.incbin "games/tbs/src/graphics/tileset/kalay/tiles_c.4bpp.mtf"
+	.byte 0x24, 0xda, 0xbb	@ PACKER: left in the buffer by Tileset_KalayTilesB+0x1865
+	.global Tileset_KalayTilesD
+Tileset_KalayTilesD:
+	.incbin "games/tbs/src/graphics/tileset/kalay/tiles_d.4bpp.mtf"
 	.balign 4, 0

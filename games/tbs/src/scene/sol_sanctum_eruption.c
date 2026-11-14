@@ -1660,14 +1660,14 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
 /// Stretches each active arc for eight frames, then lifts it out of view.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
   u32 arcIndex;
-  s32 age;
+  u32 age;
   struct Actor *actor;
 
   for (arcIndex = 0; arcIndex <= 9; arcIndex++) {
     age = gArcEffectTimers[arcIndex];
     if (age != 0) {
       actor = gArcEffects[arcIndex];
-      if ((u32)age <= 8) {
+      if (age <= 8) {
         actor->scaleX -= ELEMENTAL_ARC_SCALE_X_DECREASE;
         actor->scaleY += Q16_ONE / 2;
         actor->y.fixed += px(3) / 10;
@@ -1678,7 +1678,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
       }
       age = gArcEffectTimers[arcIndex] + 1;
       gArcEffectTimers[arcIndex] = age;
-      if ((u32)age > 14) {
+      if (age > 14) {
         gArcEffectTimers[arcIndex] = 0;
       }
     }

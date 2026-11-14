@@ -242,7 +242,7 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
     }
     probe->footprintIndex = 7;
   }
-  if ((u32)probe->footprintIndex > 6) {
+  if (probe->footprintIndex < 0 || probe->footprintIndex > 6) {
     return 0;
   }
   // Bounds are pixel offsets; dimensions and origins below are 16-pixel cells.

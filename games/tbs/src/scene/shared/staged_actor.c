@@ -499,7 +499,7 @@ UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
     probe.footprintIndex = 7;
   }
 
-  if ((u32)probe.footprintIndex > 6)
+  if (probe.footprintIndex < 0 || probe.footprintIndex > 6)
     return 0;
   probe.position.x = actor->x.fixed;
   probe.position.y = actor->y.fixed;

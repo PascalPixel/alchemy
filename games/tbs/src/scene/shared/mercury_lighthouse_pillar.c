@@ -167,7 +167,7 @@ void MercuryLighthouse_ChargeLights(void) {
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   leader = gFieldWork->actors[gMainRoutineWork.leaderActorId];
-  if ((u32)state->levels > 2)
+  if (state->levels < 0 || state->levels > 2)
     return;
   Event_Start();
   pillar = state->pillar;

@@ -253,7 +253,7 @@ static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
       updated->targetZ == ACTOR_NO_TARGET)
     RETURN_UNREAD(0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u32)(FIELD_CELL(leader->x.fixed) - 17) <= 1 &&
+  if (FIELD_CELL(leader->x.fixed) >= 17 && FIELD_CELL(leader->x.fixed) <= 18 &&
       FIELD_CELL(leader->z.fixed) == 14 && updated->x.fixed >> 20 <= 19 &&
       updated->velocityX <= 0) {
     if (leader->x.fixed <= updated->x.fixed) {

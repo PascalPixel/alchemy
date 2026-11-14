@@ -1597,7 +1597,7 @@ static void CrossboneIsle_SlideSecondLogNorth(void) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, -48);
-  } else if ((u32)row <= 9) {
+  } else if (row >= 0 && row <= 9) {
     return;
   }
   wait(2);

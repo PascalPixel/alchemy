@@ -186,7 +186,6 @@ struct MainRoutineWork {
   u8 unusedAfterTallies[4];
   u32 startStamp; ///< BuildStamp_GetTime's value at a new game
   u8 unusedAfterStartStamp[4];
-  struct Unit units[8]; ///< the characters
 };
 
 STATIC_ASSERT(offsetof(struct MainRoutineWork, buildStamp) == 0);
@@ -195,8 +194,7 @@ STATIC_ASSERT(offsetof(struct MainRoutineWork, idleSleepEnabled) == 0x22a);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, coins) == 0x10);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, shopCredit) == 0x118);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, shopGifts) == 0x11c);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, units) == 0x2c0);
-STATIC_ASSERT(sizeof(struct MainRoutineWork) == 0xd20);
+STATIC_ASSERT(sizeof(struct MainRoutineWork) == 0x2c0);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, wonPrizes) == 0x12c);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, area) == 0x1cc);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, dashKeys) == 0x21c);
@@ -220,6 +218,8 @@ STATIC_ASSERT(offsetof(struct MainRoutineWork, startStamp) == 0x2b8);
 
 /// The game's state (system/ewram.s).
 extern struct MainRoutineWork gMainRoutineWork;
+/// The eight characters' units, which follow it (Unit_Get).
+extern struct Unit gCharacterUnits[8];
 
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \

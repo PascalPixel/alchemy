@@ -82,7 +82,7 @@ struct Unit *Unit_Get(u32 unitId) {
   // lr into r3.
   UNUSED void *caller = __builtin_return_address(0);
 
-  states = gMainRoutineWork.units;
+  states = gCharacterUnits;
   /* FAKEMATCH(dead): the party return repeated under a test of the return
    * address. */
   if (caller == NULL) {

@@ -6,17 +6,6 @@
 #include "field_sequence_internal.h"
 
 // The fields of struct Unit that Field_UpdateWalking reads (see its tag).
-#ifndef UBFIX
-/// A party member's battle unit, seen as the HP and poison the walking update
-/// reads.
-struct UnitHpPoisonView {
-  u8 unitFieldsBeforeHp[56];
-  s16 hp; ///< struct Unit's hp: current HP, 0 when downed
-  u8 unitFieldsBeforePoison[305 - 58];
-  u8 poison; ///< struct Unit's poison: POISON_NORMAL or POISON_VENOM
-};
-#endif
-
 /// Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
   struct FieldWork *work = gFieldWork;
@@ -175,19 +164,13 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// while walking advances the encounter counter, regenerates PP, hurts the
 /// party with poison and hazardous ground, and wears Avoid off.
 void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): the party read through struct UnitHpPoisonView, whose
-   * alias set. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridScrollWork *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 leaderId = gMainRoutineWork.leaderActorId;
   struct Actor *leader = work->actors[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
-#ifdef UBFIX
   struct Unit *unitVitals;
-#else
-  struct UnitHpPoisonView *unitVitals;
-#endif
   u32 partyCount;
   s32 partyHurt;
   u32 i;
@@ -327,12 +310,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     FieldEffect_SetAttached(leaderId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
-#ifdef UBFIX
       unitVitals = Unit_GetFar(gMainRoutineWork.party[i]);
-#else
-      unitVitals =
-          (struct UnitHpPoisonView *)Unit_GetFar(gMainRoutineWork.party[i]);
-#endif
       if (unitVitals->hp > 0) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {

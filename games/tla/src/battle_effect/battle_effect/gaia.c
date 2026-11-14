@@ -177,8 +177,9 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
                                                  COMPOSITE_CLIP_Y |
                                                  COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  REG_BLDCNT = 0x3f46;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDCNT =
+      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
@@ -207,7 +208,8 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     dust->velocityY = ((Random16() & 63) + 32) << 13;
     dust->variant = Random16() & 31;
   }
-  REG_BG2CNT = 0x785;
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
   work->shakeFrames = 250;
 
   for (frame = 0; frame != 192; frame++) {

@@ -464,7 +464,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
                                BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                    COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
       draw[1] = (DrawRectangle) * (Ram_HeapSlots->unkb8 + 1);
-      REG_BLDCNT = 0x3f46;
+      REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
+                   BLDCNT_TGT2_ALL;
       REG_BG2PA = 0x80;
       REG_BG2X = 0;
       work->transferMode = 2;

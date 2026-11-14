@@ -111,7 +111,9 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       HEAP_BLITTER_ALTERNATE,
       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  REG_WININ = 0x2737;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = 0xf0;
   REG_WIN1V = 0x1088;
   wait(1);
@@ -121,10 +123,12 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   BattleEffect_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = 2;
   work->transferValue = 50;
 

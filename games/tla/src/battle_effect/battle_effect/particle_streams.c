@@ -112,7 +112,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   cells = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
 
   // The spray's palette and picture, the pillar's picture, the ember cells.
@@ -441,7 +441,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   x /= 2;
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
-  REG_BLDCNT = 0x3f46;
+  REG_BLDCNT =
+      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   BattleEffect_LoadBlitter(104, 19);
   maxBlend = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(188, 3);
@@ -876,8 +877,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   wait(1);
   REG_BLDCNT = 0;
   REG_BG2PA = 0x100;
-  REG_BG1CNT = 0x1f80;
-  REG_BG2CNT = 0x2787;
+  REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+  REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
 
   // 63 pale colours, and 256 of them scattered over the canvas.
   for (i = 0; i != 63; i++) {
@@ -938,8 +940,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       wait(1);
     } while (limit <= 191);
   }
-  REG_BLDCNT = 0x3f42;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
@@ -1156,8 +1158,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
-  REG_BLDALPHA = 0x1010;
-  REG_BG2CNT = 0x2784;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BG2CNT =
+      BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   BattleEffect_LoadBlitter(
       HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];

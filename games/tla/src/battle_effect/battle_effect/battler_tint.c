@@ -33,16 +33,19 @@ void BattleEffect_SetupBlendedDisplay(void) {
   u8 *battle = Ram_HeapSlots->battleWork;
   void *buffer = Ram_HeapSlots->battleFxWork[1];
 
-  REG_DISPCNT = 1;
+  REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll__f14cca8[0].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
   /* FAKEMATCH(wrapper): both fills through FillWords_. */
   FillWords___f14cca8(buffer, 0x4000, 0);
   FillWords___f14cca8((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
   wait(1);
-  REG_BLDALPHA = 0x100e;
-  REG_BLDCNT = 0x3f46;
-  REG_DISPCNT = 0x7741;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDCNT =
+      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   gCameraSceneParameters[4] = 120;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }

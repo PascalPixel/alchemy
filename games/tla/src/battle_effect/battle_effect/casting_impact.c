@@ -297,7 +297,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
   else
     BattleEffect_StartCanvasLayer(0);
 
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, tiles, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->frames, 1,
                              0);
@@ -414,7 +414,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture, buffer + 0x2000,
                                1, 1);
   } else if (kind == 73) {
-    REG_BLDALPHA = 0xc10;
+    REG_BLDALPHA = BLEND_ALPHA(16, 12);
   } else if (kind == 70) {
     Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, buffer, 1, 0);
   } else if (kind == 66) {
@@ -791,26 +791,26 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                                  work->frames, 1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, buffer, 1,
                                  0);
-      REG_BLDALPHA = 0xe10;
+      REG_BLDALPHA = BLEND_ALPHA(16, 14);
     }
     if (kind == 86) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0F1, buffer, 1, 1);
-      REG_BLDALPHA = 0x810;
+      REG_BLDALPHA = BLEND_ALPHA(16, 8);
     }
     if (kind == 88) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0DD, buffer, 1, 1);
-      REG_BLDALPHA = 0x810;
+      REG_BLDALPHA = BLEND_ALPHA(16, 8);
     }
     if (kind == 62) {
       Resource_LoadAndDecompress((s32)&ResourceId_BlueBeastSheet, work->frames,
                                  1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetB, buffer, 1,
                                  0);
-      REG_BLDALPHA = 0xe10;
+      REG_BLDALPHA = BLEND_ALPHA(16, 14);
     }
     if (kind == 85) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0F0, buffer, 1, 1);
-      REG_BLDALPHA = 0xe10;
+      REG_BLDALPHA = BLEND_ALPHA(16, 14);
     }
 
     if (kind == 7 || kind == 43 || kind == 48 || kind == 73 || kind == 77 ||
@@ -1605,7 +1605,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           scrollB = scrollB * 48 / 64;
         REG_BG2X = (scrollA >> 16) << 8;
         if (frame == 0)
-          REG_BLDALPHA = 0x810;
+          REG_BLDALPHA = BLEND_ALPHA(16, 8);
         t = frame - 24;
         if (t >= 0 && t < 16)
           REG_BLDALPHA = (16 - t) | 0x1000;
@@ -1724,7 +1724,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         } else {
           work->unk7780 = 2;
           work->unk7784 = 50;
-          REG_BLDCNT = 0x3f44;
+          REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         }
         if (frame < 32) {
           drawFuncs.draw[1](screen, buffer + 0x800, (p->x >> 16) - 24,
@@ -1811,7 +1811,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           struct Particle *p;
           Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture,
                                      buffer + 0x2000, 1, 1);
-          REG_BLDALPHA = 0x410;
+          REG_BLDALPHA = BLEND_ALPHA(16, 4);
           work->unk7780 = 1;
           work->unk7784 = 0;
           REG_BG2PA = 0x100;
@@ -2292,7 +2292,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 0) {
           work->unk7780 = 1;
           work->unk7784 = 0;
-          REG_BLDALPHA = 0x610;
+          REG_BLDALPHA = BLEND_ALPHA(16, 6);
         }
         p = SPARKS;
         for (i = 0; i != 24; i++, p++) {

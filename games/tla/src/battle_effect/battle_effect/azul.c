@@ -190,7 +190,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(3);
-  REG_BLDCNT = 0x3f44;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
   blit = Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
@@ -246,7 +246,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       work->transferPending = 1;
       wait(1);
       frame = 186;
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0x4000;
       }
@@ -264,7 +264,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       vel.y = -px(6);
     }
     if (frame == 0) {
-      REG_BLDALPHA = 0x10;
+      REG_BLDALPHA = BLEND_ALPHA(16, 0);
       work->transferMode = 1;
       work->transferValue = frame;
       for (i = 0; i != 28; i++) {
@@ -306,7 +306,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       for (i = 0; i != effect->count; i++) {
         ((s32 *)BattleObject_GetFar(effect->actors[i])->object)[3] = 0;
       }
-      REG_BG2CNT = 0x787;
+      REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                   BGCNT_SCREEN_BASE(7);
     }
     t = frame - 10;
     if (t <= 16) {
@@ -671,7 +672,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       s32 shade;
       s32 size;
 
-      REG_BG2CNT = 0x784;
+      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       if ((u32)(frame - 168) <= 17) {
         s32 y;
         s32 f;

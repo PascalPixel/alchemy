@@ -127,7 +127,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
       }
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade the canvas out over the last 16 frames.
-        REG_BLDCNT = 0x3f44;
+        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = ((duration - frame) - 5) | 0x1000;
       }
       // Column i grows 8 pixels a frame from frame i * 4 + 8 to its full
@@ -303,7 +303,8 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   BattleEffect_RunDjinniEntrance(
       effect, PREPARE_KIND | effect->side << 4 | PREPARE_ANCHOR << 5, &screen,
       &world);
-  REG_BG2CNT = 0x785;
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
@@ -415,7 +416,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
@@ -441,7 +442,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
     }
     if (frame >= total - 16) {
       // Fade the canvas out over the last 16 frames.
-      REG_BLDCNT = 0x3f44;
+      REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = (total - frame - 1) | 0x1000;
     }
 

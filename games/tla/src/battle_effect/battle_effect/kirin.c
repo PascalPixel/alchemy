@@ -72,7 +72,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   // Open the canvas over the forest and spawn the row.
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   *(u16 *)BG_PLTT = 0;
   *(u16 *)(BG_PLTT + 1) = 0x18;
   work->transferMode = 0;
@@ -81,17 +81,21 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   BattleEffect_SpawnObjects(9, 644, 1);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
-  REG_WININ = 0x2737;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = 0xca;
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
   BattleEffect_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x100e;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 
   // The fire trail's 64 flames wait at the left, each with its own delay.
   baseX = 0;
@@ -118,7 +122,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       HEAP_BLITTER,
       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  REG_BG2CNT = 0x786;
+  REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
 
   for (frame = 0; frame != 120; frame++) {
     wave = 0;
@@ -205,7 +210,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
     if (frame == 28)
-      REG_BG2CNT = 0x784;
+      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
     // The fire trail streams back from the riders.
     if (frame > 17) {
@@ -299,8 +304,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
 
     work->transferMode = 2;
     work->transferValue = 75;
-    REG_BG2CNT = 0x784;
-    REG_BLDALPHA = 0x1010;
+    REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
     frame = 0;
     do {

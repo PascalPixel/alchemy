@@ -98,10 +98,12 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
   presentation->active = 1;
   BattleEffect_WipeCanvas(0, 1);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   pathX = 0;
   pathY = 0;
 
@@ -125,7 +127,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
   for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B)); frame++) {
     // The giant walks its path: two absolute words, then a step a frame.
@@ -249,7 +251,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   for (i = 0; i != GIANT_PIECES; i++)
     Sprite_DestroyFar(work->objects[i]);
   REG_BG2PA = 0x80;
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              Ram_MapCellBuffer, 1, 0);
 

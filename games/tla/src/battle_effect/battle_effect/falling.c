@@ -56,8 +56,10 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
-  REG_BLDCNT = 0x3f44;
-  REG_WININ = 0x3337;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   // Line the shards up above the screen, each 8 pixels higher and further
   // out than the one before, with a little scatter.
@@ -267,8 +269,10 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
   BattleEffect_ConfigureEffectDisplay();
-  REG_BLDCNT = 0x3f44;
-  REG_WININ = 0x3337;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   // Drops draw at their maximum; droplets add their light.
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));

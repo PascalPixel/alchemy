@@ -455,8 +455,8 @@ void LuckyWheels_Update(void) {
             Sound_PlayFar(SE_MENU_CANCEL);
           }
         }
-        REG_BLDCNT = 0x3fd0;
-        REG_BLDALPHA = 0x10;
+        REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_ALL;
+        REG_BLDALPHA = BLEND_ALPHA(16, 0);
         if (work->pressed & KEY_A) {
           work->state = 1;
           fx->frame = 0;
@@ -587,8 +587,8 @@ void LuckyWheels_Update(void) {
         work->state = 3;
         Sound_PlayFar(MUS_093);
         work->timer = 0;
-        REG_BLDCNT = 0x3f44;
-        REG_BLDALPHA = 0x1010;
+        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+        REG_BLDALPHA = BLEND_ALPHA(16, 16);
         fx->transferMode = 2;
         fx->transferValue = 75;
       }
@@ -1119,18 +1119,22 @@ void LuckyWheels_Run(void) {
         *(volatile u16 *)(0x06003000 + j) = k * 32 + i + 148;
     }
   }
-  REG_BG1CNT = 0x509;
-  REG_BG2CNT = 0x680;
+  REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(5);
+  REG_BG2CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   gBgScroll[1].x = 0;
   gBgScroll[1].y = 0;
   gBgScroll[2].x = 0;
   gBgScroll[2].y = 0;
-  REG_WININ = 0x3737;
-  REG_WINOUT = 0x2727;
-  REG_BLDCNT = 0x3f44;
-  REG_BLDALPHA = 0x1010;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
+               WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
+               WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_CLR;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG1HOFS = 0;
   REG_BG2HOFS = 0;
   REG_BG1VOFS = 0xff60;
@@ -1209,7 +1213,8 @@ void LuckyWheels_Run(void) {
     Dma_Set((void *)OBJ_PLTT, shade, 0x84000080, REG_DMA3);
     LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
     LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, 0, 0x100);
-    REG_DISPCNT = 0x3740;
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                  DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
     if (PartyInventory_CountItemFar(228) == 1) {
       struct Window *window = Window_CreateFar(
           HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, CONTROLS_WINDOW_HEIGHT, 6);

@@ -357,7 +357,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
   HeapSlot_Release(104);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 }
 
 #define Actor_SetAnimationSpeedFar                                             \
@@ -595,7 +595,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   if (effect->prelude == 1)
     BattleEffect_RunDjinniEntrance(effect, 1 | effect->side << 4 | 2 << 5,
                                    &screen, &world);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // A 128x128 blitter, mirrored for the other side.
   if (mode == 5 || mode == 12 || mode == 13) {

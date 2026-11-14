@@ -46,7 +46,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   // spray band and the fire column into the work sheet, the sparks into the
   // sheet slot, and the transfer at three quarters.
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);

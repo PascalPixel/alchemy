@@ -192,7 +192,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // A clipped MAX blitter facing the targets, and a clipped additive one.
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->side == 0)
     BattleEffect_LoadBlitter(
         HEAP_SLOT_BLITTER,
@@ -628,11 +628,11 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
-    REG_BLDALPHA = 0x810;
+    REG_BLDALPHA = BLEND_ALPHA(16, 8);
     work->transferMode = 2;
     work->transferValue = 50;
   } else {
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
     work->transferMode = 2;
     work->transferValue = 75;
   }

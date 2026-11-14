@@ -183,7 +183,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   BattleEffect_WipeCanvas(1, 0);
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0x400;
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
@@ -877,7 +877,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   draw[0] = Ram_HeapSlots->unk64[1];
   for (frame = 0; frame != 92; frame++) {

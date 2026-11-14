@@ -222,10 +222,11 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     }
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
   if (effect->prelude == 1) {
@@ -247,7 +248,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         188, BLIT_MODE(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
 
     pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-    REG_BLDALPHA = 0x310;
+    REG_BLDALPHA = BLEND_ALPHA(16, 3);
   } else if (mode == 7 || mode == 21) {
     BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -304,7 +305,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     }
     Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 0);
-    REG_BLDALPHA = 0x410;
+    REG_BLDALPHA = BLEND_ALPHA(16, 4);
   } else if (mode == 18) {
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,

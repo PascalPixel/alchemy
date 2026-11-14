@@ -148,7 +148,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
                                             COMPOSITE_FLIP_X));
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -474,7 +474,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
       else
         work->particles[0].velocityX = px(6);
       work->particles[0].velocityY = px(8);
-      REG_BLDALPHA = 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(0, 16);
     }
     if (frame < 32)
       BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, 0);

@@ -1647,46 +1647,51 @@ s32 FieldMenu_Run(void) {
   state = Ram_HeapSlots->eventWork;
   selection = 0;
 
-loop:
-  PartyStatus_OpenAndWait();
-  selection = FieldMenu_SelectCommand(selection);
+  for (;;) {
+    PartyStatus_OpenAndWait();
+    selection = FieldMenu_SelectCommand(selection);
 #ifdef UBFIX
-  // UB: the original reads the void return of PartyStatus_CloseWithMenu, called
-  // with no prototype in scope, as The Broken Seal's FieldMenu_Run does.
-  PartyStatus_CloseWithMenu();
-  ret = 0;
+    // UB: the original reads the void return of PartyStatus_CloseWithMenu,
+    // called with no prototype in scope, as The Broken Seal's FieldMenu_Run
+    // does.
+    PartyStatus_CloseWithMenu();
+    ret = 0;
 #else
-  ret = PartyStatus_CloseWithMenu();
+    ret = PartyStatus_CloseWithMenu();
 #endif
 
-  switch (selection) {
-  case 0:
-    ret = Actor_GetTriggerCellAheadOfCurrentFar();
-    if (ret == 0)
-      ret = 0xff;
-    *(u16 *)(state + 0x162) = ret;
-    break;
-  case 1:
-    ret = PsynergyMenu_RunFar();
-    if (ret == -1)
-      goto loop;
-    break;
-  case 2:
-    ret = DjinnMenu_RunFar();
-    if (ret != 0)
-      goto loop;
-    break;
-  case 3:
-    ret = ItemMenu_RunFar();
-    if (ret == -1)
-      goto loop;
-    break;
-  case 4:
-    ret = StatusScreen_RunFar();
-    if (ret == -1)
-      goto loop;
-    break;
-  default:
+    // A screen left without a choice (-1, or nonzero from the Djinn screen)
+    // opens the field menu again.
+    switch (selection) {
+    case 0:
+      ret = Actor_GetTriggerCellAheadOfCurrentFar();
+      if (ret == 0)
+        ret = 0xff;
+      *(u16 *)(state + 0x162) = ret;
+      break;
+    case 1:
+      ret = PsynergyMenu_RunFar();
+      if (ret == -1)
+        continue;
+      break;
+    case 2:
+      ret = DjinnMenu_RunFar();
+      if (ret != 0)
+        continue;
+      break;
+    case 3:
+      ret = ItemMenu_RunFar();
+      if (ret == -1)
+        continue;
+      break;
+    case 4:
+      ret = StatusScreen_RunFar();
+      if (ret == -1)
+        continue;
+      break;
+    default:
+      break;
+    }
     break;
   }
 

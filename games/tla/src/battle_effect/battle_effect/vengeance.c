@@ -102,7 +102,7 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
   mask = 7;
   BattleEffect_StartTiledCanvas(0);
   REG_BG2PA = 0x100;
-  REG_BLDALPHA = 0x410;
+  REG_BLDALPHA = BLEND_ALPHA(16, 4);
 
   // The avenger's tile map: the body, and its arm in rows 3 to 6.
   i = 0;
@@ -153,8 +153,11 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
   REG_WIN0V = 0x2888;
   REG_WIN1H = 0xf0;
   REG_WIN1V = 0x2888;
-  REG_WININ = 0x3737;
-  REG_WINOUT = 0x2033;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_OBJ |
+               WINOUT_WIN01_CLR | WINOUT_WINOBJ_CLR;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B0, work->sheet, 1, 1);
   BattleEffect_LoadBlitter(
       SLOT_BLITTER,
@@ -405,7 +408,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
     BattleEffect_StartTiledCanvasFilled(0x2001);
   }
   REG_BG2PA = 0x100;
-  REG_BLDALPHA = 0x610;
+  REG_BLDALPHA = BLEND_ALPHA(16, 6);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F5, gMapCellBuffer, 1, 1);
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(
@@ -753,9 +756,9 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
 
   BattleEffect_StartCanvasLayer(1);
   if (mode == 0)
-    REG_BLDALPHA = 0x0c10;
+    REG_BLDALPHA = BLEND_ALPHA(16, 12);
   else
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   {
     s32 spawned;
@@ -976,7 +979,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition screen;
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
@@ -1147,7 +1150,7 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDCNT = 0x3f44;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   *(s32 *)(work + 0x77b4) = 24;
   *(s32 *)(work + 0x77b8) = 0;
@@ -1500,8 +1503,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 240;
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
-  REG_BLDCNT = 0x3f44;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   for (frame = 0; frame != 602; frame++) {
     spin = ((frame - 1) << 9) + 512;
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 581 && skip == 0) {

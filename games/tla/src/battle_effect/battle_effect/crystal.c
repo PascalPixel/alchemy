@@ -100,7 +100,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
                        128);
-  REG_BLDALPHA = 0x100e;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
   if (effect->side == 1) {
     BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   } else {

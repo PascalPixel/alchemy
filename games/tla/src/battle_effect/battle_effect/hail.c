@@ -204,7 +204,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(effect, PREPARE(0, effect->side, 2), screen,
                                  otherPoint);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->side == 1)
     BattleEffect_LoadBlitter(
         HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |

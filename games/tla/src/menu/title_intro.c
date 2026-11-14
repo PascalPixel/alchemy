@@ -214,10 +214,10 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
       *map++ = tile++ | 0x1000;
     }
   }
-  REG_BG1CNT = 0x1f02;
-  REG_BG2CNT = 0x1e05;
-  REG_BLDCNT = 0x244;
-  REG_BLDALPHA = 0xa0b;
+  REG_BG1CNT = BGCNT_PRIORITY(2) | BGCNT_SCREEN_BASE(31);
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(30);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1;
+  REG_BLDALPHA = BLEND_ALPHA(11, 10);
   for (i = 0; i < 4; i++) {
     gBgScroll[i].y = 0;
     gBgScroll[i].x = 0;
@@ -227,7 +227,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
   }
   PaletteFade_SetSource(2, 0);
   PaletteFade_SetTarget(0x10000, 0);
-  REG_DISPCNT = 0x600;
+  REG_DISPCNT = DISPCNT_BG1_ON | DISPCNT_BG2_ON;
   if (mode == 0) {
     TitlePaletteFade_Start(1);
   } else {
@@ -334,7 +334,7 @@ s32 TitleIntro_ShowCard(void) {
         *map++ = 0x2000;
     }
   }
-  REG_BG3CNT = 0x1d0a;
+  REG_BG3CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(29);
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0;
   for (i = 0; i < 4; i++)
@@ -342,7 +342,7 @@ s32 TitleIntro_ShowCard(void) {
 
   PaletteFade_SetSource(0, 0);
   PaletteFade_SetTarget(0x10000, 0);
-  REG_DISPCNT = 0x800;
+  REG_DISPCNT = DISPCNT_BG3_ON;
   TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(150))
     return 0;
@@ -398,16 +398,16 @@ s32 TitleIntro_ShowBlendedCard(void) {
         *map++ = 0x3040;
     }
   }
-  REG_BG3CNT = 0x1d0a;
-  REG_BG0CNT = 0x1c09;
-  REG_BLDCNT = 0x0841;
-  REG_BLDALPHA = 0x1000;
+  REG_BG3CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(29);
+  REG_BG0CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(28);
+  REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3;
+  REG_BLDALPHA = BLEND_ALPHA(0, 16);
   for (i = 0; i < 4; i++)
     gBgScroll[i].x = gBgScroll[i].y = 0;
 
   PaletteFade_SetSource(0, 0);
   PaletteFade_SetTarget(0x10000, 0);
-  REG_DISPCNT = 0x900;
+  REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_BG3_ON;
   TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(60))
     return 0;
@@ -588,8 +588,8 @@ void TitleIntro_UpdateLogo(void) {
       logo->timer = 0;
       logo->step = 160;
       logo->delay = 0;
-      REG_BLDCNT = 0x250;
-      REG_BLDALPHA = 0x1001;
+      REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1;
+      REG_BLDALPHA = BLEND_ALPHA(1, 16);
       return;
     }
     tile = gData_081a8378[logo->frame];
@@ -698,7 +698,7 @@ s32 TitleIntro_ShowLighthouse(void) {
     *map++ = 0x1ff;
     *map++ = 0x1ff;
   }
-  REG_BG1CNT = 0x1f83;
+  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0;
   for (i = 0; i < 4; i++) {
@@ -709,7 +709,7 @@ s32 TitleIntro_ShowLighthouse(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   wait(1);
   PaletteFade_SetTarget(q16One, 0);
-  REG_DISPCNT = 0x1240;
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
   TitlePaletteFade_Start(10);
 
   scroll.pos = 0;
@@ -869,7 +869,7 @@ s32 Title_ShowIntro(s32 prompt) {
   struct TitleScreenWork *work = HeapSlot_AllocEwram(172, 0x70);
   u8 *data;
   u16 *tilemap;
-  s16 tile;
+  u16 tile;
   u32 i;
   u32 j;
   u32 holdFrames;
@@ -879,54 +879,22 @@ s32 Title_ShowIntro(s32 prompt) {
   DebugText_Clear();
   VramCache_Reset();
   wait(1);
-  {
-    /* FAKEMATCH(pin): the native loads the control word from the pool before it
-     * starts the register address. */
-    register u16 control asm("r3") =
-        BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
-
-    /* FAKEMATCH(barrier): an asm holding r2 until the control word is loaded.
-     */
-#if TLA_PATCH_1 && !(TLA_PATCH_2 && !TLA_PATCH_3)
-    __asm__("" : "+l"(control) : : "r2");
-#endif
-    REG_BG2CNT = control;
-  }
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   gBgScroll[2].y = result;
   data = Resource_GetTableEntry((s32)&ResourceId_TitleScreenPicture);
   Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  {
-    u8 *cells = Ram_MapCellBuffer;
-
-    Decompress_TaggedLz(data + 0x1c0, cells);
-    Dma_Set(cells, (void *)BG_SCREEN_BLOCK(13), DMA_COPY_WORDS(0x9600 / 4),
-            REG_DMA3);
+  Decompress_TaggedLz(data + 448, Ram_MapCellBuffer);
+  Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(13), DMA_COPY_WORDS(9600),
+          REG_DMA3);
+  tile = 416;
+  tilemap = (u16 *)BG_SCREEN_BLOCK(6);
+  for (i = 0; i < 20; i++) {
+    for (j = 0; j < 30; j++)
+      *tilemap++ = tile++;
+    *tilemap++ = blankTile;
+    *tilemap++ = blankTile;
   }
-  {
-    u16 *start = (u16 *)BG_SCREEN_BLOCK(6);
-
-    tilemap = start;
-  }
-  tile = 0x1a0;
-  i = 0;
-row:
-  j = 0;
-column:
-  {
-    /* FAKEMATCH(temporary): the s16 step as its high-half wrap, with goto
-     * loops. */
-    s32 old = tile;
-
-    tile = ((old << 16) + 0x10000) >> 16;
-    *tilemap++ = old;
-  }
-  if (++j <= 29)
-    goto column;
-  *tilemap++ = blankTile;
-  *tilemap++ = blankTile;
-  if (++i <= 19)
-    goto row;
   for (i = 0; i < 4; i++)
     gBgScroll[i].x = gBgScroll[i].y = 0;
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
@@ -1002,14 +970,8 @@ column:
     wait(1);
   }
   HeapSlot_Release(172);
-  {
-    /* FAKEMATCH(pin): the native loads the zero from the pool before it starts
-     * the register address. */
-    register u16 zero asm("r2") = 0;
-
-    REG_BLDCNT = zero;
-    REG_BLDALPHA = zero;
-  }
+  REG_BLDCNT = 0;
+  REG_BLDALPHA = 0;
   wait(1);
   return result;
 }
@@ -1028,63 +990,35 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   u16 *map;
   u32 x;
   u32 y;
-  s32 tile;
-  s32 blank;
+  u16 tile;
+  s32 blank = 511;
   s32 resource;
 
   Sound_PlayFar(SE_CHIME);
   gRenderOamEnabled = 1;
   resource = (s32)&ResourceId_NintendoLogo;
-  blank = 0x1ff;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
   wait(1);
-  {
-    /* FAKEMATCH(pin): the native loads the control word from the pool before it
-     * starts the register address. */
-    register u16 control asm("r3") =
-        BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
-
-    REG_BG2CNT = control;
-  }
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   result = 0;
   gBgScroll[2].y = result;
   data = Resource_GetTableEntry(resource);
   Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  {
-    u8 *cells = Ram_MapCellBuffer;
-
-    Decompress_TaggedLz(data + 448, cells);
-    Dma_Set(cells, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x9600 / 4),
-            REG_DMA3);
-  }
-  {
-    u16 *start = (u16 *)BG_SCREEN_BLOCK(6);
-
-    map = start;
-  }
+  Decompress_TaggedLz(data + 448, Ram_MapCellBuffer);
+  Dma_Set(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600),
+          REG_DMA3);
+  // Pad the 30-tile picture to the hardware map's 32-tile row width.
   tile = 256;
-  y = 0;
-col:
-  {
-    x = 0;
-  row:
-    {
-      /* FAKEMATCH(temporary): the s16 step as its high-half wrap. */
-      s32 old = tile;
-
-      tile = ((old << 16) + 0x10000) >> 16;
-      *map++ = old;
-    }
-    if (++x <= 29)
-      goto row;
+  map = (u16 *)BG_SCREEN_BLOCK(6);
+  for (y = 0; y < 20; y++) {
+    for (x = 0; x < 30; x++)
+      *map++ = tile++;
     *map++ = blank;
     *map++ = blank;
   }
-  if (++y <= 19)
-    goto col;
   for (y = 0; y < 4; y++) {
     gBgScroll[y].y = 0;
     gBgScroll[y].x = 0;
@@ -1150,8 +1084,9 @@ s32 Title_ShowCamelotLogo(void) {
   ScreenFade_ToBlack(1);
   DebugText_Clear();
   wait(1);
-  REG_BG2CNT = 0x685;
-  REG_DISPCNT = 0x1440;
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(6);
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   gBgScroll[2].y = result;
   buffer = Resource_GetTableEntry(resource);
   Decompress_TaggedLz(buffer, Ram_MapCellBuffer);
@@ -1174,7 +1109,8 @@ s32 Title_ShowCamelotLogo(void) {
   DebugText_Clear();
   ScreenFade_FromWhite(1);
   ScreenFade_Wait();
-  REG_DISPCNT = 0x1540;
+  REG_DISPCNT =
+      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   for (i = 0; i < 120; i++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 1024 + buffer, BG_CHAR_BLOCK(1) + 0x100,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x340 / 4, REG_DMA3);

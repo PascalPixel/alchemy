@@ -47,7 +47,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(
       188, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The embers leave the top of the user's body: a random heading and
   // speed across, -16 to 111 sixty-fourths of a pixel up.

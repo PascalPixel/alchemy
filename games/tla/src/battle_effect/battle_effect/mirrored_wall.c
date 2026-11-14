@@ -332,10 +332,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     BattleEffect_StartCanvasLayer(0);
     BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 0x44,
                                    preludeOrigin, preludeSize);
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
   } else {
     BattleEffect_StartCanvasLayer(1);
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_GoldShellSheet, work->sheet, 1,
                              1);

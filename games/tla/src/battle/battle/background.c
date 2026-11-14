@@ -166,7 +166,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
     Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
   view->mode = mode;
   if (mode == 1)
-    REG_BG1CNT = 0x1f83;
+    REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
 }
 
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
@@ -388,7 +388,9 @@ void BattleBackground_FadeAlphaIn(void) {
 }
 
 /// Unused: sets BLDCNT to brighten every layer and the backdrop.
-UNUSED void Battle_BrightenAllLayers(void) { REG_BLDCNT = 0xbf; }
+UNUSED void Battle_BrightenAllLayers(void) {
+  REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
+}
 
 s32 Battle_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
 
@@ -587,7 +589,7 @@ void Graphics_AdvancePaletteCycle(void) {
 
       if (level > 16)
         level = 16;
-      REG_BLDCNT = 0x3f40;
+      REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = ((0x10 - level) << 8) | level;
       battle->highlightStep++;
     } else if (battle->highlightMode == 4) {
@@ -595,19 +597,19 @@ void Graphics_AdvancePaletteCycle(void) {
 
       if (level > 16)
         level = 16;
-      REG_BLDCNT = 0x3f40;
+      REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = (level << 8) | (0x10 - level);
       battle->highlightStep++;
     } else if (battle->highlightMode == 2) {
-      REG_BLDCNT = 0x3f40;
+      REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       REG_BLDALPHA =
           (gBattleEffect_HighlightBlendRamp[battle->highlightStep] << 8) |
           (0x10 - gBattleEffect_HighlightBlendRamp[battle->highlightStep]);
       battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
     } else if (battle->highlightMode != 0) {
-      REG_BLDCNT = 0x3f90;
-      REG_BLDALPHA = 0x10;
+      REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
+      REG_BLDALPHA = BLEND_ALPHA(16, 0);
       REG_BLDY = gBattleEffect_HighlightBlendRamp[battle->highlightStep];
       battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
@@ -635,7 +637,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
     battle->highlightMode = mode;
     battle->highlightStep = 0;
     REG_BLDY = 0;
-    Io_Write16(16, &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
 
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)activeActors);
     for (i = 0; i < count; i++)
@@ -987,8 +989,8 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   wait(1);
   Io_Write16(240, &REG_WIN0H);
   Io_Write16(0x1088, &REG_WIN0V);
-  Io_Write16(63, &REG_WININ);
-  Io_Write16(17, &REG_WINOUT);
+  Io_Write16(WININ_WIN0_ALL, &REG_WININ);
+  Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == 0) {
     IoWriteQueue_Store16(0x04000052, 0x100e);
     ElementGlow_InitializeStarField(kind);

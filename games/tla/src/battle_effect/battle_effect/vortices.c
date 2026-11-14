@@ -190,7 +190,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                              COMPOSITE_CLIP_Y);
@@ -210,7 +210,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_BLDALPHA = 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(0, 16);
   wait(1);
   Sound_PlayFar(SE_RUMBLE);
 

@@ -180,14 +180,15 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
   s32 i;
 
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (mode == 0) {
     BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 35, screen,
                                    other);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                FIGURE(work), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D8, work->sheet, 0, 0);
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
     frames = 84;
   } else if (mode == 1) {
     BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 33, screen,
@@ -258,7 +259,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
   } else if (mode == 5) {
     BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 226, screen,
                                    other);
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet, 0, 0);
@@ -289,12 +291,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
                                work->sheet + 0x4000, 1, 1);
     Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
     frames = 16;
   } else if (mode == 9) {
     u8 *p;
 
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x3080,
                                0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);

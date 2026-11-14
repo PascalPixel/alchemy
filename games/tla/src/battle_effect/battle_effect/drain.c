@@ -231,7 +231,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
 
       *color++ = ((21 - i / 3) << 10) | blue;
     }
-    REG_BLDALPHA = 0x610;
+    REG_BLDALPHA = BLEND_ALPHA(16, 6);
     work->transferMode = 2;
     work->transferValue = 50;
   } else {

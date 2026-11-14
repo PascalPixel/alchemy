@@ -585,8 +585,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
   // with their palette, the streaks, the dots, and in mode 1 the lightning
   // palette.
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
-  REG_BG2CNT = 0x784;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);

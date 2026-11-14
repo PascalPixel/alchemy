@@ -47,7 +47,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
     wait(1);
   }
 
-  REG_DISPCNT = 1;
+  REG_DISPCNT = DISPCNT_MODE_1;
   wait(4);
   saved = bg0cnt;
   reg = &REG_BG0CNT;
@@ -250,7 +250,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     view->secondMode = 1;
     view->busy = 0;
     view->mode = 1;
-    REG_DISPCNT = 1;
+    REG_DISPCNT = DISPCNT_MODE_1;
     {
       u32 v = 0x33333333;
       /* FAKEMATCH(barrier): an empty asm on v. */
@@ -258,7 +258,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       Iwram_FillWordsEntry((void *)BG_SCREEN_BLOCK(10), 32, v);
     }
     IWRAM_FILL_WORDS((void *)0x06005100, 32, 0);
-    REG_BG1CNT = 0xc04;
+    REG_BG1CNT = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(12);
     REG_BG0CNT |= 2;
     view->mode = 2;
     {
@@ -286,8 +286,10 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     REG_WIN0V = 0x88;
     REG_WIN1H = 0xf0;
     REG_WIN1V = 0x88;
-    REG_WININ = 0x3537;
-    REG_WINOUT = 0x3f21;
+    REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+                WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+                WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+    REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
     IoWriteQueue_Store16(0x04000000, 0x7741);
     BattleCamera_SetView(0, 0, 0, 180);
     *timer = zero;
@@ -345,7 +347,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     IoWriteQueue_ClearBits16(0x04000008, 2);
     IoWriteQueue_SetBits16(0x04000008, 0);
-    REG_BLDCNT = 0x3f40;
+    REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     count = BattleParty_ListActorIds(3, shown);
     shown[count] = 255;
     BattleActor_SpawnObjectsForList((s16 *)shown, 0);
@@ -364,11 +366,12 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     Irq_SetHandler(2, 0, 0);
   }
   Irq_SetHandler(2, 0, 0);
-  REG_BG1CNT = 0x1f83;
+  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   wait(1);
-  REG_BG1CNT = 0x1f83;
+  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   REG_BG0CNT &= 0xfffd;
   gBgScroll[1].x = 8;
-  REG_DISPCNT = 0x1541;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   HeapSlot_Release(168);
 }

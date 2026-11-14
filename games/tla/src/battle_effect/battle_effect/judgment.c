@@ -69,10 +69,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   transition[4] = 1;
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(0, 1);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   depth = -0x400000;
   zoom = 0x80000;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
@@ -85,7 +87,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, pal, 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
   // The gathering: motes rise, the tiles fold in and flash.
   frame = 0;
@@ -370,7 +372,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   REG_BG2PA = 0x100;
   REG_BG2X = -0x3c00;
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   FILL__actor_move_random(canvas, CANVAS_BYTES, 0);
   cx = 60;
   cy = 44;
@@ -481,7 +483,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       FILL__actor_move_random(work->sheet, 0x3840, 0);
       FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
       transition[4] = 0;
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       {
         struct EffectStep *p = work->particles;
 

@@ -859,8 +859,11 @@ s32 WorldPicture_Show(s32 mode) {
     map->origin = 0;
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
-    Io_Write16(0x682, &REG_BG1CNT);
-    Io_Write16(0x1340, &REG_DISPCNT);
+    Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
+               &REG_BG1CNT);
+    Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                   DISPCNT_OBJ_ON,
+               &REG_DISPCNT);
   }
   // Default: no pointer yet.
   wayX = NULL;
@@ -873,8 +876,12 @@ s32 WorldPicture_Show(s32 mode) {
     Data_0202a640 = zoomed;
     WorldMapPicture_Draw();
     wait(1);
-    Io_Write16(0x8682, &REG_BG1CNT);
-    Io_Write16(0x1340, &REG_DISPCNT);
+    Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) |
+                   BGCNT_SIZE(2),
+               &REG_BG1CNT);
+    Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                   DISPCNT_OBJ_ON,
+               &REG_DISPCNT);
     if ((GameFlag_Get(284) || GameFlag_Get(286)) && !messageShown) {
       FieldMessage_ShowFar((s32)MsgNotOnMap, 1);
       messageShown = 1;
@@ -925,7 +932,7 @@ s32 WorldPicture_Show(s32 mode) {
       if (input->repeat & KEY_SELECT) {
         world->shown = -1;
         WindowSprite_PrepareForRedrawFar(world->window);
-        Io_Write16(64, &REG_DISPCNT);
+        Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
         zoomed ^= 1;
         if (*cursorX != 0) {
           world->x = *cursorX;
@@ -981,7 +988,7 @@ s32 WorldPicture_Show(s32 mode) {
   }
 done:
   WorldPicture_Release();
-  Io_Write16(64, &REG_DISPCNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   if (mode != 0 || event->controlMode != 3) {
     event->countdown = 999;
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);

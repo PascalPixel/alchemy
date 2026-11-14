@@ -1073,8 +1073,6 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
     Decompress_TaggedLz(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
     Decompress_TaggedLz(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
-    /* FAKEMATCH(barrier): an empty asm closing the arm. */
-    asm("");
   }
   {
     s32 priority = 0x480;

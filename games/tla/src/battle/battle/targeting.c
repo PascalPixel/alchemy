@@ -446,7 +446,7 @@ void BattleMessage_WaitForAdvance(void) {
     offset = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->offset;
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-    Io_Write16(16, &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     ((u32 *)prompt)[1] = 0xa400;
     ((u32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
@@ -489,7 +489,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   while (1) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-    Io_Write16(16, &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     ((s32 *)prompt)[1] = 0x40000000;
     ((s32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pointerTiles);

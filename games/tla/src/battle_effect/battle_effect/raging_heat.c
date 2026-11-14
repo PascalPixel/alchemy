@@ -109,7 +109,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0xa10;
+  REG_BLDALPHA = BLEND_ALPHA(16, 10);
   BattleEffect_LoadBlitter(
       SLOT_BLITTER,
       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
@@ -359,7 +359,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   s32 i;
 
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_SmallFlameSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
@@ -510,11 +510,11 @@ void RagingHeat_FillGradientCanvas(void) {
   s32 x;
 
   Graphics_LoadGreyRamp();
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT_BACKDROP = 0;
   REG_BG2PA = 0x4e;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   for (y = 0; y != 128; y++) {
     for (x = 0; x != 128; x++) {
       s32 level;

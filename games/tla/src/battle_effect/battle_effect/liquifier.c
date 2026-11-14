@@ -75,7 +75,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   graphics = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, EFFECT_PICTURES,
                              1, 0);
@@ -467,7 +467,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     BattleEffect_StartCanvasLayer(1);
   else
     BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   discs = (s16 *)work->sheet;
@@ -713,7 +713,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
     gBgScroll[1].x = work->savedBg1X;
     gBgScroll[1].y = work->savedBg1Y;
-    REG_BG2CNT = 0x787;
+    REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
     Task_Remove(Palette_StepFadeTransfer);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);

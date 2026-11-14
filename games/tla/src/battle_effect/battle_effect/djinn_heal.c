@@ -362,7 +362,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = (16 - (frame - 78) / 2) | 0x1000;
     }
     if (frame == 140) {
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
     }
     if (frame == 157) {
       BattlePlayback_StartFar(145);
@@ -384,7 +384,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       for (i = 0; i != ZAGAN_PARTS; i++) {
         Animation_ApplyChildArgumentFar(work->objects[i], i + 12);
       }
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
       work->scrollStepX = -8;
       gCameraSceneParameters[3] = -968;

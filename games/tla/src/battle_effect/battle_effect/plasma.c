@@ -37,7 +37,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 |
                                              COMPOSITE_CLIP_X |
                                              COMPOSITE_CLIP_Y);
@@ -236,7 +236,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
   }
 
   // The flash sheet, the particle sprites and the kind's palette.
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);

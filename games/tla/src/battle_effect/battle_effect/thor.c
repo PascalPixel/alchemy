@@ -101,7 +101,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT[1] = 0;
-  REG_BG2CNT = 0x2784;
+  REG_BG2CNT =
+      BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   work->scrollTimer = 0;
   work->scrollInterval = 2;
   work->scrollStepX = 1;
@@ -117,10 +118,12 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x80;
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
   blit[0] = BLITTER;
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x100f;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(15, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = 2;
   work->transferValue = 75;
 
@@ -135,7 +138,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       ramp[31 - i] = 63;
     }
   }
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
 
@@ -331,7 +334,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_CrystalSheet),
                        128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data135, sprites, 0, 0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
     s32 formationX = 0x500000;
     s32 formationY = 0x400000;

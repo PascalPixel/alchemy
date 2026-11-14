@@ -139,7 +139,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
     s16 savedYaw;
     void *caster;
     s32 frames;
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
     if (effect->side == 0) {
       BattleEffect_LoadBlitter(
           SLOT_BLITTER,
@@ -151,7 +152,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
                                                           COMPOSITE_FLIP_X));
     }
     blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
     work->transferMode = 2;
     work->transferValue = 50;
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);

@@ -151,7 +151,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
     BattleEffect_StartTiledCanvasFilled(0x2001);
   else
     BattleEffect_StartTiledCanvas(0x2001);
-  REG_BLDALPHA = 0x210;
+  REG_BLDALPHA = BLEND_ALPHA(16, 2);
   if (mode == CARD_SWORD) {
     if (effect->side == 0)
       BattleEffect_LoadBlitter(
@@ -371,7 +371,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
         BattlePlayback_StartFar(136);
         work->transferMode = 2;
         work->transferValue = 50;
-        REG_BLDALPHA = 0x1010;
+        REG_BLDALPHA = BLEND_ALPHA(16, 16);
       }
       if (frame >= 48 && frame <= 79) {
         s32 time = frame - 48;
@@ -462,7 +462,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
         }
         work->transferMode = 2;
         work->transferValue = 50;
-        REG_BLDALPHA = 0x1010;
+        REG_BLDALPHA = BLEND_ALPHA(16, 16);
       }
 
       // The shards tumble through three cells and darken.

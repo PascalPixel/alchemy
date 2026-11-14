@@ -460,7 +460,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   BattleHighlight_SetModes(0, 0);
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(actor)->object;
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   list = units;
   i = 0;
   count = BattleParty_ListActorIds(3, list);
@@ -547,7 +547,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 
   BattleObject_Put();
   count = BattleParty_ListActorIds(3, units);
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   for (i = 0; i != count; i++) {
     u32 unit;
 

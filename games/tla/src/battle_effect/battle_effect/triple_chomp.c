@@ -107,7 +107,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
 
   // Set up the canvas, then let the caster lunge.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);

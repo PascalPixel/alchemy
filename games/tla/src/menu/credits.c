@@ -221,15 +221,22 @@ s32 Credits_Run(s32 mode) {
   gAutoSleepEnabled = 0;
   Task_ResetAll();
   Task_Add(Credits_ScrollBackgrounds, TASK_PASS_FRAME);
-  Io_Write16(0x40, &REG_DISPCNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
   Graphics_ClearCharacterBlockAndPalette(0);
   Graphics_ClearCharacterBlockAndPalette(1);
-  Io_Write16(0x1f8a, &REG_BG2CNT);
-  Io_Write16(0x0f83, &REG_BG3CNT);
-  Io_Write16(0x1c40, &REG_DISPCNT);
-  Io_Write16(0x2844, &REG_BLDCNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(31),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(15),
+             &REG_BG3CNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                 DISPCNT_OBJ_ON,
+             &REG_DISPCNT);
+  Io_Write16(BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 |
+                 BLDCNT_TGT2_BD,
+             &REG_BLDCNT);
 
   if (mode == 1) {
 
@@ -275,7 +282,7 @@ s32 Credits_Run(s32 mode) {
 
 done:
   Io_Write16(0, &REG_BLDCNT);
-  Io_Write16(0x1040, &REG_DISPCNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);
   Window_LoadGraphics();
   DebugText_Clear();
   gRenderOamEnabled = 1;
@@ -882,16 +889,23 @@ void EndingPicture_Start(void) {
   gEndingPicture_Speed = 1;
   gEndingPicture_Block = 0;
   Task_Add(EndingPicture_Scroll, TASK_PASS_VBLANK);
-  Io_Write16(0x40, &REG_DISPCNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
   Graphics_ClearCharacterBlockAndPalette(0);
   Graphics_ClearCharacterBlockAndPalette(1);
-  Io_Write16(0x1f8a, &REG_BG2CNT);
-  Io_Write16(0x0f83, &REG_BG3CNT);
-  Io_Write16(0x1c40, &REG_DISPCNT);
-  Io_Write16(0x2844, &REG_BLDCNT);
-  Io_Write16(16, &REG_BLDALPHA);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(31),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(15),
+             &REG_BG3CNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                 DISPCNT_OBJ_ON,
+             &REG_DISPCNT);
+  Io_Write16(BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 |
+                 BLDCNT_TGT2_BD,
+             &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
   EndingPicture_InitStrips();
 }
 

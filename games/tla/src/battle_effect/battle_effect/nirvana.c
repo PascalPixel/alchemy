@@ -373,7 +373,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x0c10;
+  REG_BLDALPHA = BLEND_ALPHA(16, 12);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
@@ -698,7 +698,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
                                  screenB);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Iwram_ClearWordsEntry(canvas, 0x3c00);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2PA = 0x100;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   work->transferMode = 2;

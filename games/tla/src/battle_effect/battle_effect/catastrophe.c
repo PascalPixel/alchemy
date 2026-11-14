@@ -254,8 +254,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   transition[4] = 1;
   gBgScroll[1].x = 0;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   {
     u16 *map = (u16 *)BG_SCREEN_BLOCK(31);
 
@@ -395,13 +395,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       break;
     }
     if (frame == 0) {
-      REG_BG2CNT = 0x786;
+      REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                   BGCNT_SCREEN_BASE(7);
       for (i = 3; i != 64; i++) {
         work->particles[i].variant = -1;
       }
     }
     if (frame == 440) {
-      REG_BG2CNT = 0x784;
+      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     }
     if (frame <= 369) {
       camZ = (frame * 334 / 379 << 16) + -0x11a0000;
@@ -1103,7 +1104,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -16, -16);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cellBuffer, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
@@ -1471,7 +1472,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, bolts, 1,
                                0);
     Render_BuildQuadStrip(Data_02012000, 4, 32, 11);
-    REG_BG2CNT = 0x784;
+    REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     frame = 0;
     do {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 2 && frame <= 87) {

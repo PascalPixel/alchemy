@@ -114,7 +114,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   BattleEffect_StartCanvasLayer(0);
   if ((u32)(variant - 3) > 2)
     REG_BLDCNT = 0;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The pictures: 1 and 2 in the sheet, 3 and 4 in the map cell
   // buffer (variant 5's four half pictures all there).

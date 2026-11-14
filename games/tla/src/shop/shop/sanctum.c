@@ -228,11 +228,7 @@ s32 Sanctum_RunPartyService(void) {
   unitId = 0;
   chooseAgain = 0;
   redraw = 1;
-  {
-    s8 *partyAction = &shop->partyAction;
-    /* FAKEMATCH(temporary): partyAction read through a pointer to it. */
-    serviceKind = *partyAction;
-  }
+  serviceKind = shop->partyAction;
   Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
 
   listWindow = Window_CreateFar(1, 12, 13, 3, 2);
@@ -252,84 +248,79 @@ s32 Sanctum_RunPartyService(void) {
   }
 
   redraw = 2;
-loop:
-  if (chooseAgain != 0) {
-    chooseAgain = 0;
-    Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
-    redraw = 2;
-    memberIndex = 0;
-    while (memberIndex < shop->partyMemberCount) {
+  for (;;) {
+    if (chooseAgain != 0) {
+      chooseAgain = 0;
+      Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
+      redraw = 2;
+      memberIndex = 0;
+      while (memberIndex < shop->partyMemberCount) {
+        unitId = shop->partyMemberIds[memberIndex];
+        if (Sanctum_NeedsService(unitId, serviceKind) != 0)
+          break;
+        memberIndex++;
+      }
+    }
+
+    if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
-      if (Sanctum_NeedsService(unitId, serviceKind) != 0)
-        break;
-      memberIndex++;
+      MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
+      shop->mode = 3;
+      if (redraw == 2) {
+        Menu_CreateOwnerEntryObjectsFar(memberIndex / 4 * 4);
+        wait(1);
+      }
+      Sanctum_HighlightMembers(listWindow, memberIndex);
+      Sanctum_DrawFee(priceWindow, unitId);
+      redraw = 0;
     }
-  }
 
-  if (redraw != 0) {
-    unitId = shop->partyMemberIds[memberIndex];
-    MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
-    shop->mode = 3;
-    if (redraw == 2) {
-      Menu_CreateOwnerEntryObjectsFar(memberIndex / 4 * 4);
+    if ((gInput.pressed & KEY_A) != 0) {
       wait(1);
+      price = Sanctum_ServicePrice(unitId, serviceKind);
+      if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
+        Sound_PlayFar(SE_MENU_CANCEL);
+        continue;
+      }
+      WindowSprite_PrepareForRedrawFar(listWindow);
+      MessageArgument_PushFar(unitId, 1);
+      MessageArgument_PushFar(price, 5);
+      messageBase = (s32)MsgReviving;
+      Sanctum_ShowKeeperMessage(messageBase);
+      if (Sanctum_AskYesNo(0) != 0) {
+        Sanctum_ShowKeeperMessageHidingCursor(messageBase + 2);
+        chooseAgain = 1;
+        continue;
+      }
+      if ((u32)price > gMainRoutineWork.coins) {
+        Sound_PlayFar(SE_MENU_CANCEL);
+        Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
+        chooseAgain = 1;
+        continue;
+      }
+      MessageArgument_PushFar(unitId, 1);
+      Sanctum_ShowKeeperMessage(messageBase + 3);
+      Message_CloseFinishedWindowsFar();
+      Sanctum_ApplyService(unitId, serviceKind);
+      Sanctum_RunMemberIconBurst(memberIndex % 4);
+      Party_AdjustCoinsFar(-price);
+      Shop_DrawMoney();
+      MessageArgument_PushFar(unitId, 1);
+      Sanctum_ShowKeeperMessage(messageBase + 4);
+      if (Sanctum_CountMembersInNeed() != 0) {
+        chooseAgain = 1;
+        continue;
+      }
+      break;
     }
-    Sanctum_HighlightMembers(listWindow, memberIndex);
-    Sanctum_DrawFee(priceWindow, unitId);
-    redraw = 0;
-  }
-
-  if ((gInput.pressed & KEY_A) != 0) {
+    if ((gInput.pressed & KEY_B) != 0) {
+      Sound_PlayFar(SE_MENU_CANCEL);
+      break;
+    }
+    redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4);
     wait(1);
-    price = Sanctum_ServicePrice(unitId, serviceKind);
-    if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
-      Sound_PlayFar(SE_MENU_CANCEL);
-      goto loop;
-    }
-    WindowSprite_PrepareForRedrawFar(listWindow);
-    MessageArgument_PushFar(unitId, 1);
-    MessageArgument_PushFar(price, 5);
-    messageBase = (s32)MsgReviving;
-    Sanctum_ShowKeeperMessage(messageBase);
-    if (Sanctum_AskYesNo(0) != 0) {
-      Sanctum_ShowKeeperMessageHidingCursor(messageBase + 2);
-      chooseAgain = 1;
-      goto loop;
-    }
-    if ((u32)price > gMainRoutineWork.coins) {
-      Sound_PlayFar(SE_MENU_CANCEL);
-      Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
-      chooseAgain = 1;
-      goto loop;
-    }
-    MessageArgument_PushFar(unitId, 1);
-    Sanctum_ShowKeeperMessage(messageBase + 3);
-    Message_CloseFinishedWindowsFar();
-    Sanctum_ApplyService(unitId, serviceKind);
-    Sanctum_RunMemberIconBurst(memberIndex % 4);
-    Party_AdjustCoinsFar(-price);
-    Shop_DrawMoney();
-    MessageArgument_PushFar(unitId, 1);
-    Sanctum_ShowKeeperMessage(messageBase + 4);
-    if (Sanctum_CountMembersInNeed() != 0) {
-      chooseAgain = 1;
-      goto loop;
-    }
-    goto done;
   }
-  if ((gInput.pressed & KEY_B) != 0) {
-    Sound_PlayFar(SE_MENU_CANCEL);
-    goto done;
-  }
-  {
-    s32 count = shop->partyMemberCount;
-    /* FAKEMATCH(temporary): the member count read into a local of its own. */
-    redraw = MenuGrid_MoveCursor(&memberIndex, count, 4);
-  }
-  wait(1);
-  goto loop;
 
-done:
   Menu_ReleaseEntryObjectsFar();
   Window_CloseFar(priceWindow, 2);
   Window_CloseFar(listWindow, 2);

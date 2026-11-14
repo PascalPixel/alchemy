@@ -45,8 +45,10 @@ void WorldMap_InitializePerspective(void) {
   view->limitY = px(16352);
   view->script = NULL;
   view->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
-  Io_Write16(0x3f9e, &REG_BLDCNT);
-  Io_Write16(0x1010, &REG_BLDALPHA);
+  Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                 BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
+             &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   REG_BLDY = 0;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
                       gMapCellBuffer);
@@ -55,9 +57,14 @@ void WorldMap_InitializePerspective(void) {
   view->fadeStep = 128;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data199),
                       gData_0202e000);
-  Io_Write16(0xa80a, &REG_BG3CNT);
-  Io_Write16(0xaa0e, &REG_BG2CNT);
-  Io_Write16(0x8501, &REG_BG1CNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG3CNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(10) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5) | BGCNT_SIZE(2),
+             &REG_BG1CNT);
   Io_Write16(0x100, &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
@@ -121,7 +128,7 @@ void WorldMap_InitializePerspective(void) {
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   REG_MOSAIC = 0;
-  Io_Write16(0x42, &REG_DISPCNT);
+  Io_Write16(DISPCNT_MODE_2 | DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   gBgScroll[1].x = 0;
   gBgScroll[1].y = 0;
   gBgScroll[2].x = 0;

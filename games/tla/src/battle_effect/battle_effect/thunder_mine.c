@@ -119,9 +119,9 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
   buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(1);
   if (mode == 0) {
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
   } else {
-    REG_BLDALPHA = 0x810;
+    REG_BLDALPHA = BLEND_ALPHA(16, 8);
   }
   BattleEffect_LoadBlitter(
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
@@ -428,7 +428,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   pictures = PICTURES;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   rects = blitters;
   BattleEffect_FetchRectangleBlitters(0, (void **)rects);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -838,7 +838,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
       *row++ = shade;
     }
   }
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   flip = 4;
   if (effect->side != 0) {
     flip = 0;
@@ -953,7 +953,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
           } else {
             work->particles[0].velocityX = px(32);
           }
-          REG_BG2CNT = 0x784;
+          REG_BG2CNT =
+              BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
         }
         if (frame == 72) {
           work->shakeFrames = 8;

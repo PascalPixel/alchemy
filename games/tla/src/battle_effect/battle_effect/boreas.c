@@ -46,7 +46,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_WININ = 0x2137;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(1, 0);
   REG_WIN0H = 0xf0f0;
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
@@ -63,10 +64,12 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   BattleEffect_SpawnObjects(9, FORMATION_ICE_BLOCKS, 1);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = 2;
   work->transferValue = 50;
 
@@ -311,7 +314,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   for (i = 0; i != 9; i++)
     Sprite_DestroyFar(work->objects[i]);
   BattleEffect_SetupBlendedDisplay();
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 
   for (i = 0; i != 64; i++) {

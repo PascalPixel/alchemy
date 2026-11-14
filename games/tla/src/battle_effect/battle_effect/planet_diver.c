@@ -354,8 +354,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
-    /* FAKEMATCH(barrier): an empty asm after the look-at call. */
-    __asm__("");
     row = work->bg2xLines;
     sway = Trig_Sin((frame << 15) /
                     (Data_08197864[mode * 2 + 1] + effect->count * 20)) *

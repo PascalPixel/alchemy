@@ -293,7 +293,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   scene = SYSTEM_WORK->scene;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT[0] = 0;
   PLTT[1] = 0;
   work->transferMode = 0;
@@ -308,7 +308,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   gBgScroll[1].x = 0;
   local264.value = 255;
   BattleActor_SpawnObjectsForListFar(&local264, 0);
-  REG_WININ = 0x2737;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = 240;
   wait(1);
   Palette_LoadBasicSpriteColors();
@@ -316,8 +318,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -20, -20);
   BattleEffect_WipeCanvas(1, 1);
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   blit = routine;
@@ -385,7 +387,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                              work->buffer + 0x1000, 1, 1);
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
   Iwram_CopyWords(PLTT, source, 128);
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_BG2X = 0x800;
   posX = 0;
   posZ = 0;
@@ -436,7 +438,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame == 0) {
       work->transferMode = 2;
       work->transferValue = 75;
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       {
         u32 hidden;
         /* FAKEMATCH(temporary): the mask held in a halfword struct set in the
@@ -1352,7 +1354,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   Palette_LoadBasicSpriteColors();
-  REG_DISPCNT = 0x141;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   wait(1);
   scene->unk867 = 0;
   BattleBackground_LoadFar(1, scene->unk670, 24);
@@ -1373,9 +1375,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   work->transferValue = 0;
   work->transferMode = 2;
   work->transferValue = 50;
-  REG_BLDALPHA = 0x410;
+  REG_BLDALPHA = BLEND_ALPHA(16, 4);
   REG_BG2X = 0;
-  REG_BG2CNT = 0x786;
+  REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
   for (i = 1; i != 64; i++) {
     s32 q = i * 2 / 3;
     s32 r = 31 - q;
@@ -1496,7 +1499,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                                    SPRITE_BUFFER, 1, 0);
         Sound_PlayFar(SE_CLATTER);
         Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-        REG_BG2CNT = 0x784;
+        REG_BG2CNT =
+            BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
         work->transferMode = 2;
         work->transferValue = 50;
         for (i = 0; i != arg->count; i++) {

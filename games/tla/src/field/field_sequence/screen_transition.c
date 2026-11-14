@@ -1873,7 +1873,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
-  Io_Write16(16, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, 28);
   if (object == NULL)
@@ -2142,8 +2142,9 @@ void Heading_Show(s32 heading) {
   }
   REG_DISPCNT &= 0x1fff;
   REG_DISPCNT |= 0x2000;
-  REG_WININ = 0x3f;
-  REG_WINOUT = 0x3e;
+  REG_WININ = WININ_WIN0_ALL;
+  REG_WINOUT = WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 | WINOUT_WIN01_BG3 |
+               WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR;
   REG_WIN0H = 0x7878;
   REG_WIN0V = 0x1848;
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);

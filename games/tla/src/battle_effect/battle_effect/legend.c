@@ -108,7 +108,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   // target; mirror the rune's corner into the sheet; load the sparks, the
   // sword and the flash.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->side == 0)
     BattleEffect_LoadBlitter(
         HEAP_SLOT_BLITTER,
@@ -425,7 +425,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
   // Set up the canvas, a clipped additive blitter, the sparks, and the
   // card's picture and its extras.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(
       HEAP_SLOT_BLITTER,
       BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
@@ -504,7 +504,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       if (mode != CARD_BRAMBLE) {
         work->transferMode = 2;
         work->transferValue = 50;
-        REG_BLDCNT = 0x3f44;
+        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       }
     }
 

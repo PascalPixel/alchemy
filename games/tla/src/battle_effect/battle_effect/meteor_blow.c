@@ -209,13 +209,15 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   BattleEffect_SpawnObjects(1, 0x28a, 1);
   REG_BLDCNT = blank;
   REG_BG2PA = 0x100;
-  REG_BG1CNT = 0x1f81;
-  REG_BG2CNT = 0x2787;
+  REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+  REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 3200);
-  REG_BLDCNT = 0x3f46;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDCNT =
+      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   projected = work->sheet + 0x5740;
   meshA = work->sheet + 0x5f40;
   triangles = work->sheet + 0x6340;
@@ -304,7 +306,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = (16 - fade) | 0x1000;
     }
     if (frame == 115) {
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
     }
     if (frame == 116) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
@@ -509,10 +511,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BG2Y = -0x1000;
-  REG_BLDALPHA = 0x1010;
-  REG_BG2CNT = 0x784;
-  REG_WININ = 0x2737;
-  REG_WINOUT = 0x721;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 |
+               WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2;
   REG_WIN0V = 0x107c;
   REG_WIN1V = 0x88;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);

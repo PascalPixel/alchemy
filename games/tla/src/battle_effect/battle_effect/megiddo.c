@@ -172,7 +172,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   sheet2 = gData_02014000;
   BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
@@ -239,7 +239,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
                                  work->sheet + 0x2400, 1, 0);
       Graphics_LoadGreyRamp();
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       if (!effect->side) {
         x = 0xa00000;
       } else {

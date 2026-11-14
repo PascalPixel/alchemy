@@ -44,9 +44,9 @@ void SpriteViewer_Run(void) {
   }
   layers[0].enabled = 1;
   gDebugMode = 2;
-  REG_BLDCNT = 0x3f42;
+  REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   *(volatile u16 *)BG_PLTT = 0x7c00;
-  REG_DISPCNT = 0x1140;
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;
   ScreenFade_FromBlack(1);
 
 restart:

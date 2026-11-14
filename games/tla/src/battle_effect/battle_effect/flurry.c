@@ -119,7 +119,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->prelude == 1)
     BattleEffect_RunDjinniEntrance(effect, PREPARE(7, effect->side, 2), screen,
                                    otherPoint);

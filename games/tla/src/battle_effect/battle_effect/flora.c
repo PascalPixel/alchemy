@@ -286,10 +286,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       sprites[i * 18 + 590 + j] = v;
     }
   }
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x100;
-  REG_BLDALPHA = 0x100e;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0;
   posX = 128;
   posY = 44;
@@ -829,8 +831,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   work->transferValue = 0;
   REG_BG2X = 0;
   REG_BLDCNT = 0;
-  REG_BG2CNT = 0x784;
-  REG_BLDALPHA = 0x1010;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2PA = 0x80;
   {
     /* FAKEMATCH(pin): e kept in r6. */
@@ -1188,7 +1190,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);

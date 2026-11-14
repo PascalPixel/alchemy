@@ -167,10 +167,12 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   Iwram_FillWords(canvas, 0x3c00, 0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x3c00, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0;
   baseX = 0;
   baseY = 0;
@@ -454,7 +456,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     BattleEffect_TintBattler(effect->actors[i], 0, -1, -1, 0);
   }
   Palette_LoadBasicSpriteColors();
-  REG_DISPCNT = 1;
+  REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
   // Two empty once-only blocks before the fills: without them, 18 differ.
@@ -465,19 +467,22 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   } while (0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
   wait(1);
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f46;
-  REG_DISPCNT = 0x7741;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT =
+      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   gCameraSceneParameters[4] = 120;
   work->transferMode = 3;
   work->transferValue = 0x02020202;
   Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   effect->actors[effect->count] = 0xff;
   BattleActor_SpawnObjectsForListFar(effect->actors, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
                              0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   for (i = 0; i != 120; i++) {
     s32 v = i / 2;
 
@@ -845,7 +850,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   work->vblanksSinceTransfer = 1;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,

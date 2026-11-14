@@ -88,7 +88,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   graphics = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -1101,11 +1101,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   work->transferMode = 0;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  REG_DISPCNT = 0x7741;
-  REG_BG2CNT = 0x784;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
@@ -1114,8 +1116,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   wait(1);
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = 2;
   work->transferValue = 75;
   savedZoom = camera[27];
@@ -1150,7 +1152,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       if (frame <= 175) {
         frame = 176;
       } else if ((u32)(frame - 177) <= 268) {
-        REG_BLDALPHA = 0x1010;
+        REG_BLDALPHA = BLEND_ALPHA(16, 16);
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->transferPending = 1;
         wait(1);
@@ -1305,7 +1307,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Canvas_BlitAtFoot(work->sheet, scene->xPixels, scene->yPixels, size);
       }
       if (frame == 175) {
-        REG_BG2CNT = 0x785;
+        REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                     BGCNT_SCREEN_BASE(7);
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         Iwram_FillWords(FADE_PLTT, 0x100, 0x7fff7fff);
       }
@@ -1500,8 +1503,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The drops: their frames, the sparks' cells and the spray.
     if (frame == 230) {
-      REG_BLDALPHA = 0x1010;
-      REG_BG2CNT = 0x784;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       for (i = 1; i != 8; i++) {
         s32 next;
 
@@ -1610,7 +1613,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         for (j = 0; j != 8; j++)
           work->sheet[0x30a + i * 16 + j] = work->sheet[0x3ef + i * 8 - j];
       }
-      REG_BLDALPHA = 0x1008;
+      REG_BLDALPHA = BLEND_ALPHA(8, 16);
     }
     if ((u32)(frame - 414) <= 7) {
       /* FAKEMATCH(temporary): the blend level copied into alpha. */
@@ -1665,7 +1668,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       if (frame == 422) {
         work->transferMode = 0;
         work->transferValue = 0;
-        REG_BLDALPHA = 0x1010;
+        REG_BLDALPHA = BLEND_ALPHA(16, 16);
       }
     }
     if ((u32)(frame - 423) <= 19) {

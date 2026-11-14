@@ -162,7 +162,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   wait(1);
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_SetupCanvasTileMap();
-  REG_BG1CNT = 0x1f80;
+  REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   wait(1);
   if (kind == 5 || kind == 6) {
     if (effect->side == 0) {
@@ -243,7 +243,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The layer is centred on the first target, kept within 128 pixels.
-  REG_BG1CNT = 0x1f81;
+  REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectSprite(effect->actors[0], &anchor);
   if (effect->side == 0)
     shake = 96 - anchor.x;
@@ -427,7 +427,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
                                         130);
   wait(1);
   BattleEffect_SetupCanvasTileMap();
-  REG_BG1CNT = 0x1f80;
+  REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(
         HEAP_BLITTER,
@@ -550,7 +550,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), words);
   work->transferMode = 2;
   work->transferValue = 75;
-  REG_BG1CNT = 0x1f81;
+  REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   if (effect->side == 0)
     shake = 32 - anchor.x;

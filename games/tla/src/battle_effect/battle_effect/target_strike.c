@@ -194,7 +194,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (mode == 8) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
@@ -697,7 +697,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
-  REG_BLDALPHA = 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(0, 16);
 
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
@@ -754,7 +754,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
     if (frame > 103) {
       REG_BLDALPHA = (120 - frame) | 0x1000;
       if (frame == 104)
-        REG_BLDCNT = 0x3f44;
+        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     }
 
     // The drift picks the picture; a dagger going left is drawn mirrored.
@@ -849,7 +849,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  REG_BLDALPHA = 0x100c;
+  REG_BLDALPHA = BLEND_ALPHA(12, 16);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
@@ -989,7 +989,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   view->secondMode = 1;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = 0;
   REG_BG2X = 0;
@@ -1002,8 +1002,10 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   REG_WIN0V = 0x1088;
   REG_WIN1H = 0xf0;
   REG_WIN1V = 0x1088;
-  REG_WININ = 0x3537;
-  REG_WINOUT = 0x3f21;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
 
   i = 0;
   for (k = 0; k != 16; k++) {
@@ -1019,7 +1021,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
   work->transferMode = 1;
   work->transferValue = 0;

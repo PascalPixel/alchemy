@@ -130,7 +130,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data102, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
@@ -159,7 +159,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, gData_02014000, 0,
                                  0);
       Graphics_LoadGreyRamp();
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != 64; i++)
         work->particles[i].variant = -1;
     }
@@ -536,10 +536,13 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   savedScrollX = gBgScroll[1].x;
   transition = Ram_HeapSlots->transitionWork;
   BattleEffect_StartCanvasLayer(3);
-  REG_DISPCNT = 0x7741;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f42;
-  REG_BG2CNT = 0x787;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 0;
   work->transferMode = 2;

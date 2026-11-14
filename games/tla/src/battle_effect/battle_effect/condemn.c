@@ -48,7 +48,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   BattleEffect_StartTiledCanvas(0x2000);
   REG_BG2PA = 0x100;
   cells = gMapCellBuffer;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, cells, 1, 0);
@@ -95,7 +95,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
       visible = 0;
     }
     if (frame == 25) {
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       visible = 1;
     }
     if (frame == 48) {
@@ -108,7 +108,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
       visible = 0;
     }
     if (frame == 49) {
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       visible = 1;
     }
 

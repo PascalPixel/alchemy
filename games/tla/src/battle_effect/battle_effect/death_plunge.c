@@ -124,7 +124,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     BattleEffect_LoadBlitter(
         HEAP_SLOT_BLITTER,
         BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
   } else {
     work->transferMode = 2;
     work->transferValue = 75;

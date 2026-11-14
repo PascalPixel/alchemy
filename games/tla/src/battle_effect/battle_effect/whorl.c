@@ -138,7 +138,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
     frames = 38;
     BattleEffect_RunDjinniEntrance(effect, (effect->side << 4) | 163, screen,
                                    point);
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
   } else if (mode == 2 || mode == 4) {
     s32 *caster = BattleObject_GetFar(effect->actor)->object;
 
@@ -170,7 +171,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
                                Ram_MapCellBuffer + 0x5000, 1, 0);
     frames = 52;
   } else {
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
     frames = 52;
   }
   if (!effect->side) {
@@ -179,7 +181,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
     BattleEffect_LoadBlitter(SLOT_BLITTER, 23);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);

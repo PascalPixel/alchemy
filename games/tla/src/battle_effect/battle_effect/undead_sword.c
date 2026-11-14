@@ -193,7 +193,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
@@ -415,9 +415,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_StartCanvasLayer(1);
   mesh = gData_02014000;
   if (mode == 0) {
-    REG_BLDALPHA = 0xc10;
+    REG_BLDALPHA = BLEND_ALPHA(16, 12);
   } else {
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
   }
   work->transferMode = 2;
   work->transferValue = 50;
@@ -803,7 +803,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == 0) {
     BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 3,
                                    (s32 *)&screen, (s32 *)&other);
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
   } else {
     BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 35,
                                    (s32 *)&screen, (s32 *)&other);
@@ -817,7 +818,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
                                             COMPOSITE_FLIP_X));
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->transferMode = 2;
   work->transferValue = 50;
   transfer = BattleEffect_ProcessPendingGraphicsTransfer;
@@ -1059,7 +1060,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EffectPosition_ProjectBattler(effect->actors[0], &pos);
   centerX = pos.x / 2;
   BattleEffect_LoadBlitter(

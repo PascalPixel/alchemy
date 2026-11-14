@@ -246,7 +246,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   }
 
   wait(30);
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, 1);
   for (index = 0; index != 16; index++) {
@@ -285,7 +285,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 
   wait(10);
   BattleObject_Put();
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, 1);
   for (index = 0; index != 16; index++) {

@@ -235,11 +235,6 @@ struct RockWork {
 void EffectSprite_Init(struct RockSprite *sprite, s32 width, s32 height,
                        u32 attributes, s32 tile);
 
-static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline. */
-  Task_Add(func, priority);
-}
-
 void Func_0200029c(void) {
   struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
   s32 entry;
@@ -269,7 +264,7 @@ void Func_0200029c(void) {
 
     work->next = zero;
   }
-  StartTask(Func_0200015c, 0x480);
+  FieldTask_AddFrame(Func_0200015c, 0x480);
 }
 
 #include "fixed_math.h"

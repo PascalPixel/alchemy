@@ -195,16 +195,11 @@ void Func_02000224(void) {
   Unit_Calculate(6);
 }
 
-static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
-  Unit_AddHp(owner, delta);
-}
-
 void Func_0200026c(void) {
   u8 *state;
 
   Message_ShowCentered((s32)MsgTheBodyIs, 1);
-  Unit_AddHpBy(4, -100);
+  FieldUnit_AddHp(4, -100);
   FieldUnit_AddHp(5, -100);
   FieldUnit_AddHp(6, -33);
   Unit_AddPp(4, -50);

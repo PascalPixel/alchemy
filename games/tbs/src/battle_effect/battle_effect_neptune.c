@@ -323,10 +323,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (z > 4) {
         z = 4;
       }
-      blit[1](canvas,
-              work->sheet + gBattleEffect_FlarePictures[z - 1] +
-                  NEPTUNE_FLARE_SHEET,
-              108 - z, 60 - z, z * 2, z * 2);
+      EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
+                        60, z);
     }
     if (frame >= 192 && frame < 200) {
       s32 z;
@@ -334,10 +332,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (z > 6) {
         z = 6;
       }
-      blit[1](canvas,
-              work->sheet + gBattleEffect_FlarePictures[z - 1] +
-                  NEPTUNE_FLARE_SHEET,
-              108 - z, 60 - z, z * 2, z * 2);
+      EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
+                        60, z);
     }
     if (frame > 199) {
       s32 z;
@@ -346,19 +342,15 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (z > 8) {
         z = 8;
       }
-      blit[1](canvas,
-              work->sheet + gBattleEffect_FlarePictures[z - 1] +
-                  NEPTUNE_FLARE_SHEET,
-              108 - z, 60 - z, z * 2, z * 2);
+      EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
+                        60, z);
       if (frame <= 213) {
         z = u / 4 + 1;
         if (z > 4) {
           z = 4;
         }
-        blit[1](canvas,
-                work->sheet + gBattleEffect_FlarePictures[z - 1] +
-                    NEPTUNE_FLARE_SHEET,
-                100 - z, 52 - z, z * 2, z * 2);
+        EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET,
+                          100, 52, z);
       }
     }
     if (frame >= 214 && frame < 222) {

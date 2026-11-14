@@ -15,10 +15,10 @@
 #include "field_sprite.h"
 #include "field/event_inline.h"
 
-void Func_02000b30(s32 id, s32 cue);
+void AnkohlRuins_SettleObject(s32 id, s32 cue);
 void AnkohlRuins_RaiseFirstSand(void);
 void AnkohlRuins_RaiseSecondSand(void);
-void Func_02001f7c(void);
+void AnkohlRuins_RideRaftDown(void);
 
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
@@ -54,7 +54,7 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 #include "system/task.h"
 #include "system/frame.h"
 
-struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
+struct Actor *AnkohlRuins_CreateActor(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = FieldActor_Create(type, x, y, z);
 
   if (object != NULL) {
@@ -89,14 +89,14 @@ extern s16 gAnkohlRuins_SandTime;
 extern s32 gAnkohlRuins_SandStep;
 extern s32 gAnkohlRuins_SandRoom;
 
-extern u32 gData_0200307c[];
-extern u32 gData_0200309c[];
+extern u32 gAnkohlRuins_Room1Regions[];
+extern u32 gAnkohlRuins_Room2Regions[];
 
 const struct ActorPlacement *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
-    return (const struct ActorPlacement *)gData_0200307c;
+    return (const struct ActorPlacement *)gAnkohlRuins_Room1Regions;
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
-    return (const struct ActorPlacement *)gData_0200309c;
+    return (const struct ActorPlacement *)gAnkohlRuins_Room2Regions;
   return 0;
 }
 
@@ -106,7 +106,7 @@ static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }
 
-void Func_02000384(void) {
+void AnkohlRuins_JumpDownLedge(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_Start(gMainRoutineWork.currentOwner, 6, 0x1000);
   Event_PlaySound(SE_310);
@@ -115,7 +115,8 @@ void Func_02000384(void) {
 }
 
 // Includes the shared FieldEffect_AdvanceMotion in this scene.
-// Neither it nor its caller Func_02000418 exists in the Japanese scene.
+// Neither it nor its caller AnkohlRuins_LandFromFall exists in the Japanese
+// scene.
 #if TLA_PATCH_1
 #include "../field/field_effect/advance_motion.c"
 #endif
@@ -126,7 +127,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #if TLA_PATCH_1
 
-void Func_02000418(void) {
+void AnkohlRuins_LandFromFall(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
   u32 i;
@@ -185,7 +186,7 @@ loop:
 
 #endif
 
-s32 Func_020005c0(struct Actor *object) {
+s32 AnkohlRuins_ClearScriptedActorSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   ((struct FieldSprite *)object->sprite)->priority = 2;
   object->priorityFlags &= 0xfe;
@@ -221,18 +222,18 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gAnkohlRuins_Placements;
 }
 
-void Func_02000698(void) {
+void AnkohlRuins_SinkIntoSand(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 2;
 }
 
-void Func_020006b4(void) {
+void AnkohlRuins_RiseFromSand(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
 // Copies the cells under the object with the given id in the rooms that have
 // them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
 // rows that flag 0x205 opens (always, in Japanese).
-void Func_020006d0(s32 unused, s32 id) {
+void AnkohlRuins_StartMovingFace(s32 unused, s32 id) {
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 4, 69);
@@ -273,7 +274,7 @@ void Func_020006d0(s32 unused, s32 id) {
 // Copies the cells the object with the given id has pushed open in rooms 1,
 // 3, 4 and 5, and sets flags 0x9c6 to 0x9cb when it stands at the end of its
 // track.
-void Func_02000850(s32 unused, s32 id) {
+void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
@@ -323,7 +324,7 @@ void Func_02000850(s32 unused, s32 id) {
   }
 }
 
-void Func_02000a68(s32 unused, s32 objectId) {
+void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
   s32 id = objectId;
   struct Actor *object = Actor_Get(id);
   s16 frames = 60;
@@ -358,8 +359,8 @@ void Func_02000a68(s32 unused, s32 objectId) {
 
 // Runs the cue, if any, and sets the object's motion flags to 3 while it
 // moves, for at most 60 frames until its vertical speed is 0, then clears
-// them ten frames later; Func_02000100 of Gaia Rock is the same function.
-void Func_02000b30(s32 id, s32 cue) {
+// them ten frames later; GaiaRock_DropPillar of Gaia Rock is the same function.
+void AnkohlRuins_SettleObject(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
   /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first. */
   register u8 *flags asm("r2");
@@ -390,7 +391,8 @@ void Func_02000b30(s32 id, s32 cue) {
 
 // Places count effects in a row, rows times, each row two pixels further down,
 // waiting between rows.
-void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
+void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
+                          s32 count) {
   struct EffectOptions params;
   s32 row;
   s32 left;
@@ -425,9 +427,10 @@ void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
 
 // When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
 // each sets its flag (0x9d9, 0x9da); once both are set, shakes the screen,
-// copies the cells of rows 2 to 6 and 13 in two columns and has Func_02000b78
-// place five objects between them, as Func_02000e60 does for object 8.
-void Func_02000c24(s32 unused, s32 id) {
+// copies the cells of rows 2 to 6 and 13 in two columns and has
+// AnkohlRuins_PourSand place five objects between them, as
+// AnkohlRuins_PlaceFacePiece does for object 8.
+void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 column = object->x >> 20;
   s32 row = object->z >> 20;
@@ -439,11 +442,11 @@ void Func_02000c24(s32 unused, s32 id) {
 
   if (id == 9 && column == 12 && row == 45) {
     Event_SetFlag(0x9d9);
-    Func_02000b30(9, 181);
+    AnkohlRuins_SettleObject(9, 181);
   }
   if (id == 10 && column == 14 && row == 45) {
     Event_SetFlag(0x9da);
-    Func_02000b30(10, 181);
+    AnkohlRuins_SettleObject(10, 181);
   }
   if (!GameFlag_Get(0x9da) || !GameFlag_Get(0x9d9))
     return;
@@ -462,20 +465,20 @@ void Func_02000c24(s32 unused, s32 id) {
   MapGrid_CopyCells(16, 27, 3, 2, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 2, toColumn, highRow);
   rise = -40;
-  Func_02000b78(3, 15, 200, rise, 0x2e8, kind = 3);
+  AnkohlRuins_PourSand(3, 15, 200, rise, 0x2e8, kind = 3);
   MapGrid_CopyCells(16, 27, 3, 3, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 3, toColumn, highRow);
-  Func_02000b78(3, 10, 200, rise, 0x2f8, kind);
+  AnkohlRuins_PourSand(3, 10, 200, rise, 0x2f8, kind);
   MapGrid_CopyCells(16, 27, 3, 4, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 4, toColumn, highRow);
-  Func_02000b78(3, 10, 200, rise, 0x308, kind);
+  AnkohlRuins_PourSand(3, 10, 200, rise, 0x308, kind);
   MapGrid_CopyCells(16, 27, 3, 5, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 5, toColumn, highRow);
-  Func_02000b78(3, 10, 200, rise, 0x318, kind);
+  AnkohlRuins_PourSand(3, 10, 200, rise, 0x318, kind);
   MapGrid_CopyCells(16, 27, 3, 6, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 6, toColumn, highRow);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Func_02000b78(3, 10, 200, rise, 0x328, kind);
+  AnkohlRuins_PourSand(3, 10, 200, rise, 0x328, kind);
   MapGrid_CopyCells(16, 27, 3, 13, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 13, toColumn, highRow);
   Event_End();
@@ -483,8 +486,8 @@ void Func_02000c24(s32 unused, s32 id) {
 
 // When the object with id 8 stands on cell (12, 5): sets flag 0x9dc, shakes
 // the screen, copies the cells of rows 2 to 6 and 16 in two columns and has
-// Func_02000b78 place four objects between them.
-void Func_02000e60(s32 unused, s32 id) {
+// AnkohlRuins_PourSand place four objects between them.
+void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
   struct Actor *pillar = Actor_GetById(id);
   s32 column = pillar->x >> 20;
   s32 row = pillar->z >> 20;
@@ -492,7 +495,7 @@ void Func_02000e60(s32 unused, s32 id) {
   if (id != 8 || column != 12 || row != 5)
     return;
   Event_SetFlag(0x9dc);
-  Func_02000b30(8, 181);
+  AnkohlRuins_SettleObject(8, 181);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(15);
@@ -504,16 +507,16 @@ void Func_02000e60(s32 unused, s32 id) {
   Event_PlaySound(SE_575);
   MapGrid_CopyCells(35, 6, 7, 2, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 2, 10, 71);
-  Func_02000b78(6, 10, 200, -40, 124, 3);
+  AnkohlRuins_PourSand(6, 10, 200, -40, 124, 3);
   MapGrid_CopyCells(35, 6, 7, 3, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 3, 10, 71);
-  Func_02000b78(3, 10, 184, -40, 140, 5);
+  AnkohlRuins_PourSand(3, 10, 184, -40, 140, 5);
   MapGrid_CopyCells(35, 6, 7, 4, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 4, 10, 71);
-  Func_02000b78(3, 10, 184, -40, 156, 5);
+  AnkohlRuins_PourSand(3, 10, 184, -40, 156, 5);
   MapGrid_CopyCells(35, 6, 7, 5, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 5, 10, 71);
-  Func_02000b78(3, 10, 184, -40, 172, 5);
+  AnkohlRuins_PourSand(3, 10, 184, -40, 172, 5);
   MapGrid_SetShakeFixed(-1, -1, 0xe666);
   MapGrid_CopyCells(35, 6, 7, 6, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 6, 10, 71);
@@ -523,7 +526,7 @@ void Func_02000e60(s32 unused, s32 id) {
   Event_End();
 }
 
-void Func_0200104c(s32 unused, s32 id) {
+void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
@@ -550,7 +553,7 @@ void Func_0200104c(s32 unused, s32 id) {
 
 extern struct MapCell gMapCellBuffer[];
 
-void Func_020010f4(void) {
+void AnkohlRuins_FlowWithSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
@@ -585,7 +588,7 @@ void Func_020010f4(void) {
   companion->z += 0x8000;
 }
 
-void Func_020011c0(void) {
+void AnkohlRuins_PushedOffLedge(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
 
   Event_Start();
@@ -607,19 +610,19 @@ void Func_020011c0(void) {
   FieldEvent_Wait(10);
   FieldCamera_MoveToFixed(-1, -1, -1, 0);
   Event_PlaySound(SE_DUST_PUFF);
-  Func_02000b30(gMainRoutineWork.currentOwner, 188);
+  AnkohlRuins_SettleObject(gMainRoutineWork.currentOwner, 188);
   object->actionFlags = 1;
   Event_End();
 }
 
-void Func_0200124c(s32 a, s32 id) {
+void AnkohlRuins_FinishPushing(s32 a, s32 id) {
   if ((u32)(id - 9) <= 1)
-    Func_02000c24(a, id);
+    AnkohlRuins_PlacePillarPair(a, id);
   else
-    Func_02000850(a, id);
+    AnkohlRuins_FinishMovingFace(a, id);
 }
 
-void Func_02001264(s32 a, s32 id) {
+void AnkohlRuins_WhirlwindOnOvergrowth(s32 a, s32 id) {
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
     Event_SetFlag(id + 0x97f);
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
@@ -1007,7 +1010,8 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     }                                                                          \
   }
 
-DEFINE_ANKOHL_RUINS_OPEN_ONCE(Func_02001ddc, 0x9e2, 14, 65, 15, 5)
+DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenFirstSandDoor, 0x9e2, 14, 65, 15,
+                              5)
 
 void AnkohlRuins_PressSecondSandSwitch(void) {
   s32 done = AnkohlRuins_FlagCheck(0x203);
@@ -1031,14 +1035,15 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
   }
 }
 
-DEFINE_ANKOHL_RUINS_OPEN_ONCE(Func_02001f04, 0x9e3, 2, 83, 1, 23)
+DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor, 0x9e3, 2, 83, 1,
+                              23)
 
 // Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
 // and the event work's unk1cc object with it while the leader stands on it;
 // copies the cells it passes in rows 31 to 37 (flag 0x146), and past row 41
 // removes itself, stops the shaking, copies the landing cells and sets flag
 // 0x201.
-void Func_02001f7c(void) {
+void AnkohlRuins_RideRaftDown(void) {
   struct Actor *rider = gFieldWork->camera;
   struct Actor *raft = Actor_GetById(9);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1074,7 +1079,7 @@ void Func_02001f7c(void) {
     Event_ClearFlag(0x146);
   }
   if (row > 41) {
-    FieldTask_Remove(Func_02001f7c);
+    FieldTask_Remove(AnkohlRuins_RideRaftDown);
     MapGrid_SetShakeFixed(-1, -1, 0xe666);
     MapGrid_CopyCellAttributes(41, 48, 3, 2, 13, 41);
     Event_SetFlag(FLAG_SCENE_TEMP_01);
@@ -1084,11 +1089,11 @@ void Func_02001f7c(void) {
   }
 }
 
-void Func_020020fc(void) {
+void AnkohlRuins_BoardRaft(void) {
   s32 z = Actor_Get(9)->z >> 20;
 
   if (Event_GetFlag(0x9dd) != 0 && z == 24) {
-    s32 found = Task_Find(Func_02001f7c);
+    s32 found = Task_Find(AnkohlRuins_RideRaftDown);
 
     if (found == -1) {
       Event_Start();
@@ -1098,7 +1103,7 @@ void Func_020020fc(void) {
       FieldEvent_Wait(10);
       FieldCamera_MoveTo(232, CAMERA_KEEP, 392, 1);
       FieldCamera_WaitForArrival();
-      Task_AddFrame(Func_02001f7c, TASK_PASS_VBLANK);
+      Task_AddFrame(AnkohlRuins_RideRaftDown, TASK_PASS_VBLANK);
       FieldEvent_Wait(40);
       EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
       FieldCamera_WaitForArrival();
@@ -1111,11 +1116,11 @@ void Func_020020fc(void) {
   }
 }
 
-void Func_020021d4(void) {
+void AnkohlRuins_BoardRaftAgain(void) {
   s32 z = Actor_Get(9)->z >> 20;
 
   if (Event_GetFlag(0x9dd) != 0 && z == 24) {
-    void (*func)(void) = Func_02001f7c;
+    void (*func)(void) = AnkohlRuins_RideRaftDown;
 
     if (Task_Find(func) == -1) {
       MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
@@ -1138,13 +1143,13 @@ extern struct Trigger gAnkohlRuins_Room5Triggers[];
 extern struct Trigger gAnkohlRuins_Room6Triggers[];
 extern struct Trigger gAnkohlRuins_Room8Triggers[];
 
-void Func_02002260(void) {
+void AnkohlRuins_PushStatueIntoGap(void) {
   struct Actor *object = Actor_Get(9);
 
   if (object->x >> 20 == 26 && object->z >> 20 == 35) {
     Event_SetFlag(0x9db);
     Event_PlaySound(SE_DUST_PUFF);
-    Func_02000b30(9, 0);
+    AnkohlRuins_SettleObject(9, 0);
     Actor_SetPosition(9, 0, 0);
     ObjectTable_Snapshot();
     FieldEvent_SetExitRequest(20);
@@ -1154,7 +1159,7 @@ void Func_02002260(void) {
 #endif
 }
 
-void Func_020022a8(void) {
+void AnkohlRuins_RevealGap(void) {
 #if TLA_PATCH_1 /* The Japanese edition does not touch flag 0x205. */
   Event_SetFlag(FLAG_SCENE_TEMP_05);
 #endif
@@ -1162,7 +1167,7 @@ void Func_020022a8(void) {
   MapGrid_CopyCells(35, 98, 3, 3, 25, 98);
 }
 
-void Func_020022e0(void) {
+void AnkohlRuins_HideGap(void) {
 #if TLA_PATCH_1
   Event_ClearFlag(FLAG_SCENE_TEMP_05);
 #endif
@@ -1170,9 +1175,9 @@ void Func_020022e0(void) {
   MapGrid_CopyCells(40, 98, 3, 3, 25, 98);
 }
 
-void Func_02002318(void) { GameFlag_Set(FLAG_SCENE_TEMP_05); }
+void AnkohlRuins_StartReveal(void) { GameFlag_Set(FLAG_SCENE_TEMP_05); }
 
-void Func_02002328(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
+void AnkohlRuins_EndReveal(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
@@ -1212,25 +1217,25 @@ void AnkohlRuins_RaiseDust(struct Actor *object) {
   }
 }
 
-void Func_020006b4(void);
-void Func_020011c0(void);
+void AnkohlRuins_RiseFromSand(void);
+void AnkohlRuins_PushedOffLedge(void);
 void AnkohlRuins_PressFirstSandSwitch(void);
-void Func_02001ddc(void);
+void AnkohlRuins_OpenFirstSandDoor(void);
 void AnkohlRuins_PressSecondSandSwitch(void);
-void Func_02001f04(void);
-void Func_020020fc(void);
-void Func_020021d4(void);
-void Func_02002260(void);
-void Func_020022a8(void);
-void Func_02002318(void);
-void Func_02002328(void);
+void AnkohlRuins_OpenSecondSandDoor(void);
+void AnkohlRuins_BoardRaft(void);
+void AnkohlRuins_BoardRaftAgain(void);
+void AnkohlRuins_PushStatueIntoGap(void);
+void AnkohlRuins_RevealGap(void);
+void AnkohlRuins_StartReveal(void);
+void AnkohlRuins_EndReveal(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
-extern s32 gData_02003268[];
-extern u32 gData_02003280[];
-extern u32 gData_02003290[];
+extern s32 gAnkohlRuins_ShrunkenSpriteScript[];
+extern u32 gAnkohlRuins_Room2Script[];
+extern u32 gAnkohlRuins_Room3Script[];
 
 struct AnkohlRuinsSpriteWork;
 
@@ -1244,9 +1249,9 @@ struct AnkohlRuinsSpriteWork;
 #include "system/ram_buffer.h"
 #include "text/msg_ids.h"
 
-void Func_020010f4(void);
+void AnkohlRuins_FlowWithSand(void);
 void FieldEffect_StartBlankOverlay();
-void Func_02000418(void);
+void AnkohlRuins_LandFromFall(void);
 void Event_StartScreenTransition(void);
 void Map_CenterOnFollowedPoint(void);
 
@@ -1384,7 +1389,7 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineWork.entrance == 17) {
-      Func_02000418();
+      AnkohlRuins_LandFromFall();
 #if TLA_PATCH_4
       Event_ClearFlag(0x122);
 #endif
@@ -1430,7 +1435,7 @@ s32 Scene_Initialize(s32 a0) {
     if (work->entrance == 1 || work->entrance == 12) {
       Event_PlaySound(SE_575);
     task:
-      Task_AddFrame(Func_020010f4, 0x480);
+      Task_AddFrame(AnkohlRuins_FlowWithSand, 0x480);
     }
   } else if (scene == (s32)&SceneId_AnkohlRuins6) {
     s16 *entrance = &work->entrance;
@@ -1517,7 +1522,7 @@ s32 Scene_Initialize(s32 a0) {
 #include "system/ram_buffer.h"
 #include "text/msg_ids.h"
 
-void Func_020010f4(void);
+void AnkohlRuins_FlowWithSand(void);
 void FieldEffect_StartBlankOverlay();
 void Event_Start(void);
 void Event_StartScreenTransition(void);
@@ -1696,7 +1701,7 @@ s32 Scene_Initialize(s32 a0) {
     if (work->entrance == 1 || work->entrance == 12) {
       Event_PlaySound(SE_575);
     task:
-      Task_AddFrame(Func_020010f4, 0x480);
+      Task_AddFrame(AnkohlRuins_FlowWithSand, 0x480);
     }
   } else if (scene == (s32)&SceneId_AnkohlRuins6) {
     s16 *entrance = &work->entrance;
@@ -1775,11 +1780,11 @@ s32 Scene_Initialize(s32 a0) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02000384(void);
-void Func_02000698(void);
+void AnkohlRuins_JumpDownLedge(void);
+void AnkohlRuins_SinkIntoSand(void);
 void AnkohlRuins_RaiseFirstSand(void);
 void AnkohlRuins_RaiseSecondSand(void);
-void Func_020022e0(void);
+void AnkohlRuins_HideGap(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
@@ -1824,12 +1829,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gData_0200307c[] = {
+u32 gAnkohlRuins_Room1Regions[] = {
     0xee0333, 0x33b0354, 0x35c00f6, 0xcffff, 0xffff, 0,
     0, 0,
 };
 
-u32 gData_0200309c[] = {
+u32 gAnkohlRuins_Room2Regions[] = {
     0xffe600b4, 0xbc00a4, 0xacffee, 0x1ffff, 0xffff, 0,
     0, 0,
 };
@@ -1944,20 +1949,20 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-s32 gData_02003268[] = {
+s32 gAnkohlRuins_ShrunkenSpriteScript[] = {
     22,
     11,
     0x18000,
     46,
-    (s32)Func_020005c0,
+    (s32)AnkohlRuins_ClearScriptedActorSpriteFlags,
     17,
 };
 
-u32 gData_02003280[] = {
+u32 gAnkohlRuins_Room2Script[] = {
     22, 26, 0, 17,
 };
 
-u32 gData_02003290[] = {
+u32 gAnkohlRuins_Room3Script[] = {
     22, 30, 0, 17,
 };
 
@@ -1975,49 +1980,49 @@ struct ActorPlacement gAnkohlRuins_Room1Placements[] = {
     ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 456, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 696, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 536, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 568, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 600, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 648, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 584, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 168, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 264, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 296, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 184, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 840, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 936, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 856, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 456, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 696, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 536, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 568, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 600, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 648, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 584, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 168, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 264, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 296, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 184, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 840, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 936, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 856, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_Room2Placements[] = {
-    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gData_02003280, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 472, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 520, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 600, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 472, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 520, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 600, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_Room3Placements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(390, CONDITION_ALWAYS, (s32)gData_02003290, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gData_02003280, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(390, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room3Script, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_Room4Placements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gData_02003280, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gData_02003280, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 504, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 712, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 792, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 648, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 728, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gData_02003268, 808, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 504, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 712, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 792, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 648, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 728, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 808, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
@@ -2025,7 +2030,7 @@ struct ActorPlacement gAnkohlRuins_Room4Placements[] = {
 
 struct ActorPlacement gAnkohlRuins_Room5Placements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gData_02003280, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2087,31 +2092,31 @@ struct Trigger gAnkohlRuins_Room1Triggers[] = {
     {TRIGGER_EXIT, 31, CONDITION_ALWAYS, 31},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 32, CONDITION_ALWAYS, 32},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 33, CONDITION_ALWAYS, 33},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c6, EVENT(Func_02000850)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c6, EVENT(Func_020006d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9d2, EVENT(Func_02000a68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9d3, EVENT(Func_02000a68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x9d4, EVENT(Func_02000a68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x9d5, EVENT(Func_02000a68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x9d6, EVENT(Func_02000a68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9d7, EVENT(Func_02000a68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x9d8, EVENT(Func_02000a68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 18, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 19, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 21, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 24, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 25, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 26, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 27, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 28, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 29, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 30, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c6, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c6, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9d2, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9d3, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x9d4, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x9d5, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x9d6, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9d7, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x9d8, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 18, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 19, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 21, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 24, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 25, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 26, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 27, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 28, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 29, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 30, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2132,13 +2137,13 @@ struct Trigger gAnkohlRuins_Room2Triggers[] = {
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 19, CONDITION_ALWAYS, 19},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9dc, EVENT(Func_02000e60)},
-    {TRIGGER_PUSHED, 8, 0x9dc, EVENT(Func_02000e60)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9dc, EVENT(AnkohlRuins_PlaceFacePiece)},
+    {TRIGGER_PUSHED, 8, 0x9dc, EVENT(AnkohlRuins_PlaceFacePiece)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2155,14 +2160,14 @@ struct Trigger gAnkohlRuins_Room3Triggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Func_020020fc)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_020021d4)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c7, EVENT(Func_020006d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c7, EVENT(Func_02000850)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9dd, EVENT(Func_0200104c)},
-    {TRIGGER_PUSHED, 10, 0x9dd, EVENT(Func_0200104c)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
+    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AnkohlRuins_BoardRaft)},
+    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AnkohlRuins_BoardRaftAgain)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c7, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c7, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9dd, EVENT(AnkohlRuins_PushRaftPillar)},
+    {TRIGGER_PUSHED, 10, 0x9dd, EVENT(AnkohlRuins_PushRaftPillar)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2183,24 +2188,24 @@ struct Trigger gAnkohlRuins_Room4Triggers[] = {
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 16, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(Func_02001264)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_0200124c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT(Func_02000c24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02000c24)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c8, EVENT(Func_020006d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c8, EVENT(Func_02000850)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, 0x9c9, EVENT(Func_020006d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, 0x9c9, EVENT(Func_02000850)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, 0x9ca, EVENT(Func_020006d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x9ca, EVENT(Func_02000850)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 16, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_FinishPushing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT(AnkohlRuins_PlacePillarPair)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(AnkohlRuins_PlacePillarPair)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c8, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c8, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, 0x9c9, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, 0x9c9, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, 0x9ca, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x9ca, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2216,17 +2221,17 @@ struct Trigger gAnkohlRuins_Room5Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(Func_02000384)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(AnkohlRuins_JumpDownLedge)},
     {TRIGGER_EXIT, 26, CONDITION_ALWAYS, 26},
-    {TRIGGER_STEP, 66, CONDITION_ALWAYS, EVENT(Func_020011c0)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9cb, EVENT(Func_020006d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9cb, EVENT(Func_02000850)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x9db, EVENT(Func_020006d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x9db, EVENT(Func_02002260)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_020022a8)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020022e0)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
+    {TRIGGER_STEP, 66, CONDITION_ALWAYS, EVENT(AnkohlRuins_PushedOffLedge)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9cb, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9cb, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x9db, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x9db, EVENT(AnkohlRuins_PushStatueIntoGap)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RevealGap)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_HideGap)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2238,15 +2243,15 @@ struct Trigger gAnkohlRuins_Room6Triggers[] = {
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 28, CONDITION_ALWAYS, 28},
     {TRIGGER_STEP, 40, 0x202, EVENT(AnkohlRuins_PressFirstSandSwitch)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_02001ddc)},
+    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AnkohlRuins_OpenFirstSandDoor)},
     {TRIGGER_STEP, 42, 0x203, EVENT(AnkohlRuins_PressSecondSandSwitch)},
-    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(Func_02001f04)},
+    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(AnkohlRuins_OpenSecondSandDoor)},
     {TRIGGER_RAISED, 68, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseFirstSand)},
     {TRIGGER_RAISED, 69, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseSecondSand)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02002318)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02002328)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_StartReveal)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_EndReveal)},
     {TRIGGER_TABLE_END},
 };
 

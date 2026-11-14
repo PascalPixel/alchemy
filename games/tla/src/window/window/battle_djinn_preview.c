@@ -168,7 +168,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
                                                  s32 page, s32 *pageCount) {
   struct PreviewUnit *unit;
   struct PreviewUnit *savedUnit;
-  struct PreviewAbility *ability;
+  struct BattleAct *ability;
   s16 *numberText;
   s32 oldHp;
   s32 oldPp;

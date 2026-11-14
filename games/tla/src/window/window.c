@@ -136,30 +136,6 @@ struct DjinnSlot {
   u16 state;
 };
 
-struct PreviewAbility {
-  u8 unk00[2];
-  u8 element; ///< 4 for none
-  u8 unk03[5];
-  u8 range; ///< 255 for everyone
-  u8 ppCost;
-};
-
-struct PsynergyMenuUnit {
-  u8 unk000[0x3a];
-  s16 pp;
-  u8 unk03c[0x101];
-  u8 psySeal;
-};
-
-struct PsynergyAbility {
-  u8 unk00;
-  u8 flags; ///< bit 7: usable in battle
-  u8 element;
-  u8 unk03[5];
-  u8 range;
-  u8 ppCost;
-};
-
 /// A unit as the summary screen reads it.
 struct SummaryOam {
   u8 unk00[4];

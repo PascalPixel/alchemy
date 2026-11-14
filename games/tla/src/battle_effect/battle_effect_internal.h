@@ -575,8 +575,6 @@ enum CanvasWipeFill {
 
 // The declarations the parts share.
 
-struct Vec2;
-
 struct AnimationEntry;
 struct BattleEffectArgument;
 struct EffectPosition;
@@ -1393,9 +1391,9 @@ extern char ResourceId_BronzeAutomatonTiles;
 extern char ResourceId_MissileTiles;
 extern char ResourceId_Data0BA;
 extern char ResourceId_Data0BB;
-extern struct Vec2 gDaedalus_WaveScale;
-extern struct Vec2 gDaedalus_ShipScale;
-extern struct Vec2 gDaedalus_ParticleScale;
+extern struct Scale gDaedalus_WaveScale;
+extern struct Scale gDaedalus_ShipScale;
+extern struct Scale gDaedalus_ParticleScale;
 extern s8 gDaedalus_ShakeOffsets[];
 extern u8 gDaedalus_DriftPictures[];
 extern u8 gDaedalus_DriftStarts[][2];

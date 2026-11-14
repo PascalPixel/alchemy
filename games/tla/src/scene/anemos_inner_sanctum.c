@@ -1773,8 +1773,6 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map/cell_sprite.c"
 
@@ -1797,8 +1795,6 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #undef BYTE_AT
 #undef FIELD_AT
 #undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Func_0200088c
 #undef Func_020009b8

@@ -1942,116 +1942,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE Data_020068b4
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-s32 CrackedTiles_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
-  struct CellTarget *table = &Data_020068b4;
-  struct CellTargetEntry *entry = table->entries;
-  struct CellMapWork *map;
-  struct CellMapLayer *layer;
-  struct CellMapCell *cells;
-  struct CellMapCell *rows;
-  struct CellMapCell *cell;
-  s32 x0, z0, width, height, i, j;
-  u32 *buffer;
-  u32 event, last;
-  s32 cx, cz;
-  s32 k;
-
-  Iwram_ClearWordsEntry(table, 4);
-  table->kind = kind;
-  table->firstFlag = flag;
-  table->flagByte = flagByte;
-  table->x = x;
-  table->z = z;
-  table->current = -1;
-  table->count = 0;
-  map = (struct CellMapWork *)Ram_HeapSlots->mapWork;
-  layer = &map->layers[0];
-  cells = layer->cells;
-  x0 = (layer->originX + map->minX) >> 20;
-  z0 = (layer->originZ + map->minZ) >> 20;
-  width = (map->maxX - map->minX) >> 20;
-  height = (map->maxZ - map->minZ) >> 20;
-  cells += ((map->minZ >> 20) << 7) + (map->minX >> 20);
-  /* Goto loops: as for loops (either one) loop.c moves the 64 of the cell
-   */
-  /* copy's masks out of them and 321 of 268 instructions differ. */
-  j = 0;
-  rows = cells;
-  if (j < height) {
-  row:
-    cell = rows + (j << 7);
-    i = 0;
-    if (i < width) {
-    column:
-      event = cell->event;
-      if (event != 0 && event >= kind) {
-        last = kind + 1;
-        if (event <= last) {
-          cx = i + x0;
-          entry->x = cx;
-          cz = j + z0;
-          entry->z = cz;
-          entry->flag = flag;
-          flag++;
-          if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-            if (event == last)
-              Event_SetFlag(entry->flag);
-          } else if (Event_GetFlag(entry->flag)) {
-            MapGrid_CopyCells(table->x, table->z + 1, 1, 1,
-                              cx | (s16)(table->x & 64),
-                              cz | (s16)(table->z & 64));
-          }
-          entry++;
-          table->count++;
-        }
-      }
-      i++;
-      cell++;
-      if (i < width)
-        goto column;
-    }
-    j++;
-    if (j < height)
-      goto row;
-  }
-  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-    s32 leaderX = leader->x >> 20;
-    s32 leaderZ = leader->z >> 20;
-
-    entry = table->entries;
-    k = 0;
-    if (k < table->count) {
-    search:
-      if (entry->x == leaderX && entry->z == leaderZ)
-        table->current = k;
-      entry++;
-      k++;
-      if (k < table->count)
-        goto search;
-    }
-  }
-  buffer = Heap_Alloc(0x100);
-  {
-    u32 *word = buffer;
-
-    k = 63;
-  fill:
-    *word++ = 0x11111111;
-    if (--k >= 0)
-      goto fill;
-  }
-  table->tile = VramCache_FindFreeEntry();
-  Vram_Load(table->tile, 0x100, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(CrackedTiles_Update, 0x480);
-  return table->count;
-}
+#include "shared/cracked_tiles_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
@@ -2117,8 +2011,6 @@ void Func_02004160(struct PushEvent *event) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 void Teleport_PlayWhirl(void);
 
@@ -2194,7 +2086,7 @@ s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct CellTarget *work = &Data_020068b4;
+  struct CellTarget *work = &gCrackedTiles;
   struct CellTargetEntry *entry = work->entries;
   s32 i;
 
@@ -2221,14 +2113,14 @@ s32 CrackedTiles_Step(void) {
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 dx = FieldGameFlag_GetByte(Data_020068b4.flagByte);
-  s32 dz = FieldGameFlag_GetByte(Data_020068b4.flagByte + 8);
+  s32 dx = FieldGameFlag_GetByte(gCrackedTiles.flagByte);
+  s32 dz = FieldGameFlag_GetByte(gCrackedTiles.flagByte + 8);
 
   if (dx != 0 || dz != 0) {
     struct Actor *marker;
 
-    GameFlag_SetByte(Data_020068b4.flagByte, 0);
-    GameFlag_SetByte(Data_020068b4.flagByte + 8, 0);
+    GameFlag_SetByte(gCrackedTiles.flagByte, 0);
+    GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->camera;

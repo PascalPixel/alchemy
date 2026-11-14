@@ -401,8 +401,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
@@ -422,8 +420,6 @@ struct CellTargetEntry;
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 // Jupiter Lighthouse's ground floor: the cracked tiles' steps and landings.
 

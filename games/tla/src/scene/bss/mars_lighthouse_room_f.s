@@ -13,8 +13,8 @@ gData_02007088:
 	.global gData_0200708c
 gData_0200708c:
 	.space 0x0000001c
-	.global gData_020070a8
-gData_020070a8:
+	.global gCrackedTiles
+gCrackedTiles:
 	.space 0x00000420
 	.global gSlideOnIce_Stopped
 gSlideOnIce_Stopped:

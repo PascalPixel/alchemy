@@ -2681,8 +2681,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
@@ -2702,8 +2700,6 @@ void CrackedTiles_Update(void);
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

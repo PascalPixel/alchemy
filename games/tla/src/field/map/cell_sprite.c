@@ -1,9 +1,9 @@
 /// @file
 /// The sprite over the cell-table entry the leader stands on, shared by the
-/// Jupiter and Mars Lighthouse overlays and overlay 6B0, each of which lists
-/// the cells its map watches in a table of its own. The including file names
-/// the table (CELL_TABLE), the function (CELL_SPRITE_DRAW) and its overlay's
-/// import of Oam_AddSpriteAtDepth (CELL_PUSH_SLOT_ENTRY).
+/// Jupiter and Mars Lighthouse rooms and the Anemos Inner Sanctum, each of
+/// which lists the cells its map watches in its own gCrackedTiles. The
+/// including file names its overlay's import of Oam_AddSpriteAtDepth
+/// (CELL_PUSH_SLOT_ENTRY).
 
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -13,7 +13,7 @@
 #include "graphics/vram_tab.h"
 #include "field/cell_target.h"
 
-extern struct CellTarget CELL_TABLE;
+extern struct CellTarget gCrackedTiles;
 
 struct Actor *Actor_GetById(u32 objectId);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -22,8 +22,8 @@ void CELL_PUSH_SLOT_ENTRY(void *entry, s32 priority);
 /// Clears the current entry once the leader has left its cell; while the
 /// leader stays on it and the sprite is shown, draws the sprite over the cell
 /// at the height of the ground there, unless it is off screen.
-void CELL_SPRITE_DRAW(void) {
-  struct CellTarget *table = &CELL_TABLE;
+void CrackedTiles_Update(void) {
+  struct CellTarget *table = &gCrackedTiles;
   struct CellTargetEntry *entry;
   struct Actor *leader;
   struct MapWork *map;

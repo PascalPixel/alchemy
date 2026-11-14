@@ -1007,8 +1007,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 /* VIEW(s1f74): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares
  * it; the joined file has another; tried as the definition's void
  * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot), which the object already
@@ -1036,8 +1034,6 @@ struct CellTargetEntry;
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

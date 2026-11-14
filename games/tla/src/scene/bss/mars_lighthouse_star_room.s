@@ -7,5 +7,5 @@ gMarsLighthouseStarRoom_MarsStar:
 	.global gSlideOnIce_Stopped
 gSlideOnIce_Stopped:
 	.space 0x00000004
-	.global gData_02004cf4
-gData_02004cf4:
+	.global gCrackedTiles
+gCrackedTiles:

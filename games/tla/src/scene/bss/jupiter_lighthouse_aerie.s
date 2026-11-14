@@ -31,5 +31,5 @@ gLightSpritesLarge:
 	.global gLightSpritePriority
 gLightSpritePriority:
 	.space 0x00000002
-	.global gData_02003488
-gData_02003488:
+	.global gCrackedTiles
+gCrackedTiles:

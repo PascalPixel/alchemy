@@ -43,5 +43,5 @@ Data_020068a4:
 	.global gSlideOnIce_Stopped
 gSlideOnIce_Stopped:
 	.space 0x00000004
-	.global Data_020068b4
-Data_020068b4:
+	.global gCrackedTiles
+gCrackedTiles:

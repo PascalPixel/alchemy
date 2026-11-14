@@ -303,7 +303,7 @@ void YampiDesertCave_StartMarkGlow(void);
 void YampiDesertCave_StopMarkGlow(void);
 s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
-void Statue_Sink(u16 *list, s32 mode, s32 count);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void Teleport_PlaySparks(void);
 
 void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
@@ -549,7 +549,7 @@ loop:
 }
 
 // Finds the current target's table row and shrinks it.
-#include "shared/statue_sink.h"
+#include "shared/pound_sink_target.h"
 
 s32 Actor_GetCellIndex(struct Actor *object);
 
@@ -734,7 +734,7 @@ void YampiDesertCave_EndSand(void) {
 
 /// Pound sinks Room3's stake and opens its cell.
 void YampiDesertCave_PoundStake(s32 a, s32 b) {
-  Statue_Sink(gYampiDesertCave_Room3Stakes, a, b);
+  Pound_SinkTarget(gYampiDesertCave_Room3Stakes, a, b);
   MapGrid_CopyCellAttributes(47, 12, 1, 1, 46, 12);
 }
 

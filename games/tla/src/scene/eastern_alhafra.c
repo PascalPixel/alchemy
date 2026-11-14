@@ -152,7 +152,7 @@ void Func_020000c8(s32 mode, s32 arg) {
   struct Actor *b;
   s32 i;
 
-  Statue_Sink(gData_02004d0c, mode, arg);
+  Pound_SinkTarget(gData_02004d0c, mode, arg);
   if (mode == 1) {
     a = Actor_Get(19);
     b = Actor_Get(21);
@@ -2430,7 +2430,7 @@ next:
 }
 
 // Finds the current target's table row and shrinks it.
-#include "shared/statue_sink.h"
+#include "shared/pound_sink_target.h"
 
 #include "shared/actor_set_cell_open.h"
 

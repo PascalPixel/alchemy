@@ -15,7 +15,7 @@ struct EffectWork1a {
 
 void DehkanPlateau_CannonLeapsAway(void);
 
-void Pillars_Pound(u16 *list, s32 mode, s32 count);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 
 void DehkanPlateau_SetActorsHidden(s32 show);
 

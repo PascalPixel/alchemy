@@ -29,6 +29,7 @@
 #include "field/event_inline.h"
 #include "version.h"
 #include "system/task.h"
+#include "map.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
@@ -89,11 +90,6 @@ struct AlhafranCaveMapWork {
   struct AlhafranCaveMapLayer layers[1];
 };
 
-struct AlhafranCaveEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
-
 struct AlhafranCaveSwitch {
   u16 id;
   s16 kind;
@@ -111,8 +107,8 @@ void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,
 
 void AlhafranCave_SetUpCave(void);
 void AlhafranCave_SetUpJail(void);
-void Pillars_Pound(const u16 *entry, s32 mode, s32 frame);
-void Pillar_ShowState(s32 id, u32 kind, s32 flag, s32 layer);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 extern s16 gAlhafranCave_Puddles[];
 extern s16 gAlhafranCave_Pillars[];
@@ -141,7 +137,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void AlhafranCave_PoundPillar(s32 mode, s32 frame) {
-  Pillars_Pound(gAlhafranCave_Pillars, mode, frame);
+  Pound_SinkTarget(gAlhafranCave_Pillars, mode, frame);
 }
 
 void AlhafranCave_StartMovingCrate(void) {}
@@ -716,7 +712,7 @@ void AlhafranCave_ShakeUnderEoleosPower(void) {
 
 /// Walks a list of three-halfword entries (object id, kind, flag) ended by
 /// 0xffff, clearing each object's collision bit and child flags before passing
-/// the entry to Pillar_ShowState.
+/// the entry to Actor_SetCellOpen.
 void Pillars_Place(const u16 *list) {
   const u16 *entry;
 
@@ -732,78 +728,16 @@ loop:
 
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlags(object, 0);
-    Pillar_ShowState(id, (u16)kind, (u16)flag, object->terrainId);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->terrainId);
     entry += 3;
   }
   if (entry[0] != 0xffff)
     goto loop;
 }
 
-void Pillars_Pound(const u16 *entry, s32 mode, s32 frame) {
-  struct AlhafranCaveEffectWork *work = Ram_HeapSlots->effectWork;
-  while (entry[0] != 0xffff) {
-    u32 value = *entry;
-    s32 id = work->objectId;
+#include "shared/pound_sink_target.h"
 
-    if (id == value) {
-      struct Actor *object = Actor_Get(id);
-      s32 kind;
-      s32 flag;
-
-      entry++;
-      kind = entry[0];
-      flag = entry[1];
-
-      if (frame <= 7)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        Event_SetFlag(flag);
-        Pillar_ShowState(id, kind, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      return;
-    }
-    entry += 3;
-  }
-}
-
-void Pillar_ShowState(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_Get(id);
-  struct AlhafranCaveMapCell *cell =
-      ((struct AlhafranCaveMapWork *)Ram_HeapSlots->mapWork)
-          ->layers[layer]
-          .cells;
-
-  cell += Func_02001588();
-  if (Event_GetFlag(flag)) {
-    cell->state = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 2);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 4);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 6);
-      break;
-    }
-  } else {
-    cell->state = 255;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 1);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 3);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 5);
-      break;
-    }
-  }
-}
+#include "shared/actor_set_cell_open.h"
 
 // clang-format off
 s16 gAlhafranCave_Puddles[] = {

@@ -257,23 +257,23 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
 }
 
 void DehkanPlateau_PoundRoom1Pillar(s32 a, s32 b) {
-  Pillars_Pound(gDehkanPlateau_Room1PoundPillars, a, b);
+  Pound_SinkTarget(gDehkanPlateau_Room1PoundPillars, a, b);
 }
 
 void DehkanPlateau_PoundRoom2Pillar(s32 a, s32 b) {
-  Pillars_Pound(gDehkanPlateau_Room2PoundPillars, a, b);
+  Pound_SinkTarget(gDehkanPlateau_Room2PoundPillars, a, b);
 }
 
 void DehkanPlateau_PoundRoom3Pillar(s32 a, s32 b) {
-  Pillars_Pound(gDehkanPlateau_Room3PoundPillars, a, b);
+  Pound_SinkTarget(gDehkanPlateau_Room3PoundPillars, a, b);
 }
 
 void DehkanPlateau_PoundRoom5Pillar(s32 a, s32 b) {
-  Pillars_Pound(gDehkanPlateau_Room5PoundPillars, a, b);
+  Pound_SinkTarget(gDehkanPlateau_Room5PoundPillars, a, b);
 }
 
 void DehkanPlateau_PoundRoom6Pillar(s32 a, s32 b) {
-  Pillars_Pound(gDehkanPlateau_Room6PoundPillars, a, b);
+  Pound_SinkTarget(gDehkanPlateau_Room6PoundPillars, a, b);
 }
 
 #include "shared/actor_drop_and_wait.h"

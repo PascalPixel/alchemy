@@ -1130,7 +1130,7 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
 }
 
 void GabombaStatue_PoundConePillar(s32 a, s32 b) {
-  Statue_Sink(gData_02005d7c, a, b);
+  Pound_SinkTarget(gData_02005d7c, a, b);
   if (Event_GetFlag(0x8ce) && Event_GetFlag(0x8cf))
     gFieldWork->raisedTrigger = 200;
 }
@@ -3452,7 +3452,7 @@ void Func_020053bc(const u16 *entry) {
 }
 
 // Finds the current target's table row and shrinks it.
-#include "shared/statue_sink.h"
+#include "shared/pound_sink_target.h"
 
 #include "shared/actor_set_cell_open.h"
 

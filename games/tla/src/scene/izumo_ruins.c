@@ -61,7 +61,7 @@ extern u8 gMapCellBuffer[];
 extern char SceneId_IzumoRuinsFirstRoom;
 extern char SceneId_IzumoRuinsSecondRoom;
 
-void Pillars_Pound(u16 *list, s32 mode, s32 count);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y);
 s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value);
 void IzumoRuins_ShowPillarState(struct Actor *object);
@@ -279,9 +279,9 @@ void IzumoRuins_PoundPillar(s32 aArg, s32 b) {
 
   scene = party->scene;
   if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
-    Pillars_Pound(gIzumoRuins_FirstRoomPoundPillars, aArg, b);
+    Pound_SinkTarget(gIzumoRuins_FirstRoomPoundPillars, aArg, b);
   else
-    Pillars_Pound(gIzumoRuins_SecondRoomPoundPillars, aArg, b);
+    Pound_SinkTarget(gIzumoRuins_SecondRoomPoundPillars, aArg, b);
   if (aArg == 1)
     IzumoRuins_ShowPillarState(Actor_Get(work->objectId));
 }

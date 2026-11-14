@@ -14,14 +14,10 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
-/* VIEW(placements): routines Statue_Sink and PartyInventory_GiveItem as
- * yampi_desert/scene.h declares them; the joined file defines and declares them
- * otherwise. */
-void Statue_Sink__placements(const void *script, s32 a,
-                             s32 b) __asm__("Statue_Sink");
+/* VIEW(placements): routine PartyInventory_GiveItem as yampi_desert/scene.h
+ * declared it; the joined file declares it otherwise. */
 void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
     "PartyInventory_GiveItem");
-#define Statue_Sink Statue_Sink__placements
 #define PartyInventory_GiveItem PartyInventory_GiveItem__placements
 #include "types.h"
 #include "item_ids.h"
@@ -64,7 +60,7 @@ void YampiDesert_SetUpRoom12SlideActors(void);
 void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode);
 void YampiDesert_MatchStakePriority(void);
 void YampiDesert_PlaceStakes(const void *script);
-void Statue_Sink(const void *script, s32 a, s32 b);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -406,16 +402,16 @@ void YampiDesert_ReadSignpost(void) {
 }
 
 void YampiDesert_PoundRoom1Stake(s32 a, s32 b) {
-  Statue_Sink(gYampiDesert_Room1Stakes, a, b);
+  Pound_SinkTarget(gYampiDesert_Room1Stakes, a, b);
 }
 
 void YampiDesert_PoundRoom3Stake(s32 a, s32 b) {
-  Statue_Sink(gYampiDesert_Room3Stakes, a, b);
+  Pound_SinkTarget(gYampiDesert_Room3Stakes, a, b);
 }
 
 #define DEFINE_POUND_STAKE_STOPPING_SCORPION(name, data1)                      \
   void name(s32 a, s32 b) {                                                    \
-    Statue_Sink(data1, a, b);                                                  \
+    Pound_SinkTarget(data1, a, b);                                             \
     if (a == 1) {                                                              \
       if (gYampiDesert_RaisedEvent == 0)                                       \
         gYampiDesert_RaisedEvent = 210;                                        \
@@ -426,7 +422,7 @@ DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundRoom4Stake,
                                      gYampiDesert_Room4Stakes)
 
 void YampiDesert_PoundRoom12Stake(s32 a, s32 b) {
-  Statue_Sink(gYampiDesert_Room12Stakes, a, b);
+  Pound_SinkTarget(gYampiDesert_Room12Stakes, a, b);
 }
 
 DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundRoom5Stake,
@@ -610,7 +606,6 @@ void YampiDesert_WatchScorpionStop(void) {
   Event_End();
 }
 
-#undef Statue_Sink
 #undef PartyInventory_GiveItem
 #include "../field/field_effect/advance_motion_priority.c"
 
@@ -2263,7 +2258,7 @@ loop:
 #undef MAIN_ROUTINE_WORK_U16
 
 // Finds the current target's table row and shrinks it.
-#include "shared/statue_sink.h"
+#include "shared/pound_sink_target.h"
 
 #include "shared/actor_set_cell_open.h"
 
@@ -2563,7 +2558,6 @@ u32 gYampiDesert_SlideDust[] = {
 #undef ARRIVE_OR
 #undef MAIN_ROUTINE_WORK_U16
 #undef PIXELS__s3910
-#undef Statue_Sink
 #undef Motion_SetModeAndWaitAnimation
 #undef Actor_SetMovementTypeAndWaitById
 #undef gYampiDesert_FinderRunsAhead

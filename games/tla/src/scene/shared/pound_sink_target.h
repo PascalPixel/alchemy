@@ -1,4 +1,7 @@
-void Statue_Sink(u16 *list, s32 mode, s32 count) {
+/// Pound's work on a listed actor, an entry of (actor, kind, flag) ended by
+/// 0xffff: while it is the target, it sinks a step a frame for the first eight
+/// frames, and on the last (mode 1) its flag is set and its cell opened.
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
   while (*list != 0xffff) {

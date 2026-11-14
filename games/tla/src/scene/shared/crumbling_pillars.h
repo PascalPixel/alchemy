@@ -24,36 +24,7 @@ void Pillars_Place(const u16 *list) {
   } while (entry[0] != 0xffff);
 }
 
-// Finds the current target's table row and shrinks it.
-void Pillars_Pound(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
-
-  if (*list == 0xffff)
-    return;
-  do {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_Get(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        Event_SetFlag(flag);
-        Actor_SetCellOpen(id, a, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      return;
-    }
-    list += 3;
-  } while (*list != 0xffff);
-}
+#include "pound_sink_target.h"
 
 #include "actor_set_cell_open.h"
 

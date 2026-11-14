@@ -470,7 +470,9 @@ void LuckyWheels_Update(void) {
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
         /* FAKEMATCH(temporary): wonPrizes read through a view of
-         * gMainRoutineWork from +12, here and below. */
+         * gMainRoutineWork from +12, here and below; as
+         * gMainRoutineWork.wonPrizes, 75 of 1829 instructions differ in
+         * tbs-en. */
         struct LuckyWheelsWonPrizesView *save =
             (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
 
@@ -1051,7 +1053,8 @@ void LuckyWheels_Run(void) {
   struct BattleEffectWork *work;
   struct LuckyWheelsWork *state;
   /* FAKEMATCH(temporary): wonPrizes read through a view of gMainRoutineWork
-   * from +12. */
+   * from +12; as gMainRoutineWork.wonPrizes, 6 of 1090 instructions differ in
+   * tbs-en. */
   struct LuckyWheelsWonPrizesView *save;
   u8 *entry;
   u8 *tiles;

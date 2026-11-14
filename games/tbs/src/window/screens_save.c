@@ -119,7 +119,8 @@ s32 Save_ScanFileSummaries(void) {
 
     fileCount = Save_LoadFileSummaries();
     /* FAKEMATCH(temporary): the flags read through a byte cursor at the end
-     * of the first summary's party. */
+     * of the first summary's party; as a summary pointer walk, 3 of 54
+     * instructions differ in tbs-en. */
     flags = (s8 *)&gSaveWork->summary[0].party[4];
     gTitleSendOptionEnabled = 0;
     gTitleBattleOptionEnabled = 0;

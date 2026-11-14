@@ -208,7 +208,7 @@ void Unit_Calculate(s32 unitId) {
         effectAmount = stats->item->effects[effectIndex].amount;
         stats->kind = effectKind;
         stats->amount = effectAmount;
-        switch (stats->kind) {
+        switch (effectKind) {
         case EQUIP_EFFECT_NONE:
           break;
         case EQUIP_EFFECT_ADD_HP:

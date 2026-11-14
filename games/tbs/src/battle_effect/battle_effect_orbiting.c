@@ -129,7 +129,6 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   do {
     REG_BG2X = xOffset << 8;
   } while (0);
-  i = 0;
   for (i = 0; i != 64; i++) {
     struct Particle *step = &work->particles[i];
 

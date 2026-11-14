@@ -47,21 +47,14 @@ void BattleEffect_RunPunji(struct BattleEffectParams *args) {
 /// Vines or green pillars grow one after another, alternately mirrored, each
 /// throwing up dust from its root.
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  void *rectangle[2];
+  BlitterPair rectangle;
 
   s32 frame;
   s32 duration;
-  void **draw;
-  s32 cueFrame;
-  s32 fadeStart;
-  s32 fadeEnd;
+  DrawRectangle *draw;
   s32 start;
-
-  u8 *variantCursor;
 
   struct GrowingColumn *setup;
   s32 x;
@@ -82,10 +75,8 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   s32 puffAge;
   s32 image;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
@@ -100,30 +91,24 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  rectangle[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+  rectangle[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   {
-    void *mirroredBlitter = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    DrawRectangle mirroredBlitter = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
     draw = rectangle;
-    draw[1] = mirroredBlitter;
+    rectangle[1] = mirroredBlitter;
   }
 
   duration = gGrowth_ColumnCounts[work->args->variant] * 4 + 56;
 
-  variantCursor = Ram_MapGridCellBuffer + offsetof(struct Particle, variant);
-  i = 0;
-  do {
-    i++;
-    *(s32 *)variantCursor = -1;
-    variantCursor += sizeof(struct Particle);
-  } while (i != 1024);
+  for (i = 0; i != 1024; i++)
+    PARTICLES[i].variant = -1;
 
-  i = 0;
-  setup = (struct GrowingColumn *)work->particles;
-  do {
+  for (i = 0; i != 16; i++) {
+    setup = &((struct GrowingColumn *)work->particles)[i];
     x = (gGrowth_ColumnX[i] + (7 & Random16())) - 4;
     setup->y = i / 2 + 108;
     setup->x = x;
@@ -135,143 +120,123 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
     }
     limit = i * 4 + 8;
     setup->start = limit;
-    i++;
-    setup++;
-  } while (i != 16);
+  }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
-  frame = 0;
-  if (duration != 0) {
-    cueFrame = duration - 64;
-    fadeStart = duration - 20;
-    fadeEnd = duration - 4;
-    do {
-      if (frame == cueFrame) {
-        EFFECT_SHOW_DAMAGE(SE_WATER);
-      }
-      if (frame >= fadeStart && frame < fadeEnd) {
-        // Fade out over the last 16 frames.
-        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-        REG_BLDALPHA = BLEND_ALPHA((duration - frame) - 5, 16);
-      }
-      if (frame < fadeEnd) {
-        i = 0;
-        if (gGrowth_ColumnCounts[work->args->variant] != 0) {
+  for (frame = 0; frame != duration; frame++) {
+    if (frame == duration - 64) {
+      EFFECT_SHOW_DAMAGE(SE_WATER);
+    }
+    if (frame >= duration - 20 && frame < duration - 4) {
+      // Fade out over the last 16 frames.
+      REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+      REG_BLDALPHA = BLEND_ALPHA((duration - frame) - 5, 16);
+    }
+    if (frame < duration - 4) {
+      for (i = 0; i != gGrowth_ColumnCounts[work->args->variant]; i++) {
+        column = &((struct GrowingColumn *)work->particles)[i];
+        start = i * 4 + 8;
+        if (frame == i * 4 + 9) {
+          work->shakeFrames = 2;
+        }
+
+        // A column grows from its root.
+        if (frame > start) {
+          u32 shape = i % 3;
+
+          length = (frame - start) * 8;
+          reach = column->height;
+          if (length > reach) {
+            length = reach;
+          }
+          if (mode == GROWING_COLUMNS_VINES) {
+            {
+              s32 side = 1 & i;
+              s32 picture = gGrowth_VinePictures[shape];
+              shape = gGrowth_VineWidths[shape];
+              draw[side](canvas, work->sheet + picture,
+                         column->x - (shape >> 1), column->y - length, shape,
+                         length);
+            }
+          } else {
+            pillarHeight = gGrowth_PillarHeights[7 & i];
+            if (length > pillarHeight) {
+              length = pillarHeight;
+            }
+            {
+              s32 side = 1 & i;
+              s32 picture = gGrowth_PillarPictures[shape];
+              shape = gGrowth_PillarWidths[shape];
+              draw[side](canvas, work->sheet + picture,
+                         column->x - (shape >> 1), column->y - length, shape,
+                         length);
+            }
+          }
+        }
+
+        // The targets react as it grows.
+        n = 0;
+        if (work->args->targetCount != 0) {
+          reactFrame = start + 4;
           do {
-            column = (struct GrowingColumn *)((u8 *)work->particles +
-                                              i * sizeof(struct GrowingColumn));
-            start = i * 4 + 8;
-            if (frame == i * 4 + 9) {
-              work->shakeFrames = 2;
-            }
-
-            // A column grows from its root.
-            if (frame > start) {
-              u32 shape = i % 3;
-
-              length = (frame - start) * 8;
-              reach = column->height;
-              if (length > reach) {
-                length = reach;
+            if (frame == reactFrame) {
+              if (!(i & 1)) {
+                Sound_PlayFar(SE_IMPACT);
               }
-              if (mode == GROWING_COLUMNS_VINES) {
-                {
-                  s32 side = 1 & i;
-                  s32 picture = gGrowth_VinePictures[shape];
-                  shape = gGrowth_VineWidths[shape];
-                  ((DrawRectangle)draw[side])(
-                      canvas, work->sheet + picture, column->x - (shape >> 1),
-                      column->y - length, shape, length);
-                }
-              } else {
-                pillarHeight = gGrowth_PillarHeights[7 & i];
-                if (length > pillarHeight) {
-                  length = pillarHeight;
-                }
-                {
-                  s32 side = 1 & i;
-                  s32 picture = gGrowth_PillarPictures[shape];
-                  shape = gGrowth_PillarWidths[shape];
-                  ((DrawRectangle)draw[side])(
-                      canvas, work->sheet + picture, column->x - (shape >> 1),
-                      column->y - length, shape, length);
-                }
-              }
+              BattleEffect_TintBattler(work->args->targets[n],
+                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, n, 3);
             }
+            n++;
+          } while (n != work->args->targetCount);
+        } else {
+          reactFrame = start + 4;
+        }
 
-            // The targets react as it grows.
-            n = 0;
-            if (work->args->targetCount != 0) {
-              reactFrame = start + 4;
-              do {
-                if (frame == reactFrame) {
-                  if (!(i & 1)) {
-                    Sound_PlayFar(SE_IMPACT);
-                  }
-                  BattleEffect_TintBattler(work->args->targets[n],
-                                           SPRITE_COLOR_WHITE, POSE_DAMAGE, n,
-                                           3);
-                }
-                n++;
-              } while (n != work->args->targetCount);
-            } else {
-              reactFrame = start + 4;
+        // Dust puffs from the root.
+        if ((frame == reactFrame) || (frame == (start + 8))) {
+          for (n = 0; n != 512; n++) {
+            struct Particle *dust = &PARTICLES[n];
+
+            if (dust->variant == -1) {
+              dust->x = ((Random16() & 0xf) + column->x) - 8;
+              dust->y = (Random16() & 0xf) + 80;
+              dust->variant = 0;
+              break;
             }
-
-            // Dust puffs from the root.
-            if ((frame == reactFrame) || (frame == (start + 8))) {
-              for (n = 0; n != 512; n++) {
-                struct Particle *dust = &PARTICLES[n];
-
-                if (dust->variant == -1) {
-                  dust->x = ((Random16() & 0xf) + column->x) - 8;
-                  dust->y = (Random16() & 0xf) + 80;
-                  dust->variant = 0;
-                  break;
-                }
-              }
-            }
-            i++;
-          } while (i != gGrowth_ColumnCounts[work->args->variant]);
+          }
         }
       }
+    }
 
-      // Dust, over the columns.
-      i = 0;
-      puff = PARTICLES;
-      do {
-        puffAge = puff->variant;
-        if (puffAge >= 0) {
-          image = puffAge / 2;
-          puffPictures = GROWING_COLUMNS_VINE_DUST_PICTURES;
-          if (mode != GROWING_COLUMNS_VINES) {
-            puffPictures = GROWING_COLUMNS_PILLAR_DUST_PICTURES;
-          }
-          ((DrawRectangle)rectangle[0])(
-              canvas,
-              work->sheet + (gGrowth_PuffPictures[image] + puffPictures),
-              puff->x - gGrowth_PuffWidths[image],
-              puff->y - (s8)gGrowth_PuffHeights[image] / 2,
-              gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
-          ((DrawRectangle)rectangle[1])(
-              canvas,
-              work->sheet + (gGrowth_PuffPictures[image] + puffPictures),
-              puff->x, puff->y - (s8)gGrowth_PuffHeights[image] / 2,
-              gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
-          puff->variant++;
-          if (puff->variant == 14) {
-            puff->variant = -1;
-          }
+    // Dust, over the columns.
+    for (i = 0; i != 512; i++) {
+      puff = &PARTICLES[i];
+      puffAge = puff->variant;
+      if (puffAge >= 0) {
+        image = puffAge / 2;
+        puffPictures = GROWING_COLUMNS_VINE_DUST_PICTURES;
+        if (mode != GROWING_COLUMNS_VINES) {
+          puffPictures = GROWING_COLUMNS_PILLAR_DUST_PICTURES;
         }
-        puff++;
-        i++;
-      } while (i != 512);
+        rectangle[0](canvas,
+                     work->sheet + (gGrowth_PuffPictures[image] + puffPictures),
+                     puff->x - gGrowth_PuffWidths[image],
+                     puff->y - (s8)gGrowth_PuffHeights[image] / 2,
+                     gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
+        rectangle[1](canvas,
+                     work->sheet + (gGrowth_PuffPictures[image] + puffPictures),
+                     puff->x, puff->y - (s8)gGrowth_PuffHeights[image] / 2,
+                     gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
+        puff->variant++;
+        if (puff->variant == 14) {
+          puff->variant = -1;
+        }
+      }
+    }
 
-      BattleCamera_Shake(4, 4);
-      EFFECT_END_FRAME(work);
-      frame++;
-    } while (frame != duration);
+    BattleCamera_Shake(4, 4);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS();
 }

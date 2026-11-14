@@ -6,25 +6,6 @@
 
 #define HEAP_SLOT_BLITTER_ALTERNATE 188
 
-extern char ResourceId_FireSwirlSheet;
-extern char ResourceId_PinkStarSheet;
-extern char ResourceId_SkullSheet;
-extern char ResourceId_BlueFlameSheet;
-
-extern u16 gHelmSplitter_Pictures[];
-extern s8 gHelmSplitter_PictureBiasX[];
-extern s8 gHelmSplitter_PictureBiasY[];
-extern u8 gHelmSplitter_PictureWidths[];
-extern u8 gHelmSplitter_PictureHeights[];
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
-                                    s32 travelDivisor, s32 initialVelocityY);
-
-void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
-
-void BattleEffect_CountDownBattlerTints(void);
-
 // Effect kind 51: the caster dashes at the target while a swirl of flame grows
 // over seven frames, then bursts into sparks that fall and bounce on the
 // ground. Variant 0 is ☀️'s: the swirl rises at the caster and throws pink
@@ -204,31 +185,6 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
 
 // The pillar sheet's cell is 24 x 39; the faded copies follow it.
 #define PILLAR_CELL_SIZE 936
-
-extern char ResourceId_FirePillarSheetB;
-extern char ResourceId_Data134;
-extern char ResourceId_EmberStreakSheet;
-
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_DualStreamPath;
-
-// The puff arc's six cells, cut from the ember streak sheet.
-extern u8 gBattleEffect_PuffArcPictureWidths[];
-extern u8 gBattleEffect_PuffArcPictureHeights[];
-extern u8 gBattleEffect_PuffArcPictureBiasY[];
-extern u16 gBattleEffect_PuffArcPictures[];
-
-// The spark cells: offsets into the particle sheet by size.
-extern u16 gBattleEffect_MotePictures[];
-
-// How many of the 56 embers are sparks, by variant (48 and 40); the rest
-// are flashes.
-extern u8 gDragonCloud_SparkCounts[];
-
-void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
-
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
 
 // Returns the fixed IWRAM word copy entry, so the call loads its address before
 // its arguments.

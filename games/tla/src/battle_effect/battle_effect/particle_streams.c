@@ -65,26 +65,6 @@ struct FxPartyList;
 
 #define PHASE_SUMMON_RESULTS 134
 
-extern char ResourceId_WaterSpraySheet;
-extern char ResourceId_FirePillarSheetA;
-extern char ResourceId_Data134;
-extern u8 gNereidCopy_Columns[]; // the pillars' feet, x and y
-// The Data134 sheet's spark pictures, by size - 1
-// (byte offsets).
-extern u16 gBattleEffect_MotePictures[];
-extern const s32 gNereidCopy_Gravity[];
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
-void BattlePlayback_StartFar(s32 phase);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 a, s32 timer,
-                              s32 frames);
-void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 y);
-void BattleEffect_RunImpactBurst(s32 formation, s32 x,
-                                 s32 y); // BattleEffect_RunImpactBurst
-void BattleEffect_EndCanvasLayer(void);
-
 /// Unused: nothing reaches it (no handler, summon case or call). A second
 /// copy of The Broken Seal's BattleEffect_RunNereid, which this game keeps
 /// for summon 2 as BattleEffect_RunNereid. As written:
@@ -324,19 +304,6 @@ struct FormationScale {
 
 extern const struct FormationScale gFormationObjects_Scale;
 extern const struct FormationScale gFormationObjects_LargeScale;
-extern const u8 gHelmSplitter_TwelveX[];
-extern const u8 gHelmSplitter_TwelveZ[];
-extern const u8 gHelmSplitter_RightEightX[];
-extern const u8 gHelmSplitter_RightEightZ[];
-extern const u8 gFormationObjects_X[];
-extern const u8 gFormationObjects_Z[];
-extern const u8 gHelmSplitter_SmallEightX[];
-extern const u8 gHelmSplitter_SmallEightZ[];
-extern const s8 gFormationObjects_WideX[];
-extern const u8 gFormationObjects_WideZ[];
-
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
 
 /// The Broken Seal's routine with The Lost Age's
 /// three more formations (4: eleven objects from signed columns, 5: twelve in
@@ -407,18 +374,6 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 }
 
 #define SHARD_E 0x59d8
-
-extern char ResourceId_FlareSheet;
-extern char ResourceId_FlareImage;
-extern u16 gHelmSplitter_ImpactBurstPictures[];
-extern u8 gHelmSplitter_ImpactBurstPictureWidths[];
-extern u8 gHelmSplitter_ImpactBurstPictureHeights[];
-
-s32 BattleEffect_LoadBlitter(
-    s32 slot,
-    s32 modeAndFlags); // BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
 
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   struct BattleFxWork *work;
@@ -722,35 +677,6 @@ struct FxAnimObject {
   u8 unk0a[16];
   u8 flags;
 };
-
-extern char ResourceId_FlameSheetB;
-extern char ResourceId_LightningBoltSheet;
-extern char ResourceId_BlastSheet;
-
-extern s16 gParticleStreams_OrbitPoints[][3];
-extern s16 gParticleStreams_FireballPoints[][2];
-extern u16 gParticleStreams_FlashPictures[];
-extern u16 gParticleStreams_FlashSizes[];
-void BattleEffect_ConfigureEffectDisplay(void);
-
-void BattleEffect_WipeCanvas(s32 mode, s32 value);
-void Animation_ApplyChildArgumentFar(void *object, s32 animation);
-
-void BattleEffect_AdvanceBg2OnInterval(void);
-void BattleEffect_FlushPendingGraphicsTransfer(void);
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags,
-                              u32 mode); // BattleEffect_BuildBlitter
-
-void SceneTransform_ApplyPosition(const s32 *pos);
-void Transform_ApplyRoll(s32 roll); // Transform_ApplyRoll
-void Transform_ApplyYaw(s32 yaw);
-void BattleEffect_SetupBlendedDisplay(void);
-void BattleObject_PutFar(void);
-
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
 // Summon 11: the screen goes dark and the ground dissolves away from the top;
 // a sun (or, in mode 1, two great flames the user throws) climbs over a

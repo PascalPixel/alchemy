@@ -19,45 +19,6 @@ struct Model;
 #define SUMMON16_FRAMES 296
 #define SUMMON16_SKIP_TO 232
 
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_Data0C1;
-extern char ResourceId_Data134;
-extern u8 gMapCellBuffer[];
-extern const u8 gMoloch_MoteSizes[];
-// The particle sheet's cell offsets by size (The Broken Seal's
-// gBattleEffect_MotePictures).
-extern u16 gBattleEffect_MotePictures[];
-extern const u8 gBattleEffect_CylinderMesh[];
-extern const u8 gBattleEffect_CylinderCorners[];
-extern const u8 gMoloch_RingStarts[];
-extern const u8 gMoloch_RingGrowth[];
-extern const s8 gMoloch_RingHeights[];
-
-void BattleEffect_StartCanvasLayer(s32 layer);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Graphics_LoadGreyRamp(void);
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
-void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 y);
-void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 mode, s32 timer,
-                              s32 frames);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
-void BattlePlayback_StartFar(s32 phase);
-
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Transform_ApplyPitch(s32 angle);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 
 // Summon 16. A shower of 256 motes drifts down the screen and, from frame
@@ -378,11 +339,6 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-extern char ResourceId_VioletSkyBackdrop;
-
-void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
-void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
-
 /// Iris's backdrop change: clears the targets' ground motion and drops
 /// each a little above the ground at a random height, empties the actor
 /// list, loads the violet sky and recolours its 128 BG palette entries from
@@ -486,9 +442,6 @@ next:
 // One model vertex: signed byte coordinates, padded to a word.
 
 extern const struct ModelVertex gIris_PillarVertices[6];
-extern const u16 gIris_PillarMesh[];
-
-void SceneTransform_ApplyPosition(const s32 *pos);
 
 /// Iris: draws one rising pillar, a textured strip of six vertices whose
 /// two lower rows come from gIris_PillarVertices and whose top row is raised to
@@ -535,9 +488,6 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   Heap_Release(projected);
 }
 
-void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
-                                        s32 color);
-
 /// Draws a 45-degree canvas line from (x + w/2, y - w/2) down-left toward
 /// (x, y), at most 48 pixels long, in the given colour.
 void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
@@ -555,35 +505,6 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 }
 
 struct StripQuad;
-
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyYaw(s32 angle);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void Transform_ApplyRoll(s32 angle);
-
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-s32 Trig_Cos(s32 angle);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
-void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
@@ -666,56 +587,15 @@ struct FourSpans {
   struct WordPair p[4];
 };
 
-extern char ResourceId_SunsetBackdrop, ResourceId_StarfieldFlareBackdrop;
-extern char ResourceId_RobedGoddessTiles, ResourceId_PinkPetalsTiles;
-extern u8 Data_02010578[];
 extern struct IrisSparks Data_02011f40;
 extern struct IrisScene Data_02012ee0;
 #define Data_02012ef4 ((struct IrisPoint(*)[10])(Ram_MapCellBuffer + 0x2ef4))
 
-extern const struct Scale gIris_UnitScale;
 extern const struct FiveWidths gIris_RisingPillarWidths;
 extern const struct SevenWidths gIris_WideningPillarWidths;
 extern const struct SevenWidths gIris_NarrowingPillarWidths;
 extern const struct FourSpans gIris_LeftStripSpans;
 extern const struct FourSpans gIris_RightStripSpans;
-extern s32 gIris_SplashRadii[];
-extern const u8 gIris_SplashOffsetsY[];
-extern const u8 gIris_ParticleCorners[];
-extern const u8 gIris_ParticleMesh[];
-extern const u8 gIris_PsynergySoundFrames[];
-extern const u16 gIris_DoorSoundFrames[];
-extern const u16 gIris_PowerUpSoundFrames[];
-extern const s8 gIris_StreakX[];
-extern const u8 gIris_StreakY[];
-extern const u16 gIris_StreakAngles[];
-extern const s16 gIris_StreakSpeeds[];
-extern const u8 gIris_LineShades[];
-extern s32 gIris_MoteSizes[];
-extern const u16 gIris_SplashStarts[];
-extern const u16 gIris_SplashEnds[];
-extern const u8 gIris_SplashX[];
-extern const u8 gIris_SplashY[];
-extern const u8 gIris_SplashSmall[];
-extern const u8 gIris_DropSpeeds[];
-extern const u8 gIris_DropFrames[];
-extern const u8 gIris_DropPictureSteps[];
-extern const u8 gIris_LeftStripCorners[];
-extern const u8 gIris_RightStripCorners[];
-extern const u8 gIris_StripMesh[];
-extern const u8 gIris_ConeCorners[];
-extern const u8 gIris_ConeMesh[];
-
-void BattleEffect_ConfigureEffectDisplay(void);
-
-void Palette_LoadBasicSpriteColors(void);
-void Palette_BrightenSavedBattleBg(s32 red, s32 green, s32 blue);
-void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void));
-void Iris_RestoreBattle(void);
-void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
-                                          s32 scale);
-void Transform_ResetMatrix(void);
-void SceneTransform_ApplyScale(s32 *scale);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
@@ -2595,9 +2475,6 @@ void Func_08196248(s32 vertexCount, s32 faceCount) {
   }
 }
 
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags, u32 mode);
-
 /// BattleEffect_BuildBlitter(slot, 7, 7, flags, mode) for a 128 by 128 canvas,
 /// with the flags and the mode packed into one word: mode << 4 | flags.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags) {
@@ -2645,26 +2522,6 @@ static __inline__ void CopyWords4(const void *source, void *destination) {
                    :
                    : "r2", "r3", "r4", "r5", "memory");
 }
-
-extern const u32 BattleEffect_PatchTemplateCode[];
-extern const u32 BattleEffect_Mask[];
-extern const u16 Data_081973f0[];
-extern const u32 BattleEffect_CopyReverse[];
-extern const u32 BattleEffect_CopyForward[];
-extern const u32 BattleEffect_Copy8Reverse[];
-extern const u32 BattleEffect_Copy8Forward[];
-extern const u32 BattleEffect_TransparentReverse[];
-extern const u32 BattleEffect_TransparentForward[];
-extern const u32 BattleEffect_Transparent8Reverse[];
-extern const u32 BattleEffect_Transparent8Forward[];
-extern const u32 BattleEffect_MaxReverse[];
-extern const u32 BattleEffect_MaxForward[];
-extern const u32 BattleEffect_Max4Reverse[];
-extern const u32 BattleEffect_Max4Forward[];
-extern const u32 BattleEffect_AdditiveReverse[];
-extern const u32 BattleEffect_AdditiveForward[];
-extern const u32 BattleEffect_ColorReverse[];
-extern const u32 BattleEffect_ColorForward[];
 
 #define BRANCH_FIELD(site, target)                                             \
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
@@ -2977,9 +2834,6 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 // same wrapper as Render_TransformVertices (below) and
 // Message_Find, with two arguments. Nothing in the image calls it.
 
-extern const u8 Data_081380ac[];
-extern u8 Data_081380acCodeSize[];
-
 /// Copies the ARM kernel at Data_081380ac into a heap block (DMA 3, words),
 /// runs it there with the caller's two arguments and frees the block.
 void RamCode_RunKernel0(s32 arg0, s32 arg1) {
@@ -2989,11 +2843,6 @@ void RamCode_RunKernel0(s32 arg0, s32 arg1) {
   routine(arg0, arg1);
   Heap_Release(routine);
 }
-
-s32 Render_ProjectPoint(const void *point, s32 *screen);
-
-extern const u8 Data_0813b9a0[];
-extern u8 Data_0813b9a0CodeSize[];
 
 /// Copies the ARM vertex kernel into a heap block and runs it: count packed
 /// s8 vertices through the current transform into screen coordinates.
@@ -3061,8 +2910,6 @@ struct Texture {
   u32 pixels;
 };
 
-u32 Heap_GetRemainingIwram(void);
-
 /// Copies a texture's pixels into a heap block when IWRAM has room for them;
 /// returns 1 with copy set up, 0 when there is no room.
 s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
@@ -3102,34 +2949,6 @@ struct Model {
 #define MODEL_TEXTURE_IN_PLACE 4
 
 typedef void (*ModelKernel)(struct Model *model);
-
-// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
-// bytes and, for three of them, in DMA words.
-extern const u8 Data_08138fc8[];
-extern const u8 Data_081391c8[];
-extern const u8 Data_081393d8[];
-extern const u8 Data_081395f8[];
-extern const u8 Data_08139aac[];
-extern const u8 Data_08139f70[];
-extern const u8 Data_0813a444[];
-extern const u8 Data_0813a924[];
-extern const u8 Data_0813ae14[];
-extern const u8 Data_0813b2ec[];
-extern const u8 Data_0813b7a0[];
-extern u8 Data_08138fc8CodeSize[];
-extern u8 Data_081391c8CodeSize[];
-extern u8 Data_081393d8CodeSize[];
-extern u8 Data_081395f8CodeSize[];
-extern u8 Data_08139aacCodeSize[];
-extern u8 Data_08139f70CodeSize[];
-extern u8 Data_0813a444CodeSize[];
-extern u8 Data_0813a924CodeSize[];
-extern u8 Data_0813ae14CodeSize[];
-extern u8 Data_0813b2ecCodeSize[];
-extern u8 Data_0813b7a0CodeSize[];
-extern u8 Data_081395f8CodeWords[];
-extern u8 Data_0813ae14CodeWords[];
-extern u8 Data_0813b2ecCodeWords[];
 
 /// Copies a kernel whose DMA control is a word of its own.
 #define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \

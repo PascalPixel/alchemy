@@ -21,11 +21,6 @@
 
 #define PHASE_RESULTS 134
 
-extern char ResourceId_FireStreakSheet;
-extern char ResourceId_FireBurstSheet;
-
-void BattleEffect_CallDoNothing(s32 frames);
-
 // The user lunges, a streak of fire leaves them, and the target bursts into
 // flame, throwing 64 burning shards away from the user.
 //

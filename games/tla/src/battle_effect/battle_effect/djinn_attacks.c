@@ -52,13 +52,6 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 #define DOTS_PER_FLAME 32
 #define FLAME_COUNT 5
 
-extern char ResourceId_BlueFlameSheet;
-/// The frames the Djinn throws its five flames on (☀️'s
-/// gDjinnAttacks_LaunchFrames).
-extern const u8 gDjinnAttacks_LaunchFrames[];
-
-/// Fetches the max and additive blitters, flipped or not.
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 /// A small Mercury Djinn circles over the targets, one turn every 32 frames, on
 /// a radius of 64 - 2 x frame pixels (half that across) that shrinks through
 /// the middle at frame 32 and opens out on the other side. At frames 4, 7, 10,
@@ -206,8 +199,6 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
 #define DOT_COUNT 512
 #define DOTS_PER_BALL 32
 #define BALL_COUNT 8
-
-extern char ResourceId_FlameballSheet;
 
 void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
@@ -480,16 +471,6 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 #define PUFF_COUNT 9
 #define SPARKS_PER_PUFF 16
-
-extern char ResourceId_GlowOrbSheet;
-extern char ResourceId_EmberStreakSheet;
-
-// The ember puff's six cels: ☀️'s gBattleEffect_PuffArcCellWidths, _CellHeights,
-// _CellBiasY and _CellSourceOffsets.
-extern u8 gBattleEffect_PuffArcPictureWidths[];
-extern u8 gBattleEffect_PuffArcPictureHeights[];
-extern u8 gBattleEffect_PuffArcPictureBiasY[];
-extern u16 gBattleEffect_PuffArcPictures[];
 
 void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;

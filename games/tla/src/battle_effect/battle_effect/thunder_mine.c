@@ -10,75 +10,13 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags, u32 mode);
-
-extern char ResourceId_TornadoSheet;
-extern char ResourceId_Data134;
-extern char ResourceId_LightningBoltSheet;
-extern char ResourceId_VioletPaletteC;
 /// The sparks, after the map cells.
 #define BOLT_SPARKS ((struct EffectStep *)gData_02014000)
-extern u16 gBattleEffect_MotePictures[];
-// Heights not const: a const table's second height read issues two places
-// early (6).
-extern u16 gBattleEffect_GlintPictures[];      // the flashes' cells: offsets,
-extern u8 gBattleEffect_GlintPictureWidths[];  // widths
-extern u8 gBattleEffect_GlintPictureHeights[]; // and heights
-extern const u8 gBoltTrail_GlintFlips[4];      // their flips
-extern const u8 gBattleEffect_ColumnMesh[];    // a bolt's mesh
-extern const u8
-    gBattleEffect_TaperedBeamCorners[];      // its corners (Thunder Mine)
-extern const u8 gBattleEffect_BeamCorners[]; // and (Earth Force)
 
 // The body of Thunder Mine (mode 0) and Earth Force (mode 1): a ball of
 // light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
@@ -369,20 +307,6 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
 
 #define HI(v) (((s16 *)&(v))[1])
 
-void BattleEffect_StepPaletteToResource(s32 palette);
-
-void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
-                                        s32 y); // ..PlaceFormationObjects
-void BattleEffect_RunImpactBurst(s32 formation, s32 x,
-                                 s32 y); // ..RunImpactBurst
-
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_WhirlBeamSheet;
-
-extern char ResourceId_SparkleDots;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_TanPalette;
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 512 sparks
 #define PICTURES (Ram_MapCellBuffer + 0x4000)
 struct Point {
@@ -390,12 +314,6 @@ struct Point {
   s32 y;
 };
 extern const struct Point gMegaera_UnitScale;
-
-extern u16 gBattleEffect_SparklePictures[]; // the sparkles' cells
-extern u8 gBattleEffect_SparkleSizes[];     // and sizes
-
-extern const u8 gMegaera_GlintFlips[];
-extern const u8 gMegaera_GlintModes[];
 
 // Abilities: Megaera.
 //
@@ -751,15 +669,6 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
 struct FxPartyList;
 struct Model;
 struct StripQuad;
-
-void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
-void BattleCamera_ApplyPhasedDelta(void); // the camera's sway
-
-extern char ResourceId_EmberStreakSheet;
-extern char ResourceId_CometSheetB;
-extern char ResourceId_RuneSheet;
-extern u8 gMapCellBuffer[];
-extern const s8 gVoidBeam_Corners[]; // the hexagon's corners (z, y)
 
 #define VOID_BEAM_FRAMES 88
 #define BEAM_SEGMENTS 10

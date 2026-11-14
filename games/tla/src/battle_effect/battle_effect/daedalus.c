@@ -45,38 +45,6 @@ struct BurstTexture {
 
 // One entry of the list Render_DrawModelList draws; kind 6 is a textured quad.
 
-extern char ResourceId_EarthWallSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_FireballSheet;
-extern char ResourceId_MarsDjinnSheet;
-
-// The burst quad: its face list and its four corners, 64x64 pixels standing
-// on its base.
-extern const u8 gBattleEffect_SquareMesh[];
-extern const u8 gBattleEffect_StandingSquareCorners[];
-
-// Per mode: the quad's scale (16.16, doubled when used) and its unk14.
-extern const s32 gMirroredWall_BurstScales[];
-extern const s32 gMirroredWall_BurstShades[];
-
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
-                                s32 wait);
-
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void BattlePlayback_StartFar(s32 phase);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 blitter); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 member, s32 timer,
-                              s32 frames);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_EndCanvasLayer(void);
-
 // A symmetrical burst over the target. Three half-pictures of the earth
 // wall sheet are mirrored into three 64x64 cels; the burst grows through
 // them in its first twelve frames, flickers between the last two until
@@ -347,59 +315,6 @@ struct SystemWork__f17e698 {
 
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
-
-extern char ResourceId_VioletSkyBackdrop;
-extern char ResourceId_ForestCanopyTiles;
-extern char ResourceId_BronzeAutomatonTiles;
-extern char ResourceId_MissileTiles;
-extern char ResourceId_Data0BA;
-extern char ResourceId_Data0BB;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data134;
-extern char ResourceId_FlashBurstSheet;
-
-extern char ResourceId_SmokeSheet;
-
-extern u16 gBattleEffect_MotePictures[];
-extern Vec2 gDaedalus_WaveScale;
-extern Vec2 gDaedalus_ShipScale;
-extern Vec2 gDaedalus_ParticleScale;
-extern s8 gDaedalus_ShakeOffsets[];
-extern u8 gDaedalus_DriftPictures[];
-extern u8 gDaedalus_DriftStarts[][2];
-extern s32 gDaedalus_DriftSpeeds[][2];
-extern u8 gDaedalus_DriftFrames[];
-extern u16 gDaedalus_ClatterFrames[];
-extern u16 gDaedalus_RingStarts[];
-extern s8 gDaedalus_RingX[];
-extern u8 gDaedalus_SpritePoints[][2];
-extern u8 gDaedalus_SplashPoints[][6][2];
-extern u16 gDaedalus_ParticleStarts[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-
-void BattleEffect_ConfigureEffectDisplay(void);
-void RagingHeat_FillGradientCanvas(void);
-
-void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-void BattleBackground_LoadFar(s32, s32, s32);
-
-void BattleEffect_FetchRectangleBlitters(s32, void **);
-void BattleEffect_StepPaletteToResource(s32);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-
-void Transform_ApplyRoll(s32 angle);
-void Transform_ApplyPitch(s32);
-
-void BattleEffect_SetupBlendedDisplay(void);
-void Palette_LoadBasicSpriteColors(void);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
-void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-
-void BattleEffect_AdvanceScrollOnInterval(void);
 
 #define ALCHEMY_TYPES_H
 
@@ -1534,25 +1449,6 @@ struct RenderModel__f17e698 {
   u8 scrollV;
 };
 
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-
-void Transform_ApplyYaw(s32 angle);
-
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-
-extern char ResourceId_Data0C9;
-extern u8 gMapCellBuffer[];
-
-extern const u8 gDaedalusAlt_StrikeFrames[]; // the seven strike frames
 /* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
@@ -1564,8 +1460,6 @@ struct PlacementSource__f17e698 {
 };
 extern const struct PlacementSource__f17e698
     gDaedalusAlt_SummonScale; // the summon's placement source
-extern const u8 gBattleEffect_SmallSquareMesh[];    // the rings' mesh
-extern const u8 gBattleEffect_TaperedBeamCorners[]; // their corners
 /// The sparks, after the map cells.
 #define STRIKE_SPARKS ((struct EffectStep *)gData_02014000)
 

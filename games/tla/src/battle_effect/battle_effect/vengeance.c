@@ -14,58 +14,11 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
-
-extern char ResourceId_Data0B0;
-extern const u8 gVengeance_BladeStrikes[][7]; // per level: which blades strike
 
 #define VENGEANCE_FRAMES 124
 #define BLADES 7
@@ -362,18 +315,6 @@ struct Scythe {
   s32 timer;
 };
 
-extern char ResourceId_Data0F5;
-extern u8 gMapCellBuffer[];
-extern u8 Data_020112e8[];                  // the reaper's raised pose
-extern u8 Data_0201276b[];                  // the blade's texture
-extern u8 Data_0201476b[];                  // the handle's texture
-extern u8 Data_0201576b[];                  // the flash's texture
-extern const u8 gLifeShear_BladeMesh[];     // the blade's mesh
-extern const u8 gLifeShear_HandleMesh[];    // the handle's mesh
-extern const u8 gLifeShear_ScytheCorners[]; // their corners
-extern const u8 gBattleEffect_SmallSquareMeshReversed[]; // the flash's mesh
-extern const u8 gBattleEffect_StandingSquareCorners[];   // its corners
-
 #define LIFE_SHEAR_FRAMES 90
 
 // Abilities: Life Shear.
@@ -647,8 +588,6 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Purgatory (kind 114).
 /* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4;
  * ability_effects.c has another definition; tried with the definition the rest
@@ -696,36 +635,9 @@ struct RenderPrimitive__f1811d4 {
   u8 scrollV;
 };
 
-extern char ResourceId_Data134;
-extern char ResourceId_CrossTextureSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_Data0D2;
-extern char ResourceId_BlastSheet;
-extern char ResourceId_MercuryDjinnSheet;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_JupiterDjinnSheet;
-
-// The life of each drop in the map cell buffer: gMapCellBuffer's
-// EffectSteps from their variant field on.
-extern s32 Data_02010018[];
-
-// Per mode: the drops' gravity, and their smallest cel.
-extern const s32 gGeyser_DropGravity[];
-extern const s8 gGeyser_DropMinSizes[];
-
-// The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern u16 gBattleEffect_MotePictures[];
-
-// The geyser: a mesh of sixteen corners and its faces.
-extern const u8 gBattleEffect_OctagonBandCorners[];
-extern const u8 gGeyser_Faces[];
-
 static inline void CopyPalette(const void *palette) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 }
-
-void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
-void BattleEffect_StepPaletteToResource(s32 resourceId);
 
 /// A geyser between the targets. A textured column, its texture scrolling
 /// upward, stands on the floor at the targets' midpoint, and drops burst
@@ -942,8 +854,6 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Djinn Stun (kind 465).
 DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStun, BattleEffect_RunStarSwarm, 0)
 
@@ -956,8 +866,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
 
 #define STARS_PER_TARGET 64 // each target's slice of the star buffer
 #define STAR_TOTAL 384
-
-void SceneTransform_ApplyPosition(const s32 *position);
 
 /// Swarms of stars over the targets. Each target gets a swarm, eight frames
 /// after the one before: its stars burst from a point that rises out of it,
@@ -1144,8 +1052,6 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *effect);
-
 /// Unused: nothing calls it. Opens the canvas layer, sets alpha blending and a
 /// 24-frame palette fade counter (read by Palette_StepFadeTransfer), then runs
 /// the effect body BattleEffect_RunBubbleColumn.
@@ -1169,19 +1075,6 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
 #define BUBBLE_COUNT 256
 #define BUBBLE_FRAMES 60
 #define BUBBLE_HIT_CUE 126
-
-extern char ResourceId_BlueBeamSheet;
-extern char ResourceId_Data0FD;
-
-// 256 bubbles past the map cells. Each is an EffectStep with its cel in z
-// and its life in variant (-1 once it has left the top of the canvas).
-extern struct EffectStep gData_02015000[];
-
-// The fifteen cels of Resource_Data0FD, a glowing oval from 16x32 down to
-// 3x4: their widths, heights and byte offsets into the sheet.
-extern u8 gBubbleColumn_PictureWidths[];
-extern u8 gBubbleColumn_PictureHeights[];
-extern u16 gBubbleColumn_Pictures[];
 
 /// A column of bubbles. On the first frame 256 glowing ovals of random size
 /// appear over the bottom left of the canvas; for 60 frames they float up
@@ -1293,47 +1186,6 @@ struct SpriteView {
 };
 
 #define EFFECT_STEPS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
-extern u8 Data_02014400[];
-extern u8 Data_02014800[];
-extern const struct WordPair gCoatlicue_UnitScale;
-extern u8 gCoatlicue_PictureWidths[];
-extern u8 gCoatlicue_PictureHeights[];
-extern u16 gCoatlicue_Pictures[];
-extern u16 gCoatlicue_BurstFrames[];
-extern u8 gCoatlicue_BurstX[];
-extern u8 gCoatlicue_BurstY[];
-extern u8 gCoatlicue_BurstSpreadX[];
-extern u8 gCoatlicue_BurstSpacingY[];
-extern s8 gCoatlicue_BurstVelocityX[];
-extern s8 gCoatlicue_BurstVelocityY[];
-extern s8 gCoatlicue_BurstZ[];
-extern s8 gCoatlicue_BurstVelocityZ[];
-extern u8 gCoatlicue_PictureBias[];
-extern u16 gCoatlicue_RingFrames[];
-extern u16 gCoatlicue_FlashFrames[];
-extern u16 gCoatlicue_GlowFrames[];
-extern u8 gCoatlicue_CoilStarts[];
-extern u16 gCoatlicue_CoilScales[];
-extern u16 gCoatlicue_CoilRolls[];
-extern u16 gCoatlicue_CoilGrowth[];
-extern u16 gCoatlicue_CoilMaxScales[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern char ResourceId_BellMaidenTiles;
-extern char ResourceId_BlueFlameSheet;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0FB;
-extern char ResourceId_Data0FC;
-
-void BattleEffect_ConfigureEffectDisplay(void);
-void RagingHeat_FillGradientCanvas(void);
-void BattleEffect_ArmPaletteHBlankDma(void);
-void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-
-void Palette_LoadBasicSpriteColors(void);
-void Graphics_LoadGreyRamp(void);
-void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
-void Palette_BrightenSavedBattleBg(s32 r, s32 g, s32 b);
 
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->vramEntry].offset)

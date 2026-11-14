@@ -50,52 +50,6 @@ struct RenderPrimitive__f17e0c0 {
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
 
-extern char ResourceId_Data134;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data181;
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_FirePillarSheetB;
-extern char ResourceId_IceBlockSheet;
-extern char ResourceId_PinkBurstSheet;
-extern char ResourceId_BlastSheet;
-extern char ResourceId_OrangePaletteB;
-
-// The 64 sparks, past the map cells' first 16 KB.
-extern u8 gData_02014000[];
-
-// The streak quad's faces (32x64) and the flash quad's (128x128), and the
-// corners of a 64x64 square around the origin, which both scale.
-extern u8 gBattleEffect_TallMesh[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u8 gBattleEffect_SquareCorners[];
-
-// The streak's scale per mode, 16.16.
-extern const s32 gRushingStrike_Scales[];
-
-// The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern u16 gBattleEffect_MotePictures[];
-
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-
-void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
-
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Transform_ApplyYaw(s32 angle);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 member, s32 timer,
-                              s32 frames);
-void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
-void BattlePlayback_StartFar(s32 phase);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_EndCanvasLayer(void);
-
 // A lunge. The caster runs 80 percent of the way to the target in ten
 // frames behind a glowing streak (a 32x32 flare and its reflection); on
 // frame 8 it strikes: the target flashes and is knocked back, a 128x128
@@ -340,9 +294,6 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
   HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }
-
-void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
-                                  s32 mode);
 
 /// Abilities: Spasm (kind 348).
 void BattleEffect_RunSpasm(s32 a0) { BattleEffect_RunMirroredWall(a0, 0); }

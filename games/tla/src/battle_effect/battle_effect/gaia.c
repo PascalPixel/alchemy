@@ -38,28 +38,6 @@ struct RockObject {
   u8 flags;
 };
 
-extern char ResourceId_EarthWallSheet;
-extern char ResourceId_OrangePaletteA;
-
-// ☀️'s gGaia_Bg2Shifts, by side and variant.
-extern s8 gGaia_Bg2Shifts[][3];
-// The growing wall's nine rows: ☀️'s gGaia_RowWidths and
-// gGaia_RowPictures.
-extern u8 gGaia_RowWidths[];
-extern u16 gGaia_RowPictures[];
-// The mound's three cels: ☀️'s gGaia_MoundWidths, _MoundHeights and
-// _MoundSheetOffsets.
-extern u8 gGaia_FlameWidths[];
-extern u8 gGaia_FlameHeights[];
-extern u16 gGaia_FlamePictures[];
-// ☀️'s gGaia_LateRockColumns.
-extern u8 gGaia_LateRockColumns[];
-
-// ☀️'s gRisingWall_UnitScale.
-extern struct Scale gGaia_UnitScale;
-
-void Animation_ApplyChildArgumentFar(void *object, s32 value);
-
 void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -1164,11 +1164,11 @@ gProjectileVolley_GlintFlips:
 	.global gDjinnAttacks_LaunchFrames
 gDjinnAttacks_LaunchFrames:
 	.byte 4, 7, 10, 21, 34
-	.global gHail_CellWidths
-gHail_CellWidths:
+	.global gHail_PictureWidths
+gHail_PictureWidths:
 	.byte 8, 8, 8, 8
-	.global gHail_CellHeights
-gHail_CellHeights:
+	.global gHail_PictureHeights
+gHail_PictureHeights:
 	.byte 8, 8, 8, 8
 	.balign 2
 	.global gHail_Pictures

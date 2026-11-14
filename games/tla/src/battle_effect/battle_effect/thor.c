@@ -13,23 +13,6 @@
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 #define BLITTER_ALTERNATE ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 
-extern char ResourceId_Data135;
-extern char ResourceId_DuskCloudsBackdrop;
-extern char ResourceId_JupiterDjinnSheet;
-extern char ResourceId_LightFanSheet;
-extern char ResourceId_LightningPillarSheet;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_MercuryDjinnSheet;
-extern char ResourceId_ParticleSpritesC;
-
-extern char ResourceId_VioletLightningSheetB;
-extern char ResourceId_VioletMoteSheet;
-
-extern const s16 gThor_Points[6][2]; // the three lines' end points
-
-extern const u8 gThor_TargetPalettes[];
-extern const u8 gThor_CrackleFlips[];
-
 #define STORM_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
 #define STORM_MOTE_CELLS 0x6000
 #define STORM_PARTICLE_COUNT 910

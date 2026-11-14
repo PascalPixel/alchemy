@@ -37,10 +37,6 @@ struct DescriptorEntry {
 
 extern struct DescriptorEntry gData_080eff28[];
 
-void Shop_InitializeWork(void);
-s32 Inn_RoomPrice(s32 innId);
-void Shop_ReleaseWork(void);
-
 void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_StartTiledCanvas(1);
   BattleEffect_EndCanvasLayer();

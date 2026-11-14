@@ -21,104 +21,13 @@ struct ModelVertex {
   s8 pad;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
-void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
-
-extern u8 Data_02011000[];
-extern u8 Data_02012000[];
-extern u8 gMapCellBuffer[];
-extern u8 gData_02014000[];
-extern u16 gBattleEffect_MotePictures[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u8 gBattleEffect_SquareCorners[];
-extern const u8 gBattleEffect_StandingSquareCorners[];
-extern u8 gBattleEffect_TallMesh[];
-extern const u16 gMegiddo_FlashStarts[]; // the five rings' start frames
-extern const s16 gMegiddo_FlashPitches[];
-extern const s16 gMegiddo_FlashYaws[];
-extern const s16 gMegiddo_RayPitches[];
-extern const s16 gMegiddo_RayYaws[];
-extern const s16 gMegiddo_RayRolls[];
-extern const s8 gMegiddo_RayX[];
-extern const s8 gMegiddo_RayY[];
-
-extern char ResourceId_RedHazeBackdrop;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0C9;
-extern char ResourceId_DustBlobSheet;
-extern char ResourceId_Data0E9;
-extern char ResourceId_Data103;
-extern char ResourceId_Data134;
-extern char ResourceId_OrangePaletteB;
-
-void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
-                                    s32 speed);
-void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
-void BattleObject_PutFar(void);
-void BattleEffect_BuildRepeatingTilemap(void);
-void Palette_BrightenBattleBg(s32 red, s32 green, s32 blue);
-void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
-void BattleEffect_StepPaletteToResource(s32 palette);
-void Graphics_LoadGreyRamp(void);
-s32 Render_ProjectPoint(const void *point, s32 *screen);
-
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
 // Megiddo: the caster rises in a column of light, a winged figure gathers
 // above and dives in a storm of feathers and rings onto the target.

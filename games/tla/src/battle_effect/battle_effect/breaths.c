@@ -58,64 +58,6 @@ struct Model__f18bc98 {
   s32 tail;
 };
 
-extern char ResourceId_Data134;
-extern char ResourceId_BlueFlameSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0C1;
-extern char ResourceId_Data0C9;
-extern char ResourceId_DustCloudSheet;
-
-// Each breath's length, the frame its burst starts, and the glow's widest
-// size by variant.
-extern u8 gBreaths_Frames[];
-extern u8 gBreaths_BurstFrames[];
-extern u8 gBreaths_MaxSizes[];
-
-// The four jaws of variant 2, by breath: their start frames, their growth,
-// and their x offsets from the mouth.
-extern u8 gBreaths_RingStarts[];
-extern u8 gBreaths_RingGrowth[];
-extern s8 gBreaths_RingX[];
-
-// The frame each breath hits the targets.
-extern u8 gBreaths_FlashFrames[];
-
-// The quad and jaw meshes and corners.
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_CylinderMesh[];
-extern const u8 gBattleEffect_CylinderCorners[];
-extern const u8 gBattleEffect_SmallSquareMesh[];
-extern const u8 gBattleEffect_BeamCorners[];
-
-// The spark cells: offsets into the particle sheet by size.
-extern u16 gBattleEffect_MotePictures[];
-
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
-
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
-                                    s32 percent);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void Transform_ApplyRoll(s32 angle);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void BattlePlayback_StartFar(s32 phase);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                              s32 frames);
-void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_EndCanvasLayer(void);
-
 // The breaths (Beam, Rolling Flame, Ghost Soldier and Pike Assault, Blast
 // Breath): 32 motes gather at the user's mouth, then burst out of it as
 // sparks while a flash grows there. The Beam glows and fires a beam of
@@ -566,9 +508,6 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
-                                   s32 mode);
-
 /// Abilities: Human Hunt (kind 437).
 DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, BattleEffect_RunCrescentSlash, 0)
 
@@ -578,17 +517,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, BattleEffect_RunCrescentSlash, 1)
 // Does nothing and gives no value: inlined with its value ignored, it leaves
 // only a clobber of the return register, an insn with no code.
 static inline s32 Nothing(void) {}
-
-extern char ResourceId_GreyCrescentSheet;
-extern char ResourceId_StarCrescentSheet;
-extern char ResourceId_MarsDjinnSheet;
-
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags, u32 mode);
-
-void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
-                                    s32 travelDivisor, s32 initialVelocityY);
 
 // The crescent slash of Human Hunt (kind 437, mode 0) and Echo Cut (kind 390,
 // mode 1). The caster closes in on the target; from frame 8 a crescent is cut

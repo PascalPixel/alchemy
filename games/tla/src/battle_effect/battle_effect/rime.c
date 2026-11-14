@@ -48,34 +48,6 @@ struct RenderModel__f173588 {
   s32 brightness;
 };
 
-extern char ResourceId_MercuryDjinnSheet;
-extern char ResourceId_RuneSheet;
-extern char ResourceId_JupiterDjinnSheet;
-extern char ResourceId_StarCrossSheet;
-
-extern const u8 gBattleEffect_SquareMesh[];          // a textured square
-extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
-
-// The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-s32 BattleEffect_LoadBlitter(
-    s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter, packed
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                              s32 frames);
-void BattleEffect_CountDownBattlerTints(void);
-void BattlePlayback_StartFar(s32 phase);
-void BattleEffect_StepPaletteToResource(s32 resource);
-void BattleEffect_RunDjinniEntrance(
-    struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-    s32 *world); // BattleEffect_RunDjinniEntrance
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-
 // Rime and Haze: the Djinni rises swaying through the canvas over the
 // party while its sign turns in the air: for Rime a crystal that spins in
 // two mirrored copies and shrinks, for Haze sixteen stars that bloom and
@@ -268,8 +240,6 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Gasp (kind 242).
 void BattleEffect_RunGasp(s32 a0) { BattleEffect_RunGaspFamily(a0, 0); }

@@ -17,10 +17,6 @@
 
 #define HI(v) (((s16 *)&(v))[1])
 
-// The card's picture, unpacked into the map cell buffer, and the 256 random
-// steps that dissolve it after it. Named as a symbol, not Ram_MapCellBuffer's
-// number: see the header.
-extern u8 gMapCellBuffer[];
 #define CARD (gMapCellBuffer + 0x603e)
 #define CARD_NOISE (CARD + 0x800)
 
@@ -59,56 +55,6 @@ struct Model__f18ad40 {
   s32 alpha;
   s32 tail;
 };
-
-extern char ResourceId_Data134;
-extern char ResourceId_SheepCardSheet;
-extern char ResourceId_Data0CF;
-extern char ResourceId_ButterflyCardSheet;
-extern char ResourceId_SwordCardSheet;
-extern char ResourceId_DaggerSheet;
-extern char ResourceId_PaletteRampImage;
-extern char ResourceId_SkeletonCardSheet;
-extern char ResourceId_CounterRevealSheet;
-extern char ResourceId_RedCrescentSheetA;
-extern char ResourceId_SmokeSheet;
-
-// The dagger's shards, ☀️'s palette ramp shards.
-extern u16 gStatChange_ShardPictures[];
-extern u8 gStatChange_ShardWidths[];
-extern u8 gStatChange_ShardHeights[];
-
-// The reaper's seven panels: x by side (seven each), then y.
-extern u8 gCastingImpact_PictureX[];
-extern u8 gCastingImpact_PictureY[];
-
-// The card's quad: its mesh and its corners.
-extern u8 gBattleEffect_TallMesh[];
-extern const u8 gBattleEffect_SquareCorners[];
-
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-
-void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
-void BattleEffect_GetTargetsMidpoint(struct EffectPosition *middle);
-void BattleEffect_StepPaletteToResource(s32 resource);
-void BattlePlayback_StartFar(s32 phase);
-void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                              s32 frames);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void Transform_ApplyRoll(s32 angle);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_EndCanvasLayer(void);
 
 // The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
 // the user to above the targets' middle for 48 frames, spinning upright and

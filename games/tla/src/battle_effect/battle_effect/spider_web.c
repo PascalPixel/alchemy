@@ -7,7 +7,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-struct AnimationEntry *AnimationObject_AllocateEmpty(void);
 /* VIEW(f15b3b0): routine Animation_ApplyChildArgumentFar as s32
  * Animation_ApplyChildArgumentFar(void *, s32); ability_effects has void
  * Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the rest
@@ -175,9 +174,6 @@ void Palette_MirrorBgColors(void) {
   REG_BLDALPHA = BLEND_ALPHA(16, 8);
 }
 
-// A scale of one in 16.16 on both axes.
-extern const struct SpriteScale gUlysses_ParticleScale;
-
 // A frame callback of summon 17 (BattleEffect_RunUlysses adds and removes it):
 // places effect object 7 at the last particle's point (x across, y in depth)
 // at a scale of one, moves the particle by its velocity (its depth speed
@@ -229,60 +225,9 @@ struct RenderModel__f15b3b0 {
   u8 scrollV;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-// Closes the canvas layer.
-void BattleEffect_EndCanvasLayer(void);
-// Copies the canvas to VRAM when a transfer is pending.
-// Counts down the actors' flash timers.
-void BattleEffect_CountDownBattlerTints(void);
-// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
-// flags, mode), whose result it returns.
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-// Flashes an actor in a palette for some frames.
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
     "Render_DrawModelList");
 #define Render_DrawModelList Render_DrawModelList__ability_effects
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-// An actor's recoil motion, through a far call.
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-// Shakes the camera while work->shakeFrames lasts.
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
@@ -290,44 +235,12 @@ void Transform_Pop(void);
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) ((v) >> 16)
 
-extern char ResourceId_Data0B1;
-extern char ResourceId_Data0B3;
-extern char ResourceId_RuneCircleSheet;
-extern char ResourceId_Data0C8;
-extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_RuneSheet;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_YellowOrbSheet;
-extern char ResourceId_EmberStreakSheet;
-extern u8 gMapCellBuffer[];
-extern u8 Data_02010200[];
-extern u16 gBattleEffect_FlarePictures[];
-extern u16 gBattleEffect_PuffArcPictures[];
-extern u8 gBattleEffect_PuffArcPictureWidths[];
-extern u8 gBattleEffect_PuffArcPictureBiasY[];
-extern u8 gBattleEffect_PuffArcPictureHeights[];
-extern const u16 gUlysses_Pictures[];
-extern const u8 gUlysses_PictureWidths[];
-extern const u8 gUlysses_PictureHeights[];
-extern const s8 gUlysses_ParticleStarts[];
-extern const u8 gUlysses_ObjectX[];
-extern const u8 gUlysses_ObjectZ[];
 struct PlacementSource {
   s32 unk00;
   s32 unk04;
 };
 
 extern const struct PlacementSource gUlysses_ShipScale;
-extern const u8 gBattleEffect_SquareMesh[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-
-void BattleEffect_ProcessPendingBlock2Transfer(void);
-void Display_ApplyBg2Affine(void);
-// Steps the background palette fade.
-void BattleEffect_StepPaletteToResource(s32 palette);
-
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
 // Ulysses: the hero's ship sails out of a whirlpool, its crew of six
 // warriors leap at the foe and the ship's broadside lands as a storm of
@@ -1004,8 +917,6 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   }
 }
 
-void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Poison Beat (kind 382).
 void BattleEffect_RunPoisonBeat(void *object) {
   BattleEffect_RunSwirlSwipe(object, 0);
@@ -1018,17 +929,6 @@ void BattleEffect_RunSpinningBeat(void *object) {
 
 // Byte offset of the blitter slot in gHeapSlots (unk64[1]).
 #define HEAP_BLITTER 104
-
-extern char ResourceId_MagentaSwirlSheet;
-extern char ResourceId_MagentaTailSheet;
-extern char ResourceId_LimePalette;
-// The swirl's six cels: ☀️'s gSpiderWeb_Pictures, _CellX (six
-// for each side), _CellWidths, _CellBiasY and _CellHeights.
-extern const u16 gSpiderWeb_Pictures[];
-extern const u8 gSpiderWeb_PictureX[];
-extern const u8 gSpiderWeb_PictureWidths[];
-extern const s8 gSpiderWeb_PictureBiasY[];
-extern const u8 gSpiderWeb_PictureHeights[];
 
 void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   struct HeapSlots *slots;
@@ -1136,13 +1036,6 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 }
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
-
-extern char ResourceId_SpiderWebSheet;
-
-// The middle between the first and the last target.
-void BattleEffect_GetTargetsMidpoint(struct EffectPosition *middle);
-
-void BattleEffect_RunImpair(void *action);
 
 // Builds the transparent blitter for one quarter.
 #define LOAD_QUARTER(flags)                                                    \

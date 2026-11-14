@@ -20,9 +20,6 @@
 
 #define PHASE_HIT 212
 
-extern char ResourceId_LimeColumnSheet;
-extern const u16 gUndeadSword_SparkPictures[];
-extern const u16 gUndeadSword_SparkSizes[];
 // Two lime columns burst out of the ground under the target and a spray of
 // sparks flies up between them.
 //
@@ -161,12 +158,6 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-extern char ResourceId_Data0DA;
-extern char ResourceId_MercuryDjinnSmallSheet;
-
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
-                                    s32 percent);
 
 // Plume Edge: the user dashes at the target, which a fan of white flashes
 // throws back; a pillar of light scrolls up through it for half a second and
@@ -339,8 +330,6 @@ void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height) {
   }
 }
 
-void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Dreamtide (kind 106).
 void BattleEffect_RunDreamtide(s32 a0) { BattleEffect_RunWaterSheet(a0, 0); }
 
@@ -371,12 +360,6 @@ struct WaterTriangle {
   u32 u2 : 8;
   u32 v2 : 8;
 };
-
-extern char ResourceId_CrackedTextureSheet;
-extern char ResourceId_Data0B4;
-extern char ResourceId_SmokeSheet;
-extern char ResourceId_CrystalSheet;
-extern const u8 gBattleEffect_SquareMesh[]; // the splash's mesh
 
 #define WATER_COLUMNS 16
 #define WATER_ROWS 8
@@ -746,23 +729,11 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Waft (kind 234).
 void BattleEffect_RunWaft(s32 a0) { BattleEffect_RunWindFunnel(a0, 0); }
 
 /// Abilities: Aroma (kind 247).
 void BattleEffect_RunAroma(s32 a0) { BattleEffect_RunWindFunnel(a0, 1); }
-
-extern char ResourceId_Data0D3;
-
-extern char ResourceId_JupiterDjinnSmallSheet;
-extern char ResourceId_CyanPalette;
-extern char ResourceId_TanPalette;
-
-extern u8 Data_02010108[];
-extern u8 Data_02010318[];
-extern const u8 gWindFunnel_Counts[]; // the funnels per mode
 
 #define WAFT_SEGMENTS 33
 
@@ -1016,21 +987,6 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
   Task_Remove(transfer);
   BattleEffect_EndCanvasLayer();
 }
-
-extern char ResourceId_CrystalBitmapSheet;
-extern char ResourceId_Data0C1;
-
-extern u8 Data_02014e20[];         // gMapCellBuffer + 20000, the berg
-extern s32 gPrism_ShardPictures[]; // the shards' cells: offsets,
-extern u8 gPrism_ShardWidths[];    // widths
-extern u8 gPrism_ShardHeights[];   // and heights
-extern const u8 gBattleEffect_CylinderMesh[];    // the ripple's mesh
-extern const u8 gBattleEffect_CylinderCorners[]; // its corners
-extern const u8 gDiamondBerg_RingStarts[4];      // per ripple: its start,
-extern const u8 gDiamondBerg_RingGrowth[4];      // its growth
-extern const s8 gDiamondBerg_RingHeights[4];     // and its height
-extern const s16 gDiamondBerg_ShardRolls[8];     // per flash: its roll
-extern const s16 gDiamondBerg_ShardPitches[8];   // and pitch
 
 #define DIAMOND_BERG_FRAMES 148
 

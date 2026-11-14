@@ -42,9 +42,6 @@ void BattleEffect_RunSevereBlow(struct BattleEffectArgument *effect) {
   BattleEffect_RunSparkGroups(effect, 2); // 2: from the user's position.
 }
 
-void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
-                                    s32 variant);
-
 /// Abilities: Quick Strike (kind 52).
 void BattleEffect_RunQuickStrike(s32 a0) {
   BattleEffect_RunFlashingStrike(a0, 1);
@@ -82,16 +79,6 @@ void BattleEffect_RunTwinShear(s32 a0) {
 #define FLOOD_FRAME 16 // the pictures end and the canvas floods
 #define RESULTS_FRAME 18
 #define HIT_FRAME 20
-
-extern char ResourceId_ArcFragmentsSheet;
-extern char ResourceId_RevealMaskA;
-extern char ResourceId_RevealMaskB;
-extern char ResourceId_RevealMaskC;
-extern char ResourceId_RevealMaskD;
-extern char ResourceId_RevealMaskE;
-extern char ResourceId_RevealMaskF;
-
-void BattleEffect_RunWeaken(void *action);
 
 // A picture flashes up over the target (four pictures, four frames each), the
 // canvas floods with one colour, and the target is struck.

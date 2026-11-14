@@ -27,50 +27,6 @@ struct PointPair {
   s32 y;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
@@ -85,44 +41,7 @@ struct MeteorStar {
   s32 kind;
 };
 
-extern char ResourceId_GlowOrbSetSheet;
-extern char ResourceId_DustBlobSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_Data134;
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_Data0DA;
-extern char ResourceId_Data0C1;
-extern u8 gMapCellBuffer[];
-extern s32 Data_02010018[]; // the shards' variants, 28 bytes apart
-extern u16 gBattleEffect_MotePictures[];
 extern const struct PointPair gMeteorBlow_DoubleScale;
-extern const u8 gMeteorBlow_PictureWidths[];
-extern const u8 gMeteorBlow_PictureHeights[];
-extern const u16 gMeteorBlow_Pictures[];
-extern const u8 gMeteorBlow_WaveStarts[];
-extern const u8 gMeteorBlow_WaveGrowth[];
-extern const u8 gMeteorBlow_WaveStretch[];
-extern const u8 gMeteorBlow_RingStarts[];
-extern const u8 gMeteorBlow_RingGrowth[];
-extern const s8 gMeteorBlow_RingHeights[];
-extern const u8 gBattleEffect_RingMesh[];
-extern const u8 gBattleEffect_RingCorners[];
-extern const u8 gBattleEffect_CylinderMesh[];
-extern const u8 gBattleEffect_CylinderCorners[];
-
-void BattleEffect_FlushPendingGraphicsTransfer(void);
-void BattleEffect_ArmMeteorBlowPaletteDma(void);
-void BattleEffect_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32 mode, s32 value);
-void Graphics_LoadGreyRamp(void);
-void BattleEffect_SetupBlendedDisplay(void);
-void BattleEffect_StepPaletteToResource(s32 palette);
-void Palette_BrightenBattleBg(s32 red, s32 green, s32 blue);
-void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                    s32 cellWidth, s32 cellHeight);
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags, u32 mode);
-void SceneTransform_ApplyPosition(const s32 *pos);
 
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {

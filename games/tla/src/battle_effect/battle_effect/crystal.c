@@ -25,32 +25,6 @@ struct BattleObjectPosition {
   s32 x;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-
-extern char ResourceId_Data0FB;
-extern char ResourceId_VenusDjinnSmallSheet;
-extern char ResourceId_BlastSheet;
-extern u8 gMapCellBuffer[];
-extern u8 gData_02014000[];
-extern const u8 gBattleEffect_LargeSquareMesh[];     // the crystal's mesh
-extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
-
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 #define CRYSTAL_FRAMES 103
 #define CRYSTAL_SHARDS 32

@@ -7,29 +7,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_BlueCrescentSheet;
-extern char ResourceId_Data134;
-extern char ResourceId_OrangePaletteB;
-extern u16 gBattleEffect_MotePictures[];
-
 #define HI(v) (((s16 *)&(v))[1])
 #define STAR_MINE_FRAMES 144
 #define STARS 6
@@ -277,61 +254,15 @@ struct RenderModel__f17d174 {
   u8 scrollV;
 };
 
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
-void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
-
-extern char ResourceId_SmokeBandSheet;
-
-extern char ResourceId_ClawSlashSheet;
-
-extern char ResourceId_RedHazeBackdrop;
 struct CornerRow {
   struct Corner corners[2];
 };
-extern u8 gMapCellBuffer[];
 #define SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
-extern u8 Data_02011000[];
-extern u8 Data_02012000[];
-
-extern const u8 gBattleEffect_SquareMesh[];
-extern const u8 gBattleEffect_SquareCorners[];
 
 #define SEGMENTS 33
 
@@ -736,9 +667,6 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
-                                   s32 mode);
 
 /// Abilities: Bone Charge (kind 311).
 void BattleEffect_RunBoneCharge(s32 a0) {

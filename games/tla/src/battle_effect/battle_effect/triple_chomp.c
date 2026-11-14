@@ -42,44 +42,6 @@ struct Model__f18b868 {
   s32 tail;
 };
 
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data134;
-extern char ResourceId_BlueFlameSheet;
-
-// The bite's quad: its mesh and its four corners, 192 x 128 around the
-// origin.
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-
-// The three bites' frames: 0, 12 and 24.
-extern u8 gTripleChomp_BiteFrames[];
-
-// The spark cells: offsets into the particle sheet by size.
-extern u16 gBattleEffect_MotePictures[];
-
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
-                                    s32 percent);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void BattlePlayback_StartFar(s32 phase);
-void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                              s32 frames);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void Transform_ApplyRoll(s32 angle);
-void Transform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_EndCanvasLayer(void);
-
 // Triple Chomp (effect kind 426): the caster lunges 80% of the way to the
 // target, and three bites close on it at frames 0, 12 and 24. Each bite
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
@@ -235,8 +197,6 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Beam, Cycle Beam, Searing Beam (kind 73).
 DEFINE_EFFECT_KIND(BattleEffect_RunBeam, BattleEffect_RunBreaths, 0)

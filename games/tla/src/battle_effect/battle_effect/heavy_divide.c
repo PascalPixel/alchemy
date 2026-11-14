@@ -12,66 +12,11 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
-
-extern char ResourceId_GreatSwordSheet;
-extern char ResourceId_AxeSheet;
-extern u8 gMapCellBuffer[];
-extern const u8 gHeavyBlow_SwordMesh[];        // the sword's mesh
-extern const u8 gBattleEffect_BeamCorners[];   // its corners
-extern const u8 gBattleEffect_SquareMesh[];    // the axe's mesh
-extern const u8 gBattleEffect_SquareCorners[]; // its corners
-extern u8 gHeavyBlow_StrikeFrames[];           // per mode: the strike's frame
-extern u8 gHeavyBlow_ChipCounts[];             // per mode: the chips
-extern const u8 gHeavyBlow_ChipPixels[];       // a chip's two pixels
 
 // The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
 // a great sword (with four fading after-images, each a dimmer copy of the
@@ -323,24 +268,6 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
 // How a column leans as it grows.
 enum { LEAN_LEFT, LEAN_RIGHT, SLIM_LEAN_LEFT, SLIM_LEAN_RIGHT };
 
-extern char ResourceId_Data0CE;
-extern char ResourceId_BlastSheet;
-extern char ResourceId_BlueFlameSheet;
-
-// The columns, by number: x, start frame, full height and lean.
-extern s16 gCool_ColumnX[];
-extern u8 gCool_ColumnStarts[];
-extern u8 gCool_ColumnHeights[];
-extern u8 gCool_ColumnLeans[];
-// The Broken Seal's gEruption_PuffPictures and gCybele_EmberSizes:
-// the spark pictures by stage.
-extern u16 gCool_SparkPictures[];
-extern u16 gCool_SparkSizes[];
-
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags,
-                              u32 mode); // BattleEffect_BuildBlitter
-
 // Cool: ice columns burst up around the targets one after another, leaning
 // as they grow, and stand until they sink back; sparks of frost fly up
 // from the ground and drift upward.
@@ -524,15 +451,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
 // Wyrd Curse: drops fall on the target and bounce away, feeding a glow that
 // grows over it, then splashes rise and the target is struck six times.
 
-extern char ResourceId_Data134;
-extern char ResourceId_Data0D8;
-
-extern u8 gData_02014000[];
-extern u16 gBattleEffect_MotePictures[];
-extern const s8 gWyrdCurse_DropBounces[]; // the drops' bounce speeds
-extern const u8 gBattleEffect_SmallSquareMeshReversed[]; // the glow's and the
-                                                         // splashes' mesh
-extern const u8 gBattleEffect_GroundSquareCorners[];     // its four corners
+// splashes' mesh
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 
@@ -799,14 +718,6 @@ struct Model;
 
 #define FLAMES 32
 
-extern char ResourceId_Data0C2;
-extern char ResourceId_OrangePaletteB;
-
-extern const u8 gBattleEffect_LargeSquareMesh[]; // a textured square
-
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
-                                    s32 percent);
-
 // Radiant Fire: eight bursts of fire bloom one after another around the
 // target, each a shaded disc that swells and shrinks under a spinning
 // square of flame, with a white flash of the canvas as the first lands.
@@ -989,11 +900,6 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
 #define SPLASH_OFFSET 0x3200
 #define SPLASH_SIZE (24 * 48)
 
-extern char ResourceId_CyanPalette;
-extern char ResourceId_SmokeSheet;
-
-void BattleEffect_RunDull(void *action);
-
 // Hurricane: driving rain slants down over the target, each drop bursting
 // into a splash where it lands, while the target is struck eight times; the
 // user rushes in at frame 32. The canvas then hands over to the summon
@@ -1154,8 +1060,6 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_RunDull(effect);
 }
-
-void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Earth Force (kind 459).
 void BattleEffect_RunEarthForce(s32 a0) { BattleEffect_RunBoltTrail(a0, 1); }

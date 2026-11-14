@@ -159,10 +159,8 @@ struct RegisterQueue {
 #define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
 #define REGISTER_QUEUE ((struct RegisterQueue *)&gIoWriteQueue)
 
-extern u8 gMapCellBuffer[];
 #define SPRITES ((struct SpriteObject__f175f74 **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapCellBuffer
-extern u8 gData_02014000[];
 #define OAM_BUFFER ((u32 *)gData_02014000)
 #define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
 #define PARTICLES ((struct Particle__f175f74 *)(Ram_MapCellBuffer + 0x4200))
@@ -170,64 +168,10 @@ extern u8 gData_02014000[];
 #define BG_VRAM_A900 ((u8 *)0x0600a900)
 #define PLTT ((u16 *)BG_PLTT)
 
-extern char ResourceId_AerialViewBackdrop;
-extern char ResourceId_CrimsonBeastTiles;
-extern char ResourceId_RedSlashTiles;
-extern char ResourceId_RedCrescentTiles;
-extern char ResourceId_WhiteArrowsTiles;
-extern char ResourceId_WhiteWispsTiles;
-extern char ResourceId_Data0B4;
-extern char ResourceId_Data0B5;
-extern char ResourceId_CharmRingSheet;
-extern char ResourceId_EffectPalette00;
-extern char ResourceId_BoltSheet;
-extern char ResourceId_CurseSealSheet;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0C3;
-extern char ResourceId_Data134;
-extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_FlashBurstSheet;
-
 extern const struct ScalePair gCharon_SwarmScale;
 extern const struct ScalePair gCharon_PulseScale;
 extern const struct ScalePair gCharon_RevealScale;
 extern const struct ScalePair gCharon_FinaleScale;
-extern u16 gBattleEffect_MotePictures[];
-extern u8 gCharon_FlashFrames[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_SquareMesh[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-
-void BattleEffect_StartCanvasLayer(s32);
-void BattleEffect_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32, s32);
-void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-void Palette_LoadBasicSpriteColors(void);
-void BattleBackground_LoadFar(s32, s32, s32);
-void Palette_BrightenSavedBattleBg(s32, s32, s32);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void SceneTransform_ApplyScale3(s32, s32, s32);
-void SceneTransform_ApplyPosition3(s32, s32, s32);
-void Transform_ApplyPitch(s32);
-void Transform_ApplyRoll(s32);
-void Transform_ApplyYaw(s32);
-void SceneTransform_ApplyUniformScale(s32);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Graphics_LoadGreyRamp(void);
-void Canvas_BlitAtFoot(void *, s32, s32, s32);
-s32 BattleEffect_LoadBlitter(s32, s32);
-void ColorBuffer_ScaleFar(void *, void *, s32, s32);
-void BattlePlayback_StartFar(s32);
-void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-
-void Camera_ApplyVerticalShake(s32);
-void BattleEffect_CountDownBattlerTints(void);
-
-void BattleEffect_EndCanvasLayer(void);
 
 void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   u16 tiles[16];

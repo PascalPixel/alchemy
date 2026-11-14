@@ -16,20 +16,6 @@
 // A boulder shatters this many frames after it starts to fall.
 #define FALL_FRAMES 18
 
-extern char ResourceId_BoulderSheet;
-// ☀️'s gSpire_RockCounts, by variant.
-extern u8 gSpire_RockCounts[];
-// ☀️'s gSpire_ShardOffsets: x, y in the boulder for each shard.
-extern u8 gSpire_ShardOffsets[];
-// ☀️'s gSpire_RockX and gSpire_DropFrames, by boulder.
-extern s8 gSpire_RockX[];
-extern u8 gSpire_DropFrames[];
-// The shard cels: ☀️'s gSpire_ShardPictures, _ShardWidths and
-// _ShardHeights.
-extern u16 gSpire_ShardPictures[];
-extern u8 gSpire_ShardWidths[];
-extern u8 gSpire_ShardHeights[];
-
 void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

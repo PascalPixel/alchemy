@@ -6,9 +6,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-void *GetMotionRecordFar(void *object, s32 index);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   u8 *camera;
   s32 *object;
@@ -37,12 +34,6 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
   if (effect->actors[0] > 0x7f)
     (void)gInput.held;
 }
-
-void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
-                                   s32 index);
-void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect);
-void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect);
-void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect);
 
 void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   struct BattleFxWorkTail *work;
@@ -93,46 +84,6 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define SPARK_COUNT 64
-
-extern char ResourceId_WaveSheet;
-extern char ResourceId_BeamImage;
-extern char ResourceId_BlueArcSheetA;
-extern char ResourceId_BlueArcSheetB;
-extern char ResourceId_MarsDjinnSmallSheet;
-extern char ResourceId_StarCrescentSheet;
-extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_YellowOrbSheet;
-// The strike's six cels: ☀️'s gBeam_Pictures and
-// gTargetStrike_Reach, _StrikeWidths and _StrikeHeights.
-extern u16 gBeam_Pictures[];
-extern u8 gBeam_PictureReaches[];
-extern u8 gBeam_PictureWidths[];
-extern u8 gBeam_PictureHeights[];
-// Byte offsets of the spark cels in the spark sheet, by size - 1 (☀️'s
-// gLuckyWheels_SparkCellOffsets).
-extern u16 gBattleEffect_FlarePictures[];
-
-s32 BattleSprite_HasHeavyImpactFar(s32 enemyId);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void EffectPosition_ProjectSprite(s32 actor, struct EffectPosition *position);
-
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-// Configures the battle display for an effect.
-void BattleEffect_ConfigureEffectDisplay(void);
-// Sets up the canvas tile map on BG1.
-void BattleEffect_SetupCanvasTileMap(void);
-// Marks the transition done and shows the battle view again.
-void BattleEffect_HideBg1AndRestoreBackdrop(void);
-// Copies the canvas to VRAM when a transfer is pending.
-// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
-// flags, mode), whose result it returns.
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
-// BattlePlayback_Start through its far call.
-void BattlePlayback_StartFar(s32 hitCue);
-// An actor's recoil motion, through a far call.
-void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 
 void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
@@ -377,16 +328,6 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 32;
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
-
-extern char ResourceId_GreyCrescentSheet;
-
-void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target, s32 frames);
-void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
-
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-// The roll step of the scene transform.
-void Transform_ApplyRoll(s32 angle);
 
 void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;

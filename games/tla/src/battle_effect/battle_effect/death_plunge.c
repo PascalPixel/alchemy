@@ -45,33 +45,6 @@ struct Model__f188714 {
   s32 tail;
 };
 
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_Data0C2;
-extern char ResourceId_EffectPalette02;
-
-// Triple Chomp's jaw quad: its mesh and its four corners.
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-
-s32 BattleUnit_GetEffectHeightFar(s32 objectId);
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
-
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                              s32 frames);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Transform_ApplyRoll(s32 angle);
-void Transform_ApplyPitch(s32 angle);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_EndCanvasLayer(void);
-
 // Death Plunge (effect kind 53): the user runs nine tenths of the way to the
 // target, and both leap; at frame 11 they turn upside down, lifted by their
 // own heights. At frame 54 the target flashes and both are thrown back, the

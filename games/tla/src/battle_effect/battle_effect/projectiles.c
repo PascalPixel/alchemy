@@ -19,36 +19,6 @@
 // The anchor whose effect runs 54 frames.
 #define ANCHOR_SHORT 8
 
-extern char ResourceId_BlastSheet;
-extern char ResourceId_MercuryDjinnSmallSheet;
-extern char ResourceId_MarsDjinnSmallSheet;
-extern char ResourceId_JupiterDjinnSmallSheet;
-extern char ResourceId_VenusDjinnSmallSheet;
-extern char ResourceId_Data134; // the spark sprites
-
-// The Broken Seal's gBattleEffect_MotePictures, each spark size's cel; then
-// gBattleEffect_GlintCell* (offsets, widths, heights), gPrism_ShardOffsets and
-// the shards' widths and heights.
-extern u16 gBattleEffect_MotePictures[];
-
-// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
-// flags, mode), whose result it returns.
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-
-void Palette_BrightenBattleBg(s32 red, s32 green, s32 blue);
-void SceneTransform_ApplyPosition(const s32 *pos);
-void Transform_ApplyYaw(s32 angle);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyRoll(s32 angle);
-void Transform_Pop(void);
-/// Flashes an actor in a palette for some frames.
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 a, s32 timer,
-                              s32 frames);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-
 // The opening every Djinn effect shares: sparks gather from around the
 // caster, spin about a point travelling from the caster to the anchor, and
 // fall into it; a small Djinn (the kind) appears there at frame 54 and
@@ -472,68 +442,12 @@ DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
 
-// Directory rows, named by their assets.
-extern char ResourceId_CometSheetA;
-extern char ResourceId_CometSheetB;
-extern char ResourceId_CometSheetC;
-extern char ResourceId_IceBlockSheet;
-extern char ResourceId_WindStreakSheet;
-extern char ResourceId_Data0FF;
-extern char ResourceId_LimePalette;
-extern char ResourceId_SmokeSheet;
-extern char ResourceId_WaterSpraySheet;
-extern char ResourceId_TornadoSheet;
-extern char ResourceId_ShurikenSheet;
-extern char ResourceId_ProjectileVolleyImage;
-extern char ResourceId_YellowSparkSheet;
-extern char ResourceId_FireballSheet;
-extern char ResourceId_CrystalSheet;
-extern char ResourceId_BlueBeamSheet;
-extern char ResourceId_IceChipSheet;
-
-// The Broken Seal's gVolley_* tables, in effect_table.s.
-extern u8 gProjectileVolley_CometHeights[]; // _CometHeights, by kind
-extern u8 gProjectileVolley_Modes[][5];     // _Modes: five bytes for each mode
-extern u8 gProjectileVolley_FlashWidths[];  // _FlashWidths
-extern u8 gProjectileVolley_FlashHeights[]; // _FlashHeights
-extern u8 gProjectileVolley_FlashSteps[];   // _FlashSteps
-extern u8 gProjectileVolley_FlashRises[];   // _FlashRises
-extern u16 gProjectileVolley_FlashPictures[];  // _FlashOffsets
-extern u16 gProjectileVolley_PelletPictures[]; // _PelletOffsets
-extern u8 gProjectileVolley_GlintFlips[];      // the glints' palettes
-// The glint's six cels: ☀️'s gBattleEffect_GlintPictures, _GlintCellWidths
-// and _GlintCellHeights.
-extern u16 gBattleEffect_GlintPictures[];
-extern u8 gBattleEffect_GlintPictureWidths[];
-extern u8 gBattleEffect_GlintPictureHeights[];
-extern s32 gPrism_ShardPictures[];
-extern u8 gPrism_ShardWidths[];
-extern u8 gPrism_ShardHeights[];
-
 // The five bytes of a mode in gProjectileVolley_Modes.
 #define VOLLEY_SHOTS 0   // shots at each target
 #define VOLLEY_STEPS 1   // frames a shot takes to reach its target
 #define VOLLEY_STAGGER 2 // frames between shots
 #define VOLLEY_DELAY 3   // frames between targets
 #define VOLLEY_SPARKS 4  // sparks on impact
-
-void BattleEffect_StartCanvasLayer(s32 control);
-/// Closes the canvas layer.
-void BattleEffect_EndCanvasLayer(void);
-// BattleEffect_BuildBlitter itself.
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags, u32 mode);
-
-/// BattlePlayback_Start through its far call.
-void BattlePlayback_StartFar(s32 phase);
-/// An actor's recoil motion, through a far call.
-void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
-/// Shakes the camera while work->shakeFrames lasts.
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-/// Counts down the actors' flash timers.
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *pos);
 
 // BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
 // slot.

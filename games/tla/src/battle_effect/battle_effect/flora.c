@@ -24,50 +24,6 @@ struct ModelTexture__f179f18 {
   u8 *pixels;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
@@ -97,44 +53,6 @@ struct FloraWork {
   s32 vy[32];
   u16 palette[240];
 };
-
-extern u8 gData_02014000[];
-extern const struct WordPair gFlora_UnitScale;
-extern u16 gBattleEffect_MotePictures[];
-extern const u8 gFlora_PetalSizes[];
-extern const u16 gFlora_PetalPictures[];
-extern const u16 gFlora_BloomFrames[];
-extern const s16 gFlora_BloomRolls[];
-extern const s16 gFlora_BloomPitches[];
-extern const s8 gFlora_BloomX[];
-extern const s8 gFlora_BloomY[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern char ResourceId_VioletSkyBackdrop;
-extern char ResourceId_GreenHairedMaidenTiles;
-extern char ResourceId_PinkPetalsTiles;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data134;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_CyanPalette;
-extern char ResourceId_TanPalette;
-extern u8 Data_02010020[];
-extern u8 Data_020100a0[];
-extern u8 Data_020102a0[];
-extern u16 Data_0201401e[];
-extern u16 Data_02014002[];
-extern u16 Data_02014260[];
-
-void BattleEffect_ConfigureEffectDisplay(void);
-void RagingHeat_FillGradientCanvas(void);
-void BattleEffect_AdvanceScrollOnInterval(void);
-void BattleEffect_SetupBlendedDisplay(void);
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void Palette_LoadBasicSpriteColors(void);
-void Graphics_LoadGreyRamp(void);
-void BattleEffect_StepPaletteToResource(s32 palette);
-void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
-                                        s32 color);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define w ((struct FloraWork *)petals)
@@ -975,13 +893,6 @@ struct RenderPrimitive {
   s32 unk14;
 };
 
-extern char ResourceId_CrossedDaggersSheet;
-
-// The dagger quad: its face list and its four corners, 32x80 pixels from
-// (-16, -16) to (16, 64), the point down.
-extern const u8 gSabreDance_DaggerMesh[];
-extern const u8 gSabreDance_DaggerCorners[];
-
 // Crossed daggers. The canvas is moved over the target. Eight daggers rise
 // spinning from below it, and the target is struck eight times, six frames
 // apart from frame 20: each strike shakes the screen, flashes the target and
@@ -1121,8 +1032,6 @@ struct FxRecord {
   u8 high : 4;
 };
 
-void *GetMotionRecordFar(void *object, s32 index);
-
 /// Sets the OBJ priority of every motion record of the battle object, unless
 /// its slot is hidden.
 void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
@@ -1150,11 +1059,6 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 #define SMOKE_COUNT 32
 #define STAR_COUNT 16
 #define STAR_CELS 0x3e80 // the pink star's six 16x16 cels, after the smoke's
-
-extern char ResourceId_PinkStarSheet;
-extern char ResourceId_SmokeSheet;
-
-void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 
 // A pink star burst. Smoke puffs from the caster for its first 24 frames
 // while the caster stands just past the target; at frame 16 it leaps at

@@ -25,15 +25,6 @@
 #define FIRST_STRIKE_FRAME 16 // each column strikes 8 frames after the last
 #define RESULTS_FRAME 40
 
-extern char ResourceId_FlameBladeSheet;
-extern char ResourceId_FlashBurstSheet;
-
-extern u8 gRagnarok_StrikeColumns[];
-extern u8 gRagnarok_FlashPictures[];
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-
-void BattleEffect_StepPaletteToResource(s32 resourceId);
-
 // A blade of fire swings down over the targets and strikes twice, each
 // strike a flash and a fountain of sparks that bounce on the ground.
 //
@@ -269,9 +260,6 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
-                                  s32 mode);
-
 /// Abilities: Titan Blade (kind 61).
 DEFINE_EFFECT_KIND(BattleEffect_RunTitanBlade, BattleEffect_RunFallingSword, 0)
 
@@ -289,13 +277,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARK                                                                  \
   ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
-
-extern char ResourceId_SwordSheet;
-
-extern u8 gTitanBlade_FlashPictures[];
-extern s32 gTitanBlade_DustGravity[]; // the dust's four gravities
-
-void Palette_MirrorBgColors(void);
 
 // A great sword falls from the sky onto the target, a pillar of fire and dust
 // spouting under it, and drives into the ground in a burst of flashes and
@@ -652,29 +633,6 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
 struct Model;
 struct StripQuad;
 
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
@@ -689,39 +647,12 @@ struct JudgmentObject {
   u8 unk1a;
 };
 
-extern char ResourceId_VioletSkyBackdrop;
-extern char ResourceId_AerialViewBackdrop;
-extern char ResourceId_BeachBackdrop;
-extern char ResourceId_ForestBackdrop;
-extern char ResourceId_WingedKnightATiles;
-extern char ResourceId_WingedKnightBTiles;
-extern char ResourceId_WingedKnightCTiles;
-extern char ResourceId_PinkBurstSheet;
-extern char ResourceId_TornadoSheet;
-extern char ResourceId_Data0C2;
-
-extern char ResourceId_BlueCrescentSheet;
-extern char ResourceId_ExplosionSheet;
-extern char ResourceId_OverlayImageA;
-
-extern u8 gData_02014000[];
-
 struct JudgmentScale {
   s32 x;
   s32 y;
 };
 
 extern const struct JudgmentScale gJudgment_UnitScale;
-extern const u8 gJudgment_BurstPictures[];
-extern const u8 gJudgment_ShardWidths[];
-extern const u8 gJudgment_ShardHeights[];
-extern const u16 gJudgment_ShardPictures[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-
-void Palette_LoadBasicSpriteColors(void);
-void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);
-void Graphics_LoadGreyRamp(void);
 
 #define SLOT_ALT 188 // unkb8[1]
 /* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has

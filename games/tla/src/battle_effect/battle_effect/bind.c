@@ -95,8 +95,6 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   wait(1);
 }
 
-void SceneTransform_ApplyScale(s32 *scale);
-
 #define FLARE_SHEET 0x1000 // the flares, after the rune picture
 #define DJINN_SHEET 0x2000 // the Jupiter Djinn, after the flares
 #define DJINN_SIZE 40

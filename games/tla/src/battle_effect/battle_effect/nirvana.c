@@ -9,28 +9,6 @@
 
 // Nirvana's ring of sparks.
 
-extern char ResourceId_Data134;
-extern char ResourceId_PinkBurstSheet;
-// The Broken Seal's gBattleEffect_MotePictures: spark cells of the
-// Data134 sheet, by size - 1.
-extern u16 gBattleEffect_MotePictures[];
-
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 blitter); // BattleEffect_BuildBlitter, packed
-void BattlePlayback_StartFar(s32 phase);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                              s32 frames);
-void Transform_Pop(void);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void Transform_ApplyPitch(s32);
-void Transform_ApplyRoll(s32 angle);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-void BattleEffect_CountDownBattlerTints(void);
-
 /// A mote leaves the first target and is drawn as a ring of 24 sparks
 /// turning about it while it is pulled back to the user.
 void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
@@ -148,20 +126,6 @@ static inline s16 *Fixed_Halves(s32 *value) {
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define ROCKS 21
-
-extern char ResourceId_BoulderSheet;
-
-// The Broken Seal's table of this name, ShardHeights and ShardCells.
-extern u8 gSpire_ShardWidths[];
-extern u8 gSpire_ShardHeights[];
-extern u16 gSpire_ShardPictures[];
-
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
 
 // Stone Justice: 21 boulders rise in a column beside the user and tumble
 // across the screen into the target, while the battle background slides
@@ -325,24 +289,6 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 #define SPARK_OFFSET 0x460
 #define SPARKS 16
 #define MOTES 32
-
-extern char ResourceId_LimeColumnSheet;
-extern char ResourceId_BlastSheet;
-
-extern char ResourceId_OrangePaletteB;
-
-// The Broken Seal's gEruption_PuffPictures and gCybele_EmberSizes:
-// the spark pictures by stage.
-extern u16 gSoulShatter_SparkPictures[];
-extern u16 gSoulShatter_SparkSizes[];
-
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags,
-                              u32 mode); // BattleEffect_BuildBlitter
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, void **out); // ..FetchRectangleBlitters
-
-void EffectPosition_ProjectBattler(s32 actor, struct EffectPosition *position);
 
 // Soul Shatter: a column bursts up under the target in a spray of sparks
 // and throws it into the air; the user glows, and from frame 32 motes of
@@ -610,31 +556,6 @@ struct RenderModel__f16d130 {
   u8 scrollV;
 };
 
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyYaw(s32 angle);
-
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
@@ -647,30 +568,10 @@ void Render_ProjectVertices__ability_effects(
     s32 count) __asm__("Render_ProjectVertices");
 #define Render_ProjectVertices Render_ProjectVertices__ability_effects
 
-extern char ResourceId_Data0C1;
-extern char ResourceId_DustBlobSheet;
-extern char ResourceId_Data0CF;
-extern char ResourceId_MercuryDjinnSheet;
-extern char ResourceId_BlueFlameSheet;
-
 // One model vertex: signed byte coordinates, padded to a word.
 
-// The cone's 64 vertices, stored at the buffer's constant address.
-extern u8 gMapCellBuffer[];
 #define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
-extern u8 gData_02014000[];
-extern u8 Data_02012000[];
 #define MESH_BUFFER (Ram_MapCellBuffer + 0x2000)
-extern u8 Data_02012540[];            // the mesh's end, after 112 faces
-extern const s8 gSerac_RowHeights[];  // the cone's ring heights
-extern const s8 gSerac_RowRadii[];    // and radii
-extern const u8 gSerac_RingStarts[];  // each ripple's delay
-extern const u8 gSerac_RingGrowth[];  // its growth
-extern const s8 gSerac_RingHeights[]; // its height
-extern const u8 gBattleEffect_CylinderCorners[];
-extern const u8 gBattleEffect_CylinderMesh[];
-extern const u8 gBattleEffect_TriangleMesh[];
-extern const u8 gBattleEffect_TriangleCorners[];
 
 // Abilities: Serac.
 //
@@ -1084,8 +985,6 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
-
-void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Heavy Divide (kind 101).
 void BattleEffect_RunHeavyDivide(s32 a0) { BattleEffect_RunHeavyBlow(a0, 0); }

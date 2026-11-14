@@ -739,12 +739,6 @@ struct Model;
 
 #define HI(v) (((s16 *)&(v))[1])
 
-extern char ResourceId_Data0B4, ResourceId_Data0C2, ResourceId_Data0C9;
-extern char ResourceId_Data0CA, ResourceId_Data104, ResourceId_Data134;
-extern char ResourceId_CornerRuneASheet, ResourceId_ForestCanopyTiles;
-extern char ResourceId_SunbeamCloudsBackdrop, ResourceId_VioletSkyBackdrop;
-extern u8 gMapCellBuffer[];
-
 #define SLOT_ALT 188 // unkb8[1]
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 #define OBJ_TILES(obj)                                                         \

@@ -26,50 +26,6 @@ struct RenderModel__f1843fc {
   u8 scrollV;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
@@ -84,85 +40,6 @@ struct MeshVertex {
   s8 y;
   s8 z;
 };
-
-extern char ResourceId_AerialViewBackdrop;
-extern char ResourceId_ChainedDemonTiles;
-extern char ResourceId_ClawSlashSheet;
-extern char ResourceId_Data0B4;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0EE;
-extern char ResourceId_Data0EF;
-extern char ResourceId_Data0F8;
-extern char ResourceId_Data0F9;
-extern char ResourceId_Data134;
-extern char ResourceId_EffectPalette02;
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_GoldenScalesTiles;
-extern char ResourceId_LightningBoltSheet;
-extern char ResourceId_PurpleArmourTiles;
-extern char ResourceId_RedHazeBackdrop;
-extern char ResourceId_SmokeBandSheet;
-extern char ResourceId_TornadoSheet;
-extern char ResourceId_WhiteSpikesTiles;
-extern u8 gMapCellBuffer[];
-extern u8 Data_02011000[];
-extern u8 Data_02012000[];
-extern u8 Data_02016000[];
-extern struct EffectStep Data_02016d00[];
-extern const struct WordPair gCatastrophe_UnitScale;
-extern u16 gBattleEffect_MotePictures[];
-extern u16 gBattleEffect_GlintPictures[];
-extern u8 gBattleEffect_GlintPictureWidths[];
-extern u8 gBattleEffect_GlintPictureHeights[];
-extern const u8 gBattleEffect_TaperedBeamCorners[];
-extern const u8 gBattleEffect_LongBeamCorners[];
-extern const u8 gBattleEffect_SquareCorners[];
-extern const u8 gBattleEffect_StandingSquareCorners[];
-extern const u8 gBattleEffect_ColumnMesh[];
-extern const u8 gCatastrophe_BurstMesh[];
-extern const u8 gBattleEffect_SquareMesh[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u16 gCatastrophe_FlashFrames[];
-extern const u16 gCatastrophe_FlashLengths[];
-extern const u8 gCatastrophe_DemonX[];
-extern const u8 gCatastrophe_DemonZ[];
-extern const u8 gCatastrophe_ArmourX[];
-extern const u16 gCatastrophe_ArmourZ[];
-extern const u8 gCatastrophe_MirroredDemonX[];
-extern const u8 gCatastrophe_MirroredDemonZ[];
-extern const u16 gCatastrophe_BurstStarts[];
-extern const u8 gCatastrophe_BurstX[];
-extern const u8 gCatastrophe_BurstY[];
-extern const u8 gCatastrophe_BurstPictures[];
-extern const u16 gCatastrophe_CanvasFlashFrames[];
-extern const u8 gCatastrophe_StrikeX[];
-extern const u8 gCatastrophe_StrikeY[];
-extern const u16 gCatastrophe_StrikeFrames[];
-extern const u8 gCatastrophe_StrikeSpeedsY[];
-extern const s16 gCatastrophe_StrikeRolls[];
-extern const s16 gCatastrophe_StrikeTurns[];
-extern const s16 gCatastrophe_StrikePictures[];
-extern const u8 gCatastrophe_GlintFlips[];
-extern const s16 gCatastrophe_ShardRolls[];
-
-void VramBlock_Reset93Far(void);
-void VramBlock_Load93Far(void);
-
-void BattleEffect_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32 a, s32 b);
-void BattleEffect_SetupBlendedDisplay(void);
-void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void Palette_LoadBasicSpriteColors(void);
-void Graphics_LoadGreyRamp(void);
-void BattleEffect_StepPaletteToResource(s32 resource);
-void Camera_ApplyVerticalShake(s32 range);
-void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
-void Palette_BrightenSavedBattleBg(s32 r, s32 g, s32 b);
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags, u32 mode);
-void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
-                          s32 count);
 
 // Copies words through the IWRAM routine as one statement.
 

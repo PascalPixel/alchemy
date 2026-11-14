@@ -47,55 +47,7 @@ struct RenderModel__f190b74 {
   } look;
 };
 
-extern char ResourceId_Data134;
-extern char ResourceId_Data102;
-extern char ResourceId_DustBlobSheet;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0E9;
-extern char ResourceId_RedHazeBackdrop;
-extern char ResourceId_Data101;
-extern u8 gMapCellBuffer[];
-extern u8 gData_02014000[];
-extern u8 Data_02016000[];
-extern u16 gBattleEffect_MotePictures[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u8 gBattleEffect_TriangleMesh[];
-extern const u8 gBattleEffect_SquareCorners[];
-extern const u8 gBattleEffect_TriangleCorners[];
-extern const s16 gOdyssey_FlashPitches[];
-extern const s16 gOdyssey_FlashYaws[];
-
-void BattleEffect_StartCanvasLayer(s32 layer);
-void BattleEffect_EndCanvasLayer(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-void Graphics_LoadGreyRamp(void);
-void BattleEffect_BuildRepeatingTilemap(void);
-void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
-
-void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
-void BattleObject_PutFar(void);
-void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
-
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 mode, s32 timer,
-                              s32 frames);
-void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
-void Camera_ApplyVerticalShake(s32 range);
-void BattleEffect_CountDownBattlerTints(void);
 
 // Effect kind 125, 114 frames. The screen turns to a scrolling red haze
 // with only the caster and the target on it (frame 2); two textured flashes
@@ -491,17 +443,6 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 // The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000
 
-extern char ResourceId_CloudSwirlSheet;
-extern char ResourceId_EmberStreakSheet;
-extern char ResourceId_BlueFlameSheet;
-
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags, u32 mode);
-
-void BattleEffect_FlushPendingGraphicsTransfer(void);
-
-void BattleEffect_StepPaletteToResource(s32 resource);
-
 static inline s32 Swirl_CopyPalette(const void *source) {
   return Iwram_CopyWordsEntry((void *)&BG_PLTT[96], source, 128);
 }
@@ -632,11 +573,6 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
-
-// The five-argument blitter builder's far call, which nothing calls; it serves
-// only the never-taken call below.
-s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
-                                 s32 flags, u32 mode);
 
 /// Iris's screen wipe: a soft-edged grey band, drawn once into the
 /// canvas, slides across the screen on BG2 at speed pixels per frame, from
@@ -826,9 +762,6 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
       table[j * count * 2 + i] = table[i];
   }
 }
-
-void BattleMotion_ApplyKnockbackFar(s32 actor, s32 mode);
-void Palette_LoadBasicSpriteColors(void);
 
 /// Iris's teardown: sets each target back on the ground at the battle
 /// origin with the usual bounce

@@ -25,49 +25,6 @@ struct RenderModel__f178710 {
   u8 scrollV;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // On every strike after the first, the target's motion goes to this percent of
 // its anchor's x, lowered from patch 1.
 #if TLA_PATCH_1
@@ -81,16 +38,6 @@ void Transform_Pop(void);
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
-
-extern char ResourceId_SmokeBandSheet;
-extern char ResourceId_Data134;
-extern char ResourceId_ClawSlashSheet;
-extern char ResourceId_BlueFlameSheet;
-extern u8 Data_02011000[];
-extern u8 Data_02012000[];
-extern u16 gBattleEffect_MotePictures[];
-extern const u8 gBattleEffect_SquareMesh[];    // a head's mesh
-extern const u8 gBattleEffect_SquareCorners[]; // its corners
 
 #define DRAGON_SEGMENTS 33
 
@@ -410,20 +357,6 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
 #define FIGURE_SWING 0x2e6e       // four pictures, gHeartbreak_SwingPictures
 #define FIGURE_FIST                                                            \
   0x4e9d // 32x29, then eight pictures, gHeartbreak_FistPictures
-
-extern char ResourceId_Data0DC;
-
-// The swing's cels: widths, heights and offsets; the fist's: heights,
-// y offsets and offsets.
-// Plain externs: const changes the code that reads them.
-extern u8 gHeartbreak_SwingWidths[];
-extern u8 gHeartbreak_SwingHeights[];
-extern u16 gHeartbreak_SwingPictures[];
-extern u8 gHeartbreak_FistHeights[];
-extern u8 gHeartbreak_FistY[];
-extern u16 gHeartbreak_FistPictures[];
-
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 
 // A great figure strikes. It sweeps down on the target from above the far
 // side, swaying on a small circle and fading in through the blend; its arm

@@ -33,14 +33,6 @@ struct ModelTexture__f14153c {
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-// Rows of Resource_DirectoryTable; the directory has yet to name most of them.
-extern char ResourceId_EarthHorizonBackdrop, ResourceId_AerialViewBackdrop;
-extern char ResourceId_GoldenDragonTiles, ResourceId_GoldenDragonHeadTiles;
-extern char ResourceId_BlueFlameSheet, ResourceId_DustBlobSheet;
-extern char ResourceId_Data134, ResourceId_TornadoSheet, ResourceId_Data0B4;
-extern char ResourceId_Data0C1, ResourceId_Data0C9, ResourceId_Data0CA;
-
-extern u8 gMapCellBuffer[];
 /// The flashes, after the map cells.
 #define FLASHES ((struct EffectStep *)gData_02014000)
 

@@ -9,49 +9,10 @@
 struct MeshTriangle;
 struct Model;
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
-void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
-                          s32 count);
-void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                    s32 cellWidth, s32 cellHeight); // builds a grid's mesh
-void BattleEffect_BuildCanvasTilemap(void);
-void BattleEffect_ConfigureEffectDisplay(void);
-void Display_ApplyBg2Affine(void);
-void BattleEffect_ProcessPendingBlock2Transfer(void);
-
-extern char ResourceId_VenusDjinnSmallSheet;
-extern char ResourceId_Data0DA;
-extern char ResourceId_OrangePaletteB;
-extern u8 gMapCellBuffer[];
-extern const u8 gBattleEffect_RingMesh[];
-extern const u8 gGeode_WaveStarts[];  // each ring's start
-extern const u8 gGeode_WaveGrowth[];  // growth
-extern const s8 gGeode_WaveHeights[]; // height
-extern const u8 gGeode_RingCorners[];
 
 struct ModelVertex {
   s8 x;

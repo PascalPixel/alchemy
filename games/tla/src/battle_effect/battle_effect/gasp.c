@@ -26,51 +26,6 @@ struct RenderModel__f173aac {
   u8 scrollV;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
@@ -79,55 +34,6 @@ void Transform_Pop(void);
 
 // A second, larger particle table, always reached at its fixed address.
 #define EXTRA_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
-
-extern u16 gBattleEffect_MotePictures[];
-extern const s8 gGaspFamily_StreakSteps[];
-extern const u8 gGaspFamily_StreakMesh[];
-extern const u8 gGaspFamily_Counts[];
-extern const u8 gBattleEffect_CylinderCorners[];
-extern const u8 gBattleEffect_CylinderMesh[];
-extern const u8 gBattleEffect_TaperedBeamCorners[];
-extern const u8 gBattleEffect_LongBeamCorners[];
-extern const u8 gBattleEffect_SquareCorners[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_SmallSquareMeshReversed[];
-extern const u8 gBattleEffect_ColumnMesh[];
-extern const u8 gBattleEffect_SquareMesh[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-
-extern char ResourceId_BlastSheet;
-extern char ResourceId_Data0B4;
-extern char ResourceId_Data0C1;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0C9;
-extern char ResourceId_LightBurstSheet;
-extern char ResourceId_CornerGlowSheet;
-extern char ResourceId_Data0D7;
-extern char ResourceId_Data0D8;
-extern char ResourceId_SmokeBandSheet;
-extern char ResourceId_EffectPalette02;
-extern char ResourceId_MarsDjinnSmallSheet;
-extern char ResourceId_JupiterDjinnSmallSheet;
-extern char ResourceId_VenusDjinnSheet;
-extern char ResourceId_VenusDjinnSmallSheet;
-extern char ResourceId_LightningBoltSheet;
-extern char ResourceId_MercuryDjinnSmallSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_Data134;
-extern char ResourceId_SmokeSheet;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_JupiterDjinnSheet;
-extern char ResourceId_MercuryDjinnSheet;
-
-void BattleEffect_StepPaletteToResource(s32 resource);
-void Palette_BrightenSavedBattleBg(s32 red, s32 green, s32 blue);
-void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
-                                     s32 bluePhase);
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
-                                    s32 percent);
-
-void Graphics_LoadGreyRamp(void);
-void Palette_LoadBasicSpriteColors(void);
 
 // The user's figure: a 20 x 40 cell drawn over the canvas.
 #define FIGURE(work) ((work)->sheet + 0x65c0)

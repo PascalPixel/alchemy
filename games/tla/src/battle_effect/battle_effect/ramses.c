@@ -37,20 +37,7 @@ struct FxScale {
   s32 y;
 };
 
-extern char ResourceId_DesertBackdrop;
-
 extern struct FxScale gRamses_UnitScale; // one to one
-extern u8 gRamses_StatueColumns[];
-extern u8 gRamses_StatueRows[];
-extern u16 gRamses_PuffPictures[];
-extern u16 gRamses_PuffSizes[];
-void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
-
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor,
-    s32 variant); // BattleMotion_ApplyVariantMotionFar
-
-void BattleEffect_CountDownBattlerTints(void);
 
 // Summon 1: the battlefield turns to desert; an orb circles over a standing
 // formation and slams down three times, raising dust, while six rocks rain

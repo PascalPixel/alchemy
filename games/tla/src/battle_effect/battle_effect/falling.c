@@ -20,8 +20,6 @@
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
 #define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
 
-extern u8 gMapCellBuffer[];
-
 // Ice, Ice Horn and Ice Missile (effect kind 7, variants 0 to 2).
 
 // Shards of ice fall in a slanting column onto the targets' side. Each one

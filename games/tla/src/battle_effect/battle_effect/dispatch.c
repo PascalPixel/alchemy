@@ -23,8 +23,6 @@ void BattleEffect_CallDoNothing(s32 cnt) {
   }
 }
 
-extern u8 gMapCellBuffer[];
-
 /// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
 /// with the effect's three work blocks taken.
 void BattleEffect_RunSceneEffect(s32 *arg) {

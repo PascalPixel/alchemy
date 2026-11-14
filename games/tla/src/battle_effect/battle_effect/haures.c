@@ -10,50 +10,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
@@ -76,57 +32,9 @@ struct WingVertex {
   s8 unused2;
 };
 
-extern u8 gMapCellBuffer[];
 #define SCRATCH (Ram_MapCellBuffer + 0x4000)
-extern u8 Data_02010ae8[];
-extern u8 Data_02010be0[];
-extern u8 Data_02010fa0[];
 extern struct WingVertex Data_020104f0[];
-extern const struct WordPair gHaures_ChargeScale;
-extern const struct WordPair gHaures_OrbitScale;
-extern const struct WordPair gHaures_OpeningScale;
-extern u16 gBattleEffect_MotePictures[];
-extern u8 gBattleEffect_PuffArcPictureWidths[];
-extern u8 gBattleEffect_PuffArcPictureHeights[];
-extern u8 gBattleEffect_PuffArcPictureBiasY[];
-extern u16 gBattleEffect_PuffArcPictures[];
-extern const u8 gBattleEffect_SquareCorners[];
-extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_SmallSquareMeshReversed[];
-extern const u8 gHaures_BandMesh[];
-extern const u8 gBattleEffect_SquareMesh[];
-extern const u8 gBattleEffect_LargeSquareMesh[];
-extern const u8 gHaures_BurstMesh[];
 extern const struct HalfPair gHaures_FeatherPoints[];
-extern const u8 gHaures_ParticleX[];
-extern s32 gHaures_UnitScale[];
-extern const u8 gHaures_WingShapes[];
-extern u8 gHaures_WingMorphSteps[];
-extern const u8 gHaures_PartPoints[];
-extern const u8 gHaures_BandStarts[];
-
-// Resource ids, named after their places in the resource directory.
-extern char ResourceId_Data0F7;
-extern char ResourceId_EmberStreakSheet;
-extern char ResourceId_Data0B4;
-extern char ResourceId_MossCaveBackdrop;
-extern char ResourceId_BlueArcSheetB;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_SmokeBandSheet;
-extern char ResourceId_Data134;
-
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-void BattleEffect_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32 a, s32 b);
-void BattleEffect_SetupBlendedDisplay(void);
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void Palette_BrightenBattleBg(s32 r, s32 g, s32 b);
-void Palette_BrightenSavedBattleBg(s32 r, s32 g, s32 b);
-s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
-                              s32 flags, u32 mode);
-void BattleEffect_ProcessPendingStampTransfer(
-    void); // copies the 0x6780 canvas to the stamp's tiles
 
 #define SPARKS ((struct EffectStep *)SCRATCH)
 #define SLOT_ALT 188 // unkb8[1]

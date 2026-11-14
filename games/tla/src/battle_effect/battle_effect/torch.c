@@ -16,10 +16,6 @@
 
 #define PHASE_RESULTS 134
 
-void BattleEffect_RunDjinniEntrance(
-    struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-    s32 *world); // BattleEffect_RunDjinniEntrance
-
 /// A disc of rings rises on BG2 over the target's side, its colour ramp
 /// cycling outward one ring a frame while each scanline sways on a sine wave.
 /// Abilities: Torch (kind 214).

@@ -14,12 +14,6 @@
 #define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
 #define CHIP_COUNT 64
 
-// The ice chip's four cels: ☀️'s gProjectileVolley_PelletOffsets,
-// gHail_CellWidths and gHail_CellHeights.
-extern u16 gHail_Pictures[];
-extern u8 gHail_CellWidths[];
-extern u8 gHail_CellHeights[];
-
 void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -100,9 +94,9 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 
         cel = (chip->z / 128) & 3;
         blit[i & 1](canvas, work->sheet + 0x400 + gHail_Pictures[cel],
-                    HI(chip->x) - (width = gHail_CellWidths[cel]) / 2,
-                    HI(chip->y) - (height = gHail_CellHeights[cel]) / 2, width,
-                    height);
+                    HI(chip->x) - (width = gHail_PictureWidths[cel]) / 2,
+                    HI(chip->y) - (height = gHail_PictureHeights[cel]) / 2,
+                    width, height);
         BattleEffectKernels_IntegrateVector3(chip, 63, 0x1000);
       }
     }
@@ -169,20 +163,6 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 #define CHIPS_PER_ROCK 4
 // The chips' shapes and flips live in particles[32..63].
 #define FIRST_CHIP 32
-
-extern char ResourceId_PortalSheet;
-
-// The chips: ☀️'s gHail_CrackleFlips (a blitter's flags), and, by shape,
-// gHail_PortalPictures, _ChipX, _ChipY, _ChipWidths and _ChipHeights.
-extern const u8 gHail_CrackleFlips[];
-extern const u16 gHail_PortalPictures[];
-extern const u8 gHail_PortalX[];
-extern const u8 gHail_PortalY[];
-extern const u8 gHail_PortalWidths[];
-extern const u8 gHail_PortalHeights[];
-
-// Steps the background colours one shade toward a resource's palette.
-void BattleEffect_StepPaletteToResource(s32 resource);
 
 void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
@@ -436,22 +416,3 @@ void Camera_ApplyVerticalShake(s32 range) {
 // violet bolts strike the foes.
 
 struct FxPartyList;
-
-void BattleEffect_AdvanceScrollOnInterval(void);
-void BattleEffect_ConfigureEffectDisplay(void);
-
-void BattleEffect_WipeCanvas(s32 page, s32 value);
-
-void BattleEffect_SetupBlendedDisplay(void);
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-
-void BattleEffect_PlaceFormationObjects(s32 group, s32 x, s32 y);
-void BattleEffect_RunImpactBurst(s32 group, s32 x, s32 y);
-
-void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size); // four motes
-void SceneTransform_ApplyScale(s32 *scale);
-
-void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);

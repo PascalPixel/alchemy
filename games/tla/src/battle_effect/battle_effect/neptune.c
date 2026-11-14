@@ -4,19 +4,6 @@
 
 #include "../battle_effect_internal.h"
 
-extern u8 gMapCellBuffer[];
-extern char ResourceId_SeaSerpentTiles;
-extern char ResourceId_DuskCloudsBackdrop;
-extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_BlueFlameSheet;
-extern struct Scale gNeptune_UnitScale;   // the serpent's scale
-extern u16 gBattleEffect_FlarePictures[]; // the sparkle cells by size
-extern s32 gNeptune_Gravity[];            // the spray's four gravities
-
-void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
-                                        s32 width);
-void BattleEffect_BuildWindowEdgeTable(void);
-
 // Summon 6: at dusk the window opens on a sea; a great serpent rises out of
 // the spray, light gathers at its mouth, rays reach out and it breathes a
 // blast; then blue flames fall as pillars on each enemy in turn, splashing.

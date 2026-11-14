@@ -39,46 +39,6 @@ struct Model__f189b14 {
   s32 tail;
 };
 
-extern char ResourceId_CornerRuneASheet;
-extern char ResourceId_Data134;
-extern char ResourceId_BladeSheet;
-extern char ResourceId_Data0E9;
-extern char ResourceId_Data0C2;
-
-// The quad mesh and the corners of the rune, the jaw-like flash and the
-// eight blades of the opening fan.
-extern const u8 gBattleEffect_LargeSquareMesh[];
-// The quad meshes and corners: the card, the pictures and their spread.
-extern u8 gBattleEffect_TallMesh[];
-extern const u8 gBattleEffect_SquareCorners[];
-extern s32 gLegend_WingCorners[];
-
-// The spark cells: offsets into the particle sheet by size.
-extern u16 gBattleEffect_MotePictures[];
-
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void BattlePlayback_StartFar(s32 phase);
-void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                              s32 frames);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void Transform_ApplyRoll(s32 angle);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_EndCanvasLayer(void);
-
 // Legend (effect kind 122): a fan of eight blades opens over the target for
 // 50 frames while a rune, mirrored from one corner, rises and turns behind
 // it. Then one sword for each step of the variant (variant + 1 in all, 16
@@ -335,9 +295,6 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
-                                  s32 mode);
-
 /// Abilities: Bramble Card (kind 88).
 DEFINE_EFFECT_KIND(BattleEffect_RunBrambleCard, BattleEffect_RunElementCards, 0)
 
@@ -366,32 +323,7 @@ struct SparkMotion {
   s32 steps;
 };
 
-extern char ResourceId_VineCardSheet;
-extern char ResourceId_DragonCardSheet;
-extern char ResourceId_CrystalSheet;
-extern char ResourceId_SunCardSheet;
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_SmokeSheet;
-extern char ResourceId_BoltCardSheet;
-extern char ResourceId_Data0F8;
-extern char ResourceId_EffectPalette02;
-extern char ResourceId_OrangePaletteB;
-
-// Each card's length in frames: 124, 140, 132 and 130.
-extern u8 gElementCards_Frames[];
 extern struct SparkMotion gElementCards_SparkMotions[];
-
-// The crystal shards' cells.
-extern s32 gPrism_ShardPictures[];
-extern u8 gPrism_ShardWidths[];
-extern u8 gPrism_ShardHeights[];
-
-extern const u8 gBattleEffect_ColumnMesh[];
-
-extern const u8 gBattleEffect_BeamCorners[];
-
-void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
-void BattleEffect_StepPaletteToResource(s32 resource);
 
 // The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
 // the user, spinning and growing, for 48 frames, then shows its picture.
@@ -798,8 +730,6 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
   HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }
-
-void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Sleep Card (kind 92).
 DEFINE_EFFECT_KIND(BattleEffect_RunSleepCard, BattleEffect_RunCards, 0)

@@ -80,18 +80,6 @@ enum {
 };
 enum { EXTRA_NONE, EXTRA_GLINTS, EXTRA_RIPPLE };
 
-extern char ResourceId_YellowOrbSheet;
-
-extern char ResourceId_BlueArcSheetA;
-extern char ResourceId_BlueArcSheetB;
-extern char ResourceId_WaveSheet;
-
-// The variants' records, eight bytes each.
-extern u8 gBurstScene_Styles[];
-
-// A glint's four flips.
-extern const u8 gBurstScene_GlintFlips[];
-
 void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                                 s32 variant) {
   struct EffectPosition actorPos;

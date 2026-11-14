@@ -3,6 +3,11 @@
 /// its water (IsletCave_RideLog), the Venus Djinni Meld and the Mercury Djinni
 /// Serac at the end of their rides (IsletCave_FightMeld, IsletCave_FightSerac),
 /// and the cycling colours of its water (IsletCave_StartSlowPaletteCycle).
+/// Teleport carries the party in by its circles
+/// (IsletCave_TeleportToFirstCircle), each corridor is darker than the last
+/// (IsletCave_DimPalette), Tremor shakes Serac out
+/// (IsletCave_TremorRevealsSerac), and at the end the Sentinel waits
+/// (IsletCave_SentinelAwaits).
 
 #include "flags.h"
 #include "field/field.h"
@@ -30,66 +35,66 @@
 #include "shared/tables.h"
 #include "objcmd.h"
 
-void Func_02000328(void);
+void IsletCave_TeleportIn(void);
 
 s32 List_CountEntries(u16 *list);
 
 void PaletteCycle_Fade(void);
 
-void Func_020008c8(void);
+void IsletCave_PlaceLogs(void);
 
 void IsletCave_FightMeld(void);
 
 void IsletCave_FightSerac(void);
 
-void Func_02000508(void);
+void IsletCave_TeleportToFirstCircle(void);
 
-void Func_02000544(void);
+void IsletCave_TeleportToSecondCircle(void);
 
-void Func_020005fc(void);
+void IsletCave_OpenDoorAndEnter(void);
 
-void Func_020009a4(void);
+void IsletCave_SettleFirstLog(void);
 
-void Func_020009b0(void);
+void IsletCave_SettleSecondLog(void);
 
-void Func_020009bc(void);
+void IsletCave_SettleThirdLog(void);
 
-void Func_020009c8(void);
+void IsletCave_SettleFourthLog(void);
 
-void Func_020009d4(void);
+void IsletCave_SettleFifthLog(void);
 
-void Func_020009e0(void);
+void IsletCave_SettleSixthLog(void);
 
-void Func_020009ec(void);
-void Func_02000aec(void);
-void Func_02000bb0(void);
-void Func_02000c1c(void);
+void IsletCave_SettleSeventhLog(void);
+void IsletCave_RideFirstLogEast(void);
+void IsletCave_RideSecondLogEast(void);
+void IsletCave_RideSecondLogWest(void);
 
-void Func_02000c8c(void);
+void IsletCave_RideThirdLogEast(void);
 
-void Func_02000d54(void);
-void Func_02000db8(void);
-void Func_02000e1c(void);
-void Func_02000e7c(void);
-void Func_02000ee0(void);
-void Func_02000f44(void);
-void Func_02000fa8(void);
-void Func_02001034(void);
-void Func_020010ac(void);
+void IsletCave_RideFourthLogEast(void);
+void IsletCave_RideFourthLogWest(void);
+void IsletCave_RideFifthLogEast(void);
+void IsletCave_RideFifthLogWest(void);
+void IsletCave_RideSixthLogEast(void);
+void IsletCave_RideSixthLogWest(void);
+void IsletCave_RideSeventhLogNorth(void);
+void IsletCave_RideSeventhLogSouth(void);
+void IsletCave_SentinelAwaits(void);
 
-void Func_0200115c(void);
+void IsletCave_TremorRevealsSerac(void);
 
-extern u32 gData_020013fc[];
+extern u32 gIsletCave_SentinelScript[];
 
-extern s32 gData_02001418[];
-extern s16 gData_020019d4[];
+extern s32 gIsletCave_ShrunkenSpriteScript[];
+extern s16 gIsletCave_DoorFrames[];
 
-extern u16 *gData_02001a24;
-extern u16 *Data_02001a2c;
-extern u16 gData_02001a14;
-extern u16 gData_02001a20;
-extern u16 gData_02001a30;
-extern u16 gData_02001a34;
+extern u16 *gPaletteSlots;
+extern u16 *gPaletteCycleColors;
+extern u16 gPaletteCycleBright;
+extern u16 gPaletteCycleDelay;
+extern u16 gPaletteCycleLength;
+extern u16 gPaletteCycleIndex;
 void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
 void BattleEffect_PackTargetBuffer(void);
@@ -103,9 +108,9 @@ extern u16 *gPaletteCycleSlots;
 void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   u8 *saved = Ram_HeapSlots->block32;
 
-  gData_02001a24 = slots;
+  gPaletteSlots = slots;
   gPaletteColors = colours;
-  Data_02001a2c = a;
+  gPaletteCycleColors = a;
   gPaletteCycleSlots = b;
   if (*slots != 0xffff && *colours != 0xffff) {
   next:
@@ -123,17 +128,17 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
-    Func_02000328();
+    IsletCave_TeleportIn();
 }
 
 extern u16 gPaletteCycleTimer;
 
 void IsletCave_StartSlowPaletteCycle(void) {
-  gData_02001a34 = 0;
-  gData_02001a30 = List_CountEntries(gData_02001a24);
-  gData_02001a20 = 15;
+  gPaletteCycleIndex = 0;
+  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
+  gPaletteCycleDelay = 15;
   gPaletteCycleTimer = 16;
-  gData_02001a14 = 1;
+  gPaletteCycleBright = 1;
   Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
 }
 
@@ -143,11 +148,11 @@ void IsletCave_StopPaletteCycle(void) {
 }
 
 void IsletCave_StartFastPaletteCycle(void) {
-  gData_02001a34 = 0;
-  gData_02001a30 = List_CountEntries(gData_02001a24);
-  gData_02001a20 = 2;
+  gPaletteCycleIndex = 0;
+  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
+  gPaletteCycleDelay = 2;
   gPaletteCycleTimer = 2;
-  gData_02001a14 = 1;
+  gPaletteCycleBright = 1;
   Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
 }
 
@@ -164,36 +169,39 @@ void PaletteCycle_Fade(void) {
   if (gPaletteCycleTimer != 0) {
     if (--gPaletteCycleTimer == 0) {
       step = 1;
-      gPaletteCycleTimer = gData_02001a20;
-      if (gData_02001a20 > 2)
-        gData_02001a20--;
+      gPaletteCycleTimer = gPaletteCycleDelay;
+      if (gPaletteCycleDelay > 2)
+        gPaletteCycleDelay--;
     }
   }
   if (step == 0)
     return;
-  src = Data_02001a2c;
-  for (i = 0; i < gData_02001a30; i++) {
-    dst = &BG_PLTT[gPaletteCycleSlots[gData_02001a34 * gData_02001a30 + i]];
+  src = gPaletteCycleColors;
+  for (i = 0; i < gPaletteCycleLength; i++) {
+    dst = &BG_PLTT[gPaletteCycleSlots[gPaletteCycleIndex * gPaletteCycleLength +
+                                      i]];
     red = *src++;
     green = *src++;
     blue = *src++;
     SET_RGB(*dst, red, green, blue);
   }
-  dst = &BG_PLTT[gData_02001a24[gData_02001a30]];
-  if (gData_02001a14 != 0)
-    src = gPaletteColors + gData_02001a30 * 3;
+  dst = &BG_PLTT[gPaletteSlots[gPaletteCycleLength]];
+  if (gPaletteCycleBright != 0)
+    src = gPaletteColors + gPaletteCycleLength * 3;
   else
-    src = Data_02001a2c + gData_02001a30 * 3;
+    src = gPaletteCycleColors + gPaletteCycleLength * 3;
   red = *src++;
   green = *src++;
   blue = *src++;
   SET_RGB(*dst, red, green, blue);
-  gData_02001a14 ^= 1;
-  if (++gData_02001a34 == gData_02001a30)
-    gData_02001a34 = 0;
+  gPaletteCycleBright ^= 1;
+  if (++gPaletteCycleIndex == gPaletteCycleLength)
+    gPaletteCycleIndex = 0;
 }
 
-void Func_02000328(void) {
+// Arriving by Teleport: the water's colours spin fast while the whirl plays,
+// then settle.
+void IsletCave_TeleportIn(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
@@ -235,7 +243,7 @@ s32 IsletCave_ClearScriptedActorSpriteFlags(s32 arg0) {
   return 0;
 }
 
-s32 Func_020003d4(struct Actor *object) {
+s32 IsletCave_BobOnWater(struct Actor *object) {
   u8 *phase = (u8 *)object + 0x62;
   s32 step = *phase & 63;
   s16 *animation = object->sprite;
@@ -283,7 +291,7 @@ const struct Trigger *Scene_GetEvents(void) {
   return gIsletCave_Triggers;
 }
 
-void Func_020004ac(void) {
+void IsletCave_FinishTeleport(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 effect = work->transition;
 
@@ -309,14 +317,16 @@ void Func_020004ac(void) {
     Event_Wait(40);                                                            \
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,      \
                                            px(n1), px(n2));                    \
-    Func_020004ac();                                                           \
+    IsletCave_FinishTeleport();                                                \
   }
 
-DEFINE_ISLET_CAVE_ARRIVE_AT(Func_02000508, 232, 136)
+DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToFirstCircle, 232, 136)
 
-DEFINE_ISLET_CAVE_ARRIVE_AT(Func_02000544, 240, 480)
+DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToSecondCircle, 240, 480)
 
-void Func_02000580(s32 scale) {
+// Darkens the palette by the scale given: each corridor is darker than the
+// last.
+void IsletCave_DimPalette(s32 scale) {
   u16 *source = Ram_HeapSlots->block32;
   u16 *channel = (u16 *)((u8 *)source + 0xe00);
   u32 count = 224;
@@ -350,9 +360,9 @@ void Func_02000580(s32 scale) {
   } while (i < count);
 }
 
-extern struct MapGridCellAnimation gData_020019ec[];
+extern struct MapGridCellAnimation gIsletCave_Doors[];
 
-void Func_020005fc(void) {
+void IsletCave_OpenDoorAndEnter(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 i;
   u32 index;
@@ -374,14 +384,14 @@ loop:
   Sound_Play(SE_DOOR_OPEN);
   index >>= 1;
   {
-    s32 x = gData_020019ec[index].x;
+    s32 x = gIsletCave_Doors[index].x;
     /* FAKEMATCH(temporary): x read first and y read through a pointer to x from
      * a separate byte offset. */
     u32 offset = index * sizeof(struct MapGridCellAnimation) +
                  offsetof(struct MapGridCellAnimation, x);
-    const u16 *position = (const u16 *)((const u8 *)gData_020019ec + offset);
+    const u16 *position = (const u16 *)((const u8 *)gIsletCave_Doors + offset);
 
-    MapGrid_AnimateCells(gData_020019ec[index].steps, x, position[1]);
+    MapGrid_AnimateCells(gIsletCave_Doors[index].steps, x, position[1]);
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
@@ -393,11 +403,11 @@ loop:
   Event_End();
 }
 
-extern u16 gData_0200134c[];
-extern u16 gData_0200135c[];
-extern u16 gData_02001388[];
-extern u16 gData_020013b4[];
-extern s32 gData_02001454[];
+extern u16 gIsletCave_PaletteSlots[];
+extern u16 gIsletCave_PaletteColors[];
+extern u16 gIsletCave_DimColors[];
+extern u16 gIsletCave_CycleSlots[];
+extern s32 gIsletCave_TremorTargetScript[];
 
 s32 Scene_Initialize(void) {
   s32 scene, dim;
@@ -406,9 +416,9 @@ s32 Scene_Initialize(void) {
   FieldEffect_StartBlankOverlay(0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_IsletCave1) {
-    Func_020008c8();
-    Palette_SetColors(gData_0200134c, gData_0200135c, gData_02001388,
-                      gData_020013b4);
+    IsletCave_PlaceLogs();
+    Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
+                      gIsletCave_DimColors, gIsletCave_CycleSlots);
   } else if (scene == (s32)&SceneId_IsletCave3) {
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     if (gMainRoutineWork.entrance == 2) {
@@ -420,7 +430,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Set(FLAG_SCENE_TEMP_30);
     } else if (!GameFlag_Get(FLAG_SCENE_TEMP_30)) {
       Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-      Actor_SetMovementTypeById(8, gData_02001454);
+      Actor_SetMovementTypeById(8, gIsletCave_TremorTargetScript);
     }
   } else {
     goto other;
@@ -434,7 +444,7 @@ other:
       dim = (gMainRoutineWork.entrance - 3) / 2;
     else
       dim = 3;
-    Func_02000580(0x400 - (dim << 7));
+    IsletCave_DimPalette(0x400 - (dim << 7));
     BattleEffect_PackTargetBuffer();
     PaletteFade_StartInterpolation(1);
     Event_WaitTransitionFrames();
@@ -447,7 +457,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Readies object id: when the flag is set, places it at (x, z) in cells;
 /// marks it, then calls Map_CopyCellAttributeRect with the cell to the left of
 /// it.
-void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
+void IsletCave_PlaceLogByCellLeft(s32 id, s32 a, s32 b, s32 x, s32 z,
+                                  s32 unused, s32 flag) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
@@ -460,9 +471,9 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
   }
 }
 
-/// As Func_020007dc, with the cell above the object.
-void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused,
-                   s32 flag) {
+/// As IsletCave_PlaceLogByCellLeft, with the cell above the object.
+void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
+                                   s32 unused, s32 flag) {
   struct Actor *object;
 
   if (Actor_GetById(id) != 0) {
@@ -476,55 +487,59 @@ void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused,
   }
 }
 
-void Func_020008b4(s32 arg0) {
+// A log the leader steps onto rocks under him.
+void IsletCave_SettleLog(s32 arg0) {
   Actor_SetModeById(arg0, 1);
   Actor_SetModeById(arg0, 2);
   return;
 }
 
-void Func_020008c8(void) {
-  ((void (*)())Func_02000848)(8, 27, 0, 136, 0x1f8, 20, 0x280);
-  ((void (*)())Func_02000848)(9, 28, 0, 136, 232, 21, 0x281);
-  ((void (*)())Func_02000848)(10, 29, 0, 0x358, 152, 22, 0x282);
-  ((void (*)())Func_02000848)(11, 30, 0, 0x318, 152, 23, 0x283);
-  ((void (*)())Func_02000848)(12, 31, 0, 0x358, 0x178, 24, 0x284);
-  ((void (*)())Func_02000848)(13, 32, 0, 0x318, 0x178, 25, 0x285);
-  ((void (*)())Func_020007dc)(14, 33, 0, 0x338, 120, 26, 0x286);
+// Places the seven logs on the water where their flags left them.
+void IsletCave_PlaceLogs(void) {
+  ((void (*)())IsletCave_PlaceLogByCellAbove)(8, 27, 0, 136, 0x1f8, 20, 0x280);
+  ((void (*)())IsletCave_PlaceLogByCellAbove)(9, 28, 0, 136, 232, 21, 0x281);
+  ((void (*)())IsletCave_PlaceLogByCellAbove)(10, 29, 0, 0x358, 152, 22, 0x282);
+  ((void (*)())IsletCave_PlaceLogByCellAbove)(11, 30, 0, 0x318, 152, 23, 0x283);
+  ((void (*)())IsletCave_PlaceLogByCellAbove)(12, 31, 0, 0x358, 0x178, 24,
+                                              0x284);
+  ((void (*)())IsletCave_PlaceLogByCellAbove)(13, 32, 0, 0x318, 0x178, 25,
+                                              0x285);
+  ((void (*)())IsletCave_PlaceLogByCellLeft)(14, 33, 0, 0x338, 120, 26, 0x286);
   return;
 }
 
-void Func_020009a4(void) {
-  Func_020008b4(8);
+void IsletCave_SettleFirstLog(void) {
+  IsletCave_SettleLog(8);
   return;
 }
 
-void Func_020009b0(void) {
-  Func_020008b4(9);
+void IsletCave_SettleSecondLog(void) {
+  IsletCave_SettleLog(9);
   return;
 }
 
-void Func_020009bc(void) {
-  Func_020008b4(10);
+void IsletCave_SettleThirdLog(void) {
+  IsletCave_SettleLog(10);
   return;
 }
 
-void Func_020009c8(void) {
-  Func_020008b4(11);
+void IsletCave_SettleFourthLog(void) {
+  IsletCave_SettleLog(11);
   return;
 }
 
-void Func_020009d4(void) {
-  Func_020008b4(12);
+void IsletCave_SettleFifthLog(void) {
+  IsletCave_SettleLog(12);
   return;
 }
 
-void Func_020009e0(void) {
-  Func_020008b4(13);
+void IsletCave_SettleSixthLog(void) {
+  IsletCave_SettleLog(13);
   return;
 }
 
-void Func_020009ec(void) {
-  Func_020008b4(14);
+void IsletCave_SettleSeventhLog(void) {
+  IsletCave_SettleLog(14);
   return;
 }
 
@@ -596,11 +611,13 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
     flagCall(flag);                                                            \
   }
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000aec, 8, 32, GameFlag_Clear, 0x280)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogEast, 8, 32,
+                                  GameFlag_Clear, 0x280)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000b4c, 8, -32, GameFlag_Set, 0x280)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogWest, 8, -32,
+                                  GameFlag_Set, 0x280)
 
-void Func_02000bb0(void) {
+void IsletCave_RideSecondLogEast(void) {
   struct Actor *object0;
   s32 value1;
   struct Actor *object2;
@@ -622,7 +639,7 @@ void Func_02000bb0(void) {
   return;
 }
 
-void Func_02000c1c(void) {
+void IsletCave_RideSecondLogWest(void) {
   struct Actor *object0;
   s32 value1;
   struct Actor *object2;
@@ -644,23 +661,31 @@ void Func_02000c1c(void) {
   return;
 }
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000c8c, 10, 80, GameFlag_Set, 0x282)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogEast, 10, 80,
+                                  GameFlag_Set, 0x282)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000cf0, 10, -80, GameFlag_Clear, 0x282)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogWest, 10, -80,
+                                  GameFlag_Clear, 0x282)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000d54, 11, 80, GameFlag_Clear, 0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogEast, 11, 80,
+                                  GameFlag_Clear, 0x283)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000db8, 11, -80, GameFlag_Clear, 0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogWest, 11, -80,
+                                  GameFlag_Clear, 0x283)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e1c, 12, 80, GameFlag_Set, 0x284)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogEast, 12, 80,
+                                  GameFlag_Set, 0x284)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e7c, 12, -80, GameFlag_Clear, 0x284)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogWest, 12, -80,
+                                  GameFlag_Clear, 0x284)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000ee0, 13, 80, GameFlag_Clear, 0x285)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogEast, 13, 80,
+                                  GameFlag_Clear, 0x285)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000f44, 13, -80, GameFlag_Set, 0x285)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogWest, 13, -80,
+                                  GameFlag_Set, 0x285)
 
-void Func_02000fa8(void) {
+void IsletCave_RideSeventhLogNorth(void) {
   struct Actor *object0;
   s32 value1;
   s32 v5;
@@ -690,7 +715,7 @@ void Func_02000fa8(void) {
   return;
 }
 
-void Func_02001034(void) {
+void IsletCave_RideSeventhLogSouth(void) {
   struct Actor *object0;
   s32 value1;
   s32 v5;
@@ -726,7 +751,9 @@ void Func_02001034(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_020010ac(void) {
+// At the end of the corridors the guardian of wind is summoned and the Sentinel
+// fights.
+void IsletCave_SentinelAwaits(void) {
   s32 cue;
   struct Actor *object;
 
@@ -758,7 +785,8 @@ void Func_020010ac(void) {
   Event_End();
 }
 
-void Func_0200115c(void) {
+// Tremor on the shaking spot: Serac drops out.
+void IsletCave_TremorRevealsSerac(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
     struct Actor *object = Actor_GetById(9);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -778,28 +806,28 @@ void Func_0200115c(void) {
 #undef DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS
 #undef FIELD_AT
 
-void Func_02000b4c(void);
-void Func_02000cf0(void);
+void IsletCave_RideFirstLogWest(void);
+void IsletCave_RideThirdLogWest(void);
 
 // clang-format off
-u16 gData_0200134c[] = {9, 10, 11, 12, 13, 14, 15, 65535};
+u16 gIsletCave_PaletteSlots[] = {9, 10, 11, 12, 13, 14, 15, 65535};
 
-u16 gData_0200135c[] = {23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 65535};
+u16 gIsletCave_PaletteColors[] = {23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 65535};
 
-u16 gData_02001388[] = {30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, 65535};
+u16 gIsletCave_DimColors[] = {30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, 65535};
 
-u16 gData_020013b4[] = {                                                               
+u16 gIsletCave_CycleSlots[] = {                                                               
       14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  
       11, 12, 13, 14, 9, 10, 10, 11, 12, 13, 14, 9, 9, 10, 11, 12, 13, 14,  
   };
 
-u32 gData_020013fc[] = {
+u32 gIsletCave_SentinelScript[] = {
     SC_SET(SW_SCALE_Y, 0x14ccc),
     SC_SET(SW_SCALE_X, 0x14ccc),
     SC_END,
 };
 
-s32 gData_02001418[] = {
+s32 gIsletCave_ShrunkenSpriteScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, px(-4)),
     SC_SET(SW_SCALE_X, 0xcccc),
@@ -808,8 +836,8 @@ s32 gData_02001418[] = {
     SC_END,
 };
 
-s32 gData_02001454[] = {
-    SC_CALL(Func_020003d4),
+s32 gIsletCave_TremorTargetScript[] = {
+    SC_CALL(IsletCave_BobOnWater),
     SC_END,
 };
 
@@ -847,17 +875,17 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gIsletCave_Placements[] = {
-    ACTOR_PLACEMENT(170, 0x9cf, (s32)gData_020013fc, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 232, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 152, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 216, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 136, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 232, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 136, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_02001418, 232, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(170, 0x9cf, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
@@ -888,30 +916,30 @@ struct Trigger gIsletCave_Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT(Func_02000aec)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT(Func_02000b4c)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT(Func_02000bb0)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(Func_02000c1c)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 22, CONDITION_ALWAYS, EVENT(Func_02000cf0)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT(Func_02000d54)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT(Func_02000db8)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT(Func_02000e1c)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT(Func_02000e7c)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT(Func_02000ee0)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT(Func_02000f44)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 26, CONDITION_ALWAYS, EVENT(Func_02000fa8)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT(Func_02001034)},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_020009a4)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_020009b0)},
-    {TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT(Func_020009bc)},
-    {TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(Func_020009c8)},
-    {TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(Func_020009d4)},
-    {TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(Func_020009e0)},
-    {TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(Func_020009ec)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT(IsletCave_RideFirstLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT(IsletCave_RideFirstLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT(IsletCave_RideSecondLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(IsletCave_RideSecondLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS, EVENT(IsletCave_RideThirdLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 22, CONDITION_ALWAYS, EVENT(IsletCave_RideThirdLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT(IsletCave_RideFourthLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT(IsletCave_RideFourthLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT(IsletCave_RideFifthLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT(IsletCave_RideFifthLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT(IsletCave_RideSixthLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT(IsletCave_RideSixthLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 26, CONDITION_ALWAYS, EVENT(IsletCave_RideSeventhLogNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT(IsletCave_RideSeventhLogSouth)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(IsletCave_SettleFirstLog)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(IsletCave_SettleSecondLog)},
+    {TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT(IsletCave_SettleThirdLog)},
+    {TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(IsletCave_SettleFourthLog)},
+    {TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(IsletCave_SettleFifthLog)},
+    {TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(IsletCave_SettleSixthLog)},
+    {TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(IsletCave_SettleSeventhLog)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IsletCave_FightMeld)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 50, CONDITION_ALWAYS, EVENT(Func_02000508)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 51, CONDITION_ALWAYS, EVENT(Func_02000544)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 50, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToFirstCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 51, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToSecondCircle)},
     {TRIGGER_TABLE_END},
 };
 
@@ -921,29 +949,30 @@ struct Trigger gIsletCave_Room2Triggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Func_020005fc)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Func_020005fc)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Func_020005fc)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Func_020005fc)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Func_020005fc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, 0x230, EVENT(Func_0200115c)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, 0x230, EVENT(IsletCave_TremorRevealsSerac)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(IsletCave_FightSerac)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gIsletCave_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 10, 0x9cf, EVENT(Func_020010ac)},
+    {TRIGGER_STEP, 10, 0x9cf, EVENT(IsletCave_SentinelAwaits)},
     {TRIGGER_TABLE_END},
 };
 
-s16 gData_020019d4[] = {
+s16 gIsletCave_DoorFrames[] = {
     72, 4, 2, 2, 2, 73, 4, 2,
     2, 2, -1, 0,
 };
 // clang-format on
 
-struct MapGridCellAnimation gData_020019ec[] = {
-    {gData_020019d4, 72, 4},  {gData_020019d4, 84, 4},  {gData_020019d4, 96, 4},
-    {gData_020019d4, 107, 4}, {gData_020019d4, 118, 4},
+struct MapGridCellAnimation gIsletCave_Doors[] = {
+    {gIsletCave_DoorFrames, 72, 4},  {gIsletCave_DoorFrames, 84, 4},
+    {gIsletCave_DoorFrames, 96, 4},  {gIsletCave_DoorFrames, 107, 4},
+    {gIsletCave_DoorFrames, 118, 4},
 };

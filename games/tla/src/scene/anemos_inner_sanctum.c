@@ -114,7 +114,7 @@ void Actor_Release(struct Actor *object);
 
 extern char SceneId_AnemosInnerSanctum5;
 
-void Func_020000f4(void);
+void PaletteCycle_Start(void);
 
 void Teleport_PlaySparks(void);
 
@@ -1254,7 +1254,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 void Func_02001c60(void) {
-  Func_020000f4();
+  PaletteCycle_Start();
   Teleport_PlaySparks();
   {
     struct MainRoutineWork2c2 *party =

@@ -120,7 +120,11 @@ struct PlacedObject {
 };
 
 struct PlayerSprite {
-  u8 unk00[9];
+  u8 unk00[5];
+  u8 low05 : 2;
+  u8 objectMode : 2;
+  u8 high05 : 4;
+  u8 unk06[3];
   u8 low09 : 2;
   u8 priority : 2;
   u8 high09 : 4;
@@ -130,6 +134,8 @@ struct PlayerSprite {
   u8 unk14[5];
   u8 dirty;
   u8 flags;
+  u8 unk1b[0x11];
+  u8 *entry;
 };
 
 struct MapFlagsWork {

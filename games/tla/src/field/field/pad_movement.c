@@ -11,26 +11,6 @@
 #include "module/field/object.h"
 #include "macros.h"
 
-/* VIEW(f0279b0): tag struct PlayerSprite as struct PlayerSprite__f0279b0;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:157: structure has no member named
- * `entry'. */
-struct PlayerSprite__f0279b0 {
-  u8 unk00[5];
-  u8 low05 : 2;
-  u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unk06[3];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-  u8 unk1b[0x11];
-  u8 *entry;
-};
-
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
@@ -56,9 +36,9 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   s32 targetCameraYaw;
   struct WorldCamera *camera;
   s32 yawStep;
-  struct PlayerSprite__f0279b0 *playerSprite;
+  struct PlayerSprite *playerSprite;
   struct Actor *ripple;
-  struct PlayerSprite__f0279b0 *rippleSprite;
+  struct PlayerSprite *rippleSprite;
   struct EventWork *work;
 
   movementAnimation = 2;
@@ -499,24 +479,6 @@ counted:
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 
-/* VIEW(s28534): tag struct PlayerSprite as struct PlayerSprite__s28534;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:709: structure has no member named
- * `objectMode'. */
-struct PlayerSprite__s28534 {
-  u8 unk00[5];
-  u8 low05 : 2;
-  u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unk06[3];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-};
-
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
@@ -545,7 +507,7 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   struct WorldCamera *camera;
   s32 yawStep;
   struct Actor *ripple;
-  struct PlayerSprite__s28534 *rippleSprite;
+  struct PlayerSprite *rippleSprite;
   struct EventWork *work;
   struct WorldEventWork *worldWork;
   u32 kind;
@@ -729,24 +691,6 @@ update_object:
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 
-/* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:949: structure has no member named
- * `objectMode'. */
-struct PlayerSprite__f028aac {
-  u8 unk00[5];
-  u8 low05 : 2;
-  u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unk06[3];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-};
-
 /* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
@@ -781,7 +725,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   struct WorldCamera *camera;
   s32 yawStep;
   struct Actor *ripple;
-  struct PlayerSprite__f028aac *rippleSprite;
+  struct PlayerSprite *rippleSprite;
   struct EventWork *work;
   struct WorldEventWork__f028aac *worldWork;
   struct Actor *other;

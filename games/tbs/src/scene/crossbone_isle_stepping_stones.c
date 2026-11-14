@@ -187,7 +187,7 @@ CrossboneIsleSteppingStones_SettleActorOnGround(struct Actor *actor) {
       break;
     }
     wait(1);
-    if ((u32)actor->y.fixed == (u32)actor->groundHeight) {
+    if (actor->y.fixed == actor->groundHeight) {
       break;
     }
     remainingFrames--;

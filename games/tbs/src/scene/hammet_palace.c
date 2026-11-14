@@ -258,7 +258,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gMainRoutineWork.next == (u32)SCENE_HAMMET_PALACE) {
+  if (gMainRoutineWork.next == SCENE_HAMMET_PALACE) {
     HammetPalace_SetUpEntrance();
   }
   return 0;

@@ -536,7 +536,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   s32 answer;
   s32 owner;
 
-  if (Event_GetFlag(0x8ff) != 0) {
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0) {
     Event_SetFlag(0x980);
     return;
   }
@@ -806,7 +806,7 @@ void LemurianShipDeck_ReturnToShip(void) {
 /// over the ship, the leader answers two prompts, and everyone leaves by
 /// script gLemurianShipDeck_ReachPiersShipScript; it sets flag 0x981.
 void LemurianShipDeck_ReachPiersShip(void) {
-  if (Event_GetFlag(0x8ff) == 0)
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
     return;
   if (Event_GetFlag(0x989) != 0)
     return;

@@ -192,6 +192,11 @@
 /// button beside them: the gates stay open.
 #define FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED 0xa01
 
+/// Set as Felix carries the message of the Gabomba to Akafubu after the
+/// ceremony at the Gabomba Statue; Madra, Alhafra and the Kibombo then speak of
+/// the raids and the Black Crystal.
+#define FLAG_GABOMBA_MESSAGE_CARRIED 0x8ff
+
 /// Set as the party sets out on the ship Hamma gave wings to at Atteka Inlet:
 /// from then on the ship flies, with no encounters at sea.
 #define FLAG_SHIP_FLIES 0x8df

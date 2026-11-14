@@ -231,7 +231,8 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.entrance = gMainRoutineWork.secondary = 8;
     AlhafraManor_BriggsEscapes();
   }
-  if (!GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) && GameFlag_Get(0x8ff)) {
+  if (!GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) &&
+      GameFlag_Get(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   }

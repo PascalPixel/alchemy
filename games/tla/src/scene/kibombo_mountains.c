@@ -8,8 +8,9 @@
 #include "flags.h"
 #include "djinn_ids.h"
 
-// Set once the Kibombo let the party pass: the guards and the dog are gone.
-#define FLAG_KIBOMBO_LETS_PARTY_PASS 0x8ff
+// Once the message of the Gabomba is carried the Kibombo let the party pass:
+// the guards and the dog are gone.
+#define FLAG_KIBOMBO_LETS_PARTY_PASS FLAG_GABOMBA_MESSAGE_CARRIED
 #define FLAG_KIBOMBO_GUARDS_REPORTED 0x880
 #define FLAG_KIBOMBO_OVERGROWTH_CLEARED 0x882
 #define FLAG_KIBOMBO_FIRST_CRATE_DROPPED 0x8e7

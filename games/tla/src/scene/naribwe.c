@@ -54,7 +54,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.entrance == 10)
     return gNaribwe_Entrance10Placements;
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gNaribwe_PlacementsOnReturn;
   return gNaribwe_Placements;
 }
@@ -72,7 +72,7 @@ void Naribwe_PrepareBlaze(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gNaribwe_TriggersOnReturn;
   return gNaribwe_Triggers;
 }

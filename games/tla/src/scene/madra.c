@@ -75,7 +75,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadra_PlacementsOnReturn;
   return gMadra_Placements;
 }
@@ -131,7 +131,7 @@ void Madra_TalkToWeaponMerchant(s32 arg) {
     Shop_Run(4, arg);
     return;
   }
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     Event_SetMessageId((s32)&MsgItLooksLikeThe);
   else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     Event_SetMessageId((s32)&MsgTheArmorerAnd);
@@ -148,7 +148,7 @@ void Madra_TalkToArmorMerchant(s32 arg) {
     Shop_Run(5, arg);
     return;
   }
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     Event_SetMessageId((s32)&MsgPeopleAreSaying);
   else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     Event_SetMessageId((s32)&MsgIKnewThere);
@@ -165,7 +165,7 @@ void Madra_TalkToItemMerchant(s32 arg) {
     Shop_Run(6, arg);
     return;
   }
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     Event_SetMessageId((s32)&MsgMyBoyfriendShin);
   else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     Event_SetMessageId((s32)&MsgAllMyInjuries);
@@ -359,7 +359,7 @@ void Madra_WorkerBlocksSealedHole(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadra_TriggersOnReturn;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gMadra_TriggersAfterRaid;
@@ -385,7 +385,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
   gFieldWork->transition = 0x100;
-  if (Event_GetFlag(0x8ff)) {
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     Madra_SealHole();
   } else {
     Actor_SetSpriteFlags(Actor_GetById(26), 0);
@@ -398,19 +398,22 @@ s32 Scene_Initialize(void) {
       sprite->unk11 = (sprite->unk11 & 3) | 32;
     }
     ((struct FieldSprite *)Actor_GetById(26)->sprite)->unk19 = 1;
-    if (Event_GetFlag(0x8ff) == 0 && Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
+    if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0 &&
+        Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
       Actor_SetPosition(27, 0, 0);
       Actor_SetPosition(28, 0, 0);
       if (Event_GetFlag(FLAG_SCENE_TEMP_80) == 0)
         Actor_SetPosition(26, 0, 0);
-    } else if (Event_GetFlag(0x8ff) != 0 || Event_GetFlag(0x910) != 0 ||
+    } else if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0 ||
+               Event_GetFlag(0x910) != 0 ||
                Event_GetFlag(FLAG_SCENE_TEMP_80) == 0) {
       Actor_SetPosition(26, 0, 0);
     }
   }
   if (gMainRoutineWork.entrance == 9 && Event_GetFlag(0x913) == 0)
     Madra_GrantPassageToOsenia();
-  if (Event_GetFlag(0x8ff) != 0 && Event_GetFlag(0x989) != 0) {
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0 &&
+      Event_GetFlag(0x989) != 0) {
     if (gMainRoutineWork.entrance == 7 && Event_GetFlag(0x98e) == 0) {
       Madra_MeetKarst();
       Event_SetFlag(0x98e);

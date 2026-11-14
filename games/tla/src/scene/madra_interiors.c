@@ -80,7 +80,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     return gMadraInteriors_SecondRoomsPlacements;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailPlacements;
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadraInteriors_PlacementsOnReturn;
   return gMadraInteriors_Placements;
 }
@@ -117,7 +117,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
   } else {
 #if !TLA_PATCH_1
     // Before patch 1 there is no choice prompt.
-    if (Event_GetFlag(0x8ff))
+    if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors155);
     else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors87);
@@ -125,7 +125,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors39);
     Event_ShowMessage(22, 0);
 #else
-    if (Event_GetFlag(0x8ff)) {
+    if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
       s32 msg = (s32)MsgMadraInteriors155;
 
       FieldEvent_SetMessageId(msg);
@@ -158,7 +158,7 @@ void MadraInteriors_TalkToHealer(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Sanctum_Run(actor);
   } else {
-    if (Event_GetFlag(0x8ff))
+    if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors149);
     else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors81);
@@ -299,7 +299,7 @@ const struct Trigger *Scene_GetEvents(void) {
     return gMadraInteriors_SecondRoomsTriggers;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailTriggers;
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadraInteriors_TriggersOnReturn;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gMadraInteriors_TriggersAfterRaid;
@@ -335,7 +335,7 @@ void MadraInteriors_SetUpJail(void) {
       Actor_SetPosition(9, 0, 0);
       Actor_SetPosition(10, 0, 0);
     }
-  } else if (Event_GetFlag(0x8ff)) {
+  } else if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     MadraInteriors_PlaceFacing(9, px(515), px(841), FACING_NORTHEAST);
     MadraInteriors_PlaceFacing(10, px(472), px(877), FACING_NORTH);
     Actor_SetPosition(8, 0, 0);
@@ -391,7 +391,7 @@ s32 Scene_Initialize(void) {
     }
   }
   MadraInteriors_PlaceBlackCrystal();
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     FieldActor_SetSpriteColor(Actor_Get(33), 2);
   else
     FieldActor_SetSpriteColor(Actor_Get(28), 2);
@@ -1411,22 +1411,22 @@ struct Trigger gMadraInteriors_SecondRoomsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TALK, 8, 0x8ab, MSGNO(MsgMadraInteriors01)},
-    {TRIGGER_TALK, 8, 0x8ff, MSGNO(MsgMadraInteriors49)},
+    {TRIGGER_TALK, 8, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors49)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors98)},
     {TRIGGER_TALK, 9, 0x8ab, MSGNO(MsgMadraInteriors02)},
-    {TRIGGER_TALK, 9, 0x8ff, MSGNO(MsgMadraInteriors50)},
+    {TRIGGER_TALK, 9, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors50)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors99)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors31)},
-    {TRIGGER_TALK, 11, 0x8ff, MSGNO(MsgMadraInteriors79)},
+    {TRIGGER_TALK, 11, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors79)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors147)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8ab, MSGNO(MsgMadraInteriors03)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8ff, MSGNO(MsgMadraInteriors51)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors51)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors100)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8ab, MSGNO(MsgMadraInteriors04)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8ff, MSGNO(MsgMadraInteriors52)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors52)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors101)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors32)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x8ff, MSGNO(MsgMadraInteriors80)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors80)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors148)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors174))},
     {TRIGGER_TABLE_END},

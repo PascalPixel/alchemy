@@ -387,7 +387,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   ActorSystem_SuspendProjectionAndShowSprites();
   FieldMessage_ShowCentered(MsgCarriedTheMessage, 0, 3);
   ActorSystem_ResumeProjectionAndHideLayers();
-  GameFlag_Set(0x8ff);
+  GameFlag_Set(FLAG_GABOMBA_MESSAGE_CARRIED);
   GameFlag_Clear(0x86b);
   GameFlag_Clear(0x8f2);
   gMainRoutineWork.retreatScene = (s32)&SceneId_Kibombo1;
@@ -1017,9 +1017,10 @@ void GabombaStatueChamber_InitializeRoom2(void) {
 
 /// Gives actors 15 to 32 action variant 2, runs Actor_DisableById for actor 8
 /// and grounds it, then GabombaStatueChamber_OpenTheLap with actor 10 placed
-/// when flag 0x8ff is set, else GabombaStatueChamber_ShowBlackCrystal; arriving
-/// by entrance 2 it sets the retreat to GabombaStatue7's entrance 1 (flag
-/// 0xa27) or GabombaStatueChamber1's entrance 3 (flag 0xa28).
+/// once the message of the Gabomba is carried, else
+/// GabombaStatueChamber_ShowBlackCrystal; arriving by entrance 2 it sets the
+/// retreat to GabombaStatue7's entrance 1 (flag 0xa27) or
+/// GabombaStatueChamber1's entrance 3 (flag 0xa28).
 void GabombaStatueChamber_InitializeRoom3(void) {
   u32 i;
   char *scene;
@@ -1028,7 +1029,7 @@ void GabombaStatueChamber_InitializeRoom3(void) {
     Actor_SetSpritePriority(i + 15, 2);
   Actor_DisableById(8);
   Actor_GetById(8)->y = 0;
-  if (GameFlag_Get(0x8ff)) {
+  if (GameFlag_Get(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     GabombaStatueChamber_OpenTheLap();
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   } else {
@@ -1214,7 +1215,7 @@ struct Trigger gGabombaStatueChamber_Room3Triggers[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYourBlackOrb)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgOeiaWhatAm)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 11, 0x8ff,
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 11, FLAG_GABOMBA_MESSAGE_CARRIED,
      EVENT(GabombaStatueChamber_GabombaNamesWitchDoctor)},
     {TRIGGER_TABLE_END},
 };

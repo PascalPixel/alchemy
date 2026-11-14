@@ -189,11 +189,11 @@ void JupiterLighthouse_TryLockedDoor(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/// A particle's step, Jupiter Lighthouse room 2's Func_02000720 with other
-/// numbers: it circles at its angle (action) around x 232 and rises with its
-/// phase (unk66) from 120 pixels down, taking mode 7 at phase 1 and mode 2 at
-/// phase 38 and starting over once above the ground; drawn in front while the
-/// sine is negative and behind otherwise.
+/// A particle's step, Jupiter Lighthouse room 2's
+/// JupiterLighthouse_CircleTheMote with other numbers: it circles at its angle
+/// (action) around x 232 and rises with its phase (unk66) from 120 pixels down,
+/// taking mode 7 at phase 1 and mode 2 at phase 38 and starting over once above
+/// the ground; drawn in front while the sine is negative and behind otherwise.
 void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   s16 angle = object->timer;
   s16 height = object->unk66;

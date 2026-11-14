@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02003400
-gData_02003400:
+	.global gJupiterLighthouse_OrbFrame
+gJupiterLighthouse_OrbFrame:
 	.space 0x00000004
 	.global gPaletteCycleColors
 gPaletteCycleColors:

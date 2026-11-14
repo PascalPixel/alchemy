@@ -403,10 +403,10 @@
 	export Actor_PlaceMovedBlock, Actor_PlaceMovedBlockFar
 	export MapCollision_FindOrAddTag, MapCollision_FindOrAddTagFar
 	export Actor_FindAtCell, Actor_FindAtCellFar
-	export Func_020029e0, EffectSprite_InitFar
+	export JupiterLighthouse_InitSparkSprite, EffectSprite_InitFar
 	export Leader_CanPushObjectAhead, Leader_CanPushObjectAheadFar
 	export EasternAlhafra_PushObjectAhead, Leader_PushObjectAheadFar
-	export Func_020029e8, EffectSprite_DrawFar
+	export JupiterLighthouse_DrawSparkSprite, EffectSprite_DrawFar
 	export Leader_PushObjectAhead, Leader_PushObjectAheadFar
 	export Leader_FindActorAhead, Leader_FindActorAheadFar
 	export TileCopies_CopyTouchedCells, TileCopies_CopyTouchedCellsFar

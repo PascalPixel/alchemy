@@ -516,7 +516,6 @@ void Actor_Restore(void) {
   s32 animation;
   s32 priority;
   s32 y;
-  s32 *leaderId = &gMainRoutineWork.leaderActorId;
   struct FieldWork **work = &gFieldWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 
@@ -539,7 +538,7 @@ void Actor_Restore(void) {
       // Through the sprite union this store moves.
       *(struct Sprite **)&actor->sprite = sprite;
       // Re-anchor the camera only when restoring the selected leader.
-      if (actorIndex == *leaderId) {
+      if (actorIndex == gMainRoutineWork.leaderActorId) {
         camera = (*work)->camera;
         cameraPosition = (*grid)->origin;
         y = actor->y.fixed;

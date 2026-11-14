@@ -243,15 +243,12 @@ s32 Scene_GetTriggers(void) { return (s32)gMenuTest_Triggers; }
 
 /// Levels the four heroes to the current debug target, then raises it by ten.
 static void MenuTest_RaisePartyLevels(void) {
-  s32 *targetLevel;
-
   FieldMessage_Show(MsgDebugWentLevel, FIELD_MESSAGE_ZOOM);
-  targetLevel = &gMenuTest_NextLevel;
-  Unit_LevelUpTo(ISAAC, *targetLevel);
-  Unit_LevelUpTo(GARET, *targetLevel);
-  Unit_LevelUpTo(MIA, *targetLevel);
-  Unit_LevelUpTo(IVAN, *targetLevel);
-  *targetLevel += 10;
+  Unit_LevelUpTo(ISAAC, gMenuTest_NextLevel);
+  Unit_LevelUpTo(GARET, gMenuTest_NextLevel);
+  Unit_LevelUpTo(MIA, gMenuTest_NextLevel);
+  Unit_LevelUpTo(IVAN, gMenuTest_NextLevel);
+  gMenuTest_NextLevel += 10;
   MenuTest_RecalculateParty();
 }
 

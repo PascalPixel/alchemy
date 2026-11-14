@@ -488,7 +488,7 @@ void Func_0200065c(void) {
       PaletteFade_ApplyTarget(0x10003, 1);
       PaletteFade_Interpolate(20);
       System_Wait(20);
-      Call1((void (*)())PartyInventory_Remove, 245);
+      PartyInventory_Remove(245);
       actor4 = Actor_GetById(4);
       created =
           FieldActor_Create(0x1e9, actor4->x, actor4->y + px(8), actor4->z);
@@ -506,7 +506,7 @@ void Func_0200065c(void) {
         buffer = HeapSlot_Alloc(68, 0x608);
         Item_LoadIcon(ITEM_JUPITER_STAR);
         Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
-        Call1((void (*)())HeapSlot_Release, 68);
+        HeapSlot_Release(68);
       }
       FieldActor_SetSpritePriority(37, 1);
       actor37 = Actor_GetById(37);

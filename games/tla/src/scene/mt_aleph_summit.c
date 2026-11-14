@@ -376,7 +376,7 @@ s32 Scene_Initialize(void) {
   } else if (mode == 2) {
     FieldCamera_MoveTo(256, CAMERA_KEEP, 128, 0);
     FieldCamera_SetSpeed(1);
-    Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(8), 0);
+    Actor_SetSpriteFlags((s32)(s32)Actor_Get(8), 0);
     Actor_SetAnimation(8, 12);
     Actor_SetAnimationSpeedById(8, 8);
     ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
@@ -519,8 +519,7 @@ s32 Scene_Initialize(void) {
       MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(4, 0),
                                      (u16 *)&BG_PLTT_COLOR(6, 0), 16);
     if (j > 49)
-      Call3((void (*)())MtAlephSummit_ShiftColors, (u16 *)&BG_PLTT_COLOR(0, 0),
-            224, 1);
+      MtAlephSummit_ShiftColors((u16 *)&BG_PLTT_COLOR(0, 0), 224, 1);
     System_Wait(4);
     j++;
     if (j != 84)
@@ -576,7 +575,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(50);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(9), 0);
+    Actor_SetSpriteFlags((s32)(s32)Actor_Get(9), 0);
     Actor_WalkToAndWait(9, 216, 96);
     Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -808,7 +807,7 @@ s32 Scene_Initialize(void) {
       if (*held & 1)
         break;
       if (j == 0) {
-        Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(8), 0);
+        Actor_SetSpriteFlags((s32)(s32)Actor_Get(8), 0);
         Actor_SetAnimation(8, 12);
       }
     }

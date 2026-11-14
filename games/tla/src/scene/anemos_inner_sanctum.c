@@ -1399,22 +1399,22 @@ s32 Scene_Initialize(void) {
   FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;
   v_r1 = gMainRoutineWork.scene;
   if (v_r1 == (s32)&SceneId_AnemosInnerSanctum1) {
-    Call4((void (*)())Func_02000038, (s32)gData_0200384c, (s32)gData_0200385c,
-          (s32)gData_02003888, (s32)gData_020038b4);
+    Func_02000038((s32)gData_0200384c, (s32)gData_0200385c, (s32)gData_02003888,
+                  (s32)gData_020038b4);
     if (Event_GetFlag(0xa87)) {
-      Call3((void (*)())Func_02000a78, 0x208, 48, 0);
+      Func_02000a78(0x208, 48, 0);
       MapGrid_CopyCellsTo(85, 34, 85, 8, 9, 8);
     }
     if (Event_GetFlag(0xa88)) {
-      Call3((void (*)())Func_02000a78, 0x228, 48, 3);
+      Func_02000a78(0x228, 48, 3);
       MapGrid_CopyCellsTo(101, 34, 101, 8, 9, 8);
     }
     if (Event_GetFlag(0xa89)) {
-      Call3((void (*)())Func_02000a78, 0x1f8, 40, 10);
+      Func_02000a78(0x1f8, 40, 10);
       MapGrid_CopyCellsTo(85, 46, 85, 20, 9, 8);
     }
     if (Event_GetFlag(0xa8a)) {
-      Call3((void (*)())Func_02000a78, 0x238, 40, 2);
+      Func_02000a78(0x238, 40, 2);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
     if (!Event_GetFlag(0xa8b))

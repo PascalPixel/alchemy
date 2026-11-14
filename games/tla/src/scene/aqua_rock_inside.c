@@ -1502,13 +1502,13 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   if (scene == (s32)&SceneId_AquaRockInside1) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_30)) {
-      Call1((void (*)())Func_02001e78, 8);
+      Func_02001e78(8);
       Actor_SetAnimation(8, 3);
     } else {
       FieldActor_SetSpriteColor(Actor_GetById(8), 6);
     }
     if (GameFlag_Get(FLAG_SCENE_TEMP_31)) {
-      Call1((void (*)())Func_02001e78, 9);
+      Func_02001e78(9);
       Actor_SetAnimation(9, 3);
     } else {
       FieldActor_SetSpriteColor(Actor_GetById(9), 6);
@@ -1519,7 +1519,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
       FieldActor_SetSpriteColor(Actor_GetById(8), 6);
     } else {
-      Call1((void (*)())Func_02001e78, 8);
+      Func_02001e78(8);
       Actor_SetAnimation(8, 3);
     }
     object = Actor_GetById(9);
@@ -1534,14 +1534,14 @@ s32 Scene_Initialize(void) {
     if (entrance == 7)
       Leader_RiseFromWater();
   } else if (scene == (s32)&SceneId_AquaRockInside4) {
-    Call1((void (*)())Func_02001e78, 10);
+    Func_02001e78(10);
     Actor_SetAnimation(10, 3);
-    Call1((void (*)())Func_02001e78, 11);
+    Func_02001e78(11);
     Actor_SetAnimation(11, 3);
     if ((u32)(entrance - 6) <= 1) {
       if (GameFlag_Get(FLAG_SCENE_TEMP_49)) {
         FieldActor_SetSpriteColor(Actor_GetById(9), 5);
-        Call1((void (*)())Func_02001e78, 9);
+        Func_02001e78(9);
         Actor_SetAnimation(9, 3);
         Func_02000b5c();
       } else {
@@ -1638,7 +1638,7 @@ s32 Scene_PrepareMap(void) {
       actor->motionFlags = i1;
       actor->terrainHeight = i1;
       actor->y = i1;
-      Call2((void (*)())Actor_SelectAnimation, (s32)actor, 0);
+      Actor_SelectAnimation((s32)actor, 0);
       actor = Actor_GetById(13);
       actor->motionFlags = i1;
       actor->terrainHeight = i1;
@@ -1651,9 +1651,9 @@ s32 Scene_PrepareMap(void) {
         MapGrid_CopyCellAttributes(64, 32, 64, 32, i2, 32);
         Func_020032d4(33, 0, 0);
       } else {
-        Call3((void (*)())Func_020032d4, 33, 4, 0);
+        Func_020032d4(33, 4, 0);
         actor = Actor_GetById(12);
-        Call2((void (*)())Func_0200349c, (actor->x >> 20) - 42, 0);
+        Func_0200349c((actor->x >> 20) - 42, 0);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_50)) {
         MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
@@ -1689,15 +1689,15 @@ s32 Scene_PrepareMap(void) {
     actor->terrainHeight = 0;
     actor->y = 0;
   } else if (scene == (s32)&SceneId_AquaRockInside3) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
-    Call2((void (*)())Actor_SetSpriteFlags, (s32)Actor_GetById(9), 0);
-    Call2((void (*)())Actor_SetSpriteFlags, (s32)Actor_GetById(10), 0);
+    FieldEffect_StartBlankOverlay(0);
+    Actor_SetSpriteFlags((s32)Actor_GetById(9), 0);
+    Actor_SetSpriteFlags((s32)Actor_GetById(10), 0);
     Func_020032d4(33, 8, -2);
-    Call3((void (*)())Func_020032d4, 40, 8, 8);
+    Func_020032d4(40, 8, 8);
     if (GameFlag_Get(0xa66)) {
       Func_02003628();
-      Value4((s32 (*)())Func_02003688, 16, 4, 16, 2);
-      Value4((s32 (*)())Func_02003688, 22, 4, 16, 0);
+      Func_02003688(16, 4, 16, 2);
+      Func_02003688(22, 4, 16, 0);
       for (i5 = 0; i5 < 6; i5++)
         Func_020036b8(33, 55);
     }
@@ -1713,7 +1713,7 @@ s32 Scene_PrepareMap(void) {
       MapGrid_CopyCellAttributes(17, 32, 5, 1, 17, 31);
     }
   } else if (scene == (s32)&SceneId_AquaRockInside4) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
     if ((u32)(entrance - 6) <= 1)
       goto statues;
     goto no_statues;
@@ -1738,7 +1738,7 @@ s32 Scene_PrepareMap(void) {
         }
         Func_02000b24(12, 38);
         Func_02003628();
-        Value4((s32 (*)())Func_02003688, 12, 2, 45, 1);
+        Func_02003688(12, 2, 45, 1);
         for (i8 = 0; i8 < 8; i8++)
           Func_020036b8(33, 55);
         Event_SetFlag(FLAG_SCENE_TEMP_49);
@@ -1761,16 +1761,16 @@ s32 Scene_PrepareMap(void) {
     }
   } else if (scene == (s32)&SceneId_AquaRockInside5) {
     Func_020032d4(33, 0, -2);
-    Call3((void (*)())Func_020032d4, 40, 0, 0);
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    Func_020032d4(40, 0, 0);
+    FieldEffect_StartBlankOverlay(0);
     if (((u32)(entrance - 1) <= 3 || entrance == 7) && GameFlag_Get(0xa67)) {
       Func_02003628();
-      Value4((s32 (*)())Func_02003688, 44, 0, 34, 2);
+      Func_02003688(44, 0, 34, 2);
       for (i10 = 0; i10 <= 4; i10++)
         Func_020036b8(33, 55);
     }
   } else if (scene == (s32)&SceneId_AquaRockInside6) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
     if (entrance == 1 || entrance == 13) {
       Func_020032d4(33, 0, -2);
     } else if (entrance == 9 || entrance == 11 || entrance == 12) {
@@ -1802,10 +1802,10 @@ s32 Scene_PrepareMap(void) {
   } else if (scene == (s32)&SceneId_AquaRockInside7) {
     Func_020032d4(33, 0, -2);
   } else if (scene == (s32)&SceneId_AquaRockInside8) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
     Func_020032d4(33, 0, -2);
     Tightrope_Initialize();
-    Call3((void (*)())Tightrope_Place, 0, 8, 9);
+    Tightrope_Place(0, 8, 9);
   } else if (scene == (s32)&SceneId_AquaRockInside9) {
     if ((u32)(entrance - 3) <= 1) {
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -1837,7 +1837,7 @@ s32 Scene_PrepareMap(void) {
         Call2((void (*)())Func_02000b24, 13, 39);
         Func_02000b24(15, 37);
         Func_02003628();
-        Value4((s32 (*)())Func_02003688, 38, 2, 19, 1);
+        Func_02003688(38, 2, 19, 1);
         for (i15 = 0; i15 < 8; i15++)
           Func_020036b8(33, 55);
         Event_SetFlag(FLAG_SCENE_TEMP_4B);
@@ -1855,10 +1855,10 @@ s32 Scene_PrepareMap(void) {
     actor = Actor_GetById(19);
     MapGrid_CopyCellAttributes(23, 39, 1, 1, actor->x >> 20, 39);
     if ((u32)(entrance - 1) <= 1) {
-      Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+      FieldEffect_StartBlankOverlay(0);
     }
   } else if (scene == (s32)&SceneId_AquaRockInside10) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
     Func_020032d4(33, 0, -2);
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_AREA_TEMP_49)) {

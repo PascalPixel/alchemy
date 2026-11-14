@@ -621,8 +621,8 @@ s32 Scene_Initialize(void) {
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
-  Call4((void (*)())Palette_SetColorsFade, (s32)gData_0200338c,
-        (s32)gData_0200339c, (s32)gData_020033c8, (s32)gData_020033f4);
+  Palette_SetColorsFade((s32)gData_0200338c, (s32)gData_0200339c,
+                        (s32)gData_020033c8, (s32)gData_020033f4);
   if (scene != (s32)&SceneId_MarsLighthouseRoomM6 &&
       scene == (s32)&SceneId_MarsLighthouseRoomM1) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);

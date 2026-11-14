@@ -1494,8 +1494,7 @@ void Func_020024e4(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 0x100,
-         0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   ShrineOfTheSeaGod_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
   FieldCamera_WaitForArrival();

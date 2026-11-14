@@ -547,7 +547,7 @@ void Func_02000908(u16 *list) {
     object->timer = flag;
     /* FAKEMATCH(wrapper): Func_020006cc called through Call1, the step behind
      * it. */
-    Call1((void (*)())Func_020006cc, (s32)object);
+    Func_020006cc((s32)object);
     entry += 3;
   } while (*entry != 0xffff);
 }

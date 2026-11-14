@@ -909,7 +909,7 @@ s32 Scene_Initialize(void) {
     case 3:
       object = FieldActor_Create(0x11e, px(472), 0, px(200));
       if (object != NULL) {
-        Call2((void (*)())Scene_SetActorSpritePriority, (s32)object, 1);
+        Scene_SetActorSpritePriority((s32)object, 1);
         object->motionFlags = 0;
         Actor_SetSpriteFlags(object, 0);
         Actor_SetSpriteColor(object, 14);

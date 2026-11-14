@@ -470,11 +470,11 @@ void Func_02000c24(s32 unused, s32 id) {
 
   if (id == 9 && column == 12 && row == 45) {
     Event_SetFlag(0x9d9);
-    Call2((void (*)())Func_02000b30, 9, 181);
+    Func_02000b30(9, 181);
   }
   if (id == 10 && column == 14 && row == 45) {
     Event_SetFlag(0x9da);
-    Call2((void (*)())Func_02000b30, 10, 181);
+    Func_02000b30(10, 181);
   }
   if (!GameFlag_Get(0x9da) || !GameFlag_Get(0x9d9))
     return;
@@ -496,17 +496,17 @@ void Func_02000c24(s32 unused, s32 id) {
   Func_02000b78(3, 15, 200, rise, 0x2e8, kind = 3);
   MapGrid_CopyCells(16, 27, 3, 3, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 3, toColumn, highRow);
-  Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x2f8, kind);
+  Func_02000b78(3, 10, 200, rise, 0x2f8, kind);
   MapGrid_CopyCells(16, 27, 3, 4, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 4, toColumn, highRow);
-  Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x308, kind);
+  Func_02000b78(3, 10, 200, rise, 0x308, kind);
   MapGrid_CopyCells(16, 27, 3, 5, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 5, toColumn, highRow);
-  Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x318, kind);
+  Func_02000b78(3, 10, 200, rise, 0x318, kind);
   MapGrid_CopyCells(16, 27, 3, 6, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 6, toColumn, highRow);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x328, kind);
+  Func_02000b78(3, 10, 200, rise, 0x328, kind);
   MapGrid_CopyCells(16, 27, 3, 13, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 13, toColumn, highRow);
   Event_End();
@@ -1295,7 +1295,7 @@ s32 Scene_Initialize(s32 a0) {
   struct Actor *object;
 
   if (scene == (s32)&SceneId_AnkohlRuins1) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
     if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
     if (GameFlag_Get(0x9d3))
@@ -1568,7 +1568,7 @@ s32 Scene_Initialize(s32 a0) {
   struct Actor *object;
 
   if (scene == (s32)&SceneId_AnkohlRuins1) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
     if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
     if (GameFlag_Get(0x9d3))

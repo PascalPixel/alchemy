@@ -1655,7 +1655,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(10)->priorityFlags |= value1;
     MagmaRockInside_RaiseActorCells(gMagmaRock_Room1Statues);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
-      Call3((void (*)())MagmaRock_PlaceVolley, 21, 13, 0);
+      MagmaRock_PlaceVolley(21, 13, 0);
     if (Event_GetFlag(0x8d5))
       Actor_SetPosition(8, 264, 360);
     if (Event_GetFlag(0x8d6))
@@ -1674,7 +1674,7 @@ s32 Scene_Initialize(void) {
       actor->terrainHeight = actor->y += px(24);
       Actor_SetSpriteFlags(actor, 0);
     }
-    Call1((void (*)())MagmaRock_RebuildFlameParts, 20);
+    MagmaRock_RebuildFlameParts(20);
     switch (work->entrance) {
     case 3:
     case 4:
@@ -1692,7 +1692,7 @@ s32 Scene_Initialize(void) {
       MagmaRock_RestoreCrumblingPillars(gMagmaRock_CrumblingPillars);
       MagmaRockInside_RaiseActorCells(gMagmaRock_Room2LowerStatues);
       Tightrope_Initialize();
-      Call3((void (*)())Func_02003bf4, 0, 11, 12);
+      Func_02003bf4(0, 11, 12);
       if (Event_GetFlag(0x8d7))
         Actor_SetPosition(15, 440, 536);
       Actor_PlaceBlocks(gMagmaRock_Room2LowerPillars);
@@ -1702,13 +1702,13 @@ s32 Scene_Initialize(void) {
           actor = Actor_GetById(*owner);
           actor->z += px(16);
         }
-        Call1((void (*)())Leader_Lift, -0x100000);
+        Leader_Lift(-0x100000);
       } else if (id == 2) {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(*owner);
           actor->z += px(16);
         }
-        Call1((void (*)())Leader_Lift, -0x600000);
+        Leader_Lift(-0x600000);
       }
     } else {
       if (*entrance <= 8) {
@@ -1720,19 +1720,19 @@ s32 Scene_Initialize(void) {
           Actor_GetById(8)->y += rise;
           Actor_GetById(9)->motionFlags = zero;
           Actor_GetById(9)->y += rise;
-          Call3((void (*)())MagmaRock_PlaceVolley, 19, 8, 0);
+          MagmaRock_PlaceVolley(19, 8, 0);
           Actor_GetById(10)->motionFlags = zero;
           rise = 0xa00000;
           Actor_GetById(10)->y += rise;
           Actor_GetById(11)->motionFlags = zero;
           Actor_GetById(11)->y += rise;
-          Call3((void (*)())MagmaRock_PlaceVolley, 20, 10, 1);
+          MagmaRock_PlaceVolley(20, 10, 1);
           Actor_GetById(12)->motionFlags = zero;
           rise = 0xf00000;
           Actor_GetById(12)->y += rise;
           Actor_GetById(13)->motionFlags = zero;
           Actor_GetById(13)->y += rise;
-          Call3((void (*)())MagmaRock_PlaceVolley, 21, 12, 0);
+          MagmaRock_PlaceVolley(21, 12, 0);
         }
         if (Event_GetFlag(0x8d8))
           Actor_SetPosition(16, 888, 568);
@@ -1754,11 +1754,11 @@ s32 Scene_Initialize(void) {
           actor->terrainHeight = actor->y += rise;
           Actor_SetSpriteFlags(actor, 0);
         }
-        Call1((void (*)())MagmaRock_RebuildFlameParts, 15);
-        Call1((void (*)())MagmaRock_RebuildFlameParts, 18);
+        MagmaRock_RebuildFlameParts(15);
+        MagmaRock_RebuildFlameParts(18);
         id = *entrance;
         if (id == 5) {
-          Call1((void (*)())Leader_Lift, 0x1200000);
+          Leader_Lift(0x1200000);
         } else if (id == 6) {
           if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
             MagmaRock_LaunchLeader();
@@ -1767,7 +1767,7 @@ s32 Scene_Initialize(void) {
             actor = Actor_GetById(*owner);
             actor->z += px(16);
           }
-          Call1((void (*)())Leader_Lift, -0x300000);
+          Leader_Lift(-0x300000);
         } else if (id == 8) {
           offset = 0x680000;
           goto move;
@@ -1797,8 +1797,8 @@ s32 Scene_Initialize(void) {
           actor->terrainHeight = actor->y += rise;
           Actor_SetSpriteFlags(actor, 0);
         }
-        Call1((void (*)())MagmaRock_RebuildFlameParts, 10);
-        Call1((void (*)())MagmaRock_RebuildFlameParts, 12);
+        MagmaRock_RebuildFlameParts(10);
+        MagmaRock_RebuildFlameParts(12);
         if (*entrance == 9 || *entrance == 10) {
           offset = 0x300000;
           goto move;
@@ -1813,7 +1813,7 @@ s32 Scene_Initialize(void) {
           actor->terrainHeight = actor->y += px(24);
           Actor_SetSpriteFlags(actor, 0);
         }
-        Call1((void (*)())MagmaRock_RebuildFlameParts, 13);
+        MagmaRock_RebuildFlameParts(13);
         if (Event_GetFlag(0x8da))
           Actor_SetPosition(8, 648, 600);
         if (Event_GetFlag(0x8db))
@@ -1826,7 +1826,7 @@ s32 Scene_Initialize(void) {
         if (Event_GetFlag(FLAG_SCENE_TEMP_52))
           MapGrid_CopyCellAttributes(108, 56, 1, 3, 109, 56);
         if (*entrance == 14) {
-          Call1((void (*)())Leader_Lift, 0x300000);
+          Leader_Lift(0x300000);
         } else if (*entrance == 16 || *entrance == 17) {
           if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
             actor = Actor_GetById(work->currentOwner);
@@ -1859,7 +1859,7 @@ s32 Scene_Initialize(void) {
         actor = Actor_GetById(*leader);
         actor->z += px(16);
       }
-      Call1((void (*)())Leader_Lift, -0x200000);
+      Leader_Lift(-0x200000);
     }
   }
   return 0;

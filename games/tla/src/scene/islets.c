@@ -750,7 +750,7 @@ void Func_02000e38(void) {
       Actor_FaceDirection(11, FACING_EAST, 0);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 856);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
-      item = (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, 454);
+      item = (struct Actor *)Func_02000da0((s32)leader, 454);
       trader->update = Actor_EmitSmoke;
       Actor_RunScriptAndWait(11, gData_020043f8);
       trader->update = 0;
@@ -758,7 +758,7 @@ void Func_02000e38(void) {
       Actor_FaceDirection(11, FACING_WEST, 0);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 856);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
-      item = (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, 454);
+      item = (struct Actor *)Func_02000da0((s32)leader, 454);
       trader->update = Actor_EmitSmoke;
       Actor_RunScriptAndWait(11, gData_02004300);
       trader->update = 0;
@@ -801,8 +801,7 @@ void Func_02000e38(void) {
       }
     }
     giftItem = 455;
-    gift =
-        (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, giftItem);
+    gift = (struct Actor *)Func_02000da0((s32)leader, giftItem);
     STEP(11, 280, 856);
     trader->update = 0;
     FieldPsynergy_RestoreMindReadPalette();

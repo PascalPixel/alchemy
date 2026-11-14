@@ -565,7 +565,7 @@ void Func_02000a34(s32 value) {
   Event_Wait(10);
   Call2((void (*)())Actor_FaceDirectionById, 8, 0x8000);
   Event_Wait(10);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 8, 0);
+  FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(8, 0, 5);
@@ -1126,7 +1126,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(7, 0, 5);
   Actor_FaceDirectionById(15, FACING_SOUTH_SOUTHWEST);
   Event_Wait(5);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x200f, 0);
+  FieldMessage_ShowAtActor(0x200f, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Actor_FaceDirectionById(6, FACING_SOUTHEAST);
@@ -1263,7 +1263,7 @@ void Func_02001868(void) {
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageThenWait(8, 0, 5);
   Motion_SetModeAndWaitAnimation(11, 4);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 11, 0);
+  FieldMessage_ShowAtActor(11, 0);
   Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTHEAST, 0);
   Call2((void (*)())Actor_FaceDirectionById, 8, 0x5000);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -1327,7 +1327,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(8, 0, 5);
   Call2((void (*)())Actor_FaceDirectionById, 14, 0xb000);
   Event_Wait(10);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x200e, 0);
+  FieldMessage_ShowAtActor(0x200e, 0);
   Call3((void (*)())Actor_ArmCallback, 8, 0x5000, 0);
   Call3((void (*)())Actor_ArmCallback, 11, FACING_WEST, 0);
   Call3((void (*)())Actor_ArmCallback, 14, 0xb000, 0);

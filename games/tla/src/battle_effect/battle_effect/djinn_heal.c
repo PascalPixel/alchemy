@@ -183,7 +183,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
       texture.pixels = work->sheet + SHEET_TEXTURE;
       job->kind = 6;
       job->texture = &texture;
-      job->faces = gBattleEffect_SquareMesh64;
+      job->faces = gBattleEffect_SquareMesh;
       job->vertices = vertices;
 
       for (i = 0; i != QUAD_COUNT; i++) {

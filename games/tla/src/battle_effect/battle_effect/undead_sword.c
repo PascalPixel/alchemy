@@ -360,9 +360,9 @@ struct WaterVertex {
 // One triangle of the water's mesh: three vertex indices, then a texture
 // coordinate for each.
 struct WaterTriangle {
-  u32 index0 : 8;
-  u32 index1 : 8;
-  u32 index2 : 8;
+  u32 vertexA : 8;
+  u32 vertexB : 8;
+  u32 vertexC : 8;
   u32 : 8;
   u32 u0 : 8;
   u32 v0 : 8;
@@ -376,7 +376,7 @@ extern char ResourceId_CrackedTextureSheet;
 extern char ResourceId_Data0B4;
 extern char ResourceId_SmokeSheet;
 extern char ResourceId_CrystalSheet;
-extern const u8 gBattleEffect_SquareMesh64[]; // the splash's mesh
+extern const u8 gBattleEffect_SquareMesh[]; // the splash's mesh
 
 #define WATER_COLUMNS 16
 #define WATER_ROWS 8
@@ -498,19 +498,19 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         quad[1].v1 = q;
         quad[1].u2 = u;
         quad[1].v2 = v + 15;
-        quad[0].index0 = b;
-        quad[0].index1 = d;
-        quad[0].index2 = c;
-        quad[1].index0 = a;
-        quad[1].index1 = b;
-        quad[1].index2 = c;
+        quad[0].vertexA = b;
+        quad[0].vertexB = d;
+        quad[0].vertexC = c;
+        quad[1].vertexA = a;
+        quad[1].vertexB = b;
+        quad[1].vertexC = c;
       }
     }
   }
   // A triangle of three zero indices ends the mesh.
-  WATER_MESH[WATER_QUADS * 2].index0 = 0;
-  WATER_MESH[WATER_QUADS * 2].index1 = 0;
-  WATER_MESH[WATER_QUADS * 2].index2 = 0;
+  WATER_MESH[WATER_QUADS * 2].vertexA = 0;
+  WATER_MESH[WATER_QUADS * 2].vertexB = 0;
+  WATER_MESH[WATER_QUADS * 2].vertexC = 0;
   frames = 48;
   if (mode != 0) {
     frames = 81;
@@ -704,7 +704,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
       EffectPosition_ProjectBattler(effect->actors[0], &target);
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->mesh = gBattleEffect_SquareMesh64;
+      model->mesh = gBattleEffect_SquareMesh;
       model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;
@@ -1249,7 +1249,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = work->sheet + 0x3080;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->scrollU = 0;
       model->scrollV = 0;
       for (k = 0; k != 8; k++) {

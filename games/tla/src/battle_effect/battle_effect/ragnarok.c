@@ -717,7 +717,7 @@ extern const u8 gJudgment_BurstPictures[];
 extern const u8 gJudgment_ShardWidths[];
 extern const u8 gJudgment_ShardHeights[];
 extern const u16 gJudgment_ShardPictures[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 
 void Palette_LoadBasicSpriteColors(void);

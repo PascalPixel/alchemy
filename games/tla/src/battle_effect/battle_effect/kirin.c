@@ -51,7 +51,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   struct EffectPosition unit;
   u8 jitterRow[16];
   u8 hitRow[14];
-  struct FxPlacement place2;
+  struct FxPlacement chargePlace;
   void *canvas;
   struct BattleEffectWork *work;
   DrawRectangle draw;
@@ -310,7 +310,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     frame = 0;
     do {
       if (frame <= 23) {
-        struct FxPair pair2 = gKirin_ChargeScale;
+        struct FxPair chargePair = gKirin_ChargeScale;
         s32 ang;
         s32 rise;
 
@@ -326,14 +326,14 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
             ang -= 0x8000;
           rise = (Trig_Sin(ang) << 5) >> 16;
         }
-        place2.unk0c = 0;
-        place2.y = px(255);
+        chargePlace.unk0c = 0;
+        chargePlace.y = px(255);
         i = 0;
         do {
-          place2.x = (rowX + gKirin_Columns[i]) << 16;
-          place2.z = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
-          Render_ApplyProjectedPlacementFar(work->objects[i], &place2.x,
-                                            &pair2.a, 0);
+          chargePlace.x = (rowX + gKirin_Columns[i]) << 16;
+          chargePlace.z = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
+          Render_ApplyProjectedPlacementFar(work->objects[i], &chargePlace.x,
+                                            &chargePair.a, 0);
           i++;
         } while (i != 9);
       }

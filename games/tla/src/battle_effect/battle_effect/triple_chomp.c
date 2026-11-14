@@ -48,7 +48,7 @@ extern char ResourceId_BlueFlameSheet;
 
 // The bite's quad: its mesh and its four corners, 192 x 128 around the
 // origin.
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 
 // The three bites' frames: 0, 12 and 24.
@@ -141,7 +141,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = pixels;
-    model->mesh = gBattleEffect_SquareMesh128;
+    model->mesh = gBattleEffect_LargeSquareMesh;
     model->kind = 7;
     model->texture = &texture;
     model->vertices = vertices;

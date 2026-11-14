@@ -157,18 +157,18 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   s32 mode;
   s32 offset;
   s32 frame;
-  s32 angle0;
+  s32 arcAngle;
   s32 j;
   s32 star;
   s32 i;
   s32 *starKind;
-  struct MeteorStar *stars2;
+  struct MeteorStar *current;
   s32 position[3];
   s32 screen[3];
   s32 point[3];
   s32 place[4];
   s32 place2[4];
-  struct ModelTexture__f18df5c texture2;
+  struct ModelTexture__f18df5c waveTexture;
   struct PointPair req2;
   s32 req[2];
   struct ModelTexture__f18df5c texture;
@@ -227,10 +227,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   size = 0;
   scale = Q16_ONE;
   Mesh_BuildGrid(triangles, 2, 16, 32, 2);
-  for (offset = 0, frame = 0, angle0 = 0; frame != 16;
-       angle0 += 1092, offset += 8, frame++) {
-    s32 y = (-Trig_Cos(angle0) * 48) >> 16;
-    s32 r = (Trig_Sin(angle0) * 48) >> 16;
+  for (offset = 0, frame = 0, arcAngle = 0; frame != 16;
+       arcAngle += 1092, offset += 8, frame++) {
+    s32 y = (-Trig_Cos(arcAngle) * 48) >> 16;
+    s32 r = (Trig_Sin(arcAngle) * 48) >> 16;
     u8 *v;
 
     j = 0;
@@ -260,17 +260,17 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = 0;
   transition[4] = 1;
   starKind = &stars->kind;
-  stars2 = stars;
-  for (star = 0; star != 256; star++, starKind += 4, stars2++) {
+  current = stars;
+  for (star = 0; star != 256; star++, starKind += 4, current++) {
     s32 a = (star & 255) << 7;
     s32 r = 160;
     s32 b;
 
-    stars2->y = Trig_Sin(a) * r;
+    current->y = Trig_Sin(a) * r;
     r = (Trig_Cos(a) * r) >> 16;
     b = Random16() & 0x7fff;
-    stars2->x = Trig_Sin(b) * r;
-    stars2->z = Trig_Cos(b) * r;
+    current->x = Trig_Sin(b) * r;
+    current->z = Trig_Cos(b) * r;
     if ((star & 31) == 0) {
       *starKind = (star / 32) % 7;
     } else {
@@ -608,12 +608,12 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     verts = Heap_AllocEwram(1024);
     model = Render_AllocateModelList(1);
     shade = 0;
-    model->texture = &texture2;
+    model->texture = &waveTexture;
     model->vertices = verts;
     model->shade = shade;
-    texture2.logWidth = 6;
-    texture2.logHeight = 6;
-    texture2.pixels = work->sheet + 0x4000;
+    waveTexture.logWidth = 6;
+    waveTexture.logHeight = 6;
+    waveTexture.pixels = work->sheet + 0x4000;
     model->kind = 7;
     model->mesh = gBattleEffect_RingMesh;
     x0 = hx / 2 - 60;
@@ -649,9 +649,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       }
     }
     model->mesh = gBattleEffect_CylinderMesh;
-    texture2.pixels = work->sheet + 0x5000;
-    texture2.logWidth = 7;
-    texture2.logHeight = 7;
+    waveTexture.pixels = work->sheet + 0x5000;
+    waveTexture.logWidth = 7;
+    waveTexture.logHeight = 7;
     half = ((hx + (s32)((u32)hx >> 31)) >> 1) - 64;
     for (i = 0; i != 3; i++) {
       s32 start = gMeteorBlow_RingStarts[i] + 8;

@@ -372,8 +372,8 @@ extern u8 Data_0201576b[];                  // the flash's texture
 extern const u8 gLifeShear_BladeMesh[];     // the blade's mesh
 extern const u8 gLifeShear_HandleMesh[];    // the handle's mesh
 extern const u8 gLifeShear_ScytheCorners[]; // their corners
-extern const u8 gBattleEffect_SquareMesh32Reversed[];  // the flash's mesh
-extern const u8 gBattleEffect_StandingSquareCorners[]; // its corners
+extern const u8 gBattleEffect_SmallSquareMeshReversed[]; // the flash's mesh
+extern const u8 gBattleEffect_StandingSquareCorners[];   // its corners
 
 #define LIFE_SHEAR_FRAMES 90
 
@@ -619,7 +619,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
           Transform_ApplyYaw(TRIG_TURN / 2);
         }
         model->kind = 6;
-        model->mesh = gBattleEffect_SquareMesh32Reversed;
+        model->mesh = gBattleEffect_SmallSquareMeshReversed;
         texture.logWidth = 5;
         texture.logHeight = 5;
         texture.pixels = Data_0201576b;
@@ -1319,7 +1319,7 @@ extern u16 gCoatlicue_CoilRolls[];
 extern u16 gCoatlicue_CoilGrowth[];
 extern u16 gCoatlicue_CoilMaxScales[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern char ResourceId_BellMaidenTiles;
 extern char ResourceId_BlueFlameSheet;
 extern char ResourceId_Data0C2;
@@ -1946,7 +1946,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       model->texture = &texture;
       texture.logWidth = 7;
       texture.logHeight = 7;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
       t = frame - 210;
       if ((u32)t <= 107) {
@@ -2292,7 +2292,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     model2->texture = &texture2;
     texture2.logWidth = 7;
     texture2.logHeight = 7;
-    model2->mesh = gBattleEffect_SquareMesh128;
+    model2->mesh = gBattleEffect_LargeSquareMesh;
     model2->vertices = verts2;
     model2->kind = 6;
     texture2.pixels = work->sheet;

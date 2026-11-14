@@ -85,7 +85,7 @@ extern char ResourceId_MarsDjinnSheet, ResourceId_WaterSpraySheet;
 
 extern u8 gMapCellBuffer[];
 extern u16 gBattleEffect_MotePictures[];
-extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_SquareMesh[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 
 void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
@@ -499,7 +499,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
         }
         texture.logWidth = 6;
         texture.logHeight = 6;
-        model->mesh = gBattleEffect_SquareMesh64;
+        model->mesh = gBattleEffect_SquareMesh;
         model->vertices = vertices;
         model->shade = shade;
         model->scrollU = 0;

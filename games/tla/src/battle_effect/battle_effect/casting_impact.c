@@ -106,9 +106,9 @@ struct IwramPointers {
   struct SummonWork *summon;
   void *screen;
   void *tiles;
-  DrawFunc slot68;
+  DrawFunc blitter;
   u8 unk6c[0x50];
-  DrawFunc slotbc;
+  DrawFunc altBlitter;
 };
 
 /// The heap-slot table (gHeapSlots), read through the slots this effect uses.
@@ -210,8 +210,8 @@ extern const u8 gBattleEffect_RingMesh[];
 extern const u8 gBattleEffect_TaperedBeamCorners[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 extern const u8 gBattleEffect_ColumnMesh[];
-extern const u8 gBattleEffect_SquareMesh64[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_SquareMesh[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 
 void SceneTransform_ApplyPosition3(s32, s32, s32);
 void SceneTransform_ApplyScale3(s32, s32, s32);
@@ -241,8 +241,8 @@ void Render_DrawModelList__ability_effects(struct Model *);
 #define BG_VRAM ((void *)BG_CHAR_BLOCK(1))
 #define SPARKS sparks
 #define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
-#define IWRAM_SLOT_68 (IWRAM->slot68)
-#define IWRAM_SLOT_BC (IWRAM->slotbc)
+#define BLITTER (IWRAM->blitter)
+#define ALT_BLITTER (IWRAM->altBlitter)
 /* FAKEMATCH(dead): the second release in a once-only block. */
 #define RELEASE_BLITTERS()                                                     \
   HeapSlot_Release(188);                                                       \
@@ -359,13 +359,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
   s32 center[3];
   s32 pos[3];
   s32 point[3];
-  s32 point2[3];
+  s32 targetPoint[3];
   struct DrawFuncs drawFuncs;
-  struct Texture texture164;
-  struct Texture texture156;
-  struct Texture texture148;
-  struct Texture texture140;
-  struct Texture texture132;
+  struct Texture stunBoltTexture;
+  struct Texture reverseStarTexture;
+  struct Texture boscaHitTexture;
+  struct Texture stunJipTexture;
+  struct Texture armorCrushTexture;
   s32 step;
   s32 i;
   u8 *src;
@@ -663,12 +663,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
   BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
   {
     struct MotionObject *object;
-    s32 save24;
-    s32 save28;
+    s32 savedVelocityX;
+    s32 savedVelocityY;
     s32 save2c;
-    s32 save34;
-    s32 save48;
-    struct MotionObject *object2;
+    s32 savedAcceleration;
+    s32 savedVerticalStrength;
+    struct MotionObject *targetObject;
     s32 n;
     s32 m;
     s32 t;
@@ -713,11 +713,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     vec[0] = object->x;
     vec[1] = object->y + 0x500000;
     vec[2] = object->z;
-    save24 = object->velocityX;
-    save28 = object->velocityY;
+    savedVelocityX = object->velocityX;
+    savedVelocityY = object->velocityY;
     save2c = object->velocityZ;
-    save34 = object->acceleration;
-    save48 = object->verticalMotionStrength;
+    savedAcceleration = object->acceleration;
+    savedVerticalStrength = object->verticalMotionStrength;
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;
@@ -847,11 +847,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       return;
     }
     Actor_SetAnimationSpeedFar(object, 16);
-    object->velocityX = save24;
-    object->velocityY = save28;
+    object->velocityX = savedVelocityX;
+    object->velocityY = savedVelocityY;
     object->velocityZ = save2c;
-    object->acceleration = save34;
-    object->verticalMotionStrength = save48;
+    object->acceleration = savedAcceleration;
+    object->verticalMotionStrength = savedVerticalStrength;
     if (kind == CASTING_IMPACT_IMPACT_SEVERE_BLOW) {
       Iwram_ClearWords(BG_VRAM, 0x3c00);
       Iwram_ClearWords(screen, 0x3c00);
@@ -872,11 +872,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         BG_PLTT[i] = (v << 10) | (v << 5) | v;
       }
     }
-    object2 = BattleObject_GetFar(action->actors[0])->object;
+    targetObject = BattleObject_GetFar(action->actors[0])->object;
     {
-      center[0] = (object2->x - origin[0]) / 6;
-      center[1] = (object2->y - origin[1] + 0x1e0000) / 6;
-      center[2] = (object2->z - origin[2]) / 6;
+      center[0] = (targetObject->x - origin[0]) / 6;
+      center[1] = (targetObject->y - origin[1] + 0x1e0000) / 6;
+      center[2] = (targetObject->z - origin[2]) / 6;
     }
     for (i = 0; i != 64; i++)
       work->particle[i].life = 0;
@@ -885,7 +885,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       i = 0;
       p = work->particle;
       for (; i != 32; i++, p++) {
-        SET_POSITION(p, object2->x, half, object2->z);
+        SET_POSITION(p, targetObject->x, half, targetObject->z);
         if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
           p->vx = ((Random16() & 255) - 127) << 12;
           p->vy = ((Random16() & 255) - 64) << 10;
@@ -947,8 +947,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       for (i = 0; i != 64; i++) {
         struct Particle *q;
         q = &SPARKS[i];
-        SET_POSITION(q, object2->x, px(20), object2->z);
-        if (object2->x < 0)
+        SET_POSITION(q, targetObject->x, px(20), targetObject->z);
+        if (targetObject->x < 0)
           q->vx = -((Random16() & 255) + 128) << 11;
         else
           q->vx = ((Random16() & 255) + 128) << 11;
@@ -965,7 +965,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         height = 0x140000;
       p = SPARKS;
       for (i = 0; i != 64; i++, p++) {
-        SET_POSITION(p, object2->x, height, object2->z);
+        SET_POSITION(p, targetObject->x, height, targetObject->z);
         if (kind == CASTING_IMPACT_IMPACT_SCORCH ||
             kind == CASTING_IMPACT_IMPACT_BARRAGE) {
           p->vx = ((Random16() & 255) - 127) << 11;
@@ -1279,7 +1279,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           kind == CASTING_IMPACT_IMPACT_STEEL ||
           kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
         s32 start;
-        struct MotionObject *object3;
+        struct MotionObject *casterObject;
         s32 half;
         s32 dx;
         s32 dy;
@@ -1299,7 +1299,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           struct Particle *p;
           p = SPARKS;
           for (i = 0; i != 64; i++, p++) {
-            SET_POSITION(p, object2->x, px(20), object2->z);
+            SET_POSITION(p, targetObject->x, px(20), targetObject->z);
             p->vx = ((Random16() & 255) - 128) << 10;
             p->vy = ((Random16() & 255) - 128) << 10;
             p->vz = ((Random16() & 255) - 128) << 10;
@@ -1313,7 +1313,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
         if (frame >= start) {
           p = SPARKS;
-          object3 = BattleObject_GetFar(action->actor)->object;
+          casterObject = BattleObject_GetFar(action->actor)->object;
           half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
           slot = kind == CASTING_IMPACT_IMPACT_FLARE_BURST;
           for (i = 0; i != 32; i++, p++) {
@@ -1326,9 +1326,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                   point[0] - n / 2, point[1] - n, n, n * 2);
               BattleEffectKernels_IntegrateVector3(p, 62, 0);
               if (frame > i + 22) {
-                dx = (object3->x - p->x) >> 8;
-                dy = (object3->y + half - p->y) >> 8;
-                dz = (object3->z - p->z) >> 8;
+                dx = (casterObject->x - p->x) >> 8;
+                dy = (casterObject->y + half - p->y) >> 8;
+                dz = (casterObject->z - p->z) >> 8;
                 p->vx += dx;
                 p->vy += dy;
                 p->vz += dz;
@@ -1429,9 +1429,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                   188, 7, 7,
                   gCastingImpact_SquallGlintFlips[Random16() & 3] | 3, 0);
             } while (0);
-            IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintPictures[m], x,
-                          y + 56, gBattleEffect_GlintPictureWidths[m],
-                          gBattleEffect_GlintPictureHeights[m]);
+            ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
+                        y + 56, gBattleEffect_GlintPictureWidths[m],
+                        gBattleEffect_GlintPictureHeights[m]);
             HeapSlot_Release(188);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
@@ -1452,9 +1452,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             RELEASE_BLITTERS();
             BattleEffect_BuildBlitter(
                 188, 7, 7, gCastingImpact_SapGlintFlips[Random16() & 3] | 3, 1);
-            IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintPictures[m], x,
-                          y + 80, gBattleEffect_GlintPictureWidths[m],
-                          gBattleEffect_GlintPictureHeights[m]);
+            ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
+                        y + 80, gBattleEffect_GlintPictureWidths[m],
+                        gBattleEffect_GlintPictureHeights[m]);
             HeapSlot_Release(188);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
@@ -1492,9 +1492,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           while (scroll > 104)
             scroll -= 104;
           BattleEffect_LoadBlitter(188, 19);
-          IWRAM_SLOT_BC(screen, buffer, x - 8, top + scroll - 104, 17, 104);
-          IWRAM_SLOT_BC(screen, buffer, x - 8, top + scroll, 17, 104 - scroll);
-          IWRAM_SLOT_BC(screen, buffer + 0x6e8, x - 17, top + 47, 34, 65);
+          ALT_BLITTER(screen, buffer, x - 8, top + scroll - 104, 17, 104);
+          ALT_BLITTER(screen, buffer, x - 8, top + scroll, 17, 104 - scroll);
+          ALT_BLITTER(screen, buffer + 0x6e8, x - 17, top + 47, 34, 65);
           HeapSlot_Release(188);
           if (frame == 8)
             work->unk77a8 = 8;
@@ -1506,7 +1506,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             for (; i != 64; i++, p++) {
               if (p->life == 0) {
                 count++;
-                SET_POSITION(p, object2->x, px(20), object2->z);
+                SET_POSITION(p, targetObject->x, px(20), targetObject->z);
                 p->vx = ((Random16() & 255) - 127) << 12;
                 p->vy = ((Random16() & 255) - 64) << 10;
                 p->vz = ((Random16() & 255) - 127) << 12;
@@ -1527,10 +1527,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           x = target[0] / 2;
           h = 48;
           BattleEffect_LoadBlitter(188, 19);
-          IWRAM_SLOT_BC(screen, buffer, x - 24, h, 24, h);
+          ALT_BLITTER(screen, buffer, x - 24, h, 24, h);
           HeapSlot_Release(188);
           BattleEffect_LoadBlitter(188, 23);
-          IWRAM_SLOT_BC(screen, buffer, x, h, 24, h);
+          ALT_BLITTER(screen, buffer, x, h, 24, h);
           HeapSlot_Release(188);
         }
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
@@ -1623,7 +1623,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         HeapSlot_Release(188);
         HeapSlot_Release(104);
         BattleEffect_LoadBlitter(104, 35);
-        drawFuncs.draw[0] = IWRAM_SLOT_68;
+        drawFuncs.draw[0] = BLITTER;
         if (frame == 0) {
           for (i = 0; i != 1104; i++)
             work->frames[i] = Random16() & 31;
@@ -1701,12 +1701,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             register s32 pinned __asm__("r3");
             HeapSlot_Release(104);
             BattleEffect_LoadBlitter(104, 3);
-            IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2 - 18,
-                          pinned = 56, 18, 48);
+            BLITTER(screen, buffer + m * 0x360, target[0] / 2 - 18, pinned = 56,
+                    18, 48);
             HeapSlot_Release(104);
             BattleEffect_LoadBlitter(104, 7);
           } while (0);
-          IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2, 56, 18, 48);
+          BLITTER(screen, buffer + m * 0x360, target[0] / 2, 56, 18, 48);
           HeapSlot_Release(104);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
@@ -1746,7 +1746,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           BattleEffect_LoadBlitter(104, 35);
         else
           BattleEffect_LoadBlitter(104, 39);
-        drawFuncs.draw[0] = IWRAM_SLOT_68;
+        drawFuncs.draw[0] = BLITTER;
         scrollA += scrollB;
         if (frame > 6)
           scrollB = scrollB * 48 / 64;
@@ -1800,7 +1800,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           BattleEffect_LoadBlitter(104, 35);
         else
           BattleEffect_LoadBlitter(104, 39);
-        drawFuncs.draw[0] = IWRAM_SLOT_68;
+        drawFuncs.draw[0] = BLITTER;
         scrollA += scrollB;
         if (frame == 5)
           scrollA += 0x200000;
@@ -2163,9 +2163,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             BattleEffect_BuildBlitter(
                 188, 7, 7,
                 gCastingImpact_StunBoltGlintFlips[Random16() & 3] | 3, 1);
-            IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintPictures[m], x,
-                          y + 80, gBattleEffect_GlintPictureWidths[m],
-                          gBattleEffect_GlintPictureHeights[m]);
+            ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
+                        y + 80, gBattleEffect_GlintPictureWidths[m],
+                        gBattleEffect_GlintPictureHeights[m]);
             HeapSlot_Release(188);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
@@ -2175,10 +2175,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           struct Model *model;
           matrix = Heap_AllocEwram(32);
           model = Render_AllocateModelList(1);
-          texture164.width = 5;
-          texture164.height = 7;
+          stunBoltTexture.width = 5;
+          stunBoltTexture.height = 7;
           model->kind = 6;
-          model->texture = &texture164;
+          model->texture = &stunBoltTexture;
           model->mesh = gBattleEffect_ColumnMesh;
           model->matrix = matrix;
           for (i = 0; i != 20; i++) {
@@ -2193,7 +2193,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               model->fade = fade;
               {
                 s32 life = p->life;
-                texture164.pixels = buffer + 0xc56 + (life << 12);
+                stunBoltTexture.pixels = buffer + 0xc56 + (life << 12);
                 p->life = (life + 1) & 3;
               }
               Transform_Reset();
@@ -2223,12 +2223,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           fade = (40 - frame) * 4;
         else
           work->unk77a8 = 1;
-        texture156.width = 6;
-        texture156.height = 6;
-        texture156.pixels = buffer;
+        reverseStarTexture.width = 6;
+        reverseStarTexture.height = 6;
+        reverseStarTexture.pixels = buffer;
         model->kind = 7;
-        model->texture = &texture156;
-        model->mesh = gBattleEffect_SquareMesh64;
+        model->texture = &reverseStarTexture;
+        model->mesh = gBattleEffect_SquareMesh;
         model->matrix = matrix;
         model->fade = fade;
         Transform_Reset();
@@ -2284,12 +2284,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         s32 t;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
-        texture148.width = 7;
-        texture148.height = 7;
-        texture148.pixels = buffer;
-        model->texture = &texture148;
+        boscaHitTexture.width = 7;
+        boscaHitTexture.height = 7;
+        boscaHitTexture.pixels = buffer;
+        model->texture = &boscaHitTexture;
         model->kind = 7;
-        model->mesh = gBattleEffect_SquareMesh128;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->matrix = matrix;
         if (kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
             kind == CASTING_IMPACT_IMPACT_BOSCA_HIT) {
@@ -2404,12 +2404,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         s32 t;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
-        texture140.width = 7;
-        texture140.height = 7;
-        texture140.pixels = buffer;
+        stunJipTexture.width = 7;
+        stunJipTexture.height = 7;
+        stunJipTexture.pixels = buffer;
         model->kind = 7;
-        model->texture = &texture140;
-        model->mesh = gBattleEffect_SquareMesh128;
+        model->texture = &stunJipTexture;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->matrix = matrix;
         t = frame - 4;
         if (t >= 0) {
@@ -2431,9 +2431,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             Render_DrawModelList(model);
           }
         }
-        texture140.width = 7;
-        texture140.height = 4;
-        texture140.pixels = buffer + 0x4000;
+        stunJipTexture.width = 7;
+        stunJipTexture.height = 4;
+        stunJipTexture.pixels = buffer + 0x4000;
         model->mesh = gCastingImpact_BandMesh;
         for (i = 0; i != 2; i++) {
           s32 start;
@@ -2472,8 +2472,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         s32 scale;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
-        /* FAKEMATCH(temporary): tex holds &texture132. */
-        tex = &texture132;
+        /* FAKEMATCH(temporary): tex holds &armorCrushTexture. */
+        tex = &armorCrushTexture;
         tex->width = 6;
         tex->height = 6;
         model->texture = tex;
@@ -2530,8 +2530,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (buffer[0x400 + i] >> 1 == frame / 2)
             buffer[0x800 + i] = buffer[i];
         }
-        EffectPosition_ProjectScaledBattler(action->actors[0], point2);
-        point2[0] = point2[0] / 2;
+        EffectPosition_ProjectScaledBattler(action->actors[0], targetPoint);
+        targetPoint[0] = targetPoint[0] / 2;
         for (i = 0; i != 16; i++) {
           struct Particle *p;
           p = &SPARKS[i];
@@ -2540,8 +2540,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             s32 x;
             s32 y;
             m = i % 3;
-            x = point2[0] + ((Trig_Sin(p->x) * p->z) >> 16);
-            y = point2[1] + ((Trig_Cos(p->x) * p->z) >> 16);
+            x = targetPoint[0] + ((Trig_Sin(p->x) * p->z) >> 16);
+            y = targetPoint[1] + ((Trig_Cos(p->x) * p->z) >> 16);
             p->z -= 4;
             p->x += p->vx;
             // Unused: this arm runs only for kind 15, so the kind 16 draw never
@@ -2690,7 +2690,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               BattleUnit_GetEffectHeightFar(action->actors[0]) / 2 + 0x1e0000;
           p = work->particle;
           for (i = 0; i != 64; i++, p++) {
-            SET_POSITION(p, object2->x, half, object2->z);
+            SET_POSITION(p, targetObject->x, half, targetObject->z);
             p->vx = ((Random16() & 255) - 127) << 11;
             p->vy = ((Random16() & 255) - 64) << 11;
             p->vz = ((Random16() & 255) - 127) << 11;

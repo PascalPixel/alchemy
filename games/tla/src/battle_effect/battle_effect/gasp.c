@@ -91,10 +91,10 @@ extern const u8 gBattleEffect_TaperedBeamCorners[];
 extern const u8 gBattleEffect_LongBeamCorners[];
 extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_SquareMesh32Reversed[];
+extern const u8 gBattleEffect_SmallSquareMeshReversed[];
 extern const u8 gBattleEffect_ColumnMesh[];
-extern const u8 gBattleEffect_SquareMesh64[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_SquareMesh[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 
 extern char ResourceId_BlastSheet;
 extern char ResourceId_Data0B4;
@@ -612,7 +612,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       texture.logWidth = 5;
       texture.logHeight = 5;
       model->kind = 7;
-      model->mesh = gBattleEffect_SquareMesh32Reversed;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 6; i++) {
         struct EffectStep *p = &work->particles[i];
 
@@ -648,7 +648,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       texture.logHeight = 5;
       model->kind = 6;
       model->texture = &texture;
-      model->mesh = gBattleEffect_SquareMesh32Reversed;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       model->vertices = verts;
       for (k = 0; k != 1; k++) {
         if (frame >= k * 32) {
@@ -686,7 +686,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       model->shade = 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->mesh = gBattleEffect_SquareMesh64;
+      model->mesh = gBattleEffect_SquareMesh;
       model->kind = 6;
       texture.pixels = work->sheet;
       for (i = 0; i != effect->count; i++) {
@@ -758,7 +758,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         texture.pixels = cells;
         model->kind = 7;
         model->texture = &texture;
-        model->mesh = gBattleEffect_SquareMesh128;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = verts;
         for (i = 0; i != 3; i++) {
           s32 t = frame - i * 4 - 55;
@@ -797,7 +797,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           work->transferValue = 50;
         texture.logWidth = 6;
         texture.logHeight = 6;
-        model->mesh = gBattleEffect_SquareMesh64;
+        model->mesh = gBattleEffect_SquareMesh;
         model->kind = 7;
         texture.pixels = work->sheet;
         EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
@@ -918,7 +918,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           model->shade = shade;
           texture.logWidth = 7;
           texture.logHeight = 7;
-          model->mesh = gBattleEffect_SquareMesh128;
+          model->mesh = gBattleEffect_LargeSquareMesh;
           model->kind = 7;
           texture.pixels = work->sheet + 0x3080;
           Transform_Reset();
@@ -963,7 +963,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       texture.logHeight = 5;
       model->kind = 6;
       model->texture = &texture;
-      model->mesh = gBattleEffect_SquareMesh32Reversed;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       model->vertices = verts;
       for (i = 0; i != 12; i++) {
         struct EffectStep *p = &work->particles[i];
@@ -1012,7 +1012,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       texture.logHeight = 5;
       model->kind = 6;
       model->texture = &texture;
-      model->mesh = gBattleEffect_SquareMesh32Reversed;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       model->vertices = verts;
       for (i = 0; i != 12; i++) {
         struct EffectStep *p = &work->particles[i];
@@ -1162,7 +1162,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       work->transferValue = 50;
       texture.logWidth = 7;
       texture.logHeight = 7;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = 6;
       work->transferMode = 1;
       work->transferValue = 0;
@@ -1240,7 +1240,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = cells;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = 6;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       Transform_Reset();
@@ -1316,7 +1316,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = cells;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = 6;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       for (i = 0; i != 2; i++) {
@@ -1365,7 +1365,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       model->shade = 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->mesh = gBattleEffect_SquareMesh64;
+      model->mesh = gBattleEffect_SquareMesh;
       model->kind = 7;
       texture.pixels = work->sheet;
       if (mode == 2 || mode == 7) {

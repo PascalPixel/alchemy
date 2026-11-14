@@ -103,7 +103,7 @@ extern char ResourceId_Data0F2;
 extern char ResourceId_MercuryDjinnSheet;
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
-extern const u8 gBattleEffect_SquareMesh64[];  // the hand's mesh
+extern const u8 gBattleEffect_SquareMesh[];    // the hand's mesh
 extern const u8 gBattleEffect_SquareCorners[]; // its corners
 
 #define FIRE_PUPPET_FRAMES 103
@@ -264,7 +264,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       Render_DrawModelList(model);
 
       // The hand at the arm's end.
-      model->mesh = gBattleEffect_SquareMesh64;
+      model->mesh = gBattleEffect_SquareMesh;
       texture.logWidth = 6;
       texture.logHeight = 6;
       model->vertices = projected;

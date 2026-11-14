@@ -439,40 +439,49 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void SummonEffect_RunCanvasMode0(void *action) {
-  SummonEffect_RunCanvasEffect(action, 0);
+/// The stat reductions' modes (BattleEffect_RunStatReduction).
+enum StatReductionMode {
+  STAT_REDUCTION_UNUSED, ///< a dagger; no effect table entry reaches it
+  STAT_REDUCTION_IMPAIR, ///< a shield
+  STAT_REDUCTION_WEAKEN, ///< a shield
+  STAT_REDUCTION_DULL    ///< a dagger
+};
+
+/// Breaks the dagger picture into fading shards as Dull does; no effect table
+/// entry reaches it.
+UNUSED void BattleEffect_RunUnusedStatReduction(void *action) {
+  BattleEffect_RunStatReduction(action, STAT_REDUCTION_UNUSED);
 }
 
+/// Abilities: Dull, Blunt.
 void BattleEffect_RunDull(void *action) {
-  SummonEffect_RunCanvasEffect(action, 3);
+  BattleEffect_RunStatReduction(action, STAT_REDUCTION_DULL);
 }
 
+/// Abilities: Impair, Debilitate.
 void BattleEffect_RunImpair(void *action) {
-  SummonEffect_RunCanvasEffect(action, 1);
+  BattleEffect_RunStatReduction(action, STAT_REDUCTION_IMPAIR);
 }
 
+/// Abilities: Weaken, Enfeeble.
 void BattleEffect_RunWeaken(void *action) {
-  SummonEffect_RunCanvasEffect(action, 2);
+  BattleEffect_RunStatReduction(action, STAT_REDUCTION_WEAKEN);
 }
-
-// The dagger and shield canvas effect, behind the four wrappers above;
-// the Broken Seal's twin is
-// BattleEffect_RunStatReduction, which has no mode 3.
 
 #define RAMP_IMAGE 0x2580 // the shard picture, then seven darker copies
 #define RAMP_SIZE 696     // one copy
 
-/// A dagger (modes 0 and 3) or a shield (1 and 2) appears over each target
-/// in turn, four frames apart, and breaks into shards that fly off and
-/// darken.
+/// A dagger (STAT_REDUCTION_DULL and _UNUSED) or a shield (the others) appears
+/// over each target in turn, four frames apart, and breaks into shards that fly
+/// off and darken.
 ///
 /// Setup: seven darker copies of the shard picture are built by clamping
 /// its levels; 24 shards a target start in a grid across the target and
 /// scatter with random headings toward the user's side. Frame loop: a
 /// target's picture plays for 24 frames; at frame 24 a chime sounds and the
 /// shards fly for 36 frames, one shade darker every four frames.
-void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -491,17 +500,17 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = 0x100;
-  if (mode == 0 || mode == 3)
+  if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL)
     Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet, work->sheet, 1, 1);
-  if (mode == 0)
+  if (mode == STAT_REDUCTION_UNUSED)
     palette = (s32)&ResourceId_PinkBurstSheet;
-  else if (mode == 3) {
+  else if (mode == STAT_REDUCTION_DULL) {
     palette = (s32)&ResourceId_GlowOrbSheet;
     /* FAKEMATCH(barrier): an empty asm. */
     asm("");
-  } else if (mode == 1)
+  } else if (mode == STAT_REDUCTION_IMPAIR)
     palette = (s32)&ResourceId_GlowOrbSheet;
   else
     palette = (s32)&ResourceId_PinkBurstSheet;
@@ -539,7 +548,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
 
     angle = Random16() & 0xffff;
     shard->x = 0;
-    if (mode == 0 || mode == 3) {
+    if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
       shard->y = ((i & 31) / 4 * 6 - 10) << 16;
       shard->z = (i % 4 * 2 - 2) << 16;
     } else {
@@ -588,7 +597,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
         EffectPosition_ProjectPoint(origin, &screen);
         x = screen.x + xOffset;
         y = screen.y;
-        if (mode == 0 || mode == 3) {
+        if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
           if (time <= 26)
             callbacks[0](canvas, work->sheet + time / 4 % 7 * 960, x - 12,
                          y - 20, 24, 40);

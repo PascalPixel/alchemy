@@ -1776,13 +1776,13 @@ gLegend_WingCorners:
 	.global gBattleEffect_GroundSquareCorners
 gBattleEffect_GroundSquareCorners:
 	.4byte 12583104, 12582976, 4194496, 4194368
-	.global gBattleEffect_SquareMesh32
-gBattleEffect_SquareMesh32:
+	.global gBattleEffect_SmallSquareMesh
+gBattleEffect_SmallSquareMesh:
 	.2byte 769, 2, 31, 7967, 7936, 0, 256, 2
 	.2byte 0, 31, 7936, 0, 0, 0, 0, 0
 	.2byte 0, 0
-	.global gBattleEffect_SquareMesh32Reversed
-gBattleEffect_SquareMesh32Reversed:
+	.global gBattleEffect_SmallSquareMeshReversed
+gBattleEffect_SmallSquareMeshReversed:
 	.2byte 256, 2, 0, 31, 7936, 0, 769, 2
 	.2byte 31, 7967, 7936, 0, 0, 0, 0, 0
 	.2byte 0, 0
@@ -1796,8 +1796,8 @@ gHeavyBlow_SwordMesh:
 	.2byte 256, 2, 0, 31, 32512, 0, 769, 2
 	.2byte 31, 32543, 32512, 0, 0, 0, 0, 0
 	.2byte 0, 0
-	.global gBattleEffect_TallMesh32
-gBattleEffect_TallMesh32:
+	.global gBattleEffect_TallMesh
+gBattleEffect_TallMesh:
 	.2byte 256, 2, 256, 287, 16128, 0, 769, 2
 	.2byte 287, 16159, 16128, 0, 0, 0, 0, 0
 	.2byte 0, 0, 256, 2, 0, 15, 16128, 0
@@ -1813,13 +1813,13 @@ gCatastrophe_BurstMesh:
 	.2byte 256, 2, 0, 31, 12032, 0, 769, 2
 	.2byte 31, 12063, 12032, 0, 0, 0, 0, 0
 	.2byte 0, 0
-	.global gBattleEffect_SquareMesh64
-gBattleEffect_SquareMesh64:
+	.global gBattleEffect_SquareMesh
+gBattleEffect_SquareMesh:
 	.2byte 769, 2, 319, 16191, 16129, 0, 256, 2
 	.2byte 257, 319, 16129, 0, 0, 0, 0, 0
 	.2byte 0, 0
-	.global gBattleEffect_SquareMesh128
-gBattleEffect_SquareMesh128:
+	.global gBattleEffect_LargeSquareMesh
+gBattleEffect_LargeSquareMesh:
 	.2byte 769, 2, 127, 32639, 32512, 0, 256, 2
 	.2byte 0, 127, 32512, 0, 0, 0, 0, 0
 	.2byte 0, 0

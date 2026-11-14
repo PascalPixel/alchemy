@@ -1040,7 +1040,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           texture.logHeight = 7;
           model->kind = 6;
           model->texture = &texture;
-          model->mesh = gBattleEffect_SquareMesh128;
+          model->mesh = gBattleEffect_LargeSquareMesh;
           model->vertices = verts;
           texture.pixels = pixels;
           shade = 0;
@@ -1107,7 +1107,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             texture.pixels = work->sheet + 0x2648;
             texture.logWidth = 6;
             texture.logHeight = 6;
-            model->mesh = gBattleEffect_SquareMesh64;
+            model->mesh = gBattleEffect_SquareMesh;
             if (frame > 63) {
               shade = frame * 4 + -320;
               if (shade > 0) {
@@ -1127,7 +1127,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           ((struct ModelTextureB *)&texture)->logWidth = 5;
           texture.logHeight = 2;
           texture.pixels = work->sheet + 0x3648;
-          model->mesh = gBattleEffect_SquareMesh32;
+          model->mesh = gBattleEffect_SmallSquareMesh;
           model->kind = 6;
           shade = -16;
           model->shade = shade;
@@ -1362,7 +1362,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         texture2.logHeight = 2;
         texture2.pixels = work->sheet + 0x3648;
         model->shade = zero;
-        model->mesh = gBattleEffect_SquareMesh32;
+        model->mesh = gBattleEffect_SmallSquareMesh;
         model->texture = &texture2;
         model->vertices = verts;
         model->kind = 6;
@@ -1708,7 +1708,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           texture3.logHeight = 2;
           texture3.pixels = work->sheet + 0x3840;
           model->shade = zero;
-          model->mesh = gBattleEffect_SquareMesh32;
+          model->mesh = gBattleEffect_SmallSquareMesh;
           model->texture = &texture3;
           model->vertices = verts;
           model->kind = 6;

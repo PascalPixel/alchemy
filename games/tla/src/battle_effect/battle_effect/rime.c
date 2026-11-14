@@ -53,7 +53,7 @@ extern char ResourceId_RuneSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_StarCrossSheet;
 
-extern const u8 gBattleEffect_SquareMesh64[];        // a textured square
+extern const u8 gBattleEffect_SquareMesh[];          // a textured square
 extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
@@ -193,7 +193,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
     texture.logHeight = 6;
     model->kind = 6;
     model->texture = &texture;
-    model->mesh = gBattleEffect_SquareMesh64;
+    model->mesh = gBattleEffect_SquareMesh;
     model->vertices = vertices;
     if (mode == 0) {
       // Rime's crystal fades in over the first eight frames and turns in

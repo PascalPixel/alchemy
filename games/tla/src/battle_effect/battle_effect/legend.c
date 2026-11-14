@@ -47,9 +47,9 @@ extern char ResourceId_Data0C2;
 
 // The quad mesh and the corners of the rune, the jaw-like flash and the
 // eight blades of the opening fan.
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 // The quad meshes and corners: the card, the pictures and their spread.
-extern u8 gBattleEffect_TallMesh32[];
+extern u8 gBattleEffect_TallMesh[];
 extern const u8 gBattleEffect_SquareCorners[];
 extern s32 gLegend_WingCorners[];
 
@@ -233,7 +233,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
       texture.logHeight = 7;
       texture.pixels = work->sheet;
       // Stored as an integer: as a pointer this store follows the kind store.
-      *(s32 *)&model->mesh = (s32)gBattleEffect_SquareMesh128;
+      *(s32 *)&model->mesh = (s32)gBattleEffect_LargeSquareMesh;
       model->kind = 7;
       model->texture = &texture;
       model->vertices = vertices;
@@ -301,7 +301,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         texture.logWidth = 5;
         texture.logHeight = 6;
         texture.pixels = work->sheet + 0x5000;
-        model->mesh = gBattleEffect_TallMesh32;
+        model->mesh = gBattleEffect_TallMesh;
         for (i = 0; i != 8; i++) {
           model->alpha = 0;
           Transform_Reset();
@@ -655,7 +655,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
     texture.pixels = work->sheet;
     model->kind = 8;
     model->texture = &texture;
-    model->mesh = gBattleEffect_TallMesh32;
+    model->mesh = gBattleEffect_TallMesh;
     model->vertices = vertices;
     if (frame >= 0) {
       // The card: it swings from side to side as it rises, tilted back.

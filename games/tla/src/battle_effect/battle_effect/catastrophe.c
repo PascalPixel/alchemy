@@ -121,8 +121,8 @@ extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gBattleEffect_StandingSquareCorners[];
 extern const u8 gBattleEffect_ColumnMesh[];
 extern const u8 gCatastrophe_BurstMesh[];
-extern const u8 gBattleEffect_SquareMesh64[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_SquareMesh[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern const u16 gCatastrophe_FlashFrames[];
 extern const u16 gCatastrophe_FlashLengths[];
 extern const u8 gCatastrophe_DemonX[];
@@ -973,7 +973,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model->shade = shade;
         model->kind = 7;
         model->texture = &texture;
-        model->mesh = gBattleEffect_SquareMesh64;
+        model->mesh = gBattleEffect_SquareMesh;
         model->vertices = verts;
         texture.pixels = work->sheet + 0x1000;
         Transform_Reset();
@@ -1051,7 +1051,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       if (shade > -64) {
         model->shade = shade;
-        model->mesh = gBattleEffect_SquareMesh128;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->kind = 7;
         texture.pixels = Data_02012000;
         texture.logWidth = 7;
@@ -1276,7 +1276,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           model2->shade = sh2;
           model2->kind = 6;
           model2->texture = &texture2;
-          model2->mesh = gBattleEffect_SquareMesh64;
+          model2->mesh = gBattleEffect_SquareMesh;
           model2->vertices = verts2;
           texture2.pixels = Data_02011000;
           Transform_Reset();
@@ -1340,7 +1340,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               }
               if (sh2 > -64) {
                 model2->shade = sh2;
-                model2->mesh = gBattleEffect_SquareMesh128;
+                model2->mesh = gBattleEffect_LargeSquareMesh;
                 model2->kind = 6;
                 texture2.pixels = Data_02012000;
                 texture2.logWidth = 7;
@@ -1646,7 +1646,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Render_DrawModelList(model3);
         Transform_Pop();
         texture3.logWidth = 6;
-        model3->mesh = gBattleEffect_SquareMesh64;
+        model3->mesh = gBattleEffect_SquareMesh;
         texture3.logHeight = 6;
         model3->scrollU = 0;
         texture3.pixels = work->sheet + 0x800;

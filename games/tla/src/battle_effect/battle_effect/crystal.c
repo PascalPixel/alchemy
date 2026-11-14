@@ -49,7 +49,7 @@ extern char ResourceId_VenusDjinnSmallSheet;
 extern char ResourceId_BlastSheet;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern const u8 gBattleEffect_SquareMesh128[];       // the crystal's mesh
+extern const u8 gBattleEffect_LargeSquareMesh[];     // the crystal's mesh
 extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
@@ -200,7 +200,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
 
         model->kind = 6;
         model->texture = &texture;
-        model->mesh = gBattleEffect_SquareMesh128;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = vertices;
         texture.logWidth = 7;
         texture.logHeight = 7;

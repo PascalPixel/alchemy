@@ -110,8 +110,8 @@ extern const u8 gAzul_LateUnitScale[];
 extern const s8 gAzul_LateObjectX[];
 extern const s8 gAzul_LateObjectZ[];
 extern const u8 gBattleEffect_SquareCorners[];
-extern const u8 gBattleEffect_SquareMesh64[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_SquareMesh[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 
 /* VIEW(f15cde8): routine EffectSprite_Acquire as struct AzulObject
  * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); the
@@ -175,7 +175,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   u32 u;
   s32 place[4];
   struct ModelTexture texture;
-  struct ModelTexture texture2;
+  struct ModelTexture scratchTexture;
   struct EffectStep *p;
   struct RenderModel *model;
   void *vertices;
@@ -703,11 +703,11 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       if (scale > Q16_ONE) {
         scale = Q16_ONE;
       }
-      texture2.logWidth = 7;
-      texture2.logHeight = 7;
-      texture2.pixels = mapCells;
+      scratchTexture.logWidth = 7;
+      scratchTexture.logHeight = 7;
+      scratchTexture.pixels = mapCells;
       model->kind = 7;
-      model->texture = &texture2;
+      model->texture = &scratchTexture;
       model->mesh = grid;
       model->vertices = verts;
       model->shade = shade;
@@ -730,12 +730,12 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           shade = 0;
         }
         if (shade > -64) {
-          texture2.pixels = gData_02014000;
-          texture2.logWidth = 7;
-          model->mesh = gBattleEffect_SquareMesh128;
+          scratchTexture.pixels = gData_02014000;
+          scratchTexture.logWidth = 7;
+          model->mesh = gBattleEffect_LargeSquareMesh;
           /* FAKEMATCH(dead): a once-only block. */
           do {
-            texture2.logHeight = 7;
+            scratchTexture.logHeight = 7;
           } while (0);
           model->shade = shade;
           Transform_Reset();
@@ -750,11 +750,11 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         work->shakeFrames = 2;
         shade = 0;
         size = (frame << 13) + -0x130000;
-        texture2.logWidth = 6;
-        texture2.logHeight = 6;
-        texture2.pixels = gData_02014000;
+        scratchTexture.logWidth = 6;
+        scratchTexture.logHeight = 6;
+        scratchTexture.pixels = gData_02014000;
         model->shade = shade;
-        model->mesh = gBattleEffect_SquareMesh64;
+        model->mesh = gBattleEffect_SquareMesh;
         Transform_Reset();
         SceneTransform_ApplyPosition3(-0x100000, pos.y + -0x500000, 0);
         SceneTransform_ApplyScale3(size >> 1, size, size >> 1);

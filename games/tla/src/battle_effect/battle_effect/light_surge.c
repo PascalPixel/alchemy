@@ -91,11 +91,11 @@ extern char ResourceId_Data134;
 extern char ResourceId_EffectPalette02;
 extern char ResourceId_MercuryDjinnSheet;
 extern u8 gMapCellBuffer[];
-extern const u8 gBattleEffect_SquareMesh32Reversed[]; // a quad's mesh
-extern const u8 gBattleEffect_SquareCorners[];        // its corners
-extern const s32 gLightSurge_PillarSizes[4];          // per pillar: its size,
-extern const s8 gLightSurge_PillarShades[4];          // its shade
-extern s8 gLightSurge_PillarOffsets[4];               // and its offset
+extern const u8 gBattleEffect_SmallSquareMeshReversed[]; // a quad's mesh
+extern const u8 gBattleEffect_SquareCorners[];           // its corners
+extern const s32 gLightSurge_PillarSizes[4]; // per pillar: its size,
+extern const s8 gLightSurge_PillarShades[4]; // its shade
+extern s8 gLightSurge_PillarOffsets[4];      // and its offset
 
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
@@ -298,7 +298,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     texture.logWidth = 5;
     texture.logHeight = 2;
     model->texture = &texture;
-    model->mesh = gBattleEffect_SquareMesh32Reversed;
+    model->mesh = gBattleEffect_SmallSquareMeshReversed;
     model->vertices = vertices;
     model->shade = shade;
     model->kind = 7;
@@ -364,7 +364,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       texture.logHeight = 5;
       texture.pixels = work->sheet + 0x1000;
       model->kind = 6;
-      model->mesh = gBattleEffect_SquareMesh32Reversed;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 4; i++) {
         s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
         s32 x = ((center.x / 2 - 64) << 16) -

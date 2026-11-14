@@ -85,10 +85,10 @@ extern u8 Data_02012000[];
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
 extern u16 gBattleEffect_MotePictures[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gBattleEffect_StandingSquareCorners[];
-extern u8 gBattleEffect_TallMesh32[];
+extern u8 gBattleEffect_TallMesh[];
 extern const u16 gMegiddo_FlashStarts[]; // the five rings' start frames
 extern const s16 gMegiddo_FlashPitches[];
 extern const s16 gMegiddo_FlashYaws[];
@@ -144,7 +144,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   s32 scale;
   u8 *transformed;
   u8 *strip;
-  u8 *sheet2;
+  u8 *scratchSheet;
   s32 i;
   s32 j;
   s32 m;
@@ -153,11 +153,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   struct EffectStep *p;
   struct EffectPosition pos;
   s16 list[14];
-  s16 list2[14];
+  s16 targetList[14];
   s32 place[4];
   s32 screen[3];
   u8 req[8];
-  struct ModelTexture texture2;
+  struct ModelTexture scratchTexture;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -169,7 +169,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   ring = gMapCellBuffer;
   transformed = Data_02011000;
   strip = Data_02012000;
-  sheet2 = gData_02014000;
+  scratchSheet = gData_02014000;
   BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -361,9 +361,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       camera[27] = savedYaw;
       x = 0x780000;
       z = 0x300000;
-      list2[0] = effect->actors[0];
-      list2[1] = 255;
-      BattleActor_SpawnObjectsForListFar(list2, 0);
+      targetList[0] = effect->actors[0];
+      targetList[1] = 255;
+      BattleActor_SpawnObjectsForListFar(targetList, 0);
       gCameraSceneParameters[4] = 556;
       target = BattleObject_GetFar(effect->actors[0])->object;
       target[2] = zero;
@@ -595,12 +595,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
 
     verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
-    texture2.logWidth = 7;
-    texture2.logHeight = 7;
-    texture2.pixels = sheet2;
+    scratchTexture.logWidth = 7;
+    scratchTexture.logHeight = 7;
+    scratchTexture.pixels = scratchSheet;
     model->kind = 7;
-    model->mesh = gBattleEffect_SquareMesh128;
-    model->texture = &texture2;
+    model->mesh = gBattleEffect_LargeSquareMesh;
+    model->texture = &scratchTexture;
     model->vertices = verts;
     for (i = 0; i != 5; i++) {
       s32 start = gMegiddo_FlashStarts[i];
@@ -632,10 +632,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       }
     }
     model->kind = 7;
-    texture2.logWidth = 5;
-    texture2.logHeight = 6;
-    texture2.pixels = work->sheet;
-    model->mesh = gBattleEffect_TallMesh32;
+    scratchTexture.logWidth = 5;
+    scratchTexture.logHeight = 6;
+    scratchTexture.pixels = work->sheet;
+    model->mesh = gBattleEffect_TallMesh;
     for (i = 0; i != 8; i++) {
       s32 start = 16 + i * 2;
 

@@ -232,7 +232,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet;
-      model->mesh = gBattleEffect_TallMesh32;
+      model->mesh = gBattleEffect_TallMesh;
       for (i = 0; i != 8; i++) {
         s32 start = gLiquifier_SplashStarts[i];
 
@@ -259,7 +259,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       texture.logWidth = 5;
       texture.logHeight = 2;
       texture.pixels = work->sheet + 0x1000;
-      model->mesh = gBattleEffect_SquareMesh32;
+      model->mesh = gBattleEffect_SmallSquareMesh;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
         s32 zero = 0;
@@ -285,7 +285,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = splash;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
         struct EffectStep *step = &work->particles[i + 32];

@@ -316,8 +316,8 @@ struct PlacementSource {
 };
 
 extern const struct PlacementSource gUlysses_ShipScale;
-extern const u8 gBattleEffect_SquareMesh64[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_SquareMesh[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 
 void BattleEffect_ProcessPendingBlock2Transfer(void);
@@ -351,7 +351,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   s32 place[4];
   DrawRectangle blits[2];
   struct ModelTexture texture;
-  struct ModelTexture texture2;
+  struct ModelTexture quadTexture;
   struct PlacementSource req;
   u8 *battle;
   s32 mask;
@@ -661,7 +661,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       model->kind = 7;
       model->shade = shade;
       model->texture = &texture;
-      model->mesh = gBattleEffect_SquareMesh64;
+      model->mesh = gBattleEffect_SquareMesh;
       model->vertices = verts;
       for (i = 0, step = work->particles; i != 6; step++, i++) {
         s32 delay = i * 8;
@@ -809,12 +809,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       model->shade = 0;
       work->transferMode = 2;
       work->transferValue = 50;
-      texture2.logWidth = 7;
-      texture2.logHeight = 7;
-      model->texture = &texture2;
-      texture2.pixels = work->sheet + 0x2781;
+      quadTexture.logWidth = 7;
+      quadTexture.logHeight = 7;
+      model->texture = &quadTexture;
+      quadTexture.pixels = work->sheet + 0x2781;
       model->kind = 7;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
       j = 0;
       for (; j != 2; j++) {

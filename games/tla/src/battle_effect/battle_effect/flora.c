@@ -109,7 +109,7 @@ extern const s16 gFlora_BloomPitches[];
 extern const s8 gFlora_BloomX[];
 extern const s8 gFlora_BloomY[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_GreenHairedMaidenTiles;
 extern char ResourceId_PinkPetalsTiles;
@@ -631,7 +631,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     texture.pixels = work->sheet;
     model->kind = 7;
     model->texture = &texture;
-    model->mesh = gBattleEffect_SquareMesh128;
+    model->mesh = gBattleEffect_LargeSquareMesh;
     model->vertices = verts;
     for (i = 0; i != 4; i++) {
       s32 d = frame - gFlora_BloomFrames[i];

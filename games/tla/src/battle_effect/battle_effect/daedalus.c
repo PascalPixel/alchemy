@@ -52,7 +52,7 @@ extern char ResourceId_MarsDjinnSheet;
 
 // The burst quad: its face list and its four corners, 64x64 pixels standing
 // on its base.
-extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_SquareMesh[];
 extern const u8 gBattleEffect_StandingSquareCorners[];
 
 // Per mode: the quad's scale (16.16, doubled when used) and its unk14.
@@ -160,7 +160,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
         texture.size = (texture.size & ~0xff00) | 6 << 8;
         texture.pixels = work->sheet + cel * CEL_SIZE;
         quad->kind = 6;
-        quad->faces = gBattleEffect_SquareMesh64;
+        quad->faces = gBattleEffect_SquareMesh;
         quad->texture = &texture;
         quad->unk14 = gMirroredWall_BurstShades[mode];
         quad->vertices = vertices;
@@ -377,7 +377,7 @@ extern u8 gDaedalus_SpritePoints[][2];
 extern u8 gDaedalus_SplashPoints[][6][2];
 extern u16 gDaedalus_ParticleStarts[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void RagingHeat_FillGradientCanvas(void);
@@ -416,13 +416,13 @@ void BattleEffect_AdvanceScrollOnInterval(void);
 void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s16 targets[14];
   Vec3 pos;
-  Vec3 pos2;
-  Vec3 pos3;
+  Vec3 shipPlace;
+  Vec3 particlePlace;
   Vec2 scale;
   void *blit[2];
-  Vec2 scale2;
+  Vec2 shipScale;
   Bitmap bitmap;
-  Vec2 scale3;
+  Vec2 particleScale;
   u8 *dest;
   s32 frame;
   u8 *map;
@@ -845,7 +845,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       if (shipY < 0)
         shipY += 0x2000;
-      scale2 = gDaedalus_ShipScale;
+      shipScale = gDaedalus_ShipScale;
       bobX = 0;
       bobY = 0;
       if (frame > 537) {
@@ -872,8 +872,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       if (swayY > 0)
         swayY = -swayY;
       swayY -= shipY * 2;
-      pos2.w = 0;
-      pos2.y = px(255);
+      shipPlace.w = 0;
+      shipPlace.y = px(255);
       for (i = 0; i != 5; i++) {
         if (frame == gDaedalus_ClatterFrames[i]) {
           work->shake = 23;
@@ -925,11 +925,11 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           Particle *p;
 
           p = &work->particles[32 + i];
-          pos2.x = p->x + camera;
-          pos2.z = p->y;
+          shipPlace.x = p->x + camera;
+          shipPlace.z = p->y;
           if (p->timer != 0)
-            Render_ApplyProjectedPlacementFar(work->sprites[40 + i], &pos2,
-                                              &scale2, 0);
+            Render_ApplyProjectedPlacementFar(work->sprites[40 + i], &shipPlace,
+                                              &shipScale, 0);
         }
       }
       if (frame == 578) {
@@ -940,11 +940,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         work->unk7798 = ~((frame - 578) / 8);
       {
         for (i = 0; i != 2; i++) {
-          pos2.x = camera - swayX + bobX + 0x780000;
-          pos2.z = (((i << 5) - gDaedalus_ShakeOffsets[work->shake]) << 16) +
-                   swayY + bobY + 0x640000;
-          Render_ApplyProjectedPlacementFar(work->sprites[32 + i], &pos2,
-                                            &scale2, 0);
+          shipPlace.x = camera - swayX + bobX + 0x780000;
+          shipPlace.z =
+              (((i << 5) - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY +
+              bobY + 0x640000;
+          Render_ApplyProjectedPlacementFar(work->sprites[32 + i], &shipPlace,
+                                            &shipScale, 0);
         }
       }
       if (frame <= 316) {
@@ -960,29 +961,33 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           p->vy = p->vy * 63 / 64;
           work->sprites[38]->rotation += 0x200;
         }
-        pos2.x = p->x - swayX + camera + 0x780000;
-        pos2.z =
+        shipPlace.x = p->x - swayX + camera + 0x780000;
+        shipPlace.z =
             ((99 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + p->y;
-        Render_ApplyProjectedPlacementFar(work->sprites[38], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[38], &shipPlace,
+                                          &shipScale, 0);
       }
       {
         Particle *p;
         s32 v;
 
         v = camera + bobX;
-        pos2.x = v + 0x8e0000;
-        pos2.z =
+        shipPlace.x = v + 0x8e0000;
+        shipPlace.z =
             ((72 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + bobY;
-        Render_ApplyProjectedPlacementFar(work->sprites[18], &pos2, &scale2, 0);
-        pos2.x = v + 0xae0000;
-        pos2.z =
+        Render_ApplyProjectedPlacementFar(work->sprites[18], &shipPlace,
+                                          &shipScale, 0);
+        shipPlace.x = v + 0xae0000;
+        shipPlace.z =
             ((72 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + bobY;
-        Render_ApplyProjectedPlacementFar(work->sprites[19], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[19], &shipPlace,
+                                          &shipScale, 0);
         v += 0x800000;
-        pos2.x = v;
-        pos2.z =
+        shipPlace.x = v;
+        shipPlace.z =
             ((104 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + bobY;
-        Render_ApplyProjectedPlacementFar(work->sprites[20], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[20], &shipPlace,
+                                          &shipScale, 0);
         p = &work->particles[22];
         if (frame > 602)
           BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
@@ -1097,17 +1102,18 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           }
           p->timer++;
         }
-        scale2.x = 0x103ff;
-        scale2.y = 0x103ff;
+        shipScale.x = 0x103ff;
+        shipScale.y = 0x103ff;
         if (p->timer == 0) {
-          pos2.x = camera + bobX + 0x980000;
-          pos2.z =
+          shipPlace.x = camera + bobX + 0x980000;
+          shipPlace.z =
               ((92 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + bobY;
         } else {
-          pos2.x = p->x + camera;
-          pos2.z = p->y;
+          shipPlace.x = p->x + camera;
+          shipPlace.z = p->y;
         }
-        Render_ApplyProjectedPlacementFar(work->sprites[39], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[39], &shipPlace,
+                                          &shipScale, 0);
       }
       work->sprites[39]->unk16 = 0;
       work->sprites[39]->unk17 = 32;
@@ -1124,7 +1130,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         bitmap.data = pixels;
         beam[4] = (s32)&bitmap;
         beam[1] = 0;
-        beam[2] = (s32)gBattleEffect_SquareMesh128;
+        beam[2] = (s32)gBattleEffect_LargeSquareMesh;
         beam[0] = 7;
         beam[3] = (s32)buffer;
         v = frame - 568;
@@ -1171,8 +1177,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           }
         }
       }
-      scale2.x = Q16_ONE;
-      scale2.y = Q16_ONE;
+      shipScale.x = Q16_ONE;
+      shipScale.y = Q16_ONE;
       work->sprites[21]->priority = 2;
       work->sprites[22]->priority = 2;
       work->sprites[23]->priority = 2;
@@ -1181,49 +1187,54 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         s32 v;
 
         v = prevCamera + bobX;
-        pos2.x = v + 0xa00000;
-        pos2.z =
+        shipPlace.x = v + 0xa00000;
+        shipPlace.z =
             ((104 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + bobY;
-        Render_ApplyProjectedPlacementFar(work->sprites[21], &pos2, &scale2, 0);
-        pos2.x = v + 0x800000;
-        pos2.z =
+        Render_ApplyProjectedPlacementFar(work->sprites[21], &shipPlace,
+                                          &shipScale, 0);
+        shipPlace.x = v + 0x800000;
+        shipPlace.z =
             ((136 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + bobY;
-        Render_ApplyProjectedPlacementFar(work->sprites[22], &pos2, &scale2, 0);
-        pos2.x = v + 0xa00000;
-        pos2.z =
+        Render_ApplyProjectedPlacementFar(work->sprites[22], &shipPlace,
+                                          &shipScale, 0);
+        shipPlace.x = v + 0xa00000;
+        shipPlace.z =
             ((136 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + bobY;
-        Render_ApplyProjectedPlacementFar(work->sprites[23], &pos2, &scale2, 0);
-        pos2.x = v + 0xc00000;
-        pos2.z =
+        Render_ApplyProjectedPlacementFar(work->sprites[23], &shipPlace,
+                                          &shipScale, 0);
+        shipPlace.x = v + 0xc00000;
+        shipPlace.z =
             ((136 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + bobY;
-        Render_ApplyProjectedPlacementFar(work->sprites[24], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[24], &shipPlace,
+                                          &shipScale, 0);
         work->sprites[25]->priority = 2;
-        pos2.x = v + 0x800000;
-        pos2.z =
+        shipPlace.x = v + 0x800000;
+        shipPlace.z =
             ((104 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + bobY;
-        Render_ApplyProjectedPlacementFar(work->sprites[25], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[25], &shipPlace,
+                                          &shipScale, 0);
       }
       for (i = 0; i != 5; i++) {
-        pos2.x = (gDaedalus_SpritePoints[i][0] << 16) + swayX + prevCamera +
-                 bobX + 0xb00000;
-        pos2.z = ((gDaedalus_SpritePoints[i][1] -
-                   gDaedalus_ShakeOffsets[work->shake])
-                  << 16) +
-                 swayY + bobY + 0x540000;
+        shipPlace.x = (gDaedalus_SpritePoints[i][0] << 16) + swayX +
+                      prevCamera + bobX + 0xb00000;
+        shipPlace.z = ((gDaedalus_SpritePoints[i][1] -
+                        gDaedalus_ShakeOffsets[work->shake])
+                       << 16) +
+                      swayY + bobY + 0x540000;
         work->sprites[26 + i]->priority = 2;
-        Render_ApplyProjectedPlacementFar(work->sprites[26 + i], &pos2, &scale2,
-                                          0);
+        Render_ApplyProjectedPlacementFar(work->sprites[26 + i], &shipPlace,
+                                          &shipScale, 0);
       }
       if (frame <= 489) {
         for (i = 0; i != 8; i++) {
           Particle *p;
 
           p = &work->particles[32 + i];
-          pos2.x = p->x + camera;
-          pos2.z = p->y;
+          shipPlace.x = p->x + camera;
+          shipPlace.z = p->y;
           if (p->timer != 0)
-            Render_ApplyProjectedPlacementFar(work->sprites[41 + i], &pos2,
-                                              &scale2, 0);
+            Render_ApplyProjectedPlacementFar(work->sprites[41 + i], &shipPlace,
+                                              &shipScale, 0);
         }
       }
       if (frame < 540) {
@@ -1238,13 +1249,13 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           p->vy = p->vy * 63 / 64;
         }
         for (i = 0; i != 4; i++) {
-          pos2.x = ((i & 1) << 21) + p->x + camera + 0x800000;
-          pos2.z =
+          shipPlace.x = ((i & 1) << 21) + p->x + camera + 0x800000;
+          shipPlace.z =
               ((((i / 2) << 5) - gDaedalus_ShakeOffsets[work->shake]) << 16) +
               swayY + p->y + 0x680000;
           work->sprites[34 + i]->priority = 1;
-          Render_ApplyProjectedPlacementFar(work->sprites[34 + i], &pos2,
-                                            &scale2, 0);
+          Render_ApplyProjectedPlacementFar(work->sprites[34 + i], &shipPlace,
+                                            &shipScale, 0);
         }
       }
       if (frame <= 316) {
@@ -1260,11 +1271,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           p->vy = p->vy * 63 / 64;
           work->sprites[31]->rotation += 0x100;
         }
-        pos2.x = swayX + p->x + camera + 0xb80000;
-        pos2.z =
+        shipPlace.x = swayX + p->x + camera + 0xb80000;
+        shipPlace.z =
             ((92 - gDaedalus_ShakeOffsets[work->shake]) << 16) + swayY + p->y;
         work->sprites[31]->priority = 1;
-        Render_ApplyProjectedPlacementFar(work->sprites[31], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[31], &shipPlace,
+                                          &shipScale, 0);
       }
       {
         Vec3 *wave;
@@ -1276,7 +1288,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             Sprite *obj;
             s32 v;
 
-            wave = &pos2;
+            wave = &shipPlace;
             wave->x = (i << 21) + waveX;
             wave->z = (((j << 5) - gDaedalus_ShakeOffsets[work->shake]) << 16) +
                       shipY + 0x840000;
@@ -1290,10 +1302,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
               work->sprites[k]->tile =
                   work->particles[row + (wavePhase + 64 + i) % 8].timer & 0x3ff;
             }
-            if (pos2.x > 0xffffff)
-              pos2.x -= px(288);
-            Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos2,
-                                              &scale2, 0);
+            if (shipPlace.x > 0xffffff)
+              shipPlace.x -= px(288);
+            Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i],
+                                              &shipPlace, &shipScale, 0);
           }
         }
       }
@@ -1416,19 +1428,19 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         for (i = 0; i != 512; i++)
           PARTICLES[i].timer = -1;
       }
-      scale3 = gDaedalus_ParticleScale;
-      pos3.w = 0;
-      pos3.y = px(255);
+      particleScale = gDaedalus_ParticleScale;
+      particlePlace.w = 0;
+      particlePlace.y = px(255);
       for (i = 0; i != 16; i++) {
         Particle *p;
 
         p = &work->particles[i];
         if (frame >= gDaedalus_ParticleStarts[i] && p->timer == 0) {
-          pos3.x = p->x;
-          pos3.z = p->y;
-          if (pos3.z > 0 && pos3.z < 0x800000)
-            Render_ApplyProjectedPlacementFar(work->sprites[i], &pos3, &scale3,
-                                              0);
+          particlePlace.x = p->x;
+          particlePlace.z = p->y;
+          if (particlePlace.z > 0 && particlePlace.z < 0x800000)
+            Render_ApplyProjectedPlacementFar(work->sprites[i], &particlePlace,
+                                              &particleScale, 0);
           if (p->y > 0x6fffff) {
             p->timer = 1;
             for (j = 0; j != 2; j++) {
@@ -1563,16 +1575,11 @@ struct PlacementSource__f17e698 {
   s32 y;
 };
 extern const struct PlacementSource__f17e698
-    gDaedalusAlt_SummonScale;                 // the summon's placement source
-extern const u8 gBattleEffect_SquareMesh32[]; // the rings' mesh
+    gDaedalusAlt_SummonScale; // the summon's placement source
+extern const u8 gBattleEffect_SmallSquareMesh[];    // the rings' mesh
 extern const u8 gBattleEffect_TaperedBeamCorners[]; // their corners
-/* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep
- * gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest
- * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/daedalus.c:1652: request for member
- * `variant' in something not a structure or union. */
-extern struct EffectStep
-    gData_02014000__f17e698[] __asm__("gData_02014000"); // the sparks
+/// The sparks, after the map cells.
+#define STRIKE_SPARKS ((struct EffectStep *)gData_02014000)
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -1675,7 +1682,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       if (frame == 80) {
         // UB: the lives are cleared through one s32 pointer stepped a whole
         // step at a time, past the step's scalar members.
-        s32 *life = &gData_02014000__f17e698[0].variant;
+        s32 *life = &STRIKE_SPARKS[0].variant;
 
         for (i = 0; i != DAEDALUS_SPARKS; i++) {
           *life = -1;
@@ -1684,7 +1691,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         work->shakeFrames = 8;
         Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       }
-      sparks = gData_02014000__f17e698;
+      sparks = STRIKE_SPARKS;
       if ((u32)(frame - 80) <= 7) {
         centerX = ((Random16() & 63) + 28) << 16;
         centerY = ((Random16() & 31) + 80) << 16;
@@ -1793,7 +1800,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       texture.pixels = work->sheet + 0x4000;
       model->kind = 7;
       model->texture = &texture;
-      model->mesh = gBattleEffect_SquareMesh32;
+      model->mesh = gBattleEffect_SmallSquareMesh;
 
       for (i = 0; i != 6; i++) {
         ring = &work->particles[i];

@@ -642,7 +642,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       texture.logHeight = 6;
       texture.pixels = work->sheet + 0x3200;
       model->kind = 6;
-      model->model = gBattleEffect_SquareMesh64;
+      model->model = gBattleEffect_SquareMesh;
       model->texture = &texture;
       model->corners = corners;
       if (frame == 8)

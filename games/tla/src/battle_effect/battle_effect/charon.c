@@ -105,7 +105,7 @@ struct SummonWork__f175f74 {
   s32 frameDone;
 };
 
-struct Scene68 {
+struct CharonBattle {
   u8 unk000[0x56c];
   u16 palette[0x82];
   u16 unk670;
@@ -113,33 +113,33 @@ struct Scene68 {
   u8 unk867;
 };
 
-struct Unit30 {
+struct CharonCamera {
   u8 unk00[0x36];
-  s16 unk36;
+  s16 yaw;
 };
 
-struct Unit88 {
+struct LineScrollView {
   u8 unk00[0x10];
   s32 unk10;
 };
 
-struct Local264 {
+struct SpawnList {
   u16 value;
   u8 unk02[26];
 };
 
 struct SystemWork {
   u8 unk00[0x24];
-  struct Scene68 *scene;
+  struct CharonBattle *battle;
   u8 unk28[0x8];
-  struct Unit30 *unit30;
+  struct CharonCamera *camera;
   u8 unk34[0x28];
   struct SummonWork__f175f74 *summon;
   u8 *canvas;
   u8 *glyphs;
   s32 (*blit)(void *, const void *, s32, s32, s32, s32);
   u8 unk6c[0x44];
-  struct Unit88 *unit88;
+  struct LineScrollView *lineScroll;
   u8 unkb4[0x8];
   s32 (*blitBc)(void *, const void *, s32, s32, s32, s32);
 };
@@ -195,8 +195,8 @@ extern const struct ScalePair gCharon_FinaleScale;
 extern u16 gBattleEffect_MotePictures[];
 extern u8 gCharon_FlashFrames[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_SquareMesh64[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_SquareMesh[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_ConfigureEffectDisplay(void);
@@ -240,25 +240,25 @@ void BattleEffect_EndCanvasLayer(void);
 
 void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   u16 tiles[16];
-  struct Local264 local264;
-  s32 pos248[4];
-  s32 pos232[4];
-  s32 pos216[4];
-  s32 pos200[4];
-  s32 pos184[4];
+  struct SpawnList emptyList;
+  s32 swarmPlace[4];
+  s32 pulsePlace[4];
+  s32 objectPlace[4];
+  s32 revealPlace[4];
+  s32 finalePlace[4];
   DrawRectangleFn routine[2];
-  struct ModelDesc desc144;
-  struct ModelDesc desc128;
-  struct ModelDesc desc112;
-  struct ModelDesc desc104;
+  struct ModelDesc lateTexture;
+  struct ModelDesc revealTexture;
+  struct ModelDesc risingTexture;
+  struct ModelDesc openingTexture;
   u8 *canvas;
   struct SummonWork__f175f74 *work;
-  struct Unit88 *unit88;
+  struct LineScrollView *lineScroll;
   s32 j;
   s32 frame;
   u32 savedWidth;
   u8 *glyphs;
-  struct Scene68 *scene;
+  struct CharonBattle *battle;
   DrawRectangleFn *blit;
   s32 posX;
   s32 posZ;
@@ -266,9 +266,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   s32 red;
   s32 green;
   s32 blue;
-  struct Unit30 *unit30;
+  struct CharonCamera *camera;
   s32 shake;
-  s16 savedUnit30;
+  s16 savedYaw;
   s32 i;
   s32 fade;
   u16 *palette;
@@ -285,11 +285,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
   canvas = SYSTEM_WORK->canvas;
   work = SYSTEM_WORK->summon;
-  unit88 = SYSTEM_WORK->unit88;
+  lineScroll = SYSTEM_WORK->lineScroll;
   savedWidth = gBgScroll[1].x;
   glyphs = SYSTEM_WORK->glyphs;
   sprites = (struct SpriteObject__f175f74 **)gMapCellBuffer;
-  scene = SYSTEM_WORK->scene;
+  battle = SYSTEM_WORK->battle;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -303,17 +303,17 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   }
   BattleEffect_WipeCanvas(1, 0);
   gCameraSceneParameters[4] = 240;
-  unit88->unk10 = 1;
+  lineScroll->unk10 = 1;
   gBgScroll[1].x = 0;
-  local264.value = 255;
-  BattleActor_SpawnObjectsForListFar(&local264, 0);
+  emptyList.value = 255;
+  BattleActor_SpawnObjectsForListFar(&emptyList, 0);
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
               WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = 240;
   wait(1);
   Palette_LoadBasicSpriteColors();
-  scene->unk867 = 1;
+  battle->unk867 = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -20, -20);
   BattleEffect_WipeCanvas(1, 1);
@@ -465,10 +465,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     if (frame >= 132 && frame < 240) {
-      struct ScalePair scale168 = gCharon_SwarmScale;
+      struct ScalePair swarmScale = gCharon_SwarmScale;
 
-      scale168.v[1] = Q16_ONE * 5 / 4;
-      scale168.v[0] = Q16_ONE * 5 / 4;
+      swarmScale.v[1] = Q16_ONE * 5 / 4;
+      swarmScale.v[0] = Q16_ONE * 5 / 4;
       if (frame == 132) {
         for (i = 0; i != 128; i++) {
           PARTICLES[i].x = (Random16() % 160 + 40) << 16;
@@ -480,14 +480,15 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       for (i = 0; i != 48; i++) {
         if (i == 10) {
-          scale168.v[1] = Q16_ONE;
-          scale168.v[0] = Q16_ONE;
+          swarmScale.v[1] = Q16_ONE;
+          swarmScale.v[0] = Q16_ONE;
         }
-        pos248[3] = 0;
-        pos248[1] = 0xff0000;
-        pos248[0] = PARTICLES[64 + i].x;
-        pos248[2] = PARTICLES[64 + i].y + 0x200000;
-        Render_ApplyProjectedPlacementFar(SPRITES[i], pos248, scale168.v, 0);
+        swarmPlace[3] = 0;
+        swarmPlace[1] = 0xff0000;
+        swarmPlace[0] = PARTICLES[64 + i].x;
+        swarmPlace[2] = PARTICLES[64 + i].y + 0x200000;
+        Render_ApplyProjectedPlacementFar(SPRITES[i], swarmPlace, swarmScale.v,
+                                          0);
         SPRITES[i]->tile = tiles[PARTICLES[64 + i].timer / 16];
       }
       for (i = 0; i != 128; i++) {
@@ -504,15 +505,16 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     t56 = frame - 56;
     if (t56 >= 0 && t56 < 76) {
-      struct ScalePair scale160 = gCharon_PulseScale;
+      struct ScalePair pulseScale = gCharon_PulseScale;
 
-      scale160.v[0] = scale160.v[1] = Trig_Sin(t56 << 7) * 2 + TRIG_TURN / 4;
-      pos232[3] = 0;
-      pos232[1] = 0xff0000;
-      pos232[0] = px(114);
-      pos232[2] = (t56 >= 0 ? 78 : 100) << 16;
-      Render_ApplyProjectedPlacementFar(work->objects[0], pos232, scale160.v,
-                                        0);
+      pulseScale.v[0] = pulseScale.v[1] =
+          Trig_Sin(t56 << 7) * 2 + TRIG_TURN / 4;
+      pulsePlace[3] = 0;
+      pulsePlace[1] = 0xff0000;
+      pulsePlace[0] = px(114);
+      pulsePlace[2] = (t56 >= 0 ? 78 : 100) << 16;
+      Render_ApplyProjectedPlacementFar(work->objects[0], pulsePlace,
+                                        pulseScale.v, 0);
     }
     if (frame == 131) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
@@ -760,10 +762,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
       }
       {
-        s32 scale152[2];
+        s32 objectScale[2];
 
-        pos216[3] = 0;
-        pos216[1] = 0xff0000;
+        objectPlace[3] = 0;
+        objectPlace[1] = 0xff0000;
         if (frame < 160) {
           posX += 0x2000;
           posZ -= 0x4000;
@@ -773,20 +775,20 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         } else {
           posX += 0x2000;
         }
-        scale152[1] = Q16_ONE * 5 / 4;
-        scale152[0] = Q16_ONE * 5 / 4;
-        scale152[0] = scale152[1] = posZ / 48 + Q16_ONE / 4;
-        pos216[0] = posX + 0x400000;
-        pos216[2] = px(144);
-        Render_ApplyProjectedPlacementFar(work->objects[12], pos216, scale152,
-                                          0);
-        scale152[1] = Q16_ONE;
-        scale152[0] = Q16_ONE;
+        objectScale[1] = Q16_ONE * 5 / 4;
+        objectScale[0] = Q16_ONE * 5 / 4;
+        objectScale[0] = objectScale[1] = posZ / 48 + Q16_ONE / 4;
+        objectPlace[0] = posX + 0x400000;
+        objectPlace[2] = px(144);
+        Render_ApplyProjectedPlacementFar(work->objects[12], objectPlace,
+                                          objectScale, 0);
+        objectScale[1] = Q16_ONE;
+        objectScale[0] = Q16_ONE;
         for (i = 0; i != 12; i++) {
-          pos216[0] = ((i % 4) << 21) + posX;
-          pos216[2] = ((i / 4) << 21) + posZ;
-          Render_ApplyProjectedPlacementFar(work->objects[i], pos216, scale152,
-                                            0);
+          objectPlace[0] = ((i % 4) << 21) + posX;
+          objectPlace[2] = ((i / 4) << 21) + posZ;
+          Render_ApplyProjectedPlacementFar(work->objects[i], objectPlace,
+                                            objectScale, 0);
         }
       }
       if (frame == 200) {
@@ -814,12 +816,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         model->depth = depth;
         work->transferMode = 2;
         work->transferValue = 75;
-        desc144.a = 7;
-        desc144.b = 7;
-        desc144.tiles = work->buffer + 0x1000;
+        lateTexture.a = 7;
+        lateTexture.b = 7;
+        lateTexture.tiles = work->buffer + 0x1000;
         model->kind = 7;
-        model->desc = &desc144;
-        model->mesh = gBattleEffect_SquareMesh128;
+        model->desc = &lateTexture;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->texture = texture;
         if (frame <= 282) {
           Transform_Reset();
@@ -842,12 +844,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           if (depth > 0) {
             depth = 0;
           }
-          desc144.a = 6;
-          desc144.b = 6;
+          lateTexture.a = 6;
+          lateTexture.b = 6;
           model->depth = depth;
-          desc144.tiles = work->buffer;
-          model->desc = &desc144;
-          model->mesh = gBattleEffect_SquareMesh64;
+          lateTexture.tiles = work->buffer;
+          model->desc = &lateTexture;
+          model->mesh = gBattleEffect_SquareMesh;
           model->kind = 7;
           model->texture = texture;
           Transform_Reset();
@@ -863,7 +865,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Heap_Release(texture);
       }
       if (frame >= 244 && frame < 310) {
-        struct ScalePair scale136 = gCharon_RevealScale;
+        struct ScalePair revealScale = gCharon_RevealScale;
 
         if (frame < 260) {
           u8 *low = REVEAL_BUFFER;
@@ -895,13 +897,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                      column) = texel;
           }
         }
-        scale136.v[1] = scale136.v[0] = (155 << 12) - (frame << 11);
-        pos200[3] = 0;
-        pos200[1] = 0xff0000;
-        pos200[0] = 184 << 15;
-        pos200[2] = 144 << 15;
-        Render_ApplyProjectedPlacementFar(work->objects[13], pos200, scale136.v,
-                                          0);
+        revealScale.v[1] = revealScale.v[0] = (155 << 12) - (frame << 11);
+        revealPlace[3] = 0;
+        revealPlace[1] = 0xff0000;
+        revealPlace[0] = 184 << 15;
+        revealPlace[2] = 144 << 15;
+        Render_ApplyProjectedPlacementFar(work->objects[13], revealPlace,
+                                          revealScale.v, 0);
         {
           u16 *target =
               Resource_GetTableEntry((s32)&ResourceId_RedCrescentTiles);
@@ -979,30 +981,30 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (frame > 301) {
           s32 k;
           s32 x;
-          s32 depth2;
+          s32 stripShade;
           s32 size;
           void *texture = Heap_AllocEwram(32);
           struct Model__f175f74 *model = Render_AllocateModelList(1);
 
-          desc128.a = 7;
-          desc128.b = 7;
-          desc128.tiles = work->buffer + 0x1000;
+          revealTexture.a = 7;
+          revealTexture.b = 7;
+          revealTexture.tiles = work->buffer + 0x1000;
           model->kind = 7;
-          model->desc = &desc128;
-          model->mesh = gBattleEffect_SquareMesh128;
+          model->desc = &revealTexture;
+          model->mesh = gBattleEffect_LargeSquareMesh;
           model->texture = texture;
           for (k = 0; k != 3; k++) {
             x = frame - 302 - k * 8;
             if (x >= 0) {
-              depth2 = x * 4 - 16;
+              stripShade = x * 4 - 16;
               size = 140000 - x * 6192;
               if (size < 0) {
                 size = 0;
               }
-              if (depth2 > 0) {
-                depth2 = 0;
+              if (stripShade > 0) {
+                stripShade = 0;
               }
-              model->depth = depth2;
+              model->depth = stripShade;
               Transform_Reset();
               SceneTransform_ApplyPosition3(-0x80000, -0x80000, 0);
               SceneTransform_ApplyScale3(size / 2, size, size / 2);
@@ -1027,7 +1029,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Iwram_FillWords(PLTT + 0x1c0, 64, 0x7c1f7c1f);
       }
       if (frame >= 330 && frame < 351) {
-        struct ScalePair scale120 = gCharon_FinaleScale;
+        struct ScalePair finaleScale = gCharon_FinaleScale;
         s32 dx = 0;
         s32 dz = 0;
 
@@ -1035,13 +1037,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           dx = 347 - frame;
           dz = (frame - 347) / 4;
         }
-        scale120.v[0] = scale120.v[1] = (frame << 11) - 0xa5000;
-        pos184[3] = 0;
-        pos184[1] = 0xff0000;
-        pos184[0] = (dx << 16) + (184 << 15);
-        pos184[2] = (dz << 16) + (144 << 15);
-        Render_ApplyProjectedPlacementFar(work->objects[13], pos184, scale120.v,
-                                          0);
+        finaleScale.v[0] = finaleScale.v[1] = (frame << 11) - 0xa5000;
+        finalePlace[3] = 0;
+        finalePlace[1] = 0xff0000;
+        finalePlace[0] = (dx << 16) + (184 << 15);
+        finalePlace[2] = (dz << 16) + (144 << 15);
+        Render_ApplyProjectedPlacementFar(work->objects[13], finalePlace,
+                                          finaleScale.v, 0);
       }
       if (frame == 347) {
         work->transferMode = 1;
@@ -1269,12 +1271,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         depth = 184 - frame * 2;
         model->depth = depth;
       }
-      desc112.a = 6;
-      desc112.b = 6;
-      desc112.tiles = work->buffer;
+      risingTexture.a = 6;
+      risingTexture.b = 6;
+      risingTexture.tiles = work->buffer;
       model->kind = 7;
-      model->desc = &desc112;
-      model->mesh = gBattleEffect_SquareMesh64;
+      model->desc = &risingTexture;
+      model->mesh = gBattleEffect_SquareMesh;
       model->texture = texture;
       if (depth > -48) {
         model->depth = depth;
@@ -1306,7 +1308,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       if (frame > 55) {
         s32 last = frame * 2 - 208;
 
-        desc112.tiles = work->buffer + 0x1000;
+        risingTexture.tiles = work->buffer + 0x1000;
         if (last >= -32) {
           last = -32;
         }
@@ -1359,8 +1361,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   wait(1);
-  scene->unk867 = 0;
-  BattleBackground_LoadFar(1, scene->unk670, 24);
+  battle->unk867 = 0;
+  BattleBackground_LoadFar(1, battle->unk670, 24);
   /* FAKEMATCH(dead): an empty once-only loop before the canvas fill. */
   do {
   } while (0);
@@ -1370,10 +1372,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   } while (0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
   gCameraSceneParameters[4] = 120;
-  unit30 = SYSTEM_WORK->unit30;
+  camera = SYSTEM_WORK->camera;
   shake = 0;
-  savedUnit30 = unit30->unk36;
-  unit30->unk36 = shake;
+  savedYaw = camera->yaw;
+  camera->yaw = shake;
   work->transferMode = 1;
   work->transferValue = 0;
   work->transferMode = 2;
@@ -1400,7 +1402,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     PLTT[i] = (b << 10) | (g << 5) | r;
   }
   arg->actors[arg->count] = 0xff;
-  BattleActor_SpawnObjectsForListFar((struct Local264 *)arg->actors, 0);
+  BattleActor_SpawnObjectsForListFar((struct SpawnList *)arg->actors, 0);
   BattleEffect_DrawShadedCircles(work->buffer, 56, 0x10000);
   BattleEffect_DrawShadedCircles(work->buffer + 0x1000, 16, 0x10000);
   Iwram_FillWords(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);
@@ -1465,7 +1467,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame == 120) {
       work->transferMode = 1;
       work->transferValue = 0;
-      ColorBuffer_ScaleFar(scene->palette, PLTT + 0x60, 0x99a0, 128);
+      ColorBuffer_ScaleFar(battle->palette, PLTT + 0x60, 0x99a0, 128);
       for (i = 0; i != arg->count; i++) {
         struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
@@ -1567,7 +1569,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
         if (frame >= gCharon_FlashFrames[i] + 1 &&
             frame < gCharon_FlashFrames[i] + 16) {
-          u16 *target = SYSTEM_WORK->scene->palette;
+          u16 *target = SYSTEM_WORK->battle->palette;
           u16 *color = PLTT + 0x60;
 
           for (j = 0; j != 128; j++) {
@@ -1604,8 +1606,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame > 120) {
       if (frame == 121) {
         gBgScroll[1].x = savedWidth;
-        unit88->unk10 = 0;
-        unit30->unk36 = savedUnit30;
+        lineScroll->unk10 = 0;
+        camera->yaw = savedYaw;
       }
       if (frame < 148) {
         s32 step = 8 - (frame - 120) / 6;
@@ -1752,12 +1754,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         void *texture = Heap_AllocEwram(32);
         struct Model__f175f74 *model = Render_AllocateModelList(1);
 
-        desc104.a = 6;
-        desc104.b = 6;
-        desc104.tiles = work->buffer + 0x3000;
+        openingTexture.a = 6;
+        openingTexture.b = 6;
+        openingTexture.tiles = work->buffer + 0x3000;
         model->kind = 9;
-        model->mesh = gBattleEffect_SquareMesh64;
-        model->desc = &desc104;
+        model->mesh = gBattleEffect_SquareMesh;
+        model->desc = &openingTexture;
         model->texture = texture;
         for (i = 0; i != arg->count; i++) {
           struct Particle__f175f74 *member = &work->members[i];

@@ -654,15 +654,15 @@ struct IrisSpriteFlags {
   u8 unk09_4 : 4;
 };
 
-struct Widths5 {
+struct FiveWidths {
   s32 w[5];
 };
 
-struct Widths7 {
+struct SevenWidths {
   s32 w[7];
 };
 
-struct Spans4 {
+struct FourSpans {
   struct WordPair p[4];
 };
 
@@ -674,11 +674,11 @@ extern struct IrisScene Data_02012ee0;
 #define Data_02012ef4 ((struct IrisPoint(*)[10])(Ram_MapCellBuffer + 0x2ef4))
 
 extern const struct Scale gIris_UnitScale;
-extern const struct Widths5 gIris_RisingPillarWidths;
-extern const struct Widths7 gIris_WideningPillarWidths;
-extern const struct Widths7 gIris_NarrowingPillarWidths;
-extern const struct Spans4 gIris_LeftStripSpans;
-extern const struct Spans4 gIris_RightStripSpans;
+extern const struct FiveWidths gIris_RisingPillarWidths;
+extern const struct SevenWidths gIris_WideningPillarWidths;
+extern const struct SevenWidths gIris_NarrowingPillarWidths;
+extern const struct FourSpans gIris_LeftStripSpans;
+extern const struct FourSpans gIris_RightStripSpans;
 extern s32 gIris_SplashRadii[];
 extern const u8 gIris_SplashOffsetsY[];
 extern const u8 gIris_ParticleCorners[];
@@ -1636,7 +1636,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Iris_DrawPillar(3, 34, h);
       }
       if (frame > 375) {
-        struct Widths5 widths = gIris_RisingPillarWidths;
+        struct FiveWidths widths = gIris_RisingPillarWidths;
         s32 h = (frame - 375) << 3;
 
         if (h > 127)
@@ -1644,7 +1644,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Iris_DrawPillar(widths.w[h >> 5], (h >> 5) * 2 + 94, h);
       }
       if (frame > 380) {
-        struct Widths7 widths = gIris_WideningPillarWidths;
+        struct SevenWidths widths = gIris_WideningPillarWidths;
         s32 h = (frame - 380) << 2;
         s32 q;
 
@@ -1654,7 +1654,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Iris_DrawPillar(widths.w[q], q + 12, h);
       }
       if (frame > 382) {
-        struct Widths7 widths = gIris_NarrowingPillarWidths;
+        struct SevenWidths widths = gIris_NarrowingPillarWidths;
         s32 h = (frame - 382) << 3;
         s32 q;
 
@@ -1844,8 +1844,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       void *verts = Heap_AllocEwram(80);
       struct RenderModel *model = Render_AllocateModelList(1);
       s32 scroll;
-      struct Spans4 spans;
-      struct Spans4 spans2;
+      struct FourSpans leftSpans;
+      struct FourSpans rightSpans;
 
       texture.logWidth = 5;
       texture.logHeight = 6;
@@ -1864,16 +1864,16 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (!(frame & 7)) {
           s32 s;
 
-          spans = gIris_LeftStripSpans;
+          leftSpans = gIris_LeftStripSpans;
           s = FindFreeSpark();
 
           if (s != -1) {
             s32 r = Random16() & 127;
 
             sparks->life[s] = -0x7c00;
-            sparks->x[s] =
-                (spans.p[(r + 1) >> 5].a + Random16() % spans.p[(r + 1) >> 5].b)
-                << 16;
+            sparks->x[s] = (leftSpans.p[(r + 1) >> 5].a +
+                            Random16() % leftSpans.p[(r + 1) >> 5].b)
+                           << 16;
             sparks->y[s] = (r << 16) + 0x100000;
             sparks->vx[s] = (Random16() & 15) * 3 << 11;
             sparks->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
@@ -1894,15 +1894,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (!(frame & 7) && frame <= 501) {
           s32 s;
 
-          spans2 = gIris_RightStripSpans;
+          rightSpans = gIris_RightStripSpans;
           s = FindFreeSpark();
 
           if (s != -1) {
             s32 r = Random16() & 127;
 
             sparks->life[s] = -0x7c00;
-            sparks->x[s] = (spans2.p[(r + 1) >> 5].a +
-                            Random16() % spans2.p[(r + 1) >> 5].b)
+            sparks->x[s] = (rightSpans.p[(r + 1) >> 5].a +
+                            Random16() % rightSpans.p[(r + 1) >> 5].b)
                            << 16;
             sparks->y[s] = (r << 16) + 0x100000;
             sparks->vx[s] = (Random16() & 15) * 3 << 11;
@@ -1995,11 +1995,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             s32 sy = Trig_Cos(a) * ry;
             s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy * 2, sinT);
             s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy * 2, cosT);
-            s32 py2;
+            s32 rowY;
 
             px = (px >> 16) + (j >> 1) + 64;
-            py2 = (py >> 16) - (j >> 1) + 63;
-            ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px, py2, 1, 2);
+            rowY = (py >> 16) - (j >> 1) + 63;
+            ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px, rowY, 1,
+                                     2);
           }
         }
       }

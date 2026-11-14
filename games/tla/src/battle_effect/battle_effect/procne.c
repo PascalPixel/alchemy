@@ -28,7 +28,7 @@
 
 // frame / 4 % 3, as the source writes it: the multiply-high routine with the
 // reciprocal of 3, where a plain % calls __modsi3.
-#define MOD3(v) Math_UnsignedMulHighAdd((v), 0x55555556, -3)
+#define MODULO_THREE(v) Math_UnsignedMulHighAdd((v), 0x55555556, -3)
 
 #define WHIRLWIND_CEL (48 * 64) // one of the whirlwind's three frames
 #define DUST_SHEET 0x2400       // the dust motes, after the whirlwind
@@ -198,25 +198,25 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         size = frame * 2 - 32;
         if (size > 48)
           size = 48;
-        draw[0](
-            canvas,
-            &work->sheet[MOD3(frame / 4) * WHIRLWIND_CEL + (48 - size) * 48],
-            32, 112 - size, 48, size);
+        draw[0](canvas,
+                &work->sheet[MODULO_THREE(frame / 4) * WHIRLWIND_CEL +
+                             (48 - size) * 48],
+                32, 112 - size, 48, size);
       }
       if ((u32)(frame - 48) <= 111) {
         size = frame * 2 - 96;
         if (size > 64)
           size = 64;
-        draw[0](
-            canvas,
-            &work->sheet[MOD3(frame / 4) * WHIRLWIND_CEL + (64 - size) * 48],
-            32, 64 - size, 48, size);
+        draw[0](canvas,
+                &work->sheet[MODULO_THREE(frame / 4) * WHIRLWIND_CEL +
+                             (64 - size) * 48],
+                32, 64 - size, 48, size);
       }
       if ((u32)(frame - 160) <= 239) {
-        draw[0](canvas, &work->sheet[MOD3(frame / 4) * WHIRLWIND_CEL], 8, 0, 48,
-                64);
-        draw[0](canvas, &work->sheet[MOD3(frame / 4) * WHIRLWIND_CEL], 8, 64,
-                48, 64);
+        draw[0](canvas, &work->sheet[MODULO_THREE(frame / 4) * WHIRLWIND_CEL],
+                8, 0, 48, 64);
+        draw[0](canvas, &work->sheet[MODULO_THREE(frame / 4) * WHIRLWIND_CEL],
+                8, 64, 48, 64);
       }
 
       // The dust motes swirl up the whirlwind, speeding up, and start again

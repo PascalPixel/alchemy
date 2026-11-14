@@ -82,7 +82,7 @@ extern u8 gCastingImpact_PictureX[];
 extern u8 gCastingImpact_PictureY[];
 
 // The card's quad: its mesh and its corners.
-extern u8 gBattleEffect_TallMesh32[];
+extern u8 gBattleEffect_TallMesh[];
 extern const u8 gBattleEffect_SquareCorners[];
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -338,7 +338,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       texture.pixels = CARD;
       model->kind = 8;
       model->texture = &texture;
-      model->mesh = gBattleEffect_TallMesh32;
+      model->mesh = gBattleEffect_TallMesh;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
       SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - px(64), 0);

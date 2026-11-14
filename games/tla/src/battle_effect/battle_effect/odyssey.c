@@ -58,7 +58,7 @@ extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
 extern u8 Data_02016000[];
 extern u16 gBattleEffect_MotePictures[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern const u8 gBattleEffect_TriangleMesh[];
 extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gBattleEffect_TriangleCorners[];
@@ -357,7 +357,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = pixels;
-    model->mesh = gBattleEffect_SquareMesh128;
+    model->mesh = gBattleEffect_LargeSquareMesh;
     model->kind = 7;
     model->texture = &texture;
     model->vertices = projected;

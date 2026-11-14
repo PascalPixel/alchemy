@@ -65,8 +65,8 @@ extern u8 gData_02014000[];
 
 // The streak quad's faces (32x64) and the flash quad's (128x128), and the
 // corners of a 64x64 square around the origin, which both scale.
-extern u8 gBattleEffect_TallMesh32[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern u8 gBattleEffect_TallMesh[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern const u8 gBattleEffect_SquareCorners[];
 
 // The streak's scale per mode, 16.16.
@@ -221,7 +221,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
     *(u32 *)&texture = (*(u32 *)&texture & ~0xff00) | 6 << 8;
     texture.pixels = work->sheet;
     quad->texture = &texture;
-    quad->faces = gBattleEffect_TallMesh32;
+    quad->faces = gBattleEffect_TallMesh;
     quad->kind = 6;
     quad->vertices = vertices;
     quad->brightness = brightness;
@@ -256,7 +256,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
       texture.logHeight = 7;
       texture.pixels = flashPixels;
       quad->kind = 7;
-      quad->faces = gBattleEffect_SquareMesh128;
+      quad->faces = gBattleEffect_LargeSquareMesh;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       if (effect->side == 0)

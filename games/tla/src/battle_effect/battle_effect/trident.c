@@ -530,7 +530,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunPlanetary, BattleEffect_RunLeapingStrike, 1)
 extern char ResourceId_FlameballSheet;
 extern char ResourceId_ClawSlashSheet;
 
-extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_SquareMesh[];
 extern const u8 gBattleEffect_RingMesh[];
 
 extern const u8 gBattleEffect_SquareCorners[];
@@ -741,7 +741,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
         texture.logHeight = 6;
         texture.pixels = work->sheet + 0x3000;
         model->kind = kind;
-        model->mesh = gBattleEffect_SquareMesh64;
+        model->mesh = gBattleEffect_SquareMesh;
         model->texture = &texture;
         model->vertices = projected;
         model->shade = shade;

@@ -75,7 +75,7 @@ extern u16 gBattleEffect_MotePictures[];
 // Per level (effect->variant): the sparks, their spread, the rings' size
 // and the embers.
 extern const u8 gRagingHeat_Styles[][4];
-extern const u8 gBattleEffect_SquareMesh128[];       // the ring's mesh
+extern const u8 gBattleEffect_LargeSquareMesh[];     // the ring's mesh
 extern const u8 gBattleEffect_GroundSquareCorners[]; // its corners
 
 #define RAGING_HEAT_FRAMES 96
@@ -236,7 +236,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       shade = 0;
       model->kind = 7;
       model->texture = &texture;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = vertices;
       model->shade = shade;
       texture.logWidth = 7;

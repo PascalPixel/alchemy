@@ -68,7 +68,7 @@ extern char ResourceId_AxeSheet;
 extern u8 gMapCellBuffer[];
 extern const u8 gHeavyBlow_SwordMesh[];        // the sword's mesh
 extern const u8 gBattleEffect_BeamCorners[];   // its corners
-extern const u8 gBattleEffect_SquareMesh64[];  // the axe's mesh
+extern const u8 gBattleEffect_SquareMesh[];    // the axe's mesh
 extern const u8 gBattleEffect_SquareCorners[]; // its corners
 extern u8 gHeavyBlow_StrikeFrames[];           // per mode: the strike's frame
 extern u8 gHeavyBlow_ChipCounts[];             // per mode: the chips
@@ -231,7 +231,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     } else {
-      model->mesh = gBattleEffect_SquareMesh64;
+      model->mesh = gBattleEffect_SquareMesh;
       texture.logWidth = 6;
       texture.logHeight = 6;
       if (frame == 0) {
@@ -531,9 +531,9 @@ extern char ResourceId_Data0D8;
 extern u8 gData_02014000[];
 extern u16 gBattleEffect_MotePictures[];
 extern const s8 gWyrdCurse_DropBounces[]; // the drops' bounce speeds
-extern const u8
-    gBattleEffect_SquareMesh32Reversed[]; // the glow's and the splashes' mesh
-extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
+extern const u8 gBattleEffect_SmallSquareMeshReversed[]; // the glow's and the
+                                                         // splashes' mesh
+extern const u8 gBattleEffect_GroundSquareCorners[];     // its four corners
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 
@@ -699,7 +699,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     texture.logHeight = 5;
     texture.pixels = work->sheet + 0x1000;
     model->kind = 6;
-    model->mesh = gBattleEffect_SquareMesh32Reversed;
+    model->mesh = gBattleEffect_SmallSquareMeshReversed;
     model->texture = &texture;
     model->vertices = vertices;
     model->shade = zero;
@@ -739,7 +739,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     texture.logWidth = 5;
     texture.logHeight = 5;
     model->kind = 7;
-    model->mesh = gBattleEffect_SquareMesh32Reversed;
+    model->mesh = gBattleEffect_SmallSquareMeshReversed;
     splash = 25000;
     /* FAKEMATCH(barrier): an empty asm through splash hides its constant. */
     asm("" : "+r"(splash));
@@ -803,7 +803,7 @@ struct Model;
 extern char ResourceId_Data0C2;
 extern char ResourceId_OrangePaletteB;
 
-extern const u8 gBattleEffect_SquareMesh128[]; // a textured square
+extern const u8 gBattleEffect_LargeSquareMesh[]; // a textured square
 
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
@@ -944,7 +944,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
       texture.pixels = work->sheet + 0x1000;
       model->kind = 6;
       model->vertices = vertices;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->texture = &texture;
       i = 0;
       square = work->particles;

@@ -331,7 +331,7 @@ extern u8 gMapCellBuffer[];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 
-extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_SquareMesh[];
 extern const u8 gBattleEffect_SquareCorners[];
 
 #define SEGMENTS 33
@@ -608,7 +608,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       // The claw.
       tex->logWidth = 6;
       tex->logHeight = 6;
-      model->mesh = gBattleEffect_SquareMesh64;
+      model->mesh = gBattleEffect_SquareMesh;
       model->scrollU = zero;
       tex->pixels = work->sheet + 0x4000;
       SceneTransform_ApplyPosition3((target.x - 124) << 16,

@@ -89,7 +89,7 @@ extern char ResourceId_BlueFlameSheet;
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern u16 gBattleEffect_MotePictures[];
-extern const u8 gBattleEffect_SquareMesh64[];  // a head's mesh
+extern const u8 gBattleEffect_SquareMesh[];    // a head's mesh
 extern const u8 gBattleEffect_SquareCorners[]; // its corners
 
 #define DRAGON_SEGMENTS 33
@@ -365,7 +365,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;
-            model->mesh = gBattleEffect_SquareMesh64;
+            model->mesh = gBattleEffect_SquareMesh;
             texture.pixels = work->sheet + 0x4000;
             SceneTransform_ApplyPosition3(endX[i] << 16, endY[i] << 16, 0);
             Transform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));

@@ -142,7 +142,7 @@ void BattleEffect_RunFireDance(struct BattleEffectArgument *effect) {
 // how many shots and where they aim; modes 5 and 23 draw one big picture at
 // the user instead, mode 10 also draws motes into the user, mode 24 adds
 // glints around the targets, and modes 11, 14 and 18 hand over to
-// SummonEffect_RunCanvasEffect at the end. Resources not yet named in
+// BattleEffect_RunStatReduction at the end. Resources not yet named in
 // directory.s, by row and asset: 0x151 BattleEffect_MarsDjinnSmallSheet,
 // 0x157 BattleEffect_VenusDjinnSmallSheet, 0x11c
 // BattleEffect_VioletLightningSheetA, 0xd7 Resource_Data0D7, 0x14d

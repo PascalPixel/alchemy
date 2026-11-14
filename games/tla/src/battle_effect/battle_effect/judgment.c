@@ -311,7 +311,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       texture.pixels = gData_02014000;
       model->texture = &texture;
       model->kind = 7;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
       if (frame > 151) {
         shade = (frame * -8) + 1216;
@@ -588,7 +588,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       shade = 0;
       model->kind = 7;
       model->texture = &glare;
-      model->mesh = gBattleEffect_SquareMesh128;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
       if (frame > 79) {
         shade = (frame * -8) + 640;

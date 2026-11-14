@@ -82,11 +82,11 @@ extern s8 gBreaths_RingX[];
 extern u8 gBreaths_FlashFrames[];
 
 // The quad and jaw meshes and corners.
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 extern const u8 gBattleEffect_CylinderMesh[];
 extern const u8 gBattleEffect_CylinderCorners[];
-extern const u8 gBattleEffect_SquareMesh32[];
+extern const u8 gBattleEffect_SmallSquareMesh[];
 extern const u8 gBattleEffect_BeamCorners[];
 
 // The spark cells: offsets into the particle sheet by size.
@@ -380,7 +380,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         texture.logHeight = 7;
         model->kind = 6;
         model->texture = &texture;
-        model->mesh = gBattleEffect_SquareMesh128;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = vertices;
         texture.pixels = Ram_MapCellBuffer;
 
@@ -493,7 +493,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           texture.logWidth = 5;
           texture.logHeight = 2;
           model->kind = 7;
-          model->mesh = gBattleEffect_SquareMesh32;
+          model->mesh = gBattleEffect_SmallSquareMesh;
           texture.pixels = work->sheet;
           Transform_Reset();
           SceneTransform_ApplyPosition3((mouthX - 64) << 16,

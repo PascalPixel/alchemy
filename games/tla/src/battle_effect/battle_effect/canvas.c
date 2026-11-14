@@ -43,12 +43,8 @@ extern char ResourceId_Data134, ResourceId_TornadoSheet, ResourceId_Data0B4;
 extern char ResourceId_Data0C1, ResourceId_Data0C9, ResourceId_Data0CA;
 
 extern u8 gMapCellBuffer[];
-/* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep
- * gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest
- * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/canvas.c:179:
- * `gData_02014000__f14153c' undeclared (first use in this function). */
-extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
+/// The flashes, after the map cells.
+#define FLASHES ((struct EffectStep *)gData_02014000)
 
 /* VIEW(battle_effect): routine EffectSprite_CreateWithTiles as struct
  * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
@@ -182,7 +178,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   {
-    const u8 *texturePixels = (const u8 *)gData_02014000__f14153c;
+    const u8 *texturePixels = (const u8 *)FLASHES;
 
     for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B));
          frame++) {
@@ -194,8 +190,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         work->fadeFrames = 1;
         work->fadeStep = frame;
         work->particles[16].variant = frame;
-        Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
-                                   gData_02014000__f14153c, 0, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, FLASHES, 0, 0);
       }
       if (frame == 136) {
         u8 *dst = Data_02010400;
@@ -339,7 +334,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         texture.logHeight = 2;
         texture.pixels = work->sheet + 0x4000;
         model->kind = 6;
-        model->mesh = gBattleEffect_SquareMesh32;
+        model->mesh = gBattleEffect_SmallSquareMesh;
         model->texture = &texture;
         model->vertices = verts;
         for (i = 0; i != 8; i++) {
@@ -377,7 +372,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           model->kind = 7;
           texture.pixels = texturePixels;
           model->texture = &texture;
-          model->mesh = gBattleEffect_SquareMesh64;
+          model->mesh = gBattleEffect_SquareMesh;
           model->vertices = verts;
           Transform_Reset();
           SceneTransform_ApplyPosition3(cx + -0x3e0000, cy + -0x420000, 0);
@@ -520,7 +515,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       texture2.logWidth = 5;
       texture2.logHeight = 2;
       texture2.pixels = work->sheet + 0x3840;
-      model->mesh = gBattleEffect_SquareMesh32;
+      model->mesh = gBattleEffect_SmallSquareMesh;
       model->shade = fade;
       model->texture = &texture2;
       model->vertices = verts;
@@ -581,7 +576,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
                              0);
   {
-    s32 *v = &gData_02014000__f14153c[0].variant;
+    s32 *v = &FLASHES[0].variant;
     s32 c = -1;
 
     for (i = 0; i != 512; i++) {
@@ -669,7 +664,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         texture3.logWidth = 5;
         texture3.logHeight = 2;
         texture3.pixels = work->sheet + 0x3840;
-        model->mesh = gBattleEffect_SquareMesh32;
+        model->mesh = gBattleEffect_SmallSquareMesh;
         model->shade = shade;
         model->vertices = gMapCellBuffer;
         model->kind = 6;
@@ -924,7 +919,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
 
       if (frame == 48) {
         {
-          s32 *variant = &gData_02014000__f14153c[0].variant;
+          s32 *variant = &FLASHES[0].variant;
 
           for (i = 0; i != 64; i++) {
             *variant = -1;
@@ -934,7 +929,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
         work->shakeFrames = 8;
         Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       }
-      flashes = gData_02014000__f14153c;
+      flashes = FLASHES;
       if (frame >= 48 && frame <= 55) {
         s32 x = ((Random16() & 63) + center.x / 2 - 32) << 16;
         s32 y = ((Random16() & 31) + center.y) << 16;
@@ -1013,7 +1008,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
       texture.pixels = work->sheet + 0x3000;
       model->kind = 7;
       model->texture = &texture;
-      model->model = gBattleEffect_SquareMesh32;
+      model->model = gBattleEffect_SmallSquareMesh;
       model->corners = corners;
 
       // The rings rise for 24 frames, spinning and swelling.

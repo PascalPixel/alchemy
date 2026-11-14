@@ -67,13 +67,8 @@ extern char ResourceId_TornadoSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_VioletPaletteC;
-/* VIEW(f16fca8): variable gData_02014000 as extern struct EffectStep
- * gData_02014000[]; f16e65c has extern u8 gData_02014000[]; tried as the rest
- * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/thunder_mine.c:196: request for
- * member `variant' in something not a structure or union. */
-extern struct EffectStep
-    gData_02014000__f16fca8[] __asm__("gData_02014000"); // the sparks
+/// The sparks, after the map cells.
+#define BOLT_SPARKS ((struct EffectStep *)gData_02014000)
 extern u16 gBattleEffect_MotePictures[];
 // Heights not const: a const table's second height read issues two places
 // early (6).
@@ -198,10 +193,10 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
       // step at a time, past the step's scalar members.
 #ifdef UBFIX
       for (i = 0; i != 512; i++)
-        gData_02014000__f16fca8[i].variant = -1;
+        BOLT_SPARKS[i].variant = -1;
 #else
       {
-        s32 *variant = &gData_02014000__f16fca8[0].variant;
+        s32 *variant = &BOLT_SPARKS[0].variant;
 
         for (i = 0; i != 512; i++) {
           *variant = -1;
@@ -215,7 +210,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == frames) {
       s32 n;
 
-      for (n = 0, spark = gData_02014000__f16fca8; n != 128; n++, spark++) {
+      for (n = 0, spark = BOLT_SPARKS; n != 128; n++, spark++) {
         s32 angle;
         s32 speed;
 
@@ -293,7 +288,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
 
     // Thunder Mine's sparks bounce.
     if (mode == 0 && frame >= frames) {
-      for (i = 0, dot = gData_02014000__f16fca8; i != 512; i++, dot++) {
+      for (i = 0, dot = BOLT_SPARKS; i != 512; i++, dot++) {
         if (dot->variant >= 0) {
           s32 size = (dot->variant >> 3) + 2;
           s32 step;
@@ -560,13 +555,13 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         (*draw)(canvas, cells, sway, 0, 96, 64);
         (*draw)(canvas, cells, sway, 64, 96, 52);
         {
-          s32 picture2 = (frame / 2) % 3;
-          u8 *cells2;
+          s32 flickerFrame = (frame / 2) % 3;
+          u8 *flickerPixels;
 
           sway = (Trig_Sin((frame << 12) + TRIG_TURN / 2) << 3) >> 16;
-          cells2 = work->sheet + picture2 * 3 * 0x800;
-          (*draw)(canvas, cells2, sway, 0, 96, 64);
-          (*draw)(canvas, cells2, sway, 64, 96, 52);
+          flickerPixels = work->sheet + flickerFrame * 3 * 0x800;
+          (*draw)(canvas, flickerPixels, sway, 0, 96, 64);
+          (*draw)(canvas, flickerPixels, sway, 64, 96, 52);
         }
       }
       for (i = 0, p = work->particles; i != 24; i++, p++) {

@@ -93,10 +93,10 @@ extern u8 gBattleEffect_PuffArcPictureBiasY[];
 extern u16 gBattleEffect_PuffArcPictures[];
 extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
-extern const u8 gBattleEffect_SquareMesh32Reversed[];
+extern const u8 gBattleEffect_SmallSquareMeshReversed[];
 extern const u8 gHaures_BandMesh[];
-extern const u8 gBattleEffect_SquareMesh64[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_SquareMesh[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 extern const u8 gHaures_BurstMesh[];
 extern const struct HalfPair gHaures_FeatherPoints[];
 extern const u8 gHaures_ParticleX[];
@@ -154,17 +154,17 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   s32 morphStep;
   s32 dived;
   s32 i;
-  s32 place[4];
-  s32 place2[4];
+  s32 wingPlace[4];
+  s32 bodyPlace[4];
   struct WordPair req;
-  struct WordPair req2;
-  struct WordPair req3;
+  struct WordPair openingScale;
+  struct WordPair orbitScale;
   struct ModelTexture texture;
-  struct ModelTexture texture2;
-  struct ModelTexture texture3;
-  struct ModelTexture texture4;
+  struct ModelTexture burstTexture;
+  struct ModelTexture wideTexture;
+  struct ModelTexture bandTexture;
   struct FieldSprite *sprite;
-  const u8 *q2;
+  const u8 *particleX;
   u8 *buffer;
   u8 *shades;
   u16 *dst;
@@ -333,12 +333,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             q[1] = 1;
           }
         }
-        q2 = gHaures_ParticleX;
+        particleX = gHaures_ParticleX;
         {
           struct EffectStep *p = work->particles;
 
-          for (i = 0; i != 4; i++, p++, q2++) {
-            p->x = *q2 << 16;
+          for (i = 0; i != 4; i++, p++, particleX++) {
+            p->x = *particleX << 16;
             p->y = px(16);
             p->velocityX = 0;
             p->velocityY = 0;
@@ -404,29 +404,31 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
       if (frame <= 266) {
         if (frame <= 639) {
-          place[1] = 0;
-          place[3] = 0;
+          wingPlace[1] = 0;
+          wingPlace[3] = 0;
           {
             struct EffectStep *p = work->particles;
 
             for (i = 0; i != 4; i++, p++) {
               if (frame > i * 26) {
                 if (p->variant == 0) {
-                  place[0] = p->x;
-                  place[2] = p->y;
-                  Render_ApplyProjectedPlacementFar(
-                      work->objects[16 + (i & 1)], place, gHaures_UnitScale, 0);
+                  wingPlace[0] = p->x;
+                  wingPlace[2] = p->y;
+                  Render_ApplyProjectedPlacementFar(work->objects[16 + (i & 1)],
+                                                    wingPlace,
+                                                    gHaures_UnitScale, 0);
                   BattleEffectKernels_IntegrateVector2(p, 63, 0x2000);
                   if (HALF_HI(p->y) > 119) {
                     p->variant = 1;
                   }
                 } else if (p->variant <= 23) {
-                  place[0] = p->x;
-                  place[2] = p->y;
+                  wingPlace[0] = p->x;
+                  wingPlace[2] = p->y;
                   Animation_ApplyChildArgumentFar(work->objects[12 + (i & 1)],
                                                   (p->variant / 6) & 3);
-                  Render_ApplyProjectedPlacementFar(
-                      work->objects[12 + (i & 1)], place, gHaures_UnitScale, 0);
+                  Render_ApplyProjectedPlacementFar(work->objects[12 + (i & 1)],
+                                                    wingPlace,
+                                                    gHaures_UnitScale, 0);
                   p->variant++;
                 }
               }
@@ -454,7 +456,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->kind = 6;
           model->shade = sh;
           model->texture = &texture;
-          model->mesh = gBattleEffect_SquareMesh64;
+          model->mesh = gBattleEffect_SquareMesh;
           model->vertices = verts;
           Transform_Reset();
           SceneTransform_ApplyPosition3(0, 0x240000, 0);
@@ -472,7 +474,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           texture.pixels = work->sheet + 0x1000;
           model->kind = 9;
           model->texture = &texture;
-          model->mesh = gBattleEffect_SquareMesh32Reversed;
+          model->mesh = gBattleEffect_SmallSquareMeshReversed;
           model->vertices = verts;
           model->shade = sh;
           Transform_Reset();
@@ -532,7 +534,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           Heap_Release(verts);
         }
         req = gHaures_ChargeScale;
-        place2[3] = 0;
+        bodyPlace[3] = 0;
         if (frame > 149) {
 
           position.a += velocity.a;
@@ -551,10 +553,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           req.a = 0x10000;
           req.b = 0x10000;
           for (i = 0; i != 2; i++) {
-            place2[0] = position.a;
-            place2[1] = 0x1100000 - (position.b + i * 0x200000);
-            place2[2] = 0x1000000;
-            Render_ApplyProjectedPlacementFar(work->objects[i], place2,
+            bodyPlace[0] = position.a;
+            bodyPlace[1] = 0x1100000 - (position.b + i * 0x200000);
+            bodyPlace[2] = 0x1000000;
+            Render_ApplyProjectedPlacementFar(work->objects[i], bodyPlace,
                                               (s32 *)&req, 0);
           }
           if ((u32)(frame - 150) <= 116) {
@@ -587,10 +589,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           if (req.b > 0x20000) {
             req.b = 0x20000;
           }
-          place2[0] = position.a;
-          place2[1] = 0x780000 - position.b;
-          place2[2] = 0x800000;
-          Render_ApplyProjectedPlacementFar(work->objects[18], place2,
+          bodyPlace[0] = position.a;
+          bodyPlace[1] = 0x780000 - position.b;
+          bodyPlace[2] = 0x800000;
+          Render_ApplyProjectedPlacementFar(work->objects[18], bodyPlace,
                                             (s32 *)&req, 0);
         }
       }
@@ -629,13 +631,13 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         }
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
-        texture2.logWidth = 7;
-        texture2.logHeight = 7;
-        texture2.pixels = SCRATCH;
+        burstTexture.logWidth = 7;
+        burstTexture.logHeight = 7;
+        burstTexture.pixels = SCRATCH;
         model->shade = 0;
         model->kind = 7;
-        model->texture = &texture2;
-        model->mesh = gBattleEffect_SquareMesh128;
+        model->texture = &burstTexture;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = verts;
         Transform_Reset();
         SceneTransform_ApplyPosition3(0, -0x40000, 0);
@@ -658,9 +660,9 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             }
           }
           if ((u32)(frame - 267) <= 5) {
-            texture2.logWidth = 6;
-            texture2.logHeight = 7;
-            texture2.pixels = buffer;
+            burstTexture.logWidth = 6;
+            burstTexture.logHeight = 7;
+            burstTexture.pixels = buffer;
             model->mesh = gHaures_BurstMesh;
             Transform_Reset();
             SceneTransform_ApplyPosition3(0, -0x40000, 0);
@@ -722,8 +724,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           velocity.a = 0;
         }
         gBgScroll[1].x += 0xfff4;
-        req3 = gHaures_OrbitScale;
-        place2[3] = 0;
+        orbitScale = gHaures_OrbitScale;
+        bodyPlace[3] = 0;
         position.a = (Trig_Sin(frame << 9) << 3) + 0x6c0000;
         position.b = 0x380000 - (Trig_Cos(frame << 9) << 3);
         if (frame > 396) {
@@ -734,12 +736,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               velocity.a; // velocity.a, not velocity.b, as the ROM has it
         }
         for (i = 0; i != 11; i++) {
-          place2[0] = (gHaures_FeatherPoints[i].x << 16) + position.a;
-          place2[1] =
+          bodyPlace[0] = (gHaures_FeatherPoints[i].x << 16) + position.a;
+          bodyPlace[1] =
               0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.b);
-          place2[2] = 0x1000000;
-          Render_ApplyProjectedPlacementFar(work->objects[i], place2,
-                                            (s32 *)&req3, 0);
+          bodyPlace[2] = 0x1000000;
+          Render_ApplyProjectedPlacementFar(work->objects[i], bodyPlace,
+                                            (s32 *)&orbitScale, 0);
         }
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
@@ -770,11 +772,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             mesh[j * 12 + 10] = none;
           }
         }
-        texture3.logWidth = 8;
-        texture3.logHeight = 7;
-        texture3.pixels = buffer;
+        wideTexture.logWidth = 8;
+        wideTexture.logHeight = 7;
+        wideTexture.pixels = buffer;
         model->kind = 1;
-        model->texture = &texture3;
+        model->texture = &wideTexture;
         model->vertices = verts;
         model->shade = (s32)shades;
         {
@@ -946,27 +948,27 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     if (frame <= 73) {
       s32 t;
 
-      req2 = gHaures_OpeningScale;
-      place2[3] = 0;
+      openingScale = gHaures_OpeningScale;
+      bodyPlace[3] = 0;
       t = frame - 20;
       if ((u32)t <= 19) {
-        req2.a = -0x10001;
+        openingScale.a = -0x10001;
         for (i = 0; i != 11; i++) {
-          place2[0] = position.a - (gHaures_FeatherPoints[i].x << 16);
-          place2[1] =
+          bodyPlace[0] = position.a - (gHaures_FeatherPoints[i].x << 16);
+          bodyPlace[1] =
               0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.b);
-          place2[2] = 0x1000000;
-          Render_ApplyProjectedPlacementFar(work->objects[i], place2,
-                                            (s32 *)&req2, 0);
+          bodyPlace[2] = 0x1000000;
+          Render_ApplyProjectedPlacementFar(work->objects[i], bodyPlace,
+                                            (s32 *)&openingScale, 0);
         }
       } else {
         for (i = 0; i != 11; i++) {
-          place2[0] = (gHaures_FeatherPoints[i].x << 16) + position.a;
-          place2[1] =
+          bodyPlace[0] = (gHaures_FeatherPoints[i].x << 16) + position.a;
+          bodyPlace[1] =
               0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.b);
-          place2[2] = 0x1000000;
-          Render_ApplyProjectedPlacementFar(work->objects[i], place2,
-                                            (s32 *)&req2, 0);
+          bodyPlace[2] = 0x1000000;
+          Render_ApplyProjectedPlacementFar(work->objects[i], bodyPlace,
+                                            (s32 *)&openingScale, 0);
         }
       }
       position.a += velocity.a;
@@ -1018,12 +1020,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     model = Render_AllocateModelList(1);
     model->shade = -8;
     model->kind = 7;
-    model->texture = &texture4;
-    texture4.logWidth = 6;
-    texture4.logHeight = 5;
+    model->texture = &bandTexture;
+    bandTexture.logWidth = 6;
+    bandTexture.logHeight = 5;
     model->mesh = gHaures_BandMesh;
     model->vertices = verts;
-    texture4.pixels = work->sheet;
+    bandTexture.pixels = work->sheet;
     model->scrollU = (frame * 8) & 127;
     for (i = 0; i != 2; i++) {
       s32 start = gHaures_BandStarts[i];
@@ -1050,8 +1052,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         }
       }
     }
-    texture4.logWidth = 6;
-    texture4.logHeight = 5;
+    bandTexture.logWidth = 6;
+    bandTexture.logHeight = 5;
     model->mesh = gHaures_BandMesh;
     model->kind = 7;
     if ((u32)(frame - 56) <= 31) {
@@ -1066,7 +1068,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
       model->shade = sh;
       model->scrollU = (frame * 8) & 127;
-      texture4.pixels = work->sheet;
+      bandTexture.pixels = work->sheet;
       if (frame <= 71) {
         v = Trig_Sin((frame << 10) + -0xe000) * 80 >> 16;
       } else if (frame > 79) {

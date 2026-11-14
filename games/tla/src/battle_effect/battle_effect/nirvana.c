@@ -765,7 +765,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             VERTICES[row * 8 + column].z = (Trig_Cos(angle) * radius) >> 16;
             if (row <= 6) {
               u8 *quad = MESH_BUFFER + (row * 8 + column) * 24;
-              u8 *quad2;
+              u8 *gridQuad;
               s32 bottom = row * 8 + 7;
               s32 left = column * 16;
               s32 right = left + 15;
@@ -778,21 +778,21 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
               quad[9] = bottom;
               quad[7] = bottom;
               quad[8] = left;
-              quad2 = MESH_BUFFER + 12 + (row * 8 + column) * 24;
-              quad2[4] = left;
-              quad2[8] = left;
-              quad2[5] = row * 8;
-              quad2[9] = bottom;
-              quad2[6] = right;
-              quad2[7] = row * 8;
+              gridQuad = MESH_BUFFER + 12 + (row * 8 + column) * 24;
+              gridQuad[4] = left;
+              gridQuad[8] = left;
+              gridQuad[5] = row * 8;
+              gridQuad[9] = bottom;
+              gridQuad[6] = right;
+              gridQuad[7] = row * 8;
               next = (column + 1) % 8 + row * 8;
               quad[0] = next;
               here = column % 8 + row * 8;
               quad[1] = here + 8;
               quad[2] = next + 8;
-              quad2[0] = here;
-              quad2[1] = here + 8;
-              quad2[2] = next;
+              gridQuad[0] = here;
+              gridQuad[1] = here + 8;
+              gridQuad[2] = next;
             }
           }
         }

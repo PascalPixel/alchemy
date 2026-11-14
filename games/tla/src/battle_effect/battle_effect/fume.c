@@ -99,7 +99,7 @@ extern u8 gMapCellBuffer[];
 extern const u16 gFume_Levels[][FUME_COLUMNS];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
-extern const u8 gBattleEffect_SquareMesh64[];  // the head's mesh
+extern const u8 gBattleEffect_SquareMesh[];    // the head's mesh
 extern const u8 gBattleEffect_SquareCorners[]; // its corners
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -306,7 +306,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
 
           // The claw at the arc's end.
           if (frame <= 22) {
-            model->mesh = gBattleEffect_SquareMesh64;
+            model->mesh = gBattleEffect_SquareMesh;
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;

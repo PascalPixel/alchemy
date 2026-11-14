@@ -109,8 +109,8 @@ extern const u8 gBattleEffect_TaperedBeamCorners[];
 extern const u8 gBattleEffect_BeamCorners[];
 extern const u8 gBattleEffect_GroundSquareCorners[]; // a quad's four corners, x
                                                      // y z for each
-extern const u8 gBattleEffect_SquareMesh32[];
-extern const u8 gBattleEffect_SquareMesh64[]; // the quad's face
+extern const u8 gBattleEffect_SmallSquareMesh[];
+extern const u8 gBattleEffect_SquareMesh[]; // the quad's face
 void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
@@ -122,7 +122,7 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
-// The models: the rings' quad (gBattleEffect_SquareMesh32), its corners, the
+// The models: the rings' quad (gBattleEffect_SmallSquareMesh), its corners, the
 // crystal and its corners.
 extern const u8 gBattleEffect_RingMesh[];
 extern const u8 gBattleEffect_RingCorners[];
@@ -135,7 +135,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 void BattleEffect_SetupCanvasWindows(void); // the BG2 canvas's registers
 extern u8 gData_02014000[];
 extern const u8 gBattleEffect_SquareCorners[];
-extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_LargeSquareMesh[];
 void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);
 void BattleEffect_RunRamses(struct BattleEffectArgument *effect);
 void BattleEffect_RunNereid(struct BattleEffectArgument *effect);
@@ -300,7 +300,7 @@ extern char ResourceId_Data0D7;
 void BattleEffect_WipeCanvas(s32, s32);
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 // The quad meshes and corners: the card, the pictures and their spread.
-extern u8 gBattleEffect_TallMesh32[];
+extern u8 gBattleEffect_TallMesh[];
 // The dagger's shards, ☀️'s palette ramp shards.
 extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];

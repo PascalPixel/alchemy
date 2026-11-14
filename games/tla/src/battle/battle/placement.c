@@ -23,7 +23,7 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   else
     object = actor->object;
   zero = 0;
-  actor->scale = 0xe666;
+  actor->scale = Q16_ONE * 9 / 10;
   actor->object = object;
   if (keep == 0) {
     actor->anchorZ = zero;
@@ -61,8 +61,8 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 facingAngle;
   s32 weaponSprite;
 
-  fixedX = x * 65536;
-  fixedZ = y * 65536;
+  fixedX = px(x);
+  fixedZ = px(y);
   object = Actor_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_Get(unitId);
   palette = 0;
@@ -76,28 +76,28 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
       sprite = registeredSprite;
   } else {
     switch (unit->enemyId) {
-    case 0:
+    case ISAAC:
       sprite = 490;
       break;
-    case 1:
+    case GARET:
       sprite = 495;
       break;
-    case 3:
+    case MIA:
       sprite = 504;
       break;
-    case 2:
+    case IVAN:
       sprite = 500;
       break;
-    case 4:
+    case FELIX:
       sprite = 508;
       break;
-    case 6:
+    case SHEBA:
       sprite = 517;
       break;
-    case 7:
+    case PIERS:
       sprite = 521;
       break;
-    case 5:
+    case JENNA:
     default:
       sprite = 513;
       break;
@@ -110,77 +110,77 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   actor->effect = 686;
 
   switch (unit->enemyId) {
-  case 0:
+  case ISAAC:
     actor->scale = Q16_ONE;
     break;
-  case 1:
+  case GARET:
     actor->scale = Q16_ONE;
     break;
-  case 3:
+  case MIA:
     actor->scale = Q16_ONE;
     break;
-  case 2:
+  case IVAN:
     actor->scale = Q16_ONE;
     break;
-  case 7:
-    actor->scale = 0x10ccc;
+  case PIERS:
+    actor->scale = Q16_ONE * 21 / 20;
     break;
-  case 5:
-    actor->scale = 0xf333;
+  case JENNA:
+    actor->scale = Q16_ONE * 19 / 20;
     break;
-  case 4:
+  case FELIX:
     actor->scale = Q16_ONE;
     break;
-  case 6:
-    actor->scale = 0xe666;
+  case SHEBA:
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   case 234:
-    actor->scale = 0xe666;
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   case 235:
-    actor->scale = 0xe666;
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   case 236:
-    actor->scale = 0xe666;
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   case 237:
-    actor->scale = 0xe666;
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   case 291:
-    actor->scale = 0x19999;
+    actor->scale = Q16_ONE * 8 / 5;
     break;
   case 302:
-    actor->scale = 0x18ccc;
+    actor->scale = Q16_ONE * 31 / 20;
     break;
   case 339:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case 340:
-    actor->scale = 0x19999;
+    actor->scale = Q16_ONE * 8 / 5;
     break;
   case 333:
     actor->scale = Q16_ONE * 3 / 2;
     break;
   case 347:
-    actor->scale = 0x1cccc;
+    actor->scale = Q16_ONE * 9 / 5;
     break;
   case 358:
-    actor->scale = 0x1cccc;
+    actor->scale = Q16_ONE * 9 / 5;
     break;
   case 245:
     actor->scale = Q16_ONE;
     break;
   case 246:
-    actor->scale = 0xe666;
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   case 385:
     actor->scale = Q16_ONE;
     break;
   case 386:
-    actor->scale = 0xe666;
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   case 348:
-    actor->scale = 0x1b333;
+    actor->scale = Q16_ONE * 17 / 10;
     break;
   case 357:
     actor->scale = Q16_ONE * 3 / 2;
@@ -213,10 +213,10 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = Q16_ONE * 3 / 2;
     break;
   case 263:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case 264:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case 297:
     actor->scale = Q16_ONE;
@@ -225,46 +225,46 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = Q16_ONE * 5 / 4;
     break;
   case 305:
-    actor->scale = 0xe666;
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   case 307:
     actor->scale = Q16_ONE * 3 / 2;
     break;
   case 311:
-    actor->scale = 0x14ccc;
+    actor->scale = Q16_ONE * 13 / 10;
     break;
   case 323:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case 341:
-    actor->scale = 0x10ccc;
+    actor->scale = Q16_ONE * 21 / 20;
     break;
   case 342:
-    actor->scale = 0x10ccc;
+    actor->scale = Q16_ONE * 21 / 20;
     break;
   case 343:
-    actor->scale = 0x11999;
+    actor->scale = Q16_ONE * 11 / 10;
     break;
   case 344:
-    actor->scale = 0x11999;
+    actor->scale = Q16_ONE * 11 / 10;
     break;
   case 345:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case 346:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case 336:
     actor->scale = Q16_ONE * 3 / 2;
     break;
   case 349:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case 350:
     actor->scale = Q16_ONE * 3 / 2;
     break;
   case 351:
-    actor->scale = 0x18ccc;
+    actor->scale = Q16_ONE * 31 / 20;
     break;
   case 268:
     actor->scale = Q16_ONE * 5 / 4;
@@ -280,12 +280,12 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 354:
   case 355:
   case 356:
-    actor->scale = 0xe666;
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   case 68:
   case 69:
   case 70:
-    actor->scale = 0xf333;
+    actor->scale = Q16_ONE * 19 / 20;
     break;
   case 218:
   case 219:
@@ -293,12 +293,12 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 221:
   case 222:
   case 223:
-    actor->scale = 0x14ccc;
+    actor->scale = Q16_ONE * 13 / 10;
     break;
   case 209:
   case 210:
   case 211:
-    actor->scale = 0x17333;
+    actor->scale = Q16_ONE * 29 / 20;
     break;
   case 91:
   case 92:
@@ -307,7 +307,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 95:
   case 96:
   case 97:
-    actor->scale = 0x11999;
+    actor->scale = Q16_ONE * 11 / 10;
     break;
   case 101:
   case 102:
@@ -319,15 +319,15 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
     break;
   case 89:
   case 90:
-    actor->scale = 0x11999;
+    actor->scale = Q16_ONE * 11 / 10;
     break;
   case 117:
   case 149:
-    actor->scale = 0x12666;
+    actor->scale = Q16_ONE * 23 / 20;
     break;
   case 118:
   case 150:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case 119:
   case 151:
@@ -346,12 +346,12 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 105:
   case 106:
     actor->effect = 685;
-    actor->scale = 0x12666;
+    actor->scale = Q16_ONE * 23 / 20;
     break;
   case 107:
   case 108:
   case 109:
-    actor->scale = 0x1028f;
+    actor->scale = Q16_ONE * 101 / 100;
     break;
   case 80:
     actor->scale = Q16_ONE * 5 / 4;
@@ -365,7 +365,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 206:
   case 207:
   case 208:
-    actor->scale = 0x11999;
+    actor->scale = Q16_ONE * 11 / 10;
     break;
   case 194:
     actor->scale = Q16_ONE * 5 / 4;
@@ -376,13 +376,13 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 158:
   case 159:
   case 160:
-    actor->scale = 0xcccc;
+    actor->scale = Q16_ONE * 4 / 5;
     break;
   case 378:
   case 379:
   case 380:
   case 381:
-    actor->scale = 0xcccc;
+    actor->scale = Q16_ONE * 4 / 5;
     break;
   case 74:
   case 75:
@@ -394,7 +394,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 369:
   case 373:
   case 376:
-    actor->scale = 0x16666;
+    actor->scale = Q16_ONE * 7 / 5;
     break;
   }
 

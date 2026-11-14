@@ -324,7 +324,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       u16 enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
 
       if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376)
-        battleObject->scale = 0xb333;
+        battleObject->scale = Q16_ONE * 7 / 10;
     }
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x6041, 0x20000);
     wait(1);

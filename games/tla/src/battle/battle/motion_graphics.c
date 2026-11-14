@@ -155,7 +155,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     if (BattleObject_Get(saved->unitId)->object == NULL) {
       saved->reactivate = 1;
       BattleObject_Reset(BattleObject_Get(saved->unitId));
-      BattleObject_Get(saved->unitId)->scale = 0x13333;
+      BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
     }
   } else {
     saved->unitId = plan->actorId;
@@ -192,7 +192,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   }
   Iwram_CopyWordsEntry(saved, BattleObject_Get(saved->unitId), 44);
   BattleObject_Reset(BattleObject_Get(saved->unitId), single);
-  BattleObject_Get(saved->unitId)->scale = 0x13333;
+  BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
   if (single)
     saved->buffer = Heap_AllocEwram(0x8000);
   else

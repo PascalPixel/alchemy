@@ -24,6 +24,10 @@
 #define FLAG_LINK_BATTLE_ARRANGED 0x172
 
 #define TEXT_COLOR_NORMAL TEXT_COLOR_WHITE ///< the window text's default colour
+
+/// WindowSprite.active as the menu sets it: shown, or hidden but kept.
+#define ICON_SHOWN 1   ///< WINDOW_SPRITE_MOTION_STILL
+#define ICON_HIDDEN 13 ///< WINDOW_SPRITE_MOTION_HIDDEN
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"

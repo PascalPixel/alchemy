@@ -194,7 +194,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
     struct ArrowSprite *entry;
 
     if (output) {
-      output->active = 1;
+      output->active = WINDOW_SPRITE_MOTION_STILL;
       output->kind = 1;
       output->index = VramCache_AllocEntry(128);
       entry = (struct ArrowSprite *)&output->sprite;

@@ -156,7 +156,7 @@ s32 Sanctum_Run(s32 unitId) {
   cursorAnchor = (struct ShopCursorAnchor *)WindowSprite_CreateFar(
       shop->cursorIcon, OUTPUT_SIZE_16X16, (struct RenderInput *)listWindow, 0,
       0);
-  cursorAnchor->active = 1;
+  cursorAnchor->active = WINDOW_SPRITE_MOTION_STILL;
   cursorAnchor->unk00[4] = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = (struct WindowSprite *)cursorAnchor;
@@ -233,7 +233,7 @@ s32 Sanctum_RunPartyService(void) {
   Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
 
   listWindow = Window_CreateFar(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
-  shop->cursor.anchor->active = 4;
+  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->mode = redraw;
   Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
 #if SERVICE_PRICE_WINDOW
@@ -380,14 +380,14 @@ void Sanctum_HighlightMembers(void *window, s32 selected) {
       icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
                                     window, 88, -12);
       icon->kind = 0;
-      icon->active = 17;
+      icon->active = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animStep = 0;
     }
     if (first + 4 < count) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
                                     window, 88, 0);
       icon->kind = 0;
-      icon->active = 15;
+      icon->active = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animStep = 0;
     }
     for (i = 0; i < 4; i++) {
@@ -493,7 +493,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   shop = Ram_HeapSlots->menuRuntime;
   savedCursorMode = shop->cursor.anchor->active;
   shop->burstMember = -1;
-  shop->cursor.anchor->active = 13;
+  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_HIDDEN;
   Sound_PlayFar(sSanctumServiceCues[shop->action]);
   Shop_SaveAndTintFieldPalette(0x00202108);
   Animation_ApplyChildValueFar(shop->partyMemberIcons[member], 0);

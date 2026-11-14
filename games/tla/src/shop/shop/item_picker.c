@@ -28,7 +28,7 @@ s32 Forge_Run(s32 objectId) {
   window = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   icon->sentinel = 255;
-  icon->active = 1;
+  icon->active = WINDOW_SPRITE_MOTION_STILL;
   icon->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
@@ -126,7 +126,7 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   result = 0;
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000,
                                 (struct RenderInput *)iconWindow, 0, result);
-  icon->active = 4;
+  icon->active = WINDOW_SPRITE_MOTION_WOBBLE;
   icon->kind = result;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
@@ -155,7 +155,7 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       slot = ItemPicker_SelectItem(unitId);
       if (slot == -1) {
-        shop->cursor.anchor->active = 4;
+        shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
         shop->mode = 12;
         redraw = 2;
         continue;
@@ -226,7 +226,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
                                  WINDOW_FLAG_INSTANT);
   nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 
-  shop->cursor.anchor->active = 18;
+  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
   shop->mode = 12;
   slot = 0;
   while (1) {

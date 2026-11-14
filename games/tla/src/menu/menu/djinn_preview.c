@@ -40,7 +40,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   frame = 0;
   page = 2;
   help = menu->helpWindow;
-  menu->cursor->active = 13;
+  menu->cursor->active = ICON_HIDDEN;
   selectedPages[0] = 0;
   selectedPages[1] = 0;
   Party_ListMembersFar(owners);
@@ -227,7 +227,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3, 8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
-            menu->cursor->active = 1;
+            menu->cursor->active = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(2, 96);
           gMainRoutineWork.eventMode = 1;
@@ -242,7 +242,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           backdrop->tutorialStep = 11;
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
-            menu->cursor->active = 13;
+            menu->cursor->active = ICON_HIDDEN;
           } while (0);
         }
         break;
@@ -255,7 +255,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2, 8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
-            menu->cursor->active = 1;
+            menu->cursor->active = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(106, 56);
           gMainRoutineWork.eventMode = 1;
@@ -271,7 +271,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           backdrop->tutorialStep = 12;
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
-            menu->cursor->active = 13;
+            menu->cursor->active = ICON_HIDDEN;
           } while (0);
         }
         break;
@@ -494,7 +494,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   redraw = 1;
   result = 0;
   frame = 0;
-  menu->cursor->active = 13;
+  menu->cursor->active = ICON_HIDDEN;
   /* FAKEMATCH(temporary): selected = selectedPages, the page array read through
    * a pointer. */
   selected = selectedPages;

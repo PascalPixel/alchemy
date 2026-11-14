@@ -374,9 +374,9 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 
   result = 0;
   icon = menu->sideIcons[partySlot];
-  icon->active = 1;
+  icon->active = ICON_SHOWN;
   icon->animStep = result;
-  menu->cursorIcon->active = 13;
+  menu->cursorIcon->active = ICON_HIDDEN;
   menu->tabCounts[partySlot] = menu->memberCount;
 
   if (memberIndex == -1) {
@@ -429,7 +429,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   if (Window_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
     menu->cursorIcon = WindowSprite_CreateFromResourceFar(
         2, 0, menu->shortcutWindow, 0, result);
-    menu->cursorIcon->active = 13;
+    menu->cursorIcon->active = ICON_HIDDEN;
   }
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
@@ -494,8 +494,8 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   menu->tabIndex[0] = selection;
   menu->selectedOwner = ownerIds[selection];
   menu->memberIds[0] = ownerIds[selection];
-  menu->paneIcon[0]->active = 13;
-  menu->paneIcon[1]->active = 13;
+  menu->paneIcon[0]->active = ICON_HIDDEN;
+  menu->paneIcon[1]->active = ICON_HIDDEN;
   return result;
 }
 
@@ -595,7 +595,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   }
   icon = menu->sideIcons[1];
   Icon_PrepareActor(icon);
-  icon->active = 13;
+  icon->active = ICON_HIDDEN;
   wait(1);
   menu->tabIndex[1] = selection;
   menu->selectedOwner = menu->ownerIds[selection];
@@ -604,8 +604,8 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   count = menu->tabCounts[0];
   Menu_CreateOwnerEntryObjects(selection / 4 * 4);
   Menu_HighlightPageEntry(menu->rowWindow, selection, count);
-  menu->paneIcon[0]->active = 13;
-  menu->paneIcon[1]->active = 13;
+  menu->paneIcon[0]->active = ICON_HIDDEN;
+  menu->paneIcon[1]->active = ICON_HIDDEN;
   return result;
 }
 
@@ -1075,7 +1075,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   result = 0;
   previous = 0;
   shortcutHelp = 0;
-  menu->sideIcons[paneIndex]->active = 13;
+  menu->sideIcons[paneIndex]->active = ICON_HIDDEN;
   Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
   window = menu->listWindow;
   done = 0;
@@ -1092,7 +1092,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
     PsynergyMenu_BuildPagedList(&state, paneIndex);
     changed = 1;
     redraw = 1;
-    menu->sideIcons[paneIndex]->active = 1;
+    menu->sideIcons[paneIndex]->active = ICON_SHOWN;
 
     while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
       MenuCursor_Position(CURSOR_X, state.row * 16 + 36);
@@ -1110,10 +1110,10 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         }
         PsynergyMenu_DrawDetailPage(window, work, &state);
         menu->paneAction[paneIndex] = menu->psynergies[state.selectedIndex];
-        menu->cursorIcon->active = 13;
+        menu->cursorIcon->active = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          icon->active = 9;
+          icon->active = WINDOW_SPRITE_MOTION_SWELL;
           icon->animStep = 0;
           icon->sentinel = 250;
         }
@@ -1216,8 +1216,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         menu->tabIndex[paneIndex] = member;
         Menu_CreateOwnerEntryObjects(member / 4 * 4);
         Menu_HighlightPageEntry(menu->rowWindow, member, ownerCount);
-        menu->paneIcon[0]->active = 13;
-        menu->paneIcon[1]->active = 13;
+        menu->paneIcon[0]->active = ICON_HIDDEN;
+        menu->paneIcon[1]->active = ICON_HIDDEN;
         wait(1);
         StatusPanel_Draw(menu->statusWindow, menu->ownerIds[member], 0, 0);
         PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[member]);

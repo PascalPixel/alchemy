@@ -145,7 +145,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   anchor =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
   anchor->sentinel = 255;
-  anchor->active = 1;
+  anchor->active = WINDOW_SPRITE_MOTION_STILL;
   anchor->kind = 0;
   // The hand waits off the left edge until a screen places it
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);

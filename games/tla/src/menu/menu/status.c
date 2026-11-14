@@ -236,7 +236,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   index = menu->tabIndex[slot];
   result = 0;
   cursor = menu->sideIcon[slot];
-  cursor->active = 1;
+  cursor->active = ICON_SHOWN;
   cursor->animStep = 0;
   WindowSprite_RedrawSavedRectFar(menu->auxiliaryWindow);
   if (GameFlag_Get(FLAG_LINK_BATTLE_ARRANGED))
@@ -274,11 +274,11 @@ void DjinnMenu_ShowCurrentList(void) {
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   Text_DrawMessageAsTilesFar(MsgButtonReturn, menu->helpWindow, 0, 16);
   Text_DrawMessageFar(MsgCurrentDjinn, menu->helpWindow, -96, 132);
-  menu->arrows[0]->active = 13;
-  menu->arrows[1]->active = 13;
+  menu->arrows[0]->active = ICON_HIDDEN;
+  menu->arrows[1]->active = ICON_HIDDEN;
   MenuIcon_SetActive(0);
-  menu->cursor->active = 13;
-  menu->selector->active = 13;
+  menu->cursor->active = ICON_HIDDEN;
+  menu->selector->active = ICON_HIDDEN;
   for (i = 0; i < 4; i++) {
     menu->rowX[i] = 32 + i * 56;
     menu->rowY[i] = 56;
@@ -327,8 +327,8 @@ void DjinnMenu_ShowCurrentList(void) {
     menu->rowX[i] = 130 + i * 32;
     menu->rowY[i] = 128;
   }
-  menu->cursor->active = 1;
-  menu->selector->active = 1;
+  menu->cursor->active = ICON_SHOWN;
+  menu->selector->active = ICON_SHOWN;
   MenuIcon_SetActive(1);
   Sound_PlayFar(SE_MENU_CANCEL);
 }
@@ -462,8 +462,8 @@ s32 PartyMemberChooser_RunRearrange(void) {
   menu->ownerIndex = ownerIndex;
   menu->selectedOwner = menu->ownerIds[ownerIndex];
   menu->selectedIds[0] = menu->ownerIds[ownerIndex];
-  menu->arrows[0]->active = 13;
-  menu->arrows[1]->active = 13;
+  menu->arrows[0]->active = ICON_HIDDEN;
+  menu->arrows[1]->active = ICON_HIDDEN;
   return result;
 }
 
@@ -997,7 +997,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
     djinnRow = 7;
   else
     djinnRow = 10;
-  menu->statusCursor->active = 1;
+  menu->statusCursor->active = ICON_SHOWN;
   ItemMenu_DrawMemberStatus(window, ownerId, mode);
   StatusScreen_BuildAvailability(ailments, 1, ownerId);
   keepDrawn = mode & 0x100;

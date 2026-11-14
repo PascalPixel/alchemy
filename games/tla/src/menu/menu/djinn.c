@@ -173,7 +173,7 @@ s32 DjinnMenu_RunScreen(void) {
   menuResult = 0;
   menu = Ram_HeapSlots->menuRuntime;
   icon = menu->cursor;
-  icon->active = 13;
+  icon->active = ICON_HIDDEN;
   icon->animStep = 0;
   Menu_OpenBackdropScreen();
   wait(1);
@@ -207,9 +207,9 @@ s32 DjinnMenu_RunScreen(void) {
       menu->owner = menu->owners[menu->selectedColumn[0]];
       menu->shownMember[0] = menu->owners[menu->selectedColumn[0]];
       icon = menu->arrows[0];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       icon = menu->arrows[1];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       result = DjinnMenu_ShowMemberStatus();
       if (result == -2)
         done = 1;
@@ -217,9 +217,9 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case 15:
       icon = menu->arrows[0];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       icon = menu->arrows[1];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       result = DjinnMenu_ShowHelp();
       if (result == -2)
         done = 1;
@@ -267,9 +267,9 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case 7:
       icon = menu->arrows[0];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       icon = menu->arrows[1];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(1);
       if (result == -2)
         done = 1;
@@ -282,18 +282,18 @@ s32 DjinnMenu_RunScreen(void) {
                                  menu->pairIndex[0], menu->shownMember[1]);
       Unit_CalculateFar(menu->shownMember[0]);
       Unit_CalculateFar(menu->shownMember[1]);
-      menu->cursor->active = 13;
+      menu->cursor->active = ICON_HIDDEN;
       WindowSprite_ClearListFar(menu->listWindow);
       DjinnMenu_BuildLists(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
-      menu->cursor->active = 1;
+      menu->cursor->active = ICON_SHOWN;
       step = 0;
       break;
     case 6:
       icon = menu->arrows[0];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       icon = menu->arrows[1];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(2);
       if (result == -2)
         done = 1;
@@ -307,16 +307,16 @@ s32 DjinnMenu_RunScreen(void) {
       result = DjinnRecovery_AddStandbyFar(
           menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
       Unit_CalculateFar(menu->shownMember[0]);
-      menu->cursor->active = 13;
+      menu->cursor->active = ICON_HIDDEN;
       WindowSprite_ClearListFar(menu->listWindow);
-      menu->cursor->active = 1;
+      menu->cursor->active = ICON_SHOWN;
       step = 2;
       break;
     case 9:
       icon = menu->arrows[0];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       icon = menu->arrows[1];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(0);
       if (result == -2)
         done = 1;
@@ -333,14 +333,14 @@ s32 DjinnMenu_RunScreen(void) {
       Unit_CalculateFar(menu->shownMember[1]);
       DjinnMenu_BuildLists(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
-      menu->cursor->active = 1;
+      menu->cursor->active = ICON_SHOWN;
       step = 2;
       break;
     case 5:
       icon = menu->arrows[0];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       icon = menu->arrows[1];
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(3);
       if (result == -2)
         done = 1;
@@ -354,9 +354,9 @@ s32 DjinnMenu_RunScreen(void) {
       result = DjinnRecovery_RemoveFar(
           menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
       Unit_CalculateFar(menu->shownMember[0]);
-      menu->cursor->active = 13;
+      menu->cursor->active = ICON_HIDDEN;
       WindowSprite_ClearListFar(menu->listWindow);
-      menu->cursor->active = 1;
+      menu->cursor->active = ICON_SHOWN;
       step = 2;
       break;
     default:
@@ -474,17 +474,17 @@ void Menu_OpenBackdropScreen(void) {
   window = menu->statusWindow;
   WindowSprite_ClearListFar(window);
   icon = Icon_CreateWithResource(window, -8, 11);
-  icon->active = 13;
+  icon->active = ICON_HIDDEN;
   menu->cursor = icon;
   entry = VramCache_FindFreeEntry();
   if (entry < 96) {
     VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
-    icon->active = 13;
+    icon->active = ICON_HIDDEN;
     menu->arrows[0] = icon;
     icon->oam.affineIndex |= 8;
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
-    icon->active = 13;
+    icon->active = ICON_HIDDEN;
     menu->arrows[1] = icon;
   }
 
@@ -1025,7 +1025,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       }
     }
   }
-  menu->cursor->active = 1;
+  menu->cursor->active = ICON_SHOWN;
   for (;;) {
     if (redraw != 0) {
       selectedRow = -1;

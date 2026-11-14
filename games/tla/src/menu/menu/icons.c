@@ -89,7 +89,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animStep = 0;
-  object->active = 1;
+  object->active = ICON_SHOWN;
   return 1;
 }
 
@@ -118,7 +118,7 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animStep = 0;
-  object->active = 1;
+  object->active = ICON_SHOWN;
   return 1;
 }
 
@@ -354,7 +354,7 @@ void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
       menu->scale[i] = Q16_ONE;
     }
   }
-  menu->active = 1;
+  menu->active = ICON_SHOWN;
   Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
 }
 
@@ -565,7 +565,7 @@ void MenuIcon_LoadSlots(void) {
     slot++;
     offset += 2;
   }
-  menu->active = 1;
+  menu->active = ICON_SHOWN;
   Task_Add(MenuIcon_PushSlots, TASK_PASS_VBLANK + 10);
 }
 

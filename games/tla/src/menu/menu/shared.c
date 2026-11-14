@@ -492,7 +492,7 @@ s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
 /// OAM attributes, with no affine matrix.
 void Icon_PrepareActor(struct WindowSprite *object) {
   if (object != NULL) {
-    object->active = 1;
+    object->active = ICON_SHOWN;
     object->sprite.oam.x = object->x;
     object->sprite.oam.y = object->y;
     object->sprite.oam.matrix = 0;
@@ -531,7 +531,7 @@ struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
   window = work->auxiliaryWindow;
   Window_DrawDividerLineFar((s32)window, 0, 3, 12, 3);
   icon = (struct WindowSprite *)Icon_CreateWithResource(window, -8, 11);
-  icon->active = 13;
+  icon->active = ICON_HIDDEN;
   work->tabIndex[0] = 255;
   work->sideIcon[0] = icon;
   sentinel = 254;
@@ -543,14 +543,14 @@ struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
-    icon->active = 13;
+    icon->active = ICON_HIDDEN;
     work->arrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
-    icon->active = 13;
+    icon->active = ICON_HIDDEN;
     work->arrows[1] = icon;
   }
   return window;
@@ -754,7 +754,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   s32 top;
   s32 left;
 
-  menu->sideIcons[0]->active = 13;
+  menu->sideIcons[0]->active = ICON_HIDDEN;
   if (y != -1) {
     Text_GetMessageSizeFar(message, &left, &top, &width, &height);
     if (Window_UpdateOrCreate((s32 *)&menu->modalWindow, x, y, width, height,
@@ -785,7 +785,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
     GameFlag_Set(337);
   }
   menu->completionFlag = 1;
-  menu->sideIcons[0]->active = 1;
+  menu->sideIcons[0]->active = ICON_SHOWN;
 #if TLA_PATCH_1
   if (y != -1)
     ((void (*)(void **, s32))Window_CloseIfOpen)((void **)&menu->modalWindow,

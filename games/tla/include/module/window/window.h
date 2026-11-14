@@ -96,6 +96,32 @@ enum {
   WINDOW_TILE_COMMAND_PANEL = WINDOW_TILE(127),
 };
 
+/// How a window sprite moves (WindowSprite.active), run each frame by
+/// WindowSprite_UpdateAll, as The Broken Seal's; 0 is a free window sprite and
+/// WINDOW_SPRITE_MOTION_PAGE_ARROW (2) is window.h's.
+enum {
+  WINDOW_SPRITE_MOTION_STILL = 1,
+  WINDOW_SPRITE_MOTION_WOBBLE = 4, ///< swings along a small arc
+  WINDOW_SPRITE_MOTION_SHAKE = 5,  ///< jitters by a pixel every other frame
+  WINDOW_SPRITE_MOTION_POP = 6,    ///< shown at double size, then normal size
+  WINDOW_SPRITE_MOTION_SPIN = 7,   ///< turns while circling its place
+  WINDOW_SPRITE_MOTION_SWELL = 9,  ///< pulses between 1 and 1.5 times its size
+  WINDOW_SPRITE_MOTION_SWELL_HALF = 10, ///< the same at half the scale
+  WINDOW_SPRITE_MOTION_SHRINK =
+      11, ///< shrinks from 1.5 times to its size, once
+  WINDOW_SPRITE_MOTION_SHRINK_HALF = 12, ///< the same at half the scale
+  WINDOW_SPRITE_MOTION_HIDDEN = 13,      ///< not drawn
+  // A hop and back, each a way of its own here where The Broken Seal's 14
+  // and 16 hop down as 15 does.
+  WINDOW_SPRITE_MOTION_HOP_RIGHT = 14,
+  WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE = 15,
+  WINDOW_SPRITE_MOTION_HOP_LEFT = 16,
+  WINDOW_SPRITE_MOTION_HOP_UP = 17,
+  WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT = 18,
+  /// Still, and drawn only while within 64 pixels of the screen.
+  WINDOW_SPRITE_MOTION_ON_SCREEN = 19,
+};
+
 /// Text colours (Text_SetColor), named as both the window palette and the basic
 /// sprite palette show them, as The Broken Seal's.
 enum TextColor {

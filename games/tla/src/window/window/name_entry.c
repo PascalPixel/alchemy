@@ -492,7 +492,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == NAME_FINISH_ROW) {
         if (letterCount == 0) {
-          nameCaret.sprite->active = 13;
+          nameCaret.sprite->active = WINDOW_SPRITE_MOTION_HIDDEN;
           WindowSprite_PrepareForRedraw(nameWindow);
           Text_DrawString(originalName, (s32)nameWindow, 0, 0);
           wait(10);
@@ -739,7 +739,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 5) {
         if (letterCount == 0) {
-          nameCaret.sprite->active = 13;
+          nameCaret.sprite->active = WINDOW_SPRITE_MOTION_HIDDEN;
           WindowSprite_PrepareForRedraw(nameWindow);
           NameEntry_DrawName((s32)nameWindow, originalName);
           wait(10);

@@ -12,9 +12,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 extern const struct Scale gTrident_UnitScale;
@@ -51,9 +48,9 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   s32 paletteBase;
   DrawRectangle draw;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_SelectLivingTargets(work->args);
@@ -65,7 +62,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   REG_WIN0V = WIN_RANGE(16, 124);
   REG_WIN1V = WIN_RANGE(16, 136);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   blit[0] = draw;
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
@@ -414,9 +411,9 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
            */
           do {
           } while (0);
-          BattleEffect_BuildBlitter(188, 7, 7, c, 1);
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, c, 1);
         }
-        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+        ((DrawRectangle)Ram_HeapSlots->ramCode2)(
             canvas, work->sheet + gBattleEffect_GlintPictures[k], x, y,
             gBattleEffect_GlintPictureWidths[k],
             gBattleEffect_GlintPictureHeights[k]);
@@ -469,9 +466,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -498,7 +495,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (mode == 0)
     work->transferValue = 75;
@@ -785,7 +782,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
 /// then arms it to copy one BG palette word per scanline from the line table in
 /// the effect work, so the backdrop's colour changes down the screen.
 void BattleEffect_ArmMeteorBlowPaletteDma(void) {
-  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  u8 *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
   u32 palette;
 
@@ -845,7 +842,6 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
   triangles[(rows - 1) * columns * 2].vertex[1] = 0;
   triangles[(rows - 1) * columns * 2].vertex[2] = 0;
 }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef LEAP_FRAMES
 #undef SPARKS

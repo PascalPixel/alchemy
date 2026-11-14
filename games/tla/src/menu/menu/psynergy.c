@@ -28,11 +28,11 @@ s32 PsynergyMenu_Run(void) {
   s32 owner;
   s32 result;
 
-  screen = HeapSlot_Alloc(220, 0xcec);
+  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, 0xcec);
 #if TLA_PATCH_2
   savedTiles = Heap_AllocEwram(0x2000);
 #endif
-  Ram_HeapSlots->objectSystem->suspended = 1;
+  Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
@@ -61,23 +61,23 @@ s32 PsynergyMenu_Run(void) {
   }
 
   WindowSprite_ClearListFar(screen->statusWindow);
-  Ram_HeapSlots->windowTiles[6] = 1;
+  Ram_HeapSlots->windowWork[6] = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
-  HeapSlot_Release(220);
-  Ram_HeapSlots->objectSystem->suspended = 0;
+  HeapSlot_Release(HEAP_SLOT_MENU);
+  Ram_HeapSlots->actorSystem->suspended = 0;
 #if TLA_PATCH_2
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles, 0x2000);
-  Ram_HeapSlots->windowTiles[6] = 0;
+  Ram_HeapSlots->windowWork[6] = 0;
   Heap_Release(savedTiles);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  Ram_HeapSlots->windowTiles[6] = 0;
+  Ram_HeapSlots->windowWork[6] = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }
@@ -139,7 +139,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
   step = PSYNERGY_STEP_MEMBER;
   done = 0;
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   useResult = 0;
 
   while (done == 0 && GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
@@ -334,7 +334,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   /* FAKEMATCH(pin): the action fixed to r3. */
   register u32 action asm("r3");
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   action = menu->sideAction[0];
   psynergy = Ability_Get(0x3fff & action);
   if (BattleEffect_HasMatchingEvent5Far(psynergy->fieldEffect) != 0)
@@ -359,7 +359,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
 /// there last (the first when none was) and runs PsynergyMenu_SelectMember on
 /// them. Returns its result.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
-  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 memberIndex = menu->tabIndex[partySlot];
   struct WindowSprite *icon;
   struct BattleUnit *unit;
@@ -410,7 +410,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   s8 fieldCount;
   s32 shortcutCount;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   selection = menu->tabIndex[0];
   count = menu->tabCounts[0];
   redraw = 2;
@@ -504,7 +504,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   struct PsynergyMenuWork *menu;
   void *owner;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   owner = Unit_Get(ownerId);
   psynergies = menu->psynergies;
   menu->psynergyCount = PsynergyMenu_CollectActions(owner, psynergies, 2);
@@ -527,7 +527,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   struct WindowSprite *icon;
   s32 column;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   selection = menu->tabIndex[1];
   count = menu->memberCount;
   result = 0;
@@ -781,7 +781,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   u16 *p;
   s32 psynergyId;
 
-  icons = ((struct PsynergyEntryMenu *)Ram_HeapSlots->menuRuntime)->entryIcons;
+  icons = ((struct PsynergyEntryMenu *)Ram_HeapSlots->menuWork)->entryIcons;
   p = psynergies;
   remaining = 31;
   do {
@@ -851,7 +851,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
 /// Split the selected slot owner's Psynergy into pages of five rows.
 s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   s32 ownerState;
-  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 entryCount;
   s32 row;
   s32 page;
@@ -893,7 +893,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
   s32 combined;
   s32 row;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   combined = state->page * 5;
   combined += state->row;
   state->selectedIndex = combined;
@@ -971,7 +971,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   s32 cursor;
   struct BattleUnit *owner;
   struct BattleAct *ability;
-  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
 
   (void)unused;
 
@@ -1062,7 +1062,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   s32 work[5];
   struct MenuResult state;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   result = 0;
   previous = 0;
   shortcutHelp = 0;

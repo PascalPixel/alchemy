@@ -518,11 +518,11 @@ void Settlements_SetUpKaltIsland(void) {
     actor->y += px(16);
   actor->flags23 &= 0xfe;
   actor->visible = 1;
-  transfer = HeapSlot_Alloc(68, 0x608);
+  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Item_LoadIcon(ITEM_APPLE);
   transfer += 0x400;
   Vram_Load(sprite->palette, 128, transfer);
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;
   actor->orbitCenterY = actor->y;

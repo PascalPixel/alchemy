@@ -33,8 +33,8 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   s32 *camera;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up: the skull sheet with its palette, the pink burst palette, the
   // max and additive blitters, the wave's HBlank DMA and a transfer that
@@ -125,11 +125,6 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Heap blocks are named by their byte offset in Ram_HeapSlots.
-#define HEAP_OFFSET(field) ((s32)&((struct HeapSlots *)0)->field)
-#define HEAP_BLITTER HEAP_OFFSET(unk64[1])
-#define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
-
 #define SPIRAL_SIZE 32
 #define SPIRAL_CELS 4
 
@@ -146,8 +141,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   s32 offsetX;
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up: the spiral sheet with its palette, the two blitters, the wave's
   // HBlank DMA and the transfer at half strength.
@@ -155,10 +150,10 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_SpiralSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -279,8 +274,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   s32 palette;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
 
   // Set up: the mote picture, the mode's palette, and the max and additive

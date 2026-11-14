@@ -10,9 +10,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define TEXTURE_PIXELS (Ram_MapCellBuffer + 0x1000)
@@ -45,16 +42,16 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   s32 i;
 
   buffer = Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 10);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   for (i = 0; i != args->targetCount; i++) {
     EffectPosition_ProjectScaledBattler(args->targets[i], &targets[i]);
   }
@@ -234,8 +231,6 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
-
 #define RING_FRAMES 122
 #define RING_CUE_FRAME 16
 #define RING_RISE_FRAME 8   // the ring starts to rise over the caster
@@ -272,10 +267,10 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   struct ScreenPoint target;
   DrawRectangle draw[2];
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
-  u8 *sparkCels = Ram_HeapSlots->unk64[0];
+  u8 *sparkCels = Ram_HeapSlots->battleSheet;
   struct Particle *ring = work->particles;
   DrawRectangle *blitters;
   s32 lift;
@@ -426,7 +421,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
 /// Loads the grey ramp and fills the 128x128 canvas with a vertical gradient
 /// that rises over the top 32 rows and falls over the bottom 32.
 void RagingHeat_FillGradientCanvas(void) {
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 y;
   s32 x;
 
@@ -450,12 +445,10 @@ void RagingHeat_FillGradientCanvas(void) {
     }
   }
 }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef TEXTURE_PIXELS
 #undef EMBERS
 #undef RAGING_HEAT_FRAMES
-#undef HEAP_SLOT_BLITTER
 #undef RING_FRAMES
 #undef RING_CUE_FRAME
 #undef RING_RISE_FRAME

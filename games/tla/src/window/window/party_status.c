@@ -12,8 +12,8 @@
 /// member (four at most outside battle), one more row with flag 1 and five more
 /// columns with flag 2, against the screen's right edge.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
-  struct PartyStatusWindow *state = Ram_HeapSlots->windowLayout;
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct PartyStatusWindow *state = Ram_HeapSlots->partyStatus;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 height = 4;
   s32 n;
   s32 width;
@@ -53,8 +53,9 @@ void PartyStatus_CreateWindow(s32 flags) {
   struct PartyStatusWindow *window;
   struct WindowWork *work;
 
-  window = HeapSlot_AllocEwram(64, sizeof(struct PartyStatusWindow));
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  window = HeapSlot_AllocEwram(HEAP_SLOT_PARTY_STATUS,
+                               sizeof(struct PartyStatusWindow));
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   zero = 0;
   work->holdTilemapUpload = 1;
   PartyStatus_BuildLayoutBounds(flags);
@@ -70,7 +71,7 @@ void PartyStatus_CreateWindow(s32 flags) {
 /// line comes first in the list). In battle it also draws the window's bottom
 /// edge.
 void Window_DrawColumnBorders(struct Window *window, u32 flags) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 first = 1;
   s32 bias = 0;
   u32 max = window->width - 1;
@@ -138,7 +139,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 
 s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   s32 i;
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 filled = value;
   s32 row;
   s32 col;
@@ -208,10 +209,10 @@ Func_08118130__screens(s32 a,
 #define DJINN_COUNT_TILE(n) ((n) > 9 ? (n) + 0xf196 : ((n) + '0') | 0xf000)
 
 void PartyStatus_Draw(s32 flags) {
-  struct PartyStatusWindow *layout = Ram_HeapSlots->windowLayout;
+  struct PartyStatusWindow *layout = Ram_HeapSlots->partyStatus;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   struct Window *window = layout->window;
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 x = 0;
   u32 count;
   s32 y = 0;
@@ -343,8 +344,8 @@ void PartyStatus_Draw(s32 flags) {
 }
 
 void PartyStatus_Close(void) {
-  Window_Close(*(void **)Ram_HeapSlots->windowLayout, 1);
-  HeapSlot_Release(64);
+  Window_Close(*(void **)Ram_HeapSlots->partyStatus, 1);
+  HeapSlot_Release(HEAP_SLOT_PARTY_STATUS);
 }
 
 #undef TILE_ROW_FROM_BOTTOM

@@ -163,7 +163,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
     position[2] = (position[2] & 0xfff00000) + 0x80000;
   }
   if (work->revealActive != 0) {
-    object = Ram_HeapSlots->scriptObjects;
+    object = Ram_HeapSlots->actors;
     i = 63;
     do {
       if (object->script != NULL) {
@@ -200,14 +200,14 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   picture->groundHeight = position[1];
   picture->velocityY = px(2);
   picture->gravity = px(1) / 4;
-  buffer = HeapSlot_Alloc(68, 0x608);
+  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItemFar(item);
   tile = VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
   visual->tile = tile;
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   picture->update = ItemDisplay_EmitSparkles;
   if (work->revealActive != 0) {
-    struct Actor *marker = Ram_HeapSlots->scriptObjects;
+    struct Actor *marker = Ram_HeapSlots->actors;
     s32 j;
 
     for (j = 0; j <= 63; j++, marker++) {
@@ -296,7 +296,7 @@ struct EffectVisual__rising {
 
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *owner = ObjectTable_Get(Party_GetLeaderActor());
-  u8 *buffer = HeapSlot_Alloc(68, 0x608);
+  u8 *buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct Actor *object =
       Actor_CreateFar(489, owner->x, owner->y + 0x240000, owner->z);
 
@@ -322,7 +322,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 
     Icon_DrawItemFar(item);
     VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)
       object->update = ItemDisplay_EmitSparkles;
@@ -374,7 +374,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
   // The row type is s16, as the rows are: with it the copied head test stays
   // apart from the bottom one.
   s16 *entry = SceneItem_GetRows();
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 *origin = (s32 *)(map + 228);
   s32 originX = origin[0] & 0xffff0000;
   s32 originZ = origin[1] & 0xffff0000;
@@ -495,7 +495,7 @@ void FieldEffect_StartWindowHBlankDma(void) {
 }
 
 void ScreenTransition_UpdateScanlineTable(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
   struct TransitionSpan *span;
   struct TransitionShape *shape;
@@ -849,7 +849,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
-      HeapSlot_AllocEwram(124, sizeof(*state));
+      HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   volatile u32 zero;
 
   zero = 0;
@@ -874,7 +874,7 @@ UNUSED void ScreenTransition_SuspendCallbacks(void) {
 /// Allocates the screen transition state (heap slot 124) and clears it.
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
   struct ScreenTransitionState *state =
-      HeapSlot_AllocEwram(124, sizeof(*state));
+      HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   volatile u32 zero = 0;
 
   Dma_Set(&zero, state,
@@ -889,7 +889,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   s32 variant;
   s32 transitionKind;
 
-  display = (struct MapViewWork *)Ram_HeapSlots->mapWork;
+  display = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
   transitionKind = (mode >> 8) & 0xff;
   variant = mode & 0xff;
   switch (transitionKind) {
@@ -943,7 +943,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   case 4: {
     struct ScreenTransitionState *state;
 
-    display = (struct MapViewWork *)Ram_HeapSlots->mapWork;
+    display = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
     state = ScreenTransition_AllocateAndClearState();
     display->windowTop = 80;
     display->windowBottom = 80;
@@ -1059,7 +1059,7 @@ void ScreenTransition_HideBackgrounds(s32 layer0, s32 layer1, s32 layer2) {
   struct MapLayerFlags *map;
   u16 flags;
 
-  map = (struct MapLayerFlags *)Ram_HeapSlots->mapWork;
+  map = (struct MapLayerFlags *)Ram_HeapSlots->mapGrid;
   if (map == 0)
     return;
   if (layer2) {
@@ -1086,7 +1086,7 @@ void ScreenTransition_Update(void) {
 
   state = Ram_HeapSlots->screenTransition;
   duration = &state->duration;
-  window = (struct MapViewWork *)Ram_HeapSlots->mapWork;
+  window = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
   if (*duration != 0) {
     s8 *step = &state->step;
 
@@ -1126,7 +1126,7 @@ void ScreenTransition_UpdateFromCentre(void) {
 
   state = Ram_HeapSlots->screenTransition;
   duration = &state->duration;
-  window = (struct MapViewWork *)Ram_HeapSlots->mapWork;
+  window = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
   if (*duration != 0) {
     s8 *step = &state->step;
 
@@ -1165,7 +1165,7 @@ void ScreenTransition_UpdateScanline(void) {
   struct MapViewWork *state;
 
   line = REG_VCOUNT;
-  state = (struct MapViewWork *)Ram_HeapSlots->mapWork;
+  state = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
 
 again:
   switch (state->irqPhase) {
@@ -1280,7 +1280,7 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
 void ScreenTransition_InitializeState(s32 value) {
   struct ScreenTransitionState *state;
 
-  state = HeapSlot_AllocEwram(0x7c, sizeof(*state));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   ScreenTransition_FillTilemapAndSolidTile(0);
   state->mode = value;
@@ -1312,7 +1312,7 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
 }
 
 void PaletteFade_Update(void) {
-  struct PaletteFade *work = Ram_HeapSlots->block32;
+  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
   u16 *add = work->delta;
   s32 i;
 
@@ -1676,7 +1676,7 @@ void PaletteFade_Initialize(void) {
   volatile s32 zero;
   struct PaletteFade *buffer;
 
-  buffer = HeapSlot_AllocEwram(128, sizeof(*buffer));
+  buffer = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
   zero = 0;
   Dma_Set(&zero, buffer,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
@@ -1691,11 +1691,11 @@ void PaletteFade_Initialize(void) {
 
 void PaletteFade_Release(void) {
   Task_Remove((s32)&PaletteFade_Update);
-  HeapSlot_Release(128);
+  HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
 void PaletteFade_SetTarget(s32 value, s32 mode) {
-  struct PaletteFade *buffers = Ram_HeapSlots->block32;
+  struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
   if (buffers != NULL) {
     PaletteFade_Build(value, buffers, buffers->target, mode);
@@ -1703,7 +1703,7 @@ void PaletteFade_SetTarget(s32 value, s32 mode) {
 }
 
 void PaletteFade_SetSource(s32 value, s32 mode) {
-  struct PaletteFade *buffers = Ram_HeapSlots->block32;
+  struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
   if (buffers != NULL) {
     PaletteFade_Build(value, buffers, buffers->current, mode);
@@ -1711,7 +1711,7 @@ void PaletteFade_SetSource(s32 value, s32 mode) {
 }
 
 void PaletteFade_SetBackdrop(u32 value) {
-  struct PaletteFade *buffers = Ram_HeapSlots->block32;
+  struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
   if (buffers != NULL) {
     buffers->palette[0] = value;
@@ -1723,7 +1723,7 @@ void PaletteFade_SetBackdrop(u32 value) {
 /// Packs the 448 target colours, three channels each, back into the effect's
 /// palette as RGB555.
 void PaletteFade_PackTarget(void) {
-  struct PaletteFade *work = Ram_HeapSlots->block32;
+  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
   u16 *packed = work->palette;
   s32 blue = 0x7c00;
   u16 *current;
@@ -1740,7 +1740,7 @@ void PaletteFade_PackTarget(void) {
 }
 
 void PaletteFade_StartInterpolation(s32 mode) {
-  struct PaletteFade *buffers = Ram_HeapSlots->block32;
+  struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
   if (buffers != NULL) {
     buffers->duration = mode;
@@ -1751,7 +1751,7 @@ void PaletteFade_StartInterpolation(s32 mode) {
 }
 
 void PaletteFade_LoadPalette(const u16 *colours) {
-  struct PaletteFade *buffers = Ram_HeapSlots->block32;
+  struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
   if (buffers != NULL) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
@@ -1785,8 +1785,8 @@ s32 PaletteFade_ClampShiftedComponent(s32 val) {
 // where the ground one or two cells south rises above the actor's floor,
 // draws a 16-pixel-wide mark at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
-  struct FadeOverlayWork *work = Ram_HeapSlots->unk84[3];
-  s16 *camera = ((struct FadeView *)Ram_HeapSlots->mapWork)->camera;
+  struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
+  s16 *camera = ((struct FadeView *)Ram_HeapSlots->mapGrid)->camera;
   s32 cameraX = camera[1];
   s32 cameraZ = camera[3];
   struct AnimationSpritePart *mark = work->marks;
@@ -1853,11 +1853,11 @@ void FieldEffect_StartFadeOverlay(void *object) {
   u8 *tiles;
   volatile u32 fill;
 
-  work = HeapSlot_AllocEwram(144, 28);
-  tiles = HeapSlot_Alloc(56, 0x400);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, 28);
+  tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   Task_Add(FadeOverlay_DrawMarks, TASK_PASS_VBLANK);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
@@ -1881,8 +1881,8 @@ void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }
 /// flags a cell two rows up (left or right of the actor), and another for the
 /// row one up.
 void BlankOverlay_DrawMarks(void) {
-  struct AnimationSpritePart *mark = Ram_HeapSlots->unk84[3];
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct AnimationSpritePart *mark = Ram_HeapSlots->fadeOverlay;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s16 *camera = (s16 *)&map->viewX;
   s16 cameraX = camera[1];
   s16 cameraZ = camera[3];
@@ -1930,13 +1930,13 @@ void BlankOverlay_DrawMarks(void) {
 /// loads 0x200 zeroed tiles to VRAM slot 94 and starts BlankOverlay_DrawMarks
 /// on object (the controlled owner's when 0).
 void FieldEffect_StartBlankOverlay(s32 object) {
-  u8 *work = HeapSlot_AllocEwram(144, 28);
-  void *buffer = HeapSlot_Alloc(56, 0x400);
+  u8 *work = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, 28);
+  void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
 
   Dma_Fill32(0, buffer, 0x200);
   VramCache_Load(94, 0x200, buffer);
   Task_Add(BlankOverlay_DrawMarks, 0x480);
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   if (object == 0)
     object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
   *(s32 *)(work + 24) = object;
@@ -1951,7 +1951,7 @@ void BlankOverlay_Resume(void) { Task_ResumeAll(BlankOverlay_DrawMarks); }
 /// Fills the overlay's 512 bytes of sprite tiles (VRAM cache slot 94) with
 /// colour 1 when solid is set, else clears them.
 void BattleEffect_FillOverlayTiles(s32 solid) {
-  void *buffer = HeapSlot_Alloc(56, 0x400);
+  void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
 
   if (solid == 0) {
     Dma_Fill32(0, buffer, 0x200);
@@ -1959,7 +1959,7 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
     Dma_Fill32(0x01010101, buffer, 0x200);
   }
   VramCache_Load(94, 0x200, buffer);
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
 }
 
 /// Sets up sprite through EffectSprite_Init with resource 94's tiles, at

@@ -670,11 +670,11 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   size = 0x608;
   sprite->nextFrame = zero;
   sprite->unk1b[0] = zero;
-  block = HeapSlot_Alloc(68, size);
+  block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, size);
   Item_LoadIcon(ITEM_MARS_STAR);
   block += 0x400;
   Vram_Load(sprite->vramBlock, 128, block);
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   if (rise) {
     System_Wait(1);
     (*slot)->velocityY = px(5) / 2;
@@ -841,7 +841,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   u16 *screen;
   s32 zero;
 
-  screen = (u16 *)Ram_HeapSlots->block32;
+  screen = (u16 *)Ram_HeapSlots->paletteFade;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "Felix used the Mars Star!"
@@ -862,10 +862,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object->retainSpriteCache = 1;
     sprite->unk1b[0] = 0;
     object->priorityFlags |= 2;
-    buffer = HeapSlot_Alloc(68, 0x608);
+    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -983,10 +983,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       object->retainSpriteCache = 1;
       sprite->unk1b[0] = 0;
       object->priorityFlags |= 2;
-      buffer = HeapSlot_Alloc(68, 0x608);
+      buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
       Item_LoadIcon(ITEM_MARS_STAR);
       Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
-      HeapSlot_Release(68);
+      HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     }
     FieldEvent_Wait(20);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -1024,7 +1024,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     Event_End();
     goto L_020093b0;
   }
-  screen = (u16 *)Ram_HeapSlots->block32;
+  screen = (u16 *)Ram_HeapSlots->paletteFade;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "Felix used the Mars Star!"
@@ -1045,10 +1045,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object2->motionFlags = 0;
     object2->retainSpriteCache = 1;
     object2->priorityFlags |= 2;
-    buffer2 = HeapSlot_Alloc(68, 0x608);
+    buffer2 = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(sprite2->vramBlock, 128, buffer2 + 0x400);
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -1950,7 +1950,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ((void (*)(struct Actor *))actor->watchedActor)(actor);
     }
 
-    map = Ram_HeapSlots->mapWork;
+    map = Ram_HeapSlots->mapGrid;
     tileX = actor->x >> 20;
     tileZ = actor->z >> 20;
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];

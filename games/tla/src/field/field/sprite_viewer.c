@@ -30,7 +30,7 @@ void SpriteViewer_Run(void) {
   selectedLayer = 0;
   shadowsEnabled = 1;
   backdrop = 0;
-  ring = HeapSlot_AllocEwram(36, 160);
+  ring = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, 160);
   gDecodeFillByte = 3;
   Dma_Fill32Cell(zero, 0, ring, 4);
   Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
@@ -50,7 +50,7 @@ void SpriteViewer_Run(void) {
 restart:
   Heap_Initialize();
   Task_ResetAll();
-  ring = HeapSlot_AllocEwram(36, 160);
+  ring = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, 160);
   VramCache_Reset();
   ActorSystem_Initialize(2);
   SpritePictureCache_Load(0, gMapGridCellBuffer, layers[0].spriteId, 0);
@@ -115,7 +115,7 @@ next:
     }
 
     if (gInput.pressed & KEY_START) {
-      struct ViewerSprite *sprites = Ram_HeapSlots->unk0c[1];
+      struct ViewerSprite *sprites = Ram_HeapSlots->sprites;
 
       shadowsEnabled ^= 1;
       for (i = 0; i < 10; i++) {
@@ -327,7 +327,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   u8 kind;
 
   angle = 0;
-  kind = ((struct ProbeObjects *)Ram_HeapSlots->unk0c[1])->shape->kind;
+  kind = ((struct ProbeObjects *)Ram_HeapSlots->sprites)->shape->kind;
   if ((gInput.held & KEY_B) != 0)
     angle = (s16)(gVBlankCount << 8);
   switch ((u32)kind) {
@@ -422,7 +422,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 #undef gInput.held
 
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
-  u8 *base = Ram_HeapSlots->unk0c[1];
+  u8 *base = Ram_HeapSlots->sprites;
   s32 offset = (slot & 3) * 4 + 40;
   s32 count = 9;
 
@@ -436,7 +436,7 @@ void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
 }
 
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
-  u8 *base = Ram_HeapSlots->unk0c[1];
+  u8 *base = Ram_HeapSlots->sprites;
   s32 offset = (slot & 3) * 4 + 40;
   s32 count = 9;
 
@@ -457,7 +457,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
   struct UiGridEntry *entry;
   u8 *work;
 
-  work = Ram_HeapSlots->unk0c[1];
+  work = Ram_HeapSlots->sprites;
   count = 0;
   offset = ((3 & slot) * 4) + 0x28;
   index = 0;
@@ -483,7 +483,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
 }
 
 void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
-  u8 *base = Ram_HeapSlots->unk0c[1];
+  u8 *base = Ram_HeapSlots->sprites;
   s32 offset;
   s32 count;
 
@@ -503,7 +503,7 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
 extern struct Vec2 gBattle_FormationPlacementScale;
 
 void SpriteViewer_PlaceRing(void) {
-  u8 *actor = Ram_HeapSlots->unk0c[1];
+  u8 *actor = Ram_HeapSlots->sprites;
   u32 kind = (*(u8 **)(actor + 40))[4];
   struct Vec2 scale;
   u8 *table;

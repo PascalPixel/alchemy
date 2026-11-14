@@ -22,7 +22,7 @@ extern struct LinkSignature
 
 void UpdateLinkSessionCountdown(void) {
   struct LinkCountdownState *state =
-      ((struct LinkCountdownState **)Ram_HeapSlots)[57];
+      (struct LinkCountdownState *)Ram_HeapSlots->battleMenuWork;
   struct LinkRuntimeState *runtime;
   struct CountdownDisplayEntry *entry;
   u8 *active;
@@ -168,7 +168,7 @@ s32 Battle_RefuseFlee(void) {
     do {
       wait(1);
     } while ((gInput.pressed & (KEY_A | KEY_B)) == 0 &&
-             *(s32 *)((u8 *)((void **)Ram_HeapSlots)[57] + 0x4C) != 0);
+             *(s32 *)((u8 *)Ram_HeapSlots->battleMenuWork + 0x4C) != 0);
     Window_Close(work, 1);
   }
   return result;

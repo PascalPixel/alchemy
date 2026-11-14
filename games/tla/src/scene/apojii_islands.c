@@ -598,7 +598,7 @@ void Scroll_HBlank(void) {
 }
 
 void Layer_TrackScroll(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
   s16 y = layer->y >> 16;
 
   gApojiiIslands_SplitLine = 1448 - y;
@@ -615,7 +615,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
   struct MainRoutineWork *party;
 
-  ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
+  ((struct MapBits *)Ram_HeapSlots->mapGrid)->mode = 1;
   effect = &gFieldWork->transition;
   *effect = 0x202;
   party = &gMainRoutineWork;
@@ -752,7 +752,7 @@ void ApojiiIslands_FlowWithStream(void) {
   Dma_Set((void *)(from), (void *)(offset + (to)), DMA_COPY_WORDS(16), REG_DMA3)
 
 void ApojiiIslands_DrawCellMarkers(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
@@ -801,9 +801,9 @@ void ApojiiIslands_DrawCellMarkers(void) {
     if ((u32)(y + 39) > 286)
       continue;
     left &= 0x1ff;
-    /* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapWork after left's
+    /* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapGrid after left's
      * mask. */
-    Ram_HeapSlots->mapWork += 0;
+    Ram_HeapSlots->mapGrid += 0;
     top &= 255;
     attr = record->oam;
     kind = record->kind;
@@ -828,7 +828,7 @@ void ApojiiIslands_StartCellMarkers(void) {
 }
 
 void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *second = &map->layers[1];
   struct MapLayer *layer = &map->layers[0];
   struct MapCell *cells = second->cells;
@@ -890,7 +890,8 @@ extern s16 gGroundParticleFrames[];
 // decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
 // move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void ApojiiIslands_StartSparkles(void) {
-  struct DustWork *work = HeapSlot_AllocEwram(116, sizeof(struct DustWork));
+  struct DustWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct DustWork));
   struct DustParticle *p = work->particles;
   u8 *buf;
   u32 i;
@@ -901,11 +902,11 @@ void ApojiiIslands_StartSparkles(void) {
   zero = size;
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
-  buf = HeapSlot_AllocEwram(56, 0x400);
+  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gField_Tiles679, buf);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = Vram_Load(work->vramEntry, 0x300, buf);
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   work->field808 = size;
   i = 0;
 loop:
@@ -927,7 +928,7 @@ loop:
 }
 
 void ApojiiIslands_SetSparkleAnchor(s32 id) {
-  u8 *work = Ram_HeapSlots->unk70[1];
+  u8 *work = Ram_HeapSlots->weather;
   struct Actor *object = Actor_Get(id);
   s32 *slot = (s32 *)(work + 0x808);
 

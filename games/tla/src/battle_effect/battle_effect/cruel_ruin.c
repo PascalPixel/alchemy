@@ -14,10 +14,6 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-// Heap slots, as byte offsets into Ram_HeapSlots.
-#define SLOT_BLITTER 104           // unk64[1]
-#define SLOT_BLITTER_ALTERNATE 188 // unkb8[1]
-
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
 
@@ -80,9 +76,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   s32 cy;
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
-  view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
+  view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
   work->args = args;
   work->vblanksSinceTransfer = 1;
 
@@ -131,9 +127,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
 
   // The pieces fly out from (32, 60) at a quarter of their distance a
   // frame.
@@ -381,7 +377,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   wait(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
-  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -415,7 +411,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   s32 i;
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   work->vblanksSinceTransfer = 1;
   work->args = args;
@@ -464,7 +460,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Sound_PlayFar(SE_SPIN);
 
   for (frame = 0; frame != 56; frame++) {
@@ -489,9 +485,9 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
       s32 mode;
 
       for (i = 0, mode = BLITTER_MAX; i != 4; i++) {
-        BattleEffect_BuildBlitter(SLOT_BLITTER_ALTERNATE, 7, 7,
+        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
                                   gElementBurst_GlintFlips[i] | CLIP, mode);
-        draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+        draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
         draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
                 ground.y + gDeathPlunge_Y[i] - 32, 32, 32);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
@@ -524,7 +520,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
-  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -532,8 +528,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 /// character block 1 at half brightness.
 void BattleEffect_TransferHalvedCanvas(void) {
   struct BattleFxFadeWork *work =
-      (struct BattleFxFadeWork *)Ram_HeapSlots->battleFxWork[0];
-  void *buffer = Ram_HeapSlots->battleFxWork[1];
+      (struct BattleFxFadeWork *)Ram_HeapSlots->battleEffect;
+  void *buffer = Ram_HeapSlots->battleCanvas;
   u32 ime;
 
   IRQ_LOCK(ime);
@@ -552,7 +548,7 @@ void BattleEffect_TransferHalvedCanvas(void) {
 
 /// Draws the streaks of the backdrop and halves the canvas into VRAM.
 void BattleEffect_DrawStreaks(void) {
-  struct StreakWork *work = (struct StreakWork *)Ram_HeapSlots->battleFxWork[0];
+  struct StreakWork *work = (struct StreakWork *)Ram_HeapSlots->battleEffect;
   s32 frame;
   s32 i;
   struct Streak *streak;
@@ -613,7 +609,7 @@ void BattleEffect_DrawStreaks(void) {
 /// colours by one more step of 1092 into BG palette 0x050000c0.
 void BattleEffect_DimBackgroundStep(void) {
   struct BattleFxFadeWork *work =
-      (struct BattleFxFadeWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleFxFadeWork *)Ram_HeapSlots->battleEffect;
   u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
 
   if (work->framesLeft > 0) {
@@ -643,9 +639,9 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   s32 k;
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
-  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
-  view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
+  view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
 
   // Turn BG2 into a 128x128 canvas, one step a frame.
   BattleEffect_ConfigureEffectDisplay();
@@ -721,14 +717,13 @@ void BattleEffect_EndElementStreaks(void) {
   Task_Remove(BattleEffect_TransferHalvedCanvas);
   Task_Remove(BattleEffect_DimBackgroundStep);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
-  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 struct Model;
 
-#define SLOT_ALT 188 // unkb8[1]
-#define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])
+#define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode2)
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
@@ -769,16 +764,16 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   s32 u;
   struct RuinObject *obj;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
-  transition = (s32 *)Ram_HeapSlots->transitionWork;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
+  transition = (s32 *)Ram_HeapSlots->battleBackground;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  draw[0] = Ram_HeapSlots->unk64[1];
+  draw[0] = Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   savedScroll = gBgScroll[1].x;
   scrollX = 0;
@@ -816,7 +811,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = Ram_HeapSlots->unk64[1];
+  draw[0] = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer, 0,
                              0);
@@ -1346,13 +1341,13 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
               /* FAKEMATCH(dead): a test that is always true here (the block is
                * entered only when r > 1). */
-              BattleEffect_LoadBlitter(SLOT_ALT, r > 1 ? 19 : 0);
+              BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, r > 1 ? 19 : 0);
               half = r / 2;
               y -= r;
               ALT_BLITTER(canvas, work->sheet, x - half, y + 8, half, r);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
               /* FAKEMATCH(dead): the same always-true test. */
-              BattleEffect_LoadBlitter(SLOT_ALT, r > 1 ? 23 : 0);
+              BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, r > 1 ? 23 : 0);
               ALT_BLITTER(canvas, work->sheet, x, y + 8, half, r);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             }
@@ -1716,14 +1711,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   Palette_LoadBasicSpriteColors();
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef SLOT_BLITTER
-#undef SLOT_BLITTER_ALTERNATE
 #undef BLITTER
 #undef CLIP
 #undef BACKGROUND
 #undef PLOT
 #undef gSparkles
-#undef SLOT_ALT
 #undef ALT_BLITTER
 #undef OBJ_TILES
 #undef WAIT_TRANSFER

@@ -141,7 +141,7 @@ const u8 *Scene_GetActorPlacements(void) {
 extern struct MapCell gMapGridCellBuffer[];
 
 s32 TreasureIsle_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
   s32 old;
 

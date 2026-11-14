@@ -238,7 +238,7 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 void AlhafranCave_SetUpCave(void) {
   struct AlhafranCaveMapWork *map =
-      (struct AlhafranCaveMapWork *)Ram_HeapSlots->mapWork;
+      (struct AlhafranCaveMapWork *)Ram_HeapSlots->mapGrid;
   struct Actor *object;
 
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;

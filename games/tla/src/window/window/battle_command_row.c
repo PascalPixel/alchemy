@@ -31,7 +31,7 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #endif
 
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
-#define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
+#define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowWork)
 
 extern struct BgScrollPair gBgScroll[];
 #include "system/main_routine_work.h"
@@ -253,7 +253,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             if (navigation->tutorialStep == 1) {
               void *message;
 
-              ((u8 *)Ram_HeapSlots->windowTiles)[5] |= 4;
+              ((u8 *)Ram_HeapSlots->windowWork)[5] |= 4;
               if (selectionUi->commandKinds[selectionUi->selectedIndex] == 15)
                 message = Message_ShowAndWait(
                     Djinn_GetGiveTutorialMessage() + 10, 15, 8);
@@ -261,7 +261,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
                        16)
                 message = Message_ShowAndWait(
                     Djinn_GetGiveTutorialMessage() + 9, 15, 8);
-              ((u8 *)Ram_HeapSlots->windowTiles)[5] &= ~4;
+              ((u8 *)Ram_HeapSlots->windowWork)[5] &= ~4;
               BattleMessage_WaitForAdvanceAtFar(102, 155);
               Window_Close(message, 1);
               navigation->tutorialStep++;
@@ -345,7 +345,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 }
 
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
-  struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowTiles;
+  struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowWork;
 
   alt &= 1;
   alt <<= 12;

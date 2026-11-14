@@ -145,7 +145,7 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
 /// lets it face object 10 or 9 by bit 0 of its action word and, failing that,
 /// the leader, forced when bit 1 is set and event word 352 or tile byte 4 is.
 s32 Yallam_WatchSongGame(struct Actor *object) {
-  u8 *tiles = Ram_HeapSlots->windowTiles;
+  u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 force = 0;
@@ -182,7 +182,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
 }
 #else
 s32 Yallam_WatchSongGame(struct Actor *object) {
-  u8 *tiles = Ram_HeapSlots->windowTiles;
+  u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 force = 0;
   struct Actor *target;

@@ -47,8 +47,8 @@ struct BlendWork {
 
 /// Task of the Pound: its shine's colours and particles, each frame.
 void FieldPsynergy_UpdatePound(void) {
-  struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleFxWork[0];
-  struct BlendWork *blend = Ram_HeapSlots->unkec[1];
+  struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleEffect;
+  struct BlendWork *blend = Ram_HeapSlots->canvasSprite;
   struct ShineParticle *particle;
   struct ShineSprite *sprite;
   s32 i;
@@ -164,7 +164,7 @@ void Camera_WorldToScreen(s32 *position);
 /// Per-frame callback: until done, moves the effect object down 2.5 pixels
 /// and shrinks it by 1/64 each frame, marking done at frame 8.
 void BattleEffect_SinkAndShrinkObject(void) {
-  struct RiseWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct RiseWork *work = Ram_HeapSlots->battleEffect;
 
   if (work->done == 0) {
     struct Actor *object = work->object;
@@ -210,8 +210,8 @@ void Camera_WorldToScreen(s32 *position);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 
 void FieldPsynergy_Pound(void) {
-  struct PoundWork *work = HeapSlot_Alloc(92, 0x18b4);
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct PoundWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x18b4);
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FxEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *child = scene->child;
   struct Actor *caster = scene->mainObject;
@@ -291,7 +291,7 @@ void FieldPsynergy_Pound(void) {
     Func_080dba5c();
 
   BattleEffect_StartCanvasSprite();
-  canvas = Ram_HeapSlots->unkec[1];
+  canvas = Ram_HeapSlots->canvasSprite;
   canvas->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   canvas->depth = 1;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
@@ -304,7 +304,7 @@ void FieldPsynergy_Pound(void) {
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
-                      Ram_HeapSlots->battleFxWork[1]);
+                      Ram_HeapSlots->battleCanvas);
   canvas->command = CANVAS_UPLOAD;
 
   IWRAM_FILL_WORDS(work, size, 0);
@@ -399,7 +399,7 @@ void FieldPsynergy_Pound(void) {
   BattleEffect_EndCanvasSprite();
 end:
   FieldPsynergy_FadeFromCastColor();
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /// Copies a 32 by 32 byte picture into a cleared one stretched down, its rows

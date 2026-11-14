@@ -148,7 +148,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 iconSlots[5];
   struct MenuSprite sprites[5];
 
-  work = (struct ItemMenuWork *)Ram_HeapSlots->windowTiles;
+  work = (struct ItemMenuWork *)Ram_HeapSlots->windowWork;
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);

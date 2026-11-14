@@ -84,8 +84,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the heap
    * slots' fixed address. */
   __asm__("" : "=r"(heap) : "0"(heap));
-  work = (struct BattleEffectWork *)heap->battleFxWork[0];
-  canvas = heap->battleFxWork[1];
+  work = (struct BattleEffectWork *)heap->battleEffect;
+  canvas = heap->battleCanvas;
   camera = heap->cameraWork;
   BattleEffect_StartCanvasLayer(1);
 
@@ -94,16 +94,16 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   if (args->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-    drawUpper = heap->unk64[1];
+    drawUpper = heap->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    drawLower = heap->unkb8[1];
+    drawLower = heap->ramCode2;
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                         BLITTER_MAX);
-    drawUpper = heap->unk64[1];
+    drawUpper = heap->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    drawLower = heap->unkb8[1];
+    drawLower = heap->ramCode2;
   }
 
   // The streak pictures, and the mode's colours.
@@ -301,10 +301,10 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 group = 32; // motes that start together
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sheet = Ram_HeapSlots->unk64[0];
+  sheet = Ram_HeapSlots->battleSheet;
   if (mode == MODE_SOOTHING_STAR)
     BattleEffect_StartCanvasLayer(0);
   else
@@ -313,10 +313,10 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   // Motes draw at their maximum; the second blitter, mirrored top to
   // bottom, is loaded but not used.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == MODE_SOOTHING_STAR)
     resource = (s32)&ResourceId_OrangePaletteA;

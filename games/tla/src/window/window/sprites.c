@@ -43,7 +43,7 @@ s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 /// nothing is drawn and it returns 0. The sprite stays until its window is
 /// cleared or closed.
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 width;
   u32 spacingX = work->glyphSpacing;
   u32 spacingY = work->lineSpacing;
@@ -57,7 +57,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
 
     // The small font, and the kana's voicing mark drawn as a second glyph
     // after it.
-    if (**(struct Window ***)&((void **)Ram_HeapSlots)[37] == window) {
+    if (*(struct Window **)Ram_HeapSlots->battleMessage == window) {
       font = Resource_GetTableEntry((s32)&ResourceId_SmallFont);
       width = 3;
       if (character == ' ')
@@ -83,7 +83,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     GlyphRoutine draw;
     s32 result;
 
-    if (**(struct Window ***)&((void **)Ram_HeapSlots)[37] == window) {
+    if (*(struct Window **)Ram_HeapSlots->battleMessage == window) {
       Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
       width = 3;
       if (character == ' ')
@@ -202,7 +202,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *tiles);
 /// Draws character as a glyph sprite on the window at x, y and returns its
 /// width, or 0 when no window sprite is free.
 s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
-  struct WindowWork *work = Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = Ram_HeapSlots->windowWork;
   u32 tiles[32];
   u32 spacingX = work->glyphSpacing;
   u32 spacingY = work->lineSpacing;
@@ -259,7 +259,7 @@ void Glyph_DrawToTiles(const void *source, void *destination) {
 /// draws nothing, and returns the VRAM address of its tiles for the caller to
 /// fill, or NULL when no window sprite is free.
 void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
-  struct WindowWork *work = Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = Ram_HeapSlots->windowWork;
   // Unused: gives the stack frame its 128 bytes.
   u32 tiles[32];
   u32 spacingX = work->glyphSpacing;
@@ -312,7 +312,7 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
 /// next-page arrow sprite on the interior's last tile. In Japanese, a kana mark
 /// goes in the tile above the character before it.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
-  struct WindowWork *base = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *base = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *tilemap = base->tilemap[0];
   struct WindowSprite *out;
   s32 idx;
@@ -403,7 +403,7 @@ enum {
 
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode) {
-  u16 *map = ((struct WindowWork *)Ram_HeapSlots->windowTiles)->tilemap[0];
+  u16 *map = ((struct WindowWork *)Ram_HeapSlots->windowWork)->tilemap[0];
   s32 palette;
   s32 index;
 
@@ -552,7 +552,7 @@ extern const s8 gWindowSprite_WobbleOffsets[][2];
 extern const s8 gUiSprite_BounceOffsets[];
 
 void WindowSprite_UpdateAll(void) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window = work->windows;
   s32 no;
   union {

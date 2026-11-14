@@ -54,10 +54,6 @@ void FieldPsynergy_WatchSandGround(void) {
     event->psynergy = 0x208b;
 }
 
-/// The heap slot (a byte offset into Ram_HeapSlots) that holds the RAM copy of
-/// the ARM picture decoder while a picture is drawn.
-#define HEAP_SLOT_PICTURE_DECODER 80
-
 // How a picture is stored.
 #define PICTURE_FORMAT_TYPE01 1 ///< one type-01 stream
 #define PICTURE_FORMAT_COMPRESSED                                              \
@@ -87,17 +83,17 @@ extern u8 BattleEffect_DecodePictureBlockSize[];
 void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
                                  s32 size) {
   s32 decoderLoaded = 1;
-  PictureDecoder decode = Ram_HeapSlots->unk4c[1];
+  PictureDecoder decode = Ram_HeapSlots->frameScratch;
 
   if (decode == NULL) {
     Dma_Set(BattleEffect_DecodePictureCode,
-            HeapSlot_Alloc(HEAP_SLOT_PICTURE_DECODER,
+            HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
                            (s32)BattleEffect_DecodePictureBlockSize),
             DMA_COPY_WORDS((u32)(BattleEffect_DecodePictureCopyEnd -
                                  BattleEffect_DecodePictureCode) >>
                            2),
             REG_DMA3);
-    decode = Ram_HeapSlots->unk4c[1];
+    decode = Ram_HeapSlots->frameScratch;
     decoderLoaded = 0;
   }
 
@@ -115,12 +111,11 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
   }
 
   if (!decoderLoaded)
-    HeapSlot_Release(HEAP_SLOT_PICTURE_DECODER);
+    HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
 #undef OBJECT_DEFINITION
 #undef SCRIPT_OBJECT_COUNT
 #undef EVENT_MODE_NO_CELL_TEST
-#undef HEAP_SLOT_PICTURE_DECODER
 #undef PICTURE_FORMAT_TYPE01
 #undef PICTURE_FORMAT_COMPRESSED
 
@@ -170,7 +165,7 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 /// Sets up the sprite the Sand draws the sinking leader as: the leader's
 /// depth, priority, scale (three quarters on the world map) and place.
 void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 position[3];
 
@@ -204,7 +199,7 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
                      struct EffectParticle *particle, s32 unused, s32 tiles,
                      s32 high) {
   struct Actor *mainObject =
-      ((struct FxScene *)Ram_HeapSlots->effectWork)->mainObject;
+      ((struct FxScene *)Ram_HeapSlots->fieldEffectWork)->mainObject;
   s32 position[3];
   s32 y;
 
@@ -278,8 +273,8 @@ void Actor_SetFirstSpriteAnimationFar(struct Actor *object, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 
 void FieldPsynergy_EndSand(void) {
-  u8 *work = HeapSlot_Alloc(92, 0x192c);
-  struct FxScene *effect = Ram_HeapSlots->effectWork;
+  u8 *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x192c);
+  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 pictureEntry;
   struct Actor *owner = effect->mainObject;
@@ -367,7 +362,7 @@ void FieldPsynergy_EndSand(void) {
       Sound_PlayFar(SE_544);
     if (frame <= 64) {
       Picture_SinkColumnsByWave(work, rippled, 92 - ripple / 2);
-      ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
+      ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
           rippled, 32, 32, (u8 *)OBJ_VRAM0 + pictureOffset);
       Sand_DrawLeaderSprite(work + 0x1900);
     }
@@ -405,15 +400,15 @@ void FieldPsynergy_EndSand(void) {
   Actor_SetOthersPaused(owner, 0, 16);
   VramCache_FreeEntry(pictureEntry);
   VramCache_FreeEntry(particleEntry);
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /// Psynergy effect 23 cast on a target: runs its effect.
 void FieldPsynergy_SandOnTarget(void) { FieldPsynergy_Sand(); }
 
 void FieldPsynergy_Sand(void) {
-  u8 *work = HeapSlot_Alloc(92, 0x192c);
-  struct BattleFxScene *effect = Ram_HeapSlots->effectWork;
+  u8 *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x192c);
+  struct BattleFxScene *effect = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner;
   s32 pictureEntry;
@@ -479,7 +474,7 @@ void FieldPsynergy_Sand(void) {
   frame = 15;
   for (; frame <= 92; frame++) {
     Picture_SinkColumnsByWave(work, work + 0x400, frame * 3 / 2);
-    ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
+    ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
         work + 0x400, 32, 32, (u8 *)OBJ_VRAM0 + pictureTiles * 32);
     Sand_DrawLeaderSprite(work + 0x1900);
     i = 0;
@@ -523,7 +518,7 @@ void FieldPsynergy_Sand(void) {
   VramCache_FreeEntry(particleEntry);
   FieldPsynergy_FadeFromCastColor();
 end:
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   if (event->standing != 0)
     FieldPsynergy_EndSand();
 }

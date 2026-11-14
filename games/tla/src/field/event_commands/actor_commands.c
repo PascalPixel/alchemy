@@ -196,13 +196,13 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
       sprite = object->sprite;
       if (resource & 0x8000)
         resource = 0;
-      buffer = HeapSlot_Alloc(68, 0x608);
+      buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
       zero = 0;
       buffer += 0x400;
       Dma_Fill32(zero, buffer, 0x80);
       Func_08038248__event_commands(resource, buffer);
       tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
-      HeapSlot_Release(68);
+      HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       object->retainSpriteCache = kind;
       SpriteAnimation_ClearFar(sprite->record);
       sprite->record = NULL;

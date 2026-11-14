@@ -1,7 +1,7 @@
 /// Draws the dust around the leader.
 void GroundParticles_Draw(void) {
-  struct MapWork *view = Ram_HeapSlots->mapWork;
-  struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
+  struct MapWork *view = Ram_HeapSlots->mapGrid;
+  struct GroundParticleWork *work = Ram_HeapSlots->weather;
   s32 *camera = &view->viewX;
   struct GroundParticle *particle = work->particles;
   s32 cameraX = camera[0];

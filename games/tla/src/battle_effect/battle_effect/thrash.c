@@ -94,8 +94,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   DrawRectangle draw[2];
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   if ((u32)(variant - 3) > 2)
     REG_BLDCNT = 0;
@@ -168,7 +168,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   if (args->side == 1)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_ADDITIVE);
@@ -176,7 +176,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         BLITTER_ADDITIVE);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
 
   Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != REVEAL_FRAMES; frame++) {

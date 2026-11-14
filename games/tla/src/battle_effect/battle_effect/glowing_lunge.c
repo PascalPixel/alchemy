@@ -7,8 +7,6 @@
 
 struct Model;
 
-#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
-
 #define LUNGE_FRAMES 60
 #define LUNGE_STREAK_FRAMES 15 // the streak follows the caster
 #define LUNGE_HIT_FRAME 8      // the caster reaches the target
@@ -62,11 +60,11 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint caster;
   struct ScreenPoint screen;
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
   s32 *camera = Ram_HeapSlots->cameraWork;
-  u8 *sparkCels = Ram_HeapSlots->unk64[0];
+  u8 *sparkCels = Ram_HeapSlots->battleSheet;
   struct MotionObject *targetObject;
   struct RenderPrimitive__f17e0c0 *quad;
   void *vertices;
@@ -299,7 +297,6 @@ void BattleEffect_RunRecovery(s32 a0) { BattleEffect_RunMirroredWall(a0, 2); }
 
 /// Abilities: Sack (kind 431).
 void BattleEffect_RunSack(s32 a0) { BattleEffect_RunMirroredWall(a0, 3); }
-#undef HEAP_SLOT_BLITTER
 #undef LUNGE_FRAMES
 #undef LUNGE_STREAK_FRAMES
 #undef LUNGE_HIT_FRAME

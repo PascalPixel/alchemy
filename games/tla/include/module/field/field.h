@@ -311,7 +311,7 @@ struct TightropeWork {
   struct TightropeNode nodes[128];
 };
 
-#define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->unk84[7])
+#define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->tightrope)
 
 struct ChainObject {
   u8 unk00[8];
@@ -651,7 +651,7 @@ struct RopeWork {
   struct RopeNode nodes[128];
 };
 
-#define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->unk84[6])
+#define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)
 
 union MoteWord {
   u32 value;

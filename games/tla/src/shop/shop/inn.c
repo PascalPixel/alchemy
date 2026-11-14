@@ -25,7 +25,7 @@ s32 Inn_RoomPrice(s32 innId) {
   s32 pricePerGuest;
   s32 memberIndex;
 
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   guestCount = 0;
   pricePerGuest = gInn_PricesPerGuest[innId];
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
@@ -43,7 +43,7 @@ s32 Inn_QuoteRoomPrice(s32 innId) {
   struct ShopWork *shop;
 
   Shop_InitializeWork();
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   shop->shopType = SHOP_TYPE_WEAPONS;
   innId = Inn_RoomPrice(innId);
   Shop_ReleaseWork();
@@ -61,7 +61,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
   s32 messageBase;
 
   Shop_InitializeWork();
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   shop->shopType = SHOP_TYPE_WEAPONS;
 
   innkeeper = Actor_GetByIdFar(actorId);

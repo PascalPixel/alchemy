@@ -15,7 +15,7 @@
 void BattleCamera_SetCommandView(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *secondary =
-      Ram_HeapSlots->transitionWork;
+      Ram_HeapSlots->battleBackground;
   struct FixedPointPosition local;
   u32 result;
   s32 one;
@@ -527,7 +527,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
 finish:
   GameFlag_Clear(FLAG_CHOOSING_COMMANDS);
   BattleCamera_SetDefaultView();
-  Ram_HeapSlots->transitionWork->targetYaw = YAW_PARTY_ACTION;
+  Ram_HeapSlots->battleBackground->targetYaw = YAW_PARTY_ACTION;
   return cnt;
 }
 

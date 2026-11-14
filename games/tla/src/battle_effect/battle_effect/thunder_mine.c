@@ -10,9 +10,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 /// The sparks, after the map cells.
@@ -46,9 +43,9 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   s32 k;
   u8 *buffer;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(1);
   if (mode == 0) {
@@ -57,7 +54,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   radius = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
                              1, 0);
@@ -211,8 +208,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         /* FAKEMATCH(dead): a once-only block. */
         do {
         } while (0);
-        BattleEffect_BuildBlitter(188, 7, 7, flags, 1);
-        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flags, 1);
+        ((DrawRectangle)Ram_HeapSlots->ramCode2)(
             canvas, work->sheet + 0x800 + gBattleEffect_GlintPictures[cell],
             flashX, flashY, gBattleEffect_GlintPictureWidths[cell],
             gBattleEffect_GlintPictureHeights[cell]);
@@ -325,9 +322,9 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sprites = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sprites = Ram_HeapSlots->battleSheet;
   pictures = PICTURES;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
@@ -606,10 +603,10 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               /* FAKEMATCH(dead): an empty once-only loop. */
               do {
               } while (0);
-              BattleEffect_BuildBlitter(188, 7, 7,
+              BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
                                         3 | gMegaera_GlintFlips[Random16() & 3],
                                         gMegaera_GlintModes[args->variant]);
-              ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+              ((DrawRectangle)Ram_HeapSlots->ramCode2)(
                   canvas, PICTURES + gBattleEffect_GlintPictures[k], gx - 4,
                   gy + 40, gBattleEffect_GlintPictureWidths[k],
                   gBattleEffect_GlintPictureHeights[k]);
@@ -621,7 +618,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
-      rects[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      rects[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
       if (frame <= 69) {
         for (i = 0, p = SPARKS; i != 512; i++, p++) {
           s32 size;
@@ -686,10 +683,10 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   u8 *buffer;
   s32 size;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
@@ -741,10 +738,10 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   if (args->side != 0) {
     flip = 0;
   }
-  BattleEffect_BuildBlitter(SLOT_BLITTER, 7, 7, flip | 3, 1);
-  BattleEffect_BuildBlitter(188, 7, 7, flip | 11, 1);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flip | 3, 1);
+  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flip | 11, 1);
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   work->cameraDelta = 0;
   work->cameraPhase = 0;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
@@ -907,7 +904,6 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   Task_Remove(BattleCamera_ApplyPhasedDelta);
   BattleEffect_EndCanvasLayer();
 }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef SPARKS
 #undef PICTURES

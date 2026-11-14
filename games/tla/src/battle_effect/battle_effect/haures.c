@@ -10,9 +10,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 struct HalfPair {
@@ -36,7 +33,6 @@ extern struct WingVertex Data_020104f0[];
 extern const struct HalfPair gHaures_FeatherPoints[];
 
 #define SPARKS ((struct Particle *)SCRATCH)
-#define SLOT_ALT 188 // unkb8[1]
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 
@@ -77,10 +73,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   buffer = gMapGridCellBuffer;
   shades = Data_02010fa0;
   battle = Ram_HeapSlots->battleWork;
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sprites = Ram_HeapSlots->unk64[0];
-  transition = (s32 *)Ram_HeapSlots->transitionWork;
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sprites = Ram_HeapSlots->battleSheet;
+  transition = (s32 *)Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
@@ -463,8 +459,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                                               (s32 *)&req, 0);
           }
           if ((u32)(frame - 150) <= 116) {
-            BattleEffect_BuildBlitter(SLOT_ALT, 6, 6, 3, 1);
-            draw[1] = Ram_HeapSlots->unkb8[1];
+            BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 6, 6, 3, 1);
+            draw[1] = Ram_HeapSlots->ramCode2;
             {
               for (i = 0; i != 8; i++) {
                 struct Particle *p = &work->particles[i + 4];
@@ -783,7 +779,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = Ram_HeapSlots->unk64[1];
+  draw[0] = Ram_HeapSlots->ramCode;
   for (frame = 0; frame != 92; frame++) {
     struct RenderModel *model;
     void *verts;
@@ -1081,11 +1077,9 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
   triangles[segments * 2].vertex[1] = 0;
   triangles[segments * 2].vertex[2] = 0;
 }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef SCRATCH
 #undef SPARKS
-#undef SLOT_ALT
 #undef STAMP_TILES
 #undef STAMP_CANVAS
 #undef FIRST_RING_Y

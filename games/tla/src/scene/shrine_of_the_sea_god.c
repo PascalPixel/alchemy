@@ -414,7 +414,7 @@ void ShrineOfTheSeaGod_OpenFieldMenu(void) {
 
 void ShrineOfTheSeaGod_LiftWithWater(void) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
   struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
@@ -438,7 +438,7 @@ void ShrineOfTheSeaGod_LiftWithWater(void) {
 
 void ShrineOfTheSeaGod_ScrollWaterUp(void) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
 
   layer->y += -px(1);
@@ -449,7 +449,7 @@ void ShrineOfTheSeaGod_ScrollWaterUp(void) {
 /// moves the first two layers' y by -0x2000 a frame for 16 frames.
 void ShrineOfTheSeaGod_RaiseWaterBand(s32 x, s32 y) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
   struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
   u8 i;
@@ -531,7 +531,7 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
 
 void ShrineOfTheSeaGod_LowerWithWater(void) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
   struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
@@ -555,7 +555,7 @@ void ShrineOfTheSeaGod_LowerWithWater(void) {
 
 void ShrineOfTheSeaGod_ScrollWaterDown(void) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
 
   layer->y += px(1);
@@ -566,7 +566,7 @@ void ShrineOfTheSeaGod_ScrollWaterDown(void) {
 /// 0x2000 a frame for 16 frames.
 void ShrineOfTheSeaGod_LowerWaterBand(s32 x, s32 y) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
   struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
   u8 i;
@@ -587,7 +587,7 @@ void MapGrid_WaitForShakeToSettle(void);
 /// Back on the island after the second Tear, the water sinks to where it was.
 void ShrineOfTheSeaGod_LowerWater(void) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
   struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
@@ -694,7 +694,7 @@ extern s16 gShrineOfTheSeaGod_MovableActors[];
 /// by 0x8000 in y a frame for 100 frames as a screen transition starts.
 void ShrineOfTheSeaGod_RiseOnWater(void) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer;
   struct ShrineOfTheSeaGodObject *leader;
   u32 i;
@@ -748,7 +748,7 @@ loop:
 /// 100 frames; at frame 90 the screen transition finishes.
 void ShrineOfTheSeaGod_SinkWithWater(void) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer;
   struct ShrineOfTheSeaGodObject *object;
   u32 i;
@@ -1893,7 +1893,7 @@ void ShrineOfTheSeaGod_PlaceFootprints(void) {
 
 void ShrineOfTheSeaGod_InitializeRoom1(void) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
 
   ShrineOfTheSeaGod_SetUpFlatProp(8);
   ShrineOfTheSeaGod_SetUpFlatProp(9);
@@ -1988,7 +1988,7 @@ void ShrineOfTheSeaGod_InitializeRoom3(void) {
 
 void ShrineOfTheSeaGod_InitializeRoom4(void) {
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
 
   if (GameFlag_Get(FLAG_DJINNI_RAN_PAST) == 0)
     ShrineOfTheSeaGod_PlaceFootprints();
@@ -2068,7 +2068,7 @@ void ShrineOfTheSeaGod_InitializeRoom7(void) {
   struct ShrineOfTheSeaGodObject *object;
   struct ShrineOfTheSeaGodObject *lastObject;
 
-  ((struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork)->mode17 = 1;
+  ((struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid)->mode17 = 1;
   ShrineOfTheSeaGod_SetUpUnderfoot(8);
   ShrineOfTheSeaGod_SetUpUnderfoot(9);
   ShrineOfTheSeaGod_SetUpUnderfoot(10);
@@ -2155,7 +2155,7 @@ void ShrineOfTheSeaGod_SparkleRightProng(
 void ShrineOfTheSeaGod_InitializeRoom11(void) {
   struct ShrineOfTheSeaGodObject *object = Actor_GetById(64);
   struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[2];
 
   layer->x += px(128);

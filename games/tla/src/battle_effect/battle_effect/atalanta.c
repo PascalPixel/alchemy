@@ -47,11 +47,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   u8 *tiles;
   u8 *picture;
 
-  presentation = Ram_HeapSlots->transitionWork;
+  presentation = Ram_HeapSlots->battleBackground;
   tiles = Ram_MapCellBuffer;
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sheet = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sheet = Ram_HeapSlots->battleSheet;
   scrollX = gBgScroll[1].x;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = Q_8_8(1);
@@ -90,7 +90,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   draw[1] = ALTERNATE_BLITTER_SLOT;
   gCameraSceneParameters[4] = 240;
   wait(1);

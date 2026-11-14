@@ -1,6 +1,6 @@
 /// Palette_SetColors, then applies the palette fade.
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
+  u8 *saved = Ram_HeapSlots->paletteFade;
 
   gPaletteCycle_Slots = slots;
   gPaletteCycle_FlashColors = colours;

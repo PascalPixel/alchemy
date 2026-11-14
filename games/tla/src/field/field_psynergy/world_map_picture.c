@@ -714,9 +714,9 @@ s32 WorldPicture_Show(s32 mode) {
   u8 savedFlags[16];
   s32 screenX;
   s32 screenY;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct ObjectSystemWork *objects = Ram_HeapSlots->objectSystem;
+  struct ObjectSystemWork *objects = Ram_HeapSlots->actorSystem;
   s16 blend;
   s32 messageShown = 0;
   s32 zoomed = 0;

@@ -580,7 +580,7 @@ void EasternAlhafra_StartWaveDma(void) {
 /// Fills the other table: each of the 160 lines takes layer 2's scroll plus a
 /// sine of the frame count less the line.
 void EasternAlhafra_FillWaveLines(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
   u16 *line;
   s32 i = 0;
 
@@ -1675,10 +1675,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_SetPosition(22, 224, 8);
   // "Did you call me a thief?"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
-  Ram_HeapSlots->mapWork->minX = 0;
-  Ram_HeapSlots->mapWork->maxX = 0x4000000;
-  Ram_HeapSlots->mapWork->minZ = 0;
-  Ram_HeapSlots->mapWork->maxZ = 0x4000000;
+  Ram_HeapSlots->mapGrid->minX = 0;
+  Ram_HeapSlots->mapGrid->maxX = 0x4000000;
+  Ram_HeapSlots->mapGrid->minZ = 0;
+  Ram_HeapSlots->mapGrid->maxZ = 0x4000000;
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(208, CAMERA_KEEP, 168, 1);
   FieldEvent_Wait(50);
@@ -1889,7 +1889,7 @@ turn:
   FieldEvent_Wait(10);
   Actor_SetAnimation(22, 9);
   FieldEvent_Wait(70);
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   Actor_GetById(22)->motionFlags = 0;
   Actor_GetById(23)->motionFlags = 0;
   MapGrid_CopyCellsLayered(42, 60, 17, 4, 42, 64);
@@ -2273,7 +2273,8 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void EasternAlhafra_StartFallingRocks(void) {
-  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
+  struct RockWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
@@ -2305,11 +2306,11 @@ void EasternAlhafra_StartFallingRocks(void) {
 }
 
 void EasternAlhafra_EndFallingRocks(void) {
-  struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
+  struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 // Rewrites the map cells under a pushable actor. The actor's sprite
@@ -2329,7 +2330,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 /// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
 /// is filled with 255. Returns 1, or 0 for a shape with no footprint.
 s32 PushTarget_FillFootprint(s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
   s16 kind = *((struct ObjectAnimationState *)actor->sprite)->value28;
   s16 i = 0;

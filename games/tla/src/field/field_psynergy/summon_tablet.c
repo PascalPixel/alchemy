@@ -114,7 +114,7 @@ struct MoteWork {
 
 /// Task of SummonTablet_PlayRunes: moves and draws the motes.
 void SummonTablet_UpdateMotes(void) {
-  struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct MoteWork *work = Ram_HeapSlots->battleEffect;
   s32 position[3];
   struct ChasingMote *mote;
   struct EffectSprite *sprite;
@@ -193,7 +193,8 @@ void Camera_WorldToScreen(s32 *position);
 /// stone tablet"): the tablet's runes and pebbles fly as motes between it
 /// and the leader, with their sounds, before Summon_ShowLearnedMessage.
 void SummonTablet_PlayRunes(s32 targetId) {
-  struct MoteWork *work = HeapSlot_Alloc(92, sizeof(struct MoteWork));
+  struct MoteWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct MoteWork));
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = ObjectTable_Get(ownerId);
   struct Actor *target = ObjectTable_Get(targetId);
@@ -435,7 +436,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   FieldPsynergy_FadeFromCastColor();
   VramCache_FreeEntry(moteEntry);
   VramCache_FreeEntry(sparkEntry);
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 struct ActorFlag {
@@ -454,7 +455,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list);
 // XXX: what the blocks are in the game (pillars, posts?); a render of Daila's
 // would settle it.
 void FlagBlock_PlaceAll(struct ActorFlag *actors) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ActorFlag *list = actors;
   struct Actor *leader;
   s32 height;

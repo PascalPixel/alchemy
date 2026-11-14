@@ -1373,7 +1373,7 @@ void KandoreanTemple_MatchLiftPriority(void) {
 
 void KandoreanTemple_DropOffLowCells(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct MapWork170 *map = (struct MapWork170 *)Ram_HeapSlots->mapWork;
+  struct MapWork170 *map = (struct MapWork170 *)Ram_HeapSlots->mapGrid;
 
   struct MapCell__kandorean_temple *cell = &map->cells[Actor_GetCellIndex()];
 
@@ -2385,7 +2385,7 @@ rise:
 }
 
 void KandoreanTemple_StartRoom5(void) {
-  struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
+  struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapGrid;
 
   gKandoreanTemple_SteamCounter = 0;
   map->mode = 1;
@@ -2397,7 +2397,7 @@ void KandoreanTemple_StartRoom5(void) {
 }
 
 void KandoreanTemple_StartRoom6(void) {
-  struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
+  struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapGrid;
 
   gKandoreanTemple_SteamCounter = 0;
   Scene_QueueMusic(SE_170);
@@ -3099,10 +3099,10 @@ void KandoreanTemple_CreateLashPebble(void) {
     object->retainSpriteCache = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    buffer = HeapSlot_Alloc(68, 0x608);
+    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_LASH_PEBBLE);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }
 

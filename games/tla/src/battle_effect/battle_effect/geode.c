@@ -9,9 +9,6 @@
 struct MeshTriangle;
 struct Model;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 struct ModelVertex {
@@ -57,9 +54,9 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  transition = (s32 *)Ram_HeapSlots->transitionWork;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  transition = (s32 *)Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(2);
   BattleEffect_RunDjinniEntrance(args, (args->side << 4) | 0xc0, screenA,
                                  screenB);
@@ -78,7 +75,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
   }
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -377,7 +374,6 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef DOME_ROWS
 #undef DOME_COLUMNS

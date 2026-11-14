@@ -15,14 +15,14 @@ struct ScreenWork {
 
 /// The sound test's per-frame task: moves the cursor.
 void DebugSoundTest_StepCursor(void) {
-  struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
+  struct ScreenWork *work = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
 /// Allocates the sound test's work block and starts its cursor task.
 void DebugSoundTest_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(208, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
 
   Dma_Fill32(0, work, 0x628);
   Task_Add(DebugSoundTest_StepCursor, TASK_PASS_VBLANK);
@@ -31,7 +31,7 @@ void DebugSoundTest_Initialize(void) {
 /// Stops the sound test's cursor task and frees its work block.
 void DebugSoundTest_Release(void) {
   Task_Remove(DebugSoundTest_StepCursor);
-  HeapSlot_Release(208);
+  HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
 struct ScreenCursorWork {
@@ -44,7 +44,7 @@ void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 
 /// Opens the sound test's window and places the cursor on its first row.
 struct RenderInput *DebugSoundTest_Open(void) {
-  struct ScreenCursorWork *work = Ram_HeapSlots->unkd0[0];
+  struct ScreenCursorWork *work = Ram_HeapSlots->settingsMenu;
   struct RenderInput *window;
 
   window = Window_Create(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
@@ -91,7 +91,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
 
   test = gDebugSoundTest_StartValues;
   DebugSoundTest_Initialize();
-  work = Ram_HeapSlots->unkd0[0];
+  work = Ram_HeapSlots->settingsMenu;
   window = DebugSoundTest_Open();
   wait(1);
   do {
@@ -157,14 +157,14 @@ UNUSED s32 DebugSoundTest_Run(void) {
 
 /// The debug menu's per-frame task: moves the cursor.
 void DebugMenu_StepCursor(void) {
-  struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
+  struct ScreenWork *work = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
 /// Allocates the debug menu's work block and starts its cursor task.
 void DebugMenu_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(208, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
 
   Dma_Fill32(0, work, 0x628);
   Task_Add(DebugMenu_StepCursor, TASK_PASS_VBLANK);
@@ -173,7 +173,7 @@ void DebugMenu_Initialize(void) {
 /// Stops the debug menu's cursor task and frees its work block.
 void DebugMenu_Release(void) {
   Task_Remove(DebugMenu_StepCursor);
-  HeapSlot_Release(208);
+  HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -183,7 +183,7 @@ extern u8 MsgFullPpAndMoney[];
 /// Opens the debug menu's window: its five rows, from "Full PP and Money"
 /// (MsgFullPpAndMoney) to "Change of hero", with a divider under each.
 struct Window *DebugMenu_Open(void) {
-  void *work = Ram_HeapSlots->unkd0[0];
+  void *work = Ram_HeapSlots->settingsMenu;
   struct Window *window = Window_Create(6, 2, 18, 16, WINDOW_FLAG_INSTANT);
   s32 i;
 
@@ -209,7 +209,7 @@ UNUSED s32 DebugMenu_Run(s32 index) {
   s32 moved;
 
   DebugMenu_Initialize();
-  work = Ram_HeapSlots->unkd0[0];
+  work = Ram_HeapSlots->settingsMenu;
   wait(1);
   moved = -1;
   window = DebugMenu_Open();
@@ -345,14 +345,14 @@ void DebugWarp_KaoruSpecial1(void) {
 
 /// The debug warp menu's per-frame task: moves the cursor.
 void DebugWarp_StepCursor(void) {
-  struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
+  struct ScreenWork *work = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
 /// Allocates the debug warp menu's work block and starts its cursor task.
 void DebugWarp_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(208, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
 
   Dma_Fill32(0, work, 0x628);
   Task_Add(DebugWarp_StepCursor, TASK_PASS_VBLANK);
@@ -361,7 +361,7 @@ void DebugWarp_Initialize(void) {
 /// Stops the debug warp menu's cursor task and frees its work block.
 void DebugWarp_Release(void) {
   Task_Remove(DebugWarp_StepCursor);
-  HeapSlot_Release(208);
+  HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
 /// One row of the debug warp menu: its name and what choosing it does.
@@ -381,7 +381,7 @@ extern const struct DebugWarpPreset gDebugWarp_Presets[];
 /// Opens the debug warp menu's window: nine preset names 16 pixels apart,
 /// with a divider under each but the last.
 struct RenderInput *DebugWarp_Open(void) {
-  struct ScreenCursorWork *work = Ram_HeapSlots->unkd0[0];
+  struct ScreenCursorWork *work = Ram_HeapSlots->settingsMenu;
   struct RenderInput *window;
   const struct DebugWarpPreset *line;
   s32 i;
@@ -418,7 +418,7 @@ UNUSED s32 DebugWarp_Run(s32 index) {
   u32 down;
 
   DebugWarp_Initialize();
-  work = Ram_HeapSlots->unkd0[0];
+  work = Ram_HeapSlots->settingsMenu;
   wait(1);
   // -1 places the cursor at once; 1 slides it to a new row.
   moved = -1;
@@ -470,14 +470,14 @@ done:
 
 /// The ability grid's per-frame task: moves the cursor.
 void DebugShortcut_StepCursor(void) {
-  struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
+  struct ScreenWork *work = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
 /// Allocates the ability grid's work block and starts its cursor task.
 void DebugShortcut_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(208, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
 
   Dma_Fill32(0, work, 0x628);
   Task_Add(DebugShortcut_StepCursor, TASK_PASS_VBLANK);
@@ -486,7 +486,7 @@ void DebugShortcut_Initialize(void) {
 /// Stops the ability grid's cursor task and frees its work block.
 void DebugShortcut_Release(void) {
   Task_Remove(DebugShortcut_StepCursor);
-  HeapSlot_Release(208);
+  HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
 extern const u8 gPauseMenu_Icons[];
@@ -505,7 +505,7 @@ extern const s16 gDebugShortcut_Abilities[4][9];
 /// Opens the ability grid's window: eight dividers, then the four columns
 /// of gDebugShortcut_Abilities in nine rows, as DebugMenu_Open draws its grid.
 struct Window *DebugShortcut_Open(void) {
-  void *work = Ram_HeapSlots->unkd0[0];
+  void *work = Ram_HeapSlots->settingsMenu;
   struct Window *window = Window_Create(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
   const s16 *abilities;
   s32 i;
@@ -554,7 +554,7 @@ UNUSED s32 DebugShortcut_Run(void) {
   s32 columns = 4;
 
   DebugShortcut_Initialize();
-  work = Ram_HeapSlots->unkd0[0];
+  work = Ram_HeapSlots->settingsMenu;
   wait(1);
   result = -1;
   column = 0;

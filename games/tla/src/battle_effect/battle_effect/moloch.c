@@ -41,9 +41,9 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  graphics = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
@@ -339,9 +339,9 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 /// green to blue, blue to red).
 void Iris_ChangeBackdrop(void) {
   struct BattlePresentationTransition *transition =
-      Ram_HeapSlots->transitionWork;
+      Ram_HeapSlots->battleBackground;
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   s16 list[14];
   u16 *palette;
   s32 i;
@@ -401,10 +401,10 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
   s32 i;
   s32 trailY;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
 
   // The drop: one 20x40 or 12x24 cell of its strip in the sheet.
   if (small == 0)
@@ -441,7 +441,7 @@ extern const struct ModelVertex gIris_PillarVertices[6];
 /// height. x is the pillar's screen column (63 is the centre); the base sits
 /// height pixels below row 63, so the pillar grows upward from there.
 void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
-  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  u8 *work = Ram_HeapSlots->battleEffect;
   void *projected;
   struct RenderModel *model;
   struct ModelVertex vertices[6];
@@ -500,7 +500,6 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 struct StripQuad;
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HALF(p, n) (((s16 *)(p))[n])
@@ -595,7 +594,6 @@ extern const struct SevenWidths gIris_NarrowingPillarWidths;
 extern const struct FourSpans gIris_LeftStripSpans;
 extern const struct FourSpans gIris_RightStripSpans;
 
-#define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 #define SCENE (&Data_02012ee0)
 #define PLTT 0x05000000
@@ -618,8 +616,8 @@ extern const struct FourSpans gIris_RightStripSpans;
 // rises while the screen shakes; the drop itself is drawn last.
 static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle drawAlt;
   DrawRectangle draw;
   u8 *sprites;
@@ -632,9 +630,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   s32 column;
   s32 dead;
 
-  sprites = Ram_HeapSlots->unk64[0];
-  draw = Ram_HeapSlots->unk64[1];
-  drawAlt = Ram_HeapSlots->unkb8[1];
+  sprites = Ram_HeapSlots->battleSheet;
+  draw = Ram_HeapSlots->ramCode;
+  drawAlt = Ram_HeapSlots->ramCode2;
   if (t < *(gIris_SplashRadii + small) * 2) {
     r = *(gIris_SplashRadii + small) * 2 - t;
     cel = r / 6;
@@ -771,11 +769,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
 void BattleEffect_RunIris(struct BattleEffectParams *args) {
   typeof(SCENE) scene = SCENE;
   struct IrisPoint(*streaks)[10] = Data_02012ef4;
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct IrisSprite **objects = (struct IrisSprite **)gMapGridCellBuffer;
-  u8 *sprites = Ram_HeapSlots->unk64[0];
+  u8 *sprites = Ram_HeapSlots->battleSheet;
   struct IrisSparks *sparks = &Data_02011f40;
   u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
   s32 savedScroll = gBgScroll[1].x;
@@ -996,8 +994,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  draw[0] = Ram_HeapSlots->unk64[1];
-  draw[1] = Ram_HeapSlots->unkb8[1];
+  draw[0] = Ram_HeapSlots->ramCode;
+  draw[1] = Ram_HeapSlots->ramCode2;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, tileBuffer, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -1087,7 +1085,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if (frame <= 175) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
-      draw[1] = Ram_HeapSlots->unkb8[1];
+      draw[1] = Ram_HeapSlots->ramCode2;
       for (i = 0; i != 15; i++) {
         if (!(frame & 1)) {
           for (j = 9; j != 0; j--) {
@@ -2095,9 +2093,9 @@ struct SolidFace {
 // overlap. Each triangle is sorted by y and filled in two halves, top to
 // middle and middle to bottom, along 16.16 edge slopes.
 void Func_0819574c(s32 vertexCount, s32 faceCount) {
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
-  s32 *vertices = Ram_HeapSlots->unk64[0];
-  struct SolidFace *faces = (struct SolidFace *)Ram_HeapSlots->battleFxWork[0];
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
+  s32 *vertices = Ram_HeapSlots->battleSheet;
+  struct SolidFace *faces = (struct SolidFace *)Ram_HeapSlots->battleEffect;
   s32 i;
   s32 *ax, *bx, *cx, *cy, *ay, *by;
   s32 facing;
@@ -2264,9 +2262,9 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
   struct BattleEffectWork *work;
   u32 y;
 
-  vertices = Ram_HeapSlots->unk64[0];
-  faces = (struct MeshFace *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  vertices = Ram_HeapSlots->battleSheet;
+  faces = (struct MeshFace *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   vertexCount *= 3;
   for (i = 0; i != vertexCount; i += 3)
     Iwram_TransformVector(&vertices[i], &vertices[i]);
@@ -2290,7 +2288,7 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
     if (Iwram_MulQ16(*bx - *ax, *cy - *ay) -
             Iwram_MulQ16(*cx - *ax, *by - *ay) >=
         0) {
-      work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
       Dma_Set(uvs[i], uv, (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
       *ax += 64 << 16;
       *ay += 64 << 16;
@@ -2422,8 +2420,8 @@ struct WireFace {
 // counter-clockwise on screen) as clipped lines into the canvas, centred at
 // (64, 64).
 void Func_08196248(s32 vertexCount, s32 faceCount) {
-  s32 *vertices = Ram_HeapSlots->unk64[0];
-  struct WireFace *faces = (struct WireFace *)Ram_HeapSlots->battleFxWork[0];
+  s32 *vertices = Ram_HeapSlots->battleSheet;
+  struct WireFace *faces = (struct WireFace *)Ram_HeapSlots->battleEffect;
   s32 i;
   s32 facing;
   s32 color;
@@ -3053,11 +3051,9 @@ void Render_DrawModelList(struct Model *model) {
 }
 #undef MOLOCH_FRAMES
 #undef MOLOCH_SKIP_TO
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef HALF
 #undef Data_02012ef4
-#undef SLOT_ALT
 #undef OBJ_TILES
 #undef SCENE
 #undef PLTT

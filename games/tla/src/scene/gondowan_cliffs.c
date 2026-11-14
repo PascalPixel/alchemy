@@ -460,7 +460,7 @@ s32 Scene_Initialize(void) {
   Iwram_CopyWordsEntry(((u8 *)gGondowanCliffs_SavedWaterColors),
                        (void *)&BG_PLTT_COLOR(0, 12), 8);
   Task_AddFrame(GondowanCliffs_CycleWaterColors, 0x480);
-  ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
+  ((struct MapLayerBits *)Ram_HeapSlots->mapGrid)->priority = 1;
 done:
   return 0;
 }
@@ -469,7 +469,7 @@ extern s32 gGondowanCliffs_MapRects[];
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS)
-    *(const u8 **)Ram_HeapSlots->mapWork->unk0fc = gGondowanCliffs_MapRects;
+    *(const u8 **)Ram_HeapSlots->mapGrid->unk0fc = gGondowanCliffs_MapRects;
   return 0;
 }
 
@@ -481,7 +481,7 @@ s32 Scene_PrepareMap(void) {
 // collision and cell maps, and carries its rider with a bob.
 void Geysers_Update(void) {
   struct GeyserWork *work = (struct GeyserWork *)(gInventorySnapshot + 0x188);
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Geyser *entry = work->entries;
   s32 value = work->value;
   u8 *terrain = map->layers[0].terrainIds;
@@ -569,7 +569,7 @@ void Geysers_Draw(void) {
   s32 frame;
   u32 *oam = work->block;
   s32 count = 0;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 scrollX, scrollZ, lift;
   struct Actor *actor;

@@ -8,7 +8,7 @@
 
 /// Sets the map coordinates the camera keeps the screen inside.
 void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
 
   map->minX = minX;
   map->minZ = minZ;
@@ -17,15 +17,15 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
 }
 
 void WorldMap_StepZoom(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s16 *duration;
   s32 *from;
   s16 *step;
   s32 offset;
   s32 delta;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->camera->paused !=
-      0)
+  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))
+          ->camera->paused != 0)
     return;
   duration = &map->zoomFrames;
   if (*duration == 0)
@@ -44,10 +44,11 @@ void WorldMap_StepZoom(void) {
 }
 
 void WorldMap_StartZoom(s32 zoom, s32 frames) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 result;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->mode != 3)
+  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))->mode !=
+      3)
     return;
   {
     s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14Entry;
@@ -61,10 +62,11 @@ void WorldMap_StartZoom(s32 zoom, s32 frames) {
 }
 
 void Event_WaitForZoomTransition(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 frames;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->mode == 3) {
+  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))->mode ==
+      3) {
     frames = 0;
     if (map->zoomFrames != 0) {
       do {

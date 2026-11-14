@@ -456,24 +456,12 @@ extern u8 gVortices_Shapes[];
 
 // The canvas life cycle, shared by every canvas effect.
 
-/// The heap slots an effect is lent, as HeapSlot_Alloc and HeapSlot_Release
-/// take a slot: byte offsets into Ram_HeapSlots. The canvas is
-/// HEAP_SLOT_CANVAS.
-#define HEAP_SLOT_BATTLE_EFFECT 92 // Ram_HeapSlots->battleFxWork[0]
-#define HEAP_SLOT_BATTLE_SHEET 100 // Ram_HeapSlots->unk64[0]
-
 /// The bytes an effect's work block is lent: more than struct
 /// BattleEffectWork holds.
 #define BATTLE_EFFECT_WORK_SIZE 0x7b7c
 
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
-
-/// The heap slots the effects build their blitters in, as
-/// BattleEffect_LoadBlitter and HeapSlot_Release take a slot: a byte offset
-/// into Ram_HeapSlots. The second is released before the first.
-#define HEAP_SLOT_RAM_CODE 104   // Ram_HeapSlots->unk64[1]
-#define HEAP_SLOT_RAM_CODE_2 188 // Ram_HeapSlots->unkb8[1]
 
 /// Clips overflow on all four sides.
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)

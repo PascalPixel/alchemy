@@ -9,10 +9,6 @@
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
 
-// The blitter pair's heap slots, as byte offsets into Ram_HeapSlots.
-#define SLOT_BLITTER 104           // unk64[1]
-#define SLOT_BLITTER_ALTERNATE 188 // unkb8[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
@@ -42,9 +38,9 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, the shard pictures in the sheet and the puffs.
   BattleEffect_StartCanvasLayer(0x2001);
@@ -92,8 +88,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
   }
-  draw[0] = Ram_HeapSlots->unk64[1];
-  draw[1] = Ram_HeapSlots->unkb8[1];
+  draw[0] = Ram_HeapSlots->ramCode;
+  draw[1] = Ram_HeapSlots->ramCode2;
 
   // Window 0's left and right edge for each line: a band slanting with the
   // shards' fall, then the targets' full width, then nothing.

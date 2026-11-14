@@ -60,7 +60,7 @@ s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct CloakCaster *caster =
-      ((struct BattleFxScene *)Ram_HeapSlots->effectWork)->mainObject;
+      ((struct BattleFxScene *)Ram_HeapSlots->fieldEffectWork)->mainObject;
   struct CloakSprite *sprite = caster->sprite;
   struct AnimationEntry *entry = sprite->entries[0];
   u32 n;
@@ -126,7 +126,7 @@ void FieldPsynergy_Douse(void) {
   struct EffectVector pos;
   struct EffectVector start;
   struct EffectVector end;
-  struct Effect05State *work = Ram_HeapSlots->effectWork;
+  struct Effect05State *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *anchor = work->anchor;
   struct Actor *target = work->target;
   s32 count;
@@ -290,7 +290,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   struct Actor *obj;
   u32 dist;
 
-  src = ((struct BattleFxScene *)Ram_HeapSlots->effectWork)->child;
+  src = ((struct BattleFxScene *)Ram_HeapSlots->fieldEffectWork)->child;
   SET_POSITION(&pos, src->x, src->y - Random16() * 16 + px(24), src->z);
 
   dist = Random16() * 3;
@@ -353,7 +353,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   s32 magnitude;
   struct FxPosition *p;
 
-  work = Ram_HeapSlots->effectWork;
+  work = Ram_HeapSlots->fieldEffectWork;
   source = work->source;
   target = work->target;
   if (target == NULL)

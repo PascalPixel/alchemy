@@ -138,7 +138,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
   smallIconSlot = VramCache_AllocEntry(512);
-  state = HeapSlot_AllocEwram(228, 272);
+  state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, 272);
   // Default: set again before each round's forced actions.
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
@@ -459,7 +459,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+        work = (struct WindowWork *)Ram_HeapSlots->windowWork;
         commandWindow = Window_Create(8, 17, 18, 3, 6);
         COMMAND_ICON_X(state) = 40;
         iconSprite->oam.word.attr01 = 0x40000400;
@@ -838,7 +838,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Window_Close(state->timerWindow, 1);
   }
   BattleCamera_SetCommandViewFar(0);
-  HeapSlot_Release(228);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_MENU);
   if (commandCount >= 0)
     commandCount += forcedCount;
   return commandCount;
@@ -878,7 +878,7 @@ void IconMenu_DrawIcons(void) {
   struct WindowBuffer *window;
   s32 span;
 
-  work = Ram_HeapSlots->menuSelectWork;
+  work = Ram_HeapSlots->iconMenu;
   sprite = work->entries;
   scale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
   buffers = Ram_HeapSlots->screenTransition;
@@ -993,14 +993,12 @@ void IconMenu_DrawIcons(void) {
 #undef COMMAND_ICON_X
 #undef TRANSITION_BUSY
 
-#define AFFINE_EFFECT_SLOT 232
-
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
 /// The work (struct IconMenuWork, 152 bytes) lives in HEAP_SLOT_ICON_MENU
 /// until IconMenu_Close frees it; it is returned, and also reached
 /// as gIconMenuWork. Every command icon menu starts here.
 void *IconMenu_Open(void) {
-  void *work = HeapSlot_AllocEwram(AFFINE_EFFECT_SLOT, 152);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, 152);
 
   Dma_Fill32(0, work, 152);
   Task_Add((TaskFunc)IconMenu_DrawIcons, TASK_PASS_VBLANK - 10);
@@ -1016,7 +1014,7 @@ void IconMenu_Close(void) {
   u16 *entry;
   void *work;
 
-  work = Ram_HeapSlots->menuSelectWork;
+  work = Ram_HeapSlots->iconMenu;
   Task_Remove(IconMenu_DrawIcons);
   child = FIELD_AT_OFFSET(work, struct Window **, 0x78);
   if (child != 0) {
@@ -1028,7 +1026,7 @@ void IconMenu_Close(void) {
     VramCache_FreeEntry(*entry);
     i += 1;
   }
-  HeapSlot_Release(232);
+  HeapSlot_Release(HEAP_SLOT_ICON_MENU);
   wait(1U);
 }
 
@@ -1037,7 +1035,7 @@ void IconMenu_Close(void) {
 /// label is message resourceBase + position when the layout set a
 /// resourceBase, else the icon's command name (MsgCommandName + its icon).
 s32 IconMenu_Run(s32 initial) {
-  struct ResourceMenuWork *work = Ram_HeapSlots->menuSelectWork;
+  struct ResourceMenuWork *work = Ram_HeapSlots->iconMenu;
   s32 resource;
 
   work->selection = initial;
@@ -1104,7 +1102,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   const u8 *table;
   struct MenuSelectionState *state;
 
-  state = Ram_HeapSlots->menuSelectWork;
+  state = Ram_HeapSlots->iconMenu;
   step = 1;
   delay = 12;
   state->selection = (s16)start;
@@ -1168,7 +1166,7 @@ void IconMenu_AddIcon(s32 no) {
   s32 slot;
   s32 flags;
 
-  work = Ram_HeapSlots->menuSelectWork;
+  work = Ram_HeapSlots->iconMenu;
   index = work->count;
   if (index <= 5) {
     work->count++;
@@ -1189,7 +1187,7 @@ void IconMenu_AddIcon(s32 no) {
 /// wide and 3 tall, follows them; the centring counts two thirds of the
 /// window's width.
 void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
-  struct ResourceMenuWork *menu = Ram_HeapSlots->menuSelectWork;
+  struct ResourceMenuWork *menu = Ram_HeapSlots->iconMenu;
   s32 x;
   s32 i;
   s32 count;
@@ -1218,7 +1216,7 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
   struct ResourceMenuEntry *entry;
   s16 *widthp;
 
-  work = Ram_HeapSlots->menuSelectWork;
+  work = Ram_HeapSlots->iconMenu;
   widthp = &work->width;
   *widthp = width + 2;
   work->resourceBase = resourceBase;
@@ -1368,7 +1366,7 @@ s32 FileList_SelectAction(void) {
 /// writes the mode's lines of text. The area starts at x 8 and ends at
 /// LABEL_RIGHT; a mode past 2 draws nothing.
 void Menu_DrawModeLabel(void) {
-  struct MenuModeLabelState *state = Ram_HeapSlots->menuSelectWork;
+  struct MenuModeLabelState *state = Ram_HeapSlots->iconMenu;
 
   if (state->previousMode != state->mode) {
     state->previousMode = state->mode;
@@ -1418,7 +1416,7 @@ void Menu_DrawModeLabel(void) {
 /// as the cable; French clears the window with WindowSprite_ClearList and
 /// redraws only when the description changes.
 void Menu_DrawModeIndicator(void) {
-  struct ResourceMenuWork *state = Ram_HeapSlots->menuSelectWork;
+  struct ResourceMenuWork *state = Ram_HeapSlots->iconMenu;
   s16 *shown = &state->previousMode;
   s16 *current = &state->selection;
 
@@ -1580,7 +1578,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 
   mode &= 1;
   IconMenu_Open();
-  work = Ram_HeapSlots->menuSelectWork;
+  work = Ram_HeapSlots->iconMenu;
   if (mode == 0) {
     IconMenu_AddIcon(44);
     IconMenu_AddIcon(45);
@@ -1769,7 +1767,6 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
 void DebugSceneSelect_Schedule(void) {
   Task_Add(DebugSceneSelect_Run, TASK_PASS_VBLANK);
 }
-#undef AFFINE_EFFECT_SLOT
 #undef Resource_DecodeByteLzInRam
 #undef LABEL_RIGHT
 #undef HELP_X

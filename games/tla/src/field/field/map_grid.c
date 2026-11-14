@@ -146,7 +146,7 @@ s32 MapGrid_LoadMap(s32 index) {
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
   sceneResources = &gMaps[index];
-  work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID, sizeof(struct MapScrollWork));
   Iwram_ClearWordsEntry(work, sizeof(struct MapScrollWork));
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
       sceneResources->resources[0] + (u32)&ResourceId_Map000);
@@ -285,7 +285,7 @@ s32 MapGrid_LoadMap(s32 index) {
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
 void Map_CenterOnFollowedPoint(void) {
-  struct MapWork *work = Ram_HeapSlots->mapWork;
+  struct MapWork *work = Ram_HeapSlots->mapGrid;
   s32 x = 0;
   s32 height = 0;
   s32 z = 0;
@@ -338,7 +338,7 @@ void Map_CenterOnFollowedPoint(void) {
 /// pictures.
 void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayerWindow *window = (struct MapLayerWindow *)&map->layers[layer];
   u32 originY = window->originY;
   u8 *screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layer << 11);
@@ -409,7 +409,7 @@ static __inline__ void CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap,
 /// same name; tileX's low bit picks the picture's left or right half.
 void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayerWindow *window = (struct MapLayerWindow *)&map->layers[layer];
   u8 *screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 maskY = window->maskY;
@@ -454,7 +454,7 @@ void MapGrid_UpdateLayerScroll(void) {
   s32 baseX, baseY;
   u32 layerIndex;
 
-  work = Ram_HeapSlots->mapWork;
+  work = Ram_HeapSlots->mapGrid;
   origin = work->origin;
   layer = (struct MapLayerScroll *)work->layers;
   if (origin == NULL)
@@ -561,7 +561,7 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
   u8 *screenMap;
   u32 *cells;
-  struct MapWork *work = Ram_HeapSlots->mapWork;
+  struct MapWork *work = Ram_HeapSlots->mapGrid;
   struct MapLayerWindow *layer = (struct MapLayerWindow *)work->layers;
   u32 originX;
 
@@ -635,7 +635,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                         u32 width, u32 height) {
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
-  struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
+  struct MapLayer *layer = Ram_HeapSlots->mapGrid->layers;
   struct TilePos tile[3];
   s32 i;
   struct TilePos *pos = tile;
@@ -808,7 +808,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   s32 y;
   u32 *src = (u32 *)gMapGridCellBuffer + (srcY * 128 + srcX);
   u32 *dst = &((u32 *)gMapGridCellBuffer)[dstY * 128 + dstX];
-  struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
+  struct MapLayer *layer = Ram_HeapSlots->mapGrid->layers;
   struct TilePos views[3];
   s32 i;
   struct TilePos *view = views;
@@ -912,7 +912,7 @@ void Map_CopyRawCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 }
 
 void MapGrid_SetShownLayers(u32 v) {
-  struct MapWork *state = Ram_HeapSlots->mapWork;
+  struct MapWork *state = Ram_HeapSlots->mapGrid;
   u32 mask = v & 0xe00;
   u32 flags = state->flags;
 
@@ -1028,7 +1028,7 @@ void Map_LoadCellsAndShapes(void) {
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct WorldMapView *perspective =
-      (struct WorldMapView *)Ram_HeapSlots->mapWork;
+      (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   u32 *tileOffsets = perspective->tiles;
   u16 *shownQuarter;
   u16 *decodedTile;
@@ -1045,7 +1045,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   if (update == 0 && tile == *shownQuarter)
     return 0;
   *shownQuarter = tile;
-  decodedTile = HeapSlot_Alloc(56, 0x400);
+  decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
   if (tileOffsets[tile] != 0)
     Resource_DecodeByteLzInRam((u8 *)tileOffsets + tileOffsets[tile],
                                decodedTile);
@@ -1078,7 +1078,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
       screenTiles += 48;
     }
   }
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   return 1;
 }
 #undef MAP_CELL_TILE_MASK

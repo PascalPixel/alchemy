@@ -259,7 +259,7 @@ loop:
 /// restores its size, sets its flag, hands it to
 /// MarsLighthouseEntrance_SetIceConeCells and clears its position.
 void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
-  struct EffectHolder *holder = Ram_HeapSlots->effectWork;
+  struct EffectHolder *holder = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object = Actor_Get(holder->objectId);
 
   if (index <= 7) {
@@ -696,7 +696,7 @@ void MarsLighthouseEntrance_PushStatueIntoRoom6Flames(s32 unused, s32 id) {
 }
 
 void MarsLighthouseEntrance_DrawHoleMask(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *camera = (s32 *)((u8 *)map + 228);
   s32 x = camera[0] & 0xffff0000;
   s32 cameraZ = camera[1] & 0xffff0000;
@@ -779,7 +779,7 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
   buffer = gMapGridCellBuffer;
   x = actor->x >> 20;
   z = actor->z >> 20;
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   if (map != NULL)
     cells = map->layers[actor->layer & 3].cells;
   else
@@ -901,7 +901,7 @@ void MarsLighthouseEntrance_JumpOrSlide(void) {
 }
 
 void MarsLighthouseEntrance_CheckCrackedFloor(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
   s32 x;
@@ -1791,7 +1791,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ((void (*)(struct Actor *))actor->watchedActor)(actor);
     }
 
-    map = Ram_HeapSlots->mapWork;
+    map = Ram_HeapSlots->mapGrid;
     tileX = actor->x >> 20;
     tileZ = actor->z >> 20;
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
@@ -2312,7 +2312,7 @@ void Teleport_ArriveWhirling(void) {
 
 // Finds the current target's table row and shrinks it.
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   /* FAKEMATCH(dead): the entry jump in a once-only block. */
   do {

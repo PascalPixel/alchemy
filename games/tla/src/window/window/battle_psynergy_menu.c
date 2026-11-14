@@ -107,7 +107,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   struct MenuSprite sprites[5];
   s32 glyph;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);

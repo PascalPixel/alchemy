@@ -824,7 +824,7 @@ struct SparkWork__s1230 {
 };
 
 void JupiterLighthouse_UpdateSparkRing(void) {
-  struct SparkWork__s1230 *work = Ram_HeapSlots->menuRuntime;
+  struct SparkWork__s1230 *work = Ram_HeapSlots->menuWork;
   struct Spark *spark = work->sparks;
   struct SparkSprite__jupiter_lighthouse_room_5 *sprite = work->sprites;
   s32 position[3];
@@ -877,7 +877,7 @@ struct SparkWork__s1650 {
 /// cosine and negated sine of it at 64 pixels as its direction, a random
 /// speed of 16 to 31 and an age of 0.
 void JupiterLighthouse_AddSparks(s32 count) {
-  struct SparkWork__s1650 *work = Ram_HeapSlots->menuRuntime;
+  struct SparkWork__s1650 *work = Ram_HeapSlots->menuWork;
   struct Spark *spark;
   s32 angle;
   s32 i;
@@ -907,7 +907,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
 
 void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   struct SparkWork__s1650 *work =
-      HeapSlot_Alloc(220, sizeof(struct SparkWork__s1650));
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct SparkWork__s1650));
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct SparkSprite *sprite;
   struct Spark *spark;
@@ -952,11 +952,11 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
 }
 
 void JupiterLighthouse_EndSparkRing(void) {
-  struct SparkWork__s1650 *work = Ram_HeapSlots->menuRuntime;
+  struct SparkWork__s1650 *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(JupiterLighthouse_UpdateSparkRing);
   VramCache_FreeEntry(work->vramEntry);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 extern struct LightOam gLightSpriteOams[];

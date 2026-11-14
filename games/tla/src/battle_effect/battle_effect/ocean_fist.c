@@ -8,7 +8,7 @@
 struct FxPartyList;
 struct Model;
 
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
+#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define OCEAN_FIST_FRAMES 92
 #define OCEAN_DROPS 512
 
@@ -36,9 +36,9 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   u8 *sheet;
   s32 i;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sprites = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

@@ -908,7 +908,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   PartyInventory_Remove(455);
   // "Hop on my back!"
   Event_ShowMessage(9, 0);
-  ((u8 *)HeapSlot_AllocEwram(88, 664))[661] = 99;
+  ((u8 *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, 664))[661] = 99;
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
   leader->update = Actor_EmitSmoke;
@@ -1069,7 +1069,7 @@ void Islets_GiveTurtle(void) {
       (gFieldWork->message)++;
       // "Then hop on my back!"
       Event_ShowMessage(9, 0);
-      ((u8 *)HeapSlot_AllocEwram(88, 664))[0x295] = 99;
+      ((u8 *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, 664))[0x295] = 99;
       FieldActor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
       Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
@@ -1140,7 +1140,7 @@ void Islets_RideBackToIsland(void) {
     ((struct {
       u8 unk000[0x295];
       u8 unk295;
-    } *)HeapSlot_AllocEwram(88, 0x298))
+    } *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, 0x298))
         ->unk295 = 99;
     FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
@@ -1234,7 +1234,7 @@ void Islets_StartWaveDma(void) {
 }
 
 void Islets_FillWaveLines(void) {
-  s16 *layer = (s16 *)&Ram_HeapSlots->mapWork->layers[2];
+  s16 *layer = (s16 *)&Ram_HeapSlots->mapGrid->layers[2];
   s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex ^ 1];
   s32 v[2];
   s32 *count = &v[1];
@@ -1380,7 +1380,7 @@ void Islets_StepOntoGround(void) {
 }
 
 void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cells0 = map->layers[0].cells;
   struct MapCell *cells2 = map->layers[2].cells;
   s32 index = x / 0x100000 + (z / 0x100000) * 128;
@@ -1814,7 +1814,7 @@ void Islets_SetDockBlocksByHeight(void) {
 }
 
 void Islets_InitializeRoom1(void) {
-  struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapWork;
+  struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapGrid;
   struct Actor *spawned;
 
   if (gMainRoutineWork.entrance == 2)
@@ -2010,7 +2010,7 @@ void Islets_InitializeRoom3(void) {
 
 /// Sets up the room's actors and map work.
 void Islets_InitializeRoom4(void) {
-  struct IsletsMapWork *map = (struct IsletsMapWork *)Ram_HeapSlots->mapWork;
+  struct IsletsMapWork *map = (struct IsletsMapWork *)Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_Get(10);
   struct Actor *last;
   s32 set;
@@ -2083,7 +2083,7 @@ void PaletteCycle_Add__islets(s32 a, s32 b, s32 c,
                               s32 d) __asm__("PaletteCycle_Add");
 
 void Islets_InitializeRoom5(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 done;
 
   Event_Start();
@@ -2165,7 +2165,7 @@ s32 PaletteCycle_Add__islets(s16 bank, s16 index, s16 delay,
                              s16 count) __asm__("PaletteCycle_Add");
 
 void Islets_InitializeRoom5(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 done;
 
   Event_Start();
@@ -2231,7 +2231,8 @@ void Islets_StartPaletteCycle(void) {
   struct PaletteSnapshot *entry;
   s16 i, j;
 
-  queue = HeapSlot_AllocEwram(112, sizeof(struct PaletteSnapshotWork));
+  queue = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
+                              sizeof(struct PaletteSnapshotWork));
   entry = queue->entries;
   i = 0;
 outer:
@@ -2261,7 +2262,8 @@ inner:
   queue->count = 0;
 }
 
-#define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unk70[0])
+#define gPaletteWork                                                           \
+  ((struct PaletteSnapshotWork *)Ram_HeapSlots->paletteCycles)
 
 #include "../field/palqueue_add.c"
 #undef gPaletteWork
@@ -2287,7 +2289,7 @@ struct PaletteCycleWork__s3410 {
   u16 count;
 };
 
-#define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->unk70[0])
+#define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
 #define EVENT_S16(offset) (*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + (offset)))
 
 void Islets_ShimmerWater(void) {
@@ -2365,7 +2367,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 /// is filled with 255 (Map_FillCellRectByte2). Returns 1, or 0 for a shape with
 /// no footprint.
 s32 PushTarget_FillFootprint(s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
   s16 kind = *((struct ObjectAnimationState *)actor->sprite)->value28;
   s16 i = 0;
@@ -2406,7 +2408,7 @@ s32 PushTarget_FillFootprint(s32 id) {
 
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
                            s32 value) {
-  struct MapCell *cells = Ram_HeapSlots->mapWork->layers[layer].cells;
+  struct MapCell *cells = Ram_HeapSlots->mapGrid->layers[layer].cells;
   struct MapCell *cell;
   u32 i;
   u32 j;

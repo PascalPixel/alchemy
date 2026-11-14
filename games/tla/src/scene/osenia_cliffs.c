@@ -77,7 +77,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 void Rope_Initialize(void);
 
 s32 Scene_Initialize(void) {
-  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
+  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapGrid;
 
   map->mode = 1;
   gOseniaCliffs_PaletteCycleStep[0] = 0;

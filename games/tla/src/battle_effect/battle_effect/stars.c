@@ -42,9 +42,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *ring;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   caster = ACTOR(args->user);
 
@@ -57,9 +57,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(caster, 2);
   Actor_SetAnimationSpeedFar(caster, 48);
   BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      HEAP_SLOT_RAM_CODE,
+      BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The rings leave from above the caster and reach the target in twelve
@@ -219,9 +220,9 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *ring;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
 
   // Set up: the rune palette, the dot sheet, one max blitter and the transfer.
@@ -230,8 +231,9 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
                        Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+      HEAP_SLOT_RAM_CODE,
+      BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Each star leaves from above the caster on its own course to the target,

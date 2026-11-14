@@ -23,7 +23,7 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
   s32 pos;
 
 #if !TLA_PATCH_1
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 #endif
   x = *px;
   y = *py;
@@ -93,7 +93,7 @@ void Text_MeasureMessage(s32 no, s32 *x, s32 *y) {
     struct WindowWork *work;                                                   \
     s32 idx;                                                                   \
                                                                                \
-    work = (struct WindowWork *)Ram_HeapSlots->windowTiles;                    \
+    work = (struct WindowWork *)Ram_HeapSlots->windowWork;                     \
     idx = Message_Decode(no, 0);                                               \
     if (work->textBuffer[idx] == 0) {                                          \
       return 0;                                                                \
@@ -133,7 +133,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 step;
   u32 style;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   width = 0;
   height = 15;
   lines = 0;
@@ -314,7 +314,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   s32 gap;
   u32 step;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 #if TLA_PATCH_1 && !TLA_PATCH_2
   maxWidth = 0;
 #endif

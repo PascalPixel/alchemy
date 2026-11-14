@@ -443,8 +443,8 @@ void BattleMessage_WaitForAdvance(void) {
   for (frame = 0;; frame++) {
     // Cycle the eight pictures, one every four frames.
     pictureTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
-    window = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->window;
-    offset = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->offset;
+    window = ((struct AdvanceDisplay *)Ram_HeapSlots->battleMessage)->window;
+    offset = ((struct AdvanceDisplay *)Ram_HeapSlots->battleMessage)->offset;
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
@@ -506,7 +506,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 void BattleMessage_WaitForTyping(void) {
   while (!Message_AllTypedFar())
     wait(1);
-  ((s32 *)Ram_HeapSlots->unk84[4])[2] = 1;
+  ((s32 *)Ram_HeapSlots->battleMessage)[2] = 1;
 }
 
 s32 BattleObject_DestroyTemporaryObject(s32 arg0) {
@@ -567,7 +567,7 @@ u32 BattlePlayback_RunAll(void) {
                                 MESSAGE_ARGUMENT_ABILITY);
         break;
       case BATTLE_EVENT_MARK:
-        ((struct BattleDisplayFlags *)Ram_HeapSlots->unk84[4])->marked = 1;
+        ((struct BattleDisplayFlags *)Ram_HeapSlots->battleMessage)->marked = 1;
         break;
       case BATTLE_EVENT_CLEAR_ARGUMENTS:
         MessageArgument_ClearAllFar();

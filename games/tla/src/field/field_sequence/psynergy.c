@@ -142,18 +142,18 @@ s32 Field_UsePsynergy(u32 code) {
     u32 zero = 0;
 
     if (before != NULL && (before->flags & 0x200)) {
-      effect = Ram_HeapSlots->effectWork;
+      effect = Ram_HeapSlots->fieldEffectWork;
       effect[34] = zero;
       effect[35] = zero;
     }
   }
   if (after != NULL && (after->flags & 0x200)) {
-    effect = Ram_HeapSlots->effectWork;
+    effect = Ram_HeapSlots->fieldEffectWork;
     effect[34] = 0;
     effect[35] = 0;
   }
   if (during != NULL && (during->flags & 0x200)) {
-    effect = Ram_HeapSlots->effectWork;
+    effect = Ram_HeapSlots->fieldEffectWork;
     effect[34] = 0;
     effect[35] = 0;
   }

@@ -56,7 +56,7 @@ UNUSED s32 Window_ReturnOne(void) { return 1; }
 /// Decompresses the type-01 tilemap resource and copies it over window's
 /// rectangle, into the BG map in VRAM and the window work's mirror of it.
 void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *buffer = Heap_AllocEwram(0x300);
   s32 offset;
   u16 *map;
@@ -89,7 +89,7 @@ void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
 
 void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
                                s32 width, s32 height, u32 field) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   x += (s16)object->x + 1;
   y += (s16)object->y + 1;
@@ -151,7 +151,7 @@ s32 Text_SetString(const u8 *str) {
   u32 width;
   u32 height;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   count = 0;
   if (*str != 0) {
     dst = work->textBuffer;
@@ -276,7 +276,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_Get(member);
-  struct WindowWork *render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *render = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct Window *keyboardWindow;
@@ -562,7 +562,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_Get(member);
-  struct WindowWork *render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *render = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct Window *keyboardWindow;

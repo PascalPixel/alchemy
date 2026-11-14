@@ -33,7 +33,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   u32 entry1;
   s32 row;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   confirmationChoice = 0;
   result = 0;
   redraw = 1;
@@ -194,7 +194,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     u32 pressed;
     u32 repeat;
 
-    work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+    work = (struct WindowWork *)Ram_HeapSlots->windowWork;
     backdrop = menu->backdrop;
     pressed = gInput.pressed;
     repeat = gInput.repeat;
@@ -444,7 +444,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
-  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
@@ -453,7 +453,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   WindowSprite_RedrawSavedRectFar(menu->listWindow);
   WindowSprite_RedrawSavedRectFar(menu->unopenedWindow);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   wait(1);
   return result;
 }
@@ -490,7 +490,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   s32 *selected;
   s32 blink;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   redraw = 1;
   result = 0;
   frame = 0;
@@ -537,7 +537,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     /* FAKEMATCH(temporary): selectedPage = &selected[side], taken at the top of
      * the loop. */
     selectedPage = &selected[side];
-    render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+    render = (struct WindowWork *)Ram_HeapSlots->windowWork;
     pressedKeys = gInput.pressed;
     repeatedKeys = gInput.repeat;
     /* FAKEMATCH(temporary): pageCount = &pageCounts[side], taken at the top of
@@ -610,7 +610,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     wait(1);
   }
   Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
-  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   Window_CloseIfOpen(helpWindowSlot, 1);
   wait(1);
   Window_UpdateOrCreate(helpWindowSlot, 13, 0, 17, 5, 2);
@@ -619,7 +619,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   WindowSprite_RedrawSavedRectFar(menu->listWindow);
   WindowSprite_RedrawSavedRectFar(menu->unopenedWindow);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   wait(1);
   return result;
 }
@@ -641,7 +641,7 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
   s8 *p;
   struct DjinnMenuWork *state;
 
-  state = Ram_HeapSlots->menuRuntime;
+  state = Ram_HeapSlots->menuWork;
   cnt = 0;
   i = 0;
   if (cnt < state->memberCount) {
@@ -688,7 +688,7 @@ void Djinn_CountOwned(u8 *counts) {
   s32 bit;
   s32 count;
 
-  work = Ram_HeapSlots->menuRuntime;
+  work = Ram_HeapSlots->menuWork;
   for (ownerIndex = 0; ownerIndex < work->memberCount; ownerIndex++) {
     unit = Unit_Get(work->members[ownerIndex]);
     count = 0;

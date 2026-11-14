@@ -61,7 +61,7 @@ void Field_UpdateHoverReady(void) {
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *block = Ram_HeapSlots->fieldWork;
   struct Actor *object = WorldMap_Unfreeze();
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 position[3];
   u8 *cell;
 
@@ -94,7 +94,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 s32 Field_GetCollisionUnderLeader(void) {
   struct FieldWork *block = Ram_HeapSlots->fieldWork;
   struct Actor *object = WorldMap_Unfreeze();
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Vector3 position;
   struct MapCell *cell;
 
@@ -170,7 +170,7 @@ void FieldEffect_SetAttached(s32 owner, s32 mode);
 
 void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 leaderId = Party_GetLeaderActor();
   struct Actor *leader = WorldMap_Unfreeze();
   s16 previousHp[8];
@@ -393,7 +393,7 @@ s32 Party_ApplyPoisonDamage(void) {
 /// fade is pending, starts it at level 80 and waits 2 frames; then calls
 /// WorldMap_StartStillPictureFar.
 void WorldMap_Freeze(void) {
-  struct FxWork *work = HeapSlot_AllocEwram(108, 0xd50);
+  struct FxWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
 
   if (*(u16 *)&work->state == 3) {
     struct FadeWork *fade;
@@ -403,7 +403,7 @@ void WorldMap_Freeze(void) {
 
     work->sprite->visible = 1;
     zero = 0;
-    fade = HeapSlot_AllocEwram(124, 0x540);
+    fade = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, 0x540);
     if (fade != NULL && fade->pending != 0) {
       fade->level = 80;
       fade->step = zero;
@@ -418,7 +418,7 @@ void WorldMap_Freeze(void) {
 /// On the world map (display mode 3), loads the area graphics a change left
 /// pending.
 void WorldMap_ReloadPendingAreaGraphics(void) {
-  struct FieldWork *block = HeapSlot_AllocEwram(108, 0xd50);
+  struct FieldWork *block = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
 
   if (block->mode == 3 && block->unk18b != 0) {
     block->unk18b = 0;

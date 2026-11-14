@@ -795,11 +795,11 @@ void DehkanPlateau_PlaceRaisedPillar(struct Actor *object) {
     Map_CopyCellAttributeRect(1, 32, 1, 1, x, 11);
     Event_End();
   } else if (x == 18) {
-    cell = ((struct MapCells *)Ram_HeapSlots->mapWork)->cells;
+    cell = ((struct MapCells *)Ram_HeapSlots->mapGrid)->cells;
     cell += Actor_GetCellIndex(object) * 4;
     cell[3] &= 0x7f;
   } else if (x == 54) {
-    cell = ((struct MapCells *)Ram_HeapSlots->mapWork)->cells;
+    cell = ((struct MapCells *)Ram_HeapSlots->mapGrid)->cells;
     cell += Actor_GetCellIndex(object) * 4;
     cell[3] &= 0x7f;
     cell[2] = 11;
@@ -998,7 +998,7 @@ void DehkanPlateau_CannonPoundsPillar(void) {
 }
 
 void DehkanPlateau_SinkPoundedPillar(void) {
-  struct EffectWork7c4 *work = Ram_HeapSlots->effectWork;
+  struct EffectWork7c4 *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object = Actor_GetById(ACTOR_ROOM3_POUND_PILLAR);
 
   if (work->timer != -1 && work->timer <= 7)
@@ -1195,7 +1195,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
 }
 
 void DehkanPlateau_PoundLeaderThrough(void) {
-  if (((struct EffectWork7c4 *)Ram_HeapSlots->effectWork)->active != 0) {
+  if (((struct EffectWork7c4 *)Ram_HeapSlots->fieldEffectWork)->active != 0) {
     Sound_Play(SE_SPLASH);
     MapGrid_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(64, 66, 15, 72, 1, 2);
@@ -1538,7 +1538,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   value = Actor_GetById(17)->x;
   zero = 0;
   if ((value >> 20) == 54) {
-    struct MapCell *cell = Ram_HeapSlots->mapWork->layers[0].cells;
+    struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[0].cells;
 
     cell += Actor_GetCellIndex__room3();
     cell->attributeB &= 0x7f;
@@ -1791,10 +1791,10 @@ void DehkanPlateau_CreatePoundCube(void) {
     object->retainSpriteCache = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    buffer = HeapSlot_Alloc(68, 0x608);
+    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_POUND_CUBE);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }
 

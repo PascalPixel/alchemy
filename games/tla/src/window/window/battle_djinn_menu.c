@@ -96,7 +96,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
   s32 i;
   s32 j;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   previewWindow = NULL;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);
@@ -498,7 +498,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
     if (djinnCount != 0)
       Oam_AddSpriteAtDepth(sprite, 242);
 
-    partyStatus = Ram_HeapSlots->windowLayout;
+    partyStatus = Ram_HeapSlots->partyStatus;
     blinkPhase = gFrameCount & 4;
     iconWindow = (struct RenderInput *)partyStatus->window;
     if (partyStatus->flags & 2) {
@@ -524,7 +524,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
   }
 
   {
-    struct PartyStatusWindow *owner = Ram_HeapSlots->windowLayout;
+    struct PartyStatusWindow *owner = Ram_HeapSlots->partyStatus;
 
     if (owner->flags & 2)
       Window_HighlightRect((s16)owner->window->x + 1, (s16)owner->window->y + 1,

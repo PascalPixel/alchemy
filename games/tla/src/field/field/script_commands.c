@@ -78,7 +78,7 @@ void Actor_UpdateAllMotion(void) {
   s32 ratio;
   s32 facingStep;
 
-  object = Ram_HeapSlots->scriptObjects;
+  object = Ram_HeapSlots->actors;
   ObjectList_CollectActive(object, list);
   object = list[0];
   next = &list[1];
@@ -408,7 +408,7 @@ s32 Script_CallWithOperand(struct ScriptInterpreter *interpreter) {
 s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values) {
   s32 index;
   u8 *flags;
-  struct Actor *entry = Ram_HeapSlots->scriptObjects;
+  struct Actor *entry = Ram_HeapSlots->actors;
 
   flags = &entry->collisionFlags;
   for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
@@ -425,7 +425,7 @@ struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
                                                s32 *values) {
   s32 index;
   u8 *flags;
-  struct Actor *entry = Ram_HeapSlots->scriptObjects;
+  struct Actor *entry = Ram_HeapSlots->actors;
 
   flags = &entry->collisionFlags;
   for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
@@ -552,7 +552,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   s32 moveStep;
   s16 *region;
 
-  bounds = Ram_HeapSlots->mapWork;
+  bounds = Ram_HeapSlots->mapGrid;
   leader = cameraObject->watchedActor;
   minX = bounds->minX + 0x780000;
   minZ = bounds->minZ + leader->y + 0x600000;
@@ -651,7 +651,7 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
   s32 distance;
   s32 moveStep;
 
-  bounds = Ram_HeapSlots->mapWork;
+  bounds = Ram_HeapSlots->mapGrid;
   leader = cameraObject->watchedActor;
   minX = bounds->minX + 0x780000;
   minZ = bounds->minZ + 0x600000;
@@ -1716,7 +1716,7 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
     check_objects:
       SET_POSITION(&contact, object->x, object->y, object->z);
       Vector_AddPolarOffset(px(4), (u16)heading, &contact);
-      other = Ram_HeapSlots->scriptObjects;
+      other = Ram_HeapSlots->actors;
       for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++) {
         s32 radius;
 

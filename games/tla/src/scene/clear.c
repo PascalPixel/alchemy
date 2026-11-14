@@ -167,7 +167,7 @@ scroll_pair:
   if (y <= 3)
     goto scroll_pair;
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  ((struct ClearWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
+  ((struct ClearWork *)Ram_HeapSlots->mapGrid)->mode = 0x1400;
   {
     struct Actor *leader;
     /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword. */
@@ -843,7 +843,7 @@ done:
 // screen.
 void Clear_DrawGridCell(const struct Window *object, s32 x, s32 y, s32 width,
                         s32 height, u32 field) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   x += (s16)object->x + 1;
   y += (s16)object->y + 1;
@@ -1348,7 +1348,7 @@ s32 Clear_EnterPassword(void) {
 /// panel's stride plus the column.
 void Clear_DrawPanel(struct Panel_02001804 *panel, const void *source) {
   /* FAKEMATCH(pin): the shadow pointer in r5. */
-  register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
+  register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowWork;
   void *work = Heap_AllocEwram(0x300);
   u16 *tiles;
   s32 offset;
@@ -1385,7 +1385,7 @@ next_column:
 
 void Clear_DrawLowerPanel(struct Panel_02001804 *panel) {
   /* FAKEMATCH(pin): the shadow pointer in r5. */
-  register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
+  register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowWork;
   void *work = Heap_AllocEwram(0x300);
   u16 *tiles;
   s32 offset;

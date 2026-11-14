@@ -2,7 +2,7 @@
 /// 0xffff: while it is the target, it sinks a step a frame for the first eight
 /// frames, and on the last (mode 1) its flag is set and its cell opened.
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   while (*list != 0xffff) {
     u32 entry = *list;

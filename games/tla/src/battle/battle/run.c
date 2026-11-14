@@ -62,7 +62,7 @@ void BattleParty_SwapInReserves(void) {
 /// Allocates the battle camera (heap slot 48) and sets its starting view.
 void BattleCamera_Create(void) {
   struct BattleCamera *camera =
-      HeapSlot_AllocEwram(48, sizeof(struct BattleCamera));
+      HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   s32 *focus = camera->focus;
 
   SET_VECTOR(focus, 0, px(64), 0);
@@ -198,13 +198,13 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   s16 cue;
   s32 scripted;
 
-  camera = HeapSlot_AllocEwram(48, sizeof(struct BattleCamera));
-  battle = HeapSlot_AllocEwram(36, sizeof(struct EncounterWork));
-  HeapSlot_AllocEwram(216, 0x7c8);
-  transition = HeapSlot_AllocEwram(176, 32);
-  HeapSlot_AllocEwram(44, 0x280);
+  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
+  battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct EncounterWork));
+  HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
+  transition = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 0x280);
   result = 0;
-  Iwram_ClearWordsEntry(Ram_HeapSlots->unkd0[2], 0x7c8);
+  Iwram_ClearWordsEntry(Ram_HeapSlots->enemyUnits, 0x7c8);
   Task_ResetAll();
   transition->targetYaw = YAW_PARTY_ACTION;
   transition->frames = 0;
@@ -220,11 +220,11 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   Iwram_FillWordsEntry(battle, sizeof(struct EncounterWork), 0);
   battle->promptSlot = -1;
   battle->enemyGroup = enemyGroup;
-  HeapSlot_AllocEwram(148, 12);
-  IWRAM_FILL_WORDS(Ram_HeapSlots->unk84[4], 12, 0);
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MESSAGE, 12);
+  IWRAM_FILL_WORDS(Ram_HeapSlots->battleMessage, 12, 0);
   battle->background = BattleBackground_GetSelectedFar();
-  HeapSlot_AllocEwram(16, 0xe00);
-  HeapSlot_AllocEwram(12, 0x600);
+  HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 0xe00);
+  HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 0x600);
   ActorSystem_InitializeFar(4);
   if (GameFlag_Get(FLAG_DJINN_LESSON) != 0)
     WindowSystem_InitBattleFar(1);
@@ -257,7 +257,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       }
     }
     battle->linkSide = (*(volatile u32 *)0x04000128 << 26) >> 30;
-    ownerStateDestination = Ram_HeapSlots->unkd0[2];
+    ownerStateDestination = Ram_HeapSlots->enemyUnits;
     for (copyIndex = 0; copyIndex < 0x7c8; copyIndex++)
       *ownerStateDestination++ = Data_02018000[copyIndex];
     enemyCount = GameFlag_GetByte(0x3f0);

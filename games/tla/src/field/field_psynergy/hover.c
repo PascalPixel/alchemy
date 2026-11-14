@@ -86,7 +86,7 @@ void Camera_WorldToScreen(s32 *position);
 // flickers between two pictures every other frame, and draws the glow under the
 // player, flattened to three quarters of its height.
 void HoverGlow_Update(void) {
-  struct HoverGlowWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct HoverGlowWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u16 *palette;
@@ -169,8 +169,8 @@ struct GlowScene {
 extern char ResourceId_RingOrb;
 
 void FieldPsynergy_Hover(void) {
-  struct HoverGlowWork *work = HeapSlot_Alloc(92, 0x1038);
-  struct GlowScene *scene = Ram_HeapSlots->effectWork;
+  struct HoverGlowWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1038);
+  struct GlowScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *player = scene->mainObject;
   struct PendingEvent *pending;
@@ -243,7 +243,7 @@ void FieldPsynergy_Hover(void) {
     wait(5);
     Task_Remove(HoverGlow_Update);
     VramCache_FreeEntry(work->resource);
-    HeapSlot_Release(92);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   } else {
     player->motionFlags = 0;
     player->y = player->groundHeight;
@@ -271,7 +271,7 @@ void FieldPsynergy_Hover(void) {
 
 void FieldPsynergy_EndHover(void) {
   struct HoverGlowWork *work =
-      (struct HoverGlowWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct HoverGlowWork *)Ram_HeapSlots->battleEffect;
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 i;
 
@@ -303,5 +303,5 @@ void FieldPsynergy_EndHover(void) {
   object->y = object->groundHeight;
   object->gravity = px(1);
   VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

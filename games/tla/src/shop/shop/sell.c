@@ -11,7 +11,7 @@
 /// Lets the player choose whose items to sell, repair or forge, by
 /// shop->action, until B or, at the forge, an item is taken.
 s32 Shop_ChooseMember(void) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 unitId = 0;
   s32 memberIndex = 0;
   struct RenderInput *listWindow;
@@ -119,7 +119,7 @@ s32 Shop_SelectSell(s32 unitId) {
   s32 result;
   s32 count;
 
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   unit = Unit_Get(unitId);
   slot = 0;
   inventoryCount = 1;
@@ -287,7 +287,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   struct ShopWork *shop;
   struct BattleUnit *unit;
 
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   unit = Unit_Get(unitId);
   item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
@@ -314,7 +314,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopWork *shop;
 
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   {
     struct BattleUnit *unit = Unit_Get(unitId);
     s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;

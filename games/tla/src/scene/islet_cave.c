@@ -107,7 +107,7 @@ extern u16 *gPaletteCycleSlots;
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
+  u8 *saved = Ram_HeapSlots->paletteFade;
 
   gPaletteSlots = slots;
   gPaletteColors = colours;
@@ -328,7 +328,7 @@ DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToSecondCircle, 240, 480)
 // Darkens the palette by the scale given: each corridor is darker than the
 // last.
 void IsletCave_DimPalette(s32 scale) {
-  u16 *source = Ram_HeapSlots->block32;
+  u16 *source = Ram_HeapSlots->paletteFade;
   u16 *channel = (u16 *)((u8 *)source + 0xe00);
   u32 count = 224;
   u32 i = 0;

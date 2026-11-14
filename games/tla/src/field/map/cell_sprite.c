@@ -45,7 +45,7 @@ void CrackedTiles_Update(void) {
   }
   if (table->shown == 0)
     return;
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   view = &map->viewX;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;

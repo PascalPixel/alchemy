@@ -15,7 +15,7 @@
 // slot.
 
 // The second blitter, loaded again for each glint.
-#define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->unkb8[1])
+#define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
 void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
@@ -30,12 +30,12 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the bolt and spark sheets, and every spark
   // and particle free.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + 0xc56, 1, 1);
@@ -118,7 +118,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           /* FAKEMATCH(dead): an empty once-only loop. */
           do {
           } while (0);
-          BattleEffect_BuildBlitter(188, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
                                     gBolt_GlintFlips[flip & 3] |
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                                     gBolt_GlintModes[args->variant]);

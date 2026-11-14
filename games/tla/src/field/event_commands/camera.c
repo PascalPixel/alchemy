@@ -29,9 +29,9 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   positionY = requestedY;
   shouldUseSetter = useSetter;
   positionZ = requestedZ;
-  runtimeBlock = HeapSlot_AllocEwram(108, 0xd50);
+  runtimeBlock = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
   object = runtimeBlock->camera;
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   // Keep the screen inside the map: the view centre stays 120 pixels from
   // either side, 96 from the top and 64 from the bottom, the z limits moved
   // down the map by its height.
@@ -103,13 +103,15 @@ void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
 /// Waits (at most 600 frames) for the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrival(void) {
   Actor_WaitForMoveFar(
-      ((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->camera);
+      ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))
+          ->camera);
   Event_Wait(2);
 }
 
 /// The event command "get view centre": returns the camera actor.
 struct Actor *FieldCamera_GetActor(void) {
-  return ((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->camera;
+  return ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))
+      ->camera;
 }
 
 /// Unused: makes the camera follow target; unless keepCurrentPosition is set
@@ -117,7 +119,8 @@ struct Actor *FieldCamera_GetActor(void) {
 void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
   struct Actor *object;
 
-  object = ((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->camera;
+  object =
+      ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))->camera;
   if (target != NULL) {
     Actor_StartCameraFar(object, NULL);
     object->watchedActor = target;

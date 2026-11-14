@@ -99,7 +99,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   mode = 0x3ff & event->psynergy;
   state = &self->paused;
   if (mode == 141) {
-    effect = Ram_HeapSlots->effectWork;
+    effect = Ram_HeapSlots->fieldEffectWork;
     if (effect[0x713] != 0)
       goto near;
   }
@@ -597,7 +597,7 @@ void Lemuria_StartRippleDma(void) {
 }
 
 void Lemuria_ComputeRipple(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer ^ 1];
   s32 v[2];
   s32 *count = &v[1];

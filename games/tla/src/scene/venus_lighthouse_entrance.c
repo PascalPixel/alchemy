@@ -1306,7 +1306,7 @@ struct GlowWork {
 };
 
 void VenusLighthouseEntrance_UpdateBlastColumn(void) {
-  struct GlowWork *work = Ram_HeapSlots->menuRuntime;
+  struct GlowWork *work = Ram_HeapSlots->menuWork;
   struct Actor *object = work->object;
   struct Actor *effect = work->effect;
   s32 i, y;
@@ -1447,7 +1447,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 /// A column of rising earth lifts an actor, holds it, then hurls it off the
 /// top of the screen, and the ground shakes as the column sinks.
 void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
-  struct GlowWork *work = HeapSlot_Alloc(220, 0x860);
+  struct GlowWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x860);
   struct Actor *actor = Actor_Get(id);
   struct Actor *effect;
   struct GlowSprite *sprite;
@@ -1502,13 +1502,13 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   FieldTask_Remove(VenusLighthouseEntrance_UpdateBlastColumn);
   Actor_Release(effect);
   VramCache_FreeEntry(resource);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 void BattleEffect_StepVector3(struct DustPuffState *state, s32 a, s32 b);
 
 void VenusLighthouseEntrance_UpdateDust(void) {
-  struct DustPuffWork *work = Ram_HeapSlots->menuRuntime;
+  struct DustPuffWork *work = Ram_HeapSlots->menuWork;
   struct DustPuffState *state = work->states;
   struct DustPuffSprite *sprite = work->sprites;
   s32 value;
@@ -1550,7 +1550,7 @@ struct SparkWork {
 
 void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
                                       s32 z) {
-  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
+  struct SparkWork *work = Ram_HeapSlots->menuWork;
   s32 angle = Random16();
   s16 *next = &work->next;
   struct SparkSprite__venus_lighthouse_entrance *sprite = &work->sprites[*next];
@@ -1605,7 +1605,7 @@ struct SparkWork__s26f4 {
 };
 
 void VenusLighthouseEntrance_StartDust(void) {
-  struct SparkWork__s26f4 *work = HeapSlot_Alloc(220, 0x2188);
+  struct SparkWork__s26f4 *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x2188);
   s32 resource;
   s32 tileBase;
   s32 i;
@@ -1649,11 +1649,11 @@ struct SparkWork__sparks {
 };
 
 void VenusLighthouseEntrance_StopDust(void) {
-  struct SparkWork__sparks *work = Ram_HeapSlots->menuRuntime;
+  struct SparkWork__sparks *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(VenusLighthouseEntrance_UpdateDust);
   VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 struct SceneEntrance gSceneEntrances[] = {

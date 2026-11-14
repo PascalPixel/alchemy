@@ -39,7 +39,7 @@ s32 Message_Start__screens() __asm__("Message_Start");
 #endif
 
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 name;
   struct Window *window;
   s32 sprite[3];
@@ -113,7 +113,7 @@ s32 Party_GetMemberPortraitSprite(u32 index) {
 }
 
 void Party_ShowJoinedMessage(s32 member) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window = NULL;
   s32 sprite[3];
   s32 *entry = sprite;
@@ -162,7 +162,7 @@ void Party_ShowJoinedMessage(s32 member) {
 }
 
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window;
   s32 sprite2[3];
   s32 sprite1[3];
@@ -256,7 +256,7 @@ extern u8 MsgCanNowSummon[], MsgToSummon[];
 /// "To summon" (MsgToSummon) with its two largest Djinn counts, until a button
 /// is pressed.
 void Summon_ShowLearnedMessage(s32 summon) {
-  struct WindowWork *work = Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = Ram_HeapSlots->windowWork;
   struct Window *window;
   s32 entries;
   u32 resource;

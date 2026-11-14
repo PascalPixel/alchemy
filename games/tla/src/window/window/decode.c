@@ -275,8 +275,6 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 }
 #endif
 
-#define TEXT_DECODER_SLOT 200
-
 // The European editions keep a second item name table after the first,
 // read for the plural forms; its distance from MsgItemName is a message id.
 #define ITEM_PLURAL_NAME_OFFSET 461
@@ -337,7 +335,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               s32 *suffix);
 
 s32 Message_Decode(s32 script, s32 clear) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 code = 0;
 #if !TLA_PATCH_2
   s32 lineStart = 1;
@@ -391,10 +389,10 @@ s32 Message_Decode(s32 script, s32 clear) {
   if (script == -1) {
     start = work->lastMessageStart;
   } else {
-    RamCode_LoadSlot(TEXT_DECODER_SLOT, Text_DecodeSymbolCode,
+    RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
     slots = Ram_HeapSlots;
-    decode = (s32 (*)(struct TextReader *))slots->unkb8[4];
+    decode = (s32 (*)(struct TextReader *))slots->messageDecoder;
     messageReader = &reader;
     Message_Find(messageReader, script);
 
@@ -833,7 +831,7 @@ s32 Message_Decode(s32 script, s32 clear) {
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     work->textBufferEnd = (u16)nextPosition;
-    HeapSlot_Release(TEXT_DECODER_SLOT);
+    HeapSlot_Release(HEAP_SLOT_MESSAGE_DECODER);
     work->lastMessageStart = (u16)start;
   }
 
@@ -893,7 +891,7 @@ static inline u32 Message_AppendArticleName(s32 mode, u16 *name,
 /// menuState is set, the Mystery Man and Mystery Woman are named from
 /// MSG_MYSTERY_MAN and the message after it rather than their unit names.
 s32 Message_Decode(s32 script, s32 clear) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 code = 0;
   s32 lineStart = 1;
   u32 start = work->textBufferEnd;
@@ -925,10 +923,10 @@ s32 Message_Decode(s32 script, s32 clear) {
   if (script == -1) {
     start = work->lastMessageStart;
   } else {
-    RamCode_LoadSlot(TEXT_DECODER_SLOT, Text_DecodeSymbolCode,
+    RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
     slots = Ram_HeapSlots;
-    decode = (s32 (*)(struct TextReader *))slots->unkb8[4];
+    decode = (s32 (*)(struct TextReader *))slots->messageDecoder;
     messageReader = &reader;
     Message_Find(messageReader, script);
 
@@ -1152,7 +1150,7 @@ s32 Message_Decode(s32 script, s32 clear) {
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     work->textBufferEnd = (u16)nextPosition;
-    HeapSlot_Release(TEXT_DECODER_SLOT);
+    HeapSlot_Release(HEAP_SLOT_MESSAGE_DECODER);
     work->lastMessageStart = (u16)start;
   }
 
@@ -1166,7 +1164,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 #undef ARTICLE_KINDS
 #undef ARTICLE_KIND_MASK
-#undef TEXT_DECODER_SLOT
 #undef ITEM_PLURAL_NAME_OFFSET
 #undef SUFFIX_START
 #undef POSSESSIVE_COUNT

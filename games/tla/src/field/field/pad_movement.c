@@ -137,7 +137,7 @@ update_object:
       object->timer--;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapWork;
+  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
   targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)
@@ -266,7 +266,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   Vector_AddPolarOffset(px(19), (u16)angle, &position);
   if (object->priorityFlags & 0x40) {
     onObject = 0;
-    other = (struct Actor *)Ram_HeapSlots->scriptObjects;
+    other = (struct Actor *)Ram_HeapSlots->actors;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
       s32 dy;
 
@@ -360,7 +360,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
 push_objects:
   SET_POSITION(&contact, object->x, object->y, object->z);
   Vector_AddPolarOffset(px(15), (u16)heading, &contact);
-  other = (struct Actor *)Ram_HeapSlots->scriptObjects;
+  other = (struct Actor *)Ram_HeapSlots->actors;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
 
@@ -642,7 +642,7 @@ update_object:
     object->facing += difference;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapWork;
+  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
   targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)
@@ -783,7 +783,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   collision |= 1;
 
 check_objects:
-  other = Ram_HeapSlots->scriptObjects;
+  other = Ram_HeapSlots->actors;
   for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++) {
     if (other->script != NULL && (other->collisionFlags & 1) &&
         other != object &&
@@ -845,7 +845,7 @@ update_object:
     object->facing += difference;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapWork;
+  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
   targetCameraYaw = Iwram_MulQ16(gWorldMap_KeyYaws[(gInput.held >> 4) & 15],
                                  object->y / 4 + 0x10000);
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;

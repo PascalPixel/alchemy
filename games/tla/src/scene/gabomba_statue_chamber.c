@@ -454,7 +454,7 @@ void GabombaStatueChamber_StepIntoSecondHole(void) {
 void BlendScript_Suspend(void);
 
 void GabombaStatueChamber_ArriveByLift(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   u8 *lower = map + 0x108;
   u8 *upper = map + 0x178;
   s32 i, step;
@@ -505,7 +505,7 @@ void GabombaStatueChamber_ArriveByLift(void) {
 }
 
 void GabombaStatueChamber_RideLiftUp(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   u8 *lower = map + 0x108;
   u8 *upper = map + 0x178;
   s32 i, step;
@@ -603,10 +603,10 @@ void GabombaStatueChamber_KeepItemWithStatue(struct Actor *object) {
       object->update = GabombaStatueChamber_KeepItemWithStatue;                \
       sprite->nextFrame = zero;                                                \
       sprite->unk1b[0] = zero;                                                 \
-      block = HeapSlot_Alloc(68, 0x608);                                       \
+      block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);                 \
       Icon_DrawItem(n1);                                                       \
       VramCache_Load(sprite->vramBlock, 128, block + 0x400);                   \
-      HeapSlot_Release(68);                                                    \
+      HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);                              \
     }                                                                          \
   }
 
@@ -669,10 +669,10 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     ((u8 *)statue)[0x5c] = 1;
-    block = (u8 *)HeapSlot_Alloc(68, 0x608);
+    block = (u8 *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->vramBlock, 0x80, (s32)(block + 0x400));
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   GabombaStatueChamber_OpenThePassage();
   ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
@@ -1028,7 +1028,7 @@ void GabombaStatueChamber_InitializeRoom2(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_07)) {
       struct GabombaStatueChamberMapWork *map =
-          (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->mapWork;
+          (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->mapGrid;
       struct GabombaStatueChamberLayer *front = &map->layers[0];
       struct GabombaStatueChamberLayer *back = &map->layers[2];
       s32 blend = 1;

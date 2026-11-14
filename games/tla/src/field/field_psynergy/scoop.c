@@ -41,7 +41,7 @@ void Scoop_Update(void) {
   s32 jitter;
   s32 i;
 
-  work = (struct Work080e6400 *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct Work080e6400 *)Ram_HeapSlots->battleEffect;
   anchor = work->anchor;
   if (work->mode == 0) {
     switch (work->phase) {
@@ -71,8 +71,9 @@ void Scoop_Update(void) {
       picture = work->picture;
       vram = (u8 *)OBJ_VRAM0 + work->pictureTile * TILE_SIZE_4BPP;
       Picture_ShiftColumnsByWave(work->tiles, picture, work->timer + 14);
-      ((const u8 *(*)(const u8 *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
-          picture, 32, 32, vram);
+      ((const u8 *(*)(const u8 *, s32, s32,
+                      void *))Ram_HeapSlots->pictureUploader)(picture, 32, 32,
+                                                              vram);
       sprite = &work->pictureSprite;
       EffectSprite_Draw(sprite);
     }
@@ -206,8 +207,8 @@ void Camera_WorldToScreen(s32 *position);
 void Scoop_DigUpItem(void);
 
 void FieldPsynergy_Scoop(void) {
-  struct ScoopWork *work = HeapSlot_Alloc(92, 0x193c);
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct ScoopWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x193c);
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *other = NULL;
@@ -465,7 +466,7 @@ end:
   Actor_ReleaseFar(object);
   Actor_ReleaseFar(other);
   FieldPsynergy_FadeFromCastColor();
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /// Puts object id at the effect's anchor (if any) and lets it fall under
@@ -486,7 +487,7 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   struct Actor *anchor;
   struct Actor *object;
 
-  anchor = ((struct AnchorWork *)Ram_HeapSlots->battleFxWork[0])->anchor;
+  anchor = ((struct AnchorWork *)Ram_HeapSlots->battleEffect)->anchor;
   object = Actor_GetById(id);
   if (anchor != NULL) {
     SET_POSITION(object, anchor->x, anchor->y, anchor->z);
@@ -515,7 +516,7 @@ extern const u16 gData_080f0fc0[];
 /// finds no room) or, past 0xc000 of the roll, a 0x8000-flagged value scaled
 /// by the unit's level, and is handed to BattleEffect_DropObjectAtAnchor.
 void Scoop_DigUpItem(void) {
-  struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleFxWork[0];
+  struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleEffect;
   struct Actor *anchor;
   struct FieldWork *event;
   struct BattleUnit *unit;

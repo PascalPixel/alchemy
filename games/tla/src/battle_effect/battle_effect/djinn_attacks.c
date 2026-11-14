@@ -43,10 +43,6 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 
 // The Mercury Djinn's flames (effect kind 281).
 
-// Byte offsets of the two blitter slots in gHeapSlots (unk64[1], unkb8[1]).
-#define HEAP_BLITTER 104
-#define HEAP_BLITTER_ALTERNATE 188
-
 // The dots live in the map cell buffer: 32 for each of the five flames.
 #define DOTS ((struct Particle *)Ram_MapCellBuffer)
 #define DOTS_PER_FLAME 32
@@ -76,9 +72,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
   // Setup: the canvas, the blitter pair, the sheets.
   slots = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)slots->battleFxWork[0];
-  canvas = slots->battleFxWork[1];
-  sheet = slots->unk64[0];
+  work = (struct BattleEffectWork *)slots->battleEffect;
+  canvas = slots->battleCanvas;
+  sheet = slots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
@@ -208,9 +204,9 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   s32 angle;
 
   // Setup: the canvas, the blitter pair, the sheets.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   draw = blit;
@@ -347,17 +343,17 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 
   // Setup: the canvas, the two blitters, the three sheets.
   slots = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)slots->battleFxWork[0];
-  canvas = slots->battleFxWork[1];
-  sheet = slots->unk64[0];
+  work = (struct BattleEffectWork *)slots->battleEffect;
+  canvas = slots->battleCanvas;
+  sheet = slots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)slots->unk64[1];
-  draw[1] = (DrawRectangle)slots->unkb8[1];
+  draw[0] = (DrawRectangle)slots->ramCode;
+  draw[1] = (DrawRectangle)slots->ramCode2;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
@@ -468,9 +464,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   s32 diveY;
 
   // Setup: the canvas, the blitter pair, the sheets.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);

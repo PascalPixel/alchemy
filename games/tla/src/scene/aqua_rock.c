@@ -672,7 +672,7 @@ static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
 }
 
 void AquaRock_StepIntoCurrent(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 col;
@@ -992,7 +992,7 @@ settle:
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
-  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
+  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapGrid;
   s32 id, x, z;
   s16 *entrance;
 
@@ -1317,7 +1317,7 @@ void AquaRock_ArriveFromPassage(void) {
 }
 
 void AquaRock_DrawRisingCellMarkers(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
 #ifndef UBFIX
   s32 *view = &map->viewX;
 #endif
@@ -1390,7 +1390,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
 }
 
 void AquaRock_DrawFallingCellMarkers(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
@@ -1486,7 +1486,8 @@ void AquaRock_SetCellMarkerAnchor(s32 id) {
 // decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
 // move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void AquaRock_StartSparkles(void) {
-  struct DustWork *work = HeapSlot_AllocEwram(116, sizeof(struct DustWork));
+  struct DustWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct DustWork));
   struct DustParticle *p = work->particles;
   u8 *buf;
   u32 i;
@@ -1497,11 +1498,11 @@ void AquaRock_StartSparkles(void) {
   zero = size;
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
-  buf = HeapSlot_AllocEwram(56, 0x400);
+  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gField_Tiles679, buf);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, buf);
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   work->field808 = size;
   i = 0;
 loop:
@@ -1523,7 +1524,7 @@ loop:
 }
 
 void AquaRock_SetSparkleAnchor(s32 id) {
-  u8 *work = Ram_HeapSlots->unk70[1];
+  u8 *work = Ram_HeapSlots->weather;
   struct Actor *object = Actor_GetById(id);
   s32 *slot = (s32 *)(work + 0x808);
 

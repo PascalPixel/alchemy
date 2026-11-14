@@ -88,9 +88,9 @@ void LuckyWheels_TransferCanvas(void) {
   struct BattleFxTransferWork *work;
   u8 *buf;
 
-  work = (struct BattleFxTransferWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleFxTransferWork *)Ram_HeapSlots->battleEffect;
   if (work->transferPending == 1) {
-    buf = Ram_HeapSlots->battleFxWork[1];
+    buf = Ram_HeapSlots->battleCanvas;
     switch (work->transferMode) {
     case 1: // Send it, then fill it with transferValue.
       Dma_Set(buf, (void *)0x06003500, DMA_COPY_WORDS(0x8000 / 4), REG_DMA3);
@@ -195,7 +195,7 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 0x80;
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 step;
   s32 i;
   s32 x;
@@ -403,7 +403,7 @@ void LuckyWheels_Update(void) {
   struct ReelWork *work;
 
   work = (struct ReelWork *)Ram_HeapSlots->canvasMap;
-  fx = (struct ReelEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  fx = (struct ReelEffectWork *)Ram_HeapSlots->battleEffect;
   objMode = 0x400;
   work->spriteCount = 0;
 
@@ -932,7 +932,7 @@ void LuckyWheels_FinishFrame(void) {
   s32 i;
 
   work = (struct ReelWork *)Ram_HeapSlots->canvasMap;
-  fx = (struct ReelEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  fx = (struct ReelEffectWork *)Ram_HeapSlots->battleEffect;
   if (work->state == 3) {
     for (i = 0; i != 8; i++) {
       struct Particle *p = &fx->particles[i];
@@ -989,7 +989,7 @@ void LuckyWheels_InitializeTitle(void) {
   s32 message;
 
   state = (struct ReelWork *)Ram_HeapSlots->canvasMap;
-  work = (struct ReelEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct ReelEffectWork *)Ram_HeapSlots->battleEffect;
   left = 0;
   for (i = 0; i != 0x800; i++)
     SPARKS[i].variant = 0;
@@ -1065,10 +1065,10 @@ void LuckyWheels_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = HeapSlot_Alloc(100, 0x60e);
-  canvas = HeapSlot_Alloc(96, 0x8000);
-  work = HeapSlot_AllocEwram(92, 0x7b7c);
-  state = HeapSlot_AllocEwram(180, sizeof(struct ReelWork));
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x8000);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 0x7b7c);
+  state = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, sizeof(struct ReelWork));
   tiles = Ram_MapCellBuffer;
   save = (struct ReelSave *)Data_0200024c;
   Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
@@ -1202,10 +1202,10 @@ void LuckyWheels_Run(void) {
       }
     }
 
-    BattleEffect_BuildBlitterFar(104, 8, 7, 3, 1);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleEffect_BuildBlitterFar(188, 8, 7, 3, 0);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 8, 7, 3, 1);
+    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 8, 7, 3, 0);
+    draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
     Iwram_FillWordsEntry(canvas, size, 0);
     Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);
     Dma_Set((void *)BG_PLTT, bgShade, 0x84000080, REG_DMA3);
@@ -1357,15 +1357,15 @@ void LuckyWheels_Run(void) {
                               0x100);
       wait(1);
     }
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(LuckyWheels_TransferCanvas);
     Task_Remove(LuckyWheels_Update);
     Task_Remove(LuckyWheels_FinishFrame);
-    HeapSlot_Release(180);
-    HeapSlot_Release(96);
-    HeapSlot_Release(92);
-    HeapSlot_Release(100);
+    HeapSlot_Release(HEAP_SLOT_CANVAS_MAP);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   }
 }
 

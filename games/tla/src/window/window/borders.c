@@ -11,7 +11,7 @@ void Window_DrawOpened(struct Window *window);
 /// its geometry and is drawn when it arrives; a closing one is erased frame
 /// by frame and cleared when its duration is reached.
 void Window_UpdateZooms(void) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *work = state->windows;
   s32 index = 0;
   u8 dirty;
@@ -135,7 +135,7 @@ u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
 u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
@@ -178,7 +178,7 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
 /// Window_ShowFlashFrame loads: the frame a window flashes with as it
 /// swells.
 void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
@@ -207,7 +207,7 @@ void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
 
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
   u32 column;
@@ -242,7 +242,7 @@ s32 Message_AllTyped(void) {
   struct UiChannelSlot *ch;
   s32 i;
 
-  ch = ((struct WindowWork *)Ram_HeapSlots->windowTiles)->channels;
+  ch = ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
   for (i = 0; i != 3; i++, ch++) {
     if (ch->work != NULL && ch->work->state == 0)
       return 0;
@@ -259,7 +259,7 @@ s32 Window_IsClosed(struct Window *window) {
 }
 
 void Text_ResetStyle(void) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   state->colour = 15;
   state->lineSpacing = 10;
@@ -271,7 +271,7 @@ void Text_ResetStyle(void) {
 void WindowSystem_Update(void);
 
 void WindowSystem_StartFieldUpdate(void) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->glyphSpacing = 9;
@@ -286,7 +286,7 @@ void WindowSystem_Update(void);
 void WindowSystem_UpdateBattle(void);
 
 void WindowSystem_StartBattleUpdate(s32 initialize) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   if (initialize != 0)
     state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
@@ -311,7 +311,7 @@ struct UiMessageSlot {
 /// Closes the battle message window at once, if one is open, and forgets it,
 /// so the next battle message (BattleMessage_Open) opens a new one.
 void BattleMessage_Close(void) {
-  struct UiMessageSlot *slot = Ram_HeapSlots->unk84[4];
+  struct UiMessageSlot *slot = Ram_HeapSlots->battleMessage;
 
   if (slot->window != NULL) {
     Window_Close(slot->window, 1);
@@ -333,8 +333,8 @@ void BattleMessage_Open(s32 message) {
   struct WindowWork *work;
   s32 result;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  slot = Ram_HeapSlots->unk84[4];
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  slot = Ram_HeapSlots->battleMessage;
   // Default: 0 until the message starts; the same zero clears a new window's
   // cursor.
   result = 0;
@@ -378,7 +378,7 @@ void BattleMessage_ShowAndWait(s32 message) {
 /// Builds the render entries of a message and queues them in the window;
 /// returns 0 when the message is empty or there is no window.
 s32 Message_OpenDecoded(s32 window, s32 argument) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 entry;
   s32 result = 0;
   // Unused: gives the stack frame its 8 bytes above the outgoing arguments.
@@ -407,7 +407,7 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
 void Message_SetDecodeFlags(u32 flags) {
   u8 *work;
 
-  work = Ram_HeapSlots->windowTiles;
+  work = Ram_HeapSlots->windowWork;
   if (work == 0)
     return;
   if (flags & 1)
@@ -416,7 +416,7 @@ void Message_SetDecodeFlags(u32 flags) {
     work[WINDOW_BUSY_FLAGS_OFFSET + 1] = 1;
 }
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
 s32 Message_Decode(s32 key, s32 mode);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
@@ -474,7 +474,7 @@ s32 Actor_GetScreenPositionFar(s32 object, s32 *out);
 s32 Message_AllTyped(void);
 
 void FieldMessage_Show(s32 no, s32 flags) {
-  u8 *base = Ram_HeapSlots->windowTiles;
+  u8 *base = Ram_HeapSlots->windowWork;
   s32 release;
   s32 pos[2] = {0, 0};
   s32 height;
@@ -524,7 +524,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
     }
 
     if (flags & 0x20) {
-      Ram_HeapSlots->windowTiles[6] = 1;
+      Ram_HeapSlots->windowWork[6] = 1;
     }
 
     if (!(flags & 4)) {

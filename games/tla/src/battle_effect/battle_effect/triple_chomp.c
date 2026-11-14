@@ -6,9 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-// The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
-#define HEAP_SLOT_BLITTER 104
-
 #define TASK_PASS_FRAME 0xc80
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
@@ -60,9 +57,9 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   s32 j;
   u8 *pixels = Ram_MapCellBuffer;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, then let the caster lunge.
   BattleEffect_StartCanvasLayer(1);
@@ -75,7 +72,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   // spark sheet and the blue flame's colours.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -209,7 +206,6 @@ void BattleEffect_RunGhostSoldier(struct BattleEffectParams *args) {
 
 /// Abilities: Blast Breath (kind 414).
 DEFINE_EFFECT_KIND(BattleEffect_RunBlastBreath, BattleEffect_RunBreaths, 3)
-#undef HEAP_SLOT_BLITTER
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT

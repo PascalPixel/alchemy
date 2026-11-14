@@ -65,7 +65,7 @@ Shop_CreatePriceSprite(s32 value, struct RenderInput *window, s32 x, s32 y) {
   s32 resourceSlot;
   struct WindowSprite *priceSprite;
 
-  tileBuffer = HeapSlot_AllocEwram(56, 1024);
+  tileBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   priceSprite = 0;
   // the blank price's eight tiles (8 * TILE_SIZE_4BPP bytes)
   Dma_Set(gShop_PriceTiles, tileBuffer, DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
@@ -94,7 +94,7 @@ Shop_CreatePriceSprite(s32 value, struct RenderInput *window, s32 x, s32 y) {
     priceSprite =
         WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_16X32, window, x, y);
   }
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   return priceSprite;
 }
 
@@ -102,7 +102,7 @@ Shop_CreatePriceSprite(s32 value, struct RenderInput *window, s32 x, s32 y) {
 /// frames.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
   struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct PaletteFade *paletteBuffers = Ram_HeapSlots->block32;
+  struct PaletteFade *paletteBuffers = Ram_HeapSlots->paletteFade;
   u16 *savedPalette = paletteBuffers->target;
 
   Dma_Set(savedPalette, field->savedFadeTarget, DMA_COPY_WORDS(336), REG_DMA3);
@@ -237,7 +237,7 @@ void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
 /// Starts the hand cursor's glide to (x, y) pixels inside `window` (the screen
 /// when it is NULL), over the frames shop->mode holds.
 void MenuCursor_Place(struct RenderInput *window, s32 x, s32 y) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
 
   // A window's position is in tiles, and its interior starts one tile (its
   // frame) in

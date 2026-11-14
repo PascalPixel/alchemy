@@ -36,7 +36,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     return;
 
   FieldEffect_InitializeSlots();
-  effectSlots = Ram_HeapSlots->effectWork;
+  effectSlots = Ram_HeapSlots->fieldEffectWork;
   Shop_SaveAndTintFieldPaletteFar(0x201090);
   wait(30);
   Actor_FaceDirectionById(djinniId, 0x4000, 0);
@@ -161,7 +161,7 @@ struct BattleFxScene;
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define Actor_ReleaseFar Actor_ReleaseFar
-#define gEffectWork Ram_HeapSlots->effectWork
+#define gEffectWork Ram_HeapSlots->fieldEffectWork
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a

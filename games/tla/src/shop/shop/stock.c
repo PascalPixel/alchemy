@@ -14,7 +14,7 @@
 /// ticket's cost, and lets the player choose who takes it.
 void Shop_GiveGameTicket(struct RenderInput *window,
                          struct RenderInput *itemWindow) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
   u32 savedSelectedItem;
   s32 memberIndex;
   s32 unitId;

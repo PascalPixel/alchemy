@@ -17,7 +17,7 @@
 #include "macros.h"
 #include "item_icon.h"
 
-// The ropes Lash ties (heap slot 156): eight slots, each a chain of nodes
+// The ropes Lash ties (HEAP_SLOT_ROPE): eight slots, each a chain of nodes
 // between two posts, coiled at the first post until tied. A tied rope can be
 // walked (render mode 3) and swings when stepped on. XXX: the swing and the
 // prompts 0xfc85 and 0xfc86 are read from the code; a render of a lashed rope
@@ -26,7 +26,8 @@
 /// Allocates the ropes' work, loads their node picture and starts Rope_Draw
 /// and Rope_Update. A scene with ropes to lash calls it first.
 void Rope_Initialize(void) {
-  struct RopeWork *work = HeapSlot_AllocEwram(156, sizeof(struct RopeWork));
+  struct RopeWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_ROPE, sizeof(struct RopeWork));
   void *buffer = Heap_Alloc(0x100);
 
   Dma_Fill32(0, work, sizeof(struct RopeWork));
@@ -52,7 +53,7 @@ void Rope_Draw(void) {
   u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   s32 prevZ = 0;
   s32 started = 0;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
@@ -732,16 +733,16 @@ void Rope_Place(s32 index, s32 flag, s32 a2, s32 a3) {
     Rope_Tie(index, a2, a3);
 }
 
-// The tightropes (heap slot 160): ropes laid straight between two posts that
-// the party walks (render mode 4) and that wobble underfoot. The family copies
-// the ropes' routines. XXX: Telago's walkthrough calls them tightropes (Trial
-// Road, Gondowan Cliffs); a render would confirm the name.
+// The tightropes (HEAP_SLOT_TIGHTROPE): ropes laid straight between two posts
+// that the party walks (render mode 4) and that wobble underfoot. The family
+// copies the ropes' routines. XXX: Telago's walkthrough calls them tightropes
+// (Trial Road, Gondowan Cliffs); a render would confirm the name.
 
 /// Allocates the tightropes' work, loads their node picture and starts
 /// Tightrope_Draw and Tightrope_Update.
 void Tightrope_Initialize(void) {
   struct TightropeWork *work =
-      HeapSlot_AllocEwram(160, sizeof(struct TightropeWork));
+      HeapSlot_AllocEwram(HEAP_SLOT_TIGHTROPE, sizeof(struct TightropeWork));
   void *buffer = Heap_Alloc(0x900);
 
   Dma_Fill32(0, work, sizeof(struct TightropeWork));
@@ -761,7 +762,7 @@ void Tightrope_Draw(void) {
   s32 prevZ = 0;
   s32 started = 0;
   u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
@@ -1281,13 +1282,12 @@ extern const u8 gHangingVine_VineTopPicture[], gHangingVine_VineUpperPicture[],
 extern const u8 gHangingVine_VineBottomPicture[],
     gHangingVine_ChainTopPicture[], gHangingVine_ChainMiddlePicture[];
 
-#define TILE_EFFECT_SLOT 164
 #define TILE_EFFECT_KIND_ALT 372 // the kind that takes the first picture set
 #define PICTURE_SIZE 0x100
 
-// The hanging vines (heap slot 164): eight slots, each seven links hung below
-// an anchor object, which sway, swing less while the leader stands under
-// them, and carry the leader across a gap. XXX: Telago's walkthrough has
+// The hanging vines (HEAP_SLOT_HANGING_VINE): eight slots, each seven links
+// hung below an anchor object, which sway, swing less while the leader stands
+// under them, and carry the leader across a gap. XXX: Telago's walkthrough has
 // Felix swing on a vine hanging over a gap once Whirlwind moves it (Gaia
 // Rock); a render would confirm the name and the swing.
 
@@ -1301,7 +1301,8 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
   u8 *pictures;
   s32 size;
 
-  work = HeapSlot_AllocEwram(TILE_EFFECT_SLOT, sizeof(struct HangingVineWork));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_HANGING_VINE,
+                             sizeof(struct HangingVineWork));
   size = 4 * PICTURE_SIZE;
   pictures = Heap_Alloc(size);
   Dma_Fill32(0, work, sizeof(struct HangingVineWork));
@@ -1343,7 +1344,7 @@ void HangingVine_Draw(void) {
   s32 prevY = 0;
   u32 tiles = gVramCacheEntries[work->vramEntry].offset >> 5;
   s32 prevZ = 0;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
@@ -1406,7 +1407,6 @@ void HangingVine_Draw(void) {
       link->angle = angle;
   }
 }
-#undef TILE_EFFECT_SLOT
 #undef TILE_EFFECT_KIND_ALT
 #undef PICTURE_SIZE
 
@@ -1543,9 +1543,9 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   s32 running;
 
   object = Actor_GetById(objectId);
-  running = Ram_HeapSlots->unk84[8];
+  running = Ram_HeapSlots->hangingVine;
   kind = 372;
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   if (running == 0) {
     if (object->sprite != 0 && object->sprite->entries[0] != 0)
       kind = *object->sprite->entries[0];

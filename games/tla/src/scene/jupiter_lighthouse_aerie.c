@@ -679,7 +679,7 @@ struct BeamWork {
 #define LERP(from, to, t, n) ((from) + ((to) - (from)) * (t) / (n))
 
 void JupiterLighthouse_UpdateBeam(void) {
-  struct BeamWork *work = Ram_HeapSlots->menuRuntime;
+  struct BeamWork *work = Ram_HeapSlots->menuWork;
   struct Actor *carrier = gFieldWork->camera;
   s32 t = work->frame;
   s32 position[3];
@@ -875,7 +875,7 @@ static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
 
 void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   struct BeamWork__s17a8 *work =
-      HeapSlot_Alloc(220, sizeof(struct BeamWork__s17a8));
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BeamWork__s17a8));
   struct Actor *carrier = gFieldWork->camera;
   struct EffectSprite *sprite;
   struct EffectSprite *large;
@@ -960,7 +960,7 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   FieldTask_Remove(JupiterLighthouse_UpdateBeam);
   VramCache_FreeEntry(largeEntry);
   VramCache_FreeEntry(smallEntry);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 extern s16 gLightSpriteTile;

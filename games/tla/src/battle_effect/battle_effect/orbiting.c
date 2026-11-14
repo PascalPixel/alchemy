@@ -24,8 +24,8 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   s32 i;
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw);
@@ -125,8 +125,8 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 record[3];
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
@@ -134,9 +134,9 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  rectangleA = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  rectangleB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  rectangleB = (DrawRectangle)Ram_HeapSlots->ramCode2;
 
   for (i = 0; i != 64; i++) {
     s32 angle;
@@ -210,7 +210,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
 #include "graphics/vram_tab.h"
 
-// The blitter slots read as what they hold, a drawing routine.
+// The second blitter slot read as what it holds, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
   (((struct {                                                                  \
      u8 before[188];                                                           \

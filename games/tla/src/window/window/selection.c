@@ -99,7 +99,7 @@ void SelectionMenu_Create(void) {
   s32 i;
   u16 clear = 0;
 
-  work = HeapSlot_AllocEwram(72, 996);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_MENU, 996);
   work->field348 = clear;
   work->field34c = clear;
   work->field350 = clear;
@@ -155,7 +155,7 @@ extern u8 Tile_ExpandOpaqueCodeSize[];
 void SelectionMenu_Clear(void) {
   struct SelectionScreen *screen;
 
-  screen = Ram_HeapSlots->menuWork;
+  screen = Ram_HeapSlots->selectionMenu;
   screen->head = NULL;
   screen->unk39a = 0;
   if (screen->cursorIndex & 0x80) {
@@ -172,7 +172,7 @@ void SelectionMenu_Clear(void) {
 /// ICON_KIND_YES_NO, ICON_KIND_ITEM and ICON_KIND_ABILITY; base is the
 /// command's, item's or ability's number.
 void SelectionMenu_AddEntry(u32 first, u32 second) {
-  struct SelectionScreen *state = Ram_HeapSlots->menuWork;
+  struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
   u16 cnt = state->count;
 
   if (cnt != 16) {
@@ -190,7 +190,7 @@ void SelectionMenu_AddEntry(u32 first, u32 second) {
 /// Builds the linked row before placing the visible icons and loading the
 /// preview.
 void SelectionMenu_BuildEntries(u32 unused) {
-  struct SelectionScreen *screen = Ram_HeapSlots->menuWork;
+  struct SelectionScreen *screen = Ram_HeapSlots->selectionMenu;
   u32 count = screen->count;
   u32 index = screen->top;
   struct SelectionNode *previous = 0;
@@ -260,7 +260,7 @@ void SelectionMenu_ReservedNoOp(void) {}
 /// or NULL.
 s32 SelectionMenu_FindFreeIcon(s32 kind) {
   struct SelectionScreen *state =
-      (struct SelectionScreen *)Ram_HeapSlots->menuWork;
+      (struct SelectionScreen *)Ram_HeapSlots->selectionMenu;
   s32 i;
 
   if (kind != 0) {
@@ -304,7 +304,7 @@ extern s8 gMenu_CursorBobOffsets[];
 struct MenuSelection;
 
 void SelectionMenu_Draw(void) {
-  struct SelectionScreen *state = Ram_HeapSlots->menuWork;
+  struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
   struct SelectionSprite *cursorEntry = &state->records[14].sprite;
   struct SelectionNode *cursor = &state->records[14];
   struct SelectionNode *transfer = &state->records[15];
@@ -562,7 +562,7 @@ void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
   struct Window **slot;
   struct Window *window;
 
-  screen = Ram_HeapSlots->menuWork;
+  screen = Ram_HeapSlots->selectionMenu;
   node = (struct SelectionNode *)SelectionMenu_GetCursorNode(
       (struct NodeChainState *)screen);
   slot = &screen->window;
@@ -608,7 +608,7 @@ void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
 /// slot 18). The chosen icons go too, so the choices are only in the indexes
 /// the loops returned.
 void SelectionMenu_Close(void) {
-  struct SelectionScreen *state = Ram_HeapSlots->menuWork;
+  struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
   struct SelectionNode *node;
 
   SelectionMenu_StopDrawing();
@@ -638,7 +638,7 @@ void SelectionMenu_Close(void) {
     }
   }
   VramCache_FreeEntry(state->records[14].slot);
-  HeapSlot_Release(72);
+  HeapSlot_Release(HEAP_SLOT_SELECTION_MENU);
 }
 
 /// Moves the row of icons to start at pixel (x, y), 16 pixels apart.
@@ -646,7 +646,7 @@ void SelectionMenu_SetPosition(u32 first, u32 second) {
   struct SelectionScreen *state;
   struct SelectionNode *node;
 
-  state = Ram_HeapSlots->menuWork;
+  state = Ram_HeapSlots->selectionMenu;
   state->baseX = first;
   state->baseY = second;
   node = state->head;
@@ -661,7 +661,7 @@ void SelectionMenu_SetPosition(u32 first, u32 second) {
 }
 
 void Menu_SetupSelectionBothSides(void) {
-  void *menu = Ram_HeapSlots->menuWork;
+  void *menu = Ram_HeapSlots->selectionMenu;
 
   SelectionMenu_SetupArrow(menu, 0);
   SelectionMenu_SetupArrow(menu, 1);
@@ -766,7 +766,7 @@ STATIC_ASSERT(offsetof(struct SelectionScrollScreen, status) == 0x3a2);
 /// moving or choosing; any mode but 0 allows cancelling. Reached only through
 /// a bare entry of the window far-call table.
 s32 SelectionMenu_Run(s32 mode) {
-  struct SelectionScrollScreen *screen = Ram_HeapSlots->menuWork;
+  struct SelectionScrollScreen *screen = Ram_HeapSlots->selectionMenu;
 
   SelectionMenu_HighlightIcon((struct MenuResourceList *)screen, 0);
   for (;;) {
@@ -791,7 +791,7 @@ s32 SelectionMenu_Run(s32 mode) {
 
 /// As SelectionMenu_Run, with the menu sounds.
 u32 SelectionMenu_RunWithSounds(u32 mode) {
-  struct SelectionScrollScreen *screen = Ram_HeapSlots->menuWork;
+  struct SelectionScrollScreen *screen = Ram_HeapSlots->selectionMenu;
   u32 result;
 
   for (;;) {
@@ -1580,7 +1580,7 @@ extern char ResourceId_CommandIcons;
 /// Other kinds of entry show none. The icon keeps its VRAM cache entry until
 /// Resource_ResetPendingTransfer.
 void SelectionMenu_LoadLargeIcon(void) {
-  struct SelectionScreen *state = Ram_HeapSlots->menuWork;
+  struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
   struct SelectionNode *selection =
       (struct SelectionNode *)SelectionMenu_GetCursorNode(
           (struct NodeChainState *)state);
@@ -1593,7 +1593,8 @@ void SelectionMenu_LoadLargeIcon(void) {
   if (selection->kind != 1 && selection->kind != 6)
     return;
 
-  buffer = (GlyphTransfer *)HeapSlot_Alloc(68, sizeof(GlyphTransfer));
+  buffer = (GlyphTransfer *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER,
+                                           sizeof(GlyphTransfer));
   transfer = &state->records[15];
   no = selection->base;
   table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
@@ -1612,12 +1613,12 @@ void SelectionMenu_LoadLargeIcon(void) {
   transfer->scale = 40;
   transfer->scaleStep = 40;
   transfer->scaleEnd = 240;
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 void Resource_ResetPendingTransfer(void) {
   struct SelectionNode *transfer =
-      &((struct SelectionScreen *)Ram_HeapSlots->menuWork)->records[15];
+      &((struct SelectionScreen *)Ram_HeapSlots->selectionMenu)->records[15];
 
   if (transfer->kind != 0) {
     VramCache_FreeEntry(transfer->slot);
@@ -1715,7 +1716,7 @@ void SelectionMenu_CreateEmpty(void) {
 void SelectionMenu_BuildEntries(u32);
 
 u32 Menu_RunSelectionForValue(u32 value) {
-  struct SelectionScreen *state = Ram_HeapSlots->menuWork;
+  struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
   u32 result;
 
   state->cursorIndex = value;

@@ -47,8 +47,8 @@ struct PendingEvent__f0e92b4 {
 extern char ResourceId_WaterSplash;
 
 void FieldPsynergy_GrindOnTarget(void) {
-  struct SplashWork *work = HeapSlot_Alloc(92, 0x1920);
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct SplashWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1920);
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *child = scene->child;
   struct SplashAnimation *animation = child->sprite;
@@ -190,7 +190,7 @@ void FieldPsynergy_GrindOnTarget(void) {
         BattleEffect_ShiftRowsDown(picture, animation->width,
                                    animation->height);
       shifts++;
-      ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
+      ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
           picture, animation->width, animation->height, dst);
     }
     ViewMove_Swing(2, counter++, amplitude);
@@ -245,7 +245,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   FieldPsynergy_FadeFromCastColor();
   VramCache_FreeEntry(entry);
 end:
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 // Field Psynergy kind 27 (FieldPsynergy_Run's case 27): the view sways.
@@ -268,8 +268,8 @@ void FieldPsynergy_Grind(void) {
   s32 state;
   s32 frames;
 
-  HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
-  scene = Ram_HeapSlots->effectWork;
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, VIEW_MOVE_WORK_SIZE);
+  scene = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   ViewMove_Start(VIEW_MOVE_Z);
@@ -314,5 +314,5 @@ void FieldPsynergy_Grind(void) {
 
   ViewMove_End();
   FieldPsynergy_FadeFromCastColor();
-  HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

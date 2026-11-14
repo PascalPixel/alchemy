@@ -23,7 +23,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchLayer *layer =
-      ((struct TouchMap *)Ram_HeapSlots->mapWork)->layers;
+      ((struct TouchMap *)Ram_HeapSlots->mapGrid)->layers;
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
   s32 lift;
   s32 scrollX = layer->x >> 20;
@@ -148,8 +148,8 @@ void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
 }
 
 void ParticleBurst_Start(void) {
-  struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
-  struct FxScene *effect = Ram_HeapSlots->effectWork;
+  struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleEffect;
+  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainObject;
   struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);

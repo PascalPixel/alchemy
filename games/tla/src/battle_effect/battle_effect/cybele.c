@@ -52,8 +52,6 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 #include "battle_effect_work.h"
 #include "graphics/resource.h"
 
-#define HEAP_BLITTER 104
-#define HEAP_BLITTER_ALTERNATE 188
 #define FORMATION_THORN_VINES 645 // eight objects
 
 static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
@@ -84,8 +82,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   // Set up: the formation's eight objects, then the order in which the
   // picture is erased: eight shuffled runs of 0..127.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_SpawnObjects(8, FORMATION_THORN_VINES, 1);
 
   order = Ram_MapCellBuffer;
@@ -113,11 +111,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                              1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = -0x2000;
 
@@ -451,10 +449,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                                  work->sheet + 0x1680, 1, 1);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      draw[1] = (DrawRectangle) * (Ram_HeapSlots->unkb8 + 1);
+      // ramCode2, reached from the slot before it.
+      draw[1] = (DrawRectangle) * (&Ram_HeapSlots->unkb8 + 1);
       REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
                    BLDCNT_TGT2_ALL;
       REG_BG2PA = Q_8_8(0.5);

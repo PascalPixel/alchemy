@@ -51,7 +51,7 @@ u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
 void MapGrid_SetScreenShake(s32 value0, s32 value1, s32 value2) {
   struct MapWork *work;
 
-  work = Ram_HeapSlots->mapWork;
+  work = Ram_HeapSlots->mapGrid;
   if (value0 >= 0) {
     work->shakeX = value0;
   }
@@ -69,7 +69,7 @@ void MapGrid_WaitForShakeToSettle(void) {
   s32 *work;
   s32 cnt;
 
-  work = (s32 *)Ram_HeapSlots->mapWork;
+  work = (s32 *)Ram_HeapSlots->mapGrid;
   cnt = 0;
   while (cnt < 300 && (work[1] > 255 || work[2] > 255)) {
     wait(1);

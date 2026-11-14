@@ -11,7 +11,7 @@
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void CrumblingPillars_Place(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader;
   s32 height;
 
@@ -167,7 +167,7 @@ void CrumblingPillar_Prepare(s32 id) {
 void Actor_MoveToObject(s32 id, s32 target);
 
 void CrumblingPillars_PlaceWithStandIns(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
   Actor_MoveToObject(8, gMainRoutineWork.leaderActorId);

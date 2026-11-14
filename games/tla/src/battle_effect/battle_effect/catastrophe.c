@@ -26,9 +26,6 @@ struct RenderModel__f1843fc {
   u8 scrollV;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // An effect sprite as this effect reaches it: its OAM priority and its VRAM
@@ -42,7 +39,6 @@ struct MeshVertex {
 
 // Copies words through the IWRAM routine as one statement.
 
-#define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gVramCacheEntries[((struct SpriteObject *)(obj))->slot].offset)
 
@@ -91,11 +87,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   s32 span = 0x80000;
   s32 rowStep = 8;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
-  transition = (s32 *)Ram_HeapSlots->transitionWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  transition = (s32 *)Ram_HeapSlots->battleBackground;
+  sprites = Ram_HeapSlots->battleSheet;
   battle = Ram_HeapSlots->battleWork;
   VramCache_FreeEntry(*(u32 *)(battle + 84));
   VramBlock_Reset93Far();
@@ -105,7 +101,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   *(volatile u16 *)BG_PLTT = 0;
   *(volatile u16 *)(BG_PLTT + 1) = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit[0] = Ram_HeapSlots->unk64[1];
+  blit[0] = Ram_HeapSlots->ramCode;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
@@ -242,7 +238,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   cueIndex = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = Ram_HeapSlots->unk64[1];
+  blit[0] = Ram_HeapSlots->ramCode;
   frame = 0;
   while (frame != 637) {
     s32 level;
@@ -1097,7 +1093,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               {
                 s32 c = gCatastrophe_GlintFlips[Random16() & 3] | 3;
 
-                BattleEffect_BuildBlitter(SLOT_ALT, 7, 7, c, 0);
+                BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, c, 0);
               }
               {
                 s32 at = gBattleEffect_GlintPictures[n];
@@ -1106,7 +1102,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                  * picture's offset and the draw. */
                 do {
                 } while (0);
-                ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+                ((DrawRectangle)Ram_HeapSlots->ramCode2)(
                     canvas, work->sheet + 0x800 + at, x, y,
                     gBattleEffect_GlintPictureWidths[n],
                     gBattleEffect_GlintPictureHeights[n]);
@@ -1620,7 +1616,5 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     EFFECT_FINISH_CANVAS_ONE_BLITTER();
   }
 }
-#undef SLOT_BLITTER
 #undef BLITTER
-#undef SLOT_ALT
 #undef OBJ_TILES

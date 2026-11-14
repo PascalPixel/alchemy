@@ -232,8 +232,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         (battleObject->resource & 0xfff) == 579 ||
         (battleObject->resource & 0xfff) == 581 ||
         (battleObject->resource & 0xfff) == 583) {
-      records = (struct TlaSpriteRecord **)Ram_HeapSlots->objectSystem->unk08 +
-                Ram_HeapSlots->objectSystem->count;
+      records = (struct TlaSpriteRecord **)Ram_HeapSlots->actorSystem->unk08 +
+                Ram_HeapSlots->actorSystem->count;
       spriteId = battleObject->resource;
       object->recordStorageKind = 2;
       object->records = records;

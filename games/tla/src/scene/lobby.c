@@ -631,7 +631,7 @@ s32 LinkLobby_EnterBattle(void) {
     wait(5);
   }
   if (!failed) {
-    buf = HeapSlot_AllocEwram(216, 0x7c8);
+    buf = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
     Task_Remove(LinkLobby_PollPeerReady);
     Map_ClearLayerEntryFlag(5);
     wait(8);
@@ -660,7 +660,7 @@ s32 LinkLobby_EnterBattle(void) {
         wait(8);
         Map_SetLayerEntryFlag(5);
         Actor_WaitForMoveById(ACTOR_FELIX);
-        HeapSlot_Release(216);
+        HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
         Task_Add((TaskFunc)LinkLobby_PollPeerReady, TASK_PASS_VBLANK);
@@ -712,7 +712,7 @@ s32 LinkLobby_EnterBattle(void) {
       if (i <= last)
         goto copy;
     }
-    HeapSlot_Release(216);
+    HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
   }
   Event_End();
 }

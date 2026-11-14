@@ -11,11 +11,6 @@
 // the sprite each frame, BattleEffect_UploadCanvas copies the canvas into its
 // tiles on command, and BattleEffect_EndCanvasSprite ends it.
 
-/// The heap slots (byte offsets into Ram_HeapSlots) it takes.
-#define HEAP_SLOT_CANVAS_SPRITE 240
-#define HEAP_SLOT_CANVAS 96
-#define HEAP_SLOT_CANVAS_MAP 180
-
 /// The canvas: 64x64 pixels of 8 bits, in 8x8 tiles.
 #define CANVAS_WIDTH 64
 #define CANVAS_SIZE 0x1000

@@ -43,7 +43,7 @@ struct Unk_080e807cWork {
 /// Task of field Psynergy 28 (its name is question marks): its motes and
 /// colours each frame.
 void FieldPsynergy_UpdateUnnamed28(void) {
-  struct Unk_080e807cWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct Unk_080e807cWork *work = Ram_HeapSlots->battleEffect;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
@@ -165,8 +165,8 @@ extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 void Camera_WorldToScreen(s32 *position);
 
 void FieldPsynergy_Unnamed28(void) {
-  struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct RingWork *work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 0x298c);
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct CanvasSpriteWork *canvas;
@@ -195,7 +195,7 @@ void FieldPsynergy_Unnamed28(void) {
     FieldPsynergy_FadeToCastColor();
     gCpuLoadDisplayEnabled = angle;
     BattleEffect_StartCanvasSprite();
-    canvas = Ram_HeapSlots->unkec[1];
+    canvas = Ram_HeapSlots->canvasSprite;
     canvas->mode = angle;
     pos = position;
     pos[0] = scene->mainObject->x;
@@ -223,8 +223,8 @@ void FieldPsynergy_Unnamed28(void) {
     /* FAKEMATCH(dead): the picture's release and allocation in a once-only
      * block. */
     do {
-      HeapSlot_Release(96);
-      picture = HeapSlot_AllocEwram(96, 0x2000);
+      HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+      picture = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_CANVAS, 0x2000);
     } while (0);
     Iwram_FillWordsEntry(picture, 0x2000, 0);
 
@@ -400,7 +400,7 @@ struct SparkleBurstWork {
 /// owner, starting a quarter of them a frame later than the last, then moves
 /// and animates them for 40 frames before releasing the effect.
 void FieldPsynergy_EndUnnamed28(void) {
-  struct SparkleBurstWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct SparkleBurstWork *work = Ram_HeapSlots->battleEffect;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct BurstMote *mote;
@@ -486,7 +486,7 @@ void FieldPsynergy_EndUnnamed28(void) {
   VramCache_FreeEntry(slot);
   VramCache_FreeEntry(work->resource);
   BattleEffect_EndCanvasSprite();
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 // How far the view stays from the edge it is beside, in pixels.
@@ -510,10 +510,10 @@ void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
 void ViewMove_Start(s32 direction) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *center = event->camera;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 viewX = map->viewX >> 16;
   s32 viewZ = map->viewZ >> 16;
-  struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
   struct MapBounds bounds;
   s32 minX;
   s32 maxX;
@@ -598,7 +598,7 @@ void ViewMove_Start(s32 direction) {
 /// beside neither. A held view does not move.
 void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *center = event->camera;
   s32 x;
   s32 z;
@@ -606,7 +606,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
 
   // Japanese does not check the map's rectangle list here.
 #if TLA_PATCH_1
-  if (*(s32 *)Ram_HeapSlots->mapWork->unk0fc != 0)
+  if (*(s32 *)Ram_HeapSlots->mapGrid->unk0fc != 0)
     return;
 #endif
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
@@ -649,10 +649,10 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
 // and lets the view follow the scene's first object again. Where the view
 // was held, it only stops the screen shake.
 void ViewMove_End(void) {
-  struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
 
 #if TLA_PATCH_1
   if (*(s32 *)map->unk0fc != 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -685,9 +685,9 @@ union FxSprite {
 /// which Field_MeasurePsynergyReach measures a distance from the first object,
 /// with each one's sprite value.
 void ViewMove_SaveNearbySprites(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleFxWork[0];
+  struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleEffect;
   struct Actor **objects;
   struct Actor *obj;
   s32 i;
@@ -710,7 +710,7 @@ void ViewMove_SaveNearbySprites(void) {
 
 /// Writes each gathered object's saved sprite value back.
 void ViewMove_RestoreNearbySprites(void) {
-  struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleFxWork[0];
+  struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleEffect;
   s32 i;
 
   for (i = 0; i < group->count; i++)

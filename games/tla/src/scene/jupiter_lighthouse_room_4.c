@@ -509,7 +509,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
 void LightSprites_Draw(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;

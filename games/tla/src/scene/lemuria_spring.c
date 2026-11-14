@@ -104,7 +104,7 @@ extern u16 gLemuriaSpring_AlphaSteps[];
 /// Raises the spring's displayed layer and blends it into view, as Tolbi's
 /// does.
 void LemuriaSpring_RiseAndFadeIn(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 *layer;
   s32 i;
 

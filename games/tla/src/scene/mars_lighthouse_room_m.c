@@ -1071,7 +1071,7 @@ void Teleport_ArriveWhirling(void);
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
+  u8 *saved = Ram_HeapSlots->paletteFade;
 
   gPaletteCycle_Slots = slots;
   gPaletteCycle_FlashColors = colours;

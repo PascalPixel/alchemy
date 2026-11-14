@@ -541,7 +541,8 @@ s32 VenusLighthouse_Idle(void) { return 0; }
 void VenusLighthouse_FelixMovesStatue(void) {
   BattleEffect_LoadActionEffectResources(140, 1);
   FieldPsynergy_SetupActorPair(4, ACTOR_MOVED_STATUE);
-  ((struct SetupWork *)Ram_HeapSlots->effectWork)->idle = VenusLighthouse_Idle;
+  ((struct SetupWork *)Ram_HeapSlots->fieldEffectWork)->idle =
+      VenusLighthouse_Idle;
   EventObject_Initialize();
   FieldEvent_Wait(10);
   FieldPsynergy_RunHandler(1);

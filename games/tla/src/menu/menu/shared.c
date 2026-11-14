@@ -30,7 +30,7 @@ s32 Menu_SuspendFieldTasks(void) {
 }
 
 void Window_InitializeWork(s32 unused) {
-  struct ItemMenuWork *work = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *work = Ram_HeapSlots->menuWork;
 
   Dma_Fill32(0, work, 0x33b * 4);
   work->sideIndex[0] = -1;
@@ -154,7 +154,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
   u8 ailments[8];
 
   created = 0;
-  state = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
+  state = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   unit = Unit_Get(owner);
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
@@ -553,7 +553,7 @@ struct RenderInput *MenuCursor_Create(void *source) {
 
 void Menu_PlacePartyFigures(void) {
   struct PsynergyMenuWork *menu =
-      (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
+      (struct PsynergyMenuWork *)Ram_HeapSlots->menuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 i;
@@ -587,7 +587,7 @@ extern u8 gMenuCursor_BobY[];
 /// bobbing.
 void MenuCursor_Position(s32 xOffset, s32 yOffset) {
   struct PsynergyMenuWork *work =
-      (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
+      (struct PsynergyMenuWork *)Ram_HeapSlots->menuWork;
   struct WindowSprite *cursor = work->sideIcon[0];
 
   cursor->sprite.oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] +
@@ -598,7 +598,7 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
 
 void MenuCursor_Slide(s32 x, s32 y) {
   struct PsynergyMenuWork *work =
-      (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
+      (struct PsynergyMenuWork *)Ram_HeapSlots->menuWork;
   struct WindowSprite *cursor;
   s32 steps;
   s32 startX;
@@ -664,7 +664,7 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   s32 index;
 
   index = 0;
-  slot = (struct WindowSprite **)((u8 *)Ram_HeapSlots->menuRuntime + 0x4c);
+  slot = (struct WindowSprite **)((u8 *)Ram_HeapSlots->menuWork + 0x4c);
   scan = slot;
   do {
     if (*scan++ != NULL) {
@@ -711,7 +711,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
   s32 originY;
   s32 base;
 
-  base = (s32)Ram_HeapSlots->menuRuntime;
+  base = (s32)Ram_HeapSlots->menuWork;
   originY = 0x38;
   if (layout != 1) {
     originY = 0x28;
@@ -739,7 +739,7 @@ void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
 /// up and flag 337 records that the info window holds it; otherwise it waits
 /// for A, B or Start and clears it again.
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
-  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   struct RenderInput *window;
   s32 height;
   s32 width;
@@ -1028,7 +1028,7 @@ void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
 
 void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
                                s32 width, s32 height, u32 field) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   x += (s16)object->x + 1;
   y += (s16)object->y + 1;
@@ -1074,7 +1074,7 @@ void Palette_LoadIconsIntoHighlight(void) {
 }
 
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct WindowSprite *icon;
   s32 i;
 
@@ -1138,7 +1138,7 @@ void Menu_UpdateCancelSound(void) {
     GameFlag_Set(FLAG_MENU_START_PRESSED);
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
-  node = (u32 *)(Ram_HeapSlots->windowTiles + 0xE30);
+  node = (u32 *)(Ram_HeapSlots->windowWork + 0xE30);
   while ((node = (u32 *)*node) != 0)
     ;
 }

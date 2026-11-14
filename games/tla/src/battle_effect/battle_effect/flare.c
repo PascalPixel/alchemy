@@ -31,8 +31,8 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   struct Particle *puff;
   struct Particle *p;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -40,7 +40,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   // The arc: from -90 degrees in steps of 22.5.
   if (args->targets[0] > 127) {

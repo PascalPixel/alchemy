@@ -143,7 +143,7 @@ s32 SeaOfTime_HideSprite(struct Actor *object) {
 
 s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
   struct SeaOfTimeMapWork *map =
-      (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapWork;
+      (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
 
   if (map == NULL)
@@ -158,7 +158,7 @@ s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
 
 s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
   struct SeaOfTimeMapWork *map =
-      (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapWork;
+      (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
   s32 old;
 
@@ -989,8 +989,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 // the palette and ripples the layer's horizontal scroll line by line.
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
-  u8 *block = Ram_HeapSlots->block32;
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  u8 *block = Ram_HeapSlots->paletteFade;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 i;
   s16 color;
@@ -1065,8 +1065,8 @@ void SeaOfTime_AnimateSea(void) {
     }
   }
 
-  Dma_Set((const void *)BG_PLTT, Ram_HeapSlots->block32, DMA_COPY_WORDS(112),
-          REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, Ram_HeapSlots->paletteFade,
+          DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetTarget(0x10000, 0);
   *(s32 *)((u8 *)layer + 0x1c) = 0;
   for (i = 0; i != 160; i++)
@@ -1289,7 +1289,7 @@ s32 Scene_Initialize(void) {
         if (!GameFlag_Get(0xa94))
           SeaOfTime_PlaceRock(59, 19, 13);
         {
-          void *block = Ram_HeapSlots->block32;
+          void *block = Ram_HeapSlots->paletteFade;
 
           BG_PLTT_COLOR(0, 15) &= 0xffe0;
           Dma_Set((const void *)BG_PLTT, block, DMA_COPY_WORDS(112), REG_DMA3);
@@ -1313,7 +1313,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  void *block = Ram_HeapSlots->block32;
+  void *block = Ram_HeapSlots->paletteFade;
 
   Dma_Fill32(-1, block, 0x1c0);
   PaletteFade_SetSource(0x10000, 0);

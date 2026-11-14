@@ -89,7 +89,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
 /// with that side's palette (14 + side).
 struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
                                      s32 arg3, s32 arg4, s32 arg5) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct WindowSprite *object = 0;
   s32 first;
   s32 second;
@@ -131,7 +131,7 @@ struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
 /// 2 or more means whichever slot already shows the picture, the second
 /// first; when neither does, nothing is loaded.
 void Portrait_Reload(u32 slot, s32 key, s32 unused) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 id = Portrait_GetForSpeaker(key);
   s32 offset;
   s32 palette;
@@ -175,7 +175,7 @@ void WindowSprite_SetInvertedSentinel(u8 *window, s32 value) {
 /// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
 /// window tiles' map through the cell picture routine copied to RAM.
 void ScanlineWindow_FillSpans(void *dst) {
-  u8 *scene = Ram_HeapSlots->windowTiles;
+  u8 *scene = Ram_HeapSlots->windowWork;
 
   if (scene == 0) {
     Dma_Fill16(0xe0e0, dst, 0x140);

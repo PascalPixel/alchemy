@@ -12,9 +12,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
@@ -41,14 +38,14 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   s32 k;
   s32 zero; // One constant, rebuilt at each store.
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 4);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   caster = BattleObject_GetFar(args->user)->object;
   if (mode == 0) {
@@ -286,8 +283,8 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -337,15 +334,15 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 
         if (frame <= 23 && args->variant > 0)
           mode = BLITTER_ADDITIVE;
-        BattleEffect_BuildBlitter(104, 7, 7,
+        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7,
                                   COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
-        draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+        draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
         BattleEffect_BuildBlitter(
             188, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
             mode);
         // At its address: through the slots' base it would share the base
         // above.
-        draw[1] = *(DrawRectangle *)&Ram_HeapSlots->unkb8[1];
+        draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCode2;
 
         for (i = 0; i != args->variant * 3 + 4; i++) {
           s32 age = frame - gCool_ColumnStarts[i];
@@ -446,7 +443,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 
 // splashes' mesh
 
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
+#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 
 #define WYRD_FRAMES 120
 #define WYRD_DROPS 16
@@ -477,9 +474,9 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   s32 size;
   s32 width;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
@@ -736,8 +733,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   s32 cells;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -906,12 +903,12 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   s32 i;
 
   size = 0x3c00;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_CyanPalette),
                        128);
@@ -1044,7 +1041,6 @@ void BattleEffect_RunEarthForce(s32 a0) { BattleEffect_RunBoltTrail(a0, 1); }
 
 /// Abilities: Thunder Mine (kind 86).
 void BattleEffect_RunThunderMine(s32 a0) { BattleEffect_RunBoltTrail(a0, 0); }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef SLIM_COLUMN_OFFSET
 #undef SPARK_OFFSET

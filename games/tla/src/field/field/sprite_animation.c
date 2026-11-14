@@ -71,7 +71,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 
   if (slot >= RESOURCE_SLOT_COUNT)
     return 0;
-  work = Ram_HeapSlots->objectSystem;
+  work = Ram_HeapSlots->actorSystem;
   record = &work->slots[slot];
   metadata = Resource_GetMetadataRecordFar(number);
   record->tag = (slot << 12) | number;
@@ -118,7 +118,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 }
 
 s32 Animation_LookupValueByKey(s32 key) {
-  struct ObjectSystemWork *work = Ram_HeapSlots->objectSystem;
+  struct ObjectSystemWork *work = Ram_HeapSlots->actorSystem;
   u32 no;
   struct ResourceSlot *p;
 
@@ -474,15 +474,19 @@ void ActorSystem_Configure(s32 mode) {
   volatile u32 zero;
 
   if (mode == 3) {
-    sprites = HeapSlot_AllocEwram(16, ANIMATION_OBJECT_COUNT *
-                                          sizeof(struct AnimationObject));
-    layers = HeapSlot_AllocEwram(12, ANIMATION_OBJECT_COUNT *
-                                         sizeof(struct AnimationEntry));
+    sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES,
+                                  ANIMATION_OBJECT_COUNT *
+                                      sizeof(struct AnimationObject));
+    layers = HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS,
+                                 ANIMATION_OBJECT_COUNT *
+                                     sizeof(struct AnimationEntry));
   } else {
-    sprites = HeapSlot_Alloc(16, ANIMATION_OBJECT_COUNT *
-                                     sizeof(struct AnimationObject));
-    layers = HeapSlot_Alloc(12, ANIMATION_OBJECT_COUNT *
-                                    sizeof(struct AnimationEntry));
+    sprites =
+        HeapSlot_Alloc(HEAP_SLOT_SPRITES,
+                       ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+    layers =
+        HeapSlot_Alloc(HEAP_SLOT_SPRITE_ANIMATIONS,
+                       ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
   }
   Palette_LoadBasicSpriteColors();
   Dma_Fill32Cell(zero, 0, sprites,
@@ -490,7 +494,8 @@ void ActorSystem_Configure(s32 mode) {
   Dma_Fill32Cell(zero, 0, layers,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
   VramCache_Load(93, 128, gActor_ShadowTiles);
-  RamCode_LoadSlot(84, Render_CopyStridedCode, Render_CopyStridedCodeSize);
+  RamCode_LoadSlot(HEAP_SLOT_PICTURE_UPLOADER, Render_CopyStridedCode,
+                   Render_CopyStridedCodeSize);
 }
 
 void VramBlock_Reset93(void) { VramCache_FreeEntry(93); }
@@ -513,7 +518,7 @@ struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
 
   found = NULL;
   metadata = Resource_GetMetadataRecordFar(id);
-  entry = Ram_HeapSlots->unk0c[0];
+  entry = Ram_HeapSlots->spriteAnimations;
   object = NULL;
 
   if (metadata->width != 0) {
@@ -586,7 +591,7 @@ struct ResourceObject *Sprite_Create(s32 id) {
   freeSprite = NULL;
   metadata = Resource_GetMetadataRecordFar(id);
   slot = VramCache_FindFreeEntry();
-  sprite = Ram_HeapSlots->unk0c[1];
+  sprite = Ram_HeapSlots->sprites;
   if (metadata->width == 0)
     return NULL;
   for (i = 0; i < 64; i++, sprite++) {

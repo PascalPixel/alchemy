@@ -11,12 +11,7 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-#undef HEAP_BLITTER
-#undef HEAP_BLITTER_ALTERNATE
-
 // Heap slots The Lost Age addresses by byte offset in Ram_HeapSlots.
-#define HEAP_BLITTER 104
-#define HEAP_BLITTER_ALTERNATE 188
 #define MOTE_COUNT 30
 #define SEAT_FIRST 32 // the particles that hold each target's seat
 
@@ -42,16 +37,16 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   // Set up: the canvas layer, the vortex sheet and two blitters, the one on
   // the right mirrored.
   landed = (s8 *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       BLITTER_MAX);
   REG_BLDALPHA = BLEND_ALPHA(15, 15);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
 
   // The motes start at the caster's chest with random velocities.
   source = BattleObject_GetFar(args->user)->object;
@@ -179,16 +174,16 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the tornado sheet and two max blitters, the
   // second mirrored.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
 
   // The glints start at random places in their funnel, staggered in time.
   for (j = 0; j != GLINT_COUNT; j++) {

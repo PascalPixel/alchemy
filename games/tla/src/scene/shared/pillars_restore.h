@@ -1,6 +1,6 @@
 /// Puts the pillars of a list back where their flags left them.
 void MagmaRockInside_RestorePillars(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
   s32 id;
   s32 flag;

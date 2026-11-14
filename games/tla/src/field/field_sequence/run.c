@@ -64,7 +64,7 @@ s32 FieldSequence_Run(void) {
   s32 talk;
   s32 packed;
 
-  work = HeapSlot_AllocEwram(108, 0xd50);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
   Iwram_ClearWordsEntry(work, 0xd50);
   GameFlag_Clear(FLAG_IN_BATTLE);
   gMainRoutineWork.returnScene = gMainRoutineWork.next;
@@ -155,16 +155,16 @@ s32 FieldSequence_Run(void) {
     value = work->transitionActive;
     if (value == 0) {
       if (ARRIVAL.state == 1) {
-        HeapSlot_Alloc(92, 0x19b8);
+        HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x19b8);
         wait(20);
-        HeapSlot_Release(92);
+        HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
       }
       ScreenTransition_Start(work->transition, work->transitionFrames);
       work->transitionActive = 1;
       if (ARRIVAL.state == 1) {
-        HeapSlot_Alloc(92, 0x19b8);
+        HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x19b8);
         wait(20);
-        HeapSlot_Release(92);
+        HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
       }
       PLTT_BACKDROP = 0;
       if (!Entrance_PlayArrival())
@@ -439,7 +439,7 @@ s32 FieldSequence_Run(void) {
           AreaNameWindow_HideFar();
           party->returnMusic = Sound_GetCurrentBgmFar();
           if (!GameFlag_Get(382)) {
-            u8 *objects = (u8 *)Ram_HeapSlots->objectSystem;
+            u8 *objects = (u8 *)Ram_HeapSlots->actorSystem;
             u8 *owner = gVramCacheBlockOwners;
             s32 freeBlocks = 0;
             s32 n = 512;
@@ -485,7 +485,7 @@ done:
     wait(work->transitionFrames);
   }
   wait(1);
-  HeapSlot_Release(108);
+  HeapSlot_Release(HEAP_SLOT_FIELD);
   return result;
 }
 
@@ -515,7 +515,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   result = 0;
   leader = WorldMap_Unfreeze();
   work = Ram_HeapSlots->fieldWork;
-  mapBytes = (u8 *)Ram_HeapSlots->mapWork;
+  mapBytes = (u8 *)Ram_HeapSlots->mapGrid;
   if (leader != 0) {
     probePosition.vector.x = leader->pos.x;
     probePosition.vector.y = leader->pos.y;
@@ -565,7 +565,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 /// to that entrance's bounds. With findEntrance it looks the entrance up and
 /// returns 0 when there is none; without, it takes the first row.
 s32 Scene_ApplyEntrance(s32 findEntrance) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 entrance = gMainRoutineWork.entrance;
   // The overlay table's entry 3 returns the scene's entrances.
   const struct SceneEntrance *entry =
@@ -614,7 +614,7 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
 /// places the party there unless flag 0x109 keeps its position, then sets the
 /// camera bounds from the first box that holds it.
 s32 Field_PlaceAtEntrance(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 xFixed;
   u8 *cursor = gData_0202e000;

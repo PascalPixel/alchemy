@@ -17,7 +17,7 @@ void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
                                 s32 flag) {
   GlyphTransfer *work;
 
-  work = HeapSlot_Alloc(68, sizeof(GlyphTransfer));
+  work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   work->encoded = gIcon_BasePointerTable[no1];
   work->width = 2;
   work->height = 2;
@@ -29,7 +29,7 @@ void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
   if (flag == 0)
     *slot = VramCache_FindFreeEntry();
   *ret = VramCache_Load(*slot, 0x80, work->tiles);
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 extern u8 *gIcon_BasePointerTable[];
@@ -55,7 +55,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   s32 overlay;
 
   overlay = 0;
-  work = HeapSlot_Alloc(68, sizeof(GlyphTransfer));
+  work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
 
   if (glyph >= Icon_CountItemIcons())
     glyph = 0;
@@ -77,7 +77,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     *cacheSlot = VramCache_FindFreeEntry();
 
   *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 extern u8 *gIcon_BasePointerTable[];
@@ -108,7 +108,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   overlay = 0;
   count = 0;
   item = Item_GetDirectFar(code & INVENTORY_ITEM_ID_MASK);
-  work = Ram_HeapSlots->glyphWork;
+  work = Ram_HeapSlots->glyphTransfer;
   if (work == NULL)
     return -1;
   if (layers & ICON_BASE) {
@@ -171,20 +171,20 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
 s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2) {
   GlyphTransfer *work;
 
-  work = HeapSlot_Alloc(0x44, sizeof(GlyphTransfer));
+  work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   ItemIcon_Compose(arg0, arg1);
   VramCache_Load(arg2, 0x80, work->tiles);
-  HeapSlot_Release(0x44);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return 1;
 }
 
 s32 Icon_BuildMiscIconTiles(s32 no, s32 unused, s32 slot) {
   GlyphTransfer *work;
 
-  work = HeapSlot_Alloc(0x44, sizeof(GlyphTransfer));
+  work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawMisc(no);
   VramCache_Load(slot, 0x80, work->tiles);
-  HeapSlot_Release(0x44);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return 1;
 }
 
@@ -192,7 +192,7 @@ void Icon_Decode(GlyphTransfer *work, s32 layer);
 
 /// Decodes item code's icon (the first icon for code 0) into the glyph work.
 void Icon_DrawItem(s32 code) {
-  GlyphTransfer *state = Ram_HeapSlots->glyphWork;
+  GlyphTransfer *state = Ram_HeapSlots->glyphTransfer;
   struct ItemDefinition *item =
       Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & code);
 
@@ -232,7 +232,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   GlyphTransfer *work;
   s32 overlay;
 
-  work = HeapSlot_Alloc(68, sizeof(GlyphTransfer));
+  work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   overlay = 0;
 
   if (glyph >= Icon_CountPsynergyIcons())
@@ -255,7 +255,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     *cacheSlot = VramCache_FindFreeEntry();
 
   *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 extern char ResourceId_Icons;
@@ -263,7 +263,7 @@ extern char ResourceId_Icons;
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 
 void Icon_DrawMisc(u32 index) {
-  GlyphTransfer *state = Ram_HeapSlots->glyphWork;
+  GlyphTransfer *state = Ram_HeapSlots->glyphTransfer;
 
   state->encoded = gIcon_MiscIconPointers[index];
   state->width = 2;
@@ -283,7 +283,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   u8 *entry;
   u32 index;
 
-  work = HeapSlot_Alloc(68, 0x608);
+  work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   table = Resource_GetTableEntry((s32)&ResourceId_Icons);
   if (icon <= 127)
     index = icon;
@@ -297,7 +297,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   if (reuse == 0)
     *slot = VramCache_FindFreeEntry();
   *tile = VramCache_Load(*slot, 0x200, work->tiles);
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   Dma_Set(entry, (void *)(0x05000200 + palette * 32), DMA_COPY_HALFWORDS(16),
           REG_DMA3);
 }

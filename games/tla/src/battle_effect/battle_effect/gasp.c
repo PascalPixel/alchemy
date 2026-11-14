@@ -26,9 +26,6 @@ struct RenderModel__f173aac {
   u8 scrollV;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // A second, larger particle table, always reached at its fixed address.
@@ -68,11 +65,11 @@ struct RenderModel__f173aac {
 /// a canvas layer and a model layer every frame for the mode's length.
 void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle draw[2];
   s32 frames;
-  u8 *sprites = Ram_HeapSlots->unk64[0];
+  u8 *sprites = Ram_HeapSlots->battleSheet;
   s32 *camera = Ram_HeapSlots->cameraWork;
   u8 *cells = Ram_MapCellBuffer;
   struct RenderModel__f173aac *model;
@@ -260,7 +257,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     else
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   for (frame = 0; frame != frames; frame++) {
     s32 a;
@@ -1337,7 +1334,6 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef EXTRA_PARTICLES
 #undef FIGURE

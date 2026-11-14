@@ -20,7 +20,7 @@ enum {
 #include "actor.h"
 
 void Serial_QueueCommand(u32 command) {
-  struct SerialCommandWork *work = Ram_HeapSlots->serialWork;
+  struct SerialCommandWork *work = Ram_HeapSlots->saveWork;
 
   if (work == 0)
     return;

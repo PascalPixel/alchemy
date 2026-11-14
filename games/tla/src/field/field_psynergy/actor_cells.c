@@ -23,7 +23,7 @@ struct SwitchCell__f0eabd0 {
 /// 2 blocks it. A leader below the new ground is lifted onto it. Scenes call it
 /// as they start, for the blocks Move pushes.
 void Actor_PlaceBlocks(u16 *actors) {
-  struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
+  struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
   struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
   u8 *grid = gMapShapeGrid;
   struct Actor *leader;
@@ -77,7 +77,7 @@ struct Actor *Leader_FindActorAhead(void);
 /// event work remembers it for Actor_PlaceMovedBlock.
 void Actor_LiftTargetBlock(u16 *actors) {
   u8 *event = Ram_HeapSlots->fieldWork;
-  struct FxScene *effect = Ram_HeapSlots->effectWork;
+  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target;
 
   if (effect != NULL && *(s16 *)(event + 358) != 0)
@@ -88,7 +88,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
 
   for (; *actors != 0xffff; actors++) {
     if (target == Actor_GetById(*actors)) {
-      struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
+      struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
       s32 zero = 0;
       u8 *grid = gMapShapeGrid;
       struct SwitchCell__f0eabd0 *cells = map->layers[target->layer].cells;
@@ -121,7 +121,7 @@ void Actor_PlaceMovedBlock(void) {
   struct Actor *target = gFieldWork->movedBlock;
 
   if (target != NULL) {
-    struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
+    struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
     /* FAKEMATCH(temporary): the cell table read split into its byte offset and
      * the read. */
     s32 offset = offsetof(struct RestoreMap, layers[target->layer].cells);

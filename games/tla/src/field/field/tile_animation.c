@@ -32,7 +32,7 @@ extern u8 gWorldMapWork__tile_animation[] __asm__("gWorldMapWork");
 /// frames, one step a frame, unless a screen transition is running.
 void WorldMap_PreloadCurrentTileBlock(void) {
   struct WorldMapView *perspective =
-      (struct WorldMapView *)Ram_HeapSlots->mapWork;
+      (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   s32 x = 0;
   s32 y = 0;
   s32 x0;
@@ -170,9 +170,9 @@ void WorldMap_PresentStillPicture(void) {
 /// tiles, draws the current affine frame into pixels and hands the window and
 /// VBlank to it.
 void WorldMap_StartStillPicture(void) {
-  u8 *pages = Ram_HeapSlots->unk1c[0];
+  u8 *pages = Ram_HeapSlots->worldMapAffine;
   struct WorldMapView *perspective =
-      (struct WorldMapView *)Ram_HeapSlots->mapWork;
+      (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   u32 *resources;
   s32 one;
   s8 *active;
@@ -224,7 +224,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   u8 *buffer;
   s16 value;
 
-  perspective = (struct WorldMapView *)Ram_HeapSlots->mapWork;
+  perspective = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   buffer = Ram_MapCellBuffer;
   resources = perspective->resources;
   value = *(s16 *)BG_PLTT;
@@ -256,7 +256,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
 /// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct WorldMapView *perspective =
-      (struct WorldMapView *)Ram_HeapSlots->mapWork;
+      (struct WorldMapView *)Ram_HeapSlots->mapGrid;
 
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
@@ -270,7 +270,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
 }
 
 void TilesetAnim_Update(void) {
-  struct MapWork *state = Ram_HeapSlots->mapWork;
+  struct MapWork *state = Ram_HeapSlots->mapGrid;
   u32 i;
 
   for (i = 0; i <= 15; i++) {
@@ -324,21 +324,21 @@ void TilesetAnim_Update(void) {
 }
 
 void Map_ClearLayerEntryFlag(u32 no) {
-  struct MapWork *state = Ram_HeapSlots->mapWork;
+  struct MapWork *state = Ram_HeapSlots->mapGrid;
   struct MapAnimation *anim = &state->anim[no];
 
   anim->paused = 0;
 }
 
 void Map_SetLayerEntryFlag(u32 no) {
-  struct MapWork *state = Ram_HeapSlots->mapWork;
+  struct MapWork *state = Ram_HeapSlots->mapGrid;
   struct MapAnimation *anim = &state->anim[no];
 
   anim->paused = 1;
 }
 
 void TilesetAnim_StartAll(const u16 *script) {
-  struct MapWork *state = Ram_HeapSlots->mapWork;
+  struct MapWork *state = Ram_HeapSlots->mapGrid;
   s32 count;
   u32 command;
 
@@ -367,17 +367,17 @@ void TilesetAnim_StartAll(const u16 *script) {
 }
 
 void TilesetAnim_SuspendAll(void) {
-  if (((struct WorldMapView *)Ram_HeapSlots->mapWork)->animationActive == 0)
+  if (((struct WorldMapView *)Ram_HeapSlots->mapGrid)->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
 void TilesetAnim_ResumeAll(void) {
-  if (((struct WorldMapView *)Ram_HeapSlots->mapWork)->animationActive == 0)
+  if (((struct WorldMapView *)Ram_HeapSlots->mapGrid)->animationActive == 0)
     Task_ResumeAll(TilesetAnim_Update);
 }
 
 void BlendScript_Run(void) {
-  struct MapWork *work = Ram_HeapSlots->mapWork;
+  struct MapWork *work = Ram_HeapSlots->mapGrid;
   struct BlendScriptState *state;
   u16 *cursor;
   u32 command;
@@ -439,7 +439,7 @@ void BlendScript_Start(u16 *script) {
 
   started = 0;
   zero = 0;
-  state = &Ram_HeapSlots->mapWork->blend;
+  state = &Ram_HeapSlots->mapGrid->blend;
   Dma_Set((const void *)&zero, state,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
   first = *script;
@@ -464,7 +464,8 @@ void PaletteCycle_Initialize(void) {
   u16 i;
   u16 j;
 
-  queue = HeapSlot_AllocEwram(112, sizeof(struct PaletteSnapshotWork));
+  queue = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
+                              sizeof(struct PaletteSnapshotWork));
   entry = queue->entries;
   for (i = 0; i != 4; i++) {
     entry->source = 0;
@@ -480,13 +481,14 @@ void PaletteCycle_Initialize(void) {
   queue->count = 0;
 }
 
-#define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unk70[0])
+#define gPaletteWork                                                           \
+  ((struct PaletteSnapshotWork *)Ram_HeapSlots->paletteCycles)
 
 #include "../palqueue_add.c"
 
 void PaletteQueue_Stop(void) {
   Task_Remove(PaletteCycle_Step);
-  HeapSlot_Release(112);
+  HeapSlot_Release(HEAP_SLOT_PALETTE_CYCLES);
 }
 
 void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK); }
@@ -527,7 +529,7 @@ void PaletteCycle_Step(void) {
 /// frames; at once, it jumps there. Flag 0x106 holds the tint as it is.
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
   struct WorldMapView *perspective =
-      (struct WorldMapView *)Ram_HeapSlots->mapWork;
+      (struct WorldMapView *)Ram_HeapSlots->mapGrid;
 
   if (perspective->tintRegion != region) {
     perspective->tintRegion = region;
@@ -825,7 +827,7 @@ extern TerrainHeightFn gMapGrid_TerrainHeightFunctions[16];
 /// Broken Seal's: the height function of the cell's terrain kind applied to
 /// its samples.
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z) {
-  struct MapWork *work = Ram_HeapSlots->mapWork;
+  struct MapWork *work = Ram_HeapSlots->mapGrid;
   u8 *grid;
   u8 *code;
 
@@ -843,7 +845,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z) {
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
 /// The Broken Seal's.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 z) {
-  struct MapWork *work = Ram_HeapSlots->mapWork;
+  struct MapWork *work = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
   x >>= 16;
@@ -858,7 +860,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 z) {
 /// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
 /// samples differ (a real bump or hollow, not a flat cell) reads as 99.
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
-  struct MapWork *work = Ram_HeapSlots->mapWork;
+  struct MapWork *work = Ram_HeapSlots->mapGrid;
   u8 *grid;
   u8 *code;
   s32 kind;
@@ -901,7 +903,7 @@ s32 MapGrid_GetHighestTerrainHeightAround(s32 layer, s32 x, s32 z, s32 reach) {
 /// Gives the cell at (x, z) of layer the ground height `height`, in 8-pixel
 /// steps, by tagging its shape with terrain kind 0 at that height.
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
-  struct MapWork *work = Ram_HeapSlots->mapWork;
+  struct MapWork *work = Ram_HeapSlots->mapGrid;
   u8 *shape;
 
   shape = gMapShapeGrid +
@@ -917,7 +919,7 @@ s32 MapGrid_GetCellHeight(s32 x, s32 z, s32 layer) {
 
 /// As MapGrid_GetCellAttributeLowNibble, a second copy.
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
-  struct MapWork *work = Ram_HeapSlots->mapWork;
+  struct MapWork *work = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
   x >>= 16;
@@ -933,7 +935,7 @@ u8 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   struct MapWork *state;
   struct MapCell *cells;
 
-  state = Ram_HeapSlots->mapWork;
+  state = Ram_HeapSlots->mapGrid;
   x >>= 20;
   y >>= 20;
   cells = (struct MapCell *)gMapGridCellBuffer;
@@ -945,7 +947,7 @@ u8 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
 }
 
 void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
-  struct MapWork *state = Ram_HeapSlots->mapWork;
+  struct MapWork *state = Ram_HeapSlots->mapGrid;
 
   x >>= 20;
   y >>= 20;
@@ -963,7 +965,7 @@ void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
 s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *shapes;
   u8 *code;
@@ -989,7 +991,7 @@ s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
 s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
@@ -1029,7 +1031,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldPosition *position) {
   s32 x = ((union FieldCoordinate *)&position->x)->part.pixel;
   s32 z = ((union FieldCoordinate *)&position->z)->part.pixel;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
@@ -1070,7 +1072,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
                                 struct FieldPosition *position) {
   s32 x = ((union FieldCoordinate *)&position->x)->part.pixel;
   s32 z = ((union FieldCoordinate *)&position->z)->part.pixel;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
@@ -1104,7 +1106,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
 s32 MapGrid_IsWallAt(s32 *position) {
   s32 x = position[0] / 65536;
   s32 z = (u32)((position[2] & 0xfff00000) - position[1]) >> 16;
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   u8 *cell;
 
   if (map == NULL)

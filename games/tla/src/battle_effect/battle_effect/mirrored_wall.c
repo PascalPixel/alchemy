@@ -27,7 +27,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     /* FAKEMATCH(barrier): an empty asm on heap and flags. */
     __asm__("" : "+l"(heap), "+l"(flags));
     slots = (void **)(heap << 18);
-    BattleEffect_LoadBlitter(104, flags);
+    BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE, flags);
     out[0] = slots[26];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
@@ -40,7 +40,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     /* FAKEMATCH(barrier): the same asm for the mirrored blitters. */
     __asm__("" : "+l"(heap), "+l"(flags));
     slots = (void **)(heap << 18);
-    BattleEffect_LoadBlitter(104, flags);
+    BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE, flags);
     out[0] = slots[26];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -84,8 +84,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
   s32 k;
   struct HeapSlots *heap;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   // heap holds the heap slots from here for the second blitter's read, so the
   heap = Ram_HeapSlots;
 
@@ -154,10 +154,10 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
       EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[1] = (DrawRectangle)heap->unkb8[1];
+    draw[1] = (DrawRectangle)heap->ramCode2;
 
     // A mote every eight frames drifts down a pixel a frame, swaying 16
     // pixels, until it is 8 pixels from the ground.
@@ -320,8 +320,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   u8 *palette;
   s32 height;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
 
   // Set up: the canvas (mode 7 with its prelude), the gold shells and the

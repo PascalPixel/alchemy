@@ -1,6 +1,6 @@
 /// Raises the pillars of a list out of the ground, making their cells solid.
 void Pillars_Raise(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader;
   s32 height;
 

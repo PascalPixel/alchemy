@@ -36,8 +36,8 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
@@ -86,7 +86,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   }
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != gEruption_Counts[variant][FIELD_FRAMES]; frame++) {
@@ -180,7 +180,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 /// Seal's BattleEffect_SpawnObjects).
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   s32 entryIndex = 0;
 
   if (entryCount == 0)

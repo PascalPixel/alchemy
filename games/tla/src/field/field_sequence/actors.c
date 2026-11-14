@@ -240,7 +240,7 @@ void Actor_ResetForLeader(s32 table) {
     gMainRoutineWork.movementMode = 0;
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
-    cell = Ram_HeapSlots->mapWork->layers[object->layer].cells +
+    cell = Ram_HeapSlots->mapGrid->layers[object->layer].cells +
            ((object->x / 0x100000) + ((object->z / 0x100000) << 7));
     above = cell - 128;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
@@ -276,7 +276,7 @@ void Actor_ResetForLeader(s32 table) {
     effect[5] = 15;
     effect[6] = 9;
   }
-  Ram_HeapSlots->mapWork->origin = &camera->x;
+  Ram_HeapSlots->mapGrid->origin = &camera->x;
   work->camera = camera;
 }
 
@@ -296,7 +296,7 @@ s32 Actor_FindLastActiveId(void) {
 }
 
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
-  struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->mapWork;
+  struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->mapGrid;
 
   GameFlag_Clear(0x164);
   GameFlag_Set(0x165);
@@ -409,7 +409,7 @@ void Actor_Restore(void) {
       sprite->partPriority = priority;
       if (index == Party_GetLeaderActor()) {
         camera = gFieldWork->camera;
-        view = Ram_HeapSlots->mapWork->origin;
+        view = Ram_HeapSlots->mapGrid->origin;
         y = object->y;
         camera->x = object->x;
         camera->groundHeight = y;

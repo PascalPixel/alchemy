@@ -315,7 +315,7 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
 /// The children's game of tag after the ending: each runs at the child it
 /// chases, and stops when the leader comes up close (from patch 1).
 s32 Prox_PlayTag(struct Actor *actor) {
-  u8 *tiles = Ram_HeapSlots->windowTiles;
+  u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 flag = 0;
   struct Actor *target;
@@ -344,7 +344,7 @@ s32 Prox_PlayTag(struct Actor *actor) {
 #else
 
 s32 Prox_PlayTag(struct Actor *actor) {
-  u8 *tiles = Ram_HeapSlots->windowTiles;
+  u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 *action = &actor->timer;
   s32 flag = 0;
@@ -2235,7 +2235,8 @@ void Prox_InitRockSprite(struct RockSprite__s4254 *sprite, s32 width,
                          s32 height, u32 attributes, s32 tile);
 
 UNUSED void Prox_StartFallingRocks(void) {
-  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
+  struct RockWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
@@ -2272,11 +2273,11 @@ struct SparkWork {
 };
 
 UNUSED void Prox_EndFallingRocks(void) {
-  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
+  struct SparkWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 #include "text/msg_ids.h"

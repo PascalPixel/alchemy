@@ -159,7 +159,7 @@ extern s32 gAnemosInnerSanctum_OrbScript[];
   } while (0)
 
 void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
+  u8 *saved = Ram_HeapSlots->paletteFade;
 
   gPaletteSlots = slots;
   gPaletteColors = colours;

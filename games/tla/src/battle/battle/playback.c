@@ -141,8 +141,8 @@ void BattlePlayback_Run(void) {
                                     MESSAGE_ARGUMENT_ABILITY);
             break;
           case BATTLE_EVENT_MARK:
-            ((struct BattleMessageDisplay *)Ram_HeapSlots->unk84[4])->marked =
-                1;
+            ((struct BattleMessageDisplay *)Ram_HeapSlots->battleMessage)
+                ->marked = 1;
             break;
           case BATTLE_EVENT_MESSAGE:
             if ((s32)events->queue.operands[eventIndex] >= 0)
@@ -237,7 +237,7 @@ void BattlePlayback_Run(void) {
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
       struct BattleMessageDisplay *display =
-          (struct BattleMessageDisplay *)Ram_HeapSlots->unk84[4];
+          (struct BattleMessageDisplay *)Ram_HeapSlots->battleMessage;
       struct MessageWindow *window = display->window;
       struct MessageOffset *offset = display->offset;
       s32 x = 0;

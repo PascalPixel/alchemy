@@ -27,7 +27,7 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
   struct BattleEffectWork *work;
   struct BattleEffectParams *args;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   args = work->args;
 
   // DEAD: nothing uses the held keys read here; their load is in the ROM.
@@ -42,8 +42,8 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
 
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, 1550);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   work->args = args;
   work->vblanksSinceTransfer = 1;
   kind = args->kind;
@@ -57,28 +57,18 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   } else {
     BattleEffect_RunAttackSlash(args);
   }
-  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-// The blitter slots read as what they hold, a drawing routine.
+// The second blitter slot read as what it holds, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
   (((struct {                                                                  \
      u8 before[188];                                                           \
      DrawRectangle draw;                                                       \
    } *)Ram_HeapSlots)                                                          \
        ->draw)
-#define BLITTER_SLOT                                                           \
-  (((struct {                                                                  \
-     u8 before[104];                                                           \
-     DrawRectangle draw;                                                       \
-   } *)Ram_HeapSlots)                                                          \
-       ->draw)
-
-// Byte offsets of the two blitter slots in gHeapSlots (unk64[1], unkb8[1]).
-#define HEAP_BLITTER 104
-#define HEAP_BLITTER_ALTERNATE 188
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -102,9 +92,9 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   kind = args->kind;
   unit = Unit_Get(args->user);
@@ -143,7 +133,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     }
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   draw[1] = ALTERNATE_BLITTER_SLOT;
   wait(1);
 
@@ -340,9 +330,9 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   big = 1;
   if (args->kind <= 199)
@@ -365,8 +355,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   slots = (DrawRectangle *)Ram_HeapSlots;
-  draw[0] = slots[HEAP_BLITTER / 4];
-  draw[1] = slots[HEAP_BLITTER_ALTERNATE / 4];
+  draw[0] = slots[HEAP_SLOT_RAM_CODE / 4];
+  draw[1] = slots[HEAP_SLOT_RAM_CODE_2 / 4];
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,

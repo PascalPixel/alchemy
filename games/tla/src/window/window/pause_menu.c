@@ -40,7 +40,7 @@ again:
 
 void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
                                   s32 width, s32 height, u32 field) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   x += (s16)object->x + 1;
   y += (s16)object->y + 1;
@@ -102,7 +102,7 @@ s32 DebugBrowser_Icons(void) {
   page = 0;
   mode = 0;
   redraw = 1;
-  Ram_HeapSlots->objectSystem->suspended = redraw;
+  Ram_HeapSlots->actorSystem->suspended = redraw;
   wait(1);
 
   while (1) {
@@ -165,7 +165,7 @@ s32 DebugBrowser_Icons(void) {
     wait(1);
   }
   Window_Close(window, 2);
-  Ram_HeapSlots->objectSystem->suspended = 0;
+  Ram_HeapSlots->actorSystem->suspended = 0;
   return 0;
 }
 
@@ -188,7 +188,7 @@ s32 DebugBrowser_Portraits(void) {
   u32 slotOffset;
   s32 palette;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
   window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);

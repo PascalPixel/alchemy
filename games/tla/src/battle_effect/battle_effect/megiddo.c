@@ -23,9 +23,6 @@ struct ModelVertex {
 
 void Render_DrawModelList(struct Model *model);
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // Megiddo: the caster rises in a column of light, a winged figure gathers
@@ -67,10 +64,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   u8 req[8];
   struct ModelTexture scratchTexture;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
-  transition = Ram_HeapSlots->transitionWork;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
+  transition = Ram_HeapSlots->battleBackground;
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = 0;
   zero = 0;
@@ -84,7 +81,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   meshA = work->sheet + 0x5f40;
   meshB = work->sheet + 0x6340;
   caster = BattleObject_GetFar(args->user)->object;
@@ -603,5 +600,4 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       1, (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef SLOT_BLITTER
 #undef BLITTER

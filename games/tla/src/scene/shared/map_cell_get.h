@@ -1,6 +1,6 @@
 /// A map cell's collision code and attribute.
 s32 MapCell_Get(u32 layer, s32 x, s32 y) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
 
   if (map == NULL)

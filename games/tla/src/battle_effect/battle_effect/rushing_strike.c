@@ -35,9 +35,9 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   s32 firstDrop;
   s32 i;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sprites = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
@@ -251,9 +251,6 @@ struct RenderModel__f17d174 {
   u8 scrollV;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 struct CornerRow {
@@ -301,13 +298,13 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   vertices = Data_02011000;
   strip = Data_02012000;
   cells = (struct CornerRow *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   victim = BattleObject_GetFar(args->targets[0])->object;
@@ -693,7 +690,6 @@ void BattleEffect_RunLivingArmor(s32 a0) {
 #undef STAR_SPARKS
 #undef STAR_DROPS
 #undef DROPS
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef SPARKS
 #undef SEGMENTS

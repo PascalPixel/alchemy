@@ -16,7 +16,7 @@
 /// The progress bar's serial callback: advances the stored progress by step
 /// and draws row min(progress, 6) of gWindow_ProgressBarRows.
 void SaveProgress_Advance(s32 step) {
-  u8 *save = Ram_HeapSlots->serialWork;
+  u8 *save = Ram_HeapSlots->saveWork;
   u32 row;
   const u8 *src;
   u16 *dst;
@@ -264,7 +264,7 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
 }
 
 u32 Save_FindFreeFile(void) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSummary *p;
   u32 i;
 
@@ -287,7 +287,7 @@ s32 Save_CountFilesExcludingSent(s32 flag) {
   } else {
     cnt = Save_LoadFileSummaries();
     if (flag != 0) {
-      work = Ram_HeapSlots->serialWork;
+      work = Ram_HeapSlots->saveWork;
       summary = work->summary;
       for (i = 0; i < 3; i++) {
         if (summary[i].sendFlag != 0)
@@ -312,7 +312,7 @@ s32 Save_ScanFileSummaries(void) {
     struct SaveWorkspace *work;
 
     ret = Save_LoadFileSummaries();
-    work = Ram_HeapSlots->serialWork;
+    work = Ram_HeapSlots->saveWork;
     gData_02003860 = 0;
     gData_020036d8 = 0;
     gData_02005350 = 0;
@@ -516,7 +516,7 @@ s32 Save_ToChosenFile(void) {
     if (slot == -1) {
       result = slot;
     } else {
-      work = Ram_HeapSlots->serialWork;
+      work = Ram_HeapSlots->saveWork;
       if (work->summary[slot].level != 0) {
         FieldMessage_Show((s32)&MsgOverwriteConfirm, 13);
         while (Message_AllTyped() == 0)
@@ -709,7 +709,7 @@ void FileList_StopPulse(void) { Task_Remove((u32)((s32)FileList_UpdatePulse)); }
 
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 sum;
 
   sum = x + (s16)window->x;
@@ -753,7 +753,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
 
 void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
                                struct SaveSummary *descriptor) {
-  struct ObjectRowWork *state = Ram_HeapSlots->menuRuntime;
+  struct ObjectRowWork *state = Ram_HeapSlots->menuWork;
   s32 i;
 
   for (i = 0; i < 4 && descriptor->party[i] != -1; i++) {
@@ -776,7 +776,7 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
 }
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
-  u8 *base = (u8 *)Ram_HeapSlots->menuRuntime;
+  u8 *base = (u8 *)Ram_HeapSlots->menuWork;
   s32 offset;
   s32 zero;
   s32 count;
@@ -799,7 +799,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
 
 void FileList_PlacePartySprites(void) {
   struct ObjectRowState *state =
-      (struct ObjectRowState *)Ram_HeapSlots->menuRuntime;
+      (struct ObjectRowState *)Ram_HeapSlots->menuWork;
   s32 source[2];
   s32 request[4];
   s32 index = 0;
@@ -940,8 +940,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   s32 i;
   s32 y;
 
-  spriteWork = HeapSlot_Alloc(220, 0xcec);
-  save = Ram_HeapSlots->serialWork;
+  spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, 0xcec);
+  save = Ram_HeapSlots->saveWork;
   summaryWindow = NULL;
   partyWindow = NULL;
   djinnWindow = NULL;
@@ -1136,7 +1136,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_Close(summaryWindow, 2);
   Window_Close(fileList, 2);
   FileList_StopPulse();
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
   WindowColor_Apply(gMainRoutineWork.windowHue,
                     gMainRoutineWork.windowBrightness);
   wait(1);

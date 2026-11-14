@@ -131,7 +131,7 @@ void SpriteDissolve_RunMany(u8 **table, s32 cnt) {
 }
 
 s32 MapGrid_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
-  u8 *state = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *state = (u8 *)Ram_HeapSlots->mapGrid;
   s32 *org = (s32 *)(state + 228);
   s32 a;
   s32 b;
@@ -162,8 +162,8 @@ void ActorSystem_Initialize(s32 mode) {
   // The fill word Dma_Fill32Cell reads its zero from, one for both fills.
   volatile u32 zero;
 
-  work = HeapSlot_AllocEwram(24, sizeof(*work));
-  buffer = HeapSlot_AllocEwram(20, 0x2000);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*work));
+  buffer = HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, 0x2000);
   ActorSystem_Configure(mode);
   Dma_Fill32Cell(zero, 0, buffer, 0x2000);
   Dma_Fill32Cell(zero, 0, work, sizeof(*work));
@@ -204,7 +204,7 @@ struct ActorSpriteView;
 /// Returns an unused object (one without a script) from the 64 slots, or 0
 /// if none is free.
 void *Actor_FindFree(void) {
-  struct Actor *obj = Ram_HeapSlots->scriptObjects;
+  struct Actor *obj = Ram_HeapSlots->actors;
   void *ret = 0;
   s32 n = 0;
 
@@ -277,8 +277,8 @@ struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
       }
       break;
     case 2:
-      entry = (void **)((u32 *)Ram_HeapSlots->objectSystem +
-                        Ram_HeapSlots->objectSystem->count++ + 2);
+      entry = (void **)((u32 *)Ram_HeapSlots->actorSystem +
+                        Ram_HeapSlots->actorSystem->count++ + 2);
       object->spriteStorageKind = kind;
       object->sprite = entry;
       zero = 0;
@@ -592,10 +592,10 @@ void Actor_SetItemIcon(struct IconOwner *owner, s32 id) {
   sprite = owner->sprite;
   if (sprite == 0)
     return;
-  buffer = HeapSlot_Alloc(68, 0x608);
+  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItemFar(id);
   tile = VramCache_Load(sprite->vramSlot, 128, buffer + 0x400);
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   sprite->unk1b = 0;
   sprite->unk19 = 0;
   sprite->width = 16;
@@ -692,17 +692,18 @@ void ActorSystem_PlaceSprites(void) {
   u32 layerPlusOne;
   s8 *basePriority;
 
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   view = &map->viewX;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  system = Ram_HeapSlots->objectSystem;
+  system = Ram_HeapSlots->actorSystem;
   originY = map->origin[1];
   /* FAKEMATCH(dead): the decoder's copy in a once-only block. */
   do {
     Dma_Set(
         Render_DecodePictureCode,
-        HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
+        HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
+                       (s32)Render_DecodePictureBlockSize),
         DMA_COPY_WORDS(
             (u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
         REG_DMA3);
@@ -711,7 +712,7 @@ void ActorSystem_PlaceSprites(void) {
     // The zero is set before the objects are read.
     u32 zero = 0;
 
-    object = Ram_HeapSlots->scriptObjects;
+    object = Ram_HeapSlots->actors;
     system->used = zero;
   }
   for (objectIndex = 0; objectIndex < 64; objectIndex++, object++) {
@@ -872,7 +873,7 @@ void ActorSystem_PlaceSprites(void) {
       }
     }
   }
-  HeapSlot_Release(80);
+  HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
 
 // The fixed camera: each frame it places every object's sprites, facing them
@@ -920,7 +921,7 @@ void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
 /// view matrix and turns the objects by an eighth of a turn less.
 void ObjectSystem_UpdateCameraFixed(void) {
   struct FixedCamera *camera = Ram_HeapSlots->cameraWork;
-  struct ObjectSystemWork *system = Ram_HeapSlots->objectSystem;
+  struct ObjectSystemWork *system = Ram_HeapSlots->actorSystem;
   struct CameraPoint *eye;
   struct CameraPoint *target;
   struct PlacedObject *object;
@@ -933,7 +934,8 @@ void ObjectSystem_UpdateCameraFixed(void) {
   do {
     Dma_Set(
         Render_DecodePictureCode,
-        HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
+        HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
+                       (s32)Render_DecodePictureBlockSize),
         DMA_COPY_WORDS(
             (u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
         REG_DMA3);
@@ -955,13 +957,13 @@ void ObjectSystem_UpdateCameraFixed(void) {
     SceneTransform_RewindStack();
     Transform_SetLookAt((s32 *)eye, (s32 *)target);
   }
-  object = Ram_HeapSlots->scriptObjects;
+  object = Ram_HeapSlots->actors;
   object += 63;
   for (i = 63; i >= 0; i--, object--) {
     if (object->active != 0)
       Actor_PlaceSprites(object, angle);
   }
-  HeapSlot_Release(80);
+  HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
 
 /// Jumps to the script the next word points to and returns 1 to continue

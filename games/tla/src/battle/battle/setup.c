@@ -15,7 +15,7 @@ void SceneTransform_SetPosition(s32 *position);
 void BattleCamera_Update(void) {
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *transition =
-      Ram_HeapSlots->transitionWork;
+      Ram_HeapSlots->battleBackground;
   struct FixedPointPosition eyeOffset;
   s32 *focus;
   s16 delta;

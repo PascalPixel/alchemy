@@ -53,9 +53,9 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   struct Particle *trail;
   struct Scale scale;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sparkleSheet = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sparkleSheet = Ram_HeapSlots->battleSheet;
   edgeSpeed = 1;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
@@ -70,10 +70,10 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkleSheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  drawAlt = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  drawAlt = (DrawRectangle)Ram_HeapSlots->ramCode2;
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);

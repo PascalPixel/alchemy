@@ -1314,7 +1314,7 @@ next:
 void GabombaStatue_DrawCogCells(void) {
   u32 *dest = (u32 *)(Data_0202c001 + 0x1cf);
   u32 *src = gGabombaStatue_CogCellPictures;
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   u8 *layerA = *(u8 **)(map + 0x13c);
   u8 *layerB = *(u8 **)(map + 0x174);
   u32 *shapesA = *(u32 **)(map + 0x138);
@@ -2857,7 +2857,7 @@ void GabombaStatue_PoundTile(s32 mode) {
   if (mode != 1)
     return;
   state = &gSceneState;
-  object = Actor_Get(*(s16 *)((u8 *)Ram_HeapSlots->effectWork + 26));
+  object = Actor_Get(*(s16 *)((u8 *)Ram_HeapSlots->fieldEffectWork + 26));
   x = (object->x >> 20) - state->originX;
   z = (object->z >> 20) - state->originZ;
   {
@@ -2979,7 +2979,7 @@ void GabombaStatue_RedrawArrowB(void) {
 // Draws the raised tiles as sprites over the room.
 void GabombaStatue_DrawFloatingTiles(void) {
   s32 affine = 0;
-  s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0xe4);
+  s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0xe4);
   struct SceneState *state = &gSceneState;
   struct Sprite *oam = state->oam;
   s32 scrollX = scroll[0] & 0xffff0000;

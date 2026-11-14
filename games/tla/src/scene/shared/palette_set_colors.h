@@ -1,6 +1,6 @@
 /// Sets palette colours from a list and saves both palettes.
 void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
+  u8 *saved = Ram_HeapSlots->paletteFade;
 
   gYampiDesertCave_MarkSlots = slots;
   gYampiDesertCave_MarkColors = colours;

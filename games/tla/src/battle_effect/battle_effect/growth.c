@@ -56,8 +56,8 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
   // Set up: the canvas layer, the sheet for the mode, and the canvas moved
   // 112 pixels right for the other side.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
@@ -73,11 +73,11 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   // Odd columns draw mirrored.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  rectangle[0] = Ram_HeapSlots->unk64[1];
+  rectangle[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  secondSlot = Ram_HeapSlots->unkb8[1];
+  secondSlot = Ram_HeapSlots->ramCode2;
   // Columns draw through a pointer to the pair, which holds that one address
   // all its life.
   draw = rectangle;
@@ -292,8 +292,8 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   // Set up: the canvas layer, the vine sheet, and the canvas scrolled so
   // that x = 64 falls midway between the first and last targets.
   heap = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)heap->battleFxWork[0];
-  canvas = heap->battleFxWork[1];
+  work = (struct BattleEffectWork *)heap->battleEffect;
+  canvas = heap->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args, PREPARE_KIND | args->side << 4 | PREPARE_ANCHOR << 5, &screen,
@@ -316,11 +316,11 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   // Odd vines draw mirrored.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)heap->unk64[1];
+  draw[0] = (DrawRectangle)heap->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)heap->unkb8[1];
+  draw[1] = (DrawRectangle)heap->ramCode2;
 
   vine = work->particles;
   i = 0;

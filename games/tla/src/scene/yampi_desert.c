@@ -461,7 +461,7 @@ DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundRoom5Stake,
                                      gYampiDesert_Room5Stakes)
 
 void YampiDesert_StepOntoStakeTops(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u16 *list = NULL;
   u8 *grid = gMapShapeGrid;
 
@@ -499,7 +499,7 @@ void YampiDesert_StepOntoStakeTops(void) {
 }
 
 void YampiDesert_StepOffStakeTops(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u16 *list = NULL;
   u8 *grid = gMapShapeGrid;
 
@@ -549,7 +549,7 @@ done:
 /// when the record's flag is set, the cell under the actor in map layer 2 takes
 /// collision code 255.
 void YampiDesert_BlockPoundedStakes(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
   /* FAKEMATCH(pin): the limit in r2. */
   register s32 limit asm("r2");
@@ -571,7 +571,7 @@ void YampiDesert_BlockPoundedStakes(u16 *list) {
 /// For each six-byte record up to an actor of 0xffff, the cell under the actor
 /// in map layer 2 takes collision code 232.
 void YampiDesert_UnblockStakes(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
   s32 collisionCode;
 
@@ -1264,10 +1264,10 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
     object->retainSpriteCache = 1;
     visual->value1a = 0;
     visual->value1b = 0;
-    buffer = HeapSlot_Alloc(68, 0x608);
+    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_SCOOP_GEM);
     VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   return object;
 }
@@ -1398,7 +1398,7 @@ void YampiDesert_UpdateSandSlide(void) {
     TilesetAnim_SuspendAll();
     return;
   }
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   index = Actor_GetCellIndex(leader);
   column = leader->x / 0x100000;
   row = (leader->z + px(4)) / 0x100000;
@@ -1496,7 +1496,7 @@ void YampiDesert_TrackUpperLevelFromBelow(void) {
 
 void YampiDesert_TrackUpperLevelOnRamp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 index = Actor_GetCellIndex(leader);
   struct MapCell *cell = map->layers[0].cells + index;
   struct MainRoutineWork *party;
@@ -1850,7 +1850,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
 }
 
 void YampiDesert_OpenScoopHole(void) {
-  if (*(s16 *)((u8 *)Ram_HeapSlots->effectWork + 0x7c4) != 0)
+  if (*(s16 *)((u8 *)Ram_HeapSlots->fieldEffectWork + 0x7c4) != 0)
     MapGrid_CopyCellPictureIndicesRect(73, 76, 78, 11, 1, 1);
 }
 
@@ -2346,7 +2346,7 @@ s32 Trig_Sin(s32 angle);
 // and carries its rider with a bob.
 void YampiDesert_UpdateRisingSand(void) {
   struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct RideEntry *entry = work->entries;
   s32 value = work->value;
   u8 *terrain = map->layers[0].terrainIds;
@@ -2430,7 +2430,7 @@ void YampiDesert_DrawRisingSand(void) {
   s32 frame;
   u32 *oam = work->block;
   s32 count = 0;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX, viewZ, originY;
   struct Actor *object;

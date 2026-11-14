@@ -49,9 +49,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  cells = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  cells = Ram_HeapSlots->battleSheet;
 
   // Open the canvas, pose the user and place the columns.
   user = BattleObject_GetFar(args->user)->object;
@@ -297,9 +297,9 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   s32 origin;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  cells = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  cells = Ram_HeapSlots->battleSheet;
 
   // Open the canvas on BG1 over the target and build the blitters.
   BattleEffect_StartCanvasLayer(1);
@@ -308,10 +308,10 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   centerX = target.x / 2;
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
 
   if (mode != 2)
     Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
@@ -621,9 +621,6 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 struct Model;
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 struct JudgmentObject {
   u8 unk0[9];
   u8 flagsLow : 2;
@@ -637,7 +634,6 @@ struct JudgmentObject {
 
 extern const struct Scale gJudgment_UnitScale;
 
-#define SLOT_ALT 188 // unkb8[1]
 /* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has
  * static __inline__ void FILL(void *dst, s32 size, s32 value) {
  * Iwram_FillWords(dst, size, value); }; tried with the definition the rest of
@@ -649,12 +645,12 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   } while (0);
 }
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
-  BattleEffect_LoadBlitter(SLOT_ALT, mode);                                    \
-  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);         \
+  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, mode);                        \
+  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, sheet, x, y, w, h);         \
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2)
 // The same draw, the routine read through a pointer to its slot.
 #define DRAW_ALT_THROUGH(slot, mode, sheet, x, y, w, h)                        \
-  BattleEffect_LoadBlitter(SLOT_ALT, mode);                                    \
+  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, mode);                        \
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2)
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)

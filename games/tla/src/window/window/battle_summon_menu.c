@@ -65,7 +65,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   s32 result;
   s32 index;
 
-  work = (struct SummonMenuWork *)Ram_HeapSlots->windowTiles;
+  work = (struct SummonMenuWork *)Ram_HeapSlots->windowWork;
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = (s16)VramCache_AllocEntry(128);

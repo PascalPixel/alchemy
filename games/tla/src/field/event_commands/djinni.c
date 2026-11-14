@@ -312,14 +312,12 @@ struct BattleFxScene__motes {
   u8 unk710[0xe4];
 };
 
-#define BATTLE_EFFECT_SLOT 224
-
 void FieldEffect_UpdateAllSlots(void) {
   struct BattleFxScene__motes *scene;
   struct FieldParticle *slot;
   s32 remainingSlots;
 
-  scene = Ram_HeapSlots->effectWork;
+  scene = Ram_HeapSlots->fieldEffectWork;
   remainingSlots = 0x17;
   slot = scene->slots;
   do {
@@ -332,14 +330,14 @@ void FieldEffect_UpdateAllSlots(void) {
 void FieldEffect_InitializeSlots(void) {
   void *work;
 
-  work =
-      HeapSlot_Alloc(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene__motes));
+  work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT,
+                        sizeof(struct BattleFxScene__motes));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene__motes));
   Task_Add((s32)FieldEffect_UpdateAllSlots, TASK_PASS_VBLANK);
 }
 
 void FieldEffect_ReleaseSlots(void) {
-  struct BattleFxScene__motes *scene = Ram_HeapSlots->effectWork;
+  struct BattleFxScene__motes *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldParticle *slot;
   s32 i;
 
@@ -349,7 +347,7 @@ void FieldEffect_ReleaseSlots(void) {
     if (slot->active != 0)
       FieldEffect_ClearOwnedSlot(slot);
   }
-  HeapSlot_Release(BATTLE_EFFECT_SLOT);
+  HeapSlot_Release(HEAP_SLOT_FIELD_EFFECT);
   wait(1);
 }
 

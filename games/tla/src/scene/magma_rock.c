@@ -144,7 +144,7 @@ void Blocks_MarkCells(u16 *ids) {
     blocked = &object->blockMarked;
     *blocked = 0;
     if (MapCell_GetAttributes(0, object->x >> 20, object->z >> 20) & 0x40) {
-      map = Ram_HeapSlots->mapWork;
+      map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
@@ -196,7 +196,7 @@ void MagmaRock_SettleBlocks(u16 *ids) {
     blocked = (u8 *)object + 99;
     *blocked = 0;
     if (MapCell_GetAttributes(0, object->x >> 20, object->z >> 20) & 64) {
-      map = Ram_HeapSlots->mapWork;
+      map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
@@ -256,7 +256,7 @@ void Actor_LiftTargetBlock(s16 *table);
 
 void MagmaRock_UnblockMovedPillar(void) {
   u8 *event = Ram_HeapSlots->fieldWork;
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_1) {
     MapGrid_CopyCellAttributes(98, 18, 4, 3, 78, 21);
@@ -572,7 +572,7 @@ void MagmaRock_WarnStatue(struct Actor *object) {
 }
 
 s32 MagmaRock_FindStatue(u16 *table) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
   s32 code = MapCell_GetAttributes(0, work->x >> 20, work->z >> 20) >> 8;
   s32 id;
@@ -612,7 +612,7 @@ s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
 // in modes 2 and 3, sets the target's byte 99 to 4 or 2 and makes it blink
 // with MagmaRock_FlashStatue.
 void MagmaRock_TargetStatue(s32 mode) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
   s16 *table = gMagmaRock_Room1Statues;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -777,7 +777,7 @@ hit:
 }
 
 void MagmaRock_FireStatue(void) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;
 
   Event_Start();
@@ -794,7 +794,7 @@ void MagmaRock_FireStatue(void) {
 }
 
 void MagmaRock_IgniteStatue(void) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;
 
   Event_Start();
@@ -806,7 +806,7 @@ void MagmaRock_IgniteStatue(void) {
 }
 
 void MagmaRock_BurstStatue(s32 mode, s32 cue) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (cue == 0)
     MagmaRock_StartFallingRocks();
@@ -1070,7 +1070,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
 // flag 0x200.
 #define DEFINE_MAGMA_ROCK_BURST_COLUMN(name, n1, n2, n3)                       \
   void name(s32 mode, s32 cue) {                                               \
-    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \
+    struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;               \
     struct MainRoutineWork *party = &gMainRoutineWork;                         \
                                                                                \
     {                                                                          \
@@ -1093,7 +1093,7 @@ DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstColumn2, 16, 10, 0x201)
 
 #define DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(name, n1, n2)                    \
   void name(s32 mode, s32 cue) {                                               \
-    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \
+    struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;               \
                                                                                \
     work->target = Actor_Get(n1);                                              \
     MagmaRock_BurstStatue(mode, cue);                                          \
@@ -1355,7 +1355,7 @@ void MagmaRock_FlashTarget(struct Actor *object) {
 // target's cell, and mode 3 also clears its position and copies the cells at
 // columns 32 and 96.
 void MagmaRock_BlastOpenWall(s32 mode, s32 cue) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (cue == 0) {
     struct Actor *object;
@@ -1838,7 +1838,7 @@ extern u8 gMapShapeGrid[];
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 
 void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
   s32 id;
   s32 flag;
@@ -2230,7 +2230,7 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;
   s32 i;
 
-  work = Ram_HeapSlots->menuRuntime;
+  work = Ram_HeapSlots->menuWork;
   if (count > 0) {
     i = count;
   next:
@@ -2297,7 +2297,8 @@ struct RockWork {
 void Import_DecompressTaggedLz(void *entry, void *destination);
 
 void MagmaRock_StartFallingRocks(void) {
-  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
+  struct RockWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
@@ -2329,11 +2330,11 @@ void MagmaRock_StartFallingRocks(void) {
 }
 
 void MagmaRock_EndFallingRocks(void) {
-  struct MagmaRockSparkWork *work = Ram_HeapSlots->menuRuntime;
+  struct MagmaRockSparkWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 void MagmaRock_UnblockMovedPillar(void);

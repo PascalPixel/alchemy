@@ -111,7 +111,7 @@ void Field_PlaceTreasureSpots(void) {
             *motionFlags = 2;
             object->groundHeight += 0xfff00000;
             object->y = object->groundHeight;
-            map = Ram_HeapSlots->mapWork;
+            map = Ram_HeapSlots->mapGrid;
             x = object->x >> 20;
             z = object->z >> 20;
             cells = (struct MapCell *)gMapGridCellBuffer;

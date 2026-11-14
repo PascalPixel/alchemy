@@ -30,10 +30,10 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   struct MotionObject *user;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sheet = Ram_HeapSlots->unk64[0];
+  sheet = Ram_HeapSlots->battleSheet;
   if (args->side == 1)
     BattleEffect_StartCanvasLayer(1);
   else
@@ -42,9 +42,9 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The embers leave the top of the user's body: a random heading and

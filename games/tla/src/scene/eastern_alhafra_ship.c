@@ -268,7 +268,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgTheMayorOf);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   map->minX = 0;
   map->maxX = 0x4000000;
   map->minZ = 0;

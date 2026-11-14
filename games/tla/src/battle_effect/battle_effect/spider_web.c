@@ -43,7 +43,7 @@ struct EffectSprite__f15b3b0 {
 /// Its callers also pass the sprite's OAM shape and mode, which it leaves for
 /// the caller to set.
 void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode) {
-  struct EffectSprite__f15b3b0 *sprite = Ram_HeapSlots->unk0c[1];
+  struct EffectSprite__f15b3b0 *sprite = Ram_HeapSlots->sprites;
   struct EffectSprite__f15b3b0 *found = NULL;
   s32 i = 0;
 
@@ -182,7 +182,7 @@ void Palette_MirrorBgColors(void) {
 // each.
 void Ulysses_MoveLastParticle(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct SpriteScale scale = gUlysses_ParticleScale;
   struct SpritePlacement place;
 
@@ -229,9 +229,6 @@ void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
     "Render_DrawModelList");
 #define Render_DrawModelList Render_DrawModelList__ability_effects
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 extern const struct Scale gUlysses_ShipScale;
@@ -265,10 +262,10 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   u8 *battle;
   s32 mask;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  transition = Ram_HeapSlots->transitionWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  transition = Ram_HeapSlots->battleBackground;
+  sprites = Ram_HeapSlots->battleSheet;
   dmaArmed = 0;
   skip = 0;
   BattleEffect_SelectLivingTargets(work->args);
@@ -826,7 +823,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   wait(1);
   /* FAKEMATCH(dead): a once-only block. */
   {
-    void *destination = Ram_HeapSlots->battleFxWork[1];
+    void *destination = Ram_HeapSlots->battleCanvas;
 
     IWRAM_FILL_WORDS(destination, 0x4000, 0);
   }
@@ -914,9 +911,6 @@ void BattleEffect_RunSpinningBeat(void *object) {
   BattleEffect_RunSwirlSwipe(object, 1);
 }
 
-// Byte offset of the blitter slot in gHeapSlots (unk64[1]).
-#define HEAP_BLITTER 104
-
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
@@ -932,19 +926,19 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   // Setup: the canvas at a scale of one, a transparent blitter, mirrored
   // for side 0.
   slots = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)slots->battleFxWork[0];
-  canvas = slots->battleFxWork[1];
+  work = (struct BattleEffectWork *)slots->battleEffect;
+  canvas = slots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = Q_8_8(1);
   if (args->side == 1) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
-    draw[0] = (DrawRectangle)slots->unk64[1];
+    draw[0] = (DrawRectangle)slots->ramCode;
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_TRANSPARENT);
-    draw[0] = (DrawRectangle)slots->unk64[1];
+    draw[0] = (DrawRectangle)slots->ramCode;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
                              1);
@@ -1019,12 +1013,12 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 
 // Builds the transparent blitter for one quarter.
 #define LOAD_QUARTER(flags)                                                    \
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLITTER_TRANSPARENT, flags))
+  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE,                                 \
+                           BLITTER(BLITTER_TRANSPARENT, flags))
 
 // Draws one quarter of the web with the blitter just built.
 #define DRAW_QUARTER(x, y)                                                     \
-  ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, y, size,    \
-                                           size)
+  ((DrawRectangle)Ram_HeapSlots->ramCode)(canvas, work->sheet, x, y, size, size)
 
 // Releases the quarter's blitter.
 // UB: HeapSlot_Release returns nothing; the releases between the quarters
@@ -1032,7 +1026,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 #ifdef UBFIX
 #define RELEASE_QUARTER() HeapSlot_Release(HEAP_SLOT_RAM_CODE)
 #else
-#define RELEASE_QUARTER() ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER)
+#define RELEASE_QUARTER() ((s64 (*)(s32))HeapSlot_Release)(HEAP_SLOT_RAM_CODE)
 #endif
 
 void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
@@ -1045,8 +1039,8 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   s32 i;
 
   // Setup: the canvas on BG2, blending, the layer on the targets' middle.
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   BattleEffect_StartCanvasLayer(2);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
@@ -1114,7 +1108,5 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 #undef LOAD_QUARTER
 #undef DRAW_QUARTER
 #undef RELEASE_QUARTER
-#undef SLOT_BLITTER
 #undef BLITTER
-#undef HEAP_BLITTER
 #undef CLIP

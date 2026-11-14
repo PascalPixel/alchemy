@@ -47,22 +47,17 @@ DEFINE_EFFECT_KIND(BattleEffect_RunCoal, BattleEffect_RunStatBoost, 9)
 /// lights), with no prelude Djinni and the fade step cleared.
 void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
 
   work->fadeStep = 0;
   args->prelude = 0;
   BattleEffect_RunStatBoost(args, 10);
 }
 
-// The two blitters' heap slots, byte offsets into Ram_HeapSlots (The Broken
-// Seal's HEAP_SLOT_BLITTER and HEAP_SLOT_BLITTER_ALTERNATE).
-#define BLITTER_SLOT 104           // Ram_HeapSlots->unk64[1]
-#define BLITTER_SLOT_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
-
 // Build a blitter in its heap slot and fetch its entry.
 #define LOAD_BLITTER(out, flags, mode)                                         \
-  BattleEffect_BuildBlitter(BLITTER_SLOT, 7, 7, flags, mode);                  \
-  out = (DrawRectangle)Ram_HeapSlots->unk64[1]
+  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flags, mode);            \
+  out = (DrawRectangle)Ram_HeapSlots->ramCode
 
 #define FLARES ((struct Particle *)Ram_MapCellBuffer)
 #define FLARES_PER_MEMBER 64
@@ -107,8 +102,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   struct ScreenPoint screen;
   s32 point[3];
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   start = 0;
   BattleEffect_StartCanvasLayer(0);
 
@@ -260,10 +255,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       // The mode is the prelude, 1 here: BLITTER_MAX.
       LOAD_BLITTER(draw[0], flags ^ flipX, prelude);
-      BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, flags ^ flipX2,
+      BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flags ^ flipX2,
                                 additive);
       // Read through the slot's address, which folds to one constant.
-      draw[1] = *(DrawRectangle *)&Ram_HeapSlots->unkb8[1];
+      draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCode2;
 
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -301,10 +296,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           /* FAKEMATCH(barrier): an empty asm through mode. */
           __asm__("" : "+h"(mode));
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
-          BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, flags,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flags,
                                     additive);
           {
-            void **slot = &Ram_HeapSlots->unkb8[1];
+            void **slot = &Ram_HeapSlots->ramCode2;
 
             /* FAKEMATCH(barrier): an empty asm through slot hides that it holds
              * the heap slot's address. */
@@ -403,13 +398,14 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           u8 *picture;    // the cel, drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
 
-          BattleEffect_BuildBlitter(BLITTER_SLOT, 7, 7, flags, BLITTER_MAX);
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flags,
+                                    BLITTER_MAX);
           lowerFlags = flags | COMPOSITE_FLIP_Y;
-          draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-          BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, lowerFlags,
+          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, lowerFlags,
                                     BLITTER_MAX);
           picture = work->sheet + cel * 2048 + SERIES_B_PICTURE;
-          draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+          draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
           draw[0](canvas, picture, screen.x - 32, screen.y - 24, 64, 32);
           draw[1](canvas, picture, screen.x - 32, screen.y + 8, 64, 32);
           EFFECT_RELEASE_BLITTERS();
@@ -489,8 +485,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 palette;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = Q_8_8(1);
   if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL)

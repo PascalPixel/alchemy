@@ -77,7 +77,7 @@ extern s8 gYampiDesertCave_LogFootprints[];
 /// raised layers' attributes and block the ground; returns 0 for an actor that
 /// is no log.
 s32 YampiDesertCave_SetLogCells(s32 id) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
   s16 sprite = ((struct ObjectAnimationState *)object->sprite)->value28[0];
   s16 i;
@@ -768,7 +768,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 pz = row * 8;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *tracked =
-      *(struct Actor **)(Ram_HeapSlots->battleFxWork[0] + 0x1930);
+      *(struct Actor **)(Ram_HeapSlots->battleEffect + 0x1930);
   s32 x = 0, z = 0;
 
   if (tracked != NULL) {

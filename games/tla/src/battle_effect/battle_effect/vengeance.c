@@ -14,9 +14,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define VENGEANCE_FRAMES 124
@@ -48,8 +45,8 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   s32 mask;
   s32 frames;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   mask = 7;
   BattleEffect_StartTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
@@ -112,11 +109,11 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B0, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   backgroundX = 0x560000;
   speed = 0x100000;
@@ -336,8 +333,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   struct Scythe *scythe;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   if (args->side == 0) {
     BattleEffect_StartTiledCanvas(0x2001);
   } else {
@@ -355,7 +352,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_TRANSPARENT);
   }
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   reaperX = 0;
   reaperY = 0;
@@ -593,8 +590,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDjinnBlast, BattleEffect_RunGeyser, 2)
 /// Abilities: Djinn Storm (kind 462).
 DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStorm, BattleEffect_RunGeyser, 1)
 
-#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
-
 #define GEYSER_FRAMES 54
 #define GEYSER_DRAW_FRAMES 40
 #define GEYSER_PEAK_FRAME 20 // the result phase starts
@@ -644,9 +639,9 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   DrawRectangle draw[2];
   struct ScreenPoint midpoint;
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
-  u8 *sparkCels = Ram_HeapSlots->unk64[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  void *canvas = Ram_HeapSlots->battleCanvas;
+  u8 *sparkCels = Ram_HeapSlots->battleSheet;
   struct Particle *drop;
   struct RenderPrimitive__f1811d4 *column;
   void *vertices;
@@ -861,11 +856,11 @@ DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
 /// frames later, 72 frames in all.
 void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  void *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle draw[2];
   s32 member;
-  u8 *sparkCels = Ram_HeapSlots->unk64[0];
+  u8 *sparkCels = Ram_HeapSlots->battleSheet;
   s32 frames;
   struct BattleCamera *camera;
   s32 frame;
@@ -880,7 +875,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
                              0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   if (mode == 0)
     frames = args->targetCount * 8 + 38;
   else
@@ -1040,7 +1035,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
 /// 24-frame palette fade counter (read by Palette_StepFadeTransfer), then runs
 /// the effect body BattleEffect_RunBubbleColumn.
 void BattleEffect_StartBubbleColumn(s32 arg) {
-  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  u8 *work = Ram_HeapSlots->battleEffect;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -1049,8 +1044,6 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
   *(s32 *)(work + 0x77b8) = 0;
   BattleEffect_RunBubbleColumn(arg);
 }
-
-// The blitter heap slots, by byte offset into Ram_HeapSlots.
 
 // The Lost Age numbers its blitter modes from the other end of The Broken
 // Seal's: additive 0, max 1, transparent 2, copy 3.
@@ -1064,9 +1057,9 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
 /// and each one is gone once it has risen past the top. From frame 18 the
 /// targets flash one by one, eight frames apart, each with the hit sound.
 void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
+  void *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   s32 frame;
@@ -1077,7 +1070,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   // The blue beam's palette colours the bubble cels.
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -1268,9 +1261,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   struct SpriteView *obj;
   struct Particle *p;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sprites = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
@@ -1284,7 +1277,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   }
   zero = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   table = (u16 *)(work->unk7300 + 0x340);
@@ -2155,12 +2148,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef VENGEANCE_FRAMES
 #undef BLADES
 #undef LIFE_SHEAR_FRAMES
-#undef HEAP_SLOT_BLITTER
 #undef GEYSER_FRAMES
 #undef GEYSER_DRAW_FRAMES
 #undef GEYSER_PEAK_FRAME

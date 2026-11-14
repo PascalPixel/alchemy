@@ -34,10 +34,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   u8 *pal;
   s32 width;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  transition = Ram_HeapSlots->transitionWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  transition = Ram_HeapSlots->battleBackground;
+  sprites = Ram_HeapSlots->battleSheet;
   cells = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = Q_8_8(1);
@@ -46,7 +46,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   ((volatile u16 *)BG_PLTT)[1] = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   work->transferMode = CANVAS_COPY;
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
@@ -346,7 +346,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
                              work->sheet + 0x4000, 1, 1);
   {
@@ -525,7 +525,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       } else {
         sheet = work->sheet + 0x4240;
       }
-      slot = (DrawRectangle *)&Ram_HeapSlots->unkb8[1];
+      slot = (DrawRectangle *)&Ram_HeapSlots->ramCode2;
       DRAW_ALT_THROUGH(slot, 19, sheet, 36, top - 24, 24, 24);
       DRAW_ALT_THROUGH(slot, 23, sheet, 59, top - 24, 24, 24);
       DRAW_ALT_THROUGH(slot, 27, sheet, 36, top - 1, 24, 24);
@@ -703,7 +703,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+    draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
     if (frame > 85) {
       draw[1](canvas, work->sheet, 0, 0, 120, 120);
     }

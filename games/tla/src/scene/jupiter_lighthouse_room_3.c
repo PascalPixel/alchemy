@@ -297,7 +297,7 @@ extern s8 gPushFootprints[][4];
 /// (Map_CopyCellAttributeRect) and byte 2 of both collision layers there is
 /// filled with 255. Returns 1, or 0 for a shape with no footprint.
 s32 PushTarget_FillFootprint(s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_Get(id);
   s16 shape = *(s16 *)((struct FieldSprite *)actor->sprite)->record;
   s16 i = 0;

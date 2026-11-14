@@ -23,10 +23,10 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   view = Ram_HeapSlots->cameraWork;
-  sheet = Ram_HeapSlots->unk64[0];
+  sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -41,7 +41,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   orb->velocityZ = 0;
   orb->variant = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Sound_PlayFar(SE_SWIRL);
 
@@ -150,15 +150,15 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   s32 hit;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   scroll = 0;
   scrollSpeed = 0;
@@ -303,9 +303,9 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 12);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
@@ -412,7 +412,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
             BattleEffect_BuildBlitter(
                 104, 7, 7,
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           draw[0](canvas, work->sheet, x, 104 - height, 14, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
@@ -541,9 +541,6 @@ struct RenderModel__f16d130 {
   u8 scrollV;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 struct ProjectedPoint {
   s32 x, y, depth;
 };
@@ -574,8 +571,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   s32 screenA[3];
   u8 *mistSheet;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   BattleEffect_ConfigureEffectDisplay();
   if (args->side == 0) {
     BattleEffect_StartTiledCanvasFilled(0x2000);
@@ -977,6 +974,5 @@ void BattleEffect_RunStrongHit(s32 a0) { BattleEffect_RunHeavyBlow(a0, 1); }
 #undef SPARK_OFFSET
 #undef SPARKS
 #undef MOTES
-#undef SLOT_BLITTER
 #undef VERTICES
 #undef MESH_BUFFER

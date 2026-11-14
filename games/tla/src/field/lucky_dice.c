@@ -289,11 +289,11 @@ void LuckyDice_Run(void) {
   s32 pairCount;
   s16 affineScale;
 
-  HeapSlot_Alloc(100, 0x60e);
-  spritePalette = HeapSlot_Alloc(96, 0x200);
-  diceWork = HeapSlot_AllocEwram(92, 0x7b7c);
-  sprites = HeapSlot_AllocEwram(180, 0x614);
-  camera = HeapSlot_AllocEwram(48, 76);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x200);
+  diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 0x7b7c);
+  sprites = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, 0x614);
+  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, 76);
   Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
   Camera_ResetViewDefaults();
   Task_ResetAll();
@@ -888,11 +888,11 @@ void LuckyDice_Run(void) {
     LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     wait(1);
   }
-  HeapSlot_Release(48);
-  HeapSlot_Release(180);
-  HeapSlot_Release(96);
-  HeapSlot_Release(92);
-  HeapSlot_Release(100);
+  HeapSlot_Release(HEAP_SLOT_CAMERA);
+  HeapSlot_Release(HEAP_SLOT_CANVAS_MAP);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
 // The tables, after LuckyDice_Run in both games.

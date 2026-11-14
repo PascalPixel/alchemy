@@ -115,9 +115,9 @@ void BattleBackground_ShowZoomedPage(void) {
   struct BattleAffineHdma *records;
   u16 *record;
 
-  if (((struct BattleBackgroundView *)Ram_HeapSlots->transitionWork)->mode ==
+  if (((struct BattleBackgroundView *)Ram_HeapSlots->battleBackground)->mode ==
       2) {
-    records = Ram_HeapSlots->unk28[0];
+    records = Ram_HeapSlots->battleScanlines;
     record = records->lines[records->page];
     Io_Write16(record[0], &REG_BG2CNT);
     Dma_Set(record + 1, (void *)&REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE,
@@ -130,7 +130,7 @@ void BattleBackground_ShowZoomedPage(void) {
 /// 0x06005000, a new one every four frames while the transition timer
 /// (unk84[9], as BattleTransition_AdvanceTimer counts it) runs from 1 to 32.
 void BattleTransition_UploadTileVariant(void) {
-  u32 variant = *(s32 *)Ram_HeapSlots->unk84[9] - 1;
+  u32 variant = *(s32 *)Ram_HeapSlots->battleEntryTimer - 1;
 
   if (variant <= 31)
     Dma_Set(gBattleTransition_CurtainVariants + (variant >> 2) * 32,
@@ -144,7 +144,7 @@ void BattleTransition_AdvanceTimer(void) {
   u32 frame;
   u32 next;
 
-  timer = (u32 *)Ram_HeapSlots->unk84[9];
+  timer = (u32 *)Ram_HeapSlots->battleEntryTimer;
   frame = *timer;
   camera = (struct BattleCamera *)Ram_HeapSlots->cameraWork;
   scroll = 0x34 - frame;
@@ -173,7 +173,7 @@ void BattleTransition_DrawRows(void) {
   u32 row;
   u16 *tiles;
 
-  frame = *(s32 *)Ram_HeapSlots->unk84[9];
+  frame = *(s32 *)Ram_HeapSlots->battleEntryTimer;
   if (frame >= 0 && frame <= 79) {
     tile = (7 & frame) + 0xf081;
     if (frame >= 0)
@@ -227,8 +227,8 @@ void BattleTransition_Run(s32 arg, s32 kind) {
   u32 i;
 
   heap = Ram_HeapSlots;
-  view = (struct BattleBackgroundView *)heap->transitionWork;
-  timer = HeapSlot_Alloc(168, 4);
+  view = (struct BattleBackgroundView *)heap->battleBackground;
+  timer = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
   if ((u32)(kind - 78) > 2) {
     s32 y;
     s32 zero;
@@ -373,5 +373,5 @@ void BattleTransition_Run(s32 arg, s32 kind) {
   gBgScroll[1].x = 8;
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  HeapSlot_Release(168);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ENTRY_TIMER);
 }

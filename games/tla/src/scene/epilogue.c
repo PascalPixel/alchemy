@@ -273,7 +273,7 @@ s32 Scene_Initialize(void) {
   *eventMode = one;
   EndingPicture_Start();
   WindowSystem_InitField();
-  tiles = Ram_HeapSlots->windowTiles;
+  tiles = Ram_HeapSlots->windowWork;
   tiles[6] = one;
   tiles[TILES_FLAG_OFFSET] = one;
   gEpilogueMessage = (s32)MsgFinallyWeVe;

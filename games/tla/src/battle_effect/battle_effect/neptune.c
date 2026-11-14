@@ -47,9 +47,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   s32 ground = 112;
   u8 *tiles;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  cells = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  cells = Ram_HeapSlots->battleSheet;
   tiles = gMapGridCellBuffer;
 
   // Open the canvas over a dark backdrop; BG2 is drawn at half scale
@@ -104,13 +104,13 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   serpentVX = -0x40000;
   serpentVY = -0x80000;
   savedScrollX = gBgScroll[1].x;
-  transition = (s32 *)Ram_HeapSlots->transitionWork;
+  transition = (s32 *)Ram_HeapSlots->battleBackground;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   transition[4] = 1;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
   // The glints wait on a wide arc above; the first spray fountains up from

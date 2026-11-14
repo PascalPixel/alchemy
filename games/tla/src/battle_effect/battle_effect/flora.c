@@ -24,9 +24,6 @@ struct ModelTexture__f179f18 {
   u8 *pixels;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 struct FloraObject {
@@ -53,7 +50,6 @@ struct FloraWork {
   u16 palette[240];
 };
 
-#define SLOT_ALT 188 // unkb8[1]
 #define w ((struct FloraWork *)petals)
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 
@@ -105,13 +101,13 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   struct ScreenPoint fadeRingScreen;
   struct ScreenPoint fadeRingPoint;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
-  transition = (s32 *)Ram_HeapSlots->transitionWork;
+  transition = (s32 *)Ram_HeapSlots->battleBackground;
   petals = (s32)&gData_02014000;
   source = Ram_MapCellBuffer;
-  sprites = Ram_HeapSlots->unk64[0];
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   RagingHeat_FillGradientCanvas();
@@ -214,7 +210,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = Ram_HeapSlots->unk64[1];
+  draw[0] = Ram_HeapSlots->ramCode;
   for (frame = 0;
        frame != 300 && (!(gInput.repeat & (KEY_A | KEY_B)) || frame <= 16);
        frame++) {
@@ -593,7 +589,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       angle += spin;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
-      draw[1] = Ram_HeapSlots->unkb8[1];
+      draw[1] = Ram_HeapSlots->ramCode2;
       for (i = 0; i != 32; i++) {
         s32 a = (i / 4) << 13;
         s32 m = i % 4;
@@ -890,7 +886,7 @@ struct RenderPrimitive {
 // result phase.
 void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct DaggerTexture texture;
   struct ScreenPoint target;
   struct Particle *dagger;
@@ -1033,8 +1029,6 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
   }
 }
 
-#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
-
 #define STAR_FRAMES 60
 #define STAR_LEAP_FRAME 16  // the caster leaps at the target
 #define STAR_BURST_FRAME 32 // and strikes it
@@ -1062,15 +1056,15 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   struct Particle *step;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
@@ -1189,16 +1183,13 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
-#undef SLOT_BLITTER
 #undef BLITTER
-#undef SLOT_ALT
 #undef w
 #undef OBJ_TILES
 #undef DAGGER_FRAMES
 #undef DAGGER_COUNT
 #undef DAGGER_FALL_FRAME
 #undef DAGGER_LAST_HIT
-#undef HEAP_SLOT_BLITTER
 #undef STAR_FRAMES
 #undef STAR_LEAP_FRAME
 #undef STAR_BURST_FRAME

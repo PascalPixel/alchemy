@@ -138,7 +138,7 @@ void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
 /// Each frame of the rocks: each of the 64 younger than 20 frames is drawn,
 /// its picture one of eight as it ages, and falls.
 void PsynergyTest2_UpdateRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuRuntime;
+  struct RockWork *work = Ram_HeapSlots->menuWork;
   struct Particle *particle = work->rocks;
   struct EffectSprite *sprite = work->sprites;
   s32 i;
@@ -203,7 +203,7 @@ struct Trigger gSceneEvents[] = {
 /// Throws `count` rocks out of (x, y, z): each starts 8 pixels or more away
 /// at a random angle and flies up and outward.
 void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
-  struct RockWork *work = Ram_HeapSlots->menuRuntime;
+  struct RockWork *work = Ram_HeapSlots->menuWork;
   struct Particle *rock;
   s32 angle;
   s32 i;
@@ -233,7 +233,8 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
 
 /// Loads the rocks' tiles, hides all 64 and starts PsynergyTest2_UpdateRocks.
 void PsynergyTest2_StartRocks(void) {
-  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
+  struct RockWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
@@ -266,11 +267,11 @@ void PsynergyTest2_StartRocks(void) {
 
 /// Stops the rocks and frees their tiles and work.
 void PsynergyTest2_EndRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuRuntime;
+  struct RockWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(PsynergyTest2_UpdateRocks);
   VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 UNUSED void PsynergyTest2_DigCells(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e,

@@ -34,9 +34,9 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -44,7 +44,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
                        Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
                        128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   for (i = 0; i != 8 * SHARDS_PER_MEMBER; i++)
     SHARDS[i].variant = -1;
@@ -168,9 +168,9 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   s32 palette;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(1);
   if (mode == 2)
@@ -213,7 +213,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   }
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   if (mode == 2) {
     // A violet ramp from color 1, blended 16:6, with a trail.
     u16 *color = BG_PLTT + 1;

@@ -14,7 +14,7 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct ItemDefinition *item;
 
   unit = Unit_Get(memberId);
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
   useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->abilityId,
@@ -52,7 +52,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   s32 amount;
   s32 messageOffset;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   effect = Ability_Get(effectId);
   changed = 0;
   messageOffset = 0;

@@ -28,15 +28,11 @@ struct ModelTexture__f14153c {
   const u8 *pixels;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 /// The flashes, after the map cells.
 #define FLASHES ((struct Particle *)gData_02014000)
 
-#define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->slot].offset)
 
 // Forwarded so that a constant size reaches the call's register at each call.
@@ -84,11 +80,11 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   struct Particle *p;
   struct EclipseObject *obj;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
-  transition = (s32 *)Ram_HeapSlots->transitionWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  transition = (s32 *)Ram_HeapSlots->battleBackground;
+  sprites = Ram_HeapSlots->battleSheet;
   battle = (u8 *)Ram_HeapSlots->battleWork;
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
@@ -147,7 +143,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   velY = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = Ram_HeapSlots->unk64[1];
+  blit[0] = Ram_HeapSlots->ramCode;
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   {
@@ -396,9 +392,9 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                 r / 2 - 8;
             y = a + (cy >> 16) - (gBattleEffect_GlintPictureHeights[t] >> 1);
           }
-          BattleEffect_BuildBlitter(SLOT_ALT, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
                                     gEclipse_GlintFlips[Random16() & 3] | 3, 1);
-          ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+          ((DrawRectangle)Ram_HeapSlots->ramCode2)(
               canvas, work->sheet + 0x2000 + gBattleEffect_GlintPictures[t], x,
               y, gBattleEffect_GlintPictureWidths[t],
               gBattleEffect_GlintPictureHeights[t]);
@@ -756,8 +752,6 @@ void BattleEffect_ReservedNoOpB(void) {}
 
 struct Model;
 
-// Heap slots, as byte offsets into Ram_HeapSlots.
-
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
 
@@ -800,12 +794,12 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   s32 i;
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   work->vblanksSinceTransfer = 1;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3000, 0,
@@ -1051,7 +1045,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   } else {
     BattleEffect_EndCanvasLayer();
   }
-  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -1059,8 +1053,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 /// when a transfer is pending, in the way the transfer mode asks for.
 void BattleEffect_ProcessPendingGraphicsTransfer(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  void *source = Ram_HeapSlots->battleFxWork[1];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  void *source = Ram_HeapSlots->battleCanvas;
   u32 ime;
 
   IRQ_LOCK(ime);
@@ -1103,7 +1097,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
 /// When a transfer is pending, copies the 0x1000-byte canvas at work 0x6780
 /// to the stamp's tiles (the pointer at work 0x7b74), then clears it.
 void BattleEffect_ProcessPendingStampTransfer(void) {
-  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  u8 *work = Ram_HeapSlots->battleEffect;
   u32 ime;
   s32 *pending;
 
@@ -1123,7 +1117,7 @@ void BattleEffect_ProcessPendingStampTransfer(void) {
 /// to BG character block 2.
 void BattleEffect_FlushPendingGraphicsTransfer(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   void *source = Ram_MapCellBuffer;
   u32 ime;
 
@@ -1163,13 +1157,13 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
 /// The same for the canvas in the second effect work block.
 void BattleEffect_ProcessPendingBlock2Transfer(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   void *source;
   u32 ime;
 
   IRQ_LOCK(ime);
   if (work->transferPending == 1) {
-    source = Ram_HeapSlots->battleFxWork[1];
+    source = Ram_HeapSlots->battleCanvas;
     work->transferPending = 0;
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
@@ -1228,7 +1222,7 @@ void BattleEffect_BuildCanvasTilemap(void) {
 /// Writes the window, display and blend registers, all at once.
 void BattleEffect_ApplyWindowBlendRegisters(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
 
   REG_WIN0H = work->win0h;
   REG_WIN0V = work->win0v;
@@ -1245,7 +1239,7 @@ void BattleEffect_ApplyWindowBlendRegisters(void) {
 void Display_ApplyBg2Affine(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2. */
   register struct BattleEffectWork *work asm("r2") =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
 
   {
     u32 value = work->bg2pa;
@@ -1266,7 +1260,7 @@ void Display_ApplyBg2Affine(void) {
 void Display_ApplyBg2Reference(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2. */
   register struct BattleEffectWork *work asm("r2") =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   u32 hold;
 
   {
@@ -1281,7 +1275,7 @@ void Display_ApplyBg2Reference(void) {
 }
 
 void Palette_StepFadeTransfer(void) {
-  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  u8 *work = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;
   u8 *battle;
 
@@ -1300,7 +1294,7 @@ void Palette_StepFadeTransfer(void) {
 
 /// Clears every target's flash timer.
 void BattleEffect_ClearActorTimers(void) {
-  Iwram_ClearWords(Ram_HeapSlots->battleFxWork[0] + 0x78dc, 8);
+  Iwram_ClearWords(Ram_HeapSlots->battleEffect + 0x78dc, 8);
 }
 
 /// Counts down each target's flash timer; when one runs out, the target gets
@@ -1310,7 +1304,7 @@ void BattleEffect_CountDownBattlerTints(void) {
   s32 i;
   s32 index;
 
-  base = Ram_HeapSlots->battleFxWork[0];
+  base = Ram_HeapSlots->battleEffect;
   i = 0;
   do {
     if (base[0x78dc + i] != 0) {
@@ -1344,11 +1338,11 @@ void BattleEffect_SetupCanvasWindows(void) {
 /// canvas's tiles and map, the windows and the backdrop's fade.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
+  void *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleBackgroundView *display =
-      (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
+      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
   s32 row;
   s32 col;
   s32 offset;
@@ -1423,11 +1417,11 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 /// starts fading.
 void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
+  void *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleBackgroundView *display =
-      (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
+      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
   s32 row;
   s32 col;
   s32 offset;
@@ -1544,7 +1538,7 @@ void BattleEffect_StartTiledCanvasFilled(s32 bg_control) {
 /// characters cleared, then the background palette faded back in.
 void BattleEffect_EndCanvasLayer(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
 
@@ -1587,7 +1581,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
 
-  flag = &((struct BattleBackgroundView *)Ram_HeapSlots->transitionWork)
+  flag = &((struct BattleBackgroundView *)Ram_HeapSlots->battleBackground)
               ->secondMode;
   battle = Ram_HeapSlots->battleWork;
   *flag = 1;
@@ -1604,10 +1598,10 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 }
 
 void BattleEffect_SetupCanvasTileMap(void) {
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
+  void *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleWork *screen = Ram_HeapSlots->battleWork;
   struct BattleBackgroundView *layer =
-      (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
+      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
   s32 row;
   s32 col;
   s32 off;
@@ -1656,7 +1650,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 0x80 << 23;
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 step;
   s32 i;
   s32 x;

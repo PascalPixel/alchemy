@@ -331,7 +331,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   u32 actorId;
   struct BattleObj *battleObject;
 
-  view = Ram_HeapSlots->transitionWork;
+  view = Ram_HeapSlots->battleBackground;
   actorId = plan->unitId;
   battleObject = BattleObject_Get(actorId);
   {
@@ -497,7 +497,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   struct BattleUnit *unit;
   struct ItemDefinition *itemDefinition;
   struct BattlePresentationTransition *transition =
-      (struct BattlePresentationTransition *)Ram_HeapSlots->transitionWork;
+      (struct BattlePresentationTransition *)Ram_HeapSlots->battleBackground;
   s32 targetYaw;
 
   if (plan->unitId > 4)
@@ -646,7 +646,7 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
 s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition =
-      Ram_HeapSlots->transitionWork;
+      Ram_HeapSlots->battleBackground;
   struct MotionObject *object;
   struct HeapSlots *heap;
   void *saved;

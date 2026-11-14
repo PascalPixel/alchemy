@@ -136,7 +136,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
-  struct CavernsMapWork *map = (struct CavernsMapWork *)Ram_HeapSlots->mapWork;
+  struct CavernsMapWork *map = (struct CavernsMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
 
   if (map == NULL)
@@ -150,7 +150,7 @@ s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
 }
 
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
-  struct CavernsMapWork *map = (struct CavernsMapWork *)Ram_HeapSlots->mapWork;
+  struct CavernsMapWork *map = (struct CavernsMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
   s32 old;
 
@@ -258,7 +258,8 @@ void Caverns_ShiftAngaraCellHeights(s32 offset) {
 void Caverns_StartMovingAngaraBlock(void) {
   s32 position[3];
   u8 *work = Ram_HeapSlots->fieldWork;
-  struct CurrentUnit *current = (struct CurrentUnit *)Ram_HeapSlots->effectWork;
+  struct CurrentUnit *current =
+      (struct CurrentUnit *)Ram_HeapSlots->fieldEffectWork;
   const u16 *ids = (const u16 *)gCaverns_AngaraBlocks;
   struct Actor *object = NULL;
   struct Actor *leader;
@@ -363,7 +364,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
   s32 sum;
 
   work = Ram_HeapSlots->fieldWork;
-  current = Ram_HeapSlots->effectWork;
+  current = Ram_HeapSlots->fieldEffectWork;
   object = FIELD_AT(work, struct Actor *, 3260);
   if (current != NULL && FIELD_AT(work, s16, 358) != 0) {
     if (FIELD_AT(current, s16, 28) != 147)

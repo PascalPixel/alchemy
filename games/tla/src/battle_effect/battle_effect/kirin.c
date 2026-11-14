@@ -39,9 +39,9 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sheet = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -68,7 +68,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   baseX = 0;
   grow = 0;
   savedX = gBgScroll[1].x;
-  view = Ram_HeapSlots->transitionWork;
+  view = Ram_HeapSlots->battleBackground;
   shift = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
   view->active = 1;
@@ -83,7 +83,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   }
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 

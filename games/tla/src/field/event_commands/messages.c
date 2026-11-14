@@ -40,7 +40,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   s32 found;
   s32 column;
 
-  win = Ram_HeapSlots->windowTiles;
+  win = Ram_HeapSlots->windowWork;
   work = Ram_HeapSlots->fieldWork;
   handle = 0;
   portrait = 0;
@@ -382,7 +382,7 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 extern const u8 gMessageSpeed_VoiceRates[];
 
 void Message_SetVoiceFromActor(s32 key) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u8 value;
   s32 id;
 
@@ -406,7 +406,7 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
   obj = ObjectTable_Get(id);
   work = Ram_HeapSlots->fieldWork;
   target = work->camera;
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   if (obj != 0) {
     map->origin = &target->x;
     Actor_StartCameraFar(target, obj);
@@ -420,7 +420,7 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
 }
 
 void Camera_SetSpeedParameters(s32 first, s32 second) {
-  struct FieldWork *work = HeapSlot_AllocEwram(108, 0xd50);
+  struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
 
   work->camera->speedLimit = first;
   work->camera->acceleration = second;

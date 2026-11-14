@@ -583,7 +583,7 @@ s32 DailaInteriors_Start(void) {
       Actor_GetById(19)->collisionFlags |= 4;
     }
   } else if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_2) {
-    map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
+    map = (struct DailaMapWork *)Ram_HeapSlots->mapGrid;
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_TEAR_SPOT), 0);

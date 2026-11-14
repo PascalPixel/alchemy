@@ -41,10 +41,10 @@ extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 
 void FieldPsynergy_Parch(void) {
-  struct PuffWork *work = HeapSlot_Alloc(92, 0x2160);
+  struct PuffWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2160);
   struct HeapSlots *slots;
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 offset; // byte offset of the event work's 80 object pointers
   struct Actor *caster;
   struct Actor *object;
@@ -358,7 +358,7 @@ loaded:
     BattleEffect_FadeToSavedPalettes(100);
   else
     FieldPsynergy_FadeFromCastColor();
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);

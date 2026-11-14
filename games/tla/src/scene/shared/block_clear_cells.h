@@ -8,7 +8,7 @@ void MagmaRockInside_ClearBlockCells(struct Actor *object) {
 
   if (object->blockMarked == 0)
     return;
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   if (map == NULL)
     return;
   cells = &map->layers[2].cells;

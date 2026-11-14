@@ -24,7 +24,7 @@ extern char ResourceId_ShopDownArrowTiles;
 /// Shop_Run when the player picks Artifacts, and by Shop_SelectBuy to refresh
 /// the list after a purchase.
 s32 Shop_ListAvailableArtifacts(void) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 count = 0;
   s32 itemId;
 
@@ -51,7 +51,7 @@ s32 Shop_ListAvailableArtifacts(void) {
 /// Advances the hand cursor one frame. Runs every frame as a task while a
 /// counter is open.
 void MenuCursor_Step(void) {
-  MenuCursor_Advance(&((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor);
+  MenuCursor_Advance(&((struct ShopWork *)Ram_HeapSlots->menuWork)->cursor);
 }
 
 /// Allocates and clears the work block in the menu's heap slot, lists the
@@ -63,7 +63,7 @@ void Shop_InitializeWork(void) {
   struct ShopWork *shop;
   s32 resourceSlot;
 
-  shop = HeapSlot_Alloc(220, sizeof(struct ShopWork));
+  shop = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ShopWork));
   Event_ResolveAllPendingActionsFar();
   Dma_Fill32(0, shop, sizeof(struct ShopWork));
   // The hand cursor's glides take 12 frames until a screen changes it
@@ -100,7 +100,7 @@ void Shop_InitializeWork(void) {
 void Shop_ReleaseWork(void) {
   struct ShopWork *state;
 
-  state = Ram_HeapSlots->menuRuntime;
+  state = Ram_HeapSlots->menuWork;
   ItemIconGrid_Release();
   Task_Remove(MenuCursor_Step);
   Message_CloseFinishedWindowsFar();
@@ -110,7 +110,7 @@ void Shop_ReleaseWork(void) {
   VramCache_FreeEntry(state->gemIcon);
   VramCache_FreeEntry(state->statUpIcon);
   VramCache_FreeEntry(state->statDownIcon);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 /// Runs a shop: the shopkeeper's welcome, then buy, sell, artifacts and repair
@@ -130,7 +130,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   // Seed this place's artifact stock before creating the shop UI.
   ShopStock_AddArtifacts(stockRow);
   Shop_InitializeWork();
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   shop->shopType = ShopStock_GetType(stockRow);
   shop->keeperGraphics =
       *((struct ObjectAnimationState *)Actor_GetByIdFar(keeperId)->sprite)
@@ -213,7 +213,7 @@ void Sound_WaitForJingle(void) {
 /// Shows a shopkeeper's line, given as the weapon shop's, and waits for its
 /// window; the other shops say their own.
 void Shop_ShowKeeperMessage(s32 messageId) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 resolvedMessage;
   s32 portraitResource;
   s8 shopType;
@@ -244,7 +244,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   struct ShopWork *shop;
   struct WindowSprite **cursorSlot;
 
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->motion;
   resolvedMessage = messageId;
@@ -280,7 +280,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
 /// or repair, and by the inn.
 s32 Shop_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
-      &((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
+      &((struct ShopWork *)Ram_HeapSlots->menuWork)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
 
   Icon_PrepareActorFar(*cursorSlot);
@@ -296,7 +296,7 @@ s32 Shop_AskYesNo(s32 choice) {
 /// Sanctum_RunPartyService.
 s32 Sanctum_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
-      &((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
+      &((struct ShopWork *)Ram_HeapSlots->menuWork)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
 
   Icon_PrepareActorFar(*cursorSlot);

@@ -3588,7 +3588,7 @@ void GaiaRockInside_SwayPlatformDown__platforms(void) __asm__(
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_1) {
-    u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+    u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
 
     if (gMainRoutineWork.entrance <= 4) {
       u8 *unit;
@@ -3954,7 +3954,7 @@ void GaiaRockInside_DrawMazeRoom(void) {
   s32 state = *(s32 *)(gInventorySnapshot + 0x288);
   s8 *origin = gGaiaRockInside_MazeOrigins[state];
   struct GaiaRockInsideMapWork *map =
-      (struct GaiaRockInsideMapWork *)Ram_HeapSlots->mapWork;
+      (struct GaiaRockInsideMapWork *)Ram_HeapSlots->mapGrid;
 
   if (state > 1) {
     s32 originX = origin[0];
@@ -4001,7 +4001,7 @@ s32 GaiaRockInside_GetMazeWayOn(void) {
 }
 
 void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *mapLayer = &map->layers[layer];
   u32 *cells = (u32 *)mapLayer->cells;
   s32 width = (map->maxX - map->minX) >> 20;
@@ -4026,7 +4026,7 @@ void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
 void GaiaRockInside_TriggerWallCell(void) {
   if (gMainRoutineWork.movementMode == 2) {
     struct FieldWork *event = Ram_HeapSlots->fieldWork;
-    struct MapWork *map = Ram_HeapSlots->mapWork;
+    struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
     s32 x = object->x / 0x100000;
     s32 z = (object->z - object->y + 0x7fff) / 0x100000;
@@ -4041,7 +4041,7 @@ void GaiaRockInside_TriggerWallCell(void) {
 
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Get(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[2].cells;
+  struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
   s32 column = x / 0x100000;
   s32 row = (z - y + 0x7fff) / 0x100000;
 

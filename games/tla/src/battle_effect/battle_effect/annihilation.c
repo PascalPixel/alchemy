@@ -46,9 +46,9 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   s32 size;
   u8 *burst;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  cells = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  cells = Ram_HeapSlots->battleSheet;
   view = Ram_HeapSlots->cameraWork;
   burst = Ram_MapCellBuffer;
 
@@ -98,7 +98,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             BLITTER_ADDITIVE);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       if (args->side == 0)
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
@@ -116,7 +116,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       s32 strip;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       if (step > 2)
         step = 2;
       if (args->variant == 0)

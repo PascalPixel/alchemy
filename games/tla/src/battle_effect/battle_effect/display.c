@@ -32,7 +32,7 @@ void BattleEffect_ConfigureEffectDisplay(void) {
 void BattleEffect_AdvanceScrollOnInterval(void) {
   struct BattleEffectWork *work;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
 
   if (++work->scrollTimer == work->scrollInterval) {
     gBgScroll[1].x += work->scrollStepX;
@@ -46,7 +46,7 @@ void BattleEffect_AdvanceScrollOnInterval(void) {
 void BattleEffect_AdvanceBg2OnInterval(void) {
   struct BattleEffectWork *work;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
 
   if (++work->scrollTimer == work->scrollInterval) {
     REG_BG2X = work->bg2x;

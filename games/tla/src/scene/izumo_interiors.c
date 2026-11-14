@@ -1127,9 +1127,9 @@ s32 IzumoInteriors_FindNoMoveTarget(void) { return -1; }
 void IzumoInteriors_ShowMove(void) {
   BattleEffect_LoadActionEffectResources(140, 1);
   FieldPsynergy_SetupActorPair(15, -1);
-  FIELD_AT(Ram_HeapSlots->effectWork, HandlerFn, 36) =
+  FIELD_AT(Ram_HeapSlots->fieldEffectWork, HandlerFn, 36) =
       IzumoInteriors_FindNoMoveTarget;
-  FIELD_AT(Ram_HeapSlots->effectWork, u8, 32) = 1;
+  FIELD_AT(Ram_HeapSlots->fieldEffectWork, u8, 32) = 1;
   EventObject_Initialize();
   Event_Wait(10);
   FieldPsynergy_RunHandler(0);

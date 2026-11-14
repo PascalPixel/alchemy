@@ -15,8 +15,6 @@
 
 struct Model;
 
-#define HEAP_BLITTER 104
-
 #define QUAD_FRAMES 64
 #define QUAD_COUNT 16
 
@@ -48,8 +46,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   s32 height;
   s32 fade;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
 
   // The mode's canvas, sheets and palette.
@@ -88,7 +86,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-  draws[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draws[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   for (frame = 0; frame != QUAD_FRAMES; frame++) {
     if (frame == 8)
@@ -224,9 +222,6 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define ZAGAN_PARTS 12
@@ -267,10 +262,10 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   none = 0;
   ringPixels = gData_02014000; // the rings' texture, for the whole function
   battle = (u8 *)Ram_HeapSlots->battleWork;
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sprites = Ram_HeapSlots->unk64[0];
-  transition = (s32 *)Ram_HeapSlots->transitionWork;
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sprites = Ram_HeapSlots->battleSheet;
+  transition = (s32 *)Ram_HeapSlots->battleBackground;
   savedScroll = gBgScroll[1].x;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
@@ -631,7 +626,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 /// delta on phase 1 and half of it on the frames in between.
 void BattleCamera_ApplyPhasedDelta(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
   if (work->cameraPhase == 1) {

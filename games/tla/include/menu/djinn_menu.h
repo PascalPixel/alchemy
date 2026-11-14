@@ -2,8 +2,8 @@
 #define ALCHEMY_DJINN_MENU_H
 
 /// @file
-/// The Djinn menu's work, held in the menu runtime heap slot
-/// (Ram_HeapSlots->menuRuntime) while the menu is open.
+/// The Djinn menu's work, held in the menu heap slot
+/// (Ram_HeapSlots->menuWork) while the menu is open.
 
 #include "static_assert.h"
 #include "types.h"

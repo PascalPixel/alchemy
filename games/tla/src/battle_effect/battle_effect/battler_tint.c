@@ -29,7 +29,7 @@ static __inline__ void FillWords___f14cca8(void *destination, s32 size,
 
 void BattleEffect_SetupBlendedDisplay(void) {
   u8 *battle = Ram_HeapSlots->battleWork;
-  void *buffer = Ram_HeapSlots->battleFxWork[1];
+  void *buffer = Ram_HeapSlots->battleCanvas;
 
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll__f14cca8[0].y = 32;
@@ -65,7 +65,7 @@ void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
   s32 groupIndex;
 
   set = BattleObject_GetFar(setId);
-  state = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  state = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   groupIndex = 0;
 
   while ((group = GetMotionRecordFar(set->object, groupIndex)) != NULL) {

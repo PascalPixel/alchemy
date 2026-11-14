@@ -443,10 +443,10 @@ void SuperLuckyDice_Run(void) {
   s32 otherIndex;
   s32 digits;
 
-  spritePalette = HeapSlot_Alloc(96, 0x200);
-  dice = HeapSlot_AllocEwram(92, 0x7b7c);
-  sprites = HeapSlot_AllocEwram(180, 0x614);
-  camera = HeapSlot_AllocEwram(48, 76);
+  spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x200);
+  dice = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 0x7b7c);
+  sprites = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, 0x614);
+  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, 76);
   Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
   SuperLuckyDice_ResetViewDefaults();
   Task_ResetAll();
@@ -1484,9 +1484,9 @@ void SuperLuckyDice_Run(void) {
                                      0x10000 - (index << 12), 256);
     wait(1);
   }
-  HeapSlot_Release(48);
-  HeapSlot_Release(180);
-  HeapSlot_Release(96);
-  HeapSlot_Release(92);
-  HeapSlot_Release(100);
+  HeapSlot_Release(HEAP_SLOT_CAMERA);
+  HeapSlot_Release(HEAP_SLOT_CANVAS_MAP);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }

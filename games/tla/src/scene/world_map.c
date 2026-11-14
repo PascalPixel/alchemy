@@ -276,7 +276,7 @@ s32 StoryActor_Initialize(struct Actor *actor) {
 }
 
 s32 Func_02000388(struct Actor *object) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
+  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
   struct TileSprite *sprite = object->sprite;
 
   sprite->tile = *tile;
@@ -1757,7 +1757,7 @@ void Func_020029a4(void) {
 
 void WorldMap_DriftNorthOfContinent(void) {
   struct Actor *boat = Actor_Get(10);
-  struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapWork;
+  struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapGrid;
   s32 i;
 
   Event_Start();
@@ -2187,7 +2187,7 @@ void Func_02003490(void) {
 }
 
 s32 Func_020035e0(struct Actor *object) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
+  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
   struct TileSprite *sprite = object->sprite;
 
   sprite->tile = *tile;
@@ -2396,7 +2396,7 @@ void Func_020042e0(void) {
   System_Wait(60);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   System_Wait(120);
-  Ram_HeapSlots->objectSystem->suspended = 1;
+  Ram_HeapSlots->actorSystem->suspended = 1;
   System_Wait(1);
   Window_LoadGraphics();
   DebugText_Clear();
@@ -2429,7 +2429,7 @@ void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct FieldSprite *sprite;
-  struct LinkedEffectWork *work = Ram_HeapSlots->effectWork;
+  struct LinkedEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 i;
 
   for (i = 0; i < 2; ++i) {

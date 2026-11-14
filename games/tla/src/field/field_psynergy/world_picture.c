@@ -103,7 +103,7 @@ void WorldPicture_Release(void) {
 /// and the camera on it.
 void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
   s32 owner = Party_GetLeaderActor();
-  s32 *camera = *(s32 **)Ram_HeapSlots->mapWork;
+  s32 *camera = *(s32 **)Ram_HeapSlots->mapGrid;
   struct Actor *object = ObjectTable_Get(owner);
 
   if (object != NULL) {

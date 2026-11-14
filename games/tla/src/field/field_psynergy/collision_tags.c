@@ -28,7 +28,7 @@ Func_08020310__f0ea8d4(s32 x, s32 z, s32 layer,
 /// where they are open (MapGrid_MarkRaisedIfOpen), as Alhafra and its cave
 /// need.
 void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ActorFlag *first = list;
   struct Actor *owner;
 
@@ -105,7 +105,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
         change = 1;
     }
     if (change) {
-      struct SwitchCell *cells = ((struct RestoreMap *)Ram_HeapSlots->mapWork)
+      struct SwitchCell *cells = ((struct RestoreMap *)Ram_HeapSlots->mapGrid)
                                      ->layers[object->layer]
                                      .cells;
       u8 *shapes;

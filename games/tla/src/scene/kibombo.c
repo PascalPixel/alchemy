@@ -1420,13 +1420,13 @@ ask:
 #undef EVENT_WORK
 
 void Kibombo_TrackLeader(void) {
-  struct KibomboWork90 *work = Ram_HeapSlots->unk84[3];
+  struct KibomboWork90 *work = Ram_HeapSlots->fadeOverlay;
 
   work->leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 }
 
 void Kibombo_StopTrackingLeader(void) {
-  struct KibomboWork90 *work = Ram_HeapSlots->unk84[3];
+  struct KibomboWork90 *work = Ram_HeapSlots->fadeOverlay;
 
   work->leader = 0;
 }
@@ -1534,10 +1534,10 @@ void Kibombo_CreateBlackCrystal(void) {
     object->retainSpriteCache = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    buffer = HeapSlot_Alloc(68, 0x608);
+    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }
 
@@ -2007,7 +2007,7 @@ void Kibombo_SetStatueTongue(s32 open, s32 mode) {
 
 // While Scoop is cast, digs the marking the event is scooping.
 void Kibombo_DigMarkingUnderLeader(void) {
-  struct KibomboEffectWork *work = Ram_HeapSlots->effectWork;
+  struct KibomboEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (work->field7c4 != 0) {
     if (GameFlag_Get(FLAG_SCOOPING_FIRST_MARKING))

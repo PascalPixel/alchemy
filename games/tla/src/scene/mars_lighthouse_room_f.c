@@ -936,7 +936,7 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
     table = gMarsLighthouseRoomF_JumpAnglesByKey;
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
     if (angle != -1) {
-      struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
+      struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
       struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
       s32 position[3];
       s32 x;
@@ -968,7 +968,7 @@ void Leader_SlideOnIceFromEdge(void);
 /// A frozen puddle is solid ground.
 void MarsLighthouseRoomF_FreezePuddle(s32 id) {
   struct Actor *object = Actor_Get(id);
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
+  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
   s32 row = (object->z >> 20) << 7;
   s32 x = object->x;
   u8 *cell = map->layers[2].cells;
@@ -982,7 +982,7 @@ void MarsLighthouseRoomF_FreezePuddle(s32 id) {
 /// A thawed puddle is water again.
 void MarsLighthouseRoomF_MeltPuddle(s32 id) {
   struct Actor *object = Actor_Get(id);
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
+  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
   s32 row = (object->z >> 20) << 7;
   s32 x = object->x;
   u8 *cell = map->layers[2].cells;
@@ -2079,7 +2079,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         }
 #if TLA_PATCH_1
         radius = actor->radius - 2;
-        other = Ram_HeapSlots->scriptObjects;
+        other = Ram_HeapSlots->actors;
         flags = &other->collisionFlags;
         for (i = 0; i <= 63; i++, flags += 128, other++) {
           /* FAKEMATCH(wrapper): Import_FieldCheckSpheresOverlap forwarded
@@ -2401,7 +2401,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ((void (*)(struct Actor *))actor->watchedActor)(actor);
     }
 
-    map = Ram_HeapSlots->mapWork;
+    map = Ram_HeapSlots->mapGrid;
     tileX = actor->x >> 20;
     tileZ = actor->z >> 20;
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
@@ -2755,7 +2755,7 @@ extern s8 gPushFootprints[][4];
 
 /// Makes the cells under a pushable actor solid, by its footprint.
 s32 PushTarget_FillFootprint(s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_Get(id);
   s16 shape = *(s16 *)((struct FieldSprite *)object->sprite)->record;
   s16 i = 0;
@@ -2796,7 +2796,7 @@ s32 PushTarget_FillFootprint(s32 id) {
 
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
                            s32 value) {
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
+  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
   u8 *cells = map->layers[layer].cells;
   u32 row;
   u32 column;
@@ -2931,7 +2931,7 @@ void PushTarget_Push(struct PushTarget target) {
 // sprite, or a 32 by 64 one when the big switch is set, at its animation
 // picture and depth.
 void LightSprites_Draw(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;

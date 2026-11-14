@@ -36,6 +36,6 @@ struct HangingVineWork {
   struct HangingVineLink links[128];
 };
 
-#define HANGING_VINE_WORK ((struct HangingVineWork *)Ram_HeapSlots->unk84[8])
+#define HANGING_VINE_WORK ((struct HangingVineWork *)Ram_HeapSlots->hangingVine)
 
 #endif

@@ -1,7 +1,7 @@
 /// Opens or closes the cell under an actor by flag, setting its pose by `kind`.
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer) {
   struct Actor *object = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
+  struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[layer].cells;
 
   cell += Actor_GetCellIndex(object);
   if (GameFlag_Get(flag)) {

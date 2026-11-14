@@ -119,7 +119,7 @@ enum GarohWerewolfActorId {
 
 // By day room 2's second layer scrolls with the first.
 void Garoh_MatchLayerScroll(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *to = &map->layers[1];
   struct MapLayer *from = &map->layers[0];
 
@@ -136,7 +136,7 @@ void Garoh_WaveRoom2Layer(void) {
   // Trig_Sin is an 8-byte far-call veneer: its target address is the word
   // after its first instruction.
   s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Trig_Sin & ~3) + 4);
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   /* FAKEMATCH(pin): line held in r5. */
   register u16 *line asm("r5") = gGaroh_WaveLines;
 
@@ -185,7 +185,7 @@ extern u16 gGaroh_Room2NightColors[];
 // Build BG palette 1 colors 8-15 from the table.
 #define DEFINE_GAROH_LOAD_PALETTE(name, data1, n1, n2)                         \
   void name(void) {                                                            \
-    struct PaletteFade *buffers = Ram_HeapSlots->block32;                      \
+    struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;                  \
     const u8 *table = (const u8 *)data1;                                       \
     u32 i = 0;                                                                 \
     u16 *dst = &buffers->palette[n1];                                          \
@@ -613,7 +613,7 @@ void Garoh_InitializeRoom1(void) {
     Event_WaitTransitionFrames();
     PaletteFade_PackTarget();
     {
-      u8 *palette = *(u8 **)((u8 *)Ram_HeapSlots + 0x80);
+      u8 *palette = (u8 *)Ram_HeapSlots->paletteFade;
 
       *(volatile u16 *)&BG_PLTT_COLOR(1, 14) = 0x7fff;
       *(u16 *)(palette + 60) = *(volatile u16 *)&BG_PLTT_COLOR(1, 14);

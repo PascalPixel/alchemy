@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_RAM_BUFFER_H
 #define ALCHEMY_RAM_BUFFER_H
 
+#include "system/heap.h"
 #include "types.h"
 
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapGridCellBuffer)
@@ -48,54 +49,6 @@
 /// The cursor's place when the screen opens (x, then y, 16.16 pixels).
 #define Ram_WorldMapCursorStart                                                \
   FIXED_ADDRESS((s32 *), 0x0202a64c, gWorldPicture_CursorStartX)
-
-struct BattleWork;
-struct BattlePresentationTransition;
-struct MapWork;
-struct ObjectSystemWork;
-struct ScreenTransitionState;
-
-struct HeapSlots {
-  void *nextEwram;
-  void *nextIwram;
-  u8 *transformStack;
-  void *unk0c[2];
-  void *scriptObjects;
-  struct ObjectSystemWork *objectSystem;
-  void *unk1c[1];
-  struct MapWork *mapWork;
-  struct BattleWork *battleWork;
-  void *unk28[2];
-  void *cameraWork;
-  void *unk34[2];
-  u8 *windowTiles;
-  void *windowLayout;
-  void *glyphWork;
-  void *menuWork;
-  void *unk4c[4];
-  u8 *battleFxWork[2];
-  void *unk64[2];
-  void *fieldWork;
-  void *unk70[3];
-  struct ScreenTransitionState *screenTransition;
-  void *block32;
-  void *unk84[11];
-  struct BattlePresentationTransition *transitionWork;
-  u16 *canvasMap;
-  void *unkb8[5];
-  void *serialWork;
-  void *unkd0[3];
-  void *menuRuntime;
-  void *effectWork;
-  void *battleMenuWork; ///< the battle menus' struct BattleMenuWork
-  void *menuSelectWork;
-  void *unkec[3];
-  void *block62;
-  void *unkfc[1];
-};
-
-#define Ram_HeapSlots                                                          \
-  FIXED_ADDRESS((struct HeapSlots *), 0x03000000, gHeapSlots)
 
 extern u8 gMapShapeGrid[];
 

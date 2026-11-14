@@ -90,12 +90,12 @@ s32 ItemMenu_Run(void) {
   s32 size;
 #endif
 
-  screen = HeapSlot_Alloc(220, 0xcec);
+  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, 0xcec);
 #if TLA_PATCH_1
   size = 0x2000;
   backup = Heap_AllocEwram(size);
 #endif
-  Ram_HeapSlots->objectSystem->suspended = 1;
+  Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
@@ -129,24 +129,24 @@ s32 ItemMenu_Run(void) {
   }
 
   WindowSprite_ClearListFar(screen->statusWindow);
-  Ram_HeapSlots->windowTiles[6] = 1;
+  Ram_HeapSlots->windowWork[6] = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   Menu_ResetTwoResourceEntries();
-  HeapSlot_Release(220);
-  Ram_HeapSlots->objectSystem->suspended = 0;
+  HeapSlot_Release(HEAP_SLOT_MENU);
+  Ram_HeapSlots->actorSystem->suspended = 0;
 #if TLA_PATCH_1
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), backup, size);
-  Ram_HeapSlots->windowTiles[6] = 0;
+  Ram_HeapSlots->windowWork[6] = 0;
   Heap_Release(backup);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  Ram_HeapSlots->windowTiles[6] = 0;
+  Ram_HeapSlots->windowWork[6] = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }
@@ -203,7 +203,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   selection = 0;
   ret = 0;
   state = 0;
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
 
   while (done == 0 && GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
     switch (state) {
@@ -747,7 +747,7 @@ s32 ItemMenu_Use(void) {
   u32 item;
   u32 mask;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   result = Item_Use(menu->selectedSlots[0], menu->sideMember[0],
                     menu->sideMember[1]);
 
@@ -777,7 +777,7 @@ s32 ItemMenu_Use(void) {
 /// figures (MenuCursor_Create, Menu_PlaceOwnerEntryObjects), the info window
 /// along the bottom and an 8 by 2 cursor grid. The parameters are not used.
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
-  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   s32 ownerIndex;
 
   Menu_PlaceOwnerEntryObjects(MenuCursor_Create(menu), 2, 2);
@@ -845,7 +845,7 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu,
 void ItemMenu_HideAllIcons(void) {
   s32 hiddenState = ICON_HIDDEN;
   struct WindowSprite **icons =
-      ((struct ItemMenuWork *)Ram_HeapSlots->menuRuntime)->entryIcons;
+      ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   s32 slot;
 
   for (slot = 31; slot >= 0; slot--) {
@@ -859,7 +859,7 @@ void ItemMenu_HideAllIcons(void) {
 #if TLA_PATCH_2
 /// Hides the item icons in every fifth slot, 0 to 30, after a trade.
 void ItemMenu_HideTradedIcons(void) {
-  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   s32 slot;
 
   for (slot = 0; slot <= 31; slot++) {
@@ -878,7 +878,7 @@ void ItemMenu_Close(void) {
   u8 *menu;
   u8 *cursor;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   Menu_ReleaseEntryObjects();
   ItemMenu_HideAllIcons();
   wait(1);
@@ -902,7 +902,7 @@ s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
 s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items);
 
 s32 ItemMenu_SelectMember(s32 pane) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 result = 0;
   s32 index;
   void *owner;
@@ -946,7 +946,7 @@ s32 ItemMenu_CountItems(s32 owner);
 /// selection and says what to redraw (2 for a new page). Returns the chosen
 /// member's id, or -1.
 s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 selection = menu->sideIndex[0];
   /* FAKEMATCH(temporary): the first owner's byte offset, taken before the
    * count. */
@@ -1051,7 +1051,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
 }
 
 void ItemMenu_OpenCategory(s32 category) {
-  u8 *menu = Ram_HeapSlots->menuRuntime;
+  u8 *menu = Ram_HeapSlots->menuWork;
 
   ItemMenu_PositionCategory();
   WindowSprite_RedrawSavedRectFar(*(void **)(menu + 36));
@@ -1092,7 +1092,7 @@ s32 ItemMenu_IsStatRaisingItem(s32 item);
 void EquipmentMenu_StopCompatibilityIndicators(void);
 
 s32 ItemMenu_SelectTarget(s32 mode) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 selection = menu->sideIndex[1];
   void *window = menu->itemWindow;
   s32 count = menu->partyCount;
@@ -1212,7 +1212,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
 #undef IN_STOCK_LABEL_X
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s8 i;
 
   if ((gFrameCount & 31) == 0) {
@@ -1231,7 +1231,7 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
 }
 
 void EquipmentMenu_StopCompatibilityIndicators(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s8 i;
 
   for (i = 0; i < menu->partyCount; i++)
@@ -1253,13 +1253,13 @@ s32 ItemMenu_IsStatRaisingItem(s32 itemId) {
 void ItemMenu_DrawMessage(s32 unused, s32 message) {
   struct ItemMenuWork *menu;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   WindowSprite_RedrawSavedRectFar(menu->questionWindow);
   Text_DrawMessageAsTilesFar(message, (s32)menu->questionWindow, 0, 0);
 }
 
 void Menu_HideEmptyEntryIcons(const u16 *items) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 slot;
 
   for (slot = 0; slot < 32; slot++) {
@@ -1330,7 +1330,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style) {
   struct WindowSprite **icons;
   s32 itemId;
 
-  icons = ((struct ItemMenuWork *)Ram_HeapSlots->menuRuntime)->entryIcons;
+  icons = ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   entries = items;
   remaining = 14;
   do {
@@ -1353,7 +1353,7 @@ void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
   struct OwnerInventoryState *owner;
   u16 *items;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   owner = Unit_Get(ownerId);
   items = menu->items;
   menu->itemCount = ItemMenu_CollectItems(owner, items, 0);
@@ -1365,7 +1365,7 @@ void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
 }
 
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 style = 0;
   struct BattleUnit *unit = Unit_Get(owner);
   s32 entry = unit->inventory[slot];
@@ -1551,7 +1551,7 @@ s32 ItemMenu_ChooseCommand(void) {
   s32 redraw;
   s8 *commandStates;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   commandIndex = 0;
   column = 0;
   row = 0;
@@ -1709,7 +1709,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   struct ItemMenuWork *menu;
   struct ItemDefinition *item;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   item = Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0]);
 
   if (item->type == 0) {
@@ -1879,7 +1879,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
 void Inventory_BreakFar(s32 owner, s32 slot);
 
 void ItemMenu_TryBreak(void) {
-  u8 *work = Ram_HeapSlots->menuRuntime;
+  u8 *work = Ram_HeapSlots->menuWork;
   u32 item = *(u16 *)(work + 0x16c);
   u32 mask;
 
@@ -1898,7 +1898,7 @@ void ItemMenu_TryBreak(void) {
 void ItemMenu_DrawItemDetails(s32, s32);
 
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   Window_UpdateOrCreate(&menu->equipWindow, 0, 0, 13, 10, 2);
   Palette_LoadIconsIntoHighlight();
@@ -1924,7 +1924,7 @@ void Window_CloseFar(s32, s32);
 /// move an unused counter from 0 to 4. Returns the counter after A or Start, or
 /// -1 after B. The twin of The Broken Seal's ItemMenu_ShowDetails.
 s32 ItemMenu_ShowDetails(s32 value) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 changed = 1;
 #if LANGUAGE != LANGUAGE_JAPANESE
   struct WindowSprite *itemIcon = menu->selectedItemIcon;
@@ -2318,7 +2318,7 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
   }
 }
 
-#define ITEM_MENU ((struct ItemMenuWork *)Ram_HeapSlots->menuRuntime)
+#define ITEM_MENU ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)
 
 void ItemMenu_SetItemWindowRow5(void) {
   Window_SetBounds(ITEM_MENU->itemWindow, 13, 5, 17, 10);
@@ -2378,8 +2378,8 @@ void QuantityBar_FillFar(s32 value, s32 column, void *tiles);
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode) {
   s32 value = baseQuantity;
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
-  u8 *tiles = HeapSlot_AllocEwram(56, 0x400);
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
+  u8 *tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   s32 entry;
   s32 changed = 1;
   s32 targetCount = 0;
@@ -2462,7 +2462,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   }
   WindowSprite_RedrawSavedRectFar(window);
   WindowSprite_ClearListFar(window);
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   menu->selectedItemIcon->motion = ICON_HIDDEN;
   if (GameFlag_Get(FLAG_MENU_START_PRESSED))
     value = -1;
@@ -2474,7 +2474,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 
 // Draws the selected item's icon, owner and item name in the heading.
 void ItemMenu_DrawItemHead(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   Resource_LoadByModeIntoSlotFar(2, menu->selectedItems[0],
                                  (u8)menu->selectedItemIcon->index, 0);
@@ -2604,7 +2604,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
   s32 changed = 1;
-  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   void *unit = Unit_Get(menu->sideMember[1]);
   void *saved;
   s32 window;
@@ -2678,7 +2678,7 @@ extern char ResourceId_MenuSmallDownArrowTiles;
 
 /// Loads the two page arrows into free tile slots.
 void Resource_LoadPairedBlocks(void) {
-  struct ItemMenuWork *state = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *state = Ram_HeapSlots->menuWork;
   s32 value = VramCache_FindFreeEntry();
 
   state->resourceSlots[0] = value;
@@ -2692,7 +2692,7 @@ void Resource_LoadPairedBlocks(void) {
 /// Splits the selected slot owner's items into pages of five rows.
 s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   s32 encoded;
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 limit;
   s32 remainder;
   s32 quotient;
@@ -2730,7 +2730,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
   s32 window;
 
   page = state->page;
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   window = menu->infoWindow;
   combined = page * 5;
   combined += state->row;
@@ -2785,7 +2785,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
 /// ItemMenu_DrawNamePage over this game's menu offsets.
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
                           const struct MenuResult *state) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u32 page;
   u32 firstEntry;
   u32 visibleCount;
@@ -2857,7 +2857,7 @@ s32 ItemMenu_RunList(s32 pane) {
   s32 work[5];
   struct MenuResult state;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   result = 0;
   previous = 0;
   menu->equipPreview = result;

@@ -560,7 +560,7 @@ void TrialRoad_StepPastChests(void) {}
 
 void TrialRoad_BlockCellUnder(s32 id) {
   struct TrialRoadMapWork *map =
-      (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
+      (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
@@ -574,7 +574,7 @@ void TrialRoad_BlockCellUnder(s32 id) {
 
 void TrialRoad_UnblockCellUnder(s32 id) {
   struct TrialRoadMapWork *map =
-      (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
+      (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
@@ -933,7 +933,7 @@ void TrialRoad_CrumblePillar16(s32 phase) {
 /// code 255): the column above and below it in mode 0, the row beside it
 /// otherwise.
 void TrialRoad_BlockLogCells(s32 id, s32 mode) {
-  struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
+  struct TrialRoadMapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
   s32 index;
   struct MapCell *low;
@@ -976,7 +976,7 @@ void TrialRoad_BlockLogs(void) {
 s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   struct Actor *object = Actor_GetById(15);
   struct TrialRoadMapWork *map =
-      (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
+      (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cells;
   u8 *cell;
   s32 value;
@@ -1566,7 +1566,7 @@ void TrialRoad_SetUpFountainStage(void) {
     Actor_SetPosition(18, 0, 0);
   else
     TrialRoad_OpenSpoutCell(18);
-  ((struct MapWorkByte23 *)Ram_HeapSlots->mapWork)->bits2 = 1;
+  ((struct MapWorkByte23 *)Ram_HeapSlots->mapGrid)->bits2 = 1;
   TrialRoad_AddPillarTop(15);
   TrialRoad_BlockCellUnder(15);
 }
@@ -1922,7 +1922,7 @@ s32 Scene_PrepareMap(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
   if (scene == SCENE_TRIAL_ROAD_1) {
-    struct MapWork *map = Ram_HeapSlots->mapWork;
+    struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct TrialRoadState *state = gTrialRoadState;
     struct Actor *leader;
     u8 *unit;
@@ -2687,7 +2687,7 @@ void TrialRoad_UpdateFountains(void) {
   struct TrialRoadFountains *work =
       (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
   struct TrialRoadFountain *mover = work->fountains;
-  struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
+  struct TrialRoadMapWork *map = Ram_HeapSlots->mapGrid;
   s32 shape = work->shape;
   u8 *shapes = *(u8 **)((u8 *)map + 316);
   u8 *cells = map->layers[0].cells;
@@ -2801,7 +2801,7 @@ void TrialRoad_DrawFountains(void) {
   entry = base->sprites;
   count = 0;
   rise = -0x20000;
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   view = &map->viewX;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
@@ -3203,7 +3203,7 @@ void MagmaRockInside_SpawnDustRing(void) {
 
 void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
   struct Actor *object = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
+  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapGrid->layers[layer].cells -
                                   (struct MapCell *)Ram_MapCellBuffer);
   s32 value = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
   s32 height = Map_GetTerrainHeight(object->layer, object->x, object->z) >> 19;
@@ -3265,7 +3265,7 @@ void TrialRoad_WaitForBalanceState(void) {
 // records the actor's position.
 void TrialRoad_MoveRival(void) {
   struct TrialRoadLinkWork *work =
-      *(struct TrialRoadLinkWork **)((u8 *)Ram_HeapSlots + 236);
+      (struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink;
   struct TrialRoadReplay *state = &gSceneState;
   struct Actor *rival = Actor_GetById(state->id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -3487,7 +3487,7 @@ static inline void *TrialRoadLink_AllocPicture(void) {
 // the two watched actors, projected at 1/16 scale from their positions and the
 // course side.
 void TrialRoad_DrawProgress(void) {
-  struct TrialRoadLinkWork__s51a0 *work = Ram_HeapSlots->unkec[0];
+  struct TrialRoadLinkWork__s51a0 *work = Ram_HeapSlots->trialRoadLink;
   u32 *cursor = (u32 *)work;
   struct TrialRoadSprite *entry = (struct TrialRoadSprite *)work;
   s16 *vramEntry = &work->vramEntry;
@@ -3566,7 +3566,8 @@ void TrialRoad_DrawProgress(void) {
 }
 
 void TrialRoad_ShowProgress(s32 a, s32 b) {
-  struct TrialRoadLink *link = HeapSlot_AllocEwram(236, 0x3934);
+  struct TrialRoadLink *link =
+      HeapSlot_AllocEwram(HEAP_SLOT_TRIAL_ROAD_LINK, 0x3934);
   void *buffer = Heap_AllocEwram(576);
   s32 zero;
   s32 owner;
@@ -3604,7 +3605,7 @@ void TrialRoad_ShowProgress(s32 a, s32 b) {
 }
 
 void TrialRoad_StartRival(s32 a) {
-  u8 *work = Ram_HeapSlots->unkec[0];
+  u8 *work = Ram_HeapSlots->trialRoadLink;
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -3623,7 +3624,7 @@ void TrialRoad_PlayRivalRecording(s32 a) {
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
   s32 zero = 0;
 
-  *(u16 *)((Ram_HeapSlots->unkec[0]) + 234) = zero;
+  *(u16 *)((Ram_HeapSlots->trialRoadLink) + 234) = zero;
   control->field0a = a;
   control->field06 = zero;
   control->state = 1;

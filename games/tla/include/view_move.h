@@ -7,13 +7,11 @@
 struct Actor;
 
 // The view moves of the field Psynergy scenes (kinds 19 and 27). Their work
-// sits in heap slot 92 (battle_fx_work[0]): ViewMove_Start opens the map's
+// sits in HEAP_SLOT_BATTLE_EFFECT: ViewMove_Start opens the map's
 // view bounds and keeps the old ones, ViewMove_Swing swings the view centre
 // each frame, and ViewMove_End puts the bounds back.
 // ViewMove_SaveNearbySprites gathers the nearby objects whose sprites shake
 // with the view, and ViewMove_RestoreNearbySprites sets them back.
-
-#define HEAP_SLOT_VIEW_MOVE 92
 
 /// Directions a view move swings in.
 #define VIEW_MOVE_X 1

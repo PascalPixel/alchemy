@@ -35,9 +35,9 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *graphics;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  graphics = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  graphics = Ram_HeapSlots->battleSheet;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

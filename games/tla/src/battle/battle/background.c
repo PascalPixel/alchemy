@@ -54,7 +54,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// BG1CNT.
 void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   struct BattleBackgroundView *transition =
-      (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
+      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
 
   if (transition->mode == 0)
     Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
@@ -113,8 +113,8 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 }
 
 void BattleBackground_Init(void) {
-  void *block = HeapSlot_AllocEwram(40, 0x2a0);
-  struct BattlePresentationTransition *work = Ram_HeapSlots->transitionWork;
+  void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, 0x2a0);
+  struct BattlePresentationTransition *work = Ram_HeapSlots->battleBackground;
 
   /* FAKEMATCH(dead): an empty once-only loop after the work's load. */
   do {
@@ -123,13 +123,15 @@ void BattleBackground_Init(void) {
   work->mode = 0;
 }
 
-void BattleBackground_Free(void) { HeapSlot_Release(40); }
+void BattleBackground_Free(void) {
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SCANLINES);
+}
 
 // Loads a battle backdrop: its picture decoded into BG VRAM, its palette
 // (darkened by level steps of 1/60 when level is not negative), the tile
 // table and tilemap, and the HBlank scroll the first time.
 void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
-  struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
+  struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
   u8 *data = Resource_GetTableEntry(resource);
   struct BattleBackdropWork *session =
       (struct BattleBackdropWork *)Ram_HeapSlots->battleWork;
@@ -172,8 +174,8 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale) {
   struct BattleBackgroundView *view =
-      (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
-  struct BattleAffineHdma *scanlines = Ram_HeapSlots->unk28[0];
+      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  struct BattleAffineHdma *scanlines = Ram_HeapSlots->battleScanlines;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   s32 horizon;
   u16 wrap;
@@ -718,10 +720,10 @@ void ElementGlow_UpdateStarField(void) {
   s32 life;
   s32 (*mul)(s32 a, s32 b);
 
-  dest = Ram_HeapSlots->battleFxWork[1];
-  work = (struct SparkWork *)Ram_HeapSlots->battleFxWork[0];
+  dest = Ram_HeapSlots->battleCanvas;
+  work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
   work->ready = 0;
-  draw = (DrawFunc)Ram_HeapSlots->unk64[1];
+  draw = (DrawFunc)Ram_HeapSlots->ramCode;
   for (i = 0; i < 16; i++) {
     spark = &work->sparks[i];
     life = spark->life;
@@ -774,7 +776,7 @@ void ElementGlow_UpdateStarField(void) {
            y - (size >> 1), size, size);
     }
   }
-  draw = (DrawFunc)Ram_HeapSlots->unkb8[1];
+  draw = (DrawFunc)Ram_HeapSlots->ramCode2;
   for (ring = work->rings, j = 2; j >= 0; j--, ring++) {
     ring->x += ring->velX;
     ring->y += ring->velY;
@@ -797,8 +799,8 @@ void ElementGlow_UpdateStarField(void) {
 s32 ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
 
 s32 ElementGlow_UploadStarField(void) {
-  void *source = Ram_HeapSlots->battleFxWork[1];
-  u8 *context = Ram_HeapSlots->battleFxWork[0];
+  void *source = Ram_HeapSlots->battleCanvas;
+  u8 *context = Ram_HeapSlots->battleEffect;
 
   if (source != 0) {
     u32 *active = (u32 *)(context + 0x13c0);
@@ -844,9 +846,9 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   u8 *data;
   s32 zero;
 
-  ((s32 *)Ram_HeapSlots->transitionWork)[2] = 1;
-  work = HeapSlot_AllocEwram(92, sizeof *work);
-  HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
+  ((s32 *)Ram_HeapSlots->battleBackground)[2] = 1;
+  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   for (i = 0; i < 16; i++) {
     s32 angle = Random16();
     u32 radius = Random16() + 0x10000;
@@ -880,7 +882,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   work->frames = 0;
   work->ready = 0;
   work->originPending = 0;
-  Iwram_ClearWordsEntry(Ram_HeapSlots->battleFxWork[1], 0x4000);
+  Iwram_ClearWordsEntry(Ram_HeapSlots->battleCanvas, 0x4000);
   data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, data, 128);
   data += 128;
@@ -912,9 +914,9 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   Io_Write16(0x100, &REG_BG2PD);
   /* FAKEMATCH(dead): a never-taken five-argument call. */
   if (0)
-    BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
-  BattleEffect_LoadBlitterFar(104, 0x03);
-  BattleEffect_LoadBlitterFar(188, 0x13);
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
+  BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);
+  BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_2, 0x13);
   Task_Add(ElementGlow_UpdateStarField, 0x480);
   return Task_Add(ElementGlow_UploadStarField, 0x480);
 }
@@ -925,10 +927,10 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
 /// result, which the caller does not read.
 s32 ElementGlow_End(s32 unused) {
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
-  HeapSlot_Release(96);
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   REG_DISPCNT = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                 DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1;
   Task_Remove(ElementGlow_UploadStarField);
@@ -986,7 +988,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
     for (frame = 0, pos = &position; frame <= 44; frame++) {
       brightness = &session->brightness;
       ime = &REG_IME;
-      work = (struct SparkWork *)Ram_HeapSlots->battleFxWork[0];
+      work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
         ColorBuffer_Scale(session->palette, (u16 *)(BG_PLTT + 6 * 16),
                           *brightness = 0x10000 - frame * 1092, 128);

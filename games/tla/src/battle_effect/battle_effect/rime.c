@@ -71,8 +71,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
     s32 row;
@@ -116,7 +116,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   for (frame = 0; frame != 48; frame++) {
     // Frame 0: Haze's stars take random places about the centre, one more

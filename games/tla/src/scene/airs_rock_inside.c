@@ -295,7 +295,7 @@ next:
 
 // Finds the current target's table row and shrinks it.
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   while (*list != 0xffff) {
     s32 entry = *list;
@@ -413,12 +413,12 @@ void AirsRockInside_DriftMote(struct Actor *object) {
 void AirsRockInside_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 
 void AirsRockInside_TakeOverWhirlwind(void) {
-  BYTE_AT(Ram_HeapSlots->effectWork, 52) = 1;
+  BYTE_AT(Ram_HeapSlots->fieldEffectWork, 52) = 1;
 }
 
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
   struct AirsRockInsideMapWork *map =
-      (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapWork;
+      (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
   s32 old;
 
@@ -439,7 +439,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
   struct AirsRockInsideMapWork *map =
-      (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapWork;
+      (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
 
   if (map == NULL)
@@ -498,7 +498,7 @@ void AirsRockInside_SetConeCells(struct Actor *object) {
 // the first's flag is set and the partner's cleared, their animations step
 // and their cells are written again (AirsRockInside_SetConeCells).
 void AirsRockInside_PoundCone(s32 mode, s32 step) {
-  s16 *pair = (s16 *)((u8 *)Ram_HeapSlots->effectWork + 26);
+  s16 *pair = (s16 *)((u8 *)Ram_HeapSlots->fieldEffectWork + 26);
   s32 even = *pair - ((*(u16 *)pair & 1) << 1);
   struct Actor *first = Actor_GetById(*pair);
   struct Actor *second = Actor_GetById(even + 1);
@@ -1011,7 +1011,7 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
   s32 *pos;
   u8 i;
 
-  if (*(s8 *)((u8 *)Ram_HeapSlots->block32 + 0x2a01) != 0)
+  if (*(s8 *)((u8 *)Ram_HeapSlots->paletteFade + 0x2a01) != 0)
     return;
   if (work->transitionActive == 0)
     return;
@@ -1187,7 +1187,8 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 // leader, carrying what it meets.
 void AirsRockInside_BlowGust(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct EffectWork *effect = (struct EffectWork *)Ram_HeapSlots->effectWork;
+  struct EffectWork *effect =
+      (struct EffectWork *)Ram_HeapSlots->fieldEffectWork;
   struct Actor *gust, *spark, *object;
   struct Vector3 velocity;
   struct EffectOptions leaves, dust;

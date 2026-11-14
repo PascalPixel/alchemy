@@ -40,7 +40,7 @@ s32 Save_InitializeWork(void) {
   struct SaveSectorHeader *slot;
   u32 index;
 
-  work = HeapSlot_AllocEwram(204, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SAVE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   SetFlashTimerIntr(2, &gIrqHandlers[5]);
 
@@ -104,7 +104,7 @@ u32 Save_SelectWriteSector(s32 mode) {
   u8 *slot;
   u8 value;
 
-  slot = ((struct SaveWorkspace *)Ram_HeapSlots->serialWork)->occupied;
+  slot = ((struct SaveWorkspace *)Ram_HeapSlots->saveWork)->occupied;
   count = 0;
   index = 0;
   do {
@@ -130,7 +130,7 @@ u32 Save_SelectWriteSector(s32 mode) {
 }
 
 u32 Save_WriteSector(s32 sector) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   void (*progress)(s32) = work->progress;
 
   if (progress != 0)
@@ -154,7 +154,7 @@ u32 Save_WriteSector(s32 sector) {
 }
 
 s32 Save_ReadSector(s32 index) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSectorHeader header;
 
   ReadFlash(index, 0, work->slot, 0x1000);
@@ -166,7 +166,7 @@ s32 Save_ReadSector(s32 index) {
 }
 
 s32 Save_WritePart(s32 partId, void *source) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSectorHeader header;
   volatile u32 zero;
   u32 current;
@@ -216,7 +216,7 @@ s32 Save_WritePart(s32 partId, void *source) {
 }
 
 u32 Save_ReadPart(s32 partId, void *destination) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 index;
 
   index = Save_FindLatestSector(partId);
@@ -230,7 +230,7 @@ u32 Save_ReadPart(s32 partId, void *destination) {
 }
 
 u32 Save_DeletePart(s32 partId) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   s32 index;
   s32 result;
 
@@ -244,7 +244,7 @@ u32 Save_DeletePart(s32 partId) {
 }
 
 s32 Save_ChecksumSector(void) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 limit;
   u32 offset;
   s32 sum;
@@ -267,7 +267,7 @@ s32 Save_ChecksumSector(void) {
 }
 
 u32 Save_FindLatestSector(s32 partId) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 latestCounter;
   u32 latestSlot;
   u32 i;
@@ -286,7 +286,7 @@ u32 Save_FindLatestSector(s32 partId) {
 }
 
 s32 Save_InvalidateSector(s32 index) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSectorHeader header;
   volatile u32 zero;
 
@@ -324,7 +324,7 @@ s32 Save_CompareBytes(u8 *left, u8 *right, s32 count) {
 }
 
 u32 Save_GetLatestCounter(s32 partId) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 latestCounter;
   u32 i;
 
@@ -341,7 +341,7 @@ u32 Save_GetLatestCounter(s32 partId) {
 /// Reads the summary of the latest save in each of the three files, clearing
 /// it first; returns how many files have one.
 s32 Save_LoadFileSummaries(void) {
-  struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSummary *summary;
   s32 count;
   u32 group;
@@ -368,7 +368,7 @@ s32 Save_LoadExtraSummary(void) {
   struct SaveSummary *summary;
   u32 index;
 
-  work = Ram_HeapSlots->serialWork;
+  work = Ram_HeapSlots->saveWork;
   summary = &work->extra;
   Dma_Fill32(0, summary, sizeof(*summary));
   index = Save_FindLatestSector(3);
@@ -382,7 +382,7 @@ s32 Save_LoadExtraSummary(void) {
 
 void Save_ReleaseWork(void) {
   Irq_SetHandler(5, 0, NULL);
-  HeapSlot_Release(204);
+  HeapSlot_Release(HEAP_SLOT_SAVE);
 }
 
 #undef DMA3_BUSY

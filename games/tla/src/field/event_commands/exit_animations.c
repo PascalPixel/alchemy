@@ -28,11 +28,11 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
     return -1;
   // UB: camera[1] crosses the viewX scalar; UBFIX reads the named pair.
 #ifdef UBFIX
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   cameraX = map->viewX & 0xffff0000;
   cameraZ = map->viewZ & 0xffff0000;
 #else
-  camera = &Ram_HeapSlots->mapWork->viewX;
+  camera = &Ram_HeapSlots->mapGrid->viewX;
   cameraX = camera[0] & 0xffff0000;
   cameraZ = camera[1] & 0xffff0000;
 #endif

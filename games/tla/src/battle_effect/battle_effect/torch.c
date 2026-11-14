@@ -47,8 +47,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   s32 angle;
   s32 *line;
 
-  work = Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
 
   // Open the canvas on BG2 over the target's side.
   BattleEffect_StartCanvasLayer(0x2000);

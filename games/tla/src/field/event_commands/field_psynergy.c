@@ -13,7 +13,7 @@
 /// If the scene's sprite is active, stops its update callback
 /// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
 void FieldPsynergy_ReleaseSceneSprite(void) {
-  struct DepthScene *scene = Ram_HeapSlots->effectWork;
+  struct DepthScene *scene = Ram_HeapSlots->fieldEffectWork;
 
   if (scene->active != 0) {
     scene->active = 0;
@@ -26,7 +26,7 @@ void FieldPsynergy_ReleaseSceneSprite(void) {
 /// world map's blocks or the cell buffer by the event work's mode.
 struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cells;
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -207,7 +207,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
 /// Moves the object from 16 pixels above the effect's main object to (x, y,
 /// z), growing it from 0.25 to 1.
 void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
-  struct MoveScene *scene = Ram_HeapSlots->effectWork;
+  struct MoveScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainObject = scene->mainObject;
   s32 start[3];
   s32 i = 0;
@@ -233,7 +233,7 @@ struct MapCell;
 /// 16 pixels above the effect's main object, shrinking it from 1 to 0.25.
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   struct Actor *mainObject =
-      ((struct MoveScene *)Ram_HeapSlots->effectWork)->mainObject;
+      ((struct MoveScene *)Ram_HeapSlots->fieldEffectWork)->mainObject;
   s32 start[3];
   s32 i;
 
@@ -317,7 +317,7 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct SpawnScene *scene = Ram_HeapSlots->effectWork;
+  struct SpawnScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;
   u8 *part;
   s32 mask;
@@ -363,7 +363,7 @@ void PaletteFade_SetTarget(s32 value, s32 mode);
 
 void Field_StartColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->fieldWork;
-  struct PaletteFade *buffers = Ram_HeapSlots->block32;
+  struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
   Dma_Set(buffers->target + 0x2a0, state + 0x762, DMA_COPY_WORDS(0x150),
           REG_DMA3);
@@ -396,7 +396,7 @@ void Field_StartPaletteTransition(s32 frames) {
 /// animations, and forced by the tint flags; then fades towards it over eight
 /// frames. The palettes are copied by Field_StartColorTransition.
 void FieldPsynergy_FadeToCastColor(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
   s32 tint;
   s32 animation;
   s32 raw;

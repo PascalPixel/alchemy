@@ -182,7 +182,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
 /// Flies the camera to a lit lighthouse and shows its beacon's glow, then flies
 /// back; stage 4 is the four beams meeting over Mt. Aleph.
 void StaffCredit_ShowBeacon(s32 stage) {
-  struct WorldCamera *map = (struct WorldCamera *)Ram_HeapSlots->mapWork;
+  struct WorldCamera *map = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
   s32 palette;
   u8 *buffer;
   u8 *grid;
@@ -766,7 +766,7 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct FieldSprite *sprite;
-  struct LinkedEffectWork *work = Ram_HeapSlots->effectWork;
+  struct LinkedEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 i;
 
   for (i = 0; i < 2; i++) {

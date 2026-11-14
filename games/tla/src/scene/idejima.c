@@ -816,7 +816,7 @@ void Idejima_ScrollWaves(void) {
 /// Fills the other table of gIdejima_WaveLines with BG3's scroll plus a sine
 /// of up to 2 pixels that moves down the screen a row each frame.
 void Idejima_ComputeWaves(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
   s16 *line = gIdejima_WaveLines[gIdejima_WaveBuffer];
   s32 i;
 
@@ -834,7 +834,7 @@ void Idejima_ComputeWaves(void) {
 /// Copies colours 128 to 191 of the palette being faded to over colours 0 to
 /// 63 and clears colour 0, for the island adrift.
 void Idejima_UseDriftPalette(void) {
-  struct FadePalette *palette = Ram_HeapSlots->block32;
+  struct FadePalette *palette = Ram_HeapSlots->paletteFade;
   u16 *to = palette->colors;
   u16 *from = palette->colors + 128;
   u32 i;
@@ -846,7 +846,7 @@ void Idejima_UseDriftPalette(void) {
 }
 
 void DriftScene_Prepare(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
 
   layer->unk18 = 0x4000;
   layer->unk1c = 0x2000;

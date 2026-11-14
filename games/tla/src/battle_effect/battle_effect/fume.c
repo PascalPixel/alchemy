@@ -52,9 +52,6 @@ enum {
 
 extern const u16 gFume_Levels[][FUME_COLUMNS];
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define FUME_FRAMES 50
@@ -95,12 +92,12 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   u8 *strip;
   struct Corner *corners;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit.draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   endX = 0;
   endY = 0;
@@ -276,7 +273,6 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef FUME_FRAMES
 #undef FUME_SEGMENTS

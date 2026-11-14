@@ -46,9 +46,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   s32 side;
   s32 anchor;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   kind = PREPARE_KIND(packed);
   side = PREPARE_SIDE(packed);
   anchor = PREPARE_ANCHOR(packed);
@@ -120,8 +120,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
                         BLITTER_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   actor = BattleObject_GetFar(args->user)->object;
   target = BattleObject_GetFar(args->targets[0])->object;
 
@@ -452,7 +452,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // The second blitter, loaded again for each draw that needs its own.
-#define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->unkb8[1])
+#define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
 // Frees the second blitter after a draw.
 #define RELEASE_DRAW_BLITTER()                                                 \
@@ -490,10 +490,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
   // Set up: the work, canvas, camera and sprite sheet, the canvas layer and
   // the Djinn's place when it circles first.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sheet = Ram_HeapSlots->unk64[0];
+  sheet = Ram_HeapSlots->battleSheet;
   seWait = 0;
   kind = args->variant;
   BattleEffect_StartCanvasLayer(1);
@@ -518,7 +518,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   // The shot pictures.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);

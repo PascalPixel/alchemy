@@ -101,9 +101,9 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
   s32 i;
   s32 j;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -217,7 +217,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
     }
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     draw[1] = ((struct {
                 u8 before[188];
                 DrawRectangle draw;
@@ -279,7 +279,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     draw[1] = ((struct {
                 u8 before[188];
                 DrawRectangle draw;
@@ -322,11 +322,11 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
           /* FAKEMATCH(dead): an empty once-only loop. */
           do {
           } while (0);
-          BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
                                     gBurstScene_GlintFlips[flip & 3] |
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                                     BLITTER_ADDITIVE);
-          ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+          ((DrawRectangle)Ram_HeapSlots->ramCode2)(
               canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
               gBattleEffect_GlintPictureWidths[cel],
               gBattleEffect_GlintPictureHeights[cel]);
@@ -338,7 +338,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
       if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
-        draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+        draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
         for (i = 0; i != 16; i++) {
           struct Particle *puff = &work->particles[i];
 

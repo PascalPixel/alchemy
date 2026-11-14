@@ -6,9 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-// The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
-#define HEAP_SLOT_BLITTER 104
-
 #define TASK_PASS_FRAME 0xc80
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
@@ -76,8 +73,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   s32 i;
   u8 *pixels; // The jaw's texture, held for the whole effect.
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up the canvas, the flash sheet, the jaw's texture and a clipped MAX
   // blitter.
@@ -98,7 +95,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   }
   work->transferMode = CANVAS_COPY_AND_FADE;
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The user runs nine tenths of the way to the target.

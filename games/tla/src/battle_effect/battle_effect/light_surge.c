@@ -26,9 +26,6 @@ struct RenderModel__f171430 {
   u8 scrollV;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 struct SurgeTarget {
@@ -84,9 +81,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   u8 *sprites;
   s32 cells;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -204,23 +201,23 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       entry = (s16 *)index;
       left = x - half;
       index = y - size;
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cel, left, index, half,
+      ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, cel, left, index, half,
                                                size);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
+      ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (void *)(*entry + cells),
                                                x, index, half, size);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       if (i > 15) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+        ((DrawRectangle)Ram_HeapSlots->ramCode2)(
             canvas, (void *)(*entry + cells), x - half, y, half, size);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+        ((DrawRectangle)Ram_HeapSlots->ramCode2)(
             canvas, (void *)(*entry + cells), x, y, half, size);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
@@ -358,7 +355,6 @@ void BattleEffect_RunPoisonFlow(s32 a0) { BattleEffect_RunWaterColumn(a0, 3); }
 
 /// Abilities: Raging Flood (kind 392).
 void BattleEffect_RunRagingFlood(s32 a0) { BattleEffect_RunWaterColumn(a0, 4); }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef LIGHT_SURGE_FRAMES
 #undef SURGE_BOLTS

@@ -316,7 +316,7 @@ scroll_pair:
   if (screenY <= 3)
     goto scroll_pair;
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  ((struct TitleWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
+  ((struct TitleWork *)Ram_HeapSlots->mapGrid)->mode = 0x1400;
 }
 
 struct SceneEntrance gSceneEntrances[] = {

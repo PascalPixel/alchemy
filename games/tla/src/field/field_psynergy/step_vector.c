@@ -22,13 +22,13 @@ void BattleEffect_PlotHalfCanvasPixel(s32 x, s32 y, s32 color) {
   u16 *map = Ram_HeapSlots->canvasMap;
   u8 *canvas;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  canvas = Ram_HeapSlots->battleCanvas;
   canvas[map[(y << 6) + x]] = color;
 }
 
 void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color) {
   u16 *map = Ram_HeapSlots->canvasMap;
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
 
   if (x > 63) {
     canvas += 0x1000;
@@ -120,7 +120,7 @@ void BattleEffect_DrawHalfCanvasCircle(s32 cx, s32 cy, s32 radius, s32 color) {
 void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
                                   s32 height) {
   u16 *map = Ram_HeapSlots->canvasMap;
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 row;
   s32 n;
 
@@ -186,8 +186,8 @@ void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
 /// the start of BG VRAM), and clearing or fading it after the copy. Case 2
 /// comes before case 1: its body comes first in the ROM.
 void BattleEffect_UploadCanvas(void) {
-  struct CanvasSpriteWork *work = Ram_HeapSlots->unkec[1];
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   u8 *tiles = OBJ_TILES + work->tile * TILE_SIZE;
 
   work->frame++;
@@ -234,7 +234,7 @@ void BattleEffect_UploadCanvas(void) {
 // position (whole pixels), scale and angle, and draws it. A sprite scaled to
 // nothing is not drawn.
 void BattleEffect_DrawCanvasSprite(void) {
-  struct CanvasSpriteWork *work = Ram_HeapSlots->unkec[1];
+  struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
   s32 x = work->x << 16;
   s32 y = work->y << 16;
   s32 scaleX = work->scaleX;
@@ -290,10 +290,10 @@ void BattleEffect_DrawCanvasSprite(void) {
 /// frame; BattleEffect_EndCanvasSprite ends it.
 void BattleEffect_StartCanvasSprite(void) {
   struct WindowWork *windowWork =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+      (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct CanvasSpriteWork *work =
       HeapSlot_Alloc(HEAP_SLOT_CANVAS_SPRITE, sizeof(*work));
-  u8 *canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_SIZE);
+  u8 *canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_SIZE);
   u16 *map;
   s32 y;
   s32 x;
@@ -333,9 +333,9 @@ void BattleEffect_EndCanvasSprite(void) {
   Task_Remove(BattleEffect_DrawCanvasSprite);
   Task_Remove(BattleEffect_UploadCanvas);
   wait(1);
-  HeapSlot_Release(180);
-  HeapSlot_Release(96);
-  HeapSlot_Release(240);
+  HeapSlot_Release(HEAP_SLOT_CANVAS_MAP);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_CANVAS_SPRITE);
 }
 
 // One spark: where it circles round, its angle and radius, and its age in
@@ -356,7 +356,6 @@ struct VanishSparksWork {
   struct EffectSprite sprites[64];
 };
 
-#define HEAP_SLOT_SPARKS 92
 #define SPARK_LIFE 50
 #define PHASE_DONE 999
 
@@ -367,7 +366,7 @@ struct VanishSparksWork {
 /// 74 frames later it ends.
 void Actor_VanishInSparks(s32 objectId) {
   struct VanishSparksWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct VanishSparksWork));
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct VanishSparksWork));
   s32 phase;
   s32 entry;
   s32 tiles;
@@ -487,7 +486,7 @@ void Actor_VanishInSparks(s32 objectId) {
     frame++;
   } while (phase != PHASE_DONE);
   VramCache_FreeEntry(entry);
-  HeapSlot_Release(HEAP_SLOT_SPARKS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 void FieldParticle_Update(struct FieldParticle *effect) {

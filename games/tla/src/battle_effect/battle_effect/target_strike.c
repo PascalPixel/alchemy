@@ -124,8 +124,8 @@ void BattleEffect_RunMadZephyr(u8 *object) {
 
 struct Model;
 
-#define gBlitter ((DrawRectangle)Ram_HeapSlots->unk64[1])
-#define gBlitterAlternate ((DrawRectangle)Ram_HeapSlots->unkb8[1])
+#define gBlitter ((DrawRectangle)Ram_HeapSlots->ramCode)
+#define gBlitterAlternate ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
 #define RECORD(mode, field) gTargetStrike_Styles[(mode)][(field)]
 #define RECORD_KIND 0    // 0: strikes across the target, 1: columns on it
@@ -182,9 +182,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   s32 resource;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   if (mode == 8)
     BattleEffect_StartCanvasLayer(0);
@@ -442,11 +442,12 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       } else {
         stage = 3;
       }
-      BUILD_BLITTER(SLOT_BLITTER, 7, 7, CLIP, RECORD(mode, RECORD_BLEND));
+      BUILD_BLITTER(HEAP_SLOT_RAM_CODE, 7, 7, CLIP, RECORD(mode, RECORD_BLEND));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
                targetPosition.x / 2 - 18, 56, 18, 48);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-      BattleEffect_BuildBlitter(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+      BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7,
+                                CLIP | COMPOSITE_FLIP_X,
                                 RECORD(mode, RECORD_BLEND));
       do {
         /* FAKEMATCH(dead): an empty once-only block. */
@@ -521,7 +522,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             (gBattleEffect_GlintPictureWidths[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gBattleEffect_GlintPictureHeights[image] / 2);
-        BattleEffect_BuildBlitter(SLOT_BLITTER_ALTERNATE, 7, 7,
+        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
                                   gTargetStrike_GlintDrawFlags[Random16() & 3] |
                                       CLIP,
                                   BLITTER_ADDITIVE);
@@ -701,8 +702,8 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
@@ -710,11 +711,11 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   blit = draw;
   Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
                              1, 1);
@@ -811,8 +812,6 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Heap slots, as byte offsets into Ram_HeapSlots.
-
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
 
@@ -844,7 +843,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   s32 i;
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   camera = Ram_HeapSlots->cameraWork;
   work->vblanksSinceTransfer = 1;
@@ -885,7 +884,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   work->transferValue = 75; // a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   args->variant++;
   if (args->variant <= 0)
     args->variant = 1;
@@ -913,7 +912,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       /* FAKEMATCH(dead): the left half's pillar draw and glow index in a
        * once-only block. */
       do {
-        draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+        draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
         draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
         n = frame / 4 % 3; // a glow picture every 4 frames
       } while (0);
@@ -922,7 +921,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
       n = frame / 2 % 4;
       draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
@@ -962,7 +961,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
-  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -981,9 +980,9 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   s32 k;
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
-  view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
+  view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
   work->args = args;
   work->vblanksSinceTransfer = 1;
   BattleEffect_RunCloudSwirl(args);
@@ -1064,11 +1063,9 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   wait(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
-  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
-#undef SLOT_BLITTER
-#undef SLOT_BLITTER_ALTERNATE
 #undef BLITTER
 #undef CLIP
 #undef RECORD

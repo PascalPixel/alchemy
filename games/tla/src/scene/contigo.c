@@ -172,7 +172,7 @@ extern u16 *gPaletteCycleSlots;
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
+  u8 *saved = Ram_HeapSlots->paletteFade;
 
   gPaletteSlots = slots;
   gPaletteColors = colours;
@@ -386,7 +386,7 @@ s32 Contigo_FaceTalker(struct Actor *self) {
   mode = 0x3ff & event->psynergy;
   state = &self->paused;
   if (mode == 141) {
-    effect = Ram_HeapSlots->effectWork;
+    effect = Ram_HeapSlots->fieldEffectWork;
     if (effect[0x713] != 0)
       goto near;
   }

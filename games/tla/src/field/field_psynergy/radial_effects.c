@@ -151,7 +151,7 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object);
 // Animation 14: carry an orb from the caster to the scene's position over
 // ten frames, growing it from a quarter size, then play out the kind.
 void FieldPsynergy_Whirlwind(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *target = scene->child;
   struct OrbTargetSprite *sprite = target->sprite;
@@ -293,7 +293,7 @@ void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   s16 angle;
   s32 state;
 
-  scene = Ram_HeapSlots->effectWork;
+  scene = Ram_HeapSlots->fieldEffectWork;
   st = &effect->state;
 top:
   state = *st;
@@ -333,12 +333,12 @@ top:
 
 /// Pauses the scene's child (byte 91) and runs the fallback transition.
 void FieldPsynergy_HaltOnTarget(void) {
-  (*(u8 **)((u8 *)Ram_HeapSlots->effectWork + 20))[91] = 1;
+  (*(u8 **)((u8 *)Ram_HeapSlots->fieldEffectWork + 20))[91] = 1;
   FieldPsynergy_Halt();
 }
 
 void FieldPsynergy_Halt(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *user = scene->mainObject;
   struct Actor *obj;
   struct FieldParticle *slot;
@@ -467,7 +467,7 @@ static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
 }
 
 void FieldPsynergy_Catch(void) {
-  struct FxScene13 *scene = Ram_HeapSlots->effectWork;
+  struct FxScene13 *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainObject = scene->mainObject;
   struct Actor *secondary = scene->child;
   struct Actor *object;
@@ -550,9 +550,8 @@ void Rope_GetEndNodePosition(s32 target, struct Vector3 *position);
 
 /// Task of the Lash: its scattering particles along the rope.
 void FieldPsynergy_UpdateLash(void) {
-  struct ScatterWork *work =
-      (struct ScatterWork *)Ram_HeapSlots->battleFxWork[0];
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct ScatterWork *work = (struct ScatterWork *)Ram_HeapSlots->battleEffect;
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object = work->object;
   struct Vector3 position;
@@ -669,7 +668,7 @@ struct EffectSceneWork__field_psynergy {
 /// Then runs FieldPsynergy_Lash.
 void FieldPsynergy_LashOnTarget(s32 value) {
   struct FieldWork *state = Ram_HeapSlots->fieldWork;
-  struct EffectSceneWork__field_psynergy *work = Ram_HeapSlots->effectWork;
+  struct EffectSceneWork__field_psynergy *work = Ram_HeapSlots->fieldEffectWork;
   s32 second;
   s32 first;
 
@@ -689,8 +688,8 @@ void FieldPsynergy_LashOnTarget(s32 value) {
 extern char ResourceId_StarSparkleFade;
 
 void FieldPsynergy_Lash(void) {
-  struct ScatterWork *work = HeapSlot_Alloc(92, 0x2114);
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct ScatterWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2114);
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *object;
@@ -777,7 +776,7 @@ void FieldPsynergy_Lash(void) {
     Actor_ReleaseFar(object);
   }
   FieldPsynergy_FadeFromCastColor();
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 void FieldEffect_UpdateSpinAngle(struct Actor *object) {
@@ -815,7 +814,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
   struct LaunchVector *arg;
   s32 lift;
 
-  src = ((struct LaunchScene *)Ram_HeapSlots->effectWork)->mainObject;
+  src = ((struct LaunchScene *)Ram_HeapSlots->fieldEffectWork)->mainObject;
   state = slot->state;
 
   if (state == 0) {
@@ -865,7 +864,7 @@ struct SpinScene {
 void Actor_ApplyRandomChildValues(struct SpinObject *owner);
 
 void FieldPsynergy_Retreat(void) {
-  struct SpinScene *scene = Ram_HeapSlots->effectWork;
+  struct SpinScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct SpinObject *obj = scene->mainObject;
   struct SpinVector pos;
   struct FieldParticle *slot;
@@ -987,7 +986,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 }
 
 void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
-  u8 *work = Ram_HeapSlots->effectWork;
+  u8 *work = Ram_HeapSlots->fieldEffectWork;
   struct ArcObject *leader = *(struct ArcObject **)(work + 16);
   struct ArcObject *objects[2];
   struct ArcObject *object;
@@ -1077,7 +1076,7 @@ void FieldPsynergy_Avoid(void) {
   s32 count;
   s32 phase;
 
-  scene = Ram_HeapSlots->effectWork;
+  scene = Ram_HeapSlots->fieldEffectWork;
   object = scene->mainObject;
   group = object->records;
   entry = group->entries[0];
@@ -1143,7 +1142,7 @@ void FieldPsynergy_Avoid(void) {
 }
 
 void BattleEffect_WaitForArcGroups(void) {
-  struct ArcEffectWork *work = Ram_HeapSlots->block62;
+  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
   s32 i = 0;
 
   while (work->age[0] <= 31 || work->age[1] <= 31) {
@@ -1189,7 +1188,7 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode) {
 /// target's priority, then restarts that group's age, records the target and
 /// switches to the other group.
 void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
-  struct ArcWork *work = Ram_HeapSlots->block62;
+  struct ArcWork *work = Ram_HeapSlots->arcEffect;
   s32 tiles = gVramCacheEntries[work->resource].offset >> 5;
   s32 group = work->group;
   struct EffectSprite *sprite;
@@ -1224,7 +1223,7 @@ struct ArcSprite__f0e150c {
 };
 
 void BattleEffect_UpdateArcEffect(void) {
-  struct ArcWork *work = Ram_HeapSlots->block62;
+  struct ArcWork *work = Ram_HeapSlots->arcEffect;
   struct Actor *target = work->target;
   s32 group;
   s32 position[3];
@@ -1266,7 +1265,8 @@ void BattleEffect_UpdateArcEffect(void) {
 }
 
 void BattleEffect_StartArcEffect(void) {
-  struct ArcEffectWork *work = HeapSlot_Alloc(248, sizeof(*work));
+  struct ArcEffectWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_ARC_EFFECT, sizeof(*work));
 
   work->resource = VramCache_FindFreeEntry();
   VramCache_Load(work->resource, 0x100, gBattleEffect_ArcTiles);
@@ -1278,11 +1278,11 @@ void BattleEffect_StartArcEffect(void) {
 }
 
 void BattleEffect_EndArcEffect(void) {
-  struct ArcEffectWork *work = Ram_HeapSlots->block62;
+  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
 
   VramCache_FreeEntry(work->resource);
   Task_Remove((u32)BattleEffect_UpdateArcEffect);
-  HeapSlot_Release(248);
+  HeapSlot_Release(HEAP_SLOT_ARC_EFFECT);
 }
 
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
@@ -1290,9 +1290,9 @@ void BattleEffect_EndArcEffect(void) {
 /// Task of field Psynergy 29 (its name is question marks): the bow and the
 /// flaming arrow.
 void FieldPsynergy_UpdateUnnamed29(void) {
-  struct BowScene *scene = Ram_HeapSlots->effectWork;
-  struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleFxWork[0];
-  struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];
+  struct BowScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleEffect;
+  struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   struct BowMotion *motion;
@@ -1570,8 +1570,9 @@ void BattleEffect_CallEffect29(void) { FieldPsynergy_Unnamed29(); }
 extern char ResourceId_BowDraw, ResourceId_FlamingArrow;
 
 void FieldPsynergy_Unnamed29(void) {
-  struct BowWork *work = HeapSlot_Alloc(92, sizeof(struct BowWork));
-  struct BowScene *scene = Ram_HeapSlots->effectWork;
+  struct BowWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BowWork));
+  struct BowScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
@@ -1593,7 +1594,7 @@ void FieldPsynergy_Unnamed29(void) {
     sprite = (struct EffectSprite *)((struct BowMotion *)sprite + 1);
   }
 
-  work->tiles = HeapSlot_Alloc(96, 0x1800);
+  work->tiles = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x1800);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_BowDraw),
                       work->tiles);
   bowSlot = VramCache_FindFreeEntry();
@@ -1635,10 +1636,10 @@ void FieldPsynergy_Unnamed29(void) {
   motion = &work->arrowMotion;
   Vector_AddPolarOffset(px(18), scene->angle, pos);
   SET_POSITION(motion, pos[0], px(16), pos[2]);
-  HeapSlot_Release(96);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
 
   BattleEffect_StartCanvasSprite();
-  canvas = Ram_HeapSlots->unkec[1];
+  canvas = Ram_HeapSlots->canvasSprite;
   canvas->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   canvas->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 3;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
@@ -1681,7 +1682,7 @@ void FieldPsynergy_Unnamed29(void) {
   VramCache_FreeEntry(bowSlot);
   FieldPsynergy_FadeFromCastColor();
   BattleEffect_EndCanvasSprite();
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /// Looks at 21 map cells around the effect owner, at the tile offsets of
@@ -1692,9 +1693,9 @@ void FieldPsynergy_Unnamed29(void) {
 /// heap slot 0x5c work's byte 0x1b34, and the last kind-2 and kind-3 cells are
 /// kept in pixels, centred on their tile, at 0xd3c and 0xd40.
 void FieldPsynergy_GatherNearbyCells(void) {
-  struct FxScene *effect = Ram_HeapSlots->effectWork;
+  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
   struct PointWork *event = Ram_HeapSlots->fieldWork;
-  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  u8 *work = Ram_HeapSlots->battleEffect;
   s16 *points = event->points;
   struct Actor *owner = effect->mainObject;
   s32 position[3];
@@ -1759,7 +1760,7 @@ static inline s32 Index(s32 i) { return i; }
 /// owner's layer, sorts the distinct ids and runs each one's event for the
 /// effect's kind.
 void FieldPsynergy_RunTouchedEvents(void) {
-  struct TouchWork *work = Ram_HeapSlots->effectWork;
+  struct TouchWork *work = Ram_HeapSlots->fieldEffectWork;
   struct TouchCell *cells = (struct TouchCell *)gFieldWork->psynergyCells;
   struct TouchOwner *owner = work->owner;
   s32 count = 0;
@@ -1822,7 +1823,7 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
   s32 ownerHeight = owner->groundHeight >> 20;
-  struct TouchMap *map = (struct TouchMap *)Ram_HeapSlots->mapWork;
+  struct TouchMap *map = (struct TouchMap *)Ram_HeapSlots->mapGrid;
   struct TouchLayer *layer = &map->layers[layerIndex];
   s32 i;
 

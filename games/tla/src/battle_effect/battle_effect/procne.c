@@ -60,10 +60,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   s32 place[4];
   struct Scale scale;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  graphics = Ram_HeapSlots->battleSheet;
 
   // Set up: the max and additive pair, the whirlwind with its palette, the
   // dots, and the transfer at half strength.
@@ -559,10 +559,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   u8 *sheet;
   s32 i;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sheet = Ram_HeapSlots->battleSheet;
 
   // Set up: half-and-half blending, the max and additive pair, the flashes
   // with their palette, the streaks, the dots, and in mode 1 the lightning

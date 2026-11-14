@@ -39,8 +39,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   s32 col;
   s32 y;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // no horizontal stretch
@@ -69,7 +69,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   for (member = 0; member != args->targetCount; member++)
     work->particles[member].variant = 0; // 1 once landed
   work->transferMode =

@@ -408,7 +408,7 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
 // ones; beyond it, calls Actor_SetPosition(36, 0, 0).
 void JupiterLighthouse_PulseBeacon(void) {
   struct Actor *object = Actor_Get(36);
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
 
   Random16();
 #if TLA_PATCH_1
@@ -488,10 +488,10 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         created->retainSpriteCache = 1;
         created->speedLimit = 0x6666;
         created->acceleration = 0xccc;
-        buffer = HeapSlot_Alloc(68, 0x608);
+        buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
         Item_LoadIcon(ITEM_JUPITER_STAR);
         Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
-        HeapSlot_Release(68);
+        HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
       FieldActor_SetSpritePriority(37, 1);
       actor37 = Actor_GetById(37);

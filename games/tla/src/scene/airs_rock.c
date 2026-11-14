@@ -88,7 +88,7 @@ extern u8 gMapGridCellBuffer[];
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
   struct AirsRockMapWork *map =
-      (struct AirsRockMapWork *)Ram_HeapSlots->mapWork;
+      (struct AirsRockMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
 
   if (map == NULL)
@@ -103,7 +103,7 @@ s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
 
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
   struct AirsRockMapWork *map =
-      (struct AirsRockMapWork *)Ram_HeapSlots->mapWork;
+      (struct AirsRockMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
   s32 old;
 
@@ -144,7 +144,7 @@ void Blocks_MarkCells(u16 *ids) {
     blocked = &object->blockMarked;
     *blocked = 0;
     if (MapCell_GetAttributes(0, object->x >> 20, object->z >> 20) & 0x40) {
-      map = Ram_HeapSlots->mapWork;
+      map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
@@ -166,7 +166,7 @@ void Blocks_UnmarkCells(struct MarkedBlock *unk) {
   struct MapWork *map;
 
   if (unk->unk63 != 0) {
-    map = Ram_HeapSlots->mapWork;
+    map = Ram_HeapSlots->mapGrid;
     if (map != NULL) {
       struct MapCell **cells = &map->layers[2].cells;
       /* FAKEMATCH(dead): cell's initial value, overwritten unread. */
@@ -353,7 +353,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 void AirsRock_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 
 void AirsRock_TakeOverWhirlwind(void) {
-  FIELD_AT(((s32)Ram_HeapSlots->effectWork + 0x34), u8, 0) = 1;
+  FIELD_AT(((s32)Ram_HeapSlots->fieldEffectWork + 0x34), u8, 0) = 1;
 }
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -418,7 +418,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // shrinks and rises away over 8 frames.
 void AirsRock_BlowGust(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct EffectWork *effect = (struct EffectWork *)Ram_HeapSlots->effectWork;
+  struct EffectWork *effect =
+      (struct EffectWork *)Ram_HeapSlots->fieldEffectWork;
   struct Actor *gust, *spark;
   struct Vector3 velocity;
   struct EffectOptions leaves, dust;
@@ -1356,7 +1357,7 @@ fade2:
 // The top's fog: its blend breathes between 4 and 8 sixteenths while its lines
 // ripple.
 void AirsRock_DriftFog(void) {
-  s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178);
+  s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178);
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   volatile u16 *channel;
@@ -1383,7 +1384,7 @@ void AirsRock_DriftFog(void) {
 }
 
 void AirsRock_LiftFog(void) {
-  s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178);
+  s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178);
   s16 *line = gAirsRock_WaveLines;
   s32 i, wave, spread, value;
   s16 *table;
@@ -1425,7 +1426,7 @@ void AirsRock_LiftFog(void) {
 // clear.
 void AirsRock_WhirlwindClearsFog(void) {
   u16 *buffer = Heap_Alloc(0x680);
-  s32 *beam = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178);
+  s32 *beam = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178);
   u16 *cell;
   struct Actor *spark;
   s32 i;
@@ -1599,7 +1600,7 @@ void AirsRock_SetLedgeCellsByLevel(void) {
 #include "shared/leader_lift.h"
 
 #define LEADER() Actor_GetById(gMainRoutineWork.leaderActorId)
-#define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))
+#define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178))
 
 // A statue that breathes whirlwinds (AirsRock_StatueBreathesWhirlwind), from
 // the given count of frames.
@@ -1776,7 +1777,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_AREA_TEMP_11))
         Actor_SetPosition(11, 520, 872);
       AirsRock_MoveSecondPillar();
-      beam = (s32 *)Ram_HeapSlots->mapWork;
+      beam = (s32 *)Ram_HeapSlots->mapGrid;
       beam = (s32 *)((u8 *)beam + 0x178);
       beam[2] = 0x5800000;
       beam[3] = 0x2400000;
@@ -1824,7 +1825,7 @@ s32 Scene_Initialize(void) {
         while ((s32)dma->control < 0)
           ;
         Task_AddFrame(AirsRock_DriftFog, 0xc80);
-        beam = (s32 *)Ram_HeapSlots->mapWork;
+        beam = (s32 *)Ram_HeapSlots->mapGrid;
         beam = (s32 *)((u8 *)beam + 0x178);
         beam[6] = 0x4000;
         beam[7] = 0xffff8000;
@@ -1851,7 +1852,7 @@ s32 Scene_Initialize(void) {
         LEADER()->z += px(16);
       Leader_Lift(0xffd00000);
     case 14:
-      beam = (s32 *)Ram_HeapSlots->mapWork;
+      beam = (s32 *)Ram_HeapSlots->mapGrid;
       beam = (s32 *)((u8 *)beam + 0x178);
       beam[2] = 0x4800000;
       beam[3] = 0x3200000;

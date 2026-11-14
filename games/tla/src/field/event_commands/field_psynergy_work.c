@@ -55,7 +55,7 @@ void Camera_WorldToScreen(struct EffectVector *position) {
     position->z = result[1] << 16;
     position->y = 0;
   } else {
-    u8 *state = (u8 *)slots->mapWork;
+    u8 *state = (u8 *)slots->mapGrid;
     s32 x = *(s32 *)(state + 228) & 0xffff0000;
     s32 z = *(s32 *)(state + 232) & 0xffff0000;
 
@@ -82,7 +82,7 @@ void BattleEffect_UpdateAllEffectSlots(void) {
   struct FieldParticle *slot;
   s32 remainingSlots;
 
-  scene = Ram_HeapSlots->effectWork;
+  scene = Ram_HeapSlots->fieldEffectWork;
   remainingSlots = 0x17;
   slot = scene->slots;
   do {
@@ -116,22 +116,20 @@ struct EffectWork {
   s16 unk7f2;
 };
 
-#define HEAP_SLOT_FX 224
-
 void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct EffectWork *work;
   s32 running;
 
   if (event->psynergyActing == 0) {
-    work = HeapSlot_Alloc(HEAP_SLOT_FX, sizeof(*work));
+    work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(*work));
     /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
     Iwram_FillWordsEntry(work, sizeof(*work), 0);
   } else {
-    work = Ram_HeapSlots->effectWork;
+    work = Ram_HeapSlots->fieldEffectWork;
   }
   work->action = abilityId;
   work->animation = Ability_Get(abilityId)->fieldEffect;
@@ -184,7 +182,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *target;
   struct PairScene *scene;
 
-  scene = Ram_HeapSlots->effectWork;
+  scene = Ram_HeapSlots->fieldEffectWork;
   scene->firstObjectId = userId;
   user = ObjectTable_Get((s16)userId);
   scene->secondObjectId = targetId;
@@ -220,7 +218,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 }
 
 void EventObject_Initialize(void) {
-  struct FinishWork *work = Ram_HeapSlots->effectWork;
+  struct FinishWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object = work->object;
   s32 quantity = work->quantity;
@@ -265,17 +263,17 @@ void EventObject_Initialize(void) {
 }
 
 void BattleEffect_StopMainActor(void) {
-  struct EffectSceneWork *work = Ram_HeapSlots->effectWork;
+  struct EffectSceneWork *work = Ram_HeapSlots->fieldEffectWork;
 
   BattleEffect_SetObjectUpdateMode(work->mainObject, 0);
   wait(1);
 }
 
 void BattleEffect_CleanupSceneObjects(void) {
-  struct CleanupWork *work = Ram_HeapSlots->effectWork;
+  struct CleanupWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s8 *block = Ram_HeapSlots->block32;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s8 *block = Ram_HeapSlots->paletteFade;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *owner = work->owner;
   s32 i;
   s16 first;
@@ -318,7 +316,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   if (work->animation != 28)
     event->unkcad = 1;
   Event_NoOp();
-  HeapSlot_Release(224);
+  HeapSlot_Release(HEAP_SLOT_FIELD_EFFECT);
 }
 
 /// On the World Map, notes that the field Psynergy has used the second half of
@@ -328,10 +326,8 @@ void FieldPsynergy_MarkWorldMapTilesUsed(void) {
   s32 mode = ((struct FieldWork *)slots->fieldWork)->mode;
 
   if (mode == ACTOR_SYSTEM_WORLD_MAP)
-    ((struct WorldMapView *)slots->mapWork)->tileBufferUsed = mode;
+    ((struct WorldMapView *)slots->mapGrid)->tileBufferUsed = mode;
 }
-
-#define WAVE_FX_SLOT 88
 
 /* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene;
  * module/field/event_commands.h has another definition; tried with the
@@ -351,14 +347,14 @@ struct WaveFxWork__scene {
   u8 unk296[2];
 };
 
-/// Starts the wave effect's work in heap slot WAVE_FX_SLOT: a phase taken
-/// from the frame count, id and value, then the shared scene, the first hue
-/// step and its colour fade, with FieldPsynergy_UpdateMindReadWave run each
+/// Starts the wave effect's work in heap slot HEAP_SLOT_MIND_READ: a phase
+/// taken from the frame count, id and value, then the shared scene, the first
+/// hue step and its colour fade, with FieldPsynergy_UpdateMindReadWave run each
 /// frame.
 void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
   struct WaveFxWork__scene *work;
 
-  work = HeapSlot_AllocEwram(WAVE_FX_SLOT, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   work->phase = (gFrameCount * 2) % 360;
   work->id = id;
@@ -375,13 +371,13 @@ void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
 }
 
 void FieldPsynergy_StopMindReadWave(void) {
-  u8 *work = Ram_HeapSlots->unk4c[3];
+  u8 *work = Ram_HeapSlots->mindRead;
 
   FieldPsynergy_RestoreMindReadPalette();
   Task_Remove((TaskFunc)FieldPsynergy_UpdateMindReadWave);
   Actor_SetSpritePalette(Actor_GetById(*(u16 *)(work + 0x290)), 1);
   FieldPsynergy_FadeFromCastColor();
-  HeapSlot_Release(WAVE_FX_SLOT);
+  HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }
 
 #define BG_PLTT_COLOR(bank, color)                                             \
@@ -392,7 +388,7 @@ void FieldPsynergy_StopMindReadWave(void) {
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
-  Ram_HeapSlots->windowTiles[4] = 1;
+  Ram_HeapSlots->windowWork[4] = 1;
   p = &BG_PLTT_COLOR(15, 1);
   *p = GREY28;
   p += 2;
@@ -420,7 +416,7 @@ void FieldPsynergy_GreyMindReadPalette(void) {
 
 /// Stops line scrolling and restores background palette 15.
 void FieldPsynergy_RestoreMindReadPalette(void) {
-  u8 *work = Ram_HeapSlots->windowTiles;
+  u8 *work = Ram_HeapSlots->windowWork;
 
   Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
   BG_PLTT_COLOR(15, 1) = 0x7fff;  // White.

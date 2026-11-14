@@ -11,8 +11,8 @@
 // palette, rises at the target and throws 32 skulls.
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  void *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle draw[2];
   struct ScreenPoint position;
   struct Particle *sparks;

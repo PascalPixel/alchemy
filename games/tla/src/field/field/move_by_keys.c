@@ -69,7 +69,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
       object->facing = TRIG_TURN / 4;
     position.y = object->y - position.z;
     position.z = object->z;
-    map = Ram_HeapSlots->mapWork;
+    map = Ram_HeapSlots->mapGrid;
     sourceCell =
         &map->layers[object->layer].cells[Actor_GetCellIndexFar(object)];
     destinationCell =
@@ -138,7 +138,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   struct FieldWork *work;
 
   sprite = object->sprite;
-  rope = *(struct RopeWork **)&Ram_HeapSlots->unk84[6];
+  rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
   speed = 0x10000;
   collisionFlags = 0;
   object->speedLimit = px(1) / 2;
@@ -155,7 +155,7 @@ s32 Actor_CrossRope(struct Actor *object) {
     position.x += object->x;
     position.y = object->y - position.z;
     position.z = object->z;
-    rope = *(struct RopeWork **)&Ram_HeapSlots->unk84[6];
+    rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
     node = rope->nodes;
     best = NULL;
     bestDistance = 0x10000000;
@@ -275,7 +275,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   } else {
     SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), angle, &position);
-    tightrope = *(struct TightropeWork **)&Ram_HeapSlots->unk84[7];
+    tightrope = *(struct TightropeWork **)&Ram_HeapSlots->tightrope;
     point = tightrope->nodes;
     best = NULL;
     bestDistance = 0x10000000;
@@ -869,7 +869,7 @@ update_object:
       (*timer)--;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapWork;
+  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
   targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)

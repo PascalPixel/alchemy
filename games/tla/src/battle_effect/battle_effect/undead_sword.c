@@ -46,9 +46,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   s32 cell;
   s32 size;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
 
   // Open the canvas and load the pictures.
   BattleEffect_StartCanvasLayer(0);
@@ -105,13 +105,14 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         }
         for (i = 0, x = 50; i != 2; i++, x += 14) {
           if (i == 0)
-            BattleEffect_BuildBlitter(
-                HEAP_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+            BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7,
+                                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                                      mode);
           else
             BattleEffect_BuildBlitter(
-                HEAP_BLITTER, 7, 7,
+                HEAP_SLOT_RAM_CODE, 7, 7,
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
-          (draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1])(
+          (draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode)(
               canvas, work->sheet, x, 112 - height, 14, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
@@ -174,9 +175,9 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   struct Particle *step;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
@@ -384,8 +385,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   u8 *mesh;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);
   mesh = gData_02014000;
@@ -396,7 +397,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = (s16)camera->yaw;
   Resource_LoadAndDecompress((s32)&ResourceId_CrackedTextureSheet, work->sheet,
@@ -752,10 +753,10 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   u8 *funnel;
   void (*transfer)(void);
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  sprites = Ram_HeapSlots->battleSheet;
   // Read through funnel at the corner loop and the transform only.
   funnel = gMapGridCellBuffer;
   BattleEffect_StartCanvasLayer(0);
@@ -774,7 +775,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   transfer = BattleEffect_ProcessPendingGraphicsTransfer;
@@ -997,15 +998,15 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   s32 k;
   u8 *cells;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EffectPosition_ProjectBattler(args->targets[0], &pos);
   centerX = pos.x / 2;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 0);
   cells = gMapGridCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalBitmapSheet, cells + 20000,
@@ -1231,8 +1232,6 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT
-#undef SLOT_BLITTER
-#undef SLOT_ALT
 #undef OBJ_TILES
 #undef PARTICLES
 #undef SPARK_LIFE

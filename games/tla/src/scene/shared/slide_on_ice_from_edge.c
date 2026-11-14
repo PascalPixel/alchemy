@@ -96,7 +96,7 @@ walkNext:
     goto end;
 #endif
   radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
+  entry = Ram_HeapSlots->actors;
   j = 0;
   flags = &entry->collisionFlags;
 overlap:

@@ -73,8 +73,8 @@ void FieldPsynergy_Blaze(void) {
   s32 k;
   s32 mode;
 
-  work = HeapSlot_Alloc(92, sizeof(struct SprayWork));
-  scene = Ram_HeapSlots->effectWork;
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SprayWork));
+  scene = Ram_HeapSlots->fieldEffectWork;
   event = Ram_HeapSlots->fieldWork;
   caster = scene->mainObject;
   look = 0;
@@ -256,12 +256,12 @@ void FieldPsynergy_Blaze(void) {
   VramCache_FreeEntry(puffSlot);
 end:
   FieldPsynergy_FadeFromCastColor();
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 // Whether a script object stands where it may not.
 
-/// The script objects (Ram_HeapSlots->scriptObjects).
+/// The script objects (Ram_HeapSlots->actors).
 #define SCRIPT_OBJECT_COUNT 64
 
 /// The event work's mode in which the cell test is skipped.
@@ -284,7 +284,7 @@ s32 Actor_CheckBlocked(struct Actor *object) {
                                     object->groundHeight) != 0)
       result = 1;
   }
-  other = Ram_HeapSlots->scriptObjects;
+  other = Ram_HeapSlots->actors;
   for (i = SCRIPT_OBJECT_COUNT - 1; i >= 0; i--, other++) {
     if (other->script != NULL && (other->collisionFlags & 1) &&
         other != object) {

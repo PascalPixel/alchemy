@@ -16,11 +16,11 @@ s32 PartyMemberChooser_Run(void);
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 PartyMemberChooser_Open(void) {
   struct StatusScreenWork *state =
-      (struct StatusScreenWork *)HeapSlot_Alloc(220, 0x0cec);
+      (struct StatusScreenWork *)HeapSlot_Alloc(HEAP_SLOT_MENU, 0x0cec);
   s32 result;
   s32 index;
 
-  Ram_HeapSlots->objectSystem->suspended = 1;
+  Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
@@ -43,9 +43,9 @@ s32 PartyMemberChooser_Open(void) {
 
   WindowSprite_ClearListFar(state->statusWindow);
   ItemMenu_Close();
-  Ram_HeapSlots->objectSystem->suspended = 0;
+  Ram_HeapSlots->actorSystem->suspended = 0;
   wait(1);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
   return result;
 }
 
@@ -55,7 +55,7 @@ s32 StatusScreen_SelectMember(s32 slot);
 /// -1.
 s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work =
-      (struct StatusScreenWork *)Ram_HeapSlots->menuRuntime;
+      (struct StatusScreenWork *)Ram_HeapSlots->menuWork;
   s32 result = 0;
 
   /* FAKEMATCH(dead): the cursor store in a once-only block. */
@@ -76,7 +76,7 @@ void MenuIcon_ReleaseSlots(void);
 
 s32 StatusScreen_Run(void) {
   struct StatusScreenWork *state =
-      (struct StatusScreenWork *)HeapSlot_Alloc(220, 0x0cec);
+      (struct StatusScreenWork *)HeapSlot_Alloc(HEAP_SLOT_MENU, 0x0cec);
   void *palette = Heap_AllocEwram(64);
   void *tiles = Heap_AllocEwram(0x2800);
   s32 result = -1;
@@ -87,7 +87,7 @@ s32 StatusScreen_Run(void) {
 
   heap = Ram_HeapSlots;
   transition = heap->screenTransition;
-  heap->objectSystem->suspended = 1;
+  heap->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   saved = *(u16 *)&transition->active;
@@ -132,15 +132,15 @@ s32 StatusScreen_Run(void) {
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), tiles, 0x2800);
   Heap_Release(tiles);
   Heap_Release(palette);
-  ((struct WindowWork *)heap->windowTiles)->holdTilemapUpload = 1;
+  ((struct WindowWork *)heap->windowWork)->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
-  HeapSlot_Release(220);
-  heap->objectSystem->suspended = 0;
+  HeapSlot_Release(HEAP_SLOT_MENU);
+  heap->actorSystem->suspended = 0;
   transition->active = saved;
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  ((struct WindowWork *)heap->windowTiles)->holdTilemapUpload = 0;
+  ((struct WindowWork *)heap->windowWork)->holdTilemapUpload = 0;
   return result;
 }
 
@@ -156,7 +156,7 @@ s32 ItemMenu_SelectItem(void);
 /// Start.
 s32 StatusScreen_RunPages(void) {
   struct StatusScreenWork *state =
-      (struct StatusScreenWork *)Ram_HeapSlots->menuRuntime;
+      (struct StatusScreenWork *)Ram_HeapSlots->menuWork;
   s32 step = 0;
   s32 finished = step;
   s32 result = 0;
@@ -217,7 +217,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   s32 result;
   s32 index;
 
-  menu = (struct StatusScreenWork *)Ram_HeapSlots->menuRuntime;
+  menu = (struct StatusScreenWork *)Ram_HeapSlots->menuWork;
   index = menu->memberIndex[slot];
   result = 0;
   cursor = menu->memberCursors[slot];
@@ -242,7 +242,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
 }
 
 void DjinnMenu_ShowCurrentList(void) {
-  struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 page;
   s32 redraw;
   s32 window;
@@ -288,7 +288,7 @@ void DjinnMenu_ShowCurrentList(void) {
           }
         }
       }
-      ((struct WindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
+      ((struct WindowWork *)Ram_HeapSlots->windowWork)->dirty = 1;
       redraw = 0;
     }
     Link_DrawPageArrowsFar((void *)0x06002500);
@@ -334,7 +334,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
   s32 result;
   s32 rowIndex;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   ownerIndex = menu->memberIndex[0];
   ownerCount = menu->memberCount[0];
   redraw = 2;
@@ -427,7 +427,7 @@ void Menu_PlaceEntryActorsInGrid(s32 x, s32 y, s32 columns);
 
 s32 PsynergyMenu_ChooseMember(void) {
   struct StatusScreenWork *menu =
-      (struct StatusScreenWork *)Ram_HeapSlots->menuRuntime;
+      (struct StatusScreenWork *)Ram_HeapSlots->menuWork;
   s32 selection = menu->memberIndex[0];
   s32 count = menu->memberCount[0];
   s32 pending = 2;
@@ -482,7 +482,7 @@ s32 PsynergyMenu_ChooseMember(void) {
 /// Moves the party member at selectedIndex one place later (direction 1) or
 /// earlier (0) in the party order. Returns 1, or 0 when it cannot move.
 s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
-  struct StatusScreenWork *menu = Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *menu = Ram_HeapSlots->menuWork;
   u32 reordered[14];
   s32 index;
 
@@ -532,7 +532,7 @@ void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
 /// Its callers pass four values it does not read.
 void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
                              s32 unused3) {
-  struct StatusScreenWork *work = Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *work = Ram_HeapSlots->menuWork;
 
   Menu_PlaceOwnerEntryObjects(MenuCursor_Create(work), 2, 2);
   work->unopenedWindow = 0;
@@ -564,7 +564,7 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   void *object;
   struct StatusScreenWork *state;
 
-  state = Ram_HeapSlots->menuRuntime;
+  state = Ram_HeapSlots->menuWork;
   created = 0;
   handle = state->statusWindow;
   if (handle == 0) {
@@ -617,7 +617,7 @@ s32 StatusScreen_SelectCommand(void) {
   s32 i;
   u8 entries[8];
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   pane = 0;
   selected = 0;
   result = 0;
@@ -748,7 +748,7 @@ s32 StatusScreen_SelectCommand(void) {
 /// or of the rows below.
 void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                       s32 invert) {
-  struct StatusScreenWork *state = Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *state = Ram_HeapSlots->menuWork;
   u32 different;
   s32 count;
   s32 index;
@@ -830,7 +830,7 @@ void Text_DrawWideStringAtOffsetFar(void *buffer, void *destination, s32 offset,
 /// gives the plain experience text. The text is copied into a heap buffer of
 /// STATUS_HELP_TEXT_MAX characters, freed before returning.
 void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
-  u8 *menu = Ram_HeapSlots->menuRuntime;
+  u8 *menu = Ram_HeapSlots->menuWork;
   u8 *buffer;
 
   if (full == 0 && help > 3)
@@ -879,7 +879,7 @@ s32 Unit_GetElementLevelFar(s32 ownerId, s32 element);
 /// levels, Power and Resist. With STATUS_PAGE_NO_CLEAR in mode the window is
 /// not cleared first.
 void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
-  struct StatusScreenWork *menu = Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *menu = Ram_HeapSlots->menuWork;
   struct BattleUnit *unit;
   s32 element;
   s32 djinnRow;
@@ -969,7 +969,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   struct ItemMenuWork *menu;
   struct BattleUnit *unit;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   unit = Unit_Get(owner);
   menu->cursor->motion = 1;
   flags &= 0x100;
@@ -1039,7 +1039,7 @@ struct MenuPageResult {
 /// the item chosen last for them, STATUS_EQUIP_PAGE_SIZE items to a page.
 /// Returns 1.
 s32 PagedList_Build(struct MenuPageResult *result, s32 index) {
-  struct MenuOwnerWork *menu = Ram_HeapSlots->menuRuntime;
+  struct MenuOwnerWork *menu = Ram_HeapSlots->menuWork;
   void *owner;
   s32 count;
   s32 value;
@@ -1166,7 +1166,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
   s32 row;
   s32 base;
 
-  menu = (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
+  menu = (struct PsynergyMenuWork *)Ram_HeapSlots->menuWork;
   state->selectedIndex = state->page * PAGE_ROWS + state->row;
   // The Japanese release clears the info window; from patch 1 it redraws the
   // window's saved rectangle.
@@ -1300,7 +1300,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 /// Psynergy" when empty, then the owner's name, class and level.
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
                               const struct MenuResult *res) {
-  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
   u8 *owner;
   u32 first;
   u32 rows;
@@ -1404,7 +1404,7 @@ s32 PsynergyMenu_SelectAction(void) {
   s32 ownerIndex;
   struct MenuResult state;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   window = menu->statusWindow;
   result = 0;
   refresh = 2;
@@ -1513,7 +1513,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   u32 entry;
   u32 mask;
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   base = state->page * PAGE_ROWS;
   state->selectedIndex = base + state->row;
   // The Japanese release clears the name's window; from patch 1 it redraws the
@@ -1630,7 +1630,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
 /// Draws one page of the member's items into window: five names a page, or
 /// "no items", then the member's name, Attack and Defense.
 s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct BattleUnit *unit;
   u16 *inventoryEntry;
   s32 firstEntry;
@@ -1713,7 +1713,7 @@ s32 ItemMenu_SelectItem(void) {
   struct MenuResult state;
   u16 savedInventory[15];
 
-  menu = Ram_HeapSlots->menuRuntime;
+  menu = Ram_HeapSlots->menuWork;
   window = menu->statusWindow;
   result = 0;
   refresh = 2;
@@ -1802,7 +1802,7 @@ s32 ItemMenu_SelectItem(void) {
 #undef CURSOR_X
 
 void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u8 *items;
 
   ItemMenu_PositionCategory();
@@ -1855,7 +1855,7 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **table;
 
   i = 0;
-  table = ((struct ItemMenuWork *)Ram_HeapSlots->menuRuntime)->entryIcons;
+  table = ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   do {
     obj = *table++;
     if (obj != NULL)
@@ -1882,7 +1882,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   struct WindowSprite *icon;
   s32 i;
 
-  state = Ram_HeapSlots->menuRuntime;
+  state = Ram_HeapSlots->menuWork;
   ItemMenu_PositionCategory();
   for (i = 0; i < 15; i++) {
     if (items[i] != 0 && (items[i] & INVENTORY_EQUIPPED) != 0) {
@@ -1913,7 +1913,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
 }
 
 void ItemMenu_PositionCategory(void) {
-  struct ItemMenuWork *state = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *state = Ram_HeapSlots->menuWork;
   s32 x = 248;
   struct WindowSprite **entry = state->entryIcons;
   s32 y = 168;

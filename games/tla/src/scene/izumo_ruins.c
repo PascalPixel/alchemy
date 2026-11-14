@@ -157,7 +157,7 @@ extern u32 gFieldEffect_LongScript[];
 
 s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
   struct IzumoRuinsMapWork *map =
-      (struct IzumoRuinsMapWork *)Ram_HeapSlots->mapWork;
+      (struct IzumoRuinsMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
 
   if (map == NULL)
@@ -172,7 +172,7 @@ s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
 
 s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value) {
   struct IzumoRuinsMapWork *map =
-      (struct IzumoRuinsMapWork *)Ram_HeapSlots->mapWork;
+      (struct IzumoRuinsMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cell;
   s32 old;
 
@@ -270,7 +270,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // Starts the effect for this scene's room, then, for a first argument of 1,
 // runs IzumoRuins_ShowPillarState on the effect work's object.
 void IzumoRuins_PoundPillar(s32 aArg, s32 b) {
-  struct IzumoRuinsEffectWork *work = Ram_HeapSlots->effectWork;
+  struct IzumoRuinsEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   s16 scene;
 

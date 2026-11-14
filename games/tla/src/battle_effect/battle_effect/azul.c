@@ -13,9 +13,6 @@ struct MeshTriangle;
 struct Model;
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 struct AzulVertex {
@@ -42,8 +39,6 @@ struct AzulObject {
   u8 unk0a[8];
   u16 shape;
 };
-
-#define SLOT_ALT 188 // unkb8[1]
 
 // Clamps a sprite's projected y to the screen's band.
 #define CLAMP_Y(place)                                                         \
@@ -91,14 +86,14 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   u8 *planes;
   s32 stripEnd;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sprites = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(3);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit = Ram_HeapSlots->unk64[1];
+  blit = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   BattleEffect_SelectLivingTargets(work->args);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -585,7 +580,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             BLITTER_ADDITIVE);
-        blit2 = Ram_HeapSlots->unkb8[1];
+        blit2 = Ram_HeapSlots->ramCode2;
         i = 0;
         y = (base.y >> 16) - 32;
         width = 16;
@@ -789,7 +784,7 @@ void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
   struct ScreenPoint first;
   struct ScreenPoint last;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   EffectPosition_ProjectBattler(work->args->targets[0], &first);
   EffectPosition_ProjectBattler(
       work->args->targets[work->args->targetCount - 1], &last);
@@ -797,7 +792,5 @@ void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
   position->y = first.y;
   position->depth = first.depth;
 }
-#undef SLOT_BLITTER
 #undef BLITTER
-#undef SLOT_ALT
 #undef CLAMP_Y

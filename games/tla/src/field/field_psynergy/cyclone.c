@@ -51,7 +51,7 @@ void ParticleBurst_Update(void) {
   s32 position[3];
   s32 i;
 
-  work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BurstWork *)Ram_HeapSlots->battleEffect;
   particle = work->particles;
 
   for (i = 0; i < 96; i++, particle++) {
@@ -82,7 +82,7 @@ void ParticleBurst_Update(void) {
 }
 
 void BattleEffect_EndX(void) {
-  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  u8 *work = Ram_HeapSlots->battleEffect;
 
   Task_Remove((u32)ParticleBurst_Update);
   VramCache_FreeEntry(*(s16 *)(work + 0x1b00));
@@ -103,8 +103,8 @@ struct CarryWork {
 /// where it stood to the nearby kind 2 cell (a Cyclone teleporter), circling
 /// and arcing up and down on the way, its follower with it.
 void Cyclone_CarryLeader(void) {
-  struct FxScene *effect = Ram_HeapSlots->effectWork;
-  struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleFxWork[0];
+  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleEffect;
   struct Actor *owner = effect->mainObject;
   s32 timer = work->timer;
   s32 position[3];
@@ -137,8 +137,8 @@ void Cyclone_CarryLeader(void) {
 /// Cyclone_CarryLeader for a kind 3 cell: the leader is carried there 32
 /// pixels up, circling, without the arc.
 void Cyclone_LiftLeader(void) {
-  struct FxScene *effect = Ram_HeapSlots->effectWork;
-  struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleFxWork[0];
+  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
+  struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleEffect;
   struct Actor *owner = effect->mainObject;
   s32 timer = work->timer;
   s32 position[3];
@@ -200,9 +200,9 @@ struct WhirlWork {
 };
 
 void FieldPsynergy_Cyclone(void) {
-  struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
+  struct WhirlWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1b38);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct FxScene *effect = Ram_HeapSlots->effectWork;
+  struct FxScene *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *owner = effect->mainObject;
   s16 *points = &event->psynergyCells[0];
   s32 spread = 0x40000;
@@ -236,7 +236,7 @@ void FieldPsynergy_Cyclone(void) {
     asm("");
   }
   BattleEffect_StartCanvasSprite();
-  canvas = Ram_HeapSlots->unkec[1];
+  canvas = Ram_HeapSlots->canvasSprite;
   pos[0] = effect->mainObject->x;
   pos[1] = effect->mainObject->y;
   pos[2] = effect->mainObject->z;
@@ -252,7 +252,7 @@ void FieldPsynergy_Cyclone(void) {
   canvas->sprite.oam.palette256 = 1;
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
-  pixels = Ram_HeapSlots->battleFxWork[1];
+  pixels = Ram_HeapSlots->battleCanvas;
   ring = Actor_Spawn(280, owner->x, owner->y - 0x60000, owner->z);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE * 3 / 2;
@@ -406,7 +406,7 @@ void FieldPsynergy_Cyclone(void) {
   owner->update = NULL;
   owner->facing = owner->timer;
   BattleEffect_EndCanvasSprite();
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 void Actor_DepartInRing(s32 actor) {
@@ -553,8 +553,8 @@ struct SprayScene {
 /// that rise for 32 frames. The angle then turns toward the scene's facing by
 /// at most 0x400 a frame.
 void Blaze_UpdateSpray(void) {
-  struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
-  struct SprayScene *scene = Ram_HeapSlots->effectWork;
+  struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleEffect;
+  struct SprayScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct EffectSprite *sprite;
   struct SprayParticle *particle;

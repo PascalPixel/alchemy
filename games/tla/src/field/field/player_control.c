@@ -72,7 +72,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
     s32 withinHalfCell;
 
     onObject = 0;
-    other = (struct Actor *)Ram_HeapSlots->scriptObjects;
+    other = (struct Actor *)Ram_HeapSlots->actors;
     withinHalfCell = 0x7ffff;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
       s32 delta;
@@ -181,7 +181,7 @@ blocked:
 push_objects:
   SET_POSITION(&contact, object->x, object->y, object->z);
   Vector_AddPolarOffset(px(4), (u16)heading, &contact);
-  other = (struct Actor *)Ram_HeapSlots->scriptObjects;
+  other = (struct Actor *)Ram_HeapSlots->actors;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
 
@@ -423,7 +423,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   movementAnimation = 2;
   onObject = 0;
   work = Ram_HeapSlots->fieldWork;
-  map = (struct MapFlagsWork *)Ram_HeapSlots->mapWork;
+  map = (struct MapFlagsWork *)Ram_HeapSlots->mapGrid;
   collision = 0;
   pushed = 0;
   if (gInput.held & gMainRoutineWork.dashKeys) {
@@ -454,7 +454,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
     Vector_AddPolarOffset(px(2), (u16)angle - TRIG_TURN / 4, &contact);
 #endif
     angleIndex = 0;
-    other = (struct Actor *)Ram_HeapSlots->scriptObjects;
+    other = (struct Actor *)Ram_HeapSlots->actors;
     for (; angleIndex < 64; angleIndex++, other++) {
       s32 dy;
 
@@ -554,7 +554,7 @@ push_objects:
   // have room; any other solid object there blocks the step.
   SET_POSITION(&contact, object->x, object->y, object->z);
   Vector_AddPolarOffset(px(4), (u16)heading, &contact);
-  other = (struct Actor *)Ram_HeapSlots->scriptObjects;
+  other = (struct Actor *)Ram_HeapSlots->actors;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
 

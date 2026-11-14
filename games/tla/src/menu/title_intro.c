@@ -431,7 +431,7 @@ s32 TitleIntro_ShowBlendedCard(void) {
 /// starts the fade to white or back when its countdown reaches 1. A key press
 /// cuts the scroll short.
 s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
-  struct TitleFadeTimers *timers = Ram_HeapSlots->unk84[10];
+  struct TitleFadeTimers *timers = Ram_HeapSlots->titleIntro;
   s32 i;
   s32 j;
   s32 step;
@@ -561,7 +561,7 @@ void TitleIntro_UpdateLogo(void) {
   s32 pieceX;
   volatile u16 *matrix;
 
-  logo = Ram_HeapSlots->unk84[10];
+  logo = Ram_HeapSlots->titleIntro;
   Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
   if (logo->phase == 0) {
     if (logo->timer == 0) {
@@ -662,7 +662,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   s32 i;
   u8 *buffer;
 
-  logo = HeapSlot_Alloc(172, 112);
+  logo = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, 112);
   REG_DISPCNT = 0;
   Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites);
@@ -705,7 +705,7 @@ s32 TitleIntro_ShowLighthouse(void) {
     gBgScroll[i].y = 0;
     gBgScroll[i].x = 0;
   }
-  Dma_Set((void *)BG_PLTT, Ram_HeapSlots->block32,
+  Dma_Set((void *)BG_PLTT, Ram_HeapSlots->paletteFade,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   wait(1);
   TitlePaletteFade_SetTarget(q16One, 0);
@@ -775,7 +775,7 @@ stopped:
 done:
   Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
   Task_Remove(TitleIntro_UpdateLogo);
-  HeapSlot_Release(172);
+  HeapSlot_Release(HEAP_SLOT_TITLE_INTRO);
   wait(1);
   return 1;
 }
@@ -865,7 +865,8 @@ s32 TitleIntro_Run(void) {
 s32 Title_ShowIntro(s32 prompt) {
   s32 blankTile = 0x1ff;
   s32 result = 0;
-  struct TitleScreenWork *work = HeapSlot_AllocEwram(172, 0x70);
+  struct TitleScreenWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_TITLE_INTRO, 0x70);
   u8 *data;
   u16 *tilemap;
   u16 tile;
@@ -900,7 +901,7 @@ s32 Title_ShowIntro(s32 prompt) {
   Window_LoadGraphics();
   DebugText_Clear();
   if (prompt != 0) {
-    u8 *buffer = HeapSlot_AllocEwram(56, 0x400);
+    u8 *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
     struct TitleSprite *sprite = work->sprites;
 
     Resource_DecodeByteLzInRam(gTitle_PromptTiles, buffer);
@@ -914,7 +915,7 @@ s32 Title_ShowIntro(s32 prompt) {
       *spriteWords++ = 0x40004000;
       *spriteWords = vramBlock;
     }
-    HeapSlot_Release(56);
+    HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   }
   ScreenFade_FromWhite(30);
   ScreenFade_Wait();
@@ -968,7 +969,7 @@ s32 Title_ShowIntro(s32 prompt) {
     Random16();
     wait(1);
   }
-  HeapSlot_Release(172);
+  HeapSlot_Release(HEAP_SLOT_TITLE_INTRO);
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0;
   wait(1);
@@ -1150,7 +1151,7 @@ void TitlePaletteFade_CalculateSteps(s16 *src, s16 *dst, s16 *step,
 /// channels into the hidden page of RGB555 colours and queues that page for the
 /// BG and OBJ palettes.
 void TitlePaletteFade_Update(void) {
-  struct TitlePaletteFade *work = Ram_HeapSlots->block32;
+  struct TitlePaletteFade *work = Ram_HeapSlots->paletteFade;
   u16 *delta = work->delta;
   u16 *current;
   u16 *packed;
@@ -1442,7 +1443,7 @@ void TitlePaletteFade_Initialize(void) {
   struct TitlePaletteFade *buffer;
   s32 operation;
 
-  buffer = HeapSlot_AllocEwram(128, sizeof(*buffer));
+  buffer = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
   Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(128), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(128),
@@ -1454,11 +1455,11 @@ void TitlePaletteFade_Initialize(void) {
 
 void TitlePaletteFade_Release(void) {
   Task_Remove((u32)((s32)&TitlePaletteFade_Update));
-  HeapSlot_Release(0x80);
+  HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
 void TitlePaletteFade_SetTarget(s32 index, s32 transform) {
-  struct TitlePaletteFade *target = Ram_HeapSlots->block32;
+  struct TitlePaletteFade *target = Ram_HeapSlots->paletteFade;
 
   if (target != NULL)
     TitlePaletteFade_BuildColors(index, target->palette, target->target,
@@ -1466,7 +1467,7 @@ void TitlePaletteFade_SetTarget(s32 index, s32 transform) {
 }
 
 void TitlePaletteFade_SetCurrent(s32 index, s32 transform) {
-  struct TitlePaletteFade *target = Ram_HeapSlots->block32;
+  struct TitlePaletteFade *target = Ram_HeapSlots->paletteFade;
 
   if (target != NULL)
     TitlePaletteFade_BuildColors(index, (u16 *)target, target->current,
@@ -1474,14 +1475,14 @@ void TitlePaletteFade_SetCurrent(s32 index, s32 transform) {
 }
 
 void TitlePaletteFade_SetBackdrop(s32 value) {
-  struct TitlePaletteFade *target = Ram_HeapSlots->block32;
+  struct TitlePaletteFade *target = Ram_HeapSlots->paletteFade;
 
   if (target != NULL)
     target->palette[0] = value;
 }
 
 void TitlePaletteFade_Start(s32 value) {
-  struct TitlePaletteFade *state = Ram_HeapSlots->block32;
+  struct TitlePaletteFade *state = Ram_HeapSlots->paletteFade;
 
   if (state != NULL) {
     state->duration = value;

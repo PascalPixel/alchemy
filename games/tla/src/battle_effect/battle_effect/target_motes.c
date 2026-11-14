@@ -68,8 +68,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   s32 i;
 
   // Set up: the canvas layer and the mode's sheet and palette.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   count = 16;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
@@ -191,11 +191,11 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           /* FAKEMATCH(barrier): an empty asm through h, the same for the height
            * table. */
           __asm__("" : "=r"(h) : "0"(h));
-          BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
                                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                         gTargetMotes_GlintFlips[Random16() & 3],
                                     BLITTER_MAX);
-          ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+          ((DrawRectangle)Ram_HeapSlots->ramCode2)(
               canvas,
               work->sheet + gBattleEffect_GlintPictures[frame & 3] +
                   RENDER_MODE_TORNADO,
@@ -207,10 +207,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       // An additive and a max blitter for this target's motes.
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       point[0] = object->x;
@@ -323,8 +323,8 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   // Set up: the canvas layer, the sheep sheet and a transparent blitter
   // pair, the second mirrored.
   sheep = (struct Particle *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   scroll = 0;
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1);
@@ -333,10 +333,10 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
                              1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  drawA = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  drawA = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       BLITTER_TRANSPARENT);
-  drawB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  drawB = (DrawRectangle)Ram_HeapSlots->ramCode2;
 
   // The sheep wait above the screen with a random spin and starting cel.
   for (i = 0; i != 32; i++) {
@@ -439,8 +439,8 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, unscaled; for side 1 the canvas shows the
   // right half of the field.
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
@@ -452,7 +452,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR;
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
@@ -525,9 +525,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the Djinn and the particle sprites, and the
   // blitter pair for the side the Djinn faces.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
@@ -753,9 +753,7 @@ void BattleEffect_RunTinder(struct BattleEffectParams *args) {
 void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
   BattleEffect_RunTumblingQuads(args, 2);
 }
-#undef SLOT_BLITTER
 #undef BLITTER
-#undef HEAP_BLITTER
 #undef GROUND_Y
 #undef MOTE_MAX
 #undef CONVERGES

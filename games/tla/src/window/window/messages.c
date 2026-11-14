@@ -4,7 +4,7 @@
 
 #include "../window_internal.h"
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
 /// Expands message into buffer without an upper length bound.
 void Message_DecodeRawUnbounded(s32 message, u16 *buffer) {
@@ -33,10 +33,6 @@ s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity) {
 #define DECODE_EUROPEAN
 #endif
 
-/// The heap slot holding the message decoder while a message is decoded (slot
-/// 50, addressed by its byte offset).
-#define TEXT_DECODER_SLOT 200
-
 extern const u8 Text_DecodeSymbolCode[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
@@ -52,12 +48,11 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   u16 delta;
 #endif
 
-  original = ((void **)Ram_HeapSlots)[TEXT_DECODER_SLOT / 4];
+  original = Ram_HeapSlots->messageDecoder;
   if (original == NULL)
-    RamCode_LoadSlot(TEXT_DECODER_SLOT, Text_DecodeSymbolCode,
+    RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
-  decode = (s32 (*)(struct TextReader *))(
-      (void **)Ram_HeapSlots)[TEXT_DECODER_SLOT / 4];
+  decode = (s32 (*)(struct TextReader *))Ram_HeapSlots->messageDecoder;
   Message_Find(&reader, message);
 #if !defined(DECODE_EUROPEAN)
   delta = 0xffff;
@@ -103,7 +98,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   }
 done:
   if (original == NULL)
-    HeapSlot_Release(TEXT_DECODER_SLOT);
+    HeapSlot_Release(HEAP_SLOT_MESSAGE_DECODER);
   *text = 0;
 }
 
@@ -124,7 +119,7 @@ void Window_CloseAll(void) {
   struct Window *pollWork;
   s32 index;
 
-  state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  state = (struct WindowWork *)Ram_HeapSlots->windowWork;
   slot = state->channels;
   direct = state->windows;
   index = 0;
@@ -233,7 +228,7 @@ void MessageArgument_ClearAll(void) {
   s32 no;
   struct WindowWork *work;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   no = 0;
 
   do {
@@ -246,7 +241,7 @@ void MessageArgument_ClearAll(void) {
 /// Inserts value of type kind in a free entry; does nothing if the table is
 /// full.
 void MessageArgument_Push(u32 value, u32 kind) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 no = 0;
   u32 limit = 8;
 
@@ -261,7 +256,7 @@ void MessageArgument_Push(u32 value, u32 kind) {
 }
 
 u32 MessageArgument_Lookup(u32 kind, u32 clear) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 index;
   u32 value = 0;
 
@@ -281,7 +276,7 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 /// Ends a message wait (clearing the channel's countdown and returning 1) when
 /// the window's voice has finished or A, B or a shoulder button is held.
 s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 cancel = 0;
 
   if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
@@ -301,7 +296,7 @@ s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
 /// (the pending presses in a window mode); while B is held the wait ends only
 /// at countdown 1, and otherwise the countdown is set to 2.
 s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 cancel = 0;
   u32 keys;
 
@@ -337,7 +332,7 @@ void Message_CloseFinishedWindows(void) {
   struct UiChannelSlot *slot;
   struct UiWindowState *work;
 
-  slot = ((struct WindowWork *)Ram_HeapSlots->windowTiles)->channels;
+  slot = ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
   slotIndex = 0;
   do {
     work = (struct UiWindowState *)slot->work;
@@ -351,7 +346,7 @@ void Message_CloseFinishedWindows(void) {
   wait(10);
 }
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
 s32 Message_Decode(s32 key, s32 mode);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
@@ -408,7 +403,7 @@ s32 Message_Decode(s32 message, s32 mode);
 
 /// Decodes message after the text decoded last, over its terminator.
 void Message_DecodeAppend(s32 message) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 count = work->textBufferEnd;
 
   count = (u16)(count - 1) & (UI_TEXT_ENTRY_COUNT - 1);
@@ -512,7 +507,7 @@ void Text_ResetStyle(void);
 /// many dashes past the first it has (the crawl waits on it); any other line
 /// returns 0.
 s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 x = 0;
   s32 y = 0;
   s32 entry;
@@ -716,7 +711,7 @@ s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
 #define Portrait_Create Portrait_Create__window
 
 void Portrait_ClearSlots(void) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 index = 0;
 
   do {
@@ -800,7 +795,7 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   s32 offset;
   struct WindowWork *work;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   if (Portrait_GetForSpeaker(speaker) == -1) {
     return 0;
   }
@@ -825,7 +820,7 @@ void Portrait_CloseWindow(s32 id) {
   s32 i;
   struct WindowSprite *entity;
 
-  state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  state = (struct WindowWork *)Ram_HeapSlots->windowWork;
   work = state->windows;
   id = Portrait_GetForSpeaker(id);
   if (id == -1)
@@ -852,7 +847,6 @@ void Portrait_CloseWindow(s32 id) {
 
 #undef UI_WORK
 #undef DECODE_EUROPEAN
-#undef TEXT_DECODER_SLOT
 #undef PLOT_GLYPH_ROWS
 #undef KANJI_FIRST_CODE
 #undef KANJI_WIDTH

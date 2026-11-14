@@ -299,7 +299,7 @@ spin:
 #define DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(name, n1)                   \
   void name(void) {                                                            \
     struct FieldWork *event = Ram_HeapSlots->fieldWork;                        \
-    u8 *effect = Ram_HeapSlots->effectWork;                                    \
+    u8 *effect = Ram_HeapSlots->fieldEffectWork;                               \
                                                                                \
     event->raisedTrigger = n1;                                                 \
     effect[52] = 1;                                                            \

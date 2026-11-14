@@ -28,7 +28,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   if (object == NULL)
     return;
   FieldEffect_InitializeSlots();
-  scene = Ram_HeapSlots->effectWork;
+  scene = Ram_HeapSlots->fieldEffectWork;
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
   Sound_PlayFar(SE_NOTE_LOW);
   Motion_SetVarCbAndRefresh(id, 1);
@@ -125,7 +125,7 @@ struct BattleFxScene__motes;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define gEffectWork Ram_HeapSlots->effectWork
+#define gEffectWork Ram_HeapSlots->fieldEffectWork
 
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct EffectOwner *owner;

@@ -39,10 +39,6 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 
 struct FxPartyList;
 
-// The blitters' heap slots, as byte offsets into Ram_HeapSlots.
-#define HEAP_BLITTER 104
-#define HEAP_BLITTER_ALTERNATE 188
-
 // The map cell buffer holds the embers.
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
 #define EMBER_COUNT 1024
@@ -80,9 +76,9 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   u8 *cells;
   u8 *palette;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  cells = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  cells = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
@@ -298,7 +294,7 @@ extern const struct Scale gFormationObjects_LargeScale;
 /// in a 4x3 grid, 6: eight more), in the order 0, 5, 1, 2, 6, 3, 4.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct Scale normal = gFormationObjects_Scale;
   struct Scale big = gFormationObjects_LargeScale;
   s32 pos[4];
@@ -374,9 +370,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   orgX = x;
   x += px(40);
   x /= 2;
@@ -385,10 +381,10 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  maxBlend = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  maxBlend = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  additive = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  additive = (DrawRectangle)Ram_HeapSlots->ramCode2;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + SHARD_E,
@@ -602,7 +598,7 @@ void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
 /// Stops DMA 0, then arms it to copy one palette line from the battle effect
 /// work into the BG palette at each horizontal blank.
 void BattleEffect_ArmPaletteHBlankDma(void) {
-  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  u8 *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
   u32 palette;
 
@@ -717,8 +713,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   s32 frame;
   s32 i;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = Q_8_8(1);
 
@@ -844,16 +840,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
     struct BattlePresentationTransition *transition =
-        Ram_HeapSlots->transitionWork;
+        Ram_HeapSlots->battleBackground;
     s32 transferMode = 3;
 
     /* FAKEMATCH(temporary): the transfer mode's 3 set in transferMode before
      * the blitter build. */
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
-    BattleEffect_BuildBlitter(HEAP_BLITTER, 8, 7,
+    BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7,
                               COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLITTER_MAX);
-    draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    draw = (DrawRectangle)Ram_HeapSlots->ramCode;
     EFFECT_SET_TRANSFER(work, transferMode, CANVAS_FILL_WORD(2));
     Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
@@ -1059,7 +1055,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   REG_BG2CNT =
       BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   for (i = 0; i != 32; i++) {
     struct Particle *mote = &work->particles[i];

@@ -38,22 +38,22 @@ void FieldMotes_Start(void) {
   register s32 clear asm("r6");
 
   size = sizeof(struct MoteWork__motes);
-  work = HeapSlot_AllocEwram(116, size);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   mote = work->motes;
   // size is reused for the fill's zero; a zero of its own differs.
   size = 0;
   zero = size;
   Dma_Set((void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x205, REG_DMA3);
-  tiles = HeapSlot_AllocEwram(56, 0x400);
+  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gFieldEffect_MoteTiles, tiles);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, tiles);
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   slots = Ram_HeapSlots;
   for (; i < 64; i++) {
-    struct MapWork *view = slots->mapWork;
+    struct MapWork *view = slots->mapGrid;
     s32 *pos;
     /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
      * height's x. */
@@ -102,7 +102,8 @@ void FieldMotes_Start(void) {
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
 /// update and, when asked, plays SE_KIRIN (Scene_QueueMusic).
 void Weather_StartRain(s32 withCue) {
-  struct SparkParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
+  struct SparkParticleWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, 0x814);
   struct SparkParticle *particle = work->particles;
   volatile u32 fill;
   /* FAKEMATCH(pin): the fill's zero held in r1, built after the copy of work.
@@ -116,15 +117,15 @@ void Weather_StartRain(s32 withCue) {
 
   zero = 0;
   Dma_Fill32Cell(fill, zero, work, 0x814);
-  tiles = HeapSlot_AllocEwram(56, 0x400);
+  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gFieldEffect_StreakTiles, tiles);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   slots = Ram_HeapSlots;
   for (; i < 64; i++, particle++) {
-    struct MapWork *view = slots->mapWork;
+    struct MapWork *view = slots->mapGrid;
     s32 *focus;
     /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
      * height's x. */
@@ -187,9 +188,9 @@ void FieldEffect_UpdateSparkles(void) {
   u32 b;
   u32 frames;
 
-  work = Ram_HeapSlots->unk70[1];
+  work = Ram_HeapSlots->weather;
   spawned = 0;
-  map = Ram_HeapSlots->mapWork;
+  map = Ram_HeapSlots->mapGrid;
   camera = &map->viewX;
   spawnX = 0;
   spawnZ = 0;
@@ -280,7 +281,7 @@ struct DustWork {
 
 void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct DustWork);
-  struct DustWork *work = HeapSlot_AllocEwram(116, size);
+  struct DustWork *work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   struct DustParticle *p = work->particles;
   u8 *buf;
   u32 i;
@@ -295,17 +296,17 @@ void FieldEffect_InitializeSparkles(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
               (sizeof(struct DustWork) / 4),
           REG_DMA3);
-  buf = HeapSlot_AllocEwram(56, 0x400);
+  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gFieldEffect_SparkleTiles, buf);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x200, buf);
-  HeapSlot_Release(56);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
 
   i = 0;
   slots = Ram_HeapSlots;
   clear = 0;
   do {
-    struct MapWork *view = slots->mapWork;
+    struct MapWork *view = slots->mapGrid;
     s32 *leader;
     /* FAKEMATCH(temporary): one integer cursor for the stores and the x. */
     u32 attr;
@@ -335,8 +336,9 @@ void Weather_StartLightning(void) {
   struct PaletteFade *buffers;
   volatile u32 zero;
 
-  work = HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
-  buffers = Ram_HeapSlots->block32;
+  work =
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
+  buffers = Ram_HeapSlots->paletteFade;
   zero = 0;
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
@@ -352,21 +354,21 @@ void Weather_StartLightning(void) {
 
 void Weather_StopLightning(void) {
   struct FieldBlendWork *state =
-      HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 0x7fff;
   state->enabled = 0;
 }
 
 void Weather_LastLightning(void) {
   struct FieldBlendWork *state =
-      HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 12;
   state->enabled = 0;
 }
 
 void Weather_ResumeLightning(void) {
   struct FieldBlendWork *state =
-      HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 128;
   state->enabled = 1;
 }
@@ -377,8 +379,9 @@ void Weather_StartLightningFlash(s32 from, s32 to) {
   volatile u32 zero;
   s16 *target;
 
-  work = HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
-  buffers = Ram_HeapSlots->block32;
+  work =
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
+  buffers = Ram_HeapSlots->paletteFade;
   zero = 0;
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),

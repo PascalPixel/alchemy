@@ -241,7 +241,7 @@ extern struct MapCell gMapGridCellBuffer[];
 // Layers 3 and above use the shared buffer.
 s32 MagmaRockInside_SetCollisionRect(u32 layer, u32 x, u32 y, u32 width,
                                      u32 height, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cells;
 
   if (map == NULL)
@@ -289,7 +289,7 @@ void MagmaRockInside_WaitForLanding(struct Actor *object) {
 #include "shared/map_cell_get.h"
 
 s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
   s32 old;
 
@@ -322,7 +322,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
     blocked = &object->blockMarked;
     *blocked = 0;
     if (MapCell_Get(0, object->x >> 20, object->z >> 20) & 0x40) {
-      map = Ram_HeapSlots->mapWork;
+      map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
@@ -624,7 +624,7 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
 // passed (0 for none).
 
 s32 MagmaRockInside_FindStatue(u16 *table) {
-  struct CellWatch *watch = Ram_HeapSlots->effectWork;
+  struct CellWatch *watch = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
   s32 cell = MapCell_Get(0, watch->x >> 20, watch->z >> 20) >> 8;
   u32 id;
@@ -658,7 +658,7 @@ void MagmaRockInside_FlashStatue(struct Actor *object);
 // mode 3.
 void MagmaRockInside_TargetStatue(s32 mode) {
   u16 *table;
-  struct CellWatch *watch = Ram_HeapSlots->effectWork;
+  struct CellWatch *watch = Ram_HeapSlots->fieldEffectWork;
   s32 scene;
 
   table = gMagmaRockInside_Statues;
@@ -826,7 +826,7 @@ hit:
 void MagmaRockInside_EndFallingRocks(void);
 
 void MagmaRockInside_FireStatue(void) {
-  struct MagmaRockInsideWork *work = Ram_HeapSlots->effectWork;
+  struct MagmaRockInsideWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;
 
   Event_Start();
@@ -843,7 +843,7 @@ void MagmaRockInside_FireStatue(void) {
 }
 
 void MagmaRockInside_BurstStatue(s32 mode, s32 cue) {
-  struct MagmaRockInsideWork *work = Ram_HeapSlots->effectWork;
+  struct MagmaRockInsideWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (cue == 0)
     MagmaRockInside_StartFallingRocks();
@@ -919,7 +919,7 @@ void MagmaRockInside_DrainLava(void) {
   s32 srcX;
   s32 srcZ;
   s32 baseX = 0;
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
   struct EffectOptions *lastOptions;
@@ -1274,7 +1274,7 @@ void MagmaRockInside_FloodWithLava(void) {
 
 #define DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(name, n1, n2)                    \
   void name(s32 a, s32 b) {                                                    \
-    struct Actor **work = Ram_HeapSlots->effectWork;                           \
+    struct Actor **work = Ram_HeapSlots->fieldEffectWork;                      \
                                                                                \
     work[5] = Actor_Get(n1);                                                   \
     MagmaRockInside_BurstStatue(a, b);                                         \
@@ -2748,7 +2748,7 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void MagmaRockInside_SetActorCellShape(s32 level, s32 layer, s32 owner) {
   struct Actor *object = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
+  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapGrid->layers[layer].cells -
                                   (struct MapCell *)Ram_MapCellBuffer);
   s32 value = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
   s32 height = Map_GetTerrainHeight(object->layer, object->x, object->z) >> 19;
@@ -2787,7 +2787,7 @@ void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
   /* FAKEMATCH(barrier): an empty asm before the work is read keeps the
    * spills of x and y at the entry. */
   asm("");
-  work = Ram_HeapSlots->menuRuntime;
+  work = Ram_HeapSlots->menuWork;
   /* A goto loop carries no loop notes, so the offsets are rebuilt on every
    */
   /* pass, as the bytes have them; a for loop hoists them. */
@@ -2819,7 +2819,8 @@ void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
 }
 
 void MagmaRockInside_StartFallingRocks(void) {
-  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
+  struct RockWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
@@ -2851,11 +2852,11 @@ void MagmaRockInside_StartFallingRocks(void) {
 }
 
 void MagmaRockInside_EndFallingRocks(void) {
-  struct MagmaRockInsideSparkWork *work = Ram_HeapSlots->menuRuntime;
+  struct MagmaRockInsideSparkWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 void MagmaRockInside_MeetDjinni(void);

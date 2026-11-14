@@ -556,7 +556,7 @@ extern struct MapCell gMapGridCellBuffer[];
 void AnkohlRuins_FlowWithSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
-  struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
+  struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapGrid;
   struct Actor *companion = work->camera;
   struct MapCell *ground;
   struct MapCell *upper;
@@ -636,7 +636,7 @@ void AnkohlRuins_WhirlwindOnOvergrowth(s32 a, s32 id) {
 // the view and is drawn when it is on screen. Then sets a word in map layer 1
 // to the level plus a base.
 void AnkohlRuins_DrawSand(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
@@ -711,7 +711,7 @@ void AnkohlRuins_InitSand(s32 unused) {
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   u32 *tiles = Heap_Alloc(128);
   u32 *pixel = tiles;
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
@@ -813,7 +813,7 @@ extern struct AnkohlRuinsSandRow gAnkohlRuins_FirstSandRows[];
 
 void AnkohlRuins_RaiseFirstSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
+  struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapGrid;
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   s16 i;
   s16 j;
@@ -894,7 +894,7 @@ extern struct AnkohlRuinsSandRow gAnkohlRuins_SecondSandRows[];
 
 void AnkohlRuins_RaiseSecondSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
+  struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapGrid;
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   s32 level;
   s16 i;

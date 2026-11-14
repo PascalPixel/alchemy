@@ -70,8 +70,9 @@ void Animation_ApplyChildValueFar(void *sprite, s32 value);
 // two tiles, which nothing here draws. An object whose picture is larger
 // than 2,048 pixels gets no sway.
 void FieldPsynergy_TremorOnTarget(void) {
-  struct ShakeWork *work = HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, sizeof(*work));
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct ShakeWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *target = scene->child;
   struct TremorSprite *targetSprite = target->sprite;
@@ -198,7 +199,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   VramCache_FreeEntry(tiles);
   FieldPsynergy_FadeFromCastColor();
 release:
-  HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 #undef SWAY_PEAK
@@ -222,8 +223,8 @@ release:
 // and the sprites come back.
 void FieldPsynergy_Tremor(void) {
   struct ViewMoveWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, VIEW_MOVE_WORK_SIZE);
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 frameCount;
   s32 phase;
@@ -302,7 +303,7 @@ void FieldPsynergy_Tremor(void) {
   ViewMove_End();
   ViewMove_RestoreNearbySprites();
   FieldPsynergy_FadeFromCastColor();
-  HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /// Moves rows 1 to rows - 2 of a buffer down one row by DMA, dropping the

@@ -25,9 +25,6 @@ struct ModelTexture__f171bb0 {
   const u8 *pixels;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 // The ring's rows of vertices, two (x, y, z, pad) each. The buffers in this
 // function are constants built from the fixed buffer, not their own symbols.
@@ -70,10 +67,10 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   struct ScreenPoint apos;
   struct ScreenPoint spos;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  sprites = Ram_HeapSlots->battleSheet;
   unit = Unit_Get(args->targets[0]);
   BattleEffect_StartCanvasLayer(0);
   if (mode <= 1) {
@@ -123,7 +120,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
@@ -581,6 +578,5 @@ void BattleEffect_RunCore(s32 a0) { BattleEffect_RunDjinniCharge(a0, 0); }
 
 /// Abilities: Cannon (kind 246).
 void BattleEffect_RunCannon(s32 a0) { BattleEffect_RunDjinniCharge(a0, 1); }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef MAP_CELLS

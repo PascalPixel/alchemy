@@ -27,8 +27,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   s32 rise;
 
   // Setup: the canvas, the blitter pair for the caster's side, the water.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(args, PREPARE(1, args->side, 2), screen,
                                  otherPoint);
@@ -174,8 +174,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   s32 j;
 
   // Setup: the canvas, a max blitter for the side, the two sheets.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(args, PREPARE(0, args->side, 2), screen,
@@ -186,7 +186,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 1);
@@ -232,7 +232,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                               BLITTER_ADDITIVE);
         if (frame <= 3)
-          ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet + 0x65c0,
+          ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, work->sheet + 0x65c0,
                                                    x, y, 20, 40);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
@@ -286,10 +286,10 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                 /* FAKEMATCH(barrier): an empty asm after the mode and the flags
                  * are set. */
                 __asm__("");
-                BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7, flags,
+                BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flags,
                                           mode);
               }
-              draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+              draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
               if (chip->velocityY & COMPOSITE_FLIP_X)
                 chipX = x - gHail_PortalWidths[chip->velocityX] -
                         gHail_PortalX[chip->velocityX] + 24;
@@ -356,7 +356,7 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   struct BattleEffectWork *work;
   s32 *remainingFrames;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   remainingFrames = &work->shakeFrames;
   if (*remainingFrames > 0) {
     s32 randomX = (rangeX - 1) & Random16();
@@ -380,7 +380,7 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
 /// While shakeFrames lasts, moves BG1 and the projection centre up or down
 /// by a random offset within range; then restores them.
 void Camera_ApplyVerticalShake(s32 range) {
-  u8 *fx = Ram_HeapSlots->battleFxWork[0];
+  u8 *fx = Ram_HeapSlots->battleEffect;
   s32 *timer;
 
   timer = (s32 *)(fx + 0x77a8);

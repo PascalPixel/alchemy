@@ -33,9 +33,6 @@ struct RenderModel__f178710 {
 #define TARGET_ANCHOR_PERCENT 300
 #endif
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define DRAGON_SEGMENTS 33
@@ -80,10 +77,10 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   if (args->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -91,7 +88,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
@@ -332,8 +329,6 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
-
 #define FIGURE_FRAMES 108
 #define FIGURE_SWING_FRAME 30 // the first blow
 #define FIGURE_HIT_FRAME 80   // the second, which starts the result phase
@@ -365,15 +360,15 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   s32 y;
 
   heap = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)heap->battleFxWork[0];
-  canvas = heap->battleFxWork[1];
+  work = (struct BattleEffectWork *)heap->battleEffect;
+  canvas = heap->battleCanvas;
   parts = Ram_MapCellBuffer;
   BattleEffect_StartTiledCanvas(0x2001);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)heap->unk64[1];
+  draw[0] = (DrawRectangle)heap->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
@@ -520,10 +515,8 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 #undef TARGET_ANCHOR_PERCENT
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef DRAGON_SEGMENTS
-#undef HEAP_SLOT_BLITTER
 #undef FIGURE_FRAMES
 #undef FIGURE_SWING_FRAME
 #undef FIGURE_HIT_FRAME

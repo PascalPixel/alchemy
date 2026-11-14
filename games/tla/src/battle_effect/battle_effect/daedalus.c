@@ -8,8 +8,6 @@
 
 struct Model;
 
-#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define BURST_FRAMES 48
@@ -49,7 +47,7 @@ struct BurstTexture {
 // scale, how hard the screen shakes and the target's flash colour.
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct BurstTexture texture;
   struct ScreenPoint target;
   struct RenderPrimitive *quad;
@@ -293,16 +291,16 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   // Reused: the second phase's ring radius, and the 0 the third phase stores.
   s32 radius;
 
-  dest = Ram_HeapSlots->battleFxWork[1];
-  work = (struct SummonWork__f17e698 *)Ram_HeapSlots->battleFxWork[0];
-  map = Ram_HeapSlots->unk64[0];
-  ctl = (s32 *)Ram_HeapSlots->transitionWork;
+  dest = Ram_HeapSlots->battleCanvas;
+  work = (struct SummonWork__f17e698 *)Ram_HeapSlots->battleEffect;
+  map = Ram_HeapSlots->battleSheet;
+  ctl = (s32 *)Ram_HeapSlots->battleBackground;
   bank = (s32 *)Ram_HeapSlots->battleWork;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   RagingHeat_FillGradientCanvas();
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit[0] = Ram_HeapSlots->unk64[1];
+  blit[0] = Ram_HeapSlots->ramCode;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   camera = 0;
@@ -1411,7 +1409,7 @@ extern const struct PlacementSource__f17e698
 /// The sparks, after the map cells.
 #define STRIKE_SPARKS ((struct Particle *)gData_02014000)
 
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
+#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define DAEDALUS_FRAMES 108
 #define DAEDALUS_SPARKS 64
 
@@ -1451,8 +1449,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
   s32 ringX;
   s32 discY;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   BattleEffect_ConfigureEffectDisplay();
   REG_WIN0V = WIN_RANGE(16, 128);
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
@@ -1662,7 +1660,6 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
   Sprite_DestroyFar(work->sprites[0]);
   BattleEffect_EndCanvasLayer();
 }
-#undef HEAP_SLOT_BLITTER
 #undef BLITTER
 #undef BURST_FRAMES
 #undef BURST_DRAW_FRAMES

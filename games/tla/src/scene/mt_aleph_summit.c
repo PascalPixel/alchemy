@@ -446,7 +446,7 @@ s32 Scene_Initialize(void) {
     Event_SetDestination(SCENE_STAFF_CREDIT, 1);
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
-    block = slots->block32;
+    block = slots->paletteFade;
     Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
     FieldCamera_MoveTo(256, CAMERA_KEEP, 144, 0);
     FieldCamera_SetSpeed(1);
@@ -749,7 +749,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(9, 4);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     FieldEvent_Wait(10);
-    slots = (struct HeapSlots *)Ram_HeapSlots->mapWork;
+    slots = (struct HeapSlots *)Ram_HeapSlots->mapGrid;
     MapGrid_SetShake(16, 16, 1);
     j = 0;
     scale = -0x1e000;

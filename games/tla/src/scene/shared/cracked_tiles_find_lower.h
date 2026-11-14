@@ -19,7 +19,7 @@ s32 CrackedTiles_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->z = z;
   table->current = -1;
   table->count = 0;
-  map = (struct CellMapWork *)Ram_HeapSlots->mapWork;
+  map = (struct CellMapWork *)Ram_HeapSlots->mapGrid;
   layer = &map->layers[0];
   rows = layer->cells;
   x0 = (layer->originX + map->minX) >> 20;

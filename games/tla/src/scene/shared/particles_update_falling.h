@@ -1,6 +1,6 @@
 /// Updates the falling particles and their sprites.
 void Particles_UpdateFalling(void) {
-  struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
+  struct ParticleWork *work = Ram_HeapSlots->menuWork;
   struct Particle *particle = work->particles;
   struct ParticleSprite *sprite = work->sprites;
   s32 i;

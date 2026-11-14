@@ -111,7 +111,7 @@ extern u8 gMapGridCellBuffer[];
 
 /// Replaces a cell's collision code and attributes, returning the old value.
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cell;
   s32 old;
 
@@ -447,7 +447,7 @@ void TundariaTower_RefluxAppears(void) {
 
 void TundariaTower_ShrinkIceColumn(s32 arg0, s32 arg1) {
   struct EffectOptions options;
-  s16 *effectWork = Ram_HeapSlots->effectWork;
+  s16 *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object = Actor_GetById(effectWork[13]);
   s32 velocityX;
 
@@ -1041,7 +1041,7 @@ loop:
 
 // Finds the current target's table row and shrinks it.
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (*list == 0xffff)
     return;
@@ -1079,7 +1079,7 @@ top:
 // its place; else its cell raised and its shape redrawn), then lifts the
 // leader onto the ground under it.
 UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
   s32 id;
   s32 flag;
@@ -1254,7 +1254,7 @@ void TundariaTower_SetPillarMode3(s32 id) {
 // gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 // it copy actor 9's visual attributes.
 UNUSED void TundariaTower_RestorePillars(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
   s32 id;
   s32 flag;
@@ -1496,7 +1496,7 @@ void TundariaTower_SetLeaderCellShape(s32 a, s32 b) {
 }
 
 void TundariaTower_UpdateFallingRocks(void) {
-  struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
+  struct ParticleWork *work = Ram_HeapSlots->menuWork;
   struct Particle *particle = work->particles;
   struct ParticleSprite *sprite = work->sprites;
   s32 i;
@@ -1560,7 +1560,8 @@ struct RockWork {
 // The falling rocks' setup: loads their picture, sets up 64 small sprites,
 // marks each rock idle and starts the task that spawns them.
 void TundariaTower_StartFallingRocks(void) {
-  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
+  struct RockWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
   s32 resource;
   s32 tile;
   struct Rock *rock;
@@ -1594,11 +1595,11 @@ void TundariaTower_StartFallingRocks(void) {
 }
 
 void TundariaTower_EndFallingRocks(void) {
-  struct TundariaTowerSparkWork *work = Ram_HeapSlots->menuRuntime;
+  struct TundariaTowerSparkWork *work = Ram_HeapSlots->menuWork;
 
   Task_Remove(TundariaTower_UpdateFallingRocks);
   VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 void TundariaTower_FightReflux(void);

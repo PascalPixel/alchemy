@@ -1191,7 +1191,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg);
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 
@@ -1382,7 +1382,7 @@ s32 Scene_Initialize(void) {
 #else
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 *effect = &gFieldWork->transition;
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
@@ -1619,7 +1619,7 @@ extern u8 gMapGridCellBuffer[];
 
 /// Points the map's followed point at cell (x, z), and the screen follows.
 void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   struct MapFocus *focus;
   s32 index, fx = x << 19;
 

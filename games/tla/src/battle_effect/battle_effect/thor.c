@@ -7,8 +7,8 @@
 #include "sounds.h"
 
 // Heap slots 104 and 188 (byte offsets from 0x03000000) hold the blitters.
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
-#define BLITTER_ALTERNATE ((DrawRectangle)Ram_HeapSlots->unkb8[1])
+#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
+#define BLITTER_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
 #define STORM_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0xc58))
 #define STORM_MOTE_CELLS 0x6000
@@ -46,10 +46,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   s32 spawned;
   struct Particle *spark;
 
-  view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
@@ -525,7 +525,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           if (never || neverToo) {
             y = 0;
           }
-          BattleEffect_BuildBlitter(188, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
                                     3 | gThor_CrackleFlips[Random16() & 3], 1);
           BLITTER_ALTERNATE(
               canvas, Ram_MapCellBuffer + gBattleEffect_GlintPictures[cell], x,

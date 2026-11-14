@@ -64,7 +64,7 @@
 #include "graphics/vram_tab.h"
 #include "item_icon.h"
 
-/// The item menu's work, Ram_HeapSlots->menuRuntime (heap slot 220): its
+/// The item menu's work, Ram_HeapSlots->menuWork (heap slot 220): its
 /// windows, the party figures, the items listed and the two choices a command
 /// makes. The Broken Seal's ItemMenuWork, whose names its members take: from
 /// itemWindow to the entry icons it lies 4 bytes further on than The Broken

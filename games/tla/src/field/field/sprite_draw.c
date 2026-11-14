@@ -120,17 +120,18 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   void *vram;
 
   mirrored = 0;
-  system = (struct ObjectSystemColours *)Ram_HeapSlots->objectSystem;
+  system = (struct ObjectSystemColours *)Ram_HeapSlots->actorSystem;
   decoderWasLoaded = 1;
-  decodePicture = Ram_HeapSlots->unk4c[1];
+  decodePicture = Ram_HeapSlots->frameScratch;
   if (decodePicture == NULL) {
     Dma_Set(Render_DecodePictureCode,
-            HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
+            HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
+                           (s32)Render_DecodePictureBlockSize),
             0x84000000 | ((u32)(Render_DecodePictureCopyEnd -
                                 Render_DecodePictureCode) >>
                           2),
             REG_DMA3);
-    decodePicture = Ram_HeapSlots->unk4c[1];
+    decodePicture = Ram_HeapSlots->frameScratch;
     decoderWasLoaded = 0;
   }
 
@@ -360,7 +361,8 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
 
     tile = VramCache_Load(obj->slot, size, 0);
     vram = (void *)((tile << 5) + 0x06010000);
-    ((UploadFn)Ram_HeapSlots->unk4c[2])(pixels, obj->width, obj->height, vram);
+    ((UploadFn)Ram_HeapSlots->pictureUploader)(pixels, obj->width, obj->height,
+                                               vram);
     obj->image.tile = tile;
     obj->dirty = 0;
     system->used += size;
@@ -368,7 +370,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   }
 
   if (decoderWasLoaded == 0)
-    HeapSlot_Release(80);
+    HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
   return mirrored;
 }
 
@@ -651,7 +653,7 @@ void Render_PlaceProjectedSprite(struct LayeredSprite *sprite, s32 *point,
   u32 matrix;
   u32 size;
 
-  if ((u16)Ram_HeapSlots->objectSystem->suspended == 0) {
+  if ((u16)Ram_HeapSlots->actorSystem->suspended == 0) {
     z = Render_ProjectPoint(point, screen);
     if (screen[2] != 0 && (u32)(screen[0] + 32) <= 304 &&
         (u32)(screen[1] + 32) <= 240) {

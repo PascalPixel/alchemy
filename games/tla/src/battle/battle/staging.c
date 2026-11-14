@@ -167,7 +167,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   if (unit->classIndex == CLASS_NONE)
     BattleAI_ChooseAction(request, 1);
 
-  view = Ram_HeapSlots->transitionWork;
+  view = Ram_HeapSlots->battleBackground;
   view->frames = 60;
   view->flag = 0;
   camera = Ram_HeapSlots->cameraWork;
@@ -374,7 +374,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
 s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 completed;
   struct EscapeTransition *presentation =
-      (struct EscapeTransition *)Ram_HeapSlots->transitionWork;
+      (struct EscapeTransition *)Ram_HeapSlots->battleBackground;
   u32 aid = plan->unitId;
   struct BattleWork *scene = Ram_HeapSlots->battleWork;
   // Default: 0 until the party branch copies completed.
@@ -441,7 +441,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   actor = plan->unitId;
   target = plan->targetIds[0];
   if (plan->battleEffect & 0x8000) {
-    struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
+    struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
 
     if (actor <= ALLY_MAX)
       view->targetYaw = YAW_PARTY_ACTION;
@@ -449,7 +449,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       view->targetYaw = YAW_BEHIND_ENEMIES;
     view->frames = 60;
   } else {
-    struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
+    struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
     s32 yaw;
 
     yaw = YAW_ENEMY_ACTION;

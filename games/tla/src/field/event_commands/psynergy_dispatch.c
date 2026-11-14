@@ -59,7 +59,7 @@ void FieldPsynergy_RunHandler(s32 kind) {
 /// Runs the field Psynergy animation the scene names, with no target chosen
 /// yet: each kind runs its effect to the end.
 void FieldPsynergy_Run(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
@@ -153,7 +153,7 @@ void FieldPsynergy_Run(void) {
 /// Runs the field Psynergy animation the scene names on the target the player
 /// chose (BattleFxScene.secondObjectId).
 void FieldPsynergy_Dispatch(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
@@ -239,7 +239,7 @@ void FieldPsynergy_Dispatch(void) {
 }
 
 void FieldPsynergy_FinishMindRead(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
 
   if (scene->fieldKind == FIELD_PSYNERGY_MIND_READ) {
     struct PartyPauseView *party;
@@ -254,7 +254,7 @@ void FieldPsynergy_FinishMindRead(void) {
 /// The extra handler of Reveal, Cloak, Avoid, Sand, Hover and the unnamed kind
 /// 28: what each does when it ends.
 void FieldPsynergy_RunExtraHandler(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
 
   switch (scene->fieldKind) {
   case FIELD_PSYNERGY_REVEAL:
@@ -351,7 +351,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
     if (depth <= 0)
       depth = 1;
   } else {
-    struct DepthMap *map = (struct DepthMap *)Ram_HeapSlots->mapWork;
+    struct DepthMap *map = (struct DepthMap *)Ram_HeapSlots->mapGrid;
     struct DepthScroll *scroll = &map->scroll;
     s32 bias = scroll->offset & 0xffff0000;
     s32 base = map->base->base;
@@ -363,11 +363,11 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
 
 /// Per-frame callback: draws the effect scene's sprite (effect work +0x7c8).
 void BattleEffect_DrawSceneSprite(void) {
-  EffectSprite_Draw((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
+  EffectSprite_Draw((u8 *)Ram_HeapSlots->fieldEffectWork + 0x7c8);
 }
 
 void Func_080dba5c(void) {
-  struct DepthScene *scene = Ram_HeapSlots->effectWork;
+  struct DepthScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainObject;
   struct DepthSprite *sprite;
   s32 position[3];

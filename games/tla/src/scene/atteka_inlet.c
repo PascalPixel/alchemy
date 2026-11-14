@@ -546,7 +546,7 @@ static __inline__ void Task_Add_(void (*func)(void), s32 priority) {
 }
 
 void AttekaInlet_SetUpTheHarbour(void) {
-  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
+  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapGrid;
   struct MainRoutineWork *party;
 
   GameFlag_Set(0x9b4);

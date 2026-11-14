@@ -6,9 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-// The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
-#define HEAP_SLOT_BLITTER 104
-
 #define TASK_PASS_FRAME 0xc80
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
@@ -76,9 +73,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 j;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, the sparks, the colours (blue for the pikes, orange
   // otherwise) and the jaws' texture, then each breath's own sheet: the Beam
@@ -135,10 +132,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The pikes lunge; Blast Breath comes from 32 pixels in front of the user.
@@ -515,8 +512,8 @@ static inline s32 Nothing(void) {}
 // palette and blends its slash more faintly.
 void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   u8 *cells = Ram_MapCellBuffer;
   DrawRectangle draw[2];
   s32 flags;
@@ -537,8 +534,8 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   }
   /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing. */
   Nothing();
-  BattleEffect_BuildBlitter(HEAP_SLOT_BLITTER, 7, 7, flags, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flags, BLITTER_MAX);
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   // Load both crescents and set the blend.
   Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet, cells, 1, 1);
@@ -637,29 +634,28 @@ typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width,
                               s32 height);
 
 void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 half;
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   half = size / 2;
-  ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x - half, y - size,
+  ((CanvasBlitFunc)Ram_HeapSlots->ramCode2)(canvas, source, x - half, y - size,
                                             half, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x, y - size, half,
+  ((CanvasBlitFunc)Ram_HeapSlots->ramCode2)(canvas, source, x, y - size, half,
                                             size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-  ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x - half, y, half,
+  ((CanvasBlitFunc)Ram_HeapSlots->ramCode2)(canvas, source, x - half, y, half,
                                             size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       BLITTER_MAX);
-  ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x, y, half, size);
+  ((CanvasBlitFunc)Ram_HeapSlots->ramCode2)(canvas, source, x, y, half, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 }
-#undef HEAP_SLOT_BLITTER
 #undef BLITTER
 #undef JAW_TEXTURE

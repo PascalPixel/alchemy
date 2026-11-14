@@ -6,9 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-// The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
-#define HEAP_SLOT_BLITTER 104
-
 #define TASK_PASS_FRAME 0xc80
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
@@ -83,9 +80,9 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   s32 first;
   s32 slot;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
 
   // Set up a tiled canvas, filled on the user's side, and a clipped MAX
   // blitter (additive for the Sword Card), mirrored to face the targets.
@@ -110,7 +107,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   scale = 0;
   scroll = 0;
   overflow = 0;
@@ -486,7 +483,6 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef HEAP_SLOT_BLITTER
 #undef BLITTER
 #undef CARD
 #undef CARD_NOISE

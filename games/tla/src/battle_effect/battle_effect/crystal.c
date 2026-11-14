@@ -25,7 +25,7 @@ struct BattleObjectPosition {
   s32 x;
 };
 
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
+#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define CRYSTAL_FRAMES 103
 #define CRYSTAL_SHARDS 32
 
@@ -53,8 +53,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   s32 offset;
   s32 cells;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   discOffsets = (u16 *)(work->sheet + 0x2710);
   cells = (s32)gMapGridCellBuffer;
   Iwram_ClearWords((void *)cells, 0x8000);

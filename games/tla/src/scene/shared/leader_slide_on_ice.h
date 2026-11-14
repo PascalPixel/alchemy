@@ -79,7 +79,7 @@ body:
     goto stop;
   }
   radius = actor->radius - 2;
-  other = Ram_HeapSlots->scriptObjects;
+  other = Ram_HeapSlots->actors;
   flags = &other->collisionFlags;
   for (i = 0; i < 64; i++, flags += 128, other++) {
     if (other->script != NULL && (*flags & 1) && other != actor) {

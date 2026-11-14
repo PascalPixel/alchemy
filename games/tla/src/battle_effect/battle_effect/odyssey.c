@@ -75,9 +75,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   s32 flatKind;
   u8 *pixels;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
@@ -91,9 +91,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   caster = BattleObject_GetFar(args->user)->object;
-  transition = Ram_HeapSlots->transitionWork;
+  transition = Ram_HeapSlots->battleBackground;
   savedScrollX = gBgScroll[1].x;
 
   for (frame = 0; frame != KIND125_FRAMES; frame++) {
@@ -214,7 +214,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       else
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
       draw[1](canvas, work->sheet + 0xc80, x, 64, 158, 56);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
@@ -299,7 +299,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                 BLITTER_MAX);
-          draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+          draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
         }
         draw[i](canvas, work->sheet, x - 20, y, 40, 80);
         if (i == 1)
@@ -473,10 +473,10 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   s32 cosine;
   s32 i;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   savedScrollX = gBgScroll[1].x;
-  transition = Ram_HeapSlots->transitionWork;
+  transition = Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(3);
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -490,7 +490,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   // The cloud sheet, recoloured to palette entries 96 on, drawn into the
   // canvas through the copy blitter.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
   /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette. */
   Swirl_CopyPalette(palette);
@@ -517,9 +517,9 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
     s32 mode = 3;
 
     enabled = 1;
-    BattleEffect_BuildBlitter(104, 8, 7, mode, mode);
+    BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, mode, mode);
   }
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
   transition->active = enabled;
   /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer.
@@ -586,12 +586,12 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   s32 i;
 
   scrollX = (side & 1) * 192 - 64;
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   /* FAKEMATCH(dead): a never-taken five-argument call reserves the stack
    * frame's outgoing argument word at sp+0. */
   if (0)
-    BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
   REG_BG2PA = 0x48;
@@ -765,9 +765,9 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 /// own backdrop over the summon's.
 void Iris_RestoreBattle(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   struct BattlePresentationTransition *transition =
-      Ram_HeapSlots->transitionWork;
+      Ram_HeapSlots->battleBackground;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
 

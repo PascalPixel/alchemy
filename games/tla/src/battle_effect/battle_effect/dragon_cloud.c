@@ -34,12 +34,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   s32 j;
   s32 angle;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   drift = 0;
   x = 0;
   y = 0;
-  graphics = Ram_HeapSlots->unk64[0];
+  graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -393,7 +393,6 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
   EFFECT_FINISH_CANVAS();
 }
-#undef HEAP_SLOT_BLITTER
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT

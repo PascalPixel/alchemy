@@ -106,7 +106,7 @@ void Actor_UpdateAllThumb(void) {
   s32 maximumChange;
   s32 standing;
 
-  object = Ram_HeapSlots->scriptObjects;
+  object = Ram_HeapSlots->actors;
   for (objectsRemaining = 63; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     struct MotionScript *script;
@@ -251,7 +251,7 @@ void Actor_UpdateAllThumb(void) {
           standing = 0;
           object->standingOn = NULL;
           if (object->priorityFlags & 0x40) {
-            struct MotionObject *other = Ram_HeapSlots->scriptObjects;
+            struct MotionObject *other = Ram_HeapSlots->actors;
             s32 i;
 
             for (i = 0; i < 64; i++, other++) {
@@ -426,7 +426,7 @@ void Actor_UpdateAllThumb(void) {
 /// 0x7c) moves with its carrier's last step (the carrier's words at 0x70,
 /// 0x74 and 0x78), and one standing on it is set on its top, 16 pixels up.
 void Actor_MoveWithCarriers(void) {
-  struct Actor *object = Ram_HeapSlots->scriptObjects;
+  struct Actor *object = Ram_HeapSlots->actors;
   s32 i;
 
   for (i = 63; i >= 0; i--, object++) {

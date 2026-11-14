@@ -363,7 +363,7 @@ void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
 void AquaRockInside_JumpForward(void) { Field_TryJumpForward(); }
 
 void AquaRockInside_DouseFirstMoai(s32 unused, s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 *layer;
   s32 i;
   s32 column;
@@ -399,7 +399,7 @@ void AquaRockInside_DouseFirstMoai(s32 unused, s32 id) {
 }
 
 void AquaRockInside_DouseFirstWaterStone(s32 unused, s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 *layer;
   s32 i;
 
@@ -639,7 +639,7 @@ void AquaRockInside_ParchPool(void) {
 }
 
 s32 AquaRockInside_BlockCellUnder(s32 id, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_Get(id);
 
   if (object != 0) {
@@ -686,7 +686,7 @@ void AquaRockInside_DouseThirdMoai(void) {
 }
 
 void AquaRockInside_DouseSecondWaterStone(s32 unused, s32 id) {
-  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
+  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x140);
   s32 i;
 
   FieldActor_SetSpriteColor(Actor_Get(9), 5);
@@ -829,7 +829,7 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 49) {
-    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
+    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x140);
     s32 i;
 
     Event_Start();
@@ -956,7 +956,7 @@ void AquaRockInside_DouseFourthMoai(void) {
 }
 
 void AquaRockInside_DouseFourthWaterStone(s32 unused, s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 *layer;
   s32 i;
 
@@ -979,7 +979,7 @@ void AquaRockInside_DouseFourthWaterStone(s32 unused, s32 id) {
 }
 
 void AquaRockInside_WaterSinks(void) {
-  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
+  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x140);
   s32 i;
 
   Event_Start();
@@ -1614,7 +1614,7 @@ s32 Scene_PrepareMap(void) {
   s32 a, b;
   u8 *map;
 
-  ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
+  ((struct MapBits *)Ram_HeapSlots->mapGrid)->mode = 1;
   AquaRockInside_StartPillars();
   if (scene == SCENE_AQUA_ROCK_INSIDE_1) {
     if ((u32)(entrance - 3) <= 1 || entrance == 6 || entrance == 8) {
@@ -1712,7 +1712,7 @@ s32 Scene_PrepareMap(void) {
       Value3((s32 (*)())AquaRockInside_AddPillar, 14, 4, 4);
       AquaRockInside_AddSpouts(40, 4, 4);
       if (!GameFlag_Get(FLAG_SCENE_TEMP_49) && !Event_GetFlag(0xa64)) {
-        map = (u8 *)Ram_HeapSlots->mapWork;
+        map = (u8 *)Ram_HeapSlots->mapGrid;
         i7 = 39;
         MapGrid_CopyCellsLayered(64, 64, 16, 13, 71, i7);
         MapGrid_CopyCellAttributes(71, 39, 16, 15, 7, i7);
@@ -1807,7 +1807,7 @@ s32 Scene_PrepareMap(void) {
       Value3((s32 (*)())AquaRockInside_AddPillar, 18, 6, 4);
       AquaRockInside_AddSpouts(40, 4, 4);
       if (!GameFlag_Get(FLAG_SCENE_TEMP_4B) && !Event_GetFlag(0xa65)) {
-        map = (u8 *)Ram_HeapSlots->mapWork;
+        map = (u8 *)Ram_HeapSlots->mapGrid;
         i14 = 13;
         MapGrid_CopyCellsLayered(64, 64, 19, 17, 100, i14);
         MapGrid_CopyCellsLayered(35, 105, 23, 24, 35, 73);
@@ -1982,7 +1982,7 @@ void Leader_SpinAway(s32 entrance) {
 // Draws the scene's pillars: a top sprite for each active one and, when it
 // stands above its base, a column sprite as tall as its height.
 void AquaRockInside_DrawPillars(void) {
-  s32 *view = &Ram_HeapSlots->mapWork->viewX;
+  s32 *view = &Ram_HeapSlots->mapGrid->viewX;
   struct PillarWork *work = &gAquaRockInside_Pillars;
   s32 viewX = view[0];
   struct PillarEntry *entry = work->entries;
@@ -1994,7 +1994,7 @@ void AquaRockInside_DrawPillars(void) {
 
   viewX &= 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  originY = Ram_HeapSlots->mapWork->origin[1];
+  originY = Ram_HeapSlots->mapGrid->origin[1];
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
 
   for (i = 0; i < 32; i++) {
@@ -2084,7 +2084,7 @@ void AquaRockInside_StartPillars(void) {
 // in [first, first + 8), at the given heights, and marks those cells as spout
 // cells (120).
 void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = map->layers;
   struct MapCell *cells = layer->cells;
   s32 originX = LAYER_S32(layer, 8) + map->minX;
@@ -2176,7 +2176,7 @@ void AquaRockInside_SetPillarsHeight(s32 height) {
 }
 
 void AquaRockInside_SetPillarHeight(u32 index, s32 height) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct PillarWork *work = &gAquaRockInside_Pillars;
 
   if (index <= 31) {
@@ -2197,7 +2197,7 @@ void AquaRockInside_SetPillarHeight(u32 index, s32 height) {
 
 // Draws thirty-two sprites that each shake by a random few pixels a frame.
 void AquaRockInside_DrawSplashes(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   struct BeamWork *splashes = &gAquaRockInside_Splashes;
   s32 viewX = view[0];
@@ -2283,7 +2283,7 @@ extern s8 gAquaRockInside_StreamTurns[];
 // cells under those left.
 s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
   s32 reached = 0;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct BeamWork *state = &gAquaRockInside_Splashes;
   s32 count = state->count;
   s32 turn;

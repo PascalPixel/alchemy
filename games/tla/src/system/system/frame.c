@@ -109,7 +109,7 @@ void wait(s32 frames) {
     Task_RunPass(TASK_PASS_VBLANK);
     gTasksRunning = 0;
     if (gOamCopyEnabled) {
-      Render_BuildOamList(HeapSlot_Alloc(80, 0x400));
+      Render_BuildOamList(HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH, 0x400));
     } else {
       gOamUsage.used = 0;
       gOamUsage.limit = 256;
@@ -171,7 +171,7 @@ void wait(s32 frames) {
     gLastFrameVBlanks = gFrameVBlanks;
     gFrameVBlanks = 0;
     System_WaitForFrameInterrupt();
-    HeapSlot_Release(80);
+    HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
     Oam_ResetFrame();
     gFrameCount++;
     gPlayTimeFrames++;
@@ -348,7 +348,7 @@ void System_VBlankHandler(void) {
   if (gFrameRenderPending != 0) {
     gFrameRenderPending = 0;
     if (gOamUsage.used != 0)
-      Dma_Set(Ram_HeapSlots->unk4c[1], OAM, 0x84000000 + gOamUsage.used,
+      Dma_Set(Ram_HeapSlots->frameScratch, OAM, 0x84000000 + gOamUsage.used,
               REG_DMA3);
     Copy16Bytes(gBgScroll, REG_BG0HOFS);
     IoWriteQueue_FlushPending();

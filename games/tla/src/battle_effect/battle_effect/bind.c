@@ -30,7 +30,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     *palette++ = RGB(half, half, i);
     i++;
   } while (i != 32);
-  delays = Ram_HeapSlots->unk64[0];
+  delays = Ram_HeapSlots->battleSheet;
   end = 0;
   speed = 16;
   Iwram_CopyWords(PIXEL_BUFFER, (void *)BG_CHAR_BLOCK(2), 0x7800);
@@ -130,9 +130,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 k;
   struct HeapSlots *heap;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   // heap holds the heap slots from here for the second blitter's read, so the
   heap = Ram_HeapSlots;
@@ -184,10 +184,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 
     // A fresh pair of max blitters each frame, the second flipped.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[1] = (DrawRectangle)heap->unkb8[1];
+    draw[1] = (DrawRectangle)heap->ramCode2;
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 
@@ -283,9 +283,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 k;
   struct HeapSlots *heap;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   // heap holds the heap slots from here for the second blitter's read, so the
   heap = Ram_HeapSlots;
@@ -315,10 +315,10 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
 
     // A fresh pair of max blitters each frame, the second flipped.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[1] = (DrawRectangle)heap->unkb8[1];
+    draw[1] = (DrawRectangle)heap->ramCode2;
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 

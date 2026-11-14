@@ -95,7 +95,7 @@ void KNOCK_BACK(void) {
         }
 #if TLA_PATCH_1
         radius = actor->radius - 2;
-        other = Ram_HeapSlots->scriptObjects;
+        other = Ram_HeapSlots->actors;
         flags = &other->collisionFlags;
         /* FAKEMATCH(wrapper): the overlap test forwarded through Value4. */
         for (i = 0; i <= 63; i++, flags += 128, other++) {

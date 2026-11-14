@@ -160,7 +160,7 @@ void LemurianShipDeck_ShowArrival(void) {
 
 /// A task: scrolls the waves' layer half a pixel a frame.
 void LemurianShipDeck_ScrollWaves(void) {
-  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x108);
+  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x108);
   s32 phase = gLemurianShipDeck_WaveScroll;
 
   layer[2] = phase;
@@ -173,7 +173,7 @@ void LemurianShipDeck_ScrollWaves(void) {
 /// A task: bobs the camera's actor and the first map layer together on a sine
 /// wave, its phase advancing 0x200 a frame.
 void LemurianShipDeck_BobDeck(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
   struct Actor *object = EventCamera_GetActor();
   s32 offset = Math_Sin(gLemurianShipDeck_BobPhase) >> 2;
 
@@ -534,7 +534,7 @@ void LemurianShipDeck_SetUpTillerDeck(void) {
 
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *party;
-  struct MapMode *map = (struct MapMode *)Ram_HeapSlots->mapWork;
+  struct MapMode *map = (struct MapMode *)Ram_HeapSlots->mapGrid;
   struct MapModeBits bits = map->bits;
 
   /* FAKEMATCH(temporary): the mode bits changed in a one-byte copy, bits, and
@@ -774,10 +774,10 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   object->retainSpriteCache = 1;
   sprite->nextFrame = 0;
   sprite->unk1b[0] = 0;
-  buffer = HeapSlot_Alloc(68, 0x608);
+  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItem(ITEM_BLACK_CRYSTAL);
   VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
-  HeapSlot_Release(68);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return object;
 }
 

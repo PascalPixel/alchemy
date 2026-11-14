@@ -11,7 +11,7 @@
 /// table into BG2X, one word a line.
 void BattleEffect_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
   u16 control = channel[5];
   u32 io;
@@ -28,7 +28,7 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
 /// moves layer 1.
 void BattleEffect_ArmBg1HBlankDma(void) {
   struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
   u16 control = channel[5];
   u32 io;
@@ -177,9 +177,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
   s32 screen[3];
   DrawRectangle pair[2];
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sheet = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sheet = Ram_HeapSlots->battleSheet;
   if (mode == 10 || mode == 11 || mode == 13 || mode == 14 || mode == 15 ||
       mode == 17 || mode == 18 || mode == 19)
     BattleEffect_StartCanvasLayer(1);
@@ -215,30 +215,30 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+      pair[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
 
-      pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      pair[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
     }
   } else if (mode == 20) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
-    pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    pair[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_TRANSPARENT);
 
-    pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+    pair[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
     REG_BLDALPHA = BLEND_ALPHA(16, 3);
   } else if (mode == 7 || mode == 21) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    pair[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 
-    pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+    pair[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   } else {
     BattleEffect_FetchRectangleBlitters(args->side, pair);
   }
@@ -723,7 +723,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
                   188, 7, 7,
                   gProjectileVolleyB_GlintFlips[Random16() & 3] | CLIP,
                   BLITTER_ADDITIVE);
-              ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+              ((DrawRectangle)Ram_HeapSlots->ramCode2)(
                   canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
                   widths[cel], heights[cel]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);

@@ -1596,7 +1596,7 @@ static __inline__ void Place(void *a, s32 b, s32 c, u32 d, s32 e) {
 }
 
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
-  struct FlashWork *work = HeapSlot_Alloc(220, 0x428);
+  struct FlashWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x428);
   struct Actor *object = Actor_GetById(id);
   s32 slot;
   s32 tile;
@@ -1670,7 +1670,7 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   }
   Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
   VramCache_FreeEntry(slot);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 #undef FIELD_AT
 #undef PALETTE
@@ -1678,7 +1678,7 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
 #undef WORD_AT
 
 void ChampaCliffCaves_DrawSparks(void) {
-  struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuRuntime;
+  struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   struct ChampaCliffCavesSprite *sprite;
   s32 i;
   u8 *tile;
@@ -1737,7 +1737,7 @@ struct ChampaCliffCavesWork__s2d34 {
 };
 
 void ChampaCliffCaves_DrawFallingSparks(void) {
-  struct ChampaCliffCavesWork__s2d34 *work = Ram_HeapSlots->menuRuntime;
+  struct ChampaCliffCavesWork__s2d34 *work = Ram_HeapSlots->menuWork;
   struct ChampaCliffCavesSprite *sprite;
   s32 i;
   u8 *tile;
@@ -1800,7 +1800,7 @@ struct Glow {
 /// and blues, places the glow's two sprites at its spot with their scales, and
 /// lets each sprite's second scale trail its first at 31/40.
 void ChampaCliffCaves_DrawGlow(void) {
-  struct Glow *work = (struct Glow *)Ram_HeapSlots->menuRuntime;
+  struct Glow *work = (struct Glow *)Ram_HeapSlots->menuWork;
   s32 position[3];
   struct GlowSprite__champa_cliff_caves *sprite;
   s32 i;
@@ -1861,7 +1861,7 @@ loop:
        ->v)
 
 void ChampaCliffCaves_StartForgeFire(const s32 *position) {
-  u8 *work = HeapSlot_Alloc(220, 0x1078);
+  u8 *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x1078);
   s32 time;
   s32 state;
 
@@ -1914,7 +1914,7 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
 }
 
 void ChampaCliffCaves_UpdateForgeFire(void) {
-  u8 *work = Ram_HeapSlots->menuRuntime;
+  u8 *work = Ram_HeapSlots->menuWork;
   s32 position[3];
   s32 state;
   s32 time;
@@ -1952,7 +1952,7 @@ void ChampaCliffCaves_UpdateForgeFire(void) {
   MapGrid_SetScreenShake(0, 0, 0);
   VramCache_FreeEntry(FIELD_AT(work, s16, 4188));
   VramCache_FreeEntry(FIELD_AT(work, s16, 4192));
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 #undef FIELD_AT
 
@@ -1987,8 +1987,8 @@ struct Vec3 {
 };
 
 void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
-  struct ChampaCliffCavesWork__s3164 *work =
-      HeapSlot_Alloc(220, sizeof(struct ChampaCliffCavesWork__s3164));
+  struct ChampaCliffCavesWork__s3164 *work = HeapSlot_Alloc(
+      HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork__s3164));
   s32 state;
 
   work->originX = origin->x;
@@ -2019,7 +2019,7 @@ void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
 
 void ChampaCliffCaves_StartSparks(void) {
   struct ChampaCliffCavesWork *work =
-      HeapSlot_Alloc(220, sizeof(struct ChampaCliffCavesWork));
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
   s32 state;
 
   ChampaCliffCaves_DrawFallingSparks();
@@ -2059,7 +2059,7 @@ void ChampaCliffCaves_StartSparks(void) {
        ->v)
 
 void ChampaCliffCaves_UpdateSparks(void) {
-  u8 *work = Ram_HeapSlots->menuRuntime;
+  u8 *work = Ram_HeapSlots->menuWork;
   s32 state = 0;
   s32 time = 0;
 
@@ -2099,7 +2099,7 @@ void ChampaCliffCaves_UpdateSparks(void) {
   Task_Remove(ChampaCliffCaves_DrawGlow);
   VramCache_FreeEntry(FIELD_AT(work, s16, 4188));
   VramCache_FreeEntry(FIELD_AT(work, s16, 4192));
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 struct ThrowAnimations gChampaCliffCaves_ThrowAnimations = {{439, 440, 441}};

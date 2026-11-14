@@ -15,7 +15,7 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 secondSlot;
   struct ItemMenuWork *activeState;
 
-  activeState = Ram_HeapSlots->menuRuntime;
+  activeState = Ram_HeapSlots->menuWork;
   firstSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[0] = (s16)firstSlot;
   if (firstSlot != -1) {
@@ -30,7 +30,7 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 }
 
 void Menu_ResetTwoResourceEntries(void) {
-  struct ItemMenuWork *state = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *state = Ram_HeapSlots->menuWork;
 
   VramCache_FreeEntry((u16)state->resourceSlots[0]);
   VramCache_FreeEntry((u16)state->resourceSlots[1]);
@@ -42,11 +42,11 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 buffer;
   u8 *allocation;
 
-  allocation = HeapSlot_AllocEwram(0x44, 0x608);
+  allocation = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
   buffer = VramCache_Reload(slot, (s32)(allocation + 0x400));
-  HeapSlot_Release(0x44);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return buffer;
 }
 
@@ -67,7 +67,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
                                s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  struct ItemMenuWork *data = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *data = Ram_HeapSlots->menuWork;
 
   if (variant == 0)
     resource = (u16)data->resourceSlots[0];
@@ -93,7 +93,7 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
                                    s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  struct ItemMenuWork *data = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *data = Ram_HeapSlots->menuWork;
 
   if (variant == 0) {
     resource = (u16)data->resourceSlots[0];
@@ -153,7 +153,7 @@ s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
 /// Shows the up arrow when the page of four starting at `index`'s page has one
 /// above it and the down arrow when one follows, among `count` entries.
 void Menu_SetPageArrowsA(s32 index, s32 count) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct WindowSprite *arrow;
 
   if (index < 0)
@@ -176,7 +176,7 @@ void Menu_SetPageArrowsA(s32 index, s32 count) {
 /// As Menu_SetPageArrowsA, with the arrows hopping left and right: the Djinn
 /// menu's columns of party members.
 void Menu_SetPageArrowsB(s32 index, s32 count) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct WindowSprite *arrow;
 
   if (index < 0)
@@ -199,7 +199,7 @@ void Menu_SetPageArrowsB(s32 index, s32 count) {
 /// Sets the page arrows for `index` and sets the chosen party member's figure
 /// apart from the others on its page of four: its y 30, theirs 26.
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 top = index / 4 * 4;
   s32 i;
 
@@ -213,7 +213,7 @@ void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
 }
 
 void Menu_UpdateEntryObjectTransforms(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 scale[2];
   s32 transform[4];
   s32 i;
@@ -242,7 +242,7 @@ s32 Party_GetCharacterSpriteFar(s32 id);
 /// figures in entries 0 and 1, as the Djinn preview shows the pair a Djinni
 /// passes between.
 void Menu_CreatePairEntryObjects(s32 first, s32 second) {
-  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   struct AnimationObject *figure;
   s32 id;
   s32 i;
@@ -273,7 +273,7 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second) {
 }
 
 void Menu_CreateOwnerEntryObjects(s32 first) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u16 owners[14];
   u8 *object;
   s32 i;
@@ -301,7 +301,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
 
 void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
                                  s32 originY) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 i;
 
   for (i = 7; i >= 0; i--)
@@ -319,7 +319,7 @@ void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
 }
 
 void Menu_ReleaseEntryObjects(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   void **objects = menu->memberSprites;
   s32 i;
 
@@ -333,13 +333,13 @@ void Menu_ReleaseEntryObjects(void) {
 }
 
 void DjinnFigures_SetShown(s32 hidden) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   menu->figuresShown = hidden;
 }
 
 void DjinnFigures_UpdateTopRow(void) {
-  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 i;
@@ -378,7 +378,7 @@ void DjinnFigures_UpdateTopRow(void) {
 extern s32 gDjinnFigures_SpriteIds[];
 
 void DjinnFigures_InitializeTopRow(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s8 *object;
   s32 i;
 
@@ -405,7 +405,7 @@ void DjinnFigures_InitializeTopRow(void) {
 }
 
 void DjinnFigures_ReleaseTopRow(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 i;
 
   for (i = 0; i < 4; i++) {
@@ -418,7 +418,7 @@ void DjinnFigures_ReleaseTopRow(void) {
 }
 
 void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s8 *object;
 
   if (menu->figures[index] != NULL) {
@@ -434,7 +434,7 @@ void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
 }
 
 void DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   if (menu->figures[index] != NULL) {
     menu->figureX[index] = x;
@@ -443,21 +443,21 @@ void DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y) {
 }
 
 void DjinnFigures_SetSlotDepth(s32 index, s32 frame) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   if (menu->figures[index] != NULL)
     menu->figureDepths[index] = frame;
 }
 
 void DjinnFigures_SetSlotPhase(s32 index, s32 scale) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   if (menu->figures[index] != NULL)
     menu->figureScales[index] = scale;
 }
 
 void MenuIcon_PushSlots(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct IconSprite *slot;
   s32 i;
 
@@ -476,7 +476,7 @@ extern u16 gData_08105a50[5];
 /// each slot its sprite attributes and tile, keeps the entries for
 /// MenuIcon_ReleaseSlots and starts MenuIcon_PushSlots.
 void MenuIcon_LoadSlots(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct IconSprite *slot = menu->menuIcons;
   u16 *ids = gData_08105a50;
   u16 *resource = menu->menuIconSlots;
@@ -505,7 +505,7 @@ void MenuIcon_LoadSlots(void) {
 }
 
 void MenuIcon_ReleaseSlots(void) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u16 *resource;
   s32 i;
 
@@ -516,14 +516,14 @@ void MenuIcon_ReleaseSlots(void) {
 }
 
 void MenuIcon_SetSlot(s32 index, u32 x, s32 y) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   menu->menuIcons[index].attr.x = x;
   menu->menuIcons[index].attr.y = y;
 }
 
 void MenuIcon_SetActive(s32 active) {
-  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   menu->menuIconsShown = active;
 }

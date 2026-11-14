@@ -50,14 +50,10 @@
 #undef PILLAR_FRAMES
 
 #undef Render_DrawModelList
-#undef SLOT_ALT
 #undef OBJ_TILES
 #undef CLIP
 #undef RECORD_FRAMES
-#undef HEAP_BLITTER_ALTERNATE
 #undef SPARK_COUNT
-#undef HEAP_BLITTER
-#undef SLOT_BLITTER
 #undef BLITTER
 
 // The effects from the Cybele summon to Bolt.
@@ -78,13 +74,10 @@
 #include "battle_effect/growth.c"
 #include "battle_effect/bolt.c"
 
-#undef HEAP_BLITTER
-#undef HEAP_BLITTER_ALTERNATE
 #undef PARTICLES
 #undef SHARDS
 #undef MOTES
 #undef SPARKS
-#undef BLITTER_SLOT
 #undef FLAME_COUNT
 #undef EMBERS
 #undef CHIPS

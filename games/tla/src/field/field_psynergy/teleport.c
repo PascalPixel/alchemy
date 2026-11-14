@@ -39,7 +39,8 @@ extern char ResourceId_ColouredOrbs;
 // a render of a Teleport circle would settle it.
 void Teleport_PlayWhirl(void) {
   s32 position[3];
-  struct TeleportWhirlWork *work = HeapSlot_Alloc(92, sizeof(*work));
+  struct TeleportWhirlWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
@@ -156,7 +157,7 @@ void Teleport_PlayWhirl(void) {
     frame++;
   } while (state != 999);
   VramCache_FreeEntry(entry);
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   FieldPsynergy_MarkWorldMapTilesUsed();
 }
 
@@ -182,7 +183,8 @@ struct SparkWork {
 /// Sparks burst from the leader, Teleport_PlayWhirl's companion in the same
 /// scenes.
 void Teleport_PlaySparks(void) {
-  struct SparkWork *work = HeapSlot_Alloc(92, sizeof(*work));
+  struct SparkWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   struct TeleportSpark *particle;
@@ -314,7 +316,7 @@ void Teleport_PlaySparks(void) {
     frame++;
   } while (state != 999);
   VramCache_FreeEntry(entry);
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /// Runs Teleport_PlaySparks, fades the palettes back to the saved ones and

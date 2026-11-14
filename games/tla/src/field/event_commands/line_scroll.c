@@ -11,7 +11,7 @@
 /// Writes the current page's first entry each frame; HBlank DMA writes the
 /// rest.
 void LineScroll_ArmDma(void) {
-  struct DmaFxPages *work = Ram_HeapSlots->unk84[1];
+  struct DmaFxPages *work = Ram_HeapSlots->lineScroll;
   u32 *line = work->pages[work->page].lines;
   volatile u32 *dest = (volatile u32 *)&REG_BG1HOFS;
   u8 *event = Ram_HeapSlots->fieldWork;
@@ -45,7 +45,7 @@ void LineScroll_ArmDma(void) {
 }
 
 void LineScroll_BuildPage(void) {
-  struct DisplayScrollWork *work = Ram_HeapSlots->unk84[1];
+  struct DisplayScrollWork *work = Ram_HeapSlots->lineScroll;
   u8 mode = work->mode;
   s32 x1 = (s16)gBgScroll[1].x;
   s32 y1 = (s16)gBgScroll[1].y;
@@ -182,7 +182,8 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// send each frame's line offsets.
 void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
                          s32 stepY, s32 ampY) {
-  struct DmaFxWork *work = HeapSlot_AllocEwram(136, sizeof(struct DmaFxWork));
+  struct DmaFxWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_LINE_SCROLL, sizeof(struct DmaFxWork));
   volatile u32 zero;
 
   zero = 0;

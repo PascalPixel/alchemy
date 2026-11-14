@@ -22,9 +22,6 @@ struct ModelTexture__f18df5c {
   const u8 *pixels;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // One star of the opening sky: a point on a sphere and its cell kind.
@@ -81,10 +78,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   s32 req[2];
   struct ModelTexture__f18df5c texture;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  canvas = Ram_HeapSlots->battleCanvas;
   map = gMapGridCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  sprites = Ram_HeapSlots->battleSheet;
   work->args = args;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = Q_8_8(1);
@@ -125,7 +122,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   projected = work->sheet + 0x5740;
   meshA = work->sheet + 0x5f40;
   triangles = work->sheet + 0x6340;
-  transition = Ram_HeapSlots->transitionWork;
+  transition = Ram_HeapSlots->battleBackground;
   stars = (struct MeteorStar *)(work->sheet + 0x7a4);
   // Default: the flight sets these at frame 0.
   pitch = 0;
@@ -157,8 +154,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     }
   }
   mode = 3;
-  BattleEffect_BuildBlitter(SLOT_BLITTER, 8, 7, mode, 1);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, mode, 1);
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   // DEAD: both fields are set again before anything reads them.
   EFFECT_SET_TRANSFER(work, mode, CANVAS_FILL_WORD(4));
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -423,7 +420,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   REG_WIN0V = WIN_RANGE(16, 124);
   REG_WIN1V = WIN_RANGE(0, 136);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
@@ -610,5 +607,4 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Sprite_DestroyFar(work->sprites[0]);
   BattleEffect_EndCanvasLayer();
 }
-#undef SLOT_BLITTER
 #undef BLITTER

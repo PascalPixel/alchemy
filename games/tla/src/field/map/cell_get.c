@@ -11,7 +11,7 @@ extern u8 gMapCellBuffer__cell_get[] __asm__("gMapGridCellBuffer");
 
 /// Returns a cell's collision code and attributes as a halfword.
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cell;
 
   if (map == NULL)

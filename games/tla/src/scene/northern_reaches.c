@@ -407,7 +407,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   void *sheet;
   s32 i, frame, column, zero, entry, sparkEntry, tiles, flying, sparkTiles;
 
-  work = HeapSlot_Alloc(220, 0x1e58);
+  work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x1e58);
   flying = 0;
   Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard), work);
@@ -510,7 +510,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   FieldEvent_Wait(40);
   MapGrid_SetShake(0, 0, 0);
   VramCache_FreeEntry(entry);
-  HeapSlot_Release(220);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 s32 gNorthernReaches_ShipAtRest[] = {

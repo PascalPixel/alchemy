@@ -20,7 +20,7 @@ s32 Forge_Run(s32 actorId) {
   s32 result;
 
   Shop_InitializeWork();
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   shop->shopType = SHOP_TYPE_WEAPONS;
   shop->action = SHOP_ACTION_FORGE;
   shop->keeperGraphics =
@@ -58,7 +58,7 @@ s32 Forge_SelectItem(s32 unitId) { return Shop_SelectSell(unitId); }
 /// the item, redraws the grid and stores the rolled result. Returns 0 when the
 /// item was taken, else -1.
 s32 Forge_OfferItem(s32 unitId, s32 slot) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
   struct BattleUnit *unit = Unit_Get(unitId);
   u32 inventoryEntry = unit->inventory[slot];
   s32 itemId;
@@ -124,7 +124,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   s32 result;
 
   Shop_InitializeWork();
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   shop->itemMode = itemMode;
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
@@ -232,7 +232,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
   s32 column;
   s32 row;
 
-  shop = Ram_HeapSlots->menuRuntime;
+  shop = Ram_HeapSlots->menuWork;
   unit = Unit_Get(unitId);
   inventoryCount = 1;
   redraw = 1;
@@ -376,7 +376,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 /// removed, or, for an item to drop, what the whole stack would sell for.
 /// Called by ItemPicker_SelectItem each time the cursor moves.
 void ItemPicker_DrawItem(struct RenderInput *window, s32 unitId, s32 slot) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
   struct BattleUnit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   u32 inventoryEntry = unit->inventory[slot];
@@ -416,7 +416,7 @@ void ItemPicker_DrawItem(struct RenderInput *window, s32 unitId, s32 slot) {
 /// Queues each loaded icon's sprite while the grid is visible. Runs every
 /// frame as a task.
 void ItemIconGrid_Draw(void) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
 
   if (shop->iconsVisible) {
     struct IconSprite *sprite = shop->iconSprites;
@@ -433,7 +433,7 @@ void ItemIconGrid_Draw(void) {
 
 /// Empties the grid, hides it and starts its drawing task.
 void ItemIconGrid_Initialize(void) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 i;
 
   for (i = ICON_COUNT - 1; i >= 0; i--)
@@ -447,7 +447,7 @@ void ItemIconGrid_Initialize(void) {
 
 /// Stops the drawing task and frees the icons' VRAM cache entries.
 void ItemIconGrid_Release(void) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 i;
 
   Task_Remove(ItemIconGrid_Draw);
@@ -459,7 +459,7 @@ void ItemIconGrid_Release(void) {
 
 /// Places icon `index` at (x, y) screen pixels.
 void ItemIconGrid_SetPosition(s32 index, s32 x, s32 y) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
 
   shop->iconSprites[index].attr.x = x;
   shop->iconSprites[index].attr.y = y;
@@ -467,7 +467,7 @@ void ItemIconGrid_SetPosition(s32 index, s32 x, s32 y) {
 
 /// Shows the grid (1) or hides it (0).
 void ItemIconGrid_SetVisible(s32 visible) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
 
   shop->iconsVisible = visible;
 }
@@ -476,7 +476,7 @@ void ItemIconGrid_SetVisible(s32 visible) {
 /// items (an empty item keeps its old entry) and gives each its sprite
 /// attributes and tile.
 void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
-  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
   struct IconSprite *sprite;
   s32 entry;
   s32 i;

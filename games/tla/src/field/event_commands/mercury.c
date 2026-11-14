@@ -75,7 +75,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
     return;
 
   FieldEffect_InitializeSlots();
-  effectSlots = Ram_HeapSlots->effectWork;
+  effectSlots = Ram_HeapSlots->fieldEffectWork;
   Shop_SaveAndTintFieldPaletteFar(0x204084);
   wait(30);
   djinni->visible = 0;

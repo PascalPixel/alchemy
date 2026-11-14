@@ -16,7 +16,7 @@ void *Unit_Get(s32 owner) {
     unit = &states[owner];
     return unit;
   }
-  if ((u32)owner - 0x80 < 6 && (states = Ram_HeapSlots->unkd0[2]) != NULL) {
+  if ((u32)owner - 0x80 < 6 && (states = Ram_HeapSlots->enemyUnits) != NULL) {
     unit = &states[owner - 0x80];
     return unit;
   }

@@ -298,7 +298,7 @@ extern s8 gPushFootprints[][4];
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 s32 PushTarget_FillFootprint(s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_Get(id);
   s16 shape = *(s16 *)((struct FieldSprite *)object->sprite)->record;
   s16 i = 0;

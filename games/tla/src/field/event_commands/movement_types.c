@@ -256,7 +256,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
 
   found = NULL;
   best = 40;
-  entry = Ram_HeapSlots->scriptObjects;
+  entry = Ram_HeapSlots->actors;
   for (cnt = 0; cnt < 64; cnt++, entry++) {
     if (entry->script == NULL)
       continue;
@@ -298,7 +298,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
 /// Whether the ground at position stops a jump: terrain kind above 2 on a
 /// layered map; never on the world map or with no map.
 s32 MapGrid_BlocksJump(struct Actor *object, s32 *position) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   if (map == 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP ||
@@ -358,7 +358,7 @@ again:
 
   // A platform 16 pixels below the landing makes it a jump spot.
   if (leader->priorityFlags & 0x40) {
-    entry = Ram_HeapSlots->scriptObjects;
+    entry = Ram_HeapSlots->actors;
     for (i = 0; i < 64; i++, entry++) {
       s32 bound = 0x7ffff;
       s32 delta;
@@ -393,7 +393,7 @@ again:
   }
 
   // A solid object at the landing blocks it.
-  entry = Ram_HeapSlots->scriptObjects;
+  entry = Ram_HeapSlots->actors;
   for (i = 0; i < 64; i++, entry++) {
     if (entry->script != NULL && !(entry->priorityFlags & 0x80) &&
         entry != leader && entry->collisionFlags != 0 &&
@@ -434,7 +434,7 @@ again:
     Actor_SelectAnimationFar(leader, 6);
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
-    map = Ram_HeapSlots->mapWork;
+    map = Ram_HeapSlots->mapGrid;
     attr = map->unk017;
     if (attr & 12) {
       s32 cellX = leader->x >> 20;
@@ -493,7 +493,7 @@ void Actor_WaitForMoveById(s32 id);
 /// Field_ClimbDown does, or lets go and falls when it cannot.
 s32 Field_ClimbDown(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 gridX;
   s16 spriteFlags;
   struct MapCell *ground;
@@ -540,7 +540,7 @@ s32 Field_ClimbDown(void) {
     position[0] = leader->x;
     position[1] = leader->y - 0x200000;
     position[2] = leader->z + 0x100000;
-    entry = Ram_HeapSlots->scriptObjects;
+    entry = Ram_HeapSlots->actors;
     for (i = 0; i < 64; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
           entry != leader &&
@@ -591,7 +591,7 @@ failure:
 /// Field_ClimbUp does.
 s32 Field_ClimbUp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s16 spriteFlags = 1;
   struct MapCell *ground;
   s32 gridX = 8 + ((leader->x >> 16) & 0xfff0);
@@ -658,7 +658,7 @@ s32 Field_ClimbUp(void) {
     position[1] = leader->y + 0x100000;
     position[2] = leader->z - 0x100000;
     i = 0;
-    entry = Ram_HeapSlots->scriptObjects;
+    entry = Ram_HeapSlots->actors;
     for (; i < 64; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
           entry != leader &&

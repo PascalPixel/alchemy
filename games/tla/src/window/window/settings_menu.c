@@ -99,7 +99,7 @@ void SettingsMenu_AnimateCursors(void) {
   s32 selection;
   struct OptionWork *work;
 
-  work = Ram_HeapSlots->unkd0[0];
+  work = Ram_HeapSlots->settingsMenu;
   selection = work->page;
   MenuCursor_AdvanceFar(&work->cursor);
   MenuCursor_MoveTowardTargetFar(&work->marker[0]);
@@ -135,7 +135,8 @@ void SettingsMenu_InitializeWork(void) {
   struct OptionWork *work;
   volatile u32 zero;
 
-  work = (struct OptionWork *)HeapSlot_AllocEwram(208, 0x628);
+  work =
+      (struct OptionWork *)HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
   zero = 0;
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x628 / 4),
@@ -159,7 +160,7 @@ void SettingsMenu_AnimateCursors(void);
 /// The task goes first, since it reads the work block.
 void SettingsMenu_Release(void) {
   Task_Remove(SettingsMenu_AnimateCursors);
-  HeapSlot_Release(208);
+  HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
 #define SLIDER_PALETTE 14
@@ -250,7 +251,7 @@ struct RenderInput *SettingsMenu_Open(void) {
   s32 y;
   s32 msg;
 
-  work = (struct WorkspaceWork *)Ram_HeapSlots->unkd0[0];
+  work = (struct WorkspaceWork *)Ram_HeapSlots->settingsMenu;
   win = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14,
                       WINDOW_FLAG_INSTANT);
   Window_DrawDividerLine((struct Window *)win, 0, 2, OPTION_DIVIDER_END, 2);
@@ -428,7 +429,7 @@ s32 SettingsMenu_Run(void) {
   redraw = 1;
   selectedOption = 0;
   SettingsMenu_InitializeWork();
-  work = Ram_HeapSlots->unkd0[0];
+  work = Ram_HeapSlots->settingsMenu;
   helpWindow = Window_Create(HELP_WINDOW_X, 2, HELP_WINDOW_WIDTH, 3,
                              WINDOW_FLAG_INSTANT);
   settingsWindow = SettingsMenu_Open();
@@ -590,7 +591,7 @@ struct ScreenPageWork {
 };
 
 void PauseMenu_AnimateCursor(void) {
-  struct ScreenPageWork *work = Ram_HeapSlots->unkd0[0];
+  struct ScreenPageWork *work = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
   WindowSprite_Pulse((void *)work->values[work->page]);
@@ -602,7 +603,7 @@ void PauseMenu_AnimateCursor(void) {
 /// PauseMenu_Run opens the settings menu. The task runs in the
 /// frame pass.
 void PauseMenu_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(208, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
 
   Dma_Fill32(0, work, 0x628);
   Task_Add(PauseMenu_AnimateCursor, TASK_PASS_VBLANK);
@@ -612,7 +613,7 @@ void PauseMenu_Initialize(void) {
 /// The task goes first, since it reads the work block.
 void PauseMenu_Release(void) {
   Task_Remove(PauseMenu_AnimateCursor);
-  HeapSlot_Release(208);
+  HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
 struct WorkspaceScreen {
@@ -642,7 +643,7 @@ struct RenderInput *PauseMenu_Open(void) {
   s32 i;
 
   rows = 3;
-  work = Ram_HeapSlots->unkd0[0];
+  work = Ram_HeapSlots->settingsMenu;
   settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   if (settingsOnly != 0) {
@@ -752,7 +753,7 @@ s32 PauseMenu_Choose(s32 initial) {
   settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   PauseMenu_Initialize();
-  work = Ram_HeapSlots->unkd0[0];
+  work = Ram_HeapSlots->settingsMenu;
   wait(1);
   window = PauseMenu_Open();
   pair = MenuTitle_Create(7, window, 40, HEADING_Y);

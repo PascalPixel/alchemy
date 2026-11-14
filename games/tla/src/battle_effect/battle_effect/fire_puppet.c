@@ -36,9 +36,6 @@ struct RenderModel__f17bd88 {
   u8 scrollV;
 };
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // The target's motion object, as the effect reads it.
@@ -78,10 +75,10 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   s32 i;
 
   buffer = Data_02012000;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   if (args->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -233,8 +230,6 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
-
 #define SWING_FRAMES 52
 #define SWING_HIT_FRAME 18
 #define SPARK_COUNT 256
@@ -257,18 +252,18 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   s32 i;
 
   heap = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)heap->battleFxWork[0];
-  canvas = heap->battleFxWork[1];
-  sparkCels = heap->unk64[0];
+  work = (struct BattleEffectWork *)heap->battleEffect;
+  canvas = heap->battleCanvas;
+  sparkCels = heap->battleSheet;
 
   BattleEffect_StartCanvasLayer(1);
   if (args->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    draw[0] = (DrawRectangle)heap->unk64[1];
+    draw[0] = (DrawRectangle)heap->ramCode;
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[0] = (DrawRectangle)heap->unk64[1];
+    draw[0] = (DrawRectangle)heap->ramCode;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                              0);
@@ -378,11 +373,9 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef SLOT_BLITTER
 #undef BLITTER
 #undef FIRE_PUPPET_FRAMES
 #undef PUPPET_SEGMENTS
-#undef HEAP_SLOT_BLITTER
 #undef SWING_FRAMES
 #undef SWING_HIT_FRAME
 #undef SPARK_COUNT

@@ -52,7 +52,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ((void (*)(struct Actor *))actor->watchedActor)(actor);
     }
 
-    map = Ram_HeapSlots->mapWork;
+    map = Ram_HeapSlots->mapGrid;
     tileX = actor->x >> 20;
     tileZ = actor->z >> 20;
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];

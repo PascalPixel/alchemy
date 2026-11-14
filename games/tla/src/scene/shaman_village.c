@@ -401,7 +401,7 @@ void ShamanVillage_WaveWhirlwindLines(void) {
 }
 
 void ShamanVillage_ScrollSandLayer(void) {
-  s32 *view = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 376);
+  s32 *view = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 376);
 
   view[2] -= 0x20000;
 
@@ -1447,10 +1447,10 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
     object->retainSpriteCache = 1;
     sprite->nextFrame = 0;
     sprite->unk1b[0] = 0;
-    buffer = HeapSlot_Alloc(68, 0x608);
+    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_SHAMANS_ROD);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   return object;
 }
@@ -2095,7 +2095,7 @@ void ShamanVillage_CountDownToStart(void) {
 /// Moapa's first test: Sheba steps up and casts Whirlwind on the purple rock,
 /// and the sand is gone.
 void ShamanVillage_ShebaClearsSand(void) {
-  u8 *work = Ram_HeapSlots->effectWork;
+  u8 *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object = ((struct Actor *)Actor_GetById(16));
 
   s32 result;

@@ -72,7 +72,7 @@ s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
 
 void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
-  struct BattlePresentationTransition *trans = Ram_HeapSlots->transitionWork;
+  struct BattlePresentationTransition *trans = Ram_HeapSlots->battleBackground;
 
   if ((gInput.held & KEY_L) != 0) {
     cam->yaw += 512;
@@ -97,7 +97,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
     return -1;
 
   action->target = BattleAbility_ReplaceDefeated(action);
-  transition = Ram_HeapSlots->transitionWork;
+  transition = Ram_HeapSlots->battleBackground;
   // Here any unit id above 4 counts as an enemy.
   if (action->unitId > 4)
     yaw = -0x2000;
@@ -123,7 +123,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
     break;
   case COMMAND_ATTACK:
   default: {
-    struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
+    struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
     view->flag = 0;
     AutoBattle_RunAttackOrItem(action);
     view->flag = 0;
@@ -223,7 +223,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 
   {
     struct BattlePresentationTransition *transition =
-        Ram_HeapSlots->transitionWork;
+        Ram_HeapSlots->battleBackground;
     transition->targetYaw =
         action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
     transition->frames = 60;
@@ -304,11 +304,11 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 
-  if (Ram_HeapSlots->transitionWork->targetYaw == YAW_PARTY_ACTION) {
-    Ram_HeapSlots->transitionWork->targetYaw = YAW_PARTY_ACTION;
+  if (Ram_HeapSlots->battleBackground->targetYaw == YAW_PARTY_ACTION) {
+    Ram_HeapSlots->battleBackground->targetYaw = YAW_PARTY_ACTION;
     wait(10);
   } else {
-    Ram_HeapSlots->transitionWork->targetYaw = YAW_PARTY_ACTION;
+    Ram_HeapSlots->battleBackground->targetYaw = YAW_PARTY_ACTION;
     wait(30);
   }
 
@@ -353,7 +353,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition =
-      Ram_HeapSlots->transitionWork;
+      Ram_HeapSlots->battleBackground;
   struct MotionObject *object;
   s32 facing;
   s32 i;

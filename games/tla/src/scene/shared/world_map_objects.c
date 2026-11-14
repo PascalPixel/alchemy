@@ -113,7 +113,7 @@ void WorldMap_UpdatePlacedActors(void) {
   struct Actor **slot;
   /* FAKEMATCH(pin): the form kept. */
   register struct FieldWork *work asm("r9") = Ram_HeapSlots->fieldWork;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = work->camera;
   s32 zoom = map->zoom;
   s32 x = object->x;
@@ -214,7 +214,7 @@ void WorldMap_UpdatePlacedActors(void) {
 /// While the object system runs, the world map's blend is queued for the
 /// next frames.
 void WorldMap_QueueBlend(void) {
-  if ((u16)Ram_HeapSlots->objectSystem->suspended == 0) {
+  if ((u16)Ram_HeapSlots->actorSystem->suspended == 0) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f8e, 0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 12, 0x20000);
   }

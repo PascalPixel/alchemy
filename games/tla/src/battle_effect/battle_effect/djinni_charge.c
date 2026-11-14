@@ -14,10 +14,6 @@ struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-
-#define SLOT_BLITTER 104 // unk64[1]
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 /* VIEW(ability_effects): routine Render_ProjectVertices as void
@@ -61,10 +57,10 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   mesh = gData_02014000;
   projected = Data_02012000;
   cells = gMapGridCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sprites = Ram_HeapSlots->unk64[0];
+  sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args, (args->side << 4) | (gDjinniCharge_EntranceFlags[mode] << 5) | 2,
@@ -84,7 +80,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
     }
-    blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
     EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     target = BattleObject_GetFar(args->targets[0])->object;
@@ -415,5 +411,4 @@ void BattleEffect_RunRime(s32 a0) { BattleEffect_RunDjinniSign(a0, 0); }
 
 /// Abilities: Haze (kind 238).
 void BattleEffect_RunHaze(s32 a0) { BattleEffect_RunDjinniSign(a0, 1); }
-#undef SLOT_BLITTER
 #undef BLITTER

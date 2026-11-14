@@ -12,7 +12,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
     blocked = &object->blockMarked;
     *blocked = 0;
     if (MagmaRockInside_GetCell(0, object->x >> 20, object->z >> 20) & 0x40) {
-      map = Ram_HeapSlots->mapWork;
+      map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;

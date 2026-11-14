@@ -2109,11 +2109,11 @@ void MarsLighthouseAerie_LightBeacon(void) {
     A(object)->speedLimit = 0x6666;
     A(object)->acceleration = 0xccc;
     A(object)->gravity = px(1) / 2;
-    block = HeapSlot_Alloc(68, 0x608);
+    block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     tiles = (block + 0x400);
     Vram_Load(sprite->vramBlock, 128, tiles);
-    HeapSlot_Release(68);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     A(object)->motionFlags = zero;
     FieldActor_SetMoveTarget(object, 512, 128, 280);
     FieldActor_WaitForMove(object);
@@ -2820,7 +2820,7 @@ void MarsLighthouseAerie_ClearCastOffer(void) {
 #if TLA_PATCH_1
 /// From patch 1: talking to the one Halt holds keeps the hold during the talk.
 void MarsLighthouseAerie_BeginTalkWhileHalted(s32 id) {
-  u8 *work = Ram_HeapSlots->windowTiles;
+  u8 *work = Ram_HeapSlots->windowWork;
 
   if (((struct MarsLighthouseAerieParty *)&gMainRoutineWork)->held == id)
     work[0x138a] = 1;
@@ -2838,7 +2838,7 @@ struct HeldHalfword {
 
 /// From patch 1: the talk over, Halt's hold on its speaker ends.
 void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
-  u8 *work = Ram_HeapSlots->windowTiles;
+  u8 *work = Ram_HeapSlots->windowWork;
   struct MarsLighthouseAerieParty *party =
       (struct MarsLighthouseAerieParty *)&gMainRoutineWork;
   s32 held = party->held;
@@ -2966,7 +2966,7 @@ void MarsLighthouseAerie_HaltGladParent(void) {
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
+  u8 *saved = Ram_HeapSlots->paletteFade;
 
   gPaletteCycle_Slots = slots;
   gPaletteCycle_FlashColors = colours;

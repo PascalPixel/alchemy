@@ -93,9 +93,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   s32 point[3];
   DrawRectangle blit[2];
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sprites = Ram_HeapSlots->battleSheet;
   shift = 0;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 13)

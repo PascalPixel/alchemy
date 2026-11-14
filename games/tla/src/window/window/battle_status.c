@@ -123,7 +123,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   s32 groupPosition;
   struct SummaryOam *sprite;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   redraw = 1;
   memberIndex = -1;
   statusCount = 0;

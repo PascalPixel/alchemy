@@ -4,7 +4,7 @@
 
 #include "../window_internal.h"
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
 void Window_DrawOpened(struct Window *window);
 void Window_WaitZoom(void *work);
@@ -71,8 +71,8 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
 void WindowSystem_InitField(void) {
   struct WindowWork *work;
 
-  work =
-      (struct WindowWork *)HeapSlot_AllocEwram(60, sizeof(struct WindowWork));
+  work = (struct WindowWork *)HeapSlot_AllocEwram(HEAP_SLOT_WINDOW,
+                                                  sizeof(struct WindowWork));
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
@@ -96,8 +96,8 @@ void WindowSystem_InitBattle(s32 kind) {
     return Iwram_ClearWordsEntry((void *)(0x0600000c + dst * 32), 20);
   }
 
-  work =
-      (struct WindowWork *)HeapSlot_AllocEwram(60, sizeof(struct WindowWork));
+  work = (struct WindowWork *)HeapSlot_AllocEwram(HEAP_SLOT_WINDOW,
+                                                  sizeof(struct WindowWork));
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
@@ -120,7 +120,7 @@ void WindowSystem_InitBattle(s32 kind) {
 }
 
 void WindowSystem_UploadTilemap(void) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 flags;
   u8 *src;
   u8 *dst;
@@ -147,7 +147,7 @@ void WindowSystem_UploadTilemap(void) {
 }
 
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *cursor = &canvas->tilemap[y][x];
   s32 tile;
   u32 bottom;
@@ -366,7 +366,7 @@ void WindowSprite_ClearList(void *work) {
   }
 }
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
 // Clears an area of a window's interior to the window fill. left, top, right
 // and bottom are pixels inside the window, and the area covers every tile
@@ -455,7 +455,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   if ((u8)entry->kind != 0) {
     VramCache_FreeEntry((u8)entry->index);
     if ((u8)entry->kind == 2) {
-      u8 *dst = (u8 *)Ram_HeapSlots->windowTiles;
+      u8 *dst = (u8 *)Ram_HeapSlots->windowWork;
       s32 idx = entry->sprite.oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
       *(u16 *)(dst + idx) = 0x3E7;
     }
@@ -465,7 +465,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
 
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct UiChannelSlot *render = work->channels;
   struct UiChannelSlot *found = NULL;
   u32 i;
@@ -503,7 +503,7 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
   return found;
 }
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
 void Text_StartCanvasScroll(struct UiChannelSlot *channel);
 
@@ -585,7 +585,7 @@ void Text_FillCanvasBackground(void) {
 
 void Message_ResetIdle(void) {
   struct UiChannelSlot *slot =
-      ((struct WindowWork *)Ram_HeapSlots->windowTiles)->channels;
+      ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
   struct UiChannelSlot *selection = 0;
   s32 i;
 
@@ -613,7 +613,7 @@ void Message_ResetIdle(void) {
 /// Copies the message's text colour, outline and line spacing into the shared
 /// glyph renderer before that message draws its next character.
 void Message_ApplyStyle(struct UiChannelSlot *channel) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   work->colour = channel->colour;
   work->outline = channel->outline;

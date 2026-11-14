@@ -67,9 +67,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   u8 *graphics;
   s32 i;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  graphics = Ram_HeapSlots->unk64[0];
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
@@ -400,23 +400,23 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
 static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
                             s32 size, s32 index) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
+  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (u8 *)(discs[index] + cells),
                                            x - (size >> 1), y - size, size >> 1,
                                            size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
+  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (u8 *)(discs[index] + cells),
                                            x, y - size, size >> 1, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
+  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (u8 *)(discs[index] + cells),
                                            x - (size >> 1), y, size >> 1, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
+  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (u8 *)(discs[index] + cells),
                                            x, y, size >> 1, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 }
@@ -452,16 +452,16 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   s32 j;
   s32 cells = (s32)Ram_MapCellBuffer;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  graphics = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  graphics = Ram_HeapSlots->battleSheet;
   if (mode <= 1)
     BattleEffect_StartCanvasLayer(1);
   else
     BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   discs = (s16 *)work->sheet;
   if (mode == 0)
     frames = 78;

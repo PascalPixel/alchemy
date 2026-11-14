@@ -92,11 +92,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void AncientLemuria_KeepCameraSouth(void) {
-  Ram_HeapSlots->mapWork->minZ = px(750);
+  Ram_HeapSlots->mapGrid->minZ = px(750);
 }
 
 void AncientLemuria_LetCameraNorth(void) {
-  Ram_HeapSlots->mapWork->minZ = px(352);
+  Ram_HeapSlots->mapGrid->minZ = px(352);
 }
 
 void AncientLemuria_StartMovingStatue(void) {}

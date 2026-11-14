@@ -43,9 +43,9 @@ void Camera_WorldToScreen(s32 *position);
 
 /// Task of the Burst: cycles its particles' colours and draws them.
 void FieldPsynergy_UpdateBurst(void) {
-  struct GlowWork *work = (struct GlowWork *)Ram_HeapSlots->battleFxWork[0];
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];
+  struct GlowWork *work = (struct GlowWork *)Ram_HeapSlots->battleEffect;
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
   struct GlowParticle *particle;
   struct EffectSprite *sprite;
   volatile u16 *palette;
@@ -318,8 +318,9 @@ void Camera_WorldToScreen(s32 *position);
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 
 void FieldPsynergy_Burst(void) {
-  struct GlowWork *work = HeapSlot_Alloc(92, sizeof(struct GlowWork));
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct GlowWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GlowWork));
+  struct FxScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct GlowParticle *particle;
@@ -340,7 +341,7 @@ void FieldPsynergy_Burst(void) {
   scene->y += px(10);
   FieldPsynergy_FadeToCastColor();
   BattleEffect_StartCanvasSprite();
-  canvas = Ram_HeapSlots->unkec[1];
+  canvas = Ram_HeapSlots->canvasSprite;
   pos[0] = scene->x;
   pos[1] = scene->y;
   pos[2] = scene->z;
@@ -399,7 +400,7 @@ void FieldPsynergy_Burst(void) {
     particle++;
   }
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
-                      Ram_HeapSlots->battleFxWork[1]);
+                      Ram_HeapSlots->battleCanvas);
   canvas->command = CANVAS_UPLOAD;
   Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
@@ -425,5 +426,5 @@ void FieldPsynergy_Burst(void) {
   VramCache_FreeEntry(burstEntry);
   FieldPsynergy_FadeFromCastColor();
   BattleEffect_EndCanvasSprite();
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

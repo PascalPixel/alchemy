@@ -56,9 +56,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
+  sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
 
   // The larger variants stretch the wall wider: BG2 at 1.25 and 1.5.
@@ -148,10 +148,10 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   // Two max blitters, the second mirrored for the right half.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -362,7 +362,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 /// Takes the first free animation entry of the 64 and clears it for use. With
 /// none free it clears the entry at address 0.
 struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
-  struct AnimationEntry *entry = Ram_HeapSlots->unk0c[0];
+  struct AnimationEntry *entry = Ram_HeapSlots->spriteAnimations;
   struct AnimationEntry *found = NULL;
   s32 i = 0;
   void *none = NULL;
@@ -426,7 +426,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
                                    s32 flags) {
   struct EffectSprite *found = NULL;
   s32 vramEntry = VramCache_FindFreeEntry();
-  struct EffectSprite *sprite = Ram_HeapSlots->unk0c[1];
+  struct EffectSprite *sprite = Ram_HeapSlots->sprites;
   s32 i = 0;
   struct ObjectSystemWork *objects;
   s32 size;
@@ -471,7 +471,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   sprite->unk1a = 0;
   Animation_ApplyChildArgumentFar(sprite, 0);
 
-  objects = Ram_HeapSlots->objectSystem;
+  objects = Ram_HeapSlots->actorSystem;
   size = sprite->width * sprite->height;
   if (!(attributes & 0x2000))
     size = (u32)size >> 1;
@@ -483,8 +483,6 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 #undef Actor_SetAnimationSpeedFar
 #undef PARTICLES
 #undef CLIP
-#undef HEAP_BLITTER
-#undef HEAP_BLITTER_ALTERNATE
 #undef BLITTER
 #undef SPARKS
 #undef PUFF_COUNT

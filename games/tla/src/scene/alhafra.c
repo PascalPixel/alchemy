@@ -71,6 +71,43 @@ enum AlhafraActorId {
   ACTOR_HUNGRY_BOY = ACTOR_FIRST_PLACED + 19
 };
 
+/// The Alhafrans the events move once Briggs is caught
+/// (gAlhafra_ActorPlacementsOnceBriggsIsCaught).
+enum AlhafraOnceBriggsIsCaughtActorId {
+  /// "Hey! You there! Sailor boy! Get back to work!"
+  ACTOR_MAN_SCOLDING_THE_SAILOR = ACTOR_FIRST_PLACED + 11,
+  /// "What does a sailor like me know about building houses, anyway?"
+  ACTOR_SAILOR_BUILDING_HOUSES = ACTOR_FIRST_PLACED + 16,
+  /// The family on the step where the mother finds five gold coins.
+  ///@{
+  ACTOR_GOLD_COIN_FINDERS_HUSBAND = ACTOR_FIRST_PLACED + 20,
+  ACTOR_GOLD_COIN_FINDER,
+  ACTOR_GOLD_COIN_FINDERS_CHILD
+  ///@}
+};
+
+/// Madra's mayor and his party, who arrive hunting Briggs
+/// (Alhafra_MadransArrive), on the last rows of gAlhafra_ActorPlacements.
+enum AlhafraMadransActorId {
+  /// "Uh... The mayor? Just keep going down this road."
+  ACTOR_ALHAFRAN_GIVING_DIRECTIONS = ACTOR_FIRST_PLACED + 9,
+  /// "We're here to bring in Briggs the Champa."
+  ACTOR_MADRAN_HUNTING_BRIGGS = ACTOR_FIRST_PLACED + 21,
+  /// Madra's mayor (his sprite, as Madra's ACTOR_MAYOR): "Madra's a pretty
+  /// big place, but this town is huge!"
+  ACTOR_MADRAS_MAYOR,
+  /// Madra's soldiers (the drawbridge guard's sprite).
+  ///@{
+  ACTOR_FIRST_MADRAN_SOLDIER,
+  ACTOR_SECOND_MADRAN_SOLDIER,
+  ///@}
+  /// "We-We're here?" ... "He's coming now..."
+  ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
+  /// Who comes last, asked after as the Elder: "Haaa hoo hooo... Are
+  /// we...here?"
+  ACTOR_MADRAN_ELDER
+};
+
 extern struct ActorPlacement gAlhafra_ActorPlacements[];
 extern struct ActorPlacement gAlhafra_ActorPlacementsOnceBriggsIsCaught[];
 extern struct ActorPlacement gAlhafra_ActorPlacementsOnceTheShipIsStolen[];
@@ -197,18 +234,20 @@ void Alhafra_FreezePuddle(s32 a0, s32 a1) {
 void Alhafra_SailorToldToWork(void) {
   Event_SetMessageId((s32)MsgAlhafra50);
   // "What does a sailor like me know about building houses, anyway?"
-  FieldEvent_ShowMessageThenWait(24, 0, 10);
-  Actor_ArmCallback(19, -256, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_BUILDING_HOUSES, 0, 10);
+  Actor_ArmCallback(ACTOR_MAN_SCOLDING_THE_SAILOR, -256, 0);
   Event_Wait(10);
-  Actor_ShowEmoteById(19, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_ShowEmoteById(ACTOR_MAN_SCOLDING_THE_SAILOR,
+                      EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Hey! You there! Sailor boy! Get back to work!"
-  FieldEvent_ShowMessageThenWait(19, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_MAN_SCOLDING_THE_SAILOR, 0, 10);
   FieldActor_StartRepeatedMotion(24, 3);
-  FieldEffect_SetAttached(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEffect_SetAttached(ACTOR_SAILOR_BUILDING_HOUSES,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirection(19, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MAN_SCOLDING_THE_SAILOR, FACING_WEST, 0);
   // "Hey! Give me a break! I'm on it!"
-  FieldEvent_ShowMessageThenWait(24, 0, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_BUILDING_HOUSES, 0, 0);
 }
 
 void Alhafra_GiveBreadToHungryBoy(void) {
@@ -277,58 +316,59 @@ void Alhafra_FindGoldCoins(void) {
   FieldCamera_MoveWithinMapBounds(px(560), -1, px(496), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
-  Motion_SetVarCbAndRefresh(29, 2);
+  Motion_SetVarCbAndRefresh(ACTOR_GOLD_COIN_FINDER, 2);
   Event_Wait(10);
   // "Why, look at this!"
-  FieldEvent_ShowMessageThenWait(29, 0, 10);
-  Actor_FaceDirection(28, FACING_EAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDER, 0, 10);
+  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_HUSBAND, FACING_EAST, 0);
   Actor_FaceDirection(31, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(30, FACING_SOUTHWEST, 0);
-  Actor_SetModeById(29, 5);
+  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_SOUTHWEST, 0);
+  Actor_SetModeById(ACTOR_GOLD_COIN_FINDER, 5);
   Sound_Play(MUS_089);
   gMainRoutineWork.currentOwner = 0x1d;
   ItemDisplay_ShowItem(0, 3);
   gMainRoutineWork.currentOwner = 4;
   Event_Wait(50);
-  FieldActor_Jump(28, 6, 15);
-  FieldActor_Jump(28, 6, 23);
+  FieldActor_Jump(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 6, 15);
+  FieldActor_Jump(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 6, 23);
   // "Wow, honey! You found some gold coins!"
-  FieldEvent_ShowMessageThenWait(28, 0, 10);
-  Actor_ArmCallback(29, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 0, 10);
+  Actor_ArmCallback(ACTOR_GOLD_COIN_FINDER, FACING_WEST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(29, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
   Event_Wait(20);
-  Actor_ShowEmoteById(30, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmoteById(ACTOR_GOLD_COIN_FINDERS_CHILD,
+                      EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Way to go, Mom! So... How much did you find?"
-  FieldEvent_ShowMessageThenWait(30, 0, 10);
-  Actor_ShowEmoteById(29, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_FaceDirection(29, FACING_SOUTH, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_CHILD, 0, 10);
+  Actor_ShowEmoteById(ACTOR_GOLD_COIN_FINDER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDER, FACING_SOUTH, 0);
   Event_Wait(20);
-  Motion_SetVarCbAndRefresh(29, 2);
+  Motion_SetVarCbAndRefresh(ACTOR_GOLD_COIN_FINDER, 2);
   Event_Wait(10);
   // "Oh! Well, it's not too much... It's only 5 coins."
-  FieldEvent_ShowMessageThenWait(29, 0, 10);
-  Motion_SetVarCbAndRefresh(30, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDER, 0, 10);
+  Motion_SetVarCbAndRefresh(ACTOR_GOLD_COIN_FINDERS_CHILD, 2);
   Event_Wait(10);
   // "That's great, though! We can use it to buy some food!"
-  FieldEvent_ShowMessageThenWait(30, 0, 10);
-  Actor_ArmCallback(29, FACING_EAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_CHILD, 0, 10);
+  Actor_ArmCallback(ACTOR_GOLD_COIN_FINDER, FACING_EAST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(29, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
   Event_Wait(20);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
   // "I'm going to start looking, too!"
   FieldEvent_ShowMessageThenWait(31, 0, 10);
-  Actor_FaceDirection(30, FACING_EAST, 0);
-  Motion_SetModeAndWaitAnimation(30, 3);
+  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_EAST, 0);
+  Motion_SetModeAndWaitAnimation(ACTOR_GOLD_COIN_FINDERS_CHILD, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(31, FACING_SOUTH, 0);
   Actor_SetAnimation(31, 6);
-  Actor_FaceDirection(30, FACING_NORTH, 0);
-  Actor_SetAnimation(30, 6);
-  Actor_FaceDirection(29, FACING_SOUTH, 0);
-  Actor_FaceDirection(28, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_NORTH, 0);
+  Actor_SetAnimation(ACTOR_GOLD_COIN_FINDERS_CHILD, 6);
+  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_HUSBAND, FACING_NORTH, 0);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Event_End();
@@ -515,22 +555,22 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra10);
-  Actor_SetSpeed(29, 1);
-  Actor_SetSpeed(30, 1);
-  Actor_SetSpeed(31, 1);
-  Actor_SetSpeed(32, 1);
-  Actor_SetSpeed(33, 1);
-  Actor_SetSpeed(34, 1);
+  Actor_SetSpeed(ACTOR_MADRAN_HUNTING_BRIGGS, 1);
+  Actor_SetSpeed(ACTOR_MADRAS_MAYOR, 1);
+  Actor_SetSpeed(ACTOR_FIRST_MADRAN_SOLDIER, 1);
+  Actor_SetSpeed(ACTOR_SECOND_MADRAN_SOLDIER, 1);
+  Actor_SetSpeed(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 1);
+  Actor_SetSpeed(ACTOR_MADRAN_ELDER, 1);
   Actor_SetSpeed(35, 1);
-  Actor_SetSpeed(17, 0.5);
+  Actor_SetSpeed(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0.5);
   Actor_SetSpeed(14, 0.5);
   if (a0 == 0x14) {
     Actor_WalkByAndWait(ACTOR_FELIX, 0, -8);
   }
-  Actor_SetPosition(31, 408, 872);
-  Actor_SetPosition(32, 392, 888);
+  Actor_SetPosition(ACTOR_FIRST_MADRAN_SOLDIER, 408, 872);
+  Actor_SetPosition(ACTOR_SECOND_MADRAN_SOLDIER, 392, 888);
   // "Finally! We made it!"
-  Event_ShowMessageThenWait(31, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_FIRST_MADRAN_SOLDIER, 0, 10);
   if (a0 == 0x14) {
     Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   } else {
@@ -539,341 +579,359 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   FieldCamera_MoveTo(400, CAMERA_KEEP, 808, 1);
   FieldCamera_WaitForArrival();
-  Actor_WalkBy(31, 0, -96);
-  Actor_WalkByAndWait(32, 0, -96);
-  Actor_SetModeById(31, 1);
+  Actor_WalkBy(ACTOR_FIRST_MADRAN_SOLDIER, 0, -96);
+  Actor_WalkByAndWait(ACTOR_SECOND_MADRAN_SOLDIER, 0, -96);
+  Actor_SetModeById(ACTOR_FIRST_MADRAN_SOLDIER, ANIM_STAND);
   Event_Wait(10);
-  Actor_FaceDirection(31, FACING_EAST, 0);
-  Actor_FaceDirection(32, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(31, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(32, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(31, FACING_EAST, 0);
-  Actor_FaceDirection(32, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(31, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(32, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(31, FACING_EAST, 0);
-  Actor_SetPosition(33, 392, 872);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_EAST, 0);
+  Actor_SetPosition(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 392, 872);
   Actor_SetPosition(35, 408, 872);
   // "We-We're here?"
-  FieldEvent_ShowMessageThenWait(33, 0, 10);
-  Actor_FaceDirection(31, FACING_SOUTH, 0);
-  Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, 10);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_WalkBy(35, 0, -48);
-  Actor_WalkByAndWait(33, 0, -48);
+  Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, -48);
   Actor_WaitForMoveById(35);
   Actor_ArmCallback(35, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
-  Motion_SetVarCbAndRefresh(31, 2);
+  Motion_SetVarCbAndRefresh(ACTOR_FIRST_MADRAN_SOLDIER, 2);
   Event_Wait(10);
   // "Where's the Elder?"
-  FieldEvent_ShowMessageThenWait(31, 0, 10);
-  Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Actor_FaceDirection(33, FACING_SOUTH_SOUTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_FIRST_MADRAN_SOLDIER, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
+                  EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
+                      FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(40);
-  Motion_SetVarCbAndRefresh(33, 2);
+  Motion_SetVarCbAndRefresh(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 2);
   Event_Wait(20);
-  Actor_FaceDirection(33, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_NORTH, 0);
   Event_Wait(20);
   // "He's coming now..."
-  FieldEvent_ShowMessageThenWait(33, 0, 10);
-  Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(32, FACING_NORTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, 10);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_SetAnimation(31, 3);
-  Motion_SetModeAndWaitAnimation(32, 3);
+  Actor_SetAnimation(ACTOR_FIRST_MADRAN_SOLDIER, ANIM_NOD);
+  Motion_SetModeAndWaitAnimation(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
   Event_Wait(10);
   Actor_WalkBy(35, 32, -48);
-  Actor_WalkByAndWait(33, 32, -48);
+  Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 32, -48);
   Actor_WaitForMoveById(35);
   Actor_FaceDirection(35, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(33, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_SOUTH, 0);
   Actor_SetSpritePriority(35, 3);
   Event_Wait(20);
-  Actor_SetPosition(34, 400, 872);
+  Actor_SetPosition(ACTOR_MADRAN_ELDER, 400, 872);
   // "Haaa hoo hooo... Are we...here? I feel like I just walked 500 miles."
-  FieldEvent_ShowMessageThenWait(34, 0, 10);
-  Actor_FaceDirection(31, FACING_SOUTH, 0);
-  Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(33, FACING_SOUTH, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_ELDER, 0, 10);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_WalkByAndWait(34, 0, -32);
+  Actor_WalkByAndWait(ACTOR_MADRAN_ELDER, 0, -32);
   Event_Wait(1);
-  Actor_SetModeById(34, 5);
+  Actor_SetModeById(ACTOR_MADRAN_ELDER, 5);
   Event_Wait(90);
-  Motion_SetVarCbAndRefresh(34, 2);
+  Motion_SetVarCbAndRefresh(ACTOR_MADRAN_ELDER, 2);
   Event_Wait(20);
   // "I'm fine... I feel like I could walk 500 more!"
-  FieldEvent_ShowMessageThenWait(34, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_ELDER, 0, 10);
   Actor_WalkByAndWaitById(34, 0, -16);
   Event_Wait(1);
-  Actor_SetModeById(34, 5);
+  Actor_SetModeById(ACTOR_MADRAN_ELDER, 5);
   Event_Wait(60);
-  Actor_WalkByAndWait(34, 8, -32);
-  Actor_FaceDirection(34, FACING_SOUTH, 0);
+  Actor_WalkByAndWait(ACTOR_MADRAN_ELDER, 8, -32);
+  Actor_FaceDirection(ACTOR_MADRAN_ELDER, FACING_SOUTH, 0);
   Event_Wait(1);
-  Actor_SetModeById(34, 5);
+  Actor_SetModeById(ACTOR_MADRAN_ELDER, 5);
   Event_Wait(30);
-  Actor_SetPosition(30, 392, 872);
-  Actor_SetPosition(29, 408, 872);
-  Actor_WalkBy(30, 0, -32);
-  Actor_WalkByAndWait(29, 0, -32);
-  Actor_SetModeById(30, 1);
+  Actor_SetPosition(ACTOR_MADRAS_MAYOR, 392, 872);
+  Actor_SetPosition(ACTOR_MADRAN_HUNTING_BRIGGS, 408, 872);
+  Actor_WalkBy(ACTOR_MADRAS_MAYOR, 0, -32);
+  Actor_WalkByAndWait(ACTOR_MADRAN_HUNTING_BRIGGS, 0, -32);
+  Actor_SetModeById(ACTOR_MADRAS_MAYOR, ANIM_STAND);
   Event_Wait(1);
-  Actor_SetAnimation(29, 5);
-  FieldActor_WatchAndSetScript(31, 30);
-  FieldActor_WatchAndSetScript(32, 30);
-  FieldActor_WatchAndSetScript(33, 30);
-  FieldActor_WatchAndSetScript(34, 30);
+  Actor_SetAnimation(ACTOR_MADRAN_HUNTING_BRIGGS, 5);
+  FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 30);
+  FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, 30);
+  FieldActor_WatchAndSetScript(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 30);
+  FieldActor_WatchAndSetScript(ACTOR_MADRAN_ELDER, 30);
   Actor_WatchAndSetScript(35, 30);
   Event_Wait(20);
-  Actor_ArmCallback(30, FACING_NORTHWEST, 0);
+  Actor_ArmCallback(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(20);
-  Actor_ArmCallback(30, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(30, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTH, 0);
   Event_Wait(10);
-  FieldActor_Jump(30, 6, 15);
-  FieldActor_Jump(30, 6, 23);
-  Actor_SetAnimation(34, 1);
+  FieldActor_Jump(ACTOR_MADRAS_MAYOR, 6, 15);
+  FieldActor_Jump(ACTOR_MADRAS_MAYOR, 6, 23);
+  Actor_SetAnimation(ACTOR_MADRAN_ELDER, ANIM_STAND);
   // "So...is this Alhafra?"
-  FieldEvent_ShowMessageThenWait(30, 0, 10);
-  Actor_SetMovementTypeById(29, (s32)gAlhafra_OfficialStepsBackScript);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetMovementTypeById(ACTOR_MADRAN_HUNTING_BRIGGS,
+                            (s32)gAlhafra_OfficialStepsBackScript);
   Event_Wait(20);
-  Actor_WalkByAndWait(30, 0, -32);
+  Actor_WalkByAndWait(ACTOR_MADRAS_MAYOR, 0, -32);
   Actor_WalkByAndWaitById(30, -32, 0);
   Event_Wait(10);
-  Motion_SetVarCbAndRefresh(30, 2);
+  Motion_SetVarCbAndRefresh(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
   // "Madra's a pretty big place, but this town is huge!"
-  FieldEvent_ShowMessageThenWait(30, 0, 10);
-  Actor_SetAnimationAndWait(29, 4);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAN_HUNTING_BRIGGS, ANIM_SHAKE_HEAD);
   // "We didn't come to Alhafra to shop, Mister Mayor."
-  FieldEvent_ShowMessageThenWait(29, 0, 10);
-  Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Actor_ArmCallback(30, FACING_EAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_HUNTING_BRIGGS, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ArmCallback(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(20);
-  Motion_SetVarCbAndRefresh(29, 2);
+  Motion_SetVarCbAndRefresh(ACTOR_MADRAN_HUNTING_BRIGGS, 2);
   Event_Wait(20);
   // "We're here to bring in Briggs the Champa."
-  FieldEvent_ShowMessageThenWait(29, 0, 10);
-  Actor_SetAnimation(29, 5);
-  Actor_WalkByAndWait(30, 64, 0);
-  Actor_FaceDirection(29, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(30, FACING_NORTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_HUNTING_BRIGGS, 0, 10);
+  Actor_SetAnimation(ACTOR_MADRAN_HUNTING_BRIGGS, 5);
+  Actor_WalkByAndWait(ACTOR_MADRAS_MAYOR, 64, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTHEAST, 0);
   Event_Wait(20);
   // "I know that!"
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
-  Actor_SetModeById(29, 1);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_MAYOR, 0,
+                                 10);
+  Actor_SetModeById(ACTOR_MADRAN_HUNTING_BRIGGS, ANIM_STAND);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(29, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_MADRAN_HUNTING_BRIGGS, ANIM_NOD);
   Event_Wait(10);
   // "Then we should go straight to speak with Alhafra's mayor."
-  Event_ShowMessageThenWait(29, 0, 10);
-  Actor_Stop(31);
-  Actor_Stop(32);
-  Actor_Stop(33);
-  Actor_Stop(34);
+  Event_ShowMessageThenWait(ACTOR_MADRAN_HUNTING_BRIGGS, 0, 10);
+  Actor_Stop(ACTOR_FIRST_MADRAN_SOLDIER);
+  Actor_Stop(ACTOR_SECOND_MADRAN_SOLDIER);
+  Actor_Stop(ACTOR_MADRAN_WAITING_FOR_THE_ELDER);
+  Actor_Stop(ACTOR_MADRAN_ELDER);
   Actor_Stop(35);
-  Actor_SetModeById(29, 5);
+  Actor_SetModeById(ACTOR_MADRAN_HUNTING_BRIGGS, 5);
   Event_Wait(50);
-  Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(32, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTHEAST, 0);
   Event_Wait(40);
-  Actor_FaceDirection(31, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(32, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_SetMovementTypeById(14, (s32)gAlhafra_PasserbyWalksOffScript);
-  FieldActor_Jump(31, 6, 15);
-  FieldActor_Jump(31, 6, 23);
+  FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 15);
+  FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 23);
   // "We're in no shape to go present ourselves to the mayor right now!"
-  Event_ShowMessageThenWait(31, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_FIRST_MADRAN_SOLDIER, 0, 10);
   Event_Wait(10);
-  Actor_ArmCallback(32, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTH, 0);
   Event_Wait(20);
-  Actor_FaceDirection(32, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(32, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_FaceDirection(32, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_ArmCallback(32, FACING_EAST_SOUTHEAST, 0);
+  Actor_ArmCallback(ACTOR_SECOND_MADRAN_SOLDIER, FACING_EAST_SOUTHEAST, 0);
   Event_Wait(20);
   // "Look, Briggs is obviously not here, and besides, we already know..."
-  FieldEvent_ShowMessageThenWait(32, 0, 10);
-  Actor_SetModeById(29, 1);
+  FieldEvent_ShowMessageThenWait(ACTOR_SECOND_MADRAN_SOLDIER, 0, 10);
+  Actor_SetModeById(ACTOR_MADRAN_HUNTING_BRIGGS, ANIM_STAND);
   Event_Wait(10);
-  Actor_ShowEmoteById(29, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Actor_FaceDirection(29, FACING_WEST, 0);
+  Actor_ShowEmoteById(ACTOR_MADRAN_HUNTING_BRIGGS, EMOTE_IN_FRONT | EMOTE_SCOWL,
+                      30);
+  Actor_FaceDirection(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_WEST, 0);
   Event_Wait(20);
   // "Silence!"
-  FieldEvent_ShowMessageThenWait(29, 0, 10);
-  EventCamera_FollowActor(29, 1);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_HUNTING_BRIGGS, 0, 10);
+  EventCamera_FollowActor(ACTOR_MADRAN_HUNTING_BRIGGS, 1);
   FieldCamera_WaitForArrival();
-  Actor_WalkToAndWait(29, 488, 808);
-  Actor_FaceDirection(31, FACING_EAST, 0);
-  Actor_FaceDirection(32, FACING_EAST, 0);
-  Actor_FaceDirection(33, FACING_EAST, 0);
-  Actor_FaceDirection(34, FACING_EAST, 0);
+  Actor_WalkToAndWait(ACTOR_MADRAN_HUNTING_BRIGGS, 488, 808);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_ELDER, FACING_EAST, 0);
   Actor_FaceDirection(35, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(30, FACING_EAST, 0);
-  Actor_FaceDirection(29, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(29, 4);
+  Actor_SetAnimationAndWait(ACTOR_MADRAN_HUNTING_BRIGGS, ANIM_SHAKE_HEAD);
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(648, CAMERA_KEEP, 536, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   // "It seems Alhafra has felt the effects of the tidal wave as well..."
-  FieldEvent_ShowMessageThenWait(29, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_HUNTING_BRIGGS, 0, 10);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 808, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1);
   Event_Wait(20);
-  Actor_WalkByAndWait(33, 32, 36);
-  Actor_WalkByAndWait(33, 32, 0);
-  Actor_WalkToAndWait(33, 504, 808);
-  Actor_ArmCallback(33, FACING_NORTH_NORTHEAST, 0);
+  Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 32, 36);
+  Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 32, 0);
+  Actor_WalkToAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 504, 808);
+  Actor_ArmCallback(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_NORTH_NORTHEAST,
+                    0);
   Event_Wait(30);
   FieldActor_StartRepeatedMotion(33, 3);
-  FieldEffect_SetAttached(33, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEffect_SetAttached(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
-  Actor_FaceDirection(33, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_WEST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(33, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, ANIM_NOD);
   Event_Wait(10);
   // "It looks like they suffered a good deal of damage..."
-  FieldEvent_ShowMessageThenWait(33, 0, 10);
-  Motion_SetVarCbAndRefresh(29, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, 10);
+  Motion_SetVarCbAndRefresh(ACTOR_MADRAN_HUNTING_BRIGGS, 2);
   Event_Wait(20);
-  Actor_ArmCallback(29, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_EAST, 0);
   Event_Wait(20);
   // "That would explain why Alhafra doesn't seem to have any boats for..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 29, 0, 10);
-  Actor_ShowEmoteById(34, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | ACTOR_MADRAN_HUNTING_BRIGGS, 0, 10);
+  Actor_ShowEmoteById(ACTOR_MADRAN_ELDER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                      40);
   // "You know, just looking around, I get the impression they only had..."
-  FieldEvent_ShowMessageThenWait(34, 0, 10);
-  Actor_FaceDirection(29, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_ELDER, 0, 10);
+  Actor_FaceDirection(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_WEST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(29, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_MADRAN_HUNTING_BRIGGS, ANIM_NOD);
   Event_Wait(10);
   // "So if you really needed a boat, the only way to get one would be to..."
-  FieldEvent_ShowMessageThenWait(29, 0, 10);
-  Motion_SetVarCbAndRefresh(30, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_HUNTING_BRIGGS, 0, 10);
+  Motion_SetVarCbAndRefresh(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
   // "...Which means the pirates must still be here, trying to get a boat!"
-  FieldEvent_ShowMessageThenWait(30, 0, 10);
-  Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_ArmCallback(32, FACING_NORTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_ArmCallback(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTHEAST, 0);
   Event_Wait(30);
-  FieldActor_Jump(31, 6, 15);
-  FieldActor_Jump(31, 6, 23);
+  FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 15);
+  FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 23);
   // "So, you think we've actually caught up with Briggs?"
-  FieldEvent_ShowMessageThenWait(31, 0, 10);
-  Motion_SetModeAndWaitAnimation(32, 3);
+  FieldEvent_ShowMessageThenWait(ACTOR_FIRST_MADRAN_SOLDIER, 0, 10);
+  Motion_SetModeAndWaitAnimation(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
   Event_Wait(10);
   // "No doubt about it!"
-  FieldEvent_ShowMessageThenWait(32, 0, 10);
-  Motion_SetVarCbAndRefresh(29, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_SECOND_MADRAN_SOLDIER, 0, 10);
+  Motion_SetVarCbAndRefresh(ACTOR_MADRAN_HUNTING_BRIGGS, 2);
   Event_Wait(10);
-  Actor_FaceDirection(31, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(32, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTHEAST, 0);
   // "That's why I want to meet the mayor of Alhafra before the Champa..."
-  FieldEvent_ShowMessageThenWait(29, 0, 10);
-  Motion_SetModeAndWaitAnimation(30, 3);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_HUNTING_BRIGGS, 0, 10);
+  Motion_SetModeAndWaitAnimation(ACTOR_MADRAS_MAYOR, ANIM_NOD);
   Event_Wait(10);
   // "Oh yeah... I get it now. In that case, let's go see Alhafra's mayor..."
-  FieldEvent_ShowMessageThenWait(30, 0, 10);
-  Actor_SetPosition(17, 408, 696);
-  Actor_WalkToAndWait(17, 408, 760);
-  Actor_WalkToAndWait(17, 448, 792);
-  Actor_WalkToAndWait(17, 448, 808);
-  Actor_WalkByAndWait(30, 8, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetPosition(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 408, 696);
+  Actor_WalkToAndWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 408, 760);
+  Actor_WalkToAndWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 448, 792);
+  Actor_WalkToAndWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 448, 808);
+  Actor_WalkByAndWait(ACTOR_MADRAS_MAYOR, 8, 0);
   // "Um... Say, excuse me..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
-  Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Actor_FaceDirection(17, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_MAYOR, 0,
+                                 10);
+  Actor_ShowEmoteById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
+                      EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Actor_FaceDirection(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_ShowEmoteById(30, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmoteById(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Where would we find the mayor of Alhafra?"
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
-  Motion_SetVarCbAndRefresh(17, 2);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_MAYOR, 0,
+                                 10);
+  Motion_SetVarCbAndRefresh(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 2);
   Event_Wait(10);
   gFieldWork->fastForward = 0;
   // "Uh... The mayor?"
-  FieldEvent_ShowMessageThenWait(17, 0, 10);
-  Motion_SetModeAndWaitAnimation(30, 3);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0, 10);
+  Motion_SetModeAndWaitAnimation(ACTOR_MADRAS_MAYOR, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetSpeed(29, 0.5);
-  Actor_SetSpeed(30, 0.5);
-  Actor_SetSpeed(31, 0.5);
-  Actor_SetSpeed(32, 0.5);
-  Actor_SetSpeed(33, 0.5);
-  Actor_SetSpeed(34, 0.5);
+  Actor_SetSpeed(ACTOR_MADRAN_HUNTING_BRIGGS, 0.5);
+  Actor_SetSpeed(ACTOR_MADRAS_MAYOR, 0.5);
+  Actor_SetSpeed(ACTOR_FIRST_MADRAN_SOLDIER, 0.5);
+  Actor_SetSpeed(ACTOR_SECOND_MADRAN_SOLDIER, 0.5);
+  Actor_SetSpeed(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0.5);
+  Actor_SetSpeed(ACTOR_MADRAN_ELDER, 0.5);
   Actor_SetSpeed(35, 0.5);
-  Actor_SetSpeed(17, 0.5);
-  EventCamera_FollowActor(30, 1);
+  Actor_SetSpeed(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0.5);
+  EventCamera_FollowActor(ACTOR_MADRAS_MAYOR, 1);
   FieldCamera_WaitForArrival();
   if (a0 == 0x15) {
-    FieldActor_SetSpritePriority(30, 2);
-    FieldActor_WatchAndSetScript(31, 29);
-    FieldActor_WatchAndSetScript(32, 29);
-    FieldActor_WatchAndSetScript(34, 29);
-    Actor_SetMovementTypeById(17, (s32)gAlhafra_PasserbyLeadsFromCell21Script);
-    Actor_SetMovementTypeById(29,
+    FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
+    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 29);
+    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, 29);
+    FieldActor_WatchAndSetScript(ACTOR_MADRAN_ELDER, 29);
+    Actor_SetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
+                              (s32)gAlhafra_PasserbyLeadsFromCell21Script);
+    Actor_SetMovementTypeById(ACTOR_MADRAN_HUNTING_BRIGGS,
                               (s32)gAlhafra_OfficialFollowsFromCell21Script);
-    Actor_SetMovementTypeById(33,
+    Actor_SetMovementTypeById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
                               (s32)gAlhafra_FirstMadranFollowsFromCell21Script);
     Event_Wait(80);
-    FieldActor_SetSpritePriority(29, 3);
-    FieldActor_SetSpritePriority(30, 3);
-    FieldActor_SetSpritePriority(31, 3);
-    FieldActor_SetSpritePriority(32, 3);
-    FieldActor_SetSpritePriority(33, 3);
-    FieldActor_SetSpritePriority(34, 3);
+    FieldActor_SetSpritePriority(ACTOR_MADRAN_HUNTING_BRIGGS, 3);
+    FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 3);
+    FieldActor_SetSpritePriority(ACTOR_FIRST_MADRAN_SOLDIER, 3);
+    FieldActor_SetSpritePriority(ACTOR_SECOND_MADRAN_SOLDIER, 3);
+    FieldActor_SetSpritePriority(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 3);
+    FieldActor_SetSpritePriority(ACTOR_MADRAN_ELDER, 3);
     FieldActor_SetSpritePriority(35, 3);
-    FieldActor_SetSpritePriority(17, 3);
+    FieldActor_SetSpritePriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
     FieldActor_WatchAndSetScript(35, 29);
-    Actor_SetMovementTypeById(30, (s32)gAlhafra_MayorFollowsFromCell21Script);
+    Actor_SetMovementTypeById(ACTOR_MADRAS_MAYOR,
+                              (s32)gAlhafra_MayorFollowsFromCell21Script);
     Event_Wait(170);
     Actor_SetMovementTypeById(
         32, (s32)gAlhafra_SecondSoldierFollowsFromCell21Script);
     Event_Wait(10);
     Actor_SetMovementTypeById(
         31, (s32)gAlhafra_FirstSoldierFollowsFromCell21Script);
-    Actor_SetMovementTypeById(34, (s32)gAlhafra_ElderFollowsFromCell21Script);
+    Actor_SetMovementTypeById(ACTOR_MADRAN_ELDER,
+                              (s32)gAlhafra_ElderFollowsFromCell21Script);
     Event_Wait(60);
     Actor_SetMovementTypeById(
         35, (s32)gAlhafra_SecondMadranFollowsFromCell21Script);
   } else {
-    FieldActor_SetSpritePriority(30, 2);
-    FieldActor_WatchAndSetScript(30, 17);
-    FieldActor_WatchAndSetScript(31, 30);
-    FieldActor_WatchAndSetScript(32, 30);
-    FieldActor_WatchAndSetScript(34, 30);
-    Actor_SetMovementTypeById(17, (s32)gAlhafra_PasserbyLeadsFromCell20Script);
+    FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
+    FieldActor_WatchAndSetScript(ACTOR_MADRAS_MAYOR, 17);
+    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 30);
+    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, 30);
+    FieldActor_WatchAndSetScript(ACTOR_MADRAN_ELDER, 30);
+    Actor_SetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
+                              (s32)gAlhafra_PasserbyLeadsFromCell20Script);
     Event_Wait(60);
-    Actor_SetMovementTypeById(29,
+    Actor_SetMovementTypeById(ACTOR_MADRAN_HUNTING_BRIGGS,
                               (s32)gAlhafra_OfficialFollowsFromCell20Script);
-    Actor_SetMovementTypeById(33,
+    Actor_SetMovementTypeById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
                               (s32)gAlhafra_FirstMadranFollowsFromCell20Script);
     Event_Wait(70);
     FieldActor_WatchAndSetScript(35, 29);
-    Actor_SetMovementTypeById(30, (s32)gAlhafra_MayorFollowsFromCell20Script);
-    FieldActor_SetSpritePriority(29, 3);
-    FieldActor_SetSpritePriority(30, 3);
-    FieldActor_SetSpritePriority(31, 3);
-    FieldActor_SetSpritePriority(32, 3);
-    FieldActor_SetSpritePriority(33, 3);
-    FieldActor_SetSpritePriority(34, 3);
+    Actor_SetMovementTypeById(ACTOR_MADRAS_MAYOR,
+                              (s32)gAlhafra_MayorFollowsFromCell20Script);
+    FieldActor_SetSpritePriority(ACTOR_MADRAN_HUNTING_BRIGGS, 3);
+    FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 3);
+    FieldActor_SetSpritePriority(ACTOR_FIRST_MADRAN_SOLDIER, 3);
+    FieldActor_SetSpritePriority(ACTOR_SECOND_MADRAN_SOLDIER, 3);
+    FieldActor_SetSpritePriority(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 3);
+    FieldActor_SetSpritePriority(ACTOR_MADRAN_ELDER, 3);
     FieldActor_SetSpritePriority(35, 3);
-    Actor_SetSpritePriority(17, 3);
+    Actor_SetSpritePriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
     Event_Wait(120);
-    Actor_SetMovementTypeById(34, (s32)gAlhafra_ElderFollowsFromCell20Script);
+    Actor_SetMovementTypeById(ACTOR_MADRAN_ELDER,
+                              (s32)gAlhafra_ElderFollowsFromCell20Script);
     Event_Wait(40);
     Actor_SetMovementTypeById(
         31, (s32)gAlhafra_FirstSoldierFollowsFromCell20Script);
@@ -884,62 +942,63 @@ void Alhafra_MadransArrive(s32 a0) {
         32, (s32)gAlhafra_SecondSoldierFollowsFromCell20Script);
   }
   Event_Wait(300);
-  Actor_RefreshSelectorById(34);
+  Actor_RefreshSelectorById(ACTOR_MADRAN_ELDER);
   Event_Wait(50);
   FieldCamera_MoveTo(248, CAMERA_KEEP, 664, 1);
   FieldCamera_WaitForArrival();
   // "Just keep going down this road. It's the last house. You can't miss it."
-  FieldEvent_ShowMessageThenWait(17, 0, 10);
-  Actor_ArmCallback(17, FACING_SOUTH_SOUTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0, 10);
+  Actor_ArmCallback(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, FACING_SOUTH_SOUTHEAST,
+                    0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(17, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, ANIM_NOD);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(30, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_MADRAS_MAYOR, ANIM_NOD);
   Event_Wait(20);
-  Actor_WalkByAndWait(17, -16, 0);
-  Actor_ArmCallback(17, FACING_EAST, 0);
+  Actor_WalkByAndWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, -16, 0);
+  Actor_ArmCallback(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(29, FACING_WEST, 0);
-  Actor_FaceDirection(31, FACING_WEST, 0);
-  Actor_FaceDirection(32, FACING_WEST, 0);
-  Actor_FaceDirection(30, FACING_EAST, 0);
-  Actor_FaceDirection(33, FACING_EAST, 0);
-  Actor_ArmCallback(34, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_MADRAN_ELDER, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_SetAnimation(30, 3);
-  Actor_SetAnimation(29, 3);
-  Actor_SetAnimation(33, 3);
-  Actor_SetAnimation(31, 3);
-  Actor_SetAnimation(32, 3);
+  Actor_SetAnimation(ACTOR_MADRAS_MAYOR, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MADRAN_HUNTING_BRIGGS, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FIRST_MADRAN_SOLDIER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
   Actor_SetAnimation(35, 3);
-  Motion_SetModeAndWaitAnimation(34, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_MADRAN_ELDER, ANIM_NOD);
   Event_Wait(10);
-  Actor_FaceDirection(29, FACING_NORTH, 0);
-  Actor_FaceDirection(31, FACING_NORTH, 0);
-  Actor_FaceDirection(32, FACING_NORTH, 0);
-  Actor_FaceDirection(30, FACING_NORTH, 0);
-  Actor_FaceDirection(33, FACING_NORTH, 0);
-  Actor_FaceDirection(34, FACING_NORTH, 0);
-  Actor_SetSpeed(29, 1.9);
-  Actor_SetSpeed(30, 1.9);
-  Actor_SetSpeed(31, 1.9);
-  Actor_SetSpeed(32, 1.9);
-  Actor_SetSpeed(33, 1.9);
-  Actor_SetSpeed(34, 1.9);
+  Actor_FaceDirection(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_ELDER, FACING_NORTH, 0);
+  Actor_SetSpeed(ACTOR_MADRAN_HUNTING_BRIGGS, 1.9);
+  Actor_SetSpeed(ACTOR_MADRAS_MAYOR, 1.9);
+  Actor_SetSpeed(ACTOR_FIRST_MADRAN_SOLDIER, 1.9);
+  Actor_SetSpeed(ACTOR_SECOND_MADRAN_SOLDIER, 1.9);
+  Actor_SetSpeed(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 1.9);
+  Actor_SetSpeed(ACTOR_MADRAN_ELDER, 1.9);
   Actor_SetSpeed(35, 1.9);
-  Actor_WalkBy(29, 0, -150);
-  Actor_WalkBy(30, 0, -150);
-  Actor_WalkBy(31, 0, -150);
-  Actor_WalkBy(32, 0, -150);
-  Actor_WalkBy(33, 0, -150);
+  Actor_WalkBy(ACTOR_MADRAN_HUNTING_BRIGGS, 0, -150);
+  Actor_WalkBy(ACTOR_MADRAS_MAYOR, 0, -150);
+  Actor_WalkBy(ACTOR_FIRST_MADRAN_SOLDIER, 0, -150);
+  Actor_WalkBy(ACTOR_SECOND_MADRAN_SOLDIER, 0, -150);
+  Actor_WalkBy(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, -150);
   Actor_WalkBy(35, 0, -150);
-  Actor_WalkByAndWait(34, 0, -150);
-  Actor_SetPosition(29, 0, 0);
-  Actor_SetPosition(30, 0, 0);
-  Actor_SetPosition(31, 0, 0);
-  Actor_SetPosition(32, 0, 0);
-  Actor_SetPosition(33, 0, 0);
-  Actor_SetPosition(34, 0, 0);
+  Actor_WalkByAndWait(ACTOR_MADRAN_ELDER, 0, -150);
+  Actor_SetPosition(ACTOR_MADRAN_HUNTING_BRIGGS, 0, 0);
+  Actor_SetPosition(ACTOR_MADRAS_MAYOR, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_MADRAN_SOLDIER, 0, 0);
+  Actor_SetPosition(ACTOR_SECOND_MADRAN_SOLDIER, 0, 0);
+  Actor_SetPosition(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, 0);
+  Actor_SetPosition(ACTOR_MADRAN_ELDER, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(35, 0, 0);
   Event_Wait(15);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);

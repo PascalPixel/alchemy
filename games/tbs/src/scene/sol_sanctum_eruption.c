@@ -66,6 +66,16 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
+u8 gSolSanctumEruption_Unk_0[8] BSS_DATA;
+s32 gEmberState[16] BSS_DATA;
+s32 gEmberTimer BSS_DATA;
+u8 gSolSanctumEruption_Unk_4c[12] BSS_DATA;
+struct Actor *gArcEffects[12] BSS_DATA;
+s32 gArcEffectTimers[10] BSS_DATA;
+s32 gEmberMask BSS_DATA;
+s32 gEmberLevel BSS_DATA;
+s32 gEmberLevelTimer BSS_DATA;
+
 s32 Scene_Initialize(void);
 extern s32 gEruption_ArcOrigins[];
 extern struct SceneEntrance gSolSanctumEruption_Entrances[];
@@ -93,14 +103,6 @@ enum CollapseActorId {
   ACTOR_FELIX,
   ACTOR_ALEX
 };
-
-extern s32 gEmberState[16];
-extern s32 gEmberTimer;
-extern s32 gArcEffectTimers[10];
-extern struct Actor *gArcEffects[];
-extern s32 gEmberMask;
-extern s32 gEmberLevel;
-extern s32 gEmberLevelTimer;
 
 /// Saturos's group has started to leave, and the embers fall without their
 /// sound.

@@ -140,11 +140,16 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture);
 static void KolimaForestTree_SpawnOrbitSparks(void);
 static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId, s32 newItemId);
 
-s32 gKolimaForestTreeSparkOrigin[3]
-    __attribute__((section(".bss"))) ALIGNED(16);
-s32 gKolimaForestTreeSparkFrame __attribute__((section(".bss")));
-s32 gKolimaForestTreePlaySparkSound __attribute__((section(".bss")));
-s32 gKolimaForestTreePaletteFrame __attribute__((section(".bss")));
+s32 gKolimaForestTreeSparkOrigin[3] BSS_DATA ALIGNED(16);
+s32 gKolimaForestTreeSparkFrame BSS_DATA;
+s32 gKolimaForestTreePlaySparkSound BSS_DATA;
+s32 gKolimaForestTreePaletteFrame BSS_DATA;
+u8 gKolimaForestTree_Unk_0[8] BSS_DATA;
+/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
+/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+u8 gKolimaPalette_Healthy[1792] BSS_DATA;
+/// The cursed colours, kept by KolimaPalette_SaveCursed.
+u8 gKolimaPalette_Cursed[896] BSS_DATA;
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestTreeEntrances;

@@ -57,6 +57,7 @@
 
 #include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -77,6 +78,12 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
+u16 gSolSanctumLunaSolRooms_Light2Timer BSS_DATA;
+u16 gSolSanctumLunaSolRooms_Light3Timer BSS_DATA ALIGNED(4);
+u16 gSolSanctumLunaSolRooms_Light1Timer BSS_DATA ALIGNED(4);
+s32 gSolSanctumLunaSolRooms_FlashState BSS_DATA;
+u16 gSolSanctumLunaSolRooms_Light4Timer BSS_DATA;
+
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
 extern u32 gSolSanctumLunaSolRoomsExits[];
@@ -92,12 +99,6 @@ enum SolSanctumLunaSolRoomsActorId {
   ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_KRADEN = ACTOR_FIRST_STATUE + 8
 };
-
-extern u16 gSolSanctumLunaSolRooms_Light1Timer;
-extern s32 gSolSanctumLunaSolRooms_FlashState;
-extern u16 gSolSanctumLunaSolRooms_Light2Timer;
-extern u16 gSolSanctumLunaSolRooms_Light3Timer;
-extern u16 gSolSanctumLunaSolRooms_Light4Timer;
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.

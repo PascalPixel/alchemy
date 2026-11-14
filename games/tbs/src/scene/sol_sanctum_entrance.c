@@ -53,6 +53,7 @@
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -204,7 +205,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void);
 static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors);
 static void SolSanctumEntrance_UpdateEruptionRumbles(void);
 
-s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
+s32 gSolSanctumEntrance_RumbleTimer BSS_DATA;
 
 /// Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol
 /// Sanctum's (SceneId_SolSanctumReliefs).

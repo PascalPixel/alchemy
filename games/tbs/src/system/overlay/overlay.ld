@@ -10,8 +10,8 @@
    code calls. The libgcc routines its code uses come next (register calls,
    and double-precision arithmetic in two scenes), then a part kept in its
    own object, where it has one. Each statement names the sections it places,
-   so the objects keep their order in each. Its globals follow in .bss; where
-   they are written in assembly, they are src/scene/bss/NAME.s. */
+   so the objects keep their order in each. Its globals follow in .bss, in the
+   order its C defines them (BSS_DATA keeps a global out of the commons). */
 
 #define OVERLAY_TEXT(object) \
     .text 0x2008000 : \
@@ -100,7 +100,7 @@ SECTIONS \
         */games/tbs/src/scene/name.o(.bss COMMON) \
     } \
 }
-/* A scene whose globals, or some of them, are written in src/scene/bss/NAME.s. */
+/* A scene whose globals are written in assembly, in src/scene/NAME_bss.s. */
 #define SCENE_WITH_BSS(name) \
 SECTIONS \
 { \
@@ -108,7 +108,7 @@ SECTIONS \
     .bss : \
     { \
         */games/tbs/src/scene/name.o(.bss COMMON) \
-        */games/tbs/src/scene/bss/name.o(.bss) \
+        */games/tbs/src/scene/name##_bss.o(.bss) \
     } \
 }
 /* A scene with a part in an object of its own, linked after its code. */
@@ -119,16 +119,6 @@ SECTIONS \
     .bss : \
     { \
         */games/tbs/src/scene/name.o(.bss COMMON) \
-    } \
-}
-#define SCENE_AND_WITH_BSS(name, part) \
-SECTIONS \
-{ \
-    OVERLAY_TEXT_AND(scene/name, part) \
-    .bss : \
-    { \
-        */games/tbs/src/scene/name.o(.bss COMMON) \
-        */games/tbs/src/scene/bss/name.o(.bss) \
     } \
 }
 /* A debug room: src/debug/NAME.c. */
@@ -165,7 +155,7 @@ SCENE(sanctum)
 #elif OVERLAY == 0x379
 SCENE(vale_eruption)
 #elif OVERLAY == 0x37a
-SCENE_WITH_BSS(sol_sanctum_luna_sol_rooms)
+SCENE(sol_sanctum_luna_sol_rooms)
 #elif OVERLAY == 0x37b
 SCENE_AND(sol_sanctum_statue, graphics/sol_sanctum_statue/rows)
 #elif OVERLAY == 0x37c
@@ -179,7 +169,7 @@ SCENE(sol_sanctum_entrance)
 #elif OVERLAY == 0x380
 SCENE(sol_sanctum_elemental_star_room)
 #elif OVERLAY == 0x381
-SCENE_WITH_BSS(sol_sanctum_eruption)
+SCENE(sol_sanctum_eruption)
 #elif OVERLAY == 0x382
 SCENE(vault)
 #elif OVERLAY == 0x383
@@ -217,9 +207,9 @@ SCENE(kolima_forest_glade)
 #elif OVERLAY == 0x393
 SCENE(kolima_forest_cliff)
 #elif OVERLAY == 0x394
-SCENE_WITH_BSS(kolima_forest_floodgate)
+SCENE(kolima_forest_floodgate)
 #elif OVERLAY == 0x395
-SCENE_WITH_BSS(kolima_forest_tree)
+SCENE(kolima_forest_tree)
 #elif OVERLAY == 0x396
 SCENE(tree_rooms)
 #elif OVERLAY == 0x397
@@ -249,15 +239,15 @@ SCENE(alpine_crossing_lama_temple)
 #elif OVERLAY == 0x3a3
 SCENE(altin)
 #elif OVERLAY == 0x3a4
-SCENE_WITH_BSS(altin_peak)
+SCENE(altin_peak)
 #elif OVERLAY == 0x3a5
-SCENE_AND_WITH_BSS(lamakan_desert, graphics/lamakan_desert/heat_gauge)
+SCENE_AND(lamakan_desert, graphics/lamakan_desert/heat_gauge)
 #elif OVERLAY == 0x3a6
 SCENE(vale_cave)
 #elif OVERLAY == 0x3a7
 SCENE(vault_cave)
 #elif OVERLAY == 0x3a8
-SCENE_WITH_BSS(kalay)
+SCENE(kalay)
 #elif OVERLAY == 0x3a9
 SCENE(stucco_rooms_a)
 #elif OVERLAY == 0x3aa
@@ -293,11 +283,11 @@ SCENE(babi_palace)
 #elif OVERLAY == 0x3b9
 SCENE(colosseum_entrance)
 #elif OVERLAY == 0x3ba
-SCENE_AND_WITH_BSS(colosseum_azart_match, graphics/colosso/gauge)
+SCENE_AND(colosseum_azart_match, graphics/colosso/gauge)
 #elif OVERLAY == 0x3bb
-SCENE_AND_WITH_BSS(colosseum_satrage_match, graphics/colosso/gauge)
+SCENE_AND(colosseum_satrage_match, graphics/colosso/gauge)
 #elif OVERLAY == 0x3bc
-SCENE_AND_WITH_BSS(colosseum_navampa_match, graphics/colosso/gauge)
+SCENE_AND(colosseum_navampa_match, graphics/colosso/gauge)
 #elif OVERLAY == 0x3bd
 SCENE(altmiller_cave)
 #elif OVERLAY == 0x3be

@@ -63,11 +63,11 @@
 ///   it again. Kolima_RestoreBridgeState draws it down on every later visit,
 ///   and the bridge on the World Map is drawn down with the same flag.
 
-#include "scene/kolima.h"
 #include "ability_ids.h"
 #include "djinn_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -83,6 +83,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/kolima.h"
 #include "scene/kolima_forest_bridge_falling_effect.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -1546,9 +1547,9 @@ static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
 }
 
 #include "shared/kolima_forest_bridge_falling_effect.c"
-s32 gKolima_PendingPose __attribute__((section(".bss")));
-s32 gKolima_MiaInParty __attribute__((section(".bss")));
-s32 gKolima_EffectActive __attribute__((section(".bss")));
+s32 gKolima_PendingPose BSS_DATA;
+s32 gKolima_MiaInParty BSS_DATA;
+s32 gKolima_EffectActive BSS_DATA;
 
 /// Sets up Kolima Bridge.
 static void Kolima_RestoreBridgeState(void) {

@@ -124,6 +124,15 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
+u16 gAltinPeak_FlickerTimer BSS_DATA;
+s32 gAltinPeak_SprayDirection BSS_DATA;
+s32 gAltinPeak_SprayOrigin[3] BSS_DATA;
+u8 gAltinPeak_Unk_14[16] BSS_DATA;
+/// Frames left on the water palette's current step (gAltinPeak_PaletteScript).
+s16 gAltinPeak_PaletteHold BSS_DATA;
+/// The next byte of gAltinPeak_PaletteScript; 0 again at its -1.
+s16 gAltinPeak_PaletteStep BSS_DATA ALIGNED(4);
+
 extern s8 gAltinPeak_PaletteScript[];
 extern s32 gAltinPeak_FaceLeaderScript[];
 extern s32 gAltinPeak_PuddleGrowScript[];
@@ -177,9 +186,6 @@ extern s32 gAltinPeak_RumbleFrames;
 extern u32 gAltinPeak_RollRadii[];
 // The spray's direction (FACING_EAST or FACING_WEST) and origin, and the
 // water's flicker timer.
-extern s32 gAltinPeak_SprayDirection;
-extern s32 gAltinPeak_SprayOrigin[3];
-extern u16 gAltinPeak_FlickerTimer;
 
 // The rooms' floor switches, each set once flipped from its first position;
 // they are area temp flags, kept until the party leaves the mine.

@@ -30,6 +30,7 @@
 /// is back on the bank, but a battle keeps it.
 
 #include "flags.h"
+#include "macros.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -1119,9 +1120,9 @@ static s32 KolimaForestEntrance_BurstOnPsynergyField(struct Actor *sparkle) {
 }
 
 #include "shared/kolima_forest_bridge_falling_effect.c"
-s32 gKolimaForestEntrance_PsynergyFieldHit __attribute__((section(".bss")));
-s32 gKolimaForestEntrance_MiaInParty __attribute__((section(".bss")));
-s32 gKolimaForestEntrance_SparkleSoundOn __attribute__((section(".bss")));
+s32 gKolimaForestEntrance_PsynergyFieldHit BSS_DATA;
+s32 gKolimaForestEntrance_MiaInParty BSS_DATA;
+s32 gKolimaForestEntrance_SparkleSoundOn BSS_DATA;
 
 /// Each frame the Psynergy fields flicker: two show on even frames and two on
 /// odd, the hidden ones lifted 500 pixels out of sight.

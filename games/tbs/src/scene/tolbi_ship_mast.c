@@ -114,13 +114,13 @@ static void TolbiShipMast_UpdateSway(void);
 static s32 TolbiShipMast_GetRowingBalance(void);
 static s32 TolbiShipMast_GetSeatRowValue(u32 seat);
 
-s32 gTolbiShipMast_DriftY __attribute__((section(".bss"))) ALIGNED(16);
-s32 gTolbiShipMast_DriftX __attribute__((section(".bss")));
-s32 gTolbiShipMast_SwayY __attribute__((section(".bss")));
-s32 gTolbiShipMast_SwayUnused __attribute__((section(".bss")));
-s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
-s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
-s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
+s32 gTolbiShipMast_DriftY BSS_DATA ALIGNED(16);
+s32 gTolbiShipMast_DriftX BSS_DATA;
+s32 gTolbiShipMast_SwayY BSS_DATA;
+s32 gTolbiShipMast_SwayUnused BSS_DATA;
+s32 gTolbiShipMast_CameraCenter[2] BSS_DATA;
+s32 gTolbiShipMast_CameraOrigin[2] BSS_DATA;
+s32 gTolbiShipMast_SwayX BSS_DATA;
 
 /// The scene's one actor placement row.
 enum TolbiShipMastActorId {

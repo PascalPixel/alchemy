@@ -14,7 +14,7 @@ struct TitleSprite {
 
 /// Frames since the lettering's reveal began; a column appears every two.
 extern s16 gTitleRevealFrame;
-/// The lettering's sprites, in the overlay's BSS (scene/bss/title.s): 18 in the
+/// The lettering's sprites, in the overlay's BSS (scene/title_bss.s): 18 in the
 /// English and Japanese editions, 120 in the others.
 extern struct TitleSprite gTitleSprites[];
 

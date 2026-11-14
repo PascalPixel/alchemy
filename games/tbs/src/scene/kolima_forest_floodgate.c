@@ -52,6 +52,28 @@
 #include "system/system_call.h"
 #include "text/msg_ids.h"
 
+u8 gKolimaForestFloodgate_Unk_0[8] BSS_DATA;
+/// The bend's logs in gSceneLocalState from byte 4, so they survive a battle.
+struct FloodgateLog *gKolimaForestFloodgateRecords BSS_DATA;
+/// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
+u16 *gKolimaForestFloodgateReturned BSS_DATA;
+/// The bend's water level in gSceneLocalState's second halfword: 1 high (the
+/// logs float), 0 low; the floodgate switch flips it.
+s16 *gKolimaForestFloodgateMap BSS_DATA;
+u8 gKolimaForestFloodgate_Unk_14[4] BSS_DATA;
+/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
+/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+u8 gKolimaPalette_Healthy[1792] BSS_DATA;
+/// The cursed colours, kept by KolimaPalette_SaveCursed.
+u8 gKolimaPalette_Cursed[896] BSS_DATA;
+u8 gKolimaForestFloodgate_Unk_a98[896] BSS_DATA;
+/// The background scroll words captured each frame for the shaken lines.
+u32 gKolimaForestFloodgate_ShakeScroll[3] BSS_DATA;
+/// The percent chance that a line above the split shows the shaken scroll: 0
+/// when the rumble starts (SE_WATER_LEVEL), then a point higher each frame up
+/// to 101 (KolimaForestFloodgate_FlipFloodgateSwitch).
+u32 gKolimaForestFloodgate_ShakeChance BSS_DATA;
+
 struct Actor;
 
 /// A log's saved record: its sprite, first map cell and orientation, then its

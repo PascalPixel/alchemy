@@ -118,12 +118,6 @@ static void Colosso_EnsureMarkerSlot(void) {
   }
 }
 
-/// The pointer's glide start on one axis, read signed or unsigned.
-union MarkerCoordinate {
-  s16 signedValue; ///< screen pixels
-  u16 value;       ///< screen pixels
-};
-
 extern s16 gColosso_MarkerSteps;
 extern s16 gColosso_MarkerStep;
 extern s16 gColosso_MarkerX;

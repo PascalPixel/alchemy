@@ -173,5 +173,8 @@ struct Trigger gKolimaForestCliffTriggers[] = {
 };
 
 // The .bss order follows the first declarations (externs in field.h).
-u8 gKolimaPalette_Healthy[1792] __attribute__((section(".bss"))) ALIGNED(16);
-u8 gKolimaPalette_Cursed[896] __attribute__((section(".bss")));
+/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
+/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+u8 gKolimaPalette_Healthy[1792] BSS_DATA ALIGNED(16);
+/// The cursed colours, kept by KolimaPalette_SaveCursed.
+u8 gKolimaPalette_Cursed[896] BSS_DATA;

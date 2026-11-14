@@ -118,6 +118,7 @@
 #include "djinn_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
 #include "scene_ids.h"
 #include "types.h"
 #include "battle/battle.h"
@@ -142,6 +143,10 @@
 #include "system/system_call.h"
 #include "window/screens.h"
 #include "text/msg_ids.h"
+
+u8 gKalay_Unk_0[12] BSS_DATA ALIGNED(8);
+/// Which of the two guides' turns Kalay_AlternateGuidesPacing is at, 0 to 4.
+s32 gKalay_DanceStep BSS_DATA;
 
 extern s32 gKalay_TileStepByFacing[];
 extern s32 gKalay_TourGroupWalkScript[];

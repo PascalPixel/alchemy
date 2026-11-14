@@ -59,6 +59,7 @@
 #include "djinn_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -86,6 +87,18 @@
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
+
+/// The VRAM cache entry holding the gauge's tiles.
+u16 gHeatGauge_VramSlot BSS_DATA ALIGNED(16);
+u8 gLamakanDesert_Unk_2[14] BSS_DATA;
+/// The gauge's five sprites: four 16x32 ones down the screen's left edge and a
+/// 16x16 cap at its foot.
+struct MenuSprite gHeatGauge_Sprites[5] BSS_DATA;
+u8 gLamakanDesert_Unk_4c[20] BSS_DATA;
+/// The gauge's decoded tiles, which each frame's drawing starts from.
+u8 gHeatGauge_TileBuffer[2304] BSS_DATA;
+/// 1 while the gauge is held on screen (HeatGauge_SetHeld).
+u16 gHeatGauge_Held BSS_DATA;
 
 s32 Scene_Initialize(void);
 void HeatGauge_Start(void);

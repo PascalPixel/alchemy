@@ -96,6 +96,46 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
+s16 gColosso_MarkerStep BSS_DATA;
+s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerFlip BSS_DATA ALIGNED(4);
+/// Isaac's z before he is shown on the stage, 16.16 fixed-point pixels.
+s32 gColosso_WarriorStartZ BSS_DATA;
+s16 gColosso_MarkerEndX BSS_DATA;
+s16 gColosso_LetteringParameter BSS_DATA ALIGNED(4);
+s16 gColosso_ModeScaleStart BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveDuration BSS_DATA ALIGNED(4);
+s32 gColosso_LetteringPosition BSS_DATA;
+s16 gColosso_MarkerBlink BSS_DATA;
+s16 gColosso_ModeScaleTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveStep BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerY BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendStep BSS_DATA ALIGNED(4);
+/// Isaac's facing before Colosso_FadeInWarrior, which
+/// Colosso_RestoreWarrior puts back.
+s32 gColosso_WarriorStartAngle BSS_DATA;
+s16 gColosso_MarkerSteps BSS_DATA;
+s16 gColosso_LetteringMode BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendStart BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringTimer BSS_DATA ALIGNED(4);
+s16 *gColosso_LetteringScript BSS_DATA;
+union MarkerCoordinate gColosso_MarkerStartX BSS_DATA;
+s16 gColosso_ModeBlendDuration BSS_DATA ALIGNED(4);
+u8 gColosseumSatrageMatch_Unk_5a[6] BSS_DATA;
+/// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
+s32 gColosso_PointerOam[3] BSS_DATA;
+union MarkerCoordinate gColosso_MarkerStartY BSS_DATA;
+/// The lettering's sprite parts, three words each, written every frame.
+u32 gColosso_LetteringSprites[12] BSS_DATA;
+s16 gColosso_ModeMoveStart BSS_DATA;
+s16 gColosso_MarkerX BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeScaleStep BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerEndY BSS_DATA ALIGNED(4);
+/// Isaac's x before he is shown on the stage, 16.16 fixed-point pixels.
+s32 gColosso_WarriorStartX BSS_DATA;
+
 s32 Scene_Initialize(void);
 // UB: the scene calls this before its definition with no prototype, as a
 // function returning int.

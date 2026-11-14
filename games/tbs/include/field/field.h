@@ -54,10 +54,6 @@ struct SwitchCell {
   u32 x; ///< 16-pixel map cells
   u32 z; ///< 16-pixel map cells
 };
-/// Frames left on the water palette's current step (gAltinPeak_PaletteScript).
-extern s16 gAltinPeak_PaletteHold;
-/// The next byte of gAltinPeak_PaletteScript; 0 again at its -1.
-extern s16 gAltinPeak_PaletteStep;
 /// One of a ledge jump's dust puffs (FieldEffect_SpawnDustPuff):
 /// SC_WAIT(1) looped 38 times, then SC_RELEASE.
 extern const u8 gFieldEffect_BurstParticleScriptA[];
@@ -74,14 +70,7 @@ extern const u8 gField_ExamineTriggerMessageOffsets[];
 extern const u8 gFieldEffect_MoteTiles[];
 extern s32 gDjinnFigures_SpriteIds[];
 extern s32 gShipRooms_ShakeTimer;
-/// The bend's water level in gSceneLocalState's second halfword: 1 high (the
-/// logs float), 0 low; the floodgate switch flips it.
-extern s16 *gKolimaForestFloodgateMap;
 struct FloodgateLog;
-/// The bend's logs in gSceneLocalState from byte 4, so they survive a battle.
-extern struct FloodgateLog *gKolimaForestFloodgateRecords;
-/// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
-extern u16 *gKolimaForestFloodgateReturned;
 /// Heap slot 5: the 64 actors, 112 bytes each.
 #define gActors (*(struct Actor **)&gHeapSlots[HEAP_SLOT_ACTORS])
 /// The lighthouse transition's pictures, packed (tagged LZ), decoded 4 KB
@@ -100,45 +89,11 @@ enum WorldMapLighthouse {
   WORLD_MAP_LIGHTHOUSE_MERCURY,
   WORLD_MAP_LIGHTHOUSE_VENUS,
 };
-/// Which of the two guides' turns Kalay_AlternateGuidesPacing is at, 0 to 4.
-extern s32 gKalay_DanceStep;
-/// The percent chance that a line above the split shows the shaken scroll: 0
-/// when the rumble starts (SE_WATER_LEVEL), then a point higher each frame up
-/// to 101 (KolimaForestFloodgate_FlipFloodgateSwitch).
-extern u32 gKolimaForestFloodgate_ShakeChance;
-/// The background scroll words captured each frame for the shaken lines.
-extern u32 gKolimaForestFloodgate_ShakeScroll[];
-/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
-/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
-extern u8 gKolimaPalette_Healthy[];
-/// The cursed colours, kept by KolimaPalette_SaveCursed.
-extern u8 gKolimaPalette_Cursed[];
-/// Isaac's facing before Colosso_FadeInWarrior, which
-/// Colosso_RestoreWarrior puts back.
-extern s32 gColosso_WarriorStartAngle;
-/// Isaac's x before he is shown on the stage, 16.16 fixed-point pixels.
-extern s32 gColosso_WarriorStartX;
-/// Isaac's z before he is shown on the stage, 16.16 fixed-point pixels.
-extern s32 gColosso_WarriorStartZ;
 /// The race gauge's 16 colours, loaded as OBJ palette 14 (Colosso_DrawGauge).
 extern u16 gColosso_GaugePalette[];
-/// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
-extern s32 gColosso_PointerOam[3];
 // The lettering's three eases (Colosso_UpdateLettering): each value goes from
 // Start to Target over Duration frames, Step counting them; Duration 0 holds
 // Target.
-extern s16 gColosso_ModeBlendDuration;
-extern s16 gColosso_ModeBlendStart;
-extern s16 gColosso_ModeBlendStep;
-extern s16 gColosso_ModeBlendTarget;
-extern s16 gColosso_ModeMoveStart;
-extern s16 gColosso_ModeMoveStep;
-extern s16 gColosso_ModeScaleDuration;
-extern s16 gColosso_ModeScaleStart;
-extern s16 gColosso_ModeScaleStep;
-extern s16 gColosso_ModeScaleTarget;
-/// The lettering's sprite parts, three words each, written every frame.
-extern u32 gColosso_LetteringSprites[];
 /// Frames in a row the chase has found a suspect cornered; at
 /// LOG_ROOMS_A_CORNERED_FRAMES the chase raises its event.
 extern u16 gLogRoomsA_StopTimer;
@@ -175,15 +130,6 @@ extern const u8 gActor_VariantScripts[];
 extern u8 gHeatGauge_Tiles[];
 /// The gauge's 16 colours, loaded as OBJ palette 14.
 extern const u16 gHeatGauge_Palette[16];
-/// 1 while the gauge is held on screen (HeatGauge_SetHeld).
-extern u16 gHeatGauge_Held;
-/// The gauge's decoded tiles, which each frame's drawing starts from.
-extern u8 gHeatGauge_TileBuffer[];
-/// The VRAM cache entry holding the gauge's tiles.
-extern u16 gHeatGauge_VramSlot;
-/// The gauge's five sprites: four 16x32 ones down the screen's left edge and a
-/// 16x16 cap at its foot.
-extern struct MenuSprite gHeatGauge_Sprites[];
 /// The sprite picture decoder, ARM code run from a copy in
 /// HEAP_SLOT_FRAME_SCRATCH.
 extern u8 Render_DecodePicture[];

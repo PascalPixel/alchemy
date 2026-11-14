@@ -1,12 +1,13 @@
+#include "macros.h"
 #include "field/map_grid_scroll.h"
 
 // Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
 // the sparkling dust that falls over the party when Tret's curse strikes
 // ("Watch out! It's happening again!").
 
-s32 gFallingEffectOffset __attribute__((section(".bss")));
-s32 gFallingEffectWidth __attribute__((section(".bss")));
-u32 gFallingEffectState __attribute__((section(".bss")));
+s32 gFallingEffectOffset BSS_DATA;
+s32 gFallingEffectWidth BSS_DATA;
+u32 gFallingEffectState BSS_DATA;
 
 /// A task: every eighth frame a speck (its script
 /// gFallingEffectScript) starts 160 pixels up at a random point near the point

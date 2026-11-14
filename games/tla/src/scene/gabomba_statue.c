@@ -18,6 +18,11 @@
 // Story flags: both cone pillars Pounded and the cogs turned back, each cone
 // Pounded, and the mouse that shows the way seen.
 #define FLAG_GABOMBA_COGS_TURNED_BACK 0x8cd
+/// The party has watched how the statue's works run.
+#define FLAG_GABOMBA_SAW_HOW_IT_WORKS 0x8f6
+/// The broken channel is fixed ("just fixing the channel should do the
+/// trick").
+#define FLAG_GABOMBA_CHANNEL_FIXED 0x9ec
 #define FLAG_GABOMBA_FIRST_CONE_POUNDED 0x8ce
 #define FLAG_GABOMBA_SECOND_CONE_POUNDED 0x8cf
 #define FLAG_GABOMBA_MOUSE_SEEN 0xa6c
@@ -1851,7 +1856,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_SetScript(23, gGabombaStatue_LookAtChannelScript);
   Actor_SetScript(6, gGabombaStatue_LookAtChannelScript);
   Actor_RunScriptAndWait(5, gGabombaStatue_LookAtChannelScript);
-  Event_SetFlag(0x8f6);
+  Event_SetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   ObjectTable_Snapshot();
@@ -1970,7 +1975,7 @@ void GabombaStatue_FixTheChannel(void) {
   Event_ShowMessage(23, 0);
   Actor_SetPosition(23, 0, 0);
   System_Wait(1);
-  Event_SetFlag(0x9ec);
+  Event_SetFlag(FLAG_GABOMBA_CHANNEL_FIXED);
   GabombaStatue_RestartClock();
 }
 
@@ -2107,10 +2112,10 @@ void GabombaStatue_InitializeRoom6(void) {
   Actor_SetSpriteFlags(t22, 0);
   t24 = ((s32)Actor_Get(22));
   Actor_SetSpriteFlags(t24, 0);
-  t26 = Event_GetFlag(0x8fb);
+  t26 = Event_GetFlag(FLAG_GABOMBA_RESPONDED);
   if (t26 == 0)
     goto L_0200b6f2;
-  t27 = Event_GetFlag(0x8fd);
+  t27 = Event_GetFlag(FLAG_AKAFUBU_OFFERED_HELP);
   if (t27 != 0)
     goto L_0200b6f2;
   GabombaStatue_SawEnergyFlow();
@@ -2134,10 +2139,10 @@ L_0200b6f2:
   System_Wait(1);
   Event_End();
 L_0200b762:
-  t42 = Event_GetFlag(0x8f6);
+  t42 = Event_GetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS);
   if (t42 == 0)
     goto L_0200b78e;
-  t43 = Event_GetFlag(0x8fd);
+  t43 = Event_GetFlag(FLAG_AKAFUBU_OFFERED_HELP);
   if (t43 != 0)
     goto L_0200b78e;
   GabombaStatue_StartClock(0);
@@ -2152,7 +2157,7 @@ L_0200b78e:
   GabombaStatue_WatchTheChargesStick();
   goto L_0200b856;
 L_0200b7c0:
-  t50 = Event_GetFlag(0x8f6);
+  t50 = Event_GetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS);
   if (t50 != 0)
     goto L_0200b7e4;
   if (gMainRoutineWork.entrance != 1) {
@@ -2179,7 +2184,7 @@ L_0200b7e4:
   t59 = Event_GetFlag(0x9eb);
   if (t59 == 0)
     goto L_0200b84a;
-  t60 = Event_GetFlag(0x9ec);
+  t60 = Event_GetFlag(FLAG_GABOMBA_CHANNEL_FIXED);
   if (t60 != 0)
     goto L_0200b84a;
   GabombaStatue_FixTheChannel();
@@ -2278,7 +2283,7 @@ void GabombaStatue_ClearGrid(void) {
       struct PuzzleCell *cell = &state->cells[row * 11 + col];
       s32 occupied = cell->occupied;
 
-      if (Event_GetFlag(0x8fb) && cell->occupied == 2) {
+      if (Event_GetFlag(FLAG_GABOMBA_RESPONDED) && cell->occupied == 2) {
         cell->occupied = 1;
         occupied = 1;
       }
@@ -4008,7 +4013,7 @@ LATE_DATA struct Trigger gGabombaStatue_Room6Triggers[] = {
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(GabombaStatue_RedrawArrowB)},
     {TRIGGER_STEP, 83, CONDITION_ALWAYS, EVENT(GabombaStatue_RaiseArrowB)},
     {TRIGGER_RAISED, 201, FLAG_SCENE_TEMP_05, EVENT(GabombaStatue_HearTheOffering)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x8fb, EVENT(GabombaStatue_PoundGreyCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, FLAG_GABOMBA_RESPONDED, EVENT(GabombaStatue_PoundGreyCone)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(GabombaStatue_ConeChimes)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},

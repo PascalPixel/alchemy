@@ -389,7 +389,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   ActorSystem_ResumeProjectionAndHideLayers();
   GameFlag_Set(FLAG_GABOMBA_MESSAGE_CARRIED);
   GameFlag_Clear(0x86b);
-  GameFlag_Clear(0x8f2);
+  GameFlag_Clear(FLAG_GABOMBA_CEREMONY_UNDER_WAY);
   gMainRoutineWork.retreatScene = (s32)&SceneId_Kibombo1;
   gMainRoutineWork.retreatEntrance = 1;
   gMainRoutineWork.savedScene = (s32)&SceneId_Kibombo3;
@@ -924,7 +924,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
     Actor_SetScript(5, path);
     Actor_RunScriptAndWait(6, path);
   }
-  Event_SetFlag(0x8fd);
+  Event_SetFlag(FLAG_AKAFUBU_OFFERED_HELP);
   Event_End();
 }
 
@@ -953,7 +953,7 @@ void GabombaStatueChamber_InitializeRoom1(void) {
   Actor_DisableById(9);
   Actor_DisableById(10);
   wait(1);
-  if (GameFlag_Get(0x8fd)) {
+  if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     GabombaStatueChamber_OpenThePassage();
     GabombaStatueChamber_SetPassageCells();
     Actor_SetPosition(8, 424, 152);

@@ -12,10 +12,14 @@
 #include "flags.h"
 #include "item_ids.h"
 
-// Story flags: the vent Scoop uncovers by the statue, and the block Moved for
-// Piers.
+// Story flags: the vent Scoop uncovers by the statue, the block Moved for
+// Piers, the ceremony begun and Piers joined.
 #define FLAG_KIBOMBO_VENT_UNCOVERED 0x86a
 #define FLAG_KIBOMBO_BLOCK_MOVED_FOR_PIERS 0x9ea
+#define FLAG_KIBOMBO_CEREMONY_BEGUN 0x8f1
+#define FLAG_PIERS_JOINED 0x8f4
+/// Set once the party has heard of the foreign ceremony.
+#define FLAG_HEARD_OF_THE_FOREIGN_CEREMONY 0x9df
 // For this visit: each of the four markings dug, and the one Scoop is digging.
 #define FLAG_FIRST_MARKING_DUG FLAG_SCENE_TEMP_04
 #define FLAG_SECOND_MARKING_DUG FLAG_SCENE_TEMP_05
@@ -274,7 +278,7 @@ void Kibombo_TalkForeignCeremony(void) {
     Event_Wait(10);
     Sanctum_Run(36);
     Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
-    GameFlag_Set(0x9df);
+    GameFlag_Set(FLAG_HEARD_OF_THE_FOREIGN_CEREMONY);
     Event_End();
   }
 }
@@ -405,7 +409,7 @@ void Kibombo_MoveBlockForPiers(void) {
     Actor_GetById(11)->motionFlags = 0;
     Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
     GameFlag_Set(FLAG_KIBOMBO_BLOCK_MOVED_FOR_PIERS);
-    if (!GameFlag_Get(0x8f4))
+    if (!GameFlag_Get(FLAG_PIERS_JOINED))
       Kibombo_PiersJoinsParty();
     Event_End();
   }
@@ -740,10 +744,9 @@ extern u32 gKibombo_JennaJoinsPiersScript[];
 extern u32 gKibombo_ShebaJoinsPiersScript[];
 extern u32 gKibombo_PartyFollowsScript[];
 
-/// A scene in Kibombo: actor 7 speaks, the camera pans, actors 26, 5, 6 and 7
-/// move, turn and speak around the controlled character, two yes-or-no
-/// questions count up the event work's halfword 0x1c4, and the scene ends with
-/// Party_GivePiersDjinn. Each call goes through the call layer (call.h).
+/// Piers, who saw the party's Psynergy, tells them he too is an Adept, from
+/// Lemuria in the middle of the Eastern Sea, and joins the party with his
+/// Djinn; Felix's two answers are counted in the event work.
 void Kibombo_PiersJoinsParty(void) {
   Actor_ArmCallback(7, FACING_NORTH, 0);
   Event_SetMessageId(MsgBlank7);
@@ -1052,7 +1055,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetMovementTypeById(6, gKibombo_PartyFollowsScript + 0);
   Actor_SetMovementTypeById(26, gKibombo_PartyFollowsScript + 0);
   Actor_SetMovementTypeAndWaitById(7, gKibombo_PartyFollowsScript + 0);
-  GameFlag_Set(0x8f4);
+  GameFlag_Set(FLAG_PIERS_JOINED);
   GameFlag_Set(0x92e);
   Event_PrepareObjectAndApplyValue(7, 1);
   Party_GivePiersDjinn();
@@ -2206,7 +2209,7 @@ void Kibombo_CeremonyBegins(void) {
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Event_ShowMessageAndWait(0x4000 + 17, 0);
   Sound_Play(MUS_011);
-  GameFlag_Set(0x8f2);
+  GameFlag_Set(FLAG_GABOMBA_CEREMONY_UNDER_WAY);
   Sound_Play(SE_BOSS_ROAR);
   Actor_GetById(18)->velocityY = px(4);
   wait(5);
@@ -2249,7 +2252,7 @@ void Kibombo_CeremonyBegins(void) {
                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(26);
   Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
-  GameFlag_Set(0x8f1);
+  GameFlag_Set(FLAG_KIBOMBO_CEREMONY_BEGUN);
 }
 
 void Kibombo_CarryBlackCrystal(void);
@@ -2660,7 +2663,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   gFieldWork->transition = 0x203;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_Set(0x8fb);
+  GameFlag_Set(FLAG_GABOMBA_RESPONDED);
   Import_EventSetExitRequest(13);
 }
 
@@ -2753,7 +2756,7 @@ void Kibombo_CeremonyEnds(void) {
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 16;
   work->transition = 0x209;
-  GameFlag_Set(0x8ef);
+  GameFlag_Set(FLAG_GABOMBA_CEREMONY_ENDED);
   Event_End();
 }
 
@@ -2892,7 +2895,7 @@ void Kibombo_InitializeRoom4(void) {
   actor->y = 0;
   Actor_Hide(29);
   Actor_SetSpritePriority(30, 3);
-  if (GameFlag_Get(0x8fd)) {
+  if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(28, 0, 0);
@@ -2916,7 +2919,7 @@ void Kibombo_CreateBlackCrystal(void);
 void Kibombo_InitializeStatueGrounds(void) {
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
-  if (!GameFlag_Get(0x8fb))
+  if (!GameFlag_Get(FLAG_GABOMBA_RESPONDED))
     Kibombo_CreateBlackCrystal();
   Kibombo_HideGroundsPair();
   if (!GameFlag_Get(0x869))
@@ -2953,7 +2956,7 @@ void Kibombo_InitializeRoom2(void) {
   s16 entrance;
 
   Kibombo_InitializeStatueGrounds();
-  if (GameFlag_Get(0x8fb)) {
+  if (GameFlag_Get(FLAG_GABOMBA_RESPONDED)) {
     Kibombo_SetStatueMouth(1, 0);
     Kibombo_SetStatueTongue(1, 5);
   }
@@ -2991,7 +2994,7 @@ void Kibombo_InitializeRoom5(void) {
   gKibombo_FireColors[2] = BG_PLTT[6];
   gKibombo_FireColors[3] = BG_PLTT[76];
   Kibombo_InitializeStatueGrounds();
-  if (GameFlag_Get(0x8fb)) {
+  if (GameFlag_Get(FLAG_GABOMBA_RESPONDED)) {
     Kibombo_SetStatueMouth(1, 1);
     Kibombo_SetStatueTongue(1, 4);
   }
@@ -3031,7 +3034,7 @@ void Kibombo_InitializeRoom5(void) {
 
     Kibombo_ObjPlaceFacing(7, 152 << 17, 176 << 15, angle);
   }
-  if (GameFlag_Get(0x8fd)) {
+  if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     Kibombo_SetStatueTongue(1, 6);
     Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   }
@@ -3044,8 +3047,8 @@ void Kibombo_InitializeRoom5(void) {
 
     *field = value;
   }
-  if (GameFlag_Get(0x8f1)) {
-    if (!GameFlag_Get(0x8fd))
+  if (GameFlag_Get(FLAG_KIBOMBO_CEREMONY_BEGUN)) {
+    if (!GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP))
       Kibombo_CrowdBows();
   } else if (gMainRoutineWork.entrance == 5) {
     Kibombo_CeremonyBegins();
@@ -3107,7 +3110,7 @@ void Kibombo_InitializeRoom3(void) {
   gFieldWork->transition = 0x209;
   Kibombo_HideRoom3Pair();
   if (gMainRoutineWork.entrance == 9) {
-    if (GameFlag_Get(0x8ef)) {
+    if (GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
       Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
       if (GameFlag_Get(0x8ee)) {
         s32 angle = FACING_NORTHWEST + FACING_STEP;
@@ -3719,77 +3722,86 @@ struct Trigger gKibombo_Room4Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, 0x9e9, 0},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS,
      EVENT(Kibombo_JumpForward)},
-    {TRIGGER_TALK, 20, 0x8fd, MSGNO(MsgAkafubuSCeremony)},
+    {TRIGGER_TALK, 20, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuSCeremony)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTheyToldMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x8fd, MSGNO(MsgItSStrange)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgItSStrange)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
      MSGNO(MsgAsLongAsThis)},
-    {TRIGGER_TALK, 14, 0x8fd, MSGNO(MsgDuringTheLast)},
+    {TRIGGER_TALK, 14, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgDuringTheLast)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasBeen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x8fd,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_AKAFUBU_OFFERED_HELP,
      MSGNO(MsgTheGreatGabombaIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgWhatSTaking)},
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgIMAfraid)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS,
      MSGNO(MsgWhenHeFails)},
-    {TRIGGER_TALK, 21, 0x8fd, MSGNO(MsgIHopeThe)},
+    {TRIGGER_TALK, 21, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIHopeThe)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWhewThankGoodness)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x8fd, MSGNO(MsgIfTheGreat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgIfTheGreat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgAmIGoing)},
-    {TRIGGER_TALK, 17, 0x8fd, MSGNO(MsgIsMakingThe)},
+    {TRIGGER_TALK, 17, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIsMakingThe)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgOnceTheCeremony)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x8fd, MSGNO(MsgHeSFailed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgHeSFailed)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      MSGNO(MsgKibomboWasSo)},
-    {TRIGGER_TALK, 22, 0x8fd, MSGNO(MsgWhenTheGabomba)},
+    {TRIGGER_TALK, 22, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgWhenTheGabomba)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgLastTimeAkafubu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0x8fd, MSGNO(MsgIHopeAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgIHopeAkafubu)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
      MSGNO(MsgAkafubuSAlways)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAkafubuWasA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS,
      MSGNO(MsgAkafubuHasNot)},
-    {TRIGGER_TALK, 15, 0x8fd, MSGNO(MsgAkafubuLooksReally)},
+    {TRIGGER_TALK, 15, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuLooksReally)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIThinkAkafubu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x8fd, MSGNO(MsgHeTravelsTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgHeTravelsTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      MSGNO(MsgAkafubuIsObsessed)},
-    {TRIGGER_TALK, 25, 0x8fd, MSGNO(MsgIfTheGreatGabomba)},
+    {TRIGGER_TALK, 25, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIfTheGreatGabomba)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIBelieveIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x8fd,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, FLAG_AKAFUBU_OFFERED_HELP,
      MSGNO(MsgIfTheGreatGabombaActually)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
      MSGNO(MsgAkafubuAndOeia)},
-    {TRIGGER_TALK, 18, 0x8fd, MSGNO(MsgAkafubuHasTried)},
+    {TRIGGER_TALK, 18, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuHasTried)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgWhatDonT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x8fd,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, FLAG_AKAFUBU_OFFERED_HELP,
      MSGNO(MsgAsAChildAkafubu)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
      MSGNO(MsgIMSoFar)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgHeyNoPushing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
      MSGNO(MsgThereAreSo)},
-    {TRIGGER_TALK, 16, 0x8fd, MSGNO(MsgAkafubuIsAttempting)},
+    {TRIGGER_TALK, 16, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgAkafubuIsAttempting)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTonightSeemsTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x8fd, MSGNO(MsgOeiaSSudden)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgOeiaSSudden)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
      MSGNO(MsgWillTheGreat)},
-    {TRIGGER_TALK, 23, 0x8fd, MSGNO(MsgHeWhoIs)},
+    {TRIGGER_TALK, 23, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgHeWhoIs)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgOeiaSDeath)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0x8fd, MSGNO(MsgIfOnlyOeia)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgIfOnlyOeia)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
      MSGNO(MsgISuspectAkafubu)},
-    {TRIGGER_TALK, 19, 0x8fd, MSGNO(MsgAkafubuBlamesHis)},
+    {TRIGGER_TALK, 19, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuBlamesHis)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTheySayThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x8fd,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_AKAFUBU_OFFERED_HELP,
      MSGNO(MsgTheyAttackedSome)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
      MSGNO(MsgTheyReSaying)},
-    {TRIGGER_TALK, 24, 0x8fd, MSGNO(MsgIfTheGreatGabombaS)},
+    {TRIGGER_TALK, 24, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIfTheGreatGabombaS)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAkafubuSeesThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x8fd, MSGNO(MsgIFeelSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgIFeelSo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgIReallyWonder)},
     {TRIGGER_TALK, 36, CONDITION_ALWAYS, EVENT(Kibombo_TalkForeignCeremony)},

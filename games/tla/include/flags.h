@@ -200,6 +200,13 @@
 /// button beside them: the gates stay open.
 #define FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED 0xa01
 
+/// The Gabomba ceremony at Kibombo: FLAG_GABOMBA_CEREMONY_UNDER_WAY is set as
+/// it begins (the music rules play its music while set) and cleared once the
+/// message is carried; the others are set as each step happens.
+#define FLAG_GABOMBA_CEREMONY_UNDER_WAY 0x8f2
+#define FLAG_GABOMBA_RESPONDED 0x8fb
+#define FLAG_GABOMBA_CEREMONY_ENDED 0x8ef
+#define FLAG_AKAFUBU_OFFERED_HELP 0x8fd
 /// Set as Felix carries the message of the Gabomba to Akafubu after the
 /// ceremony at the Gabomba Statue; Madra, Alhafra and the Kibombo then speak of
 /// the raids and the Black Crystal.

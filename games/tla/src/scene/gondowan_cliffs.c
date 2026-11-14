@@ -411,7 +411,7 @@ s32 Scene_Initialize(void) {
     GondowanCliffs_SetUpPass();
     return 0;
   }
-  if (GameFlag_Get(0x8f3) && !GameFlag_Get(0x8ef)) {
+  if (GameFlag_Get(0x8f3) && !GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
     GondowanCliffs_TurnBackToHelpPiers();
     return 0;
   }

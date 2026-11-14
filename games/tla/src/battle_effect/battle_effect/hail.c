@@ -454,4 +454,3 @@ void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size); // four motes
 void SceneTransform_ApplyScale(s32 *scale);
 
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
-

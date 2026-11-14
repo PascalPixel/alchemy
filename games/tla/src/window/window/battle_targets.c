@@ -52,8 +52,9 @@ extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
 #ifdef UBFIX
 #define Oam_AddSpriteAtDepth__menus Oam_AddSpriteAtDepth
 #else
-extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
-    "Oam_AddSpriteAtDepth");
+extern s32
+Oam_AddSpriteAtDepth__menus(void *sprite,
+                            s32 depth) __asm__("Oam_AddSpriteAtDepth");
 #endif
 
 // The help window's column beside the aimed member, kept on screen.

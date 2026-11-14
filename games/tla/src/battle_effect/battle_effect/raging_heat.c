@@ -322,7 +322,8 @@ enum {
 };
 
 // The transform entry as The Broken Seal types it.
-#define TransformVector ((s32 (*)(const void *, s32 *))Iwram_TransformVectorEntry)
+#define TransformVector                                                        \
+  ((s32 (*)(const void *, s32 *))Iwram_TransformVectorEntry)
 
 extern char ResourceId_SmallFlameSheet;
 

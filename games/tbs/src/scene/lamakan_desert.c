@@ -103,7 +103,6 @@ extern s16 gHeatGaugeFlash;
 #include "graphics/display_transition.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "text/msg_ids.h"
 #include "system/iwram_call.h"
 #include "field/event_inline.h"

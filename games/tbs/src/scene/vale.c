@@ -139,22 +139,18 @@ extern s32 gVale_GuardFromSecondPausePath[];
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "system/heap_slots.h"
 #include "system/heap_release.h"
 
-#include "types.h"
 #include "system/task.h"
 
 #include "field/pushed_actor.h"
 #include "field/event.h"
-#include "field/scene_tables.h"
 #include "item_ids.h"
 
 extern struct Trigger gVale_TriggersAfterKalay[];
 extern s32 gVale_JennaWalksToTheHouse[];
 
-#include "system/heap_slots.h"
 
 #include "field/event_inline.h"
 #include "system/iwram_call.h"

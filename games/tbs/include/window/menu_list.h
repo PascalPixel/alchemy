@@ -12,7 +12,6 @@
 #include "tbs_edition.h"
 #include "edition.h"
 #include "graphics/render_input.h"
-#include "window/window.h"
 #include "static_assert.h"
 #include "system/input.h"
 #include "gamepak/far_call.h"

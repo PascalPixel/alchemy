@@ -20,7 +20,6 @@
 #include "edition.h"
 #include "gamepak/far_call.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "system/heap_release.h"
 #include "battle/canvas.h"
 #include "field/map_grid_scroll.h"

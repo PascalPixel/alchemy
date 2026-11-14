@@ -105,7 +105,6 @@ extern s32 gVaultCave_SelectedDrop;
 
 #include "battle/battle.h"
 #include "debug.h"
-#include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

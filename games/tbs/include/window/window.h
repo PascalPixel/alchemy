@@ -160,8 +160,6 @@ struct WindowWork {
 /// The window renderer's work, heap slot HEAP_SLOT_WINDOW under its own name.
 #define gWindowWork (*(u8 *(*)[]) & gHeapSlots[HEAP_SLOT_WINDOW])
 
-#include "types.h"
-#include "edition.h"
 #include "graphics/glyph.h"
 
 struct AbilityListEntry;

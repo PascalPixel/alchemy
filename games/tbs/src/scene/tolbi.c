@@ -85,9 +85,6 @@ extern struct MapGridCellAnimation gTolbiDoors[];
 #include "window/screens.h"
 #include "edition.h"
 
-#include "types.h"
-#include "field/event.h"
-#include "field/scene_tables.h"
 #include "field/field_effect.h"
 #include "tbs_edition.h"
 #include "window/window.h"

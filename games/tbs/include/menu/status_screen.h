@@ -11,7 +11,6 @@
 #include "system/heap_slots.h"
 #include "static_assert.h"
 #include "field/sprite.h"
-#include "window/window.h"
 
 struct Unit;
 

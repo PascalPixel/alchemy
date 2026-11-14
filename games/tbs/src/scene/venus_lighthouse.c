@@ -191,7 +191,6 @@ extern s32 **gVenusFourthFloorSocketPaths[];
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "system/iwram_call.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"

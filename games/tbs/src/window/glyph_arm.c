@@ -14,7 +14,6 @@
 #include "window/text_font.h"
 #include "edition.h"
 #include "graphics/graphics.h"
-#include "window/window.h"
 
 // ARM code copied to RAM, as the tree walker is: RamCode_Load takes IWRAM
 // when the copy fits, whose 32-bit bus fetches an ARM instruction in one read,

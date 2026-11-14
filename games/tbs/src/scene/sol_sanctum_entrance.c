@@ -89,9 +89,7 @@ extern s32 gSolSanctumPushSteps[];
 #include "sound/sound.h"
 #include "system/system.h"
 #include "field/event_inline.h"
-#include "types.h"
 #include "field/event.h"
-#include "field/scene_tables.h"
 #include "flags.h"
 
 /// In Sol Sanctum (SceneId_SolSanctumReliefs), Kraden follows the party; Garet

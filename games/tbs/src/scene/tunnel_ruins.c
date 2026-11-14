@@ -114,7 +114,6 @@ extern struct Trigger gTunnelRuinsTriggersOther[];
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "sound/sound_driver_symbols.h"

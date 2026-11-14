@@ -144,7 +144,6 @@ extern const u8 gSettingsMenu_SliderTiles[];
 void Import_TitleShowCamelotLogo(s32 mode);
 void Import_CreditsRun(s32 mode);
 
-#include "types.h"
 
 struct Unit;
 struct DjinnListTable;

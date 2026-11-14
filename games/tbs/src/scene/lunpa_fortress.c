@@ -119,14 +119,9 @@ extern u32 gLunpaFortressGroundFloorDoorCells[];
 #include "system/heap_slots.h"
 
 #include "edition.h"
-#include "types.h"
 
 #include "static_assert.h"
-#include "field/scene_tables.h"
-#include "system/system.h"
 
-#include "system/main_routine_work.h"
-#include "field/event.h"
 #include "field/event_inline.h"
 
 #include "field/pushed_actor.h"

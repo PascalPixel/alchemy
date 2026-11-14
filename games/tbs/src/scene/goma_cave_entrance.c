@@ -56,7 +56,6 @@ extern struct Trigger gGomaCaveEntranceTriggers[];
 #include "field/event.h"
 #include "field/create_configured_actor.h"
 #include "debug.h"
-#include "game/game.h"
 #include "graphics/graphics.h"
 #include "sound/sound.h"
 #include "game/inventory.h"

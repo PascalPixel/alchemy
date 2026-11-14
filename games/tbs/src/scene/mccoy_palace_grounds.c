@@ -59,10 +59,7 @@ extern struct Trigger gMcCoyPalaceGroundsTriggers[];
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
 #include "field/event.h"
-#include "field/scene_tables.h"
 
 #include "item_ids.h"
 

@@ -112,7 +112,6 @@ extern struct Trigger gCrossboneIsle_PirateShipTriggers[];
 #include "battle/battle.h"
 #include "field/field.h"
 #include "menu/menu.h"
-#include "system/system.h"
 #include "field/event.h"
 #include "field/pushed_actor.h"
 #include "field/field_effect.h"

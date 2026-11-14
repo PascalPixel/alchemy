@@ -108,7 +108,6 @@ enum ActorScriptValue {
   SW_RISE_ENABLED = 40  ///< Actor.riseEnabled, scene code's own byte
 };
 
-#include "types.h"
 #include "field/script_operands.h"
 
 /// Commands receive the actor's interpreter view. A nonzero result continues

@@ -92,7 +92,6 @@ extern s32 gFuchinTemple_ShotScript[];
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"

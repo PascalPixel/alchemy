@@ -135,7 +135,6 @@ extern s32 gGlint_TwinkleScript[];
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "system/system_call.h"
 #include "field/field_effect.h"
 #include "system/io_reg.h"

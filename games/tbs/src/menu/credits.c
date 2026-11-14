@@ -11,7 +11,6 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "system/system.h"
 #include "system/ram_code.h"
 #include "system/io_write_queue.h"
 #include "system/io_write.h"

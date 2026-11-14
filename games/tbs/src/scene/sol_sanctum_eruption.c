@@ -68,15 +68,11 @@ extern s32 gSolSanctum_RingScaleSteps[];
 #include "system/system.h"
 #include "battle/battle.h"
 #include "debug.h"
-#include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
 #include "field/event.h"
-#include "field/scene_tables.h"
 
 enum CollapseActorId {
   /// The shadow on the platform under each who leaves with Saturos: a

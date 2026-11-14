@@ -40,7 +40,6 @@
 #include "field/world_map_lines.h"
 #include "field/terrain_tables.h"
 #include "field/sprite_viewer_scale.h"
-#include "field/actor_script.h"
 #include "macros.h"
 
 /// Animation script commands.

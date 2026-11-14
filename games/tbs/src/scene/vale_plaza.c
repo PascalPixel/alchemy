@@ -147,28 +147,21 @@ extern u16 gValePlaza_DoorOpens[];
 #include "system/system.h"
 #include "battle/battle.h"
 #include "debug.h"
-#include "field/field.h"
-#include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "system/heap_slots.h"
 #include "graphics/battle_sprite_id.h"
 
-#include "types.h"
 #include "field/sprite.h"
-#include "system/vram_cache.h"
 #include "system/task.h"
 
 #include "field/event.h"
-#include "field/scene_tables.h"
 #include "field/field_effect.h"
 
 #include "field/speaker.h"
 #include "field/field_psynergy_work.h"
 
-#include "system/heap_slots.h"
 
 #include "field/map_grid_scroll.h"
 #include "text/msg_ids.h"

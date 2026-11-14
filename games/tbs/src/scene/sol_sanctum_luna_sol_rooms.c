@@ -74,15 +74,12 @@ extern struct Trigger gSolSanctumLunaSolRoomsTriggers[];
 #include "field/field.h"
 #include "battle/battle.h"
 #include "debug.h"
-#include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "types.h"
 #include "field/event.h"
-#include "field/scene_tables.h"
 
 /// The placed actors, numbered in the order of
 /// gSolSanctumLunaSolRoomsActorPlacements; Jenna and Garet, its last rows,

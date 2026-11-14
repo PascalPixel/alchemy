@@ -87,7 +87,6 @@ extern s32 gSolSanctumStatue_ScrollPhase;
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "field/map_grid_scroll.h"
 #include "macros.h"
 #include "flags.h"

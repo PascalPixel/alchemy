@@ -115,7 +115,6 @@ void m4aSoundInit(void);
 void m4aSongNumStart(u16 id);
 void m4aSoundVSync(void);
 
-#include "types.h"
 
 void Sound_Play(s32 id);
 void Sound_UpdateBgmRamps(void);

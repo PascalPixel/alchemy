@@ -166,7 +166,6 @@ extern u16 gAltinPeak_FlickerTimer;
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "system/heap_slots.h"
 #include "field/event.h"
 #include "system/io_reg.h"

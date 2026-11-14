@@ -77,7 +77,6 @@ extern struct Trigger gGatewayCaveTriggers[];
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "types.h"
 #include "field/event.h"
 
 #include "djinn_ids.h"

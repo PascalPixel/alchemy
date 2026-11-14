@@ -8,7 +8,6 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "sound/sound_driver.h"
 #include "system/io_reg.h"
 

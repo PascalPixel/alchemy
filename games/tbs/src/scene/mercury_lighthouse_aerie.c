@@ -90,7 +90,6 @@ extern s32 gMercuryLighthouseAerie_SparkScript[];
 #include "battle/battle.h"
 #include "debug.h"
 #include "field/field.h"
-#include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"

@@ -110,7 +110,6 @@ extern u16 gValePrologue_GrandparentsDoorCloses[];
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "field/field_effect.h"

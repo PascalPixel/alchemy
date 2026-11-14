@@ -81,7 +81,6 @@ extern struct Trigger gKolimaForestFloodgateTriggers[];
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/system.h"
 #include "field/event.h"
 #include "system/system_call.h"
 #include "system/dma.h"

@@ -8,7 +8,6 @@
 #include "system/system.h"
 #include "battle/battle.h"
 #include "field/field.h"
-#include "system/system.h"
 #include "battle/battle_effect_work.h"
 #include "system/main_routine_work.h"
 #include "macros.h"

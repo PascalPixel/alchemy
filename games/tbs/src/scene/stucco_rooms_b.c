@@ -79,9 +79,6 @@ extern struct Trigger gStuccoRoomsBTriggersAfterColosso[];
 extern u16 gStuccoRoomsBDoorOpening[];
 extern struct MapGridCellAnimation gStuccoRoomsBDoors[];
 
-#include "types.h"
-#include "field/event.h"
-#include "field/scene_tables.h"
 #include "scene/colosso_story_flags.h"
 #include "flags.h"
 

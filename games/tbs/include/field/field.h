@@ -246,7 +246,6 @@ extern const u8 gActor_ShadowTiles[];
 
 #include "graphics/render_placement.h"
 
-#include "types.h"
 
 struct SpriteAnimation;
 struct Sprite;

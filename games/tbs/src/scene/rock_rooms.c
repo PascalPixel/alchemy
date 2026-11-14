@@ -50,11 +50,8 @@ extern const struct Trigger gRockRooms_SealedTriggers[];
 extern const struct Trigger gRockRooms_ReopenedTriggers[];
 extern const struct Trigger gRockRooms_GateToSuhallaTriggers[];
 
-#include "types.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "field/event.h"
-#include "field/scene_tables.h"
 #include "flags.h"
 #include "item_ids.h"
 

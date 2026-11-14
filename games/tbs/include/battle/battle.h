@@ -203,7 +203,6 @@ enum BattleElementGlow {
   GLOW_BURST    ///< the element's burst: a Djinni set
 };
 
-#include "types.h"
 
 struct BattleAction;
 struct BattlePlaybackWork;

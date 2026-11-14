@@ -13,7 +13,6 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "system/system.h"
 #include "system/dma.h"
 #include "menu/item_menu.h"
 #include "menu/status_screen.h"

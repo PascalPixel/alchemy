@@ -8,7 +8,6 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
-#include "system/system.h"
 #include "system/dma.h"
 #include "system/io_write_queue.h"
 #include "field/map_grid_scroll.h"

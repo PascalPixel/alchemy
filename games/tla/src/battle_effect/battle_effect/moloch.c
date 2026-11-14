@@ -706,19 +706,6 @@ extern const u8 gIris_StripMesh[];
 extern const u8 gIris_ConeCorners[];
 extern const u8 gIris_ConeMesh[];
 
-#define EffectSprite_CreateWithTiles EffectSprite_CreateWithTiles
-/* VIEW(summon_effects): routine EffectSprite_Acquire as struct IrisSprite
- * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
- * battle_effect/ability_effects has struct EffectSprite__f15b3b0
- * *EffectSprite_Acquire(s32 kind, s32 value) {; tried as the definition's
- * struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value),
- * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/moloch.c:1348: too many arguments
- * to function `EffectSprite_Acquire'. */
-struct IrisSprite *
-EffectSprite_Acquire__summon_effects(s32 width, s32 height, u32 shape,
-                                     s32 mode) __asm__("EffectSprite_Acquire");
-#define EffectSprite_Acquire EffectSprite_Acquire__summon_effects
 void BattleEffect_ConfigureEffectDisplay(void);
 
 void Palette_LoadBasicSpriteColors(void);

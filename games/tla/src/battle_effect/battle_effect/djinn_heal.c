@@ -27,12 +27,6 @@ struct Model;
 #define SHEET_TEXTURE 0x2710
 #define SHEET_DJINN 0x65c0
 
-/* VIEW(battle_effect): routine Render_DrawModelList as void
- * Render_DrawModelList(struct Model *model); battle_effect/summon_effects has
- * void Render_DrawModelList(struct Model *model); not tried:
- * Render_DrawModelList's bound declaration was not found. */
-void Render_DrawModelList__battle_effect(struct Model *model);
-
 // Sixteen textured quads tumble down over the targets (or, from the first
 // target, rise), three frames apart, for 64 frames; with a prelude a Djinn
 // circles over the canvas and a fan of light lines spreads from it. At

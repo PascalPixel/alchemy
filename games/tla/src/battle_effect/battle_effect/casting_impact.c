@@ -235,7 +235,6 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_DrawModelList__ability_effects(struct Model *);
 
 #define PLTT ((void *)BG_PLTT)
 #define BG_VRAM ((void *)BG_CHAR_BLOCK(1))

@@ -737,8 +737,6 @@ void BattleEffect_EndElementStreaks(void) {
 
 struct Model;
 
-void Render_DrawModelList__battle_effect(struct Model *model);
-
 #define HI(v) (((s16 *)&(v))[1])
 
 extern char ResourceId_Data0B4, ResourceId_Data0C2, ResourceId_Data0C9;
@@ -746,23 +744,6 @@ extern char ResourceId_Data0CA, ResourceId_Data104, ResourceId_Data134;
 extern char ResourceId_CornerRuneASheet, ResourceId_ForestCanopyTiles;
 extern char ResourceId_SunbeamCloudsBackdrop, ResourceId_VioletSkyBackdrop;
 extern u8 gMapCellBuffer[];
-
-struct SpriteObject *EffectSprite_CreateWithTiles__battle_effect(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
-#define EffectSprite_CreateWithTiles EffectSprite_CreateWithTiles__battle_effect
-/* VIEW(battle_effect): routine EffectSprite_Acquire as struct RuinObject
- * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
- * battle_effect/ability_effects has struct EffectSprite__f15b3b0
- * *EffectSprite_Acquire(s32 kind, s32 value) {; tried as the definition's
- * struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value),
- * which the object already declares, it does not compile in tla-ja (make
- * modern): games/tla/include/module/battle_effect/battle_effect.h:201:64: note:
- * expected 'struct BattleEffectArgument *' but argument is of type 'u8 *'. */
-struct RuinObject *
-EffectSprite_Acquire__battle_effect(s32 width, s32 height, u32 shape,
-                                    s32 mode) __asm__("EffectSprite_Acquire");
-#define EffectSprite_Acquire EffectSprite_Acquire__battle_effect
 
 #define SLOT_ALT 188 // unkb8[1]
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])

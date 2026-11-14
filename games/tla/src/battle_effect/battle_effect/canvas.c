@@ -28,8 +28,6 @@ struct ModelTexture__f14153c {
   const u8 *pixels;
 };
 
-void Render_DrawModelList__battle_effect(struct Model *model);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
@@ -45,16 +43,6 @@ extern char ResourceId_Data0C1, ResourceId_Data0C9, ResourceId_Data0CA;
 extern u8 gMapCellBuffer[];
 /// The flashes, after the map cells.
 #define FLASHES ((struct EffectStep *)gData_02014000)
-
-/* VIEW(battle_effect): routine EffectSprite_CreateWithTiles as struct
- * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
- * u32 attributes); battle_effect/ability_effects has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags) {; not tried: EffectSprite_CreateWithTiles's bound declaration was not
- * found. */
-struct SpriteObject *
-EffectSprite_CreateWithTiles__battle_effect(s32 width, s32 height, u32 shape,
-                                            u32 attributes);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj) (0x06010000 + gResourceTableEntries[(obj)->slot].offset)

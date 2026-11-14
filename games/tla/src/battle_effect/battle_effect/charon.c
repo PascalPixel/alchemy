@@ -206,15 +206,6 @@ void Palette_LoadBasicSpriteColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Palette_BrightenSavedBattleBg(s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-/* VIEW(f175f74): routine EffectSprite_Acquire as struct SpriteObject__f175f74
- * *EffectSprite_Acquire(s32, s32, u32, u32); the definition has struct
- * EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value); tried as
- * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
- * s32 value), which the object already declares, BattleEffect_RunCharon moves:
- * 1 of 4316 instructions in tla-ja. */
-extern struct SpriteObject__f175f74 *
-EffectSprite_Acquire__f175f74(s32, s32, u32,
-                              u32) __asm__("EffectSprite_Acquire");
 
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32, s32, s32);
@@ -361,7 +352,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   }
   for (i = 0; i != 32; i++) {
     struct SpriteObject__f175f74 *object =
-        EffectSprite_Acquire__f175f74(8, 8, 0, 0xf000);
+        EffectSprite_Acquire(8, 8, 0, 0xf000);
     SPRITES[16 + i] = object;
     Iwram_CopyWords(object, sprites[0], 24);
   }

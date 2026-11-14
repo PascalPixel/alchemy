@@ -125,17 +125,6 @@ extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
 
-/* VIEW(f179f18): routine EffectSprite_Acquire as struct FloraObject
- * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); f175f74
- * has struct SpriteObject *EffectSprite_Acquire(s32, s32, u32, u32); tried as
- * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
- * s32 value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/flora.c:234: too many arguments to
- * function `EffectSprite_Acquire'. */
-extern struct FloraObject *
-EffectSprite_Acquire__f179f18(s32 width, s32 height, u32 shape,
-                              s32 mode) __asm__("EffectSprite_Acquire");
-
 void BattleEffect_ConfigureEffectDisplay(void);
 void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
@@ -241,7 +230,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       }
       for (i = 0; i != 17; i++) {
         struct FloraObject *obj =
-            EffectSprite_Acquire__f179f18(16, 16, 0x40000000, 0xf000);
+            EffectSprite_Acquire(16, 16, 0x40000000, 0xf000);
         work->objects[27 + i] = obj;
         Iwram_CopyWordsEntry(obj, work->objects[12], 24);
       }

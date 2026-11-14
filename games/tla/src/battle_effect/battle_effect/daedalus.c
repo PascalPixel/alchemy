@@ -73,7 +73,6 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -384,15 +383,6 @@ void RagingHeat_FillGradientCanvas(void);
 
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
-/* VIEW(f17e698): routine EffectSprite_Acquire as Sprite
- * *EffectSprite_Acquire(s32, s32, u32, s32); the definition has struct
- * EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value); tried as
- * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
- * s32 value), which the object already declares, BattleEffect_RunDaedalus
- * moves: 3 of 3898 instructions in tla-ja. */
-extern Sprite *
-EffectSprite_Acquire__f17e698(s32, s32, u32,
-                              s32) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_FetchRectangleBlitters(s32, void **);
 void BattleEffect_StepPaletteToResource(s32);
@@ -547,7 +537,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
               (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
               &work->frames[(j << 12) + i * 0x200], 0x200);
         }
-        obj = EffectSprite_Acquire__f17e698(32, 32, 0x80000000, 0xf000);
+        obj = EffectSprite_Acquire(32, 32, 0x80000000, 0xf000);
         work->sprites[j * 9 + 8] = obj;
         Iwram_CopyWords(obj, work->sprites[j * 9], 24);
         for (i = 0; i != 8; i++)
@@ -591,8 +581,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
       for (i = 0; i != 15; i++) {
-        work->sprites[42 + i] =
-            EffectSprite_Acquire__f17e698(16, 8, 0x4000, 0xf000);
+        work->sprites[42 + i] = EffectSprite_Acquire(16, 8, 0x4000, 0xf000);
         Iwram_CopyWords(work->sprites[42 + i], work->sprites[41], 24);
         work->sprites[42 + i]->tile = work->sprites[41]->tile;
         if (i > 6)
@@ -1382,8 +1371,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     BattleActor_SpawnObjectsForListFar(arg->actors, 0);
     BattleEffect_SpawnObjects(1, 663, 1);
     for (i = 0; i != 15; i++) {
-      work->sprites[1 + i] =
-          EffectSprite_Acquire__f17e698(32, 16, 0x80006000, 0);
+      work->sprites[1 + i] = EffectSprite_Acquire(32, 16, 0x80006000, 0);
       IWRAM_COPY_WORDS_LINKED(work->sprites[1 + i], work->sprites[0], 24);
       work->sprites[1 + i]->unk16 = 32;
       work->sprites[1 + i]->unk17 = 8;

@@ -50,8 +50,6 @@
 #undef MOTE_COUNT
 #undef PILLAR_FRAMES
 
-#undef EffectSprite_CreateWithTiles
-#undef EffectSprite_Acquire
 #undef Render_DrawModelList
 #undef SLOT_ALT
 #undef OBJ_TILES
@@ -108,7 +106,6 @@
 #undef BLITTER_MAX
 
 #undef FxGroup
-#undef EffectSprite_CreateWithTiles
 #undef PUFF_COUNT
 
 // The effects of abilities and summons from the opening every Djinn effect
@@ -202,7 +199,5 @@
 
 #undef ModelVertex
 #undef BattleBackgroundId
-#undef EffectSprite_CreateWithTiles
-#undef EffectSprite_Acquire
 #undef Texture
 #undef Model

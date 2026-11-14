@@ -28,8 +28,8 @@ struct EffectSprite__f15b3b0 {
   u8 unk11_0 : 1;
   u8 unk11_1 : 7;
   u16 unk12;
-  u8 kind;
-  u8 unk15;
+  u8 width;
+  u8 height;
   u8 unk16;
   u8 unk17;
   u8 unk18[2];
@@ -40,14 +40,16 @@ struct EffectSprite__f15b3b0 {
   u8 unk2c[0x0c];
 };
 
-// Takes the first free effect sprite of the 64 with a new animation entry.
-struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value) {
+/// Takes the first free effect sprite of the 64 with a new animation entry.
+/// Its callers also pass the sprite's OAM shape and mode, which it leaves for
+/// the caller to set.
+void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode) {
   struct EffectSprite__f15b3b0 *sprite = Ram_HeapSlots->unk0c[1];
   struct EffectSprite__f15b3b0 *found = NULL;
   s32 i = 0;
 
   while (i <= 63) {
-    if (sprite->kind == 0) {
+    if (sprite->width == 0) {
       found = sprite;
       break;
     }
@@ -55,8 +57,8 @@ struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value) {
     sprite++;
   }
   sprite->entry = AnimationObject_AllocateEmpty();
-  sprite->kind = kind;
-  sprite->unk15 = value;
+  sprite->width = width;
+  sprite->height = height;
   sprite->unk0c = 0x10000;
   sprite->unk11_0 = 0;
   sprite->unk17 = 0;

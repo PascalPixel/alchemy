@@ -39,7 +39,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -148,15 +147,6 @@ extern const s16 gCatastrophe_ShardRolls[];
 
 void VramBlock_Reset93Far(void);
 void VramBlock_Load93Far(void);
-/* VIEW(f1843fc): routine EffectSprite_Acquire as struct SpriteObject
- * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); f17e698
- * has Sprite *EffectSprite_Acquire(s32, s32, u32, s32); tried as the
- * definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32
- * value), which the object already declares, BattleEffect_RunCatastrophe moves:
- * 2 of 4547 instructions in tla-ja. */
-extern struct SpriteObject *
-EffectSprite_Acquire__f1843fc(s32 width, s32 height, u32 shape,
-                              s32 mode) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 a, s32 b);
@@ -301,7 +291,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       u8 *cells = Data_02016000;
 
       for (i = 0; i != 4; i++) {
-        obj = EffectSprite_Acquire__f1843fc(32, 32, 0x80002000, 0);
+        obj = EffectSprite_Acquire(32, 32, 0x80002000, 0);
         work->objects[24 + i] = obj;
         Iwram_CopyWords(obj, work->objects[i], 24);
         Iwram_CopyWords((void *)OBJ_TILES(work->objects[24 + i]),
@@ -311,7 +301,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Iwram_CopyWords(cellBuffer + 0x1000, Data_02016000, 0x1000);
   }
   for (i = 0; i != 6; i++) {
-    obj = EffectSprite_Acquire__f1843fc(32, 32, 0x80002000, 0);
+    obj = EffectSprite_Acquire(32, 32, 0x80002000, 0);
     work->objects[28 + i] = obj;
     Iwram_CopyWords(obj, work->objects[i], 24);
   }

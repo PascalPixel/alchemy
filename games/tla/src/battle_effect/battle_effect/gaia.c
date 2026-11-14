@@ -450,8 +450,8 @@ struct EffectSprite {
 /// cache entry and the first free effect sprite of the 64, as
 /// EffectSprite_Acquire takes, set up for Animation_ApplyChildArgumentFar. The
 /// Lost Age's own.
-struct EffectSprite *EffectSprite_CreateWithTiles(s32 width, s32 height,
-                                                  s32 attributes, s32 flags) {
+void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
+                                   s32 flags) {
   struct EffectSprite *found = NULL;
   s32 vramEntry = VramCache_FindFreeEntry();
   struct EffectSprite *sprite = Ram_HeapSlots->unk0c[1];

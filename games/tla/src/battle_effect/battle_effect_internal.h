@@ -60,8 +60,9 @@
 #include "system/ram_code.h"
 
 struct EffectSprite;
-struct EffectSprite *EffectSprite_CreateWithTiles(s32 width, s32 height,
-                                                  s32 attributes, s32 flags);
+void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
+void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
+                                   s32 flags);
 
 struct EclipseObject {
   u8 unk0[9];

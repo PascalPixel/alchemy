@@ -26,7 +26,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -112,18 +111,6 @@ extern const s8 gAzul_LateObjectZ[];
 extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gBattleEffect_SquareMesh[];
 extern const u8 gBattleEffect_LargeSquareMesh[];
-
-/* VIEW(f15cde8): routine EffectSprite_Acquire as struct AzulObject
- * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); the
- * definition has struct EffectSprite *EffectSprite_Acquire(s32 kind, s32
- * value); tried as the definition's struct EffectSprite__f15b3b0
- * *EffectSprite_Acquire(s32 kind, s32 value), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/azul.c:224: too many arguments to
- * function `EffectSprite_Acquire'. */
-extern struct AzulObject *
-EffectSprite_Acquire__f15cde8(s32 width, s32 height, u32 shape,
-                              s32 mode) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
@@ -232,7 +219,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   wait(1);
   BattleEffect_SpawnObjects(12, 0x28c, 1);
   for (i = 0; i != 16; i++) {
-    obj = EffectSprite_Acquire__f15cde8(32, 32, 0x80002000, 0);
+    obj = EffectSprite_Acquire(32, 32, 0x80002000, 0);
     work->objects[i + 12] = obj;
     Iwram_CopyWordsEntry(obj, work->objects[5 + (i & 3)], 24);
     ((struct AzulObject *)work->objects[i])->priority = 1;

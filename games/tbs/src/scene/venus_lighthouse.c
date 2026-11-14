@@ -110,7 +110,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern u32 gPushedActor_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
 extern u32 gVenusBalancePlatformHeights[];

@@ -105,7 +105,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gValeKradensCottage_RockslideSurvivorEscapeActions[];
 extern s32 gValeKradensCottage_RockslideSurvivorSquashes[];

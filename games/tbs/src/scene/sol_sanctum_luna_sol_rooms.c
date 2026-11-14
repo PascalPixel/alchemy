@@ -84,7 +84,6 @@ u16 gSolSanctumLunaSolRooms_Light1Timer BSS_DATA ALIGNED(4);
 s32 gSolSanctumLunaSolRooms_FlashState BSS_DATA;
 u16 gSolSanctumLunaSolRooms_Light4Timer BSS_DATA;
 
-s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
 extern u32 gSolSanctumLunaSolRoomsExits[];
 extern struct ActorPlacement gSolSanctumLunaSolRoomsActorPlacements[];

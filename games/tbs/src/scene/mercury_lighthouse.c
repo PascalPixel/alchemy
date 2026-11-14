@@ -126,7 +126,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern s32 gMercuryLighthouse_RippleScript[];
 extern s32 gGlint_TwinkleScript[];
 extern s32 gMercuryLighthouse_PushScriptA[];

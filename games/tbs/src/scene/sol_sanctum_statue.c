@@ -81,7 +81,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumStatue_Entrances[];
 extern u32 gSolSanctumStatue_Exits[];
 extern struct ActorPlacement gSolSanctumStatue_ActorPlacements[];

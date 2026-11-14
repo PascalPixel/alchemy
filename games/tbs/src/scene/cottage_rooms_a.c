@@ -73,8 +73,6 @@
 #include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
-const u32 *Scene_GetExits(void);
-s32 Scene_Initialize(void);
 extern s32 gCottageRoomsA_FaceTargetScript[];
 extern s32 gCottageRoomsA_FatherPacingScript[];
 extern s32 gCottageRoomsA_PartyLeavesScript[];

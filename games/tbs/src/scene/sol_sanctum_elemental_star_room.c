@@ -70,7 +70,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gItemIcon_GrowScript[];
 extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];

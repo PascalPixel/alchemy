@@ -80,8 +80,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(s32 unused);
 extern s32 gTolbiOlderBrotherRun[];
 extern s32 gTolbiYoungerSisterRun[];
 extern struct SceneEntrance gTolbiEntrances[];

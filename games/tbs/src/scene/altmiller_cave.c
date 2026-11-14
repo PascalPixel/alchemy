@@ -92,7 +92,6 @@
 
 struct LightWheel;
 
-s32 Scene_Initialize(void);
 extern struct LightWheel *gAltmillerCave_LightWheel;
 extern struct SceneEntrance gAltmillerCave_Entrances[];
 extern u32 gAltmillerCave_Exits[];

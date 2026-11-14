@@ -100,7 +100,6 @@ u8 gHeatGauge_TileBuffer[2304] BSS_DATA;
 /// 1 while the gauge is held on screen (HeatGauge_SetHeld).
 s16 gHeatGauge_Held BSS_DATA;
 
-s32 Scene_Initialize(void);
 void HeatGauge_Start(void);
 /// The middles of the oases, where a leader stepping into one bathes: x and z
 /// of each, in 16.16 fixed-point pixels.

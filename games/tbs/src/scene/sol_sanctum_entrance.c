@@ -72,7 +72,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct ActorPlacement *Scene_GetActorPlacements(void);
 extern struct SceneEntrance gSolSanctumEntrance_FallbackEntrances[];
 extern struct SceneEntrance gSolEntrance_Entrances[];
 extern struct SceneEntrance gSolSanctumReliefs_Entrances[];

@@ -84,7 +84,6 @@
 #include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
 extern u32 gSanctum_LeaderCircleScript[];
 extern u32 gSanctum_GaretCircleScript[];
 extern s32 gItemIcon_GrowScript[];

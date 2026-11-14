@@ -127,8 +127,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gValePlaza_ChargedUpStrongmanActions[];
 extern s32 gValePlaza_SecondTravelerLeapActions[];

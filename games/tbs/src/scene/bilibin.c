@@ -128,8 +128,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-s32 Scene_Initialize(void);
 extern s32 gBilibin_FaceLeaderScript[];
 extern u16 gBilibinEntrancesOther[];
 extern struct SceneEntrance gBilibinEntrances[];

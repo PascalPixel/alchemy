@@ -92,7 +92,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern s32 gVenusLighthouseAerie_JoinLeaderAction[];
 extern s32 gVenusLighthouseAerie_StepBackWestAction[];
 extern s32 gVenusLighthouseAerie_StepBackEastAction[];

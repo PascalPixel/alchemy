@@ -96,7 +96,6 @@
 #include "system/system.h"
 #include "system/system_call.h"
 
-s32 Scene_Initialize(void);
 extern struct SceneEntrance gBilibinCaveEntrancesOther[];
 extern struct SceneEntrance gBilibinCaveEntranceEntrances[];
 extern struct SceneEntrance gBilibinCaveRapierEntrances[];

@@ -79,7 +79,6 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern u8 gValePrologue_FrameModes[];
 extern s32 gValePrologue_ShovingManScript[];
 extern s32 gValePrologue_UnusedGaretRunsUpScript[];

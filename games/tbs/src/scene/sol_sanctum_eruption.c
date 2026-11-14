@@ -76,7 +76,6 @@ s32 gEmberMask BSS_DATA;
 s32 gEmberLevel BSS_DATA;
 s32 gEmberLevelTimer BSS_DATA;
 
-s32 Scene_Initialize(void);
 extern s32 gEruption_ArcOrigins[];
 extern struct SceneEntrance gSolSanctumEruption_Entrances[];
 extern u32 gSolSanctumEruption_Exits[];

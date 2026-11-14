@@ -87,8 +87,6 @@
 #include "system/system_call.h"
 #include "text/msg_ids.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-s32 Scene_Initialize(void);
 extern s32 gMogallForest_ActorScript[];
 extern struct SceneEntrance gMogallForestSign_Entrances[];
 extern struct SceneEntrance gMogallForestQuartz_Entrances[];

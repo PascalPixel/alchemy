@@ -52,7 +52,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct Trigger *Scene_GetTriggers(void);
 extern struct SceneEntrance gLacquerRoomsB_Entrances[];
 extern u32 gLacquerRoomsB_Exits[];
 extern struct ActorPlacement gLacquerRoomsB_ActorPlacements[];

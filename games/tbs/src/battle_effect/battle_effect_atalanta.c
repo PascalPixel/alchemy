@@ -7,6 +7,14 @@
 /// The trail particles' random rotations, after the particles in PARTICLES.
 #define ATALANTA_MATRICES (Ram_MapGridCellBuffer + 14336)
 
+/// How far below its projected point a trail mote is drawn: the Japanese
+/// release draws the trails 16 pixels higher than the later releases.
+#if !TBS_PATCH_1
+#define ATALANTA_TRAIL_DROP 0
+#else
+#define ATALANTA_TRAIL_DROP 16
+#endif
+
 /// The pictures in the slash sheet: five flash pictures, then the shaft in
 /// three parts, with the sizes the draws use.
 enum SlashSheetPicture {
@@ -220,28 +228,17 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         } else {
           for (j = 0; j != 24; j++) {
             struct Particle *trail = &PARTICLES[i * 24 + j];
+            s32 size = 5;
 
             if (trail->x > 0) {
               Transform_Load(ATALANTA_MATRICES + (i * 24 + j) * 48);
               point[0] = trail->x;
-              // The Japanese release draws the trails 16 pixels higher;
-              // the later releases move them 16 pixels down.
-#if !TBS_PATCH_1
-              {
-                /* FAKEMATCH(temporary): out holds &screen. */
-                struct ScreenPoint *out = &screen;
-
-                Projection_Point(point, out);
-              }
-              screen.x = (screen.x >> 1) + x;
-              screen.y = screen.y + y;
-#else
               Projection_Point(point, &screen);
               screen.x = (screen.x >> 1) + x;
-              screen.y = screen.y + y + 16;
-#endif
+              screen.y = screen.y + y + ATALANTA_TRAIL_DROP;
               trail->x -= 4;
-              EFFECT_DRAW_MOTE(draw[1], canvas, sheet, screen.x, screen.y, 5);
+              EFFECT_DRAW_MOTE(draw[1], canvas, sheet, screen.x, screen.y,
+                               size);
             }
           }
         }

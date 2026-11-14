@@ -451,10 +451,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           if (step->variant >= 0) {
             Projection_Point(step, &position);
             position.x >>= 1;
-            draw[1](canvas,
-                    particleSheet + gBattleEffect_MotePictures[size - 1],
-                    position.x - ((u32)size >> 1), position.y - size, size,
-                    size * 2);
+            EFFECT_DRAW_MOTE(draw[1], canvas, particleSheet, position.x,
+                             position.y, size);
             Particle_AdvanceWithGravity3D(step, 60, 0);
             step->variant++;
             if (step->variant > 10) {

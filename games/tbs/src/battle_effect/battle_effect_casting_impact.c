@@ -709,10 +709,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
               s32 size = (i & 1) + 6;
               Projection_Point(step, &projected);
               projected.x >>= 1;
-              blitters[0](canvas,
-                          sprites + gBattleEffect_MotePictures[size - 1],
-                          projected.x - (u32)size / 2, projected.y - size, size,
-                          size * 2);
+              EFFECT_DRAW_MOTE(blitters[0], canvas, sprites, projected.x,
+                               projected.y, size);
               Particle_AdvanceWithGravity3D(step, 62, 0);
               if (frame > i + 22) {
                 s32 dx = (caster->x.fixed - step->x) >> 8;

@@ -81,11 +81,11 @@
 /// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
 /// (examine triggers 100 to 102).
 
+#include "types.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
 #include "field/speaker.h"
 #include "system/main_routine_work.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "field/scene.h"
 
 extern s16 gTreeRooms_MapPatches[];
 extern s32 gTreeRooms_LeaderGathersActions[];

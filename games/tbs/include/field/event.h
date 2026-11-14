@@ -10,24 +10,22 @@
 /// An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
 /// Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0); Event_End();`.
 
-#include "field/field_sequence.h"
+#include "edition.h"
+#include "fixed_math.h"
+#include "static_assert.h"
+#include "types.h"
 #include "field/event_commands.h"
 #include "field/field.h"
-#include "system/system.h"
+#include "field/field_sequence.h"
 #include "game/game.h"
-#include "sound/sound.h"
-#include "shop/shop.h"
-#include "window/window.h"
 #include "menu/menu.h"
 #include "scene/scroll_initialize_hblank_dma.h"
-#include "fixed_math.h"
-#include "edition.h"
-#include "types.h"
+#include "shop/shop.h"
+#include "sound/sound.h"
 #include "system/heap.h"
-
-#include "static_assert.h"
-
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/window.h"
 
 // A scene stores into its own const tables: an overlay's data is in RAM.
 #ifdef MODERN

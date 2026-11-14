@@ -56,9 +56,9 @@
 /// Once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED) the room rumbles and
 /// shakes, as the rest of the sanctum does.
 
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumStatue_Entrances[];

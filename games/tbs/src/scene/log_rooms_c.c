@@ -41,10 +41,10 @@
 /// in its floor. The family is put out of sight
 /// (places/kolima-interiors_cursed/map-8.png).
 
-#include "system/main_routine_work.h"
 #include "flags.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 s32 Scene_Initialize(void);

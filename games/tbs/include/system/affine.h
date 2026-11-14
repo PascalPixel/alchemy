@@ -4,9 +4,9 @@
 /// @file
 /// Sprite rotation and scale, and the affine matrices handed out each frame.
 
-#include "system/system.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
+#include "system/system.h"
 
 /// A sprite's rotation and scale: scales in 8.8 fixed point (256 is full
 /// size), the angle in 1/65536 turns.

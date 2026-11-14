@@ -85,12 +85,12 @@
 ///   last comes from the oven with the stew, whose find always answers first,
 ///   so the stew's line is unused.
 
-#include "field/script_operands.h"
-#include "field/sprite.h"
-#include "system/main_routine_work.h"
-#include "system/input.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "field/sprite.h"
+#include "system/input.h"
+#include "system/main_routine_work.h"
 
 extern s16 gImil_KeyHeadings[];
 extern s16 gImil_SwayHeadings[];

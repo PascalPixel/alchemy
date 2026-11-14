@@ -55,14 +55,14 @@
 /// has stopped, another while it moves. Each copied cell is a wall, a jump
 /// across or open ground, as the lifts line up or part.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "system/io_write_queue.h"
 #include "scene_ids.h"
-#include "system/vram_cache.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/io_write_queue.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 
 s32 ColosseumSatrageMatch_Initialize(void);
 // UB: the scene calls this before its definition with no prototype, as a

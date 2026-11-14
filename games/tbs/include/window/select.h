@@ -4,10 +4,10 @@
 /// @file
 /// The selection screen's sprites and nodes.
 
-#include "types.h"
 #include "static_assert.h"
-#include "window/window.h"
+#include "types.h"
 #include "system/affine.h"
+#include "window/window.h"
 
 /// A selection screen sprite: a list link and its OAM attributes.
 struct SelectionSprite {

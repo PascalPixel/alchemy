@@ -3,15 +3,15 @@
 /// It is the first code of bank 04, linked before the field sequence's object.
 
 #include "system/main_routine.h"
-#include "field/scene.h"
-#include "battle/battle.h"
-#include "system/system.h"
-#include "system/dma.h"
 #include "flags.h"
-#include "system/iwram_call.h"
-#include "field/map_grid_scroll.h"
+#include "battle/battle.h"
 #include "field/event.h"
 #include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene.h"
+#include "system/dma.h"
+#include "system/iwram_call.h"
+#include "system/system.h"
 
 // The scene overlay's exit table: a header word holding a scene id, then that
 // scene's exits, one packed word each (and a flag word after it when

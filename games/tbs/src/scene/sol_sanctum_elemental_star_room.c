@@ -40,10 +40,10 @@
 /// grows with him. The platform's actor, ACTOR_PLATFORM_SHADOW, draws that
 /// shadow.
 
-#include "system/main_routine_work.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 s32 Scene_Initialize(void);
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];

@@ -55,13 +55,13 @@
 /// At sea the lookout says he is the lookout, not an oarsman. At the island he
 /// warns of monsters and wonders at its treasures.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
-#include "field/scene_tables.h"
 #include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 extern s32 gTolbiShipMast_DriftY;
 extern s32 gTolbiShipMast_DriftX;

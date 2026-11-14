@@ -4,8 +4,8 @@
 /// @file
 /// The battle calculation tables: hit chances, HP and PP damage and recovery.
 
-#include "types.h"
 #include "edition.h"
+#include "types.h"
 #include "gamepak/far_call.h"
 
 // Percentages by a target's distance from the aimed position, 0 for the aimed

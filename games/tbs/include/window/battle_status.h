@@ -4,9 +4,9 @@
 /// @file
 /// The Status screen's cursors and the party status window's flags.
 
-#include "types.h"
-#include "tbs_edition.h"
 #include "static_assert.h"
+#include "tbs_edition.h"
+#include "types.h"
 #include "gamepak/far_call.h"
 
 /// A cursor stop among the Status screen's stats: its help entry, where the

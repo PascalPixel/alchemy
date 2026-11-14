@@ -4,13 +4,13 @@
 /// @file
 /// The Status screen's state, and the statuses it shows.
 
-#include "window/window.h"
-#include "window/screens.h"
-#include "menu/menu.h"
-#include "types.h"
-#include "system/heap_slots.h"
 #include "static_assert.h"
+#include "types.h"
 #include "field/sprite.h"
+#include "menu/menu.h"
+#include "system/heap_slots.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 struct Unit;
 

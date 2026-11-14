@@ -4,13 +4,13 @@
 /// @file
 /// The main-image calls the debug menus import, and their palette swatch tiles.
 
-#include "field/field_sequence.h"
-#include "menu/menu.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "types.h"
 #include "edition.h"
+#include "types.h"
+#include "field/field_sequence.h"
+#include "game/game.h"
 #include "gamepak/far_call.h"
+#include "menu/menu.h"
+#include "window/window.h"
 
 /// The palette editor's swatch tiles, compressed; it decompresses them to
 /// tile 208 of character block 0, one tile a colour.

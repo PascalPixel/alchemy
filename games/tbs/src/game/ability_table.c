@@ -3,8 +3,8 @@
 /// moves, item uses, Djinn and summons. Each name is the English release's
 /// (MsgAbilityName plus the ability's number).
 
-#include "game/game.h"
 #include "ability_ids.h"
+#include "game/game.h"
 
 // clang-format off
 const struct AbilityDefinition gAbilityDefinitions[] = {

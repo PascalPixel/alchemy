@@ -71,11 +71,11 @@
 /// copies of West Lunpa Cave's exits and actor placements, which these
 /// scenes never read.
 
-#include "system/main_routine_work.h"
-#include "field/event.h"
-#include "scene/import.h"
 #include "types.h"
+#include "field/event.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 extern s32 gLunpaFortressRandomPick;
 extern s32 gSecondPatrolRoute[];

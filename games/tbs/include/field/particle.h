@@ -5,8 +5,8 @@
 /// Particle and ScreenPoint, the positions animations move through.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// A particle of an animation: its position, its velocity and a value each
 /// animation uses its own way (a size, a timer, -1 for idle).

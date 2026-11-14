@@ -3,20 +3,18 @@
 /// levels, give any item and show the game's icons and portraits.
 
 #include "debug/level.h"
-#include "battle/battle.h"
-#include "system/input.h"
-#include "game/game.h"
-#include "system/system.h"
-#include "types.h"
 #include "edition.h"
-#include "gamepak/far_call.h"
-#include "battle/playback_queue.h"
+#include "types.h"
+#include "battle/battle.h"
 #include "battle/battle_action_run.h"
-
-#include "window/window.h"
-
+#include "battle/playback_queue.h"
 #include "field/field_work.h"
+#include "game/game.h"
+#include "gamepak/far_call.h"
 #include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/system.h"
+#include "window/window.h"
 
 void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
 

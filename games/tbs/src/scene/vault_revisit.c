@@ -41,11 +41,11 @@
 /// the hole the fiery rock burnt in it (render probe vault-revisit, the town
 /// before and after).
 
-#include "system/main_routine_work.h"
 #include "djinn_ids.h"
-#include "window/window.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
+#include "window/window.h"
 
 extern s32 gVault_BoyRoundTheWellRoute[];
 extern s32 gVault_GirlRoundTheWellRoute[];

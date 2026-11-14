@@ -5,14 +5,13 @@
 /// The battle camera, its view work and the battle background's affine
 /// work.
 
+#include "edition.h"
+#include "fixed_math.h"
+#include "static_assert.h"
+#include "types.h"
 #include "battle/battle_action.h"
 #include "battle/battle_effect_params.h"
-
-#include "types.h"
-#include "static_assert.h"
-#include "edition.h"
 #include "gamepak/far_call.h"
-#include "fixed_math.h"
 
 /// The battle camera: its eye, the focus it turns about, and its pitch, yaw
 /// and distance. It lives in the HEAP_SLOT_CAMERA heap slot.

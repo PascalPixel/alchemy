@@ -4,20 +4,20 @@
 /// crossfade behind them.
 
 #include "menu/credits.h"
-#include "system/system.h"
-#include "gamepak/flash.h"
-#include "gamepak/flash_data.h"
+#include "flags.h"
+#include "resource_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/ram_code.h"
-#include "system/io_write_queue.h"
-#include "system/io_write.h"
 #include "field/map_grid_scroll.h"
-#include "resource_ids.h"
+#include "game/game.h"
+#include "gamepak/flash.h"
+#include "gamepak/flash_data.h"
+#include "graphics/graphics.h"
+#include "system/io_write.h"
+#include "system/io_write_queue.h"
 #include "system/iwram_call.h"
-#include "flags.h"
+#include "system/ram_code.h"
+#include "system/system.h"
 
 // Credits text uses six 32-pixel sprites across each 192-pixel line.
 #define CREDITS_LINE_PIXELS 192

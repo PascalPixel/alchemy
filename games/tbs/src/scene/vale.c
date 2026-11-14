@@ -87,11 +87,11 @@
 /// the hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west and sheds
 /// sparkles, and the pillar cycles its colour modes too.
 
-#include "system/main_routine_work.h"
-#include "system/vram_cache.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 
 extern s32 gVale_AlephGuardPatrol[];
 extern s32 gVale_LeaderHammers[];

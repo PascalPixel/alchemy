@@ -14,11 +14,11 @@
 /// mechanism. A file with a local declaration defines `OWN_<name>` before
 /// including this header to keep that declaration in scope.
 
-#include "system/task.h"
+#include "edition.h"
+#include "types.h"
 #include "field/field_particle.h"
 #include "system/irq.h"
-#include "types.h"
-#include "edition.h"
+#include "system/task.h"
 
 struct AffineTransform;
 struct SpriteAnimation;

@@ -4,8 +4,8 @@
 /// @file
 /// STATIC_ASSERT, a compile-time check that emits nothing.
 
-#include "types.h"
 #include "stddef.h"
+#include "types.h"
 
 #ifdef MODERN
 #define STATIC_ASSERT(condition) _Static_assert((condition), #condition)

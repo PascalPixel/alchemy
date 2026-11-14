@@ -1,8 +1,8 @@
 /// @file
 /// The German counted nouns, singular and plural, by kind.
 
-#include "window/articles.h"
 #include "types.h"
+#include "window/articles.h"
 
 #if LANGUAGE == LANGUAGE_GERMAN
 /// {singular, plural}: window.c reads [(kind & 7) * 2 + plural].

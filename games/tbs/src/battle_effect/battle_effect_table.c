@@ -5,11 +5,11 @@
 /// offsets from the sheet start, accumulated as width times height.
 
 #include "battle_effect/battle_effect_table.h"
-#include "battle_effect/battle_effect.h"
-#include "types.h"
-#include "system/vector3.h"
-#include "graphics/render_placement.h"
 #include "fixed_math.h"
+#include "types.h"
+#include "battle_effect/battle_effect.h"
+#include "graphics/render_placement.h"
+#include "system/vector3.h"
 
 // Keep the definitions in link order.
 

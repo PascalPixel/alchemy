@@ -4,9 +4,9 @@
 /// @file
 /// The world map's scanlines and affine lines.
 
-#include "field/field.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
+#include "field/field.h"
 
 /// One screen line's ground-plane terms on the world map: its width scale and
 /// distance, from which its affine parameters are built

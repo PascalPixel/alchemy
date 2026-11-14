@@ -5,11 +5,11 @@
 /// The speaker lookup's view of an actor's sprite, the speaker
 /// definitions, and the palette fade's heap slot.
 
-#include "field/field_sequence.h"
-#include "types.h"
-#include "static_assert.h"
-#include "graphics/palette_buffers.h"
 #include "sounds.h"
+#include "static_assert.h"
+#include "types.h"
+#include "field/field_sequence.h"
+#include "graphics/palette_buffers.h"
 #include "system/heap.h"
 
 /// An actor's animated sprite (struct Sprite), as far as the

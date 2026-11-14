@@ -4,9 +4,9 @@
 /// @file
 /// Animation metadata and its lookup by resource.
 
-#include "types.h"
-#include "static_assert.h"
 #include "edition.h"
+#include "static_assert.h"
+#include "types.h"
 #include "gamepak/far_call.h"
 
 /// An animation's metadata: the sprite's size, scale and offsets, how its

@@ -54,12 +54,12 @@
 /// On every arrival ValeCave_ApplyEntryState rebuilds the cells of each puzzle
 /// already solved. Once Kite has run behind its ledge, it puts Kite back there.
 
-#include "system/main_routine_work.h"
 #include "djinn_ids.h"
-#include "system/system_call.h"
-#include "system/heap_slots.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system_call.h"
 
 s32 Scene_Initialize(void);
 extern s32 gValeCave_WalkTargets[][2];

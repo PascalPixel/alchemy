@@ -3,13 +3,13 @@
 /// every sound number, the music's volume and tempo ramps, the music's return
 /// after a jingle, and a sound test nothing in the game names.
 
-#include "system/system.h"
+#include "sound/sound.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "sound/sound.h"
 #include "sound/sound_driver.h"
 #include "system/io_reg.h"
+#include "system/system.h"
 
 enum {
   /// Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8

@@ -3,8 +3,8 @@
 /// follows the party's.
 
 #include "battle/formations.h"
-#include "battle/battle.h"
 #include "enemy_ids.h"
+#include "battle/battle.h"
 
 // clang-format off
 struct Formation gFormations[] = {

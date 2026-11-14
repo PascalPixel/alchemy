@@ -104,13 +104,13 @@
 /// Bilibin_JillGivesHardNut, which gives the leader a Hard Nut
 /// (FLAG_BILIBIN_JILL_GIFT_RECEIVED). From then on the three turn to watch him.
 
-#include "system/main_routine_work.h"
 #include "djinn_ids.h"
 #include "flags.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 s32 Scene_Initialize(void);

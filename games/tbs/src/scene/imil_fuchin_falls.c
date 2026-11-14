@@ -101,14 +101,14 @@
 /// The first room's inscription points the way: `The dragon's flame illuminates
 /// the path of truth in darkness.`
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "system/input.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
-#include "field/scene_tables.h"
 #include "field/field_effect.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/input.h"
+#include "system/main_routine_work.h"
 
 extern s32 gImilFuchinFalls_TrackLeader;
 extern s16 gImilFuchinFalls_KeyHeadings[];

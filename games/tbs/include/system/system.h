@@ -5,11 +5,11 @@
 /// The system's routines and globals: interrupts, BIOS sound bias, random
 /// numbers and sleep.
 
-#include "types.h"
-#include "system/heap_release.h"
 #include "edition.h"
+#include "types.h"
 #include "gamepak/far_call.h"
 #include "system/heap.h"
+#include "system/heap_release.h"
 
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);

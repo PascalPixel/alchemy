@@ -73,10 +73,10 @@
 ///
 /// A chest holds Power Bread.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
 
 extern s32 gAlpineCrossing_WorkerActorPlacementScript[];
 extern s32 gAlpineCrossing_FeizhiPath[];

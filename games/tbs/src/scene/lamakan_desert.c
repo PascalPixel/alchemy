@@ -55,10 +55,10 @@
 /// and FLAG_HSU_RESCUED_WITHOUT_PARTY, which lacquer_rooms_b.c reads to have
 /// Feizhi thank Master Hama alone.
 
-#include "system/vram_cache.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/vram_cache.h"
 
 s32 Scene_Initialize(void);
 void HeatGauge_Start(void);

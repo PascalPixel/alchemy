@@ -4,15 +4,15 @@
 /// @file
 /// The save workspace: sector headers and file summaries.
 
-#include "window/window.h"
-#include "window/screens.h"
-#include "types.h"
-#include "static_assert.h"
-#include "system/dma.h"
-#include "system/heap_slots.h"
 #include "fixed_math.h"
+#include "static_assert.h"
+#include "types.h"
 #include "gamepak/flash.h"
+#include "system/dma.h"
 #include "system/heap.h"
+#include "system/heap_slots.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 /// The header of a save sector in flash: its signature, the part it holds,
 /// its checksum and its counter.

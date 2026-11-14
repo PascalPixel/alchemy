@@ -4,8 +4,8 @@
 /// @file
 /// The map scroll work and the line scroll's work and wave.
 
-#include "field/map_grid_scroll.h"
 #include "static_assert.h"
+#include "field/map_grid_scroll.h"
 #include "system/heap.h"
 
 /// The line scroll's work: two pages of BG1 to BG3 scroll offsets for each

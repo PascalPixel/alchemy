@@ -56,12 +56,12 @@
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
 /// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "system/vram_cache.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 
 s32 Scene_Initialize(void);
 extern s32 gVenusLighthouseAerie_JoinLeaderAction[];

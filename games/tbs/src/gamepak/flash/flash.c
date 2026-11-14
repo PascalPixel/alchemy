@@ -5,9 +5,9 @@
 /// program_flash_sector.c.
 
 #include "gamepak/flash.h"
+#include "types.h"
 #include "gamepak/flash_data.h"
 #include "system/io_reg.h"
-#include "types.h"
 
 typedef u8 (*FlashByteRead)(u8 *address);
 

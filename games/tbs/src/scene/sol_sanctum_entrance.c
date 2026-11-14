@@ -50,10 +50,10 @@
 /// other door. And it makes the three CELL_BEHAVIOR_SOL_ENTRANCE_DOOR cells
 /// before it plain ground.
 
-#include "system/main_routine_work.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 extern struct SceneEntrance gSolSanctumEntrance_FallbackEntrances[];

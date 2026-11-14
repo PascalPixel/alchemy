@@ -4,8 +4,8 @@
 /// @file
 /// The world map's perspective view work.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// The world map's perspective view: the followed position, screen shake,
 /// view position, window, pitch and yaw, tile ids and zoom. Heap slot 8.

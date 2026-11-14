@@ -57,13 +57,13 @@
 /// (BabiLighthouse_CloseTruthDoor, FLAG_BEYOND_DOOR). Beyond it lies the Tunnel
 /// Ruins (BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE).
 
-#include "system/main_routine_work.h"
-#include "system/heap_slots.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
-#include "field/scene_tables.h"
 #include "field/scene.h"
+#include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
 
 s32 BabiLighthouse_SetupMap(void);
 extern s32 gBabiLighthouse_TrembleScript[];

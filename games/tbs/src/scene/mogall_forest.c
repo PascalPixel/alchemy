@@ -60,12 +60,12 @@
 /// with its colours rotated (SPRITE_COLOR_BRG). The rocks Move settles are
 /// SPRITE_TURNING_ROCK drawn in greys (SPRITE_COLOR_GREY).
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "system/system_call.h"
-#include "system/heap_slots.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system_call.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 Scene_Initialize(void);

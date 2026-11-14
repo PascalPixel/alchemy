@@ -2,8 +2,8 @@
 /// The eight party members' growth curves, element bonuses, starting levels
 /// and starting equipment.
 
-#include "game/game.h"
 #include "item_ids.h"
+#include "game/game.h"
 
 // clang-format off
 const struct CharacterDefinition gCharacter_DefinitionTable[] = {

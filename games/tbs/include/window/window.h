@@ -6,12 +6,12 @@
 /// work.
 
 #include "window/window.h"
-#include "window/screens.h"
-#include "types.h"
-#include "tbs_edition.h"
 #include "static_assert.h"
+#include "tbs_edition.h"
+#include "types.h"
 #include "graphics/render_input.h"
 #include "system/heap.h"
+#include "window/screens.h"
 
 /// Where the windows are drawn (WindowWork.battleMode).
 enum WindowBattleMode {

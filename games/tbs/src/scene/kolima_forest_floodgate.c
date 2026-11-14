@@ -27,11 +27,11 @@
 /// (SPLASH_ANIMATION_CHURN) and the river rises
 /// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
 
-#include "field/speaker.h"
 #include "flags.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "scene/import.h"
 
 struct Actor;
 

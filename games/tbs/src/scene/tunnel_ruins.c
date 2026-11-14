@@ -66,14 +66,14 @@
 /// by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it, one
 /// stone on the west platform and two stacked on the east, weights 2 and 4.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "system/heap_slots.h"
-#include "scene/import.h"
 #include "types.h"
-#include "field/scene_tables.h"
 #include "field/field_coordinate.h"
 #include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 s32 Scene_Initialize(void);

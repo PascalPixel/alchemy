@@ -88,14 +88,14 @@
 /// (AltinPeak_SpawnDebris). The beasts' spray is SPRITE_DUST_PUFF recoloured,
 /// as in Altin.
 
-#include "field/script_operands.h"
 #include "macros.h"
-#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
-#include "field/scene_tables.h"
 #include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 extern s8 gAltinPeak_PaletteScript[];
 extern s32 gAltinPeak_FaceLeaderScript[];

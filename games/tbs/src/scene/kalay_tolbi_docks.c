@@ -78,10 +78,10 @@
 ///   number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO. That entrance
 ///   sets FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
-#include "system/main_routine_work.h"
 #include "djinn_ids.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern u16 gKalayTolbiDocks_KalayDoorCells[];
 extern u16 gKalayTolbiDocks_TolbiDoorCells[];

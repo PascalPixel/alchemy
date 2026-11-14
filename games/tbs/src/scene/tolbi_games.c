@@ -38,9 +38,9 @@
 ///   opens to show the prize as it is given. In the editions before TBS_PATCH_1
 ///   the coin and medal counts show an `=` after each number.
 
-#include "system/input.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/input.h"
 
 s32 Scene_Initialize(void);
 extern const struct SceneEntrance gTolbiSpring_Entrances[];

@@ -81,10 +81,10 @@
 /// The jar's row finds nothing on the stormy night. After Kalay it is there
 /// only from the third patch on.
 
-#include "system/main_routine_work.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);

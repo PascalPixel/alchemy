@@ -71,12 +71,12 @@
 /// leader faces one cell unless another actor or the terrain is in the way.
 /// The water drops run as tasks started by Scene_Initialize.
 
-#include "system/main_routine_work.h"
-#include "field/field.h"
-#include "system/system_call.h"
 #include "types.h"
-#include "field/scene_tables.h"
+#include "field/field.h"
 #include "field/scene.h"
+#include "field/scene_tables.h"
+#include "system/main_routine_work.h"
+#include "system/system_call.h"
 
 extern s32 gVaultCave_DirectionSteps[];
 extern const s32 gVaultCave_PuffScript[];

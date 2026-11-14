@@ -6,8 +6,8 @@
 /// slots they draw from.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 #include "graphics/render_placement.h"
 
 /// SpriteAnimation.colorMode: how Render_DecodePicture colours a layer's

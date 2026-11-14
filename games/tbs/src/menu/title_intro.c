@@ -3,19 +3,19 @@
 /// intro uses.
 
 #include "menu/title_intro.h"
-#include "system/system.h"
+#include "macros.h"
+#include "resource_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
+#include "field/map_grid_scroll.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/dma.h"
 #include "system/io_write_queue.h"
-#include "field/map_grid_scroll.h"
-#include "system/ram_buffer.h"
-#include "resource_ids.h"
 #include "system/iwram_call.h"
 #include "system/oam_words.h"
-#include "macros.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
 
 /// A sprite of the "Press Start" prompt, linked into a render slot each frame:
 /// OAM attributes 0 to 2 with the position split out.

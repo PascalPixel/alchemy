@@ -82,14 +82,14 @@
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST and
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST.
 
-#include "field/script_operands.h"
-#include "field/sprite.h"
-#include "system/main_routine_work.h"
-#include "system/heap_slots.h"
-#include "system/input.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "field/sprite.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/main_routine_work.h"
 
 extern s32 gMercuryLighthouseEntrance_RippleScript[];
 extern s32 gMercuryLighthouse_SparkScript[];

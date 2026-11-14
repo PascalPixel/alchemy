@@ -29,14 +29,14 @@
 /// every scene temp flag it is cleared when the party next comes in, so the log
 /// is back on the bank, but a battle keeps it.
 
-#include "field/script_operands.h"
 #include "flags.h"
-#include "game/character_ids.h"
-#include "system/main_routine_work.h"
-#include "system/heap_slots.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/character_ids.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
 
 extern s32 gKolimaForestEntrance_GaretAction[];
 extern s32 gKolimaForestEntrance_IvanAction[];

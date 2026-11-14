@@ -3,13 +3,13 @@
 /// own scale and turn, so the ground seems to stretch away to a horizon.
 
 #include "field/world_map_lines.h"
+#include "fixed_math.h"
+#include "static_assert.h"
 #include "types.h"
 #include "system/frame.h"
 #include "system/mul_q16.h"
 #include "system/projection.h"
-#include "static_assert.h"
 #include "system/vector3.h"
-#include "fixed_math.h"
 
 #define VISIBLE_SCANLINES 160
 

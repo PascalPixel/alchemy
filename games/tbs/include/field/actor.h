@@ -4,9 +4,8 @@
 /// @file
 /// Actors, the actor snapshot, and the screen transition styles.
 
-#include "types.h"
 #include "static_assert.h"
-
+#include "types.h"
 #include "field/field_work.h"
 
 /// How a scene fades in and out: SCENE_TRANSITION's high byte, which

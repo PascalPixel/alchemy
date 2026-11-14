@@ -5,9 +5,9 @@
 /// FieldWork, the running scene's work, with its treasure spots and the raised
 /// triggers the field sequence handles itself.
 
-#include "types.h"
 #include "edition.h"
 #include "static_assert.h"
+#include "types.h"
 #include "system/heap.h"
 
 struct ActorPlacement;

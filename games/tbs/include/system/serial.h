@@ -5,13 +5,13 @@
 /// The link cable's runtime: serial packets, registers and transfer state.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
-#include "system/system.h"
-#include "system/io_reg.h"
+#include "types.h"
 #include "system/dma.h"
+#include "system/io_reg.h"
 #include "system/irq.h"
 #include "system/irq_lock.h"
+#include "system/system.h"
 
 /// A link cable packet: its packet number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.

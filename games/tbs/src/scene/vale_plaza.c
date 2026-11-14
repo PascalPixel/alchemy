@@ -92,13 +92,13 @@
 /// pairs of sparks rise and fall about him every 16 frames
 /// (ValePlaza_CyclePsynergyPaletteAndSpawnEffects).
 
-#include "system/main_routine_work.h"
 #include "flags.h"
-#include "game/character_ids.h"
 #include "scene_ids.h"
-#include "system/vram_cache.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "game/character_ids.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);

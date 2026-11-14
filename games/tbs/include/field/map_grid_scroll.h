@@ -4,10 +4,10 @@
 /// @file
 /// The map layers' scroll work and the background scroll values.
 
-#include "types.h"
-#include "system/heap_slots.h"
 #include "static_assert.h"
+#include "types.h"
 #include "field/map_grid.h"
+#include "system/heap_slots.h"
 
 /// One background layer of the field map: its scroll position, origin,
 /// parallax against the view, drift and wrap, and its first map cell.

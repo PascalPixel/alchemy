@@ -4,8 +4,8 @@
 /// @file
 /// FieldEffectWork, the work of a field Psynergy.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 #include "field/field_particle.h"
 
 struct Sprite;

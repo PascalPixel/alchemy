@@ -27,11 +27,11 @@
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
-#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "types.h"
 #include "field/event.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern struct SceneEntrance gStuccoRoomsA_NoEntrances[];
 extern struct SceneEntrance gStuccoRoomsA_HouseEntrances[];

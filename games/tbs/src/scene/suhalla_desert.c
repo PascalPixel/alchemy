@@ -60,13 +60,13 @@
 /// - FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM: a byte, the storm that caught the
 ///   leader.
 
-#include "field/script_operands.h"
 #include "flags.h"
-#include "system/main_routine_work.h"
-#include "field/map_grid_scroll.h"
-#include "system/system_call.h"
 #include "types.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
+#include "system/system_call.h"
 
 extern s32 gSuhallaDesertStormScript[];
 extern s32 gSuhallaDesertFourthStormScript[];

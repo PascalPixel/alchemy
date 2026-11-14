@@ -58,11 +58,11 @@
 /// or code leads there. Only the debug scene selector, which reaches every
 /// scene, can.
 
-#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 extern struct SceneEntrance gMercuryLighthouseAerieEntrances[];
 extern u32 gMercuryLighthouseAerieExits[];

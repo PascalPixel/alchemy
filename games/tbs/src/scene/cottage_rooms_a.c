@@ -58,11 +58,11 @@
 /// fortieth a frame as it climbs ever more slowly and drifts right ever faster
 /// (CottageRoomsA_AdvanceSleepZ).
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 const u32 *Scene_GetExits(void);
 s32 Scene_Initialize(void);

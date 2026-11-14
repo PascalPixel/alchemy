@@ -1,9 +1,9 @@
 /// @file
 /// World map graphics: a palette and five tilesets for each of its two looks.
 
-#include "field/field.h"
 #include "resource_ids.h"
 #include "types.h"
+#include "field/field.h"
 
 /// Each set is a palette and five tilesets: WorldMap_LoadGraphics decodes the
 /// palette into BG palettes 0 to 13, the next four into the two halves of char

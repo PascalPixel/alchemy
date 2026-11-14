@@ -59,11 +59,11 @@
 /// Colosseum's exits are how its arrivals chain into one another and into the
 /// finals stages.
 
-#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 extern s32 gColosseumEntrance_GatherIntoIsaacScript[];

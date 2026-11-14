@@ -3,11 +3,11 @@
 /// Fizz, Forge or Gust gives that Djinni.
 
 #include "debug/test_scenes.h"
-#include "battle/battle.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "flags.h"
 #include "djinn_ids.h"
+#include "flags.h"
+#include "battle/battle.h"
+#include "field/event.h"
+#include "system/system.h"
 
 /// The placed actors: the first Djinni of each element, each there while its
 /// flag is clear.

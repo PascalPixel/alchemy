@@ -43,13 +43,13 @@
 ///
 ///   Talked to while Halt holds it, Bane joins the party.
 
-#include "system/main_routine_work.h"
 #include "djinn_ids.h"
-#include "system/heap_slots.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
 
 extern s32 gCrossboneIsleKeys_BaneSquashScript[];
 extern s32 gCrossboneIsleKeys_BaneWalkTargets[][2];

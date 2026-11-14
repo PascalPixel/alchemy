@@ -57,12 +57,12 @@
 /// 11) from either side either way, and the pillar settles at the same height
 /// in each of columns 41 to 44 either way.
 
-#include "system/main_routine_work.h"
-#include "system/heap_slots.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
 
 extern struct SceneEntrance gGondowanCaveEntrancesOther[];
 extern struct SceneEntrance gGondowanPassageEntrances[];

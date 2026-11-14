@@ -5,8 +5,8 @@
 /// Palette snapshots and their work.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// A palette cycle: a run of up to 16 background palette colours, saved and
 /// rotated by one colour every delay + 1 frames.

@@ -4,8 +4,8 @@
 /// @file
 /// DMA channel registers, and the DMA and CPU fills.
 
-#include "system/io_reg.h"
 #include "types.h"
+#include "system/io_reg.h"
 
 /// A DMA channel's registers (DMAxSAD, DMAxDAD, DMAxCNT).
 struct DmaRegisters {

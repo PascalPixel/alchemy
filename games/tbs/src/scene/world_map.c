@@ -87,13 +87,13 @@
 /// WORLD_MAP_FROM_DEBUG, the debug menus' entrance, turns encounters
 /// off.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "system/heap.h"
-#include "system/vram_cache.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/heap.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 
 s32 Scene_Initialize(void);
 extern s32 gWorldMapIodem;

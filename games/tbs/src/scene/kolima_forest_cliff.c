@@ -17,12 +17,12 @@
 /// cliff runs across its north side above the river and the logs
 /// (places/kolima-forest-cliff_cursed/map-0.png).
 
-#include "field/speaker.h"
 #include "flags.h"
-#include "system/heap_slots.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
 
 extern struct SceneEntrance gKolimaForestCliffEntrances[];
 extern u32 gKolimaForestCliffExits[];

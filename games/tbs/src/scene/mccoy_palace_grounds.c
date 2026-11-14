@@ -36,9 +36,9 @@
 /// exit or trigger answers that opening, so the ivy only hides a way in that
 /// leads nowhere.
 
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern u16 gPalaceGateOpenSteps[];
 extern s32 gGuardWatchesParty[];

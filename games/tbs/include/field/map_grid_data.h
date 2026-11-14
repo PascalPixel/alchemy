@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_FIELD_MAP_GRID_DATA_H
 #define ALCHEMY_FIELD_MAP_GRID_DATA_H
 
-#include "field/field.h"
 #include "types.h"
+#include "field/field.h"
 
 /// Height samples and pixel coordinates within a 16x16 map cell.
 typedef s32 (*TerrainHeightFn)(const u8 *heightBytes, s32 pixelX, s32 pixelY);

@@ -4,14 +4,14 @@
 /// @file
 /// The field's shared routines, globals and actor scripts.
 
-#include "types.h"
 #include "edition.h"
+#include "types.h"
 #include "field/actor.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
-#include "window/menu_list.h"
 #include "gamepak/far_call.h"
 #include "system/heap.h"
+#include "window/menu_list.h"
 
 struct Actor;
 

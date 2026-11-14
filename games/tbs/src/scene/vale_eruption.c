@@ -33,9 +33,9 @@
 /// The scene sets FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it. Sol
 /// Sanctum's entrance scene does (sol_sanctum_entrance.c).
 
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 s32 Scene_Initialize(void);
 extern s32 gValeEruption_LeaderWalksDown[];

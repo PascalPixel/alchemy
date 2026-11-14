@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_SCENE_SHARED_MERCURY_LIGHTHOUSE_LIGHTS_H
 #define ALCHEMY_SCENE_SHARED_MERCURY_LIGHTHOUSE_LIGHTS_H
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 struct Actor;
 

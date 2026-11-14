@@ -50,15 +50,15 @@
 /// exhausted, and they leave him to sleep. Both exits lead to Babi's Palace,
 /// where he wakes long after the finals.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "system/io_write_queue.h"
 #include "resource_ids.h"
 #include "scene_ids.h"
-#include "system/vram_cache.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/io_write_queue.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 
 s32 Scene_Initialize(void);
 extern const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[];

@@ -4,9 +4,9 @@
 /// @file
 /// Font glyphs and their palettes.
 
-#include "types.h"
 #include "edition.h"
 #include "static_assert.h"
+#include "types.h"
 
 // FONT_GLYPH_ROWS: a main-font glyph is 12 rows of pixels in Japanese, 15 in
 // the other languages.

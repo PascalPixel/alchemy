@@ -4,8 +4,8 @@
 /// @file
 /// Lucky Wheels' title lettering.
 
-#include "types.h"
 #include "edition.h"
+#include "types.h"
 #include "gamepak/far_call.h"
 
 extern const u8 gLuckyWheels_TitleLetterTiles[];

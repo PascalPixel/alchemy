@@ -2,9 +2,9 @@
 /// The Battle Arena overlay: starting linked and monster battles, the exchange
 /// of the two parties, the attendant and the records of wins.
 
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
 
 extern const s32 gBattleArena_SlotValues[];
 extern u32 gBattleArenaCallFrames;

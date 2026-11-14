@@ -5,8 +5,8 @@
 /// The register write queue that VBlank carries out after each finished frame.
 
 #include "edition.h"
-#include "system/irq_lock.h"
 #include "types.h"
+#include "system/irq_lock.h"
 
 /// The register writes VBlank carries out once the frame loop has finished a
 /// frame; IoWriteQueue_FlushPending empties it.

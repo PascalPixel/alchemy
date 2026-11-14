@@ -5,8 +5,8 @@
 /// The screen transition's frames, windows and state.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// The screen transition state as the centre-line transition and the dissolve
 /// read it: the dissolve's tile pixels and the transition's progress.

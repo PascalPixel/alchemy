@@ -2,9 +2,9 @@
 #define ALCHEMY_BATTLE_EFFECT_BATTLE_EFFECT_H
 
 #include "types.h"
-#include "graphics/render_placement.h"
 #include "battle/battle_effect_work.h"
 #include "battle/blitter.h"
+#include "graphics/render_placement.h"
 
 struct BattleEffectParams;
 struct ScreenPoint;

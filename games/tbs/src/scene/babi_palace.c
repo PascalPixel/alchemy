@@ -54,14 +54,14 @@
 /// The Cloak Ball on show is an actor drawn from the item's icon until the
 /// party takes it (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
 
-#include "system/main_routine_work.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "scene/import.h"
 #include "system/heap.h"
 #include "system/input.h"
-#include "scene_ids.h"
-#include "scene/import.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "field/scene.h"
+#include "system/main_routine_work.h"
 
 s32 BabiPalace_ApplyEntryState(void);
 extern u16 gBabiPalace_DoorCells[];

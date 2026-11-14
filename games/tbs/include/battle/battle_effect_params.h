@@ -5,8 +5,8 @@
 /// BattleEffectParams, the command an effect's caller, dispatcher and
 /// handlers share, and the macros that define effect kinds.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// BattleEffectParams.side: the side the targets are on.
 enum BattleEffectSide { EFFECT_SIDE_ENEMIES, EFFECT_SIDE_PARTY };

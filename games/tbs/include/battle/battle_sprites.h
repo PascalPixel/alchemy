@@ -4,10 +4,9 @@
 /// @file
 /// Summons and the battle sprite definitions of the enemies.
 
-#include "static_assert.h"
-
-#include "types.h"
 #include "edition.h"
+#include "static_assert.h"
+#include "types.h"
 #include "gamepak/far_call.h"
 
 /// A unit's row of gBattleSprites: an enemy's battle sprite, size, attack

@@ -47,9 +47,9 @@
 /// (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so it is back whenever the party
 /// returns from another area.
 
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern s32 gSuhallaGateWoundedNoCollision[];
 extern s32 gSuhallaGateWounded[];

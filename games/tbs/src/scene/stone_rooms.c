@@ -26,9 +26,9 @@
 ///   uses the thieves' tables, so its chests and exit sit in the same
 ///   trigger table as the thieves' talk and the Vault door.
 
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern const struct SceneEntrance gStoneRooms_Entrances[];
 extern const u32 gStoneRooms_Exits[];

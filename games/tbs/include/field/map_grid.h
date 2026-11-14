@@ -5,9 +5,9 @@
 /// Map grids: their cells, layers, animations and blend scripts, and the map
 /// grid state.
 
-#include "field/field.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
+#include "field/field.h"
 #include "system/heap.h"
 
 /// A map cell's cell behavior (`MapGridCell.behavior`): what stepping

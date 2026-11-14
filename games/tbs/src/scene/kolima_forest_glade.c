@@ -17,12 +17,12 @@
 /// grass and stumps ringed by trees, with no cliff or river
 /// (places/kolima-forest-glade_cursed/map-0.png).
 
-#include "field/speaker.h"
 #include "flags.h"
-#include "system/heap_slots.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
 
 extern struct SceneEntrance gKolimaForestGlade_Entrances[];
 extern u32 gKolimaForestGlade_Exits[];

@@ -48,9 +48,9 @@
 /// Searching finds a turban, the symbol of Kalay's soldiers, and two books,
 /// `Business and You` and `The Good Host`. A chest holds a Water Jacket and a
 /// barrel a Nut.
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern s32 gHammetPalace_PartyActions[];
 extern struct SceneEntrance gHammetPalaceEntrancesOther[];

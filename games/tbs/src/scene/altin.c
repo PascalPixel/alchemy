@@ -60,11 +60,11 @@
 /// Each merchant opens across the counter once the shop has dried, and a cook
 /// from Xian paces between his pots (gCottageRoomsD_CookScript).
 
-#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "types.h"
 #include "field/event.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern s32 gCottageRoomsD_CookScript[];
 extern struct SceneEntrance gAltin_NoEntrances[];

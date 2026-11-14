@@ -63,12 +63,12 @@
 ///   up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
 ///   leads ashore to Tolbi Docks (SceneId_TolbiDocks).
 
-#include "field/script_operands.h"
 #include "sounds.h"
-#include "system/main_routine_work.h"
 #include "types.h"
-#include "field/scene_tables.h"
 #include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
 
 extern const s32 gTolbiShipDeck_KajaLeavesActions[];
 extern const s32 gTolbiShipDeck_CaptainStepsAsideActions[];

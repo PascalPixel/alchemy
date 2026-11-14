@@ -41,13 +41,13 @@
 /// That sends the party outside, where Iodem gives it the Black Orb
 /// (lalivero.c). A barrel holds a Lucky Medal.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
-#include "field/scene_tables.h"
 #include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 extern s32 gTimberRoomsBC_InnWorkerChores[];
 extern struct SceneEntrance gTimberRoomsBC_Entrances[];

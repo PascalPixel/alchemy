@@ -4,8 +4,8 @@
 /// @file
 /// A sprite's screen position and scale.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// A sprite's screen position and its two vertical offsets, in 16.16 pixels.
 struct SpritePlacement {

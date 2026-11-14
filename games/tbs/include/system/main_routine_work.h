@@ -6,8 +6,8 @@
 /// between sequences and the state every sequence shares, which a save file
 /// keeps.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 #include "battle/battle_unit.h"
 
 /// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneType).

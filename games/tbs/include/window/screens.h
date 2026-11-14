@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_WINDOW_SCREENS_H
 #define ALCHEMY_WINDOW_SCREENS_H
 
-#include "types.h"
 #include "edition.h"
+#include "types.h"
 #include "graphics/glyph.h"
 
 struct Window;

@@ -34,10 +34,10 @@
 /// - A jar, a stone pillar and a chest hold a Water of Life, a Psy Crystal and
 ///   a Warrior's Helm.
 
-#include "system/main_routine_work.h"
 #include "djinn_ids.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);

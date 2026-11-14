@@ -5,9 +5,9 @@
 /// Field effects, their scripts and the flags that spawn them.
 
 #include "edition.h"
+#include "field/actor_script.h"
 #include "field/event.h"
 #include "system/vector3.h"
-#include "field/actor_script.h"
 
 /// A field effect: a small actor on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update routine.

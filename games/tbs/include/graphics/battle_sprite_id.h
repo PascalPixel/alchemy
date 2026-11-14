@@ -4,8 +4,8 @@
 /// @file
 /// The parts of a battle sprite id.
 
-#include "types.h"
 #include "edition.h"
+#include "types.h"
 #include "gamepak/far_call.h"
 
 /// A battle sprite id's low twelve bits; the two-part sprites' second part

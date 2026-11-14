@@ -5,11 +5,11 @@
 /// Scenes, exit regions and scene entry tables, with the field work they
 /// fill (field_work.h).
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 #include "field/actor.h"
-#include "field/scene_tables.h"
 #include "field/field_work.h"
+#include "field/scene_tables.h"
 
 struct Actor;
 

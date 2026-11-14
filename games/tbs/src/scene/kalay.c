@@ -114,13 +114,13 @@
 /// The getters choose each scene's tables. The cave and the passage have no
 /// actor placements, and an empty set serves any other scene.
 
-#include "system/main_routine_work.h"
-#include "field/field.h"
-#include "system/system_call.h"
 #include "scene_ids.h"
 #include "types.h"
 #include "field/event.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
+#include "system/system_call.h"
 
 extern s32 gKalay_TileStepByFacing[];
 extern s32 gKalay_TourGroupWalkScript[];

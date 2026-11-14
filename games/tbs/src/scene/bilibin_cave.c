@@ -73,11 +73,11 @@
 ///
 /// Its chests hold a Vial, a Psy Crystal and Water of Life.
 
+#include "types.h"
+#include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "system/main_routine_work.h"
 #include "system/system_call.h"
-#include "types.h"
-#include "field/scene_tables.h"
 
 s32 Scene_Initialize(void);
 extern s32 gBilibinCave_ClearSpriteScript[];

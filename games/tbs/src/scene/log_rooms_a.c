@@ -66,15 +66,15 @@
 ///   them again (render probe log-rooms-a: the room has no GUESTS_ROOM cell
 ///   once the flag is set).
 
-#include "system/main_routine_work.h"
 #include "flags.h"
-#include "field/sprite.h"
 #include "scene_ids.h"
-#include "scene/import.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "field/scene.h"
 #include "static_assert.h"
+#include "types.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/sprite.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 /// Each stop links to up to three others, with a heading for each connection.
 struct LogRoomsAStopConnection {

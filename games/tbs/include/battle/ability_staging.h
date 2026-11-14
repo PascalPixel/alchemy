@@ -6,14 +6,14 @@
 /// (ability_staging.c), the values of BattleActionRun.staging and
 /// battleEffect, and the battle's names for two debug and key globals.
 
-#include "battle/playback_queue.h"
-#include "battle/battle_action_run.h"
 #include "edition.h"
-#include "gamepak/far_call.h"
-#include "game/item.h"
-#include "system/input.h"
-#include "system/frame.h"
+#include "battle/battle_action_run.h"
 #include "battle/battle_work.h"
+#include "battle/playback_queue.h"
+#include "game/item.h"
+#include "gamepak/far_call.h"
+#include "system/frame.h"
+#include "system/input.h"
 
 /// gDebugMode under the battle's name. While it and FLAG_DEBUG_BATTLE_KEYS are
 /// set, holding R as an action is planned defeats every enemy, or with Select

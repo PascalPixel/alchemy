@@ -4,12 +4,12 @@
 /// @file
 /// gOverflowItem, an item slot the spoils code uses when items are handed out.
 
-#include "game/item.h"
-#include "types.h"
 #include "edition.h"
-#include "gamepak/far_call.h"
-#include "battle/playback_queue.h"
+#include "types.h"
 #include "battle/battle_action_run.h"
+#include "battle/playback_queue.h"
+#include "game/item.h"
+#include "gamepak/far_call.h"
 #include "system/main_routine_work.h"
 
 /// The item the battle spoils could not fit in the inventory. It is

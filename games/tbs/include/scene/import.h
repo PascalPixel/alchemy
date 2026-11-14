@@ -8,8 +8,8 @@
 #include "types.h"
 #include "field/field.h"
 #include "menu/menu.h"
-#include "shop/shop.h"
 #include "scene/scroll_initialize_hblank_dma.h"
+#include "shop/shop.h"
 
 struct FieldPosition;
 struct Actor;

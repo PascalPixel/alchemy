@@ -5,8 +5,8 @@
 /// A battle's battle objects and sprites, each unit's command and action, and
 /// the spoils.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 struct Actor;
 struct SpriteAnimationHeadView;

@@ -97,10 +97,10 @@
 /// ValeKradensCottage, Vale and ValePrologue) or between this scene's own
 /// parts.
 
-#include "system/main_routine_work.h"
-#include "system/vram_cache.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 
 extern s32 gCottageRoomsB_LeaveHouseScript[];
 extern s32 gCottageRoomsB_DoraLeavesScript[];

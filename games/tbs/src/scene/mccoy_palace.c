@@ -48,9 +48,9 @@
 ///
 /// McCoy speaks with his portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
 
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern s32 gPalace_FacingActions[];
 extern s32 gPalace_PacingActions[];

@@ -52,11 +52,11 @@
 /// way back, KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the
 /// Floodgate Switch's scene (SceneId_KolimaForestFloodgate).
 
+#include "types.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
 #include "field/speaker.h"
 #include "system/main_routine_work.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "field/scene.h"
 
 extern s32 gKolimaForestTree_GaretApproachActions[];
 extern s32 gKolimaForestTree_IvanApproachActions[];

@@ -57,10 +57,10 @@
 /// Barrels hold a Vial and a Lucky Medal, and searching the ovens shows what
 /// is cooking.
 
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/event.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 const struct Trigger *StuccoRoomsB_SelectTriggers(void);
 s32 StuccoRoomsB_ApplyEntryState(void);

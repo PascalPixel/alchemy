@@ -5,8 +5,8 @@
 /// Tasks, their priorities and the task runner's state.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 enum TaskLimits { TASK_COUNT = 20, TASK_COUNT_TLA = 24 };
 

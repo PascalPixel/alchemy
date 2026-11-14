@@ -33,9 +33,9 @@
 ///
 /// Arriving here clears FLAG_SHOW_AREA_NAME.
 
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 const struct Trigger *Scene_GetTriggers(void);
 extern struct SceneEntrance gLacquerRoomsB_Entrances[];

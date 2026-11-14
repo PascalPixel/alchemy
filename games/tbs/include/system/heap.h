@@ -11,8 +11,8 @@
 /// system/main_routine.c), so no block outlives the scene, battle or
 /// minigame that took it.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState.
 extern void *gHeapSlots[64];

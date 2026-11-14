@@ -5,8 +5,8 @@
 /// The cursor that approaches its target, shared by shops, the
 /// name entry screen and the settings menu.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 #include "graphics/render_input.h"
 
 /// Cursor that approaches its target, shared by shops, name entry screen and

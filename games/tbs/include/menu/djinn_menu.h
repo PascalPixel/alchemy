@@ -5,10 +5,10 @@
 /// The Djinn menu: its list tables, backdrop and work, and the fields of a
 /// Djinni's list entry.
 
-#include "types.h"
-#include "system/heap_slots.h"
-#include "graphics/render_input.h"
 #include "djinn_ids.h"
+#include "types.h"
+#include "graphics/render_input.h"
+#include "system/heap_slots.h"
 
 // A Djinni's list entry, as Djinn_ListUnitEntries writes it into
 // DjinnListTable.ids. bits: 15 set | 11..8 member | 7..5 element | 4..0 index

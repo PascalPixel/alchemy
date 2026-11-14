@@ -58,9 +58,9 @@
 ///     - Until FLAG_HSU_RESCUED, Hama and the boy monk in her room are away.
 ///     - LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
 ///       Temple.
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern s32 gFuchinTemple_JumpingStudentScript[];
 extern s32 gFuchinTemple_HiddenSpriteScript[];

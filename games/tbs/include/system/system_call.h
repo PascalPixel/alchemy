@@ -19,10 +19,10 @@
 
 #include "types.h"
 #include "field/event_commands.h"
-#include "system/system.h"
-#include "window/window.h"
 #include "game/game.h"
 #include "scene/import.h"
+#include "system/system.h"
+#include "window/window.h"
 
 struct Actor;
 struct FieldPosition;

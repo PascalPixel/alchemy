@@ -5,8 +5,8 @@
 /// Field effect sprites: the particles field Psynergy moves and draws.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// FieldParticle.targetX and targetZ while the sprite has no target, at
 /// rest.

@@ -96,15 +96,15 @@
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
 /// their own actor placements.
 
-#include "field/script_operands.h"
-#include "sounds.h"
-#include "system/heap.h"
-#include "sound/sound_driver_symbols.h"
 #include "macros.h"
-#include "system/main_routine_work.h"
-#include "scene/import.h"
+#include "sounds.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap.h"
+#include "system/main_routine_work.h"
 
 struct Actor;
 

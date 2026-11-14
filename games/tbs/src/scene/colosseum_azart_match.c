@@ -59,14 +59,14 @@
 /// COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace, where
 /// Isaac's friends tell him he was only dreaming of the finals.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "system/io_write_queue.h"
 #include "scene_ids.h"
-#include "system/vram_cache.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/io_write_queue.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 
 s32 Scene_Initialize(void);
 extern const u8 gColosso_LetteringPaletteOffsets[];

@@ -46,13 +46,13 @@
 /// The other three side rooms are in crossbone_isle_keys.c, and the ninth
 /// floor's in crossbone_isle.c.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "field/map_grid_scroll.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 extern s32 gCrossboneIsleSteppingStones_ActionTable[];
 extern u16 gCrossboneIsleSteppingStones_SwitchCloseSteps[];

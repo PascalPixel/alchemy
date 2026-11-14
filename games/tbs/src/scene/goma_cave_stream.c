@@ -35,9 +35,9 @@
 ///   river. It has no actors and only its two exits. They lead back south
 ///   into SceneId_GomaCaveStream and out onto the World Map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 extern struct SceneEntrance gGomaCaveStreamEntrances[];
 extern struct SceneEntrance gGomaCaveBridgeEntrances[];

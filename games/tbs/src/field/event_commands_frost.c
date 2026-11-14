@@ -3,7 +3,6 @@
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
-
 #include "scene/frost_glint.h"
 
 /// Frost's glint on its target.

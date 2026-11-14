@@ -83,15 +83,15 @@
 ///   flows, people come to drink from it, and an Empty Bottle used at it
 ///   becomes Hermes' Water, once a visit (FLAG_HERMES_WATER_TAKEN).
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "system/heap.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
 #include "scene_ids.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/heap.h"
+#include "system/input.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
 
 s32 Scene_Initialize(void);
 extern s32 gMercuryLighthouse_RippleScript[];

@@ -4,8 +4,8 @@
 /// @file
 /// Vector3, a three-coordinate vector.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// Three coordinates, x, y and z: a position, a velocity or a direction.
 struct Vector3 {

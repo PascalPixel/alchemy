@@ -5,10 +5,10 @@
 ///
 /// Title_Run chooses by entrance.
 
-#include "system/main_routine_work.h"
-#include "system/vram_cache.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 
 s32 Title_Run(void);
 extern struct SceneEntrance gTitleEntrances[];

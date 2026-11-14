@@ -1,8 +1,8 @@
 /// @file
 /// Sprite scales, motion curves and lookup tables of the window and menu code.
 
-#include "game/character_ids.h"
 #include "sprite_ids.h"
+#include "game/character_ids.h"
 #include "window/window.h"
 
 /// A sprite's pulse, as a scale where 256 is its normal size: it swells to 1.5

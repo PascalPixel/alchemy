@@ -29,11 +29,11 @@
 /// - The game goes to the clear screen by the title's
 ///   TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC_ONCE).
 
+#include "types.h"
+#include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "system/main_routine_work.h"
 #include "system/vram_cache.h"
-#include "types.h"
-#include "field/scene_tables.h"
 
 s32 LemurianShip_SetupMap(void);
 extern u16 gShipGlowPalettes[];

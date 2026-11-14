@@ -81,11 +81,11 @@
 /// ivy and plants on the island, the sliding logs' footprints, the corridor's
 /// sunk pillars and the chests the mimics leave.
 
-#include "system/main_routine_work.h"
-#include "system/heap_slots.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
 
 extern u16 gCrossboneIsle_EntranceCells[];
 extern struct SceneEntrance gCrossboneIsle_IsleEntrances[];

@@ -50,12 +50,12 @@
 ///
 /// ENTRANCE_STUMP_FALL, which no exit names and only the debug scene selector
 /// reaches, plays the stump being pushed to the edge and falling.
-#include "field/script_operands.h"
-#include "system/heap_slots.h"
-#include "scene/import.h"
 #include "types.h"
-#include "field/scene_tables.h"
 #include "field/field_effect.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/heap_slots.h"
 
 extern s32 gGomaCavePillar_WitnessFrames;
 extern struct EffectDurationScripts gGomaCavePillar_FragmentScripts;

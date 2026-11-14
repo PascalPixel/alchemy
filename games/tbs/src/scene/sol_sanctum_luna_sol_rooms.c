@@ -55,9 +55,9 @@
 /// room last showed them flash for Kraden
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights).
 
-#include "system/main_routine_work.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/main_routine_work.h"
 
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];

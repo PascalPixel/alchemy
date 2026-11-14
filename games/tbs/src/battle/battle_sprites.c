@@ -3,9 +3,9 @@
 /// enemies'. Each enemy's name is the English release's.
 
 #include "battle/battle_sprites.h"
+#include "enemy_ids.h"
 #include "sprite_ids.h"
 #include "game/character_ids.h"
-#include "enemy_ids.h"
 
 // clang-format off
 const struct BattleSpriteDefinition gBattleSprites[] = {

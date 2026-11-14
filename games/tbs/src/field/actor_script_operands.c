@@ -2,8 +2,8 @@
 /// Script work values: the handler SC_SET, SC_ADD and SC_CMP call for each.
 
 #include "field/actor_script_operands.h"
-#include "field/field.h"
 #include "types.h"
+#include "field/field.h"
 
 /// The handler for each work value number (enum ActorScriptValue).
 const OperandFunc gActorScript_OperandHandlerTable[41] = {

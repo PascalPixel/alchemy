@@ -63,15 +63,15 @@
 ///   it again. Kolima_RestoreBridgeState draws it down on every later visit,
 ///   and the bridge on the World Map is drawn down with the same flag.
 
-#include "field/script_operands.h"
 #include "djinn_ids.h"
 #include "flags.h"
-#include "game/character_ids.h"
-#include "system/main_routine_work.h"
-#include "system/heap_slots.h"
 #include "types.h"
-#include "field/scene_tables.h"
 #include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/character_ids.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 s32 Scene_Initialize(void);

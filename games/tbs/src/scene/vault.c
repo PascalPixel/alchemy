@@ -45,11 +45,11 @@
 /// Stepping onto either end of it or off its west end switches the cells
 /// beneath it between the deck and the path (shared/vault_toggle.c).
 
-#include "system/main_routine_work.h"
-#include "field/sprite.h"
-#include "window/window.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/sprite.h"
+#include "system/main_routine_work.h"
+#include "window/window.h"
 
 extern s32 gVault_WomanWantingTheRoofFixedRoute[];
 extern s32 gVault_BoyRoundTheWellRoute[];

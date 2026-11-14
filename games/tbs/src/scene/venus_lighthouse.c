@@ -78,12 +78,12 @@
 /// The FLAG_SCENE_TEMP_ states last only until the next change of scene other
 /// than a return from battle. Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/field.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 s32 Scene_Initialize(void);
 extern u32 gPushedActor_DirectionSteps[];

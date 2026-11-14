@@ -53,11 +53,11 @@
 /// Two cells start a battle once each (slots 2 and 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
-#include "field/script_operands.h"
-#include "system/main_routine_work.h"
-#include "scene/import.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
 
 s32 Scene_Initialize(void);
 extern u8 gValePrologue_FrameModes[];

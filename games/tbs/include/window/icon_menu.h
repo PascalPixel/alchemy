@@ -4,10 +4,10 @@
 /// @file
 /// The icon menu's entries and work.
 
-#include "types.h"
 #include "static_assert.h"
-#include "window/window.h"
+#include "types.h"
 #include "system/heap.h"
+#include "window/window.h"
 
 /// A command icon of the icon menu: its OAM attributes, its place and its
 /// VRAM cache slot.

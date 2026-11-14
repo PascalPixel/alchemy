@@ -3,9 +3,9 @@
 /// release's; the name field itself is blank, and BattleUnit_Set takes the name
 /// from the messages.
 
-#include "game/game.h"
-#include "item_ids.h"
 #include "ability_ids.h"
+#include "item_ids.h"
+#include "game/game.h"
 
 // clang-format off
 const struct EnemyDefinition gEnemy_Definitions[] = {

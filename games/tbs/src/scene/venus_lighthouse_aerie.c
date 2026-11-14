@@ -575,13 +575,8 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
   Event_Wait(10);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  {
-    /* FAKEMATCH(temporary): south holds the facing. */
-    u16 south = FACING_SOUTH;
-
-    leader->y.fixed = -px(32);
-    leader->facing = south;
-  }
+  leader->facing = FACING_SOUTH;
+  leader->y.fixed = -px(32);
   Event_Wait(20);
   Sound_Play(SE_MATERIALIZE);
   Actor_MoveToAndWait(ACTOR_RISING_PLATFORM, 524, 191);

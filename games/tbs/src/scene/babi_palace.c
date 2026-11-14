@@ -331,7 +331,6 @@ static void BabiPalace_ShowBeds(s32 actorId) {
   struct Actor *leader;
   s16 roundedFacing;
   s32 facingOrMessage;
-  s32 facingBits;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   roundedFacing = (leader->facing + TRIG_TURN / 8) & 0xc000;
@@ -344,12 +343,8 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     // "We have just enough extra beds in this room for everybody...."
     Event_ShowMessage(actorId, 0);
     Event_Wait(10);
-    /* FAKEMATCH(temporary): the facing compared as a shifted word; as
-     * roundedFacing == FACING_SOUTH, 19 of 130 instructions differ in tbs-en.
-     */
-    facingBits = roundedFacing << 16;
     facingOrMessage = FACING_SOUTH;
-    if (facingBits == (FACING_SOUTH << 16)) {
+    if ((u16)roundedFacing == FACING_SOUTH) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 104);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     }

@@ -608,10 +608,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     wait(1);
   }
-  {
-    s32 priority = TASK_PASS_VBLANK;
-    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
-  }
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   Window_CloseIfOpen(helpWindowSlot, 1);
   wait(1);

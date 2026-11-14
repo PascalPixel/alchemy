@@ -65,8 +65,6 @@ void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
     slot->second = secondId;
     slot->priority = priority;
     lift = 128;
-    /* FAKEMATCH(barrier): an empty asm on lift. */
-    asm volatile("" : "+l"(lift));
     lift <<= 12;
     Rope_LayCoil(index, first->x, first->y + lift, first->z, second->x,
                  second->y + lift, second->z);

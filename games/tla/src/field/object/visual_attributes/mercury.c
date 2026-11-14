@@ -345,8 +345,6 @@ void Rope_Tie(s32 index, s32 id, s32 other) {
     slot->second = other;
     slot->priority = priority;
     lift = 128;
-    /* FAKEMATCH(barrier): an empty asm on lift. */
-    asm volatile("" : "+l"(lift));
     lift <<= 12;
     Rope_LayTied(index, first->x, first->y + lift, first->z, second->x,
                  second->y + lift, second->z);

@@ -502,16 +502,6 @@ void VramBlock_Load93(void) {
   VramCache_Load(93, size, data);
 }
 
-/* VIEW(resource_slot): routine SpriteAnimation_Alloc as struct AnimationEntry
- * *SpriteAnimation_Alloc(s32 id); system/system.h has s32
- * SpriteAnimation_Alloc(s32 id); tried as the definition's struct
- * AnimationEntry *SpriteAnimation_Alloc(s32 id), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/field/field/sprite_animation.c:509: conflicting types for
- * `SpriteAnimation_Alloc'. */
-struct AnimationEntry *
-SpriteAnimation_Alloc__resource_slot(s32 id) __asm__("SpriteAnimation_Alloc");
-#define SpriteAnimation_Alloc SpriteAnimation_Alloc__resource_slot
 struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationEntry *entry;

@@ -68,7 +68,8 @@ extern u8 gPartyStatusWork[];
 extern u16 gGraphics_ExpandNibbleTable[];
 extern const u8 Resource_PatchThumbBranchCode[];
 s32 _call_via_r3(s32, u8 *, u8, s32);
-s32 SpriteAnimation_Alloc(s32 id);
+struct AnimationEntry;
+struct AnimationEntry *SpriteAnimation_Alloc(s32 id);
 s32 BattleEffect_FindMatchingEvent(s32, s32, void *);
 void BattleMotion_ApplyVariantMotion(s32 id, s32 variant);
 #ifndef OWN_BattleMotion_ApproachTarget

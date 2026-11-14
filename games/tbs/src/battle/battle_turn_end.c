@@ -189,9 +189,7 @@ s32 BattleUnit_CountDownAgilityStage(s32 unitId) {
 /// ready, and returns 1 when any was set.
 s32 DjinnRecovery_CountDown(void) {
   struct DjinnRecoveryList *list =
-      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-            DJINN_RECOVERY_PARTY))
-           ->list;
+      &Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->list;
   s32 removed = 0;
   s32 i;
 
@@ -254,8 +252,7 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
   battle = gBattleWork;
   sideCount = (battle->isLink != 0) + 1;
   for (side = 0; side < sideCount; side++) {
-    list =
-        &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
+    list = &Djinn_GetRecoveryTableFar(side)->list;
     for (i = 0; i < list->count; i++) {
       struct DjinnRecoveryEntry *entry = &list->entries[i];
 
@@ -459,9 +456,7 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
   unitId = plan->unitId;
   battleContinues = 0;
   unit = Unit_GetFar(unitId);
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-               (unitId < 0 || unitId > ALLY_MAX)))
-              ->list;
+  list = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
   for (strongestElement = 0; strongestElement < list->count;
        strongestElement++) {
     if (list->entries[strongestElement].unitId == unitId &&
@@ -478,9 +473,7 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     s32 i;
     s32 holderId;
     struct DjinnRecoveryList *pending;
-    pending = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                    (unitId < 0 || unitId > ALLY_MAX)))
-                   ->list;
+    pending = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
     // The Djinn a summon used recover one a turn, after those already
     // recovering and no sooner than in 2 turns.
     for (i = 0; i < ELEMENT_COUNT; i++) {

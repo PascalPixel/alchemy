@@ -133,9 +133,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleUnit_RefreshPlacement();
   DjinnRecovery_Reconcile();
   BattleSummon_UpdateAvailability();
-  if (((struct BattleSummonState *)Djinn_GetRecoveryTableFar(
-           DJINN_RECOVERY_PARTY))
-          ->availableMask != 0)
+  if (Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask != 0)
     battle->partyStatus = PARTY_STATUS_SUMMONS;
   else
     battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
@@ -175,9 +173,7 @@ s32 Battle_Run(s32 enemyGroup) {
   for (;;) {
     Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
-    if (((struct BattleSummonState *)Djinn_GetRecoveryTableFar(
-             DJINN_RECOVERY_PARTY))
-            ->availableMask != 0)
+    if (Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask != 0)
       battle->partyStatus = PARTY_STATUS_SUMMONS;
     else
       battle->partyStatus = PARTY_STATUS_NO_SUMMONS;

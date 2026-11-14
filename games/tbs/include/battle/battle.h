@@ -206,7 +206,7 @@ enum BattleElementGlow {
 struct BattleAction;
 struct BattlePlaybackWork;
 struct BattleEffectParams;
-struct BattleSummonState;
+struct DjinnRecoveryTable;
 struct BattleTransitionEntry;
 struct AbilityDefinition;
 struct BattleObject;
@@ -225,7 +225,7 @@ void Battle_ClearBg0Vofs(void);
 void Party_BattleSetupNoOp(s32 unused);
 UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void);
 UNREAD_RESULT DjinnRecovery_Reconcile(void);
-struct BattleSummonState *BattleSummon_UpdateAvailability(void);
+struct DjinnRecoveryTable *BattleSummon_UpdateAvailability(void);
 void BattleSummon_ReservedNoOp(void);
 s32 LinkBattle_ReceiveParty(void);
 UNREAD_RESULT LinkBattle_SendParty(void);

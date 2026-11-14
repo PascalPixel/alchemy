@@ -4,7 +4,7 @@
 /// @file
 /// Party members, items, Djinn and game-state operations.
 
-void *Djinn_GetRecoveryTableFar(s32 enemySide);
+struct DjinnRecoveryTable *Djinn_GetRecoveryTableFar(s32 enemySide);
 struct Unit *Unit_GetFar(u32 owner);
 /// Works a unit's stats out again from its base stats, equipment, set Djinn,
 /// class and battle stat levels, keeping its HP and PP at the same fraction.

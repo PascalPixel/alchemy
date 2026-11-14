@@ -50,10 +50,4 @@ struct SummonDefinition {
   u8 djinnRequired[4]; ///< standby Djinn needed, by element
 };
 
-/// The party's Djinn recovery table as summons read it: the mask of summons
-/// the party can call, bit n for summon n.
-struct BattleSummonState {
-  u32 availableMask; ///< nonzero offers the Summon command
-};
-
 #endif

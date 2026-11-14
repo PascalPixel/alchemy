@@ -8,6 +8,7 @@
 /// ice floors (MarsLighthouseRoomF_SlideOnIce).
 
 #include "flags.h"
+#include "module/scene/ride.h"
 #include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -53,15 +54,6 @@
 #include "module/field/field_effect.h"
 #include "objcmd.h"
 
-struct RideEntry {
-  s16 a;
-  u8 unk02[2];
-  s16 b;
-  s16 c;
-  u8 unk08[4];
-  s32 d;
-};
-
 struct RideRow {
   u8 unk00[20];
   s16 a;
@@ -70,23 +62,6 @@ struct RideRow {
   s16 c;
   u8 unk1c[4];
   s32 d;
-};
-
-struct RideSlot {
-  u16 value;
-  u8 unk02[2];
-};
-
-struct RideWork {
-  s32 counter;
-  s16 active;
-  u8 unk06[8];
-  s16 value0e;
-  u8 unk10[4];
-  struct RideEntry entries[4];
-  struct RideSlot slots[4];
-  u8 unk64[12];
-  void *handle;
 };
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -1165,35 +1140,10 @@ s32 Func_0200158c(struct Actor *a, struct Actor *b) {
   return 0;
 }
 
-/* VIEW(s1424): tag struct RideSlot as struct RideSlot__s1424;
- * mars_lighthouse_star_room.c has another definition; not tried: struct
- * RideSlot__s1424 was not found. */
-struct RideSlot__s1424 {
-  u16 id;
-  u16 blocked;
-};
-
-/* VIEW(s1424): tag struct RideWork as struct RideWork__s1424;
- * mars_lighthouse_star_room.c has another definition; not tried: struct
- * RideWork__s1424 was not found. */
-struct RideWork__s1424 {
-  u8 unk00[4];
-  u16 landed;
-  u16 blocked;
-  u8 unk08[2];
-  u16 value0a;
-  u8 unk0c[0x48];
-  struct RideSlot__s1424 slots[4];
-  u8 unk64[4];
-  u16 value68;
-  u16 direction;
-};
-
 extern u8 gInventorySnapshot[];
 
 void Ride_UpdateCarried(struct Actor *object) {
-  struct RideWork__s1424 *work =
-      (struct RideWork__s1424 *)(gInventorySnapshot + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
@@ -1214,9 +1164,9 @@ void Ride_UpdateCarried(struct Actor *object) {
   if (actor->y == actor->terrainHeight && Func_02001528(object, actor) &&
       gMainRoutineWork.renderMode == 0) {
     if (object->unk4c != 0) {
-      work->value68 = 0;
+      work->direction.x = 0;
       {
-        u16 *cell = &work->direction;
+        u16 *cell = &work->direction.z;
 
         if (object->unk4c > 0) {
           direction = 1;
@@ -1235,7 +1185,7 @@ void Ride_UpdateCarried(struct Actor *object) {
       object->z -= speed;
       object->gravity += speed >> 2;
     }
-    work->landed = 1;
+    work->active = 1;
     event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
@@ -1280,42 +1230,13 @@ void Func_02001780(s32 *position, s32 speed, s32 flag) {
   }
 }
 
-/* VIEW(spawn): tag struct RideSlot as struct RideSlot__spawn;
- * mars_lighthouse_star_room.c has another definition; not tried: struct
- * RideSlot__spawn was not found. */
-struct RideSlot__spawn {
-  u16 id;
-  u16 blocked;
-};
-
-struct RideDirection {
-  u16 unk00;
-  u16 unk02;
-};
-
-/* VIEW(spawn): tag struct RideWork as struct RideWork__spawn;
- * mars_lighthouse_star_room.c has another definition; not tried: struct
- * RideWork__spawn was not found. */
-struct RideWork__spawn {
-  u8 unk00[4];
-  u16 landed;
-  u16 blocked;
-  u8 unk08[2];
-  u16 value0a;
-  u8 unk0c[0x48];
-  struct RideSlot__spawn slots[4];
-  u8 unk64[4];
-  struct RideDirection direction;
-};
-
 extern u8 gInventorySnapshot[];
 
 s32 Func_02001528(struct Actor *a, struct Actor *b);
 s32 Func_0200158c(struct Actor *a, struct Actor *b);
 
 void Ride_UpdateLanding(struct Actor *object) {
-  struct RideWork__spawn *work =
-      (struct RideWork__spawn *)(gInventorySnapshot + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
@@ -1335,18 +1256,18 @@ void Ride_UpdateLanding(struct Actor *object) {
   if (other->y == other->terrainHeight && Func_02001528(object, other) &&
       gMainRoutineWork.renderMode == 0) {
     if (object->unk4c != 0) {
-      work->direction.unk02 = 0;
+      work->direction.z = 0;
       direction = &work->direction;
       if (object->unk4c > 0)
-        direction->unk00 = 1;
+        direction->x = 1;
       else
-        direction->unk00 = 0xffff;
+        direction->x = 0xffff;
     }
     object->priorityFlags = 2;
     object->z -= object->bounce;
     object->gravity += object->bounce >> 2;
     object->unk4c = 0;
-    work->landed = 1;
+    work->active = 1;
     event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4; i++) {
@@ -1628,21 +1549,10 @@ struct RideAnimation {
   u8 flag11 : 1;
 };
 
-/* VIEW(s1d7c): tag struct RideWork as struct RideWork__s1d7c;
- * mars_lighthouse_star_room.c has another definition; not tried: struct
- * RideWork__s1d7c was not found. */
-struct RideWork__s1d7c {
-  u8 unk00[0xc];
-  u16 value0c;
-  u8 unk0e[0x62];
-  struct Actor *handle;
-};
-
 extern u8 gInventorySnapshot[];
 
 void Func_02001d7c(void) {
-  struct RideWork__s1d7c *work =
-      (struct RideWork__s1d7c *)(gInventorySnapshot + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct Actor *object;
   struct RideAnimation *animation;
 
@@ -1853,27 +1763,11 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 // XXX: is the car an actor (its stopped halfword sits where an actor's action
 // is, its steps in unk70)? The code that stores the car's pointer at the ride
 // state's 0x6c would settle it.
-struct RideCar {
-  u8 unk00[0x64];
-  s16 stopped;
-  u8 unk66[0xa];
-  s32 stepX;
-  s32 unk74;
-  s32 stepZ;
-};
-
-struct RideState {
-  s32 counter;
-  s16 active;
-  u8 unk06[0x66];
-  struct RideCar *car;
-};
-
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 s32 MarsLighthouseRoomF_SlideOnIce(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct RideState *ride;
+  struct RideWork *ride;
   struct Actor *leader;
   s32 frame[3]; // Unused: gives the stack frame its 12 bytes.
 
@@ -1895,7 +1789,7 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ride = (struct RideState *)(gInventorySnapshot + 0x188);
+  ride = (struct RideWork *)(gInventorySnapshot + 0x188);
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1903,14 +1797,14 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   leader->update = (void (*)(void))Actor_Blink;
   leader->facing = 0x4000;
   Actor_SelectAnimation(leader, 49);
-  while (ride->car->stopped == 0) {
+  while (ride->car->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
-      leader->x += ride->car->stepX;
-      leader->z += ride->car->stepZ;
+      leader->x += ((s32 *)ride->car->unk70)[0];
+      leader->z += ((s32 *)ride->car->unk70)[2];
     } else {
-      if (ride->car->stepX != 0)
+      if (((s32 *)ride->car->unk70)[0] != 0)
         leader->x = (leader->x & 0xfff00000) + 0x80000;
-      if (ride->car->stepZ != 0)
+      if (((s32 *)ride->car->unk70)[2] != 0)
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;

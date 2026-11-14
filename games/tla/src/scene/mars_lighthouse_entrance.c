@@ -10,6 +10,7 @@
 /// MarsLighthouseEntrance_FightBalm).
 
 #include "flags.h"
+#include "module/scene/ride.h"
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "module/scene/mars_lighthouse_entrance.h"
@@ -64,15 +65,6 @@
 #include "system/frame.h"
 #include "actor.h"
 
-struct RideEntry {
-  s16 a;
-  u8 unk02[2];
-  s16 b;
-  s16 c;
-  u8 unk08[4];
-  s32 d;
-};
-
 struct RideRow {
   u8 unk00[20];
   s16 a;
@@ -83,26 +75,7 @@ struct RideRow {
   s32 d;
 };
 
-struct RideSlot {
-  u16 value;
-  u8 unk02[2];
-};
-
-struct RideWork {
-  s32 counter;
-  s16 active;
-  u8 unk06[8];
-  s16 value0e;
-  u8 unk10[4];
-  struct RideEntry entries[4];
-  struct RideSlot slots[4];
-  u8 unk64[12];
-  void *handle;
-};
-
 extern u8 gInventorySnapshot[];
-
-#define RIDE_WORK ((struct RideWork *)(gInventorySnapshot + 0x188))
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
@@ -1223,37 +1196,8 @@ void Ride_UpdateDrift(struct Actor *object);
 
 #include "shared/actor_is_beside.h"
 
-/* VIEW(s1930): tag struct RideSlot as struct RideSlot__s1930; ride.h has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1293: structure has no member
- * named `id'. */
-struct RideSlot__s1930 {
-  u16 id;
-  u16 blocked;
-};
-
-/* VIEW(s1930): tag struct RideWork as struct RideWork__s1930; ride.h has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1261: structure has no member
- * named `value68'. */
-struct RideWork__s1930 {
-  u8 unk00[4];
-  u16 landed;
-  u16 blocked;
-  u8 unk08[2];
-  u16 value0a;
-  u8 unk0c[0x48];
-  struct RideSlot__s1930 slots[4];
-  u8 unk64[4];
-  u16 value68;
-  u16 direction;
-};
-
 void Ride_UpdateCarried(struct Actor *object) {
-  struct RideWork__s1930 *work =
-      (struct RideWork__s1930 *)(gInventorySnapshot + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
@@ -1274,9 +1218,9 @@ void Ride_UpdateCarried(struct Actor *object) {
   if (actor->y == actor->terrainHeight && Actor_IsTouching(object, actor) &&
       gMainRoutineWork.renderMode == 0) {
     if (object->unk4c != 0) {
-      work->value68 = 0;
+      work->direction.x = 0;
       {
-        u16 *cell = &work->direction;
+        u16 *cell = &work->direction.z;
 
         if (object->unk4c > 0) {
           direction = 1;
@@ -1295,7 +1239,7 @@ void Ride_UpdateCarried(struct Actor *object) {
       object->z -= speed;
       object->gravity += speed >> 2;
     }
-    work->landed = 1;
+    work->active = 1;
     event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
@@ -1324,38 +1268,6 @@ void Ride_UpdateDrift(struct Actor *object);
 #include "shared/actor_reset_scripted_for.h"
 
 #include "shared/ride_spawn_front.h"
-
-/* VIEW(s1c44): tag struct RideSlot as struct RideSlot__s1c44; ride.h has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/scene/shared/ride_update_landing.h:39: structure has no member
- * named `id'. */
-struct RideSlot__s1c44 {
-  u16 id;
-  u16 blocked;
-};
-
-struct RideDirection {
-  u16 unk00;
-  u16 unk02;
-};
-
-/* VIEW(s1c44): tag struct RideWork as struct RideWork__s1c44; ride.h has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/scene/shared/ride_update_landing.h:24: structure has no member
- * named `direction'. */
-struct RideWork__s1c44 {
-  u8 unk00[4];
-  u16 landed;
-  u16 blocked;
-  u8 unk08[2];
-  u16 value0a;
-  u8 unk0c[0x48];
-  struct RideSlot__s1c44 slots[4];
-  u8 unk64[4];
-  struct RideDirection direction;
-};
 
 #include "shared/ride_update_landing.h"
 
@@ -1554,7 +1466,7 @@ void Func_020024ac(u32 index, s32 value) {
   struct RideWork *work = RIDE_WORK;
 
   if (index <= 3)
-    work->slots[index].value = value;
+    work->slots[index].id = value;
 }
 
 /* VIEW(s2270): routine Unit_Get as struct BattleUnit *Unit_Get(s32 owner);
@@ -1624,27 +1536,11 @@ void MarsLighthouseEntrance_ContinueSlide(void) {
 extern s32 Func_020024c0__s2860(s32 a, s32 b) __asm__("Party_TakeFallDamage");
 void Actor_Blink(void);
 
-struct RideCar {
-  u8 unk00[0x64];
-  s16 stopped;
-  u8 unk66[0xa];
-  s32 stepX;
-  s32 unk74;
-  s32 stepZ;
-};
-
-struct RideState {
-  s32 counter;
-  s16 active;
-  u8 unk06[0x66];
-  struct RideCar *car;
-};
-
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 int MarsLighthouseEntrance_SlideOnIce(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct RideState *ride;
+  struct RideWork *ride;
   struct Actor *leader;
   // Unused: gives the stack frame its 12 bytes.
   s32 frame[3];
@@ -1664,7 +1560,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   Func_020024c0__s2860(-10, 0);
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ride = (struct RideState *)(gInventorySnapshot + 0x188);
+  ride = (struct RideWork *)(gInventorySnapshot + 0x188);
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1672,14 +1568,14 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   leader->update = Actor_Blink;
   leader->facing = 0x4000;
   Actor_SelectAnimation(leader, 49);
-  while (ride->car->stopped == 0) {
+  while (ride->car->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
-      leader->x += ride->car->stepX;
-      leader->z += ride->car->stepZ;
+      leader->x += ((s32 *)ride->car->unk70)[0];
+      leader->z += ((s32 *)ride->car->unk70)[2];
     } else {
-      if (ride->car->stepX != 0)
+      if (((s32 *)ride->car->unk70)[0] != 0)
         leader->x = (leader->x & 0xfff00000) + 0x80000;
-      if (ride->car->stepZ != 0)
+      if (((s32 *)ride->car->unk70)[2] != 0)
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;

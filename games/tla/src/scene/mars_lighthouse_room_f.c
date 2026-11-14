@@ -5,6 +5,7 @@
 /// (CrackedTile_Crack) and pushable statues (PushTarget_Push).
 
 #include "flags.h"
+#include "module/scene/ride.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -1439,24 +1440,6 @@ void Func_02001bcc(void) {
 /* VIEW(s1e20): tag struct MapLayer as struct MapLayer__s1e20; room.h has
  * another definition; not tried: struct MapLayer__s1e20 was not found. */
 
-struct RideSlot {
-  u16 id;
-  u16 blocked;
-};
-
-struct RideWork {
-  u8 unk00[4];
-  u16 landed;
-  u16 blocked;
-  u8 unk08[2];
-  u16 value0a;
-  u8 unk0c[0x48];
-  struct RideSlot slots[4];
-  u8 unk64[4];
-  u16 value68;
-  u16 direction;
-};
-
 #include "shared/ride_update_carried.h"
 
 extern u32 gData_02005d8c[];
@@ -1487,31 +1470,8 @@ void Func_02001fb4(s32 *position, s32 speed, s32 mode) {
   }
 }
 
-struct RideDirection {
-  u16 unk00;
-  u16 unk02;
-};
-
-/* VIEW(s1ffc): tag struct RideWork as struct RideWork__s1ffc;
- * mars_lighthouse_room_f.c has another definition; tried with the definition
- * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1520: request for member `unk02'
- * in something not a structure or union. */
-struct RideWork__s1ffc {
-  u8 unk00[4];
-  u16 landed;
-  u16 blocked;
-  u8 unk08[2];
-  u16 value0a;
-  u8 unk0c[0x48];
-  struct RideSlot slots[4];
-  u8 unk64[4];
-  struct RideDirection direction;
-};
-
 void Ride_UpdateLanding(struct Actor *object) {
-  struct RideWork__s1ffc *work =
-      (struct RideWork__s1ffc *)(gInventorySnapshot + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
@@ -1531,18 +1491,18 @@ void Ride_UpdateLanding(struct Actor *object) {
   if (other->y == other->terrainHeight && Actor_IsTouching(object, other) &&
       gMainRoutineWork.renderMode == 0) {
     if (object->unk4c != 0) {
-      work->direction.unk02 = 0;
+      work->direction.z = 0;
       direction = &work->direction;
       if (object->unk4c > 0)
-        direction->unk00 = 1;
+        direction->x = 1;
       else
-        direction->unk00 = 0xffff;
+        direction->x = 0xffff;
     }
     object->priorityFlags = 2;
     object->z -= object->bounce;
     object->gravity += object->bounce >> 2;
     object->unk4c = 0;
-    work->landed = 1;
+    work->active = 1;
     event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4; i++) {
@@ -1835,15 +1795,6 @@ void Func_020025b0(void) {
   animation->flag11 = 1;
 }
 
-struct RideEntry {
-  s16 a;
-  u8 unk02[2];
-  s16 b;
-  s16 c;
-  u8 unk08[4];
-  s32 d;
-};
-
 struct RideRow {
   u8 unk00[20];
   s16 a;
@@ -1854,69 +1805,22 @@ struct RideRow {
   s32 d;
 };
 
-/* VIEW(s25b0): tag struct RideWork as struct RideWork__s25b0;
- * mars_lighthouse_room_f.c has another definition; tried with the definition
- * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1866: structure has no member
- * named `handle'. */
-struct RideWork__s25b0 {
-  s32 counter;
-  s16 active;
-  u8 unk06[8];
-  s16 value0e;
-  u8 unk10[4];
-  struct RideEntry entries[4];
-  struct RideSlot slots[4];
-  u8 unk64[12];
-  void *handle;
-};
-
 void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
 
 void Func_02002604(void) {
-  struct RideWork__s25b0 *work =
-      (struct RideWork__s25b0 *)(gInventorySnapshot + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
 
   Actor_Release(work->handle);
   work->handle = NULL;
 }
 
 void Func_02002618(s16 value) {
-  ((struct RideWork__s25b0 *)(gInventorySnapshot + 0x188))->value0e = value;
+  ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
 }
 
 #include "shared/beam_start.h"
 
 #undef MarsLighthouseRoomF_ContinueSlide
-/* VIEW(ride): tag struct RideSlot as struct RideSlot__ride;
- * scene/mars_lighthouse_room_f has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1893: redefinition of `struct
- * RideSlot'. */
-#define RideSlot RideSlot__ride
-struct RideSlot {
-  u16 value;
-  u8 unk02[2];
-};
-
-/* VIEW(ride): tag struct RideWork as struct RideWork__ride;
- * scene/mars_lighthouse_room_f has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1904: redefinition of `struct
- * RideWork'. */
-#define RideWork RideWork__ride
-struct RideWork {
-  s32 counter;
-  s16 active;
-  u8 unk06[8];
-  s16 value0e;
-  u8 unk10[4];
-  struct RideEntry entries[4];
-  struct RideSlot slots[4];
-  u8 unk64[12];
-  void *handle;
-};
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
 
@@ -1965,39 +1869,7 @@ struct BattleUnit *Unit_Get__ride(s32 owner) __asm__("Unit_Get");
 
 #include "../field/field_effect/advance_spin.c"
 
-#undef RideSlot
-#undef RideWork
 #undef Ride_SetEntry
-
-/* VIEW(flash): tag struct RideSlot as struct RideSlot__flash;
- * scene/mars_lighthouse_room_f has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1982: redefinition of `struct
- * RideSlot'. */
-#define RideSlot RideSlot__flash
-struct RideSlot {
-  u16 value;
-  u8 unk02[2];
-};
-
-/* VIEW(flash): tag struct RideWork as struct RideWork__flash;
- * scene/mars_lighthouse_room_f has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1993: redefinition of `struct
- * RideWork'. */
-#define RideWork RideWork__flash
-struct RideWork {
-  s32 counter;
-  s16 active;
-  u8 unk06[8];
-  s16 value0e;
-  u8 unk10[4];
-  struct RideEntry entries[4];
-  struct RideSlot slots[4];
-  u8 unk64[8];
-  struct Actor *unk6c;
-  void *handle;
-};
 
 #include "shared/actor_blink.h"
 
@@ -2195,14 +2067,14 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   leader->update = (void (*)(void))Actor_Blink;
   leader->facing = 0x4000;
   Actor_SelectAnimation(leader, 49);
-  while (ride->unk6c->timer == 0) {
+  while (ride->car->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
-      leader->x += ((s32 *)ride->unk6c->unk70)[0];
-      leader->z += ((s32 *)ride->unk6c->unk70)[2];
+      leader->x += ((s32 *)ride->car->unk70)[0];
+      leader->z += ((s32 *)ride->car->unk70)[2];
     } else {
-      if (((s32 *)ride->unk6c->unk70)[0] != 0)
+      if (((s32 *)ride->car->unk70)[0] != 0)
         leader->x = (leader->x & 0xfff00000) + 0x80000;
-      if (((s32 *)ride->unk6c->unk70)[2] != 0)
+      if (((s32 *)ride->car->unk70)[2] != 0)
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
@@ -2524,8 +2396,6 @@ void Actor_RollAndCrumble(struct Actor *actor) {
 }
 #undef ABS
 
-#undef RideSlot
-#undef RideWork
 void Func_02002f6c(struct Actor *object);
 
 void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
@@ -2587,36 +2457,6 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
 #include "shared/actor_pop_up.h"
 
-/* VIEW(s328c): tag struct RideSlot as struct RideSlot__s328c;
- * scene/mars_lighthouse_room_f has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:2607: redefinition of `struct
- * RideSlot'. */
-#define RideSlot RideSlot__s328c
-struct RideSlot {
-  u16 value;
-  u8 unk02[2];
-};
-
-/* VIEW(s328c): tag struct RideWork as struct RideWork__s328c;
- * scene/mars_lighthouse_room_f has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:2618: redefinition of `struct
- * RideWork'. */
-#define RideWork RideWork__s328c
-struct RideWork {
-  s32 counter;
-  s16 active;
-  u8 unk06[8];
-  s16 value0e;
-  u8 unk10[4];
-  struct RideEntry entries[4];
-  struct RideSlot slots[4];
-  u8 unk64[8];
-  struct Actor *unk6c;
-  void *handle;
-};
-
 extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
 void Func_020041ec(void *handle);
@@ -2631,8 +2471,6 @@ s32 Actor_Park(struct Actor *object) {
 
 #include "../field/object/set_sprite_priority.c"
 
-#undef RideSlot
-#undef RideWork
 #include "../field/field_effect/move.c"
 
 #undef DEFINE_FUNC_02000444
@@ -2645,15 +2483,9 @@ s32 Actor_Park(struct Actor *object) {
 #undef MapLayer
 #undef SceneWork
 #undef Camera_SetBounds
-#undef RideSlot
-#undef RideWork
 #undef Ride_SetEntry
 #undef Unit_Get
-#undef RideSlot
-#undef RideWork
 #undef MapLayer
-#undef RideSlot
-#undef RideWork
 // @file
 #include "field/event_inline.h"
 

@@ -39,14 +39,37 @@
   FIXED_ADDRESS((s32 (*)(void *destination, const void *source, s32 size)),    \
                 0x03000730, IwramCopyWords)
 
-/// This game calls the fixed entries directly.
-#define Iwram_RatioMulQ14 Iwram_RatioMulQ14Entry
-#define Iwram_Sqrt Iwram_SqrtEntry
-#define Iwram_TransformMatrix Iwram_TransformMatrixEntry
-#define Iwram_TransformVector Iwram_TransformVectorEntry
-#define Iwram_SignedDivide Iwram_SignedDivideEntry
-#define Iwram_UnsignedDivide Iwram_UnsignedDivideEntry
-#define Iwram_Decompress Iwram_DecompressEntry
+/// value * Q16_ONE / divisor: the 16.16 ratio of two 16.16 numbers.
+static inline s32 Iwram_RatioMulQ14(s32 divisor, s32 value) {
+  return Iwram_RatioMulQ14Entry(divisor, value);
+}
+
+/// The integer square root, rounded down, of a value from 0; 0 for a
+/// negative one. A 16.16 square comes back as 8.8.
+static inline s32 Iwram_Sqrt(s32 value) { return Iwram_SqrtEntry(value); }
+
+/// Multiplies matrix, a 3 by 3 matrix and a translation in 16.16 fixed point,
+/// into the current transform.
+static inline void Iwram_TransformMatrix(const s32 *matrix) {
+  Iwram_TransformMatrixEntry(matrix);
+}
+
+static inline void Iwram_TransformVector(const void *vector, s32 *result) {
+  Iwram_TransformVectorEntry(vector, result);
+}
+
+/// The quotient, rounded toward zero.
+static inline s32 Iwram_SignedDivide(s32 dividend, s32 divisor) {
+  return Iwram_SignedDivideEntry(dividend, divisor);
+}
+
+static inline u32 Iwram_UnsignedDivide(u32 dividend, u32 divisor) {
+  return Iwram_UnsignedDivideEntry(dividend, divisor);
+}
+
+static inline void *Iwram_Decompress(const void *source, void *destination) {
+  return Iwram_DecompressEntry(source, destination);
+}
 
 /// Clears size bytes, rounded down to whole words, from destination. Returns
 /// the address after the last word.

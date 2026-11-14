@@ -323,7 +323,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
     renderBounds[0] = 0;
     renderBounds[1] = 0;
     renderBounds[2] = span;
-    Iwram_TransformVector(renderBounds, camera);
+    Iwram_TransformVectorEntry(renderBounds, camera);
   }
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;

@@ -271,13 +271,10 @@ void AlhafraManor_CountAnswer(void);
     Actor_SetHorizontalPositionWithTerrain((id), 0, 0);                        \
   }
 
-/// A long scene in Alhafra's manor (message MsgAlhafraManor29 on): actors 4
-/// to 13 are placed, turn, emote and speak in turn, the screen fades out and
-/// back between two parts, and actor 4 asks a yes-or-no question (both
-/// answers count up the event work's halfword 0x1c4); at the end actors 7, 5,
-/// 6 and 13 walk to the controlled character, the camera follows it again
-/// and flag 303 is cleared. Each call goes through the call layer
-/// (call.h), which builds its constants at the call.
+/// The night at the mayor's manor: the party thanks the mayor for his
+/// house, Jenna and Sheba doubt he will hand the boat over to Madra, the mayor
+/// asks Jiya after the repairs, and a guard runs in with news: Briggs has
+/// escaped. Felix's answer to the mayor is counted in the event work.
 void AlhafraManor_BriggsEscapes(void) {
   Event_Start();
   Event_ResolvePendingActions(0);

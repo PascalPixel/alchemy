@@ -310,10 +310,9 @@ void AlhafranCave_SetUpCave(void) {
 void FieldEffect_StartBlankOverlay(s32 value);
 void EffectSprite_InitFromSlot94(const void *data, s32 a, s32 b, s32 c);
 
-/// The rooms' setup: sprite priorities, the scene callback, actors 12 to 14,
-/// actors 15 to 24 by flags FLAG_ALHAFRA_MAST_CLEARED, FLAG_BRIGGS_CAUGHT and
-/// FLAG_FAMILY_VISITED_BRIGGS, and actor 8 stepping in at entrance 9 until flag
-/// 0x109 is set.
+/// Sets up the jail and the cave: who is held and who visits, by how far the
+/// story has gone (Briggs caught, his family's visit, the mast cleared), and
+/// the hungry boy's father stepping in as the party comes in by entrance 9.
 void AlhafranCave_SetUpJail(void) {
   const void *data;
   struct FieldWork *work;

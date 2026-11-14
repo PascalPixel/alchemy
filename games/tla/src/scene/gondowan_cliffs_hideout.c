@@ -1,6 +1,6 @@
 /// @file
 /// The hideout in the Gondowan Cliffs where four warriors from Kibombo camp,
-/// until flag 2219 is set.
+/// until Briggs is caught (FLAG_BRIGGS_CAUGHT).
 
 #include "field/field.h"
 #include "flags.h"
@@ -49,7 +49,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 /// Felix walks in on the four warriors: they jump, turn to him and talk over
-/// one another, once, until the scene's flag 2447 is set.
+/// one another, once.
 void GondowanCliffsHideout_WarriorsAreFound(void) {
   if (!GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Event_Start();
@@ -89,7 +89,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Event_ShowMessageAndWait(ACTOR_WARRIOR_AWAITING_FRIENDS, 0);
     Event_End();
   }
-  GameFlag_Set(2447);
+  GameFlag_Set(FLAG_KIBOMBO_WARRIORS_FOUND);
 }
 
 s32 Scene_Initialize(void) {
@@ -143,7 +143,8 @@ struct ActorPlacement gPlacementsWithoutWarriors[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 10, 2447, EVENT(GondowanCliffsHideout_WarriorsAreFound)},
+    {TRIGGER_STEP, 10, FLAG_KIBOMBO_WARRIORS_FOUND,
+     EVENT(GondowanCliffsHideout_WarriorsAreFound)},
     {TRIGGER_TALK, ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS,
      MSGNO(MsgKibomboWarriorIntroducesHimself)},
     {TRIGGER_TALK, ACTOR_WARRIOR_BLAMING_THE_COLLISION, CONDITION_ALWAYS,

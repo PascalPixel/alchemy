@@ -141,6 +141,9 @@
 /// Set as Briggs is caught on the boat he bought at Alhafra; the town then
 /// thanks the party and talks of pirates.
 #define FLAG_BRIGGS_CAUGHT 0x8ab
+/// Set as Felix comes upon the four Kibombo warriors in their hideout in the
+/// Gondowan Cliffs; back in Madra, Felix is asked "It was them, wasn't it?"
+#define FLAG_KIBOMBO_WARRIORS_FOUND 0x98f
 /// Set once Burst has broken the last block on the Alhafran boat's mast, so
 /// the mast is ready for repairs; the town then wonders whether Briggs was a
 /// pirate at all.

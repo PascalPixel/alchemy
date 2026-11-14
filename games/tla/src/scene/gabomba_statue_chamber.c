@@ -1015,12 +1015,10 @@ void GabombaStatueChamber_InitializeRoom2(void) {
   }
 }
 
-/// Gives actors 15 to 32 action variant 2, runs Actor_DisableById for actor 8
-/// and grounds it, then GabombaStatueChamber_OpenTheLap with actor 10 placed
-/// once the message of the Gabomba is carried, else
-/// GabombaStatueChamber_ShowBlackCrystal; arriving by entrance 2 it sets the
-/// retreat to GabombaStatue7's entrance 1 (flag 0xa27) or
-/// GabombaStatueChamber1's entrance 3 (flag 0xa28).
+/// Sets up the chamber: its lap open once the message of the Gabomba is
+/// carried, or else the place of the Black Crystal; arriving by entrance 2,
+/// Retreat leads back to the statue's top or to the chamber's first room, by
+/// the way the party came.
 void GabombaStatueChamber_InitializeRoom3(void) {
   u32 i;
   char *scene;

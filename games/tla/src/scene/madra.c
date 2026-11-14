@@ -931,7 +931,7 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_RunRepeatedMotion(24, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(24, 0, 10);
-  if (Event_GetFlag(0x98f)) {
+  if (Event_GetFlag(FLAG_KIBOMBO_WARRIORS_FOUND)) {
     Event_SetMessageId(MsgItWasThem);
     Actor_FaceDirection(32, FACING_WEST, 0);
     Event_Wait(20);

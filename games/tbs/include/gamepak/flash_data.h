@@ -35,7 +35,7 @@ struct FlashType {
 };
 
 /// Settings for each flash chip model (44 bytes), in flash_setup's field order
-/// from flashset.s.
+/// from flashset.inc.
 struct FlashSetupInfo {
   u16 (*program)(u16 sector, u8 *source); ///< programs one sector
   u16 (*eraseChip)(void);                 ///< erases the whole chip

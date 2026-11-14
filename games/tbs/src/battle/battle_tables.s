@@ -44,7 +44,7 @@ gBattleCamera_CommandMatrix:
 	.4byte 1 << 16, 0, 0, 0
 	.4byte 1 << 16, 0, 0, 0
 	.4byte 80 << 16, 0, 0
-	.include "games/tbs/src/battle/range_falloff.s"
+	.include "games/tbs/src/battle/range_falloff.inc"
 	.global gBattleAI_ActionWeights
 gBattleAI_ActionWeights:
 	.byte 32, 32, 32, 32, 32, 32, 32, 32

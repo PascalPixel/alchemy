@@ -4,7 +4,7 @@
 	.syntax unified
 	.thumb
 	.balign 4
-	.include "games/tbs/src/gamepak/far_call/veneer.s"
+	.include "games/tbs/src/gamepak/far_call/veneer.inc"
 	overlay_veneer Scene_Initialize
 	overlay_veneer Scene_GetEntrances
 	overlay_veneer Scene_GetExits

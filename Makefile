@@ -287,6 +287,9 @@ $(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 # imports.inc, in the list's order. The overlay's script places it as
 # "*/imports.o".
 IMPORT_LIST := games/$(GAME)/src/system/overlay/imports.inc
+# The far-call macros the list includes.
+VENEER_tbs := games/tbs/src/gamepak/far_call/veneer.inc
+VENEER_tla := games/tla/src/gamepak/far_call/veneer.s
 OVERLAY_IMPORTS = $(BUILD)/overlays/$*/imports.o
 .SECONDEXPANSION:
 $(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $(IMPORT_LIST)
@@ -295,7 +298,7 @@ $(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $(IMPORT_LIST)
 	  $(NM) -u $(OVERLAY_OBJS_$*) | awk '{ print "calls", $$NF }'; } | \
 	awk 'NR == FNR { seen[$$1 " " $$2] = 1; next } $$1 == "export" { name = $$2; sub(/,$$/, "", name); \
 	     if (!(("calls " name) in seen) || ("own " name) in seen) next } { print }' - $(IMPORT_LIST) > $@
-$(BUILD)/overlays/%/imports.o: $(BUILD)/overlays/%/imports.s games/$(GAME)/src/gamepak/far_call/veneer.s
+$(BUILD)/overlays/%/imports.o: $(BUILD)/overlays/%/imports.s $(VENEER_$(GAME))
 	$(AS) $(EDITION_ASFLAGS) -o $@ $<
 
 # An overlay links at 0x2008000 against the main image's symbols, less the

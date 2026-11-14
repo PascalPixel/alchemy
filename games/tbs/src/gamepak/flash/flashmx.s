@@ -1,4 +1,4 @@
-	.include "games/tbs/src/gamepak/flash/flashset.s"
+	.include "games/tbs/src/gamepak/flash/flashset.inc"
 	.section .rodata
 	.align 2
 	.global Flash_MaxTimeMacronix

@@ -215,18 +215,8 @@ struct ActorSolid {
   u8 solid : 8;
 };
 
-struct EventCounters {
-  u8 unk000[0x1c4];
-  u16 count;
-};
-
 struct ThrowAnimations {
   s32 animations[3];
-};
-
-struct EventFlags685 {
-  u8 unk000[0x15a];
-  u16 field15a;
 };
 
 struct FlashSprite {

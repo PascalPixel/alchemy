@@ -14,14 +14,14 @@
 #include "module/field/object.h"
 
 void Event_UpdateDebugSkip(void) {
-  struct EventWaitWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (gDebugMode != 0) {
     if (((struct InputState *)&gInput)->pressed & KEY_L) {
-      work->waitMode = 0;
+      work->fastForward = 0;
     }
     if (((volatile struct InputState *)&gInput)->pressed & KEY_R) {
-      work->waitMode = -1;
+      work->fastForward = -1;
     }
   }
 }
@@ -97,9 +97,7 @@ void Event_CallWithLastActiveObjectId(s32 event_id) {
                          Actor_FindLastActiveId());
 }
 
-void Event_SetSceneEvents(s32 events) {
-  ((struct EventWordWork *)Ram_HeapSlots->fieldWork)->word10 = events;
-}
+void Event_SetSceneEvents(s32 events) { gFieldWork->triggers = events; }
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value) {
   Unit_Get(event_id);

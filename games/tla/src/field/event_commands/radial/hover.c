@@ -56,7 +56,7 @@ void HoverGlow_Update(void);
 void FieldPsynergy_Hover(void) {
   struct GlowWork__f0e9af4 *work = HeapSlot_Alloc(92, 0x1038);
   struct GlowScene *scene = Ram_HeapSlots->effectWork;
-  struct GlowEvent__f0e9af4 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *player = scene->mainObject;
   struct PendingEvent *pending;
   struct EffectSprite *sprite;
@@ -96,7 +96,7 @@ void FieldPsynergy_Hover(void) {
     found = 1;
   } else {
     for (n = 0; n < 80; n++) {
-      other = event->objects[n];
+      other = event->actors[n];
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & 1) && other != scene->mainObject) {
         position[0] = other->x;

@@ -59,10 +59,10 @@ s32 FlagEntries_GetValue(s32 flag) {
 }
 
 void Encounter_SelectMapZones(s32 search) {
-  struct EventWorkView *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
-  u8 *out = work->settings;
+  u8 *out = work->encounterZones;
   u32 first = 0;
   u32 second = 0;
   const struct SceneMusicEntry *entry = gScene_EncounterRules;
@@ -85,8 +85,8 @@ void Encounter_SelectMapZones(s32 search) {
   *out++ = second;
   for (i = 0; i < 6; i++)
     *out++ = 0;
-  work->unk194 = 0;
-  work->unk198 = 0x100000;
+  work->encounterBias = 0;
+  work->encounterThreshold = 0x100000;
   BattleBackground_SelectForMap();
 }
 
@@ -126,7 +126,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
 #define ENCOUNTER_STEPS (gMainRoutineWork.encounterSteps)
 
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
-  struct EncounterWork *work;
+  struct FieldWork *work;
   const struct EncounterZone *entry;
   s32 rate;
   s32 level;
@@ -161,23 +161,23 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
       return 0;
     rate += level * 5;
 
-    bias = work->bias;
+    bias = work->encounterBias;
     if (bias == 0) {
       s32 a = Random16();
       s32 b = Random16();
       s32 c = Random16();
 
       bias = (a - b + c - (s32)Random16()) / 2;
-      work->bias = bias;
+      work->encounterBias = bias;
     }
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = ENCOUNTER_STEPS += Iwram_MulQ16(step, steps);
-    if (total < work->threshold)
+    if (total < work->encounterThreshold)
       return 0;
   }
 
-  work->bias = 0;
+  work->encounterBias = 0;
   sum = 0;
   for (i = 0; i < 8; i++)
     sum += entry->weights[i];

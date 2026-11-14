@@ -430,7 +430,7 @@ void Camera_WorldToScreen(s32 *position);
 void HoverGlow_Update(void) {
   struct GlowWork__f0e92b4 *work = Ram_HeapSlots->battleFxWork[0];
   struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
-  struct GlowEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u16 *palette;
   s32 position[3];
   s32 level;
@@ -455,7 +455,7 @@ void HoverGlow_Update(void) {
       level = 0;
     work->scale = (level << 15) / GLOW_FULL + Q16_ONE / 2;
     if (level == 0)
-      event->cue = GLOW_SPENT_CUE;
+      event->psynergy = GLOW_SPENT_CUE;
   }
 
   // Cycle the glow's colours; the last takes the 15th's level.

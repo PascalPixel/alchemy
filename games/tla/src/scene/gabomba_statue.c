@@ -890,7 +890,7 @@ const u8 *Scene_GetEvents(void) {
 }
 
 void Func_020011bc(s32 x, s32 z) {
-  struct GabombaStatueChamberEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct GabombaStatueChamberObject *object =
       Actor_Get(gMainRoutineWork.currentOwner);
 
@@ -909,7 +909,7 @@ void Func_020011bc(s32 x, s32 z) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 #define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(name, n1, n2, n3, n4, n5, n6, n7) \

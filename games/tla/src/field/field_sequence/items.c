@@ -58,7 +58,7 @@ s32 Item_MatchesFilter(s32 filter, s32 item_id) {
 /// Party_GetLeaderActor for the actor and Item_MatchesFilter for
 /// the trigger's item.
 s32 Field_FindItemTrigger(s32 source) {
-  struct FieldStepWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   const struct Trigger *trigger = work->triggers;
   s32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 selected = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
@@ -116,7 +116,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 best;
   s32 matches;
   s32 count;
-  struct ItemFieldWork *runtime;
+  struct FieldWork *runtime;
 
   result = -1;
   // The mask is assigned first, as games/tbs/src/MATCHING.md describes.
@@ -207,9 +207,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       MessageArgument_PushFar(itemId, 2);
       FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
       BattleEffect_LoadActionEffectResources(actionId, 0);
-      runtime->resolvingAction = 1;
+      runtime->psynergyActing = 1;
       FieldPsynergy_Run();
-      runtime->resolvingAction = 0;
+      runtime->psynergyActing = 0;
       BattleEffect_CleanupSceneObjects();
 
       if (((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->useType & 1)
@@ -231,8 +231,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// nearest target in reach (its number with 0x100 set); else 0x200 for a
 /// trigger that applies anywhere, or -1.
 s32 Scene_SelectPsynergyTarget(s32 kind) {
-  struct TriggerWork *work = Ram_HeapSlots->fieldWork;
-  struct TriggerEvent *event = work->events;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct TriggerEvent *event = work->triggers;
   u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 focused = Field_GetCollisionAheadOfLeader();
   s32 special = Field_GetCollisionUnderLeader();
@@ -299,8 +299,8 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
 
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector) {
-  struct TriggerWork *work = Ram_HeapSlots->fieldWork;
-  struct TriggerEvent *event = work->events;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct TriggerEvent *event = work->triggers;
   u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 flags;
 

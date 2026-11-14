@@ -58,20 +58,6 @@ struct ScatterWork {
   s16 hit;
 };
 
-struct ScatterEvent {
-  u8 unk000[0xd31];
-  s8 target;
-  s8 targetY;
-  s8 targetZ;
-};
-
-struct EffectSceneState {
-  u8 unk000[0xd31];
-  u8 valueD31;
-  u8 valueD32;
-  u8 valueD33;
-};
-
 struct LaunchVector {
   s32 x;
   s32 y;
@@ -144,11 +130,6 @@ struct BowScene {
   s32 y;
   s32 z;
   struct Actor *mainObject;
-};
-
-struct BowEvent {
-  u8 unk00[20];
-  struct Actor *objects[80];
 };
 
 struct PointWork {

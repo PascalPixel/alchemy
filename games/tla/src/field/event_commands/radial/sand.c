@@ -13,14 +13,6 @@
 
 extern char ResourceId_DustPuffA;
 
-struct GrabEventWork {
-  u8 unk000[394];
-  s8 mode;
-  u8 unk18b[0xd48 - 395];
-  s16 standing;
-  s16 phase;
-};
-
 void Func_080dc954(void);
 void Actor_SetOthersPaused(struct Actor *excludedActor, s32 groupMode,
                            s32 action);
@@ -40,7 +32,7 @@ struct Actor *Actor_GetById(u32 objectId);
 void FieldPsynergy_Sand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
   struct BattleFxScene *effect = Ram_HeapSlots->effectWork;
-  struct GrabEventWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner;
   s32 pictureEntry;
   s32 particleEntry;
@@ -140,7 +132,7 @@ void FieldPsynergy_Sand(void) {
     gMainRoutineWork.renderMode = 5;
   owner->timer = 0;
   owner->unk66 = 0;
-  event->phase = 3;
+  event->unkd4a = 3;
   gMainRoutineWork.pendingThird = 1;
   if (event->standing == 0)
     Task_Add(FieldPsynergy_WatchSandGround, 0x480);

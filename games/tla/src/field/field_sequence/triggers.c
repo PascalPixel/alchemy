@@ -23,8 +23,7 @@ struct ActionDescriptor *Scene_FindActorPlacement(s32 id) {
   s32 group = 8;
 
   for (i = 0; i < 4; i++) {
-    entry =
-        ((struct ActionDescriptorTables *)Ram_HeapSlots->fieldWork)->tables[i];
+    entry = gFieldWork->tables[i];
     if (entry == NULL)
       continue;
     if (id <= 7) {
@@ -472,18 +471,6 @@ resume:
   return result;
 }
 
-/* VIEW(field_sequence): tag struct TouchWork as struct
- * TouchWork__field_sequence; module/field/field.h has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence/triggers.c:508: structure has no
- * member named `blockedSteps'. */
-struct TouchWork__field_sequence {
-  u8 unk000[0x158];
-  s16 exit;
-  u8 unk15a[0x184 - 0x15a];
-  s16 blockedSteps;
-};
-
 s32 Scene_RunRaisedEvent(s32 id) {
   u8 *descriptor = (u8 *)Scene_FindTrigger(6, id);
   s32 result = -1;
@@ -509,7 +496,7 @@ s32 Scene_RunRaisedEvent(s32 id) {
 s32 Scene_RunStepTriggerOrExit(s32 value) {
   struct TouchEvent *event;
   s32 handled;
-  struct TouchWork__field_sequence *work;
+  struct FieldWork *work;
 
   event = Scene_FindTrigger(2, value);
   handled = -1;

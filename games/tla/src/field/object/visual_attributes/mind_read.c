@@ -722,7 +722,7 @@ extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__(
 // and watch how far the leader walks.
 void FieldPsynergy_Reveal(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct RevealEvent *event;
+  struct FieldWork *event;
   struct ScreenTransitionState *transition;
   struct Actor *caster;
   void *pending;
@@ -738,7 +738,7 @@ void FieldPsynergy_Reveal(void) {
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
   PaletteFade_StartInterpolation(1);
-  event->active = 0;
+  event->revealActive = 0;
   wait(1);
 
   pending = Scene_FindPsynergyTrigger(
@@ -751,12 +751,12 @@ void FieldPsynergy_Reveal(void) {
    * work. */
   do {
     Sound_PlayFar(SE_PSYNERGY_SPARKLE);
-    event->active = 1;
+    event->revealActive = 1;
   } while (0);
-  event->centreX = transition->centreX / Q16_ONE;
-  event->centreY = transition->centreY / Q16_ONE;
-  event->frames = REVEAL_FRAMES;
-  event->markers = 1;
+  event->revealCenterX = transition->centreX / Q16_ONE;
+  event->revealCenterY = transition->centreY / Q16_ONE;
+  event->revealFrames = REVEAL_FRAMES;
+  event->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
   frame = 0;
   do {
@@ -771,14 +771,14 @@ void FieldPsynergy_Reveal(void) {
 void FieldPsynergy_EndReveal(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScreenTransitionState *transition = Ram_HeapSlots->screenTransition;
-  struct RevealEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   void *pending;
 
-  if (event->active != 0) {
+  if (event->revealActive != 0) {
     Sound_PlayFar(SE_MAP_TRANSITION);
     Task_Remove(FieldPsynergy_WatchLeaderDistance);
-    event->active = 0;
-    event->frames = 0;
+    event->revealActive = 0;
+    event->revealFrames = 0;
     BattleEffect_RunBusyWaitDelay__f0dd820(0);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
     PaletteFade_StartInterpolation(1);
@@ -1708,11 +1708,11 @@ s32 MapGrid_IsCloakCell__mind_read(s32 x, s32 z,
 /// A task of Cloak: when the controlled character does not
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
 void FieldEffect_CheckCloakTile(void) {
-  struct EventWork__f0de21c *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct OwnerObject *owner = ObjectTable_Get(Party_GetLeaderActor());
 
   if (MapGrid_IsCloakCell(owner->x, owner->z, owner->layer) == 0)
-    event->state = 0x2092;
+    event->psynergy = 0x2092;
 }
 
 // The caster's palette while it flickers.

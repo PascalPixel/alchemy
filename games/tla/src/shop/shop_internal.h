@@ -158,13 +158,6 @@ enum InnMessageId {
   INN_MESSAGE_REST_COMPLETE,
 };
 
-struct FieldEffectState {
-  u8 padding0[0x1AC];
-  s32 effect;
-  u8 padding1B0[4];
-  s32 delay;
-};
-
 struct Effect_080b2f4c {
   u8 unk000[0xc];
   s32 x;

@@ -556,7 +556,7 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   struct Actor *ripple;
   struct PlayerSprite__s28534 *rippleSprite;
   struct FieldWork *work;
-  struct WorldEventWork *worldWork;
+  struct FieldWork *worldWork;
   u32 kind;
 
   count = 0;
@@ -655,8 +655,8 @@ update_object:
   }
   if (gInput.pressed &
       ((struct PartyKeys__s28534 *)&gMainRoutineWork)->keys23c) {
-    struct WorldEventWork *keyWork = Ram_HeapSlots->fieldWork;
-    if (keyWork->unkd39 != 0) {
+    struct FieldWork *keyWork = Ram_HeapSlots->fieldWork;
+    if (keyWork->hoverReady != 0) {
       GameFlag_Clear(0x147);
       ((struct FieldWork *)keyWork)->raisedTrigger = 253;
     }
@@ -793,10 +793,10 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   struct Actor *ripple;
   struct PlayerSprite__f028aac *rippleSprite;
   struct FieldWork *work;
-  struct WorldEventWork__f028aac *worldWork;
+  struct FieldWork *worldWork;
   struct Actor *other;
   u32 kind;
-  struct WorldEventWork__f028aac *flightWork;
+  struct FieldWork *flightWork;
 
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&object->x);

@@ -126,14 +126,14 @@ struct FieldWork {
   s16 revealCenterX;     ///< where Reveal was cast, in pixels
   s16 revealCenterY;
   s8 unkcac; ///< a lasting Psynergy (155) is active
-  u8 unkcad;
+  s8 unkcad;
   s16 unkcae;
   /// The first of the two names the next yes/no choice shows in place of Yes
   /// and No (YesNoMenu_Run), 0 for those.
   s16 choiceMessage;
   s16 choiceWidth;     ///< the choice window's width, 0 for the default
   s16 choiceSelection; ///< the answer the choice starts on
-  u8 psynergyActing;   ///< set while Psynergy takes effect
+  s8 psynergyActing;   ///< set while Psynergy takes effect
   s8 castStarted;      ///< set once a cast has been announced
   s16 queuedSound;     ///< a sound Scene_PlayQueuedMusic plays; -1 for none
   u8 unkcba[2];
@@ -147,8 +147,8 @@ struct FieldWork {
   u8 unkd34[2];
   u8 sceneAttributeLow;
   u8 sceneAttributeHigh;
-  u8 unkd38;
-  u8 hoverReady; ///< a party member knows Hover and the ship flies
+  s8 unkd38;
+  s8 hoverReady; ///< a party member knows Hover and the ship flies
   u8 terrainKind;
   s8 climbing;
   u8 unkd3c[8];

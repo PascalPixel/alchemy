@@ -113,12 +113,12 @@ struct EffectWork {
 #define HEAP_SLOT_FX 224
 
 void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
-  struct LoadEventWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct EffectWork *work;
   s32 running;
 
-  if (event->unkcb6 == 0) {
+  if (event->psynergyActing == 0) {
     work = HeapSlot_Alloc(HEAP_SLOT_FX, sizeof(*work));
     /* FAKEMATCH(dead): an empty once-only loop. */
     do {
@@ -129,7 +129,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   }
   work->action = abilityId;
   work->animation = Ability_Get(abilityId)->unk04[2];
-  running = event->unkcb6;
+  running = event->psynergyActing;
   if (running != 0)
     return;
   work->freeBlocks = 512 - ResourceTable_CountFreeBlocks();
@@ -161,10 +161,10 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     *((u8 *)work + 0x41) = 1;
   FieldPsynergy_SetupActorPair(gMainRoutineWork.currentOwner, -1);
   if (work->animation != 8)
-    event->unkca5 = 0;
+    event->effectTimerRunning = 0;
   if (work->animation != 28)
     event->unkcad = 0;
-  event->target = 0;
+  event->targetX = 0;
   event->targetY = 0;
   event->targetZ = 0;
   event->unkd38 = 0;
@@ -275,7 +275,7 @@ void BattleEffect_StopMainActor(void) {
 
 void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupWork *work = Ram_HeapSlots->effectWork;
-  struct CleanupEventWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s8 *block = Ram_HeapSlots->block32;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *owner = work->owner;
@@ -291,7 +291,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   if (work->animation >= first &&
       (work->animation <= 27 || work->animation == 30))
     Func_080dc954();
-  if (event->unkcb6 != 0)
+  if (event->psynergyActing != 0)
     return;
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
@@ -305,7 +305,7 @@ void BattleEffect_CleanupSceneObjects(void) {
       } while (block[0x2a01] != 0);
     }
   }
-  event->unkcb7 = 0;
+  event->castStarted = 0;
   FieldPsynergy_ReleaseSceneSprite();
   Task_Remove(BattleEffect_UpdateAllEffectSlots);
   map->shakeX = work->savedShakeX;
@@ -316,7 +316,7 @@ void BattleEffect_CleanupSceneObjects(void) {
     ((struct FieldSprite *)owner->sprite)->priority = work->layer;
   }
   if (work->animation != 8)
-    event->unkca5 = 1;
+    event->effectTimerRunning = 1;
   if (work->animation != 28)
     event->unkcad = 1;
   Event_NoOp();

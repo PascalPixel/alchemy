@@ -78,7 +78,7 @@ void Blaze_UpdateSpray(void);
 
 void FieldPsynergy_Blaze(void) {
   struct SprayWork *work;
-  struct FxEvent *event;
+  struct FieldWork *event;
   struct FxScene *scene;
   struct Actor *caster;
   struct Actor *object;
@@ -127,7 +127,7 @@ void FieldPsynergy_Blaze(void) {
     work->origin[2] = scene->z;
     best = 9999;
     for (i = 0; i < 80; i++) {
-      cursor.object = event->objects[i];
+      cursor.object = event->actors[i];
       id = OBJECT_DEFINITION(cursor.object)[0];
       if (cursor.object != NULL && cursor.object->script != NULL &&
           (id == 410 || id == 304 || id == 386 || id == 418)) {
@@ -333,11 +333,6 @@ s32 Actor_CheckBlocked(struct Actor *object) {
 #include "system/io_reg.h"
 #include "system/heap_release.h"
 
-struct CueEvent {
-  u8 unk000[358];
-  u16 cue;
-};
-
 /* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
  * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
  * as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in
@@ -352,7 +347,7 @@ s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 /// off sand or gMainRoutineWork's byte 707 is set, or while it climbs as sand
 /// it leaves a climbable cell or faces one that is not.
 void FieldPsynergy_WatchSandGround(void) {
-  struct CueEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *party = gMainRoutineWork__f0e3d04;
   struct Actor *object = ObjectTable_Get(*(s32 *)(party + 532));
   s32 reason = 0;
@@ -381,7 +376,7 @@ void FieldPsynergy_WatchSandGround(void) {
       reason = 4;
   }
   if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
-    event->cue = 0x208b;
+    event->psynergy = 0x208b;
 }
 
 /// The heap slot (a byte offset into Ram_HeapSlots) that holds the RAM copy of

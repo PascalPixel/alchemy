@@ -262,11 +262,6 @@ struct ObjectSprite {
   void *record;
 };
 
-struct EventActors {
-  u8 unk00[20];
-  void *actors[64];
-};
-
 struct ActorDescriptor {
   s16 action;
   s16 scene;
@@ -289,13 +284,6 @@ struct ContextAnimation {
 struct ContextEffect {
   u8 unk00[5];
   u8 param;
-};
-
-struct WobbleEvent {
-  u8 unk000[362];
-  u16 cue;
-  u8 unk16c[24];
-  s16 counter;
 };
 
 /// One node of a tightrope (Tightrope_Initialize's work): a point on the rope,
@@ -675,13 +663,6 @@ struct RopeWork {
 
 #define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->unk84[6])
 
-struct SwingEvent {
-  u8 unk000[362];
-  s16 prompt;
-  u8 unk16c[24];
-  s16 timer;
-};
-
 union MoteWord {
   u32 value;
   void *link;
@@ -798,12 +779,6 @@ struct JumpSprite {
   u8 flags;
 };
 
-struct JumpEventWork {
-  u8 unk000[0x19c];
-  s32 walkingDistanceScale;
-  s32 walkingDistance;
-};
-
 struct ClimbSprite {
   u8 unk00[26];
   u8 flags;
@@ -812,11 +787,6 @@ struct ClimbSprite {
 struct GrabSave {
   u8 unk00[98];
   u8 priority;
-};
-
-struct EventWorkGrab {
-  u8 unk000[388];
-  s16 grabState;
 };
 
 struct BattleEffectVisual {

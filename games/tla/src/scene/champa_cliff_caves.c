@@ -336,9 +336,9 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
 #if !TLA_PATCH_1
-  ((struct EventTransition *)Ram_HeapSlots->fieldWork)->type = 516;
+  gFieldWork->transition = 516;
 #else
-  ((struct EventTransition *)Ram_HeapSlots->fieldWork)->type = 513;
+  gFieldWork->transition = 513;
 #endif
   if (party->scene != (s32)&SceneId_ChampaCliffCaves1)
     Actor_GetById(party->currentOwner)->priorityFlags |= 32;
@@ -476,10 +476,10 @@ void Func_02000804(s32 actor) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(8, 0, 5);
-    ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
-    ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(8, 0, 5);
   }
   Motion_SetModeAndWaitAnimation(8, 3);
@@ -705,7 +705,7 @@ void Func_02000f48(s32 actor) {
 
   if ((Actor_GetById(gMainRoutineWork.currentOwner)->x >> 20) <= 41)
     goto first;
-  ((struct EventFlags685 *)Ram_HeapSlots->fieldWork)->field15a = 1;
+  gFieldWork->fieldMenu = 1;
   return;
 remove:
   PartyInventory_Remove(item);
@@ -888,12 +888,12 @@ void Func_0200115c(void) {
     Actor_SetModeById(8, 1);
     Actor_GetById(8)->facing = 0x8000;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
-    ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
     Actor_WalkByAndWaitById(4, -16, 0);
     Event_Wait(5);
   } else {
     Event_Wait(25);
-    ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);

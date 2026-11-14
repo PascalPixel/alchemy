@@ -151,8 +151,7 @@ struct EventWork1cc {
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
 void Event_PlayCueNearFocus(struct CueObject *object, s32 cue) {
-  struct CueObject *focus =
-      ((struct EventWork1cc *)Ram_HeapSlots->fieldWork)->focus;
+  struct CueObject *focus = gFieldWork->camera;
 
   if (object == 0 || focus == 0)
     return;

@@ -325,7 +325,7 @@ s32 Field_TryJumpForward(void) {
   s32 angle = leader->facing;
   u8 *flags = &leader->motionFlags;
   u8 saved = *flags;
-  struct JumpEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 spriteFlags = 1;
   s32 position[3];
   s32 *positionWords;
@@ -737,7 +737,7 @@ s32 Leader_StepOntoRope(void) {
   struct RopeNode *node = Rope_FindNodeNear(&leader->x);
   u8 *flags;
 
-  ((struct EventWorkGrab *)Ram_HeapSlots->fieldWork)->grabState = 0;
+  gFieldWork->blockedSteps = 0;
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
@@ -767,7 +767,7 @@ s32 Leader_StepOffRope(void) {
   s32 position[3];
   u32 angle;
 
-  ((struct EventWorkGrab *)Ram_HeapSlots->fieldWork)->grabState = 0;
+  gFieldWork->blockedSteps = 0;
   angle = Data_080f0890[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;
@@ -842,7 +842,7 @@ s32 Leader_StepOntoTightrope(void) {
   struct TightropeNode *node = Tightrope_FindNodeNear(&leader->x);
   u8 *flags;
 
-  ((struct EventWorkGrab *)Ram_HeapSlots->fieldWork)->grabState = 0;
+  gFieldWork->blockedSteps = 0;
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
@@ -872,7 +872,7 @@ s32 Leader_StepOffTightrope(void) {
   s32 position[3];
   u32 angle;
 
-  ((struct EventWorkGrab *)Ram_HeapSlots->fieldWork)->grabState = 0;
+  gFieldWork->blockedSteps = 0;
   angle = Data_080f0890[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;

@@ -123,7 +123,7 @@ void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s32 revealState;
   u32 isActive = 0;
-  struct RevealWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (work != NULL) {
     revealState = work->revealActive;

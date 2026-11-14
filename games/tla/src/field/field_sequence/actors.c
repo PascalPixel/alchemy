@@ -38,7 +38,7 @@ s32 Party_GetCharacterSprite(s32 character) {
 void Actor_ReservedNoOp(void) {}
 
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
-  struct FieldStepWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 index = 0;
   s32 i;
   u16 id;

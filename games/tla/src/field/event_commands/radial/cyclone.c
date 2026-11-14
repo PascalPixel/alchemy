@@ -590,11 +590,6 @@ struct SprayScene {
   struct Actor *otherObject;
 };
 
-struct SprayEvent {
-  u8 unk00[20];
-  struct Actor *objects[80];
-};
-
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 #define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
 s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
@@ -612,7 +607,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void Blaze_UpdateSpray(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
   struct SprayScene *scene = Ram_HeapSlots->effectWork;
-  struct SprayEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct EffectSprite *sprite;
   struct SprayParticle *particle;
   struct SprayParticle *puff;
@@ -669,7 +664,7 @@ void Blaze_UpdateSpray(void) {
     if (++particle->timer == work->lifetime)
       particle->timer = -1;
     for (j = 0; j < 80; j++) {
-      struct Actor *other = event->objects[j];
+      struct Actor *other = event->actors[j];
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & 1) && other != scene->mainObject &&
           other != scene->otherObject &&

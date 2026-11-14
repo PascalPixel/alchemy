@@ -100,7 +100,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   s32 count;
   s32 index;
   struct FieldObject *object;
-  struct FieldEffectState *state;
+  struct FieldWork *state;
 
   count = Party_ListMembersFar(objects);
   Party_AdjustCoinsFar(-roomPrice);
@@ -115,8 +115,8 @@ void Inn_PlaySleep(s32 roomPrice) {
   }
 
   state = Ram_HeapSlots->fieldWork;
-  state->effect = 0x209;
-  state->delay = 60;
+  state->transition = 0x209;
+  state->transitionFrames = 60;
   wait(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
@@ -126,5 +126,5 @@ void Inn_PlaySleep(s32 roomPrice) {
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   wait(30);
-  ((struct FieldEffectState *)Ram_HeapSlots->fieldWork)->delay = 16;
+  gFieldWork->transitionFrames = 16;
 }

@@ -1388,19 +1388,11 @@ struct Unk_080e807cWork {
   u16 phase;
 };
 
-struct Unk_080e807cEvent {
-  u8 unk000[0x166];
-  u16 unk166;
-  u8 unk168[0xb45];
-  s8 unkcad;
-  s16 count;
-};
-
 /// Task of field Psynergy 28 (its name is question marks): its motes and
 /// colours each frame.
 void FieldPsynergy_UpdateUnnamed28(void) {
   struct Unk_080e807cWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct Unk_080e807cEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 *pos = position;
@@ -1418,7 +1410,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   pos[1] = actor->y + 0x100000;
   pos[2] = actor->z;
   if (work->unk2985 != 0)
-    Vector_AddPolarOffset(px(2), -(event->count << 11), pos);
+    Vector_AddPolarOffset(px(2), -(event->unkcae << 11), pos);
   Camera_WorldToScreen(pos);
   x = pos[0] >> 16;
   gBgScroll[0].x = 64 - x;
@@ -1482,10 +1474,10 @@ void FieldPsynergy_UpdateUnnamed28(void) {
     }
   }
 
-  if (event->unkcad != 0 && event->count != 0)
-    event->count--;
-  if (event->count == 0)
-    event->unk166 = 0x209b;
+  if (event->unkcad != 0 && event->unkcae != 0)
+    event->unkcae--;
+  if (event->unkcae == 0)
+    event->psynergy = 0x209b;
 }
 #undef NEXT_PHASE
 #undef WHIRL_COUNT

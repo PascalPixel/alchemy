@@ -33,13 +33,6 @@ struct RingWork {
   u16 phase;
 };
 
-struct RingEvent {
-  u8 unk000[0xcac];
-  s8 up;
-  s8 unkcad;
-  s16 timer;
-};
-
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
 void Camera_WorldToScreen(s32 *position);
@@ -49,7 +42,7 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void FieldPsynergy_Unnamed28(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct RingEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct CanvasSpriteWork *canvas;
   s32 entry;
@@ -73,7 +66,7 @@ void FieldPsynergy_Unnamed28(void) {
   angle = 0;
   repeat = 1;
   drawing = 0;
-  if (event->up == 0) {
+  if (event->unkcac == 0) {
     FieldPsynergy_FadeToCastColor();
     gCpuLoadDisplayEnabled = angle;
     BattleEffect_StartCanvasSprite();
@@ -139,9 +132,9 @@ void FieldPsynergy_Unnamed28(void) {
     work->orbiting = 0;
     work->cycling = 1;
     work->phase = 0;
-    event->up = 1;
+    event->unkcac = 1;
     event->unkcad = 1;
-    event->timer = 999;
+    event->unkcae = 999;
     off = 0;
     Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
     wait(1);
@@ -249,9 +242,9 @@ void FieldPsynergy_Unnamed28(void) {
     FieldPsynergy_FadeFromCastColor();
   }
   work->cycling = 1;
-  event->up = 1;
+  event->unkcac = 1;
   event->unkcad = 1;
-  event->timer = 600;
+  event->unkcae = 600;
   Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
 }
 
@@ -280,13 +273,6 @@ struct BurstWork__f0e82cc {
   s16 resource;
 };
 
-struct BurstEvent {
-  u8 unk000[0xcac];
-  s8 pending;
-  u8 unkcad;
-  u16 unkcae;
-};
-
 struct Actor *Actor_GetById(u32 objectId);
 void Window_LoadGraphics(void);
 extern char ResourceId_SparkleFade;
@@ -299,7 +285,7 @@ extern char ResourceId_SparkleFade;
 /// and animates them for 40 frames before releasing the effect.
 void FieldPsynergy_EndUnnamed28(void) {
   struct BurstWork__f0e82cc *work = Ram_HeapSlots->battleFxWork[0];
-  struct BurstEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   struct BurstMote *mote;
   struct EffectSprite *sprite;
@@ -309,9 +295,9 @@ void FieldPsynergy_EndUnnamed28(void) {
   s32 i;
   s32 frame;
 
-  if (event->pending == 0)
+  if (event->unkcac == 0)
     return;
-  event->pending = 0;
+  event->unkcac = 0;
   event->unkcad = 0;
   event->unkcae = 0;
   Task_Remove(FieldPsynergy_UpdateUnnamed28);

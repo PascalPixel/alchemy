@@ -37,16 +37,6 @@ struct ObjectPartList {
   struct ObjectPart *parts[1];
 };
 
-struct EventWaitWork {
-  u8 unk000[0x1b8];
-  s32 waitMode;
-};
-
-struct EventWordWork {
-  u8 unk00[0x10];
-  s32 word10;
-};
-
 struct OwnerVitals {
   u8 unk000[20];
   s16 hpRatio;
@@ -367,12 +357,6 @@ void Party_RemoveMemberRestored(s32 owner);
 
 struct Actor;
 
-// The field event work's pending Psynergy request (fieldWork + 0x166).
-struct CloakEvent {
-  u8 unk000[0x166];
-  s16 psynergyRequest;
-};
-
 struct FallingObject {
   u8 unk00[0xc];
   s32 y;
@@ -482,22 +466,6 @@ struct WorldMapAliasedHalfword {
   s32 unk04;
 };
 
-struct LoadEventWork {
-  u8 unk000[0xca5];
-  u8 unkca5;
-  u8 unkca6[7];
-  u8 unkcad;
-  u8 unkcae[8];
-  s8 unkcb6;
-  u8 unkcb7[0x79];
-  u8 unkd30;
-  s8 target;
-  s8 targetY;
-  s8 targetZ;
-  u8 unkd34[4];
-  u8 unkd38;
-};
-
 struct PairScene {
   u16 angle;  ///< Four directions.
   u16 angle8; ///< Eight directions.
@@ -548,18 +516,6 @@ struct CleanupWork {
   u8 unk710[8];
   u8 ownerByte;
   u8 layer;
-};
-
-struct CleanupEventWork {
-  u8 unk000[394];
-  s8 mode;
-  u8 unk18b[0xca5 - 395];
-  s8 unkca5;
-  u8 unkca6[7];
-  s8 unkcad;
-  u8 unkcae[8];
-  s8 unkcb6;
-  s8 unkcb7;
 };
 
 void FieldEffect_CheckCloakTile(void);
@@ -657,16 +613,6 @@ struct OrbitingParticleVector {
 struct OrbitingParticleChild {
   u8 reserved00[35];
   u8 flags;
-};
-
-// The field event work's Reveal state (fieldWork + 0xca4).
-struct RevealEvent {
-  u8 unk000[0xca4];
-  s8 active;   // Reveal is showing
-  u8 markers;  // the nearby markers are up
-  s16 frames;  // how long it lasts
-  s16 centreX; // pixels
-  s16 centreY;
 };
 
 struct BurstParticleVector {

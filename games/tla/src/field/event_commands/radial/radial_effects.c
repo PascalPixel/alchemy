@@ -546,7 +546,7 @@ void FieldPsynergy_UpdateLash(void) {
   struct ScatterWork *work =
       (struct ScatterWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct ScatterEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object = work->object;
   struct Vector3 position;
   struct EffectSprite *sprite;
@@ -617,7 +617,7 @@ void FieldPsynergy_UpdateLash(void) {
   case 2:
     if (work->timer == 0)
       work->flash = 1;
-    Rope_GetEndNodePosition(event->target, &position);
+    Rope_GetEndNodePosition(event->targetX, &position);
     SET_POSITION(object, position.x, position.y - 0x40000, position.z);
     if (work->hit != 0) {
       work->phase++;
@@ -661,7 +661,7 @@ struct EffectSceneWork__radial {
 /// marks the effect failed, else stores the target and both in the event work.
 /// Then runs FieldPsynergy_Lash.
 void FieldPsynergy_LashOnTarget(s32 value) {
-  struct EffectSceneState *state = Ram_HeapSlots->fieldWork;
+  struct FieldWork *state = Ram_HeapSlots->fieldWork;
   struct EffectSceneWork__radial *work = Ram_HeapSlots->effectWork;
   s32 second;
   s32 first;
@@ -669,12 +669,12 @@ void FieldPsynergy_LashOnTarget(s32 value) {
   if (Rope_FindById(value, &first, &second)) {
     work->failed = 1;
   } else {
-    state->valueD32 = value;
+    state->targetY = value;
     /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
-    state->valueD33 = first;
-    state->valueD31 = second;
+    state->targetZ = first;
+    state->targetX = second;
   }
   FieldPsynergy_Lash();
 }
@@ -684,7 +684,7 @@ extern char ResourceId_StarSparkleFade;
 void FieldPsynergy_Lash(void) {
   struct ScatterWork *work = HeapSlot_Alloc(92, 0x2114);
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct ScatterEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *object;
   struct EffectSprite *sprite;
@@ -757,7 +757,7 @@ void FieldPsynergy_Lash(void) {
       while (work->phase != 999) {
         if (work->flash == 1) {
           Sound_PlayFar(SE_512);
-          Rope_Lash(event->target, event->targetY, event->targetZ);
+          Rope_Lash(event->targetX, event->targetY, event->targetZ);
           work->hit = 1;
           Sound_PlayFar(SOUND_FADE_OUT_SE5);
         }
@@ -1295,7 +1295,7 @@ void FieldPsynergy_UpdateUnnamed29(void) {
   struct BowScene *scene = Ram_HeapSlots->effectWork;
   struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleFxWork[0];
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];
-  struct BowEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   struct BowMotion *motion;
   struct EffectSprite *sprite;
@@ -1385,7 +1385,7 @@ again:
       goto again;
     }
     for (objectIndex = 0; objectIndex < 80; objectIndex++) {
-      object = event->objects[objectIndex];
+      object = event->actors[objectIndex];
       if (object != NULL && object->script != NULL &&
           (object->collisionFlags & 1) && object != scene->mainObject &&
           FieldPsynergy_CheckOverlap(&motion->x, 2, &object->x,

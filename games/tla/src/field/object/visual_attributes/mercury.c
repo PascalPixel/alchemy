@@ -275,12 +275,12 @@ void Rope_Draw(void) {
 /// one (render mode 3, 0xfc86); then swings each swinging rope, its amplitude
 /// decaying by 0.95 a frame until it settles.
 void Rope_Update(void) {
-  struct SwingEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct RopeWork *work = ROPE_WORK;
   struct RopeSlot *slot;
   s32 i = 0;
 
-  if (!GameFlag_Get(260) && event->timer > 12) {
+  if (!GameFlag_Get(260) && event->blockedSteps > 12) {
     if (gMainRoutineWork.renderMode == 0) {
       s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
 
@@ -290,10 +290,10 @@ void Rope_Update(void) {
             break;
         if (i < 8 &&
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
-          event->prompt = 0xfc85;
+          event->raisedTrigger = 0xfc85;
       }
     } else if (gMainRoutineWork.renderMode == 3) {
-      event->prompt = 0xfc86;
+      event->raisedTrigger = 0xfc86;
     }
   }
   slot = work->slots;

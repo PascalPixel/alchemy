@@ -1,9 +1,17 @@
 /// @file
+/// The caves in Champa's cliff, home of Briggs' grandmother Obaba, in four
+/// rooms of this overlay: Obaba waits for her grandson
+/// (ChampaCliffCaves_ObabaAsksForBriggs), the party fights Briggs' Avimander
+/// (ChampaCliffCaves_FightAvimander) and Briggs surrenders, and Obaba forges
+/// the three prongs into the Trident (ChampaCliffCaves_ObabaForgesTrident).
 #include "field/event_inline.h"
 #include "types.h"
 #include "system/io_reg.h"
 #include "item_ids.h"
 #include "flags.h"
+
+// Set once Avimander is beaten and Briggs gives in.
+#define FLAG_CHAMPA_AVIMANDER_BEATEN 0x97e
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "field_event.h"
@@ -49,56 +57,56 @@ struct RiseObject {
   s32 update;
 };
 
-/* VIEW(champa_cliff_caves): routine gData_02003d10 as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA s32
- * gData_02003d10[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:189: `gData_02003d10' undeclared
- * (first use in this function). */
+/* VIEW(champa_cliff_caves): routine gChampaCliffCaves_FirstDoor as this part
+ * declared it; the joined file has another; tried as the definition's extern
+ * LATE_DATA s32 gChampaCliffCaves_FirstDoor[], it does not compile in tla-ja:
+ * games/tla/src/scene/champa_cliff_caves.c:189: `gChampaCliffCaves_FirstDoor'
+ * undeclared (first use in this function). */
 extern const struct WarpTarget
-    gData_02003d10__champa_cliff_caves __asm__("gData_02003d10");
-#define gData_02003d10 gData_02003d10__champa_cliff_caves
+    gChampaCliffCaves_FirstDoor__view __asm__("gChampaCliffCaves_FirstDoor");
+#define gChampaCliffCaves_FirstDoor gChampaCliffCaves_FirstDoor__view
 
 void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
                                        s32 mode);
 void Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_WatchActor(struct Actor *object, struct Actor *target);
 
-extern struct ActorPlacement gData_0200375c[];
-extern struct ActorPlacement gData_020037a4[];
-extern struct ActorPlacement gData_020038ac[];
-extern struct ActorPlacement gData_0200390c[];
-extern struct ActorPlacement gData_02003984[];
-extern struct ActorPlacement gData_02003aec[];
-extern struct ActorPlacement gData_02003b94[];
-extern struct ActorPlacement gData_02003c0c[];
+extern struct ActorPlacement gChampaCliffCaves_Room1Placements[];
+extern struct ActorPlacement gChampaCliffCaves_Room2Placements[];
+extern struct ActorPlacement gChampaCliffCaves_Room1PlacementsBriggsHome[];
+extern struct ActorPlacement gChampaCliffCaves_Room2PlacementsBriggsHome[];
+extern struct ActorPlacement gChampaCliffCaves_Room3PlacementsBriggsHome[];
+extern struct ActorPlacement gChampaCliffCaves_Room1PlacementsAfterAvimander[];
+extern struct ActorPlacement gChampaCliffCaves_Room2PlacementsAfterAvimander[];
+extern struct ActorPlacement gChampaCliffCaves_Room3PlacementsAfterAvimander[];
 extern struct Trigger gChampaCliffCaves_Room2Triggers[];
 extern struct Trigger gChampaCliffCaves_Room3Triggers[];
 extern struct Trigger gChampaCliffCaves_Room4Triggers[];
 
-void Func_02001774(void);
-void Func_02001868(void);
-void Func_020005e8(s32 value);
-void Func_0200067c(s32 mode);
+void ChampaCliffCaves_AskIfBriggsLearned(void);
+void ChampaCliffCaves_BriggsMournsSalamander(void);
+void ChampaCliffCaves_HandPieceToObaba(s32 value);
+void ChampaCliffCaves_ObabaStepsForward(s32 mode);
 
 void FieldCamera_WaitForArrival(void);
 
-void Func_020032a4(void);
-void Func_02000804(s32 item);
-void Func_02000978(s32 item);
-void Func_020029f8(s32 id, s32 mode);
-void Func_02002c88(void);
-void Func_02002de4(void);
-void Func_02002d34(void);
+void ChampaCliffCaves_UpdateSparks(void);
+void ChampaCliffCaves_ObabaSeesAWeapon(s32 item);
+void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 item);
+void ChampaCliffCaves_StartFlash(s32 id, s32 mode);
+void ChampaCliffCaves_DrawSparks(void);
+void ChampaCliffCaves_DrawGlow(void);
+void ChampaCliffCaves_DrawFallingSparks(void);
 
-void Func_02000208(void);
+void ChampaCliffCaves_ObabaAsksForBriggs(void);
 
-void Func_020003bc(void);
+void ChampaCliffCaves_OpenWall(void);
 
-void Func_020003ec(void);
-void Func_0200115c(void);
+void ChampaCliffCaves_CloseWall(void);
+void ChampaCliffCaves_FightAvimander(void);
 
-extern s16 gData_02003ce4[];
-extern s16 gData_02003cfa[];
+extern s16 gChampaCliffCaves_DoorFrames[];
+extern s16 gChampaCliffCaves_OtherDoorFrames[];
 
 struct FlashSprite;
 
@@ -116,7 +124,7 @@ extern char ResourceId_FireColumn;
     object->scaleCopy = object->scale;                                         \
   }
 
-DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02000038, 0x1000)
+DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrown, 0x1000)
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -124,48 +132,48 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_0200381c[];
-extern struct ActorPlacement gData_02003864[];
-extern s16 gData_020039cc[];
-extern s16 gData_02003c84[];
+extern struct ActorPlacement gChampaCliffCaves_Room3Placements[];
+extern struct ActorPlacement gChampaCliffCaves_Room4Placements[];
+extern s16 gChampaCliffCaves_Room4PlacementsBriggsHome[];
+extern s16 gChampaCliffCaves_Room4PlacementsAfterAvimander[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene;
 
-  if (GameFlag_Get(0x97e)) {
+  if (GameFlag_Get(FLAG_CHAMPA_AVIMANDER_BEATEN)) {
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_ChampaCliffCaves1)
-      return gData_02003aec;
+      return gChampaCliffCaves_Room1PlacementsAfterAvimander;
     if (scene == (s32)&SceneId_ChampaCliffCaves2)
-      return gData_02003b94;
+      return gChampaCliffCaves_Room2PlacementsAfterAvimander;
     if (scene == (s32)&SceneId_ChampaCliffCaves3)
-      return gData_02003c0c;
+      return gChampaCliffCaves_Room3PlacementsAfterAvimander;
     if (scene == (s32)&SceneId_ChampaCliffCaves4)
-      return gData_02003c84;
+      return gChampaCliffCaves_Room4PlacementsAfterAvimander;
   } else {
     if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
       scene = gMainRoutineWork.scene;
       if (scene == (s32)&SceneId_ChampaCliffCaves1)
-        return gData_020038ac;
+        return gChampaCliffCaves_Room1PlacementsBriggsHome;
       if (scene == (s32)&SceneId_ChampaCliffCaves2)
-        return gData_0200390c;
+        return gChampaCliffCaves_Room2PlacementsBriggsHome;
       if (scene == (s32)&SceneId_ChampaCliffCaves3)
-        return gData_02003984;
+        return gChampaCliffCaves_Room3PlacementsBriggsHome;
       if (scene == (s32)&SceneId_ChampaCliffCaves4)
-        return gData_020039cc;
+        return gChampaCliffCaves_Room4PlacementsBriggsHome;
     } else {
       scene = gMainRoutineWork.scene;
       if (scene == (s32)&SceneId_ChampaCliffCaves1)
-        return gData_0200375c;
+        return gChampaCliffCaves_Room1Placements;
       if (scene == (s32)&SceneId_ChampaCliffCaves2)
-        return gData_020037a4;
+        return gChampaCliffCaves_Room2Placements;
       if (scene == (s32)&SceneId_ChampaCliffCaves3)
-        return gData_0200381c;
+        return gChampaCliffCaves_Room3Placements;
       if (scene == (s32)&SceneId_ChampaCliffCaves4)
-        return gData_02003864;
+        return gChampaCliffCaves_Room4Placements;
     }
   }
-  return gData_0200375c;
+  return gChampaCliffCaves_Room1Placements;
 }
 
 /// Stepping into a door: it opens, the leader walks through and the scene
@@ -193,24 +201,24 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
   Event_End();
 }
 
-void Func_020001f4(s32 door) {
-  ChampaCliffCaves_OpenDoorAndEnter(&gData_02003d10, door, 0);
+void ChampaCliffCaves_EnterDoor(s32 door) {
+  ChampaCliffCaves_OpenDoorAndEnter(&gChampaCliffCaves_FirstDoor, door, 0);
 }
 
-/* VIEW(champa_cliff_caves): routine gData_02003d18 as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA s32
- * gData_02003d18[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:229: `gData_02003d18' undeclared
- * (first use in this function). */
+/* VIEW(champa_cliff_caves): routine gChampaCliffCaves_SecondDoor as this part
+ * declared it; the joined file has another; tried as the definition's extern
+ * LATE_DATA s32 gChampaCliffCaves_SecondDoor[], it does not compile in tla-ja:
+ * games/tla/src/scene/champa_cliff_caves.c:229: `gChampaCliffCaves_SecondDoor'
+ * undeclared (first use in this function). */
 extern const struct WarpTarget
-    gData_02003d18__champa_cliff_caves __asm__("gData_02003d18");
-#define gData_02003d18 gData_02003d18__champa_cliff_caves
+    gChampaCliffCaves_SecondDoor__view __asm__("gChampaCliffCaves_SecondDoor");
+#define gChampaCliffCaves_SecondDoor gChampaCliffCaves_SecondDoor__view
 
-void Func_02000208(void) {
+void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   const struct WarpTarget *warp;
   s32 msg;
 
-  warp = &gData_02003d10;
+  warp = &gChampaCliffCaves_FirstDoor;
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 168, 424);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
   Sound_Play(SE_DOOR_OPEN);
@@ -234,12 +242,12 @@ void Func_02000208(void) {
   Actor_SetSpeedFixed(8, 0xcccc, 0x6666);
   Actor_WalkByAndWait(8, 0, -14);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-  warp = &gData_02003d18;
+  warp = &gChampaCliffCaves_SecondDoor;
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Sound_Play(SE_DOOR_OPEN);
 }
 
-void Func_02000304(s32 actor) {
+void ChampaCliffCaves_AskToComeIn(s32 actor) {
   s32 msg = (s32)MsgWhatYouWant;
 
   Event_SetMessageId(msg);
@@ -254,7 +262,7 @@ void Func_02000304(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
-void Func_02000350(s32 actor) {
+void ChampaCliffCaves_BriggsSurrenders(s32 actor) {
   struct Actor *object;
 
   Event_SetMessageId((s32)MsgAllRightI);
@@ -263,19 +271,19 @@ void Func_02000350(s32 actor) {
   Actor_WatchActor(object, Actor_GetById(gMainRoutineWork.currentOwner));
 }
 
-void Func_0200038c(s32 actor) {
+void ChampaCliffCaves_TalkToBriggs(s32 actor) {
   Event_SetMessageId((s32)MsgAwComeOn);
   Event_ShowMessageAndWait(actor, 0);
   Actor_FaceDirectionAndWait(actor, 0xd000);
   Actor_SetActionCallback(Actor_GetById(actor), 8);
 }
 
-void Func_020003bc(void) {
+void ChampaCliffCaves_OpenWall(void) {
   MapGrid_CopyCellPictureCellsRect(41, 97, 1, 4, 41, 77);
   Map_CopyCellAttributeRect(41, 33, 1, 4, 41, 13);
 }
 
-void Func_020003ec(void) {
+void ChampaCliffCaves_CloseWall(void) {
   struct Actor *object;
   s32 x;
   s32 z;
@@ -293,7 +301,7 @@ void Func_020003ec(void) {
 
 extern struct Trigger gChampaCliffCaves_Room1Triggers[];
 
-void Func_02000464(s32 a) { Event_PickUpItem(a, 326, 0x978); }
+void ChampaCliffCaves_PickUpTrident(s32 a) { Event_PickUpItem(a, 326, 0x978); }
 
 const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -322,11 +330,11 @@ s32 Scene_Initialize(void) {
   FieldEffect_StartBlankOverlay(0);
   if (party->scene == (s32)&SceneId_ChampaCliffCaves4) {
     if (party->entrance == 98)
-      Func_02001774();
+      ChampaCliffCaves_AskIfBriggsLearned();
     if (party->entrance == 99) {
       party->secondary = 23;
       party->entrance = 23;
-      Func_02001868();
+      ChampaCliffCaves_BriggsMournsSalamander();
     }
     if (GameFlag_Get(0x977) && !GameFlag_Get(0x978)) {
       FieldActor_ShowItemIconById(10, ITEM_TRIDENT);
@@ -336,7 +344,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0x977))
       Actor_SetPosition(8, 664, 200);
   } else if (party->scene == (s32)&SceneId_ChampaCliffCaves3) {
-    if (GameFlag_Get(0x97e)) {
+    if (GameFlag_Get(FLAG_CHAMPA_AVIMANDER_BEATEN)) {
       Actor_SetModeById(8, 11);
       Actor_SetSpriteFlags(Actor_GetById(8), 0);
     }
@@ -346,7 +354,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_020005e8(s32 actor) {
+void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 648, 200);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
   Event_Wait(5);
@@ -362,7 +370,7 @@ void Func_020005e8(s32 actor) {
   Event_Wait(10);
 }
 
-void Func_0200067c(s32 value) {
+void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   Actor_SetSpeed(8, 0.8);
   Actor_GetById(8)->actionFlags &= 0xfe;
   Actor_WalkByAndWaitById(8, 0, 6);
@@ -386,7 +394,7 @@ void Func_0200067c(s32 value) {
 
 /// Fades five background colours, from palette entry 114, from one set to
 /// another over the given number of frames, one step a frame.
-void Func_02000734(u16 *from, u16 *to, s32 frames) {
+void ChampaCliffCaves_FadeColours(u16 *from, u16 *to, s32 frames) {
   s32 step;
 
   for (step = 0; step <= frames; step++) {
@@ -417,11 +425,11 @@ void Func_02000734(u16 *from, u16 *to, s32 frames) {
   }
 }
 
-void Func_02000804(s32 actor) {
+void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgThisLooksLike);
-  Func_020005e8(actor);
+  ChampaCliffCaves_HandPieceToObaba(actor);
   Actor_FaceDirectionAndWait(8, 0x3000);
   Actor_SetModeById(8, 7);
   Event_Wait(30);
@@ -444,7 +452,7 @@ void Func_02000804(s32 actor) {
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(8);
   Event_ShowMessageThenWait(8, 0, 5);
-  Func_0200067c(0);
+  ChampaCliffCaves_ObabaStepsForward(0);
   Actor_FaceDirectionById(8, FACING_WEST);
   Event_Wait(10);
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -465,11 +473,11 @@ void Func_02000804(s32 actor) {
   Event_End();
 }
 
-void Func_02000978(s32 actor) {
+void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAhHaveYou);
-  Func_020005e8(actor);
+  ChampaCliffCaves_HandPieceToObaba(actor);
   Actor_FaceDirectionAndWait(8, 0x3000);
   Actor_SetModeById(8, 7);
   Event_Wait(30);
@@ -483,7 +491,7 @@ void Func_02000978(s32 actor) {
   Actor_SetModeById(8, 1);
   Event_Wait(15);
   Event_ShowMessageThenWait(8, 0, 5);
-  Func_0200067c(0);
+  ChampaCliffCaves_ObabaStepsForward(0);
   Actor_FaceDirectionById(8, FACING_WEST);
   Event_Wait(10);
   Event_ShowMessageThenWait(8, 0, 5);
@@ -500,11 +508,11 @@ void Func_02000978(s32 actor) {
    } *)(base))                                                                 \
        ->v)
 
-extern struct ThrowAnimations gData_02003634;
+extern struct ThrowAnimations gChampaCliffCaves_ThrowAnimations;
 void Actor_ShowItemIconById(s32 id, s32 animation);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 
-void Func_02000a34(s32 value) {
+void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   struct Actor *thrown = Actor_GetById(10);
   u16 bright[5];
   u16 dim[5];
@@ -531,12 +539,12 @@ void Func_02000a34(s32 value) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellDoneYou);
-  Func_020005e8(value);
+  ChampaCliffCaves_HandPieceToObaba(value);
   Actor_ShowEmote(8, 0x100, 30);
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_ShowEmote(8, 0x108, 30);
   Event_ShowMessageThenWait(8, 0, 5);
-  Func_0200067c(1);
+  ChampaCliffCaves_ObabaStepsForward(1);
   Actor_WalkToAndWait(8, 0x298, 200);
   Actor_FaceDirectionAndWait(8, 0x3000);
   Event_Wait(10);
@@ -563,7 +571,7 @@ void Func_02000a34(s32 value) {
   for (i = 0; i <= 2; i++) {
     struct ThrowAnimations animations;
     s32 landing[3];
-    animations = gData_02003634;
+    animations = gChampaCliffCaves_ThrowAnimations;
     Actor_SetModeById(8, 9);
     Event_Wait(3);
     Actor_ShowItemIconById(10, animations.animations[i]);
@@ -581,8 +589,8 @@ void Func_02000a34(s32 value) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Event_Wait(20);
     Sound_Play(SE_HEAVY_IMPACT);
-    Func_02000734(bright, dim, 12);
-    Func_02000734(dim, bright, 48);
+    ChampaCliffCaves_FadeColours(bright, dim, 12);
+    ChampaCliffCaves_FadeColours(dim, bright, 48);
     Event_Wait(10);
   }
   object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -601,14 +609,14 @@ void Func_02000a34(s32 value) {
   FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
   Event_Wait(20);
   Sound_Play(SE_SHIMMER);
-  Func_02000734(bright, dim, 48);
+  ChampaCliffCaves_FadeColours(bright, dim, 48);
   Actor_StartRepeatedMotion(gMainRoutineWork.currentOwner, 3);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
   Event_Wait(50);
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Call2((void (*)())Field_StartColorTransition, 16, 0x1090);
   MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
-  Func_02003164(glow);
+  ChampaCliffCaves_StartEmbers(glow);
   Actor_SetModeById(8, 1);
   Actor_Jump(4, 6, 0);
   Sound_Play(SE_194);
@@ -622,7 +630,7 @@ void Func_02000a34(s32 value) {
   Event_Wait(30);
   FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
   MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
-  Func_0200320c(glow);
+  ChampaCliffCaves_StartSparks(glow);
   Sound_Play(SE_194);
   Event_Wait(10);
   Actor_Jump(8, 6, 15);
@@ -635,13 +643,13 @@ void Func_02000a34(s32 value) {
   Actor_SetSpritePriority(10, 1);
   thrown->motionFlags = 2;
   thrown->y = px(24);
-  thrown->update = Func_02000038;
+  thrown->update = ChampaCliffCaves_GrowThrown;
   thrown->terrainHeight = 0;
   thrown->scaleX = 0;
   thrown->scaleY = 0;
   Actor_Jump(10, 5, 0);
   Field_StartPaletteTransition(8);
-  Func_020032a4();
+  ChampaCliffCaves_UpdateSparks();
   MapGrid_SetShakeFixed(-1, -1, 0xe666);
   while (thrown->y > 0)
     wait(1);
@@ -666,12 +674,13 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
-static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
+static __inline__ void ChampaCliffCaves_PlaceThrown(s32 x, s32 z, s32 a,
+                                                    s32 b) {
   /* FAKEMATCH(wrapper): forwarded through this inline. */
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
-void Func_02000f48(s32 actor) {
+void ChampaCliffCaves_ObabaOffersHelp(s32 actor) {
   s32 item;
   /* FAKEMATCH(dead): each owner stored and never read. */
   s32 owner;
@@ -701,21 +710,21 @@ chosen:
   if (item != -1) {
     if (!GameFlag_Test_(0x975)) {
       GameFlag_Set(0x975);
-      Func_02000804(item);
+      ChampaCliffCaves_ObabaSeesAWeapon(item);
     } else if (!GameFlag_Test_(0x976)) {
       GameFlag_Set(0x976);
-      Func_02000978(item);
+      ChampaCliffCaves_ObabaAsksForSecondPiece(item);
     } else if (!GameFlag_Test_(0x977)) {
       GameFlag_Set(0x977);
-      Func_0200343c_(164 << 18, 208 << 16, 0, -4);
-      Func_0200343c_(164 << 18, 224 << 16, 0, -4);
-      Func_0200343c_(164 << 18, 240 << 16, 0, -4);
-      Func_0200343c_(164 << 18, 128 << 17, 0, -4);
-      Func_02000a34(item);
-      Func_0200343c_(164 << 18, 208 << 16, 0, 0);
-      Func_0200343c_(164 << 18, 224 << 16, 0, 0);
-      Func_0200343c_(164 << 18, 240 << 16, 0, 0);
-      Func_0200343c_(164 << 18, 128 << 17, 0, 0);
+      ChampaCliffCaves_PlaceThrown(164 << 18, 208 << 16, 0, -4);
+      ChampaCliffCaves_PlaceThrown(164 << 18, 224 << 16, 0, -4);
+      ChampaCliffCaves_PlaceThrown(164 << 18, 240 << 16, 0, -4);
+      ChampaCliffCaves_PlaceThrown(164 << 18, 128 << 17, 0, -4);
+      ChampaCliffCaves_ObabaForgesTrident(item);
+      ChampaCliffCaves_PlaceThrown(164 << 18, 208 << 16, 0, 0);
+      ChampaCliffCaves_PlaceThrown(164 << 18, 224 << 16, 0, 0);
+      ChampaCliffCaves_PlaceThrown(164 << 18, 240 << 16, 0, 0);
+      ChampaCliffCaves_PlaceThrown(164 << 18, 128 << 17, 0, 0);
     }
   } else {
     Actor_FaceActorById(actor, gMainRoutineWork.currentOwner, 5);
@@ -732,7 +741,7 @@ chosen:
   }
 }
 
-DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02001138, 0xc00)
+DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrownSlowly, 0xc00)
 
 #define PALETTE ((u16 *)&BG_PLTT_COLOR(0, 0))
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -749,7 +758,7 @@ static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
   ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(speaker, flags);
 }
 
-void Func_0200115c(void) {
+void ChampaCliffCaves_FightAvimander(void) {
   u16 current[5];
   u16 target[5];
   struct Position position;
@@ -757,7 +766,7 @@ void Func_0200115c(void) {
   struct MainRoutineWork *party;
   struct Actor *object = Actor_GetById(13);
 
-  if (Flag_IsSet(0x97e))
+  if (Flag_IsSet(FLAG_CHAMPA_AVIMANDER_BEATEN))
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -871,10 +880,10 @@ void Func_0200115c(void) {
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Sound_Play(SOUND_FADE_OUT_BGM);
-    Func_0200343c_(656 << 16, 208 << 16, 0, -4);
-    Func_0200343c_(656 << 16, 224 << 16, 0, -4);
-    Func_0200343c_(656 << 16, 240 << 16, 0, -4);
-    Func_0200343c_(656 << 16, 256 << 16, 0, -4);
+    ChampaCliffCaves_PlaceThrown(656 << 16, 208 << 16, 0, -4);
+    ChampaCliffCaves_PlaceThrown(656 << 16, 224 << 16, 0, -4);
+    ChampaCliffCaves_PlaceThrown(656 << 16, 240 << 16, 0, -4);
+    ChampaCliffCaves_PlaceThrown(656 << 16, 256 << 16, 0, -4);
     WORD_AT(object, 72) = 0x4000;
     object->motionFlags = 2;
     object->terrainHeight = 0xfc190000;
@@ -902,13 +911,13 @@ void Func_0200115c(void) {
     target[2] = *colour++;
     target[3] = *colour++;
     target[4] = *colour++;
-    Func_02000734(current, target, 48);
+    ChampaCliffCaves_FadeColours(current, target, 48);
     Event_Wait(20);
     Sound_Play(SE_194);
     position.x = px(662);
     position.y = 0;
     position.z = px(238);
-    Func_02002f58(&position);
+    ChampaCliffCaves_StartForgeFire(&position);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetPosition(13, 664, 248);
     WORD_AT(object, 72) = 0x10000;
@@ -916,7 +925,7 @@ void Func_0200115c(void) {
     object->terrainHeight = 0;
     object->y = px(32);
     WORD_AT(object, 24) = 0x4000;
-    WORD_AT(object, 108) = (s32)Func_02001138;
+    WORD_AT(object, 108) = (s32)ChampaCliffCaves_GrowThrownSlowly;
     WORD_AT(object, 28) = 0x4000;
     Actor_Jump(13, 11, 0);
     Sound_Play(SE_BEAST_CRY);
@@ -934,7 +943,7 @@ void Func_0200115c(void) {
   Event_End();
 }
 
-void Func_02001774(void) {
+void ChampaCliffCaves_AskIfBriggsLearned(void) {
   struct FieldWork *work;
 
   Event_Start();
@@ -965,16 +974,16 @@ void Func_02001774(void) {
                        (s16)gMainRoutineWork.savedEntrance);
 }
 
-extern u32 gData_020041e8[];
-extern u32 gData_02004254[];
-extern u32 gData_0200432c[];
-extern u32 gData_020042d4[];
+extern u32 gChampaCliffCaves_BriggsFirstScript[];
+extern u32 gChampaCliffCaves_BriggsSecondScript[];
+extern u32 gChampaCliffCaves_AvimanderScript[];
+extern u32 gChampaCliffCaves_BriggsLastScript[];
 
 /// The scene that opens with MsgMySalamanderYou: persons 8 and 11 talk and
 /// move with the party through three yes-or-no answers (each counted in the
 /// event work), person 14 is brought in and the others follow it, then
 /// persons 5, 6, 7 and 15 join the leader and flag 0x97e is set.
-void Func_02001868(void) {
+void ChampaCliffCaves_BriggsMournsSalamander(void) {
   const u8 *scriptA, *scriptB, *scriptC, *scriptD;
   s32 *owner;
   u8 *party;
@@ -996,7 +1005,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(8, 0, 5);
   Motion_SetVarCbAndRefresh(13, 2);
   Event_Wait(5);
-  Func_020029f8(13, 1);
+  ChampaCliffCaves_StartFlash(13, 1);
   Actor_SetSpeedFixed(8, 0x10000, 0x8000);
   Actor_WalkByAndWait(8, -12, -18);
   Actor_WalkByAndWait(8, -10, -14);
@@ -1106,18 +1115,18 @@ void Func_02001868(void) {
   Actor_SetSpeedFixed(11, 0x36666, 0x1b333);
   Actor_StartRepeatedMotion(11, 3);
   Actor_SetAttachedEffect(11, 0x102);
-  scriptA = gData_020041e8;
+  scriptA = gChampaCliffCaves_BriggsFirstScript;
   Actor_SetMovementTypeById(8, scriptA);
   Event_Wait(20);
   Actor_WalkToById(11, 664, 290);
   Actor_RefreshSelectorById(8);
-  scriptB = gData_02004254;
+  scriptB = gChampaCliffCaves_BriggsSecondScript;
   Actor_SetMovementTypeById(8, scriptB);
   Actor_WaitForMoveById(11);
-  scriptC = gData_0200432c;
+  scriptC = gChampaCliffCaves_AvimanderScript;
   Actor_SetMovementTypeById(11, scriptC);
   Actor_RefreshSelectorById(8);
-  scriptD = gData_020042d4;
+  scriptD = gChampaCliffCaves_BriggsLastScript;
   Actor_SetMovementTypeById(8, scriptD);
   Actor_RefreshSelectorById(11);
   Actor_SetMovementTypeById(11, scriptA);
@@ -1406,7 +1415,7 @@ void Func_02001868(void) {
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_SetSpeedFixed(11, 0xb333, 0x5999);
-  Actor_SetMovementTypeById(8, gData_020041e8);
+  Actor_SetMovementTypeById(8, gChampaCliffCaves_BriggsFirstScript);
   Event_Wait(30);
   Actor_Stop(8);
   Actor_WalkToAndWait(8, 648, 188);
@@ -1451,7 +1460,7 @@ void Func_02001868(void) {
                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(15);
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-  GameFlag_Set(0x97e);
+  GameFlag_Set(FLAG_CHAMPA_AVIMANDER_BEATEN);
   Event_End();
 }
 
@@ -1460,7 +1469,7 @@ static __inline__ void Place(void *a, s32 b, s32 c, u32 d, s32 e) {
   EffectSprite_Init(a, b, c, d, e);
 }
 
-void Func_020029f8(s32 id, s32 mode) {
+void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   struct FlashWork *work = HeapSlot_Alloc(220, 0x428);
   struct Actor *object = Actor_GetById(id);
   s32 slot;
@@ -1542,7 +1551,7 @@ void Func_020029f8(s32 id, s32 mode) {
 #undef BYTE_AT
 #undef WORD_AT
 
-void Func_02002c88(void) {
+void ChampaCliffCaves_DrawSparks(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuRuntime;
   struct ChampaCliffCavesSprite *sprite;
   s32 i;
@@ -1601,7 +1610,7 @@ struct ChampaCliffCavesWork__s2d34 {
   u8 unk1076[2];
 };
 
-void Func_02002d34(void) {
+void ChampaCliffCaves_DrawFallingSparks(void) {
   struct ChampaCliffCavesWork__s2d34 *work = Ram_HeapSlots->menuRuntime;
   struct ChampaCliffCavesSprite *sprite;
   s32 i;
@@ -1664,7 +1673,7 @@ struct Glow {
 /// Cycles thirty-two colours of the object palettes through a wave of greens
 /// and blues, places the glow's two sprites at its spot with their scales, and
 /// lets each sprite's second scale trail its first at 31/40.
-void Func_02002de4(void) {
+void ChampaCliffCaves_DrawGlow(void) {
   struct Glow *work = (struct Glow *)Ram_HeapSlots->menuRuntime;
   s32 position[3];
   struct GlowSprite__champa_cliff_caves *sprite;
@@ -1725,7 +1734,7 @@ loop:
    } *)(base))                                                                 \
        ->v)
 
-void Func_02002f58(const s32 *position) {
+void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   u8 *work = HeapSlot_Alloc(220, 0x1078);
   s32 time;
   s32 state;
@@ -1733,14 +1742,14 @@ void Func_02002f58(const s32 *position) {
   FIELD_AT(work, s32, 4096) = position[0];
   FIELD_AT(work, s32, 4100) = position[1];
   FIELD_AT(work, s32, 4104) = position[2];
-  Func_02002c88();
-  Func_02002d34();
+  ChampaCliffCaves_DrawSparks();
+  ChampaCliffCaves_DrawFallingSparks();
   FIELD_AT(work, u16, 4212) = 0;
   time = 0;
   {
     s32 priority = 0x480;
 
-    Task_Add(Func_02002de4, priority);
+    Task_Add(ChampaCliffCaves_DrawGlow, priority);
   }
   MapGrid_SetShake(4, 4, 1);
   state = 0;
@@ -1778,7 +1787,7 @@ void Func_02002f58(const s32 *position) {
   } while (state != 999);
 }
 
-void Func_02003078(void) {
+void ChampaCliffCaves_UpdateForgeFire(void) {
   u8 *work = Ram_HeapSlots->menuRuntime;
   s32 position[3];
   s32 state;
@@ -1813,7 +1822,7 @@ void Func_02003078(void) {
     wait(1);
     time++;
   } while (state != 999);
-  Task_Remove(Func_02002de4);
+  Task_Remove(ChampaCliffCaves_DrawGlow);
   MapGrid_SetScreenShake(0, 0, 0);
   VramCache_FreeEntry(FIELD_AT(work, s16, 4188));
   VramCache_FreeEntry(FIELD_AT(work, s16, 4192));
@@ -1851,7 +1860,7 @@ struct Vec3 {
   s32 z;
 };
 
-void Func_02003164(const struct Vec3 *origin) {
+void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
   struct ChampaCliffCavesWork__s3164 *work =
       HeapSlot_Alloc(220, sizeof(struct ChampaCliffCavesWork__s3164));
   s32 state;
@@ -1859,14 +1868,14 @@ void Func_02003164(const struct Vec3 *origin) {
   work->originX = origin->x;
   work->originY = origin->y;
   work->originZ = origin->z;
-  Func_02002c88();
+  ChampaCliffCaves_DrawSparks();
   work->field106c = 0;
   work->field1070 = 0;
   work->field1074 = 0;
   {
     s32 priority = 0x480;
 
-    Task_Add(Func_02002de4, priority);
+    Task_Add(ChampaCliffCaves_DrawGlow, priority);
   }
   Sound_Play(SE_139);
   state = 0;
@@ -1882,16 +1891,16 @@ void Func_02003164(const struct Vec3 *origin) {
   } while (state != 999);
 }
 
-void Func_0200320c(void) {
+void ChampaCliffCaves_StartSparks(void) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(220, sizeof(struct ChampaCliffCavesWork));
   s32 state;
 
-  Func_02002d34();
+  ChampaCliffCaves_DrawFallingSparks();
   {
     s32 priority = 0x480;
 
-    Task_Add(Func_02002de4, priority);
+    Task_Add(ChampaCliffCaves_DrawGlow, priority);
   }
   Sound_Play(SE_CLATTER);
   state = 0;
@@ -1923,7 +1932,7 @@ void Func_0200320c(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_020032a4(void) {
+void ChampaCliffCaves_UpdateSparks(void) {
   u8 *work = Ram_HeapSlots->menuRuntime;
   s32 state = 0;
   s32 time = 0;
@@ -1961,13 +1970,13 @@ void Func_020032a4(void) {
     wait(1);
     time++;
   } while (state != 999);
-  Task_Remove(Func_02002de4);
+  Task_Remove(ChampaCliffCaves_DrawGlow);
   VramCache_FreeEntry(FIELD_AT(work, s16, 4188));
   VramCache_FreeEntry(FIELD_AT(work, s16, 4192));
   HeapSlot_Release(220);
 }
 
-struct ThrowAnimations gData_02003634 = {{439, 440, 441}};
+struct ThrowAnimations gChampaCliffCaves_ThrowAnimations = {{439, 440, 441}};
 #undef FIELD_AT
 
 #undef FIELD_AT
@@ -1975,8 +1984,8 @@ struct ThrowAnimations gData_02003634 = {{439, 440, 441}};
 #undef PALETTE
 #undef BYTE_AT
 #undef WORD_AT
-#undef gData_02003d10
-#undef gData_02003d18
+#undef gChampaCliffCaves_FirstDoor
+#undef gChampaCliffCaves_SecondDoor
 
 #include "text/msg_ids.h"
 
@@ -2016,7 +2025,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-LATE_DATA struct ActorPlacement gData_0200375c[] = {
+LATE_DATA struct ActorPlacement gChampaCliffCaves_Room1Placements[] = {
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 568,
                     FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK,
                     0),
@@ -2025,7 +2034,7 @@ LATE_DATA struct ActorPlacement gData_0200375c[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020037a4[] = {
+LATE_DATA struct ActorPlacement gChampaCliffCaves_Room2Placements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 184,
                     FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK,
                     0),
@@ -2039,7 +2048,7 @@ LATE_DATA struct ActorPlacement gData_020037a4[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_0200381c[] = {
+LATE_DATA struct ActorPlacement gChampaCliffCaves_Room3Placements[] = {
     ACTOR_PLACEMENT(36, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
                     FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 424,
@@ -2047,7 +2056,7 @@ LATE_DATA struct ActorPlacement gData_0200381c[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02003864[] = {
+LATE_DATA struct ActorPlacement gChampaCliffCaves_Room4Placements[] = {
     ACTOR_PLACEMENT(36, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
                     FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 216,
@@ -2056,43 +2065,46 @@ LATE_DATA struct ActorPlacement gData_02003864[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020038ac[] = {
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 552,
-                    FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, 8, 344, 0, 568, FACING_WEST,
-                    TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 504,
-                    FACING_SOUTHEAST + FACING_STEP,
-                    TALK_FACING_PARTY_THEN_WATCH, 0),
-    {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gChampaCliffCaves_Room1PlacementsBriggsHome[] =
+    {
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 552,
+                        FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, 8, 344, 0, 568, FACING_WEST,
+                        TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 504,
+                        FACING_SOUTHEAST + FACING_STEP,
+                        TALK_FACING_PARTY_THEN_WATCH, 0),
+        {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_0200390c[] = {
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 728,
-                    FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH,
-                    0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 728,
-                    FACING_NORTHWEST + FACING_STEP,
-                    TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 248,
-                    FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 248,
-                    FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH,
-                    0),
-    {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gChampaCliffCaves_Room2PlacementsBriggsHome[] =
+    {
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 728,
+                        FACING_NORTH + FACING_STEP,
+                        TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 728,
+                        FACING_NORTHWEST + FACING_STEP,
+                        TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 248,
+                        FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 248,
+                        FACING_NORTH + FACING_STEP,
+                        TALK_FACING_PARTY_THEN_WATCH, 0),
+        {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02003984[] = {
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 392,
-                    FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH,
-                    0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 424,
-                    FACING_SOUTHEAST + FACING_STEP,
-                    TALK_FACING_PARTY_THEN_WATCH, 0),
-    {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gChampaCliffCaves_Room3PlacementsBriggsHome[] =
+    {
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 392,
+                        FACING_SOUTH + FACING_STEP,
+                        TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 424,
+                        FACING_SOUTHEAST + FACING_STEP,
+                        TALK_FACING_PARTY_THEN_WATCH, 0),
+        {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gData_020039cc[] = {
+LATE_DATA s16 gChampaCliffCaves_Room4PlacementsBriggsHome[] = {
     36,
     -1,
     1,
@@ -2239,49 +2251,52 @@ LATE_DATA s16 gData_020039cc[] = {
     0,
 };
 
-LATE_DATA struct ActorPlacement gData_02003aec[] = {
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 568,
-                    FACING_SOUTHEAST + FACING_STEP,
-                    TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0, 224,
-                    FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 208,
-                    FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 216,
-                    FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 576, 0, 248,
-                    FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 264,
-                    FACING_EAST, TALK_FACING_PARTY, 0),
-    {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement
+    gChampaCliffCaves_Room1PlacementsAfterAvimander[] = {
+        ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 568,
+                        FACING_SOUTHEAST + FACING_STEP,
+                        TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0,
+                        224, FACING_SOUTH, TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 208,
+                        FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 216,
+                        FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 576, 0, 248,
+                        FACING_SOUTH, TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 264,
+                        FACING_EAST, TALK_FACING_PARTY, 0),
+        {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02003b94[] = {
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 184,
-                    FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK,
-                    0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216,
-                    FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 248,
-                    FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 248,
-                    FACING_EAST, TALK_FACING_PARTY, 0),
-    {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement
+    gChampaCliffCaves_Room2PlacementsAfterAvimander[] = {
+        ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 184,
+                        FACING_SOUTHEAST + FACING_STEP,
+                        TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216,
+                        FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 248,
+                        FACING_WEST, TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 248,
+                        FACING_EAST, TALK_FACING_PARTY, 0),
+        {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02003c0c[] = {
-    ACTOR_PLACEMENT(16, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 704,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(38, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 704,
-                    FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(37, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 712,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement
+    gChampaCliffCaves_Room3PlacementsAfterAvimander[] = {
+        ACTOR_PLACEMENT(16, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 704,
+                        FACING_SOUTH, TALK_FACING_KEEP, 0),
+        ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(38, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 704,
+                        FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(37, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 712,
+                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+        {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gData_02003c84[] = {
+LATE_DATA s16 gChampaCliffCaves_Room4PlacementsAfterAvimander[] = {
     36,  -1,     1,   0,      0,  648, 0,
     0,   0,      188, 0x5000, 2,  115, -1,
     1,   0,      0,   216,    0,  0,   0,
@@ -2291,21 +2306,21 @@ LATE_DATA s16 gData_02003c84[] = {
     0,   0,      0,   0,      0,  0,
 };
 
-LATE_DATA s16 gData_02003ce4[] = {
+LATE_DATA s16 gChampaCliffCaves_DoorFrames[] = {
     1, 64, 1, 2, 6, 2, 64, 1, 2, 6, -1,
 };
 
-LATE_DATA s16 gData_02003cfa[] = {
+LATE_DATA s16 gChampaCliffCaves_OtherDoorFrames[] = {
     1, 64, 1, 2, 6, 0, 64, 1, 2, 6, -1,
 };
 
-LATE_DATA s32 gData_02003d10[] = {
-    (s32)gData_02003ce4,
+LATE_DATA s32 gChampaCliffCaves_FirstDoor[] = {
+    (s32)gChampaCliffCaves_DoorFrames,
     0x58000b,
 };
 
-LATE_DATA s32 gData_02003d18[] = {
-    (s32)gData_02003cfa,
+LATE_DATA s32 gChampaCliffCaves_SecondDoor[] = {
+    (s32)gChampaCliffCaves_OtherDoorFrames,
     0x58000b,
 };
 
@@ -2316,30 +2331,36 @@ LATE_DATA struct Trigger gChampaCliffCaves_Room1Triggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, 8, IF_FLAG_SET(0x97e), MSGNO(MsgArenTYou)},
-    {TRIGGER_TALK, 9, IF_FLAG_SET(0x97e), MSGNO(MsgIThinkThose)},
-    {TRIGGER_TALK, 10, IF_FLAG_SET(0x97e), MSGNO(MsgWeReGoing)},
-    {TRIGGER_TALK, 11, IF_FLAG_SET(0x97e), MSGNO(MsgThereWerePlenty)},
-    {TRIGGER_TALK, 12, IF_FLAG_SET(0x97e), MSGNO(MsgWeReallyWant)},
-    {TRIGGER_TALK, 13, IF_FLAG_SET(0x97e), MSGNO(MsgItSAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x97e),
-     MSGNO(MsgThatSureComes)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x97e),
-     MSGNO(MsgAllThoseSailors)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x97e),
-     MSGNO(MsgSupposeWeWent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x97e),
-     MSGNO(MsgBriggsIsJust)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x97e),
-     MSGNO(MsgIWasAs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x97e),
-     MSGNO(MsgAtLeastWe)},
+    {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgArenTYou)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgIThinkThose)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgWeReGoing)},
+    {TRIGGER_TALK, 11, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgThereWerePlenty)},
+    {TRIGGER_TALK, 12, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgWeReallyWant)},
+    {TRIGGER_TALK, 13, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgItSAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgThatSureComes)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgAllThoseSailors)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgSupposeWeWent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgBriggsIsJust)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgIWasAs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgAtLeastWe)},
     {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgWhyDoYou)},
     {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
-     EVENT(Func_02000350)},
+     EVENT(ChampaCliffCaves_BriggsSurrenders)},
     {TRIGGER_TALK, 10, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
-     EVENT(Func_02000304)},
+     EVENT(ChampaCliffCaves_AskToComeIn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
      IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgMaybeIfI)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
@@ -2363,18 +2384,22 @@ LATE_DATA struct Trigger gChampaCliffCaves_Room2Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 13, CONDITION_ALWAYS, 13},
-    {TRIGGER_TALK, 8, IF_FLAG_SET(0x97e), MSGNO(MsgWhyDidYou)},
-    {TRIGGER_TALK, 9, IF_FLAG_SET(0x97e), MSGNO(MsgWeHaveSo)},
-    {TRIGGER_TALK, 10, IF_FLAG_SET(0x97e), MSGNO(MsgBriggsCameDown)},
-    {TRIGGER_TALK, 11, IF_FLAG_SET(0x97e), MSGNO(MsgEoleoStillWon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x97e),
-     MSGNO(MsgIJustKnow)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x97e),
-     MSGNO(MsgBriggsSaysHe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x97e),
-     MSGNO(MsgBriggsSNever)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x97e),
-     MSGNO(MsgEoleoIsYounger)},
+    {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgWhyDidYou)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgWeHaveSo)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgBriggsCameDown)},
+    {TRIGGER_TALK, 11, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgEoleoStillWon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgIJustKnow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgBriggsSaysHe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgBriggsSNever)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgEoleoIsYounger)},
     {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgIDRatherFight)},
     {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
@@ -2407,26 +2432,29 @@ LATE_DATA struct Trigger gChampaCliffCaves_Room2Triggers[] = {
 };
 
 LATE_DATA struct Trigger gChampaCliffCaves_Room3Triggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, IF_FLAG_SET(0x97e),
-     EVENT(Func_020001f4)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     EVENT(ChampaCliffCaves_EnterDoor)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 14, CONDITION_ALWAYS, 14},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS,
-     EVENT(Func_02000208)},
+     EVENT(ChampaCliffCaves_ObabaAsksForBriggs)},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
     {TRIGGER_EXIT, 19, CONDITION_ALWAYS, 19},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, 20},
-    {TRIGGER_TALK, 8, IF_FLAG_SET(0x97e), MSGNO(MsgOnceIM)},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 11, IF_FLAG_SET(0x97e),
-     MSGNO(MsgIWonderWhatS)},
-    {TRIGGER_TALK, 10, IF_FLAG_SET(0x97e), MSGNO(MsgBabuBaBubabu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x97e),
-     MSGNO(MsgIMCertain)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x97e),
-     MSGNO(MsgThereIsAbsolutely)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x97e),
-     MSGNO(MsgOneOfPapa)},
+    {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgOnceIM)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 11,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgIWonderWhatS)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgBabuBaBubabu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgIMCertain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgThereIsAbsolutely)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgOneOfPapa)},
     {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgLeaveTheWomen)},
     {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
@@ -2438,7 +2466,8 @@ LATE_DATA struct Trigger gChampaCliffCaves_Room3Triggers[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgObabaSNot)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgIVeNeverSeen)},
-    {TRIGGER_EXAMINE, 40, 0x97e, EVENT(Func_02000208)},
+    {TRIGGER_EXAMINE, 40, FLAG_CHAMPA_AVIMANDER_BEATEN,
+     EVENT(ChampaCliffCaves_ObabaAsksForBriggs)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2447,51 +2476,53 @@ LATE_DATA struct Trigger gChampaCliffCaves_Room4Triggers[] = {
     {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
-     EVENT(Func_0200115c)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000f48)},
+     EVENT(ChampaCliffCaves_FightAvimander)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     EVENT(ChampaCliffCaves_ObabaOffersHelp)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x975, MSGNO(MsgNowIVe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x976, MSGNO(MsgAllOfMy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x977, MSGNO(MsgSoonILl)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgAllOfMyTraining)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000464)},
-    {TRIGGER_TALK, 9, IF_FLAG_SET(0x97e), MSGNO(MsgYouGuysDon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x97e),
-     MSGNO(MsgMustBeIncredibly)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(ChampaCliffCaves_PickUpTrident)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN),
+     MSGNO(MsgYouGuysDon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
+     IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgMustBeIncredibly)},
     {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
-     EVENT(Func_0200038c)},
+     EVENT(ChampaCliffCaves_TalkToBriggs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
      IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgBriggsIsPretty)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgThatPitIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgIWonderHow)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(Func_020003bc)},
+     CONDITION_ALWAYS, EVENT(ChampaCliffCaves_OpenWall)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Func_020003ec)},
+     CONDITION_ALWAYS, EVENT(ChampaCliffCaves_CloseWall)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA u32 gData_020041e8[] = {
+LATE_DATA u32 gChampaCliffCaves_BriggsFirstScript[] = {
     39,       2, 4,  0x2680000, 0, 0xdc0000, 1,  4, 0x2780000, 0,
     0xce0000, 1, 4,  0x2880000, 0, 0xc80000, 1,  4, 0x2980000, 0,
     0xc60000, 1, 39, 1,         0, 1,        17,
 };
 
-LATE_DATA u32 gData_02004254[] = {
+LATE_DATA u32 gChampaCliffCaves_BriggsSecondScript[] = {
     39,       2,  4, 0x2a80000, 0, 0xc80000, 1, 4,  0x2b60000, 0,
     0xce0000, 1,  4, 0x2c60000, 0, 0xd80000, 1, 4,  0x2d00000, 0,
     0xe80000, 1,  4, 0x2d00000, 0, 0xf60000, 1, 39, 1,         0,
     1,        17,
 };
 
-LATE_DATA u32 gData_020042d4[] = {
+LATE_DATA u32 gChampaCliffCaves_BriggsLastScript[] = {
     39,        2,  4,         0x2c60000, 0, 0x1080000, 1, 4,
     0x2ba0000, 0,  0x1160000, 1,         4, 0x2980000, 0, 0x1220000,
     1,         39, 1,         0,         1, 17,
 };
 
-LATE_DATA u32 gData_0200432c[] = {
+LATE_DATA u32 gChampaCliffCaves_AvimanderScript[] = {
     39,        2, 4,  0x2780000, 0, 0x1180000, 1,  4, 0x2680000, 0,
     0x10a0000, 1, 4,  0x2600000, 0, 0xf80000,  1,  4, 0x2600000, 0,
     0xe60000,  1, 39, 1,         0, 1,         17,

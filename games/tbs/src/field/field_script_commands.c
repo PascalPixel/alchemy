@@ -76,11 +76,8 @@ s32 ActorScript_InvokeCallback(struct Actor *interpreter) {
 s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
-  s16 *waitCounter = &interpreter->wait;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take. */
-  s32 zero = 0;
 
-  *waitCounter = zero;
+  interpreter->wait = 0;
   if (labelKey == 0) {
     return 0;
   }

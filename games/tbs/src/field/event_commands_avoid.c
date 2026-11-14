@@ -80,22 +80,16 @@ void FieldPsynergy_Avoid(void) {
   entry = group->entries[0];
   angle = actor->facing;
   slot = VramCache_FindFreeEntry();
-  {
-    s16 *tileSlot = &effectWork->arcTileSlot;
-    /* FAKEMATCH(temporary): zero holds the 0 its stores take. */
-    s32 zero = 0;
-
-    // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the
-    // distance is 2,400 pixels in 16.16.
-    *tileSlot = slot;
-    VramCache_Load((s16)slot, 256, gFieldEffect_ArcSparkTiles);
-    gMainRoutineWork.avoidDistance = px(2400);
-    gMainRoutineWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
-    Actor_SetSpriteColorModeFar(actor, zero);
-    actor->update = FieldEffect_UpdateAvoidCaster;
-    actor->arcPhase = zero;
-    actor->arcFrames = zero;
-  }
+  // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the
+  // distance is 2,400 pixels in 16.16.
+  effectWork->arcTileSlot = slot;
+  VramCache_Load((s16)slot, 256, gFieldEffect_ArcSparkTiles);
+  gMainRoutineWork.avoidDistance = px(2400);
+  gMainRoutineWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
+  Actor_SetSpriteColorModeFar(actor, 0);
+  actor->update = FieldEffect_UpdateAvoidCaster;
+  actor->arcPhase = 0;
+  actor->arcFrames = 0;
   Sound_PlayFar(SE_SPIN);
   wait(15);
   actor->arcPhase = 1;

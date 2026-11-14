@@ -2851,58 +2851,7 @@ static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
   FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 
-void CrackedTile_DropIn(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EffectOptions options;
-  struct Vector3 velocity;
-  u32 i;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  Camera_SetBounds(-1, -1, -1, 0);
-  Map_CenterOnFollowedPoint();
-  System_Wait(1);
-  leader->y = px(130);
-  leader->gravity = px(1) / 2;
-  leader->bounce = 0;
-  leader->motionFlags = 0;
-  gFieldWork->transition = 0x100;
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_PlaySound(SE_DUST_PUFF);
-  leader->motionFlags = 3;
-  FieldEvent_Wait(24);
-  options.palette = 7;
-  options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
-  for (i = 0; i <= 16; i++) {
-    s32 angle = i << 12;
-
-    velocity.x = Trig_Cos(angle);
-    velocity.y = 0;
-    velocity.z = Math_Sin(angle);
-    velocity.x += velocity.x >> 1;
-    velocity.x += ((u32)(Random16() * 3 << 14) >> 16) - 0x6000;
-    velocity.z += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
-    FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity.x, velocity.y,
-                      velocity.z, 0x1090001, &options);
-  }
-  Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  Func_020057ac_(0x50000, 0x50000, 0x10000);
-  Func_020057ac_(-1, -1, 0xe666);
-  FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = px(1);
-  leader->bounce = Q16_ONE / 4;
-  FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Event_End();
-}
+#include "shared/cracked_tile_drop_in.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s539c): routine CrackedTile_Fall as this part declared it; the joined

@@ -77,7 +77,7 @@ void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
-extern s32 Data_020023ac;
+extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
@@ -305,77 +305,7 @@ extern s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-void Whirlwind_UpdateLower(struct Actor *self) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 position[3];
-  s32 distance;
-  s32 near;
-
-  if (work->psynergy != 0 || *(s16 *)&work->fieldMenu != 0 ||
-      work->pauseMenu != 0 || work->item != 0) {
-    Actor_SetAnimationSpeed(self, 0);
-    return;
-  }
-  Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(SE_WATER_LEVEL);
-  ((struct FieldSprite *)self->sprite)->priority =
-      ((struct FieldSprite *)leader->sprite)->priority;
-  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
-    Camera_WorldToScreen(position);
-    distance = position[0];
-    if (distance > 0x1100000)
-      goto stop;
-    if (distance < -0x200000)
-      goto stop;
-    {
-      if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
-        if (distance < 0)
-          distance = self->y - leader->y;
-        near = 0;
-        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
-            distance < 0xc0000)
-          near = 1;
-        if (near && !Event_GetFlag(260)) {
-          leader->facing = self->facing;
-          leader->watchedObject = self;
-          leader->priorityFlags &= ~1;
-          work->raisedTrigger = 200;
-          gMainRoutineWork.renderMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
-        }
-      }
-      /* IwramMulQ16 reached from IwramIrqMain rather than at its fixed
-       * address: */
-      /* the address is a linked word read after the cosine, as the native
-       */
-      /* reads it after the speed (at Iwram_MulQ16 it is built before). */
-      self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Trig_Cos(self->facing), self->speedLimit);
-      self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Math_Sin(self->facing), self->speedLimit);
-      return;
-    }
-  }
-stop:
-  {
-    s32 zero = 0;
-
-    /* FAKEMATCH(temporary): one word zero clears the ride byte, then the
-     * update. */
-    *((u8 *)self + 0x63) = zero;
-    self->update = (void *)zero;
-  }
-  Actor_StartScript(self, gWhirlwindEndScript);
-  Event_PlaySound(SE_SPARKLING_PASSAGE);
-  Data_020023ac = 0;
-}
+#include "shared/whirlwind_update_lower.h"
 
 extern s16 gData_020024f6;
 
@@ -716,74 +646,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-void CrackedTile_DropIn(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  u32 i;
-  struct EffectOptions options;
-  s32 spawn = 1;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  CamBounds(-1, -1, -1, 0);
-  Map_CenterOnFollowedPoint();
-  System_Wait(1);
-  actor->y = px(130);
-  actor->gravity = px(1) / 2;
-  actor->bounce = 0;
-  actor->motionFlags = 0;
-  gFieldWork->transition = 0x100;
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_PlaySound(SE_DUST_PUFF);
-  actor->motionFlags = 3;
-  FieldEvent_Wait(24);
-  options.palette = 7;
-  options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
-  i = 0;
-  /* A goto loop carries no loop notes: as a do, for or while loop, loop.c
-   */
-  /* moves the velocity array's address out of the loop. */
-loop:
-  {
-    s32 angle;
-    s32 velocity[3];
-    s32 cosine;
-
-    angle = i << 12;
-    cosine = Trig_Cos(angle);
-    /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after
-     * its partial redundancy pass. */
-    if (spawn) {
-      velocity[0] = cosine;
-      velocity[1] = 0;
-      velocity[2] = Math_Sin(angle);
-      velocity[0] += velocity[0] >> 1;
-      velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
-      velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
-      FieldEffect_Spawn(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                        velocity[2], 0x1090001, &options);
-    }
-    i++;
-  }
-  if (i <= 16)
-    goto loop;
-  Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  SetWorkTriple(0x50000, 0x50000, 0x10000);
-  SetWorkTriple(-1, -1, 0xe666);
-  FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  actor->gravity = px(1);
-  actor->bounce = Q16_ONE / 4;
-  FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Event_End();
-}
+#include "shared/cracked_tile_drop_in.h"
 
 extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack();

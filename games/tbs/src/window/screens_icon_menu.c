@@ -89,9 +89,7 @@ void IconMenu_DrawIcons(void) {
       u32 tileOffset;
 
       word = entry->sprite;
-      /* FAKEMATCH(temporary): the word pointer stands in for entry, y read as
-       * its halfword 7; as entry->y, 2 of 401 instructions differ in tbs-en. */
-      spriteY = ((s16 *)word)[7];
+      spriteY = *(s16 *)&entry->y;
       *word++ = 0;
       attributes = spriteY | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
       tileOffset = gVramCacheEntries[entry->slot].offset;

@@ -14,7 +14,6 @@
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once.
 void BattleMotion_ReturnToSpot(s32 unitId) {
-  s32 z;
   struct BattleObject *battleObject;
   struct Actor *actor;
 
@@ -33,11 +32,9 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
     Actor_StartIdleFar(actor);
     Actor_SetMoveTargetFar(actor, battleObject->anchorX, 0,
                            battleObject->anchorZ);
-    // z / 8, rounded toward zero, as BattleObject_Make turns a new actor.
-    z = battleObject->anchorZ;
-    if (z < 0)
-      z += 7;
-    actor->facing = ArcTan2(z >> 3, battleObject->anchorX) - TRIG_TURN / 2;
+    // As BattleObject_Make turns a new actor.
+    actor->facing = ArcTan2(battleObject->anchorZ / 8, battleObject->anchorX) -
+                    TRIG_TURN / 2;
   }
 }
 

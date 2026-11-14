@@ -374,9 +374,8 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
                                  SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
                                  0);
     }
-    current = sheep;
-    for (particleIndex = 0; particleIndex != SLEEP_SHEEP;
-         particleIndex++, current++) {
+    for (particleIndex = 0; particleIndex != SLEEP_SHEEP; particleIndex++) {
+      current = &sheep[particleIndex];
       if (frame > particleIndex * 4 && current->y <= px(128) - 1) {
         s32 picture;
 

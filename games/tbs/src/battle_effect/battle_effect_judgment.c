@@ -404,14 +404,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET,
                              work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
 
-  {
-    u8 *c = ramp;
-    for (i = 0; i != MOTE_SET_BYTES; i++, c++) {
-      if (*c > 32) {
-        *c += 224;
-      } else if (*c != 0) {
-        *c = 1;
-      }
+  for (i = 0; i != MOTE_SET_BYTES; i++) {
+    if (ramp[i] > 32) {
+      ramp[i] += 224;
+    } else if (ramp[i] != 0) {
+      ramp[i] = 1;
     }
   }
 

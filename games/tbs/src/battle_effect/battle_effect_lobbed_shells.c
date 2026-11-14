@@ -252,8 +252,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       } while (k != work->args->targetCount);
     }
     // The bursts.
-    for (i = 0, burst = LOBBED_SHELLS_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS;
-         burst++, i++) {
+    for (i = 0; i != LOBBED_SHELLS_BURST_SLOTS; i++) {
+      burst = &LOBBED_SHELLS_BURSTS[i];
       if (burst->variant >= 0 && burst->variant <= 44 && burst->y >= 0) {
         Projection_Point(burst, &position);
         position.x >>= 1;

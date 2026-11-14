@@ -43,8 +43,8 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
 
     EFFECT_VIEW_FROM_CAMERA(camera);
     Transform_ApplyPosition(center);
-    star = PARTICLES;
-    for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
+    for (i = 0; i != SWIRLING_STARS_COUNT; i++) {
+      star = &PARTICLES[i];
       if (frame > i / 4 && star->variant == 0) {
         s32 size;
 

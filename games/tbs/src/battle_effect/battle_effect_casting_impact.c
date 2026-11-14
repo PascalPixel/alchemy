@@ -687,9 +687,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                                    TINT_KEEP, TINT_KEEP, 0);
         }
         if (frame == 12) {
-          particle = CASTING_IMPACT_IMPACT_PARTICLES;
-          for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT;
-               i++, particle++) {
+          for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++) {
+            particle = &CASTING_IMPACT_IMPACT_PARTICLES[i];
             SET_POSITION(particle, targetActor->x.fixed, px(20),
                          targetActor->z.fixed);
             SET_VELOCITY(particle, ((Random16() & 255) - 128) << 10,
@@ -699,12 +698,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           }
         }
         if (frame > 11) {
-          struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
+          struct Particle *step;
           struct Actor *caster;
           s32 height;
           caster = GetBattleObjectSlotFar(work->args->user)->actor;
           height = BattleUnit_GetEffectHeightFar(work->args->user) / 2;
-          for (i = 0; i != 32; i++, step++) {
+          for (i = 0; i != 32; i++) {
+            step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
             if (step->variant >= 0) {
               s32 size = (i & 1) + 6;
               Projection_Point(step, &projected);
@@ -866,8 +866,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       } else if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
                  mode == CASTING_IMPACT_IMPACT_BARRAGE) {
-        struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
-        for (i = 0; i != 16; i++, step++) {
+        struct Particle *step;
+        for (i = 0; i != 16; i++) {
+          step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
           // Flash bursts rise.
           if (frame >= i / 2 + 4) {
             s32 age = step->variant;
@@ -1037,8 +1038,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           CASTING_IMPACT_IMPACT_PARTICLES[63].y = 159;
         }
         {
-          struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
-          for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++, step++) {
+          struct Particle *step;
+          for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++) {
+            step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
             if (step->x >= 0 && frame >= i / 2) {
               s32 image = i & 3;
               Transform_Reset();
@@ -1103,9 +1105,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           REG_BLDALPHA = BLEND_ALPHA(64 - frame, 16);
         }
         {
-          struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
-          for (i = 0; i != 16; i++, step++) {
+          struct Particle *step;
+          for (i = 0; i != 16; i++) {
             s32 image = i % 3;
+
+            step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
             Projection_Point(step, &projected);
             projected.x /= 2;
             blitters[i & 1](canvas, pictures + image * (24 * 24),
@@ -1118,8 +1122,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         // Unused: the test leaves impact mode 100 without smoke, a mode this
         // game never dispatches; The Lost Age's twin makes the same test.
         // The smoke impacts: a puff rises each frame.
-        struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
-        for (i = 0; i != 16; i++, step++) {
+        struct Particle *step;
+        for (i = 0; i != 16; i++) {
+          step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
           if (frame >= i + 4) {
             s32 age = step->variant;
             if (age <= 23) {

@@ -170,7 +170,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
           draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
                   screenPosition.x + scrollX, screenPosition.y - 8, 48, 16);
       }
-    } else if ((u32)kind <= BEAM_ARC_B || kind == BEAM_ARC_A_INVERTED) {
+    } else if ((kind >= BEAM_PLAIN_ATTACK && kind <= BEAM_ARC_B) ||
+               kind == BEAM_ARC_A_INVERTED) {
       if (frame <= 11) {
         if (work->args->side == EFFECT_SIDE_ENEMIES)
           draw[1](canvas, work->sheet + frame / 2 * (48 * 72),

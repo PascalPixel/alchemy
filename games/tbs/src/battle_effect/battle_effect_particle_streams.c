@@ -564,7 +564,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       if (i / 3 < elapsed && flash->y >= 0) {
         Projection_Point(&flash->x, &screen);
         screen.x >>= 1;
-        if ((u32)flash->variant <= 13) {
+        if (flash->variant >= 0 && flash->variant <= 13) {
           s32 picture = flash->variant / 2;
 
           draw(canvas, work->sheet + gParticleStreams_FlashPictures[picture],

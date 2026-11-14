@@ -174,7 +174,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
     }
 
-    if ((u32)(frame - 16) <= 143) {
+    if (frame >= 16 && frame <= 159) {
       size = frame * 2 - 32;
       if (size > 48)
         size = 48;
@@ -183,7 +183,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               112 - size, width, size);
     }
 
-    if ((u32)(frame - 48) <= 111) {
+    if (frame >= 48 && frame <= 159) {
       size = frame * 2 - 96;
       if (size > 64)
         size = 64;
@@ -192,7 +192,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               64 - size, width, size);
     }
 
-    if ((u32)(frame - 160) <= 239) {
+    if (frame >= 160 && frame <= 399) {
       image = work->sheet + frame / 4 % 3 * (48 * 64);
       draw[0](canvas, image, 8, 0, width, 64);
       draw[0](canvas, image, 8, 64, width, 64);

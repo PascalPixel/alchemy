@@ -228,7 +228,7 @@ select_again:
       allyTarget = BattleAI_ChooseTarget(request->unitId, ability);
       if (allyTarget == TARGET_PICK_SIDE_EMPTY) {
         allyIsParty = 0;
-        if (request->unitId <= (u32)ALLY_MAX)
+        if (request->unitId >= 0 && request->unitId <= ALLY_MAX)
           allyIsParty = 1;
         allyTarget = BattleAI_ChooseRandomTarget(allyIsParty);
       }
@@ -241,7 +241,7 @@ select_again:
       opponentTarget = BattleAI_ChooseTarget(request->unitId, ability);
       if (opponentTarget == TARGET_PICK_SIDE_EMPTY) {
         opponentIsParty = 0;
-        if (request->unitId <= (u32)ALLY_MAX)
+        if (request->unitId >= 0 && request->unitId <= ALLY_MAX)
           opponentIsParty = 1;
         opponentTarget = BattleAI_ChooseRandomTarget(opponentIsParty);
       }

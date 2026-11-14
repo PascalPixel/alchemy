@@ -171,35 +171,35 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                                CONDEMN_PICTURE_X(pictureColumn, 1),
                                CONDEMN_PICTURE_Y(pictureRow, 1) + screenY, 99,
                                69);
-        if ((frame - 88) <= 1U) {
+        if (frame >= 88 && frame <= 89) {
           Iwram_FillWords(canvas, CANVAS_BYTES,
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
-        if ((frame - 90) <= 1U) {
+        if (frame >= 90 && frame <= 91) {
           draw[work->args->side](canvas, work->sheet + REAPER_SHEET_CRESCENT,
                                  CONDEMN_PICTURE_X(pictureColumn, 2),
                                  CONDEMN_PICTURE_Y(pictureRow, 2) + screenY,
                                  128, 91);
         }
-        if ((frame - 92) <= 1U) {
+        if (frame >= 92 && frame <= 93) {
           draw[work->args->side](
               canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_1,
               CONDEMN_PICTURE_X(pictureColumn, 3),
               CONDEMN_PICTURE_Y(pictureRow, 3) + screenY, 128, 91);
         }
-        if ((frame - 94) <= 1U) {
+        if (frame >= 94 && frame <= 95) {
           draw[work->args->side](
               canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_2,
               CONDEMN_PICTURE_X(pictureColumn, 4),
               CONDEMN_PICTURE_Y(pictureRow, 4) + screenY, 128, 59);
         }
-        if ((frame - 96) <= 1U) {
+        if (frame >= 96 && frame <= 97) {
           draw[work->args->side](
               canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_3,
               CONDEMN_PICTURE_X(pictureColumn, 5),
               CONDEMN_PICTURE_Y(pictureRow, 5) + screenY, 122, 29);
         }
-        if ((frame - 98) <= 1U) {
+        if (frame >= 98 && frame <= 99) {
           draw[work->args->side](
               canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_4,
               CONDEMN_PICTURE_X(pictureColumn, 6),

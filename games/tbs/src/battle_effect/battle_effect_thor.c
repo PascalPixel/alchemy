@@ -259,7 +259,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
 
-    if ((u32)(frame - 151) <= 16) {
+    if (frame >= 151 && frame <= 167) {
       s32 inset = 0;
       s32 beamHeight = (frame - 151) * 20 + 44;
       if (frame > 151) {
@@ -347,7 +347,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                                    work->sheet, 1, 0);
       }
       stormFrame = frame - 80;
-      if ((u32)stormFrame <= 59 && !(frame & 7)) {
+      if (stormFrame >= 0 && stormFrame <= 59 && !(frame & 7)) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 140) {
@@ -380,7 +380,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                                          KNOCKBACK_HURL);
         }
       }
-      if ((u32)stormFrame <= 63) {
+      if (stormFrame >= 0 && stormFrame <= 63) {
         s32 moteX;
         s32 moteY;
         s32 mirrorX;
@@ -480,7 +480,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             Particle_AdvanceWithGravity2D(spark, 60, 0);
             if (spark->y > px(120)) {
               spark->velocityY = -spark->velocityY / 2;
-            } else if ((u32)spark->x <= px(127) - 1 && spark->y >= 0) {
+            } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
               s32 x = spark->x >> 16;
               s32 y = spark->y >> 16;
               s32 dotSize = spark->variant / 16 + 1;
@@ -505,7 +505,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
         BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, thorX, thorY);
       }
-      if ((u32)(frame - 16) <= 127) {
+      if (frame >= 16 && frame <= 143) {
         s32 thorScreenX;
         for (i = 0, thorScreenX = thorX >> 17; i != 3; i++) {
           s32 glint = i & 3;

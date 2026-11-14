@@ -99,8 +99,7 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   kind = args->kind;
-  if ((u32)(kind - EFFECT_RANGE_CASTING_IMPACT) <
-      EFFECT_RANGE_BEAM - EFFECT_RANGE_CASTING_IMPACT) {
+  if (kind >= EFFECT_RANGE_CASTING_IMPACT && kind < EFFECT_RANGE_BEAM) {
     BattleEffect_RunCastingImpact(args, kind - EFFECT_RANGE_CASTING_IMPACT);
   } else if (kind >= EFFECT_RANGE_RING_AND_SPARK) {
     BattleEffect_RunCriticalHit(args);

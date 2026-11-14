@@ -480,7 +480,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           shot->y = user->y.fixed + height / 2;
         else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
           shot->y = user->y.fixed + height / 2 + px(16 - (Random16() & 31));
-        else if ((u32)(mode - PROJECTILE_VOLLEY_WING_FLUTTER) <= 1)
+        else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
+                 mode == PROJECTILE_VOLLEY_WING_BEAT)
           shot->y = user->y.fixed + height / 2 + px(16 - (Random16() & 31));
         else if (mode == PROJECTILE_VOLLEY_WING_STROKE)
           shot->y = user->y.fixed + height / 2 + px(32 - (Random16() & 63));
@@ -506,7 +507,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           shot->velocityY =
               (s32)(target->y.fixed + px(Random16() & 31) - shot->y + px(4)) /
               steps;
-        else if ((u32)(mode - PROJECTILE_VOLLEY_WING_FLUTTER) <= 1 ||
+        else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
+                 mode == PROJECTILE_VOLLEY_WING_BEAT ||
                  mode == PROJECTILE_VOLLEY_WING_STROKE ||
                  mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
           shot->velocityY = 0;

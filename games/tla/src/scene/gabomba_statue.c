@@ -3180,8 +3180,7 @@ done:
 extern void
 GabombaStatue_MoveCharge__charges() __asm__("GabombaStatue_MoveCharge");
 
-// Runs a pair of charges along the channel; the walkthrough's goal is one red
-// and one blue reaching the head.
+// Runs a pair of charges, one red and one blue, along the channel to the head.
 s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   struct Unk02004d48 *actor;
   s32 second = first + 1;

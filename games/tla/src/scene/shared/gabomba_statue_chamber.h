@@ -45,10 +45,7 @@ struct GabombaStatueChamberObject {
   void *update;
 };
 
-void Func_02001e80(s32 actor);
-void Func_02001d30(struct GabombaStatueChamberObject *object);
 void FieldPsynergy_RunHandler(s32 type);
-void Func_02001ea8(void);
 
 #include "field/field_sequence_event.h"
 
@@ -56,15 +53,15 @@ void Actor_MoveToObject(s32 actor, s32 target);
 
 // ---- this overlay
 
-void Func_02000a98(s32 x, s32 z);
+void GabombaStatueChamber_DropIntoHole(s32 x, s32 z);
 
-extern struct ActorPlacement gData_020020f8[];
-extern struct ActorPlacement gData_020021e8[];
-extern struct ActorPlacement gData_02002458[];
-extern struct Trigger gData_02002470[];
-extern struct Trigger gData_020024a0[];
-extern struct Trigger gData_020024dc[];
-extern struct Trigger gData_02002530[];
-extern u32 gData_0200a08c[];
+extern struct ActorPlacement gGabombaStatueChamber_Room1Placements[];
+extern struct ActorPlacement gGabombaStatueChamber_Room3Placements[];
+extern struct ActorPlacement gGabombaStatueChamber_Placements[];
+extern struct Trigger gGabombaStatueChamber_Room1Triggers[];
+extern struct Trigger gGabombaStatueChamber_Room2Triggers[];
+extern struct Trigger gGabombaStatueChamber_Room3Triggers[];
+extern struct Trigger gGabombaStatueChamber_Triggers[];
+extern u32 gGabombaStatueChamber_Room1Regions[];
 
 #endif

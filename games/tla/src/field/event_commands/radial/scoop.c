@@ -228,7 +228,7 @@ void FieldPsynergy_Scoop(void) {
   s32 frame;
   s32 i;
 
-  if (event->mode != 3) {
+  if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
     SET_POSITION(scene, (caster->x & 0xfff00000) + 0x80000, caster->y,
                  (caster->z & 0xfff00000) + 0x80000);
     Vector_AddPolarOffset(px(16), scene->facing, &scene->x);

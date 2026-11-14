@@ -970,7 +970,7 @@ s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
 
   if (map == NULL)
     return 0;
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (layer <= 2)
     shapes = map->layers[layer].terrainIds;
@@ -999,7 +999,7 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
 
   if (map == NULL)
     return 0;
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (layer <= 2) {
     cells = (u8 *)map->layers[layer].cells;
@@ -1039,7 +1039,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 
   if (map == NULL)
     return 0;
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (actor->terrainId <= 2) {
     cells = (u8 *)map->layers[actor->terrainId].cells;
@@ -1079,7 +1079,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
 
   if (map == NULL)
     return 0;
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (actor->terrainId <= 2) {
     cells = (u8 *)map->layers[actor->terrainId].cells;

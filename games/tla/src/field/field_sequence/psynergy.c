@@ -38,7 +38,7 @@ s32 Field_UsePsynergy(u32 code) {
     FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
     return 0;
   }
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (abilityId == 144 || abilityId == 155) {
       FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
       return 0;

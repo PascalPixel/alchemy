@@ -179,7 +179,7 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprite->scaleX = Q16_ONE * 3 / 4;
     sprite->scaleY = Q16_ONE * 3 / 4;
   } else {
@@ -334,7 +334,7 @@ void FieldPsynergy_EndSand(void) {
   mask &= ((u8 *)owner->sprite)[7];
   mask |= 128;
   ((u8 *)owner->sprite)[7] = mask;
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     *(s32 *)((u8 *)owner->sprite + 12) = 0xc000;
   owner->facing = TRIG_TURN / 4;
   Actor_SelectAnimationFar(owner, 0);
@@ -379,7 +379,7 @@ void FieldPsynergy_EndSand(void) {
       Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstObjectId), 1);
       FieldCamera_FollowActor(effect->firstObjectId, 1);
       Sound_PlayFar(SE_539);
-      if (event->mode == 3) {
+      if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Data_02000452 = 1;
         *motionFlags = 2;
       } else {
@@ -510,7 +510,7 @@ void FieldPsynergy_Sand(void) {
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
     wait(1);
   }
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     gMainRoutineWork.renderMode = 9;
   else
     gMainRoutineWork.renderMode = 5;

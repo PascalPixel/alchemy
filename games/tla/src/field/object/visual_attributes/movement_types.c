@@ -301,7 +301,7 @@ s32 MapGrid_BlocksJump(struct Actor *object, s32 *position) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  if (map == 0 || event->mode == 3 ||
+  if (map == 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP ||
       MapGrid_GetTerrainKindFar(object->terrainId, position[0], position[2]) <=
           2)
     return 0;

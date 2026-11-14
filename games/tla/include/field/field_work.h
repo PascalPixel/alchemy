@@ -46,6 +46,15 @@ enum FieldRaisedTrigger {
 /// FLAG_MENUS_RAISE_TRIGGER is set, as The Broken Seal's.
 #define FIELD_RAISED_TRIGGER_MENUS 250
 
+/// How the actors are moved and drawn (FieldWork.mode, ActorSystem_Initialize).
+enum ActorSystemMode {
+  /// A town, a dungeon or the sprite viewer: the scrolling camera.
+  ACTOR_SYSTEM_MAP = 2,
+  /// The world map: the fixed camera, which projects 3D points onto the
+  /// screen.
+  ACTOR_SYSTEM_WORLD_MAP = 3
+};
+
 /// A field scene's work: FieldSequence_Run allocates it in heap slot 108,
 /// zeroes it and frees it on the way out, and the field sequence, the event
 /// commands and the scene overlays all reach it through
@@ -86,7 +95,7 @@ struct FieldWork {
   s16 blockedSteps;
   u16 heldKeys; ///< the keys held when a rope or tightrope was raised
   u8 unk188[2];
-  s8 mode; ///< 2 on a map, 3 on the world map (ActorSystem_InitializeFar)
+  s8 mode; ///< an enum ActorSystemMode
   s8 unk18b;
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
   s32 encounterBias;      ///< randomized distance adjustment between battles

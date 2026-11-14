@@ -12,7 +12,7 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->encounter = Encounter_GetFormationAtSlot(row, column);
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         (u8 *)ObjectTable_Get(Party_GetLeaderActor()) + 8);
   BattleEffect_SelectBattleCue(row, column);

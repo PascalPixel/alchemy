@@ -293,7 +293,7 @@ void BattleEffect_CleanupSceneObjects(void) {
     return;
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  if (event->mode == 3 && block != NULL) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP && block != NULL) {
     i = 0;
     if (block[0x2a01] != 0) {
       do {
@@ -327,7 +327,7 @@ void FieldPsynergy_MarkWorldMapTilesUsed(void) {
   struct HeapSlots *slots = Ram_HeapSlots;
   s32 mode = ((struct FieldWork *)slots->fieldWork)->mode;
 
-  if (mode == 3)
+  if (mode == ACTOR_SYSTEM_WORLD_MAP)
     ((struct WorldMapView *)slots->mapWork)->tileBufferUsed = mode;
 }
 

@@ -537,7 +537,7 @@ void ViewMove_Start(s32 direction) {
     }
   }
 #endif
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (direction & VIEW_MOVE_X) {
       MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
       return;
@@ -609,7 +609,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (*(s32 *)Ram_HeapSlots->mapWork->unk0fc != 0)
     return;
 #endif
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return;
 
   if (direction & VIEW_MOVE_X) {
@@ -655,9 +655,9 @@ void ViewMove_End(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
 #if TLA_PATCH_1
-  if (*(s32 *)map->unk0fc != 0 || event->mode == 3) {
+  if (*(s32 *)map->unk0fc != 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #else
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #endif
     MapGrid_SetScreenShakeFar(0, 0, 0);
   } else {

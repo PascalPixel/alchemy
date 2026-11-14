@@ -723,7 +723,7 @@ void BattleMap_ApplySceneEntranceView(void) {
   s32 done;
 
   done = Scene_ApplyEntrance(1);
-  if (event->mode == 2 && done == 0)
+  if (event->mode == ACTOR_SYSTEM_MAP && done == 0)
     done = Field_PlaceAtEntrance();
   if (done == 0)
     Scene_ApplyEntrance(0);

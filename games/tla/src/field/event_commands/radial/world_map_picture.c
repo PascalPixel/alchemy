@@ -745,9 +745,9 @@ s32 WorldPicture_Show(s32 mode) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   world->mode = mode;
-  if (mode != 0 || event->mode != 3)
+  if (mode != 0 || event->mode != ACTOR_SYSTEM_WORLD_MAP)
     ObjectTable_Snapshot();
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     savedDelay = event->transitionFrames;
     event->transitionFrames = 6;
     Event_FinishScreenTransition();
@@ -932,7 +932,7 @@ s32 WorldPicture_Show(s32 mode) {
 done:
   WorldPicture_Release();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
-  if (mode != 0 || event->mode != 3) {
+  if (mode != 0 || event->mode != ACTOR_SYSTEM_WORLD_MAP) {
     event->exit = 999;
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   } else {

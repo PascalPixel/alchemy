@@ -47,8 +47,14 @@ extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
  * priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry,
  * s32 slot), BattleTarget_RunSelection moves: 2 of 1647 instructions in tla-ja.
  */
+// UB: Oam_AddSpriteAtDepth returns nothing; the target screen calls it as
+// returning s32.
+#ifdef UBFIX
+#define Oam_AddSpriteAtDepth__menus Oam_AddSpriteAtDepth
+#else
 extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
-    "Oam_AddSpriteAtDepth"); // Returns void; see the tag.
+    "Oam_AddSpriteAtDepth");
+#endif
 
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \
@@ -96,8 +102,6 @@ extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
   }
 
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
-  /* FAKEMATCH(signature): Oam_AddSpriteAtDepth declared returning s32, though
-   * it returns nothing. */
   u16 candidateIds[8];
   struct TargetSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];

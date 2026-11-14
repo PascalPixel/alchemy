@@ -382,8 +382,13 @@ void DebugWarp_Release(void) {
 /// One row of the debug warp menu: its name and what choosing it does.
 struct DebugWarpPreset {
   const u8 *name;
-  /// The handlers return nothing; see the FAKEMATCH tag in DebugWarp_Run.
+  // UB: the handlers return nothing; DebugWarp_Run calls them as returning
+  // s32.
+#ifdef UBFIX
+  void (*warp)(void);
+#else
   s32 (*warp)(void);
+#endif
 };
 
 extern const struct DebugWarpPreset gDebugWarp_Presets[];
@@ -473,7 +478,6 @@ done:
   Window_Close(window, 2);
   DebugWarp_Release();
   wait(1);
-  /* FAKEMATCH(signature): the handlers are typed as returning s32. */
   if (index != -1)
     gDebugWarp_Presets[index].warp();
   return index;

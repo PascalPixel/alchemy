@@ -131,7 +131,7 @@ s32 DebugBrowser_Icons(void) {
       page = (page + 12) % 12;
       mode = (mode + 3) % 3;
       Window_Close(window, 2);
-      window = Window_Create(10, 0, 18, 12, 2);
+      window = Window_Create(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
       if (mode == 0)
         Text_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
       else if (mode == 1)
@@ -191,7 +191,7 @@ s32 DebugBrowser_Portraits(void) {
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
-  window = Window_Create(10, 10, 14, 3, 2);
+  window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
   index = 0;
   palette = 15;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {

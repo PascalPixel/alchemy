@@ -4,7 +4,6 @@
 
 #include "../window_internal.h"
 
-#define TEXT_CANVAS_VRAM ((void *)0x06002500)
 #define CANVAS_COLUMNS 30
 #define CANVAS_COLUMN_WORDS 32
 #define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put
@@ -159,7 +158,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       switch (code) {
       case 3:
         channel->x = channel->startX;
-        if (channel->work->flags & 8) {
+        if (channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) {
           if (channel->y >= 13 << 8) {
             Text_StartCanvasScroll(channel);
             glyphsLeft = 1;
@@ -208,13 +207,13 @@ s32 Message_Type(struct UiChannelSlot *channel) {
           } else {
             Window_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
                                channel->spacing, 0);
-            if (window->flags & 0x80) {
+            if (window->flags & WINDOW_FLAG_ANCHOR_BOTTOM) {
               if (oldHeight != newHeight)
                 y -= newHeight - oldHeight;
               if (y < 0)
                 y = 0;
             }
-            if (!(window->flags & 0x100)) {
+            if (!(window->flags & WINDOW_FLAG_FIXED_X)) {
               x += (s32)(oldWidth - newWidth) / 4;
               Window_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
                                  channel->spacing, 2);
@@ -330,7 +329,8 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
 #if TLA_PATCH_4
-      if (!(channel->work->flags & 8) && code > 32 && nextCode > 32) {
+      if (!(channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) && code > 32 &&
+          nextCode > 32) {
         s16 pairWidth =
             gFont_Glyphs[code - 32].width + gFont_Glyphs[nextCode - 32].width;
 
@@ -345,7 +345,8 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         }
       }
 #else
-      if (!(channel->work->flags & 8) && code > 32 && nextCode > 32 &&
+      if (!(channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) && code > 32 &&
+          nextCode > 32 &&
           (u16)(gFont_Glyphs[code - 32].width +
                 gFont_Glyphs[nextCode - 32].width) <= 15) {
         code |= nextCode << 8;
@@ -392,7 +393,6 @@ s32 Message_Type(struct UiChannelSlot *channel) {
   return 0;
 }
 
-#undef TEXT_CANVAS_VRAM
 #undef CANVAS_COLUMNS
 #undef CANVAS_COLUMN_WORDS
 #undef CANVAS_KEPT_ROWS

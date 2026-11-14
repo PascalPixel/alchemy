@@ -80,6 +80,10 @@
 #include "scene_call.h"
 #include "field/sprite.h"
 
+// Window animation lengths.
+#define WINDOW_OPEN_FRAMES 8
+#define WINDOW_CLOSE_FRAMES 4
+
 /// The ring of decoded text (WindowWork.entries): 512 codes, 256 in Japanese.
 #define TEXT_BUFFER_MASK (UI_TEXT_ENTRY_COUNT - 1)
 

@@ -146,9 +146,9 @@ s32 Sanctum_Run(s32 unitId) {
 
   listWindow = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {
-    listWindow = Window_CreateFar(-5, 0, 5, 5, 2);
+    listWindow = Window_CreateFar(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
     if (listWindow == 0) {
-      listWindow = Window_CreateFar(0, 0, 5, 5, 2);
+      listWindow = Window_CreateFar(0, 0, 5, 5, WINDOW_FLAG_INSTANT);
       Portrait_CreateFar(2, 0, 0, listWindow, -4, -4);
     }
   }
@@ -162,7 +162,8 @@ s32 Sanctum_Run(s32 unitId) {
   shop->cursor.anchor = (struct WindowSprite *)cursorAnchor;
   Sanctum_ShowKeeperMessage((s32)MsgWelcomeWearyWanderers);
 
-  shop->moneyWindow = Window_CreateFar(16, 11, SHOP_COIN_WINDOW_WIDTH, 4, 2);
+  shop->moneyWindow =
+      Window_CreateFar(16, 11, SHOP_COIN_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
 
   for (;;) {
@@ -231,13 +232,14 @@ s32 Sanctum_RunPartyService(void) {
   serviceKind = shop->partyAction;
   Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
 
-  listWindow = Window_CreateFar(1, 12, 13, 3, 2);
+  listWindow = Window_CreateFar(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->active = 4;
   shop->mode = redraw;
   Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
 #if SERVICE_PRICE_WINDOW
-  priceWindow = Window_CreateFar(SERVICE_PRICE_WINDOW_X, 16,
-                                 SERVICE_PRICE_WINDOW_WIDTH, 3, 2);
+  priceWindow =
+      Window_CreateFar(SERVICE_PRICE_WINDOW_X, 16, SERVICE_PRICE_WINDOW_WIDTH,
+                       3, WINDOW_FLAG_INSTANT);
 #endif
   memberIndex = 0;
   while (memberIndex < shop->partyMemberCount) {

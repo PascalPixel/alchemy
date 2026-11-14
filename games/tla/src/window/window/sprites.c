@@ -307,13 +307,6 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
 #define PAGE_ARROW_OFFSET_Y (-1)
 #endif
 
-/// The window tiles a kana mark is drawn over differently, as ☀️'s;
-/// Window_DrawDividerLine here joins its lines to the same two.
-enum {
-  WINDOW_TILE_DIVIDER_HORIZONTAL = WINDOW_TILE(14), ///< a horizontal divider
-  WINDOW_TILE_BORDER_TOP = WINDOW_TILE(17)          ///< the frame's top edge
-};
-
 /// Puts a character into a window's tilemap as a tile at tile (x, y) of its
 /// interior, as ☀️'s Window_PutGlyph; GLYPH_DRAW_PAGE_ARROW instead shows the
 /// next-page arrow sprite on the interior's last tile. In Japanese, a kana mark

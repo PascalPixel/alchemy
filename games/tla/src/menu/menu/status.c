@@ -27,7 +27,7 @@ s32 PartyMemberChooser_Open(void) {
 
   state->partyCount = Party_ListMembersFar(state->ownerIds);
   StatusScreen_Initialize(0, 3, 0, 7);
-  state->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
+  state->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   {
     struct {
       u16 value;
@@ -116,7 +116,7 @@ s32 StatusScreen_Run(void) {
   Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
   Text_UseExtraTilesFar(1);
-  state->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
+  state->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   if (Party_SumDjinnCountsFar(result) != 0)
     DjinnFigures_InitializeTopRow();
   Link_DrawPageArrowsFar(0x06002500);

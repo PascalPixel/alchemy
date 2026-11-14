@@ -68,17 +68,18 @@ s32 Shop_SelectBuy(void) {
   s32 key;
 
   shop->itemWindow = 0;
-  shop->moneyWindow =
-      Window_CreateFar(MONEY_WINDOW_X, 7, MONEY_WINDOW_WIDTH, 4, 2);
+  shop->moneyWindow = Window_CreateFar(MONEY_WINDOW_X, 7, MONEY_WINDOW_WIDTH, 4,
+                                       WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
-  priceWindow = Window_CreateFar(0, 8, PRICE_WINDOW_WIDTH, 4, 2);
+  priceWindow =
+      Window_CreateFar(0, 8, PRICE_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 
 next_page:
   selectionIndex = selected;
-  stockWindow = Window_CreateFar(0, 12, 30, 4, 2);
+  stockWindow = Window_CreateFar(0, 12, 30, 4, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->active = 18;
   shop->mode = 12;
-  messageWindow = Window_CreateFar(0, 17, 30, 3, 2);
+  messageWindow = Window_CreateFar(0, 17, 30, 3, WINDOW_FLAG_INSTANT);
   redraw = 1;
   stockIds = shop->stockItemIds;
 
@@ -122,7 +123,8 @@ next_page:
       held = PartyInventory_CountItemFar(heldItem);
 #endif
       Sound_PlayFar(SE_RECOVERY);
-      window = Window_CreateFar(HELD_WINDOW_X, 3, HELD_WINDOW_WIDTH, 10, 2);
+      window = Window_CreateFar(HELD_WINDOW_X, 3, HELD_WINDOW_WIDTH, 10,
+                                WINDOW_FLAG_INSTANT);
 #if TLA_PATCH_1
       ItemMenu_DrawItemDetailsWithCountFar(window, stockCount, held);
 #else
@@ -158,11 +160,11 @@ next_page:
   unitId = 0;
   repromptRecipient = 0;
   selectionIndex = 0;
-  partyWindow = Window_CreateFar(0, 14, 13, 3, 2);
+  partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->active = 4;
   shop->mode = 12;
   Menu_PlaceOwnerEntryObjectsFar(partyWindow, 2, 0);
-  itemWindow = Window_CreateFar(16, 11, 14, 9, 2);
+  itemWindow = Window_CreateFar(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
   redraw = 2;
 
   while (1) {
@@ -693,7 +695,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   maximum -= minimum;
   result = -1;
   count = 0;
-  window = Window_CreateFar(QUANTITY_WINDOW_X, 4, QUANTITY_WINDOW_WIDTH, 3, 2);
+  window = Window_CreateFar(QUANTITY_WINDOW_X, 4, QUANTITY_WINDOW_WIDTH, 3,
+                            WINDOW_FLAG_INSTANT);
   if (window != 0) {
     slot = VramCache_FindFreeEntry();
     if (slot != 96) {

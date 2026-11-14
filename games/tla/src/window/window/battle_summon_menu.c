@@ -69,7 +69,9 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = (s16)VramCache_AllocEntry(128);
-  description = Window_Create(0, 4, 30, 4, 42);
+  description = Window_Create(0, 4, 30, 4,
+                              WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                  WINDOW_FLAG_BORDERED_CANVAS);
   counts = Window_Create(20, 8, 10, 3, 6);
   mask = 0;
   do {

@@ -292,8 +292,9 @@ s32 NameEntry_EditMemberName(s32 member) {
   Window_LoadGraphics();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                     gMainRoutineWork.paletteGlow[1]);
-  keyboardWindow = Window_Create(3, 6, 24, NAME_KEYBOARD_HEIGHT, 2);
-  nameWindow = Window_Create(8, 3, 8, 3, 2);
+  keyboardWindow =
+      Window_Create(3, 6, 24, NAME_KEYBOARD_HEIGHT, WINDOW_FLAG_INSTANT);
+  nameWindow = Window_Create(8, 3, 8, 3, WINDOW_FLAG_INSTANT);
   Portrait_OpenWindow(member, 0, 3, 1);
   Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
@@ -576,8 +577,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   Window_LoadGraphics();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                     gMainRoutineWork.paletteGlow[1]);
-  keyboardWindow = Window_Create(3, 6, 24, 9, 2);
-  nameWindow = Window_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
+  keyboardWindow = Window_Create(3, 6, 24, 9, WINDOW_FLAG_INSTANT);
+  nameWindow = Window_Create(8, 3, NAME_LABEL_WIDTH, 3, WINDOW_FLAG_INSTANT);
   Portrait_OpenWindow(member, 0, 3, 1);
   Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS

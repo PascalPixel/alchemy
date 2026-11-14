@@ -370,59 +370,59 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       tile = *cursor;
       if (pos == y1) {
         switch (tile) {
-        case 0xf009:
-        case 0xf00b:
-        case 0xf00c:
-        case 0xf00d:
-        case 0xf018:
+        case WINDOW_TILE_DIVIDER_TEE_DOWN:
+        case WINDOW_TILE_DIVIDER_TEE_RIGHT:
+        case WINDOW_TILE_DIVIDER_TEE_LEFT:
+        case WINDOW_TILE_DIVIDER_CROSS:
+        case WINDOW_TILE_BORDER_TOP_TEE:
           break;
-        case 0xf011:
-          tile = 0xf018;
+        case WINDOW_TILE_BORDER_TOP:
+          tile = WINDOW_TILE_BORDER_TOP_TEE;
           break;
-        case 0xf00a:
-          tile = 0xf00d;
+        case WINDOW_TILE_DIVIDER_TEE_UP:
+          tile = WINDOW_TILE_DIVIDER_CROSS;
           break;
-        case 0xf00e:
-          tile = 0xf009;
+        case WINDOW_TILE_DIVIDER_HORIZONTAL:
+          tile = WINDOW_TILE_DIVIDER_TEE_DOWN;
           break;
         default:
-          tile = 0xf00f;
+          tile = WINDOW_TILE_DIVIDER_VERTICAL;
           break;
         }
       } else if (pos == y2) {
         switch (tile) {
-        case 0xf00a:
-        case 0xf00b:
-        case 0xf00c:
-        case 0xf00d:
-        case 0xf019:
+        case WINDOW_TILE_DIVIDER_TEE_UP:
+        case WINDOW_TILE_DIVIDER_TEE_RIGHT:
+        case WINDOW_TILE_DIVIDER_TEE_LEFT:
+        case WINDOW_TILE_DIVIDER_CROSS:
+        case WINDOW_TILE_BORDER_BOTTOM_TEE:
           break;
-        case 0xf014:
-          tile = 0xf019;
+        case WINDOW_TILE_BORDER_BOTTOM:
+          tile = WINDOW_TILE_BORDER_BOTTOM_TEE;
           break;
-        case 0xf009:
-          tile = 0xf00d;
+        case WINDOW_TILE_DIVIDER_TEE_DOWN:
+          tile = WINDOW_TILE_DIVIDER_CROSS;
           break;
-        case 0xf00e:
-          tile = 0xf00a;
+        case WINDOW_TILE_DIVIDER_HORIZONTAL:
+          tile = WINDOW_TILE_DIVIDER_TEE_UP;
           break;
         default:
-          tile = 0xf00f;
+          tile = WINDOW_TILE_DIVIDER_VERTICAL;
           break;
         }
       } else {
         switch (tile) {
-        case 0xf00b:
-        case 0xf00c:
-        case 0xf00d:
+        case WINDOW_TILE_DIVIDER_TEE_RIGHT:
+        case WINDOW_TILE_DIVIDER_TEE_LEFT:
+        case WINDOW_TILE_DIVIDER_CROSS:
           break;
-        case 0xf009:
-        case 0xf00a:
-        case 0xf00e:
-          tile = 0xf00d;
+        case WINDOW_TILE_DIVIDER_TEE_DOWN:
+        case WINDOW_TILE_DIVIDER_TEE_UP:
+        case WINDOW_TILE_DIVIDER_HORIZONTAL:
+          tile = WINDOW_TILE_DIVIDER_CROSS;
           break;
         default:
-          tile = 0xf00f;
+          tile = WINDOW_TILE_DIVIDER_VERTICAL;
           break;
         }
       }
@@ -443,59 +443,59 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       tile = *cursor;
       if (pos == x1) {
         switch (tile) {
-        case 0xf009:
-        case 0xf00a:
-        case 0xf00b:
-        case 0xf00d:
-        case 0xf01a:
+        case WINDOW_TILE_DIVIDER_TEE_DOWN:
+        case WINDOW_TILE_DIVIDER_TEE_UP:
+        case WINDOW_TILE_DIVIDER_TEE_RIGHT:
+        case WINDOW_TILE_DIVIDER_CROSS:
+        case WINDOW_TILE_BORDER_LEFT_TEE:
           break;
-        case 0xf016:
-          tile = 0xf01a;
+        case WINDOW_TILE_BORDER_LEFT:
+          tile = WINDOW_TILE_BORDER_LEFT_TEE;
           break;
-        case 0xf00c:
-          tile = 0xf00d;
+        case WINDOW_TILE_DIVIDER_TEE_LEFT:
+          tile = WINDOW_TILE_DIVIDER_CROSS;
           break;
-        case 0xf00f:
-          tile = 0xf00b;
+        case WINDOW_TILE_DIVIDER_VERTICAL:
+          tile = WINDOW_TILE_DIVIDER_TEE_RIGHT;
           break;
         default:
-          tile = 0xf00e;
+          tile = WINDOW_TILE_DIVIDER_HORIZONTAL;
           break;
         }
       } else if (pos == x2) {
         switch (tile) {
-        case 0xf009:
-        case 0xf00a:
-        case 0xf00c:
-        case 0xf00d:
-        case 0xf01b:
+        case WINDOW_TILE_DIVIDER_TEE_DOWN:
+        case WINDOW_TILE_DIVIDER_TEE_UP:
+        case WINDOW_TILE_DIVIDER_TEE_LEFT:
+        case WINDOW_TILE_DIVIDER_CROSS:
+        case WINDOW_TILE_BORDER_RIGHT_TEE:
           break;
-        case 0xf017:
-          tile = 0xf01b;
+        case WINDOW_TILE_BORDER_RIGHT:
+          tile = WINDOW_TILE_BORDER_RIGHT_TEE;
           break;
-        case 0xf00b:
-          tile = 0xf00d;
+        case WINDOW_TILE_DIVIDER_TEE_RIGHT:
+          tile = WINDOW_TILE_DIVIDER_CROSS;
           break;
-        case 0xf00f:
-          tile = 0xf00c;
+        case WINDOW_TILE_DIVIDER_VERTICAL:
+          tile = WINDOW_TILE_DIVIDER_TEE_LEFT;
           break;
         default:
-          tile = 0xf00e;
+          tile = WINDOW_TILE_DIVIDER_HORIZONTAL;
           break;
         }
       } else {
         switch (tile) {
-        case 0xf009:
-        case 0xf00a:
-        case 0xf00d:
+        case WINDOW_TILE_DIVIDER_TEE_DOWN:
+        case WINDOW_TILE_DIVIDER_TEE_UP:
+        case WINDOW_TILE_DIVIDER_CROSS:
           break;
-        case 0xf00b:
-        case 0xf00c:
-        case 0xf00f:
-          tile = 0xf00d;
+        case WINDOW_TILE_DIVIDER_TEE_RIGHT:
+        case WINDOW_TILE_DIVIDER_TEE_LEFT:
+        case WINDOW_TILE_DIVIDER_VERTICAL:
+          tile = WINDOW_TILE_DIVIDER_CROSS;
           break;
         default:
-          tile = 0xf00e;
+          tile = WINDOW_TILE_DIVIDER_HORIZONTAL;
           break;
         }
       }

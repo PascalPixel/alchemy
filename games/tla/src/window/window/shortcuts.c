@@ -28,7 +28,7 @@ void AreaNameWindow_Show(void) {
   Text_GetMessageSize(resource, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;
-  window = Window_Create(x, y, width, height, 2);
+  window = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
   work->noticeWindow = window;
   Text_DrawMessage(resource, (s32)window, 0, 0);
   work->noticeFrames = 90;

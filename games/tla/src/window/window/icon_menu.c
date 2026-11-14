@@ -800,7 +800,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     link = Ram_HeapSlots->battleWork;
     mode = 0;
     if (state->timerWindow == NULL && link->linkPaused == 0) {
-      state->timerWindow = Window_Create(0, 16, 30, 4, 42);
+      state->timerWindow =
+          Window_Create(0, 16, 30, 4,
+                        WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                            WINDOW_FLAG_BORDERED_CANVAS);
       Text_FillCanvasBackground();
       Link_DrawWaitingForOpponent();
     } else {
@@ -1205,7 +1208,7 @@ void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
     entry->y = row * 8;
     x += 3;
   }
-  menu->window = Window_Create(x, row, menu->width, 3, 2);
+  menu->window = Window_Create(x, row, menu->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Lays the entries out in a row three cells apart from x, on row y, and
@@ -1227,7 +1230,7 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
     entry->x = x << 3;
     x += 3;
   }
-  work->window = Window_Create(x, y, *widthp, 3, 2);
+  work->window = Window_Create(x, y, *widthp, 3, WINDOW_FLAG_INSTANT);
 }
 
 static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
@@ -1595,12 +1598,14 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   if (mode != 0) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4, 2);
+    window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4,
+                           WINDOW_FLAG_INSTANT);
     msg = (s32)MsgPasswordEntry;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(msg, window, 0, 4);
-    window = Window_Create(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, 2);
+    window = Window_Create(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12,
+                           WINDOW_FLAG_INSTANT);
     work->lowerWindow = window;
     Text_DrawMessage(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
 #if LANGUAGE == LANGUAGE_FRENCH
@@ -1618,12 +1623,13 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   } else {
     Task_Add(Menu_DrawModeIndicator, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, 2);
+    window = Window_Create(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4,
+                           WINDOW_FLAG_INSTANT);
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage((s32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
-    work->lowerWindow =
-        Window_Create(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
+    work->lowerWindow = Window_Create(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH,
+                                      7, WINDOW_FLAG_INSTANT);
   }
   result = IconMenu_Run(0);
   if (mode != 0)

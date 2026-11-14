@@ -78,7 +78,7 @@ void WindowSystem_InitField(void) {
   work->glyphResource = 99;
   work->level = 15;
   FillWords(Iwram_FillWordsEntry, work->tilemap, sizeof(work->tilemap),
-            0xf000f000);
+            WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
@@ -103,13 +103,14 @@ void WindowSystem_InitBattle(s32 kind) {
   work->glyphResource = 99;
   work->menuState = 1;
   work->level = 15;
-  Iwram_FillWordsEntry(work->tilemap, sizeof(work->tilemap), 0xf000f000);
+  Iwram_FillWordsEntry(work->tilemap, sizeof(work->tilemap),
+                       WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
   WindowSystem_StartBattleUpdate(kind);
-  WindowSystem_CopyTileLowerRows(0xf013, 128);
-  WindowSystem_CopyTileLowerRows(0xf014, 129);
-  WindowSystem_CopyTileLowerRows(0xf015, 130);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT, 128);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM, 129);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_RIGHT, 130);
   {
     u8 mode = 4;
 
@@ -175,9 +176,9 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
 
       if (canvas->menuState != 0) {
         if ((u32)(y + row) > 16)
-          tile = 0xF07F;
+          tile = WINDOW_TILE_COMMAND_PANEL;
         else
-          tile = 0xF000;
+          tile = WINDOW_TILE_BLANK;
       }
       column = 0;
       if (column < width) {
@@ -193,9 +194,9 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
-/// Draws a window as its flags ask: with flag 8 its inside is filled (with
-/// colour 4 under flag 0x20, which also draws the border, else cleared), and
-/// without it only the border is drawn. Clears the window's duration.
+/// Draws a window at its full size: its border, and for a text canvas window
+/// the canvas, filled with colour 4 under a border when the window is bordered
+/// and transparent otherwise.
 void Window_DrawOpened(struct Window *window) {
   u32 flags;
   s32 x;
@@ -211,12 +212,13 @@ void Window_DrawOpened(struct Window *window) {
   height = window->height;
   flags = window->flags;
   window->duration = 0;
-  if (8 & flags) {
-    if (0x20 & flags) {
+  if (WINDOW_FLAG_TEXT_CANVAS & flags) {
+    if (WINDOW_FLAG_BORDERED_CANVAS & flags) {
       Window_DrawBorder(x, y, width, height);
-      Iwram_FillWords((void *)0x06002500, 0xF00, 0x44444444);
+      Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
+                      TEXT_CANVAS_BACKGROUND_WORD);
     } else {
-      Iwram_FillWords((void *)0x06002500, 0xF00, 0);
+      Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
     }
     Window_MapTextCanvasTiles(x, y, width, height, 0);
   } else {
@@ -225,9 +227,9 @@ void Window_DrawOpened(struct Window *window) {
   work->dirty = 1;
 }
 
-/// Opens the first free window at x, y with width and height; attrs bits 8,
-/// 32, 64, 128 and 0x100 become window flags, and bit 2 draws it at once
-/// instead of waiting for it to open.
+/// Opens a window at tile (x, y) of width by height tiles in the first free
+/// window slot, and returns it, or NULL when all slots are in use. attrs takes
+/// the WINDOW_FLAG_ flags.
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   struct Window *slot;
   struct Window *found;
@@ -236,7 +238,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   slot = UI_WORK->windows;
   found = 0;
   for (i = 0; i != UI_WINDOW_COUNT; i++, slot++) {
-    if ((slot->flags & 1) == 0 && slot->duration == 0) {
+    if ((slot->flags & WINDOW_FLAG_OPEN) == 0 && slot->duration == 0) {
       found = slot;
       break;
     }
@@ -250,32 +252,32 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     found->state = 0;
     found->output.tailLink = &slot->output.head;
     found->unk10 = 1;
-    found->flags = 1;
+    found->flags = WINDOW_FLAG_OPEN;
     // Text_ResetStyle takes no arguments: x is passed and ignored.
     Text_ResetStyle(x);
-    if (attrs & 8) {
-      found->flags |= 8;
+    if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
+      found->flags |= WINDOW_FLAG_TEXT_CANVAS;
     }
-    if (attrs & 32) {
-      found->flags |= 32;
+    if (attrs & WINDOW_FLAG_BORDERED_CANVAS) {
+      found->flags |= WINDOW_FLAG_BORDERED_CANVAS;
     }
-    if (attrs & 64) {
-      found->flags |= 64;
+    if (attrs & WINDOW_FLAG_OUTLINED_TEXT) {
+      found->flags |= WINDOW_FLAG_OUTLINED_TEXT;
     }
-    if (attrs & 128) {
-      found->flags |= 128;
+    if (attrs & WINDOW_FLAG_ANCHOR_BOTTOM) {
+      found->flags |= WINDOW_FLAG_ANCHOR_BOTTOM;
     }
-    if (attrs & 0x100) {
-      found->flags |= 0x100;
+    if (attrs & WINDOW_FLAG_FIXED_X) {
+      found->flags |= WINDOW_FLAG_FIXED_X;
     }
-    if (attrs & 2) {
-      found->flags |= 2;
+    if (attrs & WINDOW_FLAG_INSTANT) {
+      found->flags |= WINDOW_FLAG_INSTANT;
       found->frame = 0;
       found->duration = 1;
       Window_DrawOpened(found);
     } else {
-      found->duration = 8;
-      found->frame = 7;
+      found->duration = WINDOW_OPEN_FRAMES;
+      found->frame = WINDOW_OPEN_FRAMES - 1;
       Window_WaitZoom(found);
       wait(1);
     }
@@ -284,7 +286,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
 }
 
 void Window_WaitZoom(void *work) {
-  if (!(2 & ((struct Window *)work)->flags) &&
+  if (!(WINDOW_FLAG_INSTANT & ((struct Window *)work)->flags) &&
       (((struct Window *)work)->duration != 0)) {
     do {
       wait(1);
@@ -330,12 +332,12 @@ void Window_Close(struct Window *work, s32 release) {
     work->previousHeight = zero;
   } else {
     work->frame = release;
-    work->duration = 4;
+    work->duration = WINDOW_CLOSE_FRAMES;
   }
 }
 
 void WindowSprite_PrepareForRedraw(struct Window *work) {
-  if (!(8 & work->flags)) {
+  if (!(WINDOW_FLAG_TEXT_CANVAS & work->flags)) {
     WindowSprite_RedrawSavedRect(work);
     WindowSprite_ClearList(work);
   }
@@ -409,7 +411,7 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   tiles = work->tilemap[0] + top * 32 + left;
   for (row = 0; row < height; row++) {
     for (left = 0; left < width; left++)
-      *tiles++ = 0xf020;
+      *tiles++ = WINDOW_TILE_WINDOW_FILL;
     tiles += 32 - width;
   }
   work->dirty = 1;
@@ -572,14 +574,14 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
 s32 Text_ClearCanvas(void) {
   s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
 
-  return fill((void *)0x06002500, 0xf00, 0);
+  return fill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
 }
 
 /// Fills the text canvas with the window background colour (4).
 void Text_FillCanvasBackground(void) {
   s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
 
-  fill((void *)0x06002500, 0xf00, 0x44444444);
+  fill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, TEXT_CANVAS_BACKGROUND_WORD);
 }
 
 void Message_ResetIdle(void) {

@@ -94,7 +94,7 @@ s32 DebugFlagEditor_Run(void) {
   win = 0;
   cur[0] = win;
   cur[1] = win;
-  win = Window_Create(1, 0, 28, 20, 2);
+  win = Window_Create(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
   DebugFlagEditor_DrawTable(win, page);
   MenuArrow_Create(obj, &res);
   for (;;) {

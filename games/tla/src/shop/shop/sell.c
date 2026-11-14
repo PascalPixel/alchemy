@@ -23,10 +23,11 @@ s32 Shop_ChooseMember(void) {
   s32 redraw = 1;
   s32 result;
 
-  shop->moneyWindow = Window_CreateFar(0, 9, MONEY_WINDOW_WIDTH, 4, 2);
+  shop->moneyWindow =
+      Window_CreateFar(0, 9, MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
-  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, 2);
-  listWindow = Window_CreateFar(0, 14, 13, 3, 2);
+  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
+  listWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->listWindow = listWindow;
   shop->cursor.anchor->active = 4;
   shop->mode = 12;
@@ -122,9 +123,10 @@ s32 Shop_SelectSell(s32 unitId) {
   unit = Unit_Get(unitId);
   slot = 0;
   inventoryCount = 1;
-  priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4, 2);
+  priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4,
+                                 WINDOW_FLAG_INSTANT);
   do {
-    nameWindow = Window_CreateFar(0, 5, 30, 3, 2);
+    nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
     shop->cursor.anchor->active = 18;
     shop->mode = 12;
     redraw = 1;
@@ -162,7 +164,8 @@ s32 Shop_SelectSell(s32 unitId) {
         u32 item = unit->inventory[slot];
 
         Sound_PlayFar(SE_RECOVERY);
-        window = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
+        window = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10,
+                                  WINDOW_FLAG_INSTANT);
         ItemMenu_DrawItemDetailsFar(window, item);
         *(u8 *)&shop->detailsHidden = 0;
         while (gInput.held & KEY_SELECT)

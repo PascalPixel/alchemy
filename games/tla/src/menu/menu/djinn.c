@@ -88,7 +88,7 @@ s32 DjinnMenu_Run(void) {
   ItemMenu_Initialize(0, 3, 0, 7);
   Menu_SetFirstActorRowCoordinates(0);
   Palette_LightenHighlight(14);
-  menu->helpWindow = Window_CreateFar(13, 0, 17, 5, 2);
+  menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   menu->pairEntries[0] = 255;
   zero = 0;
   menu->selectedColumn[0] = zero;
@@ -834,8 +834,8 @@ s32 DjinnMenu_ShowHelp(void) {
   Window_SetRectPalette(1, 1, 11, 3, 6);
   Window_SetInteriorRectPalette(menu->listWindow, 0, 0, 28, 10, 6);
   list = Window_CreateFar(0, 9, 8, 10, 6);
-  helpWindow = Window_CreateFar(8, 12, 22, 7, 2);
-  statusWindow = Window_CreateFar(8, 9, 22, 3, 2);
+  helpWindow = Window_CreateFar(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
+  statusWindow = Window_CreateFar(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
   Window_MarkVisibleTextTilesFar();
   helpIndex = 0;
   listMessage = (s32)MsgDjinnInfoTopic;

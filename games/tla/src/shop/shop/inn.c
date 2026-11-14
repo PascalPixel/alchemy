@@ -69,7 +69,8 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   MessageArgument_PushFar(amount, MESSAGE_ARGUMENT_NUMBER);
   messageBase = (s32)MsgInnWelcome;
   Shop_ShowKeeperMessage(messageBase);
-  state->window = Window_CreateFar(0, 16, SHOP_COIN_WINDOW_WIDTH, 4, 2);
+  state->window =
+      Window_CreateFar(0, 16, SHOP_COIN_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
 
   if (Shop_AskYesNo(0) != 0) {

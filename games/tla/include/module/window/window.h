@@ -5,6 +5,8 @@
 /// What games/tla/src/window/ declares for the files that use it, written once.
 
 #include "types.h"
+#include "system/io_reg.h"
+#include "window_tile.h"
 
 struct NameCursorMotion;
 struct Window;
@@ -14,6 +16,102 @@ void Message_CloseFinishedWindows(void);
 s32 Message_AllTyped(void);
 
 void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+
+// The text canvas tiles in VRAM: 120 4bpp tiles from tile 296, enough for the
+// interior of a full-width window six tiles tall.
+#define TEXT_CANVAS_VRAM ((void *)0x06002500)
+#define TEXT_CANVAS_SIZE (120 * TILE_SIZE_4BPP)
+#define TEXT_CANVAS_FIRST_TILE 296
+
+/// The UI tilemap in VRAM (BG screen block 4), which WindowSystem_UploadTilemap
+/// copies the work block's tilemap to.
+#define WINDOW_TILEMAP_VRAM ((u8 *)0x06002000)
+
+/// The window palette's background colour, behind its text.
+#define WINDOW_BACKGROUND_COLOR 4
+/// Eight 4bpp pixels of WINDOW_BACKGROUND_COLOR, for filling the text canvas
+/// or a tile a word at a time.
+#define TEXT_CANVAS_BACKGROUND_WORD 0x44444444
+
+/// Two copies of a tilemap entry, for filling a run of entries a word at a
+/// time.
+#define WINDOW_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
+
+/// A tilemap entry's tile number, the bits below its flip bits and palette
+/// number in the hardware's screen entry.
+#define TILE_NUMBER_MASK 0x3ff
+/// The tilemap entry flip bits.
+#define TILE_HFLIP 0x400
+#define TILE_VFLIP 0x800
+
+/// The window border's tiles, as The Broken Seal's.
+enum {
+  WINDOW_TILE_BLANK = WINDOW_TILE(0),
+  /// The frame a window flashes with as it swells (Window_DrawFlashBorder),
+  /// which Window_ShowFlashFrame loads over tiles 8 to 15.
+  WINDOW_TILE_FLASH_TOP_LEFT = WINDOW_TILE(8),
+  WINDOW_TILE_FLASH_TOP = WINDOW_TILE(9),
+  WINDOW_TILE_FLASH_TOP_RIGHT = WINDOW_TILE(10),
+  WINDOW_TILE_FLASH_BOTTOM_LEFT = WINDOW_TILE(11),
+  WINDOW_TILE_FLASH_BOTTOM = WINDOW_TILE(12),
+  WINDOW_TILE_FLASH_BOTTOM_RIGHT = WINDOW_TILE(13),
+  WINDOW_TILE_FLASH_LEFT = WINDOW_TILE(14),
+  WINDOW_TILE_FLASH_RIGHT = WINDOW_TILE(15),
+  WINDOW_TILE_BORDER_TOP_LEFT = WINDOW_TILE(16),
+  WINDOW_TILE_BORDER_TOP = WINDOW_TILE(17),
+  WINDOW_TILE_BORDER_TOP_RIGHT = WINDOW_TILE(18),
+  WINDOW_TILE_BORDER_BOTTOM_LEFT = WINDOW_TILE(19),
+  WINDOW_TILE_BORDER_BOTTOM = WINDOW_TILE(20),
+  WINDOW_TILE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(21),
+  WINDOW_TILE_BORDER_LEFT = WINDOW_TILE(22),
+  WINDOW_TILE_BORDER_RIGHT = WINDOW_TILE(23),
+  WINDOW_TILE_BORDER_ROUND_CORNER = WINDOW_TILE(28),
+  WINDOW_TILE_WINDOW_FILL = WINDOW_TILE(32),
+  // Divider lines (Window_DrawDividerLine) and their joins.
+  WINDOW_TILE_DIVIDER_TEE_DOWN =
+      WINDOW_TILE(9), ///< a vertical line leaving below
+  WINDOW_TILE_DIVIDER_TEE_UP =
+      WINDOW_TILE(10), ///< a vertical line leaving above
+  WINDOW_TILE_DIVIDER_TEE_RIGHT =
+      WINDOW_TILE(11), ///< a horizontal line leaving right
+  WINDOW_TILE_DIVIDER_TEE_LEFT =
+      WINDOW_TILE(12), ///< a horizontal line leaving left
+  WINDOW_TILE_DIVIDER_CROSS = WINDOW_TILE(13),
+  WINDOW_TILE_DIVIDER_HORIZONTAL = WINDOW_TILE(14),
+  WINDOW_TILE_DIVIDER_VERTICAL = WINDOW_TILE(15),
+  WINDOW_TILE_BORDER_TOP_TEE = WINDOW_TILE(24), ///< the top edge meeting a line
+  WINDOW_TILE_BORDER_BOTTOM_TEE =
+      WINDOW_TILE(25), ///< the bottom edge meeting a line
+  WINDOW_TILE_BORDER_LEFT_TEE =
+      WINDOW_TILE(26), ///< the left edge meeting a line
+  WINDOW_TILE_BORDER_RIGHT_TEE =
+      WINDOW_TILE(27), ///< the right edge meeting a line
+  /// In battle, the bottom border tiles' lower rows, which
+  /// WindowSystem_InitBattle copies to tiles 128 to 130.
+  WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT = WINDOW_TILE(128),
+  WINDOW_TILE_BATTLE_BORDER_BOTTOM = WINDOW_TILE(129),
+  WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(130),
+  /// In battle, the tile the command row fills its empty panels with, and
+  /// Window_EraseBorderRect below row 16.
+  WINDOW_TILE_COMMAND_PANEL = WINDOW_TILE(127),
+};
+
+/// The flags of a UI window (struct Window.flags), which Window_Create takes as
+/// its attributes, as The Broken Seal's.
+enum {
+  WINDOW_FLAG_OPEN = 0x1,    ///< the window slot is in use
+  WINDOW_FLAG_INSTANT = 0x2, ///< opens and closes at once, with no zoom
+  /// text is drawn into a canvas of bitmap tiles (Window_MapTextCanvasTiles)
+  WINDOW_FLAG_TEXT_CANVAS = 0x8,
+  /// the canvas has a border and a filled background; without it the canvas is
+  /// transparent and borderless
+  WINDOW_FLAG_BORDERED_CANVAS = 0x20,
+  WINDOW_FLAG_OUTLINED_TEXT = 0x40, ///< the canvas text gets an outline
+  /// when a new page resizes the window, its bottom edge stays put
+  WINDOW_FLAG_ANCHOR_BOTTOM = 0x80,
+  /// when a new page resizes the window, its left edge stays put
+  WINDOW_FLAG_FIXED_X = 0x100,
+};
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void WindowSprite_RedrawSavedRect(struct Window *window);

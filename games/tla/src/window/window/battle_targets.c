@@ -248,7 +248,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
    * mode are dead. */
   __asm__("" : : : "r8", "r10");
 #endif
-  window = Window_Create(0, 12, 30, 4, 74);
+  window = Window_Create(0, 12, 30, 4,
+                         WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                             WINDOW_FLAG_OUTLINED_TEXT);
 
   for (;;) {
     /* FAKEMATCH(dead): a once-only block. */

@@ -44,7 +44,7 @@ s32 PsynergyMenu_Run(void) {
 #endif
   screen->partyCount = Party_ListMembersFar(screen->ownerIds);
   ItemMenu_Initialize(0, 3, 0, 7);
-  screen->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
+  screen->messageWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
   Palette_LightenHighlight(14);
   Link_DrawPageArrowsFar((void *)0x06002500);
 

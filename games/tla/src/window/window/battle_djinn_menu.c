@@ -113,7 +113,9 @@ s32 BattleDjinnMenu_Run(s32 member) {
 #if TLA_PATCH_1
   redrawList = 0;
 #endif
-  messageWindow = Window_Create(0, 4, 30, 4, 42);
+  messageWindow = Window_Create(0, 4, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_BORDERED_CANVAS);
   Text_UseExtraTiles(1);
   listWindow = Window_Create(DJINN_LIST_X, 9, DJINN_LIST_WIDTH, 11, 6);
   DJINN_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
@@ -172,7 +174,10 @@ s32 BattleDjinnMenu_Run(s32 member) {
                            listWindow->width - 2, 1, 15);
       if (previewPage != 0) {
         Window_Close(messageWindow, 1);
-        messageWindow = Window_Create(0, 4, 30, 4, 42);
+        messageWindow =
+            Window_Create(0, 4, 30, 4,
+                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                              WINDOW_FLAG_BORDERED_CANVAS);
         Text_FillCanvasBackground();
       }
       redraw = 0;
@@ -238,7 +243,10 @@ s32 BattleDjinnMenu_Run(s32 member) {
       if (previewPage == 0) {
         work->holdTilemapUpload = 1;
         Window_Close(messageWindow, 1);
-        messageWindow = Window_Create(0, 4, 30, 4, 42);
+        messageWindow =
+            Window_Create(0, 4, 30, 4,
+                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                              WINDOW_FLAG_BORDERED_CANVAS);
         work->holdTilemapUpload = previewPage;
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);

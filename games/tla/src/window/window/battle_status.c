@@ -174,7 +174,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   cursorPosition.x = 0;
   cursorPosition.y = 0;
   statusWindow = Window_Create(0, 0, 30, 20, 6);
-  helpWindow = Window_Create(0, 14, 30, 6, 10);
+  helpWindow = Window_Create(0, 14, 30, 6,
+                             WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS);
   Window_MarkVisibleTextTiles();
 
   for (;;) {

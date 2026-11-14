@@ -153,7 +153,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);
-  messageWindow = Window_Create(0, 5, 30, 4, 42);
+  messageWindow = Window_Create(0, 5, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = 0;
   do {
     firstEntry = NAVIGATION->page;

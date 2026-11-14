@@ -107,7 +107,7 @@ s32 ItemMenu_Run(void) {
   Palette_LightenHighlight(14);
   Link_DrawPageArrowsFar(0x06002500);
   screen->questionWindow =
-      (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, 2);
+      (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
 #if TLA_PATCH_1
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, (void *)BG_CHAR_BLOCK(1), size);
@@ -2059,7 +2059,8 @@ s32 ItemMenu_ShowDetails(s32 value) {
 #if LANGUAGE != LANGUAGE_JAPANESE
   itemIcon->state = 13;
 #endif
-  window = Window_CreateFar(0, 0, DETAILS_WINDOW_WIDTH, 10, 2);
+  window =
+      Window_CreateFar(0, 0, DETAILS_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
   Task_Remove(Menu_UpdateEntryObjectTransforms);
 
   {
@@ -2655,7 +2656,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   s32 selection = 1;
   s32 changed = 1;
 
-  window = Window_CreateFar(13, 3, 17, 10, 2);
+  window = Window_CreateFar(13, 3, 17, 10, WINDOW_FLAG_INSTANT);
   itemId = item & 0x1ff;
   Item_GetDirectFar(itemId);
   Text_DrawMessageAsTilesFar(itemId + (s32)MsgItemName, window, 24, 0);

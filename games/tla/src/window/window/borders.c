@@ -143,31 +143,34 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
     return;
   Window_ClearTextTilesInRect(x, y, width, height);
   if (canvas->mode != 0)
-    *cursor++ = 0xf01c;
+    *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER;
   else
-    *cursor++ = 0xf010;
-  cursor = Memory_FillHalfwordsDma(cursor, 0xf011f011, width - 2);
+    *cursor++ = WINDOW_TILE_BORDER_TOP_LEFT;
+  cursor = Memory_FillHalfwordsDma(
+      cursor, WINDOW_TILE_PAIR(WINDOW_TILE_BORDER_TOP), width - 2);
   if (canvas->mode != 0)
-    *cursor++ = 0xf41c;
+    *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_HFLIP;
   else
-    *cursor++ = 0xf012;
+    *cursor++ = WINDOW_TILE_BORDER_TOP_RIGHT;
   cursor += 32 - width;
   for (row = 1; row < height - 1; row++) {
-    *cursor++ = 0xf016;
+    *cursor++ = WINDOW_TILE_BORDER_LEFT;
     if (width != 2)
-      cursor = Memory_FillHalfwordsDma(cursor, 0xf020f020, width - 2);
-    *cursor++ = 0xf017;
+      cursor = Memory_FillHalfwordsDma(
+          cursor, WINDOW_TILE_PAIR(WINDOW_TILE_WINDOW_FILL), width - 2);
+    *cursor++ = WINDOW_TILE_BORDER_RIGHT;
     cursor += 32 - width;
   }
   if (canvas->mode != 0)
-    *cursor++ = 0xf81c;
+    *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_VFLIP;
   else
-    *cursor++ = 0xf013;
-  cursor = Memory_FillHalfwordsDma(cursor, 0xf014f014, width - 2);
+    *cursor++ = WINDOW_TILE_BORDER_BOTTOM_LEFT;
+  cursor = Memory_FillHalfwordsDma(
+      cursor, WINDOW_TILE_PAIR(WINDOW_TILE_BORDER_BOTTOM), width - 2);
   if (canvas->mode != 0)
-    *cursor = 0xfc1c;
+    *cursor = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_HFLIP | TILE_VFLIP;
   else
-    *cursor = 0xf015;
+    *cursor = WINDOW_TILE_BORDER_BOTTOM_RIGHT;
   canvas->dirty = 1;
 }
 
@@ -182,20 +185,23 @@ void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
   if (width <= 1 || height <= 1 || width > 30 || height > 30)
     return;
   Window_ClearTextTilesInRect(x, y, width, height);
-  *cursor++ = 0xf008;
-  cursor = Memory_FillHalfwordsDma(cursor, 0xf009f009, width - 2);
-  *cursor++ = 0xf00a;
+  *cursor++ = WINDOW_TILE_FLASH_TOP_LEFT;
+  cursor = Memory_FillHalfwordsDma(
+      cursor, WINDOW_TILE_PAIR(WINDOW_TILE_FLASH_TOP), width - 2);
+  *cursor++ = WINDOW_TILE_FLASH_TOP_RIGHT;
   cursor += 32 - width;
   for (row = 1; row < height - 1; row++) {
-    *cursor++ = 0xf00e;
+    *cursor++ = WINDOW_TILE_FLASH_LEFT;
     if (width != 2)
-      cursor = Memory_FillHalfwordsDma(cursor, 0xf020f020, width - 2);
-    *cursor++ = 0xf00f;
+      cursor = Memory_FillHalfwordsDma(
+          cursor, WINDOW_TILE_PAIR(WINDOW_TILE_WINDOW_FILL), width - 2);
+    *cursor++ = WINDOW_TILE_FLASH_RIGHT;
     cursor += 32 - width;
   }
-  *cursor++ = 0xf00b;
-  cursor = Memory_FillHalfwordsDma(cursor, 0xf00cf00c, width - 2);
-  *cursor = 0xf00d;
+  *cursor++ = WINDOW_TILE_FLASH_BOTTOM_LEFT;
+  cursor = Memory_FillHalfwordsDma(
+      cursor, WINDOW_TILE_PAIR(WINDOW_TILE_FLASH_BOTTOM), width - 2);
+  *cursor = WINDOW_TILE_FLASH_BOTTOM_RIGHT;
   canvas->dirty = 1;
 }
 
@@ -213,15 +219,17 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
     for (row = 1; row < height - 1; row++) {
       cursor++;
       for (column = 1; column < width - 1; column++)
-        *cursor++ =
-            ((0x127 + row + (column - 1) * (height - 2)) & 0xfff) | 0xf000;
+        *cursor++ = WINDOW_TILE(
+            (TEXT_CANVAS_FIRST_TILE - 1 + row + (column - 1) * (height - 2)) &
+            0xfff);
       cursor++;
       cursor += 32 - width;
     }
   } else {
     for (row = 1; row < height - 1; row++) {
       for (column = 0; column < width; column++)
-        *cursor++ = ((0x127 + row + column * (height - 2)) & 0xfff) | 0xf000;
+        *cursor++ = WINDOW_TILE(
+            (TEXT_CANVAS_FIRST_TILE - 1 + row + column * (height - 2)) & 0xfff);
       cursor += 32 - width;
     }
   }
@@ -337,7 +345,8 @@ void BattleMessage_Open(s32 message) {
   if (work->entries[entry] != 0) {
     previous = slot->window;
     if (previous == NULL) {
-      window = Window_Create(0, 15, 30, 6, 10);
+      window = Window_Create(0, 15, 30, 6,
+                             WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS);
       slot->window = window;
       Window_MapTextCanvasTiles(0, 15, 30, 6, 1);
       slot->cursor = result;

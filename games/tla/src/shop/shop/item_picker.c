@@ -119,10 +119,10 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   Shop_InitializeWork();
   shop = Ram_HeapSlots->menuRuntime;
   shop->itemMode = itemMode;
-  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, 2);
-  listWindow = Window_CreateFar(0, 14, 13, 3, 2);
+  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
+  listWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->listWindow = listWindow;
-  iconWindow = Window_CreateFar(30, 0, 1, 1, 2);
+  iconWindow = Window_CreateFar(30, 0, 1, 1, WINDOW_FLAG_INSTANT);
   result = 0;
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000,
                                 (struct RenderInput *)iconWindow, 0, result);
@@ -222,8 +222,9 @@ s32 ItemPicker_SelectItem(s32 unitId) {
   unit = Unit_Get(unitId);
   inventoryCount = 1;
   redraw = 1;
-  priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4, 2);
-  nameWindow = Window_CreateFar(0, 5, 30, 3, 2);
+  priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4,
+                                 WINDOW_FLAG_INSTANT);
+  nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 
   shop->cursor.anchor->active = 18;
   shop->mode = 12;
@@ -275,7 +276,8 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       void *details;
 
       Sound_PlayFar(SE_RECOVERY);
-      details = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
+      details =
+          Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
       ItemMenu_DrawItemDetailsFar(details, item);
       shop->detailsHidden = 0;
       while (gInput.held & KEY_SELECT)

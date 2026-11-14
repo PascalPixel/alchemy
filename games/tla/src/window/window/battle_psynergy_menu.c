@@ -116,7 +116,9 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
   unit = Unit_Get(unitId);
-  messageWindow = Window_Create(0, 5, 30, 4, 42);
+  messageWindow = Window_Create(0, 5, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = 5;
   MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(LIST_WINDOW_X, 9, LIST_WINDOW_WIDTH, 11, 6);

@@ -372,8 +372,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return gShrineOfTheSeaGod_Triggers;
 }
 
-// next object the overlay links.
-
 #include "text/msg_ids.h"
 
 extern u32 gShrineOfTheSeaGod_RikiLooksAround[];
@@ -802,7 +800,9 @@ void ShrineOfTheSeaGod_FreezeThirdPuddle(void) {
   GameFlag_Set(FLAG_THIRD_PUDDLE_FROZEN);
 }
 
-void ShrineOfTheSeaGod_LiftBlock(void) { Actor_LiftTargetBlock(gShrineOfTheSeaGod_MovableActors); }
+void ShrineOfTheSeaGod_LiftBlock(void) {
+  Actor_LiftTargetBlock(gShrineOfTheSeaGod_MovableActors);
+}
 
 void ShrineOfTheSeaGod_SetDownTorch(void) {
   struct ShrineOfTheSeaGodObject *object;
@@ -973,7 +973,7 @@ extern u32 gShrineOfTheSeaGod_PillarOffset[];
 
 /// The leader rocks a pillar back and forth, then it is carried along with him.
 void ShrineOfTheSeaGod_RockPillar(struct ShrineOfTheSeaGodObject *object,
-                   struct ShrineOfTheSeaGodObject *other) {
+                                  struct ShrineOfTheSeaGodObject *other) {
   struct ShrineOfTheSeaGodSprite *sprite = object->sprite;
   u32 n;
   u32 i;
@@ -1016,7 +1016,9 @@ void ShrineOfTheSeaGod_KeepWithLeader(struct ShrineOfTheSeaGodObject *object) {
                leader->z + offset[2]);
 }
 
-void ShrineOfTheSeaGod_KeepRoom3PillarWithLeader(void) { ShrineOfTheSeaGod_KeepWithLeader(Actor_GetById(14)); }
+void ShrineOfTheSeaGod_KeepRoom3PillarWithLeader(void) {
+  ShrineOfTheSeaGod_KeepWithLeader(Actor_GetById(14));
+}
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1091,7 +1093,8 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
   Event_End();
 }
 
-void ShrineOfTheSeaGod_LandPillarAsLogs(struct ShrineOfTheSeaGodObject *object, s32 base) {
+void ShrineOfTheSeaGod_LandPillarAsLogs(struct ShrineOfTheSeaGodObject *object,
+                                        s32 base) {
   do {
     wait(1);
   } while (object->velocityY != 0);
@@ -1107,7 +1110,9 @@ void ShrineOfTheSeaGod_LandPillarAsLogs(struct ShrineOfTheSeaGodObject *object, 
   wait(20);
 }
 
-void ShrineOfTheSeaGod_KeepFirstPillarWithLeader(void) { ShrineOfTheSeaGod_KeepWithLeader(Actor_GetById(15)); }
+void ShrineOfTheSeaGod_KeepFirstPillarWithLeader(void) {
+  ShrineOfTheSeaGod_KeepWithLeader(Actor_GetById(15));
+}
 
 void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
   struct ShrineOfTheSeaGodObject *leader =
@@ -1153,7 +1158,9 @@ void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
   GameFlag_Set(FLAG_FIRST_PILLAR_TOPPLED);
 }
 
-void ShrineOfTheSeaGod_KeepSecondPillarWithLeader(void) { ShrineOfTheSeaGod_KeepWithLeader(Actor_GetById(16)); }
+void ShrineOfTheSeaGod_KeepSecondPillarWithLeader(void) {
+  ShrineOfTheSeaGod_KeepWithLeader(Actor_GetById(16));
+}
 
 void ShrineOfTheSeaGod_ToppleSecondPillar(void) {
   struct ShrineOfTheSeaGodObject *leader =
@@ -1595,41 +1602,41 @@ void ShrineOfTheSeaGod_EndDjinniDash(void) {
   Event_End();
 }
 
-#define DEFINE_DJINNI_DASH(name, n1, n2, n3)                                 \
+#define DEFINE_DJINNI_DASH(name, n1, n2, n3)                                   \
   void name(void) {                                                            \
-    ShrineOfTheSeaGod_StartDjinniDash();                                                           \
+    ShrineOfTheSeaGod_StartDjinniDash();                                       \
     FieldCamera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);          \
     Actor_WalkToAndWaitById(14, n1, n2);                                       \
     Actor_GetById(14)->state = n3;                                             \
-    ShrineOfTheSeaGod_EndDjinniDash();                                                           \
+    ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216, 1)
 
-#define DEFINE_DJINNI_WALK_AND_JUMP(name, n1, n2, n3, n4, n5, n6)                     \
+#define DEFINE_DJINNI_WALK_AND_JUMP(name, n1, n2, n3, n4, n5, n6)              \
   void name(void) {                                                            \
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \
     u8 *state;                                                                 \
     s32 flag;                                                                  \
                                                                                \
-    ShrineOfTheSeaGod_StartDjinniDash();                                                           \
+    ShrineOfTheSeaGod_StartDjinniDash();                                       \
     ShrineOfTheSeaGod_CamMove(n1 << 16, 16 << 16, 216 << 16, 1);               \
     ShrineOfTheSeaGod_ObjWalk(14, n1, 216);                                    \
-    flag = GameFlag_Get(FLAG_TORCH_AT_NORTH_WALL);                                   \
+    flag = GameFlag_Get(FLAG_TORCH_AT_NORTH_WALL);                             \
     state = &block->state;                                                     \
     if (flag) {                                                                \
       block->facing = n2;                                                      \
       ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
       Event_Wait(20);                                                          \
       *state = n3;                                                             \
-      GameFlag_Set(FLAG_DJINNI_TRAPPED);                                        \
+      GameFlag_Set(FLAG_DJINNI_TRAPPED);                                       \
     } else {                                                                   \
       Event_Wait(5);                                                           \
       FieldCamera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);       \
       Sound_Play(SE_HIGH_JUMP);                                                \
       Actor_SetSpriteFlags(Actor_GetById(14), 0);                              \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
-      block->velocityY = 0x80000;                                                  \
+      block->velocityY = 0x80000;                                              \
       Actor_MoveToAndWaitById(14, n5, 216);                                    \
       Actor_SetSpriteFlags(Actor_GetById(14), 1);                              \
       Event_Wait(10);                                                          \
@@ -1637,55 +1644,59 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216, 1)
       ShrineOfTheSeaGod_ObjWalk(14, n4, 216);                                  \
       *state = n6;                                                             \
     }                                                                          \
-    ShrineOfTheSeaGod_EndDjinniDash();                                                           \
+    ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
-DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthEastJumpsWest, 360, 0x8000, 4, 296, 328, 2)
+DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthEastJumpsWest, 360,
+                            0x8000, 4, 296, 328, 2)
 
-#define DEFINE_DJINNI_DASH_AROUND(name, n1, n2, n3, n4)                             \
+#define DEFINE_DJINNI_DASH_AROUND(name, n1, n2, n3, n4)                        \
   void name(void) {                                                            \
-    ShrineOfTheSeaGod_StartDjinniDash();                                                           \
+    ShrineOfTheSeaGod_StartDjinniDash();                                       \
     FieldCamera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);          \
     ShrineOfTheSeaGod_ObjWalk(14, n3, 248);                                    \
     ShrineOfTheSeaGod_ObjWalk(14, n1, 248);                                    \
     Actor_WalkToAndWaitById(14, n1, n2);                                       \
     Actor_GetById(14)->state = n4;                                             \
-    ShrineOfTheSeaGod_EndDjinniDash();                                                           \
+    ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
-DEFINE_DJINNI_DASH_AROUND(ShrineOfTheSeaGod_DjinniNorthWestToSouthWest, 280, 296, 296, 3)
+DEFINE_DJINNI_DASH_AROUND(ShrineOfTheSeaGod_DjinniNorthWestToSouthWest, 280,
+                          296, 296, 3)
 
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthWestToSouthEast, 392, 296, 0)
 
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToSouthWest, 280, 296, 3)
 
-DEFINE_DJINNI_DASH_AROUND(ShrineOfTheSeaGod_DjinniSouthWestToNorthWest, 296, 216, 280, 2)
+DEFINE_DJINNI_DASH_AROUND(ShrineOfTheSeaGod_DjinniSouthWestToNorthWest, 296,
+                          216, 280, 2)
 
-DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthWestJumpsEast, 328, 0, 5, 392, 360, 1)
+DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthWestJumpsEast, 328, 0,
+                            5, 392, 360, 1)
 
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniNorthEastToSouthEast, 392, 296, 0)
 
-#define DEFINE_DJINNI_JUMP(name, n1, n2, n3, n4, n5)                         \
+#define DEFINE_DJINNI_JUMP(name, n1, n2, n3, n4, n5)                           \
   void name(void) {                                                            \
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \
     u8 *state;                                                                 \
     s32 flag;                                                                  \
                                                                                \
-    ShrineOfTheSeaGod_StartDjinniDash();                                                           \
-    flag = GameFlag_Get(FLAG_TORCH_AT_NORTH_WALL);                                   \
+    ShrineOfTheSeaGod_StartDjinniDash();                                       \
+    flag = GameFlag_Get(FLAG_TORCH_AT_NORTH_WALL);                             \
     state = &block->state;                                                     \
     if (flag) {                                                                \
       block->facing = n1;                                                      \
       ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
       Event_Wait(20);                                                          \
       *state = n2;                                                             \
-      GameFlag_Set(FLAG_DJINNI_TRAPPED);                                        \
+      GameFlag_Set(FLAG_DJINNI_TRAPPED);                                       \
     } else {                                                                   \
       FieldCamera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);       \
       Sound_Play(SE_HIGH_JUMP);                                                \
       Actor_SetSpriteFlags(Actor_GetById(14), 0);                              \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
-      block->velocityY = 0x80000;                                                  \
+      block->velocityY = 0x80000;                                              \
       Actor_MoveToAndWaitById(14, n4, 216);                                    \
       Actor_SetSpriteFlags(Actor_GetById(14), 1);                              \
       Event_Wait(10);                                                          \
@@ -1693,10 +1704,11 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniNorthEastToSouthEast, 392, 296, 0)
       ShrineOfTheSeaGod_ObjWalk(14, n3, 216);                                  \
       *state = n5;                                                             \
     }                                                                          \
-    ShrineOfTheSeaGod_EndDjinniDash();                                                           \
+    ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
-DEFINE_DJINNI_JUMP(ShrineOfTheSeaGod_TrappedDjinniJumpsWest, 0x8000, 4, 296, 328, 2)
+DEFINE_DJINNI_JUMP(ShrineOfTheSeaGod_TrappedDjinniJumpsWest, 0x8000, 4, 296,
+                   328, 2)
 
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_TrappedDjinniToNorthEast, 392, 216, 1)
 
@@ -2111,7 +2123,8 @@ void ShrineOfTheSeaGod_InitializeRoom9(void) {
 }
 
 /// The Right Prong floats above the last room, shedding sparkles.
-void ShrineOfTheSeaGod_SparkleRightProng(struct ShrineOfTheSeaGodObject *object) {
+void ShrineOfTheSeaGod_SparkleRightProng(
+    struct ShrineOfTheSeaGodObject *object) {
   struct ShrineOfTheSeaGodEffectParams params;
   u32 phase = gFrameCount & 7;
   s32 dx;
@@ -2488,22 +2501,34 @@ struct Trigger gShrineOfTheSeaGod_Room5Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, FLAG_THIRD_PUDDLE_FROZEN,
      EVENT(ShrineOfTheSeaGod_FreezeThirdPuddle)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_LiftBlock)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_SetDownTorch)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
+     EVENT(ShrineOfTheSeaGod_SetDownTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_LiftBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_SetDownTorch)},
-    {TRIGGER_STEP, 10, FLAG_DJINNI_BY_LEDGE, EVENT(ShrineOfTheSeaGod_DjinniRunsNorth)},
-    {TRIGGER_STEP, 11, FLAG_DJINNI_BY_LEDGE, EVENT(ShrineOfTheSeaGod_DjinniRunsWest)},
-    {TRIGGER_STEP, 12, FLAG_DJINNI_ON_LEDGE, EVENT(ShrineOfTheSeaGod_DjinniHopsOntoLedge)},
-    {TRIGGER_STEP, 13, FLAG_DJINNI_CHASE_OVER, EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
-    {TRIGGER_STEP, 14, FLAG_DJINNI_CHASE_OVER, EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
-    {TRIGGER_STEP, 15, FLAG_DJINNI_CHASE_OVER, EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
-    {TRIGGER_STEP, 16, FLAG_DJINNI_CHASE_OVER, EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
-    {TRIGGER_STEP, 17, FLAG_DJINNI_CHASE_OVER, EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
-    {TRIGGER_STEP, 18, FLAG_DJINNI_CHASE_OVER, EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
-    {TRIGGER_STEP, 19, FLAG_DJINNI_CHASE_OVER, EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
-    {TRIGGER_STEP, 20, FLAG_DJINNI_CHASE_OVER, EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
+    {TRIGGER_STEP, 10, FLAG_DJINNI_BY_LEDGE,
+     EVENT(ShrineOfTheSeaGod_DjinniRunsNorth)},
+    {TRIGGER_STEP, 11, FLAG_DJINNI_BY_LEDGE,
+     EVENT(ShrineOfTheSeaGod_DjinniRunsWest)},
+    {TRIGGER_STEP, 12, FLAG_DJINNI_ON_LEDGE,
+     EVENT(ShrineOfTheSeaGod_DjinniHopsOntoLedge)},
+    {TRIGGER_STEP, 13, FLAG_DJINNI_CHASE_OVER,
+     EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
+    {TRIGGER_STEP, 14, FLAG_DJINNI_CHASE_OVER,
+     EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
+    {TRIGGER_STEP, 15, FLAG_DJINNI_CHASE_OVER,
+     EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
+    {TRIGGER_STEP, 16, FLAG_DJINNI_CHASE_OVER,
+     EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
+    {TRIGGER_STEP, 17, FLAG_DJINNI_CHASE_OVER,
+     EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
+    {TRIGGER_STEP, 18, FLAG_DJINNI_CHASE_OVER,
+     EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
+    {TRIGGER_STEP, 19, FLAG_DJINNI_CHASE_OVER,
+     EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
+    {TRIGGER_STEP, 20, FLAG_DJINNI_CHASE_OVER,
+     EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_FightBreath)},
     {TRIGGER_TABLE_END},
 };
@@ -2511,8 +2536,10 @@ struct Trigger gShrineOfTheSeaGod_Room5Triggers[] = {
 struct Trigger gShrineOfTheSeaGod_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_PUSHED, 0, FLAG_PILLAR_IN_HOLE, EVENT(ShrineOfTheSeaGod_PushPillarIntoHole)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_PILLAR_IN_HOLE, EVENT(ShrineOfTheSeaGod_PushPillarIntoHole)},
+    {TRIGGER_PUSHED, 0, FLAG_PILLAR_IN_HOLE,
+     EVENT(ShrineOfTheSeaGod_PushPillarIntoHole)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_PILLAR_IN_HOLE,
+     EVENT(ShrineOfTheSeaGod_PushPillarIntoHole)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2521,11 +2548,16 @@ struct Trigger gShrineOfTheSeaGod_Room7Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 17, FLAG_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 19, FLAG_SECOND_ROPE_TIED, 0},
-    {TRIGGER_STEP, 5, FLAG_FIRST_PILLAR_TOPPLED, EVENT(ShrineOfTheSeaGod_ToppleFirstPillar)},
-    {TRIGGER_STEP, 6, FLAG_SECOND_PILLAR_TOPPLED, EVENT(ShrineOfTheSeaGod_ToppleSecondPillar)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_OpenFieldMenu)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_OpenFieldMenu)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_OpenFieldMenu)},
+    {TRIGGER_STEP, 5, FLAG_FIRST_PILLAR_TOPPLED,
+     EVENT(ShrineOfTheSeaGod_ToppleFirstPillar)},
+    {TRIGGER_STEP, 6, FLAG_SECOND_PILLAR_TOPPLED,
+     EVENT(ShrineOfTheSeaGod_ToppleSecondPillar)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS,
+     EVENT(ShrineOfTheSeaGod_OpenFieldMenu)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS,
+     EVENT(ShrineOfTheSeaGod_OpenFieldMenu)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS,
+     EVENT(ShrineOfTheSeaGod_OpenFieldMenu)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2546,6 +2578,7 @@ struct Trigger gShrineOfTheSeaGod_Room8Triggers[] = {
 struct Trigger gShrineOfTheSeaGod_Room9Triggers[] = {
     {TRIGGER_EXAMINE, 1, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_ExamineStatue)},
-    {USE_ITEM(ITEM_SEA_GODS_TEAR), 1, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_SinkWithWater)},
+    {USE_ITEM(ITEM_SEA_GODS_TEAR), 1, CONDITION_ALWAYS,
+     EVENT(ShrineOfTheSeaGod_SinkWithWater)},
     {TRIGGER_TABLE_END},
 };

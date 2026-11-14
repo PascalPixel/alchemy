@@ -79,7 +79,8 @@ void ShrineOfTheSeaGod_EndSand(void);
 
 extern u32 gFieldEffect_MediumScript[];
 
-void ShrineOfTheSeaGod_LandPillarAsLogs(struct ShrineOfTheSeaGodObject *object, s32 base);
+void ShrineOfTheSeaGod_LandPillarAsLogs(struct ShrineOfTheSeaGodObject *object,
+                                        s32 base);
 void ShrineOfTheSeaGod_KeepFirstPillarWithLeader(void);
 
 void ShrineOfTheSeaGod_KeepSecondPillarWithLeader(void);

@@ -155,13 +155,13 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
   object = slot->object;
   enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376) {
-    object->acceleration = Data_0812cbb0[variant];
-    object->speedLimit = Data_0812cbd8[variant];
+    object->acceleration = gBattleKnockback_Acceleration[variant];
+    object->speedLimit = gBattleKnockback_SpeedLimit[variant];
     if (object->y == 0 || variant > 4)
-      object->velocityY = gBattleKnockback_DistancePercent[variant];
+      object->velocityY = gBattleKnockback_VelocityY[variant];
     Actor_StartIdleFar(object);
     scale = slot->anchorX;
-    x = (scale * Data_0812cc28[variant]) / 100;
+    x = (scale * gBattleKnockback_DistancePercent[variant]) / 100;
     Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;

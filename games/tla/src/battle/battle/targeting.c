@@ -916,7 +916,7 @@ power_end:
     res = plan->targetHit[slot];
     if (res == -1)
       hit = Battle_RollEffectSuccessFar(aid, tid, element, action->effect,
-                                        gHitTable[dist]);
+                                        gRangeFalloff_EffectChance[dist]);
     else
       hit = res;
   }
@@ -1148,7 +1148,7 @@ power_end:
       ELEMENT_BONUS();
       ap = action->power;
       dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
-      dmg = dmg * gPpLossTable[dist] / 100;
+      dmg = dmg * gRangeFalloff_PpLoss[dist] / 100;
       dmg *= adj;
       GUARD_CUT();
       if (action->effect == 32 && dmg > pp)
@@ -1187,7 +1187,7 @@ power_end:
 
       ap = action->power;
       dmg = Battle_CalculateRecoveryFar(ap, element == 4 ? 100 : power, 256);
-      dmg = dmg * gHpRecoveryTable[dist] / 100;
+      dmg = dmg * gRangeFalloff_HealHp[dist] / 100;
       dmg *= adj;
       dmg += Battle_RandomFar() & 3;
       cur += dmg;
@@ -1217,7 +1217,7 @@ power_end:
       ELEMENT_BONUS();
       ap = action->power;
       dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
-      dmg = dmg * gPpDmgTable[dist] / 100;
+      dmg = dmg * gRangeFalloff_PpDamage[dist] / 100;
       dmg *= adj;
       GUARD_CUT();
       BattlePlayback_Push(BATTLE_EVENT_HIT, tid);
@@ -1335,13 +1335,13 @@ power_end:
         dmg *= adj;
         switch (type & 15) {
         case 5:
-          dmg = gHpDmgTable5[dist] * dmg / 100;
+          dmg = gRangeFalloff_PsynergyDamage[dist] * dmg / 100;
           break;
         case 8:
-          dmg = dmg * gHpDmgTable8[dist] / 100;
+          dmg = dmg * gRangeFalloff_SummonDamage[dist] / 100;
           break;
         case 6:
-          dmg = dmg * gHpDmgTable6[dist] / 100;
+          dmg = dmg * gRangeFalloff_EnemyDamage[dist] / 100;
           break;
         }
         dmg += Battle_RandomFar() & 3;
@@ -1398,7 +1398,7 @@ power_end:
       pp = target->pp;
       ap = action->power;
       dmg = Battle_CalculateRecoveryFar(ap, element == 4 ? 100 : power, 256);
-      dmg = dmg * gPpRecoveryTable[dist] / 100;
+      dmg = dmg * gRangeFalloff_HealPp[dist] / 100;
       dmg *= adj;
       pp += dmg;
       if (pp > target->maxPp) {
@@ -1433,7 +1433,7 @@ power_end:
         ap = action->power;
         dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
         dmg *= adj;
-        dmg = dmg * gHpDmgTable[dist] / 100;
+        dmg = dmg * gRangeFalloff_EffectDamage[dist] / 100;
         GUARD_CUT();
         BattlePlayback_Push(BATTLE_EVENT_HIT, tid);
         BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
@@ -2244,7 +2244,8 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   } else if (unit->enemyId == 218) {
     if (selectionMemory->initialized == 0)
       selectionMemory->form = (Random16() * 3) >> 16;
-    enemy = Enemy_GetDefinitionFar(Data_08128960[selectionMemory->form]);
+    enemy =
+        Enemy_GetDefinitionFar(gBattleAI_DullahanForms[selectionMemory->form]);
   }
 
   if (retry != 0 && request->command != COMMAND_ABILITY) {

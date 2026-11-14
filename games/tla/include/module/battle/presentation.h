@@ -324,10 +324,10 @@ struct BattleGroupOrder {
   s32 group[2];
 };
 
-extern const u32 Data_08128c50[];
-extern u8 Data_08128972[];
+extern const u32 gAbilityBattleEffects[];
+extern u8 gAbilityStaging[];
 
-extern u8 Data_0812896c[];
+extern u8 gActionRun_EffectChance[];
 
 extern const u8 Model_DecodeCode[];
 
@@ -356,7 +356,7 @@ extern u8 gBattleMessage_AdvanceArrowTiles[];
 
 extern u8 gBattleAI_ActionWeights[3][8];
 
-extern u16 Data_08128960[];
+extern u16 gBattleAI_DullahanForms[];
 
 extern const u8 gBattleTransition_CurtainVariants[];
 

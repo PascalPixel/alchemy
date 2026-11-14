@@ -352,7 +352,7 @@ enum BattleActionFailure {
 
 /// BattlePlan.outcome, The Broken Seal's BattleActionRun.staging: how
 /// BattleStaging_DispatchAction shows the action, set by BattleActionRun_Build
-/// from the ability (Data_08128972 where it gives one). The Lost Age adds the
+/// from the ability (gAbilityStaging where it gives one). The Lost Age adds the
 /// stagings from STAGING_TEAM_STRIKE on.
 enum BattleStaging {
   STAGING_MESSAGES = 1, ///< no effect: each target's messages only
@@ -416,14 +416,16 @@ extern struct DebugPartyEntry gDebug_ParameterSets[];
 
 extern u16 Data_02000436;
 
-// The Broken Seal's gBattleMotion_Variant* tables, indexed by the variant.
-extern const s32 Data_0812cbb0[]; ///< acceleration
+// A knocked-back unit's motion by variant (BattleMotion_Knockback), as The
+// Broken Seal's.
+extern const s32 gBattleKnockback_Acceleration[]; ///< acceleration
 
-extern const s32 Data_0812cbd8[]; ///< speed limit
+extern const s32 gBattleKnockback_SpeedLimit[]; ///< speed limit
 
-extern const s32 gBattleKnockback_DistancePercent[]; ///< upward velocity
+extern const s32 gBattleKnockback_VelocityY[]; ///< upward velocity
 
-extern const s32 Data_0812cc28[]; ///< distance, in percent of the anchor's x
+extern const s32 gBattleKnockback_DistancePercent[]; ///< distance, in percent
+                                                     ///< of the anchor's x
 
 extern const s32 gData_08128868[];
 

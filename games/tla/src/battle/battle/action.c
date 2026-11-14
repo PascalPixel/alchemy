@@ -699,7 +699,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         s32 rate;
 
         if (ability->targetMode == ABILITY_TARGET_FOES) {
-          rate = Data_0812896c[__builtin_abs(plan->targetOffset[index])];
+          rate =
+              gActionRun_EffectChance[__builtin_abs(plan->targetOffset[index])];
         } else {
           rate = 100;
         }
@@ -722,16 +723,16 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       } while (++tries <= 9);
     }
     if (abilityId >= 0 && abilityId <= ABILITY_PSY_BOOST) {
-      plan->presentationFlags = Data_08128c50[abilityId];
+      plan->presentationFlags = gAbilityBattleEffects[abilityId];
       if (plan->targetMultiplier[0] > 1)
         plan->presentationFlags =
-            Data_08128c50[abilityId] +
+            gAbilityBattleEffects[abilityId] +
             (plan->targetMultiplier[0] << EFFECT_VARIANT_SHIFT) -
             (1 << EFFECT_VARIANT_SHIFT);
     }
     if ((abilityId >= 0 && abilityId <= ABILITY_PSY_BOOST) &&
-        Data_08128972[abilityId] != 0)
-      plan->outcome = Data_08128972[abilityId];
+        gAbilityStaging[abilityId] != 0)
+      plan->outcome = gAbilityStaging[abilityId];
     else if (Ability_IsPsynergy(abilityId))
       plan->outcome = STAGING_CAST;
     else if (plan->presentationFlags != 0) {

@@ -226,7 +226,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     case STAGING_FULL_SCREEN:
       BattleStaging_HideField(&battle->plan, 0);
       break;
-    // XXX: no ability's staging is 14 or 17 (Data_08128972), and no code sets
+    // XXX: no ability's staging is 14 or 17 (gAbilityStaging), and no code sets
     // them; a debug battle or a table row another edition has would settle it.
     case 14:
       BattleStaging_HideField(&battle->plan, 3);

@@ -2,37 +2,37 @@
 @ the same in both games: battle_data.s here (battle_tables.s in The Broken
 @ Seal) includes them in place.
 @ Hit rate (%)
-	.global gHitTable
-gHitTable:
+	.global gRangeFalloff_EffectChance
+gRangeFalloff_EffectChance:
 	.byte 100, 60, 30, 30, 30, 30
 	.balign 4
 @ PP drained
-	.global gPpLossTable
-gPpLossTable:
+	.global gRangeFalloff_PpLoss
+gRangeFalloff_PpLoss:
 	.4byte 100, 50, 30, 10, 10, 10
 @ HP healed
-	.global gHpRecoveryTable
-gHpRecoveryTable:
+	.global gRangeFalloff_HealHp
+gRangeFalloff_HealHp:
 	.4byte 100, 80, 60, 40, 20, 10
 @ PP damage
-	.global gPpDmgTable
-gPpDmgTable:
+	.global gRangeFalloff_PpDamage
+gRangeFalloff_PpDamage:
 	.4byte 100, 50, 30, 10, 10, 10
-@ HP damage of effect types 5, 8 and 6
-	.global gHpDmgTable5
-gHpDmgTable5:
+@ HP damage of Psynergy, of a summon and of an enemy's ability
+	.global gRangeFalloff_PsynergyDamage
+gRangeFalloff_PsynergyDamage:
 	.4byte 100, 80, 60, 40, 20, 10
-	.global gHpDmgTable8
-gHpDmgTable8:
+	.global gRangeFalloff_SummonDamage
+gRangeFalloff_SummonDamage:
 	.4byte 100, 70, 40, 30, 20, 10
-	.global gHpDmgTable6
-gHpDmgTable6:
+	.global gRangeFalloff_EnemyDamage
+gRangeFalloff_EnemyDamage:
 	.4byte 100, 50, 30, 10, 10, 10
 @ PP restored
-	.global gPpRecoveryTable
-gPpRecoveryTable:
+	.global gRangeFalloff_HealPp
+gRangeFalloff_HealPp:
 	.4byte 100, 80, 60, 40, 20, 10
-@ HP damage
-	.global gHpDmgTable
-gHpDmgTable:
+@ HP damage of an added effect
+	.global gRangeFalloff_EffectDamage
+gRangeFalloff_EffectDamage:
 	.4byte 100, 50, 30, 10, 10, 10

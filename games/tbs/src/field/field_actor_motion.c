@@ -119,9 +119,9 @@ void Actor_UpdateAllThumb(void) {
     } else {
       for (;;) {
 #ifdef UBFIX
-        command = script[(s16)actor->scriptCursor];
+        command = script[actor->scriptCursor];
 #else
-        command = script->word[(s16)actor->scriptCursor];
+        command = script->word[actor->scriptCursor];
 #endif
         if (command <= 63) {
           if (gActorScript_CommandTable[command]((struct Actor *)actor) == 0)

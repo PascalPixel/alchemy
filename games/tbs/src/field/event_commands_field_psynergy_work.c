@@ -47,7 +47,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
     ev->effectTimerRunning = running;
   effectWork->tileSlot = VramCache_FindFreeEntry();
-  VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
+  VramCache_Load(effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
   Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
 
@@ -167,7 +167,7 @@ void FieldPsynergy_End(void) {
 
     runtime->castStarted = 0;
     Task_Remove(FieldEffect_UpdateAllEffectSlots);
-    VramCache_FreeEntry((s16)effectWork->tileSlot);
+    VramCache_FreeEntry(effectWork->tileSlot);
     grid->shakeX = effectWork->savedShakeX;
     grid->shakeY = effectWork->savedShakeY;
     grid->shakeDecay = effectWork->savedShakeDecay;

@@ -322,13 +322,13 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;
-    if ((s16)particle->age == 60) {
+    if (particle->age == 60) {
       particle->age = 0;
       particle->state += 1;
     }
   } else if (particle->state == DJINNI_LIGHT_CIRCLING) {
     particle->orbitAngle += 1;
-    if ((s16)particle->age == 40) {
+    if (particle->age == 40) {
       particle->age = 0;
       particle->state += 1;
     }
@@ -341,14 +341,14 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;
-    if ((s16)particle->age == 40) {
+    if (particle->age == 40) {
       particle->age = 0;
       particle->state += 1;
     }
   } else if (particle->state == DJINNI_LIGHT_CLOSING) {
     particle->orbitRadius -= 1;
     particle->orbitAngle += 1;
-    if ((s16)particle->age == 60) {
+    if (particle->age == 60) {
       particle->age = 0;
       particle->state += 1;
     }

@@ -25,18 +25,17 @@ loop:
   if (window->flags != 0) {
     // Opening: zoom out one stage a frame, then draw the window in full, which
     // clears the duration.
-    if ((s16)window->zoomStage != 0) {
+    if (window->zoomStage != 0) {
       Window_DrawZoomBorder(window, 0);
-      window->zoomStage = (s16)window->zoomStage - 1;
+      window->zoomStage--;
     } else if (window->duration != 0) {
       Window_DrawOpened(window);
     }
   } else if (window->duration != 0) {
     // Closing: zoom in one stage a frame, then erase it and free its slot.
-    if ((s16)window->zoomStage != window->duration) {
-      Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
-                             (s16)window->previousWidth,
-                             (s16)window->previousHeight);
+    if (window->zoomStage != window->duration) {
+      Window_EraseBorderRect(window->previousX, window->previousY,
+                             window->previousWidth, window->previousHeight);
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
       /* FAKEMATCH(temporary): the flag through a local. */
@@ -46,9 +45,8 @@ loop:
         state->dirty = dirty;
       }
     } else {
-      Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
-                             (s16)window->previousWidth,
-                             (s16)window->previousHeight);
+      Window_EraseBorderRect(window->previousX, window->previousY,
+                             window->previousWidth, window->previousHeight);
       window->sprites.head = NULL;
       window->sprites.tailLink = NULL;
       window->width = 0;
@@ -87,7 +85,7 @@ void Window_DrawZoomBorder(void *windowArg, s32 savePosition) {
   s32 width;
   s32 height;
 
-  stage = (s16)window->zoomStage;
+  stage = window->zoomStage;
   duration = window->duration;
   remaining = duration - stage;
   // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point.

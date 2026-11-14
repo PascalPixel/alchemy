@@ -306,7 +306,7 @@ s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter) {
 /// SC_MOVE_BY(x, y, z): sends the actor towards its position plus (x, y, z).
 s32 ActorScript_ApplyRelativePosition(struct Actor *actor) {
 
-  u8 *commandBytes = (u8 *)(actor->script + (s16)actor->scriptCursor);
+  u8 *commandBytes = (u8 *)(actor->script + actor->scriptCursor);
   s32 *arguments = (s32 *)(commandBytes + 4);
   s32 deltaX = *arguments++;
   s32 deltaY = *arguments++;
@@ -520,7 +520,7 @@ s32 Actor_Wander(struct Actor *actor) {
 
   // base and range are 16.16 pixels; limit is compared in whole pixels,
   // against homeX and homeZ.
-  operands = &actor->script[(s16)actor->scriptCursor + 1];
+  operands = &actor->script[actor->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / Q16_ONE;
@@ -608,7 +608,7 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
   s32 dx;
   s32 dz;
 
-  operands = &actor->script[(s16)actor->scriptCursor + 1];
+  operands = &actor->script[actor->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / Q16_ONE;

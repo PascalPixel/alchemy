@@ -294,7 +294,7 @@ void DebugWarp_Jupiter(void) {
 void DebugWarp_Arafura2(void) {
   GameFlag_Set(FLAG_BRIGGS_CAUGHT);
   GameFlag_Clear(FLAG_ALHAFRA_MAST_CLEARED);
-  GameFlag_Set(0x8aa);
+  GameFlag_Set(FLAG_MAYOR_ARRIVED_AT_THE_SHIP);
   Inventory_AddItemFar(4, 457);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -309,7 +309,7 @@ void DebugWarp_EnergySample(void) {}
 void DebugWarp_Arafura3(void) {
   GameFlag_Set(FLAG_BRIGGS_CAUGHT);
   GameFlag_Set(FLAG_ALHAFRA_MAST_CLEARED);
-  GameFlag_Set(0x8aa);
+  GameFlag_Set(FLAG_MAYOR_ARRIVED_AT_THE_SHIP);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

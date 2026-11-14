@@ -27,6 +27,10 @@
 #include "call.h"
 #include "version.h"
 
+// Talks each person gives once, the first time spoken to.
+#define FLAG_GUESTS_ASKED_FOR_TEA 0x8b1
+#define FLAG_HOST_TOLD_OF_REPAIRS 0x8b8
+
 extern u8 gAlhafraInteriors_FirstGuestSprite[];
 extern u8 gAlhafraInteriors_SecondGuestSprite[];
 
@@ -172,9 +176,9 @@ void AlhafraInteriors_TalkToHostess(s32 a0) {
 }
 
 /// The old couple who lost their house in the wave ask the lady of the house
-/// for tea, once (flag 0x8b1).
+/// for tea, once.
 void AlhafraInteriors_GuestsAskForTea(void) {
-  Event_SetFlag(0x8b1);
+  Event_SetFlag(FLAG_GUESTS_ASKED_FOR_TEA);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 152, 328);
@@ -235,10 +239,10 @@ void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
   Actor_FaceDirection(a1, FACING_NORTHEAST, 0);
 }
 
-/// The master of the house tells that the town has started rebuilding, once
-/// (flag 0x8b8).
+/// The master of the house tells that the town has started rebuilding,
+/// once.
 void AlhafraInteriors_HostTellsOfRepairs(s32 a0) {
-  Event_SetFlag(0x8b8);
+  Event_SetFlag(FLAG_HOST_TOLD_OF_REPAIRS);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors55);
   Event_ShowMessage(a0, 0);
   FieldEvent_Wait(10);
@@ -632,8 +636,9 @@ struct Trigger gAlhafraInteriors_Triggers[] = {
      MSGNO(MsgAlhafraInteriors03)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors04)},
-    {TRIGGER_TALK, 14, 0x8b1, EVENT(AlhafraInteriors_GuestsAskForTea)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x8b1,
+    {TRIGGER_TALK, 14, FLAG_GUESTS_ASKED_FOR_TEA,
+     EVENT(AlhafraInteriors_GuestsAskForTea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, FLAG_GUESTS_ASKED_FOR_TEA,
      EVENT(AlhafraInteriors_GuestsAskForTea)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors05)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHostess)},
@@ -743,7 +748,8 @@ struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[] = {
      MSGNO(MsgAlhafraInteriors53)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors54)},
-    {TRIGGER_TALK, 12, 0x8b8, EVENT(AlhafraInteriors_HostTellsOfRepairs)},
+    {TRIGGER_TALK, 12, FLAG_HOST_TOLD_OF_REPAIRS,
+     EVENT(AlhafraInteriors_HostTellsOfRepairs)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors56)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors57)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors58)},

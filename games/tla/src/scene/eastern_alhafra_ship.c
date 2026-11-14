@@ -30,6 +30,16 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
+/// The crate pushed onto cell (24, 40), out of the way.
+#define FLAG_CRATE_MOVED 0x900
+/// Tremor has shaken the Large Bread down from where it sat.
+#define FLAG_BREAD_SHAKEN_DOWN 0x901
+/// The Large Bread has been picked up.
+#define FLAG_BREAD_TAKEN 0x902
+/// Set the first time the baby Eoleo lifts it with Psynergy; his mother
+/// remarks on it only then.
+#define FLAG_EOLEO_LIFTED 0x8ae
+
 extern struct ActorPlacement gEasternAlhafraShip_ActorPlacements[];
 void EasternAlhafraShip_BriggsIsCaught(void);
 extern u32 gEasternAlhafraShip_FirstPirateRunsScript[];
@@ -57,9 +67,9 @@ void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
   s32 z = object->z >> 20;
 
   if (x == 24 && z == 40)
-    GameFlag_Set(0x900);
+    GameFlag_Set(FLAG_CRATE_MOVED);
   if (x == 23 && z == 40)
-    GameFlag_Clear(0x900);
+    GameFlag_Clear(FLAG_CRATE_MOVED);
 }
 
 void EasternAlhafraShip_ShakeDownTheBread(void) {
@@ -68,7 +78,7 @@ void EasternAlhafraShip_ShakeDownTheBread(void) {
   s32 v6;
   struct Actor *object1;
 
-  GameFlag_Set(0x901);
+  GameFlag_Set(FLAG_BREAD_SHAKEN_DOWN);
   v5 = &gMainRoutineWork;
   v5 = (v5 + 0x214);
   object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
@@ -93,7 +103,7 @@ void EasternAlhafraShip_ShakeDownTheBread(void) {
 }
 
 void EasternAlhafraShip_TakeTheBread(s32 arg0) {
-  Event_PickUpItem(arg0, 0x1c9, 0x902);
+  Event_PickUpItem(arg0, ITEM_LARGE_BREAD, FLAG_BREAD_TAKEN);
   return;
 }
 
@@ -126,8 +136,8 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   object->gravity = px(1) / 2;
   Event_Wait(5);
   Sound_Play(SE_WATER);
-  if (Event_GetFlag(0x8ae) == 0) {
-    GameFlag_Set(0x8ae);
+  if (Event_GetFlag(FLAG_EOLEO_LIFTED) == 0) {
+    GameFlag_Set(FLAG_EOLEO_LIFTED);
     Event_Wait(30);
     Actor_ArmCallback(10, 0x3000, 0);
     Event_Wait(30);
@@ -146,7 +156,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 99) {
-    GameFlag_Set(0x8aa);
+    GameFlag_Set(FLAG_MAYOR_ARRIVED_AT_THE_SHIP);
     GameFlag_Set(FLAG_BRIGGS_CAUGHT);
     gMainRoutineWork.secondary = 3;
     gMainRoutineWork.entrance = 3;
@@ -160,7 +170,7 @@ s32 Scene_Initialize(void) {
   } else if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-    if (!GameFlag_Get(0x8bd)) {
+    if (!GameFlag_Get(FLAG_FAMILY_VISITED_BRIGGS)) {
       Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     }
@@ -168,11 +178,11 @@ s32 Scene_Initialize(void) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   }
-  if (GameFlag_Get(0x900))
+  if (GameFlag_Get(FLAG_CRATE_MOVED))
     Actor_SetPosition(13, 392, 648);
   Actor_GetById(13)->priorityFlags |= 32;
   Actor_ShowItemIconById(15, ITEM_LARGE_BREAD);
-  if (!GameFlag_Get(0x901)) {
+  if (!GameFlag_Get(FLAG_BREAD_SHAKEN_DOWN)) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_GetById(14)->priorityFlags |= 128;
       object = Actor_GetById(15);
@@ -182,7 +192,7 @@ s32 Scene_Initialize(void) {
     }
   } else {
     Actor_SetHorizontalPositionWithTerrain(14, 0x880000, 0x1db0000);
-    if (!GameFlag_Get(0x902))
+    if (!GameFlag_Get(FLAG_BREAD_TAKEN))
       Actor_SetPosition(15, 120, 472);
     else
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
@@ -1558,7 +1568,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 20, 0x8aa, EVENT(EasternAlhafraShip_MayorArrives)},
+    {TRIGGER_STEP, 20, FLAG_MAYOR_ARRIVED_AT_THE_SHIP,
+     EVENT(EasternAlhafraShip_MayorArrives)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(EasternAlhafraShip_EoleoLifts)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgEoleoAndI)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
@@ -1575,7 +1586,7 @@ struct Trigger gSceneEvents[] = {
      EVENT(EasternAlhafraShip_StartMovingCrate)},
     {TRIGGER_PUSHED, 30, CONDITION_ALWAYS,
      EVENT(EasternAlhafraShip_FinishMovingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 14, 0x901,
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 14, FLAG_BREAD_SHAKEN_DOWN,
      EVENT(EasternAlhafraShip_ShakeDownTheBread)},
     {TRIGGER_TABLE_END},
 };

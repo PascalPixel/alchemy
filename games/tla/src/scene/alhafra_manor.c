@@ -25,6 +25,11 @@
 #include "field/event_inline.h"
 #include "system/input.h"
 
+// Talks each person gives once, the first time spoken to.
+#define FLAG_GRUMBLED_ABOUT_THE_MAYOR 0x8ba
+#define FLAG_DEFENDED_THE_MAYOR 0x8bb
+#define FLAG_TOLD_OF_THE_EASTERN_SEA 0x8bc
+
 void AlhafraManor_BriggsEscapes(void);
 void AlhafraManor_KeepToTheLeadersLayer(void);
 
@@ -104,7 +109,7 @@ void AlhafraManor_AskIfTheHeroes(s32 actor) {
 void AlhafraManor_GrumbleAboutTheMayor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  GameFlag_Set(0x8ba);
+  GameFlag_Set(FLAG_GRUMBLED_ABOUT_THE_MAYOR);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor18);
@@ -124,7 +129,7 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
 void AlhafraManor_DefendTheMayor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  GameFlag_Set(0x8bb);
+  GameFlag_Set(FLAG_DEFENDED_THE_MAYOR);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor23);
@@ -164,7 +169,7 @@ void AlhafraManor_TellOfTheEasternSea(void) {
     Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
   }
-  GameFlag_Set(0x8bc);
+  GameFlag_Set(FLAG_TOLD_OF_THE_EASTERN_SEA);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor24);
@@ -760,8 +765,9 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgAlhafraManor16)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraManor17)},
-    {TRIGGER_TALK, 18, 0x8ba, EVENT(AlhafraManor_GrumbleAboutTheMayor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1042, 0x8ba,
+    {TRIGGER_TALK, 18, FLAG_GRUMBLED_ABOUT_THE_MAYOR,
+     EVENT(AlhafraManor_GrumbleAboutTheMayor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1042, FLAG_GRUMBLED_ABOUT_THE_MAYOR,
      EVENT(AlhafraManor_GrumbleAboutTheMayor)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor19)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor20)},
@@ -769,11 +775,13 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgAlhafraManor21)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraManor22)},
-    {TRIGGER_TALK, 8, 0x8bb, EVENT(AlhafraManor_DefendTheMayor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, 0x8bb,
+    {TRIGGER_TALK, 8, FLAG_DEFENDED_THE_MAYOR,
      EVENT(AlhafraManor_DefendTheMayor)},
-    {TRIGGER_TALK, 9, 0x8bc, EVENT(AlhafraManor_TellOfTheEasternSea)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1033, 0x8bc,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, FLAG_DEFENDED_THE_MAYOR,
+     EVENT(AlhafraManor_DefendTheMayor)},
+    {TRIGGER_TALK, 9, FLAG_TOLD_OF_THE_EASTERN_SEA,
+     EVENT(AlhafraManor_TellOfTheEasternSea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1033, FLAG_TOLD_OF_THE_EASTERN_SEA,
      EVENT(AlhafraManor_TellOfTheEasternSea)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor25)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor26)},

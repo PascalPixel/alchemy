@@ -140,7 +140,12 @@
 
 /// Set as Briggs is caught on the boat he bought at Alhafra; the town then
 /// thanks the party and talks of pirates.
+/// Set as the mayor of Madra arrives on the ship at Alhafra's eastern
+/// harbour, or once the party has fought Briggs there.
+#define FLAG_MAYOR_ARRIVED_AT_THE_SHIP 0x8aa
 #define FLAG_BRIGGS_CAUGHT 0x8ab
+/// Set as Chaucha and Eoleo leave the jail after visiting Briggs.
+#define FLAG_FAMILY_VISITED_BRIGGS 0x8bd
 /// Set as Felix comes upon the four Kibombo warriors in their hideout in the
 /// Gondowan Cliffs; back in Madra, Felix is asked "It was them, wasn't it?"
 #define FLAG_KIBOMBO_WARRIORS_FOUND 0x98f

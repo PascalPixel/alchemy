@@ -50,9 +50,6 @@ extern s32 gAlhafranCave_ClearedWord;
 // Set while the way down to the jail is open, as the leader stands on the
 // ledge above it.
 #define FLAG_WAY_TO_JAIL_OPEN 0x204
-// Set as Chaucha and Eoleo leave the jail after visiting Briggs.
-#define FLAG_FAMILY_VISITED_BRIGGS 0x8bd
-
 /// The jail's people, numbering the rows of gAlhafranCave_JailActorPlacements.
 enum AlhafraJailActorId {
   ACTOR_BRIGGS = ACTOR_FIRST_PLACED + 10,

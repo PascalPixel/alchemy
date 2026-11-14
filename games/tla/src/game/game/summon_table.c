@@ -6,7 +6,7 @@
 #include "../game_internal.h"
 
 /// The order the Summon command lists the summons in.
-const u8 gSummon_OrderList[29] = {
+const u8 gSummon_OrderList[SUMMON_COUNT] = {
     0,  1,  2,  3,  4,  5,  6,  7,  16, 17, 8,  9,  10, 11, 18,
     19, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 26, 27, 28,
 };

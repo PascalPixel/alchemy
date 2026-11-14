@@ -117,6 +117,15 @@ s32 Owner_UpdateClassActions(s32 owner_id);
 void *Resource_FarCall005(s32);
 void Message_DecodeRawUnboundedFar(s32, u16 *);
 
+/// How many summons there are (summon_table.c), and the number that ends a
+/// list of them (Summon_ListLearned).
+#define SUMMON_COUNT 29
+#define SUMMON_END 32
+/// The summons in the order the Summon command lists them (summon_table.c).
+extern const u8 gSummon_OrderList[SUMMON_COUNT];
+/// The experience each character needs for each level (experience_table.c).
+extern const u32 gCharacter_LevelExpTable[];
+
 extern const s16 gElement_PowerResistCurve[5][2];
 /// The power and resistance by element level (element_table.c): a table
 /// nothing writes, defined writable in .rodata as The Broken Seal's is.

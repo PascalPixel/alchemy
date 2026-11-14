@@ -264,30 +264,18 @@ void Party_InitializeCharacters(void) {
 /// Unused: reserved entry; keeps its place in the far-call table.
 void Unit_LevelNoOp(void) {}
 
-/* VIEW(game): variable gCharacter_LevelExpTable as u32
- * gCharacter_LevelExpTable[]; game/experience_table has const u32
- * gCharacter_LevelExpTable[] = {; tried as the definition's extern const u32
- * gCharacter_LevelExpTable[], it does not compile in tla-ja:
- * games/tla/src/game/game/levels.c:290: `gCharacter_LevelExpTable' undeclared
- * (first use in this function). */
-extern u32 gCharacter_LevelExpTable__game[] __asm__("gCharacter_LevelExpTable");
-#define gCharacter_LevelExpTable gCharacter_LevelExpTable__game
+/// Returns the experience a character needs for `level`: 0 below level 1, and
+/// -1 for an enemy or a level past UNIT_LEVEL_MAX.
+u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
+  struct BattleUnit *unit = Unit_Get(unitId);
 
-/// Experience required per level: eight characters, 99 levels each.
-u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
-  struct BattleUnit *state = (struct BattleUnit *)Unit_Get(owner);
-
-  if (state->classIndex != 0) {
+  if (unit->classIndex != CLASS_NONE) {
     if (level <= 0) {
       return 0;
     }
-    if (level <= 99 && state->enemyId <= 7) {
-      u32 *table = gCharacter_LevelExpTable;
-      s32 row = state->enemyId * 99 + level;
-      s32 offset;
-
-      offset = row * 4 - 4;
-      return *(u32 *)((u8 *)table + offset);
+    if (level <= UNIT_LEVEL_MAX && unit->enemyId <= PIERS) {
+      return gCharacter_LevelExpTable[unit->enemyId * UNIT_LEVEL_MAX + level -
+                                      1];
     }
   }
   return -1;

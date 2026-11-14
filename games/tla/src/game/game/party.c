@@ -203,30 +203,22 @@ s32 Party_AdjustShopGifts(s32 amount) {
   return value;
 }
 
-/// The summons in the order the menus list them.
-/* VIEW(game): variable gSummon_OrderList as u8 gSummon_OrderList[29];
- * game/summon_table has const u8 gSummon_OrderList[29] = {; tried as the
- * definition's extern const u8 gSummon_OrderList[29], it does not compile in
- * tla-ja: games/tla/src/game/game/party.c:210: `gSummon_OrderList' undeclared
- * (first use in this function). */
-extern u8 gSummon_OrderList__game[29] __asm__("gSummon_OrderList");
-#define gSummon_OrderList gSummon_OrderList__game
-
 /// Lists the summons, in the game's order, whose bit is set in the state's
 /// first word, ends the list with 32 and returns how many it listed.
 s32 Summon_ListLearned(u8 *output) {
-  u8 *source = gSummon_OrderList;
-  u8 *end = gSummon_OrderList + 28;
+  const u8 *summon = gSummon_OrderList;
+  const u8 *last = &gSummon_OrderList[SUMMON_COUNT - 1];
   s32 count = 0;
 
   do {
-    u8 value = *source++;
-    if (((*(u32 *)Djinn_GetRecoveryTable(0)) & (1 << value)) != 0) {
-      *output++ = value;
+    u8 summonId = *summon++;
+
+    if (Djinn_GetRecoveryTable(0)->summonMask & (1 << summonId)) {
+      *output++ = summonId;
       count++;
     }
-  } while (source <= end);
-  *output = 32;
+  } while (summon <= last);
+  *output = SUMMON_END;
   return count;
 }
 

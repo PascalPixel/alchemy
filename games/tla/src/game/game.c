@@ -36,9 +36,6 @@
 #include "game/djinn.c"
 #include "game/snapshot.c"
 
-#undef gCharacter_LevelExpTable
-#undef gSummon_OrderList
-
 // The tables, in ROM order.
 #include "game/experience_table.c"
 #include "game/artifact_slots.c"

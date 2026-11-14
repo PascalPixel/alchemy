@@ -14,12 +14,6 @@ void UnusedDummyFunc2(void) {}
 
 #include "sound_driver_symbols.h"
 
-/* VIEW(noop_stub): variable gBuildStamp as s32 gBuildStamp; sound.h has s32
- * gBuildStamp[]; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/sound/noop_stub.c:40: `gBuildStamp' has an
- * incomplete type. */
-extern s32 gBuildStamp__noop_stub __asm__("gBuildStamp");
-
 void Sound_LoadReverbCode(s32 preset);
 
 /// The three cues the test starts with: the object's .rodata, which the
@@ -42,7 +36,7 @@ void SoundTest_Run(void) {
   preset = 3;
   /* FAKEMATCH(dead): the store in a once-only block. */
   do {
-    gBuildStamp__noop_stub = 0;
+    gBuildStamp[0] = 0;
   } while (0);
   gSoundVBlankState.soundTestActive = 1;
   timer = 20;

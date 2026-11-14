@@ -53,7 +53,9 @@ struct TradeOffer {
 /// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
 /// party's inside gMainRoutineWork from byte 0xc, the enemies' in unit 0x83.
 struct TradeOfferState {
-  u8 unk00[8]; ///< not named by ⚓️ code; the party's runs over its coins
+  /// The summons the side can call, bit n for summon n (summon_table.c).
+  u32 summonMask;
+  u8 unusedAfterSummons[4]; ///< the party's runs over its coins
   struct TradeOffer offers[72];
   u32 count; ///< offers in use
 };

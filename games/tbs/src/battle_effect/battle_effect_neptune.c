@@ -264,9 +264,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       }
     }
     if (frame > 221) {
+      u16 *pictures = gBattleEffect_FlarePictures;
+
       for (i = 0; i != 64; i++) {
-        /* FAKEMATCH(temporary): pictures holds gBattleEffect_FlarePictures. */
-        u16 *pictures = gBattleEffect_FlarePictures;
         /* LEFTOVER(template): r holds 1, the smallest flare's size. */
         s32 r = 1;
         if (frame >= i / 2 + 222) {

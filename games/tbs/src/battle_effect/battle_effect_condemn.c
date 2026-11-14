@@ -36,37 +36,39 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   s32 drawReaper;
   s32 pictureColumn;
   s32 pictureRow;
-  s32 transferValue;
   s32 frame;
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  /* FAKEMATCH(temporary): transferValue set here, after the slots. */
-  transferValue = 0;
-  work->args = args;
-  BattleEffect_StartTiledCanvas(0);
-  REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  {
+    // The canvas is cleared to 0 as the transfer starts.
+    s32 transferValue = 0;
 
-  sheet = Resource_GetTableEntry(RESOURCE_COUNTER_REVEAL_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
-  sheet = sheet + 128;
-  Decompress_TaggedLz(sheet, work->sheet);
-  cells = Ram_MapGridCellBuffer;
-  sheet = Resource_GetTableEntry(RESOURCE_RED_CRESCENT_SHEET_A);
-  sheet = sheet + 128;
-  Decompress_TaggedLz(sheet, cells);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_TRANSPARENT);
-  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      COMPOSITE_TRANSPARENT);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, transferValue);
+    work->args = args;
+    BattleEffect_StartTiledCanvas(0);
+    REG_BG2PA = Q_8_8(1);
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+
+    sheet = Resource_GetTableEntry(RESOURCE_COUNTER_REVEAL_SHEET);
+    Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
+    sheet = sheet + 128;
+    Decompress_TaggedLz(sheet, work->sheet);
+    cells = Ram_MapGridCellBuffer;
+    sheet = Resource_GetTableEntry(RESOURCE_RED_CRESCENT_SHEET_A);
+    sheet = sheet + 128;
+    Decompress_TaggedLz(sheet, cells);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_TRANSPARENT);
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        COMPOSITE_TRANSPARENT);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
+    EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, transferValue);
+  }
   drawReaper = 1;
   if (work->args->side == EFFECT_SIDE_PARTY) {
     swayCenter[0] = -px(80);

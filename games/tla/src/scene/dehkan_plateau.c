@@ -50,7 +50,7 @@
 #include "system/task.h"
 
 void Actor_DisableById(s32 id);
-extern s16 gData_02003f44[];
+extern s16 gDehkanPlateau_Room1CrumblingPillars[];
 void Func_02002180(void);
 void Func_02001804(void);
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -133,16 +133,16 @@ void Actor_DisableById(s32 id);
 extern u16 gDehkanPlateau_Room1CrackPictures[];
 extern u16 gDehkanPlateau_Room1Cracks[][6];
 
-extern s16 gData_02003f52[];
-extern s16 gData_02003f80[];
-extern s16 gData_02003f92[];
-extern s16 gData_02003f98[];
-extern s16 gData_02003fa0[];
-extern s16 gData_02003fa8[];
-extern s16 gData_02003fb0[];
-extern s16 gData_02003fb8[];
-extern s16 gData_02003fc0[];
-extern s16 gData_02003fc4[];
+extern s16 gDehkanPlateau_Room2CrumblingPillars[];
+extern s16 gDehkanPlateau_Room3CrumblingPillars[];
+extern s16 gDehkanPlateau_Room6CrumblingPillar[];
+extern s16 gDehkanPlateau_Room1PoundPillars[];
+extern s16 gDehkanPlateau_Room2PoundPillars[];
+extern s16 gDehkanPlateau_Room3PoundPillars[];
+extern s16 gDehkanPlateau_Room5PoundPillars[];
+extern s16 gDehkanPlateau_Room6PoundPillars[];
+extern s16 gDehkanPlateau_Room2MovablePillars[];
+extern s16 gDehkanPlateau_Room3MovablePillars[];
 
 void DehkanPlateau_FightCannon(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_09);
@@ -206,7 +206,9 @@ const struct Trigger *Scene_GetEvents(void) {
   return gDehkanPlateau_Triggers;
 }
 
-void Func_020012c8(void) { CrumblingPillars_Step(gData_02003f44); }
+void DehkanPlateau_StepOnRoom1Pillars(void) {
+  CrumblingPillars_Step(gDehkanPlateau_Room1CrumblingPillars);
+}
 
 void Func_020012d8(void) {
   if (GameFlag_Get(FLAG_SCENE_TEMP_13) == 0)
@@ -219,10 +221,10 @@ void Func_020012d8(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 16, 28);
 }
 
-void Func_02001368(void) {
+void DehkanPlateau_StepOnRoom2Pillars(void) {
   s32 y;
 
-  CrumblingPillars_StepWithStandIn(gData_02003f52);
+  CrumblingPillars_StepWithStandIn(gDehkanPlateau_Room2CrumblingPillars);
   Func_020012d8();
   y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
   if (y < 0x80000) {
@@ -238,8 +240,8 @@ void Func_020013b0(void) {
     MapGrid_CopyCellAttributes(63, 0, 1, 1, 52, 20);
 }
 
-void Func_020013fc(void) {
-  CrumblingPillars_Step(gData_02003f80);
+void DehkanPlateau_StepOnRoom3Pillars(void) {
+  CrumblingPillars_Step(gDehkanPlateau_Room3CrumblingPillars);
   Func_020013b0();
   if (Actor_GetById(gMainRoutineWork.currentOwner)->y < -px(24)) {
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -247,10 +249,10 @@ void Func_020013fc(void) {
   }
 }
 
-void Func_02001444(void) {
+void DehkanPlateau_StepOnRoom6Pillar(void) {
   s32 y;
 
-  CrumblingPillars_Step(gData_02003f92);
+  CrumblingPillars_Step(gDehkanPlateau_Room6CrumblingPillar);
   y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
   if (y < 0x180000)
     Func_02002180();
@@ -296,19 +298,29 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
   }
 }
 
-void Func_02001554(s32 a, s32 b) { Pillars_Pound(gData_02003f98, a, b); }
+void DehkanPlateau_PoundRoom1Pillar(s32 a, s32 b) {
+  Pillars_Pound(gDehkanPlateau_Room1PoundPillars, a, b);
+}
 
-void Func_02001568(s32 a, s32 b) { Pillars_Pound(gData_02003fa0, a, b); }
+void DehkanPlateau_PoundRoom2Pillar(s32 a, s32 b) {
+  Pillars_Pound(gDehkanPlateau_Room2PoundPillars, a, b);
+}
 
-void Func_0200157c(s32 a, s32 b) { Pillars_Pound(gData_02003fa8, a, b); }
+void DehkanPlateau_PoundRoom3Pillar(s32 a, s32 b) {
+  Pillars_Pound(gDehkanPlateau_Room3PoundPillars, a, b);
+}
 
-void Func_02001590(s32 a, s32 b) { Pillars_Pound(gData_02003fb0, a, b); }
+void DehkanPlateau_PoundRoom5Pillar(s32 a, s32 b) {
+  Pillars_Pound(gDehkanPlateau_Room5PoundPillars, a, b);
+}
 
-void Func_020015a4(s32 a, s32 b) { Pillars_Pound(gData_02003fb8, a, b); }
+void DehkanPlateau_PoundRoom6Pillar(s32 a, s32 b) {
+  Pillars_Pound(gDehkanPlateau_Room6PoundPillars, a, b);
+}
 
 #include "shared/actor_drop_and_wait.h"
 
-void Func_020015e0(void) {
+void DehkanPlateau_DropRoom1PillarIntoGap(void) {
   struct Actor *object = Actor_GetById(12);
   s32 x;
 
@@ -323,9 +335,11 @@ void Func_020015e0(void) {
   }
 }
 
-void Func_02001630(void) { Actor_LiftTargetBlock(gData_02003fc0); }
+void DehkanPlateau_LiftRoom2Pillar(void) {
+  Actor_LiftTargetBlock(gDehkanPlateau_Room2MovablePillars);
+}
 
-void Func_02001640(void) {
+void DehkanPlateau_PlaceRoom2Pillar(void) {
   struct Actor *object = Actor_GetById(23);
   s32 x = object->x >> 20;
 
@@ -342,9 +356,11 @@ void Func_02001640(void) {
   }
 }
 
-void Func_020016a0(void) { Actor_LiftTargetBlock(gData_02003fc4); }
+void DehkanPlateau_LiftRoom3Pillar(void) {
+  Actor_LiftTargetBlock(gDehkanPlateau_Room3MovablePillars);
+}
 
-void Func_020016b0(void) {
+void DehkanPlateau_PlaceRoom3Pillar(void) {
   struct Actor *object = Actor_GetById(19);
   s32 x = object->x >> 20;
 
@@ -363,7 +379,7 @@ void Func_020016b0(void) {
   }
 }
 
-void Func_0200172c(void) {
+void DehkanPlateau_SetRoom3SecondPillarInPlace(void) {
   Actor_SetPositionFixed(20, 150 << 18, 134 << 18);
   MapGrid_CopyCellAttributes(38, 32, 1, 1, 37, 33);
   MapGrid_CopyCellAttributes(30, 32, 1, 2, 38, 32);
@@ -371,12 +387,12 @@ void Func_0200172c(void) {
   GameFlag_Set(0x841);
 }
 
-void Func_02001788(void) {
+void DehkanPlateau_MoveRoom3SecondPillar(void) {
   if ((Actor_GetById(20)->x >> 20) == 37)
-    Func_0200172c();
+    DehkanPlateau_SetRoom3SecondPillarInPlace();
 }
 
-void Func_020017a0(void) {
+void DehkanPlateau_PushRoom3SecondPillar(void) {
   u8 *flags;
 
   if ((Actor_GetById(20)->x >> 20) == 38) {
@@ -386,7 +402,7 @@ void Func_020017a0(void) {
     *flags = 0;
     wait(1);
     Leader_PushObjectAhead();
-    Func_0200172c();
+    DehkanPlateau_SetRoom3SecondPillarInPlace();
     wait(1);
     *flags = 3;
     Event_End();
@@ -785,7 +801,7 @@ void Func_0200200c(struct Actor *object) {
   }
 }
 
-extern s16 gData_02003fc8[];
+extern s16 gDehkanPlateau_Room3RaisedPillars[];
 
 void Scene_RunIfHeld(void) {
   struct Actor *object;
@@ -793,13 +809,15 @@ void Scene_RunIfHeld(void) {
   if (Leader_CanPushObjectAhead() != 0) {
     object = Actor_GetById(
         Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner));
-    Func_02000d78(gData_02003fc8);
+    Func_02000d78(gDehkanPlateau_Room3RaisedPillars);
     Leader_PushObjectAhead();
     Func_0200200c(object);
   }
 }
 
-void Func_02002114(void) { Func_02000d78(gData_02003fc8); }
+void DehkanPlateau_LiftRoom3RaisedPillar(void) {
+  Func_02000d78(gDehkanPlateau_Room3RaisedPillars);
+}
 
 void Func_02002124(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1181,15 +1199,15 @@ void DehkanPlateau_PoundLeaderThrough(void) {
   }
 }
 
-extern s16 gData_02003f52[];
-extern s16 gData_02003f80[];
-extern s16 gData_02003f92[];
-extern s16 gData_02003f98[];
-extern s16 gData_02003fa0[];
-extern s16 gData_02003fb0[];
-extern s16 gData_02003fb8[];
-extern s16 gData_02003fc0[];
-extern s16 gData_02003fc4[];
+extern s16 gDehkanPlateau_Room2CrumblingPillars[];
+extern s16 gDehkanPlateau_Room3CrumblingPillars[];
+extern s16 gDehkanPlateau_Room6CrumblingPillar[];
+extern s16 gDehkanPlateau_Room1PoundPillars[];
+extern s16 gDehkanPlateau_Room2PoundPillars[];
+extern s16 gDehkanPlateau_Room5PoundPillars[];
+extern s16 gDehkanPlateau_Room6PoundPillars[];
+extern s16 gDehkanPlateau_Room2MovablePillars[];
+extern s16 gDehkanPlateau_Room3MovablePillars[];
 
 void Func_02002180(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
@@ -1403,9 +1421,9 @@ void Func_020030c0__s2698(void) {
 void DehkanPlateau_RestoreRoom1Cracks(void);
 
 void DehkanPlateau_InitializeRoom1(void) {
-  CrumblingPillars_Place(gData_02003f44);
+  CrumblingPillars_Place(gDehkanPlateau_Room1CrumblingPillars);
   Actor_SetSpritePriority(8, 3);
-  Pillars_Place(gData_02003f98);
+  Pillars_Place(gDehkanPlateau_Room1PoundPillars);
   Actor_DisableById(12);
   if (GameFlag_Get(FLAG_AREA_TEMP_01) != 0) {
     MapGrid_CopyCellAttributes(54, 32, 2, 1, 56, 64);
@@ -1436,16 +1454,16 @@ void DehkanPlateau_InitializeRoom2(void) {
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
     }
   }
-  CrumblingPillars_PlaceWithStandIns(gData_02003f52);
+  CrumblingPillars_PlaceWithStandIns(gDehkanPlateau_Room2CrumblingPillars);
   Func_020012d8();
-  Pillars_Place(gData_02003fa0);
+  Pillars_Place(gDehkanPlateau_Room2PoundPillars);
   if (GameFlag_Get(0x840) != 0) {
     Actor_DisableById(23);
     MapGrid_CopyCellAttributes(50, 7, 1, 1, 52, 7);
     FieldActor_SetPositionAndResetMotion(Actor_GetById(23), 210 << 18, 0,
                                          240 << 15);
   } else {
-    Actor_PlaceBlocks(gData_02003fc0);
+    Actor_PlaceBlocks(gDehkanPlateau_Room2MovablePillars);
   }
   DehkanPlateau_RestoreRoom2Cracks();
   if (GameFlag_Get(0x86c) != 0) {
@@ -1461,7 +1479,7 @@ void DehkanPlateau_InitializeRoom2(void) {
   DehkanPlateau_HideRoom2Actors();
 }
 
-extern s16 gData_02003fc8[];
+extern s16 gDehkanPlateau_Room3RaisedPillars[];
 extern s32 gDehkanPlateau_CrackZ;
 
 void DehkanPlateau_ForgetCrackOnLeaving(void);
@@ -1499,7 +1517,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   Actor_SetSpritePriority(13, 1);
   Func_02003d90();
   Rope_Place(0, 520, 12, 13);
-  Actor_PlaceBlocks(gData_02003fc4);
+  Actor_PlaceBlocks(gDehkanPlateau_Room3MovablePillars);
   if (Actor_GetById(19)->y > (s32)0xfff80000)
     Actor_SetSpritePriority(19, 1);
   else
@@ -1508,14 +1526,14 @@ void DehkanPlateau_InitializeRoom3(void) {
   Actor_GetById(20)->priorityFlags |= 32;
   Actor_SetSpritePriority(20, 2);
   if (GameFlag_Get(0x841) != 0)
-    Func_0200172c();
+    DehkanPlateau_SetRoom3SecondPillarInPlace();
   else
     MapGrid_CopyCellAttributes(38, 32, 1, 1, 38, 33);
   Actor_GetById(14)->priorityFlags &= ~1;
   Actor_GetById(15)->priorityFlags &= ~1;
   Actor_GetById(16)->priorityFlags &= ~1;
   Actor_GetById(17)->priorityFlags &= ~1;
-  Pillars_Raise(gData_02003fc8);
+  Pillars_Raise(gDehkanPlateau_Room3RaisedPillars);
   value = Actor_GetById(17)->x;
   zero = 0;
   if ((value >> 20) == 54) {
@@ -1554,7 +1572,7 @@ void DehkanPlateau_InitializeRoom3(void) {
     GameFlag_Set(FLAG_SCENE_TEMP_16);
     Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   }
-  CrumblingPillars_Place(gData_02003f80);
+  CrumblingPillars_Place(gDehkanPlateau_Room3CrumblingPillars);
   Func_020013b0();
   DehkanPlateau_HideRoom3Actors();
   {
@@ -1725,7 +1743,7 @@ void DehkanPlateau_InitializeRoom5(void) {
       }
     }
   }
-  Pillars_Place(gData_02003fb0);
+  Pillars_Place(gDehkanPlateau_Room5PoundPillars);
   DehkanPlateau_RestoreRoom5Cracks();
   entrance = gMainRoutineWork.entrance;
   if (entrance > 10) {
@@ -1776,8 +1794,8 @@ void DehkanPlateau_InitializeRoom6(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (GameFlag_Get(95) != 0)
     GameFlag_Set(FLAG_SCENE_TEMP_09);
-  Pillars_Place(gData_02003fb8);
-  CrumblingPillars_Place(gData_02003f92);
+  Pillars_Place(gDehkanPlateau_Room6PoundPillars);
+  CrumblingPillars_Place(gDehkanPlateau_Room6CrumblingPillar);
   if (GameFlag_Get(FLAG_SCENE_TEMP_07) == 0) {
     Func_02002140();
     wait(10);
@@ -1801,8 +1819,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef CrumblingPillars_PlaceWithStandIns
 #undef Pillars_Raise
 
-void Func_020016b0(void);
-void Func_02001788(void);
+void DehkanPlateau_PlaceRoom3Pillar(void);
+void DehkanPlateau_MoveRoom3SecondPillar(void);
 void Func_02002180(void);
 void DehkanPlateau_CannonFleesEast(void);
 
@@ -1848,54 +1866,54 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gData_02003ed8,
 };
 
-s16 gData_02003f44[] = {
+s16 gDehkanPlateau_Room1CrumblingPillars[] = {
     8, 528, 9, 530, 10, 532, -1,
 };
 
-s16 gData_02003f52[] = {
+s16 gDehkanPlateau_Room2CrumblingPillars[] = {
     11, 528, 12, 530, 13, 532, 14, 534,
     15, 536, 16, 538, 17, 540, 18, 542,
     19, 544, 20, 546, 21, 548, -1,
 };
 
-s16 gData_02003f80[] = {
+s16 gDehkanPlateau_Room3CrumblingPillars[] = {
     21, 528, 22, 530, 23, 532, 24, 534,
     -1,
 };
 
-s16 gData_02003f92[] = {
+s16 gDehkanPlateau_Room6CrumblingPillar[] = {
     9, 528, -1,
 };
 
-s16 gData_02003f98[] = {
+s16 gDehkanPlateau_Room1PoundPillars[] = {
     11, 1, 515, -1,
 };
 
-s16 gData_02003fa0[] = {
+s16 gDehkanPlateau_Room2PoundPillars[] = {
     22, 1, 516, -1,
 };
 
-s16 gData_02003fa8[] = {
+s16 gDehkanPlateau_Room3PoundPillars[] = {
     18, 1, 517, -1,
 };
 
-s16 gData_02003fb0[] = {
+s16 gDehkanPlateau_Room5PoundPillars[] = {
     8, 1, 518, -1,
 };
 
-s16 gData_02003fb8[] = {
+s16 gDehkanPlateau_Room6PoundPillars[] = {
     8, 1, 519, -1,
 };
 
-s16 gData_02003fc0[] = {
+s16 gDehkanPlateau_Room2MovablePillars[] = {
     23, -1,
 };
 
-s16 gData_02003fc4[] = {
+s16 gDehkanPlateau_Room3MovablePillars[] = {
     19, -1,
 };
 
-s16 gData_02003fc8[] = {
+s16 gDehkanPlateau_Room3RaisedPillars[] = {
     14, 15, 16, 17, -1,
 };
 
@@ -2263,10 +2281,10 @@ struct Trigger gDehkanPlateau_Room1Triggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 30, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 31, CONDITION_ALWAYS, 7},
-    {STEP_TRIGGER_WALKING, 9, CONDITION_ALWAYS, EVENT(Func_020012c8)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 11, 0x203, EVENT(Func_02001554)},
-    {TRIGGER_PUSHED, 0, 0x301, EVENT(Func_020015e0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x301, EVENT(Func_020015e0)},
+    {STEP_TRIGGER_WALKING, 9, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom1Pillars)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 11, 0x203, EVENT(DehkanPlateau_PoundRoom1Pillar)},
+    {TRIGGER_PUSHED, 0, 0x301, EVENT(DehkanPlateau_DropRoom1PillarIntoGap)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x301, EVENT(DehkanPlateau_DropRoom1PillarIntoGap)},
     {TRIGGER_STEP, 6, 0x200, EVENT(DehkanPlateau_HideActors)},
     {TRIGGER_STEP, 7, IF_FLAG_SET(0x200), EVENT(DehkanPlateau_ShowActors)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020017f4)},
@@ -2296,13 +2314,13 @@ struct Trigger gDehkanPlateau_Room2Triggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 6},
     {TRIGGER_STEP, 30, 0x86c, EVENT(DehkanPlateau_CannonFleesOverCracks)},
     {TRIGGER_STEP, 31, 0x86d, EVENT(DehkanPlateau_CannonFleesEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 8, CONDITION_ALWAYS, EVENT(Func_02001368)},
-    {STEP_TRIGGER_WALKING, 9, CONDITION_ALWAYS, EVENT(Func_02001368)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 22, 0x204, EVENT(Func_02001568)},
-    {TRIGGER_PUSH, 0, 0x840, EVENT(Func_02001630)},
-    {TRIGGER_PUSHED, 0, 0x840, EVENT(Func_02001640)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 23, 0x840, EVENT(Func_02001630)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, 0x840, EVENT(Func_02001640)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 8, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom2Pillars)},
+    {STEP_TRIGGER_WALKING, 9, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom2Pillars)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 22, 0x204, EVENT(DehkanPlateau_PoundRoom2Pillar)},
+    {TRIGGER_PUSH, 0, 0x840, EVENT(DehkanPlateau_LiftRoom2Pillar)},
+    {TRIGGER_PUSHED, 0, 0x840, EVENT(DehkanPlateau_PlaceRoom2Pillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 23, 0x840, EVENT(DehkanPlateau_LiftRoom2Pillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, 0x840, EVENT(DehkanPlateau_PlaceRoom2Pillar)},
     {TRIGGER_STEP, 6, 0x200, EVENT(DehkanPlateau_HideActors)},
     {TRIGGER_STEP, 7, IF_FLAG_SET(0x200), EVENT(DehkanPlateau_ShowActors)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020017f4)},
@@ -2330,27 +2348,27 @@ struct Trigger gDehkanPlateau_Room3Triggers[] = {
     {TRIGGER_STEP, 31, 0x86f, EVENT(DehkanPlateau_CannonPoundsPillar)},
     {TRIGGER_STEP, 32, 0x870, EVENT(DehkanPlateau_CannonCrumblesPillars)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, 0x208, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x205, EVENT(Func_0200157c)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_020016a0)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_020016b0)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_020016a0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_020016b0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, 0x841, EVENT(Func_02001788)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 9, 0x841, EVENT(Func_020017a0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x205, EVENT(DehkanPlateau_PoundRoom3Pillar)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3Pillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(DehkanPlateau_PlaceRoom3Pillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3Pillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(DehkanPlateau_PlaceRoom3Pillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, 0x841, EVENT(DehkanPlateau_MoveRoom3SecondPillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 9, 0x841, EVENT(DehkanPlateau_PushRoom3SecondPillar)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT(Scene_RunIfHeld)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(Scene_RunIfHeld)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, EVENT(Func_02002114)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(Func_02002114)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, CONDITION_ALWAYS, EVENT(Func_02002114)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(Func_02002114)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3RaisedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3RaisedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3RaisedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3RaisedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(Func_02002124)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_02002124)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(Func_02002124)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_02002124)},
-    {STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT(Func_020013fc)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(Func_020013fc)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT(Func_020013fc)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT(Func_020013fc)},
+    {STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom3Pillars)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom3Pillars)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom3Pillars)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom3Pillars)},
     {TRIGGER_STEP, 7, 0x200, EVENT(DehkanPlateau_HideActors)},
     {TRIGGER_STEP, 8, IF_FLAG_SET(0x200), EVENT(DehkanPlateau_ShowActors)},
     {TRIGGER_STEP, 12, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
@@ -2390,7 +2408,7 @@ struct Trigger gDehkanPlateau_Room5Triggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_STEP, 23, 0x871, EVENT(DehkanPlateau_CannonPoundsLeaderThrough)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x206, EVENT(Func_02001590)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x206, EVENT(DehkanPlateau_PoundRoom5Pillar)},
     {TRIGGER_EXAMINE, 12, 0x878, EVENT(DehkanPlateau_TakePoundCube)},
     {TRIGGER_STEP, 18, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_STEP, 19, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
@@ -2419,8 +2437,8 @@ struct Trigger gDehkanPlateau_Room6Triggers[] = {
     {TRIGGER_EXIT, 41, CONDITION_ALWAYS, 41},
     {TRIGGER_EXIT, 42, CONDITION_ALWAYS, 42},
     {TRIGGER_EXIT, 43, CONDITION_ALWAYS, 43},
-    {STEP_TRIGGER_WALKING, 8, CONDITION_ALWAYS, EVENT(Func_02001444)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x207, EVENT(Func_020015a4)},
+    {STEP_TRIGGER_WALKING, 8, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom6Pillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x207, EVENT(DehkanPlateau_PoundRoom6Pillar)},
     {TRIGGER_STEP, 9, 0x202, EVENT(Func_02002140)},
     {TRIGGER_STEP, 10, IF_FLAG_SET(0x202), EVENT(Func_02002180)},
     {TRIGGER_STEP, 5, 0x200, EVENT(DehkanPlateau_HideActors)},

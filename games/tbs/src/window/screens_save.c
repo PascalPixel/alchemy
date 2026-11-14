@@ -118,11 +118,11 @@ s32 Save_ScanFileSummaries(void) {
     s8 *flags;
 
     fileCount = Save_LoadFileSummaries();
-    // A signed byte cursor from the party's end keeps the native literal base
-    // 0x1070 and flag offsets 1 and 2.
+    /* FAKEMATCH(temporary): the flags read through a byte cursor at the end
+     * of the first summary's party. */
     flags = (s8 *)&gSaveWork->summary[0].party[4];
     gTitleSendOptionEnabled = 0;
-    (*(s16 *)&gTitleBattleOptionEnabled) = 0;
+    gTitleBattleOptionEnabled = 0;
     for (i = 0; i < SAVE_FILE_COUNT; i++) {
       if (flags[i * sizeof(struct SaveFileSummary) +
                 SUMMARY_DISTANCE(party[4], sendFlag)] != 0) {
@@ -131,7 +131,7 @@ s32 Save_ScanFileSummaries(void) {
       }
       if (flags[i * sizeof(struct SaveFileSummary) +
                 SUMMARY_DISTANCE(party[4], flagCount)] != 0) {
-        (*(s16 *)&gTitleBattleOptionEnabled) = 1;
+        gTitleBattleOptionEnabled = 1;
       }
     }
 

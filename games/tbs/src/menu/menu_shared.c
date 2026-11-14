@@ -293,8 +293,7 @@ void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
   s32 width = CountDigitsAtLeastTwo(number);
 
   // Step x back to the field's left edge; the number writer right-aligns the
-  // number in a field of width characters. x changes in place: a separate
-  // left-edge local changes the registers.
+  // number in a field of width characters.
   x -= width * NUMBER_PIXELS_PER_DIGIT;
   Text_DrawNumberAtOffsetFar(number, width, window, x, y);
 }

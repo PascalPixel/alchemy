@@ -67,9 +67,9 @@ extern u8 gNumberBuffer[];
 /// Heap slot 18: the selection screen while it runs.
 #define gSelectionMenuWork                                                     \
   (*(struct SelectionMenuWork **)&gHeapSlots[HEAP_SLOT_SELECTION_MENU])
-/// Read as a halfword: nonzero offers Battle on the File Screen, when a file
+/// Nonzero offers Battle on the File Screen, when a file
 /// has any of game flags 48 to 127 set.
-extern u8 gTitleBattleOptionEnabled[];
+extern s16 gTitleBattleOptionEnabled;
 /// The Japanese item menu's help: `L+A:`, before the arrange help.
 extern u8 gItemMenu_ArrangeKeysString[];
 extern s32 gItemMenu_CommandColumnXTable[];
@@ -393,8 +393,8 @@ typedef void MenuBackdropResult;
 #else
 typedef s32 MenuBackdropResult;
 #endif
-// The native wrapper forwards an implicit result; the defined interface is
-// void.
+// UB: Menu_OpenBackdropScreen returns the result of DjinnMenu_DrawElementList,
+// called with no prototype though it returns nothing; nothing reads it.
 MenuBackdropResult Menu_OpenBackdropScreen(void);
 s32 PsynergyList_Diff(struct PsynergyEntry *before, struct PsynergyEntry *after,
                       u16 *actionsOut, s32 *gainedCountOut, s32 *lostCountOut);

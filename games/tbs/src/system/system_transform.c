@@ -232,8 +232,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   u32 code[7];
   s32 dx, dy, dz;
   s32 ux;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take. */
-  s32 zero = 0;
+  s32 uy = 0; // the sideways axis is kept level
   s32 ex;
   Dot3Fn dot;
   s32 ey;
@@ -287,9 +286,9 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   ey = eye[1];
   ez = eye[2];
   out[0] = ux;
-  out[3] = zero;
+  out[3] = uy;
   out[6] = uz;
-  out[9] = -dot(ex, ux, ez, uz, zero, zero);
+  out[9] = -dot(ex, ux, ez, uz, uy, uy);
   out[4] = vy;
   out[7] = vz;
   out[1] = vx;

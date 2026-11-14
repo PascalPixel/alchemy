@@ -65,7 +65,6 @@
 #include "field/scene_tables.h"
 #include "field/scene.h"
 
-const u32 *BabiLighthouse_GetExits(void);
 s32 BabiLighthouse_SetupMap(void);
 extern s32 gBabiLighthouse_TrembleScript[];
 extern struct SceneEntrance gBabiLighthouse_EntryEntrances[];

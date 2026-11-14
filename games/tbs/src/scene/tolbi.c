@@ -63,10 +63,6 @@
 #include "field/event.h"
 #include "field/scene_tables.h"
 
-const struct SceneEntrance *Tolbi_GetEntrances(void);
-const struct SceneExitRegion *Tolbi_GetRegions(void);
-const u32 *Tolbi_GetExits(void);
-const struct ActorPlacement *Tolbi_GetActorPlacements(void);
 const struct Trigger *Tolbi_SelectTriggers(void);
 s32 Tolbi_ApplyEntryState(s32 unused);
 extern s32 gTolbiMirroredActor[];

@@ -108,12 +108,6 @@
 
 struct Actor;
 
-const struct SceneEntrance *ShipRooms_SelectEntrances(void);
-const struct SceneExitRegion *ShipRooms_GetRegions(void);
-const u32 *ShipRooms_GetExits(void);
-const struct ActorPlacement *ShipRooms_SelectActorPlacements(void);
-const struct Trigger *ShipRooms_SelectTriggers(void);
-s32 ShipRooms_ApplyEntryState(void);
 extern s32 gShipRooms_TurnSteps[];
 extern s32 gShipRooms_LeaveHold[];
 extern s32 gShipRooms_LeaveCaptainsQuarters[];

@@ -122,12 +122,6 @@
 #include "field/event.h"
 #include "field/scene_tables.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(void);
 extern s32 gKalay_TileStepByFacing[];
 extern s32 gKalay_TourGroupWalkScript[];
 extern s32 gKalay_TourGroupLeaveScript[];

@@ -49,11 +49,6 @@
 #include "field/scene_tables.h"
 #include "field/scene.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
 extern s32 gTimberRoomsBC_InnWorkerChores[];
 extern struct SceneEntrance gTimberRoomsBC_Entrances[];
 extern struct SceneExitRegion gTimberRoomsB_Regions[];

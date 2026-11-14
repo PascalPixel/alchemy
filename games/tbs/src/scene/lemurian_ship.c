@@ -35,14 +35,7 @@
 #include "types.h"
 #include "field/scene_tables.h"
 
-const struct SceneEntrance *LemurianShip_GetEntrances(void);
-const struct SceneExitRegion *LemurianShip_GetRegions(void);
-const u32 *LemurianShip_GetExits(void);
-const struct ActorPlacement *LemurianShip_GetActorPlacements(void);
-const struct Trigger *LemurianShip_GetTriggers(void);
 s32 LemurianShip_SetupMap(void);
-void LineScroll_ArmDma(void);
-void LineScroll_BuildPage(void);
 extern u16 gShipGlowPalettes[];
 extern s32 gSprayFallScript[];
 extern s16 gRippleSine[256];

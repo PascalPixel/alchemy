@@ -60,11 +60,6 @@
 #include "types.h"
 #include "field/scene_tables.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 void HeatGauge_Start(void);
 /// The middles of the oases, where a leader stepping into one bathes: x and z

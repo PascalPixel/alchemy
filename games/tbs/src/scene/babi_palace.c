@@ -63,8 +63,6 @@
 #include "field/scene_tables.h"
 #include "field/scene.h"
 
-const struct SceneExitRegion *BabiPalace_GetRegions(void);
-const u32 *BabiPalace_GetExits(void);
 s32 BabiPalace_ApplyEntryState(void);
 extern u16 gBabiPalace_DoorCells[];
 extern s32 gBabiPalace_IndigestionScript[];

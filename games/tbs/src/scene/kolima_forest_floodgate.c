@@ -50,12 +50,6 @@ STATIC_ASSERT(offsetof(struct FloodgateLog, x) == 2);
 STATIC_ASSERT(offsetof(struct FloodgateLog, vertical) == 6);
 STATIC_ASSERT(offsetof(struct FloodgateLog, actor) == 8);
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(void);
 // UB: the scene calls this before its definition with no prototype, so as a
 // function returning int.
 #ifdef UBFIX

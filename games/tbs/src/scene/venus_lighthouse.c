@@ -85,11 +85,6 @@
 #include "field/field.h"
 #include "field/scene_tables.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern u32 gPushedActor_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
@@ -481,6 +476,10 @@ enum VenusTrack {
 #define VENUS_COLOR_MARK(mode) (VENUS_COLOR_MARK_TAG << 4 | (mode))
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
+static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x,
+                                                         s32 z, u32 width,
+                                                         u32 height, s32 value);
+
 static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Sets up a passage effect's motion, collision and child value.
@@ -624,9 +623,6 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
 }
 
 /// Unused: nothing in Venus Lighthouse calls it.
-static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x,
-                                                         s32 z, u32 width,
-                                                         u32 height, s32 value);
 #include "shared/pushed_actor_fill_rectangle.c"
 
 /// After a battle, draws every actor whose timer holds a

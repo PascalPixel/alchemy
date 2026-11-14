@@ -9,10 +9,6 @@
 #include "types.h"
 #include "field/scene_tables.h"
 
-u8 *FileScreen_GetEntrances(void);
-u8 *FileScreen_GetExits(void);
-u8 *FileScreen_GetActorPlacements(void);
-u8 *FileScreen_GetTriggers(void);
 extern const u16 gFileScreen_ButtonCode[];
 extern const u16 gFileScreen_ExtraButtonCode[];
 s32 FileScreen_Run(void);

@@ -87,7 +87,6 @@
 #include "field/scene_tables.h"
 #include "field/scene.h"
 
-s32 TreeRooms_EnterRoom(void);
 extern s16 gTreeRooms_MapPatches[];
 extern s32 gTreeRooms_LeaderGathersActions[];
 extern s32 gTreeRooms_GaretGathersActions[];

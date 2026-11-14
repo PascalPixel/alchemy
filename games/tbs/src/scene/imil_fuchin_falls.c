@@ -111,15 +111,6 @@
 #include "field/field_effect.h"
 
 extern s32 gImilFuchinFalls_TrackLeader;
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(void);
-void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
-                               s32 velocityY, s32 velocityZ, u32 flags,
-                               const struct EffectOptions *extra);
 extern s16 gImilFuchinFalls_KeyHeadings[];
 extern s16 gImilFuchinFalls_SlideHeadings[];
 extern struct Actor *gImilFuchinFalls_DragonsEye;

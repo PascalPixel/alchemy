@@ -62,10 +62,6 @@
 #include "field/event.h"
 #include "field/scene_tables.h"
 
-const struct SceneEntrance *StuccoRoomsB_GetEntrances(void);
-const struct SceneExitRegion *StuccoRoomsB_GetRegions(void);
-const u32 *StuccoRoomsB_GetExits(void);
-const struct ActorPlacement *StuccoRoomsB_SelectActorPlacements(void);
 const struct Trigger *StuccoRoomsB_SelectTriggers(void);
 s32 StuccoRoomsB_ApplyEntryState(void);
 extern s32 gStuccoRoomsBSquashStretch[];

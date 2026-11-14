@@ -7,11 +7,7 @@
 #include "field/scene_tables.h"
 
 extern const s32 gBattleArena_SlotValues[];
-u8 *BattleArena_GetEntrances(void);
-u8 *BattleArena_GetExits(void);
-s32 BattleArena_SelectActorPlacements(void);
 extern u32 gBattleArenaCallFrames;
-u8 *BattleArena_GetTriggers(void);
 s32 BattleArena_Initialize(void);
 extern u8 gBattleArena_SlotColumns[];
 extern struct SceneEntrance gBattleArenaEntrances[];

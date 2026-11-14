@@ -71,8 +71,6 @@ void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames);
 #include "field_sequence/actor_commands.c"
 
 #undef Field_RequestDjinnBattle
-#undef Event_SetAfterBattleDestination
-#undef Party_SetFields1f2And1f4
 #undef EventWork1cc
 #undef Actor_SetHorizontalPositionAndAngleWithTerrain
 #undef ParticleSprite

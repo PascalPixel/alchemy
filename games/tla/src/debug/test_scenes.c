@@ -51,7 +51,7 @@ void Test_ReceiveGust(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_020000ac(void) { return 0; }
+s32 Scene_Initialize(void) { return 0; }
 
 s32 Scene_PrepareMap(void) { return 0; }
 

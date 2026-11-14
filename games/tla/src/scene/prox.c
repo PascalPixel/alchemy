@@ -2,6 +2,13 @@
 /// Prox, Felix's home in the frozen north, where the clan of Puelle lives in
 /// poverty in the shadow of the Mars Lighthouse, in six rooms that share this
 /// overlay (SceneId_Prox1 to SceneId_Prox6).
+///
+/// While the lighthouse is unlit a storm rages over the village. Up the
+/// riverbed the Venus Djinni Mold bolts into the snow until Scoop digs it out;
+/// in the upper village the party overhears the talk of freeing Felix's
+/// parents and meets Puelle. After the ending the storm is over, the children
+/// play tag, the people give thanks for the beacon and the party says its
+/// farewell at the south gate before the credits.
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
@@ -41,6 +48,19 @@
 #include "fixed_math.h"
 #include "system/iwram_call.h"
 #include "system/task.h"
+
+#define FLAG_MOLD_JOINED 0x40       ///< Mold, the Venus Djinni, joined
+#define FLAG_HEARD_OF_PARENTS 0x9c0 ///< overheard the talk of freeing them
+#define FLAG_CLAN_SPOKE_OF_LIGHTHOUSE 0x9c1
+#define FLAG_MET_PUELLE 0x9c2
+#define FLAG_THANKED_FOR_BEACON 0x9c5 ///< after the ending, in the house
+#define FLAG_SAID_FAREWELL 0x9cc
+#define FLAG_MOLD_HID_IN_SNOW 0xa2d
+/// The door the mayor's men came out of stays open.
+#define FLAG_DOOR_LEFT_OPEN FLAG_SCENE_TEMP_00
+/// Set while the Mars Lighthouse is unlit: rain and storm over the village.
+#define FLAG_STORM_RAGING FLAG_SCENE_TEMP_01
+#define FLAG_DIG_SPOT_SCOOPED FLAG_AREA_TEMP_00
 
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -125,9 +145,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000280(void) { Djinn_JoinParty(0x14, 0, 0x10); }
+/// Mold, the Venus Djinni, joins the party.
+void Prox_MoldJoins(void) { Djinn_JoinParty(0x14, 0, 0x10); }
 
-void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
+/// The Mercury Djinni kept in the house joins the party.
+void Prox_MercuryDjinniJoins(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 #include "shared/distance.c"
 
@@ -148,12 +170,12 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 #endif
 
-extern s16 gData_02004b2c[];
+extern s16 gProx_Room1FarewellPlacements[];
 extern u32 gProx_Room2Placements[];
 extern struct ActorPlacement gProx_Room3Placements[];
-extern s32 gData_02004f04[];
+extern s32 gProx_Room3PlacementsOnceLit[];
 extern u32 gProx_Room5Placements[];
-extern u32 gData_020054a4[];
+extern u32 gProx_Room5PlacementsOnceLit[];
 extern u32 gProx_Room6Placements[];
 extern struct Trigger gProx_Triggers[];
 extern struct Trigger gProx_Room1Triggers[];
@@ -162,34 +184,38 @@ extern struct Trigger gProx_Room3Triggers[];
 extern struct Trigger gProx_Room5Triggers[];
 extern struct Trigger gProx_Room6Triggers[];
 
-extern u32 gData_02004980[];
+extern u32 gProx_KradenStepsUpToPuelle[];
 
-extern u32 gData_02004a08[];
+extern u32 gProx_StepBackFromPuelle[];
 extern s32 gProx_EnterDoorScript[];
 
-void Func_020027e4(void);
+/// The lower village: after the ending its three children play tag.
+void Prox_InitializeRoom2(void);
 
 void Prox_InitializeRoom3(void);
 
-void Func_020029c8(void);
+/// The houses: the thanks for the beacon on the first visit after the ending.
+void Prox_InitializeRoom4(void);
 
-void Func_02002a38(void);
-extern u32 gData_020047ac[];
-extern u32 gData_02004848[];
-extern u32 gData_020048e4[];
-void Func_02001c24(s32 value);
-extern u32 gData_02005f2c[];
-extern u32 gData_02005f70[];
-extern u32 gData_02005fac[];
-extern u32 gData_02005fe8[];
-extern u32 gData_020060cc[];
-extern u32 gData_0200617c[];
-extern u32 gData_020061fc[];
-extern u32 gData_0200622c[];
+/// The basements: the leader comes down their stairs.
+void Prox_InitializeRoom5(void);
+extern u32 gProx_FirstChildRuns[];
+extern u32 gProx_SecondChildRuns[];
+extern u32 gProx_ThirdChildRuns[];
+/// The leader comes down the stairs into a basement.
+void Prox_ComeDownStairs(s32 value);
+extern u32 gProx_KradenStepsForward[];
+extern u32 gProx_SecondParentWalksSouth[];
+extern u32 gProx_ThirdParentWalksSouth[];
+extern u32 gProx_LeftFileWalksSouth[];
+extern u32 gProx_JennaWalksSouth[];
+extern u32 gProx_LeaderWalksSouth[];
+extern u32 gProx_KradenWalksSouth[];
+extern u32 gProx_JennaRunsAhead[];
 void Leader_StopIfPending(void);
 void Particles_UpdateFalling(void);
 
-void Func_02000290(void);
+void Prox_MercuryDjinniJoins(void);
 
 void Prox_PraiseReturnedWarrior(void);
 
@@ -204,30 +230,34 @@ void Prox_DecideToGoToLighthouse(void);
 
 void Prox_MeetPuelle(void);
 
-void Func_020015d0(void);
+/// Touched, Mold bolts up the riverbed and hides under a pile of snow.
+void Prox_MoldHidesInSnow(void);
 
-void Func_02001770(void);
-void Func_020017e4(void);
-void Func_02001800(void);
+/// Scoop on the pile of snow digs Mold out again.
+void Prox_ScoopUpMold(void);
+void Prox_BeginScoop(void);
+void Prox_EndScoop(void);
 
-void Func_02001a9c(void);
+void Prox_OpenDoor2(void);
 
-void Func_02001ab8(void);
-void Func_02001ad4(void);
-void Func_02001af0(void);
+void Prox_OpenDoor3(void);
+void Prox_OpenDoor5(void);
+void Prox_OpenDoor6(void);
 
-void Func_02001b0c(void);
+void Prox_OpenDoor7(void);
 
-void Func_02001b28(void);
+void Prox_OpenDoor8(void);
 
-void Func_02001b60(void);
-void Func_02001b7c(void);
+void Prox_OpenUpperDoor4(void);
+/// The leader climbs the stairs out of a basement.
+void Prox_ClimbStairs(void);
 void Prox_SayFarewell(void);
 void Leader_SlideOnIce(void);
-extern u32 gData_02004644[];
-extern u32 gData_02004680[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
 
-void Func_020018e0(void);
+/// Puffs rise from the roofs of the village while the storm is over.
+void Prox_PuffFromRoofs(void);
 
 #include "text/msg_ids.h"
 
@@ -235,8 +265,10 @@ void Func_020018e0(void);
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
-s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
-                  s32 force) {
+/// Runs a child at its target while it is near and ahead, and says whether it
+/// is chasing.
+s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
+                     s32 force) {
   s32 result = 0;
   s32 *targetPos;
   s32 *objectPos;
@@ -279,12 +311,9 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 
 #if TLA_PATCH_1
 
-/// Once the leader is within 11 of the actor, stops it
-/// (Actor_SelectAnimation mode 2). Otherwise it runs Func_020002d8 toward
-/// object 18, 16 or 17 by its action (0, 1, other) at 24, and if that returns
-/// 0, toward the leader at 32, flagged when action bit 1 is set while the event
-/// work's halfword 0x160 or byte 4 of the window tiles is nonzero.
-s32 Func_020003bc(struct Actor *actor) {
+/// The children's game of tag after the ending: each runs at the child it
+/// chases, and stops when the leader comes up close (from patch 1).
+s32 Prox_PlayTag(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 flag = 0;
@@ -302,18 +331,18 @@ s32 Func_020003bc(struct Actor *actor) {
     target = Actor_Get(16);
   else
     target = Actor_Get(17);
-  if (Func_020002d8(actor, target, 24, 0) == 0) {
+  if (Prox_ChaseTarget(actor, target, 24, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.currentOwner);
     if ((work->talk != 0 || tiles[4] != 0) && (actor->timer & 2))
       flag = 1;
-    Func_020002d8(actor, target, 32, flag);
+    Prox_ChaseTarget(actor, target, 32, flag);
   }
   return 0;
 }
 
 #else
 
-s32 Func_020003bc(struct Actor *actor) {
+s32 Prox_PlayTag(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 *action = &actor->timer;
@@ -326,11 +355,11 @@ s32 Func_020003bc(struct Actor *actor) {
     target = Actor_Get(16);
   else
     target = Actor_Get(17);
-  if (Func_020002d8(actor, target, 24, 0) == 0) {
+  if (Prox_ChaseTarget(actor, target, 24, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.currentOwner);
     if ((work->talk != 0 || tiles[4] != 0) && (*action & 2))
       flag = 1;
-    Func_020002d8(actor, target, 32, flag);
+    Prox_ChaseTarget(actor, target, 32, flag);
   }
   return 0;
 }
@@ -343,47 +372,48 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern u32 gData_02004b14[];
-extern u32 gData_0200506c[];
-/* VIEW(prox): variable gData_0200521c as extern struct ActorPlacement
- * gData_0200521c[]; the definition has s16 gData_0200521c[] = { 175, - 1, 3, 0,
- * 0, 104, 0, 0, 0, 196, 0x8000, 0, 172, - 1, 1, 0, 0, 128, 0, 0, 0, 106,
- * 0xb000, 1, 178, - 1, 1, 0, 0...; tried as the definition's extern s16
- * gData_0200521c[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:366: request for member `talkFacing' in something
- * not a structure or union. */
-extern struct ActorPlacement gData_0200521c__prox[] __asm__("gData_0200521c");
+extern u32 gProx_Room1Placements[];
+extern u32 gProx_Room4Placements[];
+/* VIEW(prox): variable gProx_Room4PlacementsOnceLit as extern struct
+ * ActorPlacement gProx_Room4PlacementsOnceLit[]; the definition has s16
+ * gProx_Room4PlacementsOnceLit[] = { 175, - 1, 3, 0, 0, 104, 0, 0, 0, 196,
+ * 0x8000, 0, 172, - 1, 1, 0, 0, 128, 0, 0, 0, 106, 0xb000, 1, 178, - 1, 1, 0,
+ * 0...; tried as the definition's extern s16 gProx_Room4PlacementsOnceLit[], it
+ * does not compile in tla-ja: games/tla/src/scene/prox.c:366: request for
+ * member `talkFacing' in something not a structure or union. */
+extern struct ActorPlacement gProx_Room4PlacementsOnceLit__prox[] __asm__(
+    "gProx_Room4PlacementsOnceLit");
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Prox1 && Event_GetFlag(0x9c5) &&
-      !Event_GetFlag(0x9cc))
-    return gData_02004b2c;
+  if (scene == (s32)&SceneId_Prox1 && Event_GetFlag(FLAG_THANKED_FOR_BEACON) &&
+      !Event_GetFlag(FLAG_SAID_FAREWELL))
+    return gProx_Room1FarewellPlacements;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Prox2)
     return gProx_Room2Placements;
   if (scene == (s32)&SceneId_Prox3) {
     if (Event_GetFlag(0xa3d))
-      return gData_02004f04;
+      return gProx_Room3PlacementsOnceLit;
     return gProx_Room3Placements;
   }
   if (scene == (s32)&SceneId_Prox4) {
     if (Event_GetFlag(0xa3d)) {
-      gData_0200521c__prox[1].talkFacing = 3;
-      gData_0200521c__prox[4].talkFacing = 3;
-      return gData_0200521c__prox;
+      gProx_Room4PlacementsOnceLit__prox[1].talkFacing = 3;
+      gProx_Room4PlacementsOnceLit__prox[4].talkFacing = 3;
+      return gProx_Room4PlacementsOnceLit__prox;
     }
-    return gData_0200506c;
+    return gProx_Room4Placements;
   }
   if (scene == (s32)&SceneId_Prox5) {
     if (Event_GetFlag(0xa3d))
-      return gData_020054a4;
+      return gProx_Room5PlacementsOnceLit;
     return gProx_Room5Placements;
   }
   if (scene == (s32)&SceneId_Prox6)
     return gProx_Room6Placements;
-  return gData_02004b14;
+  return gProx_Room1Placements;
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -393,9 +423,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000588(s32 a0) { Event_DigUpTreasure(a0, 64, 0x300); }
+/// Scoop on the black dot under the boulder digs up its treasure.
+void Prox_ScoopUpDarkMatter(s32 a0) {
+  Event_DigUpTreasure(a0, FIELD_TREASURE_ACTOR, FLAG_DIG_SPOT_SCOOPED);
+}
 
-extern struct Trigger gData_02005a20[];
+extern struct Trigger gProx_Room4Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -407,7 +440,7 @@ const u8 *Scene_GetEvents(void) {
   if (scene == (s32)&SceneId_Prox3)
     return gProx_Room3Triggers;
   if (scene == (s32)&SceneId_Prox4)
-    return gData_02005a20;
+    return gProx_Room4Triggers;
   if (scene == (s32)&SceneId_Prox5)
     return gProx_Room5Triggers;
   if (scene == (s32)&SceneId_Prox6)
@@ -488,7 +521,7 @@ struct TalkActor {
   u8 unk00[6];
   u16 angle; ///< 1/65536 turns
   u8 unk08[0x5b];
-  u8 unk63; ///< Func_020002d8 reads it
+  u8 unk63; ///< Prox_ChaseTarget reads it
 };
 
 void Prox_TalkToPlayingChild(void) {
@@ -565,7 +598,7 @@ void Prox_SearchForParents(void) {
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(89, 0, 77, 16, 1, 2);
-    Event_SetFlag(FLAG_SCENE_TEMP_00);
+    Event_SetFlag(FLAG_DOOR_LEFT_OPEN);
     FieldEvent_Wait(10);
     {
       s32 y = 0xc0;
@@ -604,7 +637,7 @@ void Prox_SearchForParents(void) {
     Event_ShowMessage(9, 0);
     Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
     Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHWEST);
-    Event_SetFlag(0x9c0);
+    Event_SetFlag(FLAG_HEARD_OF_PARENTS);
     Func_0200446c();
   }
 }
@@ -685,12 +718,12 @@ void Prox_DecideToGoToLighthouse(void) {
   Actor_FaceDirection(10, FACING_NORTH_NORTHWEST, 80);
   Actor_SetAnimationAndWait(10, 4);
   Event_ShowMessage(10, 0);
-  Event_SetFlag(0x9c1);
+  Event_SetFlag(FLAG_CLAN_SPOKE_OF_LIGHTHOUSE);
   Func_0200446c();
 }
 
 s32 Actor_MoveToObject();
-extern u32 gData_020049c4[];
+extern u32 gProx_IsaacStepsUpToPuelle[];
 
 void Prox_MeetPuelle(void) {
   u32 i;
@@ -719,8 +752,8 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirection(14, FACING_NORTH_NORTHWEST, 0);
   Actor_SetSpeed(18, 0.8);
   Actor_SetSpeed(0, 0.8);
-  Actor_SetScript(0, (s32)gData_020049c4);
-  Actor_RunScriptAndWait(18, (s32)gData_02004980);
+  Actor_SetScript(0, (s32)gProx_IsaacStepsUpToPuelle);
+  Actor_RunScriptAndWait(18, (s32)gProx_KradenStepsUpToPuelle);
   Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(11, 0);
@@ -889,8 +922,8 @@ test_wait:
   Actor_FaceDirectionAndWait(0, FACING_EAST);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimationAndWait(0, 3);
-  Actor_SetScript(0, (s32)gData_02004a08);
-  Actor_RunScriptAndWait(18, (s32)gData_02004a08);
+  Actor_SetScript(0, (s32)gProx_StepBackFromPuelle);
+  Actor_RunScriptAndWait(18, (s32)gProx_StepBackFromPuelle);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 160, 154);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Actor_RunRepeatedMotion(10, 1);
@@ -911,11 +944,11 @@ test_wait:
   Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(11, 3);
   Event_ShowMessage(11, 0);
-  Event_SetFlag(0x9c2);
+  Event_SetFlag(FLAG_MET_PUELLE);
   Func_0200446c();
 }
 
-void Func_020015d0(void) {
+void Prox_MoldHidesInSnow(void) {
   struct Actor *object;
 
   Event_Start();
@@ -958,12 +991,12 @@ void Func_020015d0(void) {
   MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
   MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
   MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
-  Event_SetFlag(0xa2d);
+  Event_SetFlag(FLAG_MOLD_HID_IN_SNOW);
   Func_0200446c();
 }
 
-void Func_02001770(void) {
-  if (Event_GetFlag(0xa3d) == 0 && Event_GetFlag(64) == 0) {
+void Prox_ScoopUpMold(void) {
+  if (Event_GetFlag(0xa3d) == 0 && Event_GetFlag(FLAG_MOLD_JOINED) == 0) {
     u8 *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
@@ -980,9 +1013,9 @@ void Func_02001770(void) {
   }
 }
 
-void Func_020017e4(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
+void Prox_BeginScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 
-void Func_02001800(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
+void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
 struct RisingObject {
   u8 unk00[8];
@@ -999,7 +1032,7 @@ struct RisingObject {
 
 void Actor_Release(struct RisingObject *object);
 
-void Func_0200181c(struct RisingObject *object) {
+void Prox_RisePuff(struct RisingObject *object) {
   object->x += object->drift << 8;
   object->y += 0x8000;
   object->scaleX += 0x51e;
@@ -1009,7 +1042,8 @@ void Func_0200181c(struct RisingObject *object) {
     Actor_Release(object);
 }
 
-void Func_02001860(s32 a0, s32 a1, s32 a2) {
+/// Adds one puff rising from a roof.
+void Prox_AddPuff(s32 a0, s32 a1, s32 a2) {
   s32 t0;
 
   t0 = FieldActor_Create(0x11d, a0, a1, a2);
@@ -1025,29 +1059,29 @@ void Func_02001860(s32 a0, s32 a1, s32 a2) {
     FIELD_AT(t0, s32, 24) = 0x8000;
     FIELD_AT(t0, s32, 28) = 0x8000;
     FIELD_AT(t0, s32, 104) = 0x3c;
-    FIELD_AT(t0, s32, 108) = (s32)Func_0200181c;
+    FIELD_AT(t0, s32, 108) = (s32)Prox_RisePuff;
     Actor_SelectAnimation(t0, 5);
     Actor_SetBlendMode(t0, 1);
   }
 }
 
-void Func_020018e0(void) {
+void Prox_PuffFromRoofs(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Prox2) {
     if ((gFrameCount & 63) == 0)
-      Func_02001860(536 << 16, 40 << 16, 232 << 16);
+      Prox_AddPuff(536 << 16, 40 << 16, 232 << 16);
     if (((gFrameCount + 60) & 63) == 0)
-      Func_02001860(168 << 16, 40 << 16, 296 << 16);
+      Prox_AddPuff(168 << 16, 40 << 16, 296 << 16);
     if (((gFrameCount + 20) & 63) == 0) {
-      Func_02001860(280 << 16, 42 << 16, 184 << 16);
-      Func_02001860(152 << 16, 48 << 16, 424 << 16);
+      Prox_AddPuff(280 << 16, 42 << 16, 184 << 16);
+      Prox_AddPuff(152 << 16, 48 << 16, 424 << 16);
     }
     if (((gFrameCount + 40) & 63) == 0)
-      Func_02001860(336 << 16, 42 << 16, 362 << 16);
+      Prox_AddPuff(336 << 16, 42 << 16, 362 << 16);
   } else if (scene == (s32)&SceneId_Prox3) {
     if ((gFrameCount & 63) == 0)
-      Func_02001860(568 << 16, 104 << 16, 296 << 16);
+      Prox_AddPuff(568 << 16, 104 << 16, 296 << 16);
   }
 }
 
@@ -1058,7 +1092,7 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+  if (!Event_GetFlag(FLAG_DOOR_LEFT_OPEN)) {
     if (mode == 2)
       Event_PlaySound(SE_THUMP);
     else
@@ -1083,23 +1117,23 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-void Func_02001a9c(void) { Prox_EnterDoor(0x30, 0x27, 0x39, 0x1a, 1, 2); }
+void Prox_OpenDoor2(void) { Prox_EnterDoor(0x30, 0x27, 0x39, 0x1a, 1, 2); }
 
-void Func_02001ab8(void) { Prox_EnterDoor(0x31, 0x27, 0x41, 0x18, 1, 2); }
+void Prox_OpenDoor3(void) { Prox_EnterDoor(0x31, 0x27, 0x41, 0x18, 1, 2); }
 
-void Func_02001ad4(void) { Prox_EnterDoor(0x32, 0x27, 0x38, 0x13, 1, 2); }
+void Prox_OpenDoor5(void) { Prox_EnterDoor(0x32, 0x27, 0x38, 0x13, 1, 2); }
 
-void Func_02001af0(void) { Prox_EnterDoor(0x33, 0x27, 0x3d, 0xd, 1, 2); }
+void Prox_OpenDoor6(void) { Prox_EnterDoor(0x33, 0x27, 0x3d, 0xd, 1, 2); }
 
-void Func_02001b0c(void) { Prox_EnterDoor(0x33, 0x27, 0x50, 0x10, 1, 2); }
+void Prox_OpenDoor7(void) { Prox_EnterDoor(0x33, 0x27, 0x50, 0x10, 1, 2); }
 
-void Func_02001b28(void) { Prox_EnterDoor(0x34, 0x27, 0x32, 9, 2, 2); }
+void Prox_OpenDoor8(void) { Prox_EnterDoor(0x34, 0x27, 0x32, 9, 2, 2); }
 
-void Func_02001b44(void) { Prox_EnterDoor(0x57, 2, 0x50, 7, 1, 2); }
+void Prox_OpenDoor10(void) { Prox_EnterDoor(0x57, 2, 0x50, 7, 1, 2); }
 
-void Func_02001b60(void) { Prox_EnterDoor(0x59, 0, 0x4d, 0x10, 1, 2); }
+void Prox_OpenUpperDoor4(void) { Prox_EnterDoor(0x59, 0, 0x4d, 0x10, 1, 2); }
 
-void Func_02001b7c(void) {
+void Prox_ClimbStairs(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 entrance = work->stepTrigger;
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1125,7 +1159,7 @@ void Func_02001b7c(void) {
   FieldEvent_SetExitRequest(entrance);
 }
 
-void Func_02001c24(s32 a0) {
+void Prox_ComeDownStairs(s32 a0) {
   struct Actor *object;
 
   object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1154,8 +1188,6 @@ void Func_02001c24(s32 a0) {
 }
 #undef BYTE_AT
 #undef FIELD_AT
-
-// object the overlay links.
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -1419,7 +1451,7 @@ void Prox_GiveThanksForBeacon(void) {
     work->transitionFrames = 0x10;
   }
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-  Event_SetFlag(0x9c5);
+  Event_SetFlag(FLAG_THANKED_FOR_BEACON);
   Func_0200446c();
 }
 
@@ -1439,10 +1471,10 @@ s32 Scene_Initialize(void) {
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Prox4) {
     gFieldWork->transition = 0x209;
-    Func_020029c8();
+    Prox_InitializeRoom4();
   } else if (scene == (s32)&SceneId_Prox5) {
     gFieldWork->transition = 0x209;
-    Func_02002a38();
+    Prox_InitializeRoom5();
   } else if (scene == (s32)&SceneId_Prox6) {
     s32 *effect = &gFieldWork->transition;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
@@ -1454,13 +1486,13 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(skip);
   } else {
     if (!Event_GetFlag(0xa3d))
-      Event_SetFlag(FLAG_SCENE_TEMP_01);
-    if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {
+      Event_SetFlag(FLAG_STORM_RAGING);
+    if (Event_GetFlag(FLAG_STORM_RAGING)) {
       Weather_StartRain(1);
     } else {
       REG_BLDALPHA = 0xc08;
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-      Task_Add(Func_020018e0, 0x480);
+      Task_Add(Prox_PuffFromRoofs, 0x480);
       Map_SetLayerEntryFlag(0);
       Map_SetLayerEntryFlag(1);
       Map_ClearLayerEntryFlag(2);
@@ -1471,13 +1503,13 @@ s32 Scene_Initialize(void) {
     }
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_Prox2) {
-      if (!Event_GetFlag(FLAG_AREA_TEMP_00))
+      if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
         Actor_SetWideSprite(64, 1);
-      Func_020027e4();
+      Prox_InitializeRoom2();
     } else if (scene == (s32)&SceneId_Prox3) {
       Prox_InitializeRoom3();
     }
-    if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {
+    if (Event_GetFlag(FLAG_STORM_RAGING)) {
       BattleEffect_ApplyColorToTargetBuffer(0x10004, 1);
       PaletteFade_StartInterpolation(16);
       wait(16);
@@ -1496,26 +1528,27 @@ struct Walker {
   void (*update)(void);
 };
 
-void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
+/// Puts a child at its place and starts its game of tag.
+void Prox_StartPlayingTag(s32 actor, s32 x, s32 z, s32 frames) {
   struct Walker *object = ((struct Walker *)Actor_Get(actor));
 
   object->frames = frames;
   object->arrived = 0;
-  object->update = Func_020003bc;
+  object->update = Prox_PlayTag;
   Actor_SetPosition(actor, x, z);
 }
 
-void Func_020027e4(void) {
+void Prox_InitializeRoom2(void) {
 
   if (Event_GetFlag(0xa3d)) {
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-      Func_0200279c(0x10, 536, 360, 0);
-      Func_0200279c(0x11, 536, 424, 1);
-      Func_0200279c(0x12, 580, 420, 2);
+      Prox_StartPlayingTag(0x10, 536, 360, 0);
+      Prox_StartPlayingTag(0x11, 536, 424, 1);
+      Prox_StartPlayingTag(0x12, 580, 420, 2);
       System_Wait(1);
-      Actor_SetScript(16, (s32)gData_020047ac);
-      Actor_SetScript(17, (s32)gData_02004848);
-      Actor_SetScript(18, (s32)gData_020048e4);
+      Actor_SetScript(16, (s32)gProx_FirstChildRuns);
+      Actor_SetScript(17, (s32)gProx_SecondChildRuns);
+      Actor_SetScript(18, (s32)gProx_ThirdChildRuns);
       System_Wait(1);
     }
   }
@@ -1529,13 +1562,13 @@ void Prox_InitializeRoom3(void) {
   FieldActor_SetSpritePriority(19, 1);
   FieldActor_SetSpriteColor(((s32)Actor_Get(19)), 0xf);
   if (!Event_GetFlag(0xa3d)) {
-    if (!Event_GetFlag(0x9c0)) {
+    if (!Event_GetFlag(FLAG_HEARD_OF_PARENTS)) {
       Actor_SetPosition(8, 0, 0);
     }
-    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+    if (Event_GetFlag(FLAG_DOOR_LEFT_OPEN)) {
       MapGrid_CopyCellsTo(89, 0, 77, 16, 1, 2);
     }
-    if (Event_GetFlag(0x9c1)) {
+    if (Event_GetFlag(FLAG_CLAN_SPOKE_OF_LIGHTHOUSE)) {
       object = Actor_Get(10);
       object->facing = 0xb000;
       System_Wait(1);
@@ -1547,18 +1580,18 @@ void Prox_InitializeRoom3(void) {
     MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
     Actor_SetPosition(20, 0, 0);
   } else {
-    if (Event_GetFlag(0xa2d)) {
+    if (Event_GetFlag(FLAG_MOLD_HID_IN_SNOW)) {
       MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
       MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
       MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
-      if (!Event_GetFlag(0x40)) {
+      if (!Event_GetFlag(FLAG_MOLD_JOINED)) {
         Actor_SetPosition(20, 0, 0);
       }
     }
   }
 }
 
-void Func_020029a4(void) {
+void Prox_MatchRoom4Priority(void) {
   struct Actor *object;
 
   object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1567,18 +1600,18 @@ void Func_020029a4(void) {
       ((u32)(FIELD_AT(FIELD_AT((u8 *)object, s32, 80), u8, 9) << 28) >> 30));
 }
 
-void Func_020029c8(void) {
+void Prox_InitializeRoom4(void) {
 
   FieldEffect_StartBlankOverlay(0);
-  Task_AddFrame((s32)Func_020029a4, 0x480);
+  Task_AddFrame((s32)Prox_MatchRoom4Priority, 0x480);
   if (gMainRoutineWork.entrance == 0x14) {
-    if (!Event_GetFlag(0x9c5)) {
+    if (!Event_GetFlag(FLAG_THANKED_FOR_BEACON)) {
       Prox_GiveThanksForBeacon();
     }
   }
 }
 
-void Func_02002a08(void) {
+void Prox_MatchRoom5Priority(void) {
   s32 variant =
       ((struct FieldSprite *)Actor_Get(gMainRoutineWork.currentOwner)->sprite)
           ->priority;
@@ -1587,38 +1620,35 @@ void Func_02002a08(void) {
   FieldActor_SetSpritePriority(10, variant);
 }
 
-// Unless flag 0x109 is set, calls Func_02001c24 with 0 for entrance 6 and with
-// 1 for entrances 7 and 8, then schedules Func_02002a08.
-
-void Func_02002a38(void) {
+void Prox_InitializeRoom5(void) {
   s32 priority;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
     if (gMainRoutineWork.entrance == 6)
-      Func_02001c24(0);
+      Prox_ComeDownStairs(0);
     else if ((u32)((entrance - 7) << 16) <= 0x10000)
-      Func_02001c24(1);
+      Prox_ComeDownStairs(1);
   }
   FieldEffect_StartBlankOverlay(0);
   // The priority in a local is built before the task function's address (passed
   // directly, the address loads first).
   priority = 0x480;
-  Task_AddFrame(Func_02002a08, priority);
+  Task_AddFrame(Prox_MatchRoom5Priority, priority);
 }
 
 s32 Actor_MoveToObject();
-extern u32 gData_02005ee8[];
-extern u32 gData_02006038[];
-extern u32 gData_02006088[];
-extern u32 gData_020060fc[];
-extern u32 gData_02006268[];
+extern u32 gProx_IsaacStepsForward[];
+extern u32 gProx_RightFileWalksSouth[];
+extern u32 gProx_GaretWalksSouth[];
+extern u32 gProx_IsaacWalksSouth[];
+extern u32 gProx_GaretRunsAhead[];
 
 void Prox_SayFarewell(void) {
   u32 i;
 
-  if (Event_GetFlag(0x9c5) != 0) {
+  if (Event_GetFlag(FLAG_THANKED_FOR_BEACON) != 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -1640,8 +1670,8 @@ void Prox_SayFarewell(void) {
     System_Wait(1);
     Actor_SetSpeed(0, 0.8);
     Actor_SetSpeed(11, 0.8);
-    Actor_SetScript(0, (s32)gData_02005ee8);
-    Actor_RunScriptAndWait(11, (s32)gData_02005f2c);
+    Actor_SetScript(0, (s32)gProx_IsaacStepsForward);
+    Actor_RunScriptAndWait(11, (s32)gProx_KradenStepsForward);
     Actor_SetAnimationAndWait(9, 3);
     Event_ShowMessage(9, 0);
     Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
@@ -1760,24 +1790,24 @@ void Prox_SayFarewell(void) {
     FieldActor_SetSpritePriority(1, 2);
     FieldCamera_SetSpeed(0.4);
     FieldCamera_MoveTo(144, CAMERA_KEEP, 246, 1);
-    Actor_SetScript(9, (s32)gData_02005f70);
-    Actor_SetScript(10, (s32)gData_02005fac);
+    Actor_SetScript(9, (s32)gProx_SecondParentWalksSouth);
+    Actor_SetScript(10, (s32)gProx_ThirdParentWalksSouth);
     FieldEvent_Wait(10);
-    Actor_SetScript(8, (s32)gData_02005fe8);
-    Actor_SetScript(3, (s32)gData_02006038);
+    Actor_SetScript(8, (s32)gProx_LeftFileWalksSouth);
+    Actor_SetScript(3, (s32)gProx_RightFileWalksSouth);
     FieldEvent_Wait(10);
-    Actor_SetScript(6, gData_02005fe8);
-    Actor_SetScript(7, (s32)gData_02005fe8);
+    Actor_SetScript(6, gProx_LeftFileWalksSouth);
+    Actor_SetScript(7, (s32)gProx_LeftFileWalksSouth);
     FieldEvent_Wait(10);
-    Actor_SetScript(2, gData_02006038);
-    Actor_SetScript(1, (s32)gData_02006088);
+    Actor_SetScript(2, gProx_RightFileWalksSouth);
+    Actor_SetScript(1, (s32)gProx_GaretWalksSouth);
     FieldEvent_Wait(30);
-    Actor_SetScript(5, (s32)gData_020060cc);
+    Actor_SetScript(5, (s32)gProx_JennaWalksSouth);
     FieldEvent_Wait(20);
-    Actor_SetScript(0, (s32)gData_020060fc);
-    Actor_SetScript(gMainRoutineWork.currentOwner, (s32)gData_0200617c);
+    Actor_SetScript(0, (s32)gProx_IsaacWalksSouth);
+    Actor_SetScript(gMainRoutineWork.currentOwner, (s32)gProx_LeaderWalksSouth);
     FieldEvent_Wait(10);
-    Actor_RunScriptAndWait(11, (s32)gData_020061fc);
+    Actor_RunScriptAndWait(11, (s32)gProx_KradenWalksSouth);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
     FieldActor_RefreshSelectorById(5);
@@ -1875,8 +1905,8 @@ void Prox_SayFarewell(void) {
     FieldEvent_Wait(10);
     Actor_SetSpeed(5, 1.6);
     Actor_SetSpeed(1, 1.6);
-    Actor_SetScript(5, (s32)gData_0200622c);
-    Actor_RunScriptAndWait(1, (s32)gData_02006268);
+    Actor_SetScript(5, (s32)gProx_JennaRunsAhead);
+    Actor_RunScriptAndWait(1, (s32)gProx_GaretRunsAhead);
     FieldEvent_Wait(20);
     Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
     Actor_SetAnimation(11, 3);
@@ -1976,7 +2006,7 @@ void Prox_SayFarewell(void) {
     PaletteFade_ApplyTarget(0, 0);
     PaletteFade_Interpolate(16);
     System_Wait(16);
-    Event_SetFlag(0x9cc);
+    Event_SetFlag(FLAG_SAID_FAREWELL);
     FieldEvent_SetExitRequest(3);
   }
 }
@@ -1988,8 +2018,6 @@ extern s16 gSlideOnIce_SteerAngles[];
 
 #include "shared/leader_stop_if_pending.h"
 #undef FIELD_AT
-
-// object the overlay links.
 
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
@@ -2077,8 +2105,6 @@ struct RockWork {
 #include "shared/rocks_spawn.h"
 #undef FIELD_AT
 
-// object the overlay links, and the overlay's data.
-
 extern char ResourceId_FallingRock;
 
 /* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has
@@ -2102,7 +2128,7 @@ struct RockSprite__s4254 {
 void Func_02004604(struct RockSprite__s4254 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
-void Func_02004254(void) {
+UNUSED void Prox_StartFallingRocks(void) {
   struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
@@ -2139,7 +2165,7 @@ struct SparkWork {
   s16 resource;
 };
 
-void Func_02004310(void) {
+UNUSED void Prox_EndFallingRocks(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Particles_UpdateFalling);
@@ -2149,27 +2175,27 @@ void Func_02004310(void) {
 
 #include "text/msg_ids.h"
 
-void Func_02000280(void);
+void Prox_MoldJoins(void);
 void Prox_AskAboutIgloos(void);
 void Prox_TalkAboutParents(void);
 void Prox_TalkToRestlessChild(void);
 
-extern u32 gData_020046bc[];
+extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-u32 gData_02004644[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02004680[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020046bc[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
@@ -2186,42 +2212,42 @@ s16 gSlideOnIce_SteerAngles[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -1638
 s16 gSlideOnIce_AnglesByKey[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
 
 s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_02004644,
-    (s32)gData_02004680,
-    (s32)gData_020046bc,
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
-u32 gData_020047ac[] = {                                                               
+u32 gProx_FirstChildRuns[] = {                                                               
       39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 39, 2,  4,  0x2300000,     0,          
       0x17c0000, 1,  39, 2,  4,       0x2340000, 0,  0x1a80000,     1,  39, 2,  4,      0x2180000,         
       0,  0x1a80000, 1,  39, 2,       4,  0x2180000, 0,      0x17c0000, 1,  13, 0xffff, 0,          
   };
 
-u32 gData_02004848[] = {                                                               
+u32 gProx_SecondChildRuns[] = {                                                               
       39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 39, 2,  4,  0x2180000,     0,          
       0x17c0000, 1,  39, 2,  4,       0x2300000, 0,  0x17c0000,     1,  39, 2,  4,      0x2340000,         
       0,  0x1a80000, 1,  39, 2,       4,  0x2180000, 0,      0x1a80000, 1,  13, 0xffff, 0,          
   };
 
-u32 gData_020048e4[] = {                                                               
+u32 gProx_ThirdChildRuns[] = {                                                               
       39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 39, 2,  4,  0x2180000,     0,          
       0x1a80000, 1,  39, 2,  4,       0x2180000, 0,  0x17c0000,     1,  39, 2,  4,      0x2300000,         
       0,  0x17c0000, 1,  39, 2,       4,  0x2340000, 0,      0x1a80000, 1,  13, 0xffff, 0,          
   };
 
-u32 gData_02004980[] = {
+u32 gProx_KradenStepsUpToPuelle[] = {
     39, 2, 4, 0xb00000, 0, 0x9a0000,
     1, 39, 1, 0, 10, 22,
     3, 0xb000, 0, 10, 17,
 };
 
-u32 gData_020049c4[] = {
+u32 gProx_IsaacStepsUpToPuelle[] = {
     39, 2, 4, 0xa00000, 0, 0x9a0000,
     1, 39, 1, 0, 10, 22,
     3, 0xa000, 0, 10, 17,
 };
 
-u32 gData_02004a08[] = {
+u32 gProx_StepBackFromPuelle[] = {
     39, 2, 4, 0x900000, 0, 0x9a0000,
     1, 39, 1, 0, 1, 3,
     0, 1, 17,
@@ -2275,11 +2301,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-u32 gData_02004b14[] = {
+u32 gProx_Room1Placements[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-s16 gData_02004b2c[] = {
+s16 gProx_Room1FarewellPlacements[] = {
     6, -1, 1, 0, 0, 88, 0, 0,
     0, 248, 0xc000, 2, 7, -1, 1, 0,
     0, 104, 0, 0, 0, 248, 0xc000, 2,
@@ -2331,11 +2357,11 @@ struct ActorPlacement gProx_Room3Placements[] = {
     ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(286, CONDITION_ALWAYS, 7, 436, 0, 208, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(243, 0x40, MOVEMENT_TYPE_STAND, 404, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(243, FLAG_MOLD_JOINED, MOVEMENT_TYPE_STAND, 404, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-s32 gData_02004f04[] = {
+s32 gProx_Room3PlacementsOnceLit[] = {
     (s32)0xffff00af, 1, 0, 0, 0, 0x2b000,
     (s32)0xffff00ac, 1, 0, 0, 0, 0x2b000,
     (s32)0xffff002c, 1, 0, 0, 0, 0x25000,
@@ -2353,7 +2379,7 @@ s32 gData_02004f04[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-u32 gData_0200506c[] = {
+u32 gProx_Room4Placements[] = {
     0xffff00af, 1, 0x580000, 0, 0xc00000, 0x8000,
     0xffff00ac, 1, 0x800000, 0, 0x6a0000, 0x1b000,
     0xffff00b2, 1, 0x980000, 0, 0x700000, 0x5000,
@@ -2374,7 +2400,7 @@ u32 gData_0200506c[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-s16 gData_0200521c[] = {
+s16 gProx_Room4PlacementsOnceLit[] = {
     175, -1, 3, 0, 0, 104, 0, 0,
     0, 196, 0x8000, 0, 172, -1, 1, 0,
     0, 128, 0, 0, 0, 106, 0xb000, 1,
@@ -2419,7 +2445,7 @@ u32 gProx_Room5Placements[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-u32 gData_020054a4[] = {
+u32 gProx_Room5PlacementsOnceLit[] = {
     0xffff00ae, 3, 0x29a0000, 0, 0x7c0000, 0x15000,
     0xffff00ae, 1, 0x1740000, 0, 0x3280000, 0x3b000,
     0xffff00b0, 1, 0x1720000, 0, 0x2e40000, 0x15000,
@@ -2439,21 +2465,21 @@ struct Trigger gProx_Triggers[] = {
 struct Trigger gProx_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, 0x9cc, EVENT(Prox_SayFarewell)},
+    {TRIGGER_STEP, 10, FLAG_SAID_FAREWELL, EVENT(Prox_SayFarewell)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gProx_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Func_02001a9c)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Func_02001ab8)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Prox_OpenDoor2)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Prox_OpenDoor3)},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, 4},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Func_02001ad4)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Func_02001af0)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Func_02001b0c)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Func_02001b28)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Prox_OpenDoor5)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Prox_OpenDoor6)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Prox_OpenDoor7)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Prox_OpenDoor8)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Func_02001b44)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Prox_OpenDoor10)},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_TALK, 8, 0xa3d, MSGNO(MsgProx01)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProx81)},
@@ -2493,7 +2519,7 @@ struct Trigger gProx_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Prox_TalkToRestlessChild)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100, 0x300, EVENT(Func_02000588)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100, FLAG_DIG_SPOT_SCOOPED, EVENT(Prox_ScoopUpDarkMatter)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 19, CONDITION_ALWAYS, 0},
     {TRIGGER_TABLE_END},
 };
@@ -2502,16 +2528,16 @@ struct Trigger gProx_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Func_02001b60)},
-    {TRIGGER_STEP, 9, 0xa2d, EVENT(Func_020015d0)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Prox_OpenUpperDoor4)},
+    {TRIGGER_STEP, 9, FLAG_MOLD_HID_IN_SNOW, EVENT(Prox_MoldHidesInSnow)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Func_020017e4)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), 255, CONDITION_ALWAYS, EVENT(Func_02001800)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Func_02001770)},
-    {TRIGGER_RAISED, 200, 0xa3d, EVENT(Func_02000280)},
-    {TRIGGER_STEP, 11, 0x9c0, EVENT(Prox_SearchForParents)},
-    {TRIGGER_STEP, 12, 0x9c1, EVENT(Prox_DecideToGoToLighthouse)},
-    {TRIGGER_STEP, 13, 0x9c2, EVENT(Prox_MeetPuelle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_BeginScoop)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_EndScoop)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Prox_ScoopUpMold)},
+    {TRIGGER_RAISED, 200, 0xa3d, EVENT(Prox_MoldJoins)},
+    {TRIGGER_STEP, 11, FLAG_HEARD_OF_PARENTS, EVENT(Prox_SearchForParents)},
+    {TRIGGER_STEP, 12, FLAG_CLAN_SPOKE_OF_LIGHTHOUSE, EVENT(Prox_DecideToGoToLighthouse)},
+    {TRIGGER_STEP, 13, FLAG_MET_PUELLE, EVENT(Prox_MeetPuelle)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProx48)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx50)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProx49)},
@@ -2547,7 +2573,7 @@ struct Trigger gProx_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005a20[] = {
+struct Trigger gProx_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2617,7 +2643,7 @@ struct Trigger gData_02005a20[] = {
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgProx136)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0xa3d, MSGNO(MsgProx59)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgProx138)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Func_02000290)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Prox_MercuryDjinniJoins)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx154))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx155))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx156))},
@@ -2626,9 +2652,9 @@ struct Trigger gData_02005a20[] = {
 };
 
 struct Trigger gProx_Room5Triggers[] = {
-    {0xca02, 6, CONDITION_ALWAYS, EVENT(Func_02001b7c)},
-    {0xca02, 7, CONDITION_ALWAYS, EVENT(Func_02001b7c)},
-    {0xca02, 8, CONDITION_ALWAYS, EVENT(Func_02001b7c)},
+    {0xca02, 6, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {0xca02, 7, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {0xca02, 8, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_TALK, 8, 0xa3d, MSGNO(MsgProx23)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProx103)},
@@ -2658,56 +2684,56 @@ struct Trigger gProx_Room6Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_02005ee8[] = {
+u32 gProx_IsaacStepsForward[] = {
     39, 2, 4, 0x780000, 0, 0xc40000,
     1, 39, 1, 0, 10, 22,
     3, 0x4000, 0, 10, 17,
 };
 
-u32 gData_02005f2c[] = {
+u32 gProx_KradenStepsForward[] = {
     39, 2, 4, 0x980000, 0, 0xc40000,
     1, 39, 1, 0, 10, 22,
     3, 0x5000, 0, 10, 17,
 };
 
-u32 gData_02005f70[] = {
+u32 gProx_SecondParentWalksSouth[] = {
     39, 2, 4, 0x880000, 0, 0x15c0000,
     1, 39, 1, 0, 1, 3,
     0, 1, 17,
 };
 
-u32 gData_02005fac[] = {
+u32 gProx_ThirdParentWalksSouth[] = {
     39, 2, 4, 0x980000, 0, 0x15c0000,
     1, 39, 1, 0, 1, 3,
     0, 1, 17,
 };
 
-u32 gData_02005fe8[] = {
+u32 gProx_LeftFileWalksSouth[] = {
     39, 2, 4, 0x880000, 0, 0xf80000,
     1, 4, 0x880000, 0, 0x15c0000, 1,
     39, 1, 0, 1, 3, 0,
     1, 17,
 };
 
-u32 gData_02006038[] = {
+u32 gProx_RightFileWalksSouth[] = {
     39, 2, 4, 0x980000, 0, 0xf80000,
     1, 4, 0x980000, 0, 0x15c0000, 1,
     39, 1, 0, 1, 3, 0,
     1, 17,
 };
 
-u32 gData_02006088[] = {
+u32 gProx_GaretWalksSouth[] = {
     39, 2, 4, 0x980000, 0, 0xf80000,
     1, 4, 0x980000, 0, 0x1100000, 1,
     39, 1, 0, 1, 17,
 };
 
-u32 gData_020060cc[] = {
+u32 gProx_JennaWalksSouth[] = {
     39, 2, 4, 0xa80000, 0, 0x1100000,
     1, 39, 1, 0, 1, 17,
 };
 
-u32 gData_020060fc[] = {
+u32 gProx_IsaacWalksSouth[] = {
     39, 2, 4, 0x780000, 0, 0xdc0000,
     1, 39, 1, 0, 10, 22,
     3, 0x2000, 0, 5, 22, 3,
@@ -2716,7 +2742,7 @@ u32 gData_020060fc[] = {
     1, 17,
 };
 
-u32 gData_0200617c[] = {
+u32 gProx_LeaderWalksSouth[] = {
     39, 2, 4, 0x8c0000, 0, 0xdc0000,
     1, 39, 1, 0, 10, 22,
     3, 0x6000, 0, 5, 22, 3,
@@ -2725,18 +2751,18 @@ u32 gData_0200617c[] = {
     1, 17,
 };
 
-u32 gData_020061fc[] = {
+u32 gProx_KradenWalksSouth[] = {
     39, 2, 4, 0x980000, 0, 0xf00000,
     1, 39, 1, 0, 10, 17,
 };
 
-u32 gData_0200622c[] = {
+u32 gProx_JennaRunsAhead[] = {
     39, 2, 4, 0xa80000, 0, 0x15c0000,
     1, 39, 1, 0, 1, 3,
     0, 1, 17,
 };
 
-u32 gData_02006268[] = {
+u32 gProx_GaretRunsAhead[] = {
     39, 2, 4, 0x980000, 0, 0x15c0000,
     1, 39, 1, 0, 1, 3,
     0, 1, 17,

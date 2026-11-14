@@ -710,30 +710,7 @@ void AlhafranCave_ShakeUnderEoleosPower(void) {
   Actor_ApplyRandomChildValues();
 }
 
-/// Walks a list of three-halfword entries (object id, kind, flag) ended by
-/// 0xffff, clearing each object's collision bit and child flags before passing
-/// the entry to Actor_SetCellOpen.
-void Pillars_Place(const u16 *list) {
-  const u16 *entry;
-
-  if (list[0] == 0xffff)
-    return;
-  entry = list;
-loop:
-  {
-    u32 id = entry[0];
-    struct Actor *object = Actor_Get(id);
-    s16 kind = entry[1];
-    s16 flag = entry[2];
-
-    object->collisionFlags &= ~1;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->terrainId);
-    entry += 3;
-  }
-  if (entry[0] != 0xffff)
-    goto loop;
-}
+#include "shared/pillars_place.h"
 
 #include "shared/pound_sink_target.h"
 

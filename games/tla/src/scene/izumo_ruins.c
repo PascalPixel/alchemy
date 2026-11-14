@@ -236,16 +236,14 @@ void CrumblingPillars_Step(u16 *list) {
   position[1] = leader->y;
   position[2] = leader->z;
   pillar = Actor_FindAtCell(position, 0);
-  if (pillar != 0)
-    goto test;
-  return;
-body:
-  {
+  if (pillar == 0)
+    return;
+  while (list[0] != 0xffff) {
     u32 id = list[0];
 
     if (Actor_GetById(id) != pillar) {
       list += 2;
-      goto test;
+      continue;
     }
     {
       s32 flag = list[1];
@@ -292,9 +290,6 @@ body:
       return;
     }
   }
-test:
-  if (list[0] != 0xffff)
-    goto body;
 }
 
 void CrumblingPillar_Collapse(const void *data, s32 id) {
@@ -411,16 +406,14 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
   position[1] = leader->y;
   position[2] = leader->z;
   pillar = Actor_FindAtCell(position, 0);
-  if (pillar != 0)
-    goto test;
-  return;
-body:
-  {
+  if (pillar == 0)
+    return;
+  while (list[0] != 0xffff) {
     u32 id = list[0];
 
     if (Actor_GetById(id) != pillar) {
       list += 2;
-      goto test;
+      continue;
     }
     {
       s32 flag = list[1];
@@ -477,9 +470,6 @@ body:
       return;
     }
   }
-test:
-  if (list[0] != 0xffff)
-    goto body;
 }
 
 #include "../field/field_effect/advance_motion_priority.c"

@@ -412,8 +412,8 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   s32 targetGround;
   s32 stepHeight;
 
-  pixelX = ((union FieldCoordinate *)&position->x)->part.pixel;
-  pixelZ = ((union FieldCoordinate *)&position->z)->part.pixel;
+  pixelX = ((struct FieldCoordinate *)&position->x)->part[0].pixel;
+  pixelZ = ((struct FieldCoordinate *)&position->z)->part[0].pixel;
   gridState = gMapGridWork[0];
   if (gridState == NULL)
     return COLLISION_NONE;

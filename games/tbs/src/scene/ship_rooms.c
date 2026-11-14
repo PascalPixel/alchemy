@@ -1091,8 +1091,8 @@ static struct Actor *ShipRooms_FindActorNear(s32 x, s32 z) {
   actor = &work->actors[ACTOR_FIRST_PLACED];
   while (i <= ACTOR_LAST_ID) {
     current = *actor++;
-    actorX = current->x.part.pixel;
-    actorZ = current->z.part.pixel;
+    actorX = current->x.part[0].pixel;
+    actorZ = current->z.part[0].pixel;
     if (left < actorX && right > actorX && top < actorZ && bottom > actorZ)
       return current;
     i++;
@@ -1159,8 +1159,8 @@ enum {
 static s32 ShipRooms_IsSpotFree(s32 bucket) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   u32 offset = gShipRooms_TurnSteps[bucket];
-  s32 x = actor->x.part.pixel + ((s32)offset >> 16);
-  s32 z = actor->z.part.pixel + (s16)offset;
+  s32 x = actor->x.part[0].pixel + ((s32)offset >> 16);
+  s32 z = actor->z.part[0].pixel + (s16)offset;
 
   if (ShipRooms_FindActorNear(x, z) != 0) {
     return 0;
@@ -2103,14 +2103,16 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_IVAN);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_GARET);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);

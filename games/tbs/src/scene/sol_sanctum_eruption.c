@@ -336,8 +336,8 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_JENNA);
-  FieldCamera_MoveToFixed(px(actor->x.part.pixel), CAMERA_KEEP,
-                          px(actor->z.part.pixel), 1);
+  FieldCamera_MoveToFixed(px(actor->x.part[0].pixel), CAMERA_KEEP,
+                          px(actor->z.part[0].pixel), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);

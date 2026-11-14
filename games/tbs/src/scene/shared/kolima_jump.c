@@ -23,9 +23,10 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     actor->velocityY = px(4);
     actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
-    Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER,
-                            ((union FieldCoordinate *)&request->x)->part.pixel,
-                            ((union FieldCoordinate *)&request->z)->part.pixel);
+    Actor_MoveToAndWaitById(
+        ACTOR_PARTY_LEADER,
+        ((struct FieldCoordinate *)&request->x)->part[0].pixel,
+        ((struct FieldCoordinate *)&request->z)->part[0].pixel);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = ret;

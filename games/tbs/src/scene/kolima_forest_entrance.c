@@ -994,8 +994,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                           leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
+                           leader->z.part[0].pixel);
     }
   }
   Actor_WaitForMoveById(ACTOR_GARET);
@@ -1005,8 +1005,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                           leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].pixel,
+                           leader->z.part[0].pixel);
     }
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
@@ -1017,8 +1017,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
       if (leader != NULL) {
-        Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel,
-                             leader->z.part.pixel);
+        Actor_SetDestination(ACTOR_MIA, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
       }
     }
     Actor_WaitForMoveById(ACTOR_MIA);

@@ -1075,8 +1075,8 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   struct Actor *actor;
 
   actor = Actor_Get(attendantId);
-  attendantX = actor->x.part.pixel;
-  attendantZ = actor->z.part.pixel;
+  attendantX = actor->x.part[0].pixel;
+  attendantZ = actor->z.part[0].pixel;
   Event_Start();
   Actor_SetSpeed(attendantId, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -1118,17 +1118,20 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WalkToAndWait(attendantId, attendantX - 16, attendantZ - 64);
   Actor_SetPosition(ACTOR_GARET, 0, 0);

@@ -1057,12 +1057,8 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       CrossboneIsleSteppingStones_SetCellAttributes(
           0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
-      /* FAKEMATCH(temporary): x and z read as plain words outside their unions;
-       * as actor->x.fixed and z.fixed, 3 of 265 instructions differ in tbs-en.
-       */
       CrossboneIsleSteppingStones_SetCellAttributes(
-          2, FIELD_CELL(*(s32 *)&actor->x), FIELD_CELL(*(s32 *)&actor->z),
-          &cell);
+          2, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
     }
     sPillarSlots[i].x = FIELD_CELL(actor->x.fixed);
     sPillarSlots[i].y = FIELD_CELL(actor->y.fixed);

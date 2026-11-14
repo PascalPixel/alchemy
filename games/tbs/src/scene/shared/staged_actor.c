@@ -110,8 +110,8 @@ UNUSED static void PushedActor_AdvancePair(void) {
   lead->targetZ = ACTOR_NO_TARGET;
   lead->velocityX = 0;
   lead->velocityZ = 0;
-  lead->x.fixed = px(lead->x.part.pixel);
-  lead->z.fixed = px(lead->z.part.pixel);
+  lead->x.fixed = px(lead->x.part[0].pixel);
+  lead->z.fixed = px(lead->z.part[0].pixel);
   Actor_SelectAnimation(lead, ANIM_STAND);
 }
 
@@ -187,17 +187,18 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
         z = ((player->z.fixed >> 16) +
              (s16)gPushedActor_DirectionSteps[*direction]) >>
             4;
-        left =
-            (actor->x.part.pixel + gPushedActor_FootprintBounds[j * 4 + 0]) >>
-            4;
-        top = (actor->z.part.pixel + gPushedActor_FootprintBounds[j * 4 + 1]) >>
+        left = (actor->x.part[0].pixel +
+                gPushedActor_FootprintBounds[j * 4 + 0]) >>
+               4;
+        top = (actor->z.part[0].pixel +
+               gPushedActor_FootprintBounds[j * 4 + 1]) >>
               4;
-        right =
-            (actor->x.part.pixel + gPushedActor_FootprintBounds[j * 4 + 2]) >>
-            4;
-        bottom =
-            (actor->z.part.pixel + gPushedActor_FootprintBounds[j * 4 + 3]) >>
-            4;
+        right = (actor->x.part[0].pixel +
+                 gPushedActor_FootprintBounds[j * 4 + 2]) >>
+                4;
+        bottom = (actor->z.part[0].pixel +
+                  gPushedActor_FootprintBounds[j * 4 + 3]) >>
+                 4;
         if (left <= x && x < right && top <= z && z < bottom) {
           if (j & 1) {
             if (left != FIELD_CELL(player->x.fixed)) {

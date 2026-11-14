@@ -1097,7 +1097,7 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
       Actor_Get(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
       Actor_SetDestination(ACTOR_PARTY_LEADER,
-                           Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel, 136);
+                           Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel, 136);
       Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
       Actor_WaitForMoveById(ACTOR_CENTER_STATUE);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

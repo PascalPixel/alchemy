@@ -132,8 +132,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       if (frame > index * 16) {
         battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
         actor = battleObject->actor;
-        *(s32 *)&actor->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
-        *(s32 *)&actor->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
+        actor->x.fixed = (radius[index] * Trig_Sin(heading[index])) >> 1;
+        actor->z.fixed = (radius[index] * Trig_Cos(heading[index])) >> 1;
 
         if (frame <= 159) {
           if (frame > index * 16 + 16)

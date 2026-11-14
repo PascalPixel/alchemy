@@ -920,8 +920,8 @@ static void WorldMap_BoardBunzasWagon(void) {
   Actor_SetAnimation(ACTOR_HAMMET, ANIM_WALK);
   actor = Actor_Get(ACTOR_WAGON);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_HAMMET, actor->x.part.pixel,
-                         actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_HAMMET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_HAMMET);
   Actor_SetPosition(ACTOR_HAMMET, 0, 0);
@@ -929,7 +929,8 @@ static void WorldMap_BoardBunzasWagon(void) {
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_WALK);
   actor = Actor_Get(ACTOR_WAGON);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_BUNZA, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_BUNZA, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_BUNZA);
   Actor_SetPosition(ACTOR_BUNZA, 0, 0);
@@ -937,8 +938,8 @@ static void WorldMap_BoardBunzasWagon(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   actor = Actor_Get(ACTOR_WAGON);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_PARTY_LEADER, actor->x.part.pixel,
-                         actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_PARTY_LEADER, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2024,8 +2025,8 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(gWorldMapIodem, actor->x.part.pixel,
-                         actor->z.part.pixel);
+    Actor_SetDestination(gWorldMapIodem, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(gWorldMapIodem);
   Actor_SetPosition(gWorldMapIodem, 0, 0);
@@ -2440,7 +2441,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     Actor_SetAnimation(id, ANIM_LEADER_LOOK_AROUND);
     storm = Actor_Get(targetActorId);
     if (storm != NULL) {
-      Actor_SetDestination(id, storm->x.part.pixel, storm->z.part.pixel);
+      Actor_SetDestination(id, storm->x.part[0].pixel, storm->z.part[0].pixel);
     }
     Actor_WaitForMoveById(id);
     Sound_Play(SE_SANDSTORM);
@@ -2533,8 +2534,8 @@ static void WorldMap_JitterTransitionCamera(void) {
   u32 mode;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  sx = actor->x.part.pixel;
-  sy = actor->z.part.pixel;
+  sx = actor->x.part[0].pixel;
+  sy = actor->z.part[0].pixel;
   if (gFrameCount % 3 == 0) {
     mode = Random_Below(4);
     switch (mode) {

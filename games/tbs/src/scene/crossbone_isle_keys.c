@@ -619,8 +619,8 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_FIRST_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
@@ -661,8 +661,8 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_SECOND_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -729,8 +729,8 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
     Sound_Play(SE_THUMP);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part.pixel,
-                           leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part[0].pixel,
+                           leader->z.part[0].pixel);
     }
     Actor_WaitForMoveById(ACTOR_THIRD_STATUE);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -766,8 +766,8 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_FOURTH_STATUE, leader->x.part.pixel,
-                           leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_FOURTH_STATUE, leader->x.part[0].pixel,
+                           leader->z.part[0].pixel);
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -809,8 +809,8 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_FIFTH_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);

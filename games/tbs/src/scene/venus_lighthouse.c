@@ -576,8 +576,8 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   leader->targetZ = ACTOR_NO_TARGET;
   leader->velocityX = transitionBusy;
   leader->velocityZ = transitionBusy;
-  leader->x.fixed = px(leader->x.part.pixel);
-  leader->z.fixed = px(leader->z.part.pixel);
+  leader->x.fixed = px(leader->x.part[0].pixel);
+  leader->z.fixed = px(leader->z.part[0].pixel);
   Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
@@ -710,8 +710,8 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Event_Start();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = 0;
-    Actor_SetPositionFixed(ACTOR_PARTY_LEADER, px(leader->x.part.pixel),
-                           px(leader->z.part.pixel) - px(16));
+    Actor_SetPositionFixed(ACTOR_PARTY_LEADER, px(leader->x.part[0].pixel),
+                           px(leader->z.part[0].pixel) - px(16));
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Event_StartScreenTransition();
@@ -1137,7 +1137,7 @@ static void VenusLighthouse_JumpDown(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     landingQuarterZ = 238;
   }
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, leader->x.part.pixel,
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, leader->x.part[0].pixel,
                       landingQuarterZ << 2);
   Event_Wait(1);
   SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags,
@@ -1320,8 +1320,8 @@ static void VenusLighthouse_MovePillarOntoSwitch(void) {
 /// (FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH). Stepping off releases it.
 static void VenusLighthouse_StepOnFloorSwitch(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 x = leader->x.part.pixel;
-  s32 z = leader->z.part.pixel;
+  s32 x = leader->x.part[0].pixel;
+  s32 z = leader->z.part[0].pixel;
 
   if (x < 676 || x > 683 || z < 788 || z >= 796) {
     MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
@@ -1379,7 +1379,7 @@ static void VenusLighthouse_FallThroughFloor(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   leader->facing = FACING_SOUTH;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3);
-  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, leader->x.part.pixel, 552);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, leader->x.part[0].pixel, 552);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   Event_Wait(30);
@@ -1571,8 +1571,8 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
 
   layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  column = leader->x.part.pixel;
-  leaderZ = leader->z.part.pixel;
+  column = leader->x.part[0].pixel;
+  leaderZ = leader->z.part[0].pixel;
   leader->y.fixed = 0;
   if (column >= 308 && column <= 315 && leaderZ >= 532 && leaderZ < 540) {
     leader->y.fixed = -px(2);
@@ -2059,8 +2059,8 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
 
   layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  column = leader->x.part.pixel;
-  leaderZ = leader->z.part.pixel;
+  column = leader->x.part[0].pixel;
+  leaderZ = leader->z.part[0].pixel;
   leader->y.fixed = 0;
   if (column >= 532 && column <= 539 && leaderZ >= 324 && leaderZ < 332) {
     leader->y.fixed = -px(2);
@@ -2125,8 +2125,8 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
 
   layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  column = leader->x.part.pixel;
-  leaderZ = leader->z.part.pixel;
+  column = leader->x.part[0].pixel;
+  leaderZ = leader->z.part[0].pixel;
   leader->y.fixed = 0;
   if (column >= 788 && column <= 795 && leaderZ >= 324 && leaderZ < 332) {
     leader->y.fixed = -px(2);

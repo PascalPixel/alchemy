@@ -981,17 +981,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     effect->acceleration = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = 1;
   }
-  {
-    /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags. */
-    u8 *spriteFlags = &sprite->flags;
-
-    effect->update = Vault_UpdateDriftingEffect;
-    /* FAKEMATCH(dead): the flags store in both arms of a test. */
-    if (flags < 0)
-      *spriteFlags = 0;
-    else
-      *spriteFlags = 0;
-  }
+  effect->update = Vault_UpdateDriftingEffect;
+  sprite->flags = 0;
   sprite->image.priority = anchor->sprite->image.priority;
 }
 

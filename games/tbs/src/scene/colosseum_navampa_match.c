@@ -379,7 +379,7 @@ static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
   s32 id = state->leaderActorId;
   struct Actor *subject = work->camera;
   struct Actor *actor = Actor_Get(id);
-  s32 z = actor->z.part.pixel;
+  s32 z = actor->z.part[0].pixel;
 
   if (z >= 183 && z <= 186) {
     subject->x.fixed -= px(4) / 5;
@@ -434,7 +434,7 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
   if (lowered == 0) {
     log = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
     if (log != NULL) {
-      Actor_SetDestination(actorId, log->x.part.pixel, log->z.part.pixel);
+      Actor_SetDestination(actorId, log->x.part[0].pixel, log->z.part[0].pixel);
     }
     Actor_WaitForMoveById(actorId);
     log = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
@@ -1424,8 +1424,8 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   struct Actor *actor;
 
   actor = Actor_Get(guideId);
-  guideX = actor->x.part.pixel;
-  guideZ = actor->z.part.pixel;
+  guideX = actor->x.part[0].pixel;
+  guideZ = actor->z.part[0].pixel;
   Event_Start();
   Actor_SetSpeed(guideId, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -1462,17 +1462,20 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WalkToAndWait(guideId, guideX - 16, guideZ - 64);
   Actor_SetPosition(ACTOR_GARET, 0, 0);

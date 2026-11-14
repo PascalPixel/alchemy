@@ -1981,10 +1981,10 @@ static void Kalay_PushTunnelStatue(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = (leader->facing >> 12);
-  leaderX = leader->x.part.pixel;
+  leaderX = leader->x.part[0].pixel;
   probeStep = gKalay_TileStepByFacing[direction];
   statue = Actor_FindAtCell((leaderX + (probeStep >> 16)) >> 4,
-                            (leader->z.part.pixel + (s16)probeStep) >> 4);
+                            (leader->z.part[0].pixel + (s16)probeStep) >> 4);
   if (statue != NULL) {
     statue->layer = 2;
     Actor_StepFrom(&destination, statue, gKalay_TileStepByFacing[direction]);
@@ -2173,12 +2173,12 @@ static void Kalay_UpdateTunnelEmitters(void) {
 
   firstEmitter = Actor_Get(ACTOR_FIRST_STATUE);
   secondEmitter = Actor_Get(ACTOR_SECOND_STATUE);
-  if ((u32)(firstEmitter->x.part.pixel - 381) <= 12 &&
-      firstEmitter->z.part.pixel > 777) {
+  if ((u32)(firstEmitter->x.part[0].pixel - 381) <= 12 &&
+      firstEmitter->z.part[0].pixel > 777) {
     firstEmitter->sprite->image.priority =
         Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
   } else if (!GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
-             firstEmitter->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
+             firstEmitter->x.part[0].pixel <= 245 && (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
       Sound_Play(SE_WATER_DRAIN);
@@ -2188,7 +2188,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
                               firstEmitter->z.fixed);
   }
   if (!GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
-      secondEmitter->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
+      secondEmitter->x.part[0].pixel <= 709 && (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
       Sound_Play(SE_WATER_DRAIN);

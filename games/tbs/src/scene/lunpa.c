@@ -805,8 +805,8 @@ static void Lunpa_GuardsCatchParty(void) {
   Event_Wait(25);
   Event_SetMessageId(warningMessageBase + CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
   Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
-  Actor_WalkTo(ACTOR_LEFT_GUARD, leader->x.part.pixel - 1,
-               leader->z.part.pixel);
+  Actor_WalkTo(ACTOR_LEFT_GUARD, leader->x.part[0].pixel - 1,
+               leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 216);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 200);

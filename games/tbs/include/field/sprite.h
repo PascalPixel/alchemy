@@ -103,7 +103,7 @@ STATIC_ASSERT(sizeof(struct ActorSystemWork) == 0x5c);
 struct AnimationSpritePart {
   /// The link to the next part queued in the same depth slot this frame
   /// (Oam_AddSpriteAtDepth).
-  u8 link[4];
+  struct Sprite *link;
   /// The OAM entry's attributes 0 to 2.
   ///@{
   u16 y : 8;          ///< screen pixels

@@ -508,7 +508,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
       ACTOR_SNAPSHOT_EMPTY;
   zero = 0;
-  START_DMA(&zero, gBattleArenaRecord + 0x1c,
+  START_DMA(&zero, gCharacterUnits,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();

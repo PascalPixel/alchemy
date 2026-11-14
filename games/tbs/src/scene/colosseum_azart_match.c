@@ -794,8 +794,8 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   s32 z;
 
   actor = Actor_Get(guide);
-  x = actor->x.part.pixel;
-  z = actor->z.part.pixel;
+  x = actor->x.part[0].pixel;
+  z = actor->z.part[0].pixel;
   Event_Start();
   Actor_SetSpeed(guide, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -921,17 +921,20 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WalkToAndWait(guide, x - 16, z - 64);
   Actor_SetPosition(ACTOR_GARET, 0, 0);

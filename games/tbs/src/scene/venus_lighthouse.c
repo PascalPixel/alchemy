@@ -1327,7 +1327,7 @@ static void VenusLighthouse_StepOnFloorSwitch(void) {
   s32 x = leader->x.part.pixel;
   s32 z = leader->z.part.pixel;
 
-  if ((u32)(x - 676) > 7 || z < 788 || z >= 796) {
+  if (x < 676 || x > 683 || z < 788 || z >= 796) {
     MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);

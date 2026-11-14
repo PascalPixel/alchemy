@@ -190,7 +190,7 @@ commands:
     for (; i < 4; i++) {
       x = pos + scale * (i * 32 - 48) / 256;
       left = x + 88;
-      if ((u32)(x + 152) < 304) {
+      if (x >= -152 && x < 152) {
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr |
@@ -212,7 +212,7 @@ commands:
     for (; i < 2; i++) {
       x = pos + scale * (i * 32 - 16) / 256;
       left = x + 88;
-      if ((u32)(x + 152) < 304) {
+      if (x >= -152 && x < 152) {
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr |
@@ -236,7 +236,7 @@ commands:
     for (; i < 2; i++) {
       x = pos + scale * (i * 32 - 16) / 256;
       left = x + 88;
-      if ((u32)(x + 152) < 304) {
+      if (x >= -152 && x < 152) {
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr |
@@ -255,7 +255,7 @@ commands:
     y = 48;
     flags = OBJ_SIZE_64X32;
     left = pos + 56;
-    if ((u32)(pos + 120) < 304) {
+    if (pos >= -120 && pos < 184) {
       x = left & 511;
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) |
@@ -271,7 +271,7 @@ commands:
     y = 48;
     flags = OBJ_SIZE_32X32;
     left = pos + 88;
-    if ((u32)(pos + 152) < 304) {
+    if (pos >= -152 && pos < 152) {
       x = left & 511;
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) |

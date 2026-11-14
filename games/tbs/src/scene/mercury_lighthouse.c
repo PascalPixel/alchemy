@@ -744,17 +744,17 @@ static void MercuryLighthouse_SprayAtFountain(void) {
 
 /// Opens the fountain row by row and starts its continuous spray.
 static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
-  s32 row;
+  u32 row;
   s32 rowOffset;
   s32 particleX;
-  s32 particleIndex;
+  u32 particleIndex;
   s32 sparkleOffset;
   s32 rowShift;
   s32 randomX;
   s32 randomZ;
   s32 velocityX;
   s32 velocityZ;
-  s32 nextRow;
+  u32 nextRow;
   struct EffectOptions options;
 
   MapGrid_CopyCellsTo(78, 59, 110, 36, 1, 1);
@@ -788,12 +788,12 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
           0, px(584));
       particleIndex++;
       particleX -= px(1);
-    } while ((u32)particleIndex <= 7);
+    } while (particleIndex <= 7);
     MapGrid_CopyCellsTo(76, 59, 108 - row, 36, 2, 1);
     nextRow = row + 1;
     MercuryLighthouse_AnimateFountainTiles(delayFrames, row, nextRow);
     row = nextRow;
-  } while ((u32)nextRow <= 1);
+  } while (nextRow <= 1);
   Event_Wait(delayFrames);
   MercuryLighthouse_AnimateFountainTiles(0, nextRow, nextRow + 1);
   Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
@@ -803,8 +803,8 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
 
 /// Restores the fountain tiles and stops its continuous spray.
 static void MercuryLighthouse_StopFountainSpray(void) {
-  s32 row;
-  s32 particleIndex;
+  u32 row;
+  u32 particleIndex;
   s32 offsetX;
   s32 random;
   s32 particleX;
@@ -815,11 +815,9 @@ static void MercuryLighthouse_StopFountainSpray(void) {
   options.palette = 5;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
-  row = 0;
-  do {
+  for (row = 0; row <= 2; row++) {
     offsetX = -px(2);
-    particleIndex = 1;
-    do {
+    for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
         random = Random_Next();
         particleZ = ((584 - ((u32)(random * 5) >> 16)) & 0xffff) << 16;
@@ -829,12 +827,10 @@ static void MercuryLighthouse_StopFountainSpray(void) {
                           &options);
         Event_Wait(1);
       }
-      particleIndex++;
       offsetX -= px(2);
-    } while ((u32)particleIndex <= 7);
+    }
     MapGrid_CopyCellsTo(111, 35, (109 - row), 36, 1, 1);
-    row++;
-  } while ((u32)row <= 2);
+  }
   Task_Remove(MercuryLighthouse_SprayAtFountain);
 }
 
@@ -1721,8 +1717,8 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 rowOffset;
   u32 random;
-  s32 wave;
-  s32 particleIndex;
+  u32 wave;
+  u32 particleIndex;
   s32 particleX;
   s32 particleVelocityX;
   struct EffectOptions options;
@@ -1737,9 +1733,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.palette = 5;
   options.type = SPRITE_GLINT;
   options.script = gGlint_TwinkleScript;
-  wave = 0;
   // Two bursts spread sparks across the water before it begins to part.
-  do {
+  for (wave = 0; wave <= 15; wave++) {
     u32 particleX, z;
 
     if ((1 & wave) != 0) {
@@ -1761,11 +1756,9 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                           EFFECT_SCRIPT_MEDIUM,
                       &options);
     Event_Wait(2);
-    wave++;
-  } while ((u32)wave <= 15);
+  }
   Event_Wait(40);
-  wave = 0;
-  do {
+  for (wave = 0; wave <= 15; wave++) {
     u32 particleX, z;
     s32 particleSpeed;
 
@@ -1790,8 +1783,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                           EFFECT_SCRIPT_MEDIUM,
                       &options);
     Event_Wait(2);
-    wave++;
-  } while ((u32)wave <= 15);
+  }
   Event_Wait(60);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(5, 5, 1);
@@ -1801,8 +1793,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.startScaleY = 7 * Q16_ONE / 10;
   options.targetScaleX = 6 * Q16_ONE / 5;
   options.targetScaleY = 6 * Q16_ONE / 5;
-  wave = 0;
-  do {
+  for (wave = 0; wave <= 3; wave++) {
     s32 particleSpeed;
 
     MapGrid_CopyCellsTo(59, (12 - wave), 48, (12 - wave), 3, 1);
@@ -1814,17 +1805,15 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
       particleVelocityX = ((px(1) / 10) * (Random_Below(8))) - 4 * (px(1) / 10);
       particleSpeed = (px(1) / 10) * (Random_Below(8));
       FieldEffect_Spawn(particleX, 0,
-                        ((-((u32)particleIndex >> 1) - rowOffset) << 16) +
-                            px(192),
+                        ((-(particleIndex >> 1) - rowOffset) << 16) + px(192),
                         particleVelocityX, 0, particleSpeed,
                         EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
                             EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                         &options);
       particleIndex++;
       Event_Wait(2);
-    } while ((u32)particleIndex <= 31);
-    wave++;
-  } while ((u32)wave <= 3);
+    } while (particleIndex <= 31);
+  }
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();

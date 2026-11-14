@@ -2033,7 +2033,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 
 /// Sets up the Elemental Star Room.
 s32 Scene_Initialize(void) {
-  s32 ringActorId;
+  u32 ringActorId;
 
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -2041,7 +2041,7 @@ s32 Scene_Initialize(void) {
   do {
     Actor_Get(ringActorId)->collisionFlags = 0;
     Actor_SetSpritePriority(ringActorId++, 1);
-  } while ((u32)ringActorId <= ACTOR_LAST_FLOATING_LIGHT);
+  } while (ringActorId <= ACTOR_LAST_FLOATING_LIGHT);
   SolSanctum_StartFloatingLights(ACTOR_FIRST_FLOATING_LIGHT, 16);
   if (Event_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
     Actor_SetPosition(ACTOR_KRADEN, 456, 360);

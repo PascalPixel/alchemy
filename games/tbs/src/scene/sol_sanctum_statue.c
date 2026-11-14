@@ -700,7 +700,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   s32 scrollX;
   u32 column;
 
-  if ((u32)(screenY + 16) <= 175) {
+  if (screenY >= -16 && screenY <= 159) {
     scrollX = (gSolSanctumStatue_ScrollPhase >> 10) - cameraX;
     scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {

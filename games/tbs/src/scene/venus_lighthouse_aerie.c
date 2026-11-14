@@ -823,7 +823,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   s32 rodHolder;
   struct Actor *actor;
   s32 answerAccepted;
-  s32 frame;
+  u32 frame;
   s32 receiptMessage;
 
   Event_Start();
@@ -947,7 +947,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
     VenusLighthouseAerie_FlashActorPalette(actor);
     frame++;
     wait(1);
-  } while ((u32)frame <= 39);
+  } while (frame <= 39);
   Task_AddFrame(VenusLighthouseAerie_UpdateShebaPalette, TASK_PASS_FRAME);
   Event_Wait(80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);

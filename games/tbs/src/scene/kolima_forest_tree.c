@@ -404,7 +404,7 @@ static void KolimaForestTree_RestoreTret(void) {
   s32 includeMia;
   struct Actor *leader;
   s32 *paletteFrame;
-  s32 flash;
+  u32 flash;
   void (*spawnOrbitSparks)(void);
   const s32 *finalActions;
 
@@ -475,7 +475,7 @@ static void KolimaForestTree_RestoreTret(void) {
     PaletteFade_StartInterpolation(6);
     flash++;
     wait(6);
-  } while ((u32)flash <= 3);
+  } while (flash <= 3);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(40);
   wait(80);

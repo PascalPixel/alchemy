@@ -1641,7 +1641,7 @@ static void CrossboneIsle_SlideSecondLogSouth(void) {
     if (seventhLogColumn >= 9 && seventhLogColumn <= 11) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 48);
     } else {
-      if ((u32)(twelfthLogColumn - 9) > 2) {
+      if (twelfthLogColumn < 9 || twelfthLogColumn > 11) {
         CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 80);
       }
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 96);

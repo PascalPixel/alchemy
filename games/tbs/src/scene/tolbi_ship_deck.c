@@ -1593,7 +1593,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
 static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   struct Actor *monster;
   struct Actor *actor;
-  s32 frame;
+  u32 frame;
   const s32 *sailorActions;
 
   Event_Start();
@@ -1657,7 +1657,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   monster->scaleY = Q16_ONE / 10;
   monster->x.fixed = px(194);
   monster->z.fixed = px(642);
-  for (frame = 0; (u32)frame < 16; frame++) {
+  for (frame = 0; frame < 16; frame++) {
     monster->scaleX += 3 * Q16_ONE / 50;
     monster->scaleY += 3 * Q16_ONE / 50;
     wait(1);

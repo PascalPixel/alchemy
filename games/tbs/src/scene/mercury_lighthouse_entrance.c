@@ -281,7 +281,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 leaderColumn;
   s32 leaderRow;
-  s32 sparkIndex;
+  u32 sparkIndex;
   s32 sparkX;
   s32 sparkZ;
   s32 speedRoll;
@@ -314,7 +314,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
                         &options);
       Event_Wait(4);
       sparkIndex++;
-    } while ((u32)sparkIndex <= 14);
+    } while (sparkIndex <= 14);
     Sound_Play(SE_SHIMMER);
     Event_Wait(60);
     // Persist the activated state and replace the pool's map cells.

@@ -4,10 +4,10 @@
 /// that start, stop, resume and fade a music player's song.
 
 #include "types.h"
-#include "../../include/sound/sound_driver.h"
-#include "../../include/sound/sound.h"
-#include "../../include/system/ram_buffer.h"
-#include "../../include/system/io_reg.h"
+#include "sound/sound.h"
+#include "sound/sound_driver.h"
+#include "system/io_reg.h"
+#include "system/ram_buffer.h"
 
 /// Interpolates adjacent key frequencies and scales them by the wave sample
 /// frequency.

@@ -12,7 +12,7 @@
 /// (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND), whose jewel opens the second
 /// minotaur relief.
 ///
-/// Its setup, SolSanctumRooms_Initialize (shared/sol_sanctum_init_zoom.h), is
+/// Its setup, Scene_Initialize (shared/sol_sanctum_init_zoom.c), is
 /// the one SceneId_SolSanctumCorridor shares. Once Mt. Aleph has erupted, the
 /// room rumbles and shakes.
 ///
@@ -21,21 +21,25 @@
 /// behind it, to SE_STAIRS_DOWN. He comes out walking down from a doorway in
 /// the room of steps (render probe maze-exit).
 
-#include "module/scene/sol_sanctum_maze.h"
-#include "module/scene/shared/sol_sanctum_init_zoom.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-
-#include "shared/sol_sanctum_imports.h"
-
-#include "event.h"
 #include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/sol_sanctum_imports.h"
+#include "scene/sol_sanctum_init_zoom.h"
+#include "sound/sound.h"
+#include "system/system.h"
+
+extern struct SceneEntrance gSolSanctumMazeEntrances[];
+extern u32 gSolSanctumMazeExits[];
+extern struct ActorPlacement gSolSanctumMazeActorPlacements[];
+extern struct Trigger gSolSanctumMazeTriggers[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumMazeEntrances;
@@ -54,7 +58,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumMazeTriggers;
 }
 
-#include "shared/sol_sanctum_init_zoom.h"
+#include "shared/sol_sanctum_init_zoom.c"
 
 struct SceneEntrance gSolSanctumMazeEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,

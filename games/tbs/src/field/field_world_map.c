@@ -1,0 +1,724 @@
+/// @file
+/// The world map: its perspective view, its tiles, and the still picture of
+/// the view BG1 shows while a menu or event runs.
+// Part of field.c.
+
+#include "field_internal.h"
+
+/// Io_Write16 as an inline function.
+static __inline__ void Io_Write16Inline(s32 value, volatile u16 *reg) {
+  *reg = value;
+}
+
+/// Io_Write16Inline with the address first.
+static __inline__ void Io_Write16Swapped(volatile u16 *reg, s32 value) {
+  *reg = value;
+}
+
+typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
+                               void *out);
+
+/// One 32-pixel cell of the world map: its tile, its kind
+/// (WorldMapEncounterRegion) and a flag.
+struct WorldMapCell {
+  u32 tile
+      : 24;     ///< low halfword: the cell picture WorldMap_CopyCellTiles draws
+  u32 kind : 7; ///< the encounter region; encounters read it too
+  /// Selects the second row of gWorldMap_BattleEnvironments
+  /// (WorldMap_GetBattleEnvironment); a WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD
+  /// cell takes the third row whatever this bit says.
+  u32 flag : 1;
+};
+
+#define WORLD_MAP_BG_PALETTE ((s16 *)BG_PLTT)
+
+#define WORLD_MAP_CELLS ((struct WorldMapCell *)Ram_CellPictures)
+
+/// Loads world map tile `tile` into quarter (x & 1, y & 1) of a layer's cell
+/// picture buffer, decompressing it from the area's graphics, and with update
+/// set also draws it into the layer's BG map.
+s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
+  struct WorldMapView *perspective = gMapGridWork[0];
+  u32 *tileOffsets = perspective->tiles;
+  u16 *shownQuarter;
+  u16 *decodedTile;
+  u16 *sourceTiles;
+  u8 *quarterCells;
+  u16 *screenTiles;
+  u32 rowIndex;
+  u32 columnIndex;
+  u32 cellPictureId;
+
+  x &= 1;
+  y &= 1;
+  shownQuarter = &perspective->quarterTiles[(layer * 2 + y) * 2 + x];
+  if (update == 0 && tile == *shownQuarter)
+    return 0;
+  *shownQuarter = tile;
+  decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
+  Decompress_ByteLz((u8 *)tileOffsets + tileOffsets[tile], decodedTile);
+
+  // A tile is 16 by 16 cells of 4 bytes.
+  sourceTiles = decodedTile;
+  quarterCells = Ram_CellPictures + (((layer * 2 + y) * 32 + x) << 6);
+  for (rowIndex = 0; rowIndex < 16; rowIndex++) {
+    Dma_Set(sourceTiles, quarterCells, DMA_COPY_WORDS(16), REG_DMA3);
+    sourceTiles += 32;
+    quarterCells += 128;
+  }
+
+  // The affine BG map has one byte a tile, 64 to a row: each cell's first
+  // halfword picks a cell picture from Ram_MapGridCellBuffer, whose two
+  // halfwords are its top two tiles and its bottom two, a row (64 bytes) below.
+  if (update != 0) {
+    screenTiles =
+        (u16 *)(BG_SCREEN_BLOCK(8) + ((((layer * 2 + y) << 6) + x) << 5));
+    sourceTiles = decodedTile;
+    for (rowIndex = 0; rowIndex < 16; rowIndex++) {
+      for (columnIndex = 0; columnIndex < 16; columnIndex++) {
+        u16 *bottomTiles;
+
+        cellPictureId = *sourceTiles;
+        screenTiles[0] = *(u16 *)(Ram_MapGridCellBuffer + cellPictureId * 4);
+        bottomTiles = (u16 *)(Ram_MapGridCellBuffer + 2);
+        bottomTiles = (u16 *)((u8 *)bottomTiles + cellPictureId * 4);
+        screenTiles[32] = *bottomTiles;
+        screenTiles++;
+        sourceTiles += 2;
+      }
+      screenTiles += 48;
+    }
+  }
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
+  return 1;
+}
+
+/// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
+/// camera work, the projection, the per-scanline ground plane routine in RAM
+/// (Transform_UpdateVertices) and its first frame, and the per-frame view and
+/// HBlank updates.
+UNREAD_RESULT WorldMap_InitializePerspective(void) {
+  struct WorldMapView *perspective;
+  struct BattleCamera *camera;
+  struct WorldMapAffineWork *affineWork;
+  struct WorldMapAffinePair(*affinePages)[160];
+  s32 *cameraPosition;
+  s32 *distance;
+  s16 *zoomTransitionFrames;
+  s32 farPlane;
+  s32 tileIndex;
+
+  // Hide the backgrounds and sprites while their memory is replaced.
+  REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                   DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
+  ScreenFade_FromBlack(0);
+  perspective = HeapSlot_Alloc(HEAP_SLOT_MAP_GRID, sizeof(struct WorldMapView));
+  Dma_Fill32(0, perspective, sizeof(struct WorldMapView));
+  perspective->view[0] = 0;
+  perspective->view[1] = 0;
+  perspective->scaleX = Q16_ONE * 32;
+  perspective->scaleY = Q16_ONE * 64;
+  perspective->limitX = px(8160);
+  perspective->limitY = px(8160);
+  perspective->script = NULL;
+  perspective->tiles = Resource_GetTableEntry(RESOURCE_PERSPECTIVE_DATA_A);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_TILE_ANIMATION),
+                      Ram_MapGridShapes + 0x1000);
+  TilesetAnim_StartAll((const u16 *)(Ram_MapGridShapes + 0x1000));
+  Io_Write16Inline(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                       BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN |
+                       BLDCNT_TGT2_ALL,
+                   &REG_BLDCNT);
+  Io_Write16Inline(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
+  REG_BLDY = 0;
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_GRID_CELLS),
+                      Ram_MapGridCellBuffer);
+  Decompress_TaggedLz(
+      Resource_GetTableEntry(RESOURCE_DEFAULT_CELL_PICTURE_ATTRIBUTES),
+      Ram_MapGridShapes);
+  // The ground is BG3 and BG2, two 512-pixel affine layers that wrap (char
+  // blocks 2 and 3, screen blocks 8 and 10); BG1 is a plain layer on screen
+  // block 5.
+  perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
+                      DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
+  perspective->fadeStep = 128;
+  Io_Write16Inline(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) |
+                       BGCNT_SCREEN_BASE(8) | BGCNT_WRAP | BGCNT_SIZE(2),
+                   &REG_BG3CNT);
+  Io_Write16Inline(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) |
+                       BGCNT_SCREEN_BASE(10) | BGCNT_WRAP | BGCNT_SIZE(2),
+                   &REG_BG2CNT);
+  Io_Write16Inline(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
+  Io_Write16(Q_8_8(1), &REG_BG2PA);
+  REG_BG2PB = 0;
+  REG_BG2PC = 0;
+  Io_Write16(Q_8_8(1), &REG_BG2PD);
+  REG_BG2X = 0;
+  REG_BG2Y = 0;
+  Io_Write16(Q_8_8(1), &REG_BG3PA);
+  REG_BG3PB = 0;
+  REG_BG3PC = 0;
+  Io_Write16(Q_8_8(1), &REG_BG3PD);
+  REG_BG3X = 0;
+  Io_Write16(0, &REG_BG3Y);
+
+  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
+  affineWork = HeapSlot_Alloc(HEAP_SLOT_WORLD_MAP_AFFINE,
+                              sizeof(struct WorldMapAffineWork));
+  cameraPosition = camera->focus;
+  affinePages = affineWork->pages;
+  farPlane = 510 << 16;
+  perspective->farPlane = farPlane;
+  distance = &perspective->distance;
+  *distance = farPlane;
+  perspective->zoom = Q16_ONE;
+  zoomTransitionFrames = &perspective->zoomTransitionFrames;
+  camera->followEye = 0;
+  camera->followPosition = 0;
+  *zoomTransitionFrames = 0;
+  // A first view from the origin at pitch and yaw 0, so the scanline
+  // table and the first affine page exist before the first frame; the
+  // projection's centre is 120 by 96, as on the layered maps.
+  gProjection.centerX = 120;
+  gProjection.centerY = 96;
+  Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
+  SET_VECTOR(cameraPosition, 0, 0, 0);
+  Transform_Reset();
+  Transform_ApplyPosition(cameraPosition);
+  Transform_ApplyYaw(perspective->yaw);
+  Transform_ApplyPitch(perspective->pitch);
+  // eyeOffset in the block that uses it: at function scope it would take
+  // Dma_Fill32's word's place at the top of the stack frame.
+  {
+    struct FixedPointPosition eyeOffset;
+
+    eyeOffset.x = 0;
+    eyeOffset.y = 0;
+    eyeOffset.z = farPlane;
+    Iwram_TransformVector(&eyeOffset, (s32 *)camera);
+    Transform_Reset();
+    Transform_SetLookAt(camera->eye, cameraPosition);
+    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Transform_UpdateVertices,
+                     &Transform_UpdateVerticesSize);
+    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
+                                                  Trig_Sin(perspective->pitch)),
+                                cameraPosition, affineWork->scanlines);
+    gScanlineAngle = 0;
+    gScanlinePitch = perspective->pitch;
+    ((WorldMapPlaneFn)gHeapSlots[HEAP_SLOT_RAM_CODE])(
+        camera, cameraPosition, affineWork->scanlines,
+        affinePages[gFrameCount & 1]);
+    // Then the world map's own view: pitch TRIG_TURN * 7 / 8 (minus an eighth
+    // of a turn) and yaw 0, with the eye one pixel beyond the distance.
+    SET_VECTOR(cameraPosition, 0, 0, 0);
+    Transform_Reset();
+    Io_Write16Swapped(&perspective->pitch, TRIG_TURN * 7 / 8);
+    perspective->yaw = 0;
+    Transform_Reset();
+    Transform_ApplyPosition(cameraPosition);
+    Transform_ApplyYaw(perspective->yaw);
+    Transform_ApplyPitch(perspective->pitch);
+    eyeOffset.x = 0;
+    eyeOffset.y = 0;
+    eyeOffset.z = *distance + Q16_ONE;
+    Iwram_TransformVector(&eyeOffset, camera->eye);
+  }
+  REG_MOSAIC = 0;
+  Io_Write16(DISPCNT_MODE_2 | DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
+  gBgScroll[1].x = 0;
+  gBgScroll[1].y = 0;
+  gBgScroll[2].x = 0;
+  gBgScroll[2].y = 0;
+  gBgScroll[3].x = 0;
+  gBgScroll[3].y = 0;
+  // Rows 0 to 159: the whole screen shows the perspective view.
+  perspective->windowTop = 0;
+  perspective->windowBottom = 159;
+  Task_Add(WorldMap_UpdateView, TASK_PASS_FRAME + 5);
+  Task_Add(WorldMap_ApplyAffinePage, TASK_PASS_VBLANK);
+  // Each of the 16 by 16 grid cells starts on the tile of its own number.
+  for (tileIndex = 255; tileIndex >= 0; tileIndex--)
+    perspective->tileIds[tileIndex] = tileIndex;
+}
+
+/// Puts world map tile (x / 16, y / 16) at cell (cellX / 16, cellY / 16) of the
+/// tile id grid, and draws it at once when it is next to the view. cellX and
+/// cellY count 32-pixel world map cells, so a grid cell is a 512-pixel tile; it
+/// is next to the view when cellX / 8 and cellY / 8, in 256-pixel steps, are
+/// within one step of the followed point's.
+void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY) {
+  struct WorldMapView *perspective;
+  s32 *followedPosition;
+  s32 originX;
+  s32 originY;
+  s32 tileId;
+
+  perspective = gMapGridWork[0];
+  originX = 0;
+  originY = 0;
+  followedPosition = perspective->origin;
+  if (followedPosition != 0) {
+    originX = *followedPosition++;
+    originY = followedPosition[1];
+  }
+
+  // The followed point and cellX, cellY in 256-pixel steps.
+  originX >>= 24;
+  originY >>= 24;
+  x >>= 4;
+  y >>= 4;
+  cellX >>= 3;
+  cellY >>= 3;
+  tileId = (y << 4) + x;
+  perspective->tileIds[(((cellY / 2) & 15) << 4) + ((cellX / 2) & 15)] = tileId;
+
+  if (ABS(originX - cellX) <= 1 && ABS(originY - cellY) <= 1) {
+    WorldMap_WriteLayerCellTile(0, cellX / 2, cellY / 2, tileId, 1);
+    WorldMap_WriteLayerCellTile(1, cellX / 2, cellY / 2, tileId + 320, 1);
+  }
+}
+
+/// Loads the world map's palette and tiles for the area at (x, z): the second
+/// set where the ground there is WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
+void WorldMap_LoadGraphics(s32 x, s32 z) {
+  struct WorldMapView *perspective;
+  u32 *resources;
+  u8 *buffer;
+  u8 *tiles;
+  u32 *screenTiles;
+  u32 tilePair;
+  s32 graphicsSet;
+  s32 screenRow;
+  s32 screenColumn;
+  s16 backdropColor;
+
+  graphicsSet = 0;
+  buffer = Heap_Alloc(512);
+  perspective = gMapGridWork[0];
+  // The 32-pixel cell under (x, z), 32 cells to a row.
+  if (WORLD_MAP_CELLS[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)].kind ==
+      WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
+    graphicsSet = 1;
+  resources = gWorldMap_GraphicsResources[graphicsSet];
+  perspective->resources = resources;
+  backdropColor = WORLD_MAP_BG_PALETTE[0];
+  Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
+  *(s16 *)buffer = backdropColor;
+  Dma_Set(buffer, WORLD_MAP_BG_PALETTE, DMA_COPY_WORDS(112), REG_DMA3);
+  tiles = gBgTileBuffer;
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[1]), tiles);
+  Dma_Set(tiles, BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048), REG_DMA3);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[2]),
+                      Ram_BgTileBuffer + 0x2000);
+  Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000,
+          DMA_COPY_WORDS(2048), REG_DMA3);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]),
+                      Ram_BgTileBuffer + 0x4000);
+  Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3), DMA_COPY_WORDS(2048),
+          REG_DMA3);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
+                      Ram_BgTileBuffer + 0x6000);
+  Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
+          DMA_COPY_WORDS(2048), REG_DMA3);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
+  // BG1's map (screen block 5) is filled with tile 127 of WINDOW_PALETTE, and
+  // screen block 6 numbers a 30 by 20 tile picture from tile 424, two
+  // tile numbers a word, for the still picture WorldMap_StartStillPicture
+  // shows.
+  Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 1536);
+  screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
+  tilePair = 0x01a901a8;
+  for (screenRow = 0; screenRow < 20; screenRow++) {
+    for (screenColumn = 0; screenColumn < 15; screenColumn++) {
+      *screenTiles++ = tilePair;
+      tilePair += 0x00020002;
+    }
+    screenTiles++;
+  }
+  if (graphicsSet == 1) {
+    perspective->tileIds[10] = 266;
+    perspective->tileIds[11] = 267;
+    perspective->tileIds[12] = 268;
+    perspective->tileIds[26] = 282;
+    perspective->tileIds[27] = 283;
+    perspective->tileIds[28] = 284;
+    WorldMap_UpdateCurrentTileBlock();
+  }
+  Heap_Release(buffer);
+}
+
+/// HBlank setup each VBlank on the world map: copies the first scanline's BG2
+/// and BG3 affine parameters, starts the HBlank DMA for the rest, and picks the
+/// BG mode from the window's top and bottom.
+void WorldMap_ApplyAffinePage(void) {
+  struct WorldMapAffinePair(*affinePages)[160] =
+      ((struct WorldMapAffineWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE))
+          ->pages;
+  s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
+  u32 *affineRegisters = (u32 *)&REG_BG2PA;
+  struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  volatile u16 *dma0 = REG_DMA0;
+  u32 *affineSource;
+  u32 mode;
+  u32 windowTop;
+  u32 nextDisplayControl;
+
+  // Stop the last VBlank's HBlank DMA, then load line 0's eight words (BG2PA to
+  // BG3Y) by hand; the DMA repeats eight words into the same registers at
+  // each HBlank for the lines after it.
+  dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma0[5] &= ~DMA_ENABLE;
+  (void)dma0[5];
+  if (affinePages != NULL) {
+    affineSource = (u32 *)affinePages[gFrameCount & 1];
+    *affineRegisters++ = *affineSource++;
+    *affineRegisters++ = *affineSource++;
+    *affineRegisters++ = *affineSource++;
+    *affineRegisters++ = *affineSource++;
+    *affineRegisters++ = *affineSource++;
+    *affineRegisters++ = *affineSource++;
+    *affineRegisters++ = *affineSource++;
+    *affineRegisters = *affineSource++;
+    Dma_Set(affineSource, (void *)&REG_BG2PA,
+            (DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_32BIT |
+             DMA_DEST_RELOAD)
+                    << 16 |
+                8,
+            (volatile u32 *)dma0);
+  }
+  perspective->shownTop = perspective->windowTop;
+  perspective->shownBottom = perspective->windowBottom;
+  // DISPCNT_MODE_2 (the affine ground) for the load's rows 0 to 159;
+  // DISPCNT_MODE_0 for WorldMap_StartStillPicture's 200 and 255, which show the
+  // still picture on BG1.
+  windowTop = perspective->shownTop;
+  mode = 0;
+  if (windowTop < 200) {
+    u16 bottom = perspective->shownBottom;
+
+    mode = (bottom != 0) << 1;
+    if (windowTop <= bottom) {
+      mode = 0;
+      if (windowTop == 0)
+        mode = 2;
+    }
+  }
+  displayControl |= mode;
+  nextDisplayControl = (u16)displayControl;
+  REG_DISPCNT = nextDisplayControl;
+  perspective->windowPending = 0;
+}
+
+/// Copies one world map cell's two tile entries (top and bottom) to a BG map.
+static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
+  u32 cellPictureIndex = *(u16 *)cellBytes;
+  u16 *cellPictureTiles = (u16 *)Ram_MapGridCellBuffer;
+
+  cellPictureTiles += cellPictureIndex * 2;
+  *(u16 *)screenTile = *cellPictureTiles++;
+  *(u16 *)(screenTile + 64) = *cellPictureTiles;
+}
+
+/// Draws world map tileRow into the BG map: 32 cells, then 32 more a screen
+/// block on.
+void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
+  u8 *sourceCell;
+  u8 *screenTile;
+  u32 cellsCopied;
+
+  sourceCell = Ram_CellPictures + ((((s32)tileRow / 2) & 31) << 7);
+  screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + ((tileRow & 62) << 6));
+  cellsCopied = 0;
+  do {
+    WorldMap_CopyCellTiles(sourceCell, screenTile);
+    cellsCopied++;
+    screenTile += 2;
+    sourceCell += 4;
+  } while (cellsCopied <= 31);
+
+  screenTile += 4032;
+  sourceCell += 3968;
+  cellsCopied = 0;
+  do {
+    WorldMap_CopyCellTiles(sourceCell, screenTile);
+    cellsCopied++;
+    screenTile += 2;
+    sourceCell += 4;
+  } while (cellsCopied <= 31);
+}
+
+/// Draws world map tileColumn into the BG map: 64 cells down.
+void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
+  u8 *sourceCell;
+  u8 *screenTile;
+  u32 cellsCopied;
+
+  sourceCell = Ram_CellPictures + ((((s32)tileColumn / 2) & 31) << 2);
+  screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + (tileColumn & 62));
+  cellsCopied = 0;
+  do {
+    WorldMap_CopyCellTiles(sourceCell, screenTile);
+    cellsCopied++;
+    screenTile += 128;
+    sourceCell += 128;
+  } while (cellsCopied <= 63);
+}
+
+/// Each frame on the world map: loads tiles as the view moves, shakes and
+/// follows the player, draws the BG row or column that scrolls into view, moves
+/// the camera, and builds the ground plane's scanline table.
+void WorldMap_UpdateView(void) {
+  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  struct WorldMapAffineWork *affineWork =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
+  struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  s32 *cameraPosition = camera->focus;
+  s32 *followedPosition = perspective->origin;
+  struct WorldMapAffinePair(*affinePages)[160] = affineWork->pages;
+  s32 distance = perspective->farPlane;
+  s32 height = perspective->distance;
+  struct FixedPointPosition eyeOffset;
+
+  WorldMap_PreloadCurrentTileBlock();
+  if (followedPosition != NULL) {
+    s32 x;
+    s32 y;
+    s32 tileColumn;
+    s32 tileRow;
+
+    y = followedPosition[2];
+    x = followedPosition[0];
+    if (perspective->shakeX != 0) {
+      s32 shakeDifference = Random16();
+      s32 shakeAmplitude;
+
+      shakeDifference -= Random16();
+      shakeAmplitude = perspective->shakeX;
+      x += Iwram_MulQ16(shakeAmplitude, shakeDifference);
+      perspective->shakeX =
+          Iwram_MulQ16(shakeAmplitude, perspective->shakeDecay);
+    }
+    if (perspective->shakeY != 0) {
+      s32 shakeDifference = Random16();
+      s32 shakeAmplitude;
+
+      shakeDifference -= Random16();
+      shakeAmplitude = perspective->shakeY;
+      y += Iwram_MulQ16(shakeAmplitude, shakeDifference);
+      perspective->shakeY =
+          Iwram_MulQ16(shakeAmplitude, perspective->shakeDecay);
+    }
+    // On crossing a 16-pixel line, draw the column 16 on that side, or the
+    // row 12 on when y grows and 18 back when it falls.
+    tileColumn = x / px(16);
+    tileRow = y / px(16);
+    if ((perspective->view[0] ^ x) & (16 << 16)) {
+      if (perspective->view[0] < x)
+        WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
+      else
+        WorldMap_RenderPaletteMappedColumn(tileColumn - 16);
+    }
+    if ((perspective->view[1] ^ y) & (16 << 16)) {
+      if (perspective->view[1] < y)
+        WorldMap_RenderPaletteMappedRow(tileRow + 12);
+      else
+        WorldMap_RenderPaletteMappedRow(tileRow - 18);
+    }
+    perspective->view[0] = x;
+    perspective->view[1] = y;
+  }
+  // Rebuild the projection and look at the followed position from the
+  // current pitch and yaw, the eye one pixel beyond the zoomed distance.
+  // followedPosition is read here without the NULL test above, which never
+  // fails on the world map: FieldSequence_Run's Actor_ResetForLeader
+  // points it at the camera actor before any frame passes, and nothing clears
+  // it.
+  gProjection.centerX = 120;
+  gProjection.centerY = 96;
+  Projection_Set(distance, height / 2, height * 2);
+  SET_VECTOR(cameraPosition, *followedPosition++, 0, followedPosition[1]);
+  Transform_Reset();
+  Transform_ApplyPosition(cameraPosition);
+  Transform_ApplyYaw(perspective->yaw);
+  Transform_ApplyPitch(perspective->pitch);
+  eyeOffset.x = 0;
+  eyeOffset.y = 0;
+  eyeOffset.z = height + Q16_ONE;
+  Iwram_TransformVector(&eyeOffset, (s32 *)camera);
+  Transform_Reset();
+  Transform_SetLookAt(camera->eye, cameraPosition);
+  // The scanline table depends only on the pitch, so it is rebuilt only when
+  // the pitch has changed.
+  if (gScanlinePitch != perspective->pitch) {
+    s32 cosine = Trig_Cos(perspective->pitch);
+    s32 sine = Trig_Sin(perspective->pitch);
+
+    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
+                                affineWork->scanlines);
+    gScanlineAngle = 0;
+    gScanlinePitch = perspective->pitch;
+  }
+  ((s32 (*)(void *, s32 *, void *, void *))gHeapSlots[HEAP_SLOT_RAM_CODE])(
+      camera, cameraPosition, affineWork->scanlines,
+      affinePages[gFrameCount & 1]);
+}
+
+/// Loads and draws the 2x2 world map tiles around the player in both layers.
+void WorldMap_UpdateCurrentTileBlock(void) {
+  struct WorldMapView *perspective = gMapGridWork[0];
+  s32 firstQuarterX = 0;
+  s32 firstQuarterY = 0;
+  u32 layer;
+  u32 row;
+  u32 col;
+  s32 layerTileBase;
+  s32 tileId;
+
+  if (perspective->origin != NULL) {
+    s32 *followedPosition = perspective->origin;
+
+    firstQuarterX = *followedPosition++;
+    firstQuarterY = followedPosition[1];
+  }
+  // The top left of the 2x2 tiles (512 pixels each, >> 25) around the
+  // point, 256 pixels left of it and 320 above.
+  firstQuarterX = (firstQuarterX - px(256)) >> 25;
+  firstQuarterY = (firstQuarterY - px(320)) >> 25;
+  layer = 0;
+  layerTileBase = 0;
+  for (; layer < 2; layer++) {
+    for (row = 0; row < 2; row++) {
+      for (col = 0; col < 2; col++) {
+        tileId =
+            (((firstQuarterY + row) & 15) << 4) + ((firstQuarterX + col) & 15);
+        tileId = perspective->tileIds[tileId];
+        tileId += layerTileBase;
+        WorldMap_WriteLayerCellTile(layer, firstQuarterX + col,
+                                    firstQuarterY + row, tileId, 1);
+      }
+    }
+    layerTileBase += 320;
+  }
+}
+
+/// Loads the first of the 2x2 world map tiles around the player that is not
+/// shown yet (at most one a frame), without drawing it.
+void WorldMap_PreloadCurrentTileBlock(void) {
+  struct WorldMapView *perspective = gMapGridWork[0];
+  s32 firstQuarterX = 0;
+  s32 firstQuarterY = 0;
+  u32 layer;
+  u32 row;
+  u32 col;
+  s32 tileId;
+
+  if (perspective->origin != NULL) {
+    s32 *followedPosition = perspective->origin;
+
+    firstQuarterX = *followedPosition++;
+    firstQuarterY = followedPosition[1];
+  }
+  firstQuarterX = (firstQuarterX - px(256)) >> 25;
+  firstQuarterY = (firstQuarterY - px(320)) >> 25;
+  for (layer = 0; layer < 2; layer++) {
+    for (row = 0; row < 2; row++) {
+      for (col = 0; col < 2; col++) {
+        tileId =
+            (((firstQuarterY + row) & 15) << 4) + ((firstQuarterX + col) & 15);
+        tileId = perspective->tileIds[tileId];
+        tileId += layer * 320;
+        if (WorldMap_WriteLayerCellTile(layer, firstQuarterX + col,
+                                        firstQuarterY + row, tileId, 0) != 0)
+          return;
+      }
+    }
+  }
+}
+
+/// VBlank: shows BG1 and copies the decoded picture's tiles into VRAM.
+void WorldMap_PresentStillPicture(void) {
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
+             &REG_BG1CNT);
+  Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_COPY_WORDS(9600),
+          REG_DMA3);
+}
+
+/// Freezes the world map's perspective view as a still picture on BG1: saves
+/// BG1's tiles, draws the current affine frame into pixels and hands the window
+/// and VBlank to it.
+void WorldMap_StartStillPicture(void) {
+  struct WorldMapAffineWork *affineWork =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
+  struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+
+  perspective->animationActive = 1;
+  Task_SuspendAll(TilesetAnim_Update);
+  Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_COPY_WORDS(2048), REG_DMA3);
+  wait(1);
+  TileMap_DrawRowsFromRam(affineWork->pages[gFrameCount & 1],
+                          (u8 *)gMapGridCellBuffer);
+  perspective->windowTop = 200;
+  perspective->windowBottom = 255;
+  gVBlankCallback = WorldMap_PresentStillPicture;
+}
+
+/// VBlank: shows BG1 and copies the area's tiles back into VRAM.
+void WorldMap_ShowBg1FromBuffer(void) {
+  Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
+  Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2), DMA_COPY_WORDS(8192), REG_DMA3);
+}
+
+/// Reloads the world map area's palette and tiles after the still picture, puts
+/// the default cells back and returns to the perspective view.
+void WorldMap_LoadAreaGraphics(void) {
+  struct WorldMapView *perspective;
+  u32 *graphicsResources;
+  u8 *decodeBuffer;
+  s16 backdropColor;
+
+  perspective = gMapGridWork[0];
+  decodeBuffer = (u8 *)gMapGridCellBuffer;
+  graphicsResources = perspective->resources;
+  backdropColor = *(s16 *)BG_PLTT;
+  Decompress_ByteLz(Resource_GetTableEntry(graphicsResources[0]), decodeBuffer);
+  *(s16 *)decodeBuffer = backdropColor;
+  Dma_Set(decodeBuffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+  Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[1]),
+                      gBgTileBuffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[2]),
+                      Ram_BgTileBuffer + 0x2000);
+  Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[3]),
+                      Ram_BgTileBuffer + 0x4000);
+  Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[4]),
+                      Ram_BgTileBuffer + 0x6000);
+  // The VBlank copies the tiles back and the next frame shows the ground;
+  // only then is the still picture's buffer refilled with the cells.
+  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  perspective->windowTop = 0;
+  perspective->windowBottom = 159;
+  wait(1);
+  Decompress_TaggedLz(Resource_GetTableEntry((u32)RESOURCE_DEFAULT_GRID_CELLS),
+                      decodeBuffer);
+  WorldMap_UpdateCurrentTileBlock();
+  perspective->animationActive = 0;
+  Task_ResumeAll(TilesetAnim_Update);
+  wait(1);
+}
+
+/// Puts the default world map cells back after the still picture and returns to
+/// the perspective view, without reloading the area's palette or tiles.
+void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
+  struct WorldMapView *perspective = gMapGridWork[0];
+  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  perspective->windowTop = 0;
+  perspective->windowBottom = 159;
+  wait(1);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_GRID_CELLS),
+                      gMapGridCellBuffer);
+  WorldMap_UpdateCurrentTileBlock();
+  Task_ResumeAll(TilesetAnim_Update);
+  wait(1);
+}
+
+#undef WORLD_MAP_BG_PALETTE
+#undef WORLD_MAP_CELLS

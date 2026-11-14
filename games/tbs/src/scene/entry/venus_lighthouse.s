@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer VenusLighthouse_Initialize
-	overlay_veneer VenusLighthouse_GetEntrances
-	overlay_veneer VenusLighthouse_GetExits
-	overlay_veneer VenusLighthouse_GetActorPlacements
-	overlay_veneer VenusLighthouse_GetTriggers
-	overlay_veneer VenusLighthouse_GetRegions

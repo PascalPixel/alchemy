@@ -9,16 +9,16 @@
 /// For example, Text_DrawNumberAtOffsetFar is the window bank's entry for
 /// Text_DrawNumberAtOffset. Each bank's header, far_call/window.h and the
 /// rest, is in its table's order, and the table is the far_call file of the
-/// same name in capitals (WINDOW.S). Overlays bind their imported names to
+/// same name (window.s). Overlays bind their imported names to
 /// these entries in src/system/overlay/imports.inc, using the same 8-byte jump
 /// mechanism. A file with a local declaration defines `OWN_<name>` before
 /// including this header to keep that declaration in scope.
 
-#include "task.h"
-#include "field_particle.h"
-#include "irq.h"
-#include "types.h"
 #include "edition.h"
+#include "types.h"
+#include "field/field_particle.h"
+#include "system/irq.h"
+#include "system/task.h"
 
 struct AffineTransform;
 struct SpriteAnimation;

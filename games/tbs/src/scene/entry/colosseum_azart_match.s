@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer ColosseumAzartMatch_Initialize
-	overlay_veneer ColosseumAzartMatch_GetEntrances
-	overlay_veneer ColosseumAzartMatch_GetExits
-	overlay_veneer ColosseumAzartMatch_GetActorPlacements
-	overlay_veneer ColosseumAzartMatch_GetTriggers
-	overlay_veneer ColosseumAzartMatch_GetRegions

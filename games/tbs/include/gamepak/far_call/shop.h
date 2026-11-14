@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_SHOP_H
+#define ALCHEMY_FAR_CALL_SHOP_H
+
 /// @file
 /// Shops, inns and the cursors used by their screens.
 
@@ -17,3 +20,5 @@ void Shop_RestoreFieldPaletteFar(void);
 s32 ItemPicker_RunFar(s32 *selected_unit, s32 *selectedItem);
 void Sound_WaitForJingleFar(void);
 void Inn_PlaySleepFar(s32 room_price);
+
+#endif

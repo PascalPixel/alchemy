@@ -4,10 +4,10 @@
 /// @file
 /// Copying ARM routines to RAM to run them there.
 
-#include "dma.h"
-#include "io_reg.h"
-#include "heap_release.h"
 #include "types.h"
+#include "system/dma.h"
+#include "system/heap_release.h"
+#include "system/io_reg.h"
 
 // Copies an ARM routine to RAM for execution. bytes is its linker-defined size.
 

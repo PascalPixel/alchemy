@@ -4,11 +4,10 @@
 /// @file
 /// Summons and the battle sprite definitions of the enemies.
 
-#include "static_assert.h"
-
-#include "types.h"
 #include "edition.h"
-#include "far_call.h"
+#include "static_assert.h"
+#include "types.h"
+#include "gamepak/far_call.h"
 
 /// A unit's row of gBattleSprites: an enemy's battle sprite, size, attack
 /// effect, palette and defeat-sound kind.
@@ -18,7 +17,8 @@ struct BattleSpriteDefinition {
   /// bits: 7..5 attackHop | 4..1 attackEffect | 0 isSmall
   ///@{
   u8 isSmall : 1; ///< 1 for a small enemy, which takes one sprite slot
-  /// The beam its attack plays, an enum BeamKind (beams.c); 0 reads as 1.
+  /// The beam its attack plays, an enum BeamKind (battle_effect_beams.c); 0
+  /// reads as 1.
   u8 attackEffect : 4;
   u8 attackHop : 3; ///< the attack-hop height
   ///@}

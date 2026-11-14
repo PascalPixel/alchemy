@@ -51,27 +51,32 @@
 /// A jar, two barrels and a wooden box keep the first visit's flags, so what
 /// the party took then stays taken. Two bookcases can be read.
 
-#include "main_routine_work.h"
-#include "module/scene/log_rooms_b.h"
-#include "log_rooms_a.h"
-#include "module/scene/shared/vault_item_icon.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "system_call.h"
-#include "inventory.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/log_rooms_a.h"
+#include "scene/vault_item_icon.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
+
+extern struct SceneEntrance gLogRoomsB_Entrances[];
+extern u32 gLogRoomsB_Exits[];
+extern struct ActorPlacement gLogRoomsB_ActorPlacements[];
+extern struct Trigger gLogRoomsB_Triggers[];
 
 /// The townspeople, numbering the actor placement rows from
 /// ACTOR_FIRST_PLACED and named by what they say on the party's return.
@@ -119,7 +124,7 @@ enum {
 /// Set once the mayor has told Isaac the thieves escaped from jail.
 enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
-#include "shared/vault_bone_proximity_flag.h"
+#include "shared/vault_bone_proximity_flag.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLogRoomsB_Entrances;
@@ -270,7 +275,7 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
   Actor_SetMovementTypeById(ACTOR_MAYOR, 2);
 }
 
-#include "shared/vault_bone.h"
+#include "shared/vault_bone.c"
 
 /// Across the counter the weapon shop opens.
 static void LogRoomsB_TalkToWeaponMerchant(void) {
@@ -383,7 +388,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/vault_item_icon.h"
+#include "shared/vault_item_icon.c"
 
 struct SceneEntrance gLogRoomsB_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,

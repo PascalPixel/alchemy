@@ -87,37 +87,70 @@
 /// the hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west and sheds
 /// sparkles, and the pillar cycles its colour modes too.
 
-#include "main_routine_work.h"
-#include "vram_cache.h"
-#include "module/import.h"
-#include "module/scene/vale.h"
-#include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/event_psynergy.h"
-#include "module/scene/shared/world_map_attached_effects.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "vale.h"
-#include "event_inline.h"
-#include "iwram_call.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "field_effect.h"
-#include "map_grid_scroll.h"
 #include "flags.h"
-#include "shared/walk_into_leader.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_sequence.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_orbit.h"
+#include "scene/actor_polar_target.h"
+#include "scene/catch_nut.h"
+#include "scene/event_psynergy.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "scene/world_map_attached_effects.h"
+#include "sound/sound.h"
+#include "system/heap_release.h"
+#include "system/heap_slots.h"
+#include "system/iwram_call.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+extern s32 gVale_AlephGuardPatrol[];
+extern s32 gVale_LeaderHammers[];
+extern s32 gVale_GaretWalksToTheHouse[];
+extern s32 gVale_UnusedWaterGrows[];
+extern s32 gVale_SparkleScript[];
+extern struct SceneEntrance gVale_Entrances[];
+extern u32 gVale_Exits[];
+extern struct ActorPlacement gVale_ActorPlacements[];
+extern struct ActorPlacement gVale_ActorPlacementsAfterLeaving[];
+extern struct ActorPlacement gVale_ActorPlacementsAfterKalay[];
+extern struct ActorPlacement gVale_RepairActorPlacements[];
+extern struct Trigger gVale_Triggers[];
+extern struct Trigger gVale_TriggersAfterLeaving[];
+extern u16 gVale_SanctumDoorOpens[];
+extern u16 gVale_IsaacsDoorOpens[];
+extern u16 gVale_GrandparentsDoorOpens[];
+extern u16 gVale_WestHouseDoorOpens[];
+extern s32 gVale_FirstWarningLeaderPath[];
+extern s32 gVale_FirstWarningGuardPath[];
+extern s32 gVale_LeaderFromWestPath[];
+extern s32 gVale_GuardFromFirstPausePath[];
+extern s32 gVale_LeaderPushedBackPath[];
+extern s32 gVale_GuardFromSecondPausePath[];
+
+extern struct Trigger gVale_TriggersAfterKalay[];
+extern s32 gVale_JennaWalksToTheHouse[];
 
 // Where Garet lands after his jump once Dora has gone in, at the roof's end
 // (Vale_RoofMended): two pixels further south in the TBS_PATCH_2
@@ -278,7 +311,7 @@ enum ValeOpeningActorId {
   ACTOR_OPENING_FIRST_BOARD,
   ACTOR_OPENING_SECOND_BOARD,
   ACTOR_OPENING_THIRD_BOARD,
-  /// SPRITE_MOVE_HAND, the hand of Move (event_commands/catch.c). It pushes the
+  /// SPRITE_MOVE_HAND, the hand of Move (event_commands_catch.c). It pushes the
   /// pillar for Garet, shedding sparkles.
   ACTOR_OPENING_MOVE_HAND
 };
@@ -295,7 +328,7 @@ enum ValeAnimation {
   ANIM_GARET_STARTLED = 13
 };
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// The roof of Isaac's house has just been mended. For the rest of the visit
 /// Dora frets about the hole Garet left.
@@ -334,15 +367,15 @@ enum ValeAnimation {
 /// The stone pillar below the cliff stands in its east column.
 #define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_AREA_TEMP_16
 
-const struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) { return gVale_Entrances; }
 
-const struct SceneExitRegion *Vale_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Vale_GetExits(void) { return gVale_Exits; }
+const u32 *Scene_GetExits(void) { return gVale_Exits; }
 
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
-const struct ActorPlacement *Vale_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance == VALE_FROM_TITLE)
     return gVale_RepairActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
@@ -351,8 +384,6 @@ const struct ActorPlacement *Vale_GetActorPlacements(void) {
     return gVale_ActorPlacementsAfterLeaving;
   return gVale_ActorPlacements;
 }
-
-#include "shared/catch_nut.h"
 
 /// Catch on the Nut in Vale gives it to the party.
 static void Vale_CatchNut(void) {
@@ -366,7 +397,7 @@ static void Vale_CatchNutAfterKalay(void) {
 
 /// Vale's triggers for the story so far: before leaving, after leaving, or
 /// back from Kalay.
-const struct Trigger *Vale_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_TriggersAfterKalay;
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
@@ -771,7 +802,6 @@ static void Vale_ClimbDownFromRoof(void) {
 /// behavior 50) jumps out in front of Isaac, then keeps watching him.
 static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   struct Actor *guard;
-  struct Actor *actor;
 
   guard = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
   Event_Start();
@@ -812,8 +842,8 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   // Yes: "Mt. Aleph is a sacred peak. No one can climb it without..."
   // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
-  actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
-  actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
+  Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
+      (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Event_End();
@@ -863,8 +893,8 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   // Yes: "Mt. Aleph is a sacred peak. No one can climb it without..."
   // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
-  actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
-  actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
+  Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
+      (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   Event_End();
 }
@@ -907,7 +937,6 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   struct Actor *leader;
   struct Actor *actor;
   u8 leaderMotionFlags;
-  u8 *leaderMotion;
   s32 i;
 
   Event_Start();
@@ -922,9 +951,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   MapGrid_CopyCellsTo(0, 103, 82, 42, 1, 1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leaderMotion = &leader->motionFlags;
-  leaderMotionFlags = *leaderMotion;
-  *leaderMotion = 0;
+  leaderMotionFlags = leader->motionFlags;
+  leader->motionFlags = 0;
   Actor_SetPosition(ACTOR_PARTY_LEADER, 407, 690);
   Actor_SetPosition(ACTOR_DORA, 392, 896);
   Actor_SetPosition(ACTOR_GARET, 298, 736);
@@ -1464,13 +1492,13 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(100);
   GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  *leaderMotion = leaderMotionFlags;
+  leader->motionFlags = leaderMotionFlags;
   Event_End();
 }
 
 /// Vale's setup plays the roof mending (VALE_FROM_TITLE) or its end (entrance
 /// 17, once).
-s32 Vale_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 set;
 
@@ -1787,16 +1815,12 @@ static void Vale_GaretAsksToProtectFamily(void) {
 /// FLAG_VALE_UNUSED_WATER_BURST_SEEN. His talk and Mind Read rows show the same
 /// two lines.
 UNUSED static void Vale_UnusedWaterBurstsByTheRiver(void) {
-  struct Actor *actor;
   const s32 *actions;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_FIRST_WATER);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FIRST_WATER + 1);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FIRST_WATER + 2);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER + 1), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER + 2), 0);
   Actor_SetAnimation(ACTOR_FIRST_WATER, 0);
   Actor_SetAnimation(ACTOR_FIRST_WATER + 1, 0);
   Actor_SetAnimation(ACTOR_FIRST_WATER + 2, 0);
@@ -1922,7 +1946,6 @@ static void Vale_MendingTheRoof(void) {
   struct Actor *repairActor = NULL;
   struct Actor *leader;
   struct Actor *moveHand;
-  struct Actor *actor;
   s32 message;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1955,10 +1978,8 @@ static void Vale_MendingTheRoof(void) {
   repairActor->y.fixed = px(160);
   repairActor->x.fixed = px(388);
   Actor_SetSpriteFlags(repairActor, 0);
-  actor = Actor_Get(ACTOR_OPENING_FIRST_BOARD);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_OPENING_SECOND_BOARD);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_OPENING_FIRST_BOARD), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_OPENING_SECOND_BOARD), 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   ActorSystem_SuspendProjectionAndShowSprites();
@@ -2070,8 +2091,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_SetSpritePriority(ACTOR_GARET, 1);
   Task_AddFrame(Vale_UpdateGaretPaletteAndEffects, TASK_PASS_FRAME);
   Task_AddFrame(Vale_CycleOpeningPillarPalette, TASK_PASS_FRAME);
-  actor = Actor_Get(ACTOR_OPENING_MOVE_HAND);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_OPENING_MOVE_HAND), 0);
   moveHand->motionFlags = 0;
   moveHand->x.fixed = px(428);
   moveHand->y.fixed = px(208);
@@ -2263,11 +2283,9 @@ static void Vale_RoofMended(void) {
   turned->facing = FACING_EAST;
   turned->facing = FACING_NORTH;
   Actor_SetPosition(ACTOR_GARET, 298, 736);
-  turned = Actor_Get(ACTOR_GARET);
-  turned->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_GARET)->facing = FACING_SOUTH;
   Actor_SetPosition(ACTOR_JENNA, 298, 760);
-  turned = Actor_Get(ACTOR_JENNA);
-  turned->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_JENNA)->facing = FACING_SOUTH;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   actor = Actor_Get(ACTOR_FIRST_BOARD);
@@ -2849,7 +2867,7 @@ static void Vale_RoofMended(void) {
   Event_End();
 }
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Cycles palettes on Garet and periodically spawns attached effects.
 static void Vale_UpdateGaretPaletteAndEffects(void) {
@@ -3022,8 +3040,6 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
   SET_VELOCITY(emitter, 0, 0, 0);
 }
 
-#include "shared/actor_polar_target.h"
-
 DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(static,
                                                 FieldActor_SetMoveTargetFixed)
 
@@ -3118,7 +3134,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
   }
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
 /// Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE (7) for two
 /// frames in four, with the World Map's attached sparks every 16 frames.
@@ -3146,10 +3162,10 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
 }
 
-#include "shared/field_effect_vertical.h"
-#include "shared/world_map_attached_effects.h"
+#include "shared/field_effect_vertical.c"
+#include "shared/world_map_attached_effects.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 
 // clang-format off
 

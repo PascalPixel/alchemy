@@ -4,13 +4,13 @@
 /// @file
 /// The item menu's state and commands.
 
-#include "module/menu/menu.h"
-#include "heap_slots.h"
 #include "static_assert.h"
-#include "paged_list.h"
-#include "render_input.h"
+#include "gamepak/far_call.h"
+#include "graphics/render_input.h"
+#include "menu/menu.h"
+#include "menu/paged_list.h"
+#include "system/heap_slots.h"
 #include "text/msg_ids.h"
-#include "far_call.h"
 
 struct Sprite;
 
@@ -70,9 +70,9 @@ struct ItemMenuWork {
   u16 flags;          ///< 1 while the item's name and command grid are drawn
   s16 completionFlag; ///< set to 1 as item commands end; not read by name
   /// The row of four figures the Djinn and status screens show
-  /// (djinn_figures.c): each one's sprite and place in screen pixels, and its
-  /// scale in 16.16, which closes a third of its gap to Q16_ONE each frame, or
-  /// holds -scale while negative.
+  /// (menu_djinn_figures.c): each one's sprite and place in screen pixels, and
+  /// its scale in 16.16, which closes a third of its gap to Q16_ONE each frame,
+  /// or holds -scale while negative.
   ///@{
   struct Sprite *figures[4];
   s16 figureX[4];
@@ -88,7 +88,7 @@ struct ItemMenuWork {
   u8 mode;           ///< not named through this struct; PsynergyMenuWork.mode
   u8 shopStock[297]; ///< ShopWork's stock, party and cursor; not named
                      ///< here
-  s16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
+  u16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
 };
 
 STATIC_ASSERT(offsetof(struct ItemMenuWork, sideIcons) == 0x14);

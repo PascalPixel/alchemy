@@ -4,24 +4,23 @@
 /// line up matching icons. It draws its own wheels and lines, and keeps an
 /// unused LZ packer.
 
-#include "module/field/lucky_wheels.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "field.h"
-#include "system.h"
-#include "battle_effect_work.h"
-#include "main_routine_work.h"
-#include "macros.h"
-#include "dma.h"
-#include "iwram_call.h"
-#include "blitter.h"
-#include "map_grid_scroll.h"
-#include "ram_buffer.h"
-#include "resource_ids.h"
-#include "text/msg_ids.h"
-#include "lucky_wheels_lzpack.h"
-#include "oam_words.h"
+#include "field/lucky_wheels.h"
 #include "item_ids.h"
+#include "macros.h"
+#include "resource_ids.h"
+#include "battle/battle.h"
+#include "battle/battle_effect_work.h"
+#include "battle/blitter.h"
+#include "field/field.h"
+#include "field/lucky_wheels_lzpack.h"
+#include "field/map_grid_scroll.h"
+#include "system/dma.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/oam_words.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 /// The sparks of the jackpot, kept in the map cell buffer.
 #define LUCKY_WHEELS_SPARKS ((struct Particle *)Ram_MapGridCellBuffer)
@@ -222,11 +221,8 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       y0 = y1;
       y1 = tmp;
       dx = x1 - x0;
-      /* LEFTOVER(template): dy recomputed after the swap and never read again;
-       * Camelot's template: the swap recomputes both deltas in both halves of
-       * this routine and of its sibling BattleEffect_DrawClippedCanvasLine,
-       * and the shallow half reads its dy; without the store, 92 of 189
-       * instructions differ in tbs-en. */
+      /* LEFTOVER(template): dy recomputed after the swap and never read again.
+       */
       dy = y1 - y0;
     }
     step = (ABS(x1 - x0) << 8) / ABS(y1 - y0);
@@ -253,11 +249,8 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       tmp = y0;
       y0 = y1;
       y1 = tmp;
-      /* LEFTOVER(template): dx recomputed after the swap and never read again;
-       * Camelot's template: the swap recomputes both deltas in both halves of
-       * this routine and of its sibling BattleEffect_DrawClippedCanvasLine,
-       * and the steep half reads its dx; without the store, 149 of 189
-       * instructions differ in tbs-en. */
+      /* LEFTOVER(template): dx recomputed after the swap and never read again.
+       */
       dx = x1 - x0;
       dy = y1 - y0;
     }
@@ -363,7 +356,53 @@ struct LuckyWheelsWonPrizesView {
   s8 wonPrizes[16];
 };
 
-#include "../graphics/lucky_wheels/reel_tables.h"
+// The Lucky Wheels tables, the same in both games; LUCKY_WHEELS_TITLE_LETTERS
+// above is the letters of the title they spell.
+
+/// Where each spark picture (a square 2 to 20 pixels on a side) starts: size s
+/// (1 to 10) is a square 2s pixels a side, after the smaller squares' pixels.
+const u16 gLuckyWheels_SparkPictures[] = {0,   4,   20,  56,  120,
+                                          220, 364, 560, 816, 1140};
+
+/// The prize of each wheel symbol, kept in gMainRoutineWork.wonPrizes for each
+/// winning line.
+const u8 gLuckyWheels_SymbolPrizes[] = {0, 3, 1, 4, 2, 5};
+
+/// The tile of each title letter, the letter's place in its sheet: jackpot.png
+/// holds `Jackpot!` and jackpot_ja.png `ジャックポト!`.
+const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
+#if LANGUAGE == LANGUAGE_JAPANESE
+    0, 1, 2, 3, 4,
+    2, 5, 6
+#elif LANGUAGE == LANGUAGE_SPANISH
+    7, 0, 1, 2, 3,
+    4, 5, 6, 7
+#else
+    0, 1, 2, 3, 4,
+    5, 6, 7
+#endif
+};
+
+/// The positions of the machine's fourteen sprites, in screen pixels.
+const u8 gLuckyWheels_MachineSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
+                                          200, 28, 28,  208, 208, 219, 219};
+const u8 gLuckyWheels_MachineSpriteY[] = {2,   152, 0,   152, 8,   104, 8,
+                                          104, 118, 140, 118, 140, 6,   108};
+
+/// The advance of each title letter, in pixels, from LUCKY_WHEELS_TITLE_X. The
+/// last letter's advance is never used; Japanese leaves it out (0).
+const u8 gLuckyWheels_TitleLetterWidths[LUCKY_WHEELS_TITLE_LETTERS] = {
+#if LANGUAGE == LANGUAGE_JAPANESE
+    32, 24, 22, 28,
+    28, 22, 18
+#elif LANGUAGE == LANGUAGE_SPANISH
+    16, 28, 28, 26, 26,
+    28, 28, 20, 24
+#else
+    28, 28, 26, 26, 28,
+    28, 20, 24
+#endif
+};
 
 /// Lucky Wheels' VBlank task: reads the keys, runs the game's state
 /// (betting, spinning and stopping the wheels, scoring the paylines, choosing
@@ -806,7 +845,7 @@ void LuckyWheels_Update(void) {
     for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
       struct Particle *p = &fx->particles[i];
 
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
       if (i == 0)
         work->oam[sprite].attr01 =
             ((((s16)(p->x >> 16) + 0x1f0) & 0x1ff) << 16) | objMode |
@@ -1027,7 +1066,7 @@ void LuckyWheels_Run(void) {
                               sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
   save = (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
-  Stub_NoOpHook((s32)&ResourceId_BattleEffectFarCalls);
+  Stub_NoOpHook(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
   save->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;
@@ -1048,9 +1087,9 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D),
                       sheet);
-  entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsMachinePicture);
+  entry = Resource_GetTableEntry(RESOURCE_LUCKY_WHEELS_MACHINE_PICTURE);
   Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0), DMA_COPY_WORDS(8), REG_DMA3);
   entry += 32;
   Decompress_TaggedLz(entry, tiles);
@@ -1111,17 +1150,17 @@ void LuckyWheels_Run(void) {
     state->spins = 0;
     work->frame = 0;
     state->timer = 0;
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
+    Dma_Set(Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET),
             (void *)BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
     // The paylines' two greens, colours 64 and 65 on the canvas.
     BG_PLTT_COLOR(4, 0) = RGB(11, 28, 11);
     BG_PLTT_COLOR(4, 1) = RGB(22, 31, 22);
-    entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsIcons);
+    entry = Resource_GetTableEntry(RESOURCE_LUCKY_WHEELS_ICONS);
     Dma_Set(entry, (void *)OBJ_PLTT, DMA_COPY_WORDS(480 / 4), REG_DMA3);
     entry += 480;
     Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6960), REG_DMA3);
-    entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsJackpot);
+    entry = Resource_GetTableEntry(RESOURCE_LUCKY_WHEELS_JACKPOT);
     Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8), REG_DMA3);
     entry += 32;
     Decompress_TaggedLz(entry, tiles);
@@ -1207,15 +1246,15 @@ void LuckyWheels_Run(void) {
         s32 phase = frame % 80;
 
         if (phase <= 15)
-          Palette_StepTowardResource((s32)&ResourceId_MercuryDjinnSheet);
+          Palette_StepTowardResource(RESOURCE_MERCURY_DJINN_SHEET);
         else if (phase <= 31)
-          Palette_StepTowardResource((s32)&ResourceId_VenusDjinnSheet);
+          Palette_StepTowardResource(RESOURCE_VENUS_DJINN_SHEET);
         else if (phase <= 47)
-          Palette_StepTowardResource((s32)&ResourceId_EmberStreakSheet);
+          Palette_StepTowardResource(RESOURCE_EMBER_STREAK_SHEET);
         else if (phase <= 63)
-          Palette_StepTowardResource((s32)&ResourceId_LimePalette);
+          Palette_StepTowardResource(RESOURCE_LIME_PALETTE);
         else
-          Palette_StepTowardResource((s32)&ResourceId_JupiterDjinnSheet);
+          Palette_StepTowardResource(RESOURCE_JUPITER_DJINN_SHEET);
         if (state->timer <= 15)
           Palette_DarkenScreenStep();
         if (state->timer > 16 && (frame & 7) == 0) {
@@ -1413,14 +1452,13 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   current++;
   if (current < count) {
     u32 mask = PACK_WINDOW_MASK;
-    struct LzPackWork **root = &gLzPackWork;
 
     do {
       u32 slot = (start + current) & mask;
       struct LzPackWork *state;
 
       LzPack_RemoveSlotNode(slot);
-      state = *root;
+      state = gLzPackWork;
       current++;
       state->bucketBySlot[slot] = (-1);
     } while (current < count);

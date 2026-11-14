@@ -1,0 +1,188 @@
+/// @file
+/// Ply.
+// Part of event_commands.c.
+
+#include "event_commands_internal.h"
+
+/// Per-frame update: sways 4 pixels either side of anchorX, once every 128
+/// frames.
+void FieldEffect_SwayParticle(struct Actor *actor) {
+  actor->x.fixed =
+      actor->targetX + Iwram_MulQ16(px(4), Trig_Sin(actor->timer << 9));
+  actor->timer++;
+  actor->timer = (actor->timer + 128) % 128;
+}
+
+/// Per-frame update: spirals in on a point 10 pixels above the Psynergy's
+/// position, at a radius of as many pixels as frames are left; released when
+/// timer reaches 0.
+void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct Vector3 pos;
+  s16 remainingFrames;
+  s32 decrementedTimer;
+
+  if (particle != NULL) {
+    decrementedTimer = (u16)particle->timer - 1;
+    particle->timer = decrementedTimer;
+    remainingFrames = decrementedTimer;
+    if (remainingFrames != 0) {
+      // The angle turns 1/32 of a circle (TRIG_TURN / 32) each frame left.
+      pos.x = effectWork->x;
+      pos.y = effectWork->y + px(10);
+      pos.z = effectWork->z;
+      Vector_AddPolarOffset(px(remainingFrames),
+                            (s16)particle->userValue + (remainingFrames << 11),
+                            &pos);
+      particle->x.fixed = pos.x;
+      particle->y.fixed = pos.y;
+      particle->z.fixed = pos.z;
+    } else {
+      Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
+    }
+  }
+}
+
+/// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
+/// above the Psynergy's position, and every 3 frames sheds a spark that sways
+/// as it slowly falls.
+void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
+  struct FieldEffectWork *effectWork;
+  struct Actor *spark;
+  s32 pos[3];
+
+  effectWork = gFieldEffectWork;
+  if (emitter->timer != -1) {
+    SET_ACTOR_POSITION(emitter,
+                       effectWork->x +
+                           Iwram_MulQ16(px(6), Trig_Sin(emitter->timer << 10)),
+                       effectWork->y + ABOVE, effectWork->z);
+    emitter->timer++;
+    emitter->timer = (emitter->timer + 64) % 64;
+  }
+  if (gFrameCount % 3 == 0) {
+    // From 2 pixels up, 0 to 6 pixels in a random direction.
+    SET_VECTOR(pos, emitter->x.fixed, emitter->y.fixed + px(2),
+               emitter->z.fixed);
+    Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
+    spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
+    // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
+    // and is released after 72 frames, its script's wait (lifetime).
+    if (spark != 0) {
+      spark->update = FieldEffect_SwayParticle;
+      spark->scaleX = spark->scaleY = Q16_ONE * 3 / 5;
+      spark->motionFlags = ACTOR_FALLS;
+      spark->gravity = 458;
+      spark->timer = Random16() >> 9;
+      spark->targetX = spark->x.fixed;
+      Actor_SetSpriteColorModeFar(spark, SPRITE_COLOR_BLUE_TINT);
+      spark->wait = 72;
+      Actor_StartScriptFar(spark, gFieldEffect_SharedParticleScript);
+    }
+  }
+}
+
+/// Runs FieldPsynergy_Ply, then stops the caster's update routine.
+void FieldPsynergy_PlyOnTarget(s32 unused) {
+  FieldPsynergy_Ply();
+  FieldPsynergy_StopCasterUpdate();
+}
+
+/// Eight particles spiral into the centre, where one appears, sheds sparks and
+/// flies far away.
+void FieldPsynergy_Ply(void) {
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct Actor *target = effectWork->mainActor;
+  struct Actor *actor;
+  struct Sprite *last;
+  u8 resourceSlot;
+  s32 i;
+
+  FieldPsynergy_FadeToCastColor();
+
+  // The spiralling particles: one a frame, each 1/8 turn on from the last.
+  last = 0;
+  for (i = 0; i < 8; i++) {
+    actor = Actor_Spawn(SPRITE_WINGED_FIGURE, target->x.fixed,
+                        target->y.fixed + px(32), target->z.fixed);
+    if (actor != 0) {
+      actor->scaleY = Q16_ONE * 7 / 10;
+      actor->scaleX = Q16_ONE * 7 / 10;
+      actor->update = FieldEffect_UpdateShrinkingOrbitActor;
+      actor->timer = 120;
+      actor->userValue = i << 13;
+      actor->motionFlags = ACTOR_FLOATS;
+      last = Sprite_ShareVramCacheEntry(actor->sprite, last);
+    }
+    wait(1);
+  }
+
+  // The particles share one sprite cache; keep its slot to free at the end.
+  // last is read with no check that any particle spawned.
+  resourceSlot = last->slot;
+  Sound_PlayFar(SE_PSYNERGY_START);
+  // The last particle spawned 7 frames ago with 120 frames to live: wait
+  // until the spiral is nearly closed.
+  wait(110);
+
+  // The one in the centre.
+  target = Actor_Spawn(SPRITE_WINGED_FIGURE, 0, 0, 0);
+  actor = target;
+  if (target != 0) {
+    target->scaleY = Q16_ONE * 7 / 10;
+    target->scaleX = Q16_ONE * 7 / 10;
+    target->x.fixed = effectWork->x;
+    target->y.fixed = effectWork->y + px(16);
+    target->z.fixed = effectWork->z;
+    target->motionFlags = ACTOR_FLOATS;
+    Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
+  }
+
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
+  wait(12);
+  if (target != 0) {
+    // Switch its sprite param every 2 frames (10 one time in 4).
+    for (i = 0; i < 30; i++) {
+      /* FAKEMATCH(dead): target set again to actor. */
+      target = actor;
+      if (i & 3)
+        Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_BLUE_TINT);
+      else
+        Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_RED_TINT);
+      wait(2);
+    }
+  }
+
+  // Sparks.
+  Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
+  Sound_PlayFar(MUS_CURE);
+  if (actor != 0) {
+    target->update = FieldEffect_RunSparkEmitter;
+    target->timer = 0;
+    // Cast on a target (enabled cleared by FieldPsynergy_Dispatch),
+    // the sparks fall for 192 frames instead of 128.
+    if (effectWork->enabled != 0)
+      wait(128);
+    else
+      wait(192);
+  }
+
+  // Fly away: 192 pixels at angle TRIG_TURN * 29 / 32, and release it once it
+  // arrives.
+  if (target != 0) {
+    target->timer = -1;
+    target->speedLimit = px(5);
+    target->acceleration = px(2) / 5;
+    target->steeringFlags = 0;
+    Actor_SetTargetPositionFromMagnitudeAngle(target, px(192),
+                                              TRIG_TURN * 29 / 32);
+    Actor_WaitForMoveFar(target);
+    Actor_ReleaseFar(target);
+  }
+  // VramCache_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT for no entry.
+  if (resourceSlot != VRAM_CACHE_ENTRY_COUNT)
+    VramCache_FreeEntry(resourceSlot);
+  if (effectWork->finishCallback != 0)
+    effectWork->finishCallback();
+  FieldPsynergy_FadeFromCastColor();
+}

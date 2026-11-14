@@ -22,10 +22,10 @@
 ///
 /// The getters choose by gMainRoutineWork.next. The actor placements of
 /// TunnelRuinsLadyStatues answer any other scene number, and
-/// TunnelRuins_GetActorPlacements prepares each table's actors to appear only
+/// Scene_GetActorPlacements prepares each table's actors to appear only
 /// in view.
 ///
-/// TunnelRuins_Initialize works room by room, one case for each room's
+/// Scene_Initialize works room by room, one case for each room's
 /// entrances.
 ///
 /// - It puts each puzzle back as it was left.
@@ -66,33 +66,51 @@
 /// by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it, one
 /// stone on the west platform and two stacked on the east, weights 2 and 4.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "heap_slots.h"
-#include "module/import.h"
-#include "module/scene/tunnel_ruins.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "ground_mask.h"
-
-#define FIELD_STAGED_ACTOR_IMPORTS
-#include "text/msg_ids.h"
-#include "event_inline.h"
-#include "field_effect.h"
-#include "pushed_actor.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
 #include "ability_ids.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_coordinate.h"
+#include "field/field_effect.h"
+#include "field/ground_mask.h"
+#include "field/pushed_actor.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+s32 Scene_Initialize(void);
+extern u32 gTunnelRuins_BalanceHeights[];
+extern s32 gTunnelRuins_DouseSplashScript[];
+extern u16 gTunnelRuins_DoorOpenSteps[];
+extern u16 gTunnelRuins_DoorCloseSteps[];
+extern struct SceneEntrance gTunnelRuinsEntrancesOther[];
+extern struct SceneEntrance gTunnelRuinsGreatStatueEntrances[];
+extern struct SceneEntrance gTunnelRuinsLadyStatuesEntrances[];
+extern struct SceneExitRegion gTunnelRuinsLadyStatuesRegions[];
+extern u32 gTunnelRuinsExits[];
+extern struct ActorPlacement gTunnelRuinsGreatStatueActorPlacements[];
+extern struct ActorPlacement gTunnelRuinsActorPlacementsOther[];
+extern struct Trigger gTunnelRuinsGreatStatueTriggers[];
+extern struct Trigger gTunnelRuinsTriggersOther[];
+
+#define FIELD_STAGED_ACTOR_IMPORTS
 
 /// The actors of TunnelRuinsGreatStatue, in the order of its actor placements.
 ///
@@ -168,10 +186,10 @@ static void TunnelRuins_UpdateSecondPillarCells(void);
 static void TunnelRuins_UpdateSmallPillarCells(void);
 static void TunnelRuins_MarkPushPillarCells(void);
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Turns off the shadow of the Venus Lighthouse model once
 /// gTunnelRuins_ShrinkScript has shrunk it
@@ -265,7 +283,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   effectWork = gFadeOverlayWork;
   depthLimit = 0;
   // Each tracked entrance measures depth in eight-pixel steps.
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     switch (gMainRoutineWork.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH:
@@ -291,7 +309,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   }
 }
 
-#include "shared/actor_depth.h"
+#include "shared/actor_depth.c"
 
 /// While Douse rains on a pillar: its two frames alternate, and every fourth
 /// frame a small splash appears on its top.
@@ -365,7 +383,7 @@ static void TunnelRuins_WaitForActorToLand(struct Actor *actor) {
   actor->targetY = ACTOR_NO_TARGET;
 }
 
-#include "shared/field_effect_advance.h"
+#include "shared/field_effect_advance.c"
 
 /// Walking south off a step makes the leader hop 12 pixels forward and slide 16
 /// pixels down, kicking up dust behind.
@@ -423,7 +441,7 @@ static void TunnelRuins_HopDownStep(void) {
   ((void (*)(struct Actor *))TunnelRuins_RideStoneBelow)
 #endif
 
-#include "shared/field_effect_radial.h"
+#include "shared/field_effect_radial.c"
 
 /// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its Frost target
 /// follows it.
@@ -434,33 +452,33 @@ static void TunnelRuins_HopDownStep(void) {
 
 /// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
 /// a table for any other scene number.
-const struct SceneEntrance *TunnelRuins_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (sceneId == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     return gTunnelRuinsGreatStatueEntrances;
   }
-  if (sceneId == (s32)&SceneId_TunnelRuinsLadyStatues) {
+  if (sceneId == SCENE_TUNNEL_RUINS_LADY_STATUES) {
     return gTunnelRuinsLadyStatuesEntrances;
   }
   return gTunnelRuinsEntrancesOther;
 }
 
-const struct SceneExitRegion *TunnelRuins_GetRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsLadyStatues) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_LADY_STATUES) {
     return gTunnelRuinsLadyStatuesRegions;
   }
   return 0;
 }
 
-const u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
+const u32 *Scene_GetExits(void) { return gTunnelRuinsExits; }
 
 /// The actors of TunnelRuinsGreatStatue or of TunnelRuinsLadyStatues
 /// (the enums above), each prepared to appear only when it lies in the view.
-const struct ActorPlacement *TunnelRuins_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     table = gTunnelRuinsGreatStatueActorPlacements;
   } else {
     table = gTunnelRuinsActorPlacementsOther;
@@ -600,14 +618,12 @@ static inline void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
 static void TunnelRuins_SinkNorthwestPillar(void) {
   u32 i;
   struct Actor *overlay;
-  s32 randomX;
-  struct Actor *actor;
-  s32 randomZ;
+  s32 effectX;
+  s32 effectZ;
   struct EffectOptions options;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR);
-  if (FIELD_CELL(actor->x.fixed) == 46) {
+  if (FIELD_CELL(Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->x.fixed) == 46) {
     Event_Wait(30);
     overlay = Actor_Prepare(744, 0, 184, SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
@@ -619,13 +635,10 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     for (i = 0; i < 16; i++) {
       wait(3);
       Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= px(1);
-      randomX = Random_Next();
-      randomX = ((((u32)(randomX << 4) >> 16) << 16) + px(736));
-      randomZ = Random_Next();
-      FieldEffect_Spawn(
-          randomX, 0,
-          ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(128)), 0,
-          0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
+      effectX = px(Random_Below(16)) + px(736);
+      effectZ = px(Random_Below(18)) + px(128);
+      FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
     }
     MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     Event_Wait(30);
@@ -672,16 +685,12 @@ static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
 static void TunnelRuins_SinkSoutheastPillar(void) {
   u32 i;
   struct Actor *overlay;
-  s32 randomX;
-  struct Actor *actor;
-  s32 randomZ;
   s32 effectX;
   s32 effectZ;
   struct EffectOptions options;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR);
-  if (FIELD_CELL(actor->x.fixed) == 48) {
+  if (FIELD_CELL(Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->x.fixed) == 48) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       Event_Wait(30);
       overlay = Actor_Prepare(770, 0, 274, SPRITE_CRATE);
@@ -693,11 +702,8 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       for (i = 0; i < 16; i++) {
         wait(3);
         Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= px(1);
-        randomX = Random_Next();
-        effectX = ((((u32)(randomX << 4) >> 16) << 16) + px(768));
-        randomZ = Random_Next();
-        effectZ =
-            ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(224));
+        effectX = px(Random_Below(16)) + px(768);
+        effectZ = px(Random_Below(18)) + px(224);
         FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                           &options);
@@ -788,18 +794,14 @@ static void TunnelRuins_PushDousePillar(void) {
 /// As Douse begins on the pillar, water splashes on it and it is soaked. Its
 /// Frost target follows it from then on.
 static void TunnelRuins_DouseStartsOnPillar(void) {
-  struct Actor *frostTarget;
-
   Actor_SetScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
-  frostTarget = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET);
-  frostTarget->update =
+  Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update =
       (void (*)(struct Actor *))TunnelRuins_FrostTargetFollowsPillar;
 }
 
 /// Frost on the pillar's hidden target raises a pillar of ice where it stands.
 static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
-  struct Actor *actor;
   s32 column;
   s32 row;
 
@@ -819,11 +821,9 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   row = FIELD_CELL(Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed);
   MapGrid_CopyCellAttributes(26, 8, 1, 1, column >> 20, row);
 
-  actor = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET);
-  actor->update = UPDATE_BY_RELATIVE_DEPTH;
+  Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update = UPDATE_BY_RELATIVE_DEPTH;
 
-  actor = Actor_Get(ACTOR_DOUSE_PILLAR);
-  actor->update = UPDATE_BY_RELATIVE_DEPTH;
+  Actor_Get(ACTOR_DOUSE_PILLAR)->update = UPDATE_BY_RELATIVE_DEPTH;
 
   Event_End();
 }
@@ -1063,76 +1063,48 @@ static void TunnelRuins_HideFalseStatues(void) {
 /// Moving one of the five coloured statues in TunnelRuinsLadyStatues opens the
 /// door once all five are on their marks.
 static void TunnelRuins_MoveLadyStatue(void) {
-  struct Actor *actor;
   s32 correctPositions;
-  s32 column;
-  s32 row;
 
   correctPositions = 0;
   Event_Start();
   MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
-  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-  if (FIELD_CELL(actor->x.fixed) == 25) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-    if (FIELD_CELL(actor->z.fixed) == 49) {
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed));
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed) == 25) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed) == 49) {
       correctPositions = 1;
     }
   }
-  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-  if (FIELD_CELL(actor->x.fixed) == 23) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-    if (FIELD_CELL(actor->z.fixed) == 49) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed) == 23) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed) == 49) {
       correctPositions++;
     }
   }
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-  if (FIELD_CELL(actor->x.fixed) == 25) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-    if (FIELD_CELL(actor->z.fixed) == 47) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed) == 25) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed) == 47) {
       correctPositions++;
     }
   }
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-  if (FIELD_CELL(actor->x.fixed) == 23) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-    if (FIELD_CELL(actor->z.fixed) == 47) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed) == 23) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed) == 47) {
       correctPositions++;
     }
   }
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-  if (FIELD_CELL(actor->x.fixed) == 24) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-    if (FIELD_CELL(actor->z.fixed) == 48) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed) == 24) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed) == 48) {
       correctPositions++;
     }
   }
@@ -1197,8 +1169,8 @@ static void TunnelRuins_SearchLockedDoor(void) {
 
 /// The triggers of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
 /// any other scene.
-const struct Trigger *TunnelRuins_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     return gTunnelRuinsGreatStatueTriggers;
   }
   return gTunnelRuinsTriggersOther;
@@ -1244,30 +1216,18 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
 /// After the small pillars move, redraws their room's cells and marks the cells
 /// they stand on.
 static void TunnelRuins_UpdateSmallPillarCells(void) {
-  struct Actor *actor;
-  s32 column;
-
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   MapGrid_CopyCellAttributes(89, 51, 8, 5, 25, 51);
   Actor_Get(ACTOR_SMALL_PILLAR_C)->layer = 1;
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_A);
-  column = actor->x.fixed;
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_A);
-  column >>= 20;
-  MapGrid_CopyCellAttributes(22, 52, 1, 1, column,
-                             (FIELD_CELL(actor->z.fixed)));
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_B);
-  column = actor->x.fixed;
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_B);
-  column >>= 20;
-  MapGrid_CopyCellAttributes(22, 52, 1, 1, column,
-                             (FIELD_CELL(actor->z.fixed)));
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_C);
-  column = actor->x.fixed;
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_C);
-  column >>= 20;
-  MapGrid_CopyCellAttributes(22, 52, 1, 1, column,
-                             (FIELD_CELL(actor->z.fixed)));
+  MapGrid_CopyCellAttributes(
+      22, 52, 1, 1, FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_A)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_A)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      22, 52, 1, 1, FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_B)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_B)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      22, 52, 1, 1, FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_C)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_C)->z.fixed));
 }
 
 /// Redraws the east pillars' row and marks the cells they stand on.
@@ -1286,17 +1246,17 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// On entering a room, restores the puzzle as it was left, and the path the
 /// statue in Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
 /// _SECOND_PATH).
-s32 TunnelRuins_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue ||
-      gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsLadyStatues) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE ||
+      gMainRoutineWork.next == SCENE_TUNNEL_RUINS_LADY_STATUES) {
     FieldEffect_StartFadeOverlay(0);
     gMainRoutineWork.retreatEntrance =
         TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR;
-    gMainRoutineWork.retreatScene = (s32)&SceneId_TunnelRuinsGreatStatue;
+    gMainRoutineWork.retreatScene = SCENE_TUNNEL_RUINS_GREAT_STATUE;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     switch (gMainRoutineWork.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR:
     case TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS:
@@ -1434,7 +1394,7 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH:
       gMainRoutineWork.retreatEntrance =
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
-      gMainRoutineWork.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
+      gMainRoutineWork.retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_A, SPRITE_COLOR_GREY);
       Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_B, SPRITE_COLOR_GREY);
@@ -1600,9 +1560,9 @@ s32 TunnelRuins_Initialize(void) {
   return 0;
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 /// A balance platform's height by its weight (its timer). Each carved stone on
 /// it takes it 16 pixels further down, and the other platform up as far.

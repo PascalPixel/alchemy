@@ -50,9 +50,9 @@
 /// suspects.
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
 // Lit lighthouses. Inside a lit lighthouse, the Adepts of its element regain
-// PP faster (units.c). Each lighthouse's scenes set its flag on every arrival,
-// and Scene_Arrive clears all four when the party enters another
-// area, so a flag is set only while the party is inside.
+// PP faster (game_units.c). Each lighthouse's scenes set its flag on every
+// arrival, and Scene_Arrive clears all four when the party enters another area,
+// so a flag is set only while the party is inside.
 /// The party is inside Venus Lighthouse, which is lit.
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
 /// The party is inside Mercury Lighthouse, which is already lit when the
@@ -82,8 +82,8 @@
 /// clears it, and the Colosso's log sets it as it ends.
 #define FLAG_IN_TOWN 0x123
 // Set as a file continues from its last Sanctum by the player's choice
-// (FileScreen_Run); nothing in the game reads either, by name, by number or as
-// part of a byte.
+// (the file screen's Scene_Initialize); nothing in the game reads either, by
+// name, by number or as part of a byte.
 /// The file was loaded with L and Start held, which restarts it at its last
 /// Sanctum.
 #define FLAG_SAVE_RESTARTED_AT_SANCTUM 0x13e

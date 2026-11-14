@@ -55,29 +55,52 @@
 /// At sea the lookout says he is the lookout, not an oarsman. At the island he
 /// warns of monsters and wonders at its treasures.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/tolbi_ship_mast.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "item_ids.h"
-#include "flags.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "map_grid_scroll.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "macros.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern s32 gTolbiShipMast_FollowCameraActions[];
+extern s32 gTolbiShipMast_LookoutActions[];
+extern s32 gTolbiShipMast_DriftActions[];
+extern s32 gTolbiShipMast_WaveActions[];
+extern s32 gTolbiShipMast_BirdDeparture0[];
+extern s32 gTolbiShipMast_BirdDeparture1[];
+extern s32 gTolbiShipMast_BirdDeparture2[];
+extern s32 gTolbiShipMast_BirdDeparture3[];
+extern s32 gTolbiShipMast_BirdDeparture4[];
+extern s32 gTolbiShipMast_BirdDeparture5[];
+extern u32 gTolbiShipMast_BirdDeparture6[];
+extern struct SceneEntrance gTolbiShipMast_Entrances[];
+extern struct SceneExitRegion gTolbiShipMast_Regions[];
+extern u32 gTolbiShipMast_Exits[];
+extern struct ActorPlacement gTolbiShipMast_ActorPlacements[];
+extern struct ActorPlacement gTolbiShipMast_FirstAttackActorPlacements[];
+extern struct ActorPlacement gTolbiShipMast_BirdActorPlacements[];
+extern struct ActorPlacement gTolbiShipMast_LandingActorPlacements[];
+extern struct Trigger gTolbiShipMast_Triggers[];
+extern u32 gTolbiShipMast_PassengerRowValues[];
 
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);
@@ -91,13 +114,13 @@ static void TolbiShipMast_UpdateSway(void);
 static s32 TolbiShipMast_GetRowingBalance(void);
 static s32 TolbiShipMast_GetSeatRowValue(u32 seat);
 
-s32 gTolbiShipMast_DriftY __attribute__((section(".bss")));
-s32 gTolbiShipMast_DriftX __attribute__((section(".bss")));
-s32 gTolbiShipMast_SwayY __attribute__((section(".bss")));
-s32 gTolbiShipMast_SwayUnused __attribute__((section(".bss")));
-s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
-s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
-s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
+s32 gTolbiShipMast_DriftY BSS_DATA ALIGNED(16);
+s32 gTolbiShipMast_DriftX BSS_DATA;
+s32 gTolbiShipMast_SwayY BSS_DATA;
+s32 gTolbiShipMast_SwayUnused BSS_DATA;
+s32 gTolbiShipMast_CameraCenter[2] BSS_DATA;
+s32 gTolbiShipMast_CameraOrigin[2] BSS_DATA;
+s32 gTolbiShipMast_SwayX BSS_DATA;
 
 /// The scene's one actor placement row.
 enum TolbiShipMastActorId {
@@ -265,25 +288,25 @@ static s32 TolbiShipMast_ShrinkAndStopActor(struct Actor *actor) {
 
 /// Returns the entrances, which are the one from the deck's ladder and the
 /// voyage's events.
-const struct SceneEntrance *TolbiShipMast_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTolbiShipMast_Entrances;
 }
 
 /// Returns the ladder's three-dimensional activation region.
-const struct SceneExitRegion *TolbiShipMast_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gTolbiShipMast_Regions;
 }
 
 /// Returns exits to the deck and the continuing ship scenes.
-const u32 *TolbiShipMast_GetExits(void) { return gTolbiShipMast_Exits; }
+const u32 *Scene_GetExits(void) { return gTolbiShipMast_Exits; }
 
 /// Returns the lookout, the only actor placed.
-const struct ActorPlacement *TolbiShipMast_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTolbiShipMast_ActorPlacements;
 }
 
 /// Returns the ladder, lookout dialogue and Anchor Charm examine triggers.
-const struct Trigger *TolbiShipMast_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gTolbiShipMast_Triggers;
 }
 
@@ -308,7 +331,7 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 /// The mast's setup sways the view while the ship is under way, puts the
 /// lookout to his spot once the charm is back, and plays what the entrance
 /// calls for.
-s32 TolbiShipMast_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *leader;
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -350,17 +373,17 @@ s32 TolbiShipMast_Initialize(void) {
     }
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK:
-    gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+    gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
     gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunAvastEvent();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK:
-    gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+    gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
     gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_ShowMonsters();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK:
-    gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+    gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
     gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunMonsterLanding();
     break;
@@ -387,13 +410,10 @@ static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
 
 /// Keeps the leader visible for the course announcement.
 static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
-  struct Actor *leader;
-
   Event_Start();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 164, 321);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -433,8 +453,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   struct Actor *actor;
   struct FieldWork **field;
   s32 sparkleX;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 8 of
-   * 207 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take. */
   s32 zero = 0;
 
   Event_Start();
@@ -556,12 +575,10 @@ static inline void TolbiShipMast_PrepareGroupDeparture(void) {
 /// attack, a bird swoops at the lookout twice and Sean cries out. "Monsters!"
 static void TolbiShipMast_ShowMonsters(void) {
   struct Actor *approachingActor;
-  struct Actor *leader;
 
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
   Event_AppendActorPlacements(gTolbiShipMast_BirdActorPlacements);
   wait(1);
@@ -644,12 +661,7 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   actor->motionFlags = 0;
   actor->timer = (u32)Random_Next() >> 15;
   actor->userValue = (u32)Random_Next() >> 15;
-  randomValue = Random_Next();
-  randomValue <<= 2;
-  randomValue >>= 16;
-  randomValue <<= 16;
-  randomValue += px(6);
-  actor->y.fixed = randomValue;
+  actor->y.fixed = px(Random_Below(4)) + px(6);
   randomValue = Random_Next();
   actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - px(3) / 16;
   actor->scaleX = 5 * Q16_ONE / 4;
@@ -808,7 +820,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_WaitTransitionFrames();
   // The rowing balance picks where the ship comes in: exactly 11 takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
-  gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+  gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
   gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
   if (TolbiShipMast_GetRowingBalance() == 11) {
     Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
@@ -841,10 +853,10 @@ static s32 TolbiShipMast_GetRowingBalance(void) {
   s32 westSeats;
   s32 eastSeats;
 
-  westSeats = TolbiShipMast_GetSeatRowValue(0);
-  westSeats += TolbiShipMast_GetSeatRowValue(2);
-  eastSeats = TolbiShipMast_GetSeatRowValue(1);
-  eastSeats += TolbiShipMast_GetSeatRowValue(3);
+  westSeats =
+      TolbiShipMast_GetSeatRowValue(0) + TolbiShipMast_GetSeatRowValue(2);
+  eastSeats =
+      TolbiShipMast_GetSeatRowValue(1) + TolbiShipMast_GetSeatRowValue(3);
   return westSeats - eastSeats;
 }
 

@@ -150,7 +150,7 @@ across each turn so that both screens roll the same.
 ## Where the code is
 
 - The `*_table.c` files are the tables.
-- `game/units.c` works a unit's stats out; `classes.c`, `djinn.c`,
-  `levels.c`, `inventory.c`, `party.c` and `flags.c` are what their
+- `game_units.c` works a unit's stats out; `game_classes.c`, `game_djinn.c`,
+  `game_levels.c`, `game_inventory.c`, `game_party.c` and `game_flags.c` are what their
   names say.
-- `game/battle_arithmetic.c` is the sums.
+- `game_battle_arithmetic.c` is the sums.

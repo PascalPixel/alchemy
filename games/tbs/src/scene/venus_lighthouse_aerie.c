@@ -3,7 +3,7 @@
 /// and the only scene of this overlay.
 ///
 /// What happens here is one chain of events cut by two battles and two trips
-/// to the World Map. Each part starts in VenusLighthouseAerie_Initialize from
+/// to the World Map. Each part starts in Scene_Initialize from
 /// the entrance the part before sent the party to. Every arrival blocks
 /// Retreat and sets FLAG_VENUS_LIGHTHOUSE_LIT.
 ///
@@ -56,44 +56,106 @@
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
 /// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "vram_cache.h"
-#include "module/import.h"
-#include "module/scene/venus_lighthouse_aerie.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/scene/shared/actor_nearest.h"
-#include "module/scene/shared/event_psynergy.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
-#include "macros.h"
-
-#include "actor.h"
-#include "venus_lighthouse_aerie.h"
-#include "field_effect.h"
-#include "sound_driver_symbols.h"
-#include "create_configured_actor.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "iwram_call.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
-#include "heap_slots.h"
-#include "pushed_actor.h"
-#include "map_grid_scroll.h"
-#include "io_reg.h"
-#include "field_psynergy_work.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/create_configured_actor.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_nearest.h"
+#include "scene/event_psynergy.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern s32 gVenusLighthouseAerie_JoinLeaderAction[];
+extern s32 gVenusLighthouseAerie_StepBackWestAction[];
+extern s32 gVenusLighthouseAerie_StepBackEastAction[];
+extern s32 gVenusLighthouseAerie_ScaleStepAction[];
+extern s32 gVenusLighthouseAerie_BeamOpenAction[];
+extern s32 gVenusLighthouseAerie_BeamNarrowAction[];
+extern s32 gVenusLighthouseAerie_BeamRiseAction[];
+extern s32 gVenusLighthouseAerie_BeamCloseAction[];
+extern s32 gVenusLighthouseAerie_BeamEndAction[];
+extern s32 gVenusLighthouseAerie_OrbitParticleScript[];
+extern s32 gVenusLighthouseAerie_RiseParticleScript[];
+extern s32 gVenusLighthouseAerie_WalkOutAction[];
+extern s32 gVenusLighthouseAerie_RiseActionScript[];
+extern s32 gVenusLighthouseAerie_StepBackAction[];
+extern s32 gVenusLighthouseAerie_LeapAction[];
+extern s32 gVenusLighthouseAerie_PartyExitAction[];
+extern s32 gVenusLighthouseAerie_PartyHeadingAction[];
+extern struct SceneEntrance gVenusLighthouseAerieEntrances[];
+extern u32 gVenusLighthouseAerieExits[];
+extern struct ActorPlacement gVenusLighthouseAerieActorPlacements[];
+extern s32 gVenusLighthouseAerie_LandedPlatform;
+extern struct Trigger gVenusLighthouseAerieTriggers[];
+extern s32 gVenusLighthouseAerie_BesideParticleScript[];
+
+/// The Lighthouse Aerie's actors; its entrances and exits are in
+/// scene_exits.h.
+
+/// The aerie's actors, in the order of its actor placements;
+/// Garet, Ivan, Mia and Sheba keep their character numbers.
+enum {
+  /// The four statues around the beacon (SPRITE_STATUE_WITH_WREATH), the east
+  /// two drawn mirrored. When the beacon erupts and splits the aerie, the west
+  /// two move west with their half and the east two east.
+  ACTOR_BEACON_STATUE_SOUTHWEST = 8,
+  ACTOR_BEACON_STATUE_NORTHWEST = 9,
+  ACTOR_BEACON_STATUE_NORTHEAST = 10,
+  ACTOR_BEACON_STATUE_SOUTHEAST = 11,
+  /// Six round platforms (SPRITE_FLOATING_PLATFORM) the leader jumps across,
+  /// each dipping under him as he lands, and the one that carries him up to
+  /// the aerie.
+  ACTOR_FIRST_PLATFORM = 12,
+  ACTOR_LAST_PLATFORM = 17,
+  ACTOR_RISING_PLATFORM = 18,
+  ACTOR_MENARDI = 19,
+  ACTOR_SATUROS = 20,
+  ACTOR_FELIX = 21,
+  /// A blank actor (SPRITE_BLANK) that runs across the floor under the
+  /// Venus
+  /// Star as Saturos throws it into the beacon, so that only its shadow shows,
+  /// the star's shadow.
+  ACTOR_VENUS_STAR_SHADOW = 22,
+  /// The orb the rising particles circle as the party is lifted away:
+  /// SPRITE_BLUE_ORB drawn in SPRITE_COLOR_GBR, which turns its blue to green,
+  /// and later solid white (SPRITE_COLOR_WHITE).
+  ACTOR_BEACON_ORB = 23,
+  /// The beacon's beam, in five segments (SPRITE_PIPE_NORTH_SOUTH) from the
+  /// bottom up; particles circle the lowest.
+  ACTOR_BEAM_BOTTOM = 24,
+  ACTOR_BEAM_LOWER = 25,
+  ACTOR_BEAM_MIDDLE = 26,
+  ACTOR_BEAM_UPPER = 27,
+  ACTOR_BEAM_TOP = 28
+};
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -184,8 +246,8 @@ enum {
 // the party and flashed white. FLAG_VENUS_AERIE_ON_PLATFORM: the leader stands
 // on a platform.
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
@@ -249,28 +311,24 @@ static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *actor) {
   }
 }
 
-#include "shared/actor_heading.h"
+#include "shared/actor_heading.c"
 
-const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVenusLighthouseAerieEntrances;
 }
 
-const struct SceneExitRegion *VenusLighthouseAerie_GetRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *VenusLighthouseAerie_GetExits(void) {
-  return gVenusLighthouseAerieExits;
-}
+const u32 *Scene_GetExits(void) { return gVenusLighthouseAerieExits; }
 
 /// Returns the beacon's statues, the platforms, Saturos and Menardi, Felix and
 /// Sheba, the party and the beacon effects.
-const struct ActorPlacement *VenusLighthouseAerie_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gVenusLighthouseAerieActorPlacements;
 }
 
-#include "shared/actor_distance.h"
-#include "shared/actor_nearest.h"
+#include "shared/actor_distance.c"
+#include "shared/actor_nearest.c"
 
 /// Saturos and Menardi slide together as they fuse.
 #define FLAG_VENUS_AERIE_FUSION_SLIDING FLAG_SCENE_TEMP_34
@@ -374,12 +432,12 @@ static void VenusLighthouseAerie_FloatPlatforms(void) {
 }
 
 /// Returns the platform and confrontation step triggers.
-const struct Trigger *VenusLighthouseAerie_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gVenusLighthouseAerieTriggers;
 }
 
 /// Sets up the beacon's statues and the six platforms.
-s32 VenusLighthouseAerie_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 mirroredScale;
   u32 platformId;
   s16 entrance;
@@ -517,14 +575,8 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
   Event_Wait(10);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  {
-    /* FAKEMATCH(temporary): south holds the facing; as FACING_SOUTH at the
-     * store, 4 of 923 instructions differ in tbs-en. */
-    u16 south = FACING_SOUTH;
-
-    leader->y.fixed = -px(32);
-    leader->facing = south;
-  }
+  leader->facing = FACING_SOUTH;
+  leader->y.fixed = -px(32);
   Event_Wait(20);
   Sound_Play(SE_MATERIALIZE);
   Actor_MoveToAndWait(ACTOR_RISING_PLATFORM, 524, 191);
@@ -751,17 +803,13 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
 
 /// Shows or hides one companion, setting its movement speed when shown.
 static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
-  struct Actor *member;
-
   if (shown != 0) {
     Actor_SetSpriteColorById(actorId, SPRITE_COLOR_NORMAL);
-    member = Actor_Get(actorId);
-    Actor_SetSpriteFlags(member, SPRITE_FLAG_SHADOW);
+    Actor_SetSpriteFlags(Actor_Get(actorId), SPRITE_FLAG_SHADOW);
     Actor_SetSpeed(actorId, 0.8);
   } else {
     Actor_SetSpriteColorById(actorId, SPRITE_COLOR_HIDDEN);
-    member = Actor_Get(actorId);
-    Actor_SetSpriteFlags(member, 0);
+    Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   }
 }
 
@@ -771,7 +819,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   s32 rodHolder;
   struct Actor *actor;
   s32 answerAccepted;
-  s32 frame;
+  u32 frame;
   s32 receiptMessage;
 
   Event_Start();
@@ -872,8 +920,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_WalkToAndWait(ACTOR_SHEBA, 260, 186);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_SHEBA, 276, 192);
-  actor = Actor_Get(ACTOR_MENARDI);
-  actor->facing = FACING_SOUTH_SOUTHWEST;
+  Actor_Get(ACTOR_MENARDI)->facing = FACING_SOUTH_SOUTHWEST;
   wait(1);
   Actor_StartRepeatedMotion(ACTOR_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
@@ -891,11 +938,10 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   wait(1);
   frame = 0;
   do {
-    actor = Actor_Get(ACTOR_SHEBA);
-    VenusLighthouseAerie_FlashActorPalette(actor);
+    VenusLighthouseAerie_FlashActorPalette(Actor_Get(ACTOR_SHEBA));
     frame++;
     wait(1);
-  } while ((u32)frame <= 39);
+  } while (frame <= 39);
   Task_AddFrame(VenusLighthouseAerie_UpdateShebaPalette, TASK_PASS_FRAME);
   Event_Wait(80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -1065,8 +1111,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_SHEBA, 276, 192);
   Sound_Play(MUS_SILENCE);
-  actor = Actor_Get(ACTOR_MENARDI);
-  actor->facing = FACING_SOUTH_SOUTHWEST;
+  Actor_Get(ACTOR_MENARDI)->facing = FACING_SOUTH_SOUTHWEST;
   wait(1);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
@@ -1169,7 +1214,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_RunScriptAndWait(ACTOR_SHEBA, gVenusLighthouseAerie_StepBackWestAction);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   {
-    s32 actorId = (s32)&SceneId_VenusLighthouseAerie;
+    s32 actorId = SCENE_VENUS_LIGHTHOUSE_AERIE;
 
     Event_SetAfterBattleDestination(actorId,
                                     VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE);
@@ -1204,9 +1249,9 @@ static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
 }
 
 #define PSYNERGY_RINGS_SOUND SE_PSYNERGY_SPARKLE
-#include "shared/psynergy_rings.h"
+#include "shared/psynergy_rings.c"
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 static void VenusLighthouseAerie_UpdateShebaPalette(void) {
   VenusLighthouseAerie_CycleActorPalette(Actor_Get(ACTOR_SHEBA));
@@ -1763,9 +1808,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_FlashScreen();
   Event_Wait(20);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseAerie,
+  Event_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
                                   VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE);
-  Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseAerie,
+  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
                              VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 0);
   Party_RestorePpOfLitElements();
@@ -2453,8 +2498,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Event_Wait(30);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   Actor_Snapshot();
-  Event_SetDestination((s32)&SceneId_WorldMap,
-                       WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
+  Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
   white = RGB(31, 31, 31);
 
   PLTT_BACKDROP = white;
@@ -3096,7 +3140,7 @@ static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
   effect->spin -= TRIG_TURN / 128;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

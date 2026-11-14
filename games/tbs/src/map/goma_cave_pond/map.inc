@@ -1,0 +1,73 @@
+	.global Field_GomaCavePond
+Field_GomaCavePond:
+	map_header 0, 0, 64, 57, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_offset Field_GomaCavePond, .LField_GomaCavePond_CELL_PICTURES
+	map_offset Field_GomaCavePond, .LField_GomaCavePond_SHAPES
+	map_offset Field_GomaCavePond, .LField_GomaCavePond_GRID
+	map_offset Field_GomaCavePond, .LField_GomaCavePond_ANIMATION
+	map_offset Field_GomaCavePond, .LField_GomaCavePond_BLEND
+	map_offset Field_GomaCavePond, .LField_GomaCavePond_MARKERS
+.LField_GomaCavePond_CELL_PICTURES:
+	.incbin "games/tbs/src/map/goma_cave_pond/cell_pictures.delta2.lz"
+	.balign 4, 0
+.LField_GomaCavePond_SHAPES:
+	.incbin "games/tbs/src/map/goma_cave_pond/shapes.table.lz"
+	.balign 4, 0
+.LField_GomaCavePond_GRID:
+	.incbin "games/tbs/src/map/goma_cave_pond/map.grid.lz"
+	.balign 4, 0
+.LField_GomaCavePond_ANIMATION:
+	.incbin "games/tbs/src/map/goma_cave_pond/tileset_anims.script.lz"
+	.balign 4, 0
+.LField_GomaCavePond_BLEND:
+	.incbin "games/tbs/src/map/goma_cave_pond/blend.script.lz"
+	.balign 4, 0
+.LField_GomaCavePond_MARKERS:
+	treasure_spots_end
+	.balign 4, 0
+	.global Tileset_GomaCavePondPalette
+Tileset_GomaCavePondPalette:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/palette.gbapal.lz"
+	.byte 0x71	@ PACKER: left in the buffer by Field_GomaCavePond+0xcb
+	.global Tileset_GomaCavePondTilesA
+Tileset_GomaCavePondTilesA:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf"
+	.global Tileset_GomaCavePondTilesB
+Tileset_GomaCavePondTilesB:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf"
+	.global Tileset_GomaCavePondTilesC
+Tileset_GomaCavePondTilesC:
+	.ifdef TBS_EDITION_ES
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf"
+	.else
+	.ifdef TBS_EDITION_FR
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf"
+	.else
+	.ifdef TBS_EDITION_IT
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf"
+	.else
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_c.4bpp.mtf"
+	.endif
+	.endif
+	.endif
+	.ifdef TBS_EDITION_ES
+	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesB+0xec1
+	.else
+	.ifdef TBS_EDITION_FR
+	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesB+0xec1
+	.else
+	.ifdef TBS_EDITION_IT
+	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesB+0xec1
+	.else
+	.byte 0x00, 0x90	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesB+0xfaa
+	.endif
+	.endif
+	.endif
+	.global Tileset_GomaCavePondTilesD
+Tileset_GomaCavePondTilesD:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf"
+	.byte 0x04	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesC+0x13f
+	.balign 4, 0

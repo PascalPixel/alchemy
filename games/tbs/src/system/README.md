@@ -11,7 +11,7 @@ Switching on and the reset with A, B, Select and Start are the same thing:
 both run the cartridge's first instruction. Start-up clears memory, copies
 the hottest routines into fast RAM, switches on the interrupts, and calls
 the main routine, which never returns. It is `System_Initialize` in
-`system/start_up.c`.
+`system_start_up.c`.
 
 ## The main routine
 
@@ -38,7 +38,7 @@ named beforehand.
 
 ![Isaac talks to Garet's sister in Vale: a window opens at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out letter by letter with a bobbing arrow at the end, the next page `I wish I could go with you.` follows, and the window closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
-The frame loop is the inside of `wait()`, in `system/frame.c`. One trip
+The frame loop is the inside of `wait()`, in `system_frame.c`. One trip
 round it is one frame.
 
 The rule that shapes everything here: during a frame the game never touches
@@ -93,7 +93,7 @@ another's finished work in the same frame.
 
 There are two passes. Most tasks run once a frame from the frame loop. A
 few run once a VBlank from the handler: the ones that copy something to the
-screen. It is all in `system/task.c`.
+screen. It is all in `system_task.c`.
 
 ## The frame's sprites
 
@@ -104,11 +104,11 @@ list is written from the highest slot down.
 
 Because the slots are emptied every frame, a sprite shows only while
 something keeps asking for it. Nothing ever has to take one down. It is
-`system/oam.c`.
+`system_oam.c`.
 
 Screen settings follow the same rule as sprites. A change to a hardware
 register is queued, and the VBlank handler carries the queue out with the
-frame it belongs to (`system/io_write_queue.c`).
+frame it belongs to (`system_io_write_queue.c`).
 
 ## The heap
 
@@ -122,7 +122,7 @@ A block that other code has to find again is kept in a numbered
 [work](../../glossary.md#work): the menu's work, the battle's work. Asking
 for a slot that is already filled just returns it, so the code that sets a
 work up and the code that reads it make the same call. It is
-`system/heap.c`.
+`system_heap.c`.
 
 ## Memory map
 
@@ -142,7 +142,7 @@ back, and only then is the old copy retired. Every sector carries a label
 and a checksum, so a half-written one is recognised and ignored.
 
 The parts hold the game flags, the main routine's work and where the
-scene's actors stand. It is `system/save.c`, and the Save command that
+scene's actors stand. It is `system_save.c`, and the Save command that
 uses it is in [Windows](../window/README.md#saving).
 
 ## The link cable
@@ -150,7 +150,7 @@ uses it is in [Windows](../window/README.md#saving).
 Two consoles trade one small checked packet at every VBlank. Anything
 bigger, such as a whole party for the Battle Arena, is cut into numbered
 pieces and resent from the first one that goes missing. It is
-`system/serial.c`.
+`system_serial.c`.
 
 ## How an overlay reaches the rest of the game
 
@@ -164,8 +164,9 @@ tables:
 - The [entry table](../../glossary.md#entry-table-and-import-table) at the
   overlay's start: six functions the field calls to ask the scene about
   itself ([Scenes](../scene/README.md#the-entry-table) explains each).
-- The import table at its end: one line for each main-image function the
-  overlay calls.
+- The import table after its code: one line for each main-image function
+  the overlay calls, which the build writes from one list of them,
+  `imports.inc`.
 
 Scenes share overlays, 96 for 201 scenes, and one scene can stand for
 several places: the Sanctums of five towns are one scene that looks at

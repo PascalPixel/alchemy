@@ -41,28 +41,43 @@
 /// That sends the party outside, where Iodem gives it the Black Orb
 /// (lalivero.c). A barrel holds a Lucky Medal.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/timber_rooms_bc.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
 #include "flags.h"
-#include "shared/walk_into_leader.h"
+#include "item_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern s32 gTimberRoomsBC_InnWorkerChores[];
+extern struct SceneEntrance gTimberRoomsBC_Entrances[];
+extern struct SceneExitRegion gTimberRoomsB_Regions[];
+extern struct SceneExitRegion gTimberRoomsC_Regions[];
+extern u32 gTimberRoomsBC_Exits[];
+extern struct ActorPlacement gTimberRoomsB_ActorPlacements[];
+extern struct ActorPlacement gTimberRoomsC_ActorPlacements[];
+extern struct ActorPlacement gTimberRoomsC_ActorPlacementsAfterLighthouse[];
+extern struct Trigger gTimberRoomsB_Triggers[];
+extern struct Trigger gTimberRoomsB_TriggersAfterLighthouse[];
+extern struct Trigger gTimberRoomsC_Triggers[];
+extern struct Trigger gTimberRoomsC_TriggersAfterLighthouse[];
+
 static void TimberRoomsBC_TellFaranAboutJenna(void);
 
 /// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED.
@@ -197,22 +212,22 @@ static s32 InnWorker_Sigh(struct Actor *actor) {
   return 0;
 }
 
-const struct SceneEntrance *TimberRoomsBC_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTimberRoomsBC_Entrances;
 }
 
-const struct SceneExitRegion *TimberRoomsBC_GetRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsB) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
+  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_B) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
 }
 
-const u32 *TimberRoomsBC_GetExits(void) { return gTimberRoomsBC_Exits; }
+const u32 *Scene_GetExits(void) { return gTimberRoomsBC_Exits; }
 
 /// The people of each scene.
-const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_C) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_ActorPlacementsAfterLighthouse;
@@ -390,12 +405,12 @@ static void TimberRoomsBC_TalkToIodem(void) {
   Event_ShowMessage(ACTOR_IODEM, 0);
 }
 
-#include "shared/leave_by_exit.h"
+#include "shared/leave_by_exit.c"
 
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
-const struct Trigger *TimberRoomsBC_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_C) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_TriggersAfterLighthouse;
     }
@@ -822,7 +837,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_TimberRoomsB) {
+  if (sceneId == SCENE_TIMBER_ROOMS_B) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (ACTOR_NEAR_TALK) so that the leader reaches it across the
     // counter.
@@ -845,7 +860,7 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.restartEntrance = entrance;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
+  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_C) {
     actor = Actor_Get(ACTOR_INNKEEPER);
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;

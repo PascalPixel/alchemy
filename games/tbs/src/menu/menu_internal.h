@@ -7,26 +7,25 @@
 /// and each part includes it too, so that a part read on its own resolves. It
 /// places no bytes.
 
-#include "module/system/system.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "system.h"
-#include "dma.h"
-#include "item_menu.h"
-#include "status_screen.h"
-#include "vram_cache.h"
-#include "psynergy_menu.h"
-#include "main_routine_work.h"
-#include "iwram_call.h"
-#include "djinn_menu.h"
+#include "ability_ids.h"
+#include "flags.h"
 #include "item_ids.h"
 #include "macros.h"
-#include "flags.h"
-#include "module/window/message_speed.h"
-#include "ability_ids.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/djinn_menu.h"
+#include "menu/item_menu.h"
+#include "menu/menu.h"
+#include "menu/psynergy_menu.h"
+#include "menu/status_screen.h"
+#include "system/dma.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "window/message_speed.h"
 
 /// AbilityDefinition.flags: where an ability or item can be used, as the
 /// Psynergy list says ("Usable in the field", "Usable in battle").
@@ -237,7 +236,7 @@ enum DjinnSelectMode {
 #define DJINN_ELEMENT_TILE 0x5001
 
 /// The tile of BG character block 1 the Djinn backdrop's border tile is copied
-/// to (menu/djinn.c); the preview screens blink it (menu/djinn_preview.c).
+/// to (menu_djinn.c); the preview screens blink it (menu_djinn_preview.c).
 #define DJINN_BACKDROP_BORDER_TILE 150
 #define DJINN_BACKDROP_BORDER_VRAM                                             \
   (BG_CHAR_BLOCK(1) + DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP)

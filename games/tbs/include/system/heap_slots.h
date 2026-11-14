@@ -5,8 +5,8 @@
 /// The heap slots of gHeapSlots, read through their own names.
 
 #include "types.h"
-#include "particle.h"
-#include "heap.h"
+#include "field/particle.h"
+#include "system/heap.h"
 
 struct ScreenTransitionState;
 

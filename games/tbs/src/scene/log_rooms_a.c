@@ -66,37 +66,94 @@
 ///   them again (render probe log-rooms-a: the room has no GUESTS_ROOM cell
 ///   once the flag is set).
 
-#include "main_routine_work.h"
-#include "flags.h"
-#include "sprite.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/log_rooms_a.h"
-#include "log_rooms_a.h"
-#include "module/scene/shared/vault_item_icon.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/battle/battle.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "item_ids.h"
-#include "event.h"
-#include "battle_side.h"
-#include "text/msg_ids.h"
-#include "event_inline.h"
+#include "scene/log_rooms_a.h"
 #include "ability_ids.h"
-#include "actor_script.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "macros.h"
-#include "sound_driver_symbols.h"
+#include "scene_ids.h"
+#include "static_assert.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/sprite.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/vault_item_icon.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+/// Each stop links to up to three others, with a heading for each connection.
+struct LogRoomsAStopConnection {
+  u8 stopIndex; ///< the stop it leads to; 0xff for no connection
+  u8 facing;    ///< the heading toward it, a facing's high byte
+  u8 padding[2];
+};
+
+/// A stop on the route network, two cells square, with its links to others.
+struct LogRoomsAStop {
+  u8 gridX; ///< 8-pixel cells from x 64
+  u8 gridZ; ///< 8-pixel cells from z 624
+  u8 padding[2];
+  struct LogRoomsAStopConnection connections[3];
+};
+
+STATIC_ASSERT(sizeof(struct LogRoomsAStopConnection) == 4);
+STATIC_ASSERT(sizeof(struct LogRoomsAStop) == 16);
+
+extern struct LogRoomsAStop gLogRoomsA_Stops[];
+extern s32 gLogRoomsA_ActionTable[];
+extern s32 gLogRoomsA_FirstThiefEntryScript[];
+extern s32 gLogRoomsA_SecondThiefEntryScript[];
+extern s32 gLogRoomsA_VaultScriptA[];
+extern s32 gLogRoomsA_VaultScriptB[];
+extern s32 gLogRoomsA_VaultScriptC[];
+extern s32 gLogRoomsA_VaultScriptD[];
+extern s32 gLogRoomsA_VaultScriptE[];
+extern s32 gLogRoomsA_SuspectToWestBedHead[];
+extern s32 gLogRoomsA_SuspectRoundToWestBedHead[];
+extern s32 gLogRoomsA_SuspectToMiddleBedHead[];
+extern s32 gLogRoomsA_SuspectToEastBedHead[];
+extern s32 gLogRoomsA_SuspectRoundToEastBedHead[];
+extern s32 gLogRoomsA_SuspectToWestBedFoot[];
+extern s32 gLogRoomsA_SuspectRoundToWestBedFoot[];
+extern s32 gLogRoomsA_SuspectToMiddleBedFoot[];
+extern s32 gLogRoomsA_SuspectToEastBedFoot[];
+extern s32 gLogRoomsA_SuspectRoundToEastBedFoot[];
+extern s32 gLogRoomsA_SuspectAcrossToWestOfBeds[];
+extern s32 gLogRoomsA_SuspectToWestOfBeds[];
+extern s32 gLogRoomsA_SuspectAcrossToEastOfBeds[];
+extern s32 gLogRoomsA_SuspectToEastOfBeds[];
+extern s32 gLogRoomsA_SuspectToSouthWestCorner[];
+extern s32 gLogRoomsA_SuspectAlongToSouthWestCorner[];
+extern s32 gLogRoomsA_SuspectToSouthEastCorner[];
+extern s32 gLogRoomsA_SuspectAlongToSouthEastCorner[];
+extern struct SceneEntrance gLogRoomsA_Entrances[];
+extern struct SceneExitRegion gLogRoomsA_Regions[];
+extern u32 gLogRoomsA_Exits[];
+extern struct ActorPlacement gLogRoomsA_ActorPlacements[];
+extern struct ActorPlacement gLogRoomsA_LoftActorPlacements[];
+extern struct Trigger gLogRoomsA_Triggers[];
+extern struct Trigger gLogRoomsA_LoftTriggers[];
+extern struct Trigger gLogRoomsA_TriggersAfterThieves[];
+extern s32 *gLogRoomsA_StepActions[];
+extern s32 *gLogRoomsA_IdleActions[];
+extern s32 *gLogRoomsA_ResponseScripts[];
 
 #if TBS_PATCH_3
 #define LOG_ROOMS_A_ENTRY_ACTOR_Z 451
@@ -167,7 +224,7 @@ enum {
 };
 
 // The scene flag the inn keeps as FLAG_VAULT_LEADER_BESIDE_BONE
-// (shared/vault_bone_proximity_flag.h) once the thieves are jailed means
+// (shared/vault_bone_proximity_flag.c) once the thieves are jailed means
 // something else in the guests' room:
 /// The party is cornering the two suspects in the guests' room, so talking to
 /// Ivan or the suspects does nothing.
@@ -272,12 +329,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Returns 1 when it jumped.
 static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
   struct Actor *leader;
-  u8 *flags;
   u8 savedMotionFlags;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  flags = &leader->motionFlags;
-  savedMotionFlags = *flags;
+  savedMotionFlags = leader->motionFlags;
   if (FieldActor_CheckMovementCollision(leader, position) == 0) {
     Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
@@ -287,7 +342,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *flags &= ACTOR_JUMP_KEEPS_MOTION;
+    leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
                         ((union FieldCoordinate *)&position->x)->part.pixel,
@@ -295,7 +350,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     wait(6);
-    *flags = savedMotionFlags;
+    leader->motionFlags = savedMotionFlags;
     Event_End();
     return 1;
   }
@@ -318,8 +373,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 #if TBS_PATCH_1
     Field_TryJumpForward();
 #else
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    SET_POSITION(&target, leader->x.fixed,
+    SET_POSITION(&target, Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed - px(30));
     LogRoomsA_TryJumpTo(&target);
@@ -332,8 +386,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 #if TBS_PATCH_1
     Field_TryJumpForward();
 #else
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    SET_POSITION(&target, leader->x.fixed,
+    SET_POSITION(&target, Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed + px(30));
     LogRoomsA_TryJumpTo(&target);
@@ -346,11 +399,8 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 
 /// Once Move pushes the crate aside, the way up to the inn's loft opens.
 static void LogRoomsA_CheckCrateMoved(void) {
-  struct Actor *crate;
-
   Event_Start();
-  crate = Actor_Get(ACTOR_CRATE);
-  if (FIELD_CELL(crate->x.fixed) == 42) {
+  if (FIELD_CELL(Actor_Get(ACTOR_CRATE)->x.fixed) == 42) {
     MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     GameFlag_Set(FLAG_VAULT_CRATE_MOVED);
   }
@@ -411,7 +461,7 @@ static void LogRoomsA_TalkToInnkeeper(void) {
   Event_End();
 }
 
-#include "shared/vault_bone.h"
+#include "shared/vault_bone.c"
 
 /// At Vault's inn, while the party corners the suspects, Garet refuses to stop
 /// for anything else. "We don't have time for that, Isaac!"
@@ -462,7 +512,7 @@ static void LogRoomsA_StandAndShowMessage(s32 x) {
   Event_ShowMessage(x, 0);
 }
 
-#include "shared/vault_talk.h"
+#include "shared/vault_talk.c"
 
 /// Faces the leader and selects the next reply when the answer is no.
 static void LogRoomsA_AskYesNoAndShowReply(s32 x) {
@@ -1323,7 +1373,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  base = (s32)&SceneId_LogRoomsA;
+  base = SCENE_LOG_ROOMS_A;
   Event_SetAfterBattleDestination(base,
                                   LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
   Event_SetDefeatDestination(base, LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES);
@@ -1863,7 +1913,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
   }
 }
 
-#include "shared/vault_bone_proximity_flag.h"
+#include "shared/vault_bone_proximity_flag.c"
 
 /// Arriving in any room of Vault's houses, shops and inn: restores the room
 /// for the story so far, and plays the loft's events.
@@ -2125,9 +2175,9 @@ static void LogRoomsA_ConfrontThievesAgain(void) {
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  Event_SetAfterBattleDestination((s32)&SceneId_LogRoomsA,
+  Event_SetAfterBattleDestination(SCENE_LOG_ROOMS_A,
                                   LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
-  Event_SetDefeatDestination((s32)&SceneId_LogRoomsA,
+  Event_SetDefeatDestination(SCENE_LOG_ROOMS_A,
                              LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
@@ -2139,7 +2189,7 @@ static s32 LogRoomsA_GetIvanVenusDjinnCount(void) {
   return Unit_Get(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
-#include "shared/vault_djinn.h"
+#include "shared/vault_djinn.c"
 
 /// Stages the defeated thieves and gathers the townspeople in the loft.
 static void LogRoomsA_DefeatThieves(void) {
@@ -2795,8 +2845,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   {
-    u16 *slot = &work->message;
-    s32 saved = (s16)*slot;
+    s32 saved = (s16)work->message;
 
     if (LogRoomsA_GetIvanVenusDjinnCount() != 0) {
       Event_SetMessageId(MsgVaultWaitDontWantTakeYour);
@@ -2805,7 +2854,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
       Vault_ReturnIsaacsDjinni();
     }
     Party_RemoveMemberRestored(IVAN);
-    *slot = saved;
+    work->message = saved;
   }
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 50);
   Actor_WalkToAndWait(ACTOR_IVAN, 776, 408);
@@ -2842,10 +2891,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
 
 /// Opens the window transition and waits one frame after it finishes.
 static void LogRoomsA_OpenWindowTransition(void) {
-  struct FieldWork *state;
-
-  state = gFieldWork;
-  state->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2877,9 +2923,9 @@ static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
   Event_Wait(waitFrames);
 }
 
-#include "shared/mind_read.h"
+#include "shared/mind_read.c"
 
-#include "shared/vault_item_icon.h"
+#include "shared/vault_item_icon.c"
 
 /// Finds the route node containing the actor's position on the
 /// eight-pixel grid.
@@ -2926,8 +2972,7 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
     angleDifference = (s16)(connectionFacing - *requestedFacing);
     if (angleDifference < 0)
       angleDifference = -angleDifference;
-    /* FAKEMATCH(volatile): the stop is tested through a volatile read; as a
-     * plain test, 9 of 49 instructions differ in tbs-en. */
+    /* FAKEMATCH(volatile): the stop is tested through a volatile read. */
     if (*(volatile u8 *)&connection->stopIndex != 0xff &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;
@@ -3044,8 +3089,7 @@ static void LogRoomsA_UpdateActorStops(void) {
         (facingDifference = (u16)facing - angle) > -FACING_STEP &&
         facingDifference < FACING_STEP) {
       // Pushed toward from close by, he takes the leader's way.
-      /* FAKEMATCH(dead): a dead store; as an empty branch, 1 of 269
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): a dead store. */
       facingDifference = 0;
 #if TBS_PATCH_1
     } else if (dx * dx + dz * dz > 64) {

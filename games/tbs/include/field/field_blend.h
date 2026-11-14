@@ -4,8 +4,8 @@
 /// @file
 /// FieldBlendWork, the field's colour blend work.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// The storm's lightning work: the colours it flashes between and their
 /// difference, the countdown to the next flash and whether the thunder is loud.

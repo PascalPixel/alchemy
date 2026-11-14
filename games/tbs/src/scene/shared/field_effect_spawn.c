@@ -1,0 +1,123 @@
+#include "field/field_effect.h"
+#include "gamepak/far_call.h"
+
+// Twenty-four scenes, and the main image's field Psynergy
+// (event_commands_whirlwind.c, with EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn,
+// which places a small effect moving at a velocity, its script one of
+// gFieldEffect_DurationScripts and its options chosen by the EFFECT_USE_ flags.
+
+/// Integrates linear motion, scale changes and rotation once per effect frame.
+void FieldEffect_UpdateMotionScaleAndSpin(struct Actor *actor) {
+  struct FieldEffect *effect = (struct FieldEffect *)actor;
+  effect->x += effect->velocity.x;
+  effect->y += effect->velocity.y;
+  effect->z += effect->velocity.z;
+  effect->scaleX += effect->scaleRateX;
+  effect->scaleY += effect->scaleRateY;
+  effect->sprite->rotation += effect->spin;
+}
+
+// Compile the effect-spawning body once for the resident far-call version
+// and once for each overlay's direct-call version.
+
+extern const s32 *gFieldEffect_DurationScripts[];
+
+enum {
+  EFFECT_DEFAULT_TYPE = SPRITE_DUST_PUFF,
+  EFFECT_OPTION_MASK = 0xffff0000,
+  EFFECT_SCRIPT_REPEAT_COUNT = 3
+};
+
+/// Starts with linear motion and the leader's draw order; options can override
+/// it.
+static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
+                                                struct Sprite *sprite,
+                                                struct Actor *leader,
+                                                s32 velocityX, s32 velocityY,
+                                                s32 velocityZ) {
+  struct Sprite **leaderSprite;
+
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
+  /* FAKEMATCH(temporary): the leader's sprite read through a pointer to its
+   * slot. */
+  leaderSprite = &leader->sprite;
+  sprite->image.priority = (*leaderSprite)->image.priority;
+  effect->scaleRateX = 0;
+  effect->scaleRateY = 0;
+  effect->spin = 0;
+}
+
+#define EFFECT_SPAWN(name, create, set_mode, set_script)                       \
+  void name(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ,  \
+            u32 flags, const struct EffectOptions *options) {                  \
+    struct Actor *party = Actor_Get(ACTOR_PARTY_LEADER);                       \
+    struct FieldEffect *effect;                                                \
+    struct Sprite *sprite;                                                     \
+    const s32 *script;                                                         \
+                                                                               \
+    if ((flags & EFFECT_USE_TYPE) != 0 && options != NULL)                     \
+      effect = (struct FieldEffect *)create(options->type, x, y, z);           \
+    else                                                                       \
+      effect = (struct FieldEffect *)create(EFFECT_DEFAULT_TYPE, x, y, z);     \
+    if (effect == NULL)                                                        \
+      return;                                                                  \
+                                                                               \
+    sprite = effect->sprite;                                                   \
+    set_mode(effect, (flags + 1) & EFFECT_SCRIPT_MASK);                        \
+    set_script((void *)effect,                                                 \
+               gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);      \
+    effect->motionFlags = 0;                                                   \
+    sprite->flags = 0;                                                         \
+    effect->update = FieldEffect_UpdateMotionScaleAndSpin;                     \
+    FieldEffect_InitializeMotion(effect, sprite, party, velocityX, velocityY,  \
+                                 velocityZ);                                   \
+                                                                               \
+    if ((flags & EFFECT_OPTION_MASK) == 0 || options == NULL)                  \
+      return;                                                                  \
+    if ((flags & EFFECT_USE_PALETTE) != 0)                                     \
+      Actor_SetSpriteColor((struct Actor *)effect, options->palette);          \
+    if ((flags & EFFECT_USE_PRIORITY) != 0) {                                  \
+      effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;                      \
+      sprite->image.priority = options->priority;                              \
+    }                                                                          \
+    if ((flags & EFFECT_USE_START_SCALE) != 0) {                               \
+      effect->scaleX = options->startScaleX;                                   \
+      effect->scaleY = options->startScaleY;                                   \
+    }                                                                          \
+    if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {                               \
+      script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];       \
+      if ((flags & EFFECT_USE_START_SCALE) != 0) {                             \
+        effect->scaleRateX = (options->targetScaleX - effect->scaleX) /        \
+                             script[EFFECT_SCRIPT_REPEAT_COUNT];               \
+        effect->scaleRateY = (options->targetScaleY - effect->scaleY) /        \
+                             script[EFFECT_SCRIPT_REPEAT_COUNT];               \
+      } else {                                                                 \
+        effect->scaleRateX = (options->targetScaleX - Q16_ONE) /               \
+                             script[EFFECT_SCRIPT_REPEAT_COUNT];               \
+        effect->scaleRateY = (options->targetScaleY - Q16_ONE) /               \
+                             script[EFFECT_SCRIPT_REPEAT_COUNT];               \
+      }                                                                        \
+    }                                                                          \
+    if ((flags & EFFECT_USE_SCRIPT) != 0) {                                    \
+      set_mode(effect, 1);                                                     \
+      set_script((void *)effect, options->script);                             \
+    }                                                                          \
+    if ((flags & EFFECT_USE_ROTATION) != 0)                                    \
+      sprite->rotation = options->rotation;                                    \
+    if ((flags & EFFECT_USE_SPIN) != 0)                                        \
+      effect->spin = options->spin;                                            \
+    if ((flags & EFFECT_USE_UPDATE) != 0)                                      \
+      effect->update = options->update;                                        \
+  }
+
+#ifdef EFFECT_SPAWN_RESIDENT
+/// The resident version uses far calls into the main image.
+EFFECT_SPAWN(FieldEffect_SpawnResident, Actor_CreateFar,
+             Actor_SelectAnimationFar, Actor_StartScriptFar)
+#else
+/// Each overlay includes its own copy of this version.
+EFFECT_SPAWN(FieldEffect_Spawn, FieldActor_Create, Actor_SelectAnimation,
+             Actor_StartScript)
+#endif

@@ -28,7 +28,7 @@
 /// until its flag is set.
 ///
 /// A return after a battle finds the room as it was. On every entry
-/// SolSanctumElementalStarRoom_Initialize redraws the crossings each bagged
+/// Scene_Initialize redraws the crossings each bagged
 /// star opened. Once Alex holds the stars, it also lines up the captors again
 /// (SolSanctumElementalStarRoom_LineUpCaptors).
 ///
@@ -40,36 +40,49 @@
 /// grows with him. The platform's actor, ACTOR_PLATFORM_SHADOW, draws that
 /// shadow.
 
-#include "main_routine_work.h"
-#include "module/import.h"
-#include "module/scene/sol_sanctum_elemental_star_room.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
-#include "actor.h"
-#include "event.h"
-#include "create_configured_actor.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "io_reg.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/create_configured_actor.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/import.h"
+#include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern s32 gSolSanctumElementalStarRoom_AngleScript[];
+extern s32 gItemIcon_GrowScript[];
+extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];
+extern u32 gSolSanctumElementalStarRoom_Exits[];
+extern struct ActorPlacement gSolSanctumElementalStarRoom_ActorPlacements[];
+extern struct Trigger gSolSanctumElementalStarRoom_Triggers[];
+extern u16 gSolSanctumElementalStarRoom_StarCells[];
+extern u8 gSolSanctum_RingDrift[][3];
+extern u8 gSolSanctum_RingSwing[][3];
+extern s8 gSolSanctum_RingDirection[][3];
+extern s32 gSolSanctum_RingMaxScales[];
+extern s32 gSolSanctum_RingScaleSteps[];
 
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);
@@ -164,36 +177,31 @@ enum SolSanctumElementalStarRoomCellBehavior {
 
 struct Actor;
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Advances through the current dialogue's consecutive messages.
 static inline void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
   gFieldWork->message += amount;
 }
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
-const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumElementalStarRoom_Entrances;
 }
 
-const struct SceneExitRegion *SolSanctumElementalStarRoom_GetRegions(void) {
-  return NULL;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *SolSanctumElementalStarRoom_GetExits(void) {
-  return gSolSanctumElementalStarRoom_Exits;
-}
+const u32 *Scene_GetExits(void) { return gSolSanctumElementalStarRoom_Exits; }
 
-const struct ActorPlacement *
-SolSanctumElementalStarRoom_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSolSanctumElementalStarRoom_ActorPlacements;
 }
 
 /// Returns the pedestals' examine triggers, the talk and Mind Read rows, and
 /// the cells that call the party back or check the way ahead.
-const struct Trigger *SolSanctumElementalStarRoom_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumElementalStarRoom_Triggers;
 }
 
@@ -992,13 +1000,11 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
 static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   u32 i;
   struct Actor *actor;
-  struct Actor *alex;
 
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
-  alex = Actor_Get(ACTOR_ALEX);
-  Actor_SetSpriteFlags(alex, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
   Actor_SetPosition(ACTOR_ALEX, 392, 454);
   SolSanctumElementalStarRoom_AnimateAlexReappearing();
@@ -1045,8 +1051,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH, 20);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
-  alex = Actor_Get(ACTOR_ALEX);
-  Actor_SetSpriteFlags(alex, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   actor = Actor_Get(ACTOR_ALEX);
   actor->motionFlags = 0;
   Sound_Play(SE_SHIMMER);
@@ -1114,8 +1119,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   FieldActor_SetMoveTarget(actor, 460, 0, 360);
   Actor_WaitForMoveById(ACTOR_ALEX);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
-  alex = Actor_Get(ACTOR_ALEX);
-  Actor_SetSpriteFlags(alex, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
   Event_Wait(30);
   FieldCamera_FollowActor(ACTOR_GARET, 1);
   FieldCamera_WaitForMove();
@@ -1218,7 +1222,6 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
 static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   u8 pass;
   s32 member;
-  struct Actor *leader;
 
   Event_Start();
   Sound_Play(SE_RUMBLE);
@@ -1398,7 +1401,6 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   struct Actor *rising;
   struct Sprite *sprite;
   struct Actor *shadow;
-  struct Actor *leader;
 
   Event_Start();
   MapGrid_CopyCellAttributes(27, 16, 5, 1, 27, 17);
@@ -2024,8 +2026,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 }
 
 /// Sets up the Elemental Star Room.
-s32 SolSanctumElementalStarRoom_Initialize(void) {
-  s32 ringActorId;
+s32 Scene_Initialize(void) {
+  u32 ringActorId;
 
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -2033,7 +2035,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
   do {
     Actor_Get(ringActorId)->collisionFlags = 0;
     Actor_SetSpritePriority(ringActorId++, 1);
-  } while ((u32)ringActorId <= ACTOR_LAST_FLOATING_LIGHT);
+  } while (ringActorId <= ACTOR_LAST_FLOATING_LIGHT);
   SolSanctum_StartFloatingLights(ACTOR_FIRST_FLOATING_LIGHT, 16);
   if (Event_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
     Actor_SetPosition(ACTOR_KRADEN, 456, 360);
@@ -2158,8 +2160,7 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
     Event_Wait(1);
     if (!(frame & 1)) {
       xOffset = (Random_Below(24)) << 16;
-      x = alex->x.fixed;
-      x += xOffset;
+      x = alex->x.fixed + xOffset;
       x -= px(12);
       FieldEffect_Spawn(x, alex->y.fixed + ((Random_Below(32)) << 16) + px(32),
                         alex->z.fixed, 0, -px(4), 0,
@@ -2174,9 +2175,9 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
 }
 
-#include "shared/sol_sanctum_elemental_star_ring_setup.h"
+#include "shared/sol_sanctum_elemental_star_ring_setup.c"
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -2189,7 +2190,7 @@ s32 gSolSanctumElementalStarRoom_AngleScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-#include "shared/item_icon_grow_script.h"
+#include "shared/item_icon_grow_script.c"
 
 struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1,
@@ -2274,5 +2275,5 @@ u16 gSolSanctumElementalStarRoom_StarCells[] = {
     MAPGRID_ANIMATION_STEP(59, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(62, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(65, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(68, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(71, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(74, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(77, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(80, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(83, 40, 3, 4, 0), MAPGRID_ANIMATION_STEPS_END,
 };
 
-#include "shared/sol_sanctum_elemental_star_ring_tables.h"
+#include "shared/sol_sanctum_elemental_star_ring_tables.c"
 // clang-format on

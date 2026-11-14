@@ -14,10 +14,10 @@
 ///   within Kolima Forest.
 ///
 ///   Until the curse is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
-///   Kolima_GetActorPlacements gives the nine villagers (ACTOR_FIRST_VILLAGER
+///   Scene_GetActorPlacements gives the nine villagers (ACTOR_FIRST_VILLAGER
 ///   to ACTOR_LAST_VILLAGER) tree sprites that stand still. Sparkles twinkle on
 ///   the ground (ACTOR_FIRST_SPARKLE and the three after it, and five more that
-///   Kolima_Initialize places). The villagers answer only Mind Read, with the
+///   Scene_Initialize places). The villagers answer only Mind Read, with the
 ///   thoughts of people stuck as trees.
 ///
 ///   Afterwards they are people again and talk of the curse, the holy tree and
@@ -42,7 +42,7 @@
 ///
 ///   That table's two jars, an Apple and an Herb (examine triggers 100 and
 ///   101), are in the village. Only Kolima's layout (kolima's
-///   map.s) places them, at cells (23, 8) and (13, 23).
+///   map.inc) places them, at cells (23, 8) and (13, 23).
 ///
 /// - Kolima Bridge (SceneId_KolimaBridge), "the grand bridge across the
 ///   river" and "the pride of Kolima" to the village's armor seller, with the
@@ -63,35 +63,64 @@
 ///   it again. Kolima_RestoreBridgeState draws it down on every later visit,
 ///   and the bridge on the World Map is drawn down with the same flag.
 
-#include "script_operands.h"
+#include "ability_ids.h"
 #include "djinn_ids.h"
 #include "flags.h"
-#include "character_ids.h"
-#include "main_routine_work.h"
-#include "heap_slots.h"
-#include "module/scene/kolima.h"
-#include "module/scene/shared/kolima_forest_bridge_falling_effect.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "kolima.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "actor_script.h"
-#include "io_reg.h"
-#include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/character_ids.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/kolima.h"
+#include "scene/kolima_forest_bridge_falling_effect.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+s32 Scene_Initialize(void);
+extern s32 gKolima_GaretWalksIn[];
+extern s32 gKolima_IvanWalksIn[];
+extern s32 gKolima_MiaWalksIn[];
+extern s32 gKolima_PartySquashActions[];
+extern s32 gKolima_PartyRestoreScaleActions[];
+extern s32 gKolima_ProtectiveFieldGrowActions[];
+extern s32 gKolima_ProtectiveFieldShrinkActions[];
+extern s32 gKolima_EntryActions[];
+extern s32 gKolima_DebrisScript[];
+extern s32 gKolima_FaceLeaderScript[];
+extern u16 gKolima_DoorCells[];
+extern struct SceneEntrance gKolimaEntrances[];
+extern struct SceneEntrance gKolimaBridgeEntrances[];
+extern struct SceneEntrance gKolimaTunnelEntrances[];
+extern struct SceneExitRegion gKolimaTunnelRegions[];
+extern u32 gKolimaExits[];
+extern struct ActorPlacement gKolimaTunnelActorPlacements[];
+extern struct ActorPlacement gKolimaActorPlacements[];
+extern struct ActorPlacement gKolima_EntryScript[];
+extern struct ActorPlacement gKolimaBridgeActorPlacements[];
+extern struct Trigger gKolimaTriggers[];
+extern struct Trigger gKolimaBridgeTriggers[];
+extern s32 gKolima_GoldenRingsScript[];
+extern s32 gKolima_RegionScript[];
+extern s32 gFallingEffectScript[];
 
 static void Kolima_WitnessForestCurse(void);
 static void Kolima_ShowMessageAndWait(s32 actorId, s32 waitFrames);
@@ -226,16 +255,16 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *debris) {
   return 1;
 }
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
-const struct SceneEntrance *Kolima_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KolimaBridge) {
+  if (sceneId == SCENE_KOLIMA_BRIDGE) {
     return gKolimaBridgeEntrances;
   }
-  if (sceneId == (s32)&SceneId_KolimaTunnel) {
+  if (sceneId == SCENE_KOLIMA_TUNNEL) {
     return gKolimaTunnelEntrances;
   }
   return gKolimaEntrances;
@@ -243,8 +272,8 @@ const struct SceneEntrance *Kolima_GetEntrances(void) {
 
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
-const struct SceneExitRegion *Kolima_GetRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_KolimaTunnel) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
+  if (gMainRoutineWork.next == SCENE_KOLIMA_TUNNEL) {
     return gKolimaTunnelRegions;
   }
   return 0;
@@ -252,20 +281,20 @@ const struct SceneExitRegion *Kolima_GetRegions(void) {
 
 /// The exits of all three scenes, each scene's after its header word (an exit
 /// of kind 0).
-const u32 *Kolima_GetExits(void) { return gKolimaExits; }
+const u32 *Scene_GetExits(void) { return gKolimaExits; }
 
 /// Selects the people of Kolima or Kolima Bridge. Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
-const struct ActorPlacement *Kolima_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Kolima) {
+  if (sceneId == SCENE_KOLIMA) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Kolima_InitializeCursedVillagers(gKolimaActorPlacements);
     }
     return gKolimaActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_KolimaBridge) {
+  if (sceneId == SCENE_KOLIMA_BRIDGE) {
     return gKolimaBridgeActorPlacements;
   }
   return gKolimaTunnelActorPlacements;
@@ -296,8 +325,8 @@ static void Kolima_GraniteJoins(void) {
 
 /// Selects Kolima Bridge's triggers, or the table Kolima and Kolima Tunnel
 /// share.
-const struct Trigger *Kolima_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_KolimaBridge) {
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == SCENE_KOLIMA_BRIDGE) {
     return gKolimaBridgeTriggers;
   }
   return gKolimaTriggers;
@@ -443,19 +472,19 @@ static void Kolima_LowerBridge(void) {
 /// Sets up whichever scene is entered: Kolima Bridge as the curse and the
 /// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
 /// transition, and Kolima itself.
-s32 Kolima_Initialize(void) {
+s32 Scene_Initialize(void) {
   s16 sceneId;
   u32 actorId;
   const s32 *table;
 
   sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KolimaBridge) {
+  if (sceneId == SCENE_KOLIMA_BRIDGE) {
     Kolima_RestoreBridgeState();
     return 0;
   }
 
-  if (sceneId == (s32)&SceneId_KolimaTunnel) {
+  if (sceneId == SCENE_KOLIMA_TUNNEL) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     return 0;
@@ -527,7 +556,7 @@ static void Kolima_AlternateProtectiveFieldHeights(void) {
   Kolima_SetProtectiveFieldHeight(ACTOR_GARET_PSYNERGY_FIELD, 1);
 }
 
-#include "shared/mind_read.h"
+#include "shared/mind_read.c"
 
 /// Gives the four companions the same nod, waiting on the final actor.
 static inline void Kolima_NodTogether(void) {
@@ -546,11 +575,9 @@ static void Kolima_WitnessForestCurse(void) {
   s32 stagingValue;
   const s32 *squashActions;
   const s32 *restoreScaleActions;
-  u32 *firstCurtainState;
-  s32 *mapState;
+  s32 *miaInParty;
   const s32 *growFieldActions;
   const s32 *shrinkFieldActions;
-  u32 *secondCurtainState;
 
   // Enter the deserted village and let Ivan inspect one of its trees.
   Event_Start();
@@ -801,9 +828,8 @@ static void Kolima_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  firstCurtainState = &gFallingEffectState;
   gFallingEffectOffset = px(128);
-  *firstCurtainState = KOLIMA_DUST_CLOSING;
+  gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
   Sound_Play(MUS_FOREST);
@@ -819,7 +845,7 @@ static void Kolima_WitnessForestCurse(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
-  *firstCurtainState = KOLIMA_DUST_CLOSING_WIDE;
+  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -844,8 +870,7 @@ static void Kolima_WitnessForestCurse(void) {
   } else {
     gFieldWork->message++;
   }
-  mapState = (s32 *)&gFallingEffectState;
-  *mapState = KOLIMA_DUST_DRIFTING;
+  gFallingEffectState = KOLIMA_DUST_DRIFTING;
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_GARET)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_IVAN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -881,10 +906,8 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 94, 225);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldActions);
-  if (*mapState != KOLIMA_DUST_CENTRED) {
-    do {
-      wait(1);
-    } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
+  while (gFallingEffectState != KOLIMA_DUST_CENTRED) {
+    wait(1);
   }
   Event_Wait(300);
   Task_Remove(Kolima_UpdateCurseDust);
@@ -1103,8 +1126,7 @@ static void Kolima_WitnessForestCurse(void) {
   wait(60);
   gFallingEffectWidth = 0;
   gFallingEffectOffset = px(128);
-  secondCurtainState = &gFallingEffectState;
-  *secondCurtainState = KOLIMA_DUST_CLOSING;
+  gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(80);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1129,7 +1151,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET, 3);
   Actor_SetSpritePriority(ACTOR_IVAN, 3);
   Actor_SetSpritePriority(ACTOR_MIA, 3);
-  *secondCurtainState = KOLIMA_DUST_CLOSING_WIDE;
+  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
   Sound_Play(SE_SHIMMER);
   Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 120, 248);
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
@@ -1143,7 +1165,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 94, 225);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldActions);
   Event_Wait(120);
-  *secondCurtainState = KOLIMA_DUST_DRIFTING;
+  gFallingEffectState = KOLIMA_DUST_DRIFTING;
   do {
     wait(1);
   } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
@@ -1247,14 +1269,14 @@ static void Kolima_WitnessForestCurse(void) {
   wait(80);
   Actor_Stop(ACTOR_LEADER_PSYNERGY_FIELD);
   Actor_Stop(ACTOR_IVAN_PSYNERGY_FIELD);
-  mapState = &gKolima_MiaInParty;
+  miaInParty = &gKolima_MiaInParty;
   Actor_Stop(ACTOR_MIA_PSYNERGY_FIELD);
   Actor_Stop(ACTOR_GARET_PSYNERGY_FIELD);
   wait(1);
   shrinkFieldActions = gKolima_ProtectiveFieldShrinkActions;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, shrinkFieldActions);
   Actor_SetScript(ACTOR_IVAN_PSYNERGY_FIELD, shrinkFieldActions);
-  if (*mapState != 0) {
+  if (*miaInParty != 0) {
     Actor_SetScript(ACTOR_MIA_PSYNERGY_FIELD, shrinkFieldActions);
   }
   Actor_RunScriptAndWait(ACTOR_GARET_PSYNERGY_FIELD, shrinkFieldActions);
@@ -1450,14 +1472,13 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames) {
   Event_Wait(waitFrames);
 }
 
-#include "shared/kolima_grow.h"
+#include "shared/kolima_grow.c"
 
 /// Spawns a moving curse sparkle every eighth frame.
 static void Kolima_SpawnCurseSparkle(void) {
   struct Actor *sparkle;
   struct Sprite *sprite;
   s32 framePhase;
-  s32 priorityFlags;
   s32 spawnX = px(98);
   s32 spawnZ = px(105);
   s32 targetX = px(98);
@@ -1476,9 +1497,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   }
   sprite = sparkle->sprite;
   sprite->flags = framePhase;
-  priorityFlags = 0xff & ~ACTOR_PRIORITY_AUTOMATIC;
-  priorityFlags &= sparkle->priorityFlags;
-  sparkle->priorityFlags = priorityFlags;
+  sparkle->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
   sparkle->scaleX = Q16_ONE / 10;
   sparkle->speedLimit = px(8);
@@ -1489,7 +1508,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   Actor_StartScript(sparkle, gKolima_GoldenRingsScript);
 }
 
-#include "shared/kolima_blink.h"
+#include "shared/kolima_blink.c"
 
 /// Triggers a temporary pose when an effect enters the party's occupied area.
 static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
@@ -1517,10 +1536,10 @@ static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
   return 0;
 }
 
-#include "shared/kolima_forest_bridge_falling_effect.h"
-s32 gKolima_PendingPose __attribute__((section(".bss")));
-s32 gKolima_MiaInParty __attribute__((section(".bss")));
-s32 gKolima_EffectActive __attribute__((section(".bss")));
+#include "shared/kolima_forest_bridge_falling_effect.c"
+s32 gKolima_PendingPose BSS_DATA;
+s32 gKolima_MiaInParty BSS_DATA;
+s32 gKolima_EffectActive BSS_DATA;
 
 /// Sets up Kolima Bridge.
 static void Kolima_RestoreBridgeState(void) {
@@ -1560,7 +1579,7 @@ s32 gKolima_MiaWalksIn[] = {
     SC_ANIMATION(1), SC_END,
 };
 
-#include "shared/kolima_squash.h"
+#include "shared/kolima_squash.c"
 
 s32 gKolima_ProtectiveFieldGrowActions[] = {
     SC_SET(SW_SCALE_X, Q16_ONE / 10),
@@ -1743,7 +1762,7 @@ struct ActorPlacement gKolimaActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-/// Five more sparkles, placed by Kolima_Initialize once the curse has been seen
+/// Five more sparkles, placed by Scene_Initialize once the curse has been seen
 /// and kept while it lasts.
 struct ActorPlacement gKolima_EntryScript[] = {
     ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,

@@ -38,7 +38,7 @@
 /// attendant offers a rest (BabiPalace_OfferRest).
 ///
 /// The finals send the party back here by two entrances.
-/// BabiPalace_ApplyEntryState answers them by restoring the party and its
+/// Scene_Initialize answers them by restoring the party and its
 /// inventory (BabiPalace_RestorePartyAndInventory) and playing a waking in the
 /// big bedroom. A lost first or second match comes in by
 /// BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH (BabiPalace_WakeFromFinalsDream). The
@@ -54,34 +54,54 @@
 /// The Cloak Ball on show is an actor drawn from the item's icon until the
 /// party takes it (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
 
-#include "main_routine_work.h"
-#include "heap.h"
-#include "input.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/babi_palace.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "io_reg.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
-#include "heap_slots.h"
-#include "display_transition.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
+#include "item_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern u16 gBabiPalace_DoorCells[];
+extern s32 gBabiPalace_IndigestionScript[];
+extern struct SceneEntrance gBabiPalace_Entrances[];
+extern struct SceneEntrance gBabiPalace_OutsideEntrances[];
+extern struct SceneExitRegion gBabiPalace_Regions[];
+extern u32 gBabiPalace_Exits[];
+extern struct ActorPlacement gBabiPalace_OutsideActorPlacements[];
+extern struct ActorPlacement gBabiPalace_ActorPlacementsBabiMissing[];
+extern struct ActorPlacement gBabiPalace_ActorPlacementsFinals[];
+extern struct ActorPlacement gBabiPalace_ActorPlacementsAfterColosso[];
+extern struct Trigger gBabiPalace_TriggersBabiMissing[];
+extern struct Trigger gBabiPalace_TriggersFinals[];
+extern struct Trigger gBabiPalace_TriggersAfterColosso[];
+extern struct Trigger gBabiPalace_OutsideTriggersBabiMissing[];
+extern struct Trigger gBabiPalace_OutsideTriggersFinals[];
+extern struct Trigger gBabiPalace_OutsideTriggersAfterColosso[];
 
 /// The palace's actors are placed by one of three tables, as the story goes on.
 ///
@@ -232,8 +252,6 @@ enum BabiPalaceCellBehavior {
   CELL_BEHAVIOR_BABI_PALACE_WELL = 90
 };
 
-#include "shared/walk_into_leader.h"
-
 static inline void BabiPalace_CloseDoors(void) {
   TilesetAnim_Pause(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
   TilesetAnim_Pause(BABI_PALACE_OTHER_DOORS_ANIMATION);
@@ -262,24 +280,24 @@ static inline void BabiPalace_RestorePartyAndInventory(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_BabiPalaceEntrance) {
+  if (gMainRoutineWork.next == SCENE_BABI_PALACE_ENTRANCE) {
     return gBabiPalace_OutsideEntrances;
   }
   return gBabiPalace_Entrances;
 }
 
 /// The palace has no exit regions, so the table is empty.
-const struct SceneExitRegion *BabiPalace_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gBabiPalace_Regions;
 }
 
 /// Both scenes share one exit table.
-const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
+const u32 *Scene_GetExits(void) { return gBabiPalace_Exits; }
 
 /// Returns the actor placements for the scene and the story, which is before
 /// Babi's rescue, during the finals or after Colosso.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_BabiPalaceEntrance) {
+  if (gMainRoutineWork.next == SCENE_BABI_PALACE_ENTRANCE) {
     return gBabiPalace_OutsideActorPlacements;
   }
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -310,13 +328,11 @@ static void BabiPalace_AskAboutSoldiers(s32 actorId) {
 /// The attendant leads the party to the beds when spoken to before Babi's
 /// rescue.
 static void BabiPalace_ShowBeds(s32 actorId) {
-  struct Actor *leader;
   s16 roundedFacing;
   s32 facingOrMessage;
-  s32 facingBits;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  roundedFacing = (leader->facing + TRIG_TURN / 8) & 0xc000;
+  roundedFacing =
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & 0xc000;
   Event_Start();
   Field_EndBusyAndReveal();
   if (Event_GetFlag(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS) == 0) {
@@ -326,12 +342,8 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     // "We have just enough extra beds in this room for everybody...."
     Event_ShowMessage(actorId, 0);
     Event_Wait(10);
-    /* FAKEMATCH(temporary): the facing compared as a shifted word; as
-     * roundedFacing == FACING_SOUTH, 19 of 130 instructions differ in tbs-en.
-     */
-    facingBits = roundedFacing << 16;
     facingOrMessage = FACING_SOUTH;
-    if (facingBits == (FACING_SOUTH << 16)) {
+    if ((u16)roundedFacing == FACING_SOUTH) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 104);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     }
@@ -546,8 +558,6 @@ static void BabiPalace_OfferCloakBall(void) {
 /// Waking after resting before the finals, the leader has dreamt of fighting in
 /// them. The others tease, and the party sets off for the colosseum.
 static void BabiPalace_WakeFromFinalsDream(void) {
-  struct Actor *leader;
-
   Event_Start();
   Event_SetMessageId(MsgTolbiGetUp);
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 0;
@@ -560,8 +570,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 1;
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 1;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetPosition(ACTOR_GARET, 120, 104);
   Actor_SetPosition(ACTOR_MIA, 104, 80);
   Actor_SetPosition(ACTOR_IVAN, 120, 120);
@@ -582,10 +591,8 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   // "Are you okay? You were having nightmares for quite a while..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->z.fixed -= px(3);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->targetZ -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->targetZ -= px(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -660,8 +667,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.9);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, 0);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(40);
@@ -684,12 +690,11 @@ static void BabiPalace_WakeFromFinalsDream(void) {
 /// Searching the beds sends the party to bed, talking it over the first night.
 /// "Would you like to sleep now?"
 static void BabiPalace_RestInPalaceBeds(void) {
-  struct Actor *leader;
   s16 roundedFacing;
   u16 facing;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  roundedFacing = (leader->facing + TRIG_TURN / 8) & -0x4000;
+  roundedFacing =
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & -0x4000;
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgTolbiLikeSleep);
@@ -2574,7 +2579,7 @@ static void BabiPalace_ExamineWell(void) {
 /// Returns the triggers for the scene and the story, as for the actor
 /// placements.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_BabiPalaceEntrance) {
+  if (gMainRoutineWork.next == SCENE_BABI_PALACE_ENTRANCE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalace_OutsideTriggersAfterColosso;
     }
@@ -2593,7 +2598,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Sets up the scene being entered. Returns 0.
-s32 BabiPalace_ApplyEntryState(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct Sprite *sprite;
   u8 *buf;
@@ -2610,7 +2615,7 @@ s32 BabiPalace_ApplyEntryState(void) {
     GameFlag_Set(FLAG_BABI_SAVED);
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gMainRoutineWork.next != (s32)&SceneId_BabiPalaceEntrance) {
+  if (gMainRoutineWork.next != SCENE_BABI_PALACE_ENTRANCE) {
     if (gMainRoutineWork.entrance == BABI_PALACE_FROM_COTTAGE_ROOMS_B) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }

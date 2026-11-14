@@ -6,8 +6,8 @@
 /// curves.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// The colour channels a TitlePaletteFade moves: B, G and R for each of its 512
 /// colours.

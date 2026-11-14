@@ -4,21 +4,21 @@
 /// @file
 /// The save workspace: sector headers and file summaries.
 
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "types.h"
-#include "static_assert.h"
-#include "dma.h"
-#include "heap_slots.h"
 #include "fixed_math.h"
-#include "flash.h"
-#include "heap.h"
+#include "static_assert.h"
+#include "types.h"
+#include "gamepak/flash.h"
+#include "system/dma.h"
+#include "system/heap.h"
+#include "system/heap_slots.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 /// The header of a save sector in flash: its signature, the part it holds,
 /// its checksum and its counter.
 struct SaveSectorHeader {
   u8 signature[7]; ///< `CAMELOT`, unterminated
-  /// File n's parts are n and n + 3; SAVE_PART_NONE (system/system/save.c)
+  /// File n's parts are n and n + 3; SAVE_PART_NONE (system/system_save.c)
   /// marks a free sector.
   u8 partId;
   u16 checksum; ///< low half of the payload's checksum

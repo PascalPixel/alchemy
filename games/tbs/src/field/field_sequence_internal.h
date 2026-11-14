@@ -7,33 +7,33 @@
 /// parts, and each part includes it too, so that a part read on its own
 /// resolves. It places no bytes.
 
-#include "module/field/battle_music.h"
-#include "module/field/world_map_encounter_rules.h"
-#include "vram_cache.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "system.h"
-#include "dma.h"
-#include "io_write.h"
-#include "flags.h"
-#include "iwram_call.h"
-#include "resource_ids.h"
-#include "map_grid_scroll.h"
-#include "ram_buffer.h"
-#include "event.h"
-#include "display_transition.h"
-#include "text/msg_ids.h"
-#include "ground_mask.h"
-#include "io_write_queue.h"
-#include "battle_status.h"
-#include "field_psynergy_work.h"
-#include "macros.h"
 #include "ability_ids.h"
+#include "debug/debug.h"
+#include "flags.h"
+#include "macros.h"
+#include "resource_ids.h"
+#include "battle/battle.h"
+#include "field/battle_music.h"
 #include "field/encounter_zone.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/field_psynergy_work.h"
+#include "field/ground_mask.h"
+#include "field/map_grid_scroll.h"
+#include "field/world_map_encounter_rules.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "system/dma.h"
+#include "system/io_write.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "window/battle_status.h"
+#include "text/msg_ids.h"
 
 /// The speakers' definitions (field_sequence_tables.c), read by
 /// Speaker_FindDefinition.
@@ -52,9 +52,9 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 /// A map region's bounds, in pixels, as 16.16 fixed point.
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
-// A field Psynergy or item use, packed into one value (items.c, psynergy.c), as
-// work->psynergy and work->item hold it. bits: 13..10 the user (13 is
-// ACT_PACKED) | 9..0 the Psynergy or item.
+// A field Psynergy or item use, packed into one value (field_sequence_items.c,
+// field_sequence_psynergy.c), as work->psynergy and work->item hold it.
+// bits: 13..10 the user (13 is ACT_PACKED) | 9..0 the Psynergy or item.
 #define ABILITY_ID(c) ((c) & 0x3ff) ///< the Psynergy
 #define ACT_ITEM_ID(c) ((c) & 0x3ff)
 #define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it

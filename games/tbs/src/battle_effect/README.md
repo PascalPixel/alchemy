@@ -5,8 +5,8 @@ pillars, a summon. It decides nothing. By the time it starts, the battle
 already knows who is hit and how hard. The effect only draws, and tells the
 battle the moment the blow should land.
 
-Each effect is one function, its handler, and they are all in
-`battle_effect/`.
+Each effect is one function, its handler, and they are all in the
+`battle_effect_*.c` files.
 
 ## How an ability picks its effect
 
@@ -101,7 +101,7 @@ live.
 
 A handler reads the way its effect plays: set up, then one frame's work
 after another with a wait of one frame between, then tidy up. Anything that
-happens once is tied to a frame number. [`bolt.c`](battle_effect/bolt.c) is
+happens once is tied to a frame number. [`battle_effect_bolt.c`](battle_effect_bolt.c) is
 a short one to start with.
 
 One of those frames is the signal to the battle. From it on, the battle
@@ -122,7 +122,7 @@ its own.
 
 ## Where the code is
 
-- `battle_effect/` has one file for each handler or family.
+- Each `battle_effect_<name>.c` holds one handler or family.
 - `battle_effect_table.c` is the tables they read: which pictures, where,
   how many.
 - The `blitter_*` files are the blitters.

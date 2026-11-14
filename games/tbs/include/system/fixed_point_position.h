@@ -4,8 +4,8 @@
 /// @file
 /// FixedPointPosition, a position in 16.16 fixed point.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// A position in three coordinates, each in 16.16 fixed point.
 struct FixedPointPosition {

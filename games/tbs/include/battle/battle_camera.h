@@ -5,14 +5,13 @@
 /// The battle camera, its view work and the battle background's affine
 /// work.
 
-#include "battle_action.h"
-#include "battle_effect_params.h"
-
-#include "types.h"
-#include "static_assert.h"
 #include "edition.h"
-#include "far_call.h"
 #include "fixed_math.h"
+#include "static_assert.h"
+#include "types.h"
+#include "battle/battle_action.h"
+#include "battle/battle_effect_params.h"
+#include "gamepak/far_call.h"
 
 /// The battle camera: its eye, the focus it turns about, and its pitch, yaw
 /// and distance. It lives in the HEAP_SLOT_CAMERA heap slot.
@@ -64,8 +63,8 @@ struct BattleBackgroundWork {
 
 /// A presentation step's stack work: the battle effect command it builds and
 /// runs, and the targets' sprite colour modes saved beside it. The
-/// presentation steps of staging.c and auto_battle.c, BattleTransition_Run
-/// and ElementGlow_Play keep one as a local.
+/// presentation steps of battle_staging.c and battle_auto_battle.c,
+/// BattleTransition_Run and ElementGlow_Play keep one as a local.
 struct BattleStagingWork {
   struct BattleEffectParams effect;
   /// Each target's sprite animations' SpriteColorMode

@@ -57,26 +57,45 @@
 /// 11) from either side either way, and the pillar settles at the same height
 /// in each of columns 41 to 44 either way.
 
-#include "main_routine_work.h"
-#include "heap_slots.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/gondowan_cave.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "pushed_actor.h"
-#include "field_effect.h"
-#include "text/msg_ids.h"
+#include "ability_ids.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern struct SceneEntrance gGondowanCaveEntrancesOther[];
+extern struct SceneEntrance gGondowanPassageEntrances[];
+extern struct SceneEntrance gGondowanCaveRiverEntrances[];
+extern struct SceneEntrance gGondowanCaveEntrances[];
+extern u32 gGondowanCaveExits[];
+extern struct ActorPlacement gGondowanCaveActorPlacementsOther[];
+extern struct ActorPlacement gGondowanPassageActorPlacements[];
+extern struct ActorPlacement gGondowanPassageActorPlacementsWithIodem[];
+extern struct ActorPlacement gGondowanCaveRiverActorPlacements[];
+extern struct ActorPlacement gGondowanCaveActorPlacements[];
+extern struct Trigger gGondowanCaveTriggersOther[];
+extern struct Trigger gGondowanPassageTriggers[];
+extern struct Trigger gGondowanPassageTriggersWithIodem[];
+extern struct Trigger gGondowanCaveRiverTriggers[];
+extern struct Trigger gGondowanCaveTriggers[];
 
 /// Gondowan Passage's placed actors, numbered in the order of
 /// gGondowanPassageActorPlacements and
@@ -131,23 +150,21 @@ enum GondowanCaveActorId {
 static void GondowanCave_MovePillar(void);
 static void GondowanCave_RunSpinningLeap(s32 actorId);
 
-#include "shared/field_effect_create.h"
+#include "shared/field_effect_create.c"
 
-#include "shared/field_effect_spawn.h"
-#include "shared/staged_actor.h"
-#include "ability_ids.h"
-#include "item_ids.h"
+#include "shared/field_effect_spawn.c"
+#include "shared/staged_actor.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_GondowanPassage) {
+  if (sceneId == SCENE_GONDOWAN_PASSAGE) {
     return gGondowanPassageEntrances;
   }
-  if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
+  if (sceneId == SCENE_GONDOWAN_CAVE_RIVER) {
     return gGondowanCaveRiverEntrances;
   }
-  if (sceneId == (s32)&SceneId_GondowanCave) {
+  if (sceneId == SCENE_GONDOWAN_CAVE) {
     return gGondowanCaveEntrances;
   }
   return gGondowanCaveEntrancesOther;
@@ -163,16 +180,16 @@ const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_GondowanPassage) {
+  if (sceneId == SCENE_GONDOWAN_PASSAGE) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageActorPlacementsWithIodem;
     }
     return gGondowanPassageActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
+  if (sceneId == SCENE_GONDOWAN_CAVE_RIVER) {
     return gGondowanCaveRiverActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_GondowanCave) {
+  if (sceneId == SCENE_GONDOWAN_CAVE) {
     return gGondowanCaveActorPlacements;
   }
   return gGondowanCaveActorPlacementsOther;
@@ -183,16 +200,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_GondowanPassage) {
+  if (sceneId == SCENE_GONDOWAN_PASSAGE) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageTriggersWithIodem;
     }
     return gGondowanPassageTriggers;
   }
-  if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
+  if (sceneId == SCENE_GONDOWAN_CAVE_RIVER) {
     return gGondowanCaveRiverTriggers;
   }
-  if (sceneId == (s32)&SceneId_GondowanCave) {
+  if (sceneId == SCENE_GONDOWAN_CAVE) {
     return gGondowanCaveTriggers;
   }
   return gGondowanCaveTriggersOther;
@@ -229,7 +246,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Event_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
       Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
-      gMainRoutineWork.restartScene = (s32)&SceneId_StuccoRoomsB;
+      gMainRoutineWork.restartScene = SCENE_STUCCO_ROOMS_B;
       gMainRoutineWork.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
@@ -476,13 +493,13 @@ static void GondowanCave_LiftBoulder(void) {
 
 /// Sets up the scene as the party enters.
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GondowanPassage) {
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_PASSAGE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       Actor_SetPosition(ACTOR_IODEM, 0, 0);
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_GondowanCave) {
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_CAVE) {
     // XXX (no evidence): why this arrival changes the drop's cell; the
     // change has no effect that play shows.
     if (gMainRoutineWork.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
@@ -501,9 +518,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 const s32 *gFieldEffect_DurationScripts[] = {

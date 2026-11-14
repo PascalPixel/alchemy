@@ -17,25 +17,31 @@
 /// cliff runs across its north side above the river and the logs
 /// (places/kolima-forest-cliff_cursed/map-0.png).
 
-#include "speaker.h"
 #include "flags.h"
-#include "heap_slots.h"
-#include "module/import.h"
-#include "module/scene/kolima_forest_cliff.h"
-#include "module/scene/shared/kolima_palette.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/kolima_palette.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
 
-#include "pushed_actor.h"
-#include "main_routine_work.h"
-#include "event.h"
+extern struct SceneEntrance gKolimaForestCliffEntrances[];
+extern u32 gKolimaForestCliffExits[];
+extern struct ActorPlacement gKolimaForestCliffActorPlacements[];
+extern struct Trigger gKolimaForestCliffTriggers[];
 
 /// The scene's actors, numbering the rows of
 /// gKolimaForestCliffActorPlacements.
@@ -45,22 +51,22 @@ enum {
   ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
 };
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
 #define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_SCENE_TEMP_01
 
-const struct SceneEntrance *KolimaForestCliff_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestCliffEntrances;
 }
 
-const struct SceneExitRegion *KolimaForestCliff_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *KolimaForestCliff_GetExits(void) { return gKolimaForestCliffExits; }
+const u32 *Scene_GetExits(void) { return gKolimaForestCliffExits; }
 
 /// The three logs.
-const struct ActorPlacement *KolimaForestCliff_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestCliffActorPlacements;
 }
 
@@ -90,15 +96,15 @@ static void KolimaForestCliff_PushLog(void) {
   Event_End();
 }
 
-#include "shared/kolima_jump.h"
+#include "shared/kolima_jump.c"
 
 /// The logs, the two ways out and the hop east from the bank.
-const struct Trigger *KolimaForestCliff_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestCliffTriggers;
 }
 
 /// Sets up the logs and the forest's colours on entry.
-s32 KolimaForestCliff_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
 
   work->transition =
@@ -122,9 +128,9 @@ s32 KolimaForestCliff_Initialize(void) {
   return 0;
 }
 
-#include "shared/kolima_palette.h"
+#include "shared/kolima_palette.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 struct SceneEntrance gKolimaForestCliffEntrances[] = {
@@ -167,5 +173,8 @@ struct Trigger gKolimaForestCliffTriggers[] = {
 };
 
 // The .bss order follows the first declarations (externs in field.h).
-u8 gKolimaPalette_Healthy[1792] __attribute__((section(".bss")));
-u8 gKolimaPalette_Cursed[896] __attribute__((section(".bss")));
+/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
+/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+u8 gKolimaPalette_Healthy[1792] BSS_DATA ALIGNED(16);
+/// The cursed colours, kept by KolimaPalette_SaveCursed.
+u8 gKolimaPalette_Cursed[896] BSS_DATA;

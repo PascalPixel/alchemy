@@ -5,8 +5,8 @@
 /// Kraden, "a trained Alchemy sage" in his own words, came to Vale to study Mt.
 /// Aleph and Alchemy.
 ///
-/// One actor placement table serves every visit. ValeKradensCottage_Initialize
-/// removes the people a visit does not use, and ValeKradensCottage_GetTriggers
+/// One actor placement table serves every visit. Scene_Initialize
+/// removes the people a visit does not use, and Scene_GetTriggers
 /// picks the events for the time of the story.
 ///
 /// On the stormy night of the prologue (FLAG_VALE_STORM), the storm's scene
@@ -81,29 +81,42 @@
 /// The jar's row finds nothing on the stormy night. After Kalay it is there
 /// only from the third patch on.
 
-#include "main_routine_work.h"
-#include "module/import.h"
-#include "module/scene/vale_kradens_cottage.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
-#include "shared/walk_into_leader.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern s32 gValeKradensCottage_RockslideSurvivorEscapeActions[];
+extern s32 gValeKradensCottage_RockslideSurvivorSquashes[];
+extern s32 gValeKradensCottage_FaceTargetActions[];
+extern struct SceneEntrance gValeKradensCottage_Entrances[];
+extern u32 gValeKradensCottage_Exits[];
+extern struct ActorPlacement gValeKradensCottage_ActorPlacements[];
+extern struct Trigger gValeKradensCottage_Triggers[];
+extern struct Trigger gValeKradensCottage_StormTriggers[];
+extern struct Trigger gValeKradensCottage_TriggersAfterKalay[];
+extern u16 gValeKradensCottage_DoorOpens[];
 
 /// The placed actors, numbered in the order of
 /// gValeKradensCottage_ActorPlacements. Garet and Jenna, placed between Kraden
@@ -138,32 +151,28 @@ enum ValeKradensCottageActorId {
   ACTOR_COTTAGE_VISITOR
 };
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// The front door of Kraden's cottage stands open since Kraden set off. So
 /// walking in (cell behavior 3, the exit into the cottage) skips its opening.
 #define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_SCENE_TEMP_42
 
-const struct SceneEntrance *ValeKradensCottage_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValeKradensCottage_Entrances;
 }
 
-const struct SceneExitRegion *ValeKradensCottage_GetRegions(void) {
-  return NULL;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *ValeKradensCottage_GetExits(void) {
-  return gValeKradensCottage_Exits;
-}
+const u32 *Scene_GetExits(void) { return gValeKradensCottage_Exits; }
 
 /// Returns the one actor placement table for every visit.
-/// ValeKradensCottage_Initialize removes the actors a visit does not use.
-const struct ActorPlacement *ValeKradensCottage_GetActorPlacements(void) {
+/// Scene_Initialize removes the actors a visit does not use.
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gValeKradensCottage_ActorPlacements;
 }
 
 /// Selects the events for the current visit to Vale.
-const struct Trigger *ValeKradensCottage_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValeKradensCottage_TriggersAfterKalay;
   }
@@ -497,16 +506,12 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
 /// In Vale, when the party comes back out of Kraden's cottage, Kraden comes out
 /// ready and everyone joins Isaac for Mt. Aleph.
 static void ValeKradensCottage_KradenSetsOff(void) {
-  struct Actor *actor;
-
   Event_Start();
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(ACTOR_GARET, 216, 264);
   Actor_SetPosition(ACTOR_JENNA, 248, 264);
-  actor = Actor_Get(ACTOR_GARET);
-  actor->facing = FACING_NORTH;
-  actor = Actor_Get(ACTOR_JENNA);
-  actor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_GARET)->facing = FACING_NORTH;
+  Actor_Get(ACTOR_JENNA)->facing = FACING_NORTH;
   MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -884,9 +889,7 @@ static void ValeKradensCottage_OverhearKraden(void) {
 
 /// Arriving in Kraden's part of Vale places the actors for the storm or for the
 /// day, and plays the arrival from the cottage.
-s32 ValeKradensCottage_Initialize(void) {
-  struct Actor *actor;
-
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance ==
           VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
       gMainRoutineWork.entrance ==
@@ -910,8 +913,7 @@ s32 ValeKradensCottage_Initialize(void) {
     Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 83, 265);
     Actor_WalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
     Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 5);
-    actor = Actor_Get(ACTOR_ROCKSLIDE_SURVIVOR);
-    actor->radius = 12;
+    Actor_Get(ACTOR_ROCKSLIDE_SURVIVOR)->radius = 12;
     Actor_SetScript(ACTOR_ROCKSLIDE_SURVIVOR,
                     gValeKradensCottage_RockslideSurvivorSquashes);
     if (GameFlag_Get(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {

@@ -18,7 +18,7 @@
 ///   the Mystic Draught behind the wall the puzzle opens.
 ///
 /// The rooms share one entrance table and one exit table, and the other getters
-/// choose by gMainRoutineWork.next. AltmillerCave_Initialize sends an entry
+/// choose by gMainRoutineWork.next. Scene_Initialize sends an entry
 /// from outside the cave (entrance 0) to the room's first entrance, darkens the
 /// dark rooms and puts back what the party has done.
 ///
@@ -59,35 +59,58 @@
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
 
-#include "main_routine_work.h"
-#include "heap_slots.h"
-#include "module/import.h"
-#include "module/scene/altmiller_cave.h"
-#include "shared/walk_into_leader.h"
-#include "module/system/main_routine.h"
-#include "io_write.h"
-
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "djinn_ids.h"
-#include "pushed_actor.h"
-#include "actor_builtin_scripts.h"
-#include "dma.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "display_transition.h"
-#include "item_ids.h"
-#include "actor_script.h"
-#include "field_psynergy_work.h"
+#include "djinn_ids.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_builtin_scripts.h"
+#include "field/actor_script.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_psynergy_work.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
+#include "system/io_write.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+struct LightWheel;
+
+s32 Scene_Initialize(void);
+extern struct LightWheel *gAltmillerCave_LightWheel;
+extern struct SceneEntrance gAltmillerCave_Entrances[];
+extern u32 gAltmillerCave_Exits[];
+extern struct ActorPlacement gAltmillerCave_ActorPlacementsOther[];
+extern struct ActorPlacement gAltmillerCave_BabiActorPlacements[];
+extern struct ActorPlacement gAltmillerCave_SquallActorPlacements[];
+extern struct ActorPlacement gAltmillerCave_DraughtActorPlacements[];
+extern u32 gAltmillerCave_PulseScales[];
+extern s32 gAltmillerCave_GuardsArrivePath[];
+extern s32 gAltmillerCave_SecondGuardLeavePath[];
+extern s32 gAltmillerCave_FirstGuardLeavePath[];
+extern s32 gAltmillerCave_BabiLeavePath[];
+extern struct Trigger gAltmillerCave_TriggersOther[];
+extern struct Trigger gAltmillerCave_BabiTriggers[];
+extern struct Trigger gAltmillerCave_VialChestTriggers[];
+extern struct Trigger gAltmillerCave_SquallTriggers[];
+extern struct Trigger gAltmillerCave_CookieChestTriggers[];
+extern struct Trigger gAltmillerCave_DraughtTriggers[];
 
 /// AltmillerCaveBabi's actors: Babi while invisible and once seen, and
 /// the two men from Tolbi who come looking for him.
@@ -245,9 +268,9 @@ enum {
 };
 
 struct LightWheel gAltmillerCave_LightWheelState
-    __attribute__((nocommon, aligned(4)));
+    __attribute__((nocommon)) ALIGNED(4);
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// Talking to the Djinni in AltmillerCaveSquall starts the battle with Squall,
 /// a Jupiter Djinni.
@@ -256,24 +279,24 @@ static void AltmillerCave_StartDjinnBattle(void) {
 }
 
 /// The six rooms share one entrance table.
-const struct SceneEntrance *AltmillerCave_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gAltmillerCave_Entrances;
 }
 
-const struct SceneExitRegion *AltmillerCave_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
+const u32 *Scene_GetExits(void) { return gAltmillerCave_Exits; }
 
-const struct ActorPlacement *AltmillerCave_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_BABI) {
     return gAltmillerCave_BabiActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveSquall) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_SQUALL) {
     return gAltmillerCave_SquallActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     return gAltmillerCave_DraughtActorPlacements;
   }
   return gAltmillerCave_ActorPlacementsOther;
@@ -380,10 +403,10 @@ static void AltmillerCave_InitializeDarkness(void) {
 /// Reveal's light starts. AltmillerCaveEntrance is lit and
 /// AltmillerCaveDraught's rocks show their colors.
 static void AltmillerCave_StartReveal(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveEntrance) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_ENTRANCE) {
     Io_Write16(BLEND_ALPHA(0, 16), &REG_BLDALPHA);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_BLUE);
     Actor_SetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_GREEN);
     Actor_SetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_WHITE);
@@ -402,7 +425,7 @@ static void AltmillerCave_EndReveal(void) {
     AltmillerCave_InitializeDarkness();
     effectWork->childOption = 1;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_NONE);
     Actor_SetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_NONE);
     Actor_SetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_NONE);
@@ -522,7 +545,7 @@ static void AltmillerCave_HopSelectedActor(void) {
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
-    actor->motionFlags &= 126;
+    actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, components[0].part.pixel,
                         components[2].part.pixel);
@@ -796,7 +819,6 @@ static inline void AltmillerCave_FacePartyNorth(void) {
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   struct ScreenTransitionState *state;
   struct Actor *actor;
-  struct Actor *leader;
   s32 i;
   s32 eva;
   s32 evb;
@@ -1921,22 +1943,22 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
   Event_End();
 }
 
-const struct Trigger *AltmillerCave_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_BABI) {
     return gAltmillerCave_BabiTriggers;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveVialChest) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_VIAL_CHEST) {
     return gAltmillerCave_VialChestTriggers;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveSquall) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_SQUALL) {
     return gAltmillerCave_SquallTriggers;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveCookieChest) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_COOKIE_CHEST) {
     return gAltmillerCave_CookieChestTriggers;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     return gAltmillerCave_DraughtTriggers;
   }
   return gAltmillerCave_TriggersOther;
@@ -1960,35 +1982,35 @@ static inline void AltmillerCave_RedrawObstacleFootprints(void) {
 }
 
 /// Sets up the room being entered. Returns 0.
-s32 AltmillerCave_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i;
 
   if (gMainRoutineWork.entrance == 0) {
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveBabi) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_BABI) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveVialChest) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_VIAL_CHEST) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveSquall) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_SQUALL) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveCookieChest) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_COOKIE_CHEST) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
   GameFlag_Set(FLAG_ALTMILLER_CAVE_DARK);
   Event_ClearFlag(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveEntrance) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_ENTRANCE) {
     if (gMainRoutineWork.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         CAVE_STATE(CAVE_DARKNESS) = 0;
@@ -2003,7 +2025,7 @@ s32 AltmillerCave_Initialize(void) {
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveBabi) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_BABI) {
     if (GameFlag_Get(FLAG_BABI_SAVED)) {
       Actor_SetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     } else {
@@ -2013,7 +2035,7 @@ s32 AltmillerCave_Initialize(void) {
       actor->sprite->rotation = TRIG_TURN / 4;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveSquall) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_SQUALL) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
@@ -2032,7 +2054,7 @@ s32 AltmillerCave_Initialize(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     Actor_Get(ACTOR_FIRST_OBSTACLE)->update = AltmillerCave_MatchLeaderPriority;
@@ -2177,7 +2199,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   FieldEffect_ReleaseSlots();
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 
 struct LightWheel *gAltmillerCave_LightWheel = &gAltmillerCave_LightWheelState;
 

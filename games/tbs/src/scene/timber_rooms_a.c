@@ -42,17 +42,27 @@
 /// always answers first, and the entrance
 /// TIMBER_ROOMS_A_HOUSE_WEST_UNUSED, to which no exit leads.
 
-#include "main_routine_work.h"
-#include "event.h"
-#include "module/import.h"
-#include "module/scene/timber_rooms_a.h"
-#include "module/system/main_routine.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "sounds.h"
+#include "types.h"
+#include "field/event.h"
+#include "field/event_inline.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "scene/import.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "text/msg_ids.h"
+
+extern struct SceneEntrance gTimberRoomsAEntrances[];
+extern struct SceneExitRegion gTimberRoomsARegions[];
+extern u32 gTimberRoomsAExits[];
+extern struct ActorPlacement gTimberRoomsAActorPlacements[];
+extern struct ActorPlacement gTimberRoomsAActorPlacementsAfterAudience[];
+extern struct Trigger gTimberRoomsATriggers[];
+extern struct Trigger gTimberRoomsATriggersAfterAudience[];
 
 /// The actors, numbering the rows of gTimberRoomsAActorPlacements and of
 /// gTimberRoomsAActorPlacementsAfterAudience from ACTOR_FIRST_PLACED.
@@ -206,7 +216,7 @@ static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-#include "shared/leave_by_exit.h"
+#include "shared/leave_by_exit.c"
 
 /// In Suhalla after Babi's audience, Iodem steps out of the party and
 /// questions the two wounded soldiers.

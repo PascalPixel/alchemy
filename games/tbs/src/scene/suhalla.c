@@ -31,22 +31,33 @@
 /// - FLAG_SUHALLA_SPROUT_GROWN: Growth has grown the sprout. A return that
 ///   keeps the party's position, as after a battle, draws it grown again.
 
-#include "main_routine_work.h"
-#include "module/scene/suhalla.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern struct SceneEntrance gSuhallaEntrances[];
+extern u32 gSuhallaExits[];
+extern struct ActorPlacement gSuhallaActorPlacements[];
+extern struct ActorPlacement gSuhallaActorPlacementsLater[];
+extern s16 gSuhallaDoorCells[][2];
+extern u16 gSuhallaDoorOpenSteps[];
+extern u16 gSuhallaWideDoorOpenSteps[];
+extern struct Trigger gSuhallaTriggers[];
+extern struct Trigger gSuhallaTriggersLater[];
 
 /// Growth has grown the sprout.
 ///

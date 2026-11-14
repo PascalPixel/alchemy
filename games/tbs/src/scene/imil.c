@@ -85,32 +85,59 @@
 ///   last comes from the oven with the stew, whose find always answers first,
 ///   so the stew's line is unused.
 
-#include "script_operands.h"
-#include "sprite.h"
-#include "main_routine_work.h"
-#include "input.h"
-#include "module/scene/imil.h"
-#include "shared/walk_into_leader.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "text/msg_ids.h"
-#include "field_effect.h"
-#include "field_psynergy_work.h"
-#include "event_inline.h"
-#include "iwram_call.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "io_reg.h"
-#include "map_grid_scroll.h"
-#include "macros.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "field/sprite.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern s16 gImil_KeyHeadings[];
+extern s16 gImil_SwayHeadings[];
+extern s32 gImil_ShiverScript[];
+extern s32 gImil_OldWomanHurryScript[];
+extern s32 gImil_LeaderStepAsideScript[];
+extern s32 gImil_BobScript[];
+extern s32 gImil_SparkScript[];
+extern s32 gImil_MiaCheckRoomScript[];
+extern s32 gImil_MiaRunOutScript[];
+extern s32 gImil_FaceTargetScript[];
+extern s32 gImil_FollowMiaOutScript[];
+extern struct SceneEntrance gImil_TownEntrances[];
+extern struct SceneEntrance gImil_RoomEntrances[];
+extern u32 gImil_Exits[];
+extern struct ActorPlacement gImil_TownActorPlacements[];
+extern struct ActorPlacement gImil_TownActorPlacementsCured[];
+extern struct ActorPlacement gImil_RoomActorPlacements[];
+extern struct Trigger gImil_TownTriggers[];
+extern struct Trigger gImil_RoomTriggers[];
+extern u16 *gImil_DoorCellSteps[];
+extern s16 gImil_DoorCellPoints[][2];
+extern u16 gImil_CellStepsA[];
+extern u16 gImil_CellStepsB[];
+/// The position (x, y, z) the unused arc and sway effects move around.
+extern s32 gImil_ArcOrigin[];
 
 /// The village's actors (Imil), numbering gImil_TownActorPlacements' rows,
 /// and gImil_TownActorPlacementsCured's, from ACTOR_FIRST_PLACED.
@@ -249,25 +276,25 @@ static s32 Imil_UpdateShiver(struct Actor *actor) {
   return 1;
 }
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// Imil is two scenes: the village, and its houses and Sanctum.
-const struct SceneEntrance *Imil_GetEntrances(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
     return gImil_RoomEntrances;
   }
   return gImil_TownEntrances;
 }
 
-const struct SceneExitRegion *Imil_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Imil_GetExits(void) { return gImil_Exits; }
+const u32 *Scene_GetExits(void) { return gImil_Exits; }
 
 /// Once Saturos is beaten at Mercury Lighthouse, the villagers are well again.
-const struct ActorPlacement *Imil_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *script;
 
-  if (gMainRoutineWork.next == ((s32)&SceneId_IceRooms)) {
+  if (gMainRoutineWork.next == (SCENE_ICE_ROOMS)) {
     script = gImil_RoomActorPlacements;
     Scene_AssignViewFlags(script);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -296,8 +323,8 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
-const struct Trigger *Imil_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
     return gImil_RoomTriggers;
   }
   return gImil_TownTriggers;
@@ -383,9 +410,6 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
 /// The old man in the old couple's house moans for help, and his wife hurries
 /// to fetch Mia (FLAG_IMIL_MIA_SENT_FOR).
 static void Imil_TalkToOldMan(void) {
-  struct Actor *oldMan;
-  struct Actor *oldWoman;
-
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     Event_Start();
     Actor_FaceActor(ACTOR_OLD_MAN, ACTOR_PARTY_LEADER, 0);
@@ -409,8 +433,7 @@ static void Imil_TalkToOldMan(void) {
       Event_End();
     } else {
       Event_Start();
-      oldMan = Actor_Get(ACTOR_OLD_MAN);
-      oldMan->timer = 10;
+      Actor_Get(ACTOR_OLD_MAN)->timer = 10;
       Actor_SetScript(ACTOR_OLD_MAN, gImil_ShiverScript);
       Event_SetMessageId(MsgMercuryOoohHelpMe);
       // "Oooh... Help me..."
@@ -436,8 +459,7 @@ static void Imil_TalkToOldMan(void) {
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
       // "Get Mia... Please, get Mia!"
       Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
-      oldWoman = Actor_Get(ACTOR_OLD_WOMAN);
-      oldWoman->collisionFlags ^= ACTOR_PUSHABLE;
+      Actor_Get(ACTOR_OLD_WOMAN)->collisionFlags ^= ACTOR_PUSHABLE;
       Import_GameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
       Event_End();
     }
@@ -698,10 +720,7 @@ static void Imil_TalkToItemMerchant(void) {
 
 /// Across the counter of Imil's inn, the leader facing north, the inn opens.
 static void Imil_TalkToInnkeeper(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
+  if (IMIL_FACES_COUNTER_HALFWORD(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Inn_CheckIn(IMIL_INN, ACTOR_INNKEEPER);
   } else {
     Event_Start();
@@ -720,10 +739,7 @@ static void Imil_TalkToInnkeeper(void) {
 
 /// Justin offers the Sanctum's services across its counter.
 static void Imil_TalkToJustin(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
+  if (IMIL_FACES_COUNTER_HALFWORD(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Event_Start();
     if (Event_GetFlag(FLAG_IMIL_JUSTIN_OFFERED_HEALING) == 0) {
       Event_SetMessageId(MSGNO(MsgImilMayOnlyStudentButCan));
@@ -750,11 +766,11 @@ static void Imil_TalkToJustin(void) {
 }
 
 /// Sets up the scene as the party enters.
-s32 Imil_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 entrance;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_Imil) {
+  if (gMainRoutineWork.next == SCENE_IMIL) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
@@ -775,7 +791,7 @@ s32 Imil_Initialize(void) {
         gMainRoutineWork.entrance == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
+  } else if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     entrance = gMainRoutineWork.entrance;
@@ -1266,11 +1282,8 @@ static void Imil_PlaceMovedSnowman(void) {
 /// Walking into the way north out of Imil (step trigger 4): the leader faces
 /// north and goes into Imil Falls Cave (IMIL_TO_IMIL_FALLS_CAVE).
 static void Imil_LeaveNorth(void) {
-  struct Actor *work;
-
   Event_Start();
-  work = Actor_Get(ACTOR_PARTY_LEADER);
-  work->facing = FACING_NORTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

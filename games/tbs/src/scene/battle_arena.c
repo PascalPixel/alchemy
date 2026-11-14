@@ -2,31 +2,37 @@
 /// The Battle Arena overlay: starting linked and monster battles, the exchange
 /// of the two parties, the attendant and the records of wins.
 
-#include "module/import.h"
-#include "module/scene/battle_arena.h"
-#include "module/field/event_commands.h"
-#include "module/battle/battle.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "input.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "serial.h"
-#include "iwram_call.h"
-#include "text/msg_ids.h"
-#include "battle_side.h"
-#include "sound_driver_symbols.h"
 #include "flags.h"
-#include "heap_slots.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/iwram_call.h"
+#include "system/serial.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern u8 gBattleArena_SlotColumns[];
+extern struct SceneEntrance gBattleArenaEntrances[];
+extern u32 gBattleArenaExits[];
+extern struct ActorPlacement gBattleArenaActorPlacements[];
+extern struct ActorPlacement gBattleArenaBattleActorPlacements[];
+extern struct Trigger gBattleArenaTriggers[];
 
 /// The attendant has asked the player to take part. Every 300th call of
 /// BattleArena_PromptToParticipate clears it so she asks again.
@@ -44,7 +50,7 @@
 /// The link was lost and the attendant has yet to say so.
 #define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_SCENE_TEMP_05
 /// The first of eight flags, one per character from Isaac, each set while that
-/// character is in the battle party (BattleArena_Initialize).
+/// character is in the battle party (Scene_Initialize).
 #define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
 /// The attendant has explained the Battle Arena once. Talking to her again
 /// offers to apply.
@@ -180,24 +186,24 @@ enum LinkTally {
 /// that console as an opponent. Each return to linking writes the signature
 /// back.
 const s32 gBattleArena_SlotValues[] = {
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
     PEER_TAG('C', 'S', 'G', 'G'), PEER_TAG('3', '0', '1', '2'),
     PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
     PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'G', 'S', 'C')
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
     PEER_TAG('C', 'S', 'S', 'G'), PEER_TAG('3', '0', '1', '2'),
     PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
     PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'S', 'S', 'C')
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
     PEER_TAG('C', 'S', 'G', 'M'), PEER_TAG('3', '0', '1', '2'),
     PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
     PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('C', 'S', 'G', 'M')
-#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_ITALIAN
     PEER_TAG('S', 'G', 'I', 'C'), PEER_TAG('0', '1', '2', '3'),
     PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
     PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('C', 'I', 'G', 'S')
 #else
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
     PEER_TAG('S', 'G', 'M', 'C'),
 #else
     PEER_TAG('C', 'M', 'G', 'S'),
@@ -234,7 +240,7 @@ static s32 sBattleArenaWaitFrames;
 
 /// The Battle Arena's entrances, which FieldSequence_Run reads through
 /// entry/battle_arena.s.
-u8 *BattleArena_GetEntrances(void) { return (u8 *)gBattleArenaEntrances; }
+u8 *Scene_GetEntrances(void) { return (u8 *)gBattleArenaEntrances; }
 
 /// The exit regions entry: the Battle Arena has no exit boxes.
 s32 Scene_GetExitRegions(void) { return 0; }
@@ -252,10 +258,10 @@ static s32 BattleArena_InitializeSerial(void) {
 #endif
 }
 
-u8 *BattleArena_GetExits(void) { return (u8 *)gBattleArenaExits; }
+u8 *Scene_GetExits(void) { return (u8 *)gBattleArenaExits; }
 
 /// The actor placements entry.
-s32 BattleArena_SelectActorPlacements(void) {
+s32 Scene_GetActorPlacements(void) {
   s16 entrance = gMainRoutineWork.entrance;
 
   if (entrance == BATTLE_ARENA_AFTER_LINK_LOSS ||
@@ -489,18 +495,12 @@ recordTest:
   }
   wait(2);
   FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
-  i = 0;
-  if (namePrefix[i] != 0) {
-    do {
-      i++;
-      if (i > LOBBY_PREFIX_LIMIT) {
-        break;
-      }
-    } while (namePrefix[i] != 0);
-  }
+  // The prefix's length, at most LOBBY_PREFIX_LIMIT + 1.
+  for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
+    ;
   // German, Spanish, French and Italian put a space after the prefix.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
   namePrefix[i] = ' ';
   prefixLength = i + 1;
 #else
@@ -689,8 +689,7 @@ padNext:
   // Then the recovery table.
   size = LOBBY_RECOVERY_RECORD_BYTES;
   buffer = Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the recovery table's copy in a once-only block; as a plain
-   * call, 6 of 254 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the recovery table's copy in a once-only block. */
   do {
     Iwram_CopyWords(buffer, Djinn_GetRecoveryTable(0), size);
   } while (0);
@@ -730,8 +729,7 @@ padNext:
     wait(1);
     wait(2);
   }
-  /* FAKEMATCH(dead): the shared exit in a once-only block; as a plain label, 62
-   * of 254 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the shared exit in a once-only block. */
   do {
   done:
     Heap_Release(buffer);
@@ -747,8 +745,8 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   s32 receiveFirst;
 
   result = 0;
-  /* FAKEMATCH(dead): an empty once-only loop after result's zero loads it
-   * ahead of the call; without it, 4 of 62 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an empty once-only loop after result's zero loads it ahead
+   * of the call. */
   do {
   } while (0);
   receiveFirst = GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD);
@@ -843,7 +841,7 @@ static s32 BattleArena_EnterBattle(void) {
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
     // HEAP_SLOT_ENEMY_UNITS is gEnemyUnits, the battle's enemy
-    // units (ENEMY_UNITS_SIZE, battle/battle/run.c). While it is
+    // units (ENEMY_UNITS_SIZE, battle/battle_run.c). While it is
     // allocated, the exchange below receives the partner's party members and
     // Djinn into units 128 to 131. The copy to gActorSpriteSlots
     // (gMapGridCellBuffer + 0x8000) hands them to Battle_Run, which copies
@@ -900,19 +898,20 @@ static s32 BattleArena_EnterBattle(void) {
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     }
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
-      Event_SetAfterBattleDestination((s32)&SceneId_BattleArena,
+      Event_SetAfterBattleDestination(SCENE_BATTLE_ARENA,
                                       BATTLE_ARENA_AFTER_MONSTER_WIN);
-      Event_SetDefeatDestination((s32)&SceneId_BattleArena,
+      Event_SetDefeatDestination(SCENE_BATTLE_ARENA,
                                  BATTLE_ARENA_AFTER_MONSTER_LOSS);
     } else {
-      Event_SetAfterBattleDestination((s32)&SceneId_BattleArena,
+      Event_SetAfterBattleDestination(SCENE_BATTLE_ARENA,
                                       BATTLE_ARENA_AFTER_LINK_WIN);
-      Event_SetDefeatDestination((s32)&SceneId_BattleArena,
+      Event_SetDefeatDestination(SCENE_BATTLE_ARENA,
                                  BATTLE_ARENA_AFTER_LINK_LOSS);
     }
     // Publish EXEC only after the battle and return destinations are ready.
     // It fills the payload's first four halfwords, where the link battle's
-    // command entry looks for it in the partner's (battle_party_commands.c).
+    // command entry looks for it in the partner's
+    // (screens_battle_party_commands.c).
     Battle_SetType(BATTLE_TYPE_LINK);
     Field_RequestBattleFromEncounterTable(1, 1);
     signature = (u16 *)gSerialTransfer.payload;
@@ -1234,7 +1233,7 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
 static s32 BattleArena_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
-  Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_SANCTUM);
+  Event_SetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_SANCTUM);
 #ifdef UBFIX
   return 0;
 #endif
@@ -1301,14 +1300,13 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
 /// Talking to ACTOR_MONSTER_WINS_TELLER, who reports the most monster battles
 /// won in a row (tally 2), or before any, that the speaker will count them.
 static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
-  struct MainRoutineWork *state;
 
   Event_Start();
-  state = &gMainRoutineWork;
-  Actor_FaceActor(actorId, state->leaderActorId, 0);
-  if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
-    MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
-                         MESSAGE_ARGUMENT_NUMBER);
+  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
+  if (gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
+    MessageArgument_Push(
+        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
+        MESSAGE_ARGUMENT_NUMBER);
     Event_SetMessageId(MsgLobbyWonNumberConsecutive);
   } else {
     Event_SetMessageId(MsgLobbyCantWaitSee);
@@ -1320,7 +1318,7 @@ static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
 #endif
 }
 
-u8 *BattleArena_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
+u8 *Scene_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 
 /// Saves the battle results between saving and saved messages.
 static s32 BattleArena_SaveBattleResults(void) {
@@ -1382,7 +1380,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 
 /// The overlay's initialize entry, run on every arrival. It settles the battle
 /// that brought the party here and restarts the Battle Arena's polling.
-s32 BattleArena_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 i;
   struct FieldWork *work;
   void (*func)(void);

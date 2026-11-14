@@ -2,10 +2,10 @@
 /// Where the World Map's random battles come from: each region of the map,
 /// and its forests, take their own encounter zone.
 
-#include "module/field/world_map_encounter_rules.h"
+#include "field/world_map_encounter_rules.h"
 #include "djinn_ids.h"
-#include "module/field/field.h"
-#include "module/field/field_sequence.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
 
 /// The World Map's encounter zones (struct WorldMapEncounterRule): {encounter
 /// region, battle environment (-1 for any), flag (-1, or a flag that turns the

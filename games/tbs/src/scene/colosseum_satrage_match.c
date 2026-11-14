@@ -11,7 +11,7 @@
 /// the Board Walk.
 ///
 /// Isaac comes here three times, each at its own entrance.
-/// ColosseumSatrageMatch_Initialize restores the stages from their temporary
+/// Scene_Initialize restores the stages from their temporary
 /// flags (FLAG_OBSTACLE_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED, and the
 /// Mini-Maze pillars' columns from FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN). Then
 /// it sets up the visit its entrance stands for.
@@ -55,48 +55,117 @@
 /// has stopped, another while it moves. Each copied cell is a wall, a jump
 /// across or open ground, as the lifts line up or part.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "io_write_queue.h"
-#include "scene_ids.h"
-#include "vram_cache.h"
-#include "module/import.h"
-#include "module/scene/colosseum_satrage_match.h"
-#include "module/scene/shared/colosso_solo.h"
-#include "module/scene/shared/colosso_marker.h"
-#include "module/scene/shared/colosso_setup.h"
-#include "module/scene/shared/colosso_occupant.h"
-#include "module/field/field_sequence.h"
-#include "pushed_actor.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/sound/sound.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "input.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_psynergy_work.h"
-#include "event.h"
-#include "resource_ids.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
-#include "heap_slots.h"
-#include "shared/colosso_gauge.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
+#include "item_ids.h"
 #include "macros.h"
+#include "resource_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_psynergy_work.h"
+#include "field/field_sequence.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/colosso_gauge.h"
+#include "scene/colosso_marker.h"
+#include "scene/colosso_occupant.h"
+#include "scene/colosso_setup.h"
+#include "scene/colosso_solo.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_write_queue.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+s16 gColosso_MarkerStep BSS_DATA;
+s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerFlip BSS_DATA ALIGNED(4);
+/// Isaac's z before he is shown on the stage, 16.16 fixed-point pixels.
+s32 gColosso_WarriorStartZ BSS_DATA;
+s16 gColosso_MarkerEndX BSS_DATA;
+s16 gColosso_LetteringParameter BSS_DATA ALIGNED(4);
+s16 gColosso_ModeScaleStart BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveDuration BSS_DATA ALIGNED(4);
+s32 gColosso_LetteringPosition BSS_DATA;
+s16 gColosso_MarkerBlink BSS_DATA;
+s16 gColosso_ModeScaleTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveStep BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerY BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendStep BSS_DATA ALIGNED(4);
+/// Isaac's facing before Colosso_FadeInWarrior, which
+/// Colosso_RestoreWarrior puts back.
+s32 gColosso_WarriorStartAngle BSS_DATA;
+s16 gColosso_MarkerSteps BSS_DATA;
+s16 gColosso_LetteringMode BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendStart BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringTimer BSS_DATA ALIGNED(4);
+s16 *gColosso_LetteringScript BSS_DATA;
+union MarkerCoordinate gColosso_MarkerStartX BSS_DATA;
+s16 gColosso_ModeBlendDuration BSS_DATA ALIGNED(4);
+u8 gColosseumSatrageMatch_Unk_5a[6] BSS_DATA;
+/// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
+s32 gColosso_PointerOam[3] BSS_DATA;
+union MarkerCoordinate gColosso_MarkerStartY BSS_DATA;
+/// The lettering's sprite parts, three words each, written every frame.
+u32 gColosso_LetteringSprites[12] BSS_DATA;
+s16 gColosso_ModeMoveStart BSS_DATA;
+s16 gColosso_MarkerX BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeScaleStep BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerEndY BSS_DATA ALIGNED(4);
+/// Isaac's x before he is shown on the stage, 16.16 fixed-point pixels.
+s32 gColosso_WarriorStartX BSS_DATA;
+
+s32 Scene_Initialize(void);
+// UB: the scene calls this before its definition with no prototype, as a
+// function returning int.
+#ifdef UBFIX
+void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
+                                          s32 segments, s32 finishX,
+                                          s32 finishZ, s32 firstItem,
+                                          s32 secondItem);
+#endif
+extern const u8 gColosseumSatrageMatch_RollLogScript[];
+extern const u8 gColosso_LetteringPaletteOffsets[];
+extern const s16 gColosso_LetteringDigit[];
+extern const s16 gColosso_LetteringLose[];
+extern s32 gColosso_PrizeSparkleScript[];
+extern s32 gColosso_PrizeScript[];
+extern struct SceneEntrance gColosseumSatrageMatchEntrances[];
+extern u32 gColosseumSatrageMatchExits[];
+extern struct ActorPlacement gColosseumSatrageMatchActorPlacements[];
+extern s32 gColosseumSatrageMatch_LiftPhase;
+extern s32 gColosseumSatrageMatch_LiftTimer;
+extern struct Trigger gColosseumSatrageMatchTriggers[];
+extern s16 gColosso_LetteringTitle[];
+extern s16 gColosso_LetteringGo[];
+extern s16 gColosso_LetteringWin[];
+extern s32 gColosso_OpponentFinishScript[];
+extern s32 gColosso_LeaderFinishScript[];
+extern char gHexDigits[20];
+extern u32 gPushedActor_DirectionSteps[];
+extern s16 gColosso_LetteringSlot;
+extern s16 gColosso_MarkerSlot;
 
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES 120
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME 75
@@ -151,7 +220,7 @@ enum ColosseumSatrageMatchActorId {
   /// The stone pillar by The Wall, pushed or moved with Move.
   ACTOR_WALL_PILLAR,
   /// The Mini-Maze's three stone pillars, pushed or moved with Move.
-  /// ColosseumSatrageMatch_Initialize stands them west to east, at columns 73,
+  /// Scene_Initialize stands them west to east, at columns 73,
   /// 76 and 79, until they have been moved.
   ACTOR_MINI_MAZE_FIRST_PILLAR,
   /// The Board Walk's two logs, the western and the eastern, in the room of its
@@ -179,7 +248,7 @@ enum ColosseumSatrageMatchActorId {
       3,
   /// Four platforms in the lifts' sprite laid across the water channel at the
   /// Board Walk's south edge, drawn underfoot. Nothing but
-  /// ColosseumSatrageMatch_Initialize touches them.
+  /// Scene_Initialize touches them.
   ACTOR_BOARD_WALK_FIRST_PLATFORM,
   /// Knocked down onto the Board Walk by Force on ACTOR_FORCE_TARGET.
   ACTOR_FALLING_LOG = ACTOR_BOARD_WALK_FIRST_PLATFORM + 4,
@@ -205,7 +274,7 @@ enum ColosseumSatrageMatchActorId {
 /// The temporary flags that keep what the friends changed on the stages, for
 /// the race.
 ///
-/// ColosseumSatrageMatch_Initialize restores them.
+/// Scene_Initialize restores them.
 enum {
   FLAG_OBSTACLE_KNOCKED_DOWN =
       FLAG_AREA_TEMP_30,                       ///< by Force, on the Board Walk
@@ -253,12 +322,10 @@ static void ColosseumSatrageMatch_PushPillar(void) { Colosso_PushActorAhead(); }
 
 /// Move on the stone pillar by The Wall, and each push, keeps where it stands.
 static void ColosseumSatrageMatch_MoveWallPillar(void) {
-  struct Actor *obstacle;
   s32 column;
   s32 row;
 
-  obstacle = Actor_Get(ACTOR_WALL_PILLAR);
-  if (FIELD_CELL(obstacle->x.fixed) == 36) {
+  if (FIELD_CELL(Actor_Get(ACTOR_WALL_PILLAR)->x.fixed) == 36) {
     GameFlag_Set(FLAG_WALL_PILLAR_MOVED);
     column = 35;
     row = 77;
@@ -281,23 +348,19 @@ static void ColosseumSatrageMatch_PushWallPillar(void) {
 /// Move on a stone pillar in the Mini-Maze, and each push, keeps where the
 /// pillars stand.
 static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
-  struct Actor *obstacle;
   s32 column;
 
   MapGrid_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
-  obstacle = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR);
-  column = FIELD_CELL(obstacle->x.fixed);
+  column = FIELD_CELL(Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR)->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  obstacle = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
-  column = FIELD_CELL(obstacle->x.fixed);
+  column = FIELD_CELL(Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1)->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  obstacle = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
-  column = FIELD_CELL(obstacle->x.fixed);
+  column = FIELD_CELL(Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2)->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
@@ -355,22 +418,16 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
 /// Frost on the Log-Rolling Stage's western target freezes it and opens its
 /// crossing (FLAG_WEST_TARGET_FROZEN).
 static void ColosseumSatrageMatch_FreezeWestTarget(void) {
-  struct Actor *obstacle;
-
   GameFlag_Set(FLAG_WEST_TARGET_FROZEN);
-  obstacle = Actor_Get(ACTOR_PUDDLE_WEST);
-  obstacle->motionFlags = 0;
+  Actor_Get(ACTOR_PUDDLE_WEST)->motionFlags = 0;
   MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
 }
 
 /// Frost on the Log-Rolling Stage's eastern target freezes it and opens its
 /// crossing (FLAG_EAST_TARGET_FROZEN).
 static void ColosseumSatrageMatch_FreezeEastTarget(void) {
-  struct Actor *obstacle;
-
   GameFlag_Set(FLAG_EAST_TARGET_FROZEN);
-  obstacle = Actor_Get(ACTOR_PUDDLE_EAST);
-  obstacle->motionFlags = 0;
+  Actor_Get(ACTOR_PUDDLE_EAST)->motionFlags = 0;
   MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
 }
 
@@ -601,7 +658,6 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   s32 liftZ;
   s32 riderZ;
   s32 deltaZ;
-  struct Actor *liftActor;
 
   rider = Actor_Get(gMainRoutineWork.leaderActorId);
   // Carry a rider only while both horizontal distances are less than ten
@@ -660,24 +716,26 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   if (gColosseumSatrageMatch_LiftTimer == 0) {
     gColosseumSatrageMatch_LiftPhase ^= 1;
     if (gColosseumSatrageMatch_LiftPhase != 0) {
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, 936, 0, 184);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
-      FieldActor_SetMoveTarget(liftActor, 968, 0, 248);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
-      FieldActor_SetMoveTarget(liftActor, 1000, 0, 184);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, 1032, 0, 248);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT), 936, 0, 184);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1), 968, 0, 248);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2), 1000, 0,
+          184);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT), 1032, 0, 248);
       Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 11);
     } else {
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, 936, 0, 216);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
-      FieldActor_SetMoveTarget(liftActor, 968, 0, 216);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
-      FieldActor_SetMoveTarget(liftActor, 1000, 0, 216);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, 1032, 0, 216);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT), 936, 0, 216);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1), 968, 0, 216);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2), 1000, 0,
+          216);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT), 1032, 0, 216);
       Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 10);
     }
   }
@@ -781,9 +839,9 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         resultBase - opponentFinishedFirst + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_ColosseumSatrageMatch,
+  Event_SetAfterBattleDestination(SCENE_COLOSSEUM_SATRAGE_MATCH,
                                   COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
-  Event_SetDefeatDestination((s32)&SceneId_ColosseumSatrageMatch,
+  Event_SetDefeatDestination(SCENE_COLOSSEUM_SATRAGE_MATCH,
                              COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
@@ -826,7 +884,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
 }
 
 /// Sets up Colosseum Final 2 for the visit its entrance stands for.
-s32 ColosseumSatrageMatch_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 x;
   s32 obstacleId;
@@ -979,7 +1037,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    ColosseumSatrageMatch_StartOpponentPath((s32)&ResourceId_OpponentPathB);
+    ColosseumSatrageMatch_StartOpponentPath(RESOURCE_OPPONENT_PATH_B);
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
     Task_AddFrame(Colosso_RaiseTakePlaceOnPsynergy, TASK_PASS_FRAME);
@@ -1372,25 +1430,25 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   Event_End();
 }
 
-// This scene's exits for colosso_solo.h.
+// This scene's exits for colosso_solo.c.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH
-#include "shared/colosso_solo.h"
-#include "shared/item_equip.h"
-#include "shared/colosso_task.h"
+#include "shared/colosso_solo.c"
+#include "shared/item_equip.c"
+#include "shared/colosso_task.c"
 
-#include "shared/colosso_lettering.h"
+#include "shared/colosso_lettering.c"
 
-#include "shared/colosso_marker.h"
-#include "shared/colosso_item_icon.h"
+#include "shared/colosso_marker.c"
+#include "shared/colosso_item_icon.c"
 
-#include "shared/colosso_hex_string.h"
-#include "shared/colosso_finish.h"
+#include "shared/colosso_hex_string.c"
+#include "shared/colosso_finish.c"
 
-#include "shared/colosso_path_opponent.h"
+#include "shared/colosso_path_opponent.c"
 
 /// Colosseum Final 2's own copy of Colosso_StartRaceGauge
-/// (shared/colosso_setup.h), which passes the gauge routine's address as it is.
+/// (shared/colosso_setup.c), which passes the gauge routine's address as it is.
 void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
                                           s32 segments, s32 finishX,
                                           s32 finishZ, s32 firstItem,
@@ -1453,10 +1511,10 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
   Task_AddFrame(Colosso_UpdatePathOpponent, TASK_PASS_FRAME + 5);
 }
 
-#include "shared/colosso_map_state.h"
-#include "shared/actor_find_at_position.h"
+#include "shared/colosso_map_state.c"
+#include "shared/actor_find_at_position.c"
 
-#include "shared/colosso_occupant.h"
+#include "shared/colosso_occupant.c"
 
 /// Closes the arena's step trigger. Nothing in the game sets it.
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
@@ -1465,12 +1523,12 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
 
 const u8 gColosseumSatrageMatch_RollLogScript[] = {2, 2, 3, 3};
 
-#include "shared/colosso_lettering_tables.h"
+#include "shared/colosso_lettering_tables.c"
 // clang-format off
 
 char gHexDigits[20] = "0123456789ABCDEF";
 
-#include "shared/colosso_prize_scripts.h"
+#include "shared/colosso_prize_scripts.c"
 
 u32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
@@ -1636,9 +1694,9 @@ struct Trigger gColosseumSatrageMatchTriggers[] = {
 
 s16 gColosso_LetteringSlot = -1;
 
-#include "shared/colosso_lettering_scripts.h"
+#include "shared/colosso_lettering_scripts.c"
 // clang-format on
 
 s16 gColosso_MarkerSlot = -1;
 
-#include "shared/colosso_finish_scripts.h"
+#include "shared/colosso_finish_scripts.c"

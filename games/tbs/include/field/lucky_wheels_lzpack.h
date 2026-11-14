@@ -6,8 +6,8 @@
 /// byte value, and the output it is building.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// A position of the LZ packer's window in the chain of the byte value it
 /// holds.

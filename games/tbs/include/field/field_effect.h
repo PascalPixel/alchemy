@@ -5,9 +5,9 @@
 /// Field effects, their scripts and the flags that spawn them.
 
 #include "edition.h"
-#include "event.h"
-#include "vector3.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "system/vector3.h"
 
 /// A field effect: a small actor on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update routine.
@@ -88,14 +88,14 @@ STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
 STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
 /// An actor read as an actor and as a field effect at once, as
-/// BabiLighthouse_SetupMap writes one.
+/// Babi Lighthouse's Scene_Initialize writes one.
 union ActorOrEffect {
   struct Actor actor;
   struct FieldEffect effect;
 };
 
 /// The flags of a scene's effect spawner (EFFECT_SPAWN in
-/// scene/shared/field_effect_spawn.h): a script number in the low bits and
+/// scene/shared/field_effect_spawn.c): a script number in the low bits and
 /// which of struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
   /// An EffectDuration, picking one of gFieldEffect_DurationScripts; the

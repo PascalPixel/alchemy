@@ -2,25 +2,52 @@
 /// The debug room Menu test, whose actors each run a test of the menus, the
 /// shops or the bags when talked to.
 
-#include "module/debug/test.h"
-#include "module/window/screens.h"
-#include "battle.h"
-#include "game.h"
-#include "system.h"
-#include "menu_test.h"
-#include "system_call.h"
-#include "dma.h"
-#include "item_ids.h"
 #include "ability_ids.h"
-#include "module/sound/sound.h"
 #include "djinn_ids.h"
+#include "edition.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_action_run.h"
+#include "battle/playback_queue.h"
+#include "field/actor.h"
+#include "field/field_psynergy_work.h"
+#include "field/scene_tables.h"
+#include "game/character.h"
+#include "game/game.h"
+#include "gamepak/far_call.h"
+#include "sound/sound.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "window/screens.h"
+#include "text/msg_ids.h"
+
+u8 *Scene_GetEntrances(void);
+u8 *Scene_GetExits(void);
+u8 *Scene_GetActorPlacements(void);
+s32 Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern u32 gTest_UnusedRows[];
+extern char gDebugItemPrompt[12];
+extern char gDebugItemCapacityLabel[24];
+extern char gDebugItemFullLabel[20];
+extern struct SceneEntrance gMenuTest_Entrances[];
+extern u32 gMenuTest_Exits[];
+extern struct ActorPlacement gMenuTest_ActorPlacements[];
+extern struct Trigger gMenuTest_Triggers[];
+extern s32 gMenuTest_NextLevel;
+extern s32 gMenuTest_FillLetter;
 
 /// The debug item browser covers IDs 0 through 269.
 #define DEBUG_ITEM_COUNT 270
 #define DEBUG_ITEM_ROW_STEP 10  ///< Right and Left move ten numbers.
 #define DEBUG_ITEM_PAGE_STEP 30 ///< R and L move thirty.
 
-// The level MenuTest_Initialize raises Isaac to, which the international
+// The level Scene_Initialize raises Isaac to, which the international
 // editions changed.
 #if TBS_PATCH_1
 #define DEBUG_ISAAC_LEVEL 50
@@ -71,16 +98,14 @@ static __inline__ void MenuTest_RecalculateParty(void) {
   Unit_Calculate(IVAN);
 }
 
-u8 *MenuTest_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
+u8 *Scene_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
 
 /// The scene has no exit regions: its regions entry returns none.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *MenuTest_GetExits(void) { return (u8 *)gMenuTest_Exits; }
+u8 *Scene_GetExits(void) { return (u8 *)gMenuTest_Exits; }
 
-u8 *MenuTest_GetActorPlacements(void) {
-  return (u8 *)gMenuTest_ActorPlacements;
-}
+u8 *Scene_GetActorPlacements(void) { return (u8 *)gMenuTest_ActorPlacements; }
 
 #if TBS_PATCH_1
 /// Finishes pending UI work, displays a message, and waits one final frame.
@@ -201,7 +226,7 @@ static void MenuTest_IgnorePsynergy(void) {}
 
 /// Keeps Force from moving ACTOR_IVY: run at phase 1 of Force cast at it,
 /// this sets the effect's childMode, and Force's shot then leaves its target
-/// where it is (field/event_commands/force.c).
+/// where it is (field/event_commands_force.c).
 static void MenuTest_EnableEffectChildMode(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childMode = 1;
 }
@@ -214,19 +239,16 @@ UNUSED static void MenuTest_GiveItemToParty(void) {
 }
 #endif
 
-s32 MenuTest_GetTriggers(void) { return (s32)gMenuTest_Triggers; }
+s32 Scene_GetTriggers(void) { return (s32)gMenuTest_Triggers; }
 
 /// Levels the four heroes to the current debug target, then raises it by ten.
 static void MenuTest_RaisePartyLevels(void) {
-  s32 *targetLevel;
-
   FieldMessage_Show(MsgDebugWentLevel, FIELD_MESSAGE_ZOOM);
-  targetLevel = &gMenuTest_NextLevel;
-  Unit_LevelUpTo(ISAAC, *targetLevel);
-  Unit_LevelUpTo(GARET, *targetLevel);
-  Unit_LevelUpTo(MIA, *targetLevel);
-  Unit_LevelUpTo(IVAN, *targetLevel);
-  *targetLevel += 10;
+  Unit_LevelUpTo(ISAAC, gMenuTest_NextLevel);
+  Unit_LevelUpTo(GARET, gMenuTest_NextLevel);
+  Unit_LevelUpTo(MIA, gMenuTest_NextLevel);
+  Unit_LevelUpTo(IVAN, gMenuTest_NextLevel);
+  gMenuTest_NextLevel += 10;
   MenuTest_RecalculateParty();
 }
 
@@ -430,11 +452,7 @@ static void MenuTest_GiveConsumableTestStock(void) {
 
 /// Grants and sets test Djinn.
 static void MenuTest_GivePartyDjinn(void) {
-  /* LEFTOVER(frame): the buffer tbs-ja's loop below fills sixteen times; the
-   * other editions drop the loop but keep its 256 bytes, the whole of the ROM's
-   * frame (sub sp, #256), which no instruction addresses there, leaving them
-   * untouched; as declared only with the loop, 4 of 232 instructions differ in
-   * tbs-en. */
+  /* LEFTOVER(frame): the buffer tbs-ja's loop below fills sixteen times. */
   UNUSED u8 fillBuffer[256];
 #if !TBS_PATCH_1
   s32 pass;
@@ -513,10 +531,8 @@ static void MenuTest_GivePartyDjinn(void) {
 
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
 static void MenuTest_DamageAndAfflictParty(void) {
-  /* FAKEMATCH(temporary): the unit written through a byte pointer moved on to
-   * haunt; as unit->poison, unit->haunt and unit->curse, 5 of 68 instructions
-   * differ in tbs-en. */
-  u8 *record;
+  struct Unit *isaac;
+  struct Unit *garet;
 
   FieldMessage_Show(MsgDebugBodyTornApart, FIELD_MESSAGE_ZOOM);
   FieldUnit_AddHp(ISAAC, -100);
@@ -527,13 +543,12 @@ static void MenuTest_DamageAndAfflictParty(void) {
   Unit_AddPp(GARET, -40);
   Unit_AddPp(IVAN, -35);
   Unit_AddPp(MIA, -20);
-  record = (u8 *)Unit_Get(ISAAC);
-  record[offsetof(struct Unit, poison)] = POISON_NORMAL;
-  record += offsetof(struct Unit, haunt);
-  *record = 1;
-  record = (u8 *)Unit_Get(GARET);
-  record[offsetof(struct Unit, curse)] = 1;
-  record[offsetof(struct Unit, poison)] = POISON_VENOM;
+  isaac = Unit_Get(ISAAC);
+  isaac->poison = POISON_NORMAL;
+  isaac->haunt = 1;
+  garet = Unit_Get(GARET);
+  garet->curse = 1;
+  garet->poison = POISON_VENOM;
   MenuTest_RecalculateParty();
 }
 
@@ -725,7 +740,7 @@ static void MenuTest_GiveTreasureTestStock(void) {
 }
 
 /// Sets the debug party, stock counters and levels; returns zero.
-s32 MenuTest_Initialize(void) {
+s32 Scene_Initialize(void) {
   // Jenna leaves; Garet, Mia and Ivan join.
   Party_RemoveMember(JENNA);
   Party_AddMember(GARET);
@@ -775,7 +790,7 @@ static s32 MenuTest_ConfirmShopAction(s32 unitId) {
 }
 #endif
 
-#include "test_rows.h"
+#include "test_rows.c"
 
 char gDebugItemPrompt[12] = "Item No:";
 

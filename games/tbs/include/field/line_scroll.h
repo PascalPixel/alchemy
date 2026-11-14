@@ -4,9 +4,9 @@
 /// @file
 /// The map scroll work and the line scroll's work and wave.
 
-#include "map_grid_scroll.h"
 #include "static_assert.h"
-#include "heap.h"
+#include "field/map_grid_scroll.h"
+#include "system/heap.h"
 
 /// The line scroll's work: two pages of BG1 to BG3 scroll offsets for each
 /// of the 160 scanlines, and the sine wave that bends them on each axis.

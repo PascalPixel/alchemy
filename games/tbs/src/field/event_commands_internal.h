@@ -7,32 +7,32 @@
 /// parts, and each part includes it too, so that a part read on its own
 /// resolves. It places no bytes.
 
-#include "vram_cache.h"
-#include "module/field/world_map_lines.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "system.h"
-#include "dma.h"
-#include "io_write.h"
-#include "flags.h"
-#include "iwram_call.h"
-#include "resource_ids.h"
-#include "ram_buffer.h"
-#include "event.h"
-#include "display_transition.h"
-#include "text/msg_ids.h"
-#include "ground_mask.h"
-#include "io_write_queue.h"
-#include "item_ids.h"
-#include "sprite_metadata.h"
-#include "line_scroll.h"
-#include "field_blend.h"
-#include "field_psynergy_work.h"
-#include "field_effect_scripts.h"
-#include "fixed_point_position.h"
-#include "macros.h"
 #include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "resource_ids.h"
+#include "battle/battle.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/field_blend.h"
+#include "field/field_effect_scripts.h"
+#include "field/field_psynergy_work.h"
+#include "field/ground_mask.h"
+#include "field/line_scroll.h"
+#include "field/world_map_lines.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "system/dma.h"
+#include "system/fixed_point_position.h"
+#include "system/io_write.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/ram_buffer.h"
+#include "system/sprite_metadata.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "text/msg_ids.h"
 
 void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
                                                s32 magnitude, s32 angle);
@@ -41,9 +41,9 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-/// gMainRoutineWork.pendingDjinni of DJINNI_FLINT (requests.c, djinni.c): a
-/// Djinni battle's event is this plus the Djinni's id (DJINN_PER_ELEMENT to
-/// an element), with DJINN_NO_HOP beside it.
+/// gMainRoutineWork.pendingDjinni of DJINNI_FLINT (event_commands_requests.c,
+/// event_commands_djinni.c): a Djinni battle's event is this plus the Djinni's
+/// id (DJINN_PER_ELEMENT to an element), with DJINN_NO_HOP beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
 /// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them.

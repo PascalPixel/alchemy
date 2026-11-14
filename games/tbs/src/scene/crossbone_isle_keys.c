@@ -43,31 +43,48 @@
 ///
 ///   Talked to while Halt holds it, Bane joins the party.
 
-#include "main_routine_work.h"
-#include "djinn_ids.h"
-#include "heap_slots.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/crossbone_isle_keys.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "pushed_actor.h"
-#include "dma.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "io_write.h"
-#include "field_effect.h"
+#include "djinn_ids.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
+#include "system/io_write.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+
+extern s32 gCrossboneIsleKeys_BaneSquashScript[];
+extern s32 gCrossboneIsleKeys_BaneWalkTargets[][2];
+extern struct SceneEntrance gCrossboneIsleKeysEntrancesOther[];
+extern struct SceneEntrance gCrossboneIsleKeysRoomEntrances[];
+extern struct SceneEntrance gCrossboneIsleStatuesEntrances[];
+extern struct SceneEntrance gCrossboneIsleBaneEntrances[];
+extern u32 gCrossboneIsleKeysExits[];
+extern struct ActorPlacement gCrossboneIsleKeysActorPlacementsOther[];
+extern struct ActorPlacement gCrossboneIsleKeysRoomActorPlacements[];
+extern struct ActorPlacement gCrossboneIsleStatuesActorPlacements[];
+extern struct ActorPlacement gCrossboneIsleBaneActorPlacements[];
+extern struct Trigger gCrossboneIsleKeysTriggersOther[];
+extern struct Trigger gCrossboneIsleKeysRoomTriggers[];
+extern struct Trigger gCrossboneIsleStatuesTriggers[];
+extern struct Trigger gCrossboneIsleBaneTriggers[];
+extern u32 gCrossboneIsleKeys_SlotColumns[];
+extern s32 gCrossboneIsleKeys_IconTimer;
 
 // Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
 // FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
@@ -176,7 +193,7 @@ static inline void LiftPillar(s32 column, u8 motionFlags) {
   Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = px(32);
 }
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// Talking to Bane in CrossboneIsleBane while Halt holds it
 /// (TRIGGER_TALK_HALTED): Bane, a Venus Djinni, joins the party.
@@ -190,13 +207,13 @@ UNUSED static void CrossboneIsleKeys_UnusedNoOpA(void) {}
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_CrossboneIsleKeys) {
+  if (selector == SCENE_CROSSBONE_ISLE_KEYS) {
     return gCrossboneIsleKeysRoomEntrances;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
+  if (selector == SCENE_CROSSBONE_ISLE_STATUES) {
     return gCrossboneIsleStatuesEntrances;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleBane) {
+  if (selector == SCENE_CROSSBONE_ISLE_BANE) {
     return gCrossboneIsleBaneEntrances;
   }
   return gCrossboneIsleKeysEntrancesOther;
@@ -209,13 +226,13 @@ const u32 *Scene_GetExits(void) { return gCrossboneIsleKeysExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 selector = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_CrossboneIsleKeys) {
+  if (selector == SCENE_CROSSBONE_ISLE_KEYS) {
     return gCrossboneIsleKeysRoomActorPlacements;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
+  if (selector == SCENE_CROSSBONE_ISLE_STATUES) {
     return gCrossboneIsleStatuesActorPlacements;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleBane) {
+  if (selector == SCENE_CROSSBONE_ISLE_BANE) {
     return gCrossboneIsleBaneActorPlacements;
   }
   return gCrossboneIsleKeysActorPlacementsOther;
@@ -238,8 +255,6 @@ CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *actor) {
 /// In CrossboneIsleBane, the first time the party comes near
 /// (step trigger 20): Bane notices them and hops away.
 static void CrossboneIsleKeys_BaneFirstEscape(void) {
-  struct Actor *djinni;
-
   if (Event_GetFlag(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
     Event_Start();
@@ -253,8 +268,7 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_BANE, 1);
     Sound_Play(SE_JUMP);
-    djinni = Actor_Get(ACTOR_BANE);
-    djinni->velocityY = px(8);
+    Actor_Get(ACTOR_BANE)->velocityY = px(8);
     Actor_WalkToAndWait(ACTOR_BANE, 584, 680);
     Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
     Event_End();
@@ -265,7 +279,6 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
 /// second time.
 static void CrossboneIsleKeys_BaneSecondEscape(void) {
   struct Actor *spinningDjinni;
-  struct Actor *jumpingDjinni;
 
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
     if (Event_GetFlag(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) == 0) {
@@ -283,8 +296,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Event_Wait(20);
       Actor_SetSpeed(ACTOR_BANE, 1);
       Sound_Play(SE_JUMP);
-      jumpingDjinni = Actor_Get(ACTOR_BANE);
-      jumpingDjinni->velocityY = px(10);
+      Actor_Get(ACTOR_BANE)->velocityY = px(10);
       Actor_WalkToAndWait(ACTOR_BANE, 584, 664);
       Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(ACTOR_BANE,
@@ -328,8 +340,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     djinni->sprite->rotation = 0;
     Actor_SetAnimationSpeed(djinni, 16);
     Sound_Play(SE_JUMP);
-    djinni = Actor_Get(ACTOR_BANE);
-    djinni->velocityY = px(8);
+    Actor_Get(ACTOR_BANE)->velocityY = px(8);
     Actor_FaceDirection(ACTOR_BANE, FACING_WEST, 30);
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -337,8 +348,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_BANE, 1);
     Sound_Play(SE_JUMP);
-    djinni = Actor_Get(ACTOR_BANE);
-    djinni->velocityY = px(4);
+    Actor_Get(ACTOR_BANE)->velocityY = px(4);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 680);
     Event_Wait(10);
     Actor_SetAttachedEffect(ACTOR_BANE,
@@ -358,8 +368,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Actor_FaceDirection(ACTOR_BANE, FACING_NORTH, 20);
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-    djinni = Actor_Get(ACTOR_BANE);
-    djinni->update =
+    Actor_Get(ACTOR_BANE)->update =
         (void (*)(struct Actor *))CrossboneIsleKeys_FaceBaneTowardLeader;
     Event_End();
   }
@@ -370,7 +379,6 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
 /// unless Halt holds it.
 static void CrossboneIsleKeys_BaneKeepsAway(void) {
   struct Actor *djinni;
-  struct Actor *leader;
   s32 target;
   struct FieldWork *work;
 
@@ -379,11 +387,9 @@ static void CrossboneIsleKeys_BaneKeepsAway(void) {
     if (gMainRoutineWork.haltedActor != ACTOR_BANE) {
       target = work->stepTrigger;
       djinni = Actor_Get(ACTOR_BANE);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      djinni->speedLimit = leader->speedLimit;
+      djinni->speedLimit = Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
       djinni = Actor_Get(ACTOR_BANE);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      djinni->acceleration = leader->speedLimit;
+      djinni->acceleration = Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
       target -= 30;
       Actor_WalkTo(ACTOR_BANE, gCrossboneIsleKeys_BaneWalkTargets[target][0],
                    gCrossboneIsleKeys_BaneWalkTargets[target][1]);
@@ -401,13 +407,13 @@ static void CrossboneIsleKeys_HaltBane(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 selector = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_CrossboneIsleKeys) {
+  if (selector == SCENE_CROSSBONE_ISLE_KEYS) {
     return gCrossboneIsleKeysRoomTriggers;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
+  if (selector == SCENE_CROSSBONE_ISLE_STATUES) {
     return gCrossboneIsleStatuesTriggers;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleBane) {
+  if (selector == SCENE_CROSSBONE_ISLE_BANE) {
     return gCrossboneIsleBaneTriggers;
   }
   return gCrossboneIsleKeysTriggersOther;
@@ -455,10 +461,7 @@ static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
 /// Facing CrossboneIsleKeys's red door with the Red Key (step trigger
 /// 50): the door rumbles open, and the key is used up.
 static void CrossboneIsleKeys_UseRedKey(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->facing == FACING_NORTH) {
+  if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_NORTH) {
     if (Event_GetFlag(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
       if (PartyInventory_FindMember(ITEM_RED_KEY) != -1) {
         GameFlag_Set(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN);
@@ -503,13 +506,11 @@ static void CrossboneIsleKeys_OpenSecondBlueDoor(void) {
 /// Touching CrossboneIsleKeys's third blue door (step trigger 53, the walkway
 /// cell in front of it).
 static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
-  struct Actor *leader;
   s16 *blockedSteps;
   s32 resetSteps = 0;
 
   CrossboneIsleKeys_UseBlueKey(2);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->facing == FACING_SOUTH) {
+  if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Field_TryJumpForward();
@@ -521,13 +522,11 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
 /// Touching CrossboneIsleKeys's fourth blue door (step trigger 54, the walkway
 /// cell in front of it).
 static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
-  struct Actor *leader;
   s16 *blockedSteps;
   s32 resetSteps = 0;
 
   CrossboneIsleKeys_UseBlueKey(3);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->facing == FACING_SOUTH) {
+  if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Field_TryJumpForward();
@@ -754,19 +753,18 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
 /// up and goes after the leader.
 static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
   struct Actor *leader;
-  s32 leaderColumn;
 
   if (gMainRoutineWork.haltedActor != ACTOR_FOURTH_STATUE) {
     Event_Start();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.7);
     Actor_SetSpeed(ACTOR_FOURTH_STATUE, 1.7);
     Sound_Play(SE_THUMP);
-    leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / px(16);
-    if (leaderColumn > Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / px(16)) {
+    if (Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / px(16) >
+        Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / px(16)) {
       Actor_SetDestinationOffset(ACTOR_FOURTH_STATUE, 8, 0);
     }
-    leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / px(16);
-    if (leaderColumn < Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / px(16)) {
+    if (Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / px(16) <
+        Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / px(16)) {
       Actor_SetDestinationOffset(ACTOR_FOURTH_STATUE, -8, 0);
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
@@ -832,13 +830,9 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
 /// Reveal in CrossboneIsleStatues: the translucent layer over the room
 /// vanishes while it lasts.
 static void CrossboneIsleKeys_CastRevealInStatueRoom(void) {
-  /* FAKEMATCH(temporary): the blend built in a local, 208 shifted by 4; as
-   * REG_BLDALPHA = BLEND_ALPHA(0, 13), 4 of 5 instructions differ in tbs-en.
-   */
-  u32 coefficient = 208;
+  u16 value = BLEND_ALPHA(0, 13);
 
-  coefficient <<= 4;
-  REG_BLDALPHA = coefficient;
+  REG_BLDALPHA = value;
 }
 
 /// Reveal wears off in CrossboneIsleStatues: the translucent layer
@@ -1193,13 +1187,13 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleKeys) {
+  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_KEYS) {
     CrossboneIsleKeys_InitializeKeys();
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleStatues) {
+  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_STATUES) {
     CrossboneIsleKeys_InitializeStatues();
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleBane) {
+  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_BANE) {
     CrossboneIsleKeys_InitializeBane();
   }
   return 0;
@@ -1251,7 +1245,7 @@ UNUSED static void CrossboneIsleKeys_UnusedRedrawKeyActors(void) {
   }
 }
 
-#include "shared/colosso_item_icon.h"
+#include "shared/colosso_item_icon.c"
 
 /// Restores collected keys and already opened passages.
 static void CrossboneIsleKeys_InitializeKeys(void) {
@@ -1341,8 +1335,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 856, 824);
-      djinni = Actor_Get(ACTOR_BANE);
-      djinni->update =
+      Actor_Get(ACTOR_BANE)->update =
           (void (*)(struct Actor *))CrossboneIsleKeys_FaceBaneTowardLeader;
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 888, 664);
@@ -1357,7 +1350,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   }
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 s32 gCrossboneIsleKeys_BaneSquashScript[] = {

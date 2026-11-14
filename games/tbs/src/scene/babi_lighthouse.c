@@ -9,7 +9,7 @@
 ///
 /// The four share one exit table. The other getters choose by
 /// gMainRoutineWork.next, with the road as the fallback.
-/// BabiLighthouse_SetupMap restores the scene being entered. Retreat anywhere
+/// Scene_Initialize restores the scene being entered. Retreat anywhere
 /// but on the road leads back to the Entry.
 ///
 /// The Road to Babi Lighthouse has four workers and a carved stone pillar. Move
@@ -44,7 +44,7 @@
 /// BabiLighthouse_FaranAsksPartyToOpenDoor
 /// (FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW). The door's first opening plays
 /// BabiLighthouse_ExplainTruthDoor (FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN).
-/// BabiLighthouse_SetupMap stands Iodem, Faran and the onlookers where each has
+/// Scene_Initialize stands Iodem, Faran and the onlookers where each has
 /// left them.
 ///
 /// The door's switch shows only under Reveal
@@ -57,32 +57,50 @@
 /// (BabiLighthouse_CloseTruthDoor, FLAG_BEYOND_DOOR). Beyond it lies the Tunnel
 /// Ruins (BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE).
 
-#include "main_routine_work.h"
-#include "heap_slots.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/babi_lighthouse.h"
-#include "module/scene/shared/field_effect_spawn.h"
-
-#define FIELD_STAGED_ACTOR_IMPORTS
-#include "event.h"
-#include "djinn_ids.h"
-#include "field_effect.h"
-#include "pushed_actor.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_psynergy_work.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
+#include "djinn_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/pushed_actor.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gBabiLighthouse_EntryEntrances[];
+extern struct SceneEntrance gBabiLighthouse_LuffEntrances[];
+extern struct SceneEntrance gBabiLighthouse_StoneDoorEntrances[];
+extern struct SceneEntrance gBabiLighthouse_RoadEntrances[];
+extern struct SceneExitRegion gBabiLighthouse_EntryRegions[];
+extern u32 gBabiLighthouse_Exits[];
+extern struct ActorPlacement gBabiLighthouse_EntryActorPlacements[];
+extern struct ActorPlacement gBabiLighthouse_LuffActorPlacements[];
+extern struct ActorPlacement gBabiLighthouse_StoneDoorActorPlacements[];
+extern struct ActorPlacement gBabiLighthouse_RoadActorPlacements[];
+extern struct Trigger gBabiLighthouse_EntryTriggers[];
+extern struct Trigger gBabiLighthouse_LuffTriggers[];
+extern struct Trigger gBabiLighthouse_StoneDoorTriggers[];
+extern struct Trigger gBabiLighthouse_RoadTriggers[];
+
+#define FIELD_STAGED_ACTOR_IMPORTS
 
 /// BabiLighthouseStoneDoor, before the stone door: the door's two halves,
 /// Iodem, the strongman who saw the kidnappers go through, a grey-haired man, a
@@ -164,10 +182,10 @@ enum { PIT_MASK = SPRITE_CRATE };
 static void BabiLighthouse_CloseTruthDoor(void);
 static void BabiLighthouse_RedrawLedgePillarCells(void);
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Talking to the Djinni in BabiLighthouseLuff starts the battle with
 /// Luff, a Jupiter Djinni.
@@ -175,8 +193,8 @@ static void BabiLighthouse_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_LUFF, DJINNI_LUFF);
 }
 
-#include "shared/actor_wait_until_idle.h"
-#include "shared/field_effect_advance.h"
+#include "shared/actor_wait_until_idle.c"
+#include "shared/field_effect_advance.c"
 
 /// The leader arrives by falling from the floor above. He drops in, lands with
 /// a thud that shakes the screen and throws up a ring of dust, and is startled.
@@ -232,18 +250,13 @@ static void BabiLighthouse_LandWithParticles(void) {
 /// The leader arrives at one of the drop entrances of BabiLighthouseLuff. He
 /// drops in and falls on, out through the given exit.
 static void BabiLighthouse_FallToExit(s32 exit) {
-  struct Actor *leader;
-
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->y.fixed = px(130);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->gravity = px(1) / 4;
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->bounce = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = px(130);
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_StartScreenTransition();
@@ -252,8 +265,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Sound_Play(SE_DUST_PUFF);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->velocityY = -px(5);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = -px(5);
   Actor_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_EventSetExitRequest(exit);
@@ -263,13 +275,13 @@ static void BabiLighthouse_FallToExit(s32 exit) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryEntrances;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
     return gBabiLighthouse_LuffEntrances;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
     return gBabiLighthouse_StoneDoorEntrances;
   }
   return gBabiLighthouse_RoadEntrances;
@@ -278,25 +290,25 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// Only the Entry has regions. They are the three spots that drop into the
 /// Tunnel Ruins.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_BabiLighthouseEntry) {
+  if (gMainRoutineWork.next == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryRegions;
   }
   return 0;
 }
 
 /// The four scenes share one exit table.
-const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
+const u32 *Scene_GetExits(void) { return gBabiLighthouse_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
     return gBabiLighthouse_LuffActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
     return gBabiLighthouse_StoneDoorActorPlacements;
   }
   return gBabiLighthouse_RoadActorPlacements;
@@ -1195,13 +1207,13 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryTriggers;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
     return gBabiLighthouse_LuffTriggers;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
     return gBabiLighthouse_StoneDoorTriggers;
   }
   return gBabiLighthouse_RoadTriggers;
@@ -1248,8 +1260,8 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
   s32 priority;
 
   sprite = Actor_Get(ACTOR_PARTY_LEADER)->sprite;
-  actor = Actor_Get(ACTOR_LEFT_PILLAR);
-  if (actor->z.fixed < Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
+  if (Actor_Get(ACTOR_LEFT_PILLAR)->z.fixed <
+      Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
     Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
@@ -1258,8 +1270,8 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
     Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, priority);
     Actor_Get(ACTOR_LEFT_PILLAR)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
-  actor = Actor_Get(ACTOR_RIGHT_PILLAR);
-  if (actor->z.fixed < Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
+  if (Actor_Get(ACTOR_RIGHT_PILLAR)->z.fixed <
+      Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
     Actor_SetSpritePriority(ACTOR_RIGHT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
@@ -1272,26 +1284,24 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
 #endif
 
 /// Sets up the scene being entered. Returns 0.
-s32 BabiLighthouse_SetupMap(void) {
+s32 Scene_Initialize(void) {
   struct Actor *placedActor;
   s32 sceneId;
   s32 mapCopy;
-  struct MainRoutineWork *state;
   s32 x;
   s32 z;
 
   wait(1);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  state = &gMainRoutineWork;
-  sceneId = state->next;
-  if (sceneId != (s32)&SceneId_RoadToBabiLighthouse) {
-    state->retreatEntrance = 1;
-    state->retreatScene = (s32)&SceneId_BabiLighthouseEntry;
-    mapCopy = state->next;
+  sceneId = gMainRoutineWork.next;
+  if (sceneId != SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
+    gMainRoutineWork.retreatEntrance = 1;
+    gMainRoutineWork.retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
+    mapCopy = gMainRoutineWork.next;
   }
   // The road: the moved pillar's cell behavior where it stands.
-  if (sceneId == (s32)&SceneId_RoadToBabiLighthouse) {
+  if (sceneId == SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
     placedActor = Actor_Get(ACTOR_ROAD_PILLAR);
     x = FIELD_CELL(placedActor->x.fixed);
     if (x == 20) {
@@ -1300,7 +1310,7 @@ s32 BabiLighthouse_SetupMap(void) {
         MapGrid_CopyCellAttributes(38, 12, 1, 1, x, z);
       }
     }
-  } else if (mapCopy == (s32)&SceneId_BabiLighthouseEntry) {
+  } else if (mapCopy == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     Actor_SetSpriteColorById(ACTOR_LEFT_PILLAR, SPRITE_COLOR_GREY);
     Actor_SetSpriteColorById(ACTOR_RIGHT_PILLAR, SPRITE_COLOR_GREY);
 #if TBS_PATCH_2
@@ -1310,7 +1320,7 @@ s32 BabiLighthouse_SetupMap(void) {
     ((union ActorOrEffect *)Actor_Get(ACTOR_RIGHT_PILLAR))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
 #endif
-    if (state->entrance ==
+    if (gMainRoutineWork.entrance ==
             BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_SetPosition(ACTOR_RIGHT_PILLAR, 312, 328);
@@ -1357,10 +1367,10 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->sprite->flags = 0;
     placedActor->sprite->rotation = TRIG_TURN / 2;
     Actor_SetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, ANIM_STILL);
-  } else if (mapCopy == (s32)&SceneId_BabiLighthouseLuff) {
+  } else if (mapCopy == SCENE_BABI_LIGHTHOUSE_LUFF) {
     // Match the arrival effect and fall to the entrance used in this
     // room.
-    switch (state->entrance) {
+    switch (gMainRoutineWork.entrance) {
     case BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST:
       GameFlag_Set(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR);
       // Both entrances restore the same remembered cell changes.
@@ -1397,13 +1407,13 @@ s32 BabiLighthouse_SetupMap(void) {
       }
       break;
     }
-  } else if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
+  } else if (sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
     Actor_Get(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_Get(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_LEFT_DOOR, 1);
     Actor_SetSpeed(ACTOR_RIGHT_DOOR, 1);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (state->entrance ==
+      if (gMainRoutineWork.entrance ==
           BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE) {
         GameFlag_Set(FLAG_BEYOND_DOOR);
       } else {
@@ -1449,9 +1459,9 @@ s32 BabiLighthouse_SetupMap(void) {
   return 0;
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

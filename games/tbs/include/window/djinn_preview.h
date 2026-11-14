@@ -5,8 +5,8 @@
 /// The Djinn preview's sprites and arrow tiles.
 
 #include "edition.h"
-#include "render_input.h"
-#include "battle_sprite_id.h"
+#include "graphics/battle_sprite_id.h"
+#include "graphics/render_input.h"
 
 /// The OAM entry of a window sprite, as the Djinn preview places its stat
 /// arrows (DjinnMenu_DrawStatArrow): from the output's byte 16 on.

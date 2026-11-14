@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer LemurianShip_SetupMap
-	overlay_veneer LemurianShip_GetEntrances
-	overlay_veneer LemurianShip_GetExits
-	overlay_veneer LemurianShip_GetActorPlacements
-	overlay_veneer LemurianShip_GetTriggers
-	overlay_veneer LemurianShip_GetRegions

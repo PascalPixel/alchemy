@@ -1,9 +1,9 @@
 /// @file
 /// Programming a sector of the Macronix and Panasonic chips.
 
-#include "../../../include/gamepak/flash.h"
-#include "../../../include/gamepak/flash_data.h"
-#include "../../../include/system/io_reg.h"
+#include "gamepak/flash.h"
+#include "gamepak/flash_data.h"
+#include "system/io_reg.h"
 
 /// Erases a standard sector and programs bytes until completion or an error.
 u16 ProgramFlashSector(u16 sector, u8 *source) {

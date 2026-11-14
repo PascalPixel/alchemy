@@ -52,31 +52,42 @@
 /// way back, KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the
 /// Floodgate Switch's scene (SceneId_KolimaForestFloodgate).
 
-#include "speaker.h"
-#include "main_routine_work.h"
-#include "module/scene/kolima_forest_tree.h"
-#include "module/scene/shared/kolima_palette.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_effect.h"
-#include "system_call.h"
-#include "io_reg.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "macros.h"
-#include "sound_driver_symbols.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/kolima_palette.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
+
+extern s32 gKolimaForestTree_GaretApproachActions[];
+extern s32 gKolimaForestTree_IvanApproachActions[];
+extern s32 gKolimaForestTree_MiaApproachActions[];
+extern s32 gKolimaForestTree_RejoinPartyActions[];
+extern struct SceneEntrance gKolimaForestTreeEntrances[];
+extern struct SceneExitRegion gKolimaForestTreeRegions[];
+extern u32 gKolimaForestTreeExits[];
+extern struct ActorPlacement gKolimaForestTreeActorPlacements[];
+extern struct Trigger gKolimaForestTreeTriggers[];
+extern s32 gKolimaForestTreeEffectScript[];
 
 /// The actors, numbering gKolimaForestTreeActorPlacements' rows
 /// from ACTOR_FIRST_PLACED.
@@ -129,27 +140,33 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture);
 static void KolimaForestTree_SpawnOrbitSparks(void);
 static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId, s32 newItemId);
 
-s32 gKolimaForestTreeSparkOrigin[3] __attribute__((section(".bss")));
-s32 gKolimaForestTreeSparkFrame __attribute__((section(".bss")));
-s32 gKolimaForestTreePlaySparkSound __attribute__((section(".bss")));
-s32 gKolimaForestTreePaletteFrame __attribute__((section(".bss")));
+s32 gKolimaForestTreeSparkOrigin[3] BSS_DATA ALIGNED(16);
+s32 gKolimaForestTreeSparkFrame BSS_DATA;
+s32 gKolimaForestTreePlaySparkSound BSS_DATA;
+s32 gKolimaForestTreePaletteFrame BSS_DATA;
+u8 gKolimaForestTree_Unk_0[8] BSS_DATA;
+/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
+/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+u8 gKolimaPalette_Healthy[1792] BSS_DATA;
+/// The cursed colours, kept by KolimaPalette_SaveCursed.
+u8 gKolimaPalette_Cursed[896] BSS_DATA;
 
-const struct SceneEntrance *KolimaForestTree_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestTreeEntrances;
 }
 
 /// The region at Tret's foot that leads into the Tret Tree.
-const struct SceneExitRegion *KolimaForestTree_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gKolimaForestTreeRegions;
 }
 
 /// The ways back (SceneId_KolimaForestFloodgate) and into the Tret Tree
 /// (SceneId_TreeRooms).
-const u32 *KolimaForestTree_GetExits(void) { return gKolimaForestTreeExits; }
+const u32 *Scene_GetExits(void) { return gKolimaForestTreeExits; }
 
 /// Tret and Laurel, the blank actors at their spots, the ones the party
 /// talks to, Tret's wrathful side, and Garet, Ivan and Mia for the healing.
-const struct ActorPlacement *KolimaForestTree_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestTreeActorPlacements;
 }
 
@@ -166,7 +183,7 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
 }
 
 /// Talking to Tret and Laurel, reading their minds, and Hermes' Water on Tret.
-const struct Trigger *KolimaForestTree_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestTreeTriggers;
 }
 
@@ -386,8 +403,7 @@ static inline void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
 static void KolimaForestTree_RestoreTret(void) {
   s32 includeMia;
   struct Actor *leader;
-  s32 *paletteFrame;
-  s32 flash;
+  u32 flash;
   void (*spawnOrbitSparks)(void);
   const s32 *finalActions;
 
@@ -422,8 +438,7 @@ static void KolimaForestTree_RestoreTret(void) {
   PaletteFade_StartInterpolation(32);
   wait(40);
   // Carry the healing across the forest as its healthy colours return.
-  paletteFrame = &gKolimaForestTreePaletteFrame;
-  *paletteFrame = 0;
+  gKolimaForestTreePaletteFrame = 0;
   Task_AddFrame(KolimaForestTree_UpdateHealingPalette, TASK_PASS_FRAME);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
@@ -442,10 +457,8 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(326, CAMERA_KEEP, 384, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_GLITTER);
-  if (*paletteFrame != 24) {
-    do {
-      wait(1);
-    } while (*paletteFrame != 24);
+  while (gKolimaForestTreePaletteFrame != 24) {
+    wait(1);
   }
   Task_Remove(KolimaForestTree_UpdateHealingPalette);
   wait(10);
@@ -458,7 +471,7 @@ static void KolimaForestTree_RestoreTret(void) {
     PaletteFade_StartInterpolation(6);
     flash++;
     wait(6);
-  } while ((u32)flash <= 3);
+  } while (flash <= 3);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(40);
   wait(80);
@@ -743,7 +756,7 @@ static void KolimaForestTree_RestoreTret(void) {
 }
 
 /// Sets up Tret, Laurel and the forest's colours on entry.
-s32 KolimaForestTree_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *tretBlank;
   struct Actor *tretsWrathfulSide;
   struct Actor *laurelBlank;
@@ -755,7 +768,7 @@ s32 KolimaForestTree_Initialize(void) {
   Actor_SetSpriteColorById(ACTOR_TRETS_WRATHFUL_SIDE, SPRITE_COLOR_HIDDEN);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gMainRoutineWork.retreatScene = (s32)&SceneId_KolimaForestEntrance;
+  gMainRoutineWork.retreatScene = SCENE_KOLIMA_FOREST_ENTRANCE;
   gMainRoutineWork.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);
@@ -787,14 +800,13 @@ s32 KolimaForestTree_Initialize(void) {
   return 0;
 }
 
-#include "shared/kolima_grow.h"
+#include "shared/kolima_grow.c"
 
 /// Spawns the growing sparks that repel the party leader.
 static void KolimaForestTree_SpawnRejectionSpark(void) {
   struct Actor *effect;
   struct Sprite *sprite;
   s32 phase;
-  s32 effectFlags;
   s32 spawnX = px(326);
   s32 spawnY = px(32);
   s32 spawnZ = px(192);
@@ -811,9 +823,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
     return;
   sprite = effect->sprite;
   sprite->flags = phase;
-  effectFlags = 0xff & ~ACTOR_PRIORITY_AUTOMATIC;
-  effectFlags &= effect->priorityFlags;
-  effect->priorityFlags = effectFlags;
+  effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
   effect->scaleX = Q16_ONE / 10;
   effect->speedLimit = px(4);
@@ -1024,7 +1034,7 @@ static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
   }
 }
 
-#include "shared/kolima_palette.h"
+#include "shared/kolima_palette.c"
 
 s32 gKolimaForestTree_GaretApproachActions[] = {
     SC_ANIMATION(2),

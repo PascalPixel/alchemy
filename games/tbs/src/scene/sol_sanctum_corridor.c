@@ -7,24 +7,28 @@
 /// the chest, and SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST into the
 /// room with the stepping stones.
 ///
-/// Its setup, SolSanctumRooms_Initialize (shared/sol_sanctum_init_zoom.h), is
+/// Its setup, Scene_Initialize (shared/sol_sanctum_init_zoom.c), is
 /// the one SceneId_SolSanctumMaze shares. Once Mt. Aleph has erupted
 /// (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes.
 
-#include "module/scene/sol_sanctum_corridor.h"
-#include "module/scene/shared/sol_sanctum_init_zoom.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/sol_sanctum_imports.h"
+#include "scene/sol_sanctum_init_zoom.h"
+#include "sound/sound.h"
+#include "system/system.h"
 
-#include "shared/sol_sanctum_imports.h"
-
-#include "event.h"
+extern struct SceneEntrance gSolSanctumCorridorEntrances[];
+extern u32 gSolSanctumCorridorExits[];
+extern struct ActorPlacement gSolSanctumCorridorActorPlacements[];
+extern struct Trigger gSolSanctumCorridorTriggers[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumCorridorEntrances;
@@ -43,7 +47,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumCorridorTriggers;
 }
 
-#include "shared/sol_sanctum_init_zoom.h"
+#include "shared/sol_sanctum_init_zoom.c"
 
 struct SceneEntrance gSolSanctumCorridorEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,

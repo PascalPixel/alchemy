@@ -1,0 +1,422 @@
+/// @file
+/// Battle objects made and placed on the battlefield.
+// Part of battle.c.
+
+#include "battle_internal.h"
+
+/// Creates the battle object of a unit at (x, y) on the battlefield: its
+/// sprite, palette, size and weapon, turned to face the centre.
+void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
+  s32 fixedX;
+  s32 fixedZ;
+  s32 palette;
+  s32 sprite;
+  s32 registeredSprite;
+  struct Unit *unit;
+  struct Actor *object;
+  s32 facingAngle;
+  s32 weaponSprite;
+  u8 classId;
+
+  // Positions are 16.16 fixed point; y is the battlefield's depth.
+  fixedX = px(x);
+  fixedZ = px(y);
+  // The actor has no sprite of its own; its battle sprites are attached later.
+  object = Actor_CreateFar(0xf000, fixedX, 0, fixedZ);
+  unit = Unit_GetFar(unitId);
+  palette = 0;
+  registeredSprite = EnemySprite_LoadIntoSlots(unitId);
+
+  // The sprite: an enemy's from its class, a party member's by character; a
+  // character on the enemy side, a link opponent, takes palette 1.
+  if (unit->classId == CLASS_NONE) {
+    sprite = BattleSprite_GetSprite(unit->id);
+    if (registeredSprite == 0)
+      palette = BattleSprite_GetPalette(unit->id);
+    else
+      sprite = registeredSprite;
+  } else {
+    switch (unit->id) {
+    case GARET:
+      sprite = SPRITE_BATTLE_GARET;
+      break;
+    case MIA:
+      sprite = SPRITE_BATTLE_MIA;
+      break;
+    case IVAN:
+      sprite = SPRITE_BATTLE_IVAN;
+      break;
+    case JENNA:
+      sprite = SPRITE_BATTLE_JENNA;
+      break;
+    case ISAAC:
+    default:
+      sprite = SPRITE_BATTLE_ISAAC;
+      break;
+    }
+    if (unitId < 0 || unitId > ALLY_MAX)
+      palette = 1;
+  }
+
+  // The enemies drawn larger or smaller than their sprites, in 16.16. Bandit
+  // and Orc Captain are set to 1.0 again.
+  actor->scale = Q16_ONE;
+  switch (unit->id) {
+  case ENEMY_KILLER_APE:
+    actor->scale = Q16_ONE * 8 / 5;
+    break;
+  case ENEMY_MANTICORE:
+    actor->scale = Q16_ONE * 31 / 20;
+    break;
+  case ENEMY_LIVING_STATUE:
+    actor->scale = Q16_ONE * 6 / 5;
+    break;
+  case ENEMY_HYDROS_STATUE:
+    actor->scale = Q16_ONE * 8 / 5;
+    break;
+  case ENEMY_ANT_LION:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_TRET:
+    actor->scale = Q16_ONE * 9 / 5;
+    break;
+  case ENEMY_DEADBEARD:
+    actor->scale = Q16_ONE * 9 / 5;
+    break;
+  case ENEMY_BANDIT:
+    actor->scale = Q16_ONE;
+    break;
+  case ENEMY_KRAKEN:
+    actor->scale = Q16_ONE * 17 / 10;
+    break;
+  case ENEMY_FUSION_DRAGON:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_MIMIC_MERCURY_LIGHTHOUSE:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_MIMIC_FUCHIN_FALLS_CAVE:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_MIMIC_ALTIN_PEAK:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_MIMIC_VAULT_CAVE:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_MIMIC_CROSSBONE_ISLE:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_MIMIC_ALTMILLER_CAVE:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_MIMIC_SUHALLA_DESERT:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_MIMIC_PIRATE_SHIP:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_TROLL:
+    actor->scale = Q16_ONE * 6 / 5;
+    break;
+  case ENEMY_CAVE_TROLL:
+    actor->scale = Q16_ONE * 6 / 5;
+    break;
+  case ENEMY_BRUTAL_TROLL:
+    actor->scale = Q16_ONE * 7 / 5;
+    break;
+  case ENEMY_ORC_CAPTAIN:
+    actor->scale = Q16_ONE;
+    break;
+  case ENEMY_ORC_LORD:
+    actor->scale = Q16_ONE * 5 / 4;
+    break;
+  case ENEMY_LIZARD_FIGHTER:
+    actor->scale = Q16_ONE * 7 / 5;
+    break;
+  case ENEMY_LIZARD_KING:
+    actor->scale = Q16_ONE * 7 / 5;
+    break;
+  case ENEMY_HOBGOBLIN:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_GRYPHON:
+    actor->scale = Q16_ONE * 13 / 10;
+    break;
+  case ENEMY_CHIMERA:
+    actor->scale = Q16_ONE * 6 / 5;
+    break;
+  case ENEMY_AZART_IRON_SHIELD:
+    actor->scale = Q16_ONE * 21 / 20;
+    break;
+  case ENEMY_AZART_PADDED_GLOVES:
+    actor->scale = Q16_ONE * 21 / 20;
+    break;
+  case ENEMY_SATRAGE_CHAIN_MAIL:
+    actor->scale = Q16_ONE * 11 / 10;
+    break;
+  case ENEMY_SATRAGE_COTTON_SHIRT:
+    actor->scale = Q16_ONE * 11 / 10;
+    break;
+  case ENEMY_NAVAMPA_CLAYMORE:
+    actor->scale = Q16_ONE * 6 / 5;
+    break;
+  case ENEMY_NAVAMPA_HUNTERS_SWORD:
+    actor->scale = Q16_ONE * 6 / 5;
+    break;
+  case ENEMY_TOADONPA:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_TORNADO_LIZARD:
+    actor->scale = Q16_ONE * 6 / 5;
+    break;
+  case ENEMY_STORM_LIZARD:
+    actor->scale = Q16_ONE * 3 / 2;
+    break;
+  case ENEMY_TEMPEST_LIZARD:
+    actor->scale = Q16_ONE * 31 / 20;
+    break;
+  case ENEMY_RECLUSE:
+    actor->scale = Q16_ONE * 5 / 4;
+    break;
+  case ENEMY_CEREBUS:
+    actor->scale = Q16_ONE * 5 / 4;
+    break;
+  case ENEMY_SLIME_SOL_SANCTUM:
+  case ENEMY_SLIME_2:
+  case ENEMY_OOZE:
+  case ENEMY_SLIME_BEAST:
+  case ENEMY_THIEF:
+  case ENEMY_SIREN:
+  case ENEMY_SUCCUBUS:
+  case ENEMY_NIGHTMARE:
+  case ENEMY_KOBOLD:
+  case ENEMY_MYSTERY_MAN:
+  case ENEMY_SATUROS_MERCURY_LIGHTHOUSE:
+  case ENEMY_SATUROS_VENUS_LIGHTHOUSE:
+  case ENEMY_MYSTERY_WOMAN:
+  case ENEMY_MENARDI:
+    actor->scale = Q16_ONE * 9 / 10;
+    break;
+  }
+
+  actor->actor = object;
+  actor->anchorX = fixedX;
+  actor->anchorZ = fixedZ;
+  actor->palette = palette;
+  actor->resource = sprite;
+  weaponSprite = BattleUnit_GetWeaponSprite(unitId);
+  actor->animation = 0;
+  actor->animationEntry = 0;
+  actor->shadowEntry = 0;
+  actor->active = 0;
+  actor->fading = 0;
+  actor->shadow = SPRITE_BATTLE_SHADOW;
+  classId = unit->id;
+  actor->overlay = weaponSprite;
+
+  // Isaac and Garet draw a Machete as part of their own sprite, with no
+  // weapon overlay.
+  if (classId <= GARET &&
+      Inventory_GetEquippedItemFar(unit, EQUIP_WEAPON) == ITEM_MACHETE) {
+    if (unit->id == ISAAC) {
+      sprite = SPRITE_ISAAC_MACHETE;
+      actor->resource = sprite;
+    } else {
+      sprite = SPRITE_GARET_MACHETE;
+      actor->resource = sprite;
+    }
+    actor->overlay = 0;
+  }
+
+  // Face the centre of the battlefield; enemies are drawn at 1.3 times their
+  // size.
+  facingAngle = ArcTan2(y / 8, x) + TRIG_TURN / 2;
+  object->facing = facingAngle;
+  object->collisionFlags = 3;
+  object->motionFlags = ACTOR_FALLS;
+  if (unit->classId == CLASS_NONE) {
+    object->scaleX = Q16_ONE * 13 / 10;
+    object->scaleY = Q16_ONE * 13 / 10;
+  } else {
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
+  }
+  Actor_StartScriptFar(object, gBattleObject_EmptyScript);
+}
+
+/// Unused: reads the battlefield position of a party place.
+void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
+  partyPlace *= 2;
+  *x = gBattlePlacement_StepPairs[partyPlace];
+  *y = gBattlePlacement_StepPairs[partyPlace + 1];
+}
+
+/// BattleWork.enemyIds of an enemy that left the battle, and of a place
+/// held for one: unit ids 254 and 255 in the list.
+#define IS_PLACEHOLDER_ID(id) ((u16)((id) - BATTLE_UNIT_REMOVED) <= 1)
+
+/// The enemies' column, in pixels from the battlefield's centre, and the
+/// nearer place the Kraken and the Fusion Dragon would take.
+#define ENEMY_COLUMN_X (-80)
+#define ENEMY_COLUMN_NEAR_X (-50)
+/// Pixels of the column a large enemy, a small one and an empty place take.
+#define ENEMY_SPACING_LARGE 38
+#define ENEMY_SPACING_SMALL 27
+#define ENEMY_SPACING_EMPTY 25
+
+/// Lays out count enemies in a column left of the centre, spaced by their size,
+/// from a rough estimate of the column's length.
+void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
+                                   s32 *zPositions) {
+  s32 totalSpacing = count <= 4 ? 30 : 27;
+  s32 z = ((count - 1) * totalSpacing) / 2;
+  s32 index;
+
+  // z starts half a line's estimated length up and steps down by half of
+  // each enemy's spacing before it (none for the first) and half after it.
+  for (index = 0; index != count; index++) {
+    s32 spacing = 0;
+
+    xPositions[index] = ENEMY_COLUMN_X;
+    if (index != 0) {
+      struct Unit *actor;
+
+      spacing = ENEMY_SPACING_EMPTY;
+      if (!IS_PLACEHOLDER_ID(actorIds[index])) {
+        actor = Unit_GetFar(actorIds[index]);
+        spacing = BattleSprite_IsSmall(actor->id) ? ENEMY_SPACING_SMALL
+                                                  : ENEMY_SPACING_LARGE;
+        // The first place keeps ENEMY_COLUMN_X whatever its class.
+        if (actor->id == ENEMY_FUSION_DRAGON || actor->id == ENEMY_KRAKEN) {
+          xPositions[index] = ENEMY_COLUMN_NEAR_X;
+        }
+      }
+    }
+    z -= spacing / 2;
+    zPositions[index] = z;
+    spacing = ENEMY_SPACING_EMPTY;
+    if (!IS_PLACEHOLDER_ID(actorIds[index])) {
+      struct Unit *actor = Unit_GetFar(actorIds[index]);
+
+      spacing = BattleSprite_IsSmall(actor->id) ? ENEMY_SPACING_SMALL
+                                                : ENEMY_SPACING_LARGE;
+    }
+    z -= spacing / 2;
+  }
+}
+
+/// Returns the id of the first free enemy unit, or -1 when all six are taken.
+s32 Enemy_GetFreeUnitId(void) {
+  s32 enemySlot;
+  s32 unitId;
+
+  for (enemySlot = 0; enemySlot < ENEMY_BATTLE_SIZE; enemySlot++) {
+    unitId = enemySlot + FIRST_ENEMY_UNIT;
+    if (Unit_GetFar(unitId)->side == BATTLE_SIDE_NONE)
+      break;
+  }
+  if (enemySlot == ENEMY_BATTLE_SIZE)
+    return -1;
+  return unitId;
+}
+
+/// Lays the enemies out again and moves each one's battle object anchor to its
+/// new place.
+UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
+  struct BattleWork *battle = gBattleWork;
+  u16 unitIds[UNIT_MAX];
+  s32 xPositions[ENEMY_BATTLE_SIZE];
+  s32 zPositions[ENEMY_BATTLE_SIZE];
+  s32 enemyCount;
+  s32 enemyIndex;
+
+  for (enemyIndex = 0; enemyIndex < ENEMY_BATTLE_SIZE &&
+                       battle->enemyIds[enemyIndex] != BATTLE_UNIT_LIST_END;
+       enemyIndex++)
+    unitIds[enemyIndex] = battle->enemyIds[enemyIndex];
+  enemyCount = enemyIndex;
+  BattlePlacement_LayoutEnemies(unitIds, enemyCount, xPositions, zPositions);
+  for (enemyIndex = 0; enemyIndex < enemyCount; enemyIndex++) {
+    s32 unitId = battle->enemyIds[enemyIndex];
+
+    if (unitId != BATTLE_UNIT_REMOVED) {
+      struct BattleObject *battleObject = BattleObject_Get(unitId);
+
+      battleObject->anchorX = px(xPositions[enemyIndex]);
+      battleObject->anchorZ = px(zPositions[enemyIndex]);
+    }
+  }
+}
+
+/// Places every unit at the start of a battle and creates its battle object at
+/// its spot.
+void BattleUnit_RefreshPlacement(void) {
+  struct BattleWork *battle;
+  u16 unitIds[UNIT_MAX];
+  s32 xPositions[ENEMY_BATTLE_SIZE];
+  s32 zPositions[ENEMY_BATTLE_SIZE];
+  s32 count;
+  s32 i;
+  s32 partyPlace = 0;
+  s32 enemyPlace = 0;
+  s32 number;
+  s32 enemy;
+  u8 *place;
+
+  battle = gBattleWork;
+  count = BattleParty_PrepareMembers(unitIds);
+  // objectIndex[0..7] is each party unit id's place and objectIndex[8..13]
+  // the enemy places, numbered 8 to 13.
+  number = BATTLE_OBJECT_NONE;
+  for (i = UNIT_MAX - 1; i >= 0; i--)
+    battle->objectIndex[i] = number;
+  place = &battle->objectIndex[UNIT_MAX - 1];
+  for (enemy = ENEMY_BATTLE_SIZE - 1, number = UNIT_MAX - 1; enemy >= 0;
+       enemy--, number--)
+    *place-- = number;
+
+  // The party, at its fixed spots in pixels: x 80, z 48, 16, -16 and -48
+  // (gBattlePlacement_StepPairs, battle_tables.c).
+  for (i = 0; i < count; partyPlace++, i++) {
+    s32 unitId = unitIds[i];
+
+    battle->objectIndex[unitId] = partyPlace;
+    BattleObject_Make(BattleObject_Get(unitId), unitId,
+                      gBattlePlacement_StepPairs[partyPlace * 2],
+                      gBattlePlacement_StepPairs[partyPlace * 2 + 1]);
+  }
+
+  // The enemies, laid out by size.
+  for (i = 0;
+       i < ENEMY_BATTLE_SIZE && battle->enemyIds[i] != BATTLE_UNIT_LIST_END;
+       i++)
+    unitIds[i] = battle->enemyIds[i];
+  count = i;
+  BattlePlacement_LayoutEnemies(unitIds, count, xPositions, zPositions);
+  for (i = 0; i < count; i++, enemyPlace++) {
+    s32 unitId = battle->enemyIds[i];
+
+    if (unitId != BATTLE_UNIT_REMOVED)
+      BattleObject_Make(BattleObject_Get(unitId), unitId,
+                        xPositions[enemyPlace], zPositions[enemyPlace]);
+  }
+}
+
+/// Returns 1 if the unit at place is in list.
+s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
+  u32 i;
+
+  if (place > ALLY_MAX)
+    place += FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+  i = 0;
+  do {
+    u16 unitId = *list++;
+
+    if (unitId == BATTLE_UNIT_LIST_END)
+      break;
+    if (unitId == place)
+      return 1;
+  } while (++i < UNIT_MAX);
+  return 0;
+}

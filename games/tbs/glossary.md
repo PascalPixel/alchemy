@@ -182,8 +182,8 @@ For readers of the code: the source is many files, and a file can only use
 what another file has announced. A module header is the short file where
 one file of code makes its announcements. The main routine's header is
 where the rest of the game learns that `MainRoutine_Run` exists. A header
-sits at the same path under `include/module/` as its code has under `src/`:
-`src/system/main_routine.c` has `include/module/system/main_routine.h`
+sits in `include/` under its code's folder, named for its code:
+`src/system/main_routine.c` has `include/system/main_routine.h`
 ([Source](src/README.md#headers)).
 
 Evidence: plain English; the project's own word.
@@ -196,9 +196,10 @@ The objects are then laid end to end to make the cartridge. The word has
 nothing to do with the people and things in a scene, which are
 [actors](#actor).
 
-A very long file is written as several smaller parts in a folder of its own
-name, and still makes one object. The shops are one: `src/shop/shop.c`
-gathers the inn, buying and selling from `src/shop/shop/`
+A very long file is written as several smaller parts beside it, each named
+for it, and still makes one object. The shops are one: `src/shop/shop.c`
+gathers the inn, buying and selling from `shop_inn.c`, `shop_buy.c` and
+`shop_sell.c`
 ([Source](src/README.md#objects-and-parts)).
 
 Evidence: plain English; the GNU tools' "object file".

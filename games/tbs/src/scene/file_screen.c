@@ -5,37 +5,53 @@
 /// delete), the door to the Battle Arena and the transfer of a save's data, by
 /// link or as a password.
 
-#include "scene_ids.h"
-#include "module/scene/file_screen.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "input.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "text_font.h"
-#include "dma.h"
-#include "ram_buffer.h"
-#include "event.h"
-#include "system_call.h"
-#include "resource_ids.h"
-#include "io_write_queue.h"
-#include "serial.h"
-#include "text/msg_ids.h"
-#include "sound_driver_symbols.h"
-#include "map_grid_scroll.h"
 #include "flags.h"
-#include "title.h"
 #include "item_ids.h"
+#include "resource_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/title.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_write_queue.h"
+#include "system/ram_buffer.h"
+#include "system/serial.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "window/screens.h"
+#include "window/text_font.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gFileScreen_Entrances[];
+extern u32 gFileScreen_Exits[];
+extern struct ActorPlacement gFileScreen_ActorPlacements[];
+extern struct Trigger gFileScreen_Triggers[];
+extern s16 gFileScreen_BlendFrame;
+extern s16 gFileScreen_CodeUnlocked;
+extern s16 gFileScreen_ExtraCodeUnlocked;
+extern s16 gFileScreen_CodeProgress;
+extern s16 gFileScreen_ExtraCodeProgress;
+extern s16 gFileScreen_CodeHeld;
+extern s32 gFileScreen_ExtraCodeHeld;
+extern u32 gFileScreen_PasswordMembers[];
+extern u32 gFileScreen_PasswordFlags[];
+extern u32 gFileScreen_PasswordKeyItems[];
+extern u16 gFileScreen_PasswordStackItems[];
 
 // Edition-specific text and window layout values.
 // The password buffer: a Gold password is 260 symbols
@@ -49,8 +65,8 @@
 #define FILE_SCREEN_PASSWORD_BUFFER_SIZE 260
 #endif
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define FILE_SCREEN_LINK_WINDOW_X 4
 #define FILE_SCREEN_LINK_WINDOW_WIDTH 22
 #else
@@ -59,23 +75,23 @@
 #endif
 
 // The first letter of the greeting a cable transfer waits for, before V, T
-// and S (FileScreen_Run).
-#if (LANGUAGE == LANGUAGE_GERMAN)
+// and S (Scene_Initialize).
+#if LANGUAGE == LANGUAGE_GERMAN
 #define FILE_SCREEN_LINK_LANGUAGE_TAG 'E'
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define FILE_SCREEN_LINK_LANGUAGE_TAG 'F'
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define FILE_SCREEN_LINK_LANGUAGE_TAG 'S'
-#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_ITALIAN
 #define FILE_SCREEN_LINK_LANGUAGE_TAG 'I'
-#elif (LANGUAGE == LANGUAGE_JAPANESE)
+#elif LANGUAGE == LANGUAGE_JAPANESE
 #define FILE_SCREEN_LINK_LANGUAGE_TAG 'C'
 #else
 #define FILE_SCREEN_LINK_LANGUAGE_TAG 'U'
 #endif
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define FILE_SCREEN_LINK_ERROR_WINDOW_X 4
 #define FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH 22
 #else
@@ -83,8 +99,8 @@
 #define FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH 20
 #endif
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
 #define FILE_SCREEN_HELP_WINDOW_X 8
 #define FILE_SCREEN_HELP_WINDOW_WIDTH 13
 #else
@@ -98,11 +114,11 @@
 #define FILE_SCREEN_PAGE_LABEL_X 0
 #endif
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define FILE_SCREEN_MESSAGE_WINDOW_X 0
 #define FILE_SCREEN_MESSAGE_WINDOW_WIDTH 30
-#elif (LANGUAGE == LANGUAGE_JAPANESE)
+#elif LANGUAGE == LANGUAGE_JAPANESE
 #define FILE_SCREEN_MESSAGE_WINDOW_X 3
 #define FILE_SCREEN_MESSAGE_WINDOW_WIDTH 24
 #else
@@ -126,18 +142,16 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The File Screen overlay's scene tables, for the scene loader.
-u8 *FileScreen_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
+u8 *Scene_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
 
 /// The exit regions entry: the File Screen has no exit boxes.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *FileScreen_GetExits(void) { return (u8 *)gFileScreen_Exits; }
+u8 *Scene_GetExits(void) { return (u8 *)gFileScreen_Exits; }
 
-u8 *FileScreen_GetActorPlacements(void) {
-  return (u8 *)gFileScreen_ActorPlacements;
-}
+u8 *Scene_GetActorPlacements(void) { return (u8 *)gFileScreen_ActorPlacements; }
 
-u8 *FileScreen_GetTriggers(void) { return (u8 *)gFileScreen_Triggers; }
+u8 *Scene_GetTriggers(void) { return (u8 *)gFileScreen_Triggers; }
 
 /// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
 /// and stops the leader's motion.
@@ -151,7 +165,7 @@ static void FileScreen_LoadBackground(void) {
   struct BgScroll *scroll;
   s32 blankTile = LOGO_BLANK_TILE;
 
-  resourceId = (s32)&ResourceId_GoldenSunLogo;
+  resourceId = RESOURCE_GOLDEN_SUN_LOGO;
   ScreenFade_ToBlack(0);
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
@@ -179,12 +193,7 @@ static void FileScreen_LoadBackground(void) {
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  {
-    struct Actor *leader;
-
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    leader->motionFlags = 0;
-  }
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 }
 
 /// The task that fades BG0 and the sprites in over the logo.
@@ -209,7 +218,7 @@ static void FileScreen_UpdateBlend(void) {
 /// The first hidden code, entered on the File Screen and ended by 0.
 ///
 /// It is Select three times. With it a new game names Garet, Ivan and Mia as
-/// well as Isaac (FileScreen_Run).
+/// well as Isaac (Scene_Initialize).
 const u16 gFileScreen_ButtonCode[] = {
     KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
@@ -283,7 +292,7 @@ static void FileScreen_CheckButtonCodes(void) {
 static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
   if (cell <= 7)
     text[0] = cell + 'A';
   else if (cell <= 12)
@@ -348,7 +357,7 @@ static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
     return 0;
   }
-  mapDifference = gMainRoutineWork.next ^ (s32)&SceneId_WorldMap;
+  mapDifference = gMainRoutineWork.next ^ SCENE_WORLD_MAP;
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
 
@@ -364,10 +373,10 @@ struct SaveMenuMapLocalState {
 /// A console's link payload as the cable transfer reads it from
 /// gLinkPeerSignatures.
 struct SaveLinkGreeting {
-  /// The greeting FileScreen_Run waits for: FILE_SCREEN_LINK_LANGUAGE_TAG, then
-  /// V, T and S.
+  /// The greeting Scene_Initialize waits for: FILE_SCREEN_LINK_LANGUAGE_TAG,
+  /// then V, T and S.
   ///
-  /// FileScreen_Run sets every console's to "0000" before it waits.
+  /// Scene_Initialize sets every console's to "0000" before it waits.
   u16 code[4];
   u8 reserved[16]; ///< the rest of the 24 bytes; not read
 };
@@ -375,7 +384,7 @@ struct SaveLinkGreeting {
 /// The overlay's initialize entry: the File Screen.
 ///
 /// Returns 0 once a destination is set.
-s32 FileScreen_Run(void) {
+s32 Scene_Initialize(void) {
   s32 pageCount;
   s32 encodedSize;
   struct Window *pageWindow;
@@ -405,7 +414,7 @@ s32 FileScreen_Run(void) {
   gFieldWork->transition = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  // FILE_SCREEN_FROM_TITLE, after the credits (Title_Run): save the cleared
+  // FILE_SCREEN_FROM_TITLE, after the credits (the title): save the cleared
   // game, then WORLD_MAP_FROM_FILE_SCREEN. Cancelling the file choice asks
   // again.
   if (gMainRoutineWork.entrance == FILE_SCREEN_FROM_TITLE) {
@@ -428,7 +437,7 @@ s32 FileScreen_Run(void) {
     Event_FinishScreenTransition();
     Sound_Play(SOUND_FADE_OUT_BGM);
     Event_Wait(300);
-    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_FILE_SCREEN);
+    Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_FROM_FILE_SCREEN);
     return 0;
   }
   gSleepDisabled = 0;
@@ -489,7 +498,7 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gMainRoutineWork.next = (s32)&SceneId_CottageRoomsB;
+    gMainRoutineWork.next = SCENE_COTTAGE_ROOMS_B;
     gMainRoutineWork.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
@@ -577,8 +586,7 @@ menu_top:;
     GameFlag_Clear(FLAG_MENU_OPEN);
     GameFlag_Set(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
-    Event_SetDestination((s32)&SceneId_BattleArena,
-                         BATTLE_ARENA_FROM_FILE_SCREEN);
+    Event_SetDestination(SCENE_BATTLE_ARENA, BATTLE_ARENA_FROM_FILE_SCREEN);
     goto leave;
   } else {
     if (result != 5) {
@@ -830,8 +838,7 @@ menu_top:;
           for (index = pageIndex * PASSWORD_SYMBOLS_PER_PAGE,
               pageGlyphIndex = 0;
                index != result; index++, pageGlyphIndex++) {
-            /* FAKEMATCH(dead): a once-only block round the draw call; as the
-             * plain call, 170 of 920 instructions differ in tbs-en. */
+            /* FAKEMATCH(dead): a once-only block round the draw call. */
             do {
               FileScreen_NameEntryCharacter(
                   password[index] & PASSWORD_SYMBOL_MASK, glyph);
@@ -1123,8 +1130,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
                 INVENTORY_QUANTITY_SHIFT;
           }
         }
-        /* FAKEMATCH(dead): a halfword copy of the quantity nothing reads;
-         * without it, 71 of 485 instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): a halfword copy of the quantity nothing reads. */
         quantity = j;
         if (bitOffset < 0) {
           out[outputIndex] += (u16)j >> -bitOffset;

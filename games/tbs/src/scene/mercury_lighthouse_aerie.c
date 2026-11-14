@@ -58,36 +58,43 @@
 /// or code leads there. Only the debug scene selector, which reaches every
 /// scene, can.
 
-#include "main_routine_work.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/mercury_lighthouse_aerie.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/scene/shared/actor_nearest.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "event.h"
-#include "system_call.h"
-#include "create_configured_actor.h"
-#include "heap_slots.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "iwram_call.h"
-#include "map_grid_scroll.h"
-#include "text/msg_ids.h"
-#include "macros.h"
-#include "flags.h"
-#include "sound_driver_symbols.h"
-#include "io_reg.h"
 #include "ability_ids.h"
+#include "flags.h"
+#include "macros.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/create_configured_actor.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_nearest.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
+
+extern struct SceneEntrance gMercuryLighthouseAerieEntrances[];
+extern u32 gMercuryLighthouseAerieExits[];
+extern struct ActorPlacement gMercuryLighthouseAerieActorPlacements[];
+extern struct Trigger gMercuryLighthouseAerieTriggers[];
+extern s32 gMercuryLighthouseAerie_PlatformUnderfoot;
+extern s32 gMercuryLighthouseAerie_SparkScript[];
 
 /// The aerie's actors.
 ///
@@ -147,40 +154,36 @@ static void MercuryLighthouseAerie_LowerLift(void);
 static void MercuryLighthouseAerie_RaiseLift(void);
 static void MercuryLighthouseAerie_FlickerBeacon(void);
 
-#include "shared/field_effect_create.h"
+#include "shared/field_effect_create.c"
 
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_spawn.c"
 
-const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMercuryLighthouseAerieEntrances;
 }
 
-const struct SceneExitRegion *MercuryLighthouseAerie_GetRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// Returns the one exit, the lift down to SceneId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, by the Fountain
 /// of Healing.
-const u32 *MercuryLighthouseAerie_GetExits(void) {
-  return gMercuryLighthouseAerieExits;
-}
+const u32 *Scene_GetExits(void) { return gMercuryLighthouseAerieExits; }
 
 /// Returns the actors, with Jenna, Kraden, Felix and Menardi placed only on the
 /// first arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
-const struct ActorPlacement *MercuryLighthouseAerie_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
     GameFlag_Set(FLAG_HOSTAGES_GONE);
   }
   return gMercuryLighthouseAerieActorPlacements;
 }
 
-const struct Trigger *MercuryLighthouseAerie_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gMercuryLighthouseAerieTriggers;
 }
 
 /// Sets up the Lighthouse Aerie, then plays the event of the entrance taken.
-s32 MercuryLighthouseAerie_Initialize(void) {
+s32 Scene_Initialize(void) {
   u32 i;
   s32 actorId;
   struct Actor *actor;
@@ -188,7 +191,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseAerie) {
+  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_AERIE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Task_AddFrame(MercuryLighthouseAerie_FlickerBeacon, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
@@ -353,8 +356,8 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Event_End();
 }
 
-#include "shared/actor_distance.h"
-#include "shared/actor_nearest.h"
+#include "shared/actor_distance.c"
+#include "shared/actor_nearest.c"
 
 /// Lighthouse Aerie: walking into cell behavior 10 or 11.
 static void MercuryLighthouseAerie_JumpToPlatform(void) {
@@ -906,7 +909,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_WalkToAndWait(ACTOR_SATUROS, 336, 216);
-  Event_SetAfterBattleDestination((s32)&SceneId_MercuryLighthouseAerie, 2);
+  Event_SetAfterBattleDestination(SCENE_MERCURY_LIGHTHOUSE_AERIE, 2);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // Saturos: ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
@@ -1682,7 +1685,6 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   u32 j;
   u32 n;
   s32 speed;
-  struct Actor *actor;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   speed = px(1) / 10;
@@ -1707,8 +1709,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
     lift->offsetY -= speed;
     for (j = 0; j < n; j++) {
       Actor_Get(ids[j])->z.fixed += speed;
-      actor = Actor_Get(ids[j]);
-      actor->targetZ = Actor_Get(ids[j])->z.fixed;
+      Actor_Get(ids[j])->targetZ = Actor_Get(ids[j])->z.fixed;
     }
     if ((i & 3) == 3)
       speed += px(1) / 10;
@@ -1728,7 +1729,6 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   u32 j;
   u32 n;
   s32 speed;
-  struct Actor *actor;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   speed = px(3) / 2;
@@ -1747,8 +1747,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
     lift->offsetY += speed;
     for (j = 0; j < n; j++) {
       Actor_Get(ids[j])->z.fixed -= speed;
-      actor = Actor_Get(ids[j]);
-      actor->targetZ = Actor_Get(ids[j])->z.fixed;
+      Actor_Get(ids[j])->targetZ = Actor_Get(ids[j])->z.fixed;
     }
     if ((i & 3) == 3 && i > 75)
       speed -= px(1) / 5;
@@ -1845,7 +1844,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   sprite->image.priority = beacon->sprite->image.priority;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

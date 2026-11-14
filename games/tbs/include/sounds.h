@@ -192,17 +192,18 @@ enum SoundId {
   /// Tolbi-bound ship rocks and as Saturos and Menardi combine.
   MUS_ERUPTION,
   /// The Title's music as the intro holds the title, without its prompt, after
-  /// the prologue and before Vale three years later (Title_Run).
+  /// the prologue and before Vale three years later (the title's
+  /// Scene_Initialize).
   MUS_TITLE_AFTER_PROLOGUE,
   MUS_065,
   MUS_066,
   /// The ending's music: the Lemurian ship sailing away (LemurianShip_SetSail)
-  /// and the staff credits that follow (Title_Run).
+  /// and the staff credits that follow (the title's Scene_Initialize).
   MUS_ENDING,
   MUS_068,
   MUS_069,
   /// The title intro's music at power-on, when a save file exists, with its
-  /// "Press Start" prompt (Title_Run).
+  /// "Press Start" prompt (the title's Scene_Initialize).
   MUS_TITLE,
   /// A row of the song table that holds the empty song (dummy_song_header), so
   /// nothing plays; only the debug battle message viewer starts it, to silence
@@ -216,7 +217,7 @@ enum SoundId {
   /// The File Screen's music, and the field music of the Sanctum.
   MUS_FILE_SCREEN,
   /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
-  /// event on the world map, until a key is pressed (Title_Run's entrance 10).
+  /// event on the world map, until a key is pressed (the title's entrance 10).
   MUS_ENDING_LOGO,
   /// Battle music gEncounter_BattleMusic gives the battles that end the Colosso
   /// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_Run plays it after

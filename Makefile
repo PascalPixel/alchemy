@@ -172,10 +172,8 @@ ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
 # One include path, as pret has: a header names its bank folder in its
-# path (#include "field/actor.h"). The Broken Seal still finds its headers
-# through each bank folder too.
-INCLUDES_tbs := $(addprefix -Igames/tbs/include/,battle field game gamepak graphics menu shop sound system window)
-INCLUDES := -Igames/$(GAME)/include $(INCLUDES_$(GAME))
+# path (#include "field/actor.h").
+INCLUDES := -Igames/$(GAME)/include
 
 # Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game;
 # ⚓️'s overlays swap -O2 for -Os below, by file and place in the build.
@@ -188,7 +186,7 @@ CPPFLAGS_ARM := -lang-c -nostdinc '-Acpu(arm)' '-Amachine(arm)' -D__CHAR_UNSIGNE
                 -D__ARM_ARCH_4T__ -D__APCS_32__ -D__ARMEL__ -Darm_elf -D__ELF__
 CPPFLAGS_AGBCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include -D__GNUC__=2 -D__GNUC_MINOR__=9 \
                   -D__GNUC_PATCHLEVEL__=0 -D__THUMBEL__ -Dthumb -D__thumb__ -D$(DEFINE)=1 -I$(BUILD)
-CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include $(filter-out -Igames/$(GAME)/include,$(INCLUDES)) \
+CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) $(INCLUDES) \
                   -D__GNUC__=2 -D__GNUC_MINOR__=95 -D__GNUC_PATCHLEVEL__=2 -Darm -D__arm__ -D$(DEFINE)=1 -I$(BUILD)
 SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/src/sound/driver.c \
            games/tla/src/sound/sound.c games/tla/src/sound/tables.c games/tla/src/sound/player_work_copy.c \
@@ -284,14 +282,16 @@ $(ELF): $(LINKED) $(STREAM) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 $(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 	$(LD) --unresolved-symbols=ignore-all --no-warn-mismatch $(LDFLAGS) -o $@ $(LINKED) $(LIBGCC)
 
-# An overlay's import table (⚓️): a far-call stub for each main-image routine
+# An overlay's import table: a far-call stub for each main-image routine
 # its code calls and does not define, copied from the game's list of them,
 # imports.inc, in the list's order. The overlay's script places it as
 # "*/imports.o". It is rewritten when the overlay's objects or its script
 # change, so an object leaving the overlay takes its calls' stubs with it.
-IMPORT_LIST_tla := games/tla/src/system/overlay/imports.inc
-IMPORT_LIST := $(IMPORT_LIST_$(GAME))
-OVERLAY_IMPORTS = $(if $(IMPORT_LIST),$(BUILD)/overlays/$*/imports.o)
+IMPORT_LIST := games/$(GAME)/src/system/overlay/imports.inc
+# The far-call macros the list includes.
+VENEER_tbs := games/tbs/src/gamepak/far_call/veneer.inc
+VENEER_tla := games/tla/src/gamepak/far_call/veneer.s
+OVERLAY_IMPORTS = $(BUILD)/overlays/$*/imports.o
 .SECONDEXPANSION:
 $(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_DEPS) $(IMPORT_LIST)
 	@mkdir -p $(@D)
@@ -299,7 +299,7 @@ $(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_DEPS) $(IMPORT_LI
 	  $(NM) -u $(OVERLAY_OBJS_$*) | awk '{ print "calls", $$NF }'; } | \
 	awk 'NR == FNR { seen[$$1 " " $$2] = 1; next } $$1 == "export" { name = $$2; sub(/,$$/, "", name); \
 	     if (!(("calls " name) in seen) || ("own " name) in seen) next } { print }' - $(IMPORT_LIST) > $@
-$(BUILD)/overlays/%/imports.o: $(BUILD)/overlays/%/imports.s games/$(GAME)/src/gamepak/far_call/veneer.s
+$(BUILD)/overlays/%/imports.o: $(BUILD)/overlays/%/imports.s $(VENEER_$(GAME))
 	$(AS) $(EDITION_ASFLAGS) -o $@ $<
 
 # An overlay links at 0x2008000 against the main image's symbols, less the

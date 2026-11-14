@@ -1,18 +1,26 @@
 /// @file
 /// Lucky Dice, the dice game in Tolbi, drawn with the battles' 3D camera.
 
-#include "module/field/lucky_dice.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "system.h"
-#include "io_reg.h"
-#include "battle_camera.h"
-#include "projection.h"
-#include "iwram_call.h"
-#include "system_call.h"
-#include "oam_words.h"
+#include "field/lucky_dice.h"
 #include "macros.h"
+#include "resource_ids.h"
+#include "battle/battle.h"
+#include "battle/battle_camera.h"
+#include "battle/battle_effect_work.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "game/game.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/oam_words.h"
+#include "system/projection.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "system/transform.h"
+#include "text/msg_ids.h"
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
 /// song MUS_DJINN_LESSON and plays until the player quits. Returns 0.
@@ -29,7 +37,6 @@ void Camera_ResetViewDefaults(void) {
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   s32 offset[3];
   u32 nearPlane;
-  u32 focalLength;
 
   camera->pitch = 152 << 8;
   camera->distance = 255 << 17;
@@ -49,13 +56,8 @@ void Camera_ResetViewDefaults(void) {
   SET_VECTOR(offset, 0, 0, camera->distance);
   Iwram_TransformVector(offset, camera->eye);
 
-  focalLength = 250;
-  focalLength <<= 16;
-  nearPlane = Iwram_RatioMulQ14(focalLength, 192 << 8);
-
-  focalLength = 250;
-  focalLength <<= 16;
-  Projection_Set(focalLength, nearPlane, 0x7fff0000);
+  nearPlane = Iwram_RatioMulQ14(px(250), 192 << 8);
+  Projection_Set(px(250), nearPlane, 0x7fff0000);
 }
 
 /// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.
@@ -87,24 +89,15 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 /// Unused: the reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 
-#include "dma.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
-#include "map_grid_scroll.h"
-#include "battle_effect_work.h"
-#include "transform.h"
-#include "resource_ids.h"
-#include "text/msg_ids.h"
-
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
 // coins window at the top, the help window (Throw / Quit) and the winnings
 // window at the bottom, and the result lettering's x in sprite coordinates.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH
 #define DICE_COIN_X 17
 #define DICE_COIN_W 13
 #define DICE_WIN_W 13
-#elif (LANGUAGE != LANGUAGE_JAPANESE)
+#elif LANGUAGE != LANGUAGE_JAPANESE
 #define DICE_COIN_X 18
 #define DICE_COIN_W 12
 #define DICE_WIN_W 12
@@ -114,21 +107,21 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 #define DICE_WIN_W 10
 #endif
 
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
 #define DICE_LABEL_X 56
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define DICE_LABEL_X 53
 #else
 #define DICE_LABEL_X 48
 #endif
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH
 #define DICE_HELP_X 20
 #define DICE_HELP_W 10
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define DICE_HELP_X 21
 #define DICE_HELP_W 9
-#elif (LANGUAGE != LANGUAGE_JAPANESE)
+#elif LANGUAGE != LANGUAGE_JAPANESE
 #define DICE_HELP_X 22
 #define DICE_HELP_W 8
 #else
@@ -136,7 +129,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 #define DICE_HELP_W 7
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define DICE_WIN_X 9
 #define DICE_WIN_NUMBER_X 48
 #define DICE_WIN_LABEL_X DICE_LABEL_X
@@ -158,7 +151,33 @@ struct LuckyDiceSprites {
   struct Window *helpWindow;     ///< the Throw and Quit buttons
 };
 
-#include "../graphics/lucky_dice/tables.h"
+// The Lucky Dice minigame's tables, after LuckyDice_Run in both games.
+
+// A table of signs nothing reads.
+const s32 gLuckyDice_UnusedSigns[] = {-1, 1, -1, 1, -1, -1, 1, 1};
+
+/// How many sprites each kind of result's lettering takes: 32 pixels each,
+/// for the kinds of lucky_dice.c's resultKind, 0 all four numbers alike, 1
+/// three alike, 2 two pairs and 3 one pair.
+const u8 gLuckyDice_LabelCounts[] = {5, 4, 3, 3};
+
+/// The first tile of each kind of result's lettering.
+const u8 gLuckyDice_LabelTiles[] = {
+    28,  48,  64, 76,
+#if LANGUAGE != LANGUAGE_JAPANESE
+    28,  248, 64,
+    248, // never read
+#endif
+};
+
+/// The die face tile at each step of its roll: one for each 1024 of the roll
+/// angle (variant), three to a face.
+const u8 gLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
+                                   3, 9,  13, 4, 7,  6, 5, 17, 11};
+
+/// The board's rows by depth: a die at rest is in the first row whose value its
+/// z (16.16 pixels) exceeds, -32767 taking the rest.
+const s16 gLuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
 
 #define DICE_COUNT 2
 #define DICE_FACE_COUNT 6
@@ -233,14 +252,10 @@ void LuckyDice_Run(void) {
   s32 groundPoint[3];
   s32 screen[3];
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 768 bytes it reserves (add sp, r5, r5 being -768), no
-   * instruction addresses the 32 at sp+168 to sp+199, and The Lost Age's
-   * LuckyDice_Run declares the same unused[8]; as without it, 42 of 2046
-   * instructions differ in tbs-en. */
+   * touches. */
   UNUSED s32 unused[8];
-  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each
-   * reloaded with ldrh; as plain u16 locals, 902 of 2046 instructions differ
-   * in tbs-en. */
+  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each reloaded
+   * with ldrh. */
   volatile u16 affineA;
   volatile u16 affineB;
   volatile u16 affineC;
@@ -304,7 +319,7 @@ void LuckyDice_Run(void) {
   diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceWork));
   sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 1560);
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
-  Stub_NoOpHook((s32)&ResourceId_BattleEffectFarCalls);
+  Stub_NoOpHook(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
   Camera_ResetViewDefaults();
   Task_ResetAll();
   gOamCopyEnabled = 0;
@@ -319,8 +334,7 @@ void LuckyDice_Run(void) {
     }
   }
 
-  resourceAddress =
-      (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
+  resourceAddress = (s32)Resource_GetTableEntry(RESOURCE_LUCKY_DICE_BOARD);
   Dma_Set((void *)resourceAddress, (void *)BG_PLTT, DMA_COPY_WORDS(112),
           REG_DMA3);
   Dma_Set((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(128), REG_DMA3);
@@ -331,8 +345,7 @@ void LuckyDice_Run(void) {
                            Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, BG_SCREEN_BLOCK(8), DMA_COPY_WORDS(9600),
           REG_DMA3);
-  resourceAddress =
-      (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
+  resourceAddress = (s32)Resource_GetTableEntry(RESOURCE_LUCKY_DICE_SPRITES);
   Dma_Set((void *)resourceAddress, spritePalette, DMA_COPY_WORDS(128),
           REG_DMA3);
   Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT, DMA_COPY_WORDS(128),

@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_FIELD_SEQUENCE_H
+#define ALCHEMY_FAR_CALL_FIELD_SEQUENCE_H
+
 /// @file
 /// Triggers, field Psynergy, actors and effect lifecycles.
 
@@ -163,4 +166,6 @@ void Scene_PlayQueuedMusicFar(void);
 s32 Party_RemapCharacterIdIfEnabledFar(s32 character, s32 childhood);
 #if TBS_PATCH_2
 void FieldEffect_ReleaseRevealSparklesFar(void);
+#endif
+
 #endif

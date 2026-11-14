@@ -4,20 +4,20 @@
 /// @file
 /// The settings menu's work and the selection work.
 
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "types.h"
-#include "render_input.h"
-#include "cursor.h"
 #include "static_assert.h"
-#include "heap.h"
+#include "types.h"
+#include "graphics/render_input.h"
+#include "system/heap.h"
+#include "window/cursor.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 /// The settings menu's work (heap block 20): the settings being edited and how
 /// many values each takes, the page, and the cursor, markers and icons.
 struct OptionMenuWork {
   u8 unused[1024];
-  /// Seven 52-byte entries (struct OptionMenuEntry in settings_menu.c), whose
-  /// state only the unused SettingsMenu_ResetEntries writes.
+  /// Seven 52-byte entries (struct OptionMenuEntry in window_settings_menu.c),
+  /// whose state only the unused SettingsMenu_ResetEntries writes.
   u8 entries[7][52];
   u8 unusedAfterEntries[8];
   /// The row the cursor is on: on the settings menu 0 to 4, indexing option

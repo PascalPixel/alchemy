@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_GAME_H
+#define ALCHEMY_FAR_CALL_GAME_H
+
 /// @file
 /// Party members, items, Djinn and game-state operations.
 
@@ -110,3 +113,5 @@ u32 BuildStamp_GetTimeFar();
 s32 PartyInventory_CountFreeSlotsFar(void);
 void InventorySnapshot_SaveFar(void);
 void InventorySnapshot_RestoreFar(void);
+
+#endif

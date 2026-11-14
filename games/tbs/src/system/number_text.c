@@ -1,9 +1,9 @@
 /// @file
 /// The digit characters and place values numbers are written with.
 
-#include "module/system/number_text.h"
+#include "system/number_text.h"
 #include "types.h"
-#include "system.h"
+#include "system/system.h"
 
 /// The hexadecimal digit characters, indexed by a nibble's value.
 const u8 gString_HexDigits[] = "0123456789ABCDEF";

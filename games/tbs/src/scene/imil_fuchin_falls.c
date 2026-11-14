@@ -87,7 +87,7 @@
 /// (FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST
 /// and _WEST) or up by
 /// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE starts the
-/// fade overlay (field/field_sequence/ground_mask.c). The overlay follows the
+/// fade overlay (field/field_sequence_ground_mask.c). The overlay follows the
 /// leader, except from
 /// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE. Step
 /// triggers 15 and 16 start and stop its following. When Reveal ends, the room
@@ -101,34 +101,70 @@
 /// The first room's inscription points the way: `The dragon's flame illuminates
 /// the path of truth in darkness.`
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "input.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/imil_fuchin_falls.h"
-#include "module/system/main_routine.h"
-#include "battle.h"
-#include "event_inline.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "imil_fuchin_falls.h"
-#include "djinn_ids.h"
-#include "battle_side.h"
-#include "display_transition.h"
-#include "field_psynergy_work.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "ground_mask.h"
-#include "io_reg.h"
+#include "djinn_ids.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
-#include "map_grid.h"
+#include "item_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/ground_mask.h"
+#include "field/map_grid.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern s16 gImilFuchinFalls_KeyHeadings[];
+extern s16 gImilFuchinFalls_SlideHeadings[];
+extern struct Actor *gImilFuchinFalls_DragonsEye;
+extern struct SceneEntrance gImilFuchinFalls_NoEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_ImilFallsCaveEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_EntranceEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_ZephyrRoomEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_DragonsEyeRoomEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_ArcticBladeRoomEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_KiRoomEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_DragonRoomEntrances[];
+extern u32 gImilFuchinFalls_Exits[];
+extern struct ActorPlacement gImilFuchinFalls_NoActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_ImilFallsCaveActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_EntranceActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_ZephyrRoomActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_DragonsEyeRoomActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_ArcticBladeRoomActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_DragonRoomActorPlacements[];
+extern struct Trigger gImilFuchinFalls_NoTriggers[];
+extern struct Trigger gImilFuchinFalls_ImilFallsCaveTriggers[];
+extern struct Trigger gImilFuchinFalls_EntranceTriggers[];
+extern struct Trigger gImilFuchinFalls_ZephyrRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_DragonsEyeRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_ArcticBladeRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_KiRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_DragonRoomTriggers[];
+extern s32 gImilFuchinFalls_ShortDustScript[];
+extern s32 gImilFuchinFalls_MediumDustScript[];
+extern s32 gImilFuchinFalls_LongDustScript[];
+
+extern void *gHeapSlots[];
 
 /// The placed actors, numbering each scene's placement rows from
 /// ACTOR_FIRST_PLACED: Fever in Imil Falls Cave, the floating logs of Fuchin
@@ -206,63 +242,63 @@ static void FuchinFallsCave_FightZephyr(void) {
   Field_RequestDjinnBattle(ACTOR_ZEPHYR, DJINNI_ZEPHYR);
 }
 
-const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ImilFallsCave) {
+  if (sceneId == SCENE_IMIL_FALLS_CAVE) {
     return gImilFuchinFalls_ImilFallsCaveEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveEntrance) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
     return gImilFuchinFalls_EntranceEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     return gImilFuchinFalls_ZephyrRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
     return gImilFuchinFalls_DragonsEyeRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveArcticBlade) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
     return gImilFuchinFalls_ArcticBladeRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveOrbOfForce) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ORB_OF_FORCE) {
     return gImilFuchinFalls_KiRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonStatue) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     return gImilFuchinFalls_DragonRoomEntrances;
   }
   return gImilFuchinFalls_NoEntrances;
 }
 
-const struct SceneExitRegion *ImilFuchinFalls_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the exit table every scene of the overlay shares.
-const u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
+const u32 *Scene_GetExits(void) { return gImilFuchinFalls_Exits; }
 
-const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ImilFallsCave) {
+  if (sceneId == SCENE_IMIL_FALLS_CAVE) {
     return gImilFuchinFalls_ImilFallsCaveActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveEntrance) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
     return gImilFuchinFalls_EntranceActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     return gImilFuchinFalls_ZephyrRoomActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
     return gImilFuchinFalls_DragonsEyeRoomActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveArcticBlade) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
     return gImilFuchinFalls_ArcticBladeRoomActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonStatue) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     return gImilFuchinFalls_DragonRoomActorPlacements;
   }
   return gImilFuchinFalls_NoActorPlacements;
 }
 
-#include "shared/actor_pair_move.h"
+#include "shared/actor_pair_move.c"
 
 /// The first room's first log lies at the east end of its track.
 #define FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST FLAG_AREA_TEMP_01
@@ -1005,28 +1041,28 @@ static struct Actor *FuchinFallsCave_CreateForegroundActor(s32 x, s32 y, s32 z,
   return 0;
 }
 
-const struct Trigger *ImilFuchinFalls_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ImilFallsCave) {
+  if (sceneId == SCENE_IMIL_FALLS_CAVE) {
     return gImilFuchinFalls_ImilFallsCaveTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveEntrance) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
     return gImilFuchinFalls_EntranceTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     return gImilFuchinFalls_ZephyrRoomTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
     return gImilFuchinFalls_DragonsEyeRoomTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveArcticBlade) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
     return gImilFuchinFalls_ArcticBladeRoomTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveOrbOfForce) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ORB_OF_FORCE) {
     return gImilFuchinFalls_KiRoomTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonStatue) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     return gImilFuchinFalls_DragonRoomTriggers;
   }
   return gImilFuchinFalls_NoTriggers;
@@ -1035,11 +1071,8 @@ const struct Trigger *ImilFuchinFalls_GetTriggers(void) {
 /// Walking into the way out of Imil Falls Cave (step trigger 1) faces the
 /// leader south and leaves for Imil.
 static void Imil_LeaveFallsCave(void) {
-  struct Actor *leader;
-
   Event_Start();
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1275,10 +1308,10 @@ static void FuchinFallsCave_StopLightFollowingLeader(void) {
 }
 
 /// Sets up the scene as the party enters.
-s32 ImilFuchinFalls_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.next == (s32)&SceneId_ImilFallsCave) {
+      gMainRoutineWork.next == SCENE_IMIL_FALLS_CAVE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Imil_WalkTowardFever();
   } else {
@@ -1303,7 +1336,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
   struct FadeOverlayWork *work;
 
   ImilFuchinFalls_RebuildLogRoom();
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
+  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
     if (!GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) &&
         gMainRoutineWork.entrance ==
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
@@ -1313,8 +1346,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
       FuchinFallsCave_CreateForegroundActor(px(156), 0, px(452), SPRITE_CRATE);
       FuchinFallsCave_CreateForegroundActor(px(188), 0, px(452), SPRITE_CRATE);
     }
-  } else if (gMainRoutineWork.next ==
-             (s32)&SceneId_FuchinFallsCaveDragonStatue) {
+  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     // Default: NULL unless the arrival from the south half's middle takes the
     // fade overlay.
     work = NULL;
@@ -1361,19 +1393,18 @@ static void ImilFuchinFalls_PrepareRoom(void) {
 /// Restores the cell behavior templates for the current log room of Fuchin
 /// Falls Cave.
 static void ImilFuchinFalls_RebuildLogRoom(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveEntrance) {
+  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
     MapGrid_CopyCellAttributes(8, 29, 15, 5, 8, 42);
     FuchinFallsCave_RebuildEntranceLogs();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     MapGrid_CopyCellAttributes(12, 8, 10, 18, 0, 28);
     FuchinFallsCave_RebuildZephyrRoomLogs();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveDragonsEye &&
+  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
              gMainRoutineWork.entrance !=
                  FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
     MapGrid_CopyCellAttributes(12, 21, 9, 16, 12, 3);
     FuchinFallsCave_RebuildDragonsEyeRoomLogs();
-  } else if (gMainRoutineWork.next ==
-             (s32)&SceneId_FuchinFallsCaveArcticBlade) {
+  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
     if (gMainRoutineWork.entrance ==
             FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE ||
         gMainRoutineWork.entrance ==
@@ -1390,14 +1421,14 @@ static void ImilFuchinFalls_RebuildLogRoom(void) {
 static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gFieldWork->stepTrigger;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     if (trigger == 17) {
       ImilFuchinFalls_HopBy(0, -32);
     } else {
       ImilFuchinFalls_HopBy(-32, 0);
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveDragonsEye &&
+  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
       trigger == 25 &&
       GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE)) {
     ImilFuchinFalls_HopBy(0, 32);

@@ -3,14 +3,14 @@
 /// every sound number, the music's volume and tempo ramps, the music's return
 /// after a jingle, and a sound test nothing in the game names.
 
-#include "module/system/system.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "sound.h"
-#include "system.h"
-#include "sound_driver.h"
-#include "io_reg.h"
+#include "sound/sound.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "sound/sound_driver.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/system.h"
 
 enum {
   /// Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8
@@ -165,11 +165,7 @@ void SoundTest_Run(void) {
 
   row = 0;
   reverbCode = SOUND_REVERB_NORMAL;
-  /* FAKEMATCH(dead): a once-only block; as a plain store, 4 of 145 instructions
-   * differ in tbs-en. */
-  do {
-    gBuildStamp[0] = 0;
-  } while (0);
+  Io_Write32(0, &gBuildStamp[0]);
   clipTimer = 20;
 
   for (;;) {

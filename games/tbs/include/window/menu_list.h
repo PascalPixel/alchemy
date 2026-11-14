@@ -4,20 +4,19 @@
 /// @file
 /// Menu lists: sprites, cursors, the party status window and paged selections.
 
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "types.h"
-#include "battle_sprite_id.h"
-#include "task.h"
-#include "tbs_edition.h"
 #include "edition.h"
-#include "render_input.h"
-#include "window.h"
 #include "static_assert.h"
-#include "input.h"
-#include "far_call.h"
-#include "frame.h"
-#include "heap.h"
+#include "tbs_edition.h"
+#include "types.h"
+#include "gamepak/far_call.h"
+#include "graphics/battle_sprite_id.h"
+#include "graphics/render_input.h"
+#include "system/frame.h"
+#include "system/heap.h"
+#include "system/input.h"
+#include "system/task.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 enum { BATTLE_LIST_ROWS = 5 };
 

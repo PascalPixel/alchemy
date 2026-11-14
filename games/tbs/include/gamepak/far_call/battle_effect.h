@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_BATTLE_EFFECT_H
+#define ALCHEMY_FAR_CALL_BATTLE_EFFECT_H
+
 /// @file
 /// Battle effect dispatch, drawing and presentation setup.
 
@@ -11,3 +14,5 @@ void BattleEffect_RunShatteringOpeningFar(struct BattleEffectParams *args);
 void BattleEffect_RunElementBurstFar(struct BattleEffectParams *args);
 void BattleEffect_StartElementStreaksFar(s32 element);
 void BattleEffect_EndElementStreaksFar(void);
+
+#endif

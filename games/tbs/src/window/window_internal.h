@@ -7,33 +7,33 @@
 /// parts, and each part includes it too, so that a part read on its own still
 /// resolves.
 
-#include "module/window/scales.h"
-#include "module/window/articles.h"
-#include "module/window/message_speed.h"
-#include "module/window/glyph_arm.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "iwram_call.h"
-#include "battle_work.h"
-#include "text_font.h"
-#include "resource_ids.h"
-#include "ram_code.h"
-#include "battle_side.h"
-#include "message_reader.h"
-#include "vram_cache.h"
-#include "select.h"
-#include "text/msg_ids.h"
-#include "event.h"
-#include "settings_menu.h"
-#include "save.h"
-#include "serial.h"
-#include "macros.h"
-#include "flags.h"
 #include "ability_ids.h"
 #include "enemy_ids.h"
+#include "flags.h"
+#include "macros.h"
+#include "resource_ids.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "battle/battle_work.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "system/iwram_call.h"
+#include "system/ram_code.h"
+#include "system/save.h"
+#include "system/serial.h"
+#include "system/vram_cache.h"
+#include "window/articles.h"
+#include "window/glyph_arm.h"
+#include "window/message_reader.h"
+#include "window/message_speed.h"
+#include "window/scales.h"
+#include "window/select.h"
+#include "window/settings_menu.h"
+#include "window/text_font.h"
+#include "text/msg_ids.h"
 
 /// Writes code at position in the ring of decoded text and steps position on,
 /// wrapping at the ring's end.
@@ -42,20 +42,20 @@
    (position) = ((position) + 1) & TEXT_BUFFER_MASK)
 
 // Edition-specific text and window layout values.
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
 #define ITEM_POSSESSIVE_TEXT_COUNT 2
 #else
 #define ITEM_POSSESSIVE_TEXT_COUNT 4
 #endif
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TEXT_ARGUMENT_SPACE ' '
 #else
 #define TEXT_ARGUMENT_SPACE 143
 #endif
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define WINDOW_SPRITE_SPACE_WIDTH 7
 #else
 #define WINDOW_SPRITE_SPACE_WIDTH 5

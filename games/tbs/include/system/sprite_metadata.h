@@ -4,10 +4,10 @@
 /// @file
 /// Animation metadata and its lookup by resource.
 
-#include "types.h"
-#include "static_assert.h"
 #include "edition.h"
-#include "far_call.h"
+#include "static_assert.h"
+#include "types.h"
+#include "gamepak/far_call.h"
 
 /// An animation's metadata: the sprite's size, scale and offsets, how its
 /// pictures are drawn and decoded, its pictures and its animation scripts.
@@ -23,7 +23,7 @@ struct AnimationMetadata {
   s8 adjustY; ///< pixels
   /// Pixels from the actor's position up to the top of its sprite
   /// (Actor_GetScreenPosition).
-  u8 boxX;
+  s8 boxX;
   /// Pixels; half of it is a battle unit's radius, and can be an
   /// actor's radius (Actor.radius).
   u8 boxY;
@@ -45,5 +45,9 @@ STATIC_ASSERT(offsetof(struct AnimationMetadata, boxY) == 0x09);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 0x0a);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 0x0c);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 0x10);
+
+struct AnimationMetadata;
+
+struct AnimationMetadata *Resource_GetMetadataRecord(u32 number);
 
 #endif

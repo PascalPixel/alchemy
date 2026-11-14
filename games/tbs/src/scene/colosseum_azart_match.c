@@ -11,7 +11,7 @@
 /// Pipeworks, the Broken Bridge and the Lumber Water Crossing Area.
 ///
 /// Isaac comes here three times, each time at its own entrance.
-/// ColosseumAzartMatch_Initialize blocks Retreat and restores the stages from
+/// Scene_Initialize blocks Retreat and restores the stages from
 /// their temporary flags (FLAG_PIPES_MOVED, FLAG_PIPEWORKS_PIPE_PUSHED,
 /// FLAG_PLANT_GROWN and the rock's column in FLAG_SECOND_ROCK_COLUMN), so that
 /// what the friends changed stays changed for the race. Then it sets up the
@@ -59,45 +59,104 @@
 /// COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace, where
 /// Isaac's friends tell him he was only dreaming of the finals.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "io_write_queue.h"
-#include "scene_ids.h"
-#include "vram_cache.h"
-#include "module/import.h"
-#include "module/scene/colosseum_azart_match.h"
-#include "module/scene/shared/colosso_solo.h"
-#include "module/scene/shared/colosso_marker.h"
-#include "module/scene/shared/colosso_setup.h"
-#include "module/scene/shared/colosso_occupant.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/sound/sound.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "input.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "pushed_actor.h"
-#include "resource_ids.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
-#include "shared/colosso_gauge.h"
-#include "macros.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "resource_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/colosso_gauge.h"
+#include "scene/colosso_marker.h"
+#include "scene/colosso_occupant.h"
+#include "scene/colosso_setup.h"
+#include "scene/colosso_solo.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/input.h"
+#include "system/io_write_queue.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+s16 gColosso_MarkerStep BSS_DATA;
+s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerFlip BSS_DATA ALIGNED(4);
+/// Isaac's z before he is shown on the stage, 16.16 fixed-point pixels.
+s32 gColosso_WarriorStartZ BSS_DATA;
+s16 gColosso_MarkerEndX BSS_DATA;
+s16 gColosso_LetteringParameter BSS_DATA ALIGNED(4);
+s16 gColosso_ModeScaleStart BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveDuration BSS_DATA ALIGNED(4);
+s32 gColosso_LetteringPosition BSS_DATA;
+s16 gColosso_MarkerBlink BSS_DATA;
+s16 gColosso_ModeScaleTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveStep BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerY BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendStep BSS_DATA ALIGNED(4);
+/// Isaac's facing before Colosso_FadeInWarrior, which
+/// Colosso_RestoreWarrior puts back.
+s32 gColosso_WarriorStartAngle BSS_DATA;
+s16 gColosso_MarkerSteps BSS_DATA;
+s16 gColosso_LetteringMode BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendStart BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringTimer BSS_DATA ALIGNED(4);
+s16 *gColosso_LetteringScript BSS_DATA;
+union MarkerCoordinate gColosso_MarkerStartX BSS_DATA;
+s16 gColosso_ModeBlendDuration BSS_DATA ALIGNED(4);
+u8 gColosseumAzartMatch_Unk_5a[6] BSS_DATA;
+/// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
+s32 gColosso_PointerOam[3] BSS_DATA;
+union MarkerCoordinate gColosso_MarkerStartY BSS_DATA;
+/// The lettering's sprite parts, three words each, written every frame.
+u32 gColosso_LetteringSprites[12] BSS_DATA;
+s16 gColosso_ModeMoveStart BSS_DATA;
+s16 gColosso_MarkerX BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeScaleStep BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerEndY BSS_DATA ALIGNED(4);
+/// Isaac's x before he is shown on the stage, 16.16 fixed-point pixels.
+s32 gColosso_WarriorStartX BSS_DATA;
+
+s32 Scene_Initialize(void);
+extern const u8 gColosso_LetteringPaletteOffsets[];
+extern const s16 gColosso_LetteringDigit[];
+extern const s16 gColosso_LetteringLose[];
+extern s32 gColosso_PrizeSparkleScript[];
+extern s32 gColosso_PrizeScript[];
+extern struct SceneEntrance gColosseumAzartMatch_Entrances[];
+extern u32 gColosseumAzartMatch_Exits[];
+extern struct ActorPlacement gColosseumAzartMatch_ActorPlacements[];
+extern s32 gColosseumAzartMatch_Countdown;
+extern struct Trigger gColosseumAzartMatch_Triggers[];
+extern s16 gColosso_LetteringTitle[];
+extern s16 gColosso_LetteringGo[];
+extern s16 gColosso_LetteringWin[];
+extern s32 gColosso_OpponentFinishScript[];
+extern s32 gColosso_LeaderFinishScript[];
+extern char gHexDigits[20];
+extern u32 gPushedActor_DirectionSteps[];
+extern s16 gColosso_LetteringSlot;
+extern s16 gColosso_MarkerSlot;
 
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared.
@@ -166,7 +225,7 @@ enum {
 /// The temporary flags that keep what the friends changed on the stages, for
 /// the race.
 ///
-/// ColosseumAzartMatch_Initialize restores them.
+/// Scene_Initialize restores them.
 enum {
   FLAG_PIPES_MOVED =
       FLAG_AREA_TEMP_01, ///< the Pipeworks' pipes, as water filled them
@@ -178,17 +237,15 @@ enum {
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
-const struct SceneEntrance *ColosseumAzartMatch_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumAzartMatch_Entrances;
 }
 
-const struct SceneExitRegion *ColosseumAzartMatch_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *ColosseumAzartMatch_GetExits(void) {
-  return gColosseumAzartMatch_Exits;
-}
+const u32 *Scene_GetExits(void) { return gColosseumAzartMatch_Exits; }
 
-const struct ActorPlacement *ColosseumAzartMatch_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gColosseumAzartMatch_ActorPlacements;
 }
 
@@ -244,16 +301,8 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
   s32 i;
 
   wait(10);
-  i = 0;
-  if (gColosseumAzartMatch_Countdown != 22) {
-    do {
-      wait(1);
-      i++;
-      if (i > 119) {
-        break;
-      }
-    } while (gColosseumAzartMatch_Countdown != 22);
-  }
+  for (i = 0; i < 120 && gColosseumAzartMatch_Countdown != 22; i++)
+    wait(1);
 }
 
 /// Move on a rock in the Rock Challenge, and each push, settles the rocks.
@@ -549,9 +598,9 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         base - approach + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_ColosseumAzartMatch,
+  Event_SetAfterBattleDestination(SCENE_COLOSSEUM_AZART_MATCH,
                                   COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON);
-  Event_SetDefeatDestination((s32)&SceneId_ColosseumAzartMatch,
+  Event_SetDefeatDestination(SCENE_COLOSSEUM_AZART_MATCH,
                              COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
@@ -566,7 +615,7 @@ static void ColosseumAzartMatch_PushRockOrCheckAhead(void) {
   }
 }
 
-const struct Trigger *ColosseumAzartMatch_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gColosseumAzartMatch_Triggers;
 }
 
@@ -619,7 +668,7 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
 }
 
 /// Sets up Colosseum Final 1 for the visit its entrance stands for.
-s32 ColosseumAzartMatch_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 hit;
   s32 x;
@@ -707,7 +756,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartOpponent((s32)&ResourceId_OpponentPathA);
+    Colosso_StartOpponent(RESOURCE_OPPONENT_PATH_A);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
     Task_AddFrame(Colosso_RaiseTakePlaceOnPsynergy, TASK_PASS_FRAME);
@@ -969,7 +1018,6 @@ static inline void ColosseumAzartMatch_SetPipeHeight(struct Actor *actor,
 static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
   s32 path;
   struct Actor *second;
-  struct Actor *first;
 
   if (gMainRoutineWork.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
@@ -994,14 +1042,12 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_HidePointer();
       wait(2);
-      first = Actor_Get(ACTOR_PIPE_WEST);
-      ColosseumAzartMatch_SetPipeHeight(first, px(8));
+      ColosseumAzartMatch_SetPipeHeight(Actor_Get(ACTOR_PIPE_WEST), px(8));
       second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, px(32));
       Actor_WaitForMove(second);
       Event_Wait(45);
-      first = Actor_Get(ACTOR_PIPE_WEST);
-      ColosseumAzartMatch_SetPipeHeight(first, px(24));
+      ColosseumAzartMatch_SetPipeHeight(Actor_Get(ACTOR_PIPE_WEST), px(24));
       second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, 0);
       Actor_WaitForMove(second);
@@ -1123,39 +1169,39 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
   Event_End();
 }
 
-// This scene's exits for colosso_solo.h.
+// This scene's exits for colosso_solo.c.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST
-#include "shared/colosso_solo.h"
-#include "shared/item_equip.h"
-#include "shared/colosso_task.h"
+#include "shared/colosso_solo.c"
+#include "shared/item_equip.c"
+#include "shared/colosso_task.c"
 
-#include "shared/colosso_lettering.h"
+#include "shared/colosso_lettering.c"
 
-#include "shared/colosso_marker.h"
-#include "shared/colosso_item_icon.h"
+#include "shared/colosso_marker.c"
+#include "shared/colosso_item_icon.c"
 
-#include "shared/colosso_hex_string.h"
-#include "shared/colosso_finish.h"
+#include "shared/colosso_hex_string.c"
+#include "shared/colosso_finish.c"
 
-#include "shared/colosso_path_opponent.h"
-#include "shared/colosso_setup.h"
-#include "shared/colosso_map_state.h"
-#include "shared/actor_find_at_position.h"
+#include "shared/colosso_path_opponent.c"
+#include "shared/colosso_setup.c"
+#include "shared/colosso_map_state.c"
+#include "shared/actor_find_at_position.c"
 
-#include "shared/colosso_occupant.h"
+#include "shared/colosso_occupant.c"
 
 /// Closes the arena's step trigger. Nothing in the game sets it.
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding an Oil Drop has been opened.
 #define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_AREA_TEMP_09
 
-#include "shared/colosso_lettering_tables.h"
+#include "shared/colosso_lettering_tables.c"
 // clang-format off
 
 char gHexDigits[20] = "0123456789ABCDEF";
 
-#include "shared/colosso_prize_scripts.h"
+#include "shared/colosso_prize_scripts.c"
 
 u32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
@@ -1275,9 +1321,9 @@ struct Trigger gColosseumAzartMatch_Triggers[] = {
 
 s16 gColosso_LetteringSlot = -1;
 
-#include "shared/colosso_lettering_scripts.h"
+#include "shared/colosso_lettering_scripts.c"
 // clang-format on
 
 s16 gColosso_MarkerSlot = -1;
 
-#include "shared/colosso_finish_scripts.h"
+#include "shared/colosso_finish_scripts.c"

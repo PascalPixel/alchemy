@@ -18,7 +18,7 @@
 ///   reached from Tolbi. During the trials the crowd cannot get in. Its people
 ///   talk of the heats and of the Lucky Guess, a bet on which warrior will win
 ///   the finals, and Mind Read hears what they hope for. On the finals day
-///   ColosseumEntrance_GetActorPlacements places a second crowd, with Isaac's
+///   Scene_GetActorPlacements places a second crowd, with Isaac's
 ///   companions and four of the colosseum's soldiers, and the triggers' flag
 ///   conditions give everyone new lines. The scalpers sell seats. The Lucky
 ///   Guess man recognizes Isaac and will not let a finalist play, and
@@ -59,26 +59,59 @@
 /// Colosseum's exits are how its arrivals chain into one another and into the
 /// finals stages.
 
-#include "main_routine_work.h"
-#include "scene_ids.h"
-#include "module/import.h"
-#include "module/scene/colosseum_entrance.h"
-#include "shared/walk_into_leader.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "macros.h"
 #include "flags.h"
-#include "io_reg.h"
-#include "sound_driver_symbols.h"
+#include "macros.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+extern s32 gColosseumEntrance_GatherIntoIsaacScript[];
+extern s32 gColosseumEntrance_GatherIntoGaretScript[];
+extern s32 gColosseumEntrance_RejoinPartyScript[];
+extern s32 gColosseumEntrance_EnterGatesScript[];
+extern s32 gColosseumEntrance_ApproachFinalsGroupScript[];
+extern s32 gColosseumEntrance_JoinFinalsFromEastScript[];
+extern s32 gColosseumEntrance_JoinFinalsFromSouthScript[];
+extern s32 gColosseumEntrance_EnterFinalsScript[];
+extern s32 gColosseumEntrance_PulseScaleScript[];
+extern struct SceneEntrance gColosseumEntranceEntrancesOther[];
+extern struct SceneEntrance gColosseumEntrances[];
+extern struct SceneEntrance gColosseumEntranceEntrances[];
+extern u32 gColosseumEntranceExits[];
+extern struct ActorPlacement gColosseumEntranceActorPlacementsOther[];
+extern struct ActorPlacement gColosseumStandsActorPlacements[];
+extern struct ActorPlacement gColosseumTrialGroundsActorPlacements[];
+extern struct ActorPlacement gColosseumActorPlacements[];
+extern struct ActorPlacement gColosseumSoldiersActorPlacements[];
+extern struct ActorPlacement
+    gColosseumActorPlacementsFromColosseumAzartMatchWest[];
+extern struct ActorPlacement
+    gColosseumActorPlacementsFromColosseumNavampaMatch[];
+extern struct ActorPlacement gColosseumEntranceActorPlacements[];
+extern struct ActorPlacement gColosseumEntranceActorPlacementsFinalsDay[];
+extern struct ActorPlacement gColosseumEntranceActorPlacementsAfterColosso[];
+extern struct Trigger gColosseumEntranceTriggersOther[];
+extern struct Trigger gColosseumTunnelTriggers[];
+extern struct Trigger gColosseumTriggers[];
+extern struct Trigger gColosseumEntranceTriggers[];
+extern struct Trigger gColosseumTriggersFromColosseumAzartMatchWest[];
 
 static void ColosseumEntrance_ApplyArrivalState(void);
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker);
@@ -261,28 +294,28 @@ enum {
   FLAG_FINALS_LINE_REACHED = FLAG_SCENE_TEMP_35
 };
 
-const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Colosseum) {
+  if (sceneId == SCENE_COLOSSEUM) {
     return gColosseumEntrances;
   }
-  if (sceneId == (s32)&SceneId_ColosseumEntrance) {
+  if (sceneId == SCENE_COLOSSEUM_ENTRANCE) {
     return gColosseumEntranceEntrances;
   }
   return gColosseumEntranceEntrancesOther;
 }
 
-const struct SceneExitRegion *ColosseumEntrance_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// Returns the shared colosseum exits.
-const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
+const u32 *Scene_GetExits(void) { return gColosseumEntranceExits; }
 
 /// Selects the actors for the scene being entered.
-const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   const struct ActorPlacement *table;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_Colosseum) {
+  if (gMainRoutineWork.next == SCENE_COLOSSEUM) {
     switch (gMainRoutineWork.entrance) {
     case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
@@ -314,7 +347,7 @@ const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
       table = gColosseumActorPlacements;
       break;
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_ColosseumEntrance) {
+  } else if (gMainRoutineWork.next == SCENE_COLOSSEUM_ENTRANCE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntranceActorPlacementsAfterColosso;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -328,20 +361,20 @@ const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
   return table;
 }
 
-const struct Trigger *ColosseumEntrance_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ColosseumTunnel) {
+  if (sceneId == SCENE_COLOSSEUM_TUNNEL) {
     return gColosseumTunnelTriggers;
   }
-  if (sceneId == (s32)&SceneId_Colosseum) {
+  if (sceneId == SCENE_COLOSSEUM) {
     if (gMainRoutineWork.entrance ==
         COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
       return gColosseumTriggersFromColosseumAzartMatchWest;
     }
     return gColosseumTriggers;
   }
-  if (sceneId == (s32)&SceneId_ColosseumEntrance) {
+  if (sceneId == SCENE_COLOSSEUM_ENTRANCE) {
     return gColosseumEntranceTriggers;
   }
   return gColosseumEntranceTriggersOther;
@@ -458,10 +491,9 @@ static void ColosseumEntrance_TalkToAzart(void) {
     *timer = duration;
   }
   {
-    u16 *work = &contestant->userValue;
     u16 value = 112;
 
-    *work = value;
+    contestant->userValue = value;
   }
   Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   Event_End();
@@ -1224,12 +1256,12 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 }
 
 /// Sets up the Colosseum or its entrance as the party arrives.
-s32 ColosseumEntrance_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Colosseum) {
+  if (sceneId == SCENE_COLOSSEUM) {
     ColosseumEntrance_ApplyArrivalState();
-  } else if (sceneId == (s32)&SceneId_ColosseumEntrance) {
+  } else if (sceneId == SCENE_COLOSSEUM_ENTRANCE) {
     ColosseumEntrance_UpdateEntranceCells();
   }
   return 0;
@@ -1541,8 +1573,6 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
 /// In the Colosseum's east passage, a soldier leads Isaac to the next finals
 /// match's tour.
 static void ColosseumEntrance_EscortToEastExit(void) {
-  struct Actor *escort;
-
   if (GameFlag_Get(JENNA) != 0) {
     GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
     Party_RemoveMember(JENNA);
@@ -1554,8 +1584,7 @@ static void ColosseumEntrance_EscortToEastExit(void) {
   FieldCamera_FollowActor(ACTOR_ESCORTING_SOLDIER, 1);
   Actor_SetSpeed(ACTOR_ESCORTING_SOLDIER, 1.6);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
-  escort = Actor_Get(ACTOR_ESCORTING_SOLDIER);
-  escort->facing = FACING_EAST;
+  Actor_Get(ACTOR_ESCORTING_SOLDIER)->facing = FACING_EAST;
   Event_StartScreenTransition();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_WALK);
@@ -1607,10 +1636,9 @@ static void ColosseumEntrance_AnnounceFinals(void) {
     *timer = duration;
   }
   {
-    u16 *work = &contestant->userValue;
     u16 value = 112;
 
-    *work = value;
+    contestant->userValue = value;
   }
   Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   Actor_FaceDirection(ACTOR_MORGAN, FACING_SOUTH_SOUTHEAST, 0);
@@ -1694,8 +1722,6 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
 /// In the Colosseum's west passage, a soldier leads Isaac to Colosseum Final
 /// 2's tour.
 static void ColosseumEntrance_EscortToWestExit(void) {
-  struct Actor *escort;
-
   if (GameFlag_Get(JENNA) != 0) {
     GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
     Party_RemoveMember(JENNA);
@@ -1707,8 +1733,7 @@ static void ColosseumEntrance_EscortToWestExit(void) {
   FieldCamera_FollowActor(ACTOR_ESCORTING_SOLDIER, 1);
   Actor_SetSpeed(ACTOR_ESCORTING_SOLDIER, 1.6);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
-  escort = Actor_Get(ACTOR_ESCORTING_SOLDIER);
-  escort->facing = FACING_WEST;
+  Actor_Get(ACTOR_ESCORTING_SOLDIER)->facing = FACING_WEST;
   Event_StartScreenTransition();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_WALK);

@@ -3,7 +3,7 @@
 /// places in one scene (SceneId_Sanctum).
 ///
 /// The entrance the party arrives at decides which place it is, and
-/// Sanctum_GetActorPlacements and Sanctum_GetTriggers choose that place's
+/// Scene_GetActorPlacements and Scene_GetTriggers choose that place's
 /// tables by it. Spoken to from the front, each place's healer opens the
 /// Sanctum's services (Sanctum_Run). From any other side the healer talks. Each
 /// place's door leads back out to its own town.
@@ -57,33 +57,58 @@
 /// - Sanctum, the name the game gives every other entrance, which leaves only
 ///   SANCTUM_UNUSED. No exit leads there, and it places nobody.
 
-#include "speaker.h"
-#include "flags.h"
-#include "main_routine_work.h"
-#include "module/scene/sanctum.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/sound/sound.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "input.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_effect.h"
-#include "text/msg_ids.h"
-#include "save.h"
-#include "event_inline.h"
-#include "actor_builtin_scripts.h"
 #include "ability_ids.h"
+#include "flags.h"
 #include "item_ids.h"
-#include "sound_driver_symbols.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_builtin_scripts.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/input.h"
+#include "system/main_routine_work.h"
+#include "system/save.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+extern u32 gSanctum_LeaderCircleScript[];
+extern u32 gSanctum_GaretCircleScript[];
+extern s32 gItemIcon_GrowScript[];
+extern s32 gSanctum_ItemIconEndScript[];
+extern struct SceneEntrance gSanctum_Entrances[];
+extern u32 gSanctum_Exits[];
+extern struct ActorPlacement gSanctum_NoActorPlacements[];
+extern struct ActorPlacement gSanctum_ValeActorPlacements[];
+extern struct ActorPlacement gSanctum_IvanActorPlacement[];
+extern struct ActorPlacement gSanctum_VaultBilibinActorPlacements[];
+extern struct ActorPlacement gSanctum_QuestActorPlacements[];
+extern struct ActorPlacement gSanctum_AltinXianActorPlacements[];
+extern struct Trigger gSanctum_ValeTriggers[];
+extern struct Trigger gSanctum_VaultTriggers[];
+extern struct Trigger gSanctum_VaultRevisitTriggers[];
+extern struct Trigger gSanctum_QuestTriggers[];
+extern struct Trigger gSanctum_ValeTriggersAfterLeaving[];
+extern struct Trigger gSanctum_ValeTriggersAfterKalay[];
+extern struct Trigger gSanctum_AltinTriggers[];
+extern struct Trigger gSanctum_BilibinTriggers[];
+extern struct Trigger gSanctum_XianTriggers[];
+extern s32 gSanctum_CursorBob[];
+extern s32 gSanctum_OwnerEffectScript[];
+extern s32 gSanctum_SparkEndScript[];
 
 /// After the quest is refused, the Great Healer has warned that stepping
 /// outside the village is final.
@@ -98,7 +123,7 @@
 // Sanctum.
 
 /// The placed actors, numbering the rows of the table
-/// Sanctum_GetActorPlacements returns for the entrance.
+/// Scene_GetActorPlacements returns for the entrance.
 ///
 /// The party's rows take their own ids. Every place's first row is its healer.
 enum SanctumActorId {
@@ -171,16 +196,16 @@ static UNREAD_RESULT Sanctum_FaceActorNamedByTimer(struct Actor *actor) {
 }
 
 /// Returns the entrances, shared by all six places.
-const struct SceneEntrance *Sanctum_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSanctum_Entrances;
 }
 
-const struct SceneExitRegion *Sanctum_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
+const u32 *Scene_GetExits(void) { return gSanctum_Exits; }
 
 /// Chooses the actors by entrance.
-const struct ActorPlacement *Sanctum_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case SANCTUM_FROM_VALE:
   case SANCTUM_VALE_UNUSED:
@@ -207,7 +232,7 @@ const struct ActorPlacement *Sanctum_GetActorPlacements(void) {
 
 /// Chooses the triggers by entrance, and in Vale Sanctum before and after the
 /// quest by story flag.
-const struct Trigger *Sanctum_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   switch (gMainRoutineWork.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_LOG_ROOMS_A:
@@ -387,7 +412,7 @@ static void Sanctum_AskAboutPsynergyChanges(void) {
 }
 
 /// Sets up the place for its entrance and plays its opening event.
-s32 Sanctum_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -1090,7 +1115,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
 /// Garet.
 static void Sanctum_ReceiveWiseOnesMission(void) {
   u32 sparkIndex;
-  struct Actor *wiseOne;
 
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1200,10 +1224,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
     Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
     Event_Wait(4);
-    wiseOne = Actor_Get(ACTOR_WISE_ONE);
-    wiseOne->scaleX -= Q16_ONE / 100;
-    wiseOne = Actor_Get(ACTOR_WISE_ONE);
-    wiseOne->scaleY -= Q16_ONE / 100;
+    Actor_Get(ACTOR_WISE_ONE)->scaleX -= Q16_ONE / 100;
+    Actor_Get(ACTOR_WISE_ONE)->scaleY -= Q16_ONE / 100;
   }
   Sound_Play(SE_STOP_ACTION_SE);
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
@@ -1481,12 +1503,9 @@ static void Sanctum_ShowHealerAfterimage(void) {
   }
   Actor_SetAnimation(ACTOR_HEALER_AFTERIMAGE, ANIM_STILL);
   afterimage = Actor_Get(ACTOR_HEALER_AFTERIMAGE);
-  actor = Actor_Get(ACTOR_HEALER);
-  afterimage->facing = actor->facing;
-  actor = Actor_Get(ACTOR_HEALER_AFTERIMAGE);
-  actor->update = Sanctum_UpdateHealerAfterimage;
-  actor = Actor_Get(ACTOR_HEALER_AFTERIMAGE);
-  sprite = actor->sprite;
+  afterimage->facing = Actor_Get(ACTOR_HEALER)->facing;
+  Actor_Get(ACTOR_HEALER_AFTERIMAGE)->update = Sanctum_UpdateHealerAfterimage;
+  sprite = Actor_Get(ACTOR_HEALER_AFTERIMAGE)->sprite;
   {
     for (entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
       struct SpriteAnimation *entry = sprite->entries[entryIndex];
@@ -1890,7 +1909,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
       VramCache_Load(sprite->slot, 128, transferBuffer + 1024);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       for (frame = 0; frame < 60; frame++) {
-        if ((u32)(icon->velocityY + 255) <= 510)
+        if (icon->velocityY >= -255 && icon->velocityY <= 255)
           icon->motionFlags = 0;
         wait(1);
       }
@@ -1940,8 +1959,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   if (actor == NULL)
     return;
   randomOffset = Math_RemainderUnsigned(Random_Next(), 20);
-  x = actor->x.fixed;
-  x += randomOffset << 16;
+  x = actor->x.fixed + (randomOffset << 16);
   x -= px(10);
   spark = FieldActor_Create(
       SPRITE_GLINT, x, actor->y.fixed + ((Random_Next() & 15) << 16) - px(8),
@@ -2134,7 +2152,7 @@ u32 gSanctum_GaretCircleScript[] = {
     SC_END,
 };
 
-#include "shared/item_icon_grow_script.h"
+#include "shared/item_icon_grow_script.c"
 
 s32 gSanctum_ItemIconEndScript[] = {
     SC_WAIT(60),

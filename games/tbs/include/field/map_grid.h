@@ -5,10 +5,10 @@
 /// Map grids: their cells, layers, animations and blend scripts, and the map
 /// grid state.
 
-#include "module/field/field.h"
-#include "types.h"
 #include "static_assert.h"
-#include "heap.h"
+#include "types.h"
+#include "field/field.h"
+#include "system/heap.h"
 
 /// A map cell's cell behavior (`MapGridCell.behavior`): what stepping
 /// on, pushing against or searching the cell does.
@@ -119,7 +119,7 @@ struct MapResources {
   u16 tiles[3];       ///< For char blocks 1, 2 and 3.
   u16 animationTiles; ///< Into gMapGridAnimTiles.
 };
-/// Every layout's resources, by map number (maps.c).
+/// Every layout's resources, by map number (src/map/resources.c).
 extern const struct MapResources gMaps[];
 
 #endif

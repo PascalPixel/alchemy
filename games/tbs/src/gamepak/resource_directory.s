@@ -167,14 +167,14 @@ Resource_DirectoryTable:
 	resource , Tileset_BlankTilesC
 	resource , Tileset_BlankTilesD
 	tileset ValePrologue, ABCD, ValePrologue
-	tileset Set01, ABCD, Vale
-	tileset Set02, ABCD, ValePlaza
+	tileset Vale, ABCD, Vale
+	tileset ValePlaza, ABCD, ValePlaza
 	tileset ValeKradensCottage, ABCD, ValeKradensCottage
-	tileset Set04, ABCD, CottageRoomsA
+	tileset CottageRoomsA, ABCD, CottageRoomsA
 	tileset CottageRoomsB, ABCD, CottageRoomsB
 	tileset Sanctum, ABCD, Sanctum
-	tileset Set07, ABCD, SolEntrance
-	tileset Set08, ABCD, SolSanctumLunaSolRooms
+	tileset SolEntrance, ABCD, SolEntrance
+	tileset SolSanctumLunaSolRooms, ABCD, SolSanctumLunaSolRooms
 	tileset SolSanctumStatue, ABC, SolSanctumStatue
 	tileset SolSanctumPsynergyStone, ABCD, SolSanctumPsynergyStone
 	tileset SolSanctumCorridor, ABCD, SolSanctumMaze, SolSanctumCorridor
@@ -182,38 +182,38 @@ Resource_DirectoryTable:
 	tileset SolSanctumEruption, ABCD, SolSanctumEruption
 	recolor SolSanctumReliefs, SolSanctumReliefs
 	tileset Vault, ABCD, Vault
-	tileset Set15, ABCD, VaultLogRooms
+	tileset VaultLogRooms, ABCD, VaultLogRooms
 	tileset StoneRooms, ABCD, StoneRooms
-	tileset Set17, ABCD, GomaCaveEntrance
+	tileset GomaCaveEntrance, ABCD, GomaCaveEntrance
 	tileset GomaCavePond, ABCD, GomaCavePond
-	tileset Set19, ABCD, GomaCavePillar
-	tileset Set20, ABCD, GomaCaveStream, GomaCaveBridge, VaultCavePassage
-	tileset Set21, ABCD, VaultCaveVambrace, VaultCaveMouth, ValeCaveMouth
-	tileset Set22, ABC, ValeCaveKite
-	tileset Set23, ABCD, ValeCaveLogs, Bilibin
-	tileset Set24, AB, CottageRoomsC
-	tileset Set25, A, BilibinTreasury
+	tileset GomaCavePillar, ABCD, GomaCavePillar
+	tileset VaultCavePassage, ABCD, GomaCaveStream, GomaCaveBridge, VaultCavePassage
+	tileset ValeCaveMouth, ABCD, VaultCaveVambrace, VaultCaveMouth, ValeCaveMouth
+	tileset ValeCaveKite, ABC, ValeCaveKite
+	tileset Bilibin, ABCD, ValeCaveLogs, Bilibin
+	tileset CottageRoomsC, AB, CottageRoomsC
+	tileset BilibinTreasury, A, BilibinTreasury
 	tileset BilibinBarricade, ABC, BilibinBarricade
-	tileset Set27, ABCD, McCoyPalaceGrounds
-	tileset Set28, ABCD, McCoyPalace
-	tileset Set29, ABCD, Kolima
+	tileset McCoyPalaceGrounds, ABCD, McCoyPalaceGrounds
+	tileset McCoyPalace, ABCD, McCoyPalace
+	tileset Kolima, ABCD, Kolima
 	tileset LogRoomsC, A, LogRoomsC
-	tileset Set31, ABCD, KolimaBridge
+	tileset KolimaBridge, ABCD, KolimaBridge
 	recolor KolimaTunnel, KolimaTunnel
 	tileset KolimaForest, ABCD, KolimaForestEntrance
 	tileset KolimaForestGlade, A, KolimaForestGlade
 	recolor KolimaForestCliff, KolimaForestCliff
-	tileset Set34, ABCD, KolimaForestFloodgate
+	tileset KolimaForestFloodgate, ABCD, KolimaForestFloodgate
 	tileset KolimaForestTree, ABCD, KolimaForestTree
 	tileset TreeRooms, ABCD, TreeRooms
 	tileset TretTreeBranch, ABCD, TretTreeBranch
 	tileset BilibinCaveEntrance, A, BilibinCaveEntrance
-	tileset Set39, A, BilibinCaveRapier
+	tileset BilibinCaveRapier, A, BilibinCaveRapier
 	tileset BilibinCaveIce, A, BilibinCaveIce
 	tileset Imil, ABCD, Imil
-	tileset Set42, ABCD, IceRooms
-	tileset Set43, ABCD, ImilFallsCave, MercuryLighthouseEntrance
-	tileset Set44, A, MercuryLighthouseLower, MercuryLighthouseMiddle, MercuryLighthouseUpper, MercuryLighthouseExterior, MercuryLighthouseAerie, FuchinTempleGrounds
+	tileset IceRooms, ABCD, IceRooms
+	tileset MercuryLighthouseEntrance, ABCD, ImilFallsCave, MercuryLighthouseEntrance
+	tileset MercuryLighthouse, A, MercuryLighthouseLower, MercuryLighthouseMiddle, MercuryLighthouseUpper, MercuryLighthouseExterior, MercuryLighthouseAerie, FuchinTempleGrounds
 	tileset LacquerRoomsA, ABCD, LacquerRoomsA
 	recolor FuchinFallsCave, FuchinFallsCaveEntrance
 	tileset MogallForest, ABCD, FuchinFallsCaveZephyr, FuchinFallsCaveDragonsEye, FuchinFallsCaveArcticBlade, FuchinFallsCaveOrbOfForce, FuchinFallsCaveDragonStatue, MogallForestSign
@@ -224,21 +224,21 @@ Resource_DirectoryTable:
 	recolor AltinPeak, AltinPeakFirstWaterBeast
 	recolor AltinPeakHydrosStatue, AltinPeakRailTunnel, AltinPeakSecondWaterBeast, AltinPeakSouthEntrance, AltinPeakThirdWaterBeast, AltinPeakPool, AltinPeakSpritz, AltinPeakJunction, AltinPeakFallingRocks, AltinPeakHydrosStatue
 	recolor LamakanDesertCave, AltinPeakWestExit, LamakanDesertCave
-	tileset Set50, ABCD, LamaTemple, LamakanDesertEast
-	tileset Set51, ABCD, LamakanDesertSmog, LamakanDesertManticore, Kalay
-	tileset Set52, ABCD, StuccoRoomsA
+	tileset LamakanDesertEast, ABCD, LamaTemple, LamakanDesertEast
+	tileset Kalay, ABCD, LamakanDesertSmog, LamakanDesertManticore, Kalay
+	tileset StuccoRoomsA, ABCD, StuccoRoomsA
 	recolor HammetPalace, KalaySanctum, HammetPalaceGrounds, HammetPalace
 	tileset Lunpa, AB, Lunpa
 	recolor RockRooms, RockRooms
 	recolor WestLunpaCave, WestLunpaCave
-	tileset Set54, ABC, KalayDocks
+	tileset KalayDocks, ABC, KalayDocks
 	tileset CottageRoomsE, A, CottageRoomsE
-	tileset Set56, ABCD, TolbiShipDeck
+	tileset TolbiShipDeck, ABCD, TolbiShipDeck
 	recolor TolbiShipMast, TolbiShipMast
 	tileset ShipRooms, ABCD, ShipRooms
 	recolor TolbiDocks, TolbiDocks
 	recolor CrossboneIsle, CrossboneIsle
-	tileset Set58, ABCD, Map108
+	tileset Map108, ABCD, Map108
 	recolor CrossboneIsleIcePillars, CrossboneIsleIcePillars
 	recolor 15, Map110
 	recolor CrossboneIsleStatues, CrossboneIsleStatues
@@ -254,14 +254,14 @@ Resource_DirectoryTable:
 	recolor StuccoRooms, StuccoRoomsB
 	recolor BabiPalaceEntrance, StuccoRoomsC, BabiPalaceEntrance
 	recolor BabiPalace, BabiPalace
-	tileset Set59, ABCD, ColosseumTunnel
+	tileset ColosseumTunnel, ABCD, ColosseumTunnel
 	recolor Colosseum, Colosseum
 	recolor ColosseumEntrance, ColosseumEntrance
 	tileset ColosseumAzartMatch, ABCD, ColosseumAzartMatch
 	tileset ColosseumSatrageMatch, ABCD, ColosseumSatrageMatch
 	tileset ColosseumNavampaMatch, ABCD, ColosseumNavampaMatch
-	recolor 31, AltmillerCaveEntrance
-	recolor 32, AltmillerCaveBabi, AltmillerCaveVialChest, AltmillerCaveSquall
+	recolor AltmillerCaveEntrance, AltmillerCaveEntrance
+	recolor AltmillerCave, AltmillerCaveBabi, AltmillerCaveVialChest, AltmillerCaveSquall
 	resource , Field_AltmillerCaveCookieChest
 	resource , Field_AltmillerCaveDraught
 	resource , Field_GondowanPassage
@@ -274,12 +274,12 @@ Resource_DirectoryTable:
 	tileset KalayTunnel, A, KalayTunnelPassage
 	recolor SuhallaDesert, KalayTunnelTreasureRoom, SuhallaDesertNorth
 	recolor SuhallaDesertCaves, SuhallaDesertSouth, SuhallaDesertCaves
-	tileset Set64, ABCD, Suhalla
+	tileset Suhalla, ABCD, Suhalla
 	tileset TimberRooms, ABCD, TimberRoomsA
 	recolor SuhallaGate, SuhallaGateCheckpoint
 	recolor GatewayCave, SuhallaGateDew, GatewayCave
 	recolor TunnelRuins, TunnelRuinsGreatStatue
-	recolor 44, TunnelRuinsLadyStatues, BabiLighthouseEntry
+	recolor BabiLighthouseEntry, TunnelRuinsLadyStatues, BabiLighthouseEntry
 	resource , Tileset_Palette45
 	recolor BabiLighthouseStoneDoor, BabiLighthouseStoneDoor
 	recolor Lalivero, Lalivero

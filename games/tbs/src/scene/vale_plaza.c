@@ -3,7 +3,7 @@
 /// and the town gate, Vale's way out to the world.
 ///
 /// The scene sees the prologue end and the journey begin.
-/// ValePlaza_GetActorPlacements and ValePlaza_GetTriggers pick its people and
+/// Scene_GetActorPlacements and Scene_GetTriggers pick its people and
 /// events by the time of the story. In story order:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
@@ -43,7 +43,7 @@
 /// - After the party has left (FLAG_VALE_PARTY_LEFT), the villagers point the
 ///   way to Vault and talk of the eruption, whose sparkles they take for
 ///   crushed Psynergy Stones. A large Psynergy Stone has fallen on the hut,
-///   whose roof ValePlaza_Initialize redraws. Only now does the town gate lead
+///   whose roof Scene_Initialize redraws. Only now does the town gate lead
 ///   out (ValePlaza_LeaveThroughTownGate).
 /// - Back from Kalay (FLAG_KALAY_REACHED), the villagers welcome Isaac home.
 ///   The hut's owner finds the stone gone, leaving a hole in his roof
@@ -82,7 +82,7 @@
 ///   VALE_PLAZA_TO_BILIBIN (ValePlaza_SetProgressFlagsAndExit).
 ///
 /// The hut's owner (ACTOR_HUT_OWNER) is never seen by day after the prologue.
-/// ValePlaza_Initialize hides the storm's Jenna by number without testing
+/// Scene_Initialize hides the storm's Jenna by number without testing
 /// FLAG_VALE_STORM, and by day that number is his (a BUG, fixed by BUGFIX).
 ///
 /// A villager showing Psynergy flashes white
@@ -92,35 +92,74 @@
 /// pairs of sparks rise and fall about him every 16 frames
 /// (ValePlaza_CyclePsynergyPaletteAndSpawnEffects).
 
-#include "main_routine_work.h"
-#include "flags.h"
-#include "character_ids.h"
-#include "scene_ids.h"
-#include "vram_cache.h"
-#include "module/scene/vale_plaza.h"
-#include "module/scene/shared/event_psynergy.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "vale_plaza.h"
-#include "map_grid_scroll.h"
-#include "text/msg_ids.h"
-#include "event_inline.h"
 #include "ability_ids.h"
-#include "sound_driver_symbols.h"
+#include "flags.h"
 #include "item_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "field/sprite.h"
+#include "game/character_ids.h"
+#include "game/game.h"
+#include "graphics/battle_sprite_id.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/event_psynergy.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern s32 gValePlaza_ChargedUpStrongmanActions[];
+extern s32 gValePlaza_SecondTravelerLeapActions[];
+extern s32 gValePlaza_FirstTravelerLeapActions[];
+extern s32 gValePlaza_LeaderActions[];
+extern s32 gValePlaza_StormGaretLeapActions[];
+extern s32 gValePlaza_FirstTravelerBounceActions[];
+extern s32 gValePlaza_SecondTravelerBounceActions[];
+extern s32 gValePlaza_FaceTargetActions[];
+extern s32 gValePlaza_FarewellDogActions[];
+extern s32 gValePlaza_FarewellChaseActions[];
+extern s32 gValePlaza_FarewellFirstChildActions[];
+extern s32 gValePlaza_FarewellSecondChildActions[];
+extern s32 gValePlaza_PartyDepartureActions[];
+extern s32 gValePlaza_HutOwnerSearchActions[];
+extern s32 gValePlaza_AideRunActions[];
+extern s32 gValePlaza_LeaderStepActions[];
+extern s32 gValePlaza_StormGaretStepActions[];
+extern struct SceneEntrance gValePlaza_Entrances[];
+extern u32 gValePlaza_Exits[];
+extern u32 gValePlaza_StormExits[];
+extern struct ActorPlacement gValePlaza_ActorPlacements[];
+extern struct ActorPlacement gValePlaza_StormActorPlacements[];
+extern struct ActorPlacement gValePlaza_DepartureActorPlacements[];
+extern struct ActorPlacement gValePlaza_ActorPlacementsAfterKalay[];
+extern struct Trigger gValePlaza_Triggers[];
+extern struct Trigger gValePlaza_StormTriggers[];
+extern struct Trigger gValePlaza_DepartureTriggers[];
+extern struct Trigger gValePlaza_TriggersAfterLeaving[];
+extern struct Trigger gValePlaza_TriggersAfterKalay[];
+extern u16 gValePlaza_DoorOpens[];
 
 // Vale's area flags, kept while the party stays in Vale's scenes.
 /// Back from Kalay, a young man has welcomed Isaac home.
@@ -187,7 +226,7 @@ enum ValePlazaDayActorId {
   /// hole in my roof". "Since food is stored in this hut, it isn't scary at
   /// all..."
   ///
-  /// Once the prologue is over, ValePlaza_Initialize hides him by day as if he
+  /// Once the prologue is over, Scene_Initialize hides him by day as if he
   /// were the storm's ACTOR_STORM_JENNA (a BUG), so only a debug jump past the
   /// prologue shows him. The renders show him by the hut with no story flags
   /// set and gone once the party has left.
@@ -333,17 +372,17 @@ static void ValePlaza_UpdateShowingStrongmanPsynergy(void);
 static void ValePlaza_UpdateSmallRockPalette(void);
 static void ValePlaza_SetProgressFlagsAndExit(void);
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
-const struct SceneEntrance *ValePlaza_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValePlaza_Entrances;
 }
 
-const struct SceneExitRegion *ValePlaza_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the stormy night's exits while FLAG_VALE_STORM is set, else the
 /// day's.
-const u32 *ValePlaza_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValePlaza_StormExits;
   }
@@ -352,7 +391,7 @@ const u32 *ValePlaza_GetExits(void) {
 
 /// Selects the actor placements: the stormy night's, the farewell's
 /// (VALE_PLAZA_FROM_SANCTUM), after Kalay, else the day's.
-const struct ActorPlacement *ValePlaza_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValePlaza_StormActorPlacements;
   }
@@ -380,7 +419,7 @@ static void ValePlaza_UsePsynergyStone(void) {
 
 /// Selects the events: after Kalay, after the party has left, the farewell's
 /// (VALE_PLAZA_FROM_SANCTUM), the stormy night's, else the day's.
-const struct Trigger *ValePlaza_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValePlaza_TriggersAfterKalay;
   }
@@ -542,7 +581,7 @@ static void ValePlaza_AskAboutJourney(void) {
 /// An old man shows Isaac the Psynergy Stone that fell on his hut.
 ///
 /// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale. In a
-/// play-through ValePlaza_Initialize has hidden him by then (a BUG). So only
+/// play-through Scene_Initialize has hidden him by then (a BUG). So only
 /// the debug menus, setting FLAG_VALE_PARTY_LEFT without the prologue's flags,
 /// reach it.
 static void ValePlaza_TalkAboutFallenStone(void) {
@@ -671,7 +710,7 @@ static void ValePlaza_PsynergyStoneIsGone(void) {
   Event_End();
 }
 
-#include "shared/vale.h"
+#include "shared/vale.c"
 
 /// Opens a door's map grid cells and sends the leader through its threshold.
 static inline void ValePlaza_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
@@ -774,7 +813,7 @@ static void ValePlaza_BlowAwayThirdIvy(void) {
 }
 
 /// Arriving in this part of Vale sets the scene up for the time of the story.
-s32 ValePlaza_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 flag;
   s32 verticalScale;
@@ -801,12 +840,9 @@ s32 ValePlaza_Initialize(void) {
     return 0;
   }
   verticalScale = 3 * Q16_ONE / 2;
-  actor = Actor_Get(ACTOR_FIRST_IVY);
-  actor->scaleY = verticalScale;
-  actor = Actor_Get(ACTOR_SECOND_IVY);
-  actor->scaleY = verticalScale;
-  actor = Actor_Get(ACTOR_THIRD_IVY);
-  actor->scaleY = verticalScale;
+  Actor_Get(ACTOR_FIRST_IVY)->scaleY = verticalScale;
+  Actor_Get(ACTOR_SECOND_IVY)->scaleY = verticalScale;
+  Actor_Get(ACTOR_THIRD_IVY)->scaleY = verticalScale;
   // Later in the story two things in the plaza are redrawn: the thatched roof
   // north of it shows a dark crack once Kalay is reached, or a blue-grey patch
   // once the party has left Vale, and the stretch of fence between the trees
@@ -846,8 +882,7 @@ s32 ValePlaza_Initialize(void) {
         actor = Actor_Get(ACTOR_STORM_SMALL_ROCK);
         actor->scaleX = 3 * Q16_ONE / 10;
         actor->scaleY = 3 * Q16_ONE / 10;
-        actor = Actor_Get(ACTOR_STORM_SMALL_ROCK);
-        Actor_SetSpriteFlags(actor, 0);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_SMALL_ROCK), 0);
         actor = Actor_Get(ACTOR_STORM_SMALL_ROCK_SHADOW);
         actor->scaleX = 3 * Q16_ONE / 5;
         actor->scaleY = 3 * Q16_ONE / 5;
@@ -855,8 +890,7 @@ s32 ValePlaza_Initialize(void) {
       } else {
         if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
           Actor_SetPosition(ACTOR_FALLEN_STONE_SPOT, 331, 249);
-          actor = Actor_Get(ACTOR_FALLEN_STONE_SPOT);
-          Actor_SetSpriteFlags(actor, 0);
+          Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLEN_STONE_SPOT), 0);
         }
       }
       // BUG: the test is meant for the stormy night, but the flag stays set,
@@ -890,8 +924,6 @@ s32 ValePlaza_Initialize(void) {
   }
   return 0;
 }
-
-#include "shared/walk_into_leader.h"
 
 /// The mayor sends help to the elders and the boys back to the river.
 static void ValePlaza_SentToAidElders(void) {
@@ -1125,13 +1157,10 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
 /// fight. Win or lose, the party returns by VALE_PLAZA_AFTER_TRAVELERS_BATTLE.
 /// "You must forget everything you heard."
 static void ValePlaza_FightTravelers(void) {
-  struct Actor *actor;
-
   // Garet, still out of sight, calls Isaac to wait; the travelers turn and
   // look down at Isaac.
   Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_HIDDEN);
-  actor = Actor_Get(ACTOR_STORM_GARET);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_GARET), 0);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, 331);
   wait(1);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 0);
@@ -1165,8 +1194,7 @@ static void ValePlaza_FightTravelers(void) {
   // Garet runs in from the west. The first traveler asks whether Isaac was
   // eavesdropping; whatever he answers, Garet thinks they look scary.
   Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_NORMAL);
-  actor = Actor_Get(ACTOR_STORM_GARET);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_GARET), SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, 331);
   Actor_SetSpeed(ACTOR_STORM_GARET, 1.2);
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 37, 339);
@@ -1251,15 +1279,11 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SECOND_TRAVELER, FACING_WEST, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->scaleX = -Q16_ONE;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_Get(ACTOR_PARTY_LEADER)->scaleX = -Q16_ONE;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetAnimation(ACTOR_STORM_GARET, 7);
-  actor = Actor_Get(ACTOR_STORM_GARET);
-  actor->sprite->rotation = TRIG_TURN / 12;
-  actor = Actor_Get(ACTOR_STORM_GARET);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_Get(ACTOR_STORM_GARET)->sprite->rotation = TRIG_TURN / 12;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_GARET), 0);
   {
     struct FieldWork *work = gFieldWork;
 
@@ -1328,18 +1352,12 @@ static void ValePlaza_DepartForQuest(void) {
   FieldCamera_MoveTo(180, 16, 618, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9), 0);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpritePriority(ACTOR_GARET, 1);
   Actor_SetSpritePriority(ACTOR_FAREWELL_GARETS_BROTHER, 1);
@@ -1752,10 +1770,10 @@ static void ValePlaza_CyclePsynergyPalette(struct Actor *actor) {
   }
 }
 
-#include "shared/field_effect_vertical.h"
+#include "shared/field_effect_vertical.c"
 
 /// Spawns a pair of Psynergy sparks, one rising and one falling
-/// (shared/field_effect_vertical.h).
+/// (shared/field_effect_vertical.c).
 static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -1806,7 +1824,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Updates the rock-lifting boy's Psynergy display.
 static void ValePlaza_UpdateRockLiftingBoyPsynergy(void) {

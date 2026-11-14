@@ -6,8 +6,8 @@
 /// festival is on, and the town's talk follows the Colosso story in three
 /// stages.
 ///
-/// Tolbi_SelectTriggers gives each stage its own trigger table. One actor
-/// placement table serves all three, and Tolbi_ApplyEntryState moves the
+/// Scene_GetTriggers gives each stage its own trigger table. One actor
+/// placement table serves all three, and Scene_Initialize moves the
 /// actors whose places change.
 ///
 /// - The festival (neither story flag set). The trials have begun at the
@@ -59,17 +59,139 @@
 /// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
 /// out onto the World Map.
 
-#include "module/scene/tolbi.h"
-#include "djinn_ids.h"
-#include "module/window/screens.h"
-#include "tolbi.h"
-#include "iwram_call.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
+#include "djinn_ids.h"
+#include "edition.h"
+#include "flags.h"
 #include "item_ids.h"
 #include "sounds.h"
-#include "map_grid.h"
+#include "tbs_edition.h"
+#include "types.h"
+#include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field_effect.h"
+#include "field/map_grid.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "scene/colosso_story_flags.h"
+#include "system/heap.h"
+#include "system/iwram_call.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(s32 unused);
+extern s32 gTolbiOlderBrotherRun[];
+extern s32 gTolbiYoungerSisterRun[];
+extern struct SceneEntrance gTolbiEntrances[];
+extern u32 gTolbiExits[];
+extern struct ActorPlacement gTolbiActorPlacements[];
+extern struct Trigger gTolbiTriggersFestival[];
+extern struct Trigger gTolbiTriggersFinalsDay[];
+extern struct Trigger gTolbiTriggersAfterColosso[];
+extern struct MapGridCellAnimation gTolbiDoors[];
+
+/// Growth has raised the sprout into a vine the leader can climb.
+#define FLAG_TOLBI_SPROUT_GROWN FLAG_SCENE_TEMP_00
+/// Frost has frozen the puddle into an ice pillar.
+#define FLAG_TOLBI_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
+
+// Scene flags: FLAG_TOLBI_SPROUT_GROWN is set once Growth has raised the
+// sprout, FLAG_TOLBI_PUDDLE_FROZEN once Frost has frozen the puddle; both reset
+// when the party leaves the town.
+
+/// Actors, numbered in the order of the actor placements from
+/// ACTOR_FIRST_PLACED. The townspeople the text gives no name are named by
+/// what their sprites show and what they say or, under Mind Read, think
+/// during the festival.
+enum TolbiActorId {
+  /// The sprout Growth grows into a vine (Tolbi_GrowSprout).
+  ACTOR_TOLBI_SPROUT = 8,
+  /// The puddle Frost freezes into an ice pillar (Tolbi_FreezePuddle).
+  ACTOR_TOLBI_PUDDLE = 9,
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
+  ACTOR_TOLBI_EXCITED_YOUNG_MAN = 10,
+  /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
+  ACTOR_TOLBI_HURRYING_WOMAN = 11,
+  /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR); after
+  /// Colosso he asks whether the party was in the finals
+  /// (Tolbi_AskWhetherPartyWasInFinals).
+  ACTOR_TOLBI_FINALS_FAN = 12,
+  /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
+  ACTOR_TOLBI_WORRIED_WOMAN = 13,
+  /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who says he is 65 and
+  /// later talks of the Lucky Guess. He copies the leader's sprite priority
+  /// every frame (Tolbi_CopyLeaderPriority).
+  ACTOR_TOLBI_OLD_MAN = 14,
+  /// An old woman (SPRITE_OLD_WOMAN) who asks whether someone can live past
+  /// a hundred (Tolbi_AskAboutLivingPastHundred).
+  ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN = 15,
+  /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR), who runs after
+  /// his sister.
+  ACTOR_TOLBI_OLDER_BROTHER = 16,
+  /// A little girl with pigtails (SPRITE_GIRL_WITH_PIGTAILS).
+  ACTOR_TOLBI_YOUNGER_SISTER = 17,
+  /// A strongman (SPRITE_STRONGMAN).
+  ACTOR_TOLBI_SOUVENIR_SELLER = 18,
+  /// A stout man (SPRITE_STOUT_MAN).
+  ACTOR_TOLBI_SNACK_VENDOR = 19,
+  /// A young man with a headband (SPRITE_YOUTH_WITH_HEADBAND).
+  ACTOR_TOLBI_WOULD_BE_FIGHTER = 20,
+  /// A young man with a headband (SPRITE_YOUTH_WITH_HEADBAND), whom Mind Read
+  /// finds thinking of his home.
+  ACTOR_TOLBI_XIAN_VISITOR = 21,
+  /// A woman with a sword (SPRITE_PERSON_WITH_SWORD), beside a second whose
+  /// row has no name.
+  ACTOR_TOLBI_OVERSLEEPER = 22,
+  /// A family at the festival: the father, a burly grey-haired man
+  /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR), the mother, a woman in a green dress
+  /// (SPRITE_WOMAN_IN_GREEN_DRESS), and their small boy
+  /// (SPRITE_BOY_WITH_FAIR_HAIR), who cries for sweets.
+  ACTOR_TOLBI_FATHER = 24,
+  ACTOR_TOLBI_MOTHER = 25,
+  ACTOR_TOLBI_CRYING_BOY = 26,
+  /// A strongman (SPRITE_STRONGMAN) who sleeps under the archway during the
+  /// festival; on finals day he sells seats.
+  ACTOR_TOLBI_SCALPER = 27,
+  /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK) at the gate of Tolbi
+  /// Spring, who lets the party go first.
+  ACTOR_TOLBI_SPRING_VISITOR = 28,
+  /// Babi's soldiers (SPRITE_SOLDIER), searching the town for him and
+  /// showing his picture (Tolbi_MeetSearchingSoldiers).
+  ACTOR_TOLBI_SOLDIER_A = 29,
+  /// The second of the two soldiers.
+  ACTOR_TOLBI_SOLDIER_B = 30,
+  /// Ember, a Mars Djinni, until it joins the party (Tolbi_JoinEmber).
+  ACTOR_TOLBI_EMBER = 31,
+  /// The "Missing Person" poster, placed with Babi's sprite (SPRITE_BABI).
+  ACTOR_TOLBI_MISSING_PERSON_POSTER = 32,
+};
+
+/// The cell behaviors Tolbi's coord and examine triggers answer besides the
+/// doors, whose own cells carry the numbers of their exits (Tolbi_EnterDoor,
+/// Tolbi_RequestTouchedExit).
+enum TolbiCellBehavior {
+  /// Where Babi's soldiers stop the party during the festival.
+  CELL_BEHAVIOR_TOLBI_SOLDIERS = 20,
+  /// The first of the two signs beside the gate to Tolbi Spring.
+  CELL_BEHAVIOR_TOLBI_SPRING_SIGN = 30,
+  CELL_BEHAVIOR_TOLBI_LUCKY_MEDAL_SIGN = 31,
+  CELL_BEHAVIOR_TOLBI_BARREL = 100,
+  CELL_BEHAVIOR_TOLBI_JAR = 101,
+  CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST = 102,
+  /// The gate to Tolbi Spring, open once the visitor at the gate has stepped
+  /// aside.
+  CELL_BEHAVIOR_TOLBI_GATE_TO_SPRING = 239
+};
+
+/// The running children keep these flags in Actor.timer, their scene
+/// scratch halfword. Bits: 1 talking | 0 chases the younger sister.
+enum {
+  /// Set on the older brother, who runs after ACTOR_TOLBI_YOUNGER_SISTER.
+  KID_CHASES_YOUNGER = 1,
+  KID_TALKING = 2, ///< set while the party talks to this child
+};
 
 #if TBS_PATCH_1
 #define TOLBI_JAR_SEARCH_KIND                                                  \
@@ -85,7 +207,7 @@ static void Tolbi_JoinEmber(void) {
   Djinn_JoinParty(ACTOR_TOLBI_EMBER, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER));
 }
 
-#include "shared/actor_distance.h"
+#include "shared/actor_distance.c"
 
 /// Stops a running child when the target is close by and ahead of it, or
 /// always when force is set.
@@ -162,13 +284,13 @@ static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   RETURN_UNREAD(0);
 }
 
-const struct SceneEntrance *Tolbi_GetEntrances(void) { return gTolbiEntrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) { return gTolbiEntrances; }
 
-const struct SceneExitRegion *Tolbi_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *Tolbi_GetExits(void) { return gTolbiExits; }
+const u32 *Scene_GetExits(void) { return gTolbiExits; }
 
-const struct ActorPlacement *Tolbi_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTolbiActorPlacements;
 }
 
@@ -180,8 +302,7 @@ static void Tolbi_GrowSprout(void) {
   if (sprout != NULL) {
     sprout->collisionFlags = 0;
   }
-  sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
-  Actor_SetSpriteFlags(sprout, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TOLBI_SPROUT), 0);
   Field_SetCellBehaviorAt(0, 544, 288, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_TOLBI_SPROUT_GROWN);
 }
@@ -292,7 +413,7 @@ static void Tolbi_TalkToYoungerSister(void) {
 }
 
 /// Picks the trigger table for Tolbi's current mood.
-const struct Trigger *Tolbi_SelectTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     return gTolbiTriggersAfterColosso;
   }
@@ -437,7 +558,7 @@ static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
 }
 
 /// Sets up the scene on entry.
-s32 Tolbi_ApplyEntryState(s32 unused) {
+s32 Scene_Initialize(s32 unused) {
   struct Actor *actor;
   void (*kidUpdate)(struct Actor *);
 
@@ -455,8 +576,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   actor = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
   actor->timer = 0;
   actor->update = kidUpdate;
-  actor = Actor_Get(ACTOR_TOLBI_OLD_MAN);
-  actor->update = Tolbi_CopyLeaderPriority;
+  Actor_Get(ACTOR_TOLBI_OLD_MAN)->update = Tolbi_CopyLeaderPriority;
 
   // What the party has already done here.
   if (GameFlag_Get(FLAG_TOLBI_SPRING_OPENED) != 0) {

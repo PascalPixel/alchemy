@@ -5,8 +5,8 @@
 /// Field effect sprites: the particles field Psynergy moves and draws.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// FieldParticle.targetX and targetZ while the sprite has no target, at
 /// rest.
@@ -36,7 +36,7 @@ struct FieldParticle {
   u16 heading;             ///< 1/65536 turns
   s16 turnStepMax;         ///< 1/65536 turns a frame
   EffectCallback callback; ///< run each frame once callbackDelay is 0
-  u16 age;                 ///< frames
+  s16 age;                 ///< frames
   s16 callbackDelay;       ///< frames
   s16 orbitRadius;         ///< pixels
   s16 orbitAngle;          ///< 1/32 turns

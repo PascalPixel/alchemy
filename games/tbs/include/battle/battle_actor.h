@@ -6,11 +6,11 @@
 /// unit its sprites through, and SpriteAnimationHeadView, the start of a sprite
 /// sprite animation.
 
-#include "types.h"
-#include "static_assert.h"
-#include "battle_action.h"
 #include "edition.h"
-#include "far_call.h"
+#include "static_assert.h"
+#include "types.h"
+#include "battle/battle_action.h"
+#include "gamepak/far_call.h"
 
 struct Actor;
 

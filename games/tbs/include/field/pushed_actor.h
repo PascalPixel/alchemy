@@ -4,10 +4,10 @@
 /// @file
 /// The pushed actors' movement probes and footprint bounds.
 
-#include "types.h"
-#include "actor.h"
-#include "scene.h"
 #include "static_assert.h"
+#include "types.h"
+#include "field/actor.h"
+#include "field/scene.h"
 
 /// A pixel step packed as one word: X in the upper halfword, Z in the lower.
 /// Packed through u32, so a negative step is its two's-complement bits.

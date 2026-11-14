@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_SYSTEM_H
+#define ALCHEMY_FAR_CALL_SYSTEM_H
+
 /// @file
 /// Tasks, frames, memory, resources and the other services the System
 /// provides.
@@ -41,3 +44,5 @@ s32 Serial_StartSendFar(void *source, s32 transferValue);
 s32 Serial_StartReceiveFar(void *destination);
 s32 Serial_GetActiveTransfersFar(void);
 s32 Task_SetFlagsFar(TaskFunc func, u32 mask);
+
+#endif

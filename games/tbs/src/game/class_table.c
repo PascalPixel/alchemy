@@ -2,8 +2,8 @@
 /// The 203 classes, by class id. Each name is the English release's
 /// (MsgClassName plus the class id).
 
-#include "game.h"
 #include "ability_ids.h"
+#include "game/game.h"
 
 // clang-format off
 const struct ClassDefinition gClass_DefinitionTable[] = {

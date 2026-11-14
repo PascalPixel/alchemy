@@ -39,7 +39,7 @@
 ///   answer those, while the water between them stays a wall. From then on the
 ///   pool's heart gives the leader up to three lights. Each hop into the water
 ///   spends one, and landing in it without one sinks the leader back to the
-///   heart (the helpers of shared/mercury_lighthouse_pillar.h). Dropping in
+///   heart (the helpers of shared/mercury_lighthouse_pillar.c). Dropping in
 ///   from above
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE) the first
 ///   time, the leader lands in a burst, and until Ply has worked the
@@ -74,7 +74,7 @@
 /// they are black until then.
 ///
 /// The lights the leader carries come back from their heap slot
-/// (shared/mercury_lighthouse_lights.h) on a return after a battle.
+/// (shared/mercury_lighthouse_lights.c) on a return after a battle.
 ///
 /// Three entrances each have two rows, chosen by whether the channels upstairs
 /// run (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN). They are
@@ -82,42 +82,59 @@
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST and
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST.
 
-#include "script_operands.h"
-#include "sprite.h"
-#include "main_routine_work.h"
-#include "heap_slots.h"
-#include "input.h"
-#include "module/import.h"
-#include "module/scene/mercury_lighthouse_entrance.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/scene/shared/mercury_lighthouse_lights.h"
-#include "module/scene/shared/mercury_lighthouse_pillar.h"
-#include "module/field/event_commands.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
-#include "io_write.h"
-
-#include "actor.h"
-#include "heap_release.h"
-#include "shared/mercury_lighthouse.h"
-#include "pushed_actor.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "system_call.h"
-#include "field_effect.h"
-#include "io_reg.h"
-#include "text/msg_ids.h"
-#include "iwram_call.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "field/sprite.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/import.h"
+#include "scene/mercury_lighthouse.h"
+#include "scene/mercury_lighthouse_lights.h"
+#include "scene/mercury_lighthouse_pillar.h"
+#include "sound/sound.h"
+#include "system/heap_release.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+extern s32 gMercuryLighthouseEntrance_RippleScript[];
+extern s32 gMercuryLighthouseEntrance_LizardManStepCentre[];
+extern s32 gMercuryLighthouseEntrance_LizardManStepWest[];
+extern s32 gMercuryLighthouseEntrance_LizardManStepEast[];
+extern struct SceneEntrance gMercuryLighthouseEntrance_Entrances[];
+extern u32 gMercuryLighthouseEntrance_Exits[];
+extern struct ActorPlacement gMercuryLighthouseEntrance_ActorPlacements[];
+extern struct Trigger gMercuryLighthouseEntrance_Triggers[];
+extern s32 gGlint_TwinkleScript[];
+extern s32 gMercuryLighthouse_SparkScript[];
+extern s32 gMercuryLighthouse_RampScript[];
+extern s32 gMercuryLighthouse_ScaleCounterScript[];
+extern s32 gMercuryLighthouse_PillarScript[];
+extern u16 gMercuryLighthouse_MoveAngles[];
+extern s32 gPaletteCycleRed;
+extern s32 gPaletteCycleGreen;
+extern s32 gPaletteCycleBlue;
 
 /// This floor's actors, numbering its actor placement rows from
 /// ACTOR_FIRST_PLACED.
@@ -146,10 +163,10 @@ enum {
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void);
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
-#include "shared/staged_actor.h"
-#include "shared/mercury_lighthouse_sparks.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
+#include "shared/staged_actor.c"
+#include "shared/mercury_lighthouse_sparks.c"
 
 /// The sound of the Lizard Man's sidestep, played by all three step scripts
 /// as he lands.
@@ -176,7 +193,7 @@ MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *actor) {
 #endif
 }
 
-#include "shared/mercury_lighthouse_palette_cycle.h"
+#include "shared/mercury_lighthouse_palette_cycle.c"
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching
 /// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue ripples spreading
@@ -207,21 +224,16 @@ static void MercuryLighthouseEntrance_ChargeLights(void) {
   MercuryLighthouse_ChargeLights();
 }
 
-const struct SceneEntrance *MercuryLighthouseEntrance_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMercuryLighthouseEntrance_Entrances;
 }
 
-const struct SceneExitRegion *MercuryLighthouseEntrance_GetRegions(void) {
-  return NULL;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *MercuryLighthouseEntrance_GetExits(void) {
-  return gMercuryLighthouseEntrance_Exits;
-}
+const u32 *Scene_GetExits(void) { return gMercuryLighthouseEntrance_Exits; }
 
 /// Returns Mia, the Lizard Man, the six statues and the Ply target.
-const struct ActorPlacement *
-MercuryLighthouseEntrance_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMercuryLighthouseEntrance_ActorPlacements;
 }
 
@@ -233,7 +245,7 @@ static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Event_End();
 }
 
-#include "shared/mercury_lighthouse_passage.h"
+#include "shared/mercury_lighthouse_passage.c"
 
 /// Mercury Lighthouse: walking north into cell behavior 67, a sparkling
 /// passage, leaves by
@@ -260,7 +272,7 @@ static void MercuryLighthouseEntrance_LeaveDryPoolByPassage(void) {
 }
 
 /// Returns the floor's coord, bg, talk and Psynergy triggers.
-const struct Trigger *MercuryLighthouseEntrance_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gMercuryLighthouseEntrance_Triggers;
 }
 
@@ -269,7 +281,7 @@ const struct Trigger *MercuryLighthouseEntrance_GetTriggers(void) {
 static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 leaderColumn;
   s32 leaderRow;
-  s32 sparkIndex;
+  u32 sparkIndex;
   s32 sparkX;
   s32 sparkZ;
   s32 speedRoll;
@@ -302,7 +314,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
                         &options);
       Event_Wait(4);
       sparkIndex++;
-    } while ((u32)sparkIndex <= 14);
+    } while (sparkIndex <= 14);
     Sound_Play(SE_SHIMMER);
     Event_Wait(60);
     // Persist the activated state and replace the pool's map cells.
@@ -336,12 +348,10 @@ static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
 /// Mercury Lighthouse, the doorway: touching cell behavior 41 while the Lizard
 /// Man stands in the doorway.
 static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
-  struct Actor *leader;
   s32 leaderX;
   s32 leaderColumn;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leaderX = leader->x.fixed;
+  leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
   leaderColumn = leaderX / px(16);
   GameFlag_Set(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   if (leaderColumn == 7) {
@@ -362,7 +372,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Event_SetAfterBattleDestination(
-      (s32)&SceneId_MercuryLighthouseEntrance,
+      SCENE_MERCURY_LIGHTHOUSE_ENTRANCE,
       MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // The second slot of the encounter zone of Tret Tree's and Mercury
@@ -372,11 +382,11 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   Event_End();
 }
 
-#include "shared/mercury_lighthouse_arrive.h"
+#include "shared/mercury_lighthouse_arrive.c"
 
 /// Sets up Mercury Lighthouse's ground floor, then plays the event of the
 /// entrance taken.
-s32 MercuryLighthouseEntrance_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct EffectOptions options;
   s32 velocity[3];
   struct Actor *actor;
@@ -393,7 +403,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       (struct MercuryLighthouseLights *)gSceneLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gMainRoutineWork.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
+  gMainRoutineWork.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
@@ -546,16 +556,12 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
 /// after a battle.
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   s32 paceCycle;
-  struct Actor *mia;
   struct Actor *actor;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
-  actor->scaleX = -Q16_ONE;
-  actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 1);
-  actor->scaleX = -Q16_ONE;
-  actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 2);
-  actor->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -Q16_ONE;
   Actor_SetPosition(ACTOR_MIA, 136, 184);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 136, 296);
   Actor_SetPosition(ACTOR_LIZARD_MAN, 136, 152);
@@ -578,8 +584,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 30);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-    mia = Actor_Get(ACTOR_MIA);
-    mia->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkTo(ACTOR_MIA, 136, 184);
     Event_Wait(10);
     Actor_SetScript(ACTOR_LIZARD_MAN,
@@ -627,17 +632,12 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, back from the
 /// Lizard Man battle, once.
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
-  struct Actor *actor;
-
   if (Event_GetFlag(FLAG_MIA_GOES_IN_SEEN) == 0) {
     GameFlag_Set(FLAG_MIA_GOES_IN_SEEN);
     Event_Start();
-    actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
-    actor->scaleX = -Q16_ONE;
-    actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 1);
-    actor->scaleX = -Q16_ONE;
-    actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 2);
-    actor->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -Q16_ONE;
     Actor_SetPosition(ACTOR_MIA, 136, 144);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 10);
     gFieldWork->transition =
@@ -660,7 +660,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   }
 }
 
-#include "shared/mercury_lighthouse_lights.h"
+#include "shared/mercury_lighthouse_lights.c"
 
 /// Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 frames.
 static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
@@ -682,11 +682,11 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
   }
 }
 
-#include "shared/mercury_lighthouse_pillar.h"
+#include "shared/mercury_lighthouse_pillar.c"
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 s32 gMercuryLighthouseEntrance_RippleScript[] = {
@@ -897,5 +897,5 @@ struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-#include "shared/glint_twinkle_script.h"
+#include "shared/glint_twinkle_script.c"
 // clang-format on

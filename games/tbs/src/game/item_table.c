@@ -1,9 +1,9 @@
 /// @file
 /// The 324 items, by item id. Each name is the English release's.
 
-#include "game.h"
-#include "item_ids.h"
 #include "ability_ids.h"
+#include "item_ids.h"
+#include "game/game.h"
 
 // clang-format off
 const struct ItemDefinition gItem_DefinitionTable[] = {

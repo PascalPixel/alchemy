@@ -9,7 +9,7 @@
 /// An overlay writes `Task_AddFrame(func, TASK_PASS_FRAME)` and the inline
 /// calls Task_Add, which resolves to the overlay's import stub. Main-image
 /// code calls the routines as ordinary functions; only the shared
-/// scene/shared/scroll_initialize_hblank_dma.h, which field/event_commands.c
+/// scene/shared/scroll_initialize_hblank_dma.c, which field/event_commands.c
 /// includes as lemurian_ship.c does, reaches the layer there, as
 /// LuckyDice_Run's two decodes do through a tagged wrapper. event_inline.h
 /// includes this layer; rooms without the event command layer use it directly.
@@ -18,11 +18,11 @@
 // call.
 
 #include "types.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "module/window/window.h"
-#include "module/game/game.h"
-#include "module/import.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "scene/import.h"
+#include "system/system.h"
+#include "window/window.h"
 
 struct Actor;
 struct FieldPosition;

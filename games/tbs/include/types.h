@@ -5,8 +5,8 @@
 /// The integer types, TRUE, UNUSED, unread results and the fixed-address
 /// macros.
 
-#include "version.h"
 #include "config.h"
+#include "version.h"
 
 typedef signed char s8;
 typedef unsigned char u8;

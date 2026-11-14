@@ -25,15 +25,15 @@ For the rest:
 | a town's people, lines and events | its file in `src/scene/`, such as [vale.c](scene/vale.c) |
 | the inside of a house | follow the door: the town's exit row names the scene, such as `CottageRoomsC` |
 | what an item, ability, enemy, class or Djinni is | its row in a `src/game/*_table.c` |
-| what a shop sells | [src/shop/shop/stock.c](shop/shop/stock.c) |
-| how an ability looks | its file in `src/battle_effect/battle_effect/`, whose opening comment lists the abilities it draws |
+| what a shop sells | [src/shop/shop_stock.c](shop/shop_stock.c) |
+| how an ability looks | its `battle_effect_*.c` file in `src/battle_effect/`, whose opening comment lists the abilities it draws |
 | a picture | a PNG under `src/graphics/` |
 | a tune | a MIDI file under [`sound/songs`](../sound/songs) |
-| a map | `src/map/map_NNN/map.txt` ([Maps](map/README.md#finding-a-scenes-map) says how to find its number) |
+| a map | `src/map/<place>/map.txt`, named for the scene or place that uses it ([Maps](map/README.md#finding-a-scenes-map)) |
 | the name of a flag, sound, scene, item or sprite | a header in `include/`: `flags.h`, `sounds.h`, `scene_ids.h`, `item_ids.h`, `sprite_ids.h` |
 
 To read the game in the order it runs, start at `System_Initialize` in
-[system/start_up.c](system/system/start_up.c), which hands over to the main
+[system_start_up.c](system/system_start_up.c), which hands over to the main
 routine in [system/main_routine.c](system/main_routine.c).
 
 ## What each folder holds
@@ -93,24 +93,28 @@ neighbours in a file are neighbours in the ROM.
 
 Some files would be far too long to read. The battle's runs to about
 13,000 lines. Such a file is written as parts, each holding one family of
-functions, in a folder of the same name: `battle/battle.c` is a guide to
-its parts followed by a list of them, and the code is in
-`battle/battle/`. That is why several folders hold a folder of their own
-name, and why the guide at the top of the `.c` file is the place to start.
+functions, named for the file they belong to: `battle/battle.c` is a guide
+to its parts followed by a list of them, and the code is in
+`battle/battle_run.c`, `battle/battle_turn.c` and the rest beside it. A
+part is never built on its own; the file that lists it includes it at its
+place, and the guide at the top of that file is the place to start.
 
 ### Overlays
 
 A place's code is an [overlay](../glossary.md#overlay), loaded when the
 party arrives ([System](../system.md#overlays)). Each is one `.c` file in
-`scene/` or `debug/`, with its entry and import tables beside it as small
-assembly files.
+`scene/` or `debug/`. Every one links the same entry table, `scene/entry.s`;
+the build writes each overlay's import table from one list,
+`system/overlay/imports.inc`.
 
 ### Headers
 
 [`include/`](../include) holds the names the whole game shares. A C
 file's own declarations for other files are in its
-[module header](../glossary.md#module-header), at the same path under
-`include/module` as the file has under `src/`.
+[module header](../glossary.md#module-header), in the same folder under
+`include/` as the file has under `src/`. A scene's own declarations are in
+its `.c`; the routines several scenes keep a copy of are declared in
+`include/scene/`.
 
 ### C and assembly
 

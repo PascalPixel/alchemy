@@ -1,4 +1,4 @@
-	.include "games/tbs/include/ed_asm.h"
+	.include "games/tbs/include/edition.inc"
 	.section .rodata
 	.global LuckyDice_Board
 LuckyDice_Board:
@@ -8,49 +8,22 @@ LuckyDice_Board:
 	.global LuckyDice_Sprites
 LuckyDice_Sprites:
 	.ifeq EDITION_INTERNATIONAL
-	.set LUCKY_DICE_JA, 1
-	.endif
-	.ifdef TBS_EDITION_DE
-	.set LUCKY_DICE_DE, 1
-	.endif
-	.ifdef TLA_EDITION_DE
-	.set LUCKY_DICE_DE, 1
-	.endif
-	.ifdef TBS_EDITION_ES
-	.set LUCKY_DICE_ES, 1
-	.endif
-	.ifdef TLA_EDITION_ES
-	.set LUCKY_DICE_ES, 1
-	.endif
-	.ifdef TBS_EDITION_FR
-	.set LUCKY_DICE_FR, 1
-	.endif
-	.ifdef TLA_EDITION_FR
-	.set LUCKY_DICE_FR, 1
-	.endif
-	.ifdef TBS_EDITION_IT
-	.set LUCKY_DICE_IT, 1
-	.endif
-	.ifdef TLA_EDITION_IT
-	.set LUCKY_DICE_IT, 1
-	.endif
-	.ifdef LUCKY_DICE_JA
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_ja.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_ja.parts.lz"
 	.else
-	.ifdef LUCKY_DICE_DE
+	.ifdef TBS_EDITION_DE
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_de.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_de.parts.lz"
 	.else
-	.ifdef LUCKY_DICE_ES
+	.ifdef TBS_EDITION_ES
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_es.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_es.parts.lz"
 	.else
-	.ifdef LUCKY_DICE_FR
+	.ifdef TBS_EDITION_FR
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_fr.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_fr.parts.lz"
 	.else
-	.ifdef LUCKY_DICE_IT
+	.ifdef TBS_EDITION_IT
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_it.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_it.parts.lz"
 	.else

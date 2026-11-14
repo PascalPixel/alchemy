@@ -5,13 +5,14 @@
 /// The link cable's runtime: serial packets, registers and transfer state.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
-#include "system.h"
-#include "io_reg.h"
-#include "dma.h"
-#include "irq.h"
-#include "irq_lock.h"
+#include "types.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/irq.h"
+#include "system/irq_lock.h"
+#include "system/system.h"
 
 /// A link cable packet: its packet number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.
@@ -92,10 +93,11 @@ struct SerialWork {
   u8 packetNumber;
   u8 reserved0c[8];
   /// The halfword of sendBuffer[1] sent next; -1 between packets, when
-  /// serial.c's SERIAL_IDLE_HALFWORD is sent and the two send buffers swap.
+  /// system_serial.c's SERIAL_IDLE_HALFWORD is sent and the two send buffers
+  /// swap.
   s32 sendIndex;
   /// Each console's next halfword in its incomingBuffer; -1 after an idle
-  /// serial.c's SERIAL_IDLE_HALFWORD.
+  /// system_serial.c's SERIAL_IDLE_HALFWORD.
   s32 receiveIndex[2];
   u8 reserved20[8];
   /// The packet being built ([0]) and the packet being sent ([1]).
@@ -207,17 +209,11 @@ static __inline__ void Serial_ResetTransferState(void) {
 
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
-  /* FAKEMATCH(temporary): zero holds the stores' 0; as 0 in each store, 29 of
-   * 62 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): zero holds the stores' 0. */
   zero = 0;
-  /* FAKEMATCH(dead): state set again; as the one assignment above, 14 of 62
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): state set again. */
   state = &gSerialTransfer;
-  /* FAKEMATCH(dead): an empty once-only loop ends CSE's block; without it, 29
-   * of 62 instructions differ in tbs-en. */
-  do {
-  } while (0);
-  state->status = SERIAL_STATUS_RUNNING;
+  Io_Write8(SERIAL_STATUS_RUNNING, &state->status);
   gSerialSendSource = zero;
   gSerialSendSize = zero;
   gSerialReceiveDestination = zero;

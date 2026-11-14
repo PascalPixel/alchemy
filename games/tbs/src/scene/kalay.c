@@ -91,7 +91,7 @@
 ///   Once FLAG_KALAY_TUNNEL_OPEN is set a man (ACTOR_WAITING_MAN) waits here,
 ///   thinking `The things beyond these doors belong to you all.`
 ///
-///   The fade overlay (field/field_sequence/ground_mask.c) follows the leader
+///   The fade overlay (field/field_sequence_ground_mask.c) follows the leader
 ///   through the treasure room unless he comes down from the town
 ///   (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY). Step triggers 10 and 11 stop and
 ///   restart it, and 18 and 19 fix and free his depth priority.
@@ -114,34 +114,76 @@
 /// The getters choose each scene's tables. The cave and the passage have no
 /// actor placements, and an empty set serves any other scene.
 
-#include "main_routine_work.h"
-#include "module/field/field.h"
-#include "system_call.h"
-#include "scene_ids.h"
-#include "module/scene/kalay.h"
-#include "module/scene/shared/actor_orbit.h"
-#include "module/system/main_routine.h"
-#include "module/window/screens.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
-#include "script_operands.h"
-
-#include "ground_mask.h"
-#include "shared/orbit.h"
-
-#include "flags.h"
 #include "djinn_ids.h"
-#include "sound_driver_symbols.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/ground_mask.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_orbit.h"
+#include "scene/catch_nut.h"
+#include "scene/orbit.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "window/screens.h"
+#include "text/msg_ids.h"
+
+u8 gKalay_Unk_0[12] BSS_DATA ALIGNED(8);
+/// Which of the two guides' turns Kalay_AlternateGuidesPacing is at, 0 to 4.
+s32 gKalay_DanceStep BSS_DATA;
+
+extern s32 gKalay_TileStepByFacing[];
+extern s32 gKalay_TourGroupWalkScript[];
+extern s32 gKalay_TourGroupLeaveScript[];
+extern s32 gKalay_TouristFidgetScript[];
+extern s32 gKalay_GuideCountScript[];
+extern s32 gKalay_GuidePaceScript[];
+extern s32 gKalay_HeadGuideStopScript[];
+extern s32 gKalay_SecondGuideStopScript[];
+extern s32 gKalay_HeadGuideReturnScript[];
+extern s32 gKalay_SecondGuideReturnScript[];
+extern s32 gKalay_PartyFidgetScript[];
+extern s32 gKalay_PartyGatherScript[];
+extern s32 gKalay_FrostGrowScript[];
+extern struct SceneEntrance gKalay_NoEntrances[];
+extern struct SceneEntrance gKalay_TownEntrances[];
+extern struct SceneEntrance gKalay_HammetPalaceEntrances[];
+extern struct SceneEntrance gKalay_TunnelEntranceEntrances[];
+extern struct SceneEntrance gKalay_TunnelCaveEntrances[];
+extern struct SceneEntrance gKalay_TunnelPassageEntrances[];
+extern struct SceneEntrance gKalay_TunnelEntrances[];
+extern u32 gKalay_Exits[];
+extern struct ActorPlacement gKalay_NoActorPlacements[];
+extern struct ActorPlacement gKalay_TownActorPlacements[];
+extern struct ActorPlacement gKalay_TourGroupActorPlacements[];
+extern struct ActorPlacement gKalay_HammetPalaceActorPlacements[];
+extern struct ActorPlacement gKalay_TunnelEntranceActorPlacements[];
+extern struct ActorPlacement gKalay_TunnelActorPlacements[];
+extern struct Trigger gKalay_NoTriggers[];
+extern struct Trigger gKalay_TownTriggers[];
+extern struct Trigger gKalay_HammetPalaceTriggers[];
+extern struct Trigger gKalay_TunnelEntranceTriggers[];
+extern struct Trigger gKalay_TunnelCaveTriggers[];
+extern struct Trigger gKalay_TunnelPassageTriggers[];
+extern struct Trigger gKalay_TunnelTriggers[];
+extern struct MapGridCellAnimation gKalay_DoorCells[];
+extern s32 gKalay_TunnelParticleScript[];
 
 /// Kalay's actors (Kalay), numbering the rows of
 /// gKalay_TownActorPlacements from ACTOR_FIRST_PLACED, then the tour
@@ -315,56 +357,56 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
   return 1;
 }
 
-#include "shared/actor_heading.h"
+#include "shared/actor_heading.c"
 
 /// The party has heard in Lunpa that Hammet is held there, or he is already
 /// free. It changes what Layana says.
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
-const struct SceneEntrance *Kalay_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Kalay) {
+  if (sceneId == SCENE_KALAY) {
     return gKalay_TownEntrances;
   }
-  if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
+  if (sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
     return gKalay_HammetPalaceEntrances;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
+  if (sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
     return gKalay_TunnelEntranceEntrances;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelCave) {
+  if (sceneId == SCENE_KALAY_TUNNEL_CAVE) {
     return gKalay_TunnelCaveEntrances;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
+  if (sceneId == SCENE_KALAY_TUNNEL_PASSAGE) {
     return gKalay_TunnelPassageEntrances;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
+  if (sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
     return gKalay_TunnelEntrances;
   }
   return gKalay_NoEntrances;
 }
 
-const struct SceneExitRegion *Kalay_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// The numbered exits of all six scenes.
-const u32 *Kalay_GetExits(void) { return gKalay_Exits; }
+const u32 *Scene_GetExits(void) { return gKalay_Exits; }
 
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
 /// the Kalay Tunnel's treasure room.
-const struct ActorPlacement *Kalay_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Kalay) {
+  if (sceneId == SCENE_KALAY) {
     return gKalay_TownActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
+  if (sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
     return gKalay_HammetPalaceActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
+  if (sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
     return gKalay_TunnelEntranceActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
+  if (sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
     return gKalay_TunnelActorPlacements;
   }
   return gKalay_NoActorPlacements;
@@ -378,8 +420,6 @@ static void Kalay_SearchWell(void) {
   Event_End();
 }
 
-#include "shared/catch_nut.h"
-
 /// Catch at the Kalay Tunnel Entrance pulls in the Nut floating there, until it
 /// is caught (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT).
 static void Kalay_CatchTunnelEntranceNut(void) {
@@ -388,25 +428,25 @@ static void Kalay_CatchTunnelEntranceNut(void) {
 }
 
 /// The conversations, exits and Psynergy targets of each scene.
-const struct Trigger *Kalay_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Kalay) {
+  if (sceneId == SCENE_KALAY) {
     return gKalay_TownTriggers;
   }
-  if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
+  if (sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
     return gKalay_HammetPalaceTriggers;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
+  if (sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
     return gKalay_TunnelEntranceTriggers;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelCave) {
+  if (sceneId == SCENE_KALAY_TUNNEL_CAVE) {
     return gKalay_TunnelCaveTriggers;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
+  if (sceneId == SCENE_KALAY_TUNNEL_PASSAGE) {
     return gKalay_TunnelPassageTriggers;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
+  if (sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
     return gKalay_TunnelTriggers;
   }
   return gKalay_NoTriggers;
@@ -428,11 +468,8 @@ static void Kalay_TalkAboutLeavingHome(void) {
 /// Entrance asks `Do you want to go to the cave up ahead?`, and turns the
 /// party away either way.
 static void Kalay_AskAboutCaveAccess(void) {
-  struct Actor *leader;
-
   // From the north he only stands in the way.
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - FACING_EAST_SOUTHEAST) >
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_EAST_SOUTHEAST) >
       FACING_WEST_SOUTHWEST - FACING_EAST_SOUTHEAST) {
     Event_Start();
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TUNNEL_GUARD, 0);
@@ -467,11 +504,8 @@ static void Kalay_TalkAboutLayana(void) {
 /// Talking to the weapon merchant in Kalay across the counter, with the leader
 /// facing north, opens the weapon shop.
 static void Kalay_TalkToWeaponMerchant(void) {
-  struct Actor *leader;
-
   // Across the counter: between northwest and southeast, by way of north.
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - FACING_SOUTHEAST) >
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
       FACING_NORTHWEST - FACING_SOUTHEAST) {
     Shop_Run(22, ACTOR_WEAPON_MERCHANT);
   } else {
@@ -486,11 +520,8 @@ static void Kalay_TalkToWeaponMerchant(void) {
 /// Talking to the armor merchant in Kalay across the counter, with the leader
 /// facing west to north, opens the armor shop.
 static void Kalay_TalkToArmorMerchant(void) {
-  struct Actor *leader;
-
   // Across the counter: between southwest and northeast, by way of west.
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - (FACING_SOUTHWEST + 1)) <=
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - (FACING_SOUTHWEST + 1)) <=
       FACING_NORTHEAST - FACING_SOUTHWEST - 2) {
     Shop_Run(23, ACTOR_ARMOR_MERCHANT);
   } else {
@@ -507,11 +538,8 @@ static void Kalay_TalkToArmorMerchant(void) {
 /// Talking to the item merchant in Kalay across the counter, with the leader
 /// facing east, opens the item shop.
 static void Kalay_TalkToItemMerchant(void) {
-  struct Actor *leader;
-
   // Across the counter: between northeast and southeast, by way of east.
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - FACING_SOUTHEAST) >
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
       FACING_NORTHEAST - FACING_SOUTHEAST) {
     Shop_Run(24, ACTOR_ITEM_MERCHANT);
   } else {
@@ -589,18 +617,8 @@ static void Kalay_EnterPalace(void) {
 /// the inn, the party watches the tour group stop.
 static void Kalay_WatchTourGroupDeparture(void) {
   s32 message;
-  struct Actor *headWait;
-  struct Actor *lastWait;
   struct Actor *closing;
-  struct Actor *late;
-  struct Actor *headEnd;
-  struct Actor *lastEnd;
-  struct Actor *leader;
   struct Actor *last;
-  struct Actor *head;
-  struct Actor *headBack;
-  struct Actor *headAgain;
-  struct Actor *headHome;
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -697,24 +715,20 @@ static void Kalay_WatchTourGroupDeparture(void) {
     // "Everything will be just fine, folks!"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
-    head = Actor_Get(ACTOR_HEAD_GUIDE);
-    head->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_HEAD_GUIDE)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 172, 264);
     Event_Wait(1);
-    headBack = Actor_Get(ACTOR_HEAD_GUIDE);
-    headBack->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_HEAD_GUIDE)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 20);
     Actor_SetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
     Event_Wait(20);
-    headAgain = Actor_Get(ACTOR_HEAD_GUIDE);
-    headAgain->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_HEAD_GUIDE)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 172, 272);
     Event_Wait(1);
-    headHome = Actor_Get(ACTOR_HEAD_GUIDE);
-    headHome->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_HEAD_GUIDE)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 180, 272);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
     // "We're just checking to make sure no one is missing!"
@@ -829,10 +843,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_Stop(ACTOR_HEAD_GUIDE);
     Actor_Stop(ACTOR_SECOND_GUIDE);
     wait(1);
-    headWait = Actor_Get(ACTOR_HEAD_GUIDE);
-    headWait->timer = 0;
-    lastWait = Actor_Get(ACTOR_SECOND_GUIDE);
-    lastWait->timer = 0;
+    Actor_Get(ACTOR_HEAD_GUIDE)->timer = 0;
+    Actor_Get(ACTOR_SECOND_GUIDE)->timer = 0;
     Actor_SetSpeed(ACTOR_HEAD_GUIDE, 0.8);
     Actor_SetSpeed(ACTOR_SECOND_GUIDE, 0.8);
     Actor_SetScript(ACTOR_HEAD_GUIDE, gKalay_HeadGuideStopScript);
@@ -1044,14 +1056,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
       wait(1);
     } while (Actor_Get(ACTOR_LATE_TOURIST)->timer != 1);
     Actor_SetPosition(ACTOR_LATE_TOURIST, 359, 314);
-    late = Actor_Get(ACTOR_LATE_TOURIST);
-    late->facing = FACING_NORTH_NORTHEAST;
+    Actor_Get(ACTOR_LATE_TOURIST)->facing = FACING_NORTH_NORTHEAST;
     Actor_SetPosition(ACTOR_HEAD_GUIDE, 455, 434);
-    headEnd = Actor_Get(ACTOR_HEAD_GUIDE);
-    headEnd->facing = FACING_NORTH_NORTHEAST;
+    Actor_Get(ACTOR_HEAD_GUIDE)->facing = FACING_NORTH_NORTHEAST;
     Actor_SetPosition(ACTOR_SECOND_GUIDE, 464, 416);
-    lastEnd = Actor_Get(ACTOR_SECOND_GUIDE);
-    lastEnd->facing = FACING_SOUTH_SOUTHWEST;
+    Actor_Get(ACTOR_SECOND_GUIDE)->facing = FACING_SOUTH_SOUTHWEST;
     Actor_ReleaseById(ACTOR_FIRST_TOURIST);
     Actor_ReleaseById(ACTOR_FIRST_TOURIST + 1);
     Actor_ReleaseById(ACTOR_FIRST_TOURIST + 2);
@@ -1063,12 +1072,10 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Sound_Play(SOUND_FADE_OUT_BGM);
     if (work->stepTrigger == 9) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      leader->facing = FACING_NORTH;
+      Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
     } else {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 248);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      leader->facing = FACING_SOUTH;
+      Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
     }
     Scene_PlayMusic();
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
@@ -1126,20 +1133,20 @@ static void Kalay_CatchTownNut(void) {
 
 /// Every scene of the overlay sets FLAG_KALAY_REACHED, then prepares its own
 /// people and cells.
-s32 Kalay_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 sceneId;
 
   GameFlag_Set(FLAG_KALAY_REACHED);
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_Kalay) {
+  if (sceneId == SCENE_KALAY) {
     Kalay_PrepareTown();
-  } else if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
+  } else if (sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
     Kalay_PrepareHammetPalace();
-  } else if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
+  } else if (sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
     Kalay_PrepareTunnelEntrance();
-  } else if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
+  } else if (sceneId == SCENE_KALAY_TUNNEL_PASSAGE) {
     Kalay_PrepareTunnelPassage();
-  } else if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
+  } else if (sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
     Kalay_PrepareTunnelTreasureRoom();
   }
   return 0;
@@ -1211,14 +1218,11 @@ static void Kalay_PrepareHammetPalace(void) {
 
 /// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance).
 static void Kalay_PrepareTunnelEntrance(void) {
-  struct Actor *guard;
-
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT) == 0) {
     Scene_FloatNut(ACTOR_TUNNEL_ENTRANCE_NUT);
   }
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
-    guard = Actor_Get(ACTOR_TUNNEL_GUARD);
-    guard->facing = FACING_EAST;
+    Actor_Get(ACTOR_TUNNEL_GUARD)->facing = FACING_EAST;
   }
   if (gMainRoutineWork.entrance == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
     Kalay_HammetReturnsToPalace();
@@ -1965,7 +1969,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_End();
 }
 
-#include "shared/actor_find_at_cell.h"
+#include "shared/actor_find_at_cell.c"
 
 /// In the Kalay Tunnel (KalayTunnelTreasureRoom), walking into a statue pushes
 /// it one cell when there is room.
@@ -2254,7 +2258,7 @@ static void Kalay_FreezePuddle(void) {
   GameFlag_Set(FLAG_TUNNEL_PUDDLE_FROZEN);
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
 // One cell in each facing direction: x in the high 16 bits, z in the low 16.
 // UB: negative x coordinates cannot be left-shifted as signed integers.

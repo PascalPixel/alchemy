@@ -7,42 +7,42 @@
 /// parts, and each part includes it too, so that a part read on its own still
 /// resolves.
 
-#include "module/window/glyph_arm.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "iwram_call.h"
-#include "battle_work.h"
-#include "text_font.h"
-#include "resource_ids.h"
-#include "ram_code.h"
-#include "battle_side.h"
-#include "vram_cache.h"
-#include "select.h"
-#include "flags.h"
-#include "io_write.h"
-#include "event.h"
-#include "ram_buffer.h"
-#include "save.h"
-#include "item_menu.h"
-#include "io_write_queue.h"
-#include "map_grid_scroll.h"
-#include "djinn_preview.h"
-#include "battle_status.h"
-#include "icon_menu.h"
-#include "serial.h"
-#include "shop.h"
-#include "display_transition.h"
-#include "module/window/scales.h"
 #include "ability_ids.h"
 #include "djinn_ids.h"
 #include "enemy_ids.h"
+#include "flags.h"
+#include "resource_ids.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "battle/battle_work.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/item_menu.h"
+#include "menu/menu.h"
+#include "shop/shop.h"
+#include "system/io_write.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/ram_buffer.h"
+#include "system/ram_code.h"
+#include "system/save.h"
+#include "system/serial.h"
+#include "system/vram_cache.h"
+#include "window/battle_status.h"
+#include "window/djinn_preview.h"
+#include "window/glyph_arm.h"
+#include "window/icon_menu.h"
+#include "window/scales.h"
+#include "window/select.h"
+#include "window/text_font.h"
 
 #ifdef MODERN
 // The menu object calls these window functions with no prototype in scope, so
-// their arguments take the old promotions (module/window/window.h says why for
+// their arguments take the old promotions (window/window.h says why for
 // each); a current GCC, which refuses implicit declarations, gets them here.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node);
@@ -82,7 +82,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PSYNERGY_COST_SECOND_TILE WINDOW_TILE_PP_LABEL_END
 
 // The Status screen's level label, after the party member's name, in pixels.
-#if (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_FRENCH
 #define OWNER_STATUS_LEVEL_X 51
 #else
 #define OWNER_STATUS_LEVEL_X 56
@@ -106,7 +106,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #endif
 
 // Where "Attack" is written in its window once chosen, in pixels.
-#if (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_FRENCH
 #define BATTLE_COMMAND_NAME_X 14
 #else
 #define BATTLE_COMMAND_NAME_X 16
@@ -152,8 +152,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
   } while (0)
 
 // The chosen item's window.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define BATTLE_ITEM_WINDOW_WIDTH 16
 #else
 #define BATTLE_ITEM_WINDOW_WIDTH 15
@@ -162,14 +162,14 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 // The password level menu (IconMenu_ChooseSendOption,
 // RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
 // and, outside the Japanese edition, the explanation window under it.
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
 #define PASSWORD_LEVEL_WINDOW_X 7
 #define PASSWORD_LEVEL_WINDOW_WIDTH 17
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define PASSWORD_LEVEL_WINDOW_X 5
 #define PASSWORD_LEVEL_WINDOW_WIDTH 21
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define PASSWORD_LEVEL_WINDOW_X 5
 #define PASSWORD_LEVEL_WINDOW_WIDTH 22
 #else
@@ -177,7 +177,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PASSWORD_LEVEL_WINDOW_WIDTH 13
 #endif
 
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define PASSWORD_HELP_WINDOW_X 1
 #define PASSWORD_HELP_WINDOW_WIDTH 28
 #else
@@ -188,13 +188,13 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 // The transfer method menu (IconMenu_ChooseSendOption,
 // RESOURCE_LAYOUT_TRANSFER_METHOD): its heading window ("Transfer Method"), the
 // heading's x in it in pixels, and the help window.
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN
 #define TRANSFER_METHOD_WINDOW_X 6
 #define TRANSFER_METHOD_WINDOW_WIDTH 18
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define TRANSFER_METHOD_WINDOW_X 4
 #define TRANSFER_METHOD_WINDOW_WIDTH 21
-#elif (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TRANSFER_METHOD_WINDOW_X 5
 #define TRANSFER_METHOD_WINDOW_WIDTH 20
 #else
@@ -208,11 +208,11 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define TRANSFER_METHOD_LABEL_X 0
 #endif
 
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_SPANISH) ||        \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_SPANISH ||            \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TRANSFER_HELP_WINDOW_X 1
 #define TRANSFER_HELP_WINDOW_WIDTH 28
-#elif (LANGUAGE == LANGUAGE_GERMAN)
+#elif LANGUAGE == LANGUAGE_GERMAN
 #define TRANSFER_HELP_WINDOW_X 0
 #define TRANSFER_HELP_WINDOW_WIDTH 30
 #else
@@ -222,7 +222,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 
 // The width inside the border of the name window under the shop's commands
 // and the Sanctum's services.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_COMMAND_LABEL_WIDTH 8
 #elif LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_COMMAND_LABEL_WIDTH 7
@@ -307,8 +307,8 @@ enum BattleTargetHint {
 #define SAVE_SCAN_ALL_CLEARED 100
 
 /// One icon of the command row (struct BattleCommandRowWork): its sprite, where
-/// it stands and the command it stands for. menu_titles.c loads it,
-/// battle_command_row.c runs the row.
+/// it stands and the command it stands for. screens_menu_titles.c loads it,
+/// screens_battle_command_row.c runs the row.
 struct BattleCommandRowIcon {
   /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
   /// the others show as tiles of BG1.

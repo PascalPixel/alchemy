@@ -11,8 +11,8 @@
 /// system/main_routine.c), so no block outlives the scene, battle or
 /// minigame that took it.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState.
 extern void *gHeapSlots[64];
@@ -109,7 +109,7 @@ enum HeapSlot {
   /// intro's struct TitlePaletteFade.
   HEAP_SLOT_PALETTE_FADE = 32,
   /// The floating lights of Sol Sanctum's Elemental Star room (struct
-  /// SolSanctumRingList, sol_sanctum_elemental_star_ring_setup.h).
+  /// SolSanctumRingList, sol_sanctum_elemental_star_ring_setup.c).
   HEAP_SLOT_SOL_SANCTUM_LIGHTS = 33,
   /// The line scroll's work (struct LineScrollWork).
   HEAP_SLOT_LINE_SCROLL = 34,

@@ -4,9 +4,9 @@
 /// @file
 /// InnWork, an inn's work.
 
-#include "heap_slots.h"
 #include "static_assert.h"
 #include "types.h"
+#include "system/heap_slots.h"
 
 /// An inn's work, in the menu work: the coins window and the innkeeper's
 /// portrait.

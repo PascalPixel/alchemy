@@ -4,11 +4,11 @@
 ///
 /// It is a scene of its own that stands in for SceneId_Vale while
 /// FLAG_VALE_STORM is set, so that the doors that lead to Vale by day lead
-/// here. ValePrologue_Initialize sets the flag on every arrival, and
+/// here. Scene_Initialize sets the flag on every arrival, and
 /// vale_plaza.c clears it when the night ends.
 ///
 /// The night is a chain of story flags. Each is set by one event and read by
-/// ValePrologue_Initialize, which rebuilds the scene at that stage on the
+/// Scene_Initialize, which rebuilds the scene at that stage on the
 /// next arrival:
 ///
 /// - FLAG_VALE_STORM_SENT_TO_PLAZA: ValePrologue_DoraSendsIsaacToThePlaza,
@@ -46,38 +46,74 @@
 /// - FLAG_VALE_STORM_GARET_LEFT: ValePrologue_GaretFollowsIsaac, as Isaac
 ///   leaves for the plaza again. The night ends in vale_plaza.c.
 ///
-/// Every way out goes through Vale_RequestBackdropExit (shared/vale.h), which
+/// Every way out goes through Vale_RequestBackdropExit (shared/vale.c), which
 /// stops the lightning first, and each door plays its opening cells before
 /// it. gValePrologue_Exits gives each exit's destination.
 ///
 /// Two cells start a battle once each (slots 2 and 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "module/import.h"
-#include "module/scene/vale_prologue.h"
-#include "module/scene/shared/event_psynergy.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
-#include "field_effect.h"
-#include "heap_slots.h"
-#include "vram_cache.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
-#include "io_reg.h"
-#include "field_psynergy_work.h"
-#include "shared/walk_into_leader.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/event_psynergy.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern u8 gValePrologue_FrameModes[];
+extern s32 gValePrologue_ShovingManScript[];
+extern s32 gValePrologue_UnusedGaretRunsUpScript[];
+extern s32 gValePrologue_UnusedGaretPantingScript[];
+extern s32 gValePrologue_BoulderWaits[];
+extern s32 gValePrologue_BoulderFallLeaderPath[];
+extern s32 gValePrologue_BoulderFallGaretPath[];
+extern s32 gValePrologue_DoraRunsIntoRiversideHouse[];
+extern s32 gValePrologue_JennaRunsIntoRiversideHouse[];
+extern s32 gValePrologue_DoraComesOutOfRiversideHouse[];
+extern s32 gValePrologue_JennaComesOutOfRiversideHouse[];
+extern s32 gValePrologue_DoraHeadsNorth[];
+extern s32 gValePrologue_JennaHeadsForPlaza[];
+extern s32 gValePrologue_DoraLeavesForHelp[];
+extern s32 gValePrologue_DoraRunsToRiver[];
+extern s32 gValePrologue_ToRiverbankPath[];
+extern s32 gValePrologue_ExhaustedStrongmanGatherPath[];
+extern s32 gValePrologue_JennaGatherPath[];
+extern s32 gValePrologue_LeaderGatherPath[];
+extern s32 gValePrologue_GaretGatherPath[];
+extern s32 gValePrologue_LookAroundScript[];
+extern s32 gValePrologue_SquashAndStretchScript[];
+extern s32 gValePrologue_BoulderRollsDownriver[];
+extern struct SceneEntrance gValePrologue_Entrances[];
+extern u32 gValePrologue_Exits[];
+extern struct ActorPlacement gValePrologue_ActorPlacements[];
+extern struct ActorPlacement gValePrologue_BoulderWatchers[];
+extern struct Trigger gValePrologue_Triggers[];
+extern u16 gValePrologue_SanctumDoorOpens[];
+extern u16 gValePrologue_IsaacsDoorOpens[];
+extern u16 gValePrologue_GrandparentsDoorOpens[];
+extern u16 gValePrologue_WestHouseDoorOpens[];
+extern u16 gValePrologue_IsaacsDoorCloses[];
+extern u16 gValePrologue_GrandparentsDoorCloses[];
 
 static void ValePrologue_DoraSendsIsaacToThePlaza(void);
 static void ValePrologue_ApplyFirstRockCollision(void);
@@ -234,7 +270,7 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
   return 1;
 }
 
-#include "shared/actor_pulse.h"
+#include "shared/actor_pulse.c"
 
 /// The door of Isaac's house, from which Dora and Isaac came out into the
 /// storm, stands open.
@@ -249,21 +285,19 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
 #define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 
 /// Returns where the party appears.
-const struct SceneEntrance *ValePrologue_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValePrologue_Entrances;
 }
 
-const struct SceneExitRegion *ValePrologue_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *ValePrologue_GetExits(void) { return gValePrologue_Exits; }
+const u32 *Scene_GetExits(void) { return gValePrologue_Exits; }
 
-const struct ActorPlacement *ValePrologue_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gValePrologue_ActorPlacements;
 }
 
-const struct Trigger *ValePrologue_GetTriggers(void) {
-  return gValePrologue_Triggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gValePrologue_Triggers; }
 
 /// In Vale on the stormy night, swaps the bridge's cell behaviors as
 /// the leader steps onto it.
@@ -279,7 +313,7 @@ static void ValePrologue_StepOffBridge(void) {
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-#include "shared/vale.h"
+#include "shared/vale.c"
 
 /// Unused: on the stormy night, the Sanctum's door opens and the leader goes
 /// into a house of Vale.
@@ -415,7 +449,7 @@ static void ValePrologue_LeaveToCottageRoomsBEast(void) {
 
 /// Arriving in Vale on the stormy night sets the scene up for its stage of
 /// the night.
-s32 ValePrologue_Initialize(void) {
+s32 Scene_Initialize(void) {
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Actor_SetPosition(ACTOR_FELIX_CHILD, 0, 0);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -746,7 +780,6 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
 /// cannot get around it.
 static void ValePrologue_FirstRockFalls(void) {
   struct Actor *rock;
-  struct Actor *leader;
   s32 targetHeight;
   struct Sprite *rockSprite;
 
@@ -789,8 +822,7 @@ static void ValePrologue_FirstRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          if (leader->y.fixed > px(128)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > px(128)) {
             ValePrologue_GaretCommentsOnBlockedPath(326, 918);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 291, 918);
           } else {
@@ -817,7 +849,6 @@ static void ValePrologue_ApplyFirstRockCollision(void) {
 /// down the path as Isaac walks past.
 static void ValePrologue_SecondRockFalls(void) {
   struct Actor *rock;
-  struct Actor *leader;
   s32 targetHeight;
 
   if (Event_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_PASSED) == 0) {
@@ -856,8 +887,7 @@ static void ValePrologue_SecondRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          if (leader->y.fixed > px(128)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > px(128)) {
             ValePrologue_GaretCommentsOnBlockedPath(219, 843);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 829);
           } else {
@@ -957,7 +987,6 @@ static void ValePrologue_ApplyThirdRockCollision(void) {
 /// down the path as Isaac walks past.
 static void ValePrologue_FourthRockFalls(void) {
   struct Actor *rock;
-  struct Actor *leader;
   s32 targetHeight;
 
   if (Event_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) == 0) {
@@ -992,8 +1021,7 @@ static void ValePrologue_FourthRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          if (leader->z.fixed < px(1146)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < px(1146)) {
             ValePrologue_GaretCommentsOnBlockedPath(412, 1120);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 414, 1068);
           } else {
@@ -1151,7 +1179,6 @@ static void ValePrologue_GaretLeavesHisChest(void) {
 /// Unused: another version of Garet joining Isaac on the stormy night,
 /// which the game never plays.
 static void ValePrologue_UnusedGaretJoinsIsaac(void) {
-  struct Actor *actor;
   s32 message;
 
   if (Event_GetFlag(FLAG_VALE_STORM_GARET_JOINED) == 0) {
@@ -1174,8 +1201,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_SetScript(ACTOR_GARET_CHILD, gValePrologue_UnusedGaretPantingScript);
     // "*Hah* *Hah*"
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
-    actor = Actor_Get(ACTOR_GARET_CHILD);
-    actor->scaleY = Q16_ONE;
+    Actor_Get(ACTOR_GARET_CHILD)->scaleY = Q16_ONE;
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 1);
     Event_Wait(20);
     // "Are you trapped, too?"
@@ -1651,9 +1677,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_SetDestination(ACTOR_JENNAS_MOTHER, 247, 1210);
   Actor_MoveToAndWait(ACTOR_JENNA_CHILD, 227, 1189);
   {
-    struct Actor *actor;
-    actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-    actor->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_JENNAS_MOTHER)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Actor_Get(ACTOR_JENNA_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTHWEST, 0);
@@ -2050,7 +2074,6 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   struct Actor *actor;
   struct Actor *lookingActor;
   struct Actor *boulderShadow;
-  struct Actor *currentActor;
   u32 random;
   const s32 *entryActions;
   const s32 *lookAroundActions;
@@ -2148,10 +2171,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   PaletteFade_StartInterpolation(40);
   wait(40);
   Actor_SetSpriteColorById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
-  currentActor = Actor_Get(ACTOR_BOULDER);
-  Actor_SetSpriteFlags(currentActor, 0);
-  currentActor = Actor_Get(ACTOR_BOULDER_SHADOW);
-  Actor_SetSpriteFlags(currentActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER_SHADOW), 0);
   boulderShadow->scaleX = 4 * Q16_ONE / 5;
   boulderShadow->scaleY = 4 * Q16_ONE / 5;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2160,18 +2181,12 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->motionFlags = 0;
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actorVisual->image.priority = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetX = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetY = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetZ = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityX = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityY = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityZ = 0;
+  FieldCamera_GetActor()->targetX = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->targetY = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->targetZ = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->velocityX = 0;
+  FieldCamera_GetActor()->velocityY = 0;
+  FieldCamera_GetActor()->velocityZ = 0;
   wait(1);
   FieldCamera_MoveTo(247, 128, 917, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -2191,18 +2206,12 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   MapGrid_WaitForShakeToSettle();
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetX = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetY = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetZ = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityX = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityY = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityZ = 0;
+  FieldCamera_GetActor()->targetX = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->targetY = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->targetZ = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->velocityX = 0;
+  FieldCamera_GetActor()->velocityY = 0;
+  FieldCamera_GetActor()->velocityZ = 0;
   Task_Remove(ValePrologue_UpdateBoulderShadow);
   Actor_Stop(ACTOR_BOULDER);
   wait(1);
@@ -2352,8 +2361,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
       ~ACTOR_PRIORITY_AUTOMATIC;
   Task_AddFrame(ValePrologue_CopyLeaderSpritePriority, TASK_PASS_FRAME);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 181, 1273);
-  currentActor = Actor_Get(ACTOR_PARTY_LEADER);
-  currentActor->facing = FACING_NORTHEAST;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTHEAST;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldCamera_MoveTo(181, 0, 1273, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -2683,9 +2691,9 @@ static void ValePrologue_CycleActorPalettes(struct Actor *actor) {
 }
 
 #define PSYNERGY_RINGS_SOUND SE_JUMP
-#include "shared/psynergy_rings.h"
+#include "shared/psynergy_rings.c"
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Cycles the four elders' palettes and effects while they hold the Boulder.
 /// The westernmost elder's stop once that elder lets go (sShakeDone).

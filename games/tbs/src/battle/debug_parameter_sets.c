@@ -2,10 +2,10 @@
 /// The debug parameter sets: runs of party members, each run ended by
 /// DEBUG_PARAMETER_SET_END, that DebugParameterSet_Load gives the party.
 
-#include "debug_parameter_set.h"
-#include "character_ids.h"
-#include "item_ids.h"
 #include "ability_ids.h"
+#include "item_ids.h"
+#include "battle/debug_parameter_set.h"
+#include "game/character_ids.h"
 
 // clang-format off
 struct DebugParameterSetRow gDebug_ParameterSets[] = {

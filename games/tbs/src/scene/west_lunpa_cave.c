@@ -55,13 +55,146 @@
 /// camera bounds, so Frost can never reach it
 /// (WestLunpaCave_UnusedFreezePuddle).
 
-#include "main_routine_work.h"
+#include "ability_ids.h"
+#include "flags.h"
 #include "scene_ids.h"
-#include "event.h"
-#include "module/scene/west_lunpa_cave.h"
-#include "west_lunpa_cave.h"
+#include "sounds.h"
+#include "types.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
+#include "scene/walk_into_leader.h"
+#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
-#include "shared/walk_into_leader.h"
+
+extern const struct SceneEntrance gCaveEntrances[];
+extern const u32 gCaveExits[];
+extern const struct ActorPlacement gCaveNoActorPlacements[];
+extern const struct ActorPlacement gCaveActorPlacements[];
+extern const struct Trigger gCaveTriggers[];
+
+/// The cell behaviors the cave's triggers answer.
+enum WestLunpaCaveCellBehavior {
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE = 1,
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE = 2,
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_LOWERING_SWITCH = 3,
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_RAISING_SWITCH = 4,
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE = 10
+};
+
+enum CaveActorId {
+  /// Placed at (0, 0, 0), outside the cave's camera bounds, so the player
+  /// never sees it (WestLunpaCave_UnusedFreezePuddle).
+  ACTOR_UNUSED_PUDDLE = ACTOR_FIRST_PLACED,
+  ACTOR_SOUTH_PUDDLE,
+  ACTOR_GATE_PUDDLE,
+  ACTOR_NORTH_PUDDLE,
+  ACTOR_BUNZA,
+  ACTOR_HAMMET
+};
+
+enum { GATE_PILLAR_PRIORITY = 3 };
+
+enum SightingMessage {
+  SIGHTING_GARET_SAW_SOMEONE,
+  SIGHTING_MIA_SAW_SOMETHING,
+  SIGHTING_IVAN_ASKS_IF_FOUND,
+  SIGHTING_GARET_WILL_FIGHT,
+  SIGHTING_GARET_ASKS_WHAT_ELSE
+};
+
+enum RecognitionMessage {
+  RECOGNITION_HAMMET_CALLS_OUT,
+  RECOGNITION_HAMMET_NAMES_BUNZA,
+  RECOGNITION_BUNZA_KNOWS_VOICE,
+  RECOGNITION_BUNZA_NAMES_HAMMET
+};
+
+enum ReunionMessage {
+  REUNION_BUNZA_ASKS_ABOUT_RELEASE,
+  REUNION_HAMMET_CREDITS_IVAN,
+  REUNION_IVAN_CREDITS_LEADER,
+  REUNION_GARET_QUESTIONS_IVAN,
+  REUNION_IVAN_CREDITS_EVERYONE,
+  REUNION_HAMMET_THANKS_PARTY,
+  REUNION_HAMMET_THANKS_IVAN,
+  REUNION_MIA_PRAISES_BUNZA,
+  REUNION_HAMMET_PRAISES_BUNZA,
+  REUNION_BUNZA_CALLS_IT_CHANCE,
+  REUNION_BUNZA_AVOIDED_LUNPA,
+  REUNION_BUNZA_KNEW_OF_PRISON,
+  REUNION_GARET_ASKS_WHY_BUNZA_CAME,
+  REUNION_BUNZA_RECALLS_ADVICE,
+  REUNION_MIA_ASKS_ABOUT_TRADE,
+  REUNION_BUNZA_MEANS_WISDOM,
+  REUNION_HAMMET_ON_APPEARANCES,
+  REUNION_BUNZA_ON_UNPLEASANT_PLACES,
+  REUNION_HAMMET_ON_SELLING,
+  REUNION_IVAN_ASKS_ABOUT_SERVING,
+  REUNION_IVAN_ON_FATE,
+  REUNION_GARET_ASKS_ABOUT_ENTRY,
+  REUNION_BUNZA_WAS_REFUSED,
+  REUNION_MIA_ASKS_WHY_BUNZA_STILL_CAME,
+  REUNION_BUNZA_MENTIONS_COMMOTION,
+  REUNION_IVAN_EXPLAINS_COMMOTION,
+  REUNION_BUNZA_LINKS_COMMOTION,
+  REUNION_BUNZA_HAD_TO_KNOW,
+  REUNION_GARET_ASKS_ABOUT_CAVE,
+  REUNION_MIA_ON_GATE,
+  REUNION_BUNZA_HID,
+  REUNION_HAMMET_STARTLED_BUNZA,
+  REUNION_BUNZA_IS_GLAD,
+  REUNION_IVAN_ASKS_WHY,
+  REUNION_BUNZA_WARNS_OF_SEARCH,
+  REUNION_BUNZA_FEARS_CAPTURE,
+  REUNION_MIA_URGES_ESCAPE,
+  REUNION_IVAN_WANTS_STEALTH,
+  REUNION_GARET_ASKS_TO_FIGHT,
+  REUNION_BUNZA_DISCOURAGES_FIGHT,
+  REUNION_BUNZA_AGREES_NOT_TO_FIGHT
+};
+
+enum TurnMessage {
+  PLAN_HAMMET_ASKS_PLAN,
+  PLAN_BUNZA_HAS_WAGON,
+  PLAN_MIA_ASKS_ABOUT_WAGON,
+  PLAN_BUNZA_OFFERS_RIDE,
+  PLAN_IVAN_DOUBTS_WAGON,
+  PLAN_BUNZA_REASSURES,
+  PLAN_GARET_AGREES,
+  PLAN_BUNZA_IS_UNSUSPECTED
+};
+
+enum WagonMessage { WAGON_BUNZA_LEADS_THE_WAY, WAGON_GARET_ASKS_TO_RIDE };
+
+enum ConfusionMessage {
+  CONFUSION_IVAN_IS_CONFUSED,
+  CONFUSION_GARET_ASKS_AGAIN
+};
+
+enum WarningMessage {
+  WARNING_IVAN_ASKS_IF_STAYING,
+  WARNING_BUNZA_CANNOT_WAIT,
+  WARNING_MIA_ASKS_ABOUT_BUSINESS
+};
+
+enum FarewellMessage {
+  FAREWELL_GARET_STAYS,
+  FAREWELL_MIA_STAYS,
+  FAREWELL_IVAN_STAYS,
+  FAREWELL_HAMMET_LETS_IVAN_GO,
+  FAREWELL_BUNZA_SAYS_GOODBYE,
+  FAREWELL_GARET_SIGHS,
+  FAREWELL_MIA_HOPES_FOR_SAFETY,
+  FAREWELL_IVAN_REASSURES,
+  FAREWELL_GARET_MOVES_ON
+};
+
+enum DepartureMessage {
+  DEPARTURE_GARET_HEADS_FOR_KALAY,
+  DEPARTURE_IVAN_THINKS_OF_LAYANA,
+  DEPARTURE_HAMMET_LONGS_FOR_LAYANA,
+  DEPARTURE_BUNZA_SETS_OFF
+};
 
 /// The gate's puddle is frozen into a pillar, propping the gate open.
 #define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
@@ -104,7 +237,7 @@ const u32 *Scene_GetExits(void) { return gCaveExits; }
 
 /// Only the cave scene places puddles, Hammet, Bunza and the party members.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_WestLunpaCave) {
+  if (gMainRoutineWork.next == SCENE_WEST_LUNPA_CAVE) {
     return gCaveActorPlacements;
   }
   return gCaveNoActorPlacements;
@@ -958,7 +1091,7 @@ static void Party_RidesWagon(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_WestLunpaCave) {
+  if (gMainRoutineWork.next == SCENE_WEST_LUNPA_CAVE) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_UNUSED_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTH_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_GATE_PUDDLE), 0);

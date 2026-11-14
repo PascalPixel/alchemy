@@ -13,31 +13,31 @@
 /// order, one family to a part. README.md in this folder gives the words,
 /// prefixes and spellings the parts use. Where to start:
 ///
-///   Windows         windows.c: Window_Create, Window_Close;
-///                   borders.c: Window_DrawBorder, Window_UpdateZooms
-///   Messages        borders.c: Message_OpenWindow,
-///                   FieldMessage_Show; typing.c:
-///                   Message_Type; decode.c:
+///   Windows         window_windows.c: Window_Create, Window_Close;
+///                   window_borders.c: Window_DrawBorder, Window_UpdateZooms
+///   Messages        window_borders.c: Message_OpenWindow,
+///                   FieldMessage_Show; window_typing.c:
+///                   Message_Type; window_decode.c:
 ///                   Message_Decode
-///   Text drawing    sprites.c: Glyph_Draw; text_tiles.c:
+///   Text drawing    window_sprites.c: Glyph_Draw; window_text_tiles.c:
 ///                   Text_DrawStringAsTiles, Text_DrawString
-///   Screens         selection.c: SelectionMenu_Run, FieldMenu_Run;
-///                   settings_menu.c: SettingsMenu_Run,
+///   Screens         window_selection.c: SelectionMenu_Run, FieldMenu_Run;
+///                   window_settings_menu.c: SettingsMenu_Run,
 ///                   PauseMenu_Choose
 
 #include "window_internal.h"
 
 // The parts, in ROM order (src/README.md, "Objects and parts").
-#include "window/windows.c"
-#include "window/typing.c"
-#include "window/borders.c"
-#include "window/glyphs.c"
-#include "window/decode.c"
-#include "window/measure.c"
-#include "window/sprites.c"
-#include "window/messages.c"
-#include "window/icons.c"
-#include "window/selection.c"
-#include "window/shortcuts.c"
-#include "window/settings_menu.c"
-#include "window/text_tiles.c"
+#include "window_windows.c"
+#include "window_typing.c"
+#include "window_borders.c"
+#include "window_glyphs.c"
+#include "window_decode.c"
+#include "window_measure.c"
+#include "window_sprites.c"
+#include "window_messages.c"
+#include "window_icons.c"
+#include "window_selection.c"
+#include "window_shortcuts.c"
+#include "window_settings_menu.c"
+#include "window_text_tiles.c"

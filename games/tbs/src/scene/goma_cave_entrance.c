@@ -37,29 +37,35 @@
 /// GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma Cave
 /// (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
 /// World Map.
-#include "module/scene/goma_cave_entrance.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "battle.h"
-#include "field.h"
-#include "menu.h"
-#include "system.h"
-#include "event.h"
-#include "create_configured_actor.h"
-#include "debug.h"
-#include "game.h"
-#include "graphics.h"
-#include "sound.h"
-#include "inventory.h"
-#include "text/msg_ids.h"
-#include "actor_script.h"
-#include "heap_slots.h"
+
 #include "ability_ids.h"
-#include "macros.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "field_psynergy_work.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/create_configured_actor.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_psynergy_work.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern struct SceneEntrance gGomaCaveEntranceEntrances[];
+extern u32 gGomaCaveEntranceExits[];
+extern struct ActorPlacement gGomaCaveEntranceActorPlacements[];
+extern struct Trigger gGomaCaveEntranceTriggers[];
 
 /// The room's actors.
 ///
@@ -90,8 +96,8 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
@@ -114,11 +120,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Move on the west pillar at Goma Cave Entrance, and after each push: the
 /// pillar stands on one of three columns.
 static void GomaCaveEntrance_MoveWestPillar(void) {
-  struct Actor *pillar;
   s32 column;
 
-  pillar = Actor_Get(ACTOR_WEST_PILLAR);
-  column = pillar->x.fixed / px(16);
+  column = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed / px(16);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
   if (column == 15) {
@@ -135,11 +139,9 @@ static void GomaCaveEntrance_MoveWestPillar(void) {
 /// Move on the east pillar at Goma Cave Entrance: once it reaches column 23 it
 /// settles into the floor and can be walked over.
 static void GomaCaveEntrance_MoveEastPillar(void) {
-  struct Actor *pillar;
   s32 column;
 
-  pillar = Actor_Get(ACTOR_EAST_PILLAR);
-  column = pillar->x.fixed / px(16);
+  column = Actor_Get(ACTOR_EAST_PILLAR)->x.fixed / px(16);
   if (column == 23) {
     Event_Wait(10);
     Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -195,8 +197,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Sets up Goma Cave Entrance.
 s32 Scene_Initialize(void) {
-  struct Actor *movedActor;
-
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   Event_Wait(10);
   Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -244,8 +244,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_EAST_PILLAR, 376, 280);
     Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_Get(ACTOR_EAST_PILLAR)->motionFlags = 0;
-    movedActor = Actor_Get(ACTOR_EAST_PILLAR);
-    Actor_SetSpriteFlags(movedActor, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_EAST_PILLAR), 0);
     MapGrid_CopyCellAttributes(54, 17, 1, 1, 23, 17);
   }
   return 0;
@@ -471,14 +470,12 @@ static void GomaCaveEntrance_IvanRejoins(void) {
 /// leaps away and lies where it lands (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
 static void GomaCaveEntrance_MoveStump(void) {
   s32 column;
-  struct Actor *stump;
 
   Event_Start();
   column = FIELD_CELL(Actor_Get(ACTOR_STUMP)->x.fixed);
   if (column == 11) {
     GomaCaveEntrance_LeapStump(ACTOR_STUMP);
-    stump = Actor_Get(ACTOR_STUMP);
-    stump->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, column);
     GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);
@@ -510,7 +507,7 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
   state->rotation = v;
 }
 
-#include "shared/actor_wait_below_height.h"
+#include "shared/actor_wait_below_height.c"
 
 /// The stump leaps out of the way and sinks in the pool.
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
@@ -571,7 +568,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   MapGrid_WaitForShakeToSettle();
 }
 
-#include "shared/item_equip.h"
+#include "shared/item_equip.c"
 
 /// Gives Ivan the Shaman's Rod and equips it.
 static void GomaCaveEntrance_GiveShamansRod(void) {
@@ -621,7 +618,7 @@ retry:
   }
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

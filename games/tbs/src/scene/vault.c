@@ -43,40 +43,56 @@
 ///
 /// The rope bridge in the town's south-east spans a path that runs under it.
 /// Stepping onto either end of it or off its west end switches the cells
-/// beneath it between the deck and the path (shared/vault_toggle.h).
+/// beneath it between the deck and the path (shared/vault_toggle.c).
 
-#include "main_routine_work.h"
-#include "sprite.h"
-#include "window.h"
-#include "module/scene/vault.h"
-#include "vault.h"
-#include "module/scene/shared/vault_range.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/battle/battle.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
-#include "actor.h"
-#include "event.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "battle_side.h"
-#include "text/msg_ids.h"
-#include "fixed_point_position.h"
-#include "iwram_call.h"
-#include "inventory.h"
+#include "scene/vault.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
-#include "flags.h"
 #include "djinn_ids.h"
-#include "shared/walk_into_leader.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "field/sprite.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/vault_range.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "system/fixed_point_position.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+extern s32 gVault_BoyRoundTheWellRoute[];
+extern s32 gVault_GirlRoundTheWellRoute[];
+extern struct SceneEntrance gVault_Entrances[];
+extern u32 gVault_Exits[];
+extern struct ActorPlacement gVault_ActorPlacements[];
+extern struct ActorPlacement gVault_ActorPlacementsAfterThieves[];
+extern struct Trigger gVault_Triggers[];
+extern struct Trigger gVault_TriggersAfterThieves[];
+extern u16 gVault_GemOwnersHouseDoorCells[];
+extern u16 gVault_ChildsHouseDoorCells[];
+extern u16 gVault_InnDoorCells[];
+extern u16 gVault_ItemShopDoorCells[];
+extern u16 gVault_WeaponAndArmorShopDoorCells[];
+extern u16 gVault_MayorsHouseDoorCells[];
+extern u16 gVault_JailDoorCells[];
+extern s32 gVault_DriftScriptA[];
+extern s32 gVault_DriftScriptB[];
 
 enum { VAULT_DRIFT_RATE = px(1) / 10 };
 
@@ -120,10 +136,10 @@ static void Vault_ShowStandingActorMessage(s32 actorId);
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay);
 static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
-#include "shared/vault_nearby.h"
+#include "shared/vault_nearby.c"
 
 /// The woman wanting the roof fixed walks about looking for the man who should
 /// be fixing it and stops to face the leader when near, or while a conversation
@@ -167,7 +183,7 @@ static int Vault_GetIvanVenusDjinnCount(void) {
   return Unit_Get(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
-#include "shared/vault_djinn.h"
+#include "shared/vault_djinn.c"
 
 /// Leaving Vault by either gate, Ivan stays behind if he is helping search
 /// for the rod and the thieves are free.
@@ -375,7 +391,7 @@ static void Vault_ShowStandingActorMessage(s32 actorId) {
   Event_End();
 }
 
-#include "shared/vault_talk.h"
+#include "shared/vault_talk.c"
 
 /// The welcoming young man asks whether the party is leaving again.
 /// He asks after the thieves are jailed. "So, you're hitting the road again?"
@@ -398,12 +414,10 @@ static void Vault_PraiseThievesCapture(void) {
 
 /// An old man talks about Ivan, Hammet's servant.
 static void Vault_TalkAboutIvan(void) {
-  struct FieldWork *workspace;
   Event_Start();
   Event_SetMessageId(MsgVaultTalkingAboutHammetsServantIvan);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0) {
-    workspace = gFieldWork;
-    ++workspace->message;
+    ++gFieldWork->message;
   }
   Vault_ShowStandingActorMessage(ACTOR_OLD_MAN_ON_HAMMETS_SERVANT);
   Event_End();
@@ -597,7 +611,7 @@ static void Vault_ReadWomanWantingTheRoofFixedMind(void) {
   Event_End();
 }
 
-#include "shared/vault_toggle.h"
+#include "shared/vault_toggle.c"
 
 /// Walks to the exit's threshold and requests the room's transition.
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
@@ -664,7 +678,7 @@ static void Vault_EnterMayorsHouse(void) {
   Vault_WalkThroughExit(120, 144, VAULT_TO_LOG_ROOMS_A_NORTHWEST);
 }
 
-#include "shared/vault_map_cells.h"
+#include "shared/vault_map_cells.c"
 
 /// In Vault, the jail door opens and the party walks in, drawn behind the
 /// doorway (VAULT_TO_STONE_ROOMS, the jail's STONE_ROOMS_FROM_VAULT).
@@ -781,8 +795,7 @@ s32 Scene_Initialize(void) {
   suspectsMindRead = GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     if ((suspectsMindRead & 1) != 0) {
-      actor = Actor_Get(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED);
-      actor->update =
+      Actor_Get(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED)->update =
           (void (*)(struct Actor *))Vault_UpdateRoofComplainerProximity;
     }
   }
@@ -857,8 +870,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/actor_distance.h"
-#include "shared/vault_range.h"
+#include "shared/actor_distance.c"
+#include "shared/vault_range.c"
 
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay) {
   Event_ShowMessage(actorId, 0);
@@ -969,13 +982,11 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     effect->timer = 1;
   }
   {
-    /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags; as
-     * sprite->flags, 2 of 141 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags. */
     u8 *spriteFlags = &sprite->flags;
 
     effect->update = Vault_UpdateDriftingEffect;
-    /* FAKEMATCH(dead): the flags store in both arms of a test; as one store, 2
-     * of 141 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): the flags store in both arms of a test. */
     if (flags < 0)
       *spriteFlags = 0;
     else
@@ -984,7 +995,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   sprite->image.priority = anchor->sprite->image.priority;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -1051,7 +1062,7 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_END,
 };
 
-#include "shared/vault_well_routes.h"
+#include "shared/vault_well_routes.c"
 
 struct SceneEntrance gVault_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1,

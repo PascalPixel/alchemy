@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef ALCHEMY_GRAPHICS_H
+#define ALCHEMY_GRAPHICS_H
 
 /// @file
 /// The screen blend's globals and the graphics routines.
@@ -16,8 +16,8 @@
 
 #include "types.h"
 #include "edition.h"
-#include "far_call.h"
-#include "heap.h"
+#include "gamepak/far_call.h"
+#include "system/heap.h"
 
 /// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gScreenFadeToWhite;
@@ -48,7 +48,7 @@ extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];
 /// Decompress_ByteLzArm: how much Decompress_ByteLz allocates for it.
 extern u8 Decompress_ByteLzCodeSize[];
 /// The Japanese status panel's PP row, "EP    /": label and slash in one
-/// string, drawn by the unit summary in menu/menu/shared.c.
+/// string, drawn by the unit summary in menu/menu_shared.c.
 extern const u8 gStatusPanel_PpRowString[];
 /// A one-entry table of sprite tiles: the pointing hand cursor
 /// (gPointingHandTiles), returned by WindowSprite_GetPointerTiles.
@@ -84,7 +84,7 @@ struct MenuCursor;
 struct TileMask;
 
 // The pixel shading kernels and their sizes: each
-// PaletteFade_BackupAnd... function in system/system/decompress.c copies its
+// PaletteFade_BackupAnd... function in system/system_decompress.c copies its
 // kernel onto its own stack and runs it there.
 /// PaletteFade_BrightenKernel, for PaletteFade_BackupAndBrighten.
 extern u8 PaletteFade_BackupAndBrightenCodeSize[];

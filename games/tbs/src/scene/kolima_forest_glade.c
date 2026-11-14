@@ -17,27 +17,35 @@
 /// grass and stumps ringed by trees, with no cliff or river
 /// (places/kolima-forest-glade_cursed/map-0.png).
 
-#include "speaker.h"
-#include "flags.h"
-#include "heap_slots.h"
-#include "module/import.h"
-#include "module/scene/kolima_forest_glade.h"
-#include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/kolima_palette.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "pushed_actor.h"
-#include "io_reg.h"
 #include "ability_ids.h"
+#include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_orbit.h"
+#include "scene/catch_nut.h"
+#include "scene/import.h"
+#include "scene/kolima_palette.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/system.h"
+
+extern struct SceneEntrance gKolimaForestGlade_Entrances[];
+extern u32 gKolimaForestGlade_Exits[];
+extern struct ActorPlacement gKolimaForestGlade_ActorPlacements[];
+extern struct Trigger gKolimaForestGlade_Triggers[];
 
 /// Kolima Forest's actors, numbering the rows of
 /// gKolimaForestGlade_ActorPlacements.
@@ -48,22 +56,22 @@ enum KolimaForestGladeActorId {
   ACTOR_NUT = ACTOR_FIRST_LOG + 3
 };
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// Where the party enters, from SceneId_KolimaForestEntrance and
 /// SceneId_KolimaForestCliff.
-const struct SceneEntrance *KolimaForestGlade_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestGlade_Entrances;
 }
 
-const struct SceneExitRegion *KolimaForestGlade_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// The ways on into the forest (SceneId_KolimaForestCliff) and back
 /// (SceneId_KolimaForestEntrance).
-const u32 *KolimaForestGlade_GetExits(void) { return gKolimaForestGlade_Exits; }
+const u32 *Scene_GetExits(void) { return gKolimaForestGlade_Exits; }
 
 /// The three logs and the Nut.
-const struct ActorPlacement *KolimaForestGlade_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestGlade_ActorPlacements;
 }
 
@@ -77,8 +85,6 @@ static void KolimaForestGlade_PushLog(void) {
   Event_End();
 }
 
-#include "shared/catch_nut.h"
-
 /// In Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut
 /// makes it vanish, and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
@@ -86,12 +92,12 @@ static void KolimaForestGlade_CatchNut(void) {
 }
 
 /// The logs, the Nut and the two ways out.
-const struct Trigger *KolimaForestGlade_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestGlade_Triggers;
 }
 
 /// Sets up the floating Nut and the logs on entry.
-s32 KolimaForestGlade_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
@@ -106,10 +112,10 @@ s32 KolimaForestGlade_Initialize(void) {
   return 0;
 }
 
-#include "shared/kolima_palette.h"
-#include "shared/actor_orbit.h"
+#include "shared/kolima_palette.c"
+#include "shared/actor_orbit.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 struct SceneEntrance gKolimaForestGlade_Entrances[] = {
@@ -161,5 +167,8 @@ struct Trigger gKolimaForestGlade_Triggers[] = {
 };
 
 // The .bss order follows the first declarations (externs in field.h).
-u8 gKolimaPalette_Healthy[1792] __attribute__((section(".bss")));
-u8 gKolimaPalette_Cursed[896] __attribute__((section(".bss")));
+/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
+/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+u8 gKolimaPalette_Healthy[1792] BSS_DATA ALIGNED(16);
+/// The cursed colours, kept by KolimaPalette_SaveCursed.
+u8 gKolimaPalette_Cursed[896] BSS_DATA;

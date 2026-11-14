@@ -1,8 +1,8 @@
 /// @file
 /// The sound driver's empty callback.
 
-#include "sound/sound.h"
 #include "types.h"
+#include "sound/sound.h"
 
 /// Provides the default empty callback before the sound driver installs its
 /// handlers: SoundInit puts it in the work's cgbUpdate, cgbMute,

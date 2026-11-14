@@ -4,11 +4,10 @@
 /// @file
 /// The fade overlay, the weather particles and the actor effect work.
 
-#include "types.h"
 #include "edition.h"
-#include "heap.h"
-
-#include "sprite.h"
+#include "types.h"
+#include "field/sprite.h"
+#include "system/heap.h"
 
 struct Actor;
 

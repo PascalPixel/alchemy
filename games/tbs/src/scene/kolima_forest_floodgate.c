@@ -27,30 +27,84 @@
 /// (SPLASH_ANIMATION_CHURN) and the river rises
 /// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
 
-#include "speaker.h"
 #include "flags.h"
-#include "module/import.h"
-#include "module/scene/kolima_forest_floodgate.h"
-#include "module/scene/shared/kolima_palette.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "system_call.h"
-#include "dma.h"
-#include "map_grid.h"
-#include "text/msg_ids.h"
-#include "map_grid_scroll.h"
-#include "macros.h"
-#include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/map_grid.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/kolima_palette.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
+
+u8 gKolimaForestFloodgate_Unk_0[8] BSS_DATA;
+/// The bend's logs in gSceneLocalState from byte 4, so they survive a battle.
+struct FloodgateLog *gKolimaForestFloodgateRecords BSS_DATA;
+/// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
+u16 *gKolimaForestFloodgateReturned BSS_DATA;
+/// The bend's water level in gSceneLocalState's second halfword: 1 high (the
+/// logs float), 0 low; the floodgate switch flips it.
+s16 *gKolimaForestFloodgateMap BSS_DATA;
+u8 gKolimaForestFloodgate_Unk_14[4] BSS_DATA;
+/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
+/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+u8 gKolimaPalette_Healthy[1792] BSS_DATA;
+/// The cursed colours, kept by KolimaPalette_SaveCursed.
+u8 gKolimaPalette_Cursed[896] BSS_DATA;
+u8 gKolimaForestFloodgate_Unk_a98[896] BSS_DATA;
+/// The background scroll words captured each frame for the shaken lines.
+u32 gKolimaForestFloodgate_ShakeScroll[3] BSS_DATA;
+/// The percent chance that a line above the split shows the shaken scroll: 0
+/// when the rumble starts (SE_WATER_LEVEL), then a point higher each frame up
+/// to 101 (KolimaForestFloodgate_FlipFloodgateSwitch).
+u32 gKolimaForestFloodgate_ShakeChance BSS_DATA;
+
+struct Actor;
+
+/// A log's saved record: its sprite, first map cell and orientation, then its
+/// actor once created.
+struct FloodgateLog {
+  s16 sprite;          ///< sprite number; -1 ends the list
+  s16 x;               ///< map cells
+  s16 z;               ///< map cells
+  s16 vertical;        ///< nonzero runs north to south; zero west to east
+  struct Actor *actor; ///< created for this row; NULL in the defaults
+};
+
+STATIC_ASSERT(sizeof(struct FloodgateLog) == 12);
+STATIC_ASSERT(offsetof(struct FloodgateLog, x) == 2);
+STATIC_ASSERT(offsetof(struct FloodgateLog, vertical) == 6);
+STATIC_ASSERT(offsetof(struct FloodgateLog, actor) == 8);
+
+// UB: the scene calls this before its definition with no prototype, so as a
+// function returning int.
+#ifdef UBFIX
+void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
+                                         s32 value);
+#endif
+extern struct FloodgateLog gKolimaForestFloodgate_DefaultRecords[];
+extern u8 gKolimaForestFloodgate_PushAnimations[];
+extern s8 gKolimaForestFloodgate_PushStepX[];
+extern s8 gKolimaForestFloodgate_PushStepZ[];
+extern struct SceneEntrance gKolimaForestFloodgateEntrances[];
+extern u32 gKolimaForestFloodgateExits[];
+extern struct ActorPlacement gKolimaForestFloodgateActorPlacements[];
+extern struct Trigger gKolimaForestFloodgateTriggers[];
 
 /// The actors, numbering gKolimaForestFloodgateActorPlacements'
 /// rows from ACTOR_FIRST_PLACED.
@@ -74,27 +128,23 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs);
 
 /// Where the party enters, from SceneId_KolimaForestCliff and from
 /// SceneId_KolimaForestTree.
-const struct SceneEntrance *KolimaForestFloodgate_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestFloodgateEntrances;
 }
 
-const struct SceneExitRegion *KolimaForestFloodgate_GetRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// The ways back (SceneId_KolimaForestCliff) and on to Tret
 /// (SceneId_KolimaForestTree).
-const u32 *KolimaForestFloodgate_GetExits(void) {
-  return gKolimaForestFloodgateExits;
-}
+const u32 *Scene_GetExits(void) { return gKolimaForestFloodgateExits; }
 
 /// The short log, the switch and the sign.
-const struct ActorPlacement *KolimaForestFloodgate_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestFloodgateActorPlacements;
 }
 
 /// The logs, the switch, the sign, the jump and the chest.
-const struct Trigger *KolimaForestFloodgate_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestFloodgateTriggers;
 }
 
@@ -112,7 +162,7 @@ static void KolimaForestFloodgate_PushLog(void) {
 /// (step trigger 10) makes the leader jump across.
 static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
-#include "shared/map_grid_panel.h"
+#include "shared/map_grid_panel.c"
 
 /// Gives the short log's column of cells its cell behavior: column 4 at the
 /// west place, column 6 at the east.
@@ -372,7 +422,7 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
 }
 
 /// Sets up the logs and the river's level on entry.
-s32 KolimaForestFloodgate_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   gKolimaForestFloodgateReturned = (u16 *)gSceneLocalState;
@@ -432,8 +482,7 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     actor->radius = 32;
     height = px(
         MapGrid_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel));
-    /* FAKEMATCH(temporary): the height added as a plain word, outside its
-     * union; as actor->y.fixed, 1 of 82 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): the height added. */
     *(s32 *)&actor->y += height;
     actor->groundHeight = height;
   }
@@ -582,7 +631,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Event_End();
 }
 
-#include "shared/kolima_palette.h"
+#include "shared/kolima_palette.c"
 
 /// The logs on a first visit, as struct FloodgateLog, each in the sprite of the
 /// way it runs: one sprite for north to south, another for west to east.

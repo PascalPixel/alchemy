@@ -5,8 +5,8 @@
 /// The words of an actor's script as the motion loops index them, and
 /// ActorArmView, struct Actor as actor_update_arm.c reads it.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 struct Actor;
 

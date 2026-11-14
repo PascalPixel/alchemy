@@ -22,7 +22,7 @@
 /// The room behind Master Feh's school
 /// (LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) is reached only from the
 /// school (LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE, in fuchin_temple.c) and has
-/// its own tables (LacquerRoomsB_GetTriggers).
+/// its own tables (Scene_GetTriggers).
 ///
 /// Once Xian has heard of Hsu, Master Feh, Feizhi and Hsu are there, Hsu lying
 /// in the bed (ANIM_HSU_IN_BED; the room's render with Hsu placed).
@@ -33,21 +33,32 @@
 ///
 /// Arriving here clears FLAG_SHOW_AREA_NAME.
 
-#include "main_routine_work.h"
-#include "module/scene/lacquer_rooms_b.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "event.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_effect.h"
-#include "text/msg_ids.h"
+#include "ability_ids.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+const struct Trigger *Scene_GetTriggers(void);
+extern struct SceneEntrance gLacquerRoomsB_Entrances[];
+extern u32 gLacquerRoomsB_Exits[];
+extern struct ActorPlacement gLacquerRoomsB_ActorPlacements[];
+extern struct ActorPlacement gLacquerRoomsB_SchoolRoomActorPlacements[];
+extern struct Trigger gLacquerRoomsB_Triggers[];
+extern struct Trigger gLacquerRoomsB_SchoolRoomTriggers[];
 
 /// The actors of the houses, shops and inn, numbered by the rows of
 /// gLacquerRoomsB_ActorPlacements. Each villager is named by what they
@@ -94,21 +105,19 @@ enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
 /// room behind the school (hsu.png's frame 36; the room's render).
 enum { ANIM_HSU_IN_BED = 6 };
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
-#include "ability_ids.h"
-#include "item_ids.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
-const struct SceneEntrance *LacquerRoomsB_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLacquerRoomsB_Entrances;
 }
 
-const struct SceneExitRegion *LacquerRoomsB_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *LacquerRoomsB_GetExits(void) { return gLacquerRoomsB_Exits; }
+const u32 *Scene_GetExits(void) { return gLacquerRoomsB_Exits; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu.
-const struct ActorPlacement *LacquerRoomsB_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance ==
       LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomActorPlacements;
@@ -243,7 +252,7 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
 }
 
 /// The room behind the school has its own triggers.
-const struct Trigger *LacquerRoomsB_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.entrance ==
       LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomTriggers;
@@ -253,7 +262,7 @@ const struct Trigger *LacquerRoomsB_GetTriggers(void) {
 
 /// Opens the room through a window transition and places hidden still actors of
 /// SPRITE_CHEST's sheet (Actor_CreateConfigured).
-s32 LacquerRoomsB_Initialize(void) {
+s32 Scene_Initialize(void) {
   s16 entrance;
 
   gFieldWork->transition =
@@ -274,7 +283,7 @@ s32 LacquerRoomsB_Initialize(void) {
   return 0;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

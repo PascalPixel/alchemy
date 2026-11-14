@@ -4,9 +4,9 @@
 /// @file
 /// The sprite VRAM block cache and its owners.
 
-#include "types.h"
 #include "edition.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// The sprite VRAM cache's sizes and its free marks. Sprite tile memory, from
 /// OBJ_VRAM0, is split into blocks that the cache entries own.

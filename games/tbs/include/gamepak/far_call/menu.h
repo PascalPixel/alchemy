@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_MENU_H
+#define ALCHEMY_FAR_CALL_MENU_H
+
 /// @file
 /// Party menus and their interactive selection screens.
 
@@ -11,3 +14,5 @@ void Menu_ReleasePartyFiguresFar(void);
 void Icon_PrepareActorFar(struct WindowSprite *object);
 s32 DjinnMenu_RunFar(void);
 void ItemMenu_DrawItemDetailsFar(s32 window, s32 item);
+
+#endif

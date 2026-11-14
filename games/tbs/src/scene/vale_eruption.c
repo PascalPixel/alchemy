@@ -13,7 +13,7 @@
 /// mayor, Isaac's mother Dora, Garet's sister and brother, and the guard who
 /// saw the two hanging around on his watch.
 ///
-/// The scene has no triggers. ValeEruption_Initialize plays the whole event on
+/// The scene has no triggers. Scene_Initialize plays the whole event on
 /// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (ValeEruption_ReturnFromMtAleph).
 ///
 /// - The ground shakes, and the villagers wonder where the two are.
@@ -33,21 +33,32 @@
 /// The scene sets FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it. Sol
 /// Sanctum's entrance scene does (sol_sanctum_entrance.c).
 
-#include "main_routine_work.h"
-#include "module/scene/vale_eruption.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "text/msg_ids.h"
-#include "actor_script.h"
 #include "flags.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern s32 gValeEruption_LeaderWalksDown[];
+extern s32 gValeEruption_GaretWalksDown[];
+extern s32 gValeEruption_EnterSanctum[];
+extern struct SceneEntrance gValeEruption_Entrances[];
+extern u32 gValeEruption_Exits[];
+extern struct ActorPlacement gValeEruption_ActorPlacements[];
+extern struct Trigger gValeEruption_Triggers[];
+extern u16 gValeEruption_SanctumDoorOpens[];
 
 /// The placed actors, numbered in the order of gValeEruption_ActorPlacements.
 /// Garet's row places the party's Garet and takes no number.
@@ -86,29 +97,27 @@ static void ValeEruption_ReturnFromMtAleph(void);
 
 /// Returns where the party appears. VALE_ERUPTION_FROM_SOL_ENTRANCE is the path
 /// down from the mountain, Mt. Aleph.
-const struct SceneEntrance *ValeEruption_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValeEruption_Entrances;
 }
 
-const struct SceneExitRegion *ValeEruption_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the one exit, VALE_ERUPTION_TO_SANCTUM into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), which ValeEruption_ReturnFromMtAleph takes.
-const u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
+const u32 *Scene_GetExits(void) { return gValeEruption_Exits; }
 
 /// Returns Garet and the villagers gathered before the sanctum.
-const struct ActorPlacement *ValeEruption_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gValeEruption_ActorPlacements;
 }
 
 /// The scene has no triggers of its own, since everything happens on arrival.
-const struct Trigger *ValeEruption_GetTriggers(void) {
-  return gValeEruption_Triggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gValeEruption_Triggers; }
 
 /// Arriving in Vale during the eruption plays the return from the mountain,
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE.
-s32 ValeEruption_Initialize(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     ValeEruption_ReturnFromMtAleph();
   }

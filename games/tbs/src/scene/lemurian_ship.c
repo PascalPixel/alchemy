@@ -6,7 +6,7 @@
 /// once Iodem has given it the Black Orb. Stepping back on cell behavior 1
 /// (LemurianShip_LeaveTheShip) returns there.
 ///
-/// LemurianShip_SetupMap prepares the map. It sinks the ship's two map layers
+/// Scene_Initialize prepares the map. It sinks the ship's two map layers
 /// 90 pixels, and puts the two pieces of the gangway and the party at sprite
 /// priority 1.
 ///
@@ -29,39 +29,64 @@
 /// - The game goes to the clear screen by the title's
 ///   TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC_ONCE).
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "vram_cache.h"
-#include "module/scene/lemurian_ship.h"
-#include "module/scene/shared/scroll_initialize_hblank_dma.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/shop/shop.h"
-#include "module/sound/sound.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "event.h"
-#include "dma.h"
-#include "iwram_call.h"
-#include "fixed_point_position.h"
-#include "io_write.h"
-#include "map_grid_scroll.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
-#include "line_scroll.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "item_ids.h"
-#include "sound_driver_symbols.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/line_scroll.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/scroll_initialize_hblank_dma.h"
+#include "shop/shop.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/fixed_point_position.h"
+#include "system/heap_slots.h"
+#include "system/io_write.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern u16 gShipGlowPalettes[];
+extern s32 gSprayFallScript[];
+extern s16 gRippleSine[256];
+extern struct SceneEntrance gLemurianShipEntrances[];
+extern u32 gLemurianShipExits[];
+extern struct ActorPlacement gLemurianShipActorPlacements[];
+extern struct Trigger gLemurianShipTriggers[];
+extern s32 gOrbGlowActive;
+extern s32 gOrbGlowPhase;
+extern s32 gOrbGlowStrength;
+extern s32 gOrbGlowFadeFrames;
+extern s32 gSprayActive;
+extern s32 gSwellActive;
+extern s32 gSwellPhase;
+extern s32 gShipHullY;
+extern s32 gShipDeckY;
+extern s32 gLeaderDeckY;
+extern s32 gGaretDeckY;
+extern s32 gMiaDeckY;
+extern s32 gIvanDeckY;
+extern u32 gShipGlowStep[];
+extern s32 gLeaderBoardsShip[];
+extern s32 gGaretBoardsShip[];
+extern s32 gIvanBoardsShip[];
+extern s32 gMiaBoardsShip[];
 
 #if TBS_PATCH_3
 #define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 30
@@ -88,17 +113,17 @@ enum {
 #define SET_SHADOW_PRIORITY(actor, level)                                      \
   ((void)(actor->sprite->shadow.priority = (level)))
 
-const struct SceneEntrance *LemurianShip_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLemurianShipEntrances;
 }
 
-const struct SceneExitRegion *LemurianShip_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *LemurianShip_GetExits(void) { return gLemurianShipExits; }
+const u32 *Scene_GetExits(void) { return gLemurianShipExits; }
 
 /// The gangway's two pieces.
 /// The party's own actors fill the first three rows.
-const struct ActorPlacement *LemurianShip_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLemurianShipActorPlacements;
 }
 
@@ -113,7 +138,7 @@ static void LemurianShip_LeaveTheShip(void) {
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
-/// Called by LemurianShip_SetupMap, and reached by Reveal as the spell ends.
+/// Called by Scene_Initialize, and reached by Reveal as the spell ends.
 static void Ripple_Start(void) {
   LineScroll_InitWave(0, Q16_ONE * 4, Q16_ONE, Q16_ONE / 8, Q16_ONE,
                       Q16_ONE / 2, Q16_ONE / 4);
@@ -121,9 +146,7 @@ static void Ripple_Start(void) {
 
 /// The exit, Reveal and the Black Orb at the water's edge (cell behavior
 /// 10).
-const struct Trigger *LemurianShip_GetTriggers(void) {
-  return gLemurianShipTriggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gLemurianShipTriggers; }
 
 /// Makes the ship's glow ripple.
 static void ShipGlow_CyclePalette(void) {
@@ -151,8 +174,7 @@ static void LemurianShip_SprayUpdate(struct Actor *drop) {
     s32 drift;
 
     drop->timer--;
-    drift = Random_Next();
-    drift -= Random_Next();
+    drift = Random_Next() - Random_Next();
     drop->x.fixed += drift;
     drop->y.fixed += px(4) / 5;
   } else if ((s16)drop->userValue != 0) {
@@ -178,8 +200,7 @@ static void OrbGlow_Fade(void) {
 
 /// Keeps the raised ship alive with a glow, a swell and spray.
 static void Ship_UpdateSwell(void) {
-  /* FAKEMATCH(volatile): the blend passes through a halfword on the stack;
-   * as a plain u16, 5 of 225 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): the blend passes through a halfword on the stack. */
   volatile u16 blend;
   struct FixedPointPosition sprayPosition;
   struct MapGridScrollWork *grid;
@@ -529,7 +550,7 @@ static void LemurianShip_SetSail(void) {
   Event_WaitTransitionFrames();
   Event_Wait(30);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
-  Event_SetDestination((s32)&SceneId_Title, TITLE_FROM_LEMURIAN_SHIP);
+  Event_SetDestination(SCENE_TITLE, TITLE_FROM_LEMURIAN_SHIP);
 }
 
 /// The water's ripple, this scene's view of the line scroll's work
@@ -565,8 +586,8 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  /* FAKEMATCH(volatile): each control passes through a halfword on the stack;
-   * as a plain u16, 6 of 231 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): each control passes through a halfword on the stack.
+   */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
@@ -651,10 +672,10 @@ static void LemurianShip_RaiseTheShip(void) {
 }
 
 /// Sets the Lemurian ship's map up.
-s32 LemurianShip_SetupMap(void) {
+s32 Scene_Initialize(void) {
   struct MapGridScrollWork *grid;
-  /* FAKEMATCH(volatile): each control passes through a halfword on the stack;
-   * as a plain u16, 2 of 165 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): each control passes through a halfword on the stack.
+   */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
@@ -778,7 +799,7 @@ void LineScroll_BuildPage(void) {
   work->page ^= 1;
 }
 
-#include "shared/scroll_initialize_hblank_dma.h"
+#include "shared/scroll_initialize_hblank_dma.c"
 
 /// Takes the ripple's tasks off and stops DMA 0.
 static void Ripple_Stop(void) {

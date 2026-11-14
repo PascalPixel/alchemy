@@ -60,23 +60,37 @@
 /// Each merchant opens across the counter once the shop has dried, and a cook
 /// from Xian paces between his pots (gCottageRoomsD_CookScript).
 
-#include "main_routine_work.h"
-#include "scene_ids.h"
-#include "module/scene/altin.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "system_call.h"
-#include "field_effect.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "scene_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
+
+extern struct SceneEntrance gAltin_NoEntrances[];
+extern struct SceneEntrance gAltin_Entrances[];
+extern struct SceneEntrance gCottageRoomsD_Entrances[];
+extern u32 gAltin_Exits[];
+extern struct ActorPlacement gAltin_NoActorPlacements[];
+extern struct ActorPlacement gAltin_ActorPlacements[];
+extern struct ActorPlacement gCottageRoomsD_ActorPlacements[];
+extern struct Trigger gAltin_NoTriggers[];
+extern struct Trigger gAltin_Triggers[];
+extern struct Trigger gCottageRoomsD_Triggers[];
+extern struct MapGridCellAnimation gAltin_Doors[];
 
 #if !TBS_PATCH_3
 #define ALTIN_COOK_LAST_POT_X 384
@@ -84,8 +98,8 @@
 #define ALTIN_COOK_LAST_POT_X 380
 #endif
 
-#define MAP_ALTIN_VILLAGE ((s32)&SceneId_Altin)
-#define MAP_ALTIN_HOUSES ((s32)&SceneId_CottageRoomsD)
+#define MAP_ALTIN_VILLAGE (SCENE_ALTIN)
+#define MAP_ALTIN_HOUSES (SCENE_COTTAGE_ROOMS_D)
 
 /// The village's actors, numbering the rows of gAltin_ActorPlacements.
 ///
@@ -514,11 +528,7 @@ static void Altin_TalkToItemMerchant(void) {
 
 /// Altin's innkeeper opens the inn when spoken to across the counter.
 static void CottageRoomsD_TalkToInnkeeper(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-
-  if (ALTIN_FACES_COUNTER(leader->facing)) {
+  if (ALTIN_FACES_COUNTER(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Inn_CheckIn(ALTIN_INN, ACTOR_INNKEEPER);
     return;
   }

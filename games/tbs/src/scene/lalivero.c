@@ -2,8 +2,8 @@
 /// Lalivero (SceneId_Lalivero), the town by Babi Lighthouse. Its buildings are
 /// timber_rooms_bc.c.
 ///
-/// The story brings the party here twice. Lalivero_GetActorPlacements and
-/// Lalivero_GetTriggers choose the town's people and triggers for each visit by
+/// The story brings the party here twice. Scene_GetActorPlacements and
+/// Scene_GetTriggers choose the town's people and triggers for each visit by
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
 ///
 /// On the first visit the party comes in from the World Map with Iodem, and
@@ -34,24 +34,39 @@
 /// - A jar, a stone pillar and a chest hold a Water of Life, a Psy Crystal and
 ///   a Warrior's Helm.
 
-#include "main_routine_work.h"
-#include "djinn_ids.h"
-#include "module/scene/lalivero.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "field_effect.h"
-#include "item_ids.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
+#include "djinn_ids.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern s32 gLalivero_CryingScript[];
+extern struct SceneEntrance gLaliveroEntrances[];
+extern u32 gLaliveroExits[];
+extern struct ActorPlacement gLaliveroActorPlacements[];
+extern struct ActorPlacement gLaliveroActorPlacementsAfterLighthouse[];
+extern s16 gLaliveroDoorCells[][2];
+extern u16 gLaliveroDoorOpenSteps[];
+extern u16 gLaliveroGateOpenSteps[];
+extern struct Trigger gLaliveroTriggers[];
+extern struct Trigger gLaliveroTriggersAfterLighthouse[];
 
 static void Lalivero_TalkAboutIdejimaShip(void);
 
@@ -117,7 +132,7 @@ enum LaliveroActorId {
 enum LaliveroCellBehavior { CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE = 6 };
 
 /// A cell of the wall along the town's south edge (CELL_BEHAVIOR_WALL), whose
-/// attributes Lalivero_Initialize copies onto cells the party may not cross.
+/// attributes Scene_Initialize copies onto cells the party may not cross.
 enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 
 /// A chest searched while facing the given way.
@@ -133,17 +148,17 @@ static void Lalivero_TalkToTorch(void) {
   Djinn_JoinParty(ACTOR_TORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
 }
 
-const struct SceneEntrance *Lalivero_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLaliveroEntrances;
 }
 
-const struct SceneExitRegion *Lalivero_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Lalivero_GetExits(void) { return gLaliveroExits; }
+const u32 *Scene_GetExits(void) { return gLaliveroExits; }
 
 /// The townsfolk, who stand differently once the party is back from Venus
 /// Lighthouse.
-const struct ActorPlacement *Lalivero_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroActorPlacementsAfterLighthouse;
   }
@@ -836,7 +851,7 @@ static void Lalivero_TurnBackToTheShip(void) {
 
 /// What the party can talk to, touch and search, which changes once they are
 /// back from Venus Lighthouse.
-const struct Trigger *Lalivero_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroTriggersAfterLighthouse;
   }
@@ -846,7 +861,7 @@ const struct Trigger *Lalivero_GetTriggers(void) {
 /// Sets Lalivero up as the party enters: the Black Orb Iodem will hold out,
 /// the wounded soldiers of the first visit (and its event), or the sign at
 /// the north exit after Venus Lighthouse.
-s32 Lalivero_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct Sprite *sprite;
   GlyphTransfer *icon;

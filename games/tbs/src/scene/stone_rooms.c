@@ -26,22 +26,30 @@
 ///   uses the thieves' tables, so its chests and exit sit in the same
 ///   trigger table as the thieves' talk and the Vault door.
 
-#include "main_routine_work.h"
-#include "module/scene/stone_rooms.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
 #include "ability_ids.h"
-#include "event.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
 #include "text/msg_ids.h"
+
+extern const struct SceneEntrance gStoneRooms_Entrances[];
+extern const u32 gStoneRooms_Exits[];
+extern const struct ActorPlacement gStoneRooms_ThiefActorPlacements[];
+extern const struct ActorPlacement gStoneRooms_PrisonerActorPlacements[];
+extern const struct Trigger gStoneRooms_ThiefTriggers[];
+extern const struct Trigger gStoneRooms_PrisonerTriggers[];
 
 /// The cell behaviors the jail's triggers answer.
 enum StoneRoomsCellBehavior {

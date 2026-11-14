@@ -20,21 +20,26 @@
 ///
 /// The flag is an area temp flag, so the stump is back up in the room
 /// above once the party leaves Goma Cave's four scenes.
-#include "module/scene/goma_cave_pond.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
 
-#include "heap_slots.h"
-
-#include "event.h"
 #include "flags.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/system.h"
+
+extern struct SceneEntrance gGomaCavePondEntrances[];
+extern u32 gGomaCavePondExits[];
+extern struct ActorPlacement gGomaCavePondActorPlacements[];
+extern struct Trigger gGomaCavePondTriggers[];
 
 // Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
 // FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use

@@ -5,10 +5,10 @@
 /// The sprite renderer's inputs and outputs: render inputs, OAM attributes and
 /// window sprite lists.
 
-#include "types.h"
-#include "static_assert.h"
 #include "edition.h"
-#include "far_call.h"
+#include "static_assert.h"
+#include "types.h"
+#include "gamepak/far_call.h"
 
 /// A 16-byte rectangle. Only the Japanese glyph renderer declares one, and no
 /// code reads its fields.

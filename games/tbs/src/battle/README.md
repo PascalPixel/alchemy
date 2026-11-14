@@ -16,7 +16,7 @@ A formation lists up to five kinds of enemy, each with a fewest and a most.
 Every kind comes its fewest number of times, then each gains a random
 number more while there is room. So one formation is a family of line-ups,
 not one. Each enemy becomes a unit filled in from its row of the enemy
-table. It is `formation.c` and `setup.c`.
+table. It is `battle_formation.c` and `battle_setup.c`.
 
 ## Turns
 
@@ -24,7 +24,7 @@ table. It is `formation.c` and `setup.c`.
 
 A turn is written down before it is played. Each action is brief: who
 acts, the command, where it is aimed, and a priority to sort by. Then the
-list is sorted and played from the top (`turn.c`).
+list is sorted and played from the top (`battle_turn.c`).
 
 ### The party's commands
 
@@ -35,7 +35,7 @@ reads why they did nothing.
 
 Enemies choose by dice from a list of eight moves in their row of the
 enemy table, weighted by a habit, such as favouring the start of the list
-(`enemy_ai.c`).
+(`battle_enemy_ai.c`).
 
 A move marked for an item uses the first item the enemy holds. An enemy
 that holds none is given the ability Can't Use, but an item command reads
@@ -55,7 +55,7 @@ which is how a guarding Djinni always goes first.
 
 Just before a unit acts, its brief action is turned into a full
 description, the action run: the ability, everyone it reaches, and every
-roll that affects how it will look (`action.c`, `targeting.c`).
+roll that affects how it will look (`battle_action.c`, `battle_targeting.c`).
 
 ### Commands and ability ids
 
@@ -79,7 +79,7 @@ staging of their own in a table.
 
 ![Isaac attacks and his sword unleashes: `Isaac's Swift Sword lets out a howl! Sonic Smash!`, and a burst of light strikes Ivan](https://alchemy.pascalpixel.com/guides/battle/unleash.gif)
 
-Staging is the part the player watches, in `staging.c`: the attacker's
+Staging is the part the player watches, in `battle_staging.c`: the attacker's
 run and leap, the caster's raised hand and glow, a summon taking the whole
 screen while the rest of its side fades out. It starts the ability's
 battle effect at the right moment, so that a leap and its blow meet.
@@ -95,13 +95,13 @@ the line of text waiting for a button.
 So the two are split. Resolving changes the numbers at once and leaves
 behind a list of things to show. A task plays that list a little each
 frame, while the battle effect goes on drawing. That is how lightning and
-text share the screen, and it is `playback.c` and `playback_queue.c`.
+text share the screen, and it is `battle_playback.c` and `battle_playback_queue.c`.
 
 ## How an ability resolves
 
 For each target in turn, the rules decide the damage or healing and
 whether the ability's added effect, such as sleep or poison, takes hold
-(`ability.c`). Nothing is shown while this happens: each step queues the
+(`battle_ability.c`). Nothing is shown while this happens: each step queues the
 names, numbers, messages and reactions that playback then shows in order,
 while the units themselves change at once.
 
@@ -144,14 +144,14 @@ the one aimed at.
 
 After each action the things it leaves behind are settled and everyone
 returns to their spot. After each turn the lasting effects are counted
-down (`turn_end.c`).
+down (`battle_turn_end.c`).
 
 ## The end of the battle
 
 ![In Goma Cave, Ivan's Magic Rod unleashes Murk on a Skeleton, which falls asleep; Isaac and Garet attack it until `Ghost's party goes down!`, and the experience and coins are handed out](https://alchemy.pascalpixel.com/guides/battle/won.gif)
 
 A win gives experience to every party member still standing, then coins,
-then items, each level gained shown as it happens (`spoils.c`). Then the
+then items, each level gained shown as it happens (`battle_spoils.c`). Then the
 battle writes its result, and the main routine decides where the party
 goes.
 
@@ -163,12 +163,12 @@ The battlefield is one flat picture on the layer the console can zoom, and
 the camera is that layer's zoom and slide. The picture is larger than the
 layer can hold, so it is kept as an upper and a lower half, and the layer
 is switched from one to the other partway down the screen as it is drawn
-(`background.c`).
+(`battle_background.c`).
 
 ## The other files
 
-- `transition.c` is the opening: the curtain, or the storm on Venus
+- `battle_transition.c` is the opening: the curtain, or the storm on Venus
   Lighthouse.
-- `auto_battle.c` builds and plays actions without the command menu.
-- `link.c` is a battle against another console: the parties exchanged and
+- `battle_auto_battle.c` builds and plays actions without the command menu.
+- `battle_link.c` is a battle against another console: the parties exchanged and
   the handshake each turn.

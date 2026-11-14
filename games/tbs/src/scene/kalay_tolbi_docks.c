@@ -78,28 +78,54 @@
 ///   number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO. That entrance
 ///   sets FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
-#include "main_routine_work.h"
-#include "djinn_ids.h"
-#include "module/scene/kalay_tolbi_docks.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "kalay_tolbi_docks.h"
-#include "text/msg_ids.h"
-#include "event_inline.h"
 #include "ability_ids.h"
-#include "actor_script.h"
+#include "djinn_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+extern u16 gKalayTolbiDocks_KalayDoorCells[];
+extern u16 gKalayTolbiDocks_TolbiDoorCells[];
+extern s32 gKalayTolbiDocks_BodyguardSpinScript[];
+extern struct SceneEntrance gKalayTolbiDocks_NoEntrances[];
+extern struct SceneEntrance gKalayTolbiDocks_KalayEntrances[];
+extern struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[];
+extern struct SceneEntrance gKalayTolbiDocks_RoomEntrances[];
+extern u32 gKalayTolbiDocks_Exits[];
+extern struct ActorPlacement gKalayTolbiDocks_NoActorPlacements[];
+extern struct ActorPlacement gKalayTolbiDocks_TolbiActorPlacements[];
+extern struct ActorPlacement gKalayTolbiDocks_TolbiActorPlacementsStranded[];
+extern struct ActorPlacement gKalayTolbiDocks_KalayActorPlacements[];
+extern struct ActorPlacement gKalayTolbiDocks_KalayActorPlacementsShipGone[];
+extern struct ActorPlacement gKalayTolbiDocks_RoomActorPlacements[];
+extern struct ActorPlacement gKalayTolbiDocks_RoomActorPlacementsShipGone[];
+extern struct ActorPlacement gKalayTolbiDocks_RoomActorPlacementsStranded[];
+extern struct Trigger gKalayTolbiDocks_NoTriggers[];
+extern struct Trigger gKalayTolbiDocks_KalayTriggers[];
+extern struct Trigger gKalayTolbiDocks_KalayTriggersShipGone[];
+extern struct Trigger gKalayTolbiDocks_TolbiTriggers[];
+extern struct Trigger gKalayTolbiDocks_TolbiTriggersStranded[];
+extern struct Trigger gKalayTolbiDocks_RoomTriggers[];
+extern struct Trigger gKalayTolbiDocks_RoomTriggersShipGone[];
+extern struct Trigger gKalayTolbiDocks_RoomTriggersStranded[];
 
 /// Kalay Docks' people, numbering the rows of
 /// gKalayTolbiDocks_KalayActorPlacements from ACTOR_FIRST_PLACED. Garet's row
@@ -223,48 +249,48 @@ static void KalayTolbiDocks_GroundJoins(void) {
 
 /// Selects the entrances of Kalay Docks, Tolbi Docks or the rooms
 /// on CottageRoomsE.
-const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KalayDocks) {
+  if (sceneId == SCENE_KALAY_DOCKS) {
     return gKalayTolbiDocks_KalayEntrances;
   }
-  if (sceneId == (s32)&SceneId_TolbiDocks) {
+  if (sceneId == SCENE_TOLBI_DOCKS) {
     return gKalayTolbiDocks_TolbiEntrances;
   }
-  if (sceneId == (s32)&SceneId_CottageRoomsE) {
+  if (sceneId == SCENE_COTTAGE_ROOMS_E) {
     return gKalayTolbiDocks_RoomEntrances;
   }
   return gKalayTolbiDocks_NoEntrances;
 }
 
-const struct SceneExitRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// The exits of the three scenes, each scene's after its header word (an exit
 /// of kind 0).
-const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
+const u32 *Scene_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
 /// Each scene's people before the crossing, once the ship has crossed and not
 /// come back (FLAG_TOLBI_SHIP_REACHED_TOLBI), and once the Colosso Tour's
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
-const struct ActorPlacement *KalayTolbiDocks_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KalayDocks) {
+  if (sceneId == SCENE_KALAY_DOCKS) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayActorPlacementsShipGone;
     }
     return gKalayTolbiDocks_KalayActorPlacements;
   }
 
-  if (sceneId == (s32)&SceneId_TolbiDocks) {
+  if (sceneId == SCENE_TOLBI_DOCKS) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiActorPlacementsStranded;
     }
     return gKalayTolbiDocks_TolbiActorPlacements;
   }
 
-  if (sceneId == (s32)&SceneId_CottageRoomsE) {
+  if (sceneId == SCENE_COTTAGE_ROOMS_E) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_RoomActorPlacementsStranded;
     }
@@ -291,24 +317,24 @@ static void KalayTolbiDocks_GreetArrivals(void) {
 }
 
 /// Selects each scene's events for the same three times as its people.
-const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KalayDocks) {
+  if (sceneId == SCENE_KALAY_DOCKS) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayTriggersShipGone;
     }
     return gKalayTolbiDocks_KalayTriggers;
   }
 
-  if (sceneId == (s32)&SceneId_TolbiDocks) {
+  if (sceneId == SCENE_TOLBI_DOCKS) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiTriggersStranded;
     }
     return gKalayTolbiDocks_TolbiTriggers;
   }
 
-  if (sceneId == (s32)&SceneId_CottageRoomsE) {
+  if (sceneId == SCENE_COTTAGE_ROOMS_E) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_RoomTriggersStranded;
     }
@@ -385,11 +411,10 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
 static void KalayTolbiDocks_TalkToTicketTaker(void) {
   s32 ticketHolder;
   s32 ticketSlot;
-  struct Actor *leader;
   s16 cardinalFacing;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  cardinalFacing = ((leader->facing + TRIG_TURN / 8) & ~0x3fff);
+  cardinalFacing =
+      ((Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff);
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     if (Event_GetFlag(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
@@ -433,8 +458,8 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
       Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
       Inventory_Discard(ticketHolder, ticketSlot);
       GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, leader->x.part.pixel, 1304);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER,
+                          Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel, 1304);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 72, 1304);
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1304);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_EAST, 0);
@@ -615,11 +640,11 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Sound_Play(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
-  if (gMainRoutineWork.next == (s32)&SceneId_KalayDocks) {
+  if (gMainRoutineWork.next == SCENE_KALAY_DOCKS) {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 1392);
     MapGrid_AnimateCells(gKalayTolbiDocks_KalayDoorCells, 78, 86);
   } else {
-    if (gMainRoutineWork.next == (s32)&SceneId_TolbiDocks) {
+    if (gMainRoutineWork.next == SCENE_TOLBI_DOCKS) {
       Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 192);
       MapGrid_AnimateCells(gKalayTolbiDocks_TolbiDoorCells, 74, 9);
     }
@@ -634,15 +659,15 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
 enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 
 /// Prepares whichever of the three scenes is entered.
-s32 KalayTolbiDocks_Initialize(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_KalayDocks) {
+  if (gMainRoutineWork.next == SCENE_KALAY_DOCKS) {
     KalayTolbiDocks_PrepareKalayDocks();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_TolbiDocks) {
+  } else if (gMainRoutineWork.next == SCENE_TOLBI_DOCKS) {
     KalayTolbiDocks_PrepareTolbiDocks();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_CottageRoomsE) {
+  } else if (gMainRoutineWork.next == SCENE_COTTAGE_ROOMS_E) {
     KalayTolbiDocks_PrepareRoom();
   }
   return 0;

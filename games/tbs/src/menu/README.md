@@ -45,7 +45,7 @@ the one before it.
 - **Djinn** moves Djinn between set and standby and between party members.
 - **Status** shows one party member over three pages.
 
-The questions of all four draw on the same helpers, in `menu/shared.c`.
+The questions of all four draw on the same helpers, in `menu_shared.c`.
 
 ### The preview is the real thing
 
@@ -88,7 +88,7 @@ background into the next behind the names.
 
 ## Where the code is
 
-- `menu/` has a file for each screen: `psynergy.c`, `item.c`, `djinn.c`,
-  `status.c`, with `use.c` for what using something does and `shared.c`
-  for what they have in common.
+- There is a file for each screen: `menu_psynergy.c`, `menu_item.c`,
+  `menu_djinn.c`, `menu_status.c`, with `menu_use.c` for what using something
+  does and `menu_shared.c` for what they have in common.
 - `menu_tables.c` is the menu's tables.

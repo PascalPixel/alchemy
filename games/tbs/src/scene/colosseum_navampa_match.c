@@ -12,7 +12,7 @@
 /// Stepping-Stone Stage, the Wall Wedge, the Free-Climb Area, the Moving
 /// Sidewalk Stage and another log-rolling area.
 ///
-/// ColosseumNavampaMatch_Initialize restores the stages from their temporary
+/// Scene_Initialize restores the stages from their temporary
 /// flags (FLAG_PLANT_GROWN to FLAG_LONG_LOG_IN_PLACE, and the stone's column
 /// from FLAG_STONE_COLUMN). Then it sets up the visit its entrance stands for.
 ///
@@ -50,46 +50,119 @@
 /// exhausted, and they leave him to sleep. Both exits lead to Babi's Palace,
 /// where he wakes long after the finals.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "io_write_queue.h"
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "resource_ids.h"
 #include "scene_ids.h"
-#include "vram_cache.h"
-#include "module/import.h"
-#include "module/scene/colosseum_navampa_match.h"
-#include "module/scene/shared/colosso_solo.h"
-#include "module/scene/shared/colosso_marker.h"
-#include "module/scene/shared/colosso_setup.h"
-#include "module/scene/shared/colosso_occupant.h"
-#include "module/field/field_sequence.h"
-#include "pushed_actor.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/sound/sound.h"
-#include "event.h"
-#include "input.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "map_grid.h"
-#include "flags.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/map_grid.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/colosso_gauge.h"
+#include "scene/colosso_marker.h"
+#include "scene/colosso_occupant.h"
+#include "scene/colosso_setup.h"
+#include "scene/colosso_solo.h"
+#include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/input.h"
+#include "system/io_write_queue.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
 #include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
-#include "shared/colosso_gauge.h"
-#include "macros.h"
-#include "sound_driver_symbols.h"
+
+s32 gColossoParticleCount BSS_DATA ALIGNED(16);
+u8 gColosseumNavampaMatch_Unk_4[12] BSS_DATA;
+s16 gColosso_MarkerStep BSS_DATA;
+s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerFlip BSS_DATA ALIGNED(4);
+/// Isaac's z before he is shown on the stage, 16.16 fixed-point pixels.
+s32 gColosso_WarriorStartZ BSS_DATA;
+s16 gColosso_MarkerEndX BSS_DATA;
+s16 gColosso_LetteringParameter BSS_DATA ALIGNED(4);
+s16 gColosso_ModeScaleStart BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveDuration BSS_DATA ALIGNED(4);
+s32 gColosso_LetteringPosition BSS_DATA;
+s16 gColosso_MarkerBlink BSS_DATA;
+s16 gColosso_ModeScaleTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveStep BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerY BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendStep BSS_DATA ALIGNED(4);
+/// Isaac's facing before Colosso_FadeInWarrior, which
+/// Colosso_RestoreWarrior puts back.
+s32 gColosso_WarriorStartAngle BSS_DATA;
+s16 gColosso_MarkerSteps BSS_DATA;
+s16 gColosso_LetteringMode BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeBlendStart BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringTimer BSS_DATA ALIGNED(4);
+s16 *gColosso_LetteringScript BSS_DATA;
+union MarkerCoordinate gColosso_MarkerStartX BSS_DATA;
+s16 gColosso_ModeBlendDuration BSS_DATA ALIGNED(4);
+u8 gColosseumNavampaMatch_Unk_6a[6] BSS_DATA;
+/// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
+s32 gColosso_PointerOam[3] BSS_DATA;
+union MarkerCoordinate gColosso_MarkerStartY BSS_DATA;
+/// The lettering's sprite parts, three words each, written every frame.
+u32 gColosso_LetteringSprites[12] BSS_DATA;
+s16 gColosso_ModeMoveStart BSS_DATA;
+s16 gColosso_MarkerX BSS_DATA ALIGNED(4);
+s16 gColosso_ModeMoveTarget BSS_DATA ALIGNED(4);
+s16 gColosso_ModeScaleStep BSS_DATA ALIGNED(4);
+s16 gColosso_MarkerEndY BSS_DATA ALIGNED(4);
+/// Isaac's x before he is shown on the stage, 16.16 fixed-point pixels.
+s32 gColosso_WarriorStartX BSS_DATA;
+
+s32 Scene_Initialize(void);
+extern const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[];
+extern const s8 gColosseumNavampaMatch_WallWedgePattern[][6];
+extern const u16 gColosseumNavampaMatch_FacingAngles[];
+extern const s32 gColosseumNavampaMatch_SidewalkLogScript[];
+extern const u8 gColosso_LetteringPaletteOffsets[];
+extern const s16 gColosso_LetteringDigit[];
+extern const s16 gColosso_LetteringLose[];
+extern s32 gColosso_PrizeSparkleScript[];
+extern s32 gColosso_PrizeScript[];
+extern struct SceneEntrance gColosseumNavampaMatchEntrances[];
+extern u32 gColosseumNavampaMatchExits[];
+extern struct ActorPlacement gColosseumNavampaMatchActorPlacements[];
+extern s32 gColosseumNavampaMatch_WallWedgePatternIndex;
+extern s32 gColosseumNavampaMatch_WallWedgeTimer;
+extern struct Trigger gColosseumNavampaMatchTriggers[];
+extern s32 gColosseumNavampaMatch_OpponentAfterBattle[];
+extern s32 gColosseumNavampaMatch_LeaderActionA[];
+extern s32 gColosseumNavampaMatch_LeaderActionB[];
+extern s32 gColosseumNavampaMatch_LeaderActionC[];
+extern s32 gColosseumNavampaMatch_LeaderScaleScript[];
+extern s32 gColossoParticleKinds[];
+extern s16 gColosso_LetteringTitle[];
+extern s16 gColosso_LetteringGo[];
+extern s16 gColosso_LetteringWin[];
+extern s32 gColosso_OpponentFinishScript[];
+extern s32 gColosso_LeaderFinishScript[];
+extern char gHexDigits[20];
+extern u32 gPushedActor_DirectionSteps[];
+extern s16 gColosso_LetteringSlot;
+extern s16 gColosso_MarkerSlot;
 
 // UB: this calls a void function through an s32 function type, the call the
 // bytes show; UBFIX calls it as declared.
@@ -178,7 +251,7 @@ enum {
 /// The temporary flags that keep what the friends changed on the stages, for
 /// the race, and the scales' state.
 ///
-/// ColosseumNavampaMatch_Initialize restores the stages from them.
+/// Scene_Initialize restores the stages from them.
 enum {
   FLAG_PLANT_GROWN = FLAG_AREA_TEMP_60, ///< by Growth, into a shortcut
   FLAG_WALL_WEDGE_HALTED =
@@ -205,19 +278,15 @@ enum {
 
 enum { PISTON_COUNT = 5 };
 
-const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumNavampaMatchEntrances;
 }
 
-const struct SceneExitRegion *ColosseumNavampaMatch_GetRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *ColosseumNavampaMatch_GetExits(void) {
-  return gColosseumNavampaMatchExits;
-}
+const u32 *Scene_GetExits(void) { return gColosseumNavampaMatchExits; }
 
-const struct ActorPlacement *ColosseumNavampaMatch_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gColosseumNavampaMatchActorPlacements;
 }
 
@@ -359,7 +428,6 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
   s32 lowered;
   struct Actor *log;
   struct Actor *rider;
-  u8 *flags;
 
   actorId = gMainRoutineWork.leaderActorId;
   lowered = GameFlag_Get(FLAG_SCALES_FROZEN);
@@ -376,15 +444,14 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, 4);
     rider = Actor_Get(actorId);
-    flags = &rider->motionFlags;
-    *flags = lowered;
+    rider->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(rider, 4);
     Actor_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
     Actor_WaitForMoveById(actorId);
     MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     wait(2);
     Actor_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
-    *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    rider->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     rider->groundHeight = rider->y.fixed;
     GameFlag_Set(FLAG_ON_SCALES);
   }
@@ -415,7 +482,6 @@ static void ColosseumNavampaMatch_SetWeightOnScales(void) {
   struct Actor *probe;
   struct Actor *log;
   struct Actor *upper;
-  struct Actor *lower;
   s32 x;
   s32 z;
 
@@ -432,8 +498,7 @@ static void ColosseumNavampaMatch_SetWeightOnScales(void) {
       upper = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
       upper->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       ColosseumNavampaMatch_MoveOnScales(upper, 32);
-      lower = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
-      ColosseumNavampaMatch_MoveOnScales(lower, 4);
+      ColosseumNavampaMatch_MoveOnScales(Actor_Get(ACTOR_SCALES_WEST_LEDGE), 4);
       GameFlag_Set(FLAG_WEIGHT_ON_SCALES);
       MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, z);
       MapGrid_CopyCellAttributes(1, 25, 1, 1, x, z);
@@ -848,9 +913,9 @@ static void ColosseumNavampaMatch_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         last - place + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_ColosseumNavampaMatch,
+  Event_SetAfterBattleDestination(SCENE_COLOSSEUM_NAVAMPA_MATCH,
                                   COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
-  Event_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch,
+  Event_SetDefeatDestination(SCENE_COLOSSEUM_NAVAMPA_MATCH,
                              COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
@@ -873,12 +938,12 @@ static void ColosseumNavampaMatch_PushWeightOrCheckAhead(void) {
   }
 }
 
-const struct Trigger *ColosseumNavampaMatch_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gColosseumNavampaMatchTriggers;
 }
 
 /// Sets up Colosseum Final 3 for the visit its entrance stands for.
-s32 ColosseumNavampaMatch_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i;
   s32 height;
@@ -1060,7 +1125,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartOpponent((s32)&ResourceId_OpponentPathC);
+    Colosso_StartOpponent(RESOURCE_OPPONENT_PATH_C);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH:
@@ -1569,14 +1634,9 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
-      if (work->raisedTrigger != 5) {
-        do {
-          wait(1);
-          if (++promptResult > 239) {
-            break;
-          }
-        } while (work->raisedTrigger != 5);
-      }
+      for (promptResult = 0; promptResult < 240 && work->raisedTrigger != 5;
+           promptResult++)
+        wait(1);
       ColosseumNavampaMatch_PassSouthWallOpening();
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
@@ -1802,27 +1862,27 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   Event_End();
 }
 
-// This scene's exits for colosso_solo.h.
+// This scene's exits for colosso_solo.c.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM
-#include "shared/colosso_solo.h"
-#include "shared/item_equip.h"
-#include "shared/colosso_task.h"
+#include "shared/colosso_solo.c"
+#include "shared/item_equip.c"
+#include "shared/colosso_task.c"
 
-#include "shared/colosso_lettering.h"
+#include "shared/colosso_lettering.c"
 
-#include "shared/colosso_marker.h"
-#include "shared/colosso_item_icon.h"
+#include "shared/colosso_marker.c"
+#include "shared/colosso_item_icon.c"
 
-#include "shared/colosso_hex_string.h"
-#include "shared/colosso_finish.h"
+#include "shared/colosso_hex_string.c"
+#include "shared/colosso_finish.c"
 
-#include "shared/colosso_path_opponent.h"
-#include "shared/colosso_setup.h"
-#include "shared/colosso_map_state.h"
-#include "shared/actor_find_at_position.h"
+#include "shared/colosso_path_opponent.c"
+#include "shared/colosso_setup.c"
+#include "shared/colosso_map_state.c"
+#include "shared/actor_find_at_position.c"
 
-#include "shared/colosso_occupant.h"
+#include "shared/colosso_occupant.c"
 
 /// Closes the arena's step trigger. Nothing in the game sets it.
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
@@ -1869,11 +1929,11 @@ const s32 gColosseumNavampaMatch_SidewalkLogScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-#include "shared/colosso_lettering_tables.h"
+#include "shared/colosso_lettering_tables.c"
 
 char gHexDigits[20] = "0123456789ABCDEF";
 
-#include "shared/colosso_prize_scripts.h"
+#include "shared/colosso_prize_scripts.c"
 
 u32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
@@ -2150,9 +2210,9 @@ s32 gColossoParticleKinds[] = {
 
 s16 gColosso_LetteringSlot = -1;
 
-#include "shared/colosso_lettering_scripts.h"
+#include "shared/colosso_lettering_scripts.c"
 // clang-format on
 
 s16 gColosso_MarkerSlot = -1;
 
-#include "shared/colosso_finish_scripts.h"
+#include "shared/colosso_finish_scripts.c"

@@ -4,8 +4,8 @@
 /// @file
 /// FieldCoordinate, a position on the field.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// A field coordinate, read whole or as its fraction and its whole pixels.
 union FieldCoordinate {

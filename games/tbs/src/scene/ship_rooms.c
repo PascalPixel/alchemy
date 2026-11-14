@@ -96,37 +96,81 @@
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
 /// their own actor placements.
 
-#include "script_operands.h"
-#include "sounds.h"
-#include "heap.h"
-#include "sound_driver_symbols.h"
-#include "macros.h"
-#include "main_routine_work.h"
-#include "module/import.h"
-#include "module/scene/ship_rooms.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "event.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
-#include "inventory.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
-#include "tolbi_ship.h"
-#include "shared/walk_into_leader.h"
+#include "macros.h"
+#include "sounds.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/tolbi_ship.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+struct Actor;
+
+extern s32 gShipRooms_TurnSteps[];
+extern s32 gShipRooms_LeaveHold[];
+extern s32 gShipRooms_LeaveCaptainsQuarters[];
+extern s32 gShipRooms_AnchorCharmPulse[];
+extern s32 gShipRooms_FollowersRejoinByStairs[];
+extern s32 gShipRooms_FollowersRejoinMidDeck[];
+extern s32 gShipRooms_FollowersRejoinBySeats[];
+extern s32 gShipRooms_Shiver[];
+extern s32 gShipRooms_MonsterBob[];
+extern s32 gShipRooms_LeaveByStairs[];
+extern s32 gShipRooms_StepIntoAisle[];
+extern s32 gShipRooms_LookAroundScript[];
+extern struct Actor *gShipRooms_AnchorObject;
+extern struct SceneEntrance gShipRooms_EntrancesOther[];
+extern struct SceneEntrance gShipRooms_Entrances[];
+extern u32 gShipRooms_Exits[];
+extern struct ActorPlacement gShipRooms_ActorPlacementsNone[];
+extern struct ActorPlacement gShipRooms_CaptainsQuartersActorPlacements[];
+extern struct ActorPlacement
+    gShipRooms_CaptainsQuartersActorPlacementsWarriors[];
+extern struct ActorPlacement
+    gShipRooms_CaptainsQuartersActorPlacementsArrived[];
+extern struct ActorPlacement gShipRooms_HoldActorPlacementsEmpty[];
+extern struct ActorPlacement gShipRooms_HoldActorPlacements[];
+extern struct ActorPlacement gShipRooms_HoldActorPlacementsAtSea[];
+extern struct ActorPlacement gShipRooms_RowingDeckActorPlacements[];
+extern struct ActorPlacement gShipRooms_PartyFollowerActorPlacements[];
+extern struct ActorPlacement gShipRooms_FirstAttackMonsters[];
+extern struct ActorPlacement gShipRooms_SecondAttackMonsters[];
+extern struct ActorPlacement gShipRooms_ThirdAttackMonsters[];
+extern struct Trigger gShipRooms_TriggersOther[];
+extern struct Trigger gShipRooms_HoldTriggers[];
+extern struct Trigger gShipRooms_HoldTriggersChoosingRowers[];
+extern struct Trigger gShipRooms_HoldTriggersAtIsland[];
+extern struct Trigger gShipRooms_CaptainsQuartersTriggers[];
+extern struct Trigger gShipRooms_CaptainsQuartersTriggersAtIsland[];
+extern struct Trigger gShipRooms_CaptainsQuartersTriggersArrived[];
+extern struct Trigger gShipRooms_RowingDeckTriggers[];
+extern struct Trigger gShipRooms_RowingDeckTriggersMonstersAboard[];
+extern struct Trigger gShipRooms_RowingDeckTriggersKrakenAboard[];
+extern struct Trigger gShipRooms_RowingDeckTriggersArrived[];
 
 /// The visible anchor charm has been created this visit.
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_SCENE_TEMP_00
@@ -585,19 +629,19 @@ static s32 ShipRooms_LayFlat(struct Actor *work) {
   return 1;
 }
 
-const struct SceneEntrance *ShipRooms_SelectEntrances(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_ShipRooms) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  if (gMainRoutineWork.next == SCENE_SHIP_ROOMS) {
     return gShipRooms_Entrances;
   }
   return gShipRooms_EntrancesOther;
 }
 
-const struct SceneExitRegion *ShipRooms_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *ShipRooms_GetExits(void) { return gShipRooms_Exits; }
+const u32 *Scene_GetExits(void) { return gShipRooms_Exits; }
 
 /// Picks the actor placements for the room entered and the voyage's stage.
-const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
@@ -690,7 +734,7 @@ const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
 }
 
 /// Chooses the room's interactions for the current stage of the voyage.
-const struct Trigger *ShipRooms_SelectTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
   switch (entrance) {
@@ -1334,10 +1378,8 @@ static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
 
 /// The travelling healer in the hold.
 static void ShipRooms_TalkToHealer(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - FACING_SOUTHEAST) > TRIG_TURN * 3 / 4) {
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
+      TRIG_TURN * 3 / 4) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0 &&
         GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
       Sanctum_Run(ACTOR_SEA_HOLD_HEALER);
@@ -1377,20 +1419,17 @@ static void ShipRooms_FightRowingDeckMonsters(void) {
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) == 0) {
     Event_SetAfterBattleDestination(
-        (s32)&SceneId_ShipRooms,
-        SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE);
+        SCENE_SHIP_ROOMS, SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 0);
   } else {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) == 0) {
       Event_SetAfterBattleDestination(
-          (s32)&SceneId_ShipRooms,
-          SHIP_ROOMS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE);
+          SCENE_SHIP_ROOMS, SHIP_ROOMS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE);
       Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 1);
     } else {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) == 0) {
         Event_SetAfterBattleDestination(
-            (s32)&SceneId_ShipRooms,
-            SHIP_ROOMS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE);
+            SCENE_SHIP_ROOMS, SHIP_ROOMS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE);
         Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 2);
       }
     }
@@ -2085,7 +2124,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
 }
 
 /// Restores the room or plays the event selected by this entrance.
-s32 ShipRooms_ApplyEntryState(void) {
+s32 Scene_Initialize(void) {
   wait(1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gFieldWork->transition =
@@ -3145,8 +3184,8 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
       struct Actor *actor;
 
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 3, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3);
-      actor->facing = FACING_SOUTH_SOUTHEAST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3)->facing =
+          FACING_SOUTH_SOUTHEAST;
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3);
       actor->scaleX = Q16_ONE;
     }
@@ -3154,19 +3193,18 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
       struct Actor *actor;
 
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 4, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 4);
-      actor->facing = FACING_SOUTH_SOUTHWEST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 4)->facing =
+          FACING_SOUTH_SOUTHWEST;
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 5, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5);
-      actor->facing = FACING_SOUTH_SOUTHEAST;
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5);
-      actor->scaleX = Q16_ONE;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5)->facing =
+          FACING_SOUTH_SOUTHEAST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5)->scaleX = Q16_ONE;
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 6, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 6);
-      actor->facing = FACING_SOUTH_SOUTHWEST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 6)->facing =
+          FACING_SOUTH_SOUTHWEST;
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 7, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7);
-      actor->facing = FACING_SOUTH_SOUTHEAST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7)->facing =
+          FACING_SOUTH_SOUTHEAST;
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7);
       actor->scaleX = Q16_ONE;
     }
@@ -3640,7 +3678,6 @@ static void ShipRooms_NoticeShipRocking(void) {
   s32 secondRower;
   s32 thirdRower;
   s32 firstRower;
-  struct Actor *actor;
   const s32 *action;
 
   firstRower = ShipRooms_FindFirstSetFlag(0, 0);
@@ -3653,8 +3690,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
   Actor_SetPosition(ACTOR_ROWING_KAJA, 440, 134);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_HIDDEN);
-  actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), 0);
   ShipRooms_InstallRowingDeckActors(16);
   ShipRooms_MoveCameraAndWait(438, CAMERA_KEEP, 174,
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
@@ -3702,8 +3738,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_NORMAL);
-  actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 430, 134);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST);
@@ -3803,7 +3838,6 @@ static void ShipRooms_ReachIsland(void) {
   s32 secondRower;
   s32 thirdRower;
   s32 firstRower;
-  struct Actor *actor;
   s32 reaction = 0;
   const s32 *progressB;
   const s32 *progressC;
@@ -3820,16 +3854,14 @@ static void ShipRooms_ReachIsland(void) {
   Actor_SetPosition(ACTOR_ROWING_CREWMAN, 472, 152);
   Actor_SetPosition(ACTOR_ROWING_KAJA, 440, 134);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_HIDDEN);
-  actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), 0);
   ShipRooms_InstallRowingDeckActors(16);
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
   ShipRooms_MoveCameraAndWait(438, CAMERA_KEEP, 174,
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 1, 20);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_NORMAL);
-  actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 132);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 142);

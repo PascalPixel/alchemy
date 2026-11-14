@@ -2,12 +2,23 @@
 /// The debug rooms Test 0 to Test 7, all one room, where talking to Flint,
 /// Fizz, Forge or Gust gives that Djinni.
 
-#include "module/debug/test_scenes.h"
-#include "battle.h"
-#include "system.h"
-#include "event.h"
-#include "flags.h"
 #include "djinn_ids.h"
+#include "flags.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
+#include "system/system.h"
+
+u8 *Scene_GetEntrances(void);
+u8 *Scene_GetExits(void);
+u8 *Scene_GetActorPlacements(void);
+u8 *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gTest_Entrances[];
+extern u32 gTest_Exits[];
+extern struct ActorPlacement gTest_ActorPlacements[];
+extern struct Trigger gTest_Triggers[];
 
 /// The placed actors: the first Djinni of each element, each there while its
 /// flag is clear.
@@ -18,14 +29,14 @@ enum TestActorId {
   ACTOR_GUST
 };
 
-u8 *Test_GetEntrances(void) { return (u8 *)gTest_Entrances; }
+u8 *Scene_GetEntrances(void) { return (u8 *)gTest_Entrances; }
 
 /// The scene has no exit regions: its regions entry returns none.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *Test_GetExits(void) { return (u8 *)gTest_Exits; }
+u8 *Scene_GetExits(void) { return (u8 *)gTest_Exits; }
 
-u8 *Test_GetActorPlacements(void) { return (u8 *)gTest_ActorPlacements; }
+u8 *Scene_GetActorPlacements(void) { return (u8 *)gTest_ActorPlacements; }
 
 /// Gives the first Djinni of an element, then clears its flag so it stays.
 static __inline__ void Test_GiveDjinniForTesting(s32 actorId, s32 element) {
@@ -49,12 +60,12 @@ static void Test_ReceiveGust(void) {
   Test_GiveDjinniForTesting(ACTOR_GUST, ELEMENT_JUPITER);
 }
 
-u8 *Test_GetTriggers(void) { return (u8 *)gTest_Triggers; }
+u8 *Scene_GetTriggers(void) { return (u8 *)gTest_Triggers; }
 
 /// Nothing to set up.
-s32 Test_Initialize(void) { return 0; }
+s32 Scene_Initialize(void) { return 0; }
 
-#include "test_rows.h"
+#include "test_rows.c"
 
 struct SceneEntrance gTest_Entrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},

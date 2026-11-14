@@ -5,7 +5,7 @@
 ///
 /// Each scene has its own entrance, actor placement and trigger tables
 /// (VenusLighthouseGroundFloor's entrances are the fallback table). All share
-/// one exit table. VenusLighthouse_Initialize redraws each scene's puzzles as
+/// one exit table. Scene_Initialize redraws each scene's puzzles as
 /// their flags left them, case by entrance. Inside, only the actors of the
 /// room entered are placed (CONDITION_IN_VIEW).
 ///
@@ -78,35 +78,83 @@
 /// The FLAG_SCENE_TEMP_ states last only until the next change of scene other
 /// than a return from battle. Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "module/import.h"
-#include "module/scene/venus_lighthouse.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "io_write.h"
-#include "ground_mask.h"
-#include "shared/walk_into_leader.h"
-
-#include "heap_slots.h"
-#include "field_effect.h"
-#include "pushed_actor.h"
-#include "battle.h"
-#include "debug.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "iwram_call.h"
-#include "text/msg_ids.h"
-#include "event_inline.h"
-#include "io_reg.h"
-#include "map_grid_scroll.h"
+#include "ability_ids.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/ground_mask.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_step.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern u32 gPushedActor_DirectionSteps[];
+extern struct SwitchCell gVenusThirdFloorSockets[];
+extern u32 gVenusBalancePlatformHeights[];
+extern struct SwitchCell gVenusFourthFloorSockets[];
+extern u8 gVenusTracksMovingWest[];
+extern u8 gVenusTracksMovingEast[];
+extern u8 gVenusTracksMovingNorth[];
+extern u8 gVenusTracksMovingSouth[];
+extern s32 gVenusLeaderDazedScript[];
+extern s32 gGlint_TwinkleScript[];
+extern s32 gVenusSecondFloorLightToGate[];
+extern s32 gVenusThirdFloorLightToNortheast[];
+extern s32 gVenusThirdFloorLightToSoutheast[];
+extern s32 gVenusLightGoesOut[];
+extern s32 gVenusFourthFloorLightFromStatue[];
+extern s32 gVenusFourthFloorLightToSoutheast[];
+extern s32 gVenusFourthFloorLightToSouthwest[];
+extern u16 gVenusSecondFloorGateCells[];
+extern u16 gVenusThirdFloorGateCells[];
+extern u16 gVenusFourthFloorGateCells[];
+extern struct SceneEntrance gVenusLighthouseEntryEntrances[];
+extern struct SceneEntrance gVenusLighthouseEntrancesOther[];
+extern struct SceneEntrance gVenusLighthouseFirstFloorEntrances[];
+extern struct SceneEntrance gVenusLighthouseSecondFloorEntrances[];
+extern struct SceneEntrance gVenusLighthouseThirdFloorEntrances[];
+extern struct SceneEntrance gVenusLighthouseFourthFloorEntrances[];
+extern u32 gVenusLighthouseExits[];
+extern struct ActorPlacement gVenusLighthouseActorPlacementsOther[];
+extern struct ActorPlacement gVenusLighthouseEntryActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseGroundFloorActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseFirstFloorActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseSecondFloorActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseThirdFloorActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseFourthFloorActorPlacements[];
+extern struct Trigger gVenusLighthouseEntryTriggers[];
+extern struct Trigger gVenusLighthouseGroundFloorTriggers[];
+extern struct Trigger gVenusLighthouseFirstFloorTriggers[];
+extern struct Trigger gVenusLighthouseSecondFloorTriggers[];
+extern struct Trigger gVenusLighthouseThirdFloorTriggers[];
+extern struct Trigger gVenusLighthouseFourthFloorTriggers[];
+extern const u8 *gVenusThirdFloorSocketTracks[];
+extern s32 **gVenusThirdFloorSocketPaths[];
+extern const u8 *gVenusFourthFloorSocketTracks[];
+extern s32 **gVenusFourthFloorSocketPaths[];
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -387,6 +435,10 @@ enum VenusTrack {
 #define VENUS_COLOR_MARK(mode) (VENUS_COLOR_MARK_TAG << 4 | (mode))
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
+static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x,
+                                                         s32 z, u32 width,
+                                                         u32 height, s32 value);
+
 static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Sets up a passage effect's motion, collision and child value.
@@ -446,8 +498,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-#include "shared/field_effect_spawn.h"
-#include "ability_ids.h"
+#include "shared/field_effect_spawn.c"
 
 /// The scene's names for the bytes Actor keeps for scene code. A statue
 /// with SW_VENUS_IMMOVABLE set cannot be pushed
@@ -458,9 +509,8 @@ enum {
   SW_VENUS_LIGHT_ARRIVED = SW_RISE_ENABLED
 };
 
-#include "shared/actor_distance.h"
-#include "shared/actor_find_at_position.h"
-#include "shared/actor_step.h"
+#include "shared/actor_distance.c"
+#include "shared/actor_find_at_position.c"
 
 /// Pushing a pillar moves the pillar ahead of the leader one cell on with him,
 /// leaning into it (ANIM_PUSH).
@@ -532,10 +582,8 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
 }
 
 /// Unused: nothing in Venus Lighthouse calls it.
-static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x,
-                                                         s32 z, u32 width,
-                                                         u32 height, s32 value);
-#include "shared/pushed_actor_fill_rectangle.h"
+
+#include "shared/pushed_actor_fill_rectangle.c"
 
 /// After a battle, draws every actor whose timer holds a
 /// VENUS_COLOR_MARK in its colour mode again.
@@ -694,9 +742,9 @@ static void VenusLighthouse_LeaveCappedPillarRows(void) {
   gFadeOverlayWork->actor = NULL;
 }
 
-#include "shared/actor_depth.h"
-#include "shared/actor_wait_until_idle.h"
-#include "shared/field_effect_advance.h"
+#include "shared/actor_depth.c"
+#include "shared/actor_wait_until_idle.c"
+#include "shared/field_effect_advance.c"
 
 /// Drops the leader onto the floor and emits the radial landing dust.
 static void VenusLighthouse_LandWithRadialDust(void) {
@@ -751,7 +799,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Event_End();
 }
 
-#include "shared/field_effect_radial.h"
+#include "shared/field_effect_radial.c"
 
 /// In VenusLighthouseGroundFloor, the leader stands on the floor switch and
 /// holds it down.
@@ -763,7 +811,6 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   struct EffectOptions options;
   s32 velocityX;
   s32 velocityZ;
-  s32 random;
 
   if ((gFrameCount & 3) != 0) {
     RETURN_UNREAD(0);
@@ -779,10 +826,8 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   options.startScaleY = Q16_ONE;
   options.targetScaleX = -327;
   options.targetScaleY = -327;
-  random = Random_Next();
-  velocityX = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
-  random = Random_Next();
-  velocityZ = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
+  velocityX = Math_Divide(px(Random_Below(9) - 4), 10);
+  velocityZ = Math_Divide(px(Random_Below(9) - 4), 10);
   FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - px(1),
                     velocityX, 0, velocityZ,
                     EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
@@ -883,63 +928,63 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
 
 /// Selects the scene's entrances. VenusLighthouseGroundFloor takes the
 /// fallback table.
-const struct SceneEntrance *VenusLighthouse_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     return gVenusLighthouseEntryEntrances;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR) {
     return gVenusLighthouseFirstFloorEntrances;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR) {
     return gVenusLighthouseSecondFloorEntrances;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
     return gVenusLighthouseThirdFloorEntrances;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR) {
     return gVenusLighthouseFourthFloorEntrances;
   }
   return gVenusLighthouseEntrancesOther;
 }
 
 /// These scenes supply no exit regions.
-const struct SceneExitRegion *VenusLighthouse_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// Returns the packed exits shared by the six scenes.
-const u32 *VenusLighthouse_GetExits(void) { return gVenusLighthouseExits; }
+const u32 *Scene_GetExits(void) { return gVenusLighthouseExits; }
 
 /// Selects the scene's actor placements.
-const struct ActorPlacement *VenusLighthouse_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
   s16 sceneId;
 
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     return gVenusLighthouseEntryActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_GROUND_FLOOR) {
     placements = gVenusLighthouseGroundFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR) {
     placements = gVenusLighthouseFirstFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR) {
     placements = gVenusLighthouseSecondFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
     placements = gVenusLighthouseThirdFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR) {
     placements = gVenusLighthouseFourthFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
@@ -1205,8 +1250,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
   walkAcceleration = px(2) / 5;
   emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
   Event_Start();
-  actor = Actor_Get(ACTOR_WALL_PILLAR);
-  if (FIELD_CELL(actor->x.fixed) == 53) {
+  if (FIELD_CELL(Actor_Get(ACTOR_WALL_PILLAR)->x.fixed) == 53) {
     if (GameFlag_Get(talked) == 0) {
       GameFlag_Set(talked);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1279,7 +1323,7 @@ static void VenusLighthouse_StepOnFloorSwitch(void) {
   s32 x = leader->x.part.pixel;
   s32 z = leader->z.part.pixel;
 
-  if ((u32)(x - 676) > 7 || z < 788 || z >= 796) {
+  if (x < 676 || x > 683 || z < 788 || z >= 796) {
     MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
@@ -1803,10 +1847,7 @@ static void VenusLighthouse_JumpOrPushSwitchPillar(void) {
 /// Keep a stacked pillar sixteen pixels above its supporting actor.
 static UNREAD_RESULT
 VenusLighthouse_FollowSupportingPillarHeight(struct Actor *pillar) {
-  struct Actor *support;
-
-  support = Actor_Get(pillar->timer);
-  pillar->y.fixed = support->y.fixed + px(16);
+  pillar->y.fixed = Actor_Get(pillar->timer)->y.fixed + px(16);
   RETURN_UNREAD(0);
 }
 
@@ -2320,25 +2361,25 @@ static void VenusLighthouse_EnterRisingPassage(void) {
 
 /// Selects the puzzle interactions and dialogue for the current lighthouse
 /// scene.
-const struct Trigger *VenusLighthouse_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     return gVenusLighthouseEntryTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_GROUND_FLOOR) {
     return gVenusLighthouseGroundFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR) {
     return gVenusLighthouseFirstFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR) {
     return gVenusLighthouseSecondFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
     return gVenusLighthouseThirdFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR) {
     return gVenusLighthouseFourthFloorTriggers;
   }
   return gVenusLighthouseGroundFloorTriggers;
@@ -2372,7 +2413,7 @@ static void VenusLighthouse_VisitPillarActors(void) {
 
 /// Restores puzzle progress, actors and entrance effects for all six scenes,
 /// by scene and entrance.
-s32 VenusLighthouse_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 sceneId;
   u32 pillarIndex;
@@ -2385,7 +2426,7 @@ s32 VenusLighthouse_Initialize(void) {
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
       VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK);
@@ -2399,7 +2440,7 @@ s32 VenusLighthouse_Initialize(void) {
     Actor_SetSpritePriority(ACTOR_SOLDIER_OPENED_DOOR, 2);
     VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_HEADED_FOR_BABI);
     VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_COLOSSO_VICTORS);
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_GROUND_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS:
@@ -2447,7 +2488,7 @@ s32 VenusLighthouse_Initialize(void) {
       }
       break;
     }
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR:
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -2517,7 +2558,7 @@ s32 VenusLighthouse_Initialize(void) {
       Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
@@ -2587,7 +2628,7 @@ s32 VenusLighthouse_Initialize(void) {
       Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST:
       VenusLighthouse_AnimateWestTileWave();
@@ -2679,7 +2720,7 @@ s32 VenusLighthouse_Initialize(void) {
       Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES:
@@ -3069,14 +3110,10 @@ static void VenusLighthouse_EmitEastPassageParticles(void) {
 /// VenusLighthouseFourthFloor by
 /// VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST.
 static void VenusLighthouse_AnimateWestTileWave(void) {
-  struct EffectOptions optionsStorage;
+  struct EffectOptions options;
   u32 extraBursts;
-  s32 zero;
   u32 row;
-  s32 rowOffset;
-  s32 particleZ;
   u32 particleIndex;
-  struct EffectOptions *options;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_Start();
@@ -3092,25 +3129,15 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   // The wave holds on its fourth row for three more bursts, and the passage
   // it opens starts to smoke.
   extraBursts = 0;
-  row = 0;
-  /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
-   * at the spawn, 10 of 179 instructions differ in tbs-en. */
-  options = &optionsStorage;
-  rowOffset = 0;
-  do {
-    VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
+  for (row = 0; row <= 12; row++) {
+    VenusLighthouse_RubbleSetScaleAndSpin(&options);
     // One burst of rubble: four bits down the row, each over a random one of
     // seven 8-pixel columns.
   burst:
-    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each
-     * burst starts; as 0 in both, 2 of 179 instructions differ in tbs-en. */
-    particleZ = px(192);
-    for (particleIndex = 0, zero = 0, particleZ += rowOffset;
-         particleIndex <= 3; particleIndex++) {
-      FieldEffect_Spawn(((Random_Below(7)) << 19) + px(416), 0, particleZ, 0,
-                        zero, zero, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-                        options);
-      particleZ += px(4);
+    for (particleIndex = 0; particleIndex <= 3; particleIndex++) {
+      FieldEffect_Spawn(((Random_Below(7)) << 19) + px(416), 0,
+                        px(192) + row * px(16) + particleIndex * px(4), 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
     wait(3);
     if (row == 3) {
@@ -3123,9 +3150,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
                       TASK_PASS_FRAME);
     }
     MapGrid_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
-    rowOffset += px(16);
-    row++;
-  } while (row <= 12);
+  }
   MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
   FieldCamera_WaitForMove();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -3141,14 +3166,10 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
 /// VenusLighthouseFourthFloor by
 /// VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST.
 static void VenusLighthouse_AnimateEastTileWave(void) {
-  struct EffectOptions optionsStorage;
+  struct EffectOptions options;
   u32 extraBursts;
-  s32 zero;
   u32 row;
-  s32 rowOffset;
-  s32 particleZ;
   u32 particleIndex;
-  struct EffectOptions *options;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_Start();
@@ -3163,25 +3184,13 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   FieldCamera_MoveTo(568, CAMERA_KEEP, 360, 1);
   // As the western wave, but its smoke task is added again on every row.
   extraBursts = 0;
-  row = 0;
-  /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
-   * at the spawn, 10 of 179 instructions differ in tbs-en. */
-  options = &optionsStorage;
-  rowOffset = 0;
-  do {
-    VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
-    // One burst of rubble: four bits down the row, each over a random one of
-    // seven 8-pixel columns.
+  for (row = 0; row <= 12; row++) {
+    VenusLighthouse_RubbleSetScaleAndSpin(&options);
   burst:
-    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each
-     * burst starts; as 0 in both, 2 of 179 instructions differ in tbs-en. */
-    particleZ = px(192);
-    for (particleIndex = 0, zero = 0, particleZ += rowOffset;
-         particleIndex <= 3; particleIndex++) {
-      FieldEffect_Spawn(((Random_Below(7)) << 19) + px(544), 0, particleZ, 0,
-                        zero, zero, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-                        options);
-      particleZ += px(4);
+    for (particleIndex = 0; particleIndex <= 3; particleIndex++) {
+      FieldEffect_Spawn(((Random_Below(7)) << 19) + px(544), 0,
+                        px(192) + row * px(16) + particleIndex * px(4), 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
     wait(3);
     if (row == 3 && extraBursts <= 2) {
@@ -3190,9 +3199,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     }
     Task_AddFrame(VenusLighthouse_EmitEastPassageParticles, TASK_PASS_FRAME);
     MapGrid_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
-    rowOffset += px(16);
-    row++;
-  } while (row <= 12);
+  }
   MapGrid_CopyCellsTo(86, 41, 97, 14, 5, 2);
   FieldCamera_WaitForMove();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -3355,7 +3362,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
       Actor_StartScript(light, gVenusLightGoesOut);
       return 0;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_VenusLighthouseThirdFloor) {
+    if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
       for (socket = 0;
            socket <= 3 &&
            !(FIELD_CELL(light->x.fixed) == gVenusThirdFloorSockets[socket].x &&
@@ -3402,7 +3409,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
   return 0;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 /// The cell ahead for each of sixteen headings, 16 pixels east-west in the
 /// upper halfword and north-south in the lower (DIRECTION_STEP).
@@ -3537,7 +3544,7 @@ s32 gVenusMiniatureLighthouseScript[] = {
     SC_END,
 };
 
-#include "shared/glint_twinkle_script.h"
+#include "shared/glint_twinkle_script.c"
 
 /// The actor scripts that give a spiral pillar its piece of track.
 s32 gVenusTrackNorthSouthScript[] = {

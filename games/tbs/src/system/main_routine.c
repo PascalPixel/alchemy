@@ -2,16 +2,16 @@
 /// The main routine and scene changes: exits, returns from battle, entering.
 /// It is the first code of bank 04, linked before the field sequence's object.
 
-#include "module/system/main_routine.h"
-#include "scene.h"
-#include "battle.h"
-#include "system.h"
-#include "dma.h"
+#include "system/main_routine.h"
 #include "flags.h"
-#include "iwram_call.h"
-#include "map_grid_scroll.h"
-#include "event.h"
-#include "field_psynergy_work.h"
+#include "battle/battle.h"
+#include "field/event.h"
+#include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene.h"
+#include "system/dma.h"
+#include "system/iwram_call.h"
+#include "system/system.h"
 
 // The scene overlay's exit table: a header word holding a scene id, then that
 // scene's exits, one packed word each (and a flag word after it when
@@ -201,14 +201,14 @@ void MainRoutine_Run(s32 mode) {
   // Read once: both debug starts test the same value.
   debug = gDebugMode;
   if (debug && mode == GAME_START_DEBUG_VALE) {
-    gMainRoutineWork.next = (s32)&SceneId_ValePlaza;
+    gMainRoutineWork.next = SCENE_VALE_PLAZA;
     gMainRoutineWork.entrance = mode;
   } else if (debug && mode == GAME_START_DEBUG_FILE_SCREEN) {
-    gMainRoutineWork.next = (s32)&SceneId_FileScreen;
+    gMainRoutineWork.next = SCENE_FILE_SCREEN;
     gMainRoutineWork.entrance = FILE_SCREEN_FROM_SANCTUM;
   } else {
     MainRoutineWork_InitializeDefaultsFar();
-    gMainRoutineWork.next = (s32)&SceneId_Title;
+    gMainRoutineWork.next = SCENE_TITLE;
     gMainRoutineWork.entrance = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.

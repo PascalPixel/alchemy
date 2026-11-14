@@ -1,8 +1,8 @@
 /// @file
 /// Unused: the scale of the debug sprite viewer's ring of sprites, which
-/// nothing in the game opens (sprite_viewer.c).
+/// nothing in the game opens (field_sprite_viewer.c).
 
-#include "module/field/sprite_viewer_scale.h"
+#include "field/sprite_viewer_scale.h"
 #include "fixed_math.h"
 
 /// The sprite viewer's (x, y) sprite scale, 1.0 each (Q16), which

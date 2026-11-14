@@ -2,9 +2,9 @@
 /// Erasing and programming the SST chip, the routines also installed for an
 /// unknown chip; every chip but Atmel erases through them.
 
-#include "../../../include/gamepak/flash.h"
-#include "../../../include/gamepak/flash_data.h"
-#include "../../../include/system/io_reg.h"
+#include "gamepak/flash.h"
+#include "gamepak/flash_data.h"
+#include "system/io_reg.h"
 
 /// Issues the chip-erase command and waits for an erased byte.
 u16 EraseFlashChip(void) {

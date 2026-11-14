@@ -43,7 +43,7 @@
 /// SolSanctumLunaSolRoomsCellBehavior). One of three scene flags remembers
 /// which colours show, so a return after a battle keeps them.
 ///
-/// On entry SolSanctumLunaSolRooms_Initialize copies each lit quarter into its
+/// On entry Scene_Initialize copies each lit quarter into its
 /// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN. It redraws the pictures, the floor and the
 /// open way up from the story flags, unless the entrance's own event draws
 /// them.
@@ -55,27 +55,50 @@
 /// room last showed them flash for Kraden
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights).
 
-#include "main_routine_work.h"
-#include "module/scene/sol_sanctum_luna_sol_rooms.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "sol_sanctum_luna_sol_rooms.h"
-#include "event_inline.h"
-#include "io_reg.h"
-#include "text/msg_ids.h"
-#include "io_write.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+u16 gSolSanctumLunaSolRooms_Light2Timer BSS_DATA;
+u16 gSolSanctumLunaSolRooms_Light3Timer BSS_DATA ALIGNED(4);
+u16 gSolSanctumLunaSolRooms_Light1Timer BSS_DATA ALIGNED(4);
+s32 gSolSanctumLunaSolRooms_FlashState BSS_DATA;
+u16 gSolSanctumLunaSolRooms_Light4Timer BSS_DATA;
+
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
+extern u32 gSolSanctumLunaSolRoomsExits[];
+extern struct ActorPlacement gSolSanctumLunaSolRoomsActorPlacements[];
+extern struct Trigger gSolSanctumLunaSolRoomsTriggers[];
+
+/// The placed actors, numbered in the order of
+/// gSolSanctumLunaSolRoomsActorPlacements; Jenna and Garet, its last rows,
+/// keep their characters' ids.
+enum SolSanctumLunaSolRoomsActorId {
+  /// Eight statues, four in each room, with the sprite of
+  /// SceneId_SolSanctumStatue's statues (sol_sanctum_statue.c).
+  ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
+  ACTOR_KRADEN = ACTOR_FIRST_STATUE + 8
+};
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.
@@ -154,27 +177,23 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
                                                       s32 waitFrames);
 static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void);
 
-const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumLunaSolRoomsEntrances;
 }
 
-const struct SceneExitRegion *SolSanctumLunaSolRooms_GetRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *SolSanctumLunaSolRooms_GetExits(void) {
-  return gSolSanctumLunaSolRoomsExits;
-}
+const u32 *Scene_GetExits(void) { return gSolSanctumLunaSolRoomsExits; }
 
 /// Returns the eight statues, four in each room, Kraden, Jenna and Garet, all
 /// always placed.
-const struct ActorPlacement *SolSanctumLunaSolRooms_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSolSanctumLunaSolRoomsActorPlacements;
 }
 
 /// Returns the floor's cell behaviors that tint the rooms, Kraden's talk
 /// and events, the floor symbol and the Herb's chest.
-const struct Trigger *SolSanctumLunaSolRooms_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumLunaSolRoomsTriggers;
 }
 
@@ -1151,8 +1170,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     actor = Actor_Get(ACTOR_KRADEN);
     {
       /* FAKEMATCH(temporary): the mask built in steeringFlags and frame reused
-       * for the zero; as actor->steeringFlags &= ~ACTOR_FACES_MOTION and a 0,
-       * 57 of 442 instructions differ in tbs-en. */
+       * for the zero. */
       s32 steeringFlags = 254;
 
       steeringFlags &= actor->steeringFlags;
@@ -1195,7 +1213,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
 
 /// Sets up Sol Sanctum's rooms of Sol and Luna and plays the event this
 /// entrance calls for.
-s32 SolSanctumLunaSolRooms_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 playedEntranceEvent;
   s32 anyLightLit;
 

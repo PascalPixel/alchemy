@@ -1,4 +1,4 @@
-@ The pieces BattleEffect_BuildBlitter (battle_effect/blitter.c) builds canvas blitters
+@ The pieces BattleEffect_BuildBlitter (battle_effect_blitter.c) builds canvas blitters
 @ from.
 @ None of this code runs where it is: the builder copies its words into a
 @ heap block, one routine per canvas size, mirroring, clip and mode.
@@ -12,7 +12,7 @@
 @ (blitter_color_fragments.s), which add four pixels a word at a time:
 @ BattleEffect_Mask puts 0x40 in every byte of sl, and a byte that reaches it
 @ becomes 63. gBlitterTemplate is the template the builder walks: each
-@ word it rewrites is marked, and battle_effect/blitter.c describes its blocks.
+@ word it rewrites is marked, and battle_effect_blitter.c describes its blocks.
 @
 @ Why assembly:
 @ r11 (fp) as an ordinary register: it holds a row counter
@@ -166,7 +166,7 @@ BattleEffect_Mask:
 	orr	sl, sl, sl, lsl #8
 	orr	sl, sl, sl, lsl #16
 gBlitterTemplate:
-	@ Block 1: prologue (see battle_effect/blitter.c)
+	@ Block 1: prologue (see battle_effect_blitter.c)
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r4, sp, #32
 	ldm	r4, {r4, r5}
@@ -181,7 +181,7 @@ gBlitterTemplate:
 	sub	r1, r1, #1	@ [11] slot: written when mirrored both ways
 	mov	r6, #0	@ [12] slot: written when mirrored both ways
 	mov	r6, #0	@ [13] slot: written when not mirrored
-	@ Block 2: vertical clip (see battle_effect/blitter.c)
+	@ Block 2: vertical clip (see battle_effect_blitter.c)
 	rsbs	ip, r3, #0	@ [14] slot: vertical clip only
 	addpl	r5, r5, r3	@ [15] slot: vertical clip only
 	mlapl	r1, r3, r4, r1	@ [16] slot: vertical clip, mirrored down
@@ -190,7 +190,7 @@ gBlitterTemplate:
 	add	ip, r3, r5	@ [19] slot: vertical clip only
 	cmp	ip, #0	@ [20] slot: vertical clip; patched: + cell height
 	rsbgt	r5, r3, #0	@ [21] slot: vertical clip; patched: + cell height
-	@ Block 3: columns (see battle_effect/blitter.c)
+	@ Block 3: columns (see battle_effect_blitter.c)
 	cmp	r5, #0
 	ble .Lclip_x	@ [23] patched: branch to the exit when no rows remain
 	and	r2, r2, #0	@ [24] slot: unclipped only; patched: + width mask
@@ -224,7 +224,7 @@ gBlitterTemplate:
 	add	r0, r0, r2
 	lsl	r3, r3, #3
 	add	r2, r3, r5, lsl #3
-	@ Block 4: row loop (see battle_effect/blitter.c)
+	@ Block 4: row loop (see battle_effect_blitter.c)
 	and	ip, r3, #56
 	and	lr, r3, #0, 26	@ [53] patched: + rows per cell, less one
 	orr	ip, ip, lr	@ [54] patched: + width shift
@@ -274,7 +274,7 @@ gBlitterTemplate:
 	add	r3, r3, #8
 	cmp	r3, r2
 	bne .Lreturn	@ [94] patched: branch back to the row loop
-	@ Block 5: exit (see battle_effect/blitter.c)
+	@ Block 5: exit (see battle_effect_blitter.c)
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 .Lreturn:
 	bx	lr

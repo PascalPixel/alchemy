@@ -5,8 +5,8 @@
 /// The actor script interpreter and the operands its commands read.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 struct Actor;
 

@@ -41,30 +41,45 @@
 /// the hole the fiery rock burnt in it (render probe vault-revisit, the town
 /// before and after).
 
-#include "main_routine_work.h"
+#include "ability_ids.h"
 #include "djinn_ids.h"
-#include "window.h"
-#include "module/scene/vault_revisit.h"
-#include "vault.h"
-#include "module/scene/shared/vault_range.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
-#include "actor.h"
-#include "event.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "iwram_call.h"
-#include "inventory.h"
-#include "text/msg_ids.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/vault.h"
+#include "scene/vault_range.h"
+#include "sound/sound.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+extern s32 gVault_BoyRoundTheWellRoute[];
+extern s32 gVault_GirlRoundTheWellRoute[];
+extern struct SceneEntrance gVaultRevisit_Entrances[];
+extern u32 gVaultRevisit_Exits[];
+extern struct ActorPlacement gVaultRevisit_ActorPlacements[];
+extern u16 gVaultRevisit_GemOwnersHouseDoorCells[];
+extern u16 gVaultRevisit_ChildsHouseDoorCells[];
+extern u16 gVaultRevisit_InnDoorCells[];
+extern u16 gVaultRevisit_ItemShopDoorCells[];
+extern u16 gVaultRevisit_WeaponAndArmorShopDoorCells[];
+extern u16 gVaultRevisit_MayorsHouseDoorCells[];
+extern u16 gVaultRevisit_JailDoorCells[];
+extern struct Trigger gVaultRevisit_Triggers[];
 
 /// The townspeople, the dog and Sap, numbering
 /// gVaultRevisit_ActorPlacements' rows from ACTOR_FIRST_PLACED.
@@ -113,11 +128,11 @@ enum {
 };
 
 // Shared effect and proximity routines precede the scene's entry points.
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
-#include "shared/actor_distance.h"
-#include "shared/vault_range.h"
-#include "shared/vault_nearby.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
+#include "shared/actor_distance.c"
+#include "shared/vault_range.c"
+#include "shared/vault_nearby.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultRevisit_Entrances;
@@ -457,9 +472,7 @@ static void VaultRevisit_EnterMayorsHouse(void) {
   Vault_WalkThroughExit(120, 144, VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST);
 }
 
-#include "shared/vault_map_cells.h"
-#include "ability_ids.h"
-#include "item_ids.h"
+#include "shared/vault_map_cells.c"
 
 /// The jail door opens and the party walks in.
 static void VaultRevisit_EnterJail(void) {
@@ -475,7 +488,7 @@ static void VaultRevisit_EnterJail(void) {
 }
 
 // Shared entrance toggles precede the Djinni and dog events.
-#include "shared/vault_toggle.h"
+#include "shared/vault_toggle.c"
 
 /// Talking to Sap, a Venus Djinni, makes it join the party.
 static void VaultRevisit_SapJoins(void) {
@@ -563,8 +576,6 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 
 /// Sets up Vault as the party finds it after reaching Kalay.
 s32 Scene_Initialize(void) {
-  struct Actor *actor;
-
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   // A still actor on the well that shows nothing. XXX (no evidence): what it
@@ -573,11 +584,11 @@ s32 Scene_Initialize(void) {
   Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   wait(1);
-  actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
-  actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->update =
+      (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = 1;
-  actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
-  actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->update =
+      (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, 216, 392);
@@ -595,7 +606,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -603,7 +614,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-#include "shared/vault_well_routes.h"
+#include "shared/vault_well_routes.c"
 
 struct SceneEntrance gVaultRevisit_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,

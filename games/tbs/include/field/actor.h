@@ -4,10 +4,9 @@
 /// @file
 /// Actors, the actor snapshot, and the screen transition styles.
 
-#include "types.h"
 #include "static_assert.h"
-
-#include "field_work.h"
+#include "types.h"
+#include "field/field_work.h"
 
 /// How a scene fades in and out: SCENE_TRANSITION's high byte, which
 /// ScreenTransition_Start and ScreenTransition_Finish read.
@@ -23,9 +22,9 @@ enum ScreenTransitionStyle {
 /// A scene transition as FieldWork.transition holds it.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 
-#include "field_coordinate.h"
+#include "field/field_coordinate.h"
 
-#include "sprite.h"
+#include "field/sprite.h"
 
 struct Actor;
 

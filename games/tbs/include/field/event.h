@@ -10,24 +10,22 @@
 /// An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
 /// Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0); Event_End();`.
 
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
-#include "module/game/game.h"
-#include "module/sound/sound.h"
-#include "module/shop/shop.h"
-#include "module/window/window.h"
-#include "module/menu/menu.h"
-#include "module/scene/shared/scroll_initialize_hblank_dma.h"
-#include "fixed_math.h"
 #include "edition.h"
-#include "types.h"
-#include "heap.h"
-
+#include "fixed_math.h"
 #include "static_assert.h"
-
-#include "main_routine_work.h"
+#include "types.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "game/game.h"
+#include "menu/menu.h"
+#include "scene/scroll_initialize_hblank_dma.h"
+#include "shop/shop.h"
+#include "sound/sound.h"
+#include "system/heap.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/window.h"
 
 // A scene stores into its own const tables: an overlay's data is in RAM.
 #ifdef MODERN
@@ -44,9 +42,9 @@ extern u8 gSceneLocalState[];
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
 #define gColossoWork (*(u8 **)&gHeapSlots[HEAP_SLOT_COLOSSO_RACE])
 
-#include "frame.h"
+#include "system/frame.h"
 
-#include "actor.h"
+#include "field/actor.h"
 
 // Speaker bits, above the actor id in the low 12 bits of a message command's
 // speaker, as FieldMessage_ShowAtActor reads them.

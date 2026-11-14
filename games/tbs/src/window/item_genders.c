@@ -4,8 +4,8 @@
 /// message writes with the item. The names in the
 /// comments are the English release's.
 
-#include "types.h"
 #include "edition.h"
+#include "types.h"
 
 // clang-format off
 #if LANGUAGE == LANGUAGE_GERMAN

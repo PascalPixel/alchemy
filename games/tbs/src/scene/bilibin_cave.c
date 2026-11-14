@@ -7,7 +7,7 @@
 /// end opens onto the World Map farther north.
 ///
 /// No one speaks here. Each scene is a run of Psynergy puzzles. The getters
-/// pick its tables by gMainRoutineWork.next, and BilibinCave_Initialize
+/// pick its tables by gMainRoutineWork.next, and Scene_Initialize
 /// restores what the party has already solved in the scene being entered.
 ///
 /// At the Bilibin Cave Entrance, entered from the World Map, Growth on a sprout
@@ -73,27 +73,44 @@
 ///
 /// Its chests hold a Vial, a Psy Crystal and Water of Life.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "system_call.h"
-#include "module/scene/bilibin_cave.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "map_grid.h"
-#include "event.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
 #include "flags.h"
-#include "map_grid_scroll.h"
-#include "pushed_actor.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/map_grid.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gBilibinCaveEntrancesOther[];
+extern struct SceneEntrance gBilibinCaveEntranceEntrances[];
+extern struct SceneEntrance gBilibinCaveRapierEntrances[];
+extern struct SceneEntrance gBilibinCaveIceEntrances[];
+extern u32 gBilibinCaveExits[];
+extern struct ActorPlacement gBilibinCaveActorPlacementsOther[];
+extern struct ActorPlacement gBilibinCaveEntranceActorPlacements[];
+extern struct ActorPlacement gBilibinCaveRapierActorPlacements[];
+extern struct ActorPlacement gBilibinCaveIceActorPlacements[];
+extern struct Trigger gBilibinCaveTriggersOther[];
+extern struct Trigger gBilibinCaveEntranceTriggers[];
+extern struct Trigger gBilibinCaveRapierTriggers[];
+extern struct Trigger gBilibinCaveIceTriggers[];
+extern s32 gPushedActor_DirectionSteps[];
 
 /// In Bilibin Cave's ice room, a movable torch has melted the third puddle's
 /// ice pillar.
@@ -164,50 +181,50 @@ static s32 BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
   return 0;
 }
 
-const struct SceneEntrance *BilibinCave_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
     return gBilibinCaveEntranceEntrances;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
+  if (sceneId == SCENE_BILIBIN_CAVE_RAPIER) {
     return gBilibinCaveRapierEntrances;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveIce) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ICE) {
     return gBilibinCaveIceEntrances;
   }
   return gBilibinCaveEntrancesOther;
 }
 
-const struct SceneExitRegion *BilibinCave_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
+const u32 *Scene_GetExits(void) { return gBilibinCaveExits; }
 
-const struct ActorPlacement *BilibinCave_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
     return gBilibinCaveEntranceActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
+  if (sceneId == SCENE_BILIBIN_CAVE_RAPIER) {
     return gBilibinCaveRapierActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveIce) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ICE) {
     return gBilibinCaveIceActorPlacements;
   }
   return gBilibinCaveActorPlacementsOther;
 }
 
-const struct Trigger *BilibinCave_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
     return gBilibinCaveEntranceTriggers;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
+  if (sceneId == SCENE_BILIBIN_CAVE_RAPIER) {
     return gBilibinCaveRapierTriggers;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveIce) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ICE) {
     return gBilibinCaveIceTriggers;
   }
   return gBilibinCaveTriggersOther;
@@ -374,14 +391,14 @@ static void BilibinCave_StopFootprints(void) {
 }
 
 /// Sets up the scene being entered, with its puzzles already solved.
-s32 BilibinCave_Initialize(void) {
+s32 Scene_Initialize(void) {
   s16 variant = gMainRoutineWork.next;
 
-  if (variant == (s32)&SceneId_BilibinCaveEntrance) {
+  if (variant == SCENE_BILIBIN_CAVE_ENTRANCE) {
     BilibinCave_RestoreEntrance();
-  } else if (variant == (s32)&SceneId_BilibinCaveRapier) {
+  } else if (variant == SCENE_BILIBIN_CAVE_RAPIER) {
     BilibinCave_RestoreRapierRoom();
-  } else if (variant == (s32)&SceneId_BilibinCaveIce) {
+  } else if (variant == SCENE_BILIBIN_CAVE_ICE) {
     BilibinCave_RestoreIceRoom();
   }
   return 0;
@@ -495,7 +512,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   }
 }
 
-#include "shared/actor_find_at_cell.h"
+#include "shared/actor_find_at_cell.c"
 
 /// Pushing one of the two movable torches in Bilibin Cave
 /// (SceneId_BilibinCaveIce) moves it only when its next cell and movement
@@ -775,4 +792,4 @@ struct Trigger gBilibinCaveIceTriggers[] = {
 };
 // clang-format on
 
-#include "shared/pushed_actor_direction_steps.h"
+#include "shared/pushed_actor_direction_steps.c"

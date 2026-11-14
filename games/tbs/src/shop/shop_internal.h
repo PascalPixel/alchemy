@@ -7,46 +7,44 @@
 /// includes it before the parts, and each part includes it too, so that a
 /// part read on its own still resolves.
 
-#include "module/shop/shop.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
+#include "debug/debug.h"
 #include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_release.h"
-#include "heap_slots.h"
-#include "main_routine_work.h"
-#include "playback_queue.h"
-#include "battle_action_run.h"
-#include "actor.h"
-#include "dma.h"
-#include "task.h"
-#include "battle_sprite_id.h"
-#include "shop.h"
-#include "battle_status.h"
-#include "tbs_edition.h"
-#include "io_reg.h"
-#include "text/msg_ids.h"
-#include "input.h"
-#include "node_chain.h"
-#include "sounds.h"
-#include "item.h"
-#include "item_ids.h"
-#include "vram_cache.h"
 #include "fixed_math.h"
-#include "fixed_point_position.h"
-#include "inn.h"
-#include "scene.h"
-#include "range_falloff.h"
-#include "heap.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "sounds.h"
+#include "tbs_edition.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_action_run.h"
+#include "battle/playback_queue.h"
+#include "battle/range_falloff.h"
+#include "field/actor.h"
+#include "field/field.h"
+#include "field/scene.h"
+#include "game/game.h"
+#include "game/item.h"
+#include "gamepak/far_call.h"
+#include "graphics/battle_sprite_id.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "shop/inn.h"
+#include "shop/shop.h"
+#include "sound/sound.h"
+#include "system/dma.h"
+#include "system/fixed_point_position.h"
+#include "system/heap.h"
+#include "system/heap_release.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "system/vram_cache.h"
+#include "window/battle_status.h"
+#include "window/node_chain.h"
+#include "text/msg_ids.h"
 
 /// What the player chose at a shop's counter, in the order of its menu's
 /// Buy, Sell, Artifacts and Repair, held in shop->action while it runs.
@@ -95,7 +93,7 @@ enum SanctumSparkleState {
 };
 
 /// What the sanctum does for one party member; each kind picks the party
-/// member's status it needs, its fee and its cure (sanctum.c).
+/// member's status it needs, its fee and its cure (shop_sanctum.c).
 enum SanctumService {
   SANCTUM_SERVICE_REVIVE,      ///< for a downed party member (HP 0)
   SANCTUM_SERVICE_CURE_POISON, ///< for poison or deadly poison
@@ -123,20 +121,20 @@ enum {
 // Edition-specific text and window layout values. Window positions and sizes
 // are in tiles, text positions in pixels.
 
-// The shop's Yes/No menu (run.c): one column further left in German.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+// The shop's Yes/No menu (shop_run.c): one column further left in German.
+#if LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_CONFIRM_MENU_X 6
 #else
 #define SHOP_CONFIRM_MENU_X 7
 #endif
 
 // An item's price and the word after it in the price window that the buy,
-// sell and repair lists share (Shop_DrawItemPrice, buy.c), in pixels: French
-// moves both 8 left, Spanish the word 8 right.
-#if (LANGUAGE == LANGUAGE_FRENCH)
+// sell and repair lists share (Shop_DrawItemPrice, shop_buy.c), in pixels:
+// French moves both 8 left, Spanish the word 8 right.
+#if LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_PRICE_NUMBER_X 24
 #define SHOP_PRICE_LABEL_X 64
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define SHOP_PRICE_NUMBER_X 32
 #define SHOP_PRICE_LABEL_X 80
 #else
@@ -144,10 +142,10 @@ enum {
 #define SHOP_PRICE_LABEL_X 72
 #endif
 
-// Where the item grid (Shop_DrawMemberItems, sell.c), shared by the sell,
+// Where the item grid (Shop_DrawMemberItems, shop_sell.c), shared by the sell,
 // repair and drop screens and the equip prompt, writes MsgNoItems for a party
 // member with no items, in pixels.
-#if (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ITALIAN
 #define SHOP_EMPTY_GRID_X 20
 #define SHOP_EMPTY_GRID_Y 12
 #else
@@ -156,7 +154,7 @@ enum {
 #endif
 
 // Outside Japan the coins window is a tile wider, and every counter's item
-// description (Shop_DrawMessage, buy.c) is drawn as tiles
+// description (Shop_DrawMessage, shop_buy.c) is drawn as tiles
 // (Text_DrawMessageAsTilesFar) rather than into a text canvas.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_MONEY_WINDOW_WIDTH 12
@@ -166,11 +164,12 @@ enum {
 #define SHOP_DRAW_MESSAGE Text_DrawMessageFar
 #endif
 
-// The sanctum's fee window (sanctum.c), wider for the German and French text.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+// The sanctum's fee window (shop_sanctum.c), wider for the German and French
+// text.
+#if LANGUAGE == LANGUAGE_GERMAN
 #define SANCTUM_PRICE_WINDOW_X 0
 #define SANCTUM_PRICE_WINDOW_WIDTH 30
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define SANCTUM_PRICE_WINDOW_X 1
 #define SANCTUM_PRICE_WINDOW_WIDTH 25
 #else
@@ -178,7 +177,7 @@ enum {
 #define SANCTUM_PRICE_WINDOW_WIDTH 23
 #endif
 
-// The item picker's small window (item_picker.c): two tiles wider, and two
+// The item picker's small window (shop_item_picker.c): two tiles wider, and two
 // further left, outside Japan.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_PICKER_WINDOW_X 14
@@ -188,16 +187,16 @@ enum {
 #define ITEM_PICKER_WINDOW_WIDTH 14
 #endif
 
-// The x of the note below an item's name, in pixels: buy.c and
-// item_picker.c both draw it.
+// The x of the note below an item's name, in pixels: shop_buy.c and
+// shop_item_picker.c both draw it.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_ITEM_NOTE_X 0
 #else
 #define SHOP_ITEM_NOTE_X 8
 #endif
 
-// The quantity cursor's x, in pixels: buy.c and sell.c both place it.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
+// The quantity cursor's x, in pixels: shop_buy.c and shop_sell.c both place it.
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_QUANTITY_CURSOR_X 120
 #else
 #define SHOP_QUANTITY_CURSOR_X 128

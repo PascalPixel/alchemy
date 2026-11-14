@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer ColosseumEntrance_Initialize
-	overlay_veneer ColosseumEntrance_GetEntrances
-	overlay_veneer ColosseumEntrance_GetExits
-	overlay_veneer ColosseumEntrance_GetActorPlacements
-	overlay_veneer ColosseumEntrance_GetTriggers
-	overlay_veneer ColosseumEntrance_GetRegions

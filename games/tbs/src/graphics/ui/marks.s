@@ -1,4 +1,4 @@
-	.include "games/tbs/include/ed_asm.h"
+	.include "games/tbs/include/edition.inc"
 	.section .rodata
 	.balign 4
 @ The three icon bases
@@ -25,15 +25,7 @@ Icon_MarkEquip:
 	.ifdef TBS_EDITION_IT
 	.incbin "games/tbs/src/graphics/ui/marks/equip_de.icon4"
 	.else
-	.ifdef TLA_EDITION_DE
-	.incbin "games/tbs/src/graphics/ui/marks/equip_de.icon4"
-	.else
-	.ifdef TLA_EDITION_IT
-	.incbin "games/tbs/src/graphics/ui/marks/equip_de.icon4"
-	.else
 	.incbin "games/tbs/src/graphics/ui/marks/equip.icon4"
-	.endif
-	.endif
 	.endif
 	.endif
 Icon_MarkCross:

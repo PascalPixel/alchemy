@@ -11,7 +11,7 @@
 /// third holds the inn with the restaurant beside it, and its stairs
 /// (COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS and
 /// COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN) join it to its upstairs rooms. Three
-/// other buildings hold villagers. CottageRoomsC_GetActorPlacements leaves out
+/// other buildings hold villagers. Scene_GetActorPlacements leaves out
 /// the actors of the rooms not in view.
 ///
 /// Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
@@ -38,7 +38,7 @@
 /// Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg soup and
 /// omelettes in the ovens, and a book called "All About Items".
 ///
-/// CottageRoomsC_Initialize opens the rooms with a window around the leader
+/// Scene_Initialize opens the rooms with a window around the leader
 /// and draws one diner, ACTOR_BILIBIN_DINER, at a fixed sprite priority.
 ///
 /// He stands at the north edge of the restaurant's table, on cell (7, 49).
@@ -47,21 +47,29 @@
 /// him behind the middle layer (`BG2`, priority 2 in this map). The fixed
 /// priority 2 draws him in front of it, as the other diners are.
 
-#include "module/scene/cottage_rooms_c.h"
-#include "flags.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
+#include "flags.h"
 #include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gCottageRoomsCEntrances[];
+extern u32 gCottageRoomsCExits[];
+extern struct ActorPlacement gCottageRoomsCActorPlacements[];
+extern struct Trigger gCottageRoomsCTriggers[];
 
 /// The head chef has shouted his string of orders once, so from then on he
 /// sends the party to the waitress.
@@ -129,17 +137,17 @@ enum CottageRoomsCActorId {
   ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES
 };
 
-const struct SceneEntrance *CottageRoomsC_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCottageRoomsCEntrances;
 }
 
-const struct SceneExitRegion *CottageRoomsC_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *CottageRoomsC_GetExits(void) { return gCottageRoomsCExits; }
+const u32 *Scene_GetExits(void) { return gCottageRoomsCExits; }
 
 /// Marks actor placements outside the current room's view before
 /// actors are spawned.
-const struct ActorPlacement *CottageRoomsC_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   Scene_AssignViewFlags(gCottageRoomsCActorPlacements);
   return gCottageRoomsCActorPlacements;
 }
@@ -187,9 +195,7 @@ static void CottageRoomsC_TalkToItemMerchant(void) {
 }
 
 /// Returns both story stages' triggers.
-const struct Trigger *CottageRoomsC_GetTriggers(void) {
-  return gCottageRoomsCTriggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gCottageRoomsCTriggers; }
 
 /// Bilibin's armor merchant opens the shop across the counter, or talks.
 static void CottageRoomsC_TalkToArmorMerchant(void) {
@@ -395,7 +401,7 @@ static void CottageRoomsC_ReadMiaAdmirersMind(void) {
 }
 
 /// Sets up Bilibin's buildings.
-s32 CottageRoomsC_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   gFieldWork->transition =

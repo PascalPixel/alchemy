@@ -4,8 +4,8 @@
 /// @file
 /// The 3D projection.
 
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// The 3D projection onto the screen: its focal length, near and far depths,
 /// and the screen point the view centres on.

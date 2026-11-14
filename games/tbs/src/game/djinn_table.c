@@ -2,9 +2,9 @@
 /// The 80 Djinn, 20 of each element in element order. Each name is the
 /// English release's.
 
-#include "game.h"
 #include "ability_ids.h"
 #include "djinn_ids.h"
+#include "game/game.h"
 
 // clang-format off
 const struct DjinnDefinition gDjinn_DefinitionTable[] = {

@@ -47,25 +47,39 @@
 /// (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so it is back whenever the party
 /// returns from another area.
 
-#include "main_routine_work.h"
-#include "module/scene/suhalla_gate.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "suhalla_gate.h"
-#include "djinn_ids.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
+#include "djinn_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern struct SceneEntrance gSuhallaGateEntrancesOther[];
+extern struct SceneEntrance gSuhallaGateDewEntrances[];
+extern struct SceneEntrance gGatewayCaveEntrances[];
+extern u32 gSuhallaGateExits[];
+extern struct ActorPlacement gSuhallaGateActorPlacementsOther[];
+extern struct ActorPlacement gSuhallaGateDewActorPlacements[];
+extern struct ActorPlacement gSuhallaGateCheckpointActorPlacements[];
+extern struct ActorPlacement
+    gSuhallaGateCheckpointActorPlacementsAfterAudience[];
+extern struct Trigger gSuhallaGateTriggersOther[];
+extern struct Trigger gSuhallaGateDewTriggers[];
+extern struct Trigger gGatewayCaveTriggers[];
 
 /// Gateway Cave's Psynergy Stone has been found.
 ///
@@ -74,8 +88,7 @@
 #define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
 #if TBS_PATCH_3
-#define SUHALLA_GATE_RETREAT_MAP(currentMap)                                   \
-  ((s32)&SceneId_SuhallaGateCheckpoint)
+#define SUHALLA_GATE_RETREAT_MAP(currentMap) (SCENE_SUHALLA_GATE_CHECKPOINT)
 #else
 #define SUHALLA_GATE_RETREAT_MAP(currentMap) (currentMap)
 #endif
@@ -120,10 +133,10 @@ static void SuhallaGate_FightDew(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_SuhallaGateDew) {
+  if (sceneId == SCENE_SUHALLA_GATE_DEW) {
     return gSuhallaGateDewEntrances;
   }
-  if (sceneId == (s32)&SceneId_GatewayCave) {
+  if (sceneId == SCENE_GATEWAY_CAVE) {
     return gGatewayCaveEntrances;
   }
   return gSuhallaGateEntrancesOther;
@@ -137,10 +150,10 @@ const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_SuhallaGateDew) {
+  if (sceneId == SCENE_SUHALLA_GATE_DEW) {
     return gSuhallaGateDewActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_SuhallaGateCheckpoint) {
+  if (sceneId == SCENE_SUHALLA_GATE_CHECKPOINT) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gSuhallaGateCheckpointActorPlacementsAfterAudience;
     }
@@ -155,10 +168,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_SuhallaGateDew) {
+  if (sceneId == SCENE_SUHALLA_GATE_DEW) {
     return gSuhallaGateDewTriggers;
   }
-  if (sceneId == (s32)&SceneId_GatewayCave) {
+  if (sceneId == SCENE_GATEWAY_CAVE) {
     return gGatewayCaveTriggers;
   }
   return gSuhallaGateTriggersOther;
@@ -169,11 +182,11 @@ s32 Scene_Initialize(void) {
   s32 sceneId;
 
   if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
-    gMainRoutineWork.restartScene = (s32)&SceneId_RockRooms;
+    gMainRoutineWork.restartScene = SCENE_ROCK_ROOMS;
     gMainRoutineWork.restartEntrance = ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_SuhallaGateCheckpoint) {
+  if (sceneId == SCENE_SUHALLA_GATE_CHECKPOINT) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Actor_SetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
@@ -208,7 +221,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance ==
         SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
-  } else if (sceneId == (s32)&SceneId_SuhallaGateDew) {
+  } else if (sceneId == SCENE_SUHALLA_GATE_DEW) {
     Actor_SetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIMATION_GROWN);
     Actor_SetAnimation(ACTOR_FIRST_SPROUT + 1, SPROUT_ANIMATION_GROWN);
     Actor_SetAnimation(ACTOR_FIRST_SPROUT + 2, SPROUT_ANIMATION_HALF_GROWN);

@@ -3,22 +3,21 @@
 /// into a ring of sprite tiles, scroll up over battle backgrounds that
 /// crossfade behind them.
 
-#include "module/menu/credits.h"
-#include "module/system/system.h"
-#include "flash.h"
-#include "flash_data.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "system.h"
-#include "ram_code.h"
-#include "io_write_queue.h"
-#include "io_write.h"
-#include "map_grid_scroll.h"
-#include "resource_ids.h"
-#include "iwram_call.h"
+#include "menu/credits.h"
 #include "flags.h"
+#include "resource_ids.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "game/game.h"
+#include "gamepak/flash.h"
+#include "gamepak/flash_data.h"
+#include "graphics/graphics.h"
+#include "system/io_write.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/ram_code.h"
+#include "system/system.h"
 
 // Credits text uses six 32-pixel sprites across each 192-pixel line.
 #define CREDITS_LINE_PIXELS 192
@@ -68,38 +67,38 @@ typedef s32 (*PackedDecoder)(const u8 *source, void *destination, u32 fill);
 /// Battle backgrounds shown in the credits; 0 clears the display.
 // clang-format off
 const u32 gCredits_Backgrounds[] = {
-    (u32)&ResourceId_ValeStormBackdrop,
-    (u32)&ResourceId_SolSanctumBackdrop,
-    (u32)&ResourceId_GrasslandBackdrop,
-    (u32)&ResourceId_InteriorBackdrop,
-    (u32)&ResourceId_ForestBackdrop,
-    (u32)&ResourceId_GomaCaveBackdrop,
-    (u32)&ResourceId_KolimaForestBackdrop,
-    (u32)&ResourceId_TretTreeInteriorsBackdrop,
-    (u32)&ResourceId_TretTreeBranchBackdrop,
-    (u32)&ResourceId_SnowfieldBackdrop,
-    (u32)&ResourceId_MercuryLighthouseBackdrop,
-    (u32)&ResourceId_MercuryLighthouseAerieBackdrop,
-    (u32)&ResourceId_ImilFuchinFallsBackdrop,
-    (u32)&ResourceId_MogallForestBackdrop,
-    (u32)&ResourceId_AltinPeakBackdrop,
-    (u32)&ResourceId_LamakanDesertBackdrop,
-    (u32)&ResourceId_TolbiShipDeckBackdrop,
-    (u32)&ResourceId_TolbiShipInteriorsBackdrop,
-    (u32)&ResourceId_BeachBackdrop,
-    (u32)&ResourceId_ColossoBackdrop,
-    (u32)&ResourceId_AltmillerCaveBackdrop,
-    (u32)&ResourceId_SuhallaDesertBackdrop,
-    (u32)&ResourceId_CrossboneIsleCaveBackdrop,
-    (u32)&ResourceId_PirateShipBackdrop,
-    (u32)&ResourceId_SuhallaGateBackdrop,
-    (u32)&ResourceId_TunnelRuinsBackdrop,
-    (u32)&ResourceId_BabiLighthouseBackdrop,
-    (u32)&ResourceId_VenusLighthouseBackdrop,
-    (u32)&ResourceId_VenusLighthouseAerieBackdrop,
-    (u32)&ResourceId_VenusLighthouseAerieStormBackdrop,
-    (u32)&ResourceId_DuskCloudsBackdrop,
-    (u32)&ResourceId_VioletSkyBackdrop,
+    (u32)RESOURCE_VALE_STORM_BACKDROP,
+    (u32)RESOURCE_SOL_SANCTUM_BACKDROP,
+    (u32)RESOURCE_GRASSLAND_BACKDROP,
+    (u32)RESOURCE_INTERIOR_BACKDROP,
+    (u32)RESOURCE_FOREST_BACKDROP,
+    (u32)RESOURCE_GOMA_CAVE_BACKDROP,
+    (u32)RESOURCE_KOLIMA_FOREST_BACKDROP,
+    (u32)RESOURCE_TRET_TREE_INTERIORS_BACKDROP,
+    (u32)RESOURCE_TRET_TREE_BRANCH_BACKDROP,
+    (u32)RESOURCE_SNOWFIELD_BACKDROP,
+    (u32)RESOURCE_MERCURY_LIGHTHOUSE_BACKDROP,
+    (u32)RESOURCE_MERCURY_LIGHTHOUSE_AERIE_BACKDROP,
+    (u32)RESOURCE_IMIL_FUCHIN_FALLS_BACKDROP,
+    (u32)RESOURCE_MOGALL_FOREST_BACKDROP,
+    (u32)RESOURCE_ALTIN_PEAK_BACKDROP,
+    (u32)RESOURCE_LAMAKAN_DESERT_BACKDROP,
+    (u32)RESOURCE_TOLBI_SHIP_DECK_BACKDROP,
+    (u32)RESOURCE_TOLBI_SHIP_INTERIORS_BACKDROP,
+    (u32)RESOURCE_BEACH_BACKDROP,
+    (u32)RESOURCE_COLOSSO_BACKDROP,
+    (u32)RESOURCE_ALTMILLER_CAVE_BACKDROP,
+    (u32)RESOURCE_SUHALLA_DESERT_BACKDROP,
+    (u32)RESOURCE_CROSSBONE_ISLE_CAVE_BACKDROP,
+    (u32)RESOURCE_PIRATE_SHIP_BACKDROP,
+    (u32)RESOURCE_SUHALLA_GATE_BACKDROP,
+    (u32)RESOURCE_TUNNEL_RUINS_BACKDROP,
+    (u32)RESOURCE_BABI_LIGHTHOUSE_BACKDROP,
+    (u32)RESOURCE_VENUS_LIGHTHOUSE_BACKDROP,
+    (u32)RESOURCE_VENUS_LIGHTHOUSE_AERIE_BACKDROP,
+    (u32)RESOURCE_VENUS_LIGHTHOUSE_AERIE_STORM_BACKDROP,
+    (u32)RESOURCE_DUSK_CLOUDS_BACKDROP,
+    (u32)RESOURCE_VIOLET_SKY_BACKDROP,
     0               // Clear
 };
 // clang-format on
@@ -522,7 +521,7 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
     sBlankCreditLine,
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
     "Coordination",
     sBlankCreditLine,
     "Masaaki Uno",
@@ -534,7 +533,7 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
 #endif
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
     "Public Relations",
     sBlankCreditLine,
     "Mitsuaki Hagishima",
@@ -647,7 +646,7 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
     0
-#elif (LANGUAGE == LANGUAGE_ENGLISH)
+#elif LANGUAGE == LANGUAGE_ENGLISH
     sBlankCreditLine,
     "North American",
     " Localization",
@@ -801,22 +800,22 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
     sBlankCreditLine,
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
     "German Translation",
     sBlankCreditLine,
     "Micky Auer",
     "Martina Deimel",
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
     "Spanish Translation",
     sBlankCreditLine,
     "Carlos Montilla",
     "Miguel Lopez",
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
     "French Translation",
     sBlankCreditLine,
     "Daniel Charbit",
     "Steven Arhan",
-#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_ITALIAN
     "Italian Translation",
     sBlankCreditLine,
     "Andrea Salvi",
@@ -825,7 +824,7 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
     sBlankCreditLine,
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
     "German Testing",
     sBlankCreditLine,
     "Maurice Tisdale",
@@ -834,7 +833,7 @@ const void *gCredits_Lines[] = {
     "Wolfgang Weber",
     "Frank Heuchle",
     "Zoran Tasevski",
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
     "Spanish Testing",
     sBlankCreditLine,
     "Maurice Tisdale",
@@ -843,7 +842,7 @@ const void *gCredits_Lines[] = {
     "Jose Ramon Diaz",
     "Ana Paris",
     "Monica Gomez",
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
     "French Testing",
     sBlankCreditLine,
     "Maurice Tisdale",
@@ -853,7 +852,7 @@ const void *gCredits_Lines[] = {
     "Kamel Chelirem",
     "Sebastien Aubre",
     "Michael Troger",
-#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_ITALIAN
     "Italian Testing",
     sBlankCreditLine,
     "Maurice Tisdale",
@@ -901,7 +900,7 @@ const void *gCredits_Lines[] = {
     "Copyrights of all characters",
     "and music reserved by",
     sBlankCreditLine,
-#if (LANGUAGE != LANGUAGE_FRENCH)
+#if LANGUAGE != LANGUAGE_FRENCH
     "NINTENDO.",
 #endif
     sBlankCreditLine,
@@ -912,7 +911,18 @@ const void *gCredits_Lines[] = {
 };
 // clang-format on
 
-#include "../graphics/credits/glyph_widths.h"
+/// The staff credits font's advance widths in pixels, character codes 32
+/// to 127, beside the font (font.png).
+// clang-format off
+const u8 gCredits_GlyphWidths[96] = {
+    7, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 6, 4, 6,
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 4, 5, 6, 5, 7,
+    8, 8, 8, 8, 8, 8, 8, 8, 8, 5, 6, 8, 8, 8, 8, 8,
+    8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 8, 5, 6, 5, 7, 7,
+    6, 7, 7, 7, 7, 7, 5, 7, 7, 4, 4, 6, 4, 8, 7, 7,
+    7, 7, 7, 7, 5, 7, 6, 8, 6, 6, 6, 5, 4, 5, 7, 1,
+};
+// clang-format on
 
 /// A credits line has been drawn, so its scratch buffer holds the shadow row to
 /// carry.
@@ -1049,9 +1059,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u32 glyphMask;
 
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 44 bytes it reserves (sub sp, #44), no instruction
-   * addresses the 32 at sp+12 to sp+43; as without it, 4 of 277 instructions
-   * differ in tbs-en. */
+   * touches. */
   UNUSED u32 unused[8];
 
   if (text == NULL) {
@@ -1086,8 +1094,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     startX = (lineWidth - textAdvance) / 2;
 
   // Rasterize each glyph and its one-pixel shadow at the aligned start.
-  /* FAKEMATCH(dead): sourceBytes rewound to text; as no store, 20 of 277
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): sourceBytes rewound to text. */
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *text++) != 0) {

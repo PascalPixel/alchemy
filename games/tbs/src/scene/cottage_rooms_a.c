@@ -28,9 +28,9 @@
 /// The actor placements and triggers follow the story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out.
-///   CottageRoomsA_Initialize removes every resident and flashes the
+///   Scene_Initialize removes every resident and flashes the
 ///   lightning outside. The doors out to the village lead into the storm's
-///   scene (SceneId_ValePrologue) instead (CottageRoomsA_GetExits). The jars
+///   scene (SceneId_ValePrologue) instead (Scene_GetExits). The jars
 ///   and the barrel are empty, and six more bookcases than by day can be
 ///   read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -58,19 +58,37 @@
 /// fortieth a frame as it climbs ever more slowly and drifts right ever faster
 /// (CottageRoomsA_AdvanceSleepZ).
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "module/import.h"
-#include "module/scene/cottage_rooms_a.h"
-#include "event.h"
-#include "field_blend.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "actor_script.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "sounds.h"
+#include "types.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field_blend.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "scene/import.h"
+#include "system/main_routine_work.h"
+#include "text/msg_ids.h"
+
+const u32 *Scene_GetExits(void);
+s32 Scene_Initialize(void);
+extern s32 gCottageRoomsA_FaceTargetScript[];
+extern s32 gCottageRoomsA_FatherPacingScript[];
+extern s32 gCottageRoomsA_PartyLeavesScript[];
+extern s32 gCottageRoomsA_SleepZScript[];
+extern struct SceneEntrance gCottageRoomsA_Entrances[];
+extern u32 gCottageRoomsA_Exits[];
+extern u32 gCottageRoomsA_StormExits[];
+extern struct ActorPlacement gCottageRoomsA_ActorPlacements[];
+extern struct ActorPlacement gCottageRoomsA_ActorPlacementsAfterLeaving[];
+extern struct ActorPlacement gCottageRoomsA_ActorPlacementsAfterKalay[];
+extern struct Trigger gCottageRoomsA_StormTriggers[];
+extern struct Trigger gCottageRoomsA_Triggers[];
+extern struct Trigger gCottageRoomsA_TriggersAfterLeaving[];
+extern struct Trigger gCottageRoomsA_TriggersAfterKalay[];
 
 /// The placed actors, numbered in the order of the actor placement tables,
 /// which all place them alike.
@@ -145,7 +163,7 @@ enum CottageRoomsAAnimation {
 static void CottageRoomsA_GaretComesHome(void);
 static void CottageRoomsA_SpawnSleepZ(void);
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {
@@ -158,14 +176,14 @@ static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {
   return 0;
 }
 
-const struct SceneEntrance *CottageRoomsA_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCottageRoomsA_Entrances;
 }
 
-const struct SceneExitRegion *CottageRoomsA_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// On the stormy night, the doors lead out into the storm.
-const u32 *CottageRoomsA_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     return gCottageRoomsA_StormExits;
   return gCottageRoomsA_Exits;
@@ -173,7 +191,7 @@ const u32 *CottageRoomsA_GetExits(void) {
 
 /// Selects the actor placements for the current visit to Vale, and marks
 /// which of their actors are in view.
-const struct ActorPlacement *CottageRoomsA_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
   if (GameFlag_Get(FLAG_KALAY_REACHED)) {
@@ -188,7 +206,7 @@ const struct ActorPlacement *CottageRoomsA_GetActorPlacements(void) {
 }
 
 /// Selects the triggers for the current visit to Vale.
-const struct Trigger *CottageRoomsA_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     return gCottageRoomsA_StormTriggers;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
@@ -338,7 +356,7 @@ static void CottageRoomsA_LeaveToValePlazaNorth(void) {
 }
 
 /// Sets up a house of Vale as the party arrives.
-s32 CottageRoomsA_Initialize(void) {
+s32 Scene_Initialize(void) {
   // The heap slots from the field's on.
   void **slots = (void **)&gFieldWork;
 
@@ -399,11 +417,7 @@ s32 CottageRoomsA_Initialize(void) {
 /// In Vale's shops, opens the weapon shop across the counter, or the
 /// merchant speaks.
 static void CottageRoomsA_TalkToWeaponMerchant(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-
-  if (FACING_IS_NORTH(leader->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(1, ACTOR_WEAPON_MERCHANT);
     return;
   }
@@ -429,10 +443,7 @@ static void CottageRoomsA_TalkToWeaponMerchant(void) {
 /// In Vale's shops, opens the armor shop across the counter, or the merchant
 /// speaks.
 static void CottageRoomsA_TalkToArmorMerchant(void) {
-  struct Actor *actor;
-
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(actor->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(2, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_Start();
@@ -453,10 +464,7 @@ static void CottageRoomsA_TalkToArmorMerchant(void) {
 /// In Vale's shops, opens the item shop across the counter, or the merchant
 /// speaks.
 static void CottageRoomsA_TalkToItemMerchant(void) {
-  struct Actor *actor;
-
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(actor->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(3, ACTOR_ITEM_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -496,7 +504,6 @@ static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 actorId,
 
 /// In Garet's house in Vale, back from Kalay, Garet comes home.
 static void CottageRoomsA_GaretComesHome(void) {
-  struct Actor *sleepZ;
   struct Actor *actor;
   s32 motionFlags = 0;
   TaskFunc timedUpdate;
@@ -514,12 +521,9 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetSpeed(ACTOR_MIA, 0.4);
   Actor_SetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
-  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z);
-  Actor_SetSpriteFlags(sleepZ, 0);
-  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 1);
-  Actor_SetSpriteFlags(sleepZ, 0);
-  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 2);
-  Actor_SetSpriteFlags(sleepZ, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SLEEP_Z), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SLEEP_Z + 1), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SLEEP_Z + 2), 0);
   Actor_Get(ACTOR_FIRST_SLEEP_Z)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;

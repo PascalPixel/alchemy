@@ -35,25 +35,34 @@
 ///   river. It has no actors and only its two exits. They lead back south
 ///   into SceneId_GomaCaveStream and out onto the World Map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
-#include "main_routine_work.h"
-#include "module/scene/goma_cave_stream.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "actor.h"
-#include "event.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "actor_script.h"
+
+#include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "ability_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+
+extern struct SceneEntrance gGomaCaveStreamEntrances[];
+extern struct SceneEntrance gGomaCaveBridgeEntrances[];
+extern u32 gGomaCaveStreamAndBridgeExits[];
+extern struct ActorPlacement gGomaCaveStreamActorPlacements[];
+extern struct ActorPlacement gGomaCaveBridgeActorPlacements[];
+extern struct Trigger gGomaCaveStreamTriggers[];
+extern struct Trigger gGomaCaveBridgeTriggers[];
 
 /// SceneId_GomaCaveStream's actors, numbering its actor placement
 /// rows from ACTOR_FIRST_PLACED.
@@ -71,11 +80,11 @@ enum { ENTRANCE_BESIDE_STUMP = 99 };
 
 static void GomaCaveStream_LeapStump(s32 stumpId);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GomaCaveBridge) {
+  if (gMainRoutineWork.next == SCENE_GOMA_CAVE_BRIDGE) {
     return gGomaCaveBridgeEntrances;
   }
   return gGomaCaveStreamEntrances;
@@ -86,7 +95,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gGomaCaveStreamAndBridgeExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GomaCaveBridge) {
+  if (gMainRoutineWork.next == SCENE_GOMA_CAVE_BRIDGE) {
     return gGomaCaveBridgeActorPlacements;
   }
   return gGomaCaveStreamActorPlacements;
@@ -105,7 +114,7 @@ static void GomaCaveStream_MoveStump(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GomaCaveBridge) {
+  if (gMainRoutineWork.next == SCENE_GOMA_CAVE_BRIDGE) {
     return gGomaCaveBridgeTriggers;
   }
   return gGomaCaveStreamTriggers;
@@ -116,7 +125,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_GomaCaveStream) {
+  if (gMainRoutineWork.next == SCENE_GOMA_CAVE_STREAM) {
     if (gMainRoutineWork.entrance ==
         GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -142,7 +151,7 @@ static void GomaCaveStream_SpinStump(struct Actor *actor) {
   sprite->rotation -= TRIG_TURN / 32;
 }
 
-#include "shared/actor_wait_below_height.h"
+#include "shared/actor_wait_below_height.c"
 
 /// The stump leaps out of the way and sinks in the water.
 static void GomaCaveStream_LeapStump(s32 stumpId) {
@@ -206,7 +215,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   MapGrid_WaitForShakeToSettle();
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

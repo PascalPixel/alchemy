@@ -5,8 +5,8 @@
 /// The sound driver's command masks, sound controls and the routines and
 /// globals it shares with the rest of the game.
 
-#include "types.h"
 #include "sounds.h"
+#include "types.h"
 
 /// Sound_UpdateCommandMask's command: the new gSoundCommandMask, or
 /// with SOUND_COMMAND_MASK_TOGGLE the bits to flip in it.

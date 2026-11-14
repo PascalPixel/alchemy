@@ -11,13 +11,13 @@
 /// name, the routine keeps it and the inline takes the FieldActor_ prefix, as
 /// FieldActor_JumpDownLedge does.
 
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
-#include "event.h"
-#include "system_call.h"
-#include "far_call.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "gamepak/far_call.h"
+#include "system/system.h"
+#include "system/system_call.h"
 
 /// Turns two actors toward each other, as a conversation between them
 /// begins.

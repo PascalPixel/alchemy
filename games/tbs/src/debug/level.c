@@ -2,17 +2,45 @@
 /// The debug room Increase item and level, whose actors raise the party's
 /// levels, give any item and show the game's icons and portraits.
 
-#include "module/debug/level.h"
-#include "battle.h"
-#include "input.h"
-#include "game.h"
-#include "system.h"
-#include "level.h"
-#include "event_inline.h"
-#include "dma.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "field_psynergy_work.h"
+#include "edition.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_action_run.h"
+#include "battle/playback_queue.h"
+#include "field/event_inline.h"
+#include "field/field_psynergy_work.h"
+#include "field/field_work.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "gamepak/far_call.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/system.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+u8 *Scene_GetEntrances(void);
+u8 *Scene_GetExits(void);
+u8 *Scene_GetActorPlacements(void);
+u8 *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern char gIncreaseItemAndLevel_LvLabel[4];
+extern char gIncreaseItemAndLevel_ItemPrompt[12];
+extern char gIncreaseItemAndLevel_ItemHelp[24];
+extern char gIncreaseItemAndLevel_ItemFull[20];
+extern char gIncreaseItemAndLevel_PsyPrompt[8];
+extern char gIncreaseItemAndLevel_PsyHelp[12];
+extern char gIncreaseItemAndLevel_GlyphsUpper[28];
+extern char gIncreaseItemAndLevel_GlyphsLower[28];
+extern char gIncreaseItemAndLevel_GlyphsMarks[12];
+extern struct SceneEntrance gIncreaseItemAndLevel_Entrances[];
+extern u32 gIncreaseItemAndLevel_Exits[];
+extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
+extern struct Trigger gIncreaseItemAndLevel_Triggers[];
+
+void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
 
 // Edition-specific text and window layout values: outside Japanese the item
 // browser's details window is 28 tiles wide rather than 13, and its
@@ -32,7 +60,7 @@
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
 // ACTOR_LEVEL_EDITOR's scale in 16.16, which the international editions
-// changed (IncreaseItemAndLevel_Initialize).
+// changed (Scene_Initialize).
 #if TBS_PATCH_1
 #define LEVEL_EDITOR_SCALE (Q16_ONE * 8 / 5)
 #else
@@ -66,18 +94,14 @@ enum IncreaseItemAndLevelActorId {
   ACTOR_SECOND_EMOTE_TESTER
 };
 
-u8 *IncreaseItemAndLevel_GetEntrances(void) {
-  return (u8 *)gIncreaseItemAndLevel_Entrances;
-}
+u8 *Scene_GetEntrances(void) { return (u8 *)gIncreaseItemAndLevel_Entrances; }
 
 /// The scene has no exit regions: its regions entry returns none.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *IncreaseItemAndLevel_GetExits(void) {
-  return (u8 *)gIncreaseItemAndLevel_Exits;
-}
+u8 *Scene_GetExits(void) { return (u8 *)gIncreaseItemAndLevel_Exits; }
 
-u8 *IncreaseItemAndLevel_GetActorPlacements(void) {
+u8 *Scene_GetActorPlacements(void) {
   return (u8 *)gIncreaseItemAndLevel_ActorPlacements;
 }
 
@@ -99,9 +123,7 @@ static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
 }
 #endif
 
-u8 *IncreaseItemAndLevel_GetTriggers(void) {
-  return (u8 *)gIncreaseItemAndLevel_Triggers;
-}
+u8 *Scene_GetTriggers(void) { return (u8 *)gIncreaseItemAndLevel_Triggers; }
 
 /// Raises one party member's level by amount, then recalculates that unit.
 static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
@@ -435,7 +457,7 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
 }
 
 /// Sets up the scene: the window transition in, and the level editor's size.
-s32 IncreaseItemAndLevel_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
   Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;
@@ -466,9 +488,7 @@ static void IncreaseItemAndLevel_RunMotionTest(void) {
 static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
   struct Window *window;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 36 bytes it reserves (sub sp, #36), no instruction
-   * addresses the 32 at sp+4 to sp+35; as without it, 4 of 29 instructions
-   * differ in tbs-en. */
+   * touches. */
   UNUSED u8 text[32];
 
   window = Window_Create(0, 13, 30, 6, WINDOW_FLAG_INSTANT);
@@ -480,7 +500,7 @@ static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
 
 /// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run at phase 1 of Force
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
-/// its target where it is (field/event_commands/force.c).
+/// its target where it is (field/event_commands_force.c).
 static void IncreaseItemAndLevel_EnableEffectChildMode(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
@@ -508,24 +528,24 @@ char gIncreaseItemAndLevel_ItemHelp[24] = "A:Get Item  B:Return";
 
 char gIncreaseItemAndLevel_ItemFull[20] = "ITEM FULL........";
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 char gIncreaseItemAndLevel_PsyPrompt[8] = "Psy No:";
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 char gIncreaseItemAndLevel_PsyHelp[12] = "B:Return";
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// The glyph captions' first row; it has no I.
 char gIncreaseItemAndLevel_GlyphsUpper[28] = "A B C D E F G H J K L M N O";
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 char gIncreaseItemAndLevel_GlyphsLower[28] = "P Q R S T U V W X Y Z a b c";
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 char gIncreaseItemAndLevel_GlyphsMarks[12] = "! ? # $ %";
 #endif
 

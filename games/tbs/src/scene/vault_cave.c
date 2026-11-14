@@ -71,33 +71,60 @@
 /// leader faces one cell unless another actor or the terrain is in the way.
 /// The water drops run as tasks started by Scene_Initialize.
 
-#include "main_routine_work.h"
-#include "module/field/field.h"
-#include "system_call.h"
-#include "module/scene/vault_cave.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "text/msg_ids.h"
-#include "event.h"
 #include "ability_ids.h"
 #include "flags.h"
-#include "actor_script.h"
-#include "map_grid_scroll.h"
 #include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_step.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/io_write_queue.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
+
+extern s32 gVaultCave_DirectionSteps[];
+extern const s32 gVaultCave_PuffScript[];
+extern struct SceneEntrance gVaultCave_FallbackEntrances[];
+extern struct SceneEntrance gVaultCavePassage_Entrances[];
+extern struct SceneEntrance gVaultCaveVambrace_Entrances[];
+extern struct SceneEntrance gVaultCaveMouth_Entrances[];
+extern struct SceneExitRegion gVaultCave_Regions[];
+extern u32 gVaultCave_FallbackExits[];
+extern u32 gVaultCavePassage_Exits[];
+extern u32 gVaultCaveVambrace_Exits[];
+extern u32 gVaultCaveMouth_Exits[];
+extern struct ActorPlacement gVaultCave_FallbackActorPlacements[];
+extern struct ActorPlacement gVaultCavePassage_ActorPlacements[];
+extern struct ActorPlacement gVaultCaveVambrace_ActorPlacements[];
+extern struct ActorPlacement gVaultCaveMouth_ActorPlacements[];
+extern struct Trigger gVaultCave_FallbackTriggers[];
+extern struct Trigger gVaultCavePassage_Triggers[];
+extern struct Trigger gVaultCaveVambrace_Triggers[];
+extern struct Trigger gVaultCaveMouth_Triggers[];
+extern u32 gVaultCave_ScheduleFrames[];
+extern s32 gVaultCave_ScheduleTimer;
+extern s32 gVaultCave_ScheduleIndex;
+extern s32 gVaultCave_DropFrames;
+extern s32 gVaultCave_SelectedDrop;
 
 static void VaultCave_ApplySouthernSwitchCells(void);
 static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
 static void VaultCave_SpawnPuffs(struct Actor *source);
-
-#include "io_write_queue.h"
 
 #define TILE(position) ((position) / px(16))
 
@@ -186,13 +213,13 @@ enum VaultCaveMouthActorId {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VaultCavePassage) {
+  if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_Entrances;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
     return gVaultCaveVambrace_Entrances;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_Entrances;
   }
   return gVaultCave_FallbackEntrances;
@@ -206,13 +233,13 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VaultCavePassage) {
+  if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_Exits;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
     return gVaultCaveVambrace_Exits;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_Exits;
   }
   return gVaultCave_FallbackExits;
@@ -222,13 +249,13 @@ const u32 *Scene_GetExits(void) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VaultCavePassage) {
+  if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_ActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
     return gVaultCaveVambrace_ActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_ActorPlacements;
   }
   return gVaultCave_FallbackActorPlacements;
@@ -255,9 +282,6 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   }
   return NULL;
 }
-
-#include "shared/actor_step.h"
-#include "pushed_actor.h"
 
 /// Pushes the faced pillar one cell unless another actor or terrain
 /// blocks it.
@@ -344,13 +368,13 @@ static void VaultCave_ShowLockedDoor(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VaultCavePassage) {
+  if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_Triggers;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
     return gVaultCaveVambrace_Triggers;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_Triggers;
   }
   return gVaultCave_FallbackTriggers;
@@ -860,7 +884,7 @@ static void VaultCave_StartTimedFalls(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_VaultCavePassage) {
+  if (gMainRoutineWork.next == SCENE_VAULT_CAVE_PASSAGE) {
     switch (gMainRoutineWork.entrance) {
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
@@ -884,7 +908,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_VaultCaveVambrace) {
+  if (gMainRoutineWork.next == SCENE_VAULT_CAVE_VAMBRACE) {
     if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
       Actor_Get(ACTOR_IVY)->scaleY = 3 * Q16_ONE / 2;
     }
@@ -948,7 +972,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTHERN_PILLAR), 0);
     Actor_Get(ACTOR_SOUTHERN_PILLAR)->collisionFlags = ACTOR_SOLID;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_VaultCaveMouth) {
+  if (gMainRoutineWork.next == SCENE_VAULT_CAVE_MOUTH) {
     Actor_SetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH,
                        FLAME_PILLAR_ANIMATION_BURNING);
     if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
@@ -986,7 +1010,7 @@ s32 Scene_Initialize(void) {
   // Retreat always returns to the foot of SceneId_VaultCavePassage's ladder
   // from Vault.
   gMainRoutineWork.retreatEntrance = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_VaultCavePassage;
+  gMainRoutineWork.retreatScene = SCENE_VAULT_CAVE_PASSAGE;
   return 0;
 }
 

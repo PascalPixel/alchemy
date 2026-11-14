@@ -47,22 +47,155 @@
 /// (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going back up
 /// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
 
-#include "main_routine_work.h"
-#include "module/scene/lunpa.h"
-#include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "field_effect.h"
-#include "system_call.h"
-#include "scene.h"
-#include "lunpa.h"
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "macros.h"
+#include "sounds.h"
+#include "types.h"
+#include "field/event.h"
+#include "field/field_effect.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "scene/actor_orbit.h"
+#include "scene/catch_nut.h"
+#include "scene/field_effect_spawn.h"
+#include "system/main_routine_work.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
+
+extern struct SceneEntrance gLunpaEntrances[];
+extern struct SceneEntrance gGateEntrances[];
+extern u32 gLunpaExits[];
+extern u32 gGateExits[];
+extern struct ActorPlacement gLunpaActorPlacements[];
+extern struct ActorPlacement gGateActorPlacements[];
+extern struct Trigger gLunpaSealedTriggers[];
+extern struct Trigger gLunpaReopenedTriggers[];
+extern struct Trigger gGateTriggers[];
+
+// Lunpa's and the gates' entrances and exits are in scene_exits.h.
+
+/// The exit the gates' third road
+/// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD) requests, which gGateExits
+/// has no row for. Scene_TakeExit, reaching the end of the gates' exits, falls
+/// back to the event of their first exit at entrance 0, so the road leads to
+/// LunpaFortressGroundFloor's default entrance.
+enum { GATE_EXIT_THIRD = 3 };
+
+/// The first of the rooms in RockRooms that Lunpa's doors lead into.
+enum { ROOM_ENTRANCE_FIRST = 1 };
+
+#define ROOM_ENTRANCE(exit) ((exit) - LUNPA_TO_FIRST_HOME + ROOM_ENTRANCE_FIRST)
+
+/// The cell behaviors Lunpa's triggers answer.
+enum LunpaCellBehavior {
+  CELL_BEHAVIOR_LUNPA_WORLD_MAP_ROAD = 1,
+  CELL_BEHAVIOR_LUNPA_GATE_ROAD,
+  CELL_BEHAVIOR_LUNPA_CAVE_ROAD,
+  CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR,
+  CELL_BEHAVIOR_LUNPA_SECOND_HOME_DOOR,
+  CELL_BEHAVIOR_LUNPA_THIRD_HOME_DOOR,
+  CELL_BEHAVIOR_LUNPA_ARMS_SHOP_DOOR,
+  CELL_BEHAVIOR_LUNPA_ITEM_SHOP_DOOR,
+  CELL_BEHAVIOR_LUNPA_INN_DOOR,
+  CELL_BEHAVIOR_LUNPA_TEMPLE_DOOR,
+  CELL_BEHAVIOR_LUNPA_EIGHTH_ROOM_DOOR,
+  CELL_BEHAVIOR_LUNPA_HIDDEN_PASSAGE,
+  CELL_BEHAVIOR_LUNPA_HIDDEN_SWITCH = 20,
+  CELL_BEHAVIOR_LUNPA_WELL = 90,
+  CELL_BEHAVIOR_LUNPA_GRAVE_SLEEP_BOMB = 100,
+  CELL_BEHAVIOR_LUNPA_BARREL_NUT,
+  CELL_BEHAVIOR_LUNPA_PSYNERGY_STONE
+};
+
+/// The cell behaviors the Lunpa Fortress Gates' triggers answer.
+enum LunpaFortressGatesCellBehavior {
+  CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_DOOR = 1,
+  CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_LUNPA_ROAD,
+  CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD,
+  CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND = 10,
+  CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH = 20,
+  CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_WELL = 90
+};
+
+/// The event the gates' guards raise on spotting the uncloaked party.
+enum LunpaFortressGatesRaisedTrigger { RAISED_PARTY_SPOTTED = 91 };
+
+enum {
+  DOOR_COUNT = 8,
+  DOOR_TEMPLE = CELL_BEHAVIOR_LUNPA_TEMPLE_DOOR -
+      CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR
+};
+
+/// Lunpa's placed actors, numbered in the order of gLunpaActorPlacements
+/// from ACTOR_FIRST_PLACED. The townspeople are named by their sprites and by
+/// what they say before Donpa's judgment.
+enum LunpaActorId {
+  /// The puddle Reveal shows and Frost freezes into a pillar.
+  ACTOR_HIDDEN_PUDDLE = ACTOR_FIRST_PLACED,
+  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
+  ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA,
+  /// A woman with fair hair in a white apron (SPRITE_WOMAN_WITH_FAIR_HAIR).
+  ACTOR_WOMAN_WITH_NO_FREEDOM,
+  /// A stout man with brown hair (SPRITE_STOUT_MAN).
+  ACTOR_MAN_ON_HAMMETS_KIDNAPPING,
+  /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
+  ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD,
+  /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who wanders.
+  ACTOR_OLD_MAN_ON_LUNPA_AND_DONPA,
+  /// An old woman with white hair (SPRITE_OLD_WOMAN).
+  ACTOR_OLD_WOMAN_ON_DONPA,
+  /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR).
+  ACTOR_BOY_ASKING_TO_SEE_DONPA,
+  /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS), who
+  /// wanders.
+  ACTOR_GIRL_ON_THE_CHEFS_MEALS,
+  /// The two soldiers in spiked helmets (SPRITE_SOLDIER_IN_SPIKED_HELMET);
+  /// this one keeps the road in from the World Map.
+  ACTOR_WEST_GUARD,
+  ACTOR_EAST_GUARD, ///< wants Dodonpa's authorization
+  /// The hidden switch's sparkle, shown by Reveal.
+  ACTOR_SWITCH_SPARKLE,
+  /// The Nut that floats over the town, for Catch.
+  ACTOR_FLOATING_NUT
+};
+
+/// The Lunpa Fortress Gates' placed actors, numbered in the order of
+/// gGateActorPlacements from ACTOR_FIRST_PLACED. Garet's row, the third,
+/// takes his own actor, GARET, as every row of a party member's sprite does.
+enum GateActorId { ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED, ACTOR_RIGHT_GUARD };
+
+/// How the switch's sparkle is stretched while Reveal shows it.
+enum { SPARKLE_SCALE_X = 6 * Q16_ONE / 5, SPARKLE_SCALE_Y = 3 * Q16_ONE / 2 };
+
+/// Where Retreat at the gates sends the party
+/// (MainRoutineWork.retreatEntrance).
+enum { GATE_RETREAT_ENTRANCE = 10 };
+
+enum CatchMessage {
+  CATCH_LEFT_GUARD_CHALLENGES,
+  CATCH_RIGHT_GUARD_WONDERS,
+  CATCH_LEFT_GUARD_REFUSES_ENTRY,
+  CATCH_RIGHT_GUARD_SENDS_PARTY_OFF
+};
+
+enum RecognitionMessage { RECOGNITION_SEEN_THAT_MAN, RECOGNITION_IMPOSSIBLE };
+
+enum { ANIM_SPRAWLED = 19 };
+
+enum { PILLAR_TOP_HEIGHT = px(16), CELL_SIZE = px(16) };
+
+enum { TREASURE_SPOT_PSYNERGY_STONE = 102 };
+
+extern struct MapGridCellAnimation gLunpaDoors[];
 
 static void Lunpa_WatchForUncloakedParty(void);
 
 enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Frost has frozen the hidden puddle into an ice pillar to stand on.
 #define FLAG_LUNPA_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
@@ -81,7 +214,7 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 /// The guards have caught the party and are marching it down the steps.
 #define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_SCENE_TEMP_44
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -92,10 +225,10 @@ const s32 *gFieldEffect_DurationScripts[] = {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Lunpa) {
+  if (sceneId == SCENE_LUNPA) {
     return gLunpaEntrances;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GATES) {
     return gGateEntrances;
   }
   return gLunpaEntrances;
@@ -106,10 +239,10 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Lunpa) {
+  if (sceneId == SCENE_LUNPA) {
     return gLunpaExits;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GATES) {
     return gGateExits;
   }
   return gLunpaExits;
@@ -119,16 +252,14 @@ const u32 *Scene_GetExits(void) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Lunpa) {
+  if (sceneId == SCENE_LUNPA) {
     return gLunpaActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GATES) {
     return gGateActorPlacements;
   }
   return gLunpaActorPlacements;
 }
-
-#include "shared/catch_nut.h"
 
 /// Lunpa: Catch on the Nut floating over the town gives it to the party.
 static void Lunpa_CatchFloatingNut(void) {
@@ -225,8 +356,6 @@ static void Lunpa_RevealSecrets(void) {
 
 /// Lunpa, as Reveal ends and on every entry: the secrets hide again.
 static void Lunpa_HideSecrets(void) {
-  struct Actor *puddle;
-
   Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
   Actor_SetPosition(ACTOR_HIDDEN_PUDDLE, 0, 0);
@@ -238,8 +367,7 @@ static void Lunpa_HideSecrets(void) {
   MapGrid_CopyCells(32, 42, 3, 2, 1, 15);
   GameFlag_Clear(FLAG_LUNPA_PUDDLE_FROZEN);
   Actor_SetAnimation(ACTOR_HIDDEN_PUDDLE, ANIM_STAND);
-  puddle = Actor_Get(ACTOR_HIDDEN_PUDDLE);
-  puddle->update = NULL;
+  Actor_Get(ACTOR_HIDDEN_PUDDLE)->update = NULL;
   Actor_SetColorMode(Actor_Get(ACTOR_HIDDEN_PUDDLE), 0);
   Task_Remove(Lunpa_UpdateIcePillarDrawOrder);
   GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
@@ -260,12 +388,11 @@ static void Lunpa_SearchWell(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GATES) {
     GameFlag_Get(FLAG_DODONPA_LOCKED_UP);
     return gGateTriggers;
   }
-  if (sceneId == (s32)&SceneId_Lunpa &&
-      GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (sceneId == SCENE_LUNPA && GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     return gLunpaReopenedTriggers;
   }
   return gLunpaSealedTriggers;
@@ -885,7 +1012,7 @@ static void Lunpa_LeaderSneaksOut(void) {
 s32 Scene_Initialize(void) {
   struct Actor *puddle;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_Lunpa) {
+  if (gMainRoutineWork.next == SCENE_LUNPA) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Lunpa_HideSecrets();
     if (GameFlag_Get(FLAG_LUNPA_NUT_CAUGHT) == 0) {
@@ -897,7 +1024,7 @@ s32 Scene_Initialize(void) {
     }
     GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressGates) {
+  if (gMainRoutineWork.next == SCENE_LUNPA_FORTRESS_GATES) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gMainRoutineWork.retreatEntrance = GATE_RETREAT_ENTRANCE;
     if (gMainRoutineWork.entrance == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
@@ -933,7 +1060,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing)                                 \
   {(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}

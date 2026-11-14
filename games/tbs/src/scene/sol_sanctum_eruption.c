@@ -4,7 +4,7 @@
 /// it collapses once the Mars Star is taken.
 ///
 /// The scene is one event, with no triggers of its own.
-/// SolSanctumEruption_Initialize plays it on arrival at
+/// Scene_Initialize plays it on arrival at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, in two parts:
 /// - SolSanctumEruption_PlayHostageEvent: the chamber quakes, and the Wise One
 ///   appears and stills it. Saturos's group leaves with Jenna and Kraden,
@@ -36,35 +36,73 @@
 /// over a shadow that shrinks with him. The platform's actor,
 /// ACTOR_PLATFORM_SHADOW, draws that shadow.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "module/scene/sol_sanctum_eruption.h"
-#include "module/scene/shared/event_psynergy.h"
-#include "module/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "sol_sanctum_eruption.h"
-#include "event_inline.h"
-#include "iwram_call.h"
-#include "field_effect.h"
-#include "text/msg_ids.h"
-#include "heap_slots.h"
-#include "vram_cache.h"
-#include "macros.h"
 #include "flags.h"
-#include "io_reg.h"
-#include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "field_psynergy_work.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/ground_mask.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/event_psynergy.h"
+#include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "text/msg_ids.h"
+
+u8 gSolSanctumEruption_Unk_0[8] BSS_DATA;
+s32 gEmberState[16] BSS_DATA;
+s32 gEmberTimer BSS_DATA;
+u8 gSolSanctumEruption_Unk_4c[12] BSS_DATA;
+struct Actor *gArcEffects[12] BSS_DATA;
+s32 gArcEffectTimers[10] BSS_DATA;
+s32 gEmberMask BSS_DATA;
+s32 gEmberLevel BSS_DATA;
+s32 gEmberLevelTimer BSS_DATA;
+
+s32 Scene_Initialize(void);
+extern s32 gEruption_ArcOrigins[];
+extern struct SceneEntrance gSolSanctumEruption_Entrances[];
+extern u32 gSolSanctumEruption_Exits[];
+extern struct ActorPlacement gSolSanctumEruption_ActorPlacements[];
+extern struct Trigger gSolSanctumEruption_Triggers[];
+extern s32 gEruption_EmberScript[];
+extern u8 gSolSanctum_RingDrift[][3];
+extern u8 gSolSanctum_RingSwing[][3];
+extern s8 gSolSanctum_RingDirection[][3];
+extern s32 gSolSanctum_RingMaxScales[];
+extern s32 gSolSanctum_RingScaleSteps[];
+
+enum CollapseActorId {
+  /// The shadow on the platform under each who leaves with Saturos: a
+  /// blank actor, whose sprite draws only its shadow, shrunk with
+  /// the departing actor, whose own shadow is turned off
+  /// (SolSanctumEruption_RaiseAndShrinkActor).
+  ACTOR_PLATFORM_SHADOW = ACTOR_FIRST_PLACED,
+  ACTOR_KRADEN,
+  ACTOR_SATUROS,
+  ACTOR_MENARDI,
+  /// Felix in his mask, before the star room unmasks him.
+  ACTOR_FELIX_MASKED,
+  ACTOR_FELIX,
+  ACTOR_ALEX
+};
 
 /// Saturos's group has started to leave, and the embers fall without their
 /// sound.
@@ -118,25 +156,21 @@ enum { ACTOR_ELEMENTAL_STAR = 22 };
 #define EMBER_EMISSION_DISABLED 999
 #define ARC_SCAN_STILL_ACTIVE 888
 
-const struct SceneEntrance *SolSanctumEruption_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumEruption_Entrances;
 }
 
-const struct SceneExitRegion *SolSanctumEruption_GetRegions(void) {
-  return NULL;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *SolSanctumEruption_GetExits(void) {
-  return gSolSanctumEruption_Exits;
-}
+const u32 *Scene_GetExits(void) { return gSolSanctumEruption_Exits; }
 
 /// Returns everyone the event moves, all placed off the map until it does.
-const struct ActorPlacement *SolSanctumEruption_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSolSanctumEruption_ActorPlacements;
 }
 
 /// Returns the empty trigger table, because the scene is one event.
-const struct Trigger *SolSanctumEruption_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumEruption_Triggers;
 }
 
@@ -224,8 +258,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
   // The Wise One, a floating rock, appears over the chamber and the quake
   // stops.
-  actor = Actor_Get(ACTOR_WISE_ONE);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_WISE_ONE), 0);
   Actor_SetPosition(ACTOR_WISE_ONE, 325, 302);
   actor = Actor_Get(ACTOR_WISE_ONE);
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
@@ -537,7 +570,6 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   struct Actor *actor;
   struct Actor *shadow;
-  struct Actor *target;
   u8 frame;
 
   shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
@@ -548,8 +580,7 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Event_Wait(10);
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   actor = Actor_Get(actorId);
-  target = Actor_Get(actorId);
-  Actor_SetSpriteFlags(target, 0);
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_BLINK);
   actor->motionFlags = 0;
   Sound_Play(SE_ASCEND);
@@ -581,7 +612,7 @@ UNUSED static void SolSanctumEruption_UnusedNoOpA(void) {}
 UNUSED static void SolSanctumEruption_UnusedNoOpB(void) {}
 
 /// Plays the collapse after the cut from the Elemental Star Room.
-s32 SolSanctumEruption_Initialize(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
     FieldEffect_InitializeSparkles();
@@ -1629,14 +1660,14 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
 /// Stretches each active arc for eight frames, then lifts it out of view.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
   u32 arcIndex;
-  s32 age;
+  u32 age;
   struct Actor *actor;
 
   for (arcIndex = 0; arcIndex <= 9; arcIndex++) {
     age = gArcEffectTimers[arcIndex];
     if (age != 0) {
       actor = gArcEffects[arcIndex];
-      if ((u32)age <= 8) {
+      if (age <= 8) {
         actor->scaleX -= ELEMENTAL_ARC_SCALE_X_DECREASE;
         actor->scaleY += Q16_ONE / 2;
         actor->y.fixed += px(3) / 10;
@@ -1647,7 +1678,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
       }
       age = gArcEffectTimers[arcIndex] + 1;
       gArcEffectTimers[arcIndex] = age;
-      if ((u32)age > 14) {
+      if (age > 14) {
         gArcEffectTimers[arcIndex] = 0;
       }
     }
@@ -1729,7 +1760,7 @@ static void SolSanctumEruption_CycleActorPalette(struct Actor *actor) {
   }
 }
 
-#include "shared/field_effect_vertical.h"
+#include "shared/field_effect_vertical.c"
 
 /// Creates two vertical effects sharing the parent position and cached tiles.
 static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
@@ -1778,14 +1809,14 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Cycles the Wise One's palette while it glows.
 static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Actor_Get(ACTOR_WISE_ONE));
 }
 
-#include "shared/sol_sanctum_elemental_star_ring_setup.h"
+#include "shared/sol_sanctum_elemental_star_ring_setup.c"
 
 s32 gEruption_ArcOriginsHead[] = {
     SC_SET(SW_VELOCITY_Y, px(6)),
@@ -1896,5 +1927,5 @@ s32 gEruption_EmberScript[] = {
     SC_END,
 };
 
-#include "shared/sol_sanctum_elemental_star_ring_tables.h"
+#include "shared/sol_sanctum_elemental_star_ring_tables.c"
 // clang-format on

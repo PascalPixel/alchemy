@@ -37,7 +37,7 @@
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
 // IWRAM variables the code reaches as constants; German moves them 16 bytes up.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
 #define Ram_VramCacheEntries                                                   \
   FIXED_ADDRESS((u8 *), 0x03001b20, gVramCacheEntries)

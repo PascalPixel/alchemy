@@ -2,14 +2,14 @@
 /// The World Map's tilt: each line of the screen draws the flat map at its
 /// own scale and turn, so the ground seems to stretch away to a horizon.
 
-#include "module/field/world_map_lines.h"
-#include "types.h"
-#include "frame.h"
-#include "mul_q16.h"
-#include "projection.h"
-#include "static_assert.h"
-#include "vector3.h"
+#include "field/world_map_lines.h"
 #include "fixed_math.h"
+#include "static_assert.h"
+#include "types.h"
+#include "system/frame.h"
+#include "system/mul_q16.h"
+#include "system/projection.h"
+#include "system/vector3.h"
 
 #define VISIBLE_SCANLINES 160
 
@@ -155,8 +155,7 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
         // the line and a quarter step across it, so alternate frames sample
         // between each other's texels.
         /* FAKEMATCH(temporary): sampleOffset takes a copy of line->u for the
-         * second sum; as line->u in that sum, 6 of 157 instructions differ in
-         * tbs-en. */
+         * second sum. */
         s32 sampleOffset;
 
         sampleOffset = ((originX + line->dx) >> 8) + line->v / 4 + line->u / 2;

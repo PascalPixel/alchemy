@@ -3,9 +3,9 @@
 /// Colosso finals and the fights with Saturos have their own, and every other
 /// battle plays the usual battle music.
 
-#include "module/field/battle_music.h"
-#include "module/field/field_sequence.h"
+#include "field/battle_music.h"
 #include "sounds.h"
+#include "field/field_sequence.h"
 
 /// Battle music: which battles have music of their own
 /// (Encounter_SelectBattleMusic).

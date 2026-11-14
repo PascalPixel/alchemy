@@ -7,14 +7,13 @@
 /// which is the window height less its two border rows. Glyph_Draw and
 /// ScanlineWindow_FillSpans copy these routines into RAM for each call.
 
-#include "module/window/glyph_arm.h"
-#include "types.h"
-#include "window.h"
-#include "glyph.h"
-#include "text_font.h"
+#include "window/glyph_arm.h"
 #include "edition.h"
-#include "graphics.h"
-#include "module/window/window.h"
+#include "types.h"
+#include "graphics/glyph.h"
+#include "graphics/graphics.h"
+#include "window/text_font.h"
+#include "window/window.h"
 
 // ARM code copied to RAM, as the tree walker is: RamCode_Load takes IWRAM
 // when the copy fits, whose 32-bit bus fetches an ARM instruction in one read,
@@ -52,37 +51,34 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
   const u16 *glyphRows;
   u32 glyphWidth;
   u32 outlinePass;
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
   u32 advance;
 #endif
   u32 windowHeight;
   u32 row;
   u32 nextRow;
   u32 column;
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
   u32 glyphIndex;
 #endif
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-  /* LEFTOVER(frame): an unused local the tbs-ja ROM's frame reserves and
-   * never touches: of the 100 bytes it reserves (sub sp, sp, #100), no
-   * instruction addresses the 64 at sp+36 to sp+99, and The Lost Age's
-   * Glyph_DrawArm reserves the same 64 in tla-ja alone; as
-   * without it, 6 of 193 instructions differ in tbs-ja. */
+#if LANGUAGE == LANGUAGE_JAPANESE
+  /* LEFTOVER(frame): an unused local the tbs-ja ROM's frame reserves and never
+   * touches. */
   UNUSED struct GlyphRect unusedStackFrame[4];
 #endif
 
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
   // The English font accepts printable codes 32 through 143.
   glyphIndex = character - 32;
 #endif
   windowHeight = window->height;
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
   if (glyphIndex > 111)
     return 1;
 #endif
 
   // character - TEXT_MARK_VOICED <= 1, unsigned, is either kana mark.
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
   if (character <= 255 || (font != NULL && character - TEXT_MARK_VOICED <= 1))
 #else
   if (character <= 255 || font != NULL)
@@ -98,7 +94,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
       u32 bits;
 #endif
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
       u32 fontWidth;
 
       // The small font: 10 rows of a byte, bit 0 the leftmost pixel, in colour
@@ -154,7 +150,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
       foregroundColor = 0x1111;
       secondaryColor = 0x3333;
       row = 0;
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
       fontWidth = gFont_GlyphWidths[glyphIndex];
 #else
       fontWidth = gFont_GlyphWidths[character - 32];
@@ -201,7 +197,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
     glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 26);
     glyphWidth = *glyphRows++;
   } else {
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
     glyphWidth = 10;
     glyphRows = (const u16 *)(gFont_KanjiGlyphs + (character - 256) * 24);
 #else
@@ -210,7 +206,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
     glyphRows += 4;
 #endif
   }
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
   if (character - TEXT_MARK_VOICED <= 1) {
     x -= 3;
     y -= 2;
@@ -277,7 +273,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
       }
     }
   }
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
   return advance;
 #else
   return glyphWidth;

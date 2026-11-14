@@ -29,7 +29,7 @@
 ///
 /// SceneId_SolSanctumReliefs is one scene, but each relief room has actor
 /// placement and trigger tables of its own.
-/// SolSanctumEntrance_GetActorPlacements and _GetTriggers choose them by the
+/// Scene_GetActorPlacements and _GetTriggers choose them by the
 /// entrance the party came in at, so a room's statues and their events exist
 /// only while the party is in it.
 ///
@@ -50,24 +50,84 @@
 /// other door. And it makes the three CELL_BEHAVIOR_SOL_ENTRANCE_DOOR cells
 /// before it plain ground.
 
-#include "main_routine_work.h"
-#include "module/import.h"
-#include "module/scene/sol_sanctum_entrance.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "sol_sanctum_entrance.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
+#include "flags.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+extern struct SceneEntrance gSolSanctumEntrance_FallbackEntrances[];
+extern struct SceneEntrance gSolEntrance_Entrances[];
+extern struct SceneEntrance gSolSanctumReliefs_Entrances[];
+extern u32 gSolSanctumEntrance_Exits[];
+extern struct ActorPlacement gSolSanctumEntrance_FallbackActorPlacements[];
+extern struct ActorPlacement gSolSanctumReliefs_ActorPlacements[];
+extern struct ActorPlacement
+    gSolSanctumReliefs_FirstReliefRoomActorPlacements[];
+extern struct ActorPlacement
+    gSolSanctumReliefs_SecondReliefRoomActorPlacements[];
+extern struct ActorPlacement gSolEntrance_ActorPlacements[];
+extern struct Trigger gSolSanctumEntrance_FallbackTriggers[];
+extern struct Trigger gSolEntrance_Triggers[];
+extern struct Trigger gSolSanctumReliefs_Triggers[];
+extern struct Trigger gSolSanctumReliefs_FirstReliefRoomTriggers[];
+extern struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[];
+extern s32 gSolSanctumPushSteps[];
+
+/// In Sol Sanctum (SceneId_SolSanctumReliefs), Kraden follows the party; Garet
+/// and Jenna, placed before him, take their own party slots.
+enum { ACTOR_KRADEN = ACTOR_FIRST_PLACED };
+
+/// At Sol Entrance (SceneId_SolEntrance), the one placed actor is a man
+/// with long brown hair and a beard in a long robe, who stands in the path once
+/// the party has left Vale and warns everyone away while Mt. Aleph is active;
+/// read with Mind Read, he is all alone in this dangerous place and asks how
+/// the Great Healer can treat him like this.
+enum { ACTOR_WARNING_MAN = ACTOR_FIRST_PLACED };
+
+/// The statues, placed after Kraden. They share one sprite, which Kraden calls
+/// statues ("More statues..."). Outside the two rooms below, Sol Sanctum places
+/// one, in the statue nook off the first relief room
+/// (SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM).
+enum { ACTOR_STATUE = ACTOR_FIRST_PLACED + 1 };
+
+/// The first relief room's eleven statues: the two that can be pushed,
+/// then nine that cannot.
+enum {
+  ACTOR_WEST_STATUE = ACTOR_FIRST_PLACED + 1,
+  ACTOR_EAST_STATUE,
+  /// The first of the nine.
+  ACTOR_FIRST_FIXED_STATUE
+};
+
+/// The second relief room's row of six, each of which can be pushed a cell
+/// east or west; alike, they are numbered west to east, each starting 64 pixels
+/// east of the one before (SolSanctumEntrance_RestoreInteriorState).
+enum {
+  ACTOR_ROW_STATUE_1 = ACTOR_FIRST_PLACED + 1,
+  ACTOR_ROW_STATUE_2,
+  ACTOR_ROW_STATUE_3,
+  ACTOR_ROW_STATUE_4,
+  ACTOR_ROW_STATUE_5,
+  ACTOR_ROW_STATUE_6
+};
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -145,35 +205,33 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void);
 static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors);
 static void SolSanctumEntrance_UpdateEruptionRumbles(void);
 
-s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
+s32 gSolSanctumEntrance_RumbleTimer BSS_DATA;
 
 /// Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol
 /// Sanctum's (SceneId_SolSanctumReliefs).
-const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_SolEntrance) {
+  if (sceneId == SCENE_SOL_ENTRANCE) {
     return gSolEntrance_Entrances;
   }
-  if (sceneId == (s32)&SceneId_SolSanctumReliefs) {
+  if (sceneId == SCENE_SOL_SANCTUM_RELIEFS) {
     return gSolSanctumReliefs_Entrances;
   }
   return gSolSanctumEntrance_FallbackEntrances;
 }
 
-const struct SceneExitRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *SolSanctumEntrance_GetExits(void) {
-  return gSolSanctumEntrance_Exits;
-}
+const u32 *Scene_GetExits(void) { return gSolSanctumEntrance_Exits; }
 
 /// Selects the actors for the scene and, in Sol Sanctum, the room.
-const struct ActorPlacement *SolSanctumEntrance_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_SolSanctumReliefs) {
+  if (gMainRoutineWork.next == SCENE_SOL_SANCTUM_RELIEFS) {
     if (gMainRoutineWork.entrance >= firstStatueRoomEntrance) {
       if (gMainRoutineWork.entrance >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
@@ -189,22 +247,22 @@ const struct ActorPlacement *SolSanctumEntrance_GetActorPlacements(void) {
     Scene_AssignViewFlags(table);
     return table;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_SolEntrance) {
+  if (gMainRoutineWork.next == SCENE_SOL_ENTRANCE) {
     return gSolEntrance_ActorPlacements;
   }
   return gSolSanctumEntrance_FallbackActorPlacements;
 }
 
 /// Selects the events for the scene and room, by the same entrances as
-/// SolSanctumEntrance_GetActorPlacements.
-const struct Trigger *SolSanctumEntrance_GetTriggers(void) {
+/// Scene_GetActorPlacements.
+const struct Trigger *Scene_GetTriggers(void) {
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_SolEntrance) {
+  if (gMainRoutineWork.next == SCENE_SOL_ENTRANCE) {
     return gSolEntrance_Triggers;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_SolSanctumReliefs) {
+  if (gMainRoutineWork.next == SCENE_SOL_SANCTUM_RELIEFS) {
     if (gMainRoutineWork.entrance >= firstStatueRoomEntrance) {
       if (gMainRoutineWork.entrance >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
@@ -496,7 +554,7 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-#include "shared/actor_find_at_cell.h"
+#include "shared/actor_find_at_cell.c"
 
 /// The party has entered the second relief room, which turns off Move on the
 /// first relief room's statues.
@@ -558,12 +616,12 @@ static void SolSanctumEntrance_PushStatue(void) {
 }
 
 /// Sets up Sol Entrance or Sol Sanctum.
-s32 SolSanctumEntrance_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_SolEntrance) {
+  if (sceneId == SCENE_SOL_ENTRANCE) {
     SolSanctumEntrance_ApplyEntryState();
-  } else if (sceneId == (s32)&SceneId_SolSanctumReliefs) {
+  } else if (sceneId == SCENE_SOL_SANCTUM_RELIEFS) {
     SolSanctumEntrance_RestoreInteriorState();
   }
   return 0;
@@ -623,7 +681,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
-    gMainRoutineWork.retreatScene = (s32)&SceneId_SolSanctumReliefs;
+    gMainRoutineWork.retreatScene = SCENE_SOL_SANCTUM_RELIEFS;
     gMainRoutineWork.retreatEntrance = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
@@ -1116,23 +1174,15 @@ static void SolSanctumEntrance_DoorTightlyLocked(void) {
 /// Sol Entrance after the eruption: the ground rumbles now and then, and each
 /// shake fades.
 static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
-  s32 randomValue;
-  s32 *timer;
-  s32 remainingFrames;
-
-  timer = &gSolSanctumEntrance_RumbleTimer;
-  if (*timer != 0) {
-    remainingFrames = (*timer - 1);
-    *timer = (*timer - 1);
-    if (remainingFrames == 40) {
+  if (gSolSanctumEntrance_RumbleTimer != 0) {
+    if (--gSolSanctumEntrance_RumbleTimer == 40) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
   } else {
-    randomValue = Random_Next();
-    if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
+    if (Random_Below(120) == 0) {
       Sound_Play(SE_ITEM_BREAK);
       MapGrid_SetShake(1, 2, 1);
-      *timer = 80;
+      gSolSanctumEntrance_RumbleTimer = 80;
     }
   }
 }

@@ -43,8 +43,8 @@
 // The European editions' Colosso lettering keeps 192 bytes of palettes
 // before its tiles instead of 160, and the Battle Arena's opponent names take
 // up to 8 letters of prefix, then a space, instead of 5.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define COLOSSO_PALETTE_BYTES 192
 #define LOBBY_PREFIX_LIMIT 7
 #else
@@ -54,8 +54,8 @@
 
 // The Kalay and Tolbi docks' ticket counter: its coins window, wider in the
 // European editions, and where the number sits in it.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TICKET_COUNTER_WINDOW_X 18
 #define TICKET_COUNTER_WIDTH 12
 #define TICKET_COUNTER_X 32
@@ -79,7 +79,7 @@
 #define SWITCH_HELP_X 64
 #define PAGE_ROWS 6
 #define MENU_ROW_COUNT 4
-#elif (LANGUAGE == LANGUAGE_GERMAN)
+#elif LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_LIST_X 14
 #define SHOP_LIST_WIDTH 16
 #define HELP_TEXT_X 0
@@ -99,7 +99,7 @@
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SHOP_MONEY_WIDTH 11
 #define SHOP_PRICE_WIDTH 14
-#elif (LANGUAGE == LANGUAGE_GERMAN)
+#elif LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_MONEY_WIDTH 12
 #define SHOP_PRICE_WIDTH 16
 #else
@@ -108,7 +108,7 @@
 #endif
 
 // The window that announces a Djinni joining, wider in Italian.
-#if (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ITALIAN
 #define DJINN_JOIN_X 1
 #define DJINN_JOIN_WIDTH 28
 #else
@@ -132,7 +132,7 @@
 #define OPTION_CHOICE_X 84
 #define OPTION_SETTING_X 160
 #define OPTION_SETTING_END 184
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
 #define OPTION_SPEED_END 208
 #else
 #define OPTION_SPEED_END 200
@@ -140,18 +140,18 @@
 #endif
 
 // Where the item menu puts its "in stock" label after the count.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define STOCK_LABEL_X 32
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define STOCK_LABEL_X 30
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define STOCK_LABEL_X 29
 #else
 #define STOCK_LABEL_X 24
 #endif
 
 // Lucky Wheels: its title's letters and where they start (nine in Spanish).
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
 #define LUCKY_WHEELS_TITLE_LETTERS 9
 #define LUCKY_WHEELS_TITLE_X 8
 #else
@@ -180,7 +180,7 @@
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_STOP_X 23
 #define LUCKY_WHEELS_STOP_WIDTH 7
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define LUCKY_WHEELS_STOP_X 21
 #define LUCKY_WHEELS_STOP_WIDTH 9
 #define LUCKY_WHEELS_ALL_HELD_X 6
@@ -191,7 +191,7 @@
 #define LUCKY_WHEELS_HOLD_WIDTH 8
 #define LUCKY_WHEELS_RELEASE_X 22
 #define LUCKY_WHEELS_RELEASE_WIDTH 8
-#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_ITALIAN
 #define LUCKY_WHEELS_STOP_X 18
 #define LUCKY_WHEELS_STOP_WIDTH 12
 #define LUCKY_WHEELS_ALL_HELD_X 10
@@ -202,7 +202,7 @@
 #define LUCKY_WHEELS_HOLD_WIDTH 9
 #define LUCKY_WHEELS_RELEASE_X 21
 #define LUCKY_WHEELS_RELEASE_WIDTH 9
-#elif (LANGUAGE == LANGUAGE_GERMAN)
+#elif LANGUAGE == LANGUAGE_GERMAN
 #define LUCKY_WHEELS_STOP_X 18
 #define LUCKY_WHEELS_STOP_WIDTH 12
 #define LUCKY_WHEELS_ALL_HELD_X 11
@@ -243,8 +243,8 @@
 // area (AreaNameWindow_Show).
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define RENDER_RESOURCE_BASE 2516
-#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||       \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||           \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define RENDER_RESOURCE_BASE 3039
 #else
 #define RENDER_RESOURCE_BASE 2459
@@ -272,8 +272,8 @@
 #endif
 
 // Where the save screen's file list puts the leader's name.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define FILE_LIST_NAME_X 6
 #else
 #define FILE_LIST_NAME_X 12

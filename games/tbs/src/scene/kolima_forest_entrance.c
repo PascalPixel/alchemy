@@ -29,33 +29,51 @@
 /// every scene temp flag it is cleared when the party next comes in, so the log
 /// is back on the bank, but a battle keeps it.
 
-#include "script_operands.h"
 #include "flags.h"
-#include "character_ids.h"
-#include "main_routine_work.h"
-#include "heap_slots.h"
-#include "module/import.h"
-#include "module/scene/kolima_forest_entrance.h"
-#include "module/scene/shared/kolima_forest_bridge_falling_effect.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "system_call.h"
-#include "kolima.h"
-#include "pushed_actor.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/pushed_actor.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/character_ids.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/kolima.h"
+#include "scene/kolima_forest_bridge_falling_effect.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
 #include "text/msg_ids.h"
-#include "actor_script.h"
-#include "io_reg.h"
-#include "sound_driver_symbols.h"
+
+extern s32 gKolimaForestEntrance_GaretAction[];
+extern s32 gKolimaForestEntrance_IvanAction[];
+extern s32 gKolimaForestEntrance_MiaAction[];
+extern s32 gKolima_PartySquashActions[];
+extern s32 gKolima_PartyRestoreScaleActions[];
+extern s32 gKolimaForestEntrance_PsynergyFieldGrowAction[];
+extern s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[];
+extern s32 gKolimaForestEntrance_GroundSparkleAction[];
+extern struct SceneEntrance gKolimaForestEntrance_Entrances[];
+extern u32 gKolimaForestEntrance_Exits[];
+extern struct ActorPlacement gKolimaForestEntrance_ActorPlacements[];
+extern struct Trigger gKolimaForestEntrance_Triggers[];
+extern s32 gKolimaForestEntrance_SparkleScript[];
+extern s32 gKolimaForestEntrance_SparkleBurstScript[];
+extern s32 gFallingEffectScript[];
 
 /// The scene's actors after Garet's, Ivan's and Mia's party slots,
 /// numbering the rows of gKolimaForestEntrance_ActorPlacements from
@@ -86,7 +104,7 @@ static void KolimaForestEntrance_FaceActorAndWait(s32 actorId, s32 facing,
 static void KolimaForestEntrance_SpawnCurseSparkle(void);
 static void KolimaForestEntrance_FlickerPsynergyFields(void);
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
@@ -105,38 +123,33 @@ static s32 KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *actor) {
 
 /// Each frame, a ground sparkle's timer runs on at random.
 static s32 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *actor) {
-  s16 *counter = &actor->timer;
-  *counter = (*counter + (Random_Below(100)));
-  if (*counter > 1000)
+  actor->timer = (actor->timer + (Random_Below(100)));
+  if (actor->timer > 1000)
     Actor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else
     Actor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
-  if (*counter > 1200) {
+  if (actor->timer > 1200) {
     u16 z = 0;
-    *counter = z;
+    actor->timer = z;
   }
   return 1;
 }
 
 /// Where the party enters, from the next scene of the forest
 /// (SceneId_KolimaForestGlade) and from the World Map.
-const struct SceneEntrance *KolimaForestEntrance_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestEntrance_Entrances;
 }
 
-const struct SceneExitRegion *KolimaForestEntrance_GetRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// The ways on into the forest (SceneId_KolimaForestGlade) and back to the
 /// World Map.
-const u32 *KolimaForestEntrance_GetExits(void) {
-  return gKolimaForestEntrance_Exits;
-}
+const u32 *Scene_GetExits(void) { return gKolimaForestEntrance_Exits; }
 
 /// The party's companions, the logs, Tret, Laurel, the Psynergy fields and the
 /// ground sparkles.
-const struct ActorPlacement *KolimaForestEntrance_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestEntrance_ActorPlacements;
 }
 
@@ -167,16 +180,16 @@ static void KolimaForestEntrance_PushLog(void) {
   Event_End();
 }
 
-#include "shared/kolima_jump.h"
+#include "shared/kolima_jump.c"
 
 /// The logs, the hop east from the bank and the two ways out.
-const struct Trigger *KolimaForestEntrance_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestEntrance_Triggers;
 }
 
 /// On entry a log already in the river floats there again and the logs mark the
 /// cells they cover.
-s32 KolimaForestEntrance_Initialize(void) {
+s32 Scene_Initialize(void) {
   Scene_RedrawActorFootprint(ACTOR_RIVER_LOG);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
     Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -453,10 +466,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
-  if (gFallingEffectState != KOLIMA_DUST_CENTRED) {
-    do {
-      wait(1);
-    } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
+  while (gFallingEffectState != KOLIMA_DUST_CENTRED) {
+    wait(1);
   }
   Event_Wait(300);
   Task_Remove(Kolima_UpdateCurseDust);
@@ -1033,7 +1044,7 @@ static void KolimaForestEntrance_FaceActorAndWait(s32 actorId, s32 facing,
   Event_Wait(waitFrames);
 }
 
-#include "shared/kolima_grow.h"
+#include "shared/kolima_grow.c"
 
 /// Every eighth frame a sparkle of Tret's glamour (SPRITE_GOLDEN_RINGS) falls
 /// toward the party, with its tinkle while the rain is at its height.
@@ -1041,7 +1052,6 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   struct Actor *sparkle;
   struct Sprite *sprite;
   s32 framePhase;
-  s32 priorityFlags;
   s32 spawnX = px(231);
   s32 spawnZ = px(460);
   s32 targetX = px(231);
@@ -1057,9 +1067,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
     return;
   sprite = sparkle->sprite;
   sprite->flags = framePhase;
-  priorityFlags = 0xff & ~ACTOR_PRIORITY_AUTOMATIC;
-  priorityFlags &= sparkle->priorityFlags;
-  sparkle->priorityFlags = priorityFlags;
+  sparkle->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
   sparkle->scaleX = Q16_ONE / 10;
   sparkle->speedLimit = px(8);
@@ -1070,7 +1078,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   Actor_StartScript(sparkle, gKolimaForestEntrance_SparkleScript);
 }
 
-#include "shared/kolima_blink.h"
+#include "shared/kolima_blink.c"
 
 /// The end of a sparkle's fall: one that lands on a field (the Psynergy fields'
 /// area, which differs with Mia) bursts with a sound, and the Psynergy fields
@@ -1105,10 +1113,10 @@ static s32 KolimaForestEntrance_BurstOnPsynergyField(struct Actor *sparkle) {
   return 0;
 }
 
-#include "shared/kolima_forest_bridge_falling_effect.h"
-s32 gKolimaForestEntrance_PsynergyFieldHit __attribute__((section(".bss")));
-s32 gKolimaForestEntrance_MiaInParty __attribute__((section(".bss")));
-s32 gKolimaForestEntrance_SparkleSoundOn __attribute__((section(".bss")));
+#include "shared/kolima_forest_bridge_falling_effect.c"
+s32 gKolimaForestEntrance_PsynergyFieldHit BSS_DATA;
+s32 gKolimaForestEntrance_MiaInParty BSS_DATA;
+s32 gKolimaForestEntrance_SparkleSoundOn BSS_DATA;
 
 /// Each frame the Psynergy fields flicker: two show on even frames and two on
 /// odd, the hidden ones lifted 500 pixels out of sight.
@@ -1153,7 +1161,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
   }
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 // clang-format on
 
@@ -1176,7 +1184,7 @@ s32 gKolimaForestEntrance_MiaAction[] = {
     SC_ANIMATION(1), SC_END,
 };
 
-#include "shared/kolima_squash.h"
+#include "shared/kolima_squash.c"
 
 /// A field grows from a tenth of its size over 70 frames.
 s32 gKolimaForestEntrance_PsynergyFieldGrowAction[] = {

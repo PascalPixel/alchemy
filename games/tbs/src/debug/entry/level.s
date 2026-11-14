@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer IncreaseItemAndLevel_Initialize
-	overlay_veneer IncreaseItemAndLevel_GetEntrances
-	overlay_veneer IncreaseItemAndLevel_GetExits
-	overlay_veneer IncreaseItemAndLevel_GetActorPlacements
-	overlay_veneer IncreaseItemAndLevel_GetTriggers
-	overlay_veneer Scene_GetExitRegions

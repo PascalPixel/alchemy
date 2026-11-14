@@ -1,5 +1,5 @@
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef ALCHEMY_SOUND_H
+#define ALCHEMY_SOUND_H
 
 /// @file
 /// The sound tables (CGB codes, frequency steps, samples a VBlank) and the
@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "sound_driver_types.h"
+#include "sound/sound_driver_types.h"
 
 struct MusicPlayerInfo;
 struct MusicPlayerTrack;
@@ -114,5 +114,22 @@ extern u8 gSound_UnreadByte;
 void m4aSoundInit(void);
 void m4aSongNumStart(u16 id);
 void m4aSoundVSync(void);
+
+void Sound_Play(s32 id);
+void Sound_UpdateBgmRamps(void);
+void SoundTest_Run(void);
+void Sound_Initialize(void);
+void Sound_SetBgmTempo(u16 tempoScale);
+void Sound_SetBgmPitch(u16 pitch);
+void Sound_SetBgmTempoPitchTarget(u16 targetScale, u16 step);
+void Sound_SetBgmVolume(s16 volume);
+void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step);
+s32 Sound_GetBgmRestoreDelay(void);
+void Sound_StopAllMusicPlayers(void);
+void Sound_ResumeAllMusicPlayers(void);
+void Sound_UpdateCommandMask(u32 command);
+s32 Sound_GetCurrentBgm(void);
+void Sound_WaitForBgmRestore(void);
+s32 Sound_GetReverbCode(s32 command);
 
 #endif

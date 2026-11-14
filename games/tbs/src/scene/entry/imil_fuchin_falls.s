@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer ImilFuchinFalls_Initialize
-	overlay_veneer ImilFuchinFalls_GetEntrances
-	overlay_veneer ImilFuchinFalls_GetExits
-	overlay_veneer ImilFuchinFalls_GetActorPlacements
-	overlay_veneer ImilFuchinFalls_GetTriggers
-	overlay_veneer ImilFuchinFalls_GetRegions

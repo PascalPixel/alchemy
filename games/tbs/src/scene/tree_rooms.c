@@ -81,30 +81,49 @@
 /// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
 /// (examine triggers 100 to 102).
 
-#include "speaker.h"
-#include "main_routine_work.h"
-#include "module/scene/tree_rooms.h"
-#include "shared/walk_into_leader.h"
-#include "module/scene/shared/field_effect_spawn.h"
-
-#include "create_configured_actor.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "iwram_call.h"
-#include "dma.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
-#include "field_effect.h"
+#include "ability_ids.h"
 #include "flags.h"
-#include "map_grid_scroll.h"
-#include "sound_driver_symbols.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/create_configured_actor.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern s16 gTreeRooms_MapPatches[];
+extern s32 gTreeRooms_LeaderGathersActions[];
+extern s32 gTreeRooms_GaretGathersActions[];
+extern s32 gTreeRooms_IvanGathersActions[];
+extern s32 gTreeRooms_MiaGathersActions[];
+extern s32 gTreeRooms_FaceSinksActions[];
+extern s32 gTreeRooms_RejoinLeaderActions[];
+extern u32 gTreeRooms_TintSteps[];
+extern struct SceneEntrance gTreeRoomsEntrances[];
+extern struct SceneExitRegion gTreeRoomsRegions[];
+extern u32 gTreeRoomsExits[];
+extern struct ActorPlacement gTreeRoomsActorPlacements[];
+extern struct Trigger gTreeRoomsTriggers[];
+extern s32 gTreeRooms_TintIndex;
 
 /// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
 /// second Tret actor (SPRITE_TRET_RAISED) placed at the same spot.
@@ -156,15 +175,13 @@ static void TreeRooms_SpawnSwirlSparks(void);
 static void TreeRooms_ApplyFlaggedMapPatches(void);
 static void TreeRooms_RunLandingDustEvent(void);
 
-static struct FieldPosition sSparkOrigin;
+static struct FieldPosition sSparkOrigin ALIGNED(8);
 static s32 sSparkFrame;
 static s16 *sLastCocoon;
 
-#include "shared/field_effect_create.h"
+#include "shared/field_effect_create.c"
 
-#include "shared/field_effect_spawn.h"
-#include "ability_ids.h"
-#include "item_ids.h"
+#include "shared/field_effect_spawn.c"
 
 /// Cocoon 21 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
@@ -282,7 +299,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
                     destinationRow);
   Sound_Play(SE_CURSE_FALL);
   Event_Start();
-  Event_SetDestination((s32)&SceneId_TreeRooms, entrance);
+  Event_SetDestination(SCENE_TREE_ROOMS, entrance);
   Actor_SetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
   Actor_SetSpriteFlags(Actor_Get(leaderActorId), 0);
   Actor_SetAttachedEffect(leaderActorId,
@@ -431,7 +448,6 @@ const struct Trigger *Scene_GetTriggers(void) { return gTreeRoomsTriggers; }
 /// 40, while FLAG_TRET_DEFEATED is clear).
 static void TreeRooms_FightTret(void) {
   s32 hasMia;
-  struct Actor *leader;
 
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   Event_Start();
@@ -498,7 +514,7 @@ static void TreeRooms_FightTret(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   gFieldWork->transitionFrames = 64;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_TreeRooms,
+  Event_SetAfterBattleDestination(SCENE_TREE_ROOMS,
                                   TREE_ROOMS_AFTER_FIGHT_TRET);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         0);
@@ -509,7 +525,6 @@ static void TreeRooms_FightTret(void) {
 /// he comes to, thanks the party and says good-bye. "Oh... Mmmmm..."
 static void TreeRooms_PlayPostBattleConversation(void) {
   s32 hasMia;
-  struct Actor *partyActor;
   TaskFunc sparkTask;
   const s32 *actions;
 
@@ -526,18 +541,14 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 166, 80);
-  partyActor = Actor_Get(ACTOR_PARTY_LEADER);
-  partyActor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
   Actor_SetPosition(ACTOR_GARET, 148, 90);
-  partyActor = Actor_Get(ACTOR_GARET);
-  partyActor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_GARET)->facing = FACING_NORTH;
   Actor_SetPosition(ACTOR_IVAN, 182, 90);
-  partyActor = Actor_Get(ACTOR_IVAN);
-  partyActor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_IVAN)->facing = FACING_NORTH;
   if (hasMia != 0) {
     Actor_SetPosition(ACTOR_MIA, 166, 104);
-    partyActor = Actor_Get(ACTOR_MIA);
-    partyActor->facing = FACING_NORTH;
+    Actor_Get(ACTOR_MIA)->facing = FACING_NORTH;
   }
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   wait(10);
@@ -737,7 +748,7 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
 /// Tret Tree's setup places or removes the Tret actors, starts the tint,
 /// redraws the torn cocoons after a battle, and sets the map grid by
 /// FLAG_TRET_DEFEATED.
-s32 TreeRooms_EnterRoom(void) {
+s32 Scene_Initialize(void) {
   struct Actor *tret;
   struct Actor *actor;
   struct MapGridScrollWork *grid;
@@ -803,7 +814,7 @@ s32 TreeRooms_EnterRoom(void) {
     actor->groundHeight = -px(160);
     actor->gravity = px(1) / 2;
     Sound_Play(SE_DUST_PUFF);
-    Event_SetDestination((s32)&SceneId_TreeRooms, entrance - 10);
+    Event_SetDestination(SCENE_TREE_ROOMS, entrance - 10);
     Event_Wait(20);
     actor->layer = 2;
     Actor_SetSpritePriority(leaderActorId, 3);
@@ -1070,7 +1081,7 @@ static void TreeRooms_CastReveal(void) {
   Task_Remove(TretPalette_UpdateMapTint);
 }
 
-#include "shared/field_effect_advance.h"
+#include "shared/field_effect_advance.c"
 
 /// Entrance 10, at the end of the fall from cocoon 50.
 static void TreeRooms_RunLandingDustEvent(void) {
@@ -1128,7 +1139,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   Event_End();
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 /// The torn cocoons redrawn after a battle. Each row is the cocoon's flag,
 /// whether it is redrawn (0 for the four the layout draws torn), the staging

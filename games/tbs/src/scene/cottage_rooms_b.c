@@ -97,35 +97,61 @@
 /// ValeKradensCottage, Vale and ValePrologue) or between this scene's own
 /// parts.
 
-#include "main_routine_work.h"
-#include "vram_cache.h"
-#include "module/scene/cottage_rooms_b.h"
-#include "module/scene/shared/event_psynergy.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_blend.h"
-#include "map_grid_scroll.h"
-#include "event.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
-#include "io_reg.h"
-#include "field_effect.h"
 #include "ability_ids.h"
-#include "item_ids.h"
-#include "io_write.h"
 #include "flags.h"
-#include "field_psynergy_work.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_blend.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/event_psynergy.h"
+#include "sound/sound.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+extern s32 gCottageRoomsB_LeaveHouseScript[];
+extern s32 gCottageRoomsB_DoraLeavesScript[];
+extern s32 gCottageRoomsB_IsaacLeavesScript[];
+extern s32 gCottageRoomsB_DoraRunsAheadScript[];
+extern s32 gCottageRoomsB_IsaacRunsAheadScript[];
+extern s32 gCottageRoomsB_DoraRunsBackScript[];
+extern s32 gCottageRoomsB_IsaacRunsBackScript[];
+extern s32 gCottageRoomsB_RunToPlazaScript[];
+extern s32 gCottageRoomsB_FlameShakesScript[];
+extern s32 gCottageRoomsB_FlameRisesScript[];
+extern s32 gCottageRoomsB_DoraFacesIsaacScript[];
+extern s32 gCottageRoomsB_MythrilBagRisesScript[];
+extern s32 gCottageRoomsB_MythrilBagWobblesScript[];
+extern struct SceneEntrance gCottageRoomsB_Entrances[];
+extern u32 gCottageRoomsB_Exits[];
+extern u32 gCottageRoomsB_StormExits[];
+extern struct ActorPlacement gCottageRoomsB_ActorPlacements[];
+extern struct ActorPlacement gCottageRoomsB_ActorPlacementsAfterLeaving[];
+extern struct ActorPlacement gCottageRoomsB_ActorPlacementsAfterKalay[];
+extern struct ActorPlacement gCottageRoomsB_BabiScholarsActorPlacements[];
+extern struct Trigger gCottageRoomsB_StormTriggers[];
+extern struct Trigger gCottageRoomsB_Triggers[];
+extern struct Trigger gCottageRoomsB_TriggersAfterLeaving[];
+extern struct Trigger gCottageRoomsB_TriggersAfterKalay[];
+extern struct Trigger gCottageRoomsB_BabiScholarsTriggers[];
+extern struct Trigger gCottageRoomsB_BabiScholarsLaterTriggers[];
 
 static void CottageRoomsB_DoraWakesIsaac(void);
 static void CottageRoomsB_HurryToThePlaza(void);
@@ -134,7 +160,7 @@ static void CottageRoomsB_ShowMythrilBag(void);
 static void CottageRoomsB_SpawnEffectPair(struct Actor *actor);
 static void CottageRoomsB_DemonstrateCatch(void);
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// Back from Kalay, Dora has got out of her sickbed on this visit to show Isaac
 /// she is well.
@@ -239,14 +265,14 @@ enum CottageRoomsBAreaFlag {
 // FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
 
 /// Returns the entrances, among them the events played on arrival.
-const struct SceneEntrance *CottageRoomsB_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCottageRoomsB_Entrances;
 }
 
-const struct SceneExitRegion *CottageRoomsB_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// On the stormy night the exits lead into the storm.
-const u32 *CottageRoomsB_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gCottageRoomsB_StormExits;
   }
@@ -254,7 +280,7 @@ const u32 *CottageRoomsB_GetExits(void) {
 }
 
 /// Places Babi's scholars, or Vale's villagers as the story has left them.
-const struct ActorPlacement *CottageRoomsB_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
@@ -287,7 +313,7 @@ static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
 }
 
 /// Chooses the events for the room the party is in.
-const struct Trigger *CottageRoomsB_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gCottageRoomsB_BabiScholarsLaterTriggers;
@@ -441,7 +467,7 @@ static void CottageRoomsB_ExitToValePrologueEast(void) {
 }
 
 /// Sets up these rooms for the stormy night or the story's villagers.
-s32 CottageRoomsB_Initialize(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     gFieldWork->transition =
@@ -806,10 +832,8 @@ ramp:
 
 /// Vale's innkeeper offers a room from behind the counter.
 static void CottageRoomsB_TalkToInnkeeper(void) {
-  struct Actor *actor;
-
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u32)(actor->facing - FACING_SOUTHEAST) > TRIG_TURN * 9 / 16) {
+  if ((u32)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
+      TRIG_TURN * 9 / 16) {
     Inn_CheckIn(0, ACTOR_INNKEEPER);
   } else {
     Event_Start();
@@ -877,7 +901,6 @@ static void CottageRoomsB_ReadThoughtsAboutDorasIllness(void) {
 
 /// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale.
 static void CottageRoomsB_VisitSickDora(void) {
-  struct Actor *leader;
   s32 firstMessage;
 
   Event_Start();
@@ -968,8 +991,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(40);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->facing = FACING_EAST;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_EAST;
   wait(1);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);
@@ -1101,9 +1123,9 @@ static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
   }
 }
 
-#include "shared/color_mode_cycle.h"
+#include "shared/color_mode_cycle.c"
 
-#include "shared/field_effect_vertical.h"
+#include "shared/field_effect_vertical.c"
 
 /// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
@@ -1158,7 +1180,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Cycles Dora's palette and gives off pairs of effects.
 UNUSED static void CottageRoomsB_CyclePaletteWithParticles(void) {

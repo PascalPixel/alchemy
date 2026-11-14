@@ -38,34 +38,51 @@
 ///   opens to show the prize as it is given. In the editions before TBS_PATCH_1
 ///   the coin and medal counts show an `=` after each number.
 
-#include "input.h"
-#include "module/scene/tolbi_games.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/shop/shop.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "io_reg.h"
-#include "text/msg_ids.h"
-#include "heap_slots.h"
-#include "event_inline.h"
-#include "inventory.h"
-#include "iwram_call.h"
 #include "ability_ids.h"
-#include "io_write.h"
-#include "item_ids.h"
-#include "map_grid_scroll.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "shop/shop.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/iwram_call.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern const struct SceneEntrance gTolbiSpring_Entrances[];
+extern const u32 gTolbiSpring_Exits[];
+extern const struct ActorPlacement gTolbiSpringActorPlacements[];
+extern const struct ActorPlacement gTolbiSpringActorPlacementsOther[];
+extern const struct Trigger gTolbiSpringTriggersOther[];
+extern const struct Trigger gTolbiSpringTriggers[];
+extern const u16 gTolbiSpring_AlphaSteps[];
+extern const u32 gTolbiSpring_PrizeItems[];
+extern const u16 gTolbiSpring_CoinPrizes[];
+extern const u32 gTolbiSpring_LuckyWheelsPrizeItems[];
+extern const u8 gTolbiSpring_SliderFrames[];
+extern const u8 gTolbiSpring_CircleFrames[];
+extern const u8 gTolbiSpring_ActorPixelX[];
+extern const u8 gTolbiSpring_ActorPixelZ[];
+extern const u16 gTolbiSpring_ActorHeadings[];
 
 /// The spring has risen and faded into view this visit.
 #define FLAG_TOLBI_SPRING_RISEN FLAG_SCENE_TEMP_00
@@ -151,7 +168,7 @@ enum TolbiSpringActorId {
   /// The tufts of grass at the foot of each sign.
   ///
   /// They are the signs' sprite in its second frame, mirrored and drawn
-  /// underfoot (TolbiSpring_Initialize).
+  /// underfoot (Scene_Initialize).
   ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS,
   ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS,
   /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK).
@@ -245,18 +262,18 @@ static inline void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
 
 static inline void Io_SetBlendAlpha(s32 value) { REG_BLDALPHA = value; }
 
-const struct SceneEntrance *TolbiSpring_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTolbiSpring_Entrances;
 }
 
-const struct SceneExitRegion *TolbiSpring_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
+const u32 *Scene_GetExits(void) { return gTolbiSpring_Exits; }
 
 /// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
-const struct ActorPlacement *TolbiSpring_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == SCENE_TOLBI_SPRING) {
     return gTolbiSpringActorPlacements;
   }
   return gTolbiSpringActorPlacementsOther;
@@ -332,21 +349,21 @@ static void TolbiSpring_TalkToWheelsAttendant(void) {
 
 /// Selects the triggers of Tolbi Spring or of the Lucky Dice and Lucky Wheels
 /// rooms.
-const struct Trigger *TolbiSpring_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == SCENE_TOLBI_SPRING) {
     return gTolbiSpringTriggers;
   }
   return gTolbiSpringTriggersOther;
 }
 
 /// The setup of both scenes.
-s32 TolbiSpring_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 coinChange;
   s8 *wonPrizes;
   s32 prizeIndex;
   s32 item;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
+  if (gMainRoutineWork.next == SCENE_TOLBI_SPRING) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);
@@ -604,7 +621,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   // "Step right up and enjoy yourself."
   Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
   Event_LeaveFor(SEQUENCE_SLOTS, 0);
-  Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
+  Event_SetAfterBattleDestination(SCENE_STUCCO_ROOMS_C,
                                   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
 }
 
@@ -636,7 +653,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Event_Wait(20);
     Event_LeaveFor(SEQUENCE_DICE, 0);
-    Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
+    Event_SetAfterBattleDestination(SCENE_STUCCO_ROOMS_C,
                                     STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {
     gFieldWork->message++;
@@ -834,8 +851,7 @@ prompt:
       if (prizeIndex < result * 3 + 3) {
         do {
           /* FAKEMATCH(temporary): the weight read as a byte from the work's
-           * start; as routine->prizeWeights[prizeIndex], 6 of 280 instructions
-           * differ in tbs-en. */
+           * start. */
           u8 weight =
               ((u8 *)routine)[prizeIndex +
                               offsetof(struct MainRoutineWork, prizeWeights)];
@@ -855,8 +871,7 @@ prompt:
         prizeIndex = 14;
       }
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
-      /* FAKEMATCH(dead): stepping routine away and back; without it, 6 of 280
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): stepping routine away and back. */
       routine++;
       routine--;
       {
@@ -865,8 +880,7 @@ prompt:
         s8 *weights = (s8 *)routine + 1;
 
         if (weights[slot] > 1) {
-          /* FAKEMATCH(dead): the halving in both arms of a test of slot; as one
-           * halving, 10 of 280 instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): the halving in both arms of a test of slot. */
           if (slot)
             weights[slot] /= 2;
           else
@@ -938,8 +952,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
 
         entry->colorMode = colorVariant;
         // No picture is cached in the new colours yet.
-        picture = entry->picture;
-        picture |= none;
+        picture = entry->picture | none;
         entry->picture = picture;
       }
     } while (--left != 0);
@@ -955,7 +968,7 @@ static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
   }
 }
 
-static struct SpringTossMotion sToss;
+static struct SpringTossMotion sToss ALIGNED(16);
 
 static s32 sTossKind;
 
@@ -985,9 +998,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   s32 minZ;
   s32 maxZ;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 24 bytes it reserves (sub sp, #24), no instruction
-   * addresses the 12 at sp+12 to sp+23; as without it, 4 of 947 instructions
-   * differ in tbs-en. */
+   * touches. */
   UNUSED struct Vector3 spare;
 
   toss = &sToss;

@@ -35,4 +35,11 @@
 /// their truth values so; the name is ours. `v` is read twice.
 #define NONZERO(v) ((u32)(-(v) | (v)) >> 31)
 
+/// Data aligned as the ROM places it, where its own type would not.
+#define ALIGNED(n) __attribute__((aligned(n)))
+
+/// A global kept in its object's .bss in the order written, where a plain
+/// one would be a common symbol the linker places in an order of its own.
+#define BSS_DATA __attribute__((section(".bss")))
+
 #endif

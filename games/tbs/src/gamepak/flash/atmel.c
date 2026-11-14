@@ -2,9 +2,9 @@
 /// Erasing and programming the Atmel chip, whose small 128-byte sectors are
 /// erased thirty-two to a standard sector.
 
-#include "../../../include/gamepak/flash.h"
-#include "../../../include/gamepak/flash_data.h"
-#include "../../../include/system/io_reg.h"
+#include "gamepak/flash.h"
+#include "gamepak/flash_data.h"
+#include "system/io_reg.h"
 
 /// Erases the Atmel chip and waits for completion with its configured timing.
 u16 EraseAtmelFlashChip(void) {
@@ -30,7 +30,7 @@ u16 EraseAtmelFlashChip(void) {
 /// FLASH_ERASED_BYTE: one of gFlash_ChipAtmelLayout's 512 sectors of 128 bytes,
 /// written with interrupts off.
 u16 EraseAtmelFlashSector(u16 sector) {
-  struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
+  const struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
   u8 *cursor;
   s32 bytesRemaining;
   u16 result;

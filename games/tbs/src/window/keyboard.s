@@ -1,4 +1,4 @@
-	.include "games/tbs/include/ed_asm.h"
+	.include "games/tbs/include/edition.inc"
 	.include "enums/sprite_ids.inc"
 	.section .rodata
 	.balign 4

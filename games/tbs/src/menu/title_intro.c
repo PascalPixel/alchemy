@@ -2,21 +2,20 @@
 /// The title intro, the Nintendo and Camelot logos, and the palette fade the
 /// intro uses.
 
-#include "module/menu/title_intro.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "system.h"
-#include "dma.h"
-#include "io_write_queue.h"
-#include "map_grid_scroll.h"
-#include "ram_buffer.h"
-#include "resource_ids.h"
-#include "iwram_call.h"
-#include "oam_words.h"
+#include "menu/title_intro.h"
 #include "macros.h"
+#include "resource_ids.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/dma.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/oam_words.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
 
 /// A sprite of the "Press Start" prompt, linked into a render slot each frame:
 /// OAM attributes 0 to 2 with the position split out.
@@ -188,14 +187,14 @@ void Title_LoadIntroBackgrounds(void) {
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   REG_DISPCNT = 0;
-  resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
+  resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_A);
   Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
   OBJ_PLTT[0] = 0;
   resourceData += 512;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_HALFWORDS(3840),
           REG_DMA3);
-  resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
+  resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_C);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
   BG_PLTT[0] = 0;
   resourceData += 512;
@@ -268,21 +267,21 @@ void Title_LoadIntroBackgrounds(void) {
 
 // The "Press Start" prompt: its tile count, rows and sprites, and where it
 // stands, by edition.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define PROMPT_TILES 8
 #else
 #define PROMPT_TILES 5
 #endif
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define PROMPT_ROWS 2
 #define PROMPT_SPRITES 3
 #define PROMPT_X 80
 #define PROMPT_Y 116
-#elif (LANGUAGE == LANGUAGE_JAPANESE)
+#elif LANGUAGE == LANGUAGE_JAPANESE
 #define PROMPT_SPRITES 5
 #define PROMPT_X 56
 #define PROMPT_Y 126
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define PROMPT_SPRITES 5
 #define PROMPT_X 56
 #define PROMPT_Y 124
@@ -409,7 +408,7 @@ s32 Title_ShowIntro(s32 prompt) {
       REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
       REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
       gBgScroll[2].y = 0;
-      resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
+      resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_B);
       Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(120), REG_DMA3);
       BG_PLTT[0] = 0;
       resourceData += 512;
@@ -464,7 +463,7 @@ s32 Title_ShowIntro(s32 prompt) {
       struct IntroSprite *sprite = work->area.prompt.sprites;
       u32 level;
       s32 x;
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
       u32 row;
       s32 y;
 
@@ -524,7 +523,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
 
   Sound_PlayFar(SE_CHIME);
   gOamCopyEnabled = 1;
-  resourceId = (s32)&ResourceId_NintendoLogo;
+  resourceId = RESOURCE_NINTENDO_LOGO;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
@@ -610,7 +609,7 @@ s32 Title_ShowCamelotLogo(void) {
 
   gOamCopyEnabled = 1;
   result = 0;
-  resourceId = (s32)&ResourceId_CamelotLogo;
+  resourceId = RESOURCE_CAMELOT_LOGO;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
@@ -787,16 +786,14 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
             red + ((colorWork >> 5) & 31) + ((colorWork >> 10) & 31), 10);
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
-        /* FAKEMATCH(dead): two XORs with red that cancel fold late; as green =
-         * blue, 6 of 803 instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): two XORs with red that cancel fold late. */
         green = blue ^ red;
         green ^= red;
         if (red < 8)
           red = 8;
         if (blue < 8) {
           green = 8;
-          /* FAKEMATCH(dead): two XORs that cancel, green being 8; as no pair,
-           * 46 of 803 instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): two XORs that cancel, green being 8. */
           blue ^= green;
           blue ^= 8;
         }

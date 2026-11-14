@@ -5,13 +5,13 @@
 /// The scene table formats: entrances, exits, actor placements
 /// and triggers, and the macros that write them.
 
-#include "static_assert.h"
-#include "scene_ids.h"
-#include "scene_exits.h"
-#include "character_ids.h"
-#include "sprite_ids.h"
-#include "field_work.h"
 #include "fixed_math.h"
+#include "scene_exits.h"
+#include "scene_ids.h"
+#include "sprite_ids.h"
+#include "static_assert.h"
+#include "field/field_work.h"
+#include "game/character_ids.h"
 
 /// The sixteen compass headings in 1/65536 turns, from east through south: a
 /// quarter turn is TRIG_TURN / 4, and the screen's y axis points south.

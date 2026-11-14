@@ -58,31 +58,47 @@
 ///     - Until FLAG_HSU_RESCUED, Hama and the boy monk in her room are away.
 ///     - LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
 ///       Temple.
-#include "main_routine_work.h"
-#include "module/scene/fuchin_temple.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "actor.h"
-#include "script_operands.h"
-#include "event.h"
-#include "system_call.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "text/msg_ids.h"
+
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "actor_script.h"
-#include "heap_slots.h"
-#include "field_psynergy_work.h"
-#include "io_reg.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_psynergy_work.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
+
+extern s32 gFuchinTemple_JumpingStudentScript[];
+extern u16 gFuchinTemple_TempleDoorOpens[];
+extern u16 gFuchinTemple_FehsDoorOpens[];
+extern u16 gFuchinTemple_FehsDoorCloses[];
+extern struct SceneEntrance gFuchinTempleGroundsEntrances[];
+extern struct SceneEntrance gFuchinTempleEntrancesOther[];
+extern u32 gFuchinTempleExits[];
+extern struct ActorPlacement gFuchinTempleGroundsActorPlacements[];
+extern struct ActorPlacement gFuchinTempleActorPlacements[];
+extern struct ActorPlacement gFuchinTempleActorPlacementsFromLamaTemple[];
+extern struct Trigger gFuchinTempleGroundsTriggers[];
+extern struct Trigger gFuchinTempleTriggers[];
+extern struct Trigger gFuchinTempleTriggersFromLamaTemple[];
+extern s32 gFuchinTemple_ShotScript[];
 
 // Fuchin Temple's area temp flags last until the party enters another area.
 
@@ -174,8 +190,8 @@ static void FuchinTemple_FinishMindReadDemonstration(void);
 static void FuchinTemple_SpawnNyunpasParticles(void);
 static void FuchinTemple_AnimateRevealLesson(void);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// The Psynergy Stone outside the temple has been taken. It refills once the
 /// party enters another area.
@@ -204,7 +220,7 @@ static UNREAD_RESULT FuchinTemple_FaceLeader(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_FuchinTempleGrounds) {
+  if (sceneId == SCENE_FUCHIN_TEMPLE_GROUNDS) {
     return gFuchinTempleGroundsEntrances;
   }
   return gFuchinTempleEntrancesOther;
@@ -217,7 +233,7 @@ const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 /// Selects the room's actors and applies the post-lesson actor
 /// placement changes.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinTempleGrounds) {
+  if (gMainRoutineWork.next == SCENE_FUCHIN_TEMPLE_GROUNDS) {
     return gFuchinTempleGroundsActorPlacements;
   }
   if (gMainRoutineWork.entrance ==
@@ -297,7 +313,6 @@ static void FuchinTemple_BoyMonkSpeaksOfNyunpa(void) {
 /// pass (FLAG_FUCHIN_FALLS_GROTTO_OPENED).
 static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   struct Actor *monk;
-  struct Actor *movingMonk;
   struct EffectOptions options;
 
   monk = Actor_Get(ACTOR_FALLS_MONK);
@@ -309,15 +324,12 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 392);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Sound_Play(SE_WATER);
-  movingMonk = Actor_Get(ACTOR_FALLS_MONK);
-  movingMonk->velocityY = px(20);
-  movingMonk = Actor_Get(ACTOR_FALLS_MONK);
-  movingMonk->gravity = px(4);
+  Actor_Get(ACTOR_FALLS_MONK)->velocityY = px(20);
+  Actor_Get(ACTOR_FALLS_MONK)->gravity = px(4);
   Actor_SetSpeed(ACTOR_FALLS_MONK, 3);
   Actor_SetDestination(ACTOR_FALLS_MONK, 152, 392);
   Actor_WaitForMoveById(ACTOR_FALLS_MONK);
-  movingMonk = Actor_Get(ACTOR_FALLS_MONK);
-  movingMonk->gravity = px(1);
+  Actor_Get(ACTOR_FALLS_MONK)->gravity = px(1);
   Actor_FaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 0);
   Sound_Play(SE_WATER);
   // Three white puffs, with only the colour option set.
@@ -369,7 +381,6 @@ static void FuchinTemple_MonkAsksWhetherTestIsDone(void) {
 /// talking to him after a refusal: he offers the test of the grotto.
 static void FuchinTemple_NyunpaOffersTest(void) {
   s32 alreadyDeclinedTrial;
-  struct Actor *nyunpa;
 
   Event_Start();
   // Revisit an earlier refusal, or introduce the offer through Mind Read.
@@ -380,8 +391,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Actor_Get(ACTOR_NYUNPA)->paused = 0;
     Sound_Play(SE_JUMP);
-    nyunpa = Actor_Get(ACTOR_NYUNPA);
-    nyunpa->velocityY = px(8);
+    Actor_Get(ACTOR_NYUNPA)->velocityY = px(8);
     Actor_SetAnimation(ACTOR_NYUNPA, ANIM_STAND);
     Event_Wait(30);
     Event_SetMessageId(MsgXianMustSurviveTestGrottoBefore);
@@ -397,8 +407,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Sound_Play(SE_JUMP);
     Actor_Get(ACTOR_NYUNPA)->paused = alreadyDeclinedTrial;
-    nyunpa = Actor_Get(ACTOR_NYUNPA);
-    nyunpa->velocityY = px(8);
+    Actor_Get(ACTOR_NYUNPA)->velocityY = px(8);
     Actor_SetAnimation(ACTOR_NYUNPA, ANIM_STAND);
     Event_Wait(30);
     Event_OpenMessage(ACTOR_NYUNPA, 0);
@@ -807,12 +816,9 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
   Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
   Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
-  tree = Actor_Get(ACTOR_TRAINING_TREE);
-  tree->y.fixed = px(12);
-  tree = Actor_Get(ACTOR_TRAINING_TREE);
-  tree->targetY = ACTOR_NO_TARGET;
-  tree = Actor_Get(ACTOR_TRAINING_TREE);
-  tree->scaleX = 4 * Q16_ONE / 5;
+  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = px(12);
+  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * Q16_ONE / 5;
   tree = Actor_Get(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = tree->sprite;
@@ -1489,11 +1495,9 @@ static void FuchinTemple_OpenLockedDoor(void) {
 /// Talking to the healer at Fuchin Temple (FuchinTempleGrounds): he heals, or
 /// speaks of his travels.
 static void FuchinTemple_TalkToHealer(void) {
-  struct Actor *leader;
   u32 facing;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  facing = leader->facing;
+  facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
 
   if (FACING_IS_NORTH(facing)) {
@@ -1520,7 +1524,7 @@ static void FuchinTemple_ReadNyunpasLastWish(void) {
 
 /// Selects the outdoor, school, or lesson trigger table.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinTempleGrounds) {
+  if (gMainRoutineWork.next == SCENE_FUCHIN_TEMPLE_GROUNDS) {
     return gFuchinTempleGroundsTriggers;
   }
   if (gMainRoutineWork.entrance ==
@@ -1595,7 +1599,6 @@ static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
 /// (FuchinTempleGrounds, step trigger 3): spray falls over Isaac as the screen
 /// fades, and he enters Fuchin Falls Cave.
 static void FuchinTemple_EnterWaterfallGrotto(void) {
-  struct Actor *leader;
   TaskFunc particleTask;
 
   Event_Start();
@@ -1609,8 +1612,7 @@ static void FuchinTemple_EnterWaterfallGrotto(void) {
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Task_Remove(particleTask);
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
@@ -1645,8 +1647,6 @@ static void FuchinTemple_EnterTemple(void) {
 /// Back inside Fuchin Temple from the grotto with the Orb of Force
 /// (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), Nyunpa praises Isaac.
 static void FuchinTemple_NyunpaTeachesKi(void) {
-  struct Actor *nyunpa;
-
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 168, 504);
@@ -1661,8 +1661,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Event_Wait(60);
   Actor_Get(ACTOR_NYUNPA)->paused = 0;
   Sound_Play(SE_JUMP);
-  nyunpa = Actor_Get(ACTOR_NYUNPA);
-  nyunpa->velocityY = px(8);
+  Actor_Get(ACTOR_NYUNPA)->velocityY = px(8);
   Actor_SetAnimation(ACTOR_NYUNPA, ANIM_STAND);
   // Praise the completed test before answering the follow-up questions.
   Event_SetMessageId(MsgXianExcellentIsaac);
@@ -2413,7 +2412,7 @@ s32 Scene_Initialize(void) {
   struct Actor *trainingTree;
   s32 heardHsuTrapped;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_LacquerRoomsA) {
+  if (gMainRoutineWork.next == SCENE_LACQUER_ROOMS_A) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     if (gMainRoutineWork.entrance ==
@@ -2589,9 +2588,8 @@ static void FuchinTemple_AnimateRevealLesson(void) {
     if ((particleIndex & 3) == 0) {
       Sound_Play(SE_GLITTER);
     }
-    particleX = hama->x.fixed +
-                ((((u32)(Random_Next() * 3) << 4) >> 16) << 16) - px(12);
-    particleY = hama->y.fixed + ((Random_Below(32)) << 16) - px(16);
+    particleX = hama->x.fixed + px(Random_Below(48)) - px(12);
+    particleY = hama->y.fixed + px(Random_Below(32)) - px(16);
     riseSpeed = ((Random_Below(4)) << 15) + (128 << 8);
     FieldEffect_Spawn(
         particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
@@ -2609,7 +2607,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   Actor_SetSpriteColorById(ACTOR_IVAN, SPRITE_COLOR_NORMAL);
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

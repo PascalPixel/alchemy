@@ -34,7 +34,7 @@
 /// The Turtle Boots are buried in the ground
 /// (CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS).
 ///
-/// And it plays the story's moments on the map, each run by WorldMap_Initialize
+/// And it plays the story's moments on the map, each run by Scene_Initialize
 /// for the entrance another scene sends the party to. In story order:
 /// - Leaving Vale (WORLD_MAP_FROM_VALE_PLAZA) sets FLAG_VALE_PARTY_LEFT the
 ///   first time.
@@ -87,42 +87,81 @@
 /// WORLD_MAP_FROM_DEBUG, the debug menus' entrance, turns encounters
 /// off.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "heap.h"
-#include "vram_cache.h"
-#include "module/import.h"
-#include "module/scene/world_map.h"
-#include "module/scene/shared/world_map_attached_effects.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "event.h"
-#include "djinn_ids.h"
-#include "world_map_render_work.h"
-#include "event_inline.h"
-#include "iwram_call.h"
-#include "text/msg_ids.h"
-#include "inventory.h"
-#include "field_effect.h"
-#include "io_write_queue.h"
 #include "ability_ids.h"
-#include "field_psynergy_work.h"
+#include "djinn_ids.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "field/world_map_render_work.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "scene/world_map_attached_effects.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap.h"
+#include "system/heap_slots.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern s32 gWorldMapIodem;
+extern s32 gCaravanFirstWagonArrives[];
+extern s32 gCaravanFirstWagonDeparts[];
+extern s32 gCaravanFirstWagonReturns[];
+extern s32 gCaravanWagonHeadsNorth[];
+extern s32 gCaravanSecondWagonArrives[];
+extern s32 gCaravanSecondWagonDeparts[];
+extern s32 gCaravanSecondWagonReturns[];
+extern s32 gCaravanThirdWagonArrives[];
+extern s32 gCaravanThirdWagonDeparts[];
+extern s32 gCaravanThirdWagonReturns[];
+extern s32 gCaravanFourthWagonArrives[];
+extern s32 gCaravanFourthWagonDeparts[];
+extern s32 gCaravanFourthWagonReturns[];
+extern s32 gCaravanRockGuideScript[];
+extern s32 gBlackOrbLeaderScript[];
+extern s32 gEndingAlexWalk[];
+extern s32 gEndingKradenWalk[];
+extern s32 gEndingJennaWalk[];
+extern s32 gQuakeDustScript[];
+extern s32 gCrossingShipSailsWest[];
+extern s32 gCrossingShipVeersNorth[];
+extern s32 gIslandDriftsEast[];
+extern struct SceneEntrance gWorldSceneEntrances[];
+extern u32 gWorldMapExits[];
+extern struct ActorPlacement gWorldMapActorPlacements[];
+extern struct ActorPlacement gWorldMapActorPlacementsHammetsCaravan[];
+extern struct ActorPlacement gWorldMapActorPlacementsFromWestLunpaCave[];
+extern struct ActorPlacement gWorldMapActorPlacementsCrossingEnds[];
+extern struct ActorPlacement gWorldMapActorPlacementsCrossing[];
+extern struct ActorPlacement
+    gWorldMapActorPlacementsFromKalayTunnelEntranceSouth[];
+extern struct ActorPlacement gWorldMapActorPlacementsJennaAndKradenAdrift[];
+extern struct ActorPlacement gWorldMapActorPlacementsFromClear[];
+extern struct ActorPlacement gWorldMapActorPlacementsBeforeShebasFall[];
+extern struct Trigger gWorldTriggers[];
+extern u32 gWorldMapPassengerRowValues[];
+extern s32 gIslandWakeScript[];
 
 /// The falling rock of Hammet's caravan event has landed and shattered.
 #define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_SCENE_TEMP_00
@@ -474,13 +513,13 @@ static s32 WorldMap_SetUpFlint(struct Actor *actor) {
   return 0;
 }
 
-const struct SceneEntrance *WorldMap_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gWorldSceneEntrances;
 }
 
-const struct SceneExitRegion *WorldMap_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
+const u32 *Scene_GetExits(void) { return gWorldMapExits; }
 
 /// Kolima Bridge's actor script (gWorldMapKolimaBridgeScript).
 static s32 WorldMap_SetUpKolimaBridge(struct Actor *actor) {
@@ -534,7 +573,7 @@ static s32 WorldMap_BlinkActorSprite(struct Actor *actor) {
 }
 
 /// Chooses the actors for the entrance.
-const struct ActorPlacement *WorldMap_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
     if (GameFlag_Get(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
@@ -644,9 +683,9 @@ static void WorldMap_EnterLalivero(void) {
                          WORLD_MAP_TO_LALIVERO_EAST);
 }
 
-const struct Trigger *WorldMap_GetTriggers(void) { return gWorldTriggers; }
+const struct Trigger *Scene_GetTriggers(void) { return gWorldTriggers; }
 
-/// Run each frame on the map, where WorldMap_Initialize adds it.
+/// Run each frame on the map, where Scene_Initialize adds it.
 static void WorldMap_UpdateAreaContacts(void) {
   struct Actor *leader;
   struct FieldWork *work;
@@ -723,7 +762,7 @@ static void WorldMap_ReturnToTolbiShip(void) {
 }
 
 /// The scene's initialization, which runs the moment the entrance selects.
-s32 WorldMap_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   if (routine->entrance == WORLD_MAP_FROM_DEBUG) {
@@ -733,11 +772,11 @@ s32 WorldMap_Initialize(void) {
   }
   if (routine->entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_MERCURY);
-    Event_SetDestination((s32)&SceneId_MercuryLighthouseAerie,
+    Event_SetDestination(SCENE_MERCURY_LIGHTHOUSE_AERIE,
                          MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
   } else if (routine->entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_VENUS);
-    Event_SetDestination((s32)&SceneId_VenusLighthouseAerie,
+    Event_SetDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
                          VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
   } else if (routine->entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     Event_Start();
@@ -939,8 +978,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, 5848, 1576);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_HIDDEN);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CARAVAN_HAMMET), 0);
   Actor_SetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON, 1.6, 0.4);
   Actor_SetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON + 1, 1.6, 0.4);
   Actor_SetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON + 2, 1.6, 0.4);
@@ -1018,8 +1056,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, 5656, 1784);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_NORMAL);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
-  Actor_SetSpriteFlags(spriteActor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CARAVAN_HAMMET), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_CARAVAN_HAMMET, 0.8);
   Actor_WalkToAndWait(ACTOR_CARAVAN_HAMMET, 5640, 1784);
   Event_Wait(20);
@@ -1089,21 +1126,16 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetSpriteFlags(actor, 0);
   Actor_SelectAnimation(actor, FALLING_ROCK_ANIMATION_TUMBLE);
   wait(1);
-  spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLING_ROCK), 0);
   Task_AddFrame(WorldMap_UpdateFallingRock, TASK_PASS_FRAME);
   do {
     wait(1);
   } while (actor->timer == 0);
-  spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
-  Actor_SetSpriteFlags(spriteActor, 0);
-  spriteActor = Actor_Get(ACTOR_INVISIBLE_ROCK_GUIDE);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLING_ROCK), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_ROCK_GUIDE), 0);
   Event_Wait(10);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_MAN);
-  spriteActor->velocityY = px(6);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
-  spriteActor->velocityY = px(6);
+  Actor_Get(ACTOR_CARAVAN_MAN)->velocityY = px(6);
+  Actor_Get(ACTOR_CARAVAN_HAMMET)->velocityY = px(6);
   Sound_Play(SE_CRASH);
   FieldCamera_SetSpeedAndAcceleration(4, 4);
   WorldMap_ShakeCameraWhereRockFalls();
@@ -1776,7 +1808,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Event_Wait(20);
   GameFlag_Set(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
-  gMainRoutineWork.restartScene = (s32)&SceneId_WorldMap;
+  gMainRoutineWork.restartScene = SCENE_WORLD_MAP;
   gMainRoutineWork.restartEntrance = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   Event_End();
 }
@@ -1918,9 +1950,9 @@ static void WorldMap_UseBlackOrb(void) {
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    /* FAKEMATCH(dead): clearing the motion flags again through a pointer;
-     * without it, 11 of 363 instructions differ in tbs-en. */
-    *(u8 *)&orb->motionFlags = 0;
+    /* FAKEMATCH(dead): the motion flags cleared again, as the icon set-up
+     * that follows the sprite resets clears them. */
+    orb->motionFlags = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
     Vram_Load(sprite->slot, 128, buffer + 1024);
@@ -2158,7 +2190,7 @@ static void WorldMap_ShowEndingEvent(void) {
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   wait(120);
-  Event_SetDestination((s32)&SceneId_Title, TITLE_FROM_WORLD_MAP);
+  Event_SetDestination(SCENE_TITLE, TITLE_FROM_WORLD_MAP);
 }
 
 /// The look back before Sheba's fall, with the view settling on Venus
@@ -2232,15 +2264,12 @@ static void WorldMap_UpdateLighthouseQuake(void) {
 /// A leg of the Tolbi-bound Ship's crossing, in which the ship sails north to
 /// its anchorage off the island.
 static void WorldMap_SailTolbiShipToIsland(void) {
-  struct Actor *actor;
-
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetAnimation(ACTOR_CROSSING_SHIP, ANIM_WALK);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, 4872, 808);
-  actor = Actor_Get(ACTOR_CROSSING_SHIP);
-  actor->facing = FACING_NORTHWEST;
+  Actor_Get(ACTOR_CROSSING_SHIP)->facing = FACING_NORTHWEST;
   wait(1);
   WorldMap_StartZoom(6 * Q16_ONE / 5, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2271,8 +2300,7 @@ static s32 WorldMap_GetRowingBalance(void) {
   s32 negativeTotal;
 
   positiveTotal += WorldMap_GetSeatRowValue(2);
-  negativeTotal = WorldMap_GetSeatRowValue(1);
-  negativeTotal += WorldMap_GetSeatRowValue(3);
+  negativeTotal = WorldMap_GetSeatRowValue(1) + WorldMap_GetSeatRowValue(3);
   return positiveTotal - negativeTotal;
 }
 
@@ -2344,7 +2372,6 @@ static void WorldMap_SpawnIslandWake(void) {
 /// with its wake under warm colours.
 static void WorldMap_ShowIslandDrifting(void) {
   struct Actor *actor;
-  struct Actor *spriteActor;
 
   actor = Actor_Get(ACTOR_DRIFTING_ISLAND);
   Event_Wait(60);
@@ -2355,10 +2382,8 @@ static void WorldMap_ShowIslandDrifting(void) {
   FieldCamera_FollowActor(ACTOR_DRIFTING_ISLAND, 1);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  spriteActor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(spriteActor, 0);
-  spriteActor = Actor_Get(ACTOR_DRIFTING_ISLAND);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_DRIFTING_ISLAND), 0);
   Actor_SetSpeed(ACTOR_DRIFTING_ISLAND, 0.4);
   actor->timer = 0;
   Actor_SetScript(ACTOR_DRIFTING_ISLAND, gIslandDriftsEast);
@@ -2438,7 +2463,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
 static void WorldMap_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 
 /// Starting to cast Douse on the storm gathers Douse's rain cloud 80 pixels
-/// up, where the party floats (douse.c reads childOption).
+/// up, where the party floats (event_commands_douse.c reads childOption).
 static void WorldMap_StartDousingStorm(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
@@ -2447,8 +2472,6 @@ static void WorldMap_StartDousingStorm(void) {
 /// it begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
 /// Desert's storms.
 static void WorldMap_DouseMapStorm(void) {
-  struct Actor *leader;
-
   if (gFieldWork->raisedTrigger == RAISED_STORM_TIME_UP) {
     gFieldWork->raisedTrigger = 0;
   }
@@ -2458,8 +2481,7 @@ static void WorldMap_DouseMapStorm(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  leader->motionFlags = ACTOR_FALLS;
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
 }
 
 /// The storm drops the party outside Suhalla when its time in the air runs out.
@@ -2486,7 +2508,7 @@ static void WorldMap_StormDropsParty(void) {
   Event_WaitTransitionFrames();
   Event_End();
   GameFlag_Set(FLAG_ARRIVE_FALLING);
-  Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_SUHALLA);
+  Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_FROM_SUHALLA);
 }
 
 /// Run each frame of the lighthouse transition.
@@ -2641,10 +2663,10 @@ UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
   }
 }
 
-#include "shared/color_mode_cycle.h"
+#include "shared/color_mode_cycle.c"
 
-#include "shared/field_effect_vertical.h"
-#include "shared/world_map_attached_effects.h"
+#include "shared/field_effect_vertical.c"
+#include "shared/world_map_attached_effects.c"
 
 /// Hammet's caravan outside Vault (WorldMap_ShowHammetsCaravan): each of
 /// the four wagons, at one and a half times its size, rolls up to the party

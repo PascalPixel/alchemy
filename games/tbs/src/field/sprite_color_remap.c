@@ -2,7 +2,7 @@
 /// The four byte remap tables, 256 bytes each, that follow
 /// gSpriteColorTables' five.
 
-#include "field.h"
+#include "field/field.h"
 
 // clang-format off
 const u8 gSpriteColorRemapTables[] = {

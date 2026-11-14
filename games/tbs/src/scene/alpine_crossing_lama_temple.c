@@ -73,32 +73,45 @@
 ///
 /// A chest holds Power Bread.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "module/scene/alpine_crossing_lama_temple.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "field_effect.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern s32 gAlpineCrossing_FeizhiPath[];
+extern s32 gAlpineCrossing_LeaderPath[];
+extern s32 gAlpineCrossing_HsuStruggle[];
+extern u16 gLamaTemple_DoorOpenCells[];
+extern u16 gLamaTemple_DoorCloseCells[];
+extern struct SceneEntrance gLamaTemple_Entrances[];
+extern struct SceneEntrance gAlpineCrossing_Entrances[];
+extern u32 gAlpineCrossingLamaTemple_Exits[];
+extern struct ActorPlacement gLamaTemple_ActorPlacements[];
+extern struct ActorPlacement gAlpineCrossing_ActorPlacements[];
+extern struct Trigger gLamaTemple_Triggers[];
+extern struct Trigger gAlpineCrossing_Triggers[];
 
 /// The temple's Psynergy Stone. It is an area temp flag, so it refills once the
 /// party has been to another area.
 #define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
-#define MAP_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
-#define MAP_LAMA_TEMPLE ((s32)&SceneId_LamaTemple)
+#define MAP_ALPINE_CROSSING (SCENE_ALPINE_CROSSING)
+#define MAP_LAMA_TEMPLE (SCENE_LAMA_TEMPLE)
 
 /// Lama Temple's actors. Garet, Ivan and Mia are placed in their own party
 /// slots for Hama's farewell. The others count from ACTOR_FIRST_PLACED.
@@ -592,8 +605,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     Actor_SetScript(ACTOR_PARTY_LEADER, gAlpineCrossing_LeaderPath);
     Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
     Event_Wait(10);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    leader->update = NULL;
+    Actor_Get(ACTOR_PARTY_LEADER)->update = NULL;
     Event_Wait(30);
 
     // She cannot hear Hsu's voice.

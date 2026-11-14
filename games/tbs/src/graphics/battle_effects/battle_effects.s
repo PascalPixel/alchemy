@@ -1,4 +1,4 @@
-	.include "games/tbs/include/ed_asm.h"
+	.include "games/tbs/include/edition.inc"
 	.section .rodata
 	.global BattleEffect_TileAnimationMask
 BattleEffect_TileAnimationMask:

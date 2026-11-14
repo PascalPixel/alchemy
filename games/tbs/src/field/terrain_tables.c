@@ -3,7 +3,7 @@
 /// TerrainKind): where a raised or sunken square rounds off at its corners,
 /// and which of three heights each pixel takes, split along two diagonals.
 
-#include "module/field/terrain_tables.h"
+#include "field/terrain_tables.h"
 #include "types.h"
 
 /// Height-curve tables, indexed by (row << 4) + column within a 16x16 cell.

@@ -5,8 +5,8 @@
 /// MessageReader, a cursor through message text.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 /// A position in a Huffman-coded message: the previous code, which picks the
 /// next symbol's tree, and the message's remaining bits.

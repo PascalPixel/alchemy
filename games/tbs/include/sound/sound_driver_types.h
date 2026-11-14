@@ -5,8 +5,8 @@
 /// The sound driver's types, registers and work: MusicPlayer2000, the library
 /// pret calls m4a, under the names pret gives it (include/gba/m4a_internal.h).
 
+#include "static_assert.h"
 #include "types.h"
-#include "../static_assert.h"
 
 /// SoundInfo.ident and MusicPlayerInfo.ident when free; its bytes spell `Smsh`
 /// in memory order.

@@ -37,29 +37,34 @@
 /// The overlay also keeps three unused hooks and a link-cable input exchange no
 /// table reaches.
 
-#include "module/scene/tret_tree_branch.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "input.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "io_reg.h"
-#include "main_routine_work.h"
 #include "ability_ids.h"
-#include "event.h"
-#include "system_call.h"
 #include "djinn_ids.h"
-#include "display_transition.h"
-#include "map_grid_scroll.h"
 #include "flags.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+
+extern struct SceneEntrance gTretTreeBranch_Entrances[];
+extern u32 gTretTreeBranch_Exits[];
+extern struct ActorPlacement gTretTreeBranch_ActorPlacements[];
+extern struct Trigger gTretTreeBranch_Triggers[];
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), is the only placed actor. Its
 /// actor placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE)) is set.
@@ -68,7 +73,7 @@ enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED };
 /// Starts the scanline-dependent BG3 scroll tasks.
 static void TretTreeBranch_StartBg3Split(void);
 
-static u16 sTransferHeader[16];
+static u16 sTransferHeader[16] ALIGNED(16);
 static u8 sTransferData[96];
 static s32 sSplitLine;
 static u16 sHofsAtOrAfterSplit;
@@ -80,15 +85,15 @@ static void TretTreeBranch_TalkToBreeze(void) {
   Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
 
-const struct SceneEntrance *TretTreeBranch_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTretTreeBranch_Entrances;
 }
 
-const struct SceneExitRegion *TretTreeBranch_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *TretTreeBranch_GetExits(void) { return gTretTreeBranch_Exits; }
+const u32 *Scene_GetExits(void) { return gTretTreeBranch_Exits; }
 
-const struct ActorPlacement *TretTreeBranch_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTretTreeBranch_ActorPlacements;
 }
 
@@ -183,19 +188,16 @@ TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
 /// Casting Reveal in Tret Tree sets the window transition and BG1's blend over
 /// the rest of the screen again, as when the map opened.
 static void TretTreeBranch_CastReveal(void) {
-  struct ScreenTransitionState *state;
-
   ScreenTransition_InitializeBattleEffectState(9);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  state = gScreenTransitionWork;
-  TretTreeBranch_SetRevealWindow(state);
+  TretTreeBranch_SetRevealWindow(gScreenTransitionWork);
 }
 
 /// Returns the scene's exit, coord, talk and Reveal events.
-const struct Trigger *TretTreeBranch_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gTretTreeBranch_Triggers;
 }
 
@@ -222,7 +224,7 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
 
 /// Initializes the backdrop transition and installs BG3's line scroll
 /// split. Returns 0 for the overlay initialization entry point.
-s32 TretTreeBranch_Initialize(void) {
+s32 Scene_Initialize(void) {
 #ifndef UBFIX
   u8 **eventSlot = (u8 **)&gFieldWork;
 #endif

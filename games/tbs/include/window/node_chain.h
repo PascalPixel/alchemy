@@ -5,8 +5,8 @@
 /// NodeChain, a chain of menu nodes.
 
 #include "edition.h"
-#include "types.h"
 #include "static_assert.h"
+#include "types.h"
 
 // XXX: likely a SelectionNode, because next sits where SelectionNode.next does;
 // see SelectionMenuCursorView.

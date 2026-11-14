@@ -36,25 +36,36 @@
 /// exit or trigger answers that opening, so the ivy only hides a way in that
 /// leads nowhere.
 
-#include "main_routine_work.h"
-#include "module/scene/mccoy_palace_grounds.h"
-#include "module/scene/shared/actor_orbit.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "mccoy_palace_grounds.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_orbit.h"
+#include "scene/catch_nut.h"
+#include "sound/sound.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+extern u16 gPalaceGateOpenSteps[];
+extern s32 gGuardWatchesParty[];
+extern struct SceneEntrance gMcCoyPalaceGroundsEntrances[];
+extern u32 gMcCoyPalaceGroundsExits[];
+extern struct ActorPlacement gMcCoyPalaceGroundsNoActorPlacements[];
+extern struct ActorPlacement gMcCoyPalaceGroundsActorPlacements[];
+extern struct Trigger gMcCoyPalaceGroundsNoTriggers[];
+extern struct Trigger gMcCoyPalaceGroundsTriggers[];
 
 // UB: this calls a void function through an s32 function type, the call the
 // bytes show; UBFIX calls it as declared.
@@ -104,7 +115,7 @@ static void McCoyPalaceGrounds_RestoreStory(void);
 static void McCoyPalaceGrounds_GuardsArrestParty(void);
 static void McCoyPalaceGrounds_OpenGate(void);
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceGroundsEntrances;
@@ -116,7 +127,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 
 /// The people outside McCoy's Palace.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsActorPlacements[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
@@ -127,8 +138,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   }
   return gMcCoyPalaceGroundsNoActorPlacements;
 }
-
-#include "shared/catch_nut.h"
 
 /// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
 /// it to the party.
@@ -146,7 +155,7 @@ static void McCoyPalaceGrounds_SearchWell(void) {
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
     return gMcCoyPalaceGroundsTriggers;
   }
   return gMcCoyPalaceGroundsNoTriggers;
@@ -265,8 +274,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       McCoyPalaceGrounds_OpenGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
-      /* FAKEMATCH(dead): an empty once-only loop; without it, 1 of 233
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
@@ -309,7 +317,7 @@ s32 Scene_Initialize(void) {
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 1;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
     McCoyPalaceGrounds_RestoreStory();
   }
 
@@ -446,7 +454,7 @@ static void McCoyPalaceGrounds_OpenGate(void) {
   GameFlag_Set(FLAG_GATE_OPEN);
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
 // clang-format off
 /// The gate opening: three steps of cells, 5 frames each.

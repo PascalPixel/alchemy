@@ -180,9 +180,10 @@ memory and runs them there.
 
 ## Where the code is
 
-- `field_sequence/` is the sequence itself: set-up, the walk, requests,
-  triggers and encounters.
-- `field/` is what it stands on: actors and their scripts, the camera,
-  sprites and the map on screen.
-- `event_commands/` is the orders an event gives, such as showing a
-  message or moving an actor, and each field Psynergy.
+- The `field_sequence_*.c` files are the sequence itself: set-up, the walk,
+  requests, triggers and encounters.
+- The other `field_*.c` files, with `actor_*.c`, `sprite_*.c` and the
+  `map_*.c` files, are what it stands on: actors and their scripts, the
+  camera, sprites and the map on screen.
+- The `event_commands_*.c` files are the orders an event gives, such as
+  showing a message or moving an actor, and each field Psynergy.

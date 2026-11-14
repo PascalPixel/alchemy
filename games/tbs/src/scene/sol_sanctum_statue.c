@@ -14,7 +14,7 @@
 ///
 /// Each move's trigger carries the flag of what it achieves (a seal open, a
 /// beam shining, the centre statue moved), so a statue stops answering once it
-/// has done its part. SolSanctumStatue_Initialize redraws the room from those
+/// has done its part. Scene_Initialize redraws the room from those
 /// story flags on every entry.
 ///
 /// The puzzle is a trap, and the room follows the story flags in order:
@@ -56,30 +56,37 @@
 /// Once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED) the room rumbles and
 /// shakes, as the rest of the sanctum does.
 
-#include "main_routine_work.h"
-#include "module/scene/sol_sanctum_statue.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "battle_sprite_id.h"
-#include "heap_release.h"
-#include "heap_slots.h"
-#include "io_reg.h"
-#include "event_inline.h"
-#include "text/msg_ids.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "map_grid_scroll.h"
-#include "macros.h"
-#include "flags.h"
-#include "sound_driver_symbols.h"
 #include "ability_ids.h"
-#include "shared/walk_into_leader.h"
+#include "flags.h"
+#include "macros.h"
+#include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/battle_sprite_id.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_release.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
+
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gSolSanctumStatue_Entrances[];
+extern u32 gSolSanctumStatue_Exits[];
+extern struct ActorPlacement gSolSanctumStatue_ActorPlacements[];
+extern struct Trigger gSolSanctumStatue_Triggers[];
+extern s32 gSolSanctumStatue_ScrollPhase;
 
 /// Both beams have opened the hole in the floor before the centre statue.
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07
@@ -208,7 +215,7 @@ enum SolSanctumStatueActorId {
 /// The scene's bss, in this order.
 ///
 /// As commons of one object the linker would sort them itself.
-static struct SealOpening sSealOpening;
+static struct SealOpening sSealOpening ALIGNED(16);
 /// Initialization writes each three-word OAM packet, and drawing updates its
 /// fields.
 static union {
@@ -216,23 +223,23 @@ static union {
   s32 words[3 * SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT * 3];
 } sScrollingSprites;
 
-const struct SceneEntrance *SolSanctumStatue_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumStatue_Entrances;
 }
 
-const struct SceneExitRegion *SolSanctumStatue_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *SolSanctumStatue_GetExits(void) { return gSolSanctumStatue_Exits; }
+const u32 *Scene_GetExits(void) { return gSolSanctumStatue_Exits; }
 
 /// Returns Kraden, the eight statues, the centre statue and its moved copy
 /// (ACTOR_KRADEN to ACTOR_MOVED_CENTER_STATUE), then Jenna and Garet.
-const struct ActorPlacement *SolSanctumStatue_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSolSanctumStatue_ActorPlacements;
 }
 
 /// Returns the statues' Move and push events, each row only until its seal or
 /// beam is done.
-const struct Trigger *SolSanctumStatue_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumStatue_Triggers;
 }
 
@@ -693,9 +700,9 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   s32 scrollX;
   u32 column;
 
-  if ((u32)(screenY + 16) <= 175) {
-    scrollX = (gSolSanctumStatue_ScrollPhase >> 10) - cameraX;
-    scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
+  if (screenY >= -16 && screenY <= 159) {
+    scrollX = ((gSolSanctumStatue_ScrollPhase >> 10) - cameraX) |
+              -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY;
@@ -703,8 +710,8 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
-    scrollX = (gSolSanctumStatue_ScrollPhase >> 9) - cameraX;
-    scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
+    scrollX = ((gSolSanctumStatue_ScrollPhase >> 9) - cameraX) |
+              -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY;
@@ -712,8 +719,8 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
-    scrollX = (gSolSanctumStatue_ScrollPhase >> 8) - cameraX;
-    scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
+    scrollX = ((gSolSanctumStatue_ScrollPhase >> 8) - cameraX) |
+              -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY + SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET;
@@ -761,7 +768,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 
 /// Restores the room's statues, beams and seals from their flags and plays
 /// Kraden's two visits.
-s32 SolSanctumStatue_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *centerEffect;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -961,14 +968,10 @@ static void SolSanctumStatue_RightBeamStatueMoved(void) {
 /// Starting Move beside the centre statue blocks its cells while the leader
 /// stands in their row.
 static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
-  struct Actor *leaderPosition;
   s32 column;
-  struct Actor *leader;
 
-  leaderPosition = Actor_Get(ACTOR_PARTY_LEADER);
-  column = FIELD_CELL(leaderPosition->x.fixed);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FIELD_CELL(leader->z.fixed) == 8) {
+  column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
+  if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) == 8) {
     if (column >= 17 && column <= 18) {
       Field_SetCellBehaviorAt(2, 272, 128, CELL_BEHAVIOR_WALL);
       Field_SetCellBehaviorAt(2, 288, 128, CELL_BEHAVIOR_WALL);
@@ -1002,7 +1005,6 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
 /// the statue into the floor.
 static void SolSanctumStatue_CenterStatueMoved(void) {
   struct Actor *statue;
-  struct Actor *leader;
   s32 statueZ;
 
   statue = Actor_Get(ACTOR_CENTER_STATUE);
@@ -1013,11 +1015,9 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
     Event_Start();
     if ((statueZ >> 20) == 8) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN) == 0) {
-        leader = Actor_Get(ACTOR_PARTY_LEADER);
-        if ((u32)(leader->z.fixed >> 19) <= 17) {
+        if ((u32)(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 17) {
           Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 289, 158);
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          leader->facing = FACING_NORTH;
+          Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
         }
       }
       if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
@@ -1093,8 +1093,8 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
       Actor_Get(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-      movingActor = Actor_Get(ACTOR_PARTY_LEADER);
-      Actor_SetDestination(ACTOR_PARTY_LEADER, movingActor->x.part.pixel, 136);
+      Actor_SetDestination(ACTOR_PARTY_LEADER,
+                           Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel, 136);
       Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
       Actor_WaitForMoveById(ACTOR_CENTER_STATUE);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

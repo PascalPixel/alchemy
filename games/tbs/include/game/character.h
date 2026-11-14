@@ -5,13 +5,12 @@
 /// The definitions of characters, classes, Djinn and enemies, and a level up's
 /// result.
 
-#include "module/game/game.h"
-#include "types.h"
 #include "edition.h"
-#include "far_call.h"
-#include "playback_queue.h"
-#include "battle_action_run.h"
 #include "static_assert.h"
+#include "types.h"
+#include "battle/battle_action_run.h"
+#include "battle/playback_queue.h"
+#include "gamepak/far_call.h"
 
 struct Unit;
 

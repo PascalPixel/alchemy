@@ -1,7 +1,3 @@
-
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/field_effect/move.c"
 /// @file
 /// The Kandorean Temple of Master Poi, south-west of Daila, in nine rooms that
 /// share this overlay (SceneId_KandoreanTemple1 to SceneId_KandoreanTemple9).
@@ -16,9 +12,9 @@
 /// Chestbeaters (KandoreanTemple_FightChestbeaters). Poi then gives the party
 /// the Lash Pebble (KandoreanTemple_ReceiveLash), and Lash reaches Fog, the
 /// Mercury Djinni (KandoreanTemple_FightFog).
-///
-/// This file is the overlay's own copy of the effect spawner
-/// (FieldEffect_Spawn); the rest of the temple is in kandorean_temple/.
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -1932,7 +1928,6 @@ L_0200ae24:
 #undef gKandoreanTemple_FogRoomEvents
 #undef gKandoreanTemple_GateEvents
 #undef gKandoreanTemple_PoisHallEvents
-// @file
 // The Kandorean Temple's events, from the vents' rides to Poi's test, and its
 // tables.
 

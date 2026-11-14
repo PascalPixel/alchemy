@@ -602,7 +602,6 @@ void Func_020015d0(s32 a0) { gLightSpritePriority = a0; }
 #include "../field/field_effect/move.c"
 
 #undef DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE
-// @file
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 a);
@@ -705,7 +704,6 @@ struct CellTargetEntry;
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// @file
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

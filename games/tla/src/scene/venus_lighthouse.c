@@ -1,3 +1,7 @@
+/// @file
+/// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
+/// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
+/// leave, meet Alex and set off for Idejima (SceneId_VenusLighthouse).
 
 #include "../field/object/set_sprite_priority.c"
 #include "battle/battle.h"
@@ -155,12 +159,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "shared/distance.c"
 
 #include "../field/object/find_in_cell.c"
-
-// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
-// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
-// leave, meet Alex and set off for Idejima. This file holds the scene's entry
-// routines and the block push; the rest of the overlay is in
-// venus_lighthouse/.
 
 extern s32 gPushLeaderSteps[];
 

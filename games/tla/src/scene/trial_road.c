@@ -1164,7 +1164,6 @@ void TrialRoad_RevealVine(void) {
 #undef FIELD_AT
 #undef DEFINE_TRIAL_ROAD_ON_FOOT
 #undef gTrialRoad_PoundPartners
-// @file
 // Trial Road's effect spawner and the sand stage's stream.
 
 extern const s32 *gFieldEffect_DurationScripts[];

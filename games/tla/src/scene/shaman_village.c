@@ -1,12 +1,11 @@
-
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/field_effect/move.c"
 /// @file
 /// The Shaman Village, whose people will not talk to outsiders: Moapa, shown
 /// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind
 /// clears the sand before the race to the summit; its houses, inn, shop and
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 
 #include "flags.h"
 #include "item_ids.h"

@@ -1912,7 +1912,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef gMarsLighthouseEntrance_Room7Triggers
 #undef Position
 #undef Position
-// @file
 extern s32 gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -2165,7 +2164,6 @@ void Func_02004160(struct PushEvent *event) {
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 void Teleport_PlayWhirl(void);
 
 void Func_020042f8(void) {

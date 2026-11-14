@@ -238,7 +238,6 @@ void Func_02000328(void) {
 #include "../field/field_effect/move.c"
 
 #undef BG_PLTT_SET_RGB
-// @file
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 extern s32 gData_02003840[];
@@ -1808,7 +1807,6 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #undef Func_02000a78
 #undef Func_02000038
 #undef CrackedTile_PlaceLanding
-// @file
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;

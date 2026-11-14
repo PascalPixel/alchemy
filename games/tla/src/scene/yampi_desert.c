@@ -1,11 +1,11 @@
-
+/// @file
+/// The Yampi Desert, in twelve rooms that share this overlay
+/// (SceneId_YampiDesert1 to SceneId_YampiDesert12): its travelers, the
+/// scorpion in its way, the stakes Pound sinks and the sand slides Sand slips
+/// under, and its tables of entrances, placements and triggers by room.
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-/// @file
-/// The Yampi Desert's tables of entrances, placements and triggers by room, its
-/// travelers' talk, and the stakes Pound sinks and Sand slips under; linked
-/// apart from yampi_desert.c, with the field's shared effect code between.
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -621,7 +621,6 @@ void YampiDesert_WatchScorpionStop(void) {
 #undef EFFECT_SCRIPTS
 #undef DEFINE_POUND_STAKE_STOPPING_SCORPION
 #undef gYampiDesert_Room2PlacementsAfterMeeting
-// @file
 // The Yampi Desert, between Osenia's south and Alhafra: twelve rooms of sand.
 // Pound sinks its wooden stakes and Sand lets the party slip under them; a
 // group of Madra's travelers hunting Briggs is stuck halfway (Room2); the King
@@ -2631,7 +2630,6 @@ u32 gYampiDesert_SlideDust[] = {
 #undef gYampiDesert_TravelersFollow
 #undef gYampiDesert_LastTravelersFollow
 
-// @file
 // The Yampi Desert's data: its effect and travelers' scripts, stake lists,
 // rooms' tables and triggers.
 

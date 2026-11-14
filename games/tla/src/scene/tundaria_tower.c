@@ -1,4 +1,7 @@
-
+/// @file
+/// Tundaria Tower, the ice-bound tower that holds the Center Prong, its floors
+/// slid over on ice, in seven rooms that share this overlay
+/// (SceneId_TundariaTower1 to SceneId_TundariaTower7).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"

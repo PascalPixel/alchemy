@@ -1,8 +1,10 @@
-
+/// @file
+/// Prox, Felix's home in the frozen north, where the clan of Puelle lives in
+/// poverty in the shadow of the Mars Lighthouse, in six rooms that share this
+/// overlay (SceneId_Prox1 to SceneId_Prox6).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-/// @file
 #include "types.h"
 #include "flags.h"
 #include "system/main_routine_work.h"
@@ -134,7 +136,6 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 #ifndef TLA_PROX_LOCAL_H
 #define TLA_PROX_LOCAL_H
 
-/// @file
 /// Overlay 6A8's scene layer: the declarations its scenes share and the
 /// inline helpers some of their calls go through, as overlay 694's do.
 

@@ -965,7 +965,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/field_effect/move.c"
 
 #undef LERP
-// @file
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -1188,7 +1187,6 @@ void Leader_CenterInCell(void);
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// @file
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
 extern u16 gPaletteCycleColors[];

@@ -455,7 +455,6 @@ s32 gPushLeaderSteps[] = {
 #undef ABS
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 #undef PIXEL_PART
-// @file
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
@@ -559,7 +558,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 // The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps
 // and the fall to the floor below.
 
@@ -580,7 +578,6 @@ void CrackedTile_Crack();
 
 #include "shared/cracked_tile_place_landing.h"
 
-// @file
 // The tables of Jupiter Lighthouse's room of gaps and logs that the scene's
 // getters return.
 

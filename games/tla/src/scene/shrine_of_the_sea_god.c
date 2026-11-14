@@ -1,8 +1,10 @@
-
+/// @file
+/// The Shrine of the Sea God east of Daila, where the party saves the two boys
+/// and, with the Sea God's Tear, wakes the statue, in eleven rooms that share
+/// this overlay (SceneId_ShrineOfTheSeaGod1 to SceneId_ShrineOfTheSeaGod11).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-/// @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -943,7 +945,6 @@ void Func_020012b4(void) {
 #undef gShrineOfTheSeaGod_Room7Triggers
 #undef gShrineOfTheSeaGod_Room8Triggers
 #undef gShrineOfTheSeaGod_Room9Triggers
-// @file
 #include "text/msg_ids.h"
 
 extern u32 gData_02004a18[];

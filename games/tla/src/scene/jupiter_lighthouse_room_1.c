@@ -324,7 +324,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect/move.c"
 
 #undef FLAG_GATES_BUTTON_HELD
-// @file
 // Jupiter Lighthouse's ground floor: its copy of the effect spawner, and the
 // cracked tiles, found, cracked and fallen through.
 
@@ -426,7 +425,6 @@ struct CellTargetEntry;
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 // Jupiter Lighthouse's ground floor: the cracked tiles' steps and landings.
 
 void GameFlag_SetByte(s32 flag, s32 value);

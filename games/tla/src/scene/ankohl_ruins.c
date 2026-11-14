@@ -1,4 +1,7 @@
-
+/// @file
+/// The Ankohl Ruins, whose old ruins hold the Left Prong behind the Sand
+/// puzzles, in seven rooms that share this overlay (SceneId_AnkohlRuins1 to
+/// SceneId_AnkohlRuins8).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"

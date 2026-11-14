@@ -1,12 +1,10 @@
-
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/field_effect/move.c"
 /// @file
 /// The summit of Mt. Aleph, at the end of the game: the Golden Sun forms over
 /// the mountain, Alex claims its power, and the scene's colours and dust follow
-/// what happens. This file holds the effect spawner and the colour helpers;
-/// mt_aleph_summit/ holds the events.
+/// what happens.
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 
 #include "shared/tables.h"
 #include "types.h"
@@ -295,7 +293,6 @@ struct Trigger gSceneEvents[] = {
 
 #include "../field/field_effect/advance_motion.c"
 
-// @file
 // The summit's events: the Golden Sun's formation and what follows it.
 
 #include "text/msg_ids.h"

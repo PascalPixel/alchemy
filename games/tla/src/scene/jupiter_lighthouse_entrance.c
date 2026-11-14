@@ -341,7 +341,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "../field/field_effect/move.c"
 
-// @file
 // The grounds before Jupiter Lighthouse's gates: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
@@ -445,7 +444,6 @@ struct CellTargetEntry;
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 // The grounds before Jupiter Lighthouse's gates: the cracked tiles' steps and
 // landings.
 

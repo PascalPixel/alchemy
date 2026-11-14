@@ -931,7 +931,6 @@ void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 #include "../field/field_effect/move.c"
 
 #undef FIELD_AT
-// @file
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1042,7 +1041,6 @@ struct CellTargetEntry;
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_SelectAnimation
 #undef Actor_StartScript
-// @file
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

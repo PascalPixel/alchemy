@@ -272,7 +272,6 @@ void Func_02000328(void) {
  * does not compile in tla-ja: games/tla/src/scene/contigo.c:2130: redefinition
  * of `struct ContigoEventWork'. */
 #define ContigoEventWork ContigoEventWork__contigo
-// @file
 #undef Func_02003f54
 #include "text/msg_ids.h"
 

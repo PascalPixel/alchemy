@@ -278,7 +278,6 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 #undef gNaribwe_Doors
-// @file
 // Naribwe's data: its scripts, door, placements and triggers.
 
 #include "text/msg_ids.h"

@@ -1,7 +1,12 @@
 /// @file
-/// The Izumo Ruins' pillars: those Pound sinks into the floor (Pillars_Place,
-/// Pillars_Pound) and the grey ones that crack under a first step and crumble
-/// under a second (CrumblingPillars_Step).
+/// The Izumo Ruins, under the stone circle of Izumo, in two rooms that share
+/// this overlay (SceneId_IzumoRuinsFirstRoom, SceneId_IzumoRuinsSecondRoom).
+/// Sand carries the party across the sandy floor (IzumoRuins_SinkIntoSand),
+/// Frost freezes the puddles (IzumoRuins_FreezePuddle), Pound sinks pillars
+/// (IzumoRuins_PoundPillar), Move sets the brown pillars in place
+/// (IzumoRuins_FinishMovingPillar), grey pillars crumble under a second step
+/// (shared/crumbling_pillars.h), and Parch dries the pool before the room of
+/// the stone tablet (IzumoRuins_ParchThePool).
 #include "system/iwram_call.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -134,20 +139,6 @@ s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-
-// @file
-// The Izumo Ruins, under the stone circle of Izumo, in two rooms that share
-// this overlay (SceneId_IzumoRuinsFirstRoom, SceneId_IzumoRuinsSecondRoom).
-// Sand carries the party across the sandy floor (IzumoRuins_SinkIntoSand),
-// Frost freezes the puddles (IzumoRuins_FreezePuddle), Pound sinks pillars
-// (IzumoRuins_PoundPillar), Move sets the brown pillars in place
-// (IzumoRuins_FinishMovingPillar), and Parch dries the pool before the room
-// of the stone tablet (IzumoRuins_ParchThePool).
-//
-// The pillars, the rubble and the effect spawner are in izumo_ruins/, which
-// shared field effect objects link between.
-//
-// It opens on its copy of the effect spawner, FieldEffect_Spawn.
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate

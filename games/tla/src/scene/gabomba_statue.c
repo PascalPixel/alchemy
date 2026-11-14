@@ -1467,7 +1467,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
  * before has its own. */
 #define Wanderer Wanderer__s2394
 #define SceneState SceneState__s2394
-// @file
 void Func_02002394(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;

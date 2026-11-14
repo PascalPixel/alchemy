@@ -1,13 +1,12 @@
-
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/field_effect/move.c"
 /// @file
 /// Four small places the ship reaches, sharing one overlay: the Gondowan
 /// Settlement (rooms 1 to 3), whose bush Cyclone cuts to a stair; the Hesperia
 /// Settlement (4 to 6), with its vine, crate and Tinder; Kalt Island (7 and 8),
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -985,7 +984,6 @@ void Settlements_SplashCrate(s32 id) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef SINK
-// @file
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

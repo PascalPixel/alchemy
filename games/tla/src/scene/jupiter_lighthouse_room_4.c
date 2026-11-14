@@ -703,7 +703,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #undef FLAG_RED_DOOR_OPENED
 #undef FLAG_BLUE_DOOR_OPENED
 #undef FLAG_BRIDGE_BLOCK_RAISED
-// @file
 // The room of grey blocks and locked doors in Jupiter Lighthouse: its copy of
 // the effect spawner, and the cracked tiles, found, cracked and fallen
 // through.
@@ -813,7 +812,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 // The room of grey blocks and locked doors in Jupiter Lighthouse: the cracked
 // tiles' steps and the fall to the floor below.
 

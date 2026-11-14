@@ -1,3 +1,7 @@
+/// @file
+/// Magma Rock, outside and on its slopes, where the party climbs to the Magma
+/// Ball the diggers of Loho need for their cannon, in three rooms that share
+/// this overlay (SceneId_MagmaRock1 to SceneId_MagmaRock3).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
@@ -1436,7 +1440,6 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef MagmaRock_PlayBurst
 #undef Position
 #undef MagmaRockEffectConfig
-// @file
 // Magma Rock's rooms set up, the leader launched and landed, and the
 // crumbling pillars and traps.
 

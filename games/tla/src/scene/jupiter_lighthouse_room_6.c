@@ -393,7 +393,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect/move.c"
 
 #undef FLAG_DOOR_BUTTON_HELD
-// @file
 // The hall below Jupiter Lighthouse's aerie: its copy of the effect spawner,
 // and the cracked tiles, found, cracked and fallen through.
 
@@ -497,7 +496,6 @@ struct CellTargetEntry;
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 // The hall below Jupiter Lighthouse's aerie: the cracked tiles' steps and
 // landings.
 

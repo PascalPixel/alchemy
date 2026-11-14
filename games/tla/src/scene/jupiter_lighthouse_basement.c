@@ -459,7 +459,6 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 #include "../field/field_effect/move.c"
 
 #undef OBJECT_BYTE
-// @file
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -565,7 +564,6 @@ struct CellTargetEntry;
 #undef CELL_PUSH_SLOT_ENTRY
 #undef OBJECT_BYTE
 #undef Actor_StartScript
-// @file
 #include "shared/cracked_tile_drop_in.h"
 
 extern struct CellTarget gCrackedTiles;

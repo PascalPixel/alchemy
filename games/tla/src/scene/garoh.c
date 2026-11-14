@@ -1,8 +1,11 @@
-
+/// @file
+/// Garoh, the village under Air's Rock whose people, its protectors, say there
+/// are no werewolves while one prowls its paths at night, in five rooms and a
+/// house that share this overlay (SceneId_Garoh1 to SceneId_Garoh5,
+/// SceneId_GarohInteriors3).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-/// @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -768,7 +771,6 @@ void Func_020011c8(void) {
 #undef EFFECT_SCRIPTS
 #undef DEFINE_GAROH_LOAD_PALETTE
 #undef DEFINE_GAROH_TRIGGER_AT_CELL
-// @file
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

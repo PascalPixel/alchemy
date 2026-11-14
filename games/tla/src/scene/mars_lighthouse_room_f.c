@@ -2434,7 +2434,6 @@ s32 Actor_Park(struct Actor *object) {
 #undef Ride_SetEntry
 #undef Unit_Get
 #undef MapLayer
-// @file
 #include "field/event_inline.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -2641,7 +2640,6 @@ s32 CrackedTiles_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 #include "field/event_inline.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {

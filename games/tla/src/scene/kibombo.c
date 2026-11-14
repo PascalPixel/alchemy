@@ -1470,7 +1470,6 @@ void Func_02002eb0(void) {
 #undef Import_ActorCreate
 #undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
-// @file
 #include "flags.h"
 #include "shared/tables.h"
 #include "kibombo.h"

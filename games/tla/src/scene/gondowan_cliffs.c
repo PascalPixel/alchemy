@@ -104,12 +104,9 @@ u32 gFieldEffect_LongScript[] = {
 #include "../field/field_effect/move.c"
 
 #undef gGondowanCliffs_PassActorPlacements
-// @file
 // The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
 // the yellow sand: each rises and falls on its timer, carrying the leader up
 // its column of water (Geysers_Update, Geysers_Draw).
-//
-// It opens on its copy of the effect spawner, FieldEffect_Spawn.
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -706,7 +703,6 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef FLAG_SECOND_PUDDLE_FROZEN
 #undef PIXEL_PART
 
-// @file
 // The Gondowan Cliffs' tables, which the scene's getters return.
 
 #include "text/msg_ids.h"

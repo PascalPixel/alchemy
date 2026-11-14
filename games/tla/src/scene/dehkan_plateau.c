@@ -77,7 +77,6 @@ void Actor_StartScript(struct Actor *object, const void *script);
 
 #include "../field/field_effect/move.c"
 
-// @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -983,7 +982,6 @@ void DehkanPlateau_CannonCastsPound(void) {
 #undef HeldActor_RaiseCell
 #undef Pillars_LowerHeldCells
 #undef CrumblingPillars_StepWithStandIn
-// @file
 void Actor_DisableById(s32 id);
 /* VIEW(s2698): routine gDehkanPlateau_PoundCube as this part declared it; the
  * joined file has another; tried as the definition's extern u32

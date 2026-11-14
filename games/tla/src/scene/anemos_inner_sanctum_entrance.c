@@ -1,4 +1,7 @@
-
+/// @file
+/// The entrance to the Anemos Inner Sanctum, sealed under Contigo, which the
+/// party reaches with Teleport once it has all seventy-two Djinn
+/// (SceneId_AnemosInnerSanctumEntrance).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"

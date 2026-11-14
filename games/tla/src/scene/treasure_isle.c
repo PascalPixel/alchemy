@@ -37,7 +37,6 @@
 
 #include "../field/field_effect/move.c"
 
-// @file
 // Treasure Isle's copy of the field effect spawner.
 
 #define EFFECT_SPAWN FieldEffect_Spawn

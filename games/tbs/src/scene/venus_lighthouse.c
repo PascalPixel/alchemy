@@ -3323,8 +3323,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
   // one FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY records, leaves that
   // socket empty, and the light sent there always arrives. With no pillar
   // the reads below go through address 0, into the BIOS, and that light goes
-  // out (gVenusLightGoesOut) while the other opens the gate (render probe
-  // venus-sockets-a).
+  // out (gVenusLightGoesOut) while the other opens the gate.
   sprite = pillar->sprite;
   if (sprite->entries[0]->animationId == SPRITE_SPIRAL_PILLAR) {
     s32 velocityX = light->velocityX;

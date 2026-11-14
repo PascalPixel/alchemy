@@ -38,8 +38,7 @@
 /// The inn's roof is mended. Scene_Initialize copies a 3-by-3 block of cells
 /// from (45, 41) to (8, 45). The block lies under map grid layer 2's window,
 /// on the inn's roof, and draws the thatch whole where vault.c's town shows
-/// the hole the fiery rock burnt in it (render probe vault-revisit, the town
-/// before and after).
+/// the hole the fiery rock burnt in it.
 
 #include "ability_ids.h"
 #include "djinn_ids.h"

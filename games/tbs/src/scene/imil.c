@@ -1428,9 +1428,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_Get(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 644, 166);
   Event_Wait(1);
-  /* FAKEMATCH(temporary): the flags set through a byte pointer to the actor;
-   * as Actor_Get(ACTOR_MEGAN)->steeringFlags |=, 2 of 506 instructions differ
-   * in tbs-en. */
+  /* FAKEMATCH(temporary): the flags set through a byte pointer. */
   *((u8 *)Actor_Get(ACTOR_MEGAN) + offsetof(struct Actor, steeringFlags)) |=
       ACTOR_FACES_MOTION;
   gFieldWork->transition =

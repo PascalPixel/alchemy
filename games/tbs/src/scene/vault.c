@@ -1141,7 +1141,7 @@ struct ActorPlacement gVault_ActorPlacements[] = {
         168, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     // XXX (no evidence): what this ivy was for; it stands above the map's top
     // edge where no camera shows it, is not solid, and only the field's passes
-    // over every actor touch it (render probe vault-ivy).
+    // over every actor touch it.
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_SAP), MOVEMENT_TYPE_STAND,

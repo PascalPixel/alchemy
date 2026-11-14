@@ -69,7 +69,7 @@
 /// it, and no other way leads in or out. Behavior 11 lies on one cell,
 /// (11, 28), in every state of the map. That is the cell north of where the
 /// party comes back out (VALE_PLAZA_FROM_CHEST_CAVE, at (186, 474)), so that
-/// way back is the way in (render probe vale-gate).
+/// way back is the way in.
 ///
 /// Three debug entrances are in no entrance table and no exit leads to them:
 ///
@@ -264,8 +264,7 @@ enum ValePlazaStormActorId {
   /// while the setup turns off the rock's own.
   ///
   /// It blocks nothing the rock does not already block, and nothing moves it,
-  /// so the shadow stays on the ground as the boy lifts the rock (render probe
-  /// vale-gate: the sprites with it and without it).
+  /// so the shadow stays on the ground as the boy lifts the rock.
   ACTOR_STORM_SMALL_ROCK_SHADOW,
   /// Rested at the Psynergy Stone, the strongman vale_prologue.c calls
   /// ACTOR_EXHAUSTED_STRONGMAN. "Great! I'm all charged up!"
@@ -362,8 +361,8 @@ static void ValePlaza_FightTravelers(void);
 static void ValePlaza_TravelersLeaveAfterBattle(void);
 static void ValePlaza_DepartForQuest(void);
 static void ValePlaza_SayThenWait(s32 speaker, s32 frames);
-static void ValePlaza_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames);
 static void ValePlaza_FlashPsynergyPalette(struct Actor *actor);
+static void ValePlaza_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames);
 static void ValePlaza_SpawnEffectPair(struct Actor *parent);
 static void ValePlaza_UpdateRockLiftingBoyPsynergy(void);
 static void ValePlaza_UpdateShowingStrongmanPsynergy(void);

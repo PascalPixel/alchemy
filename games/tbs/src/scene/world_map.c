@@ -1951,8 +1951,9 @@ static void WorldMap_UseBlackOrb(void) {
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    /* FAKEMATCH(dead): the motion flags cleared again, as the icon set-up
-     * that follows the sprite resets clears them. */
+    /* LEFTOVER(template): the motion flags cleared again after the sprite
+     * resets, as ImilFuchinFalls_PlaceDragonsEye clears them; as the
+     * first store alone, 11 of 363 instructions differ in tbs-en. */
     orb->motionFlags = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);

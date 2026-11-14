@@ -257,21 +257,15 @@ s32 Actor_GetSpriteById(s32 key) {
 s32 Actor_FindBySprite(s32 value) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 result = -1;
-  s32 index = 8;
-  struct Actor *object = event->objects[index];
+  s32 index;
+  struct Actor *object;
 
-  if (object != NULL && object->animationKind == 1 &&
-      *((struct ObjectAnimationState *)object->sprite)->value28 == value) {
-    result = index;
-  } else {
-  next:
-    index++;
-    if (index <= 79) {
-      object = event->objects[index];
-      if (object == NULL || object->animationKind != 1 ||
-          *((struct ObjectAnimationState *)object->sprite)->value28 != value)
-        goto next;
+  for (index = 8; index <= 79; index++) {
+    object = event->objects[index];
+    if (object != NULL && object->animationKind == 1 &&
+        *((struct ObjectAnimationState *)object->sprite)->value28 == value) {
       result = index;
+      break;
     }
   }
   return result;

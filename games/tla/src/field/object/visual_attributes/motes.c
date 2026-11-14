@@ -306,8 +306,7 @@ void FieldEffect_InitializeSparkles(void) {
   i = 0;
   slots = Ram_HeapSlots;
   clear = 0;
-loop:
-  {
+  do {
     struct MapWork *view = slots->mapWork;
     s32 *leader;
     /* FAKEMATCH(temporary): one integer cursor for the stores and the x. */
@@ -327,11 +326,9 @@ loop:
     p->posZ = clear;
     p->posY = MapGrid_GetTerrainHeightFar(0, attr, z);
     p->timer = (i & 15) + 1;
-  }
-  i++;
-  p++;
-  if (i < 64)
-    goto loop;
+    i++;
+    p++;
+  } while (i < 64);
   Task_Add(FieldEffect_UpdateSparkles, TASK_PASS_VBLANK);
 }
 

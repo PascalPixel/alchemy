@@ -1297,22 +1297,15 @@ struct ItemListMenu {
   struct WindowSprite *messageWindow;
 };
 
-s32 ItemMenu_IsStatRaisingItem(s32 item_id) {
-  s32 result;
-  s32 first;
-
-  if (item_id > 0xC4) {
-    goto L0;
+s32 ItemMenu_IsStatRaisingItem(s32 itemId) {
+  switch (itemId) {
+  case 193: // Apple
+  case 194: // Hard Nut
+  case 195: // Mint
+  case 196: // Lucky Pepper
+    return 1;
   }
-  first = 0xC1;
-  if (item_id < first) {
-    goto L0;
-  }
-  result = 1;
-  return result;
-L0:
-  result = 0;
-  return result;
+  return 0;
 }
 
 void ItemMenu_DrawMessage(s32 unused, s32 message) {

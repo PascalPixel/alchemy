@@ -73,22 +73,10 @@ void MapGrid_WaitForShakeToSettle(void) {
 
   work = (s32 *)Ram_HeapSlots->mapWork;
   cnt = 0;
-  if (work[1] > 255 || work[2] > 255) {
-    goto body;
-  body:
+  while (cnt < 300 && (work[1] > 255 || work[2] > 255)) {
     wait(1);
-    ++cnt;
-    if (cnt >= 300) {
-      goto done;
-    }
-    if (work[1] > 255) {
-      goto body;
-    }
-    if (work[2] > 255) {
-      goto body;
-    }
+    cnt++;
   }
-done:
   work[3] = 0;
 }
 

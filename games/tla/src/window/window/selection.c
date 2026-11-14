@@ -258,48 +258,22 @@ void SelectionMenu_ReservedNoOp(void) {}
 /// Returns a free selection icon record of `kind` (enum SelectionIconGroup),
 /// or NULL.
 s32 SelectionMenu_FindFreeIcon(s32 kind) {
-  s32 state;
-  s32 off;
+  struct SelectionScreen *state =
+      (struct SelectionScreen *)Ram_HeapSlots->menuWork;
   s32 i;
-  s32 j;
-  u32 ret;
-  u16 *q;
-  u16 *p;
-  u32 v;
 
-  state = (s32)Ram_HeapSlots->menuWork;
   if (kind != 0) {
-    i = 0;
-    p = &((struct SelectionScreen *)state)->records[9].kind;
-    off = 0;
-  loop_2:
-    if (*p == 0) {
-      return state + off + 0x1D4;
+    for (i = 0; i != 5; i++) {
+      if (state->records[i + 9].kind == 0)
+        return (s32)&state->records[i + 9];
     }
-    i = i + 1;
-    p += 0x1A;
-    off = off + 0x34;
-    if (i == 5) {
-      goto block_10;
+  } else {
+    for (i = 0; i != 7; i++) {
+      if (state->records[i + 2].kind == 0)
+        return (s32)&state->records[i + 2];
     }
-    goto loop_2;
   }
-  j = 0;
-  ret = state + 0x68;
-  q = &((struct SelectionScreen *)state)->records[2].kind;
-loop_7:
-  v = *q;
-  q += 0x1A;
-  if (v == 0) {
-    return ret;
-  }
-  ret += 0x34;
-  j += 1;
-  if (j == 7) {
-  block_10:
-    return 0;
-  }
-  goto loop_7;
+  return 0;
 }
 
 /// Starts drawing the selection screen each frame, in the vertical blank pass

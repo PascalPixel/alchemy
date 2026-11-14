@@ -4,6 +4,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "flags.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "flag_call.h"
@@ -12,16 +13,6 @@
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 #include "macros.h"
-
-/* VIEW(f0267bc): tag struct PartyKeys as struct PartyKeys__f0267bc;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/player_control.c:54: structure has no member named
- * `keys23c'. */
-struct PartyKeys__f0267bc {
-  u8 unk000[0x23c];
-  u16 keys23c;
-};
 
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
@@ -32,7 +23,7 @@ s32 MapGrid_CheckCollision__resource_slot(
 /* VIEW(f0267bc): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/field/player_control.c:253: request for member
+ * in tla-ja: games/tla/src/field/field/player_control.c:244: request for member
  * `hp' in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f0267bc(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -55,12 +46,12 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   s32 angleIndex;
   s32 onObject;
   struct Actor *other;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   movementAnimation = 2;
   collision = 0;
   pushed = 0;
-  if (gInput.held & ((struct PartyKeys__f0267bc *)&gMainRoutineWork)->keys23c) {
+  if (gInput.held & gMainRoutineWork.dashKeys) {
     object->speedLimit = px(1);
     object->acceleration = 0xccc;
     movementAnimation = 5;
@@ -243,7 +234,7 @@ push_objects:
   }
 
 counted:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collision & 3)
       work->blockedSteps++;
@@ -290,19 +281,16 @@ counted:
 }
 
 s32 Field_RequestShortcut(u32 value) {
-  struct EventPrompt *event = Ram_HeapSlots->eventWork;
+  struct EventPrompt *event = Ram_HeapSlots->fieldWork;
   u32 kind = value >> 14;
   s32 code = value & 0x3fff;
 
-  if (GameFlag_Get(0x107) != 0) {
+  if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER) != 0) {
     event->result = 250;
   } else if (event->mode == 3) {
-    /* FAKEMATCH(volatile): the held keys. */
-    volatile u32 *held = &gInput.held;
-
-    if (*held & KEY_R)
+    if (gInput.held & KEY_R)
       event->result = 0xfc88;
-    else if (*held & KEY_L)
+    else if (gInput.held & KEY_L)
       event->result = 0xfc87;
   } else {
     switch (kind) {
@@ -323,34 +311,34 @@ s32 Field_RequestShortcut(u32 value) {
 /// the five requests command 0x209b instead. Returns 0 when none is pressed.
 // As ☀️'s function of the same name.
 s32 Field_CheckConfiguredKeys(void) {
-  struct EventPrompt *work = Ram_HeapSlots->eventWork;
+  struct EventPrompt *work = Ram_HeapSlots->fieldWork;
   s32 result = 0;
 
   if (work == NULL)
     return 0;
   if (work->pendingSecond != 0) {
-    if ((gInput.pressed & gMainRoutineWork.keys234) ||
-        (gInput.pressed & gMainRoutineWork.keys230) ||
-        (gInput.pressed & gMainRoutineWork.keys236) ||
-        (gInput.pressed & gMainRoutineWork.keys238) ||
-        (gInput.pressed & gMainRoutineWork.keys23a)) {
+    if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
+        (gInput.pressed & gMainRoutineWork.aKeys) ||
+        (gInput.pressed & gMainRoutineWork.startKeys) ||
+        (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
+        (gInput.pressed & gMainRoutineWork.secondShortcutKeys)) {
       work->choice[0] = 0x209b;
       return 1;
     }
     return 0;
   } else {
-    if (gInput.pressed & gMainRoutineWork.keys234) {
+    if (gInput.pressed & gMainRoutineWork.selectKeys) {
       work->menu = 1;
       result = 1;
-    } else if (gInput.pressed & gMainRoutineWork.keys230) {
+    } else if (gInput.pressed & gMainRoutineWork.aKeys) {
       work->examine = 1;
       result = 1;
-    } else if (gInput.pressed & gMainRoutineWork.keys236) {
+    } else if (gInput.pressed & gMainRoutineWork.startKeys) {
       work->start = 1;
       result = 1;
-    } else if (gInput.pressed & gMainRoutineWork.keys238) {
+    } else if (gInput.pressed & gMainRoutineWork.firstShortcutKeys) {
       result = Field_RequestShortcut(gMainRoutineWork.packedEvents[0]);
-    } else if (gInput.pressed & gMainRoutineWork.keys23a) {
+    } else if (gInput.pressed & gMainRoutineWork.secondShortcutKeys) {
       result = Field_RequestShortcut(gMainRoutineWork.packedEvents[1]);
     }
   }
@@ -405,16 +393,6 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 
-/* VIEW(f027064): tag struct PartyKeys as struct PartyKeys__f027064;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/player_control.c:456: structure has no member named
- * `keys23c'. */
-struct PartyKeys__f027064 {
-  u8 unk000[0x23c];
-  u16 keys23c;
-};
-
 extern struct MapCell gMapCellBuffer[];
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
@@ -425,7 +403,7 @@ s32 MapGrid_CheckCollision__resource_slot(
 /* VIEW(f027064): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/field/player_control.c:651: request for member
+ * in tla-ja: games/tla/src/field/field/player_control.c:629: request for member
  * `hp' in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f027064(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -447,7 +425,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   s32 headingCount;
   s32 footprintAngle;
   s32 onObject;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct MapFlagsWork *map;
   u16 angle;
   u16 direction;
@@ -458,11 +436,11 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   sprite = object->sprite;
   movementAnimation = 2;
   onObject = 0;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   map = (struct MapFlagsWork *)Ram_HeapSlots->mapWork;
   collision = 0;
   pushed = 0;
-  if (gInput.held & ((struct PartyKeys__f027064 *)&gMainRoutineWork)->keys23c) {
+  if (gInput.held & gMainRoutineWork.dashKeys) {
     object->speedLimit = px(3) / 2;
     object->acceleration = px(1) / 4;
     movementAnimation = 5;

@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "flags.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
@@ -457,11 +458,9 @@ void BattleMessage_WaitForAdvance(void) {
     Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
-    /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
     if ((gInput.held & KEY_B) ||
         (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
-        (frame > 15 &&
-         (*(volatile u32 *)&gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))))
+        (frame > 15 && (gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))))
       break;
     wait(1);
   }
@@ -537,7 +536,7 @@ void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
  * BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void
  * BattleMotion_FlashHit(s32 id); tried as the definition's void
  * BattleMotion_FlashHit(s32 id), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/battle/battle/targeting.c:590: too many
+ * compile in tla-ja: games/tla/src/battle/battle/targeting.c:589: too many
  * arguments to function `BattleMotion_FlashHit'. */
 extern void
 BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a,
@@ -1102,7 +1101,8 @@ power_end:
               dmg = 1;
           }
         }
-        if (GameFlag_Get(366) != 0 && plan->command == 5 && hp <= dmg) {
+        if (GameFlag_Get(FLAG_DJINN_LESSON) != 0 && plan->command == 5 &&
+            hp <= dmg) {
           dmg = hp - 1;
         }
         pass++;
@@ -1345,7 +1345,7 @@ power_end:
         dmg += Battle_RandomFar() & 3;
         GUARD_CUT();
         if ((gMainRoutineWork.battleRule24b == 6 ||
-             (GameFlag_Get(366) != 0 && plan->command == 6)) &&
+             (GameFlag_Get(FLAG_DJINN_LESSON) != 0 && plan->command == 6)) &&
             cur > dmg) {
           dmg = cur;
         }

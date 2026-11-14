@@ -15,7 +15,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 #include "field/event_inline.h"
 #include "system/main_routine_work.h"
@@ -787,7 +787,7 @@ void Actor_DisableById(s32 id);
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
+  gFieldWork->transition = 0x209;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   Actor_DisableById(17);
   Actor_DisableById(18);

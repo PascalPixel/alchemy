@@ -13,20 +13,14 @@ struct EffectWork1a {
   s16 active;
 };
 
-/// A shape grid byte seen as a bit-field, so its store takes the struct's
-/// alias set (see the FAKEMATCH tag in Func_02000d78).
-struct ShapeBits {
-  u32 shape : 8;
-};
-
 void DehkanPlateau_CannonLeapsAway(void);
 
-void Pillars_Pound(const void *data, s32 mode, s32 timer);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 
 void DehkanPlateau_SetActorsHidden(s32 show);
 
 void Actor_DropAndWait(struct Actor *object);
-void Func_0200172c(void);
+void DehkanPlateau_SetRoom3SecondPillarInPlace(void);
 
 void Import_ActorRelease(struct Actor *object);
 
@@ -57,29 +51,29 @@ void DehkanPlateau_CannonCastsPound(void);
 
 void DehkanPlateau_FightCannon(void);
 
-void Func_020012c8(void);
-void Func_02001368(void);
-void Func_020013fc(void);
-void Func_02001444(void);
+void DehkanPlateau_StepOnRoom1Pillars(void);
+void DehkanPlateau_StepOnRoom2Pillars(void);
+void DehkanPlateau_StepOnRoom3Pillars(void);
+void DehkanPlateau_StepOnRoom6Pillar(void);
 void DehkanPlateau_HideActors(void);
 
 void DehkanPlateau_ShowActors(void);
 
-void Func_020015e0(void);
+void DehkanPlateau_DropRoom1PillarIntoGap(void);
 
-void Func_02001630(void);
+void DehkanPlateau_LiftRoom2Pillar(void);
 
-void Func_02001640(void);
-void Func_020016a0(void);
+void DehkanPlateau_PlaceRoom2Pillar(void);
+void DehkanPlateau_LiftRoom3Pillar(void);
 
-void Func_020017a0(void);
+void DehkanPlateau_PushRoom3SecondPillar(void);
 
 void Func_020017f4(void);
 
 void DehkanPlateau_StepOnCrack(void);
 void Scene_RunIfHeld(void);
-void Func_02002114(void);
-void Func_02002124(void);
+void DehkanPlateau_LiftRoom3RaisedPillar(void);
+void DehkanPlateau_FinishMovingRaisedPillar(void);
 void DehkanPlateau_CannonFleesOverCracks(void);
 void DehkanPlateau_CannonPoundsPillar(void);
 
@@ -122,7 +116,7 @@ void DehkanPlateau_InitializeRoom4(void);
 void DehkanPlateau_InitializeRoom5(void);
 void DehkanPlateau_InitializeRoom6(void);
 
-void CrumblingPillars_Place(const void *data);
+void CrumblingPillars_Place(u16 *list);
 
 void Func_020012d8(void);
 void DehkanPlateau_HideRoom2Actors(void);

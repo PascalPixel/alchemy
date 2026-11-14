@@ -18,7 +18,7 @@
 #include "macros.h"
 #include "system/task.h"
 #include "system/frame.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -353,7 +353,7 @@ struct SparkWork {
 /* VIEW(jupiter_lighthouse_room_5): routine gPaletteCyclePausesInEvents as this
  * part declared it; the joined file has another; tried as the definition's
  * extern s32 gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:586:
+ * games/tla/src/scene/shared/palette_cycle_set_pauses_in_events.h:3:
  * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32 gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5 __asm__(
     "gPaletteCyclePausesInEvents");
@@ -454,8 +454,7 @@ void Func_02000810(s32 actor, s32 target) {
   Actor_SetAnimation(target, 1);
 }
 
-#define EVENT_WORK                                                             \
-  ((struct JupiterLighthouseRoom5EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((struct FieldWork *)Ram_HeapSlots->fieldWork)
 
 /// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
 /// about, actor 22 rises in sparks and talks with it, then joins it; flags
@@ -537,8 +536,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 angle;
 
-  ((struct JupiterLighthouseRoom5EventWork1ac *)Ram_HeapSlots->eventWork)
-      ->value = 0x204;
+  gFieldWork->transition = 0x204;
   if (Event_GetFlag(0xa23))
     Event_ClearFlag(0xa22);
   if (Event_GetFlag(0xa22)) {
@@ -591,9 +589,7 @@ s32 Scene_PrepareMap(void) {
 #include "shared/scene_set_arrival_flags.c"
 #undef EVENT_WORK
 
-void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 extern s32 gPaletteCycleFrame;
 
@@ -618,14 +614,14 @@ extern s32 gData_02003400;
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 void Func_02001070(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
@@ -663,7 +659,7 @@ void Func_02001070(struct Actor *self) {
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;
-            *(u16 *)(work + 362) = delay;
+            work->raisedTrigger = delay;
           }
           gMainRoutineWork.renderMode = 0;
           *((u8 *)self + 0x62) = 1;
@@ -702,10 +698,8 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_222);
-  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Trig_Cos(source->angle));
-  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Sin(source->angle));
+  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
+  position.z = source->z + Math_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
   Import_ActorSelectAnimation(object, 2);
@@ -760,7 +754,7 @@ struct Spark {
 /* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct
  * SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:800: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:794: structure has no
  * member named `x'. */
 struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk00[0x0c];
@@ -772,7 +766,7 @@ struct SparkSprite__jupiter_lighthouse_room_5 {
 /* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230;
  * jupiter_lighthouse_room_5.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:775: structure has no member
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:769: structure has no member
  * named `sparks'. */
 struct SparkWork__s1230 {
   u8 unk0000[0x400];
@@ -819,7 +813,7 @@ void Func_02001538(void) {
 /* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
  * games/tla/src/scene/jupiter_lighthouse_room_5 has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:836: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:830: structure has no
  * member named `sparks'. */
 struct SparkWork__s1650 {
   u8 tiles[0x400];
@@ -947,7 +941,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef gData_02003274
 #undef gData_02003278
 #undef gPaletteCyclePausesInEvents
-// @file
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1026,8 +1019,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
@@ -1041,62 +1032,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-/* VIEW(s22b8): tag struct CellTarget as struct CellTarget__s22b8; cell_target.h
- * has another definition; tried with the definition the rest of the object has,
- * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
-struct CellTarget__s22b8 {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-};
-
-void CrackedTile_Fall(struct CellTarget__s22b8 *table,
-                      struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
-  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
-
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  leader->facing = 0x4000;
-  leader->motionFlags = 0;
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Io_Write16(0xf1f, &REG_WINOUT);
-  REG_DISPCNT |= 0x8000;
-  table->shown = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  x = 0;
-  do {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    leader->scaleX += -0x400;
-    leader->scaleY += -0x300;
-    leader->y += -0x9999;
-    System_Wait(1);
-    x++;
-  } while (x <= 39);
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

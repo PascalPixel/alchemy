@@ -20,7 +20,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/scene/scene.h"
 #include "system/ram_buffer.h"
@@ -29,6 +29,7 @@
 #include "field/event_inline.h"
 #include "version.h"
 #include "system/task.h"
+#include "map.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
@@ -89,19 +90,6 @@ struct AlhafranCaveMapWork {
   struct AlhafranCaveMapLayer layers[1];
 };
 
-struct AlhafranCaveEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-  u8 unk1b0[0xb9a];
-  u16 valueD4a;
-  u16 valueD4c;
-};
-
-struct AlhafranCaveEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
-
 struct AlhafranCaveSwitch {
   u16 id;
   s16 kind;
@@ -119,8 +107,8 @@ void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,
 
 void AlhafranCave_SetUpCave(void);
 void AlhafranCave_SetUpJail(void);
-void Pillars_Pound(const u16 *entry, s32 mode, s32 frame);
-void Pillar_ShowState(s32 id, u32 kind, s32 flag, s32 layer);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 extern s16 gAlhafranCave_Puddles[];
 extern s16 gAlhafranCave_Pillars[];
@@ -138,16 +126,6 @@ static __inline__ void MapGrid_SetCellBehavior_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellBehavior(x, z, a, b);
 }
 
-static __inline__ void Map_CopyCellAttributeRect_(s32 a, s32 b, s32 c, s32 d,
-                                                  s32 e, s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
-static __inline__ void MapGrid_CopyCellPictureCellsRect_(s32 a, s32 b, s32 c,
-                                                         s32 d, s32 e, s32 f) {
-  MapGrid_CopyCellPictureCellsRect(a, b, c, d, e, f);
-}
-
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
@@ -159,7 +137,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void AlhafranCave_PoundPillar(s32 mode, s32 frame) {
-  Pillars_Pound(gAlhafranCave_Pillars, mode, frame);
+  Pound_SinkTarget(gAlhafranCave_Pillars, mode, frame);
 }
 
 void AlhafranCave_StartMovingCrate(void) {}
@@ -205,9 +183,9 @@ void AlhafranCave_CloseWayToJail(void) {
 }
 
 void AlhafranCave_CastSand(void) {
-  struct AlhafranCaveEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->valueD4a = 2;
+  work->unkd4a = 2;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -239,7 +217,7 @@ s32 AlhafranCave_DrawCrateSprite(void) {
 
 s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
-  ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
+  gFieldWork->transition = 0x201;
   if (gMainRoutineWork.scene == (s32)&SceneId_AlhafranCave)
     AlhafranCave_SetUpCave();
   else if (gMainRoutineWork.scene == (s32)&SceneId_AlhafraJail)
@@ -249,16 +227,13 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_AlhafranCave) {
-    ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
-        0x201;
+    gFieldWork->transition = 0x201;
     AlhafranCave_SetUpCave();
   } else if (scene == (s32)&SceneId_AlhafraJail) {
     if (gMainRoutineWork.entrance == 8 || gMainRoutineWork.entrance == 9)
-      ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
-          0x209;
+      gFieldWork->transition = 0x209;
     else
-      ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
-          0x201;
+      gFieldWork->transition = 0x201;
     AlhafranCave_SetUpJail();
   }
   return 0;
@@ -327,9 +302,9 @@ void AlhafranCave_SetUpCave(void) {
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     /* FAKEMATCH(wrapper): the three calls forwarded through
      * MapGrid_CopyCellPictureCellsRect_. */
-    MapGrid_CopyCellPictureCellsRect_(0, 58, 12, 7, 13, 58);
-    MapGrid_CopyCellPictureCellsRect_(0, 58, 2, 9, 25, 66);
-    MapGrid_CopyCellPictureCellsRect_(0, 58, 10, 5, 15, 74);
+    MapGrid_CopyCellsLayered(0, 58, 12, 7, 13, 58);
+    MapGrid_CopyCellsLayered(0, 58, 2, 9, 25, 66);
+    MapGrid_CopyCellsLayered(0, 58, 10, 5, 15, 74);
   }
 }
 
@@ -342,7 +317,7 @@ void EffectSprite_InitFromSlot94(const void *data, s32 a, s32 b, s32 c);
 /// 0x109 is set.
 void AlhafranCave_SetUpJail(void) {
   const void *data;
-  struct AlhafranCaveEventWork *work;
+  struct FieldWork *work;
 
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Actor_Get(8)->priorityFlags |= 32;
@@ -352,9 +327,9 @@ void AlhafranCave_SetUpJail(void) {
   Call4((void (*)())EffectSprite_InitFromSlot94, (s32)data, 8, 15, 0x40000000);
   FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
-    work = Ram_HeapSlots->eventWork;
+    work = Ram_HeapSlots->fieldWork;
 
-    work->valueD4c = 3;
+    work->unkd4c = 3;
   }
   Rope_Initialize();
   Rope_Place(0, 0x200, 10, 11);
@@ -423,9 +398,9 @@ void AlhafranCave_SetUpJail(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_AlhafraJail &&
       Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    MapGrid_CopyCellPictureCellsRect_(23, 46, 4, 5, 21, 14);
-    MapGrid_CopyCellPictureCellsRect_(86, 44, 5, 6, 84, 12);
-    Map_CopyCellAttributeRect_(22, 45, 5, 6, 20, 13);
+    MapGrid_CopyCellsLayered(23, 46, 4, 5, 21, 14);
+    MapGrid_CopyCellsLayered(86, 44, 5, 6, 84, 12);
+    MapGrid_CopyCellAttributes(22, 45, 5, 6, 20, 13);
   }
   return 0;
 }
@@ -735,96 +710,11 @@ void AlhafranCave_ShakeUnderEoleosPower(void) {
   Actor_ApplyRandomChildValues();
 }
 
-/// Walks a list of three-halfword entries (object id, kind, flag) ended by
-/// 0xffff, clearing each object's collision bit and child flags before passing
-/// the entry to Pillar_ShowState.
-void Pillars_Place(const u16 *list) {
-  const u16 *entry;
+#include "shared/pillars_place.h"
 
-  if (list[0] == 0xffff)
-    return;
-  entry = list;
-loop:
-  {
-    u32 id = entry[0];
-    struct Actor *object = Actor_Get(id);
-    s16 kind = entry[1];
-    s16 flag = entry[2];
+#include "shared/pound_sink_target.h"
 
-    object->collisionFlags &= ~1;
-    Actor_SetSpriteFlags(object, 0);
-    Pillar_ShowState(id, (u16)kind, (u16)flag, object->terrainId);
-    entry += 3;
-  }
-  if (entry[0] != 0xffff)
-    goto loop;
-}
-
-void Pillars_Pound(const u16 *entry, s32 mode, s32 frame) {
-  struct AlhafranCaveEffectWork *work = Ram_HeapSlots->effectWork;
-  while (entry[0] != 0xffff) {
-    u32 value = *entry;
-    s32 id = work->objectId;
-
-    if (id == value) {
-      struct Actor *object = Actor_Get(id);
-      s32 kind;
-      s32 flag;
-
-      entry++;
-      kind = entry[0];
-      flag = entry[1];
-
-      if (frame <= 7)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        Event_SetFlag(flag);
-        Pillar_ShowState(id, kind, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      return;
-    }
-    entry += 3;
-  }
-}
-
-void Pillar_ShowState(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_Get(id);
-  struct AlhafranCaveMapCell *cell =
-      ((struct AlhafranCaveMapWork *)Ram_HeapSlots->mapWork)
-          ->layers[layer]
-          .cells;
-
-  cell += Func_02001588();
-  if (Event_GetFlag(flag)) {
-    cell->state = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 2);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 4);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 6);
-      break;
-    }
-  } else {
-    cell->state = 255;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 1);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 3);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 5);
-      break;
-    }
-  }
-}
+#include "shared/actor_set_cell_open.h"
 
 // clang-format off
 s16 gAlhafranCave_Puddles[] = {

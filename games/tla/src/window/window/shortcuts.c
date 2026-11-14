@@ -3,19 +3,14 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "field/field_work.h"
 
-struct TimedNoticeWork {
-  u8 unk000[0x21c];
-  struct Window *window;
-  u16 countdown;
-};
-
-#define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->eventWork)
+#define TIMED_NOTICE_WORK ((struct FieldWork *)Ram_HeapSlots->fieldWork)
 
 void AreaNameWindow_Update(void);
 /// Opens the area-name window, which closes after ninety frames.
 void AreaNameWindow_Show(void) {
-  struct TimedNoticeWork *work;
+  struct FieldWork *work;
   s32 height;
   s32 width;
   s32 y;
@@ -34,25 +29,25 @@ void AreaNameWindow_Show(void) {
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;
   window = Window_Create(x, y, width, height, 2);
-  work->window = window;
+  work->noticeWindow = window;
   Text_DrawMessage(resource, (s32)window, 0, 0);
-  work->countdown = 90;
+  work->noticeFrames = 90;
   Task_Add(AreaNameWindow_Update, TASK_PASS_VBLANK);
 }
 
 /// Counts the area name down, and closes it at 0.
 void AreaNameWindow_Update(void) {
-  struct TimedNoticeWork *work;
+  struct FieldWork *work;
   u16 *countdown;
   s32 count;
 
   work = TIMED_NOTICE_WORK;
-  countdown = &work->countdown;
+  countdown = &work->noticeFrames;
   count = *countdown;
   count += 0xffff;
   *countdown = count;
   if ((count << 16) == 0) {
-    Window_Close(work->window, 2);
+    Window_Close(work->noticeWindow, 2);
     Task_Remove(AreaNameWindow_Update);
   }
 }
@@ -61,7 +56,7 @@ void AreaNameWindow_Update(void) {
 void AreaNameWindow_Hide(void) {
   struct Window *window;
 
-  window = TIMED_NOTICE_WORK->window;
+  window = TIMED_NOTICE_WORK->noticeWindow;
   if (window != NULL && window->flags != 0) {
     Window_Close(window, 2);
     Task_Remove(AreaNameWindow_Update);

@@ -1,12 +1,11 @@
-
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/field_effect/move.c"
 /// @file
 /// The Shaman Village, whose people will not talk to outsiders: Moapa, shown
 /// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind
 /// clears the sand before the race to the summit; its houses, inn, shop and
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 
 #include "flags.h"
 #include "item_ids.h"
@@ -231,7 +230,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "field/event_inline.h"
 #include "system/frame.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 
 void Event_End(void);
 void Shop_Run(s32 shop, s32 keeper);
@@ -315,7 +314,7 @@ extern struct ActorPlacement gShamanVillage_Room3Placements[];
  * scene/shaman_village/s1fec has struct ActorPlacement
  * gShamanVillage_Room2Placements[] = {; tried as the definition's extern struct
  * ActorPlacement gShamanVillage_Room2Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/shaman_village.c:326:
+ * tla-ja: games/tla/src/scene/shaman_village.c:325:
  * `gShamanVillage_Room2Placements' undeclared (first use in this function). */
 extern struct ShamanVillageSceneBlock
     gShamanVillage_Room2Placements__s00b8 __asm__(
@@ -745,7 +744,7 @@ void ShamanVillage_TalkToGuard(void) {
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessage(17, 0);
   }
   Event_End();
@@ -768,42 +767,42 @@ void ShamanVillage_TalkToOtherGuard(void) {
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessage(16, 0);
   }
   Event_End();
 }
 
 void ShamanVillage_TellOutsidersToLeave(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanOutsidersLeaveTown);
   Event_ShowMessage(15, 0);
-  work->unk15a = 1;
+  work->fieldMenu = 1;
   Event_End();
 }
 
 void ShamanVillage_WarnOfMoapasPower(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanFearMoapaPower);
   Event_ShowMessage(17, 0);
-  work->unk15a = 1;
+  work->fieldMenu = 1;
   Event_End();
 }
 
 void ShamanVillage_SendToMoapa(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanSpeakToMoapa);
   Event_ShowMessage(16, 0);
-  work->unk15a = 1;
+  work->fieldMenu = 1;
   Event_End();
 }
 
@@ -911,7 +910,7 @@ void ShamanVillage_TalkToMoapa(void) {
         1) {
       Event_ShowMessage(11, 0);
     } else {
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
       Event_ShowMessage(11, 0);
       Event_SetFlag(0x9ed);
     }
@@ -962,7 +961,7 @@ void ShamanVillage_TellFortune(void) {
         1) {
       Event_ShowMessage(17, 0);
     } else {
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
       Event_ShowMessage(17, 0);
       Event_PlaySound(MUS_011);
       Actor_SetAnimation(17, 5);
@@ -1080,7 +1079,7 @@ void ShamanVillage_OfferToGiveUp(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 368);
     Event_ClearFlag(FLAG_SCENE_TEMP_01);
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessage(15, 0);
     FieldCamera_SetSpeed(1.2);
     FieldCamera_MoveTo(168, CAMERA_KEEP, 280, 1);
@@ -1107,7 +1106,7 @@ void ShamanVillage_ChallengeMoapa(void) {
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -1116,7 +1115,7 @@ void ShamanVillage_ChallengeMoapa(void) {
       Event_SetFlag(FLAG_SCENE_TEMP_00);
       ShamanVillage_ExplainTrialRules();
     } else {
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
       ShamanVillage_CheckTrialEntry();
     }
   }
@@ -1341,8 +1340,6 @@ void ShamanVillage_MeetMoapa(void) {
   Event_End();
 }
 
-#undef gShamanVillage_WalkToLeftStartScript
-#undef gShamanVillage_WalkToRightStartScript
 #undef gShamanVillage_Room2Placements
 #include "shared/drift_spawn.c"
 
@@ -1631,7 +1628,7 @@ void ShamanVillage_StepBackFromTrial(void) {
   Event_ClearFlag(FLAG_SCENE_TEMP_01);
 }
 
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK gFieldWork
 
 // Forwards to Party_ListMembers; tagged where it is used.
 /// Moapa takes the challenge only from a party with the Shaman's Rod and eight
@@ -1667,14 +1664,14 @@ void ShamanVillage_CheckTrialEntry(void) {
     if (remaining == 0)
       break;
   }
-  EVENT_WORK->messageId++;
+  EVENT_WORK->message++;
   if (remaining != 0) {
   refuse:
     SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20)
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
     Actor_WatchAndSetScript(17, gMainRoutineWork.currentOwner);
@@ -2214,7 +2211,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   } else {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAnimationAndWait(15, 4);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Event_ShowMessage(15, 0);
     Actor_SetAnimation(15, 3);
     Event_ShowMessage(15, 0);
@@ -2292,7 +2289,7 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
 }
 
 void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
@@ -2319,7 +2316,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void ShamanVillage_EnterDoor4(void) {
@@ -2405,16 +2402,16 @@ void ShamanVillage_RestartTrial(void) {
       ShamanVillage_ExplainTrialRules();
       return;
     }
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
   } else {
-    EVENT_WORK->messageId += 2;
+    EVENT_WORK->message += 2;
   }
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_CheckTrialEntry();
   }
@@ -2634,7 +2631,7 @@ void ShamanVillage_SetUpRoom2(void) {
 void ShamanVillage_SetUpRoom4(void) {
   u32 i;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+  gFieldWork->transition = 521;
   ((struct Actor *)Actor_GetById(12))->collisionFlags = 8;
   if (Event_GetFlag(0x9fe)) {
     s32 angle = 0x3000;
@@ -2697,9 +2694,9 @@ void ShamanVillage_SetUpRoom4(void) {
 DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerSanctumActors, 9, 10)
 
 void ShamanVillage_SetUpRoom6(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 521;
+  work->transition = 521;
   if (Event_GetFlag(0x9fe)) {
     Task_Add(ShamanVillage_LayerSanctumActors, 0x480);
   } else {
@@ -3418,7 +3415,4 @@ u32 gDriftScene_SpawnScript[] = {
 #undef SHAMAN_VILLAGE_EMOTE
 #undef WORD_AT
 #undef OBJ14_BYTE
-#undef gShamanVillage_WalkToLeftStartScript
-#undef gShamanVillage_WalkToRightStartScript
-#undef Import_ActorSetMode
 #undef gShamanVillage_Room2Placements

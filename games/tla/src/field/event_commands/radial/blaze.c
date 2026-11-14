@@ -9,21 +9,6 @@
 
 #include "system/input.h"
 
-struct FxScene {
-  u16 angleFraction;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
-};
-
 struct FxEvent {
   u8 unk00[20];
   struct Actor *objects[80];
@@ -31,17 +16,6 @@ struct FxEvent {
   u8 unkd30;
   u8 unkd31[7];
   s8 unkd38;
-};
-
-/* VIEW(psynergy): tag struct ObjectAnimation as struct
- * ObjectAnimation__psynergy; module/field/field.h has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial/blaze.c:36: redefinition of
- * `struct ObjectAnimation'. */
-#define ObjectAnimation ObjectAnimation__psynergy
-struct ObjectAnimation {
-  u8 unk00[40];
-  s16 *definition;
 };
 
 struct ObjectMetadata {
@@ -78,7 +52,7 @@ void Blaze_UpdateSpray(void);
 
 void FieldPsynergy_Blaze(void) {
   struct SprayWork *work;
-  struct FxEvent *event;
+  struct FieldWork *event;
   struct FxScene *scene;
   struct Actor *caster;
   struct Actor *object;
@@ -106,7 +80,7 @@ void FieldPsynergy_Blaze(void) {
 
   work = HeapSlot_Alloc(92, sizeof(struct SprayWork));
   scene = Ram_HeapSlots->effectWork;
-  event = Ram_HeapSlots->eventWork;
+  event = Ram_HeapSlots->fieldWork;
   caster = scene->mainObject;
   look = 0;
   object = scene->child;
@@ -127,7 +101,7 @@ void FieldPsynergy_Blaze(void) {
     work->origin[2] = scene->z;
     best = 9999;
     for (i = 0; i < 80; i++) {
-      cursor.object = event->objects[i];
+      cursor.object = event->actors[i];
       id = OBJECT_DEFINITION(cursor.object)[0];
       if (cursor.object != NULL && cursor.object->script != NULL &&
           (id == 410 || id == 304 || id == 386 || id == 418)) {
@@ -309,9 +283,9 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   struct Actor *other;
   s32 i;
 
-  s8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   result = 0;
-  if (work[394] != EVENT_MODE_NO_CELL_TEST) {
+  if (work->mode != EVENT_MODE_NO_CELL_TEST) {
     if (MapGrid_CheckCollisionAtFar(object->x, object->z, 0,
                                     object->terrainHeight) != 0)
       result = 1;
@@ -333,18 +307,6 @@ s32 Actor_CheckBlocked(struct Actor *object) {
 #include "system/io_reg.h"
 #include "system/heap_release.h"
 
-struct CueEvent {
-  u8 unk000[358];
-  u16 cue;
-};
-
-/* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
- * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
- * as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial/blaze.c:341: conflicting
- * types for `gMainRoutineWork'. */
-extern u8 gMainRoutineWork__f0e3d04[] __asm__("gMainRoutineWork");
-
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);
 s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 
@@ -352,16 +314,16 @@ s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 /// off sand or gMainRoutineWork's byte 707 is set, or while it climbs as sand
 /// it leaves a climbable cell or faces one that is not.
 void FieldPsynergy_WatchSandGround(void) {
-  struct CueEvent *event = Ram_HeapSlots->eventWork;
-  u8 *party = gMainRoutineWork__f0e3d04;
-  struct Actor *object = ObjectTable_Get(*(s32 *)(party + 532));
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct Actor *object = ObjectTable_Get(party->currentOwner);
   s32 reason = 0;
 
-  if (*(s8 *)(party + 707) != 0)
+  if ((s8)party->unk2c3 != 0)
     reason = 1;
   if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0)
     reason = 2;
-  if (party[530] == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
+  if (party->renderMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
       object->timer == 0) {
     s32 x;
     s32 z;
@@ -381,7 +343,7 @@ void FieldPsynergy_WatchSandGround(void) {
       reason = 4;
   }
   if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
-    event->cue = 0x208b;
+    event->psynergy = 0x208b;
 }
 
 /// The heap slot (a byte offset into Ram_HeapSlots) that holds the RAM copy of

@@ -175,7 +175,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       work->transferMode = 2;
       work->transferValue = 75;
     }
-    Projection_Set(0x1fe0000, RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
+    Projection_Set(0x1fe0000, Iwram_RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
     Transform_Reset();
     if (frame > 128) {
       s32 sinkFrame = frame - 128;

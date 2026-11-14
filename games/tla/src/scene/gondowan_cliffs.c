@@ -33,7 +33,7 @@
 #include "objcmd.h"
 #include "flags.h"
 #include "map.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/tla.h"
@@ -103,13 +103,9 @@ u32 gFieldEffect_LongScript[] = {
 
 #include "../field/field_effect/move.c"
 
-#undef gGondowanCliffs_PassActorPlacements
-// @file
 // The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
 // the yellow sand: each rises and falls on its timer, carrying the leader up
 // its column of water (Geysers_Update, Geysers_Draw).
-//
-// It opens on its copy of the effect spawner, FieldEffect_Spawn.
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -282,7 +278,7 @@ void GondowanCliffs_TalkToDog(void) {
   out[2] = object->z;
   FieldVector_AddPolarOffset(px(16), object->facing, out);
   if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
+    gFieldWork->fieldMenu = 1;
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -338,10 +334,6 @@ void GondowanCliffs_SetUpPass(void) {
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
-static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
-  Actor_ShowEmoteById(actor, height, frames);
-}
-
 // The scene that asks where the party intends to go, to help recover the black
 // orb.
 void GondowanCliffs_TurnBackToHelpPiers(void) {
@@ -360,7 +352,7 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_MoveToObject(22, gMainRoutineWork.currentOwner);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
-  GondowanCliffs_Jump(22, 258, 20);
+  FieldActor_ShowEmote(22, 258, 20);
   Event_ShowMessage(22, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 10);
   FieldActor_Jump(5, 6, 15);
@@ -411,7 +403,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
+  gFieldWork->transition = 513;
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass) {
     GondowanCliffs_SetUpPass();
     return 0;
@@ -623,9 +615,7 @@ void Geysers_Draw(void) {
     x = (x >> 16) - 8;
     /* FAKEMATCH(wrapper): forwarded. */
     screenY =
-        ((screenY +
-          Value2((s32 (*)())Iwram_MulQ16, -0x20000, Trig_Sin(swing->phase)) +
-          -0x20000) >>
+        ((screenY + Math_MulQ16(-0x20000, Trig_Sin(swing->phase)) + -0x20000) >>
          16) -
         4;
     depth = ((y + z) >> 16) + 58;
@@ -710,7 +700,6 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef FLAG_SECOND_PUDDLE_FROZEN
 #undef PIXEL_PART
 
-// @file
 // The Gondowan Cliffs' tables, which the scene's getters return.
 
 #include "text/msg_ids.h"
@@ -828,4 +817,3 @@ LATE_DATA s32 gGondowanCliffs_MapRects[] = {
     0x2000200, 0x3600400, 0x600, 0x1601000, -1, -1,
 };
 // clang-format on
-#undef GondowanCliffs_PushPillarIntoWater

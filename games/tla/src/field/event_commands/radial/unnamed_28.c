@@ -33,13 +33,6 @@ struct RingWork {
   u16 phase;
 };
 
-struct RingEvent {
-  u8 unk000[0xcac];
-  s8 up;
-  s8 unkcad;
-  s16 timer;
-};
-
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
 void Camera_WorldToScreen(s32 *position);
@@ -49,7 +42,7 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void FieldPsynergy_Unnamed28(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct RingEvent *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct CanvasSpriteWork *canvas;
   s32 entry;
@@ -73,7 +66,7 @@ void FieldPsynergy_Unnamed28(void) {
   angle = 0;
   repeat = 1;
   drawing = 0;
-  if (event->up == 0) {
+  if (event->unkcac == 0) {
     FieldPsynergy_FadeToCastColor();
     gCpuLoadDisplayEnabled = angle;
     BattleEffect_StartCanvasSprite();
@@ -139,9 +132,9 @@ void FieldPsynergy_Unnamed28(void) {
     work->orbiting = 0;
     work->cycling = 1;
     work->phase = 0;
-    event->up = 1;
+    event->unkcac = 1;
     event->unkcad = 1;
-    event->timer = 999;
+    event->unkcae = 999;
     off = 0;
     Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
     wait(1);
@@ -249,9 +242,9 @@ void FieldPsynergy_Unnamed28(void) {
     FieldPsynergy_FadeFromCastColor();
   }
   work->cycling = 1;
-  event->up = 1;
+  event->unkcac = 1;
   event->unkcad = 1;
-  event->timer = 600;
+  event->unkcae = 600;
   Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
 }
 
@@ -267,24 +260,12 @@ struct BurstMote {
   s32 timer;
 };
 
-/* VIEW(f0e82cc): tag struct BurstWork as struct BurstWork__f0e82cc; f0e2c38.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/unnamed_28.c:337: structure has no
- * member named `motes'. */
-struct BurstWork__f0e82cc {
+struct SparkleBurstWork {
   u8 unk0000[0x1000];
   struct EffectSprite sprites[64];
   struct BurstMote motes[64];
   u8 unk2100[0x880];
   s16 resource;
-};
-
-struct BurstEvent {
-  u8 unk000[0xcac];
-  s8 pending;
-  u8 unkcad;
-  u16 unkcae;
 };
 
 struct Actor *Actor_GetById(u32 objectId);
@@ -298,8 +279,8 @@ extern char ResourceId_SparkleFade;
 /// owner, starting a quarter of them a frame later than the last, then moves
 /// and animates them for 40 frames before releasing the effect.
 void FieldPsynergy_EndUnnamed28(void) {
-  struct BurstWork__f0e82cc *work = Ram_HeapSlots->battleFxWork[0];
-  struct BurstEvent *event = Ram_HeapSlots->eventWork;
+  struct SparkleBurstWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   struct BurstMote *mote;
   struct EffectSprite *sprite;
@@ -309,9 +290,9 @@ void FieldPsynergy_EndUnnamed28(void) {
   s32 i;
   s32 frame;
 
-  if (event->pending == 0)
+  if (event->unkcac == 0)
     return;
-  event->pending = 0;
+  event->unkcac = 0;
   event->unkcad = 0;
   event->unkcae = 0;
   Task_Remove(FieldPsynergy_UpdateUnnamed28);
@@ -411,8 +392,8 @@ void MapGrid_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
 // move (the view is held, or the field is in control mode 3), it shakes the
 // screen along the asked direction instead.
 void ViewMove_Start(s32 direction) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct Actor *center = event->viewCenter;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct Actor *center = event->camera;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 viewX = map->viewX >> 16;
   s32 viewZ = map->viewZ >> 16;
@@ -440,7 +421,7 @@ void ViewMove_Start(s32 direction) {
     }
   }
 #endif
-  if (event->controlMode == 3) {
+  if (event->mode == 3) {
     if (direction & VIEW_MOVE_X) {
       MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
       return;
@@ -500,9 +481,9 @@ void ViewMove_Start(s32 direction) {
 /// into the room: away from the edge the view is beside, or forward when it is
 /// beside neither. A held view does not move.
 void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct Actor *center = event->viewCenter;
+  struct Actor *center = event->camera;
   s32 x;
   s32 z;
   s32 edge;
@@ -512,7 +493,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (*(s32 *)Ram_HeapSlots->mapWork->unk0fc != 0)
     return;
 #endif
-  if (event->controlMode == 3)
+  if (event->mode == 3)
     return;
 
   if (direction & VIEW_MOVE_X) {
@@ -548,29 +529,19 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   SET_POSITION(center, x, work->y, z);
 }
 
-/* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc;
- * f0e2c38.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/unnamed_28.c:572: structure has no
- * member named `firstObjectId'. */
-struct EffectScene__f0e82cc {
-  u8 unk00[0x18];
-  s16 firstObjectId;
-};
-
 // Ends a view move: gives the map back the view bounds ViewMove_Start kept
 // and lets the view follow the scene's first object again. Where the view
 // was held, it only stops the screen shake.
 void ViewMove_End(void) {
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct EffectScene__f0e82cc *scene = Ram_HeapSlots->effectWork;
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
 #if TLA_PATCH_1
-  if (*(s32 *)map->unk0fc != 0 || event->controlMode == 3) {
+  if (*(s32 *)map->unk0fc != 0 || event->mode == 3) {
 #else
-  if (event->controlMode == 3) {
+  if (event->mode == 3) {
 #endif
     MapGrid_SetScreenShakeFar(0, 0, 0);
   } else {
@@ -599,14 +570,14 @@ union FxSprite {
 /// with each one's sprite value.
 void ViewMove_SaveNearbySprites(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleFxWork[0];
   struct Actor **objects;
   struct Actor *obj;
   s32 i;
 
   group->count = 0;
-  objects = work->objects;
+  objects = work->actors;
   for (i = 0; i < 80; i++) {
     obj = *objects++;
     if (obj == NULL || obj->script == NULL || obj == scene->mainObject)

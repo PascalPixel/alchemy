@@ -16,11 +16,14 @@
  * graphics.h has void Transform_Reset(void); tried as the definition's void
  * Transform_Reset(void), which the object already declares,
  * WorldMap_InitializePerspective moves: 1 of 372 instructions in tla-ja. */
-extern u32 Render_ResetTransformState__f02b998(void) __asm__(
-    "Transform_Reset"); // Returns void; see the tag.
+// UB: Transform_Reset returns nothing; this object calls it as returning u32.
+#ifdef UBFIX
+#define Render_ResetTransformState__f02b998 Transform_Reset
+#else
+extern u32 Render_ResetTransformState__f02b998(void) __asm__("Transform_Reset");
+#endif
 
 void WorldMap_InitializePerspective(void) {
-  /* FAKEMATCH(signature): Transform_Reset declared returning u32. */
   u8 *perspective;
   struct WorldView *view;
   u8 *camera;
@@ -214,7 +217,7 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
 /* VIEW(world_map): variable gWorldMapWork as extern u8 gWorldMapWork[];
  * battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field/world_map.c:278: `gWorldMapWork' has an incomplete
+ * games/tla/src/field/field/world_map.c:281: `gWorldMapWork' has an incomplete
  * type. */
 extern u8 gWorldMapWork__world_map[] __asm__("gWorldMapWork");
 
@@ -358,7 +361,7 @@ void WorldMap_ApplyAffinePage(void) {
 
 /* VIEW(world_map): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has
  * extern u32 gMapBlocks[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/field/field/world_map.c:377:
+ * not compile in tla-ja: games/tla/src/field/field/world_map.c:380:
  * `gMapBlocks__world_map' undeclared (first use in this function). */
 extern u8 gMapBlocks__world_map[] __asm__("gMapBlocks");
 

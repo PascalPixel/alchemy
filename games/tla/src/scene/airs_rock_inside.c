@@ -91,7 +91,7 @@ static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
 #include "system/main_routine_work.h"
 #include "system/input.h"
 #include "system/iwram_call.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
 #include "macros.h"
@@ -103,7 +103,7 @@ static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/task.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
@@ -307,7 +307,6 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
 
 #include "../field/field_effect/move.c"
 
-// @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -357,10 +356,10 @@ void Func_020004d4(struct Actor *object) {
 }
 
 void Func_02000550(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(object, 0);
     TilesetAnim_SuspendAll();
     return;
@@ -725,15 +724,14 @@ s32 Trig_Sin(s32 angle);
 // is 0xc000.
 void Func_02000d48(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
   s32 speed = 0x18000;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
-      gMainRoutineWork.renderMode == 5) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0 || gMainRoutineWork.renderMode == 5) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -767,7 +765,7 @@ void Func_02000d48(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      ((struct EventWork *)work)->unk16a = 200;
+      work->raisedTrigger = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
@@ -791,13 +789,13 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // 240 launches a shot 8 pixels ahead along its angle with a dust effect below
 // it.
 void Func_02000f34(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0)
     return;
   if (object->timer == 240) {
     if (!GameFlag_Get(FLAG_SCENE_TEMP_50))
@@ -807,10 +805,8 @@ void Func_02000f34(struct Actor *object) {
       position.z = object->z;
     } else {
       /* FAKEMATCH(wrapper): forwarded. */
-      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Cos(object->facing));
-      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Sin(object->facing));
+      position.x = object->x + Math_MulQ16(0x80000, Trig_Cos(object->facing));
+      position.z = object->z + Math_MulQ16(0x80000, Trig_Sin(object->facing));
     }
     shot = (struct Actor *)Import_ActorCreate(280, position.x, object->y,
                                               position.z);
@@ -845,15 +841,14 @@ extern u32 gData_020061cc[];
 
 void Func_020010b4(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
   s32 speed = 0x18000;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
-      *(u16 *)(work + 0x1b2) == 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0 || work->transitionActive == 0) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -892,7 +887,7 @@ void Func_020010b4(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      ((struct EventWork *)work)->unk16a = 200;
+      work->raisedTrigger = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
@@ -913,14 +908,14 @@ void Func_020010b4(struct Actor *shot) {
 // of objects 13 to 15 from 8 pixels ahead along its angle, with Func_020010b4
 // as its update, and a dust effect below it.
 void Func_02001290(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
   s32 i;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0)
     return;
   for (i = 0; i != 3;)
     Actor_GetById(13 + i++);
@@ -933,10 +928,8 @@ void Func_02001290(struct Actor *object) {
       position.z = object->z;
     } else {
       /* FAKEMATCH(wrapper): forwarded. */
-      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Cos(object->facing));
-      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Sin(object->facing));
+      position.x = object->x + Math_MulQ16(0x80000, Trig_Cos(object->facing));
+      position.z = object->z + Math_MulQ16(0x80000, Trig_Sin(object->facing));
     }
     for (i = 0; i != 3; i++) {
       shot = Actor_GetById(13 + i);
@@ -976,7 +969,7 @@ void Func_02001420(struct Actor *object, s16 timer, u8 value) {
 }
 
 void Func_02001458(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *other;
   s32 *pos;
@@ -984,10 +977,10 @@ void Func_02001458(struct Actor *object) {
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->block32 + 0x2a01) != 0)
     return;
-  if (*(u16 *)(work + 0x1b2) == 0)
+  if (work->transitionActive == 0)
     return;
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(object, 0);
     return;
   }
@@ -1004,7 +997,7 @@ void Func_02001458(struct Actor *object) {
   if (Position_FlatDistance(&leader->x, pos = &object->x) <= 8 &&
       ((s16 *)&leader->y)[1] == ((s16 *)&object->y)[1]) {
     {
-      s16 *counter = (s16 *)(work + 0x16a);
+      s16 *counter = &work->raisedTrigger;
       s32 value = 201;
 
       *counter = value;
@@ -1066,12 +1059,12 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
 // leader's position and flags 0x200 to 0x202. Places the two frame arms share
 // are one call, reached by goto from the other arm.
 void Func_02001690(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 frame;
   s32 scene;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0)
     return;
   frame = gFrameCount;
   if ((frame & 6) != 0)
@@ -1528,7 +1521,7 @@ void Func_020026c0(void) {
   s32 key = (x << 16) + z;
   s32 last;
   s32 value;
-  u8 *work;
+  struct FieldWork *work;
 
   if (object->velocityX != 0 || object->velocityZ != 0)
     return;
@@ -1542,13 +1535,13 @@ void Func_020026c0(void) {
             gData_020073e8);
   if (gMainRoutineWork.scene != (s32)&SceneId_AirsRockInside5)
     return;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   value = Func_02000690(2, x, z) >> 8;
   if (value != 0) {
     /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
      */
     s32 delay = value + 200;
-    *(s16 *)(work + 362) = delay;
+    work->raisedTrigger = delay;
   }
 }
 
@@ -1955,7 +1948,7 @@ void Func_02003254(void) {
   }
 }
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
 // After the pushed object (the event work's object at 0xcbc) comes to rest:
 // if it stopped above the ground it drops onto it with cue 188; then, by
@@ -2269,7 +2262,7 @@ fadeOut:
 // (Func_02002790), redraws the marker in the row the event work's counter
 // gives, sets flag 0x200 and the counter's flag (312 on).
 void Func_02003cac(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 cell, row = 54;
 
@@ -2568,7 +2561,7 @@ void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK gFieldWork
 
 s32 Actor_MoveToObject();
 s32 Actor_SetHorizontalPositionWithTerrain();
@@ -2595,7 +2588,7 @@ void AirsRockInside_ReadRevealTablet(void) {
     Event_End();
   } else {
     Event_SetMessageId((s32)MsgCheckedTheTablet);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xb333,
           0x5999);
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
@@ -2691,7 +2684,7 @@ void Func_02004880(void) {}
  * scene/airs_rock_inside/airs_rock_inside has void Func_020007b4(s32 mode, s32
  * step) {; tried as the definition's void Func_020007b4(s32 mode, s32 step),
  * which the object already declares, it does not compile in tla-ja
- * (airs_rock_inside.c): games/tla/src/scene/airs_rock_inside.c:2701: too few
+ * (airs_rock_inside.c): games/tla/src/scene/airs_rock_inside.c:2694: too few
  * arguments to function `Func_020007b4'. */
 void Func_020007b4__s2cf0(void) __asm__("Func_020007b4");
 
@@ -2792,7 +2785,7 @@ void Func_02004ab8(void) {
 
   x = 0;
   z = 0;
-  warp = (s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
+  warp = &gFieldWork->stepTrigger;
   if (*warp == 0)
     return;
   Event_Start();
@@ -3033,7 +3026,6 @@ void Func_02004f3c(void) {
 #undef TARGET
 #undef PICK_UP
 #undef SHAKE
-// @file
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Trig_Sin(s32 angle);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -3055,7 +3047,7 @@ void Func_0200505c(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -3093,7 +3085,7 @@ void Func_0200505c(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Event_End();
 }
 
@@ -3110,7 +3102,7 @@ s32 Scene_Initialize(void) {
   /* FAKEMATCH(wrapper): 48 calls forwarded through call.h's Call3, Call4 and
    * Call6. */
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
+  gFieldWork->transition = 516;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   GameFlag_Set(FLAG_AREA_TEMP_00);
   GameFlag_Set(0x89f);

@@ -14,10 +14,6 @@
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
-/// The held keys, read again at each use, as The Broken Seal's gKeysHeld is.
-/* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
-#define INPUT_HELD (((volatile struct InputState *)&gInput)->held)
-
 /// The script command 0x1b: moves an object 8 pixels at a time by the
 /// direction pad, with up and down changing its height (y) rather than its
 /// depth. Refuses steps into an occupied cell, from or onto a cell without
@@ -28,7 +24,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   struct FieldPosition position;
   struct MapCell *sourceCell;
   struct MapCell *destinationCell;
-  struct EventWork *work;
+  struct FieldWork *work;
   u16 angle;
   s32 animation;
   s32 collisionFlags;
@@ -43,8 +39,8 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   half = 0x8000;
   object->speedLimit = half;
   if (gDebugMode)
-    keys = INPUT_HELD;
-  keys = INPUT_HELD;
+    keys = gInput.held;
+  keys = gInput.held;
   {
     const u16 *table = gWorldMap_KeyHeadings;
 
@@ -80,12 +76,12 @@ s32 Actor_MoveByKeys(struct Actor *object) {
         !(sourceCell->attributeB & 64) || !(destinationCell->attributeB & 64)) {
       collisionFlags = 4;
       animation = 12;
-    } else if (INPUT_HELD & 64) {
+    } else if (gInput.held & 64) {
       terrainHeight = MapGrid_GetTerrainHeight(object->terrainId, position.x,
                                                position.z - 0x100000);
       if (terrainHeight - object->y < 0x100000)
         goto refused;
-    } else if (INPUT_HELD & 128) {
+    } else if (gInput.held & 128) {
       terrainHeight =
           MapGrid_GetTerrainHeight(object->terrainId, position.x, position.z);
       if (terrainHeight - object->y > -0x80000) {
@@ -95,13 +91,13 @@ s32 Actor_MoveByKeys(struct Actor *object) {
       }
     }
   }
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collisionFlags & 3)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
-    work->heldKeys = INPUT_HELD;
+    work->heldKeys = gInput.held;
   }
   Actor_SelectAnimation(object, animation);
   if (collisionFlags != 0) {
@@ -136,7 +132,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   s32 turn;
   struct Actor *first;
   struct Actor *second;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   sprite = object->sprite;
   rope = *(struct RopeWork **)&Ram_HeapSlots->unk84[6];
@@ -145,7 +141,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   object->speedLimit = px(1) / 2;
   object->acceleration = px(1) / 2;
   object->motionFlags = 0;
-  angle = gWorldMap_KeyHeadings[(INPUT_HELD >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
     best = (struct RopeNode *)object->watchedObject;
     value = 0;
@@ -163,7 +159,7 @@ s32 Actor_CrossRope(struct Actor *object) {
     if (rope == NULL) {
       collisionFlags = 1;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
-      Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
+      Ram_HeapSlots->fieldWork = Ram_HeapSlots->fieldWork;
       goto done;
     }
     for (count = 0; count < 128; count++, node++) {
@@ -213,13 +209,13 @@ s32 Actor_CrossRope(struct Actor *object) {
     }
   }
 done:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collisionFlags & 3)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
-    work->heldKeys = INPUT_HELD;
+    work->heldKeys = gInput.held;
   }
   Actor_SelectAnimation(object, 29);
   Actor_SetAnimationSpeed(object, value);
@@ -262,7 +258,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   s32 bestDistance;
   u16 angle;
   s32 count;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   sprite = object->sprite;
   argument = 1;
@@ -285,7 +281,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     if (tightrope == NULL) {
       collisionFlags = 1;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
-      Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
+      Ram_HeapSlots->fieldWork = Ram_HeapSlots->fieldWork;
     } else {
       for (count = 0; count < 128; count++, point++) {
         if (point->kind == 1) {
@@ -321,7 +317,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
       }
     }
   }
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collisionFlags & 3)
       work->blockedSteps++;
@@ -379,27 +375,27 @@ void Sand_JitterGrain(struct Actor *object) {
 /// accepts the argument, else posts event request 0x208b and returns 1 while
 /// flag 0x146 is clear.
 s32 Sand_CheckEndKeys(s32 arg) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   /* FAKEMATCH(pin): pressed held in r0, the register the early zero is returned
    * in. */
   register s32 pressed asm("r0") = 0;
 
   if (work == NULL)
     return 0;
-  if ((gInput.pressed & gMainRoutineWork.keys234) ||
-      (gInput.pressed & gMainRoutineWork.keys230) ||
-      (gInput.pressed & gMainRoutineWork.keys236))
+  if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
+      (gInput.pressed & gMainRoutineWork.aKeys) ||
+      (gInput.pressed & gMainRoutineWork.startKeys))
     pressed = 1;
   if (pressed) {
     if (Actor_CheckBlockedFar(arg)) {
       Sound_PlayFar(SE_MENU_CANCEL);
     } else if (!GameFlag_Get(0x146)) {
-      work->unk166 = 0x208b;
+      work->psynergy = 0x208b;
       return 1;
     }
   }
   return 0;
 }
-#undef INPUT_HELD
+#undef gInput.held
 #undef CHAIN_WORK
 #undef HALF_AT

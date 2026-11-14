@@ -40,8 +40,6 @@ struct Box {
   s32 word[6];
 };
 
-#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 

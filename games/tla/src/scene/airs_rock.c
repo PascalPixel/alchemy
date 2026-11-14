@@ -11,7 +11,7 @@
 #include "flags.h"
 #include "system/main_routine_work.h"
 #include "field/field.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "map.h"
 #include "module/field/field.h"
@@ -35,7 +35,7 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "system/input.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "bg_scroll.h"
 #include "../field/object/set_sprite_priority.c"
@@ -46,7 +46,6 @@
 
 #include "../field/field_effect/move.c"
 
-// @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -916,7 +915,7 @@ extern u32 gData_02003dcc[];
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 speed = 0x18000;
   s32 cue = 539;
   struct Actor *other, *launcher;
@@ -925,9 +924,8 @@ void Func_02001908(struct Actor *shot) {
   s32 *shotPosition;
   struct Actor **objects;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
-      gMainRoutineWork.renderMode == 5) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0 || gMainRoutineWork.renderMode == 5) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -964,13 +962,13 @@ void Func_02001908(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      ((struct EventWork *)work)->unk16a = 200;
+      work->raisedTrigger = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
     }
   }
-  objects = (struct Actor **)(work + 0x34);
+  objects = &work->actors[8];
   for (i = 8; i != 64; i++) {
     other = *objects++;
     if (other->script != 0) {
@@ -998,13 +996,13 @@ void Func_02001908(struct Actor *shot) {
 // frames in its action parameter, and at 240 launches a shot 8 pixels ahead
 // along its angle with a dust effect below it.
 void Func_02001b54(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0)
     return;
   if (object->timer == 240) {
     if (!Event_GetFlag(FLAG_SCENE_TEMP_50))
@@ -1014,10 +1012,8 @@ void Func_02001b54(struct Actor *object) {
       position.z = object->z;
     } else {
       /* FAKEMATCH(wrapper): forwarded. */
-      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Cos(object->facing));
-      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Sin(object->facing));
+      position.x = object->x + Math_MulQ16(0x80000, Trig_Cos(object->facing));
+      position.z = object->z + Math_MulQ16(0x80000, Math_Sin(object->facing));
     }
     shot = FieldActor_Create(280, position.x, object->y, position.z);
     Actor_SelectAnimation(shot, 2);
@@ -1039,23 +1035,22 @@ void Func_02001b54(struct Actor *object) {
 }
 
 void Func_02001ca4(void) {
-  struct AirsRockEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Actor_LiftTargetBlock(gData_02003d94);
-  Func_02000468(work->valueCbc);
+  Func_02000468(work->movedBlock);
 }
 
 /* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void
  * Actor_PlaceMovedBlock(void); module/scene/scene.h has void
  * Actor_PlaceMovedBlock(s32 id); tried as the definition's void
  * Actor_PlaceMovedBlock(void), which the object already declares, it does not
- * compile in tla-ja (airs_rock.c): games/tla/src/scene/airs_rock.c:1056: too
+ * compile in tla-ja (airs_rock.c): games/tla/src/scene/airs_rock.c:1051: too
  * few arguments to function `Actor_PlaceMovedBlock'. */
 extern void Func_02003cc0__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 
 void Func_02001cc8(void) {
-  struct Actor *object =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+  struct Actor *object = gFieldWork->movedBlock;
   s32 x, z;
 
   Event_Start();
@@ -1572,7 +1567,7 @@ s32 Scene_Initialize(void) {
   s32 *beam;
   volatile struct DmaRegisters *dma;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
+  gFieldWork->transition = 516;
   gMainRoutineWork.retreatScene = (s32)&SceneId_AirsRock1;
   gMainRoutineWork.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
@@ -1771,7 +1766,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(0x879))
         Actor_SetPosition(13, 184, 280);
       if (!GameFlag_Get(0x87a)) {
-        ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+        gFieldWork->transition = 0x100;
         REG_BLDALPHA = 0x1008;
         REG_BLDCNT = 0x3f42;
         dma = (volatile struct DmaRegisters *)0x040000b0;

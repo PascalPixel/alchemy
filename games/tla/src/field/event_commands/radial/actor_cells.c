@@ -81,12 +81,12 @@ struct Actor *Leader_FindActorAhead(void);
 /// listed actors. Its cell goes back to the ground and its old mark, and the
 /// event work remembers it for Actor_PlaceMovedBlock.
 void Actor_LiftTargetBlock(u16 *actors) {
-  u8 *event = Ram_HeapSlots->eventWork;
-  u8 *effect = Ram_HeapSlots->effectWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FxScene *effect = Ram_HeapSlots->effectWork;
   struct Actor *target;
 
   if (effect != NULL && *(s16 *)(event + 358) != 0)
-    target = *(struct Actor **)(effect + 20);
+    target = effect->child;
   else
     target = Leader_FindActorAhead();
   *(struct Actor **)(event + 0xcbc) = NULL;
@@ -127,8 +127,7 @@ static inline s32 ActorX(struct Actor *actor) { return actor->x; }
 /// Puts the block Actor_LiftTargetBlock remembered back into the map at the
 /// cell it has moved to, as Actor_PlaceBlocks places each.
 void Actor_PlaceMovedBlock(void) {
-  struct Actor *target =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+  struct Actor *target = gFieldWork->movedBlock;
 
   if (target != NULL) {
     struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
@@ -201,8 +200,8 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
   u32 i;
 
   for (i = 8; i < 64; i++) {
-    struct EventWork *event = Ram_HeapSlots->eventWork;
-    struct Actor *object = event->objects[i];
+    struct FieldWork *event = Ram_HeapSlots->fieldWork;
+    struct Actor *object = event->actors[i];
 
     if (checkY) {
       if (position[0] >> 20 == object->x >> 20 &&

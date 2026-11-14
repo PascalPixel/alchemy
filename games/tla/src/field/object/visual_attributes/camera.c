@@ -13,7 +13,7 @@
 void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
                                      s32 requestedZ, s32 useSetter) {
   s32 shouldUseSetter;
-  struct EventWork *runtimeBlock;
+  struct FieldWork *runtimeBlock;
   s32 minimumX;
   s32 minimumZ;
   s32 maximumX;
@@ -30,7 +30,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   shouldUseSetter = useSetter;
   positionZ = requestedZ;
   runtimeBlock = HeapSlot_AllocEwram(108, 0xd50);
-  object = runtimeBlock->viewCenter;
+  object = runtimeBlock->camera;
   map = Ram_HeapSlots->mapWork;
   // Keep the screen inside the map: the view centre stays 120 pixels from
   // either side, 96 from the top and 64 from the bottom, the z limits moved
@@ -66,7 +66,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   if (shouldUseSetter == 0) {
     SET_POSITION(object, positionX, positionY, positionZ);
     wait(1);
-    if (runtimeBlock->controlMode != 3) {
+    if (runtimeBlock->mode != 3) {
       Map_CenterOnFollowedPointFar();
     }
   } else {
@@ -88,7 +88,7 @@ void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
  * FieldCamera_MoveToActor(s32 id, s32 use_setter); field/event.h has s32
  * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
  * FieldCamera_MoveToActor(s32 id, s32 use_setter), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/field/event.h:157:
+ * declares, it does not compile in tla-ja: games/tla/include/field/event.h:159:
  * conflicting types for `FieldCamera_MoveToActor'. */
 void FieldCamera_MoveToActor__visual_attributes(s32 id, s32 use_setter) __asm__(
     "FieldCamera_MoveToActor");
@@ -103,13 +103,13 @@ void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
 /// Waits (at most 600 frames) for the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrival(void) {
   Actor_WaitForMoveFar(
-      ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter);
+      ((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->camera);
   Event_Wait(2);
 }
 
 /// The event command "get view centre": returns the camera actor.
 struct Actor *FieldCamera_GetActor(void) {
-  return ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter;
+  return ((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->camera;
 }
 
 /// Unused: makes the camera follow target; unless keepCurrentPosition is set
@@ -117,7 +117,7 @@ struct Actor *FieldCamera_GetActor(void) {
 void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
   struct Actor *object;
 
-  object = ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter;
+  object = ((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->camera;
   if (target != NULL) {
     Actor_StartCameraFar(object, NULL);
     object->watchedObject = target;

@@ -1,7 +1,3 @@
-
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/field_effect/move.c"
 /// @file
 /// The Kandorean Temple of Master Poi, south-west of Daila, in nine rooms that
 /// share this overlay (SceneId_KandoreanTemple1 to SceneId_KandoreanTemple9).
@@ -16,9 +12,9 @@
 /// Chestbeaters (KandoreanTemple_FightChestbeaters). Poi then gives the party
 /// the Lash Pebble (KandoreanTemple_ReceiveLash), and Lash reaches Fog, the
 /// Mercury Djinni (KandoreanTemple_FightFog).
-///
-/// This file is the overlay's own copy of the effect spawner
-/// (FieldEffect_Spawn); the rest of the temple is in kandorean_temple/.
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -103,11 +99,6 @@ extern struct Actor *gKandoreanTemple_LashPebble;
 extern s32 gKandoreanTemple_MeditateScript[];
 extern s32 gKandoreanTemple_LevitateScript[];
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 value;
-};
-
 void KandoreanTemple_AskAboutPoi(void);
 void KandoreanTemple_TellOfTheMeditation(void);
 void KandoreanTemple_OpenTheTrapdoor(void);
@@ -123,11 +114,6 @@ static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
 
 static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y, s32 z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
-}
-
-static __inline__ void Actor_SetPositionAndResetMotion_(struct Actor *object,
-                                                        s32 x, s32 y, s32 z) {
-  Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
 static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -159,7 +145,7 @@ static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
 #include "system/task.h"
 #include "shared/tables.h"
 #include "system/field_effect.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
 
@@ -485,21 +471,8 @@ void KandoreanTemple_PushThroughTheSteam(void) {
   KandoreanTemple_PushNorth(leader, 55705);
 }
 
-/* VIEW(kandorean_temple): tag struct EventWork1cc as struct
- * EventWork1cc__kandorean_temple; module/tla.h has another definition; tried
- * with the definition the rest of the object has, its members read focus as
- * object, it does not compile in tla-ja (kandorean_temple.c):
- * games/tla/src/scene/kandorean_temple.c:492: dereferencing pointer to
- * incomplete type. */
-struct EventWork1cc__kandorean_temple {
-  u8 unk000[0x1cc];
-  struct Actor *focus;
-};
-
 void KandoreanTemple_PushNorth(struct Actor *object, s32 dz) {
-  struct Actor *focus =
-      ((struct EventWork1cc__kandorean_temple *)Ram_HeapSlots->eventWork)
-          ->focus;
+  struct Actor *focus = gFieldWork->camera;
   s32 position[3];
 
   position[0] = object->x;
@@ -722,12 +695,12 @@ void KandoreanTemple_BlowStream(void) {
 
 void KandoreanTemple_LowerLeftColumn(s32 id) {
   Actor_GetById(id)->scaleY = 0x800;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(id), px(216), 0, px(216));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(id), px(216), 0, px(216));
 }
 
 void KandoreanTemple_LowerRightColumn(s32 id) {
   Actor_GetById(id)->scaleY = 0x800;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(id), px(376), 0, px(248));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(id), px(376), 0, px(248));
 }
 
 void KandoreanTemple_GrowColumn(s32 id, s32 dy, s32 scale) {
@@ -767,15 +740,16 @@ void KandoreanTemple_StartLeftVent(void) {
   Actor_SetModeById(9, 0);
   Actor_SetSpritePriority(9, 2);
   Actor_GetById(9)->priorityFlags &= ~2;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(9), px(216), px(8), px(216));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(9), px(216), px(8),
+                                       px(216));
   if (GameFlag_Get(FLAG_SCENE_TEMP_08)) {
     Actor_SetModeById(9, 4);
-    Actor_SetPositionAndResetMotion_(
+    FieldActor_SetPositionAndResetMotion(
         Actor_GetById(gMainRoutineWork.currentOwner), px(216), px(12), px(216));
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
   Actor_GetById(11)->scaleY = Q16_ONE;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(11), px(216), 0, px(216));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(11), px(216), 0, px(216));
   KandoreanTemple_LowerLeftColumn(13);
   KandoreanTemple_LowerLeftColumn(14);
   if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
@@ -795,15 +769,16 @@ void KandoreanTemple_StartRightVent(void) {
   Actor_SetModeById(10, 0);
   Actor_SetSpritePriority(10, 2);
   Actor_GetById(10)->priorityFlags &= ~2;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(10), px(376), px(8), px(248));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(10), px(376), px(8),
+                                       px(248));
   if (GameFlag_Get(FLAG_SCENE_TEMP_09)) {
     Actor_SetModeById(10, 4);
-    Actor_SetPositionAndResetMotion_(
+    FieldActor_SetPositionAndResetMotion(
         Actor_GetById(gMainRoutineWork.currentOwner), px(376), px(12), px(248));
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
   Actor_GetById(12)->scaleY = Q16_ONE;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(12), px(376), 0, px(248));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(12), px(376), 0, px(248));
   KandoreanTemple_LowerRightColumn(17);
   KandoreanTemple_LowerRightColumn(18);
   if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
@@ -1293,7 +1268,7 @@ void KandoreanTemple_WatchLifts(void) {
 /* VIEW(kandorean_temple): tag struct MapCell as struct
  * MapCell__kandorean_temple; map.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja
- * (kandorean_temple.c): games/tla/src/scene/kandorean_temple.c:1312: arithmetic
+ * (kandorean_temple.c): games/tla/src/scene/kandorean_temple.c:1287: arithmetic
  * on pointer to an incomplete type. */
 struct MapCell__kandorean_temple {
   u8 unk0[2];
@@ -1727,7 +1702,7 @@ void KandoreanTemple_CycloneFifthPatch(void) {
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
+  gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_KandoreanTemple1)
     KandoreanTemple_StartLiftRoom();
@@ -1808,12 +1783,12 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
   object = Actor_GetById(8);
   object->motionFlags = 0;
   if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
-    Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1380000, 0x200000,
-                                     0x1d80000);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(8), 0x1380000, 0x200000,
+                                         0x1d80000);
     MapGrid_CopyCellAttributes(0, 0, 3, 3, 19, 28);
   } else if (GameFlag_Get(FLAG_AREA_TEMP_03)) {
-    Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1580000, 0x200000,
-                                     0x1d80000);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(8), 0x1580000, 0x200000,
+                                         0x1d80000);
     MapGrid_CopyCellAttributes(0, 4, 3, 3, 19, 28);
   }
   Actor_PlaceBlocks(gKandoreanTemple_PillarActors);
@@ -1942,18 +1917,6 @@ L_0200ae24:
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
-#undef gKandoreanTemple_Placements
-#undef gKandoreanTemple_VentRoomPlacements
-#undef gKandoreanTemple_FogRoomPlacements
-#undef gKandoreanTemple_LiftRoomEvents
-#undef gKandoreanTemple_ChestbeaterRoomEvents
-#undef gKandoreanTemple_VentRoomEvents
-#undef gKandoreanTemple_Room5Events
-#undef gKandoreanTemple_Room6Events
-#undef gKandoreanTemple_FogRoomEvents
-#undef gKandoreanTemple_GateEvents
-#undef gKandoreanTemple_PoisHallEvents
-// @file
 // The Kandorean Temple's events, from the vents' rides to Poi's test, and its
 // tables.
 
@@ -1979,7 +1942,7 @@ void KandoreanTemple_LandFromAbove(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -2015,7 +1978,7 @@ void KandoreanTemple_LandFromAbove(void) {
   leader->bounce = Q16_ONE / 4;
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Event_End();
 }
 
@@ -2058,7 +2021,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   } while (next <= 15);
   Map_CenterOnFollowedPoint();
   wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
@@ -2086,13 +2049,13 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Actor_SetModeById(9, 1);
-  Actor_SetPositionAndResetMotion_(Actor_GetById(9), 0xd80000, 0, 0xd80000);
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(9), 0xd80000, 0, 0xd80000);
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(9, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Event_End();
 }
 
@@ -2135,7 +2098,7 @@ void KandoreanTemple_RiseOnRightVent(void) {
   } while (next <= 15);
   Map_CenterOnFollowedPoint();
   wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
@@ -2149,13 +2112,14 @@ void KandoreanTemple_RiseOnRightVent(void) {
   Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
   Actor_SetModeById(10, 1);
-  Actor_SetPositionAndResetMotion_(Actor_GetById(10), 0x1780000, 0, 0xf80000);
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(10), 0x1780000, 0,
+                                       0xf80000);
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(10, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Event_End();
 }
 
@@ -2163,7 +2127,7 @@ void KandoreanTemple_LeaveBySteam(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -2217,7 +2181,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     if (i == 10)
       Sound_Play(SE_DUST_PUFF);
     if (i == 20) {
-      ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+      gFieldWork->transition = 521;
       Event_FinishScreenTransition();
     }
   }
@@ -2237,15 +2201,15 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     wait(1);                                                                   \
     leader->motionFlags = 0;                                                   \
-    Actor_SetPositionAndResetMotion_(                                          \
+    FieldActor_SetPositionAndResetMotion(                                      \
         Actor_GetById(gMainRoutineWork.currentOwner), px(n3), px(-20),         \
         px(n4));                                                               \
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),   \
                                0);                                             \
-    Actor_SetPositionAndResetMotion_(Actor_GetById(n1), px(n3), px(-20),       \
-                                     px(n5));                                  \
-    Actor_SetPositionAndResetMotion_(Actor_GetById(n2), px(n3), px(-20),       \
-                                     px(n4));                                  \
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(n1), px(n3), px(-20),   \
+                                         px(n5));                              \
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(n2), px(n3), px(-20),   \
+                                         px(n4));                              \
     Actor_SetSpritePriority(n1, 2);                                            \
     Actor_SetSpritePriority(n2, 3);                                            \
     {                                                                          \
@@ -2257,7 +2221,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     second->scaleY = 0x400;                                                    \
     Actor_SetModeById(n1, 4);                                                  \
     Actor_SetModeById(n2, 2);                                                  \
-    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;            \
+    gFieldWork->transition = 521;                                              \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
     /* A goto loop, as in KandoreanTemple_RideWestLiftUp. */                   \
@@ -2270,7 +2234,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
       goto rise;                                                               \
     MapGrid_CopyCellAttributes(0, 0, 1, 1, n6, n7);                            \
     data1 = 2000;                                                              \
-    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;            \
+    gFieldWork->transition = 516;                                              \
     Event_End();                                                               \
   }
 
@@ -2294,7 +2258,7 @@ rise:
   if (object->y > -px(20))
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+  gFieldWork->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(6);
@@ -2313,7 +2277,7 @@ rise:
   if (object->y > -px(20))
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+  gFieldWork->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(7);
@@ -2363,7 +2327,7 @@ void KandoreanTemple_StartMeditating(s32 id, s32 base) {
 }
 
 void KandoreanTemple_StartGate(void) {
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x100;
+  gFieldWork->transition = 0x100;
   if (GameFlag_Get(0x842)) {
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
@@ -2415,7 +2379,7 @@ void KandoreanTemple_PlaceTheLevitator(void) {
 void KandoreanTemple_MatchLiftPriority(void);
 
 void KandoreanTemple_StartPoisHall(void) {
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+  gFieldWork->transition = 521;
   Rope_Initialize();
   Func_020053a8_(0, 527, 8, 9);
   Rope_Place(1, 528, 10, 11);
@@ -2729,7 +2693,7 @@ void KandoreanTemple_PraiseTheLevitator(void) {
   Actor_ArmCallback(16, FACING_EAST, 0);
   Actor_WalkToAndWait(12, 468, 428);
   Actor_WalkToAndWait(12, 472, 454);
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 514;
+  gFieldWork->transition = 514;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(13);
@@ -2744,7 +2708,7 @@ void KandoreanTemple_FindTheRopeOnTheFloor(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 514;
+  gFieldWork->transition = 514;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetHorizontalPositionWithTerrain(12, px(472), px(648));
@@ -2772,7 +2736,7 @@ void KandoreanTemple_StudentWalksUp(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 12, 0);
 }
 
-#define WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define WORK gFieldWork
 
 void KandoreanTemple_MeetPoi(void) {
   struct Actor *object;
@@ -2791,7 +2755,7 @@ void KandoreanTemple_MeetPoi(void) {
     s32 angle = 0xb000;
     Actor_SetPositionAndFacing(12, px(472), px(454), angle);
   }
-  WORK->screenEffect = 0x202;
+  WORK->transition = 0x202;
   Event_StartScreenTransition();
   Actor_SetSpeed(12, 1.2);
   Actor_WalkToAndWait(12, 464, 428);
@@ -2815,9 +2779,9 @@ void KandoreanTemple_MeetPoi(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetModeById(12, 4);
     Event_ShowMessageAndWait(12, 0);
-    WORK->messageId++;
+    WORK->message++;
   } else {
-    WORK->messageId++;
+    WORK->message++;
     Actor_SetModeById(12, 3);
     Event_ShowMessageAndWait(12, 0);
   }
@@ -2858,9 +2822,9 @@ void KandoreanTemple_MeetPoi(void) {
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     KandoreanTemple_StudentWalksUp();
-    WORK->messageId++;
+    WORK->message++;
   } else {
-    WORK->messageId++;
+    WORK->message++;
     KandoreanTemple_StudentWalksUp();
   }
   Actor_ArmCallback(16, 0, 0);
@@ -2884,9 +2848,9 @@ void KandoreanTemple_MeetPoi(void) {
     Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16,
                              0);
-    WORK->messageId += 2;
+    WORK->message += 2;
   } else {
-    WORK->messageId += 2;
+    WORK->message += 2;
     Actor_SetModeById(12, 4);
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 12, 0);
     Actor_ArmCallback(16, 0, 0);
@@ -2965,7 +2929,7 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   GameFlag_Set(0x849);
 #if TLA_PATCH_1
-  WORK->screenEffect = 0x209;
+  WORK->transition = 0x209;
 #endif
   Event_End();
 }
@@ -3469,6 +3433,3 @@ struct Trigger gKandoreanTemple_PoisHallEvents[] = {
     {TRIGGER_TABLE_END},
 };
 // clang-format on
-#undef KandoreanTemple_MeditateRestlessly
-#undef KandoreanTemple_LevitateStudentBob
-#undef KandoreanTemple_PlaceLevitatingStudent

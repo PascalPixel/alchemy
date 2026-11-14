@@ -18,7 +18,7 @@
 #include "macros.h"
 #include "actor_view.h"
 #include "system/main_routine_work.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "map.h"
 #include "flag_call.h"
 
@@ -31,7 +31,7 @@ void WorldMap_SetCountdownByX(s32 slot, s32 before, s32 after) {
   register s32 elseValue asm("r6") = after;
   struct Actor *target = gWorldMap_PlacedActors[slot - 100];
   struct Actor *owner;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
    * the currentOwner offset. */
@@ -42,11 +42,11 @@ void WorldMap_SetCountdownByX(s32 slot, s32 before, s32 after) {
     register s32 thenValue asm("r7") = before;
 
     owner = Actor_Get(gMainRoutineWork.currentOwner);
-    work = Ram_HeapSlots->eventWork;
+    work = Ram_HeapSlots->fieldWork;
     if (owner->x < target->x)
-      work->countdown = thenValue;
+      work->exit = thenValue;
     else
-      work->countdown = elseValue;
+      work->exit = elseValue;
   }
   Event_PlaySound(SE_MAP_EXIT);
 }
@@ -57,7 +57,7 @@ void WorldMap_SetCountdownByZ(s32 slot, s32 before, s32 after) {
   register s32 elseValue asm("r6") = after;
   struct Actor *target = gWorldMap_PlacedActors[slot - 100];
   struct Actor *owner;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
    * the currentOwner offset. */
@@ -68,11 +68,11 @@ void WorldMap_SetCountdownByZ(s32 slot, s32 before, s32 after) {
     register s32 thenValue asm("r7") = before;
 
     owner = Actor_Get(gMainRoutineWork.currentOwner);
-    work = Ram_HeapSlots->eventWork;
+    work = Ram_HeapSlots->fieldWork;
     if (owner->z < target->z)
-      work->countdown = thenValue;
+      work->exit = thenValue;
     else
-      work->countdown = elseValue;
+      work->exit = elseValue;
   }
   Event_PlaySound(SE_MAP_EXIT);
 }
@@ -112,9 +112,9 @@ void WorldMap_UpdatePlacedActors(void) {
   s32 left, right, top, bottom;
   struct Actor **slot;
   /* FAKEMATCH(pin): the form kept. */
-  register struct EventWork *work asm("r9") = Ram_HeapSlots->eventWork;
+  register struct FieldWork *work asm("r9") = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *object = work->viewCenter;
+  struct Actor *object = work->camera;
   s32 zoom = map->zoom;
   s32 x = object->x;
   u8 kind = placement->kind;
@@ -188,9 +188,9 @@ void WorldMap_UpdatePlacedActors(void) {
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Get(0x104) == 0) {
               if (gMainRoutineWork.renderMode == 9)
-                work->unk166 = 0x208b;
+                work->psynergy = 0x208b;
               else
-                work->exit = i + 100;
+                work->stepTrigger = i + 100;
             }
           }
         }

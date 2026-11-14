@@ -16,7 +16,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/event_inline.h"
 #include "version.h"
 #include "module/scene/scene.h"
@@ -197,9 +197,9 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
 #if !TLA_PATCH_1
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
+  gFieldWork->transition = 0x201;
 #else
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
+  gFieldWork->transition = 0x209;
 #endif
   Actor_SetSpritePriority(11, 1);
   Actor_SetSpritePriority(14, 2);
@@ -419,11 +419,11 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
     goto answeredNo;
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+  gFieldWork->message += 1;
   goto answered;
 answeredNo:
   Event_Wait(40);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+  gFieldWork->message += 1;
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
 answered:
   Actor_SetAnimationAndWait(12, 3);
@@ -515,12 +515,10 @@ visited:
   if (answer == 0) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
   } else {
     FieldEvent_Wait(40);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   }
   Actor_SetAnimationAndWait(10, 3);
@@ -543,12 +541,10 @@ visited:
   if (answer == 0) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
   } else {
     FieldEvent_Wait(40);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   }
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -782,10 +778,10 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   if (result == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(18, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(18, 0, 10);
   }
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
@@ -950,13 +946,13 @@ void LemuriaInteriors_AskWherePiersIs(void) {
     Actor_SetAnimationAndWait(18, 3);
     Event_Wait(10);
     Event_ShowMessageThenWait(18, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
     Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(18, 4);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(18, 0, 10);
   }
   Actor_RunRepeatedMotion(12, 2);
@@ -973,10 +969,10 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   if (result == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(12, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(12, 0, 10);
   }
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);

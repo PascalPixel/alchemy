@@ -25,7 +25,7 @@
 #include "item_ids.h"
 #include "flags.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 #include "shared/tables.h"
 #include "actor.h"
@@ -228,7 +228,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
 
 void Alhafra_TalkToHungryBoy(s32 id) {
   if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED)) {
-    ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value15a = 1;
+    gFieldWork->fieldMenu = 1;
     Event_SetMessageId(MsgAlhafra65);
     Event_ShowMessageAndWait(id, 0);
   } else if (Event_GetFlag(FLAG_BOY_TOLD_OF_CAVE)) {
@@ -246,10 +246,10 @@ void Alhafra_TalkToHungryBoy(s32 id) {
       GameFlag_Set(FLAG_BOY_TOLD_OF_CAVE);
       Event_Wait(20);
       Event_ShowMessageThenWait(id, 0, 10);
-      ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;
+      gFieldWork->message++;
     } else {
       Event_Wait(30);
-      ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;
+      gFieldWork->message++;
       Event_ShowMessageThenWait(id, 0, 10);
     }
   }
@@ -373,7 +373,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (!GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE)) {
       Actor_GetById(24)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
@@ -756,7 +756,7 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->waitMode = 0;
+  gFieldWork->fastForward = 0;
   FieldEvent_ShowMessageThenWait(17, 0, 10);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(20);
@@ -940,12 +940,10 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
       Motion_SetVarCbAndRefresh(ACTOR_LOOKOUT, 2);
       Event_Wait(20);
       Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-          (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+      gFieldWork->message = (gFieldWork->message + 1);
     } else {
       Event_Wait(30);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-          (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+      gFieldWork->message = (gFieldWork->message + 1);
       Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
     }
     Actor_GetById(4)->actionFlags &= 0xfe;

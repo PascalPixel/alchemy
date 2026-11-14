@@ -14,21 +14,21 @@
 #include "module/field/object.h"
 
 void Event_UpdateDebugSkip(void) {
-  struct EventWaitWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (gDebugMode != 0) {
     if (((struct InputState *)&gInput)->pressed & KEY_L) {
-      work->waitMode = 0;
+      work->fastForward = 0;
     }
     if (((volatile struct InputState *)&gInput)->pressed & KEY_R) {
-      work->waitMode = -1;
+      work->fastForward = -1;
     }
   }
 }
 
 void Event_Wait(s32 frames) {
-  struct EventWork *state = Ram_HeapSlots->eventWork;
-  if (state->waitMode == 0 && frames != 0)
+  struct FieldWork *state = Ram_HeapSlots->fieldWork;
+  if (state->fastForward == 0 && frames != 0)
     wait(frames);
 }
 
@@ -47,25 +47,25 @@ void Leader_StopMoving(void) {
 }
 
 void Event_Start(void) {
-  struct EventWork *state = Ram_HeapSlots->eventWork;
+  struct FieldWork *state = Ram_HeapSlots->fieldWork;
   AreaNameWindow_HideFar();
   Leader_StopMoving();
-  if (state->actionCounter != 0)
+  if (state->busy != 0)
     Event_ResolveAllPendingActions();
-  state->unkcb0 = 0;
-  state->unkcb2 = 0;
-  state->unkcb4 = 0;
-  state->delay = 16;
-  state->waitMode = 0;
-  state->messageActor = 0xffff;
-  state->choice = -1;
-  state->messageState = -1;
+  state->choiceMessage = 0;
+  state->choiceWidth = 0;
+  state->choiceSelection = 0;
+  state->transitionFrames = 16;
+  state->fastForward = 0;
+  state->unusedAfterMessage = 0xffff;
+  state->unusedBeforeCamera[0] = -1;
+  state->unusedBeforeCamera[1] = -1;
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_VBLANK);
   GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
-    state->currentOwner = party->currentOwner;
-    state->objectStatus = 0;
+    state->speaker = party->currentOwner;
+    state->messageWindow = 0;
   }
 }
 
@@ -97,9 +97,7 @@ void Event_CallWithLastActiveObjectId(s32 event_id) {
                          Actor_FindLastActiveId());
 }
 
-void Event_SetSceneEvents(s32 events) {
-  ((struct EventWordWork *)Ram_HeapSlots->eventWork)->word10 = events;
-}
+void Event_SetSceneEvents(s32 events) { gFieldWork->triggers = events; }
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value) {
   Unit_Get(event_id);
@@ -135,56 +133,31 @@ void Party_ClearUnusableShortcuts(void) {
     gMainRoutineWork.packedEvents[1] = 0;
 }
 
-static __inline__ s32 Vitals_Ratio(s32 value, s32 max) {
-  s32 ratio = (value << 14) / max;
-  s32 clamped = 0x4000;
+void Party_RemoveMemberRestored(s32 unit) {
+  struct BattleUnit *vitals;
+  s32 partyIndex;
+  s32 partyCount;
+  s32 survivingMembers;
 
-  if (ratio <= 0x4000) {
-    clamped = 0;
-    if (ratio >= 0)
-      clamped = ratio;
-  }
-  return clamped;
-}
-
-void Party_RemoveMemberRestored(s32 owner) {
-  struct OwnerVitals *vitals;
-  s32 i;
-  s32 count;
-  s32 standing;
-
-  Party_RemoveMemberFar(owner);
+  Party_RemoveMemberFar(unit);
   Party_ClearUnusableShortcuts();
-  vitals = Unit_Get(owner);
-  /* FAKEMATCH(dead): the two copies in a once-only block keep both ahead of the
-   * ratio. */
-  do {
-    vitals->hp = vitals->maxHp;
-    vitals->pp = vitals->maxPp;
-  } while (0);
-  vitals->hpRatio = Vitals_Ratio(vitals->hp, vitals->maxHp);
-  if (vitals->hpRatio == 0 && vitals->hp != 0)
-    vitals->hpRatio = 1;
-  vitals->ppRatio = Vitals_Ratio(vitals->pp, vitals->maxPp);
-  if (vitals->ppRatio == 0 && vitals->pp != 0)
-    vitals->ppRatio = 1;
-  vitals->status = 0;
-  standing = 0;
-  count = Party_CountMembersFar();
-  for (i = 0; i < count; i++) {
-    vitals = Unit_Get(gMainRoutineWork.activeOwners[i]);
+  vitals = Unit_Get(unit);
+  vitals->hp = vitals->maxHp;
+  vitals->pp = vitals->maxPp;
+  Unit_UpdateGauges(vitals);
+  vitals->poison = 0;
+  // Count the party members who remain and still have HP.
+  survivingMembers = 0;
+  partyCount = Party_CountMembersFar();
+  for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+    vitals = Unit_Get(gMainRoutineWork.activeOwners[partyIndex]);
     if (vitals->hp != 0)
-      standing++;
+      survivingMembers++;
   }
-  if (standing == 0) {
+  if (survivingMembers == 0) {
     vitals = Unit_Get(gMainRoutineWork.currentOwner);
     vitals->hp = 1;
-    vitals->hpRatio = Vitals_Ratio(vitals->hp, vitals->maxHp);
-    if (vitals->hpRatio == 0 && vitals->hp != 0)
-      vitals->hpRatio = 1;
-    vitals->ppRatio = Vitals_Ratio(vitals->pp, vitals->maxPp);
-    if (vitals->ppRatio == 0 && vitals->pp != 0)
-      vitals->ppRatio = 1;
+    Unit_UpdateGauges(vitals);
   }
 }
 
@@ -209,8 +182,8 @@ s32 Party_CheckItemLimit(s32 item) {
 #endif
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  s16 saved = work->messageId;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s16 saved = work->message;
   s32 owner;
   s32 result;
   s32 count;
@@ -270,7 +243,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       }
     }
   done:
-    work->messageId = saved;
+    work->message = saved;
     return owner;
   }
   Sound_PlayFar(MUS_083);
@@ -281,7 +254,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     MessageArgument_PushFar(owner, 1);
     FieldMessage_ShowFar((s32)&MsgItemReceived + 1, 1);
   }
-  work->messageId = saved;
+  work->message = saved;
   return owner;
 }
 
@@ -326,7 +299,7 @@ void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
 // As ☀️'s Event_AskYesNoWithActorAnimation
 // (games/tbs/src/object/psynergy_effects.c), less its wait for released keys.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 sprite = *(s16 *)Scene_FindActorPlacement(*(s32 *)(work + 0x1e0));
   struct Window *window = *(struct Window **)(work + 0x1e4);
   struct Window *side = *(struct Window **)(work + 0x1e8);
@@ -402,7 +375,7 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
  * Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void
  * Unit_LearnPsynergyFar(s32 owner, s32 action); tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence/event.c:407: too few arguments to function
+ * games/tla/src/field/field_sequence/event.c:380: too few arguments to function
  * `Unit_LearnPsynergyFar'. */
 extern void
 Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
@@ -420,47 +393,47 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 }
 
 void Event_StartScreenTransition(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  ScreenTransition_Start(event->screenEffect, event->delay);
-  event->screenStatus = 1;
+  ScreenTransition_Start(event->transition, event->transitionFrames);
+  event->transitionActive = 1;
 }
 
 void Event_FinishScreenTransition(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  ScreenTransition_Finish(event->screenEffect, event->delay);
-  event->screenStatus = 0;
+  ScreenTransition_Finish(event->transition, event->transitionFrames);
+  event->transitionActive = 0;
 }
 
 void Event_WaitTransitionFrames(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  wait(event->delay);
+  wait(event->transitionFrames);
 }
 
 void Event_SetDestination(s32 scene, s32 entrance) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->countdown = 999;
+  event->exit = 999;
   party = &gMainRoutineWork;
   party->scene = scene;
   party->entrance = entrance;
 }
 
 void Event_SetRestartPoint(s32 scene, s32 entrance) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->countdown = 999;
+  event->exit = 999;
   party = &gMainRoutineWork;
   party->savedScene = scene;
   party->savedEntrance = entrance;
 }
 
 void Event_SetExitRequest(u16 frames) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->countdown = frames;
+  event->exit = frames;
 }

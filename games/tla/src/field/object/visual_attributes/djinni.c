@@ -178,7 +178,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
       return;
     djinni = recorded - 1;
   }
-  if (GameFlag_Get(366)) {
+  if (GameFlag_Get(FLAG_DJINN_LESSON)) {
     owner = gMainRoutineWork.currentOwner;
     GameFlag_Set(element * 20 + djinni + 48);
   } else {
@@ -201,7 +201,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   Djinn_ShowJoinedMessageFar(owner, element, djinni);
   WorldMap_ReloadPendingAreaGraphics();
 #if TLA_PATCH_1
-  ((struct EventActors *)Ram_HeapSlots->eventWork)->actors[actor] = NULL;
+  gFieldWork->actors[actor] = NULL;
 #endif
   Event_End();
 }

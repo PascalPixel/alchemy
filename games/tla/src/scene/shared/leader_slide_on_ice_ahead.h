@@ -1,5 +1,5 @@
 /// Leader_SlideOnIce in the direction the leader faces.
-void TundariaTower_SlideOnIceFacing(void) {
+void Leader_SlideOnIceAhead(void) {
   struct Vector3 probe;
   s32 heading;
   s32 startBehavior;
@@ -25,7 +25,7 @@ void TundariaTower_SlideOnIceFacing(void) {
   heading = (s16)((actor->facing + 0x2000) & -0x4000);
 
 top:
-  TundariaTower_StopLeader();
+  Leader_StopIfPending();
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
@@ -64,7 +64,7 @@ top:
   actor->timer = zero;
   Actor_SelectAnimation(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
-  actor->update = TundariaTower_KeepSliding;
+  actor->update = Actor_SteerByPad;
   /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading
    * nextBehavior twice. */
   asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);

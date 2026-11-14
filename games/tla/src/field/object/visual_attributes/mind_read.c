@@ -24,7 +24,7 @@
 #include "debug.h"
 #include "field/field_psynergy_work.h"
 #include "graphics/display_transition.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/scene.h"
 #include "macros.h"
 
@@ -675,26 +675,26 @@ loop:
 /// once the leader is 60 pixels from the centre or the timer has run out,
 /// requests the effect's end.
 void FieldPsynergy_WatchLeaderDistance(void) {
-  u8 *work;
+  struct FieldWork *work;
   struct Actor *actor;
   s16 *timer;
   s32 dx;
   s32 dz;
   struct MainRoutineWork *party;
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   party = &gMainRoutineWork;
   actor = ObjectTable_Get(party->currentOwner);
-  if (*(s8 *)(work + 0xca5) != 0) {
-    timer = (s16 *)(work + 0xca6);
+  if (work->effectTimerRunning != 0) {
+    timer = &work->revealFrames;
     if (*timer != 0)
       (*timer)--;
   }
 
-  dx = Iwram_MulQ16(*(s16 *)(work + 0xca8) - actor->x / Q16_ONE, 0xd105);
-  dz = *(s16 *)(work + 0xcaa) - (actor->z - actor->y) / Q16_ONE;
-  if (dx * dx + dz * dz >= 3600 || *(s16 *)(work + 0xca6) == 0) {
-    u16 *slot = (u16 *)(work + 358);
+  dx = Iwram_MulQ16(work->revealCenterX - actor->x / Q16_ONE, 0xd105);
+  dz = work->revealCenterY - (actor->z - actor->y) / Q16_ONE;
+  if (dx * dx + dz * dz >= 3600 || work->revealFrames == 0) {
+    u16 *slot = &work->psynergy;
     u32 request = 0x2090;
 
     *slot = request;
@@ -722,14 +722,14 @@ extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__(
 // and watch how far the leader walks.
 void FieldPsynergy_Reveal(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct RevealEvent *event;
+  struct FieldWork *event;
   struct ScreenTransitionState *transition;
   struct Actor *caster;
   void *pending;
   s32 frame;
 
   BattleEffect_RunBusyWaitDelay__f0dd820(6);
-  event = Ram_HeapSlots->eventWork;
+  event = Ram_HeapSlots->fieldWork;
   ScreenTransition_InitializeBattleEffectState(FIELD_PSYNERGY_REVEAL);
   transition = Ram_HeapSlots->screenTransition;
   caster = scene->mainObject;
@@ -738,7 +738,7 @@ void FieldPsynergy_Reveal(void) {
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
   PaletteFade_StartInterpolation(1);
-  event->active = 0;
+  event->revealActive = 0;
   wait(1);
 
   pending = Scene_FindPsynergyTrigger(
@@ -751,12 +751,12 @@ void FieldPsynergy_Reveal(void) {
    * work. */
   do {
     Sound_PlayFar(SE_PSYNERGY_SPARKLE);
-    event->active = 1;
+    event->revealActive = 1;
   } while (0);
-  event->centreX = transition->centreX / Q16_ONE;
-  event->centreY = transition->centreY / Q16_ONE;
-  event->frames = REVEAL_FRAMES;
-  event->markers = 1;
+  event->revealCenterX = transition->centreX / Q16_ONE;
+  event->revealCenterY = transition->centreY / Q16_ONE;
+  event->revealFrames = REVEAL_FRAMES;
+  event->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
   frame = 0;
   do {
@@ -771,14 +771,14 @@ void FieldPsynergy_Reveal(void) {
 void FieldPsynergy_EndReveal(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScreenTransitionState *transition = Ram_HeapSlots->screenTransition;
-  struct RevealEvent *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   void *pending;
 
-  if (event->active != 0) {
+  if (event->revealActive != 0) {
     Sound_PlayFar(SE_MAP_TRANSITION);
     Task_Remove(FieldPsynergy_WatchLeaderDistance);
-    event->active = 0;
-    event->frames = 0;
+    event->revealActive = 0;
+    event->revealFrames = 0;
     BattleEffect_RunBusyWaitDelay__f0dd820(0);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
     PaletteFade_StartInterpolation(1);
@@ -1684,11 +1684,9 @@ void FieldPsynergy_Ply(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/* VIEW(f0de21c): tag struct EventWork as struct EventWork__f0de21c;
- * event_work.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes/mind_read.c:1706: structure has
- * no member named `state'. */
+/* VIEW(f0de21c): tag struct FieldWork as struct EventWork__f0de21c;
+ * event_work.h has another definition; not tried: struct FieldWork__f0de21c was
+ * not found. */
 struct EventWork__f0de21c {
   u8 unk000[0x166];
   u16 state;
@@ -1699,7 +1697,7 @@ struct EventWork__f0de21c {
  * MapGrid_IsCloakCell(s32 x, s32 z) {; tried as the definition's s32
  * MapGrid_IsCloakCell(s32 x, s32 z), which the object already declares, it does
  * not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes/mind_read.c:1704: too many
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1702: too many
  * arguments to function `MapGrid_IsCloakCell'. */
 s32 MapGrid_IsCloakCell__mind_read(s32 x, s32 z,
                                    s32 layer) __asm__("MapGrid_IsCloakCell");
@@ -1708,11 +1706,11 @@ s32 MapGrid_IsCloakCell__mind_read(s32 x, s32 z,
 /// A task of Cloak: when the controlled character does not
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
 void FieldEffect_CheckCloakTile(void) {
-  struct EventWork__f0de21c *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct OwnerObject *owner = ObjectTable_Get(Party_GetLeaderActor());
 
   if (MapGrid_IsCloakCell(owner->x, owner->z, owner->layer) == 0)
-    event->state = 0x2092;
+    event->psynergy = 0x2092;
 }
 
 // The caster's palette while it flickers.

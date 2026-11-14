@@ -12,7 +12,7 @@
 #include "actor.h"
 #include "macros.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
@@ -221,7 +221,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
 
 struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
                                             s32 *kind) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor **entry;
   struct Actor *object;
@@ -230,7 +230,7 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
 
   *direction = leader->facing >> 12;
   i = 8;
-  entry = &work->objects[8];
+  entry = &work->actors[8];
 outer:
   object = *entry;
   k = 0;
@@ -303,13 +303,8 @@ void YampiDesertCave_StartMarkGlow(void);
 void YampiDesertCave_StopMarkGlow(void);
 s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
-void Statue_Sink(u16 *list, s32 mode, s32 count);
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void Teleport_PlaySparks(void);
-
-static inline void YampiDesertCave_Call1920(s32 a, s32 b, s32 c) {
-  Actor_ReturnHome(a, b, c);
-}
 
 void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   // Read as s32: the load then keeps its place after the argument stores.
@@ -443,7 +438,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
 #include "shared/palette_cycle_start_vblank.h"
 
 void YampiDesertCave_StopMarkGlow(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
+  gFieldWork->transition = 256;
   Task_Remove(PaletteCycle_Fade);
 }
 
@@ -501,14 +496,13 @@ void PaletteCycle_Fade(void) {
 /// Arriving by Teleport: the screen flashes as the marks' colours race, then
 /// fades back.
 void YampiDesertCave_ArriveByTeleport(void) {
-  struct YampiDesertCaveEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->transition;
   BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct YampiDesertCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
-      0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   YampiDesertCave_StartMarkFlash();
@@ -523,14 +517,14 @@ void YampiDesertCave_ArriveByTeleport(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->transition = saved;
 }
 
-void YampiDesertCave_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 /// Walks a list of three-halfword entries (object id, column, row) ended by
 /// 0xffff, clearing each object's collision bit and child flags before passing
-/// the entry to YampiDesertCave_SetStakeCell. A struct of three halfwords would
+/// the entry to Actor_SetCellOpen. A struct of three halfwords would
 /// be padded to 8 bytes, so the list is read as u16 triples.
 void YampiDesertCave_PlaceStakes(const u16 *list) {
   const u16 *entry;
@@ -547,7 +541,7 @@ loop:
 
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlags(object, 0);
-    YampiDesertCave_SetStakeCell(id, (u16)column, (u16)row, object->terrainId);
+    Actor_SetCellOpen(id, (u16)column, (u16)row, object->terrainId);
     entry += 3;
   }
   if (entry[0] != 0xffff)
@@ -555,70 +549,11 @@ loop:
 }
 
 // Finds the current target's table row and shrinks it.
-void Statue_Sink(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
-
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        GameFlag_Set(flag);
-        YampiDesertCave_SetStakeCell(id, a, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
+#include "shared/pound_sink_target.h"
 
 s32 Actor_GetCellIndex(struct Actor *object);
 
-void YampiDesertCave_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Actor_GetCellIndex(object);
-  if (GameFlag_Get(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 2);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 4);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 1);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 3);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 5);
-      break;
-    }
-  }
-}
+#include "shared/actor_set_cell_open.h"
 
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
 /// (flag 0x271).
@@ -799,7 +734,7 @@ void YampiDesertCave_EndSand(void) {
 
 /// Pound sinks Room3's stake and opens its cell.
 void YampiDesertCave_PoundStake(s32 a, s32 b) {
-  Statue_Sink(gYampiDesertCave_Room3Stakes, a, b);
+  Pound_SinkTarget(gYampiDesertCave_Room3Stakes, a, b);
   MapGrid_CopyCellAttributes(47, 12, 1, 1, 46, 12);
 }
 
@@ -835,7 +770,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 px = column * 8;
   s16 row = gYampiDesertCave_RipplePath[index + 1];
   s32 pz = row * 8;
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *tracked =
       *(struct Actor **)(Ram_HeapSlots->battleFxWork[0] + 0x1930);
   s32 x = 0, z = 0;
@@ -859,7 +794,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
     chest->gravity = 0x170a;
     wait(50);
     {
-      s16 *counter = (s16 *)(work + 0x160);
+      s16 *counter = &work->talk;
       s32 value = 17;
 
       *counter = value;
@@ -910,9 +845,7 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Field_RequestBattleFromEncounterTable(103, 1);
 }
 
-void YampiDesertCave_ScoopTreasure(s32 a) {
-  YampiDesertCave_Call1920(a, 64, 0x302);
-}
+void YampiDesertCave_ScoopTreasure(s32 a) { Event_DigUpTreasure(a, 64, 0x302); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave2)
@@ -936,7 +869,7 @@ void Actor_SetWideSprite(s32 id, s32 wide);
 /// palette cycle and Retreat destination, the third room's background
 /// priorities, and in each room the objects its flags place.
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave1) {
     YampiDesertCave_SetMarkColors(
@@ -1045,7 +978,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef DEFINE_TELEPORT_FROM_MARK
 #undef DEFINE_BURST_PILLAR
 #undef FIELD_AT
-#undef gYampiDesertCave_MarkPaletteSlots
 
 void YampiDesertCave_MeetGuardianOfFire(void);
 
@@ -1271,5 +1203,3 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
      IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
     {TRIGGER_TABLE_END},
 };
-#undef YampiDesertCave_StartMovingPillar
-#undef YampiDesertCave_FinishMovingPillar

@@ -583,12 +583,12 @@ void Tightrope_Draw(void) {
 /// decays by 0.95 a frame until it drops to 0x1998, and Tightrope_WobbleBetween
 /// redraws the slot with the sine of its angle times it.
 void Tightrope_Update(void) {
-  struct WobbleEvent *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct TightropeWork *work = TIGHTROPE_WORK;
   struct TightropeSlot *slot;
   s32 i = 0;
 
-  if (!GameFlag_Get(260) && event->counter > 12) {
+  if (!GameFlag_Get(260) && event->blockedSteps > 12) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->renderMode == 0) {
@@ -601,10 +601,10 @@ void Tightrope_Update(void) {
         }
         if (i < 8 &&
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
-          event->cue = 0xfc83;
+          event->raisedTrigger = 0xfc83;
       }
     } else if (party->renderMode == 4) {
-      event->cue = 0xfc84;
+      event->raisedTrigger = 0xfc84;
     }
   }
 

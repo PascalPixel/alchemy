@@ -1013,8 +1013,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
       s32 entry;
 
       entry = (s16)(((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2));
-      /* FAKEMATCH(volatile): the map written through a volatile pointer. */
-      *(volatile u16 *)(0x06003800 + i) = *(u16 *)&entry;
+      *(volatile u16 *)(BG_SCREEN_BLOCK(7) + i) = *(u16 *)&entry;
     }
   }
 
@@ -1041,11 +1040,9 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
 
   // Fade the colours up a shade every two frames; B starts again, A ends.
   for (frame = 0; frame != 32096; frame++) {
-    /* FAKEMATCH(volatile): the A test reads the held keys through a volatile
-     * pointer. */
     if (gInput.held & KEY_B)
       frame = 0;
-    if (*(volatile u32 *)&gInput.held & KEY_A)
+    if (gInput.held & KEY_A)
       break;
     if (frame <= 63)
       Palette_BrightenSavedBattleBg(frame / 2 - 31, frame / 2 - 31,

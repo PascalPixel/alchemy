@@ -4,8 +4,8 @@
 	.global gMarsLighthouseStarRoom_MarsStar
 gMarsLighthouseStarRoom_MarsStar:
 	.space 0x00000004
-	.global gMarsLighthouseStarRoom_SlideStopped
-gMarsLighthouseStarRoom_SlideStopped:
+	.global gSlideOnIce_Stopped
+gSlideOnIce_Stopped:
 	.space 0x00000004
-	.global gData_02004cf4
-gData_02004cf4:
+	.global gCrackedTiles
+gCrackedTiles:

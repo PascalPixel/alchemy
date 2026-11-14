@@ -12,7 +12,7 @@
 /// rooms take their morning tables.
 
 #include "battle/battle.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -251,7 +251,7 @@ void GarohInteriors_AskWhatTheWanderersSeek(s32 actor) {
       Event_ShowMessageAndWait(actor, 0);
     } else {
       // Past "You don't really believe they exist, do you?" to the next line.
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
       Event_ShowMessageAndWait(actor, 0);
     }
   } else {
@@ -367,7 +367,7 @@ const struct Trigger *Scene_GetEvents(void) {
 s32 Scene_Initialize(void) {
   s32 turn;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+  gFieldWork->transition = 521;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_GarohInteriors1) {

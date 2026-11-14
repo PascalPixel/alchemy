@@ -131,44 +131,6 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4;
- * f0ec2b8.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/world_map_picture.c:208: structure
- * has no member named `scrollX'. */
-struct WorldMapWork__f0ec4d4 {
-  u16 vramBlock;
-  u16 windowSlot;
-  s32 x;
-  s32 z;
-  u8 unk0c[6];
-  s16 shown;
-  u8 unk14[4];
-  s32 speed;
-  void *window;
-  struct WorldMapMarker markers[129];
-  u8 unk62c[4];
-  s32 scrollX;
-  s32 scrollZ;
-};
-
-/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4;
- * f0ec2b8.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/world_map_picture.c:281: structure
- * has no member named `name'. */
-struct WorldMapPlace__f0ec4d4 {
-  u8 flag;
-  u8 value;
-  s16 unk02;
-  s16 x;
-  s16 z;
-  u8 unk08[4];
-  s16 name;
-  s16 nameEntrance;
-  u8 unk10[4];
-};
-
 #define WORK Ram_WorldMapWork
 #define NAME_BOX_X Ram_WorldMapNameBox[0]
 #define NAME_BOX_Y Ram_WorldMapNameBox[1]
@@ -181,7 +143,7 @@ void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
 void WorldPicture_UpdateMarkers(void) {
-  struct WorldMapWork__f0ec4d4 *work;
+  struct WorldMapWork *work;
   struct WorldMapMarker *marker;
   s32 tileBase;
   s32 blend;
@@ -193,10 +155,10 @@ void WorldPicture_UpdateMarkers(void) {
   s32 nearestName;
   s32 nearestEntrance;
   s32 entrance;
-  struct WorldMapPlace__f0ec4d4 *places;
+  struct WorldMapPlace *places;
   s32 scrollX;
   s32 scrollY;
-  struct WorldMapPlace__f0ec4d4 *place;
+  struct WorldMapPlace *place;
   s32 width;
   s32 height;
   s32 placeX;
@@ -742,7 +704,7 @@ void WorldMapPicture_UpdateScroll(void) {
 
 #include "system/io_write.h"
 #include "scene_ids.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "actor.h"
 #include "map.h"
 #include "field/sprite.h"
@@ -772,7 +734,7 @@ s32 WorldPicture_Show(s32 mode) {
   s32 screenX;
   s32 screenY;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ObjectSystemWork *objects = Ram_HeapSlots->objectSystem;
   s16 blend;
   s32 messageShown = 0;
@@ -802,11 +764,11 @@ s32 WorldPicture_Show(s32 mode) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   world->mode = mode;
-  if (mode != 0 || event->controlMode != 3)
+  if (mode != 0 || event->mode != 3)
     ObjectTable_Snapshot();
-  if (event->controlMode == 3) {
-    savedDelay = event->delay;
-    event->delay = 6;
+  if (event->mode == 3) {
+    savedDelay = event->transitionFrames;
+    event->transitionFrames = 6;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     layer = map->anim;
@@ -825,11 +787,11 @@ s32 WorldPicture_Show(s32 mode) {
   } else {
     do {
       /* FAKEMATCH(dead): the statement in a once-only block. */
-      event->viewCenter->movementState = 1;
+      event->camera->movementState = 1;
     } while (0);
-    savedDelay = event->delay;
-    event->delay = 6;
-    event->screenEffect = 0;
+    savedDelay = event->transitionFrames;
+    event->transitionFrames = 6;
+    event->transition = 0;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Task_ResetAll();
@@ -989,8 +951,8 @@ s32 WorldPicture_Show(s32 mode) {
 done:
   WorldPicture_Release();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
-  if (mode != 0 || event->controlMode != 3) {
-    event->countdown = 999;
+  if (mode != 0 || event->mode != 3) {
+    event->exit = 999;
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   } else {
     WorldMap_LoadAreaGraphicsFar();
@@ -1006,8 +968,8 @@ done:
     ((struct MapViewWork *)map)->picturePending = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    event->delay = savedDelay;
-    event->viewCenter->movementState = 0;
+    event->transitionFrames = savedDelay;
+    event->camera->movementState = 0;
   }
   return 0;
 }
@@ -1021,7 +983,7 @@ void WorldMap_StartZoom(s32 scale, s32 frames);
 void WorldMap_ZoomOutWhileLHeld(void) {
   struct MainRoutineWork *party;
 
-  if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
+  if (gFieldWork->mode == 3) {
     Leader_StopMoving();
     WorldMap_StartZoom(Q16_ONE * 8 / 13, 6);
     while (gInput.held & KEY_L)

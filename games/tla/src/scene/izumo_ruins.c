@@ -1,7 +1,12 @@
 /// @file
-/// The Izumo Ruins' pillars: those Pound sinks into the floor (Pillars_Place,
-/// Pillars_Pound) and the grey ones that crack under a first step and crumble
-/// under a second (CrumblingPillars_Step).
+/// The Izumo Ruins, under the stone circle of Izumo, in two rooms that share
+/// this overlay (SceneId_IzumoRuinsFirstRoom, SceneId_IzumoRuinsSecondRoom).
+/// Sand carries the party across the sandy floor (IzumoRuins_SinkIntoSand),
+/// Frost freezes the puddles (IzumoRuins_FreezePuddle), Pound sinks pillars
+/// (IzumoRuins_PoundPillar), Move sets the brown pillars in place
+/// (IzumoRuins_FinishMovingPillar), grey pillars crumble under a second step
+/// (shared/crumbling_pillars.h), and Parch dries the pool before the room of
+/// the stone tablet (IzumoRuins_ParchThePool).
 #include "system/iwram_call.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -21,15 +26,6 @@
 #include "field/event_inline.h"
 #include "system/frame.h"
 #include "scene_tables.h"
-
-struct IzumoRuinsEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[0x56];
-  s32 field1ac;
-  u8 unk1b0[0xb0c];
-  struct Actor *objectCbc;
-};
 
 struct IzumoRuinsAnimation {
   u8 unk00[9];
@@ -65,8 +61,7 @@ extern u8 gMapCellBuffer[];
 extern char SceneId_IzumoRuinsFirstRoom;
 extern char SceneId_IzumoRuinsSecondRoom;
 
-void Pillars_Pound(u16 *list, s32 mode, s32 count);
-void Actor_SetCellShapeAt(s32 a, s32 b, s32 owner);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y);
 s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value);
 void IzumoRuins_ShowPillarState(struct Actor *object);
@@ -114,7 +109,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
@@ -123,506 +118,27 @@ struct Actor;
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Field_TryJumpForward(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 flags);
-void Leader_SetCellShapeAt(s32 a, s32 b);
+void Leader_SetCellShapeAt(s32 level, s32 layer);
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-/// Places each pillar of a list of three-halfword entries (actor, kind,
-/// flag) ended by 0xffff, its collision bit cleared, raised or sunk by its
-/// flag (Actor_SetCellOpen).
-void Pillars_Place(const u16 *list) {
-  const u16 *entry;
-
-  if (list[0] == 0xffff)
-    return;
-  entry = list;
-loop:
-  {
-    u32 id = entry[0];
-    struct Actor *object = Actor_Get(id);
-    s16 kind = entry[1];
-    s16 flag = entry[2];
-
-    object->collisionFlags &= ~1;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->terrainId);
-    entry += 3;
-  }
-  if (entry[0] != 0xffff)
-    goto loop;
-}
-
-// Finds the current target's table row and shrinks it.
-void Pillars_Pound(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
-
-  if (*list == 0xffff)
-    return;
-top:
-  {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_Get(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        Event_SetFlag(flag);
-        Actor_SetCellOpen(id, a, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      return;
-    }
-  }
-  list += 3;
-  if (*list != 0xffff)
-    goto top;
-}
-
-#include "shared/actor_set_cell_open.h"
-
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
-
-void CrumblingPillars_Place(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *leader;
-  s32 height;
-
-  while (list[0] != 0xffff) {
-    u32 id = list[0];
-    struct Actor *object = Actor_Get(id);
-    s32 flag = list[1];
-    s32 next = flag + 1;
-    struct MapCell *cells = map->layers[object->terrainId].cells;
-    u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-
-    if (Event_GetFlag(next)) {
-      Actor_SetPosition(id, 0, 0);
-    } else {
-      s32 index = Actor_GetCellIndex(object);
-      struct MapCell *cell;
-      u8 *slot;
-      s32 shape, ground;
-
-      cell = cells + index;
-      slot = shapes + index;
-      shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
-      ground = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-
-      Actor_DisableById(id);
-      cell->attributeB = 128;
-      *slot = MapCollision_FindOrAddTag(object->terrainId, shape,
-                                        (ground >> 19) + 4);
-      if (Event_GetFlag(flag))
-        Actor_SelectAnimation(object, 0);
-    }
-    list += 2;
-  }
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
-  height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
-  if (leader->y < height) {
-    leader->terrainHeight = height;
-    leader->y = height;
-  }
-}
-
-void CrumblingPillars_Step(u16 *list) {
-  struct Actor *leader;
-  struct Actor *pillar;
-  s32 position[3];
-
-  if (Field_TryJumpForward() != 0)
-    return;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
-  pillar = Actor_FindAtCell(position, 0);
-  if (pillar != 0)
-    goto test;
-  return;
-body:
-  {
-    u32 id = list[0];
-
-    if (Actor_GetById(id) != pillar) {
-      list += 2;
-      goto test;
-    }
-    {
-      s32 flag = list[1];
-
-      Event_Start();
-      if (!GameFlag_Get(flag)) {
-        Sound_Play(SE_CHEST_CLOSE);
-        Actor_SetSpriteColor(Actor_GetById(id), 7);
-        wait(2);
-        Actor_SelectAnimation(pillar, 0);
-        Actor_SetSpriteColor(Actor_GetById(id), 0);
-        wait(2);
-        Actor_SetSpriteColor(Actor_GetById(id), 7);
-        wait(4);
-        Actor_SetSpriteColor(Actor_GetById(id), 0);
-        Rubble_Spray(0);
-        GameFlag_Set(flag);
-      } else if (!GameFlag_Get(flag + 1)) {
-        u8 *flags = &leader->motionFlags;
-
-        *flags = 0;
-        Sound_Play(SE_PUSH);
-        MapGrid_SetShake(1, 4, 1);
-        Rubble_Spray(0);
-        wait(8);
-        Actor_SelectAnimation(pillar, 2);
-        Leader_SetCellShapeAt(-2, pillar->terrainId);
-        Rubble_Spray(1);
-        wait(16);
-        Leader_SetCellShapeAt(-2, pillar->terrainId);
-        wait(4);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-        wait(8);
-        *flags = 3;
-        wait(5);
-        Actor_SetPositionAndResetMotion(pillar, 0, 0, 0);
-        wait(2);
-        Sound_Play(SE_THUMP);
-        Rubble_Burst();
-        wait(20);
-        GameFlag_Set(flag + 1);
-      }
-      Event_End();
-      return;
-    }
-  }
-test:
-  if (list[0] != 0xffff)
-    goto body;
-}
-
-void CrumblingPillar_Collapse(const void *data, s32 id) {
-  const struct TrapEntry *entry = data;
-  struct Actor *object = Actor_Get(id);
-  s32 flag;
-
-  while (entry->actor != 0xffff) {
-    if (entry->actor != id) {
-      entry++;
-      continue;
-    }
-    {
-      flag = entry->flag;
-      Event_Start();
-      if (!Event_GetFlag(flag + 1)) {
-        Event_PlaySound(SE_PUSH);
-        MapGrid_SetShake(1, 4, 1);
-        Rubble_Spray(0);
-        System_Wait(8);
-        Actor_SelectAnimation(object, 2);
-        Actor_SetCellShapeAt(-4, OBJECT_BYTE(object, 34), id);
-        Rubble_Spray(1);
-        System_Wait(16);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-        System_Wait(8);
-        FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
-        System_Wait(2);
-        Event_PlaySound(SE_THUMP);
-        Rubble_Burst();
-        System_Wait(20);
-        Event_SetFlag(flag);
-        Event_SetFlag(flag + 1);
-      }
-      Event_End();
-      break;
-    }
-  }
-}
-
-void CrumblingPillar_Prepare(s32 id) {
-  Actor_Get(id)->unk5c[0] = 3;
-  Actor_DisableById(id);
-}
-
-void Actor_MoveToObject(s32 id, s32 target);
-
-void CrumblingPillars_PlaceWithStandIns(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  u8 *grid;
-
-  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
-  System_Wait(1);
-  CrumblingPillar_Prepare(8);
-  CrumblingPillar_Prepare(9);
-  CrumblingPillar_Prepare(10);
-  Actor_SetAnimation(9, 0);
-  System_Wait(1);
-  Actor_SetPosition(8, 0, 0);
-  Actor_SetPosition(9, 0, 0);
-  Actor_SetPosition(10, 0, 0);
-  System_Wait(1);
-  grid = gMapShapeGrid;
-  while (list[0] != 0xffff) {
-    u32 id = list[0];
-    struct Actor *actor = Actor_Get(id);
-    s32 flag = list[1];
-    s32 next = flag + 1;
-    struct MapCell *cells = map->layers[actor->terrainId].cells;
-    u8 *shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-
-    actor->unk5c[0] = 3;
-    if (Event_GetFlag(next)) {
-      Actor_SetPosition(id, 0, 0);
-    } else {
-      s32 index = Actor_GetCellIndex(actor);
-      struct MapCell *cell = cells + index;
-      u8 *shape = shapes + index;
-      s32 kind, ground;
-
-      kind = MapGrid_GetTerrainKind(actor->terrainId, actor->x, actor->z);
-      ground = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z);
-
-      Actor_DisableById(id);
-      cell->attributeB = 128;
-      *shape =
-          MapCollision_FindOrAddTag(actor->terrainId, kind, (ground >> 19) + 4);
-      if (Event_GetFlag(flag))
-        Actor_CopyGraphics(id, 9);
-    }
-    list += 2;
-  }
-  System_Wait(10);
-}
-
-void Actor_TakePlaceOf(struct Actor *object, struct Actor *target) {
-  FieldActor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
-  FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
-}
-
-void CrumblingPillars_StepWithStandIn(u16 *list) {
-  struct Actor *leader;
-  struct Actor *helper;
-  struct Actor *pillar;
-  s32 position[3];
-
-  if (Field_TryJumpForward() != 0)
-    return;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  helper = Actor_GetById(8);
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
-  pillar = Actor_FindAtCell(position, 0);
-  if (pillar != 0)
-    goto test;
-  return;
-body:
-  {
-    u32 id = list[0];
-
-    if (Actor_GetById(id) != pillar) {
-      list += 2;
-      goto test;
-    }
-    {
-      s32 flag = list[1];
-
-      Event_Start();
-      if (!GameFlag_Get(flag)) {
-        Actor_SelectAnimation(helper, 1);
-        Actor_TakePlaceOf(helper, pillar);
-        wait(1);
-        Sound_Play(SE_CHEST_CLOSE);
-        Actor_SetSpriteColor(Actor_GetById(8), 7);
-        wait(2);
-        Actor_SelectAnimation(helper, 0);
-        Actor_CopyGraphics(id, 9);
-        Actor_SetSpriteColor(Actor_GetById(8), 0);
-        wait(2);
-        Actor_SetSpriteColor(Actor_GetById(8), 7);
-        wait(4);
-        Actor_SetSpriteColor(Actor_GetById(8), 0);
-        Rubble_Spray(0);
-        Actor_TakePlaceOf(pillar, helper);
-        wait(1);
-        GameFlag_Set(flag);
-      } else if (!GameFlag_Get(flag + 1)) {
-        u8 *flags;
-
-        Actor_SelectAnimation(helper, 0);
-        Actor_TakePlaceOf(helper, pillar);
-        wait(1);
-        flags = &leader->motionFlags;
-        *flags = 0;
-        Sound_Play(SE_PUSH);
-        MapGrid_SetShake(1, 4, 1);
-        Rubble_Spray(0);
-        wait(8);
-        Actor_SelectAnimation(helper, 2);
-        Leader_SetCellShapeAt(-2, pillar->terrainId);
-        Rubble_Spray(1);
-        wait(16);
-        Leader_SetCellShapeAt(-2, pillar->terrainId);
-        wait(4);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-        wait(8);
-        *flags = 3;
-        wait(5);
-        Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
-        wait(2);
-        Sound_Play(SE_THUMP);
-        Rubble_Burst();
-        wait(20);
-        GameFlag_Set(flag + 1);
-      }
-      Event_End();
-      return;
-    }
-  }
-test:
-  if (list[0] != 0xffff)
-    goto body;
-}
+#include "shared/crumbling_pillars.h"
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-// @file
-// The Izumo Ruins' rubble, sprayed and burst from the leader as a pillar
-// crumbles (Rubble_Spray, Rubble_Burst).
+void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 
-struct Actor;
-struct FieldSprite;
-s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-void Leader_SetCellShapeAt(s32 a, s32 b);
-u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
-
-extern u32 gIzumoRuins_RubbleSprayScript[];
-
-void Rubble_Spray(s32 spread) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct FieldEffect *effect;
-  u32 frame = 0;
-  u32 i = 0;
-
-  do {
-    {
-      /* FAKEMATCH(temporary): y held in a local. */
-      s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
-
-      effect = (struct FieldEffect *)FieldActor_Create(
-          285, (i << 17) + leader->x - px(8), y - 0x20000, leader->z);
-    }
-    if (effect != 0) {
-      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
-      effect->motionFlags = 0;
-      effect->collisionFlags = 0;
-      Actor_SetSpriteFlags((struct Actor *)effect, 0);
-      Actor_SelectAnimation((struct Actor *)effect, 2);
-      Actor_StartScript(effect, gIzumoRuins_RubbleSprayScript);
-      effect->scaleY = effect->scaleX = 0xb333;
-      effect->sprite->priority = 1;
-      if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
-        effect->velocity.z = Math_Sin(i << 13);
-      } else {
-        effect->velocity.x = spread;
-        effect->velocity.z = spread;
-      }
-      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
-      effect->spin = ((Random16() << 9) >> 16) - 0x100;
-      effect->scaleRateX = -0x800;
-      effect->scaleRateY = -0x600;
-      effect->update = Effect_AdvanceMotionAtLeaderPriority;
-    }
-    i++;
-  } while (i <= 7);
-}
-
-extern u32 gIzumoRuins_RubbleBurstScript[];
-
-void Rubble_Burst(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct FieldEffect *effect;
-  u32 frame;
-  u32 i;
-
-  if (leader == 0)
-    return;
-  frame = 0;
-  i = 0;
-  do {
-    effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
-                                                     leader->z);
-    if (effect != 0) {
-      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
-      effect->motionFlags = 0;
-      effect->collisionFlags = 0;
-      Actor_SetSpriteFlags((struct Actor *)effect, 0);
-      Actor_SelectAnimation((struct Actor *)effect, 2);
-      Actor_StartScript(effect, gIzumoRuins_RubbleBurstScript);
-      effect->velocity.x = Trig_Cos(i << 12);
-      effect->velocity.y = 0;
-      effect->velocity.z = Math_Sin(i << 12);
-      effect->velocity.x += effect->velocity.x >> 1;
-      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
-      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
-      effect->spin = ((Random16() << 12) >> 16) - 0x800;
-      effect->scaleRateX = 0;
-      effect->scaleRateY = 0;
-      effect->update = Effect_AdvanceMotionAtLeaderPriority;
-      effect->sprite->priority =
-          ((struct FieldSprite *)leader->sprite)->priority;
-    }
-    i++;
-  } while (i <= 16);
-}
+#include "shared/rubble.h"
 
 s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
 
-void Actor_SetCellShapeAt(s32 heightOffset, s32 layer, s32 id) {
-  struct Actor *actor = Actor_Get(id);
-  s32 cell = Ram_HeapSlots->mapWork->layers[layer].cells -
-             (struct MapCell *)Ram_MapCellBuffer;
-  s32 z = actor->z;
-  u8 *shapes = gMapShapeGrid + cell;
-  s32 value;
-  s32 height;
+#include "shared/actor_set_cell_shape.h"
 
-  value = MapGrid_GetTerrainKind(actor->terrainId, actor->x, z);
-  height = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z) >> 19;
-  height += heightOffset;
-  shapes += actor->x / 0x100000 + (actor->z / 0x100000 << 7);
-  *shapes = MapCollision_FindOrAddTag(actor->terrainId, value, height);
-}
-
-void Leader_SetCellShapeAt(s32 a, s32 b) {
-  Actor_SetCellShapeAt(a, b, gMainRoutineWork.currentOwner);
-}
+#include "shared/leader_set_cell_shape.h"
 
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-
-// @file
-// The Izumo Ruins, under the stone circle of Izumo, in two rooms that share
-// this overlay (SceneId_IzumoRuinsFirstRoom, SceneId_IzumoRuinsSecondRoom).
-// Sand carries the party across the sandy floor (IzumoRuins_SinkIntoSand),
-// Frost freezes the puddles (IzumoRuins_FreezePuddle), Pound sinks pillars
-// (IzumoRuins_PoundPillar), Move sets the brown pillars in place
-// (IzumoRuins_FinishMovingPillar), and Parch dries the pool before the room
-// of the stone tablet (IzumoRuins_ParchThePool).
-//
-// The pillars, the rubble and the effect spawner are in izumo_ruins/, which
-// shared field effect objects link between.
-//
-// It opens on its copy of the effect spawner, FieldEffect_Spawn.
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -763,21 +279,21 @@ void IzumoRuins_PoundPillar(s32 aArg, s32 b) {
 
   scene = party->scene;
   if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
-    Pillars_Pound(gIzumoRuins_FirstRoomPoundPillars, aArg, b);
+    Pound_SinkTarget(gIzumoRuins_FirstRoomPoundPillars, aArg, b);
   else
-    Pillars_Pound(gIzumoRuins_SecondRoomPoundPillars, aArg, b);
+    Pound_SinkTarget(gIzumoRuins_SecondRoomPoundPillars, aArg, b);
   if (aArg == 1)
     IzumoRuins_ShowPillarState(Actor_Get(work->objectId));
 }
 
 void IzumoRuins_FreezePuddle(void) {
-  struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FlagBlock_ApplyFlags(gIzumoRuins_Puddles);
-  object = work->objectCbc;
+  object = work->movedBlock;
   object->priorityFlags |= 1;
   object->priorityFlags &= ~2;
   Event_End();
@@ -838,11 +354,11 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 s32 Scene_Initialize(void) {
-  struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 height;
 
-  work->field1ac = 0x204;
+  work->transition = 0x204;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsFirstRoom) {
@@ -875,15 +391,15 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
-u32 gIzumoRuins_RubbleSprayScript[] = {                                                               
-      SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_FREE,                                                                 
-  };
+u32 gRubble_SprayScript[] = {
+    SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),
+    SC_FREE,
+};
 
-u32 gIzumoRuins_RubbleBurstScript[] = {                                                               
-      SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_FREE,                                                                 
-  };
+u32 gRubble_BurstScript[] = {
+    SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),
+    SC_FREE,
+};
 
 u32 gFieldEffect_ShortScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     

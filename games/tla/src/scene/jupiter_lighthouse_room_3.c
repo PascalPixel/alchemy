@@ -13,6 +13,7 @@
 /// cached pictures.
 
 #include "system/system.h"
+#include "system/io_write.h"
 #include "flags.h"
 #include "shared/tables.h"
 #include "types.h"
@@ -36,7 +37,7 @@
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "field/cell_target.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "system/io_reg.h"
 #include "field_event.h"
@@ -80,9 +81,6 @@ static __inline__ void Lift_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
-static __inline__ void Func_020023b0_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
 void JupiterLighthouse_StartMovingPillar(void);
 void JupiterLighthouse_LeaveByCyclone(void);
 void JupiterLighthouse_JumpForward(void);
@@ -181,7 +179,7 @@ void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(12); }
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   HangingVine_Place(12, 1);
   HangingVine_Place(13, 1);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
@@ -204,7 +202,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->terrainHeight = px(-32);
     object->y = px(-32);
-    Func_020023b0_(14, px(328), px(584));
+    Actor_SetPositionFixed(14, px(328), px(584));
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
@@ -212,7 +210,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->terrainHeight = px(-32);
     object->y = px(-32);
-    Func_020023b0_(15, px(520), px(584));
+    Actor_SetPositionFixed(15, px(520), px(584));
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);
   }
   Actor_Get(8)->priorityFlags |= 32;
@@ -247,9 +245,7 @@ void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/scene_set_arrival_flags.c"
 
-void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 #include "shared/palette_cycle_step_at.h"
 
@@ -459,7 +455,6 @@ s32 gPushLeaderSteps[] = {
 #undef ABS
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 #undef PIXEL_PART
-// @file
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
@@ -541,8 +536,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
@@ -556,66 +549,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-void CrackedTile_Fall(struct PushEvent *event) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x;
-  s32 z;
-  s32 mask;
-
-  mask = 64;
-  x = object->x >> 20;
-  do {
-  } while (0);
-  x |= (s16)(event->x & mask);
-  z = object->z >> 20;
-  z |= (s16)(event->z & mask);
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  {
-    u32 zero = 0;
-
-    object->facing = 0x4000;
-    object->motionFlags = zero;
-  }
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  {
-    /* FAKEMATCH(temporary): a word local holding 0xf1f, built with movs,
-     * lsls, adds as the native does. */
-    u32 winout = 0xf1f;
-
-    REG_WINOUT = winout;
-  }
-  do {
-  } while (0);
-  REG_DISPCNT |= 0x8000;
-  event->busy = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  for (x = 0; x < 40; x++) {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    object->scaleX += -0x400;
-    object->scaleY += -0x300;
-    object->y += -0x9999;
-    System_Wait(1);
-  }
-  do {
-    Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  } while (0);
-  event->busy = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 // The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps
 // and the fall to the floor below.
 
@@ -629,29 +567,13 @@ extern u16 gPushKinds[];
 // leader steps on.
 extern struct CellTarget gCrackedTiles;
 
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
-
 #include "shared/cracked_tile_drop_in.h"
 
 void CrackedTile_Crack();
-/* VIEW(cracked_tile_steps): routine CrackedTile_Fall as this part declared it,
- * with no parameter list; the joined file defines it with one. */
-void CrackedTile_FallEvent__cracked_tile_steps() __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_FallEvent__cracked_tile_steps
-
 #include "shared/cracked_tiles_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 
-#undef CrackedTile_Fall
-
-// @file
 // The tables of Jupiter Lighthouse's room of gaps and logs that the scene's
 // getters return.
 
@@ -763,4 +685,3 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef JupiterLighthouse_FinishMovingPillar

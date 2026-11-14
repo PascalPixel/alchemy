@@ -26,7 +26,7 @@
 #include "system/ram_buffer.h"
 #include "system/field_effect.h"
 #include "field_sprite.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 #include "module/scene/scene.h"
@@ -53,7 +53,6 @@
 
 #include "../field/field_effect/move.c"
 
-// @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -101,11 +100,6 @@ struct Counted {
   u8 count;
 };
 
-struct EventWork900 {
-  u8 unk000[362];
-  u16 timer;
-};
-
 struct CellPoint {
   s16 position[2];
 };
@@ -130,11 +124,6 @@ struct GaiaRockInsideOrbit {
   u8 growth;
   s16 angle;
   s16 speed;
-};
-
-struct GaiaRockInsideEventWork {
-  u8 unk000[0x15a];
-  u16 unk15a;
 };
 
 struct SwayState {
@@ -312,7 +301,7 @@ s32 Func_0200042c(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -360,7 +349,7 @@ loop:
   actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   return Event_EndWithResult();
 }
 #endif
@@ -488,7 +477,7 @@ s32 Func_02000748(void) {
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja (gaia_rock_inside.c):
- * games/tla/src/scene/gaia_rock_inside.c:506: structure has no member named
+ * games/tla/src/scene/gaia_rock_inside.c:495: structure has no member named
  * `layer'. */
 struct DustSprite__s07f4 {
   u8 unk00[9];
@@ -549,7 +538,7 @@ void Func_02000900(struct Counted *object) {
   struct Counted *other = (struct Counted *)Actor_Get(9);
 
   if (object->count == 30 || other->count == 30) {
-    ((struct EventWork900 *)Ram_HeapSlots->eventWork)->timer = 42;
+    gFieldWork->raisedTrigger = 42;
     if (object->count == 30)
       object->count = 31;
     if (other->count == 30)
@@ -722,7 +711,7 @@ void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 /* VIEW(s07f4): variable gData_020051d8 as const struct CellPoint
  * gData_020051d8[12]; scene/gaia_rock_inside/s4d00 has u16 gData_020051d8[] =
  * {; tried as the definition's extern u16 gData_020051d8[], it does not compile
- * in tla-ja (gaia_rock_inside.c): games/tla/src/scene/gaia_rock_inside.c:737:
+ * in tla-ja (gaia_rock_inside.c): games/tla/src/scene/gaia_rock_inside.c:726:
  * `gData_020051d8' undeclared (first use in this function). */
 extern const struct CellPoint
     gData_020051d8__s07f4[12] __asm__("gData_020051d8");
@@ -850,13 +839,12 @@ void Func_02000fac(void) {
 
 #undef FIELD_AT
 #undef gData_020051d8
-#undef gData_02005ee4
 #include "text/msg_ids.h"
 
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
  * has extern struct Actor gData_0200646c; tried as the one declaration extern
  * s32 gData_0200646c[], it does not compile in tla-ja (gaia_rock_inside.c):
- * games/tla/src/scene/gaia_rock_inside.c:856: conflicting types for
+ * games/tla/src/scene/gaia_rock_inside.c:844: conflicting types for
  * `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 
@@ -1021,24 +1009,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
 }
 
 // Moves around in a circle.
-s32 Orbit_Update(struct GaiaRockInsideOrbit *object) {
-  s32 z;
-
-  object->angle += object->speed;
-  object->x = IwramMulQ16(Trig_Cos(object->angle), object->radius);
-  z = IwramMulQ16(Math_Sin(object->angle), object->radius);
-  object->x += object->centreX;
-  object->z = (z >> 1) + object->centreZ;
-  if (object->growth != 141 && (gFrameCount & 1)) {
-    object->radius = object->growth * Math_Sin(object->phase << 10);
-    object->growth += 10;
-  }
-  if (object->speed == 0)
-    return 0;
-  if (object->growth == 141)
-    object->speed -= 128;
-  return 1;
-}
+#include "shared/orbit_update.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -1494,10 +1465,10 @@ void GaiaRockInside_CheckAltar(void) {
   owner = FieldPartyInventory_FindMember(451);
   next = message + 2;
   if (owner != -1) {
-    struct GaiaRockInsideEventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Message_ShowCentered(next, 1);
-    work->unk15a = 1;
+    work->fieldMenu = 1;
   } else {
     Message_ShowCentered(next, 1);
   }
@@ -1948,7 +1919,7 @@ const struct Trigger *Scene_GetEvents(void) {
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
  * compile in tla-ja (gaia_rock_inside.c):
- * games/tla/src/scene/gaia_rock_inside.c:1952: too few arguments to function
+ * games/tla/src/scene/gaia_rock_inside.c:1923: too few arguments to function
  * `Actor_GetById'. */
 extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
 
@@ -1992,7 +1963,7 @@ void Func_02002b04(u32 id, s8 mode) {
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
  * compile in tla-ja (gaia_rock_inside.c):
- * games/tla/src/scene/gaia_rock_inside.c:1995: too few arguments to function
+ * games/tla/src/scene/gaia_rock_inside.c:1966: too few arguments to function
  * `Actor_GetById'. */
 extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
 
@@ -2019,11 +1990,11 @@ void Func_02002b8c(void) {
   struct SwayState *state = &gSceneState;
   u16 *pending = &state->pending;
   u16 *frame = &state->frame;
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 stopped = Event_GetFlag(FLAG_MENU_OPEN);
   s32 id;
 
-  if (work->unk166 != 0)
+  if (work->psynergy != 0)
     stopped |= 1;
   id = 8;
   do {
@@ -2032,7 +2003,7 @@ void Func_02002b8c(void) {
   if (stopped != 0)
     return;
   ++*pending;
-  if (work->unk156 != 0)
+  if (work->pushCell != 0)
     return;
   if (*pending == 0)
     return;
@@ -2069,7 +2040,7 @@ step:
  * games/tla/src/scene/gaia_rock_inside/s2b8c has struct SwayState gSceneState;
  * tried as the 3 declarations' extern struct SceneState gSceneState, it does
  * not compile in tla-ja (gaia_rock_inside.c):
- * games/tla/src/scene/gaia_rock_inside.c:2073: incompatible types in
+ * games/tla/src/scene/gaia_rock_inside.c:2044: incompatible types in
  * initialization. */
 extern u16 gSceneState__s2cb4[] __asm__("gSceneState");
 #define gSceneState gSceneState__s2cb4
@@ -2186,11 +2157,6 @@ struct GaiaRockAnimation {
   u16 angle;
 };
 
-struct GaiaRockInsideSceneWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 extern u32 gData_02005360[];
 extern u32 gData_0200539c[];
 extern u32 gData_020053d8[];
@@ -2227,8 +2193,7 @@ s32 Scene_Initialize(void) {
   s16 *early;
 
   work = &gMainRoutineWork;
-  ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      516;
+  gFieldWork->transition = 516;
   if (work->scene == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
     if (work->entrance > 8) {
@@ -2882,11 +2847,6 @@ struct GaiaRockAnimation {
   u16 angle;
 };
 
-struct GaiaRockInsideSceneWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 extern char SceneId_GaiaRockInside1;
 extern char SceneId_GaiaRockInside2;
 extern char SceneId_GaiaRockInside3;
@@ -2931,8 +2891,7 @@ s32 Scene_Initialize(void) {
   s16 *early;
 
   work = &gMainRoutineWork;
-  ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      516;
+  gFieldWork->transition = 516;
   if (work->scene == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
     if (work->entrance > 8) {
@@ -4025,7 +3984,7 @@ void Func_0200495c(s32 layer, s32 keep) {
 
 void Func_020049e4(void) {
   if (gMainRoutineWork.renderMode == 2) {
-    u8 *event = Ram_HeapSlots->eventWork;
+    struct FieldWork *event = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
     s32 x = object->x / 0x100000;
@@ -4035,7 +3994,7 @@ void Func_020049e4(void) {
     s32 code = cell->collisionCode;
 
     if (code >= 1 && code <= 230)
-      *(u16 *)(event + 340) = code;
+      event->stepTrigger = code;
   }
 }
 
@@ -4781,22 +4740,17 @@ s32 gData_020062d4[] = {
 #undef EFFECT_SPRITE_PRIORITY
 #undef FIELD_AT
 #undef BYTE_AT
-#undef FIELD_AT
-#undef FIELD_AT
-#undef FIELD_AT
 #undef Test
 #undef C1
 #undef C2
 #undef C3
 #undef C4
 #undef C6
-#undef FIELD_AT
 #undef GRID_WIDTH
 #undef gPath
 #undef AT
 #undef AT_ADDRESS
 #undef GAIA_ROCK_INSIDE_PATH
-#undef gData_02005ee4
 #undef gData_020051d8
 #undef gSceneState
 #undef Func_02000aac

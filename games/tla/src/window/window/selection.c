@@ -3,6 +3,8 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "field/field_work.h"
+#include "flags.h"
 #include "sounds.h"
 
 // The part's functions its code calls before their definitions, declared
@@ -356,7 +358,7 @@ void SelectionMenu_Draw(void) {
       }
     }
     if (node->scale != 0) {
-      if (GameFlag_Get(0x103) != 0) {
+      if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
         if (state->records[14].kind == 1) {
           e->mode = 1;
         } else {
@@ -397,7 +399,7 @@ void SelectionMenu_Draw(void) {
       te->y = te->y + 0xf0;
       transfer->scale = transfer->scale + transfer->scaleStep;
     }
-    if (GameFlag_Get(0x103) != 0) {
+    if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
       te->mode = 1;
     }
     Oam_AddSpriteAtDepth((s32 *)te, 248);
@@ -428,7 +430,7 @@ void SelectionMenu_Draw(void) {
       e->affine = 0;
       e->param = 0;
     }
-    if (GameFlag_Get(0x103) != 0) {
+    if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
       if (state->records[14].kind == 1) {
         e->mode = 1;
       } else {
@@ -466,7 +468,7 @@ void SelectionMenu_Draw(void) {
     cursorEntry->y =
         cursor->y + gMenu_CursorBobOffsets[(gVBlankCount >> 2) & 15] - 32;
     cursorEntry->x = cursor->x - 4;
-    if (GameFlag_Get(0x103) != 0) {
+    if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
       if (state->records[14].kind == 1) {
         cursorEntry->mode = 1;
       } else {
@@ -534,7 +536,7 @@ void SelectionMenu_DrawArrow(struct MenuSelection *state, s32 index) {
   }
   tmp = frames + frame * 128;
   entry->tile = VramCache_Load(state->nodes[index].handle, 128, tmp);
-  if (GameFlag_Get(0x103)) {
+  if (GameFlag_Get(FLAG_IN_BATTLE)) {
     if (state->mode == 1)
       entry->mode = 1;
     else
@@ -1642,9 +1644,9 @@ s32 StatusScreen_RunFar(void);
 s32 FieldMenu_Run(void) {
   s32 ret;
   s32 selection;
-  u8 *state;
+  struct FieldWork *state;
 
-  state = Ram_HeapSlots->eventWork;
+  state = Ram_HeapSlots->fieldWork;
   selection = 0;
 
   for (;;) {
@@ -1667,7 +1669,7 @@ s32 FieldMenu_Run(void) {
       ret = Actor_GetTriggerCellAheadOfCurrentFar();
       if (ret == 0)
         ret = 0xff;
-      *(u16 *)(state + 0x162) = ret;
+      state->examineCell = ret;
       break;
     case 1:
       ret = PsynergyMenu_RunFar();

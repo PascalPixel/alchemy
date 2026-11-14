@@ -24,7 +24,7 @@
 /// (Idejima_ComputeWaves, Idejima_ScrollWaves).
 
 #include "battle/battle.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -263,7 +263,7 @@ void Idejima_WakeJenna(void) {
     Actor_SetAnimation(ACTOR_JENNA, 3);
     Event_ShowMessage(ACTOR_JENNA, 0);
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
     Event_ShowMessage(ACTOR_JENNA, 0);
   }
   Actor_SetSpeed(ACTOR_JENNA, 1.6);
@@ -580,9 +580,9 @@ void Idejima_RunAlexDeparture(void) {
       0) {
     Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   }
@@ -611,9 +611,9 @@ void Idejima_RunAlexDeparture(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
@@ -637,9 +637,9 @@ void Idejima_RunAlexDeparture(void) {
     Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 20);
     Event_ShowMessage(ACTOR_SHEBA, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 20);
     Event_ShowMessage(ACTOR_SHEBA, 0);
@@ -711,9 +711,9 @@ void Idejima_RunAlexDeparture(void) {
       0) {
     Actor_SetAnimation(ACTOR_JENNA, 3);
     Event_ShowMessage(ACTOR_JENNA, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Actor_SetAnimation(ACTOR_JENNA, 4);
     Event_ShowMessage(ACTOR_JENNA, 0);
   }
@@ -1115,7 +1115,7 @@ void Idejima_FindFelixAndSheba(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0, 40);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 120;
+  gFieldWork->transitionFrames = 120;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(12);
@@ -1463,7 +1463,7 @@ void Idejima_FelixWakes(void) {
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   } else {
     Actor_WaitForAnimationChange(leader);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.4);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 384, 746);
     FelixWake_EndStep();

@@ -14,7 +14,7 @@
 #include "types.h"
 struct Actor;
 #include "kibombo.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "gamepak/far_call/system.h"
 #include "module/field/event_commands.h"
 #include "module/scene/kibombo.h"
@@ -443,11 +443,11 @@ void Kibombo_PiersHasForgottenParty(void) {
     Kibombo_ObjArm(5, FACING_SOUTH, 10);
     Actor_SetModeById(5, 3);
     Event_ShowMessageAndWait(5, 0);
-    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+    gFieldWork->message++;
   } else {
     Kibombo_ObjArm(5, FACING_SOUTH, 10);
     Actor_SetModeById(5, 4);
-    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+    gFieldWork->message++;
     Event_ShowMessageAndWait(5, 0);
   }
   Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
@@ -664,9 +664,9 @@ void Func_02000d74(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 26,
                              0);
-    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+    gFieldWork->message++;
   } else {
-    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+    gFieldWork->message++;
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 26,
                              0);
     Func_02005c7c();
@@ -710,7 +710,7 @@ void Kibombo_PiersRefusesToLeave(void) {
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
 void Party_GivePiersDjinn(void);
 extern u32 gData_02005e88[];
@@ -836,9 +836,9 @@ void Kibombo_PiersJoinsParty(void) {
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
     Motion_SetModeAndWaitAnimation(5, 4);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0);
-    ((struct EventWork *)EVENT_WORK)->messageId += 1;
+    ((struct FieldWork *)EVENT_WORK)->message += 1;
   } else {
-    ((struct EventWork *)EVENT_WORK)->messageId += 2;
+    ((struct FieldWork *)EVENT_WORK)->message += 2;
     Motion_SetModeAndWaitAnimation(26, 3);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
   }
@@ -991,9 +991,9 @@ void Kibombo_PiersJoinsParty(void) {
     Actor_FaceDirection(6, FACING_NORTHEAST, 20);
     Actor_SetModeById(5, 3);
     Motion_SetModeAndWaitAnimation(6, 3);
-    ((struct EventWork *)EVENT_WORK)->messageId += 3;
+    ((struct FieldWork *)EVENT_WORK)->message += 3;
   } else {
-    ((struct EventWork *)EVENT_WORK)->messageId += 1;
+    ((struct FieldWork *)EVENT_WORK)->message += 1;
     Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
     Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
@@ -1039,7 +1039,7 @@ void Kibombo_PiersJoinsParty(void) {
 }
 #undef EVENT_WORK
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
 extern u32 gData_02006014[];
 extern u32 gData_02006058[];
@@ -1167,7 +1167,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_FaceDirection(6, FACING_WEST, 0);
 ask:
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    ((struct EventWork *)EVENT_WORK)->messageId += 1;
+    ((struct FieldWork *)EVENT_WORK)->message += 1;
   } else {
     Event_ShowMessageAndWait(26, 0);
     *(s16 *)(EVENT_WORK + 0x1c4) -= 2;
@@ -1385,9 +1385,9 @@ void Func_02002ba4(s32 index, s32 entry, s32 delta) {
 
 #define DEFINE_KIBOMBO_WOBBLE(name, n1, n2, n3, n4, call1, n5, n6, n7)         \
   void name(void) {                                                            \
-    struct KibomboEventWork *work = Ram_HeapSlots->eventWork;                  \
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;                         \
                                                                                \
-    if (work->field166 == 0 && work->field15a == 0 && work->field15e == 0 &&   \
+    if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 && \
         (gFrameCount & 7) == 0) {                                              \
       Func_02002b18(9, 0, ((Random16() * 10) >> 16) - 5);                      \
       Func_02002b18(n1, 1, ((Random16() * n2) >> 16) - n3);                    \
@@ -1401,9 +1401,9 @@ DEFINE_KIBOMBO_WOBBLE(Func_02002c34, 87, 8, 4, 103, Func_02002b18, 119, 4, 2)
 DEFINE_KIBOMBO_WOBBLE(Func_02002ccc, 7, 6, 3, 6, Func_02002ba4, 76, 8, 4)
 
 void Func_02002d64(void) {
-  struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (work->field166 == 0 && work->field15a == 0 && work->field15e == 0 &&
+  if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
       (gFrameCount & 7) == 0) {
     Func_02002b18(169, 0, ((Random16() * 4) >> 16) - 2);
     Func_02002b18(167, 1, ((Random16() * 2) >> 16) - 1);
@@ -1460,21 +1460,11 @@ void Func_02002eb0(void) {
 
 #undef DEFINE_KIBOMBO_WOBBLE
 #undef Actor_SetSpriteFlags
-#undef Actor_SetBlendMode
-#undef Actor_WaitForMove
-#undef FieldCamera_GetActor
 #undef EVENT_WORK
-#undef Actor_SetPositionAndResetMotion
-#undef Actor_SetSpritePriority
-#undef Actor_SetMoveTarget
-#undef Import_ActorCreate
-#undef Actor_SetSpritePriority
-#undef Actor_SetPositionAndResetMotion
-// @file
 #include "flags.h"
 #include "shared/tables.h"
 #include "kibombo.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/scene/kibombo.h"
 #include "module/scene/scene.h"
@@ -1916,7 +1906,7 @@ void Func_020037e4(void) {
  * order); called through the definition's s32, 2 of 31 instructions move in
  * every edition; tried as the 3 declarations' void Task_Add(void(*func) (void),
  * s32 priority), it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:1914: conflicting types for `Task_Add'. */
+ * games/tla/src/scene/kibombo.c:1904: conflicting types for `Task_Add'. */
 extern void Task_AddVoid__kibombo(void (*func)(void),
                                   s32 order) __asm__("Task_Add");
 
@@ -1943,7 +1933,7 @@ void Func_02003898(void) {
 }
 
 void Kibombo_LeaveRoom(void) {
-  struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1952,18 +1942,18 @@ void Kibombo_LeaveRoom(void) {
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void Kibombo_LeaveRoomFading(void) {
-  struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 0x209;
+  work->transition = 0x209;
   Kibombo_LeaveRoom();
 }
 
 void Func_02003948(void) {
-  struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 x;
   s32 px;
@@ -1986,12 +1976,12 @@ void Func_02003948(void) {
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void Func_02003a08(s32 x, s32 z) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(party->currentOwner);
 
   Event_Start();
@@ -2008,7 +1998,7 @@ void Func_02003a08(s32 x, s32 z) {
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 #include "system/input.h"
@@ -2075,7 +2065,7 @@ test:
     goto next;
 done:
   Task_Remove(Func_02002d64);
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 32;
+  gFieldWork->transitionFrames = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(11);
@@ -2087,7 +2077,7 @@ void Func_02003c84(void) {
   PaletteFade_StartInterpolation(1);
   wait(1);
   Kibombo_FadeTo(0x10000, 0);
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;
+  gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Kibombo_TaskAdd(Func_02002d64, 0x480);
@@ -2125,7 +2115,7 @@ void Func_02003c84(void) {
   Task_Remove(Func_02002d64);
   wait(1);
 
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;
+  gFieldWork->transitionFrames = 1;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
@@ -2257,7 +2247,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Event_ShowMessageThenWait(17, 0, 40);
   Task_Remove(Func_02002ccc);
   wait(1);
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
+  gFieldWork->transition = 0x202;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(10);
@@ -2319,14 +2309,14 @@ void Kibombo_GabombaNotPleased(void) {
   GameFlag_Clear(0x8f7);
   Sound_Play(MUS_011);
   Event_Wait(80);
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(11);
 }
 
 void Kibombo_WitchDoctorFeelsPower(void) {
-  struct KibomboEventWork *work;
+  struct FieldWork *work;
   s32 effect;
 
   Event_Start();
@@ -2335,8 +2325,8 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Func_020032b0();
   KIBOMBO_TASK_ADD(Func_02002ccc, 1152);
-  work = Ram_HeapSlots->eventWork;
-  work->screenEffect = effect = 513;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = effect = 513;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -2350,7 +2340,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   Kibombo_ObjTurn(17, FACING_NORTH + FACING_STEP);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0, 0);
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
+  gFieldWork->transition = effect;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(0x8fc);
@@ -2359,7 +2349,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
 }
 
 void Func_02004524(void) {
-  struct KibomboEventWork *work;
+  struct FieldWork *work;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2375,8 +2365,8 @@ void Func_02004524(void) {
     gData_02007950->motionFlags = 4;
   }
   wait(1);
-  work = Ram_HeapSlots->eventWork;
-  work->screenEffect = 0x201;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -2616,7 +2606,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Kibombo_ObjSpeed(17, 0xcccc, 0x6666);
   Kibombo_ObjWalk(17, 264, 320);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
+  gFieldWork->transition = 0x203;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(0x8fb);
@@ -2624,7 +2614,7 @@ void Kibombo_GabombaRespondsToGift(void) {
 }
 
 void Kibombo_CeremonyEnds(void) {
-  struct KibomboEventWork *work;
+  struct FieldWork *work;
   struct Actor *leader;
 
   Event_Start();
@@ -2636,10 +2626,10 @@ void Kibombo_CeremonyEnds(void) {
       gMainRoutineWork.currentOwner, px(370), px(636), FACING_NORTH);
   Map_CenterOnFollowedPoint();
   wait(1);
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   BattleEffect_ApplyColorToSourceBuffer(0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10002, 0);
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 60;
+  gFieldWork->transitionFrames = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -2709,9 +2699,9 @@ void Kibombo_CeremonyEnds(void) {
                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(10);
   Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-  work = Ram_HeapSlots->eventWork;
-  work->field1b4 = 16;
-  work->screenEffect = 0x209;
+  work = Ram_HeapSlots->fieldWork;
+  work->transitionFrames = 16;
+  work->transition = 0x209;
   GameFlag_Set(0x8ef);
   Event_End();
 }
@@ -3059,7 +3049,7 @@ void Actor_FallOverById(s32 actor, s32 angle);
 void Kibombo_InitializeRoom3(void) {
   struct Actor *object;
 
-  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Func_02003288();
   if (gMainRoutineWork.entrance == 9) {
     if (GameFlag_Get(0x8ef)) {
@@ -3902,14 +3892,5 @@ struct Trigger gKibombo_Room3Triggers[] = {
 };
 #undef PALETTE_WORD
 #undef DEFINE_KIBOMBO_SET_CROWD_MODE
-#undef Actor_WaitForMove
-#undef FieldCamera_GetActor
 #undef DEFINE_KIBOMBO_STEP_WHEN_HELD
 #undef Actor_SetSpriteFlags
-#undef Actor_SetBlendMode
-#undef Actor_SetPositionAndResetMotion
-#undef Actor_SetSpritePriority
-#undef Actor_SetMoveTarget
-#undef Import_ActorCreate
-#undef Actor_SetSpritePriority
-#undef Actor_SetPositionAndResetMotion

@@ -10,7 +10,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "field/cell_target.h"
@@ -266,10 +266,10 @@ spin:
 
 #define DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(name, n1)                   \
   void name(void) {                                                            \
-    struct EventWork *event = Ram_HeapSlots->eventWork;                        \
+    struct FieldWork *event = Ram_HeapSlots->fieldWork;                        \
     u8 *effect = Ram_HeapSlots->effectWork;                                    \
                                                                                \
-    event->unk16a = n1;                                                        \
+    event->raisedTrigger = n1;                                                 \
     effect[52] = 1;                                                            \
   }
 
@@ -277,13 +277,9 @@ DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(Func_020003f4, 30)
 
 DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(Func_02000410, 31)
 
-void Func_0200042c(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 0x20;
-}
+void Func_0200042c(void) { gFieldWork->raisedTrigger = 0x20; }
 
-void Func_02000440(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 0x21;
-}
+void Func_02000440(void) { gFieldWork->raisedTrigger = 0x21; }
 
 /// Once the leader stands at height 32 or more, it rises and spins for 110
 /// frames.
@@ -446,9 +442,9 @@ void Func_020007d0(void) {
 /// variant 3, the blend registers, the particles, and the map and actors by
 /// flags 0xa02, 0xa00 and 0xa03 and the entrance.
 s32 Scene_Initialize(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 0x204;
+  work->transition = 0x204;
   FieldActor_SetSpritePriority(13, 3);
   FieldActor_SetSpritePriority(14, 3);
   Io_Write16(0x3f06, &REG_BLDCNT);
@@ -528,7 +524,7 @@ void MapGrid_SetCellHeight();
  * MapGrid_SetAttributeBAt(s32 actor); tried as the definition's u8
  * MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_2.c:539: too many arguments to
+ * games/tla/src/scene/jupiter_lighthouse_room_2.c:535: too many arguments to
  * function `MapGrid_SetAttributeBAt'. */
 extern void
 Func_0200230c__jupiter_lighthouse_room_2() __asm__("MapGrid_SetAttributeBAt");
@@ -606,7 +602,6 @@ void Func_020015d0(s32 a0) { gLightSpritePriority = a0; }
 #include "../field/field_effect/move.c"
 
 #undef DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE
-// @file
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 a);
@@ -684,8 +679,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
@@ -701,74 +694,14 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 struct CellTargetEntry;
 
-/* VIEW(s1c8c): tag struct CellTarget as struct CellTarget__s1c8c; cell_target.h
- * has another definition; tried with the definition the rest of the object has,
- * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
-struct CellTarget__s1c8c {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-};
-
-void CrackedTile_Fall(struct CellTarget__s1c8c *table,
-                      struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
-  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
-
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  leader->facing = 0x4000;
-  leader->motionFlags = 0;
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Io_Write16(0xf1f, &REG_WINOUT);
-  REG_DISPCNT |= 0x8000;
-  table->shown = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  x = 0;
-  do {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    leader->scaleX += -0x400;
-    leader->scaleY += -0x300;
-    leader->y += -0x9999;
-    System_Wait(1);
-    x++;
-  } while (x <= 39);
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
-// @file
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
 
 #include "shared/cracked_tile_drop_in.h"
 

@@ -7,23 +7,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-// Kind 24's work (battle_fx_work[0]), as HoverGlow_Update's draft has it.
-/* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/hover.c:62: structure has no member
- * named `resource'. */
-struct GlowWork__f0e9af4 {
-  u8 unk0000[0x1000];
-  struct EffectSprite sprite;
-  s32 scale;
-  s16 resource;
-  u16 tile;
-  u16 unk1030;
-  u16 phase;
-  s16 fading;
-};
-
 struct GlowScene {
   u8 unk00[0x10];
   struct Actor *mainObject;
@@ -34,19 +17,6 @@ struct GlowScene {
   s16 kind;
 };
 
-/* VIEW(f0e9af4): tag struct GlowEvent as struct GlowEvent__f0e9af4; f0e2c38.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/hover.c:87: structure has no member
- * named `objects'. */
-struct GlowEvent__f0e9af4 {
-  u8 unk000[0x14];
-  struct Actor *objects[80];
-  u8 unk154[0xbf0];
-  s16 glow;
-  s16 glowHeld;
-};
-
 extern char ResourceId_RingOrb;
 
 s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
@@ -54,9 +24,9 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void HoverGlow_Update(void);
 
 void FieldPsynergy_Hover(void) {
-  struct GlowWork__f0e9af4 *work = HeapSlot_Alloc(92, 0x1038);
+  struct HoverGlowWork *work = HeapSlot_Alloc(92, 0x1038);
   struct GlowScene *scene = Ram_HeapSlots->effectWork;
-  struct GlowEvent__f0e9af4 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *player = scene->mainObject;
   struct PendingEvent *pending;
   struct EffectSprite *sprite;
@@ -96,7 +66,7 @@ void FieldPsynergy_Hover(void) {
     found = 1;
   } else {
     for (n = 0; n < 80; n++) {
-      other = event->objects[n];
+      other = event->actors[n];
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & 1) && other != scene->mainObject) {
         position[0] = other->x;
@@ -157,8 +127,8 @@ void FieldPsynergy_Hover(void) {
 struct Actor *Actor_GetById(u32 objectId);
 
 void FieldPsynergy_EndHover(void) {
-  struct GlowWork__f0e9af4 *work =
-      (struct GlowWork__f0e9af4 *)Ram_HeapSlots->battleFxWork[0];
+  struct HoverGlowWork *work =
+      (struct HoverGlowWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 i;
 
@@ -272,13 +242,7 @@ void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
 
 // One mote: a position chasing its target (Motion_StepTowardTarget's struct
 // Chase) and a frame count, negative before it starts.
-/* VIEW(psynergy): tag struct Mote as struct Mote__psynergy;
- * module/field/field.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/hover.c:275: redefinition of
- * `struct Mote'. */
-#define Mote Mote__psynergy
-struct Mote {
+struct ChasingMote {
   s32 x;
   s32 z;
   s32 unk08;
@@ -290,9 +254,9 @@ struct Mote {
 
 struct MoteWork {
   u8 unk0000[0x800];
-  struct Mote sparks[32];
+  struct ChasingMote sparks[32];
   struct EffectSprite sparkSprites[32];
-  struct Mote motes[48];
+  struct ChasingMote motes[48];
   struct EffectSprite moteSprites[48];
   s32 originX;
   s32 originZ;
@@ -312,7 +276,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 void SummonTablet_UpdateMotes(void) {
   struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
   s32 position[3];
-  struct Mote *mote;
+  struct ChasingMote *mote;
   struct EffectSprite *sprite;
   s32 i;
   u16 *tile;

@@ -9,10 +9,10 @@
 #include "module/field/object.h"
 
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->encounterEnemyGroup = Encounter_GetFormationAtSlot(row, column);
-  if (event->controlMode == 3)
+  event->encounter = Encounter_GetFormationAtSlot(row, column);
+  if (event->mode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         (u8 *)ObjectTable_Get(Party_GetLeaderActor()) + 8);
   BattleEffect_SelectBattleCue(row, column);
@@ -37,7 +37,7 @@ void Field_RequestDjinnBattle__event_commands(u32 flags, u32 djinn) __asm__(
     "Field_RequestDjinnBattle");
 #define Field_RequestDjinnBattle Field_RequestDjinnBattle__event_commands
 void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 noPrepare = flags & 0x800;
   u32 group;
   s32 index;
@@ -56,58 +56,37 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   if (noPrepare == 0)
     Djinn_RunBattleStartHop(flags);
   gMainRoutineWork.pendingDjinnEvent = (djinn + 300) | noPrepare;
-  *(s16 *)(work + 356) = Encounter_GetDjinnFormation(djinn);
-  if (*(s8 *)(work + 394) == 3)
+  work->encounter = Encounter_GetDjinnFormation(djinn);
+  if (work->mode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &ObjectTable_Get(Party_GetLeaderActor())->x);
   BattleEffect_SelectBattleCue(0, 0);
 }
 
-/* VIEW(event_commands): routine Event_SetAfterBattleDestination as void
- * Event_SetAfterBattleDestination(u16 first, u16 second); field/event.h has
- * void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance); tried as the
- * definition's void Event_SetAfterBattleDestination(u16 first, u16 second),
- * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence/requests.c:66: conflicting types for
- * `Event_SetAfterBattleDestination'. */
-void Event_SetAfterBattleDestination__event_commands(
-    u16 first, u16 second) __asm__("Event_SetAfterBattleDestination");
-#define Event_SetAfterBattleDestination                                        \
-  Event_SetAfterBattleDestination__event_commands
-void Event_SetAfterBattleDestination(u16 first, u16 second) {
+void Event_SetAfterBattleDestination(s32 first, s32 second) {
   gMainRoutineWork.pair1ee[0] = first;
   gMainRoutineWork.pair1ee[1] = second;
 }
 
-/* VIEW(event_commands): routine Party_SetFields1f2And1f4 as void
- * Party_SetFields1f2And1f4(u16 first, u16 second); field/event.h has void
- * Party_SetFields1f2And1f4(s32 sceneId, s32 entrance); tried as the
- * definition's void Party_SetFields1f2And1f4(u16 first, u16 second), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence/requests.c:82: conflicting types for
- * `Party_SetFields1f2And1f4'. */
-void Party_SetFields1f2And1f4__event_commands(u16 first, u16 second) __asm__(
-    "Party_SetFields1f2And1f4");
-#define Party_SetFields1f2And1f4 Party_SetFields1f2And1f4__event_commands
-void Party_SetFields1f2And1f4(u16 first, u16 second) {
+void Party_SetFields1f2And1f4(s32 first, s32 second) {
   gMainRoutineWork.pair1f2[0] = first;
   gMainRoutineWork.pair1f2[1] = second;
 }
 
 void Event_LeaveFor(s16 scene, s16 entrance) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   gMainRoutineWork.scene = scene;
   gMainRoutineWork.entrance = entrance;
-  event->countdown = 999;
+  event->exit = 999;
 }
 
 void Scene_QueueMusic(s32 soundId) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 state;
 
   state = soundId;
-  event->cueState = state;
+  event->queuedSound = state;
   if ((s16)state == -1)
     state = 0x186;
   Sound_PlayFar(SE_298);
@@ -117,7 +96,7 @@ void Scene_QueueMusic(s32 soundId) {
 void Event_NoOp(void) {}
 
 void Scene_PlayQueuedMusic(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
 
   if (work != 0) {
     s16 cue = *(s16 *)(work + 0xcb8);
@@ -134,13 +113,13 @@ void Func_080d2cc4(s32 message) {
   GameFlag_Clear(0x142);
   Event_End();
   if (Party_FindOwnerWithActionFar(136) != -1)
-    ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
+    ((struct EventWork15a *)Ram_HeapSlots->fieldWork)->flag = 1;
 }
 
 /* VIEW(event_commands): tag struct EventWork1cc as struct
  * EventWork1cc__event_commands; module/tla.h has another definition; tried with
  * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence/requests.c:140: redefinition of `struct
+ * games/tla/src/field/field_sequence/requests.c:119: redefinition of `struct
  * EventWork1cc'. */
 #define EventWork1cc EventWork1cc__event_commands
 struct EventWork1cc {
@@ -151,8 +130,7 @@ struct EventWork1cc {
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
 void Event_PlayCueNearFocus(struct CueObject *object, s32 cue) {
-  struct CueObject *focus =
-      ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->focus;
+  struct CueObject *focus = gFieldWork->camera;
 
   if (object == 0 || focus == 0)
     return;

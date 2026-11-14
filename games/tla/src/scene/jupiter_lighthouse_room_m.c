@@ -25,7 +25,7 @@ void Leader_CenterInCell(void);
 #include "call.h"
 #include "field_sprite.h"
 #include "system/frame.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
@@ -112,7 +112,8 @@ extern struct CellTarget gCrackedTiles;
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTargetHead *table,
+                      struct CellTargetEntry *entry);
 
 s32 Event_ClearInvalidPackedValues();
 void HangingVine_Place(s32 id, s32 mode);
@@ -259,10 +260,6 @@ static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
-static __inline__ void Func_020048b4_(s32 id, s32 angle) {
-  Actor_FaceDirectionById(id, angle);
-}
-
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
   /* FAKEMATCH(wrapper): forwarded inline. */
@@ -303,24 +300,24 @@ void Func_020003b8(s32 unused, s32 id) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 1000, 232);
     }
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 1000, 248);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
     PaletteFade_ApplySource(0x10000, 0);
     PaletteFade_ApplyTarget(0x10003, 0);
     PaletteFade_Interpolate(60);
     FieldEvent_Wait(50);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x6000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x6000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x2000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x2000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x6000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x6000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x2000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x2000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x4000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
     FieldEvent_Wait(20);
     FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
                          EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
     FieldEvent_Wait(40);
@@ -664,11 +661,11 @@ void Func_02000cac(s32 arg) {
     FieldEvent_Wait(20);
     FieldEvent_Wait(10);
     FieldEvent_ShowMessageThenWait(28, 0, 5);
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
   } else {
     Actor_SetAnimation(28, 4);
     FieldEvent_Wait(33);
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
     FieldEvent_ShowMessageThenWait(28, 0, 5);
   }
   Actor_RunRepeatedMotion(5, 2);
@@ -1164,7 +1161,7 @@ void Func_02001e38(void) {
   Actor_SetScript(3, gData_02005548);
 }
 
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK gFieldWork
 
 s32 Inventory_Equip();
 
@@ -1327,10 +1324,10 @@ void Func_02001ed0(void) {
   if (answer == 0) {
     ((struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30));
     FieldEvent_ShowMessageThenWait(27, 0, 5);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
   } else {
     ((struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30));
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     FieldEvent_ShowMessageThenWait(27, 0, 5);
   }
   Actor_FaceActor(7, 26, 0);
@@ -1400,10 +1397,10 @@ void Func_02001ed0(void) {
   if (answer == 0) {
     ACTOR_SET_MODE_AND_WAIT(26, 4, 33);
     FieldEvent_ShowMessageThenWait(26, 0, 5);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
   } else {
     ACTOR_SET_MODE_AND_WAIT(26, 4, 33);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     FieldEvent_ShowMessageThenWait(26, 0, 5);
   }
   Actor_FaceEachOther(28, 4, 0);
@@ -1486,7 +1483,7 @@ void Func_02001ed0(void) {
   Actor_RunRepeatedMotion(4, 2);
   PartyInventory_Remove(0xdf);
   PartyInventory_Add(245);
-  Message_ShowCentered((s16)EVENT_WORK->messageId++, 5);
+  Message_ShowCentered((s16)EVENT_WORK->message++, 5);
   index = 0;
   offset = 0xd8;
   for (index = 0; index <= 14; offset += 2, index++) {
@@ -1566,7 +1563,7 @@ void Func_02001ed0(void) {
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
+  gFieldWork->transition = 516;
   HangingVine_Place(8, 1);
   HangingVine_Place(9, 1);
   HangingVine_Place(10, 1);
@@ -1660,9 +1657,7 @@ s32 Scene_PrepareMap(void) {
 
 extern s32 gPaletteCyclePausesInEvents;
 
-void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 extern s32 gPaletteCycleFrame;
 
@@ -1698,8 +1693,7 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_222);
-  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Trig_Cos(source->angle));
+  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
@@ -1752,7 +1746,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef PLACE
 #undef EVENT_WORK
 #undef ACTOR_SET_MODE_AND_WAIT
-// @file
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1829,8 +1822,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
@@ -1846,55 +1837,14 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 struct CellTargetEntry;
 
-/* VIEW(s41ac): tag struct CellTarget as struct CellTarget__s41ac; cell_target.h
- * has another definition; tried with the definition the rest of the object has,
- * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
-struct CellTarget__s41ac {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-};
-
-/* VIEW(s41ac): routine CrackedTile_Fall as void CrackedTile_Fall(struct
- * CellTarget__s41ac *table, struct CellTargetEntry *entry);
- * module/scene/jupiter_lighthouse_room_m.h has void CrackedTile_Fall(struct
- * CellTarget *table, struct CellTargetEntry *entry); tried as the definition's
- * void CrackedTile_Fall(struct PushEvent *event), it does not compile in
- * tla-ja: games/tla/src/scene/shared/cracked_tile_fall.h:4: conflicting types
- * for `CrackedTile_Fall'. */
-void CrackedTile_Fall__s41ac(
-    struct CellTarget__s41ac *table,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_Fall__s41ac
 #include "shared/cracked_tile_fall.h"
-
-#undef CrackedTile_Fall
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
-#undef CrackedTile_Fall
-// @file
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
 
 #include "shared/cracked_tile_drop_in.h"
 

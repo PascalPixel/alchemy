@@ -398,10 +398,14 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   top = y + 1;
   width = right - x;
   height = bottom - y;
-  /* FAKEMATCH(signature): Window_ClearTextTilesInRect called as returning s32.
-   */
+  // UB: Window_ClearTextTilesInRect returns nothing; this call goes through a
+  // function type that returns s32.
+#ifdef UBFIX
+  Window_ClearTextTilesInRect(left, top, width, height);
+#else
   ((s32 (*)(s32, s32, u32, u32))Window_ClearTextTilesInRect)(left, top, width,
                                                              height);
+#endif
   tiles = work->tilemap[0] + top * 32 + left;
   for (row = 0; row < height; row++) {
     for (left = 0; left < width; left++)

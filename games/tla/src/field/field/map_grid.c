@@ -13,22 +13,6 @@
 #include "system/ram_buffer.h"
 #include "macros.h"
 
-/* VIEW(f0298c0): tag struct PlayerSprite as struct PlayerSprite__f0298c0;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/map_grid.c:506: structure has no member named
- * `entry'. */
-struct PlayerSprite__f0298c0 {
-  u8 unk00[9];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-  u8 unk1b[0x11];
-  u8 *entry;
-};
-
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
@@ -54,7 +38,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   u8 *terrainId;
   u8 *wakeTimer;
   struct Actor *effect;
-  struct PlayerSprite__f0298c0 *sprite;
+  struct PlayerSprite *sprite;
 
   heading = 0;
   count = 0;
@@ -94,7 +78,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     collision = 0;
     // DEAD: the debug read of the held keys is never used.
     if (gDebugMode != 0)
-      (void)*(volatile u32 *)&gInput.held;
+      (void)gInput.held;
     actor->speedLimit = px(1) / 2;
     actor->acceleration = px(1) / 4;
     angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
@@ -297,7 +281,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
 
 counted:
   {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     if (work != NULL) {
       if (collision & 3)
@@ -356,7 +340,7 @@ counted:
       effect->motionFlags = 0;
       Sound_PlayFar(SE_596);
       if (sprite != NULL) {
-        struct Unk_ClimbEventWork *work = Ram_HeapSlots->eventWork;
+        struct Unk_ClimbEventWork *work = Ram_HeapSlots->fieldWork;
 
         Animation_ApplyChildArgument(sprite, 1);
         sprite->flags = 0;
@@ -397,10 +381,10 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   s32 targetCameraYaw;
   struct WorldCamera *camera;
   s32 yawStep;
-  struct PlayerSprite__f0298c0 *playerSprite;
+  struct PlayerSprite *playerSprite;
   struct Actor *ripple;
-  struct PlayerSprite__f0298c0 *rippleSprite;
-  struct EventWork *work;
+  struct PlayerSprite *rippleSprite;
+  struct FieldWork *work;
   u8 *timer;
 
   collision = 0;
@@ -461,7 +445,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   }
 
 update_object:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if ((collision & 3) != 0)
       work->blockedSteps++;

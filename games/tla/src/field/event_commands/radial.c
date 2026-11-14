@@ -34,15 +34,10 @@
 #include "radial/mote_trail.c"
 #include "radial/collision_tags.c"
 
-#undef BurstWork
 #undef Camera_WorldToScreen
 #undef EffectSprite_DrawAtWorldPosition
-#undef ObjectAnimation
 #undef Resource_GetMetadataRecordFarFar
 #undef BattleEffect_DropObjectAtAnchor
-#undef SparkParticle
-#undef ObjectSprite
-#undef Mote
 
 #include "radial/actor_cells.c"
 #include "radial/step_vector.c"

@@ -358,9 +358,8 @@ void System_VBlankHandler(void) {
 
   keys = REG_KEYINPUT ^ 0x3ff;
   {
-    /* FAKEMATCH(volatile): the input state reached through a volatile pointer.
-     */
-    volatile struct InputState *input = (void *)&gInput;
+    // volatile: the code this interrupt broke into reads the same state.
+    volatile struct InputState *input = &gInput;
     u32 pressed = keys & ~input->held;
 
     input->pressed = pressed;
@@ -377,13 +376,11 @@ void System_VBlankHandler(void) {
     }
   }
   {
-    /* FAKEMATCH(volatile): the VBlank count read and written through a volatile
-     * pointer. */
+    // volatile: the frame loop waits on the count this interrupt advances.
     volatile u32 *count;
     volatile struct SoundVBlankState *sound;
 
     count = &gVBlankCount;
-    /* FAKEMATCH(volatile): the store through a volatile cast. */
     ((volatile struct InputState *)&gInput)->previousVblankHeld = keys;
     sound = &gSoundVBlankState;
     vblankCount = *count;

@@ -4,31 +4,12 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "flags.h"
 #include "fixed_math.h"
 #include "flag_call.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "macros.h"
-
-/* VIEW(f0279b0): tag struct PlayerSprite as struct PlayerSprite__f0279b0;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:157: structure has no member named
- * `entry'. */
-struct PlayerSprite__f0279b0 {
-  u8 unk00[5];
-  u8 low05 : 2;
-  u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unk06[3];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-  u8 unk1b[0x11];
-  u8 *entry;
-};
 
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
@@ -55,15 +36,15 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   s32 targetCameraYaw;
   struct WorldCamera *camera;
   s32 yawStep;
-  struct PlayerSprite__f0279b0 *playerSprite;
+  struct PlayerSprite *playerSprite;
   struct Actor *ripple;
-  struct PlayerSprite__f0279b0 *rippleSprite;
-  struct EventWork *work;
+  struct PlayerSprite *rippleSprite;
+  struct FieldWork *work;
 
   movementAnimation = 2;
   collision = 0;
   count = 0;
-  if (gInput.held & ((struct PartyKeys *)&gMainRoutineWork)->dashKeys) {
+  if (gInput.held & gMainRoutineWork.dashKeys) {
     object->speedLimit = px(1);
     object->acceleration = px(1) / 2;
     movementAnimation = 5;
@@ -80,8 +61,8 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
     collision = 0;
     SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction, &position);
-    if (gDebugMode == 0 ||
-        ((gInput.held & KEY_L) == 0 && GameFlag_Get(0x163) == 0)) {
+    if (gDebugMode == 0 || ((gInput.held & KEY_L) == 0 &&
+                            GameFlag_Get(FLAG_DEBUG_STEPS_OFF) == 0)) {
       SET_POSITION(&leftPosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
       SET_POSITION(&rightPosition, object->x, object->y, object->z);
@@ -116,7 +97,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   }
 
 update_object:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if ((collision & 3) != 0)
       work->blockedSteps++;
@@ -197,8 +178,8 @@ update_object:
     }
   }
   Field_CheckConfiguredKeys();
-  if (gInput.pressed & gMainRoutineWork.keys230)
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 251;
+  if (gInput.pressed & gMainRoutineWork.aKeys)
+    gFieldWork->raisedTrigger = 251;
   object->step++;
   return 1;
 }
@@ -234,7 +215,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   s32 onObject;
   s32 difference;
   struct Actor *other;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   collision = 0;
   pushed = 0;
@@ -431,7 +412,7 @@ push_objects:
   }
 
 counted:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collision & 3)
       work->blockedSteps++;
@@ -444,8 +425,8 @@ counted:
   else
     Actor_SelectAnimation(object, 2);
 
-  if (gInput.pressed & gMainRoutineWork.keys230) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
+  if (gInput.pressed & gMainRoutineWork.aKeys) {
+    gFieldWork->raisedTrigger = 252;
     collision |= 4;
   }
 
@@ -498,34 +479,6 @@ counted:
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 
-/* VIEW(s28534): tag struct PlayerSprite as struct PlayerSprite__s28534;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:709: structure has no member named
- * `objectMode'. */
-struct PlayerSprite__s28534 {
-  u8 unk00[5];
-  u8 low05 : 2;
-  u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unk06[3];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-};
-
-/* VIEW(s28534): tag struct PartyKeys as struct PartyKeys__s28534;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:648: structure has no member named
- * `keys23c'. */
-struct PartyKeys__s28534 {
-  u8 unk000[0x23c];
-  u16 keys23c;
-};
-
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
@@ -554,14 +507,14 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   struct WorldCamera *camera;
   s32 yawStep;
   struct Actor *ripple;
-  struct PlayerSprite__s28534 *rippleSprite;
-  struct EventWork *work;
-  struct WorldEventWork *worldWork;
+  struct PlayerSprite *rippleSprite;
+  struct FieldWork *work;
+  struct FieldWork *worldWork;
   u32 kind;
 
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&object->x);
-  worldWork = Ram_HeapSlots->eventWork;
+  worldWork = Ram_HeapSlots->fieldWork;
   if (terrain >= 1 && terrain <= 3)
     worldWork->terrainKind = 0;
   if (terrain >= 5 && terrain <= 6)
@@ -636,7 +589,7 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   }
 
 update_object:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if ((collision & 3) != 0)
       work->blockedSteps++;
@@ -649,16 +602,15 @@ update_object:
   else
     Actor_SelectAnimation(object, 2);
 
-  if (gInput.pressed & gMainRoutineWork.keys230) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
+  if (gInput.pressed & gMainRoutineWork.aKeys) {
+    gFieldWork->raisedTrigger = 252;
     collision |= 4;
   }
-  if (gInput.pressed &
-      ((struct PartyKeys__s28534 *)&gMainRoutineWork)->keys23c) {
-    struct WorldEventWork *keyWork = Ram_HeapSlots->eventWork;
-    if (keyWork->unkd39 != 0) {
+  if (gInput.pressed & gMainRoutineWork.dashKeys) {
+    struct FieldWork *keyWork = Ram_HeapSlots->fieldWork;
+    if (keyWork->hoverReady != 0) {
       GameFlag_Clear(0x147);
-      ((struct EventWork *)keyWork)->unk16a = 253;
+      ((struct FieldWork *)keyWork)->raisedTrigger = 253;
     }
   }
 
@@ -739,35 +691,6 @@ update_object:
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 
-/* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:949: structure has no member named
- * `objectMode'. */
-struct PlayerSprite__f028aac {
-  u8 unk00[5];
-  u8 low05 : 2;
-  u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unk06[3];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-};
-
-/* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:969: structure has no member named
- * `climbing'. */
-struct WorldEventWork__f028aac {
-  u8 unk000[0xd3a];
-  u8 terrainKind;
-  s8 climbing;
-};
-
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
@@ -791,16 +714,16 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   struct WorldCamera *camera;
   s32 yawStep;
   struct Actor *ripple;
-  struct PlayerSprite__f028aac *rippleSprite;
-  struct EventWork *work;
-  struct WorldEventWork__f028aac *worldWork;
+  struct PlayerSprite *rippleSprite;
+  struct FieldWork *work;
+  struct FieldWork *worldWork;
   struct Actor *other;
   u32 kind;
-  struct WorldEventWork__f028aac *flightWork;
+  struct FieldWork *flightWork;
 
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&object->x);
-  worldWork = Ram_HeapSlots->eventWork;
+  worldWork = Ram_HeapSlots->fieldWork;
   if (terrain >= 1 && terrain <= 3)
     worldWork->terrainKind = 0;
   if (terrain >= 5 && terrain <= 6)
@@ -886,7 +809,7 @@ check_objects:
   }
 
 update_object:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if ((collision & 3) != 0)
       work->blockedSteps++;
@@ -974,8 +897,8 @@ update_object:
     }
   }
 
-  flightWork = Ram_HeapSlots->eventWork;
-  if (gInput.held & (gMainRoutineWork.keys230 | gMainRoutineWork.unk232)) {
+  flightWork = Ram_HeapSlots->fieldWork;
+  if (gInput.held & (gMainRoutineWork.aKeys | gMainRoutineWork.bKeys)) {
     flightWork->climbing = 1;
     object->y += px(1) / 8;
   } else {
@@ -984,7 +907,7 @@ update_object:
   if (Party_GetPpRatioFar() == 0)
     object->y -= px(1) / 4;
   if (object->y <= 0 && flightWork->climbing != 0)
-    ((struct EventWork *)flightWork)->unk16a = 254;
+    ((struct FieldWork *)flightWork)->raisedTrigger = 254;
   if (object->y >= 0xc0000)
     object->y = px(12);
   if (object->y <= 0)

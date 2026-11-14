@@ -37,16 +37,12 @@ void Message_CloseFinishedWindows(void);
 void Message_OpenWindow(s32, s32, s32, s32);
 s32 Message_AllTyped(void);
 
-#define INPUT_HELD (gInput.held)
-
 void Test_ReceiveFlint(s32 message, s32 count) {
   s32 i;
   s32 frames;
   void *window;
   s32 typed;
-  volatile struct InputState *input;
 
-  /* FAKEMATCH(volatile): the input read through a volatile pointer. */
   window = Portrait_OpenWindow(206, 0, 0, 0);
   i = 0;
   if (i >= count)
@@ -58,29 +54,28 @@ loop:
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   frames = 0;
-  if (INPUT_HELD & 3)
+  if (gInput.held & 3)
     goto shown;
   do {
     wait(1);
     frames++;
     if (frames > 59)
       goto shown;
-  } while (!(INPUT_HELD & 3));
+  } while (!(gInput.held & 3));
   for (;;) {
   shown:
     typed = Message_AllTyped();
-    input = (volatile struct InputState *)&gInput;
     if (typed != 0)
       break;
-    input->held = 1;
-    input->pressed = 1;
-    input->repeat = 1;
+    gInput.held = 1;
+    gInput.pressed = 1;
+    gInput.repeat = 1;
     wait(1);
   }
   frames = 0;
-  if (input->held & KEY_B)
+  if (gInput.held & KEY_B)
     goto done;
-  if (!(input->held & KEY_A))
+  if (!(gInput.held & KEY_A))
     goto hold;
   goto next;
 hold:
@@ -88,10 +83,9 @@ hold:
   frames++;
   if (frames > 9)
     goto next;
-  input = (volatile struct InputState *)&gInput;
-  if (input->held & KEY_B)
+  if (gInput.held & KEY_B)
     goto done;
-  if (!(input->held & KEY_A))
+  if (!(gInput.held & KEY_A))
     goto hold;
 next:
   message++;
@@ -415,14 +409,13 @@ struct Trigger gSceneEvents[] = {
     {0, 33, CONDITION_ALWAYS, (u32)(Func_02000664)},
     {TRIGGER_TABLE_END},
 };
-#undef INPUT_HELD
 
 // Overlay 0x6ba's code from Func_02000520 on, in ROM order.
 
 #include "owner_state.h"
 #include "version.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "actor.h"
@@ -434,7 +427,7 @@ void Inventory_Break(s32 owner, s32 slot);
 /* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition
  * *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried
  * as the definition's void Func_02000d48(struct Actor *shot), it does not
- * compile in tla-ja: games/tla/src/debug/shop_test.c:434: conflicting types for
+ * compile in tla-ja: games/tla/src/debug/shop_test.c:427: conflicting types for
  * `Func_02000d48'. */
 extern struct ItemDefinition *
 Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
@@ -546,8 +539,8 @@ void Party_AddIsaacsParty(void);
 /// objects 16 to 19 in mode 5 and 30 to 33 in mode 6, and runs
 /// Party_AddIsaacsParty when the party came in by entrance 99.
 s32 Func_02000688(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  s32 *effect = &work->screenEffect;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s32 *effect = &work->transition;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   *effect = 256;

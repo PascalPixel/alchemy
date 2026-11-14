@@ -22,7 +22,7 @@
 #include "scene_tables.h"
 #include "system/main_routine_work.h"
 #include "system/dma.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -81,8 +81,6 @@ struct LohoSpark {
   s32 age;
 };
 
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
-
 /// Lull, the Jupiter Djinni behind the wall the cannon breaks, joins the party
 /// when spoken to.
 void Loho_MeetLull(void) { Djinn_JoinParty(19, 3, 16); }
@@ -131,7 +129,7 @@ void Loho_AskWantCannon(s32 actor) {
 /// "It looks like it's empty."
 void Loho_ExamineCannon(void) {
   FieldMessage_Show((s32)MsgLoho27, 1);
-  ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
+  gFieldWork->fieldMenu = 1;
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -436,7 +434,7 @@ askCannon:
     goto answeredNo;
   Actor_SetAnimation(18, 3);
   Event_ShowMessage(18, 0);
-  t189 = (s32)Ram_HeapSlots->eventWork;
+  t189 = (s32)Ram_HeapSlots->fieldWork;
   t190 = FIELD_AT(t189, u16, 452);
   FIELD_AT(t189, u16, 452) = (t190 + 1);
   goto crewLeaves;
@@ -445,7 +443,7 @@ fromSouth:
   goto inPlace;
 answeredNo:
   Actor_SetAnimation(18, 4);
-  t193 = (s32)Ram_HeapSlots->eventWork;
+  t193 = (s32)Ram_HeapSlots->fieldWork;
   t194 = FIELD_AT(t193, u16, 452);
   FIELD_AT(t193, u16, 452) = (t194 + 1);
   Event_ShowMessage(17, 0);
@@ -524,18 +522,11 @@ void Loho_MindReadMiner(void) {
   Event_ShowMessage(11, 0);
 }
 
-/// Scoop digs up a buried treasure: its actor comes up out of the ground and
-/// its flag is set (Actor_ReturnHome). The helper, our name, is the forward
-/// the Scoop spots of Loho, Taopo Swamp and the Yampi Desert Cave all
-/// make.
-static inline void Loho_DigUpTreasure(s32 id, s32 kind, s32 flag) {
-  Actor_ReturnHome(id, kind, flag);
-}
-
-void Loho_ScoopFirstTreasure(s32 id) { Loho_DigUpTreasure(id, 64, 0x300); }
+/// The Scoop spots: each digs up its treasure actor and sets its flag.
+void Loho_ScoopFirstTreasure(s32 id) { Event_DigUpTreasure(id, 64, 0x300); }
 
 #define DEFINE_SCOOP_TREASURE(name, n1, n2)                                    \
-  void name(s32 id) { Loho_DigUpTreasure(id, n1, 0x300 + n2); }
+  void name(s32 id) { Event_DigUpTreasure(id, n1, 0x300 + n2); }
 
 DEFINE_SCOOP_TREASURE(Loho_ScoopSecondTreasure, 65, 1)
 
@@ -627,7 +618,7 @@ static __inline__ void Loho_AnimateCells(const void *data, s32 a, s32 b) {
 }
 
 void Loho_OpenDoorAndEnter(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
   Event_Start();
@@ -643,7 +634,7 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  work = (u8 *)&((struct EventWork154 *)work)->returnEntrance;
+  work = (u8 *)&((struct FieldWork *)work)->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
@@ -659,7 +650,7 @@ loop:
 
 void Loho_EnterDoor(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
@@ -668,11 +659,11 @@ void Loho_EnterDoor(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Event_PlaySound(SE_MAP_EXIT);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
-  Import_EventSetExitRequest(work->returnEntrance);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void Loho_ClimbDownLadder(void) {
-  s32 value = ((struct EventWork154 *)Ram_HeapSlots->eventWork)->returnEntrance;
+  s32 value = gFieldWork->stepTrigger;
 
   if (value == 2)
     Actor_SetPosition(8, 144, 224);
@@ -722,12 +713,12 @@ void Loho_TurnAndClimbDownLadder(void) {
 }
 
 void Loho_SetUpTown(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
+  gFieldWork->transition = 256;
   Actor_SetSpriteFlags(Actor_GetById(20), 0);
 }
 
 void Loho_SetUpRoom2(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 521;
+  gFieldWork->transition = 521;
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
 }
 

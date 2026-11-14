@@ -89,31 +89,9 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  FieldCamera_MoveWithinMapBounds(x, a, z, b);
-}
-
-static __inline__ void Func_02002960_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
-static __inline__ void Func_02002958_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  Map_CopyCellsRect(a, b, c, d, e, f);
-}
-
-static __inline__ void Func_02002a20_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
-static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
-  Actor_SetDestinationById(id, x, z);
-}
-
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -165,7 +143,6 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
 
 #include "../field/field_effect/move.c"
 
-// @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -543,8 +520,8 @@ void Func_02000b68(s32 unused, s32 id) {
   Event_Wait(20);
   if (Event_GetFlag(0xa68) == 0) {
     GameFlag_Set(0xa68);
-    Func_02002958_(64, 64, 1, 2, 51, 82);
-    Func_02002958_(66, 64, 1, 2, 115, 18);
+    MapGrid_CopyCells(64, 64, 1, 2, 51, 82);
+    MapGrid_CopyCells(66, 64, 1, 2, 115, 18);
     Map_SetLayerEntryFlag(5);
     Map_SetLayerEntryFlag(6);
     Map_ClearLayerEntryFlag(7);
@@ -553,8 +530,8 @@ void Func_02000b68(s32 unused, s32 id) {
     Func_020025a8(26);
   } else {
     GameFlag_Clear(0xa68);
-    Func_02002958_(65, 64, 1, 2, 51, 82);
-    Func_02002958_(67, 64, 1, 2, 115, 18);
+    MapGrid_CopyCells(65, 64, 1, 2, 51, 82);
+    MapGrid_CopyCells(67, 64, 1, 2, 115, 18);
     Map_SetLayerEntryFlag(7);
     Map_SetLayerEntryFlag(8);
     Map_ClearLayerEntryFlag(5);
@@ -615,13 +592,13 @@ void Func_02000d80(void) {
   struct Actor *leader, *carried;
   struct Vector3 ahead;
   s32 owner;
-  struct EventWork1cc *work;
+  struct FieldWork *work;
   s32 result, i;
 
   if (GameFlag_Get(0xa68)) {
-    work = Ram_HeapSlots->eventWork;
+    work = Ram_HeapSlots->fieldWork;
     owner = gMainRoutineWork.currentOwner;
-    carried = work->object;
+    carried = work->camera;
     leader = Actor_GetById(owner);
     if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&
         leader->terrainHeight == 0)
@@ -697,7 +674,7 @@ static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
 
 void Func_02000f8c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct AquaRockEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 col;
   s32 row;
@@ -706,7 +683,7 @@ void Func_02000f8c(void) {
     col = object->x >> 20;
     row = (object->z - object->y - px(12)) >> 20;
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
-      work->field16a = 44;
+      work->raisedTrigger = 44;
   } else {
     col = object->x >> 20;
     row = (object->z - object->y) >> 20;
@@ -716,7 +693,7 @@ void Func_02000f8c(void) {
 }
 
 void Func_02001010(void) {
-  Func_02002960_(62, 41, 1, 2, 33, 41);
+  MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
   MapGrid_CopyCellPictureCellsRect(125, 32, 3, 13, 96, 32);
   MapGrid_CopyCellPictureCellsRect(61, 96, 3, 13, 32, 96);
   Actor_SetSpriteColor(Actor_GetById(12), 5);
@@ -756,7 +733,7 @@ void Func_0200106c(void) {
                                                                                \
     object->priorityFlags = 0;                                                 \
     object->motionFlags = 0;                                                   \
-    Func_02002960_(n1, n2, 1, 1, n3, n2);                                      \
+    MapGrid_CopyCellAttributes(n1, n2, 1, 1, n3, n2);                          \
     GameFlag_Set(n4);                                                          \
   }
 
@@ -815,7 +792,7 @@ void Func_02001224(s32 unused, s32 id) {
   MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
   Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
   Event_Wait(30);
-  Func_02002a20_(0x10000, 0);
+  PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_StartInterpolation(30);
   Event_Wait(15);
   FieldCamera_SetSpeed(1);
@@ -984,10 +961,10 @@ scatter:
     goto scatter;
   Event_Wait(60);
   Map_CopyCellsRect(64, 69, 11, 4, 87, 53);
-  Actor_ResetAndSetPosition_(17, 392, 824);
-  Actor_ResetAndSetPosition_(18, 424, 824);
-  Actor_ResetAndSetPosition_(19, 456, 824);
-  Actor_ResetAndSetPosition_(20, 488, 824);
+  Actor_SetDestination(17, 392, 824);
+  Actor_SetDestination(18, 424, 824);
+  Actor_SetDestination(19, 456, 824);
+  Actor_SetDestination(20, 488, 824);
   Actor_SetDestinationById(21, 520, 824);
   Event_Wait(240);
   Map_CopyCellsRect(64, 66, 11, 7, 87, 50);
@@ -1020,7 +997,7 @@ s32 Scene_Initialize(void) {
   s32 id, x, z;
   s16 *entrance;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
+  gFieldWork->transition = 516;
   gMainRoutineWork.retreatScene = (s32)&SceneId_AquaRock1;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;
@@ -1187,10 +1164,10 @@ void Func_02001e00(void) {
   s32 result;
 
   {
-    struct EventWork1cc *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     owner = gMainRoutineWork.currentOwner;
-    anchor = work->object;
+    anchor = work->camera;
   }
   leader = Actor_GetById(owner);
   if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&

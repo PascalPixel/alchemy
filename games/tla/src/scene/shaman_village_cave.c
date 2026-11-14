@@ -18,7 +18,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/event_inline.h"
 #include "module/scene/scene.h"
 #include "field_sprite.h"
@@ -63,11 +63,6 @@ notFirst:
 done:
   return;
 }
-
-struct ShamanVillageCaveEventWork {
-  u8 unk000[0x154];
-  s16 value154;
-};
 
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
@@ -412,7 +407,7 @@ void Event_SetDestination();
   (((struct {                                                                  \
       u8 unk000[0x1c4];                                                        \
       s16 message;                                                             \
-    } *)Ram_HeapSlots->eventWork)                                              \
+    } *)Ram_HeapSlots->fieldWork)                                              \
        ->message)
 
 void ShamanVillageCave_LoseToColossoFans(void) {
@@ -467,7 +462,7 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   ((struct {
      u8 unk000[0x1ac];
      s32 value;
-   } *)Ram_HeapSlots->eventWork)
+   } *)Ram_HeapSlots->fieldWork)
       ->value = 0;
 }
 
@@ -574,7 +569,7 @@ void ShamanVillageCave_BeatColossoFans(void) {
 /// The party goes through a passage in the rock: everyone stops and the screen
 /// fades.
 void ShamanVillageCave_EnterPassage(void) {
-  struct ShamanVillageCaveEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   u32 id;
 
@@ -593,7 +588,7 @@ next:
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(5);
   Event_PlaySound(SE_MAP_EXIT);
-  FieldEvent_SetExitRequest(work->value154);
+  FieldEvent_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -602,8 +597,7 @@ next:
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->eventWork)
-      ->screenEffect = 516;
+  gFieldWork->transition = 516;
   if (Event_GetFlag(0x9a9))
     Actor_SetPosition(8, 0, 0);
   if (Event_GetFlag(0x9aa))

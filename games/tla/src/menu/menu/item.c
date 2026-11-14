@@ -124,7 +124,7 @@ s32 ItemMenu_Run(void) {
       u16 chosenItem;
       u8 unk16a[0x18];
       u16 chosenSlot;
-    } *selection = Ram_HeapSlots->eventWork;
+    } *selection = Ram_HeapSlots->fieldWork;
 
     selection->chosenItem = (owner << 10) | (item & 0x1ff);
     selection->chosenSlot = screen->selectedSlots[0];

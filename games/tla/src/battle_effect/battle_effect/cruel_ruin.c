@@ -121,8 +121,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
       s16 entry;
 
       entry = ((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2);
-      /* FAKEMATCH(volatile): the map written through a volatile pointer. */
-      *(volatile s16 *)(0x06003800 + i) = entry;
+      *(volatile s16 *)(BG_SCREEN_BLOCK(7) + i) = entry;
     }
   }
 
@@ -685,8 +684,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
       s32 entry;
 
       entry = (s16)(((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2));
-      /* FAKEMATCH(volatile): the map written through a volatile pointer. */
-      *(volatile u16 *)(0x06003800 + i) = *(u16 *)&entry;
+      *(volatile u16 *)(BG_SCREEN_BLOCK(7) + i) = *(u16 *)&entry;
     }
   }
   Iwram_ClearWords(canvas, CANVAS_BYTES);

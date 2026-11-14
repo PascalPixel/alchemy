@@ -7,7 +7,7 @@
 /// "overgrowth foliage"; a render of the cave would settle it.
 
 #include "shared/tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -50,7 +50,7 @@ void ApojiiIslandsCave_BlowAwayFoliage(s32 unused, s32 actor) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   return 0;
 }
 

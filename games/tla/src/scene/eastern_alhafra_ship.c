@@ -22,7 +22,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 #include "module/field/event_commands.h"
 #include "field/event_inline.h"
@@ -141,15 +141,10 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 99) {
     GameFlag_Set(0x8aa);
     GameFlag_Set(FLAG_BRIGGS_CAUGHT);
@@ -437,13 +432,13 @@ void EasternAlhafraShip_MayorArrives(void) {
     Actor_ArmCallback(5, FACING_WEST, 0);
     Event_Wait(20);
     Event_ShowMessageThenWait(5, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
   } else {
     Func_020032a0();
     Event_Wait(20);
     Actor_ArmCallback(5, FACING_WEST, 0);
     Event_Wait(20);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(5, 0, 10);
   }
   Actor_FaceDirection(5, FACING_SOUTH, 0);
@@ -578,12 +573,12 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     Motion_SetModeAndWaitAnimation(6, 3);
     Event_Wait(10);
     Event_ShowMessageThenWait(6, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
     Event_Wait(40);
     Motion_SetVarCbAndRefresh(6, 2);
     Event_Wait(10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Event_ShowMessageThenWait(6, 0, 10);
   }
   Motion_SetVarCbAndRefresh(25, 2);
@@ -1332,7 +1327,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     Event_Wait(20);
     Motion_SetModeAndWaitAnimation(17, 4);
     Event_ShowMessageThenWait(17, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
     Event_Wait(40);
     Func_020032a0();
@@ -1340,7 +1335,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     Event_Wait(20);
     Motion_SetModeAndWaitAnimation(17, 3);
     Event_Wait(20);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Event_ShowMessageThenWait(17, 0, 10);
   }
   Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
@@ -1449,11 +1444,11 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     Motion_SetModeAndWaitAnimation(6, 3);
     Event_Wait(20);
     Event_ShowMessageThenWait(5, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
     Event_Wait(40);
     Motion_SetModeAndWaitAnimation(5, 4);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Event_ShowMessageThenWait(5, 0, 10);
   }
   Actor_SetModeById(25, 3);

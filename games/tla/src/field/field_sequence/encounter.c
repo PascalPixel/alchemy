@@ -59,10 +59,10 @@ s32 FlagEntries_GetValue(s32 flag) {
 }
 
 void Encounter_SelectMapZones(s32 search) {
-  struct EventWorkView *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
-  u8 *out = work->settings;
+  u8 *out = work->encounterZones;
   u32 first = 0;
   u32 second = 0;
   const struct SceneMusicEntry *entry = gScene_EncounterRules;
@@ -85,8 +85,8 @@ void Encounter_SelectMapZones(s32 search) {
   *out++ = second;
   for (i = 0; i < 6; i++)
     *out++ = 0;
-  work->unk194 = 0;
-  work->unk198 = 0x100000;
+  work->encounterBias = 0;
+  work->encounterThreshold = 0x100000;
   BattleBackground_SelectForMap();
 }
 
@@ -126,7 +126,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
 #define ENCOUNTER_STEPS (gMainRoutineWork.encounterSteps)
 
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
-  struct EncounterWork *work;
+  struct FieldWork *work;
   const struct EncounterZone *entry;
   s32 rate;
   s32 level;
@@ -139,9 +139,9 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   /* FAKEMATCH(barrier): an empty asm reading pick before it is set. */
   asm("" : : "l"(pick));
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (GameFlag_Get(351) == 0) {
-    if (GameFlag_Get(352) != 0 || GameFlag_Get(353) != 0)
+    if (GameFlag_Get(352) != 0 || GameFlag_Get(FLAG_NO_ENCOUNTERS_IN_AREA) != 0)
       return 0;
     if (zone == 0)
       return 0;
@@ -161,23 +161,23 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
       return 0;
     rate += level * 5;
 
-    bias = work->bias;
+    bias = work->encounterBias;
     if (bias == 0) {
       s32 a = Random16();
       s32 b = Random16();
       s32 c = Random16();
 
       bias = (a - b + c - (s32)Random16()) / 2;
-      work->bias = bias;
+      work->encounterBias = bias;
     }
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = ENCOUNTER_STEPS += Iwram_MulQ16(step, steps);
-    if (total < work->threshold)
+    if (total < work->encounterThreshold)
       return 0;
   }
 
-  work->bias = 0;
+  work->encounterBias = 0;
   sum = 0;
   for (i = 0; i < 8; i++)
     sum += entry->weights[i];
@@ -197,7 +197,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 #define Scene_GetArea ((s32 (*)(s32))Scene_GetArea)
 
 s32 Encounter_RollTerrain(u32 index, s32 steps) {
-  u8 *table = (u8 *)Ram_HeapSlots->eventWork + 0x18c;
+  u8 *table = gFieldWork->encounterZones;
 
   return Encounter_CountStepsAndSelectFormation(table[index], steps);
 }
@@ -450,7 +450,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   u16 music;
   u16 value;
 
-  if (GameFlag_Get(0x16c)) {
+  if (GameFlag_Get(FLAG_LINK_BATTLE)) {
     music = 79;
   } else {
     for (;;) {

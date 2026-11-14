@@ -24,8 +24,8 @@ void WorldMap_StepZoom(void) {
   s32 offset;
   s32 delta;
 
-  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))
-          ->viewCenter->movementState != 0)
+  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))
+          ->camera->movementState != 0)
     return;
   duration = &map->zoomFrames;
   if (*duration == 0)
@@ -47,10 +47,10 @@ void WorldMap_StartZoom(s32 zoom, s32 frames) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 result;
 
-  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->controlMode != 3)
+  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->mode != 3)
     return;
   {
-    s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14;
+    s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14Entry;
     result = ratio(zoom, 0x10000);
   }
   map->zoomFrom = map->zoomTo;
@@ -64,7 +64,7 @@ void Event_WaitForZoomTransition(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 frames;
 
-  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->controlMode == 3) {
+  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->mode == 3) {
     frames = 0;
     if (map->zoomFrames != 0) {
       do {
@@ -107,7 +107,7 @@ extern const u8 gFieldEffect_WatchedActorScript[];
  * frames); tried as the definition's struct BattleEffectWatchedObject
  * *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32 state), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:66: conflicting types for
+ * games/tla/include/field/event.h:67: conflicting types for
  * `Actor_ShowEmoteById'. */
 struct BattleEffectWatchedObject *Actor_ShowEmoteById__visual_attributes(
     s32 resourceId, s32 flags, s32 state) __asm__("Actor_ShowEmoteById");

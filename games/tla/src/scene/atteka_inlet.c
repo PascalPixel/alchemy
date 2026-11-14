@@ -30,7 +30,7 @@
 #include "actor.h"
 #include "field_event.h"
 #include "field_sprite.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
@@ -114,7 +114,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
     }
     Import_EventSetExitRequest(4);
   } else {
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
@@ -277,7 +277,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
     }
     Import_EventSetExitRequest(4);
   } else {
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
@@ -464,7 +464,7 @@ void AttekaInlet_RotateWaterColors(void) {
 /// Stepping into a door: it opens, the leader walks through and the scene
 /// leaves by the exit given.
 void AttekaInlet_OpenDoorAndEnter(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -476,7 +476,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
   Event_Wait(8);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(((struct EventWork *)work)->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 s32 Scene_Initialize(void) {

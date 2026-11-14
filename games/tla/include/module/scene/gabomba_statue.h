@@ -113,7 +113,7 @@ void Import_ActorStartIdle();
 void Func_02005210(void);
 void Func_0200525c(void);
 extern char ResourceId_ClockDigits;
-void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
 s32 Func_02005844(struct Actor *object);
 

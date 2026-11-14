@@ -77,20 +77,8 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
-  Actor_CenterOnColumn(id, column, offset);
-}
-
-static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
-  Actor_ArmCallback(id, angle, flags);
-}
-
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
   FieldCamera_MoveWithinMapBounds(x, a, z, b);
-}
-
-static __inline__ void Func_02001d04_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -108,7 +96,7 @@ static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 #include "system/io_reg.h"
 #include "field/event_inline.h"
 #include "field/event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "field_event.h"
 #include "flag_call.h"
@@ -135,7 +123,6 @@ static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 
 #include "../field/field_effect/move.c"
 
-// @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -206,13 +193,13 @@ extern u16 gData_02002998[];
 extern u16 gData_020029b8[];
 
 void Func_020003e8(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 phase, k, offset;
   u16 *firstCopy, *secondCopy;
 
-  if (*(s16 *)(work + 0x166) != 0)
+  if (work->psynergy != 0)
     return;
-  if (((struct EventWork *)work)->pendingFirst != 0)
+  if (work->revealActive != 0)
     return;
   if (gData_020024c4 == -1) {
     Iwram_CopyWords(Data_02002958, (void *)0x05000060, 32);
@@ -242,12 +229,12 @@ extern u16 Data_02002a18[];
 extern u16 Data_02002a38[];
 
 void Func_02000540(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 busy, phase, k, j;
 
-  if (*(s16 *)(work + 0x166) != 0)
+  if (work->psynergy != 0)
     return;
-  busy = ((struct EventWork *)work)->pendingFirst;
+  busy = work->revealActive;
   if (busy != 0)
     return;
   if (gData_020024c8 == -1) {
@@ -323,10 +310,6 @@ static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
   BattleEffect_ApplyColorToTargetBuffer__s07a4(strength, mode);
 }
 
-static inline void ApojiiIslands_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
 // An Apojii Islands scene inside an event: the actor takes Actor_FlickerChild
 // as its update, cues 78 and 21 play, a sparkle setup (Func_02001ad8) runs and
 // four flashes of random strength follow; then the screen blends in over six
@@ -380,12 +363,12 @@ blend:
   FieldCamera_SetSpeed(1);
   /* FAKEMATCH(wrapper): the camera moves forwarded through
    * ApojiiIslands_CamMove. */
-  ApojiiIslands_CamMove(px(360), -1, px(328), 1);
+  FieldCamera_MoveToFixed(px(360), -1, px(328), 1);
   Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldCamera_WaitForArrival();
-  ApojiiIslands_CamMove(px(440), -1, px(376), 1);
+  FieldCamera_MoveToFixed(px(440), -1, px(376), 1);
   FieldCamera_WaitForArrival();
-  ApojiiIslands_CamMove(px(472), -1, px(408), 1);
+  FieldCamera_MoveToFixed(px(472), -1, px(408), 1);
   Import_EventSetExitRequest(77);
 }
 
@@ -399,9 +382,9 @@ void Func_02000974(void) {
   Event_WaitTransitionFrames();
   Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_SetAnimationAndWait(16, 3);
-  Actor_ArmCallback_(16, FACING_WEST, 0);
+  Actor_FaceDirection(16, FACING_WEST, 0);
   Actor_SetAnimationAndWait(16, 3);
-  Actor_ArmCallback_(16, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(16, FACING_NORTHEAST, 0);
   Actor_SetAnimationAndWait(16, 3);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Event_ShowMessage(16, 0);
@@ -424,7 +407,7 @@ void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
                                                                                \
     Func_02001e0c_(n1, 38, n2, n3, n1, n4, 1);                                 \
     if (Event_GetFlag(n5) == 0) {                                              \
-      Func_02001d04_(n6, px(n7), px(n8));                                      \
+      Actor_SetPositionFixed(n6, px(n7), px(n8));                              \
       if (leader->x >> 20 == n9 && leader->z >> 20 == n10) {                   \
         Event_Start();                                                         \
         FieldEvent_ResolvePendingActions(0);                                   \
@@ -453,7 +436,7 @@ DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(Func_02000ba8, 67, 11, 6, 8, 0xf9e,
 // Stepping onto a door: the leader walks through it and the scene leaves by
 // the exit of its number.
 void ApojiiIslands_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -462,9 +445,9 @@ void ApojiiIslands_EnterDoor(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Event_PlaySound(SE_MAP_EXIT);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_CenterOnColumn_(gMainRoutineWork.currentOwner, 2, -6);
+  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(((struct EventWork *)work)->exit);
+  FieldEvent_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -481,7 +464,7 @@ s32 Func_02000cb4(void) {
     Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)&MsgWhyDoesMy);
     Event_ShowMessage(9, 0);
-    Actor_ArmCallback_(9, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   }
   Event_End();
   return 0;
@@ -601,7 +584,7 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *party;
 
   ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
-  effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
+  effect = &gFieldWork->transition;
   *effect = 0x202;
   party = &gMainRoutineWork;
   scene = party->scene;
@@ -636,7 +619,7 @@ void ApojiiIslands_InitializeRoom2(void) {
 }
 
 void Func_020010b4(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
 }
 
@@ -666,9 +649,9 @@ void Func_020010d8(struct Actor *object) {
 #include "shared/actor_emit_water_drop.h"
 
 void Func_020011a8(void) {
-  struct EventWork1cc *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 owner = gMainRoutineWork.currentOwner;
-  struct Actor *anchor = work->object;
+  struct Actor *anchor = work->camera;
   struct Actor *leader = Actor_Get(owner);
   s32 position[3];
   s32 result;

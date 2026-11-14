@@ -1,9 +1,8 @@
 /// Ride_UpdateCarried for the rides that set the direction through their work.
 void Ride_UpdateLanding(struct Actor *object) {
-  struct RideWork__s1c44 *work =
-      (struct RideWork__s1c44 *)(gInventorySnapshot + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
   s32 dz;
   s32 i;
@@ -21,19 +20,19 @@ void Ride_UpdateLanding(struct Actor *object) {
   if (other->y == other->terrainHeight && Actor_IsTouching(object, other) &&
       gMainRoutineWork.renderMode == 0) {
     if (object->unk4c != 0) {
-      work->direction.unk02 = 0;
+      work->direction.z = 0;
       direction = &work->direction;
       if (object->unk4c > 0)
-        direction->unk00 = 1;
+        direction->x = 1;
       else
-        direction->unk00 = 0xffff;
+        direction->x = 0xffff;
     }
     object->priorityFlags = 2;
     object->z -= object->bounce;
     object->gravity += object->bounce >> 2;
     object->unk4c = 0;
-    work->landed = 1;
-    event->exit = work->value0a;
+    work->active = 1;
+    event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4; i++) {
     s32 id = work->slots[i].id;

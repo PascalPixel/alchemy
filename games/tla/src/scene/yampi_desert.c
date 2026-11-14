@@ -1,11 +1,11 @@
-
+/// @file
+/// The Yampi Desert, in twelve rooms that share this overlay
+/// (SceneId_YampiDesert1 to SceneId_YampiDesert12): its travelers, the
+/// scorpion in its way, the stakes Pound sinks and the sand slides Sand slips
+/// under, and its tables of entrances, placements and triggers by room.
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-/// @file
-/// The Yampi Desert's tables of entrances, placements and triggers by room, its
-/// travelers' talk, and the stakes Pound sinks and Sand slips under; linked
-/// apart from yampi_desert.c, with the field's shared effect code between.
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -14,14 +14,10 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
-/* VIEW(placements): routines Statue_Sink and PartyInventory_GiveItem as
- * yampi_desert/scene.h declares them; the joined file defines and declares them
- * otherwise. */
-void Statue_Sink__placements(const void *script, s32 a,
-                             s32 b) __asm__("Statue_Sink");
+/* VIEW(placements): routine PartyInventory_GiveItem as yampi_desert/scene.h
+ * declared it; the joined file declares it otherwise. */
 void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
     "PartyInventory_GiveItem");
-#define Statue_Sink Statue_Sink__placements
 #define PartyInventory_GiveItem PartyInventory_GiveItem__placements
 #include "types.h"
 #include "item_ids.h"
@@ -33,13 +29,6 @@ void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
 #include "field_event.h"
 #include "scene_ids.h"
 #include "system/frame.h"
-
-struct SceneEventWork {
-  u8 unk000[0x16a];
-  u16 unk16a;
-  u8 unk16c[0x40];
-  s32 screenEffect;
-};
 
 extern s16 gYampiDesert_Room1Stakes[];
 extern s16 gYampiDesert_Room3Stakes[];
@@ -71,7 +60,7 @@ void YampiDesert_SetUpRoom12SlideActors(void);
 void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode);
 void YampiDesert_MatchStakePriority(void);
 void YampiDesert_PlaceStakes(const void *script);
-void Statue_Sink(const void *script, s32 a, s32 b);
+void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -81,7 +70,6 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
 s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
 void Actor_DisableById(s32 actor);
 void Field_RequestDjinnBattle(s32 a, s32 b);
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void FieldEffect_StartBlankOverlay(s32 value);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 void FieldPsynergy_SetupActorPair(s32 a, s32 b);
@@ -121,7 +109,7 @@ void YampiDesert_PlayScorpionRumble(void);
 void YampiDesert_SetUpRoom4Scorpion(void);
 void YampiDesert_ReadyStake(s32 id);
 void YampiDesert_TrackUpperLevelFromBelow(void);
-void YampiDesert_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 static inline void Scene_TaskAdd(void (*func)(void), s32 priority) {
   Task_Add(func, priority);
@@ -133,41 +121,18 @@ static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
   Actor_ArmCallback(id, angle, flags);
 }
 
-static inline void Scene_Call4090(s32 actor, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
-}
-
 static inline void Scene_Call4098(s32 actor, s32 x, s32 z, s32 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
-}
-
-static inline void Scene_Call4000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static inline void Scene_Call41d8(s32 a, s32 b, s32 c, s32 d) {
   Rope_Place(a, b, c, d);
 }
 
-static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
-static inline void Scene_CamBounds(s32 x, s32 a, s32 z, s32 b) {
-  FieldCamera_MoveWithinMapBounds(x, a, z, b);
-}
-
-static inline void Scene_SetPositionAndCommit(s32 id, s32 x, s32 z) {
-  Actor_MoveToAndWaitById(id, x, z);
-}
-
 static inline void Scene_Call4178(s32 a, s32 b, s32 c) {
   Actor_ReturnHome(a, b, c);
 }
 
-static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
-  Actor_WalkToAndWaitById(id, x, z);
-}
 #include "types.h"
 #include "module/tla.h"
 #include "battle/battle.h"
@@ -184,7 +149,7 @@ static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
 #include "system/main_routine_work.h"
 #include "map.h"
 #include "system/field_effect.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "flag_call.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
@@ -437,16 +402,16 @@ void YampiDesert_ReadSignpost(void) {
 }
 
 void YampiDesert_PoundRoom1Stake(s32 a, s32 b) {
-  Statue_Sink(gYampiDesert_Room1Stakes, a, b);
+  Pound_SinkTarget(gYampiDesert_Room1Stakes, a, b);
 }
 
 void YampiDesert_PoundRoom3Stake(s32 a, s32 b) {
-  Statue_Sink(gYampiDesert_Room3Stakes, a, b);
+  Pound_SinkTarget(gYampiDesert_Room3Stakes, a, b);
 }
 
 #define DEFINE_POUND_STAKE_STOPPING_SCORPION(name, data1)                      \
   void name(s32 a, s32 b) {                                                    \
-    Statue_Sink(data1, a, b);                                                  \
+    Pound_SinkTarget(data1, a, b);                                             \
     if (a == 1) {                                                              \
       if (gYampiDesert_RaisedEvent == 0)                                       \
         gYampiDesert_RaisedEvent = 210;                                        \
@@ -457,7 +422,7 @@ DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundRoom4Stake,
                                      gYampiDesert_Room4Stakes)
 
 void YampiDesert_PoundRoom12Stake(s32 a, s32 b) {
-  Statue_Sink(gYampiDesert_Room12Stakes, a, b);
+  Pound_SinkTarget(gYampiDesert_Room12Stakes, a, b);
 }
 
 DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundRoom5Stake,
@@ -636,15 +601,11 @@ void YampiDesert_WatchScorpionStop(void) {
     FieldCamera_FollowActor(21, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   }
-  goto test;
-  do {
+  while (gYampiDesert_RaisedEvent == 210)
     wait(1);
-  test:;
-  } while (gYampiDesert_RaisedEvent == 210);
   Event_End();
 }
 
-#undef Statue_Sink
 #undef PartyInventory_GiveItem
 #include "../field/field_effect/advance_motion_priority.c"
 
@@ -654,8 +615,6 @@ void YampiDesert_WatchScorpionStop(void) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef DEFINE_POUND_STAKE_STOPPING_SCORPION
-#undef gYampiDesert_Room2PlacementsAfterMeeting
-// @file
 // The Yampi Desert, between Osenia's south and Alhafra: twelve rooms of sand.
 // Pound sinks its wooden stakes and Sand lets the party slip under them; a
 // group of Madra's travelers hunting Briggs is stuck halfway (Room2); the King
@@ -704,7 +663,7 @@ void YampiDesert_StirScorpion(void) {
   YampiDesert_ClearRaisedEvent();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
   FieldCamera_SetSpeed(2.4);
-  Scene_CamBounds(px(300), -1, px(248), 1);
+  FieldCamera_MoveToFixed(px(300), -1, px(248), 1);
   Actor_MoveToAndWaitById(16, 254, 248);
   Actor_MoveToAndWaitById(16, 352, 240);
   Task_Remove(YampiDesert_PlayScorpionRumble);
@@ -721,7 +680,7 @@ void YampiDesert_StirScorpion(void) {
   Actor_MoveToAndWaitById(16, 380, 248);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Sound_Play(SE_WATER_MOVE);
-  Scene_SetSpeed(16, 0xcccc, 0x6666);
+  Actor_SetSpeedFixed(16, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(16, 428, 248);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
@@ -737,8 +696,8 @@ void YampiDesert_StirScorpionAgain(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveWithinMapBounds(px(246), -1, px(616), 1);
-  Scene_SetPositionAndCommit(21, 248, 648);
-  Scene_SetPositionAndCommit(21, 248, 576);
+  Actor_MoveToAndWait(21, 248, 648);
+  Actor_MoveToAndWait(21, 248, 576);
   Task_Remove(YampiDesert_PlayScorpionRumble);
   FieldEvent_Wait(10);
   Task_Remove(YampiDesert_RippleFollowsScorpion);
@@ -754,8 +713,8 @@ void YampiDesert_StirScorpionAgain(void) {
   FieldEvent_Wait(20);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Sound_Play(SE_WATER_MOVE);
-  Scene_SetSpeed(21, 0xcccc, 0x6666);
-  Scene_SetPositionAndReset(21, 248, 496);
+  Actor_SetSpeedFixed(21, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(21, 248, 496);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
   GameFlag_Set(0x88a);
@@ -768,10 +727,10 @@ void YampiDesert_CornerScorpion(void) {
   YampiDesert_ClearRaisedEvent();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   FieldCamera_SetSpeed(2.4);
-  Scene_CamBounds(px(232), -1, px(328), 1);
-  Scene_SetPositionAndCommit(21, 232, 328);
+  FieldCamera_MoveToFixed(px(232), -1, px(328), 1);
+  Actor_MoveToAndWait(21, 232, 328);
   FieldCamera_MoveWithinMapBounds(px(232), -1, px(200), 1);
-  Scene_SetPositionAndCommit(21, 232, 280);
+  Actor_MoveToAndWait(21, 232, 280);
   Actor_MoveToAndWaitById(21, 232, 168);
   Task_Remove(YampiDesert_PlayScorpionRumble);
   Actor_ArmCallback(21, FACING_SOUTH, 0);
@@ -845,10 +804,10 @@ loop_3:
     goto loop_3;
   Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   FieldEvent_Wait(20);
-  Scene_CamBounds(px(232), -1, px(196), 1);
+  FieldCamera_MoveToFixed(px(232), -1, px(196), 1);
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
                       EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeedFixed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
   angle = 0x4000;
@@ -861,7 +820,7 @@ loop_3:
   Actor_SetSpritePriority(21, 2);
   Actor_SetSpriteColor(Actor_GetById(21), 0);
   Actor_SetSpriteFlags(Actor_GetById(21), 1);
-  Scene_SetSpeed(21, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(21, 0x19999, 0xcccc);
   Actor_MoveToAndWaitById(21, 216, 184);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, angle, 0);
   Actor_FaceDirectionById(21, FACING_EAST);
@@ -904,7 +863,7 @@ step_5:
   if (i <= 5)
     goto step_5;
   Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(4);
@@ -918,7 +877,7 @@ void YampiDesert_ScoopCenterPit(s32 mode) {
   if (mode == 1) {
     object = Actor_GetById(9);
     MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
-    Scene_Call4090(9, px(232), px(200));
+    Actor_SetPositionFixed(9, px(232), px(200));
     height = Map_GetTerrainHeight(0, object->x, object->z);
     object->y = height;
     object->terrainHeight = height;
@@ -944,11 +903,11 @@ void YampiDesert_RevealRockHint(void) {
   s32 row = leader->z >> 20;
 
   if (object != NULL)
-    Scene_Call4090(64, 154 << 18, 222 << 17);
+    Actor_SetPositionFixed(64, 154 << 18, 222 << 17);
   MapGrid_CopyCellPictureIndicesRect(82, 82, 15, 40, 5, 6);
-  Scene_Call4000(82, 82, 5, 6, 15, 40);
+  MapGrid_CopyCellAttributes(82, 82, 5, 6, 15, 40);
   MapGrid_CopyCellPictureIndicesRect(88, 82, 36, 25, 5, 5);
-  Scene_Call4000(88, 82, 5, 5, 36, 25);
+  MapGrid_CopyCellAttributes(88, 82, 5, 5, 36, 25);
   if (column == 15) {
     if (row == 41)
       MOVE_LEADER_TO(14, 41)
@@ -985,9 +944,9 @@ void YampiDesert_HideRockHint(void) {
   if (Actor_GetById(64) != NULL)
     Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
   MapGrid_CopyCellPictureIndicesRect(82, 89, 15, 40, 5, 6);
-  Scene_Call4000(82, 89, 5, 6, 15, 40);
+  MapGrid_CopyCellAttributes(82, 89, 5, 6, 15, 40);
   MapGrid_CopyCellPictureIndicesRect(88, 89, 36, 25, 5, 5);
-  Scene_Call4000(88, 89, 5, 5, 36, 25);
+  MapGrid_CopyCellAttributes(88, 89, 5, 5, 36, 25);
   if (column == 15 && row == 44)
     MOVE_LEADER_TO(15, 43)
   else if (column == 17 && row == 44)
@@ -1006,7 +965,7 @@ void YampiDesert_RevealMedalSpot(void) {
 
   if (object != 0) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
-    Scene_Call4090(64, px(288), px(240));
+    Actor_SetPositionFixed(64, px(288), px(240));
     if ((leader->x + px(8)) >> 20 == (object->x + px(8)) >> 20 &&
         (leader->z + px(8)) >> 20 == (object->z + px(8)) >> 20)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
@@ -1057,7 +1016,7 @@ void YampiDesert_HideSlideActors(void) {
 /* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
  * declared it; the joined file has another; tried as the definition's extern
  * LATE_DATA u32 gYampiDesert_FinderRunsAhead[], it does not compile in tla-ja
- * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1108:
+ * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1069:
  * `gYampiDesert_FinderRunsAhead' undeclared (first use in this function). */
 extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
     "gYampiDesert_FinderRunsAhead");
@@ -1065,7 +1024,7 @@ extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
 /* VIEW(yampi_desert): routine gYampiDesert_TravelersFollow as this part
  * declared it; the joined file has another; tried as the definition's extern
  * LATE_DATA u32 gYampiDesert_TravelersFollow[], it does not compile in tla-ja
- * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1155:
+ * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1116:
  * `gYampiDesert_TravelersFollow' undeclared (first use in this function). */
 extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
     "gYampiDesert_TravelersFollow");
@@ -1299,8 +1258,7 @@ void YampiDesert_RippleFollowsScorpion(void) {
   struct Actor *object;
   s16 scene;
 
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->unk16a =
-      gYampiDesert_RaisedEvent;
+  gFieldWork->raisedTrigger = gYampiDesert_RaisedEvent;
   if (gYampiDesert_SandRipple != 0) {
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_YampiDesert4)
@@ -1388,7 +1346,7 @@ void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
 
 void YampiDesert_UpdateSandSlide(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 speed = 0x18000;
   struct MapWork *map;
@@ -1396,8 +1354,7 @@ void YampiDesert_UpdateSandSlide(void) {
   s32 index, column, row;
   struct MapCell *cells;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0) {
     Actor_SetAnimationSpeed(leader, 0);
     TilesetAnim_SuspendAll();
     return;
@@ -1529,8 +1486,7 @@ void YampiDesert_TrackLeaderInPitArea(void) {
 }
 
 void YampiDesert_PlayScorpionRumble(void) {
-  if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 358) == 0 &&
-      gFrameCount % 5 == 0) {
+  if (gFieldWork->psynergy == 0 && gFrameCount % 5 == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->renderMode != 5 || gInput.held == 0)
@@ -1539,7 +1495,7 @@ void YampiDesert_PlayScorpionRumble(void) {
 }
 
 void YampiDesert_ClearRaisedEvent(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->unk16a = 0;
+  gFieldWork->raisedTrigger = 0;
   gYampiDesert_RaisedEvent = 0;
 }
 
@@ -1621,7 +1577,7 @@ void YampiDesert_SetUpRoom4Scorpion(void) {
   Actor_DisableById(17);
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(17, 3);
-  Scene_SetSpeed(16, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(16, 0x19999, 0xcccc);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(16, 3);
   Actor_DisableById(16);
@@ -1721,7 +1677,7 @@ void YampiDesert_SetUpRoom5Scorpion(void) {
   Actor_DisableById(22);
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(22, 3);
-  Scene_SetSpeed(21, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(21, 0x19999, 0xcccc);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
   Actor_DisableById(21);
@@ -1832,7 +1788,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
   Actor_DisableById(22);
   Actor_SetSpritePriority(22, 3);
   (*followed)->motionFlags = 3;
-  Scene_SetSpeed(21, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(21, 0x19999, 0xcccc);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
   Actor_DisableById(21);
@@ -1972,7 +1928,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   actor8->gravity = Q16_ONE / 2;
   actor8->bounce = 0;
   wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
+  gFieldWork->transition = 0x203;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -2149,25 +2105,25 @@ void YampiDesert_SetUpRoom5(void) {
     if (GameFlag_Get(0x889) && !GameFlag_Get(0x88a))
       YampiDesert_SetUpRoom5Scorpion();
   } else {
-    Scene_Call4090(11, 200 << 16, 248 << 16);
-    Scene_Call4090(12, 168 << 16, 280 << 16);
-    Scene_Call4090(13, 152 << 16, 344 << 16);
-    Scene_Call4090(14, 184 << 16, 360 << 16);
-    Scene_Call4090(15, 328 << 16, 264 << 16);
-    Scene_Call4090(16, 296 << 16, 296 << 16);
-    Scene_Call4090(17, 344 << 16, 312 << 16);
-    Scene_Call4090(18, 312 << 16, 360 << 16);
-    Scene_Call4090(19, 280 << 16, 376 << 16);
+    Actor_SetPositionFixed(11, 200 << 16, 248 << 16);
+    Actor_SetPositionFixed(12, 168 << 16, 280 << 16);
+    Actor_SetPositionFixed(13, 152 << 16, 344 << 16);
+    Actor_SetPositionFixed(14, 184 << 16, 360 << 16);
+    Actor_SetPositionFixed(15, 328 << 16, 264 << 16);
+    Actor_SetPositionFixed(16, 296 << 16, 296 << 16);
+    Actor_SetPositionFixed(17, 344 << 16, 312 << 16);
+    Actor_SetPositionFixed(18, 312 << 16, 360 << 16);
+    Actor_SetPositionFixed(19, 280 << 16, 376 << 16);
     Actor_SetHorizontalPositionWithTerrain(20, 328 << 16, 392 << 16);
     if (GameFlag_Get(0x88c)) {
       if (GameFlag_Get(0x8ed)) {
         MapGrid_CopyCellPictureIndicesRect(68, 77, 13, 9, 3, 3);
-        Scene_Call4000(68, 77, 3, 3, 13, 9);
+        MapGrid_CopyCellAttributes(68, 77, 3, 3, 13, 9);
       } else {
         MapGrid_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
-        Scene_Call4000(74, 71, 3, 3, 13, 9);
+        MapGrid_CopyCellAttributes(74, 71, 3, 3, 13, 9);
       }
-      Scene_Call4000(63, 77, 3, 3, 13, 73);
+      MapGrid_CopyCellAttributes(63, 77, 3, 3, 13, 73);
     } else if (GameFlag_Get(0x88a)) {
       YampiDesert_SetUpTrappedScorpion();
     }
@@ -2246,7 +2202,7 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
 
 // Room 10's setup.
 void YampiDesert_SetUpRoom10(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   if (gMainRoutineWork.entrance == 1 && !GameFlag_Get(0x88c)) {
     YampiDesert_LandAndFightKingScorpion();
@@ -2256,19 +2212,17 @@ void YampiDesert_SetUpRoom10(void) {
   }
   if (GameFlag_Get(0x8ed)) {
     MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
-    Scene_Call4090(9, 232 << 16, 200 << 16);
+    Actor_SetPositionFixed(9, 232 << 16, 200 << 16);
   }
   YampiDesert_StartRisingSand(0, 240);
   YampiDesert_AddRisingSand(0, 9, 0, 0, 64);
   wait(10);
 }
 
-void YampiDesert_SetUpRoom11(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-}
+void YampiDesert_SetUpRoom11(void) { gFieldWork->transition = 0x204; }
 
 void YampiDesert_SetUpRoom12(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Scene_QueueMusic(SE_137);
   YampiDesert_PlaceStakes(gYampiDesert_Room12Stakes);
   YampiDesert_SetUpRoom12SlideActors();
@@ -2290,7 +2244,7 @@ loop:
 
     object->collisionFlags &= 0xfe;
     Actor_SetSpriteFlags(object, 0);
-    YampiDesert_SetStakeCell(id, (u16)kind, (u16)flag, object->terrainId);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->terrainId);
     entry += 3;
   }
   if (entry[0] != 0xffff)
@@ -2304,68 +2258,9 @@ loop:
 #undef MAIN_ROUTINE_WORK_U16
 
 // Finds the current target's table row and shrinks it.
-void Statue_Sink(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+#include "shared/pound_sink_target.h"
 
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        GameFlag_Set(flag);
-        YampiDesert_SetStakeCell(id, a, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
-
-void YampiDesert_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Actor_GetCellIndex(object);
-  if (GameFlag_Get(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 2);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 4);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 1);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 3);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 5);
-      break;
-    }
-  }
-}
+#include "shared/actor_set_cell_open.h"
 
 // The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has
@@ -2542,9 +2437,7 @@ void YampiDesert_DrawRisingSand(void) {
     sy = z - y;
     x = (x >> 16) - 8;
     /* FAKEMATCH(wrapper): forwarded. */
-    sy = ((sy +
-           Value2((s32 (*)())Iwram_MulQ16, -0x20000, Trig_Sin(entry->phase)) +
-           -0x20000) >>
+    sy = ((sy + Math_MulQ16(-0x20000, Trig_Sin(entry->phase)) + -0x20000) >>
           16) -
          4;
     depth = ((y + z) >> 16) + 58;
@@ -2663,14 +2556,11 @@ u32 gYampiDesert_SlideDust[] = {
 #undef ARRIVE_OR
 #undef MAIN_ROUTINE_WORK_U16
 #undef PIXELS__s3910
-#undef Statue_Sink
 #undef Motion_SetModeAndWaitAnimation
 #undef Actor_SetMovementTypeAndWaitById
 #undef gYampiDesert_FinderRunsAhead
 #undef gYampiDesert_TravelersFollow
-#undef gYampiDesert_LastTravelersFollow
 
-// @file
 // The Yampi Desert's data: its effect and travelers' scripts, stake lists,
 // rooms' tables and triggers.
 

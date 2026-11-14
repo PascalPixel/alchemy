@@ -1,13 +1,12 @@
-
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/field_effect/move.c"
 /// @file
 /// Four small places the ship reaches, sharing one overlay: the Gondowan
 /// Settlement (rooms 1 to 3), whose bush Cyclone cuts to a stair; the Hesperia
 /// Settlement (4 to 6), with its vine, crate and Tinder; Kalt Island (7 and 8),
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -44,7 +43,7 @@ void Settlements_SinkPillar(void);
 void Settlements_SlideCrateDownFalls(void);
 void Settlements_RestoreWallCells(void);
 void Settlements_DropCrate(void);
-void TundariaTower_SlideOnIce(void);
+void Leader_SlideOnIce(void);
 void Leader_StopMoving(void);
 void Event_ResolveAllPendingActions(void);
 void Scene_QueueMusic(s32 a);
@@ -103,16 +102,16 @@ static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "system/input.h"
 #include "shared/tables.h"
 
-extern s16 gTundariaTower_SlideAnglesByKey[];
+extern s16 gSlideOnIce_AnglesByKey[];
 
 void Settlements_StepOntoWall(void);
 
-void TundariaTower_StopLeader(void);
+void Leader_StopIfPending(void);
 
 void Settlements_MeetTinder(void);
 
@@ -343,7 +342,7 @@ void Settlements_CutStairsBush(void) {
 }
 
 void Settlements_EnterDoor(void) {
-  s32 next = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
+  s32 next = gFieldWork->stepTrigger;
 
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
@@ -547,7 +546,7 @@ extern s16 gSettlements_WallCrate[];
 void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
+  gFieldWork->transition = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Settlements7)
     Settlements_SetUpKaltIsland();
   if (gMainRoutineWork.scene == (s32)&SceneId_Settlements9) {
@@ -623,7 +622,7 @@ void Settlements_StepOntoIce(void) { GameFlag_Set(FLAG_SCENE_TEMP_01); }
 
 void Settlements_StepOffIce(void) { GameFlag_Clear(FLAG_SCENE_TEMP_01); }
 
-void Settlements_StepOnIceSlide(void) { TundariaTower_SlideOnIce(); }
+void Settlements_StepOnIceSlide(void) { Leader_SlideOnIce(); }
 
 void Settlements_EnterCave(void) {
   u32 i;
@@ -664,12 +663,11 @@ void Settlements_LashRope(void) {
 extern s32 gSettlements_WaterColorFrame;
 
 void Settlements_CycleWaterColors(void) {
-  struct PaletteCycleWork *work =
-      (struct PaletteCycleWork *)Ram_HeapSlots->eventWork;
+  struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   s32 *frame;
   s32 phase, i;
 
-  if (work->unk166 != 0 || work->unkca4 != 0)
+  if (work->psynergy != 0 || work->revealActive != 0)
     return;
   frame = &gSettlements_WaterColorFrame;
   if (*frame == -1) {
@@ -705,7 +703,7 @@ void Settlements_CycleWaterColors(void) {
 }
 
 void Settlements_StartWaterfall(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 514;
+  gFieldWork->transition = 514;
   FieldTask_AddFrame(Settlements_CycleWaterColors, 0x480);
   Scene_QueueMusic(SE_170);
   Scroll_StartHBlank();
@@ -986,7 +984,6 @@ void Settlements_SplashCrate(s32 id) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef SINK
-// @file
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -1018,58 +1015,31 @@ void Settlements_SpawnSplashRing(s32 objectId) {
 
 void Settlements_LiftBoulder(void) { GameFlag_Set(FLAG_SCENE_TEMP_08); }
 
-extern s16 gTundariaTower_SlideAngles[];
+extern s16 gSlideOnIce_SteerAngles[];
 
 #include "shared/actor_steer_by_pad.h"
 
-void TundariaTower_StopLeader(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+#include "shared/leader_stop_if_pending.h"
 
-  if (work->actionCounter != 0) {
-    Event_SetFlag(FLAG_MENU_OPEN);
-    Leader_StopMoving();
-    Event_ResolveAllPendingActions();
-    Event_ClearFlag(FLAG_MENU_OPEN);
-  }
-}
-
-extern s16 gTundariaTower_SlideAnglesByKey[];
+extern s16 gSlideOnIce_AnglesByKey[];
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 #include "shared/leader_slide_on_ice.h"
 
-extern volatile s16 gSettlements_SlideStopped;
+extern volatile s16 gSlideOnIce_Stopped;
 
-extern s16 gTundariaTower_SlideAnglesByKey[];
-void TundariaTower_KeepSliding(struct Actor *object);
-void TundariaTower_StopLeader(void);
+extern s16 gSlideOnIce_AnglesByKey[];
+void Actor_SteerByPad(struct Actor *object);
+void Leader_StopIfPending(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-#define SLIDE_FROM_EDGE Settlements_SlideOnIceFromEdge
-#define SLIDE_STOPPED gSettlements_SlideStopped
-#define SLIDE_STOP_LEADER TundariaTower_StopLeader
-#define SLIDE_ANGLES gTundariaTower_SlideAnglesByKey
-#define SLIDE_SET_ANIMATION Actor_SelectAnimation
-#define SLIDE_HAS_ARRIVED Actor_HasArrived
-#define SLIDE_KEEP_SLIDING TundariaTower_KeepSliding
-#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
 #include "shared/slide_on_ice_from_edge.c"
-#undef SLIDE_FROM_EDGE
-#undef SLIDE_STOPPED
-#undef SLIDE_STOP_LEADER
-#undef SLIDE_ANGLES
-#undef SLIDE_SET_ANIMATION
-#undef SLIDE_HAS_ARRIVED
-#undef SLIDE_KEEP_SLIDING
-#undef SLIDE_SPHERES_OVERLAP
 
-void Settlements_SetSlideStopped(s32 value) {
-  gSettlements_SlideStopped = value;
-}
+void Settlements_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
@@ -1111,14 +1081,14 @@ s16 gSettlements_WallCrate[] = {
     10, -1,
 };
 
-s16 gTundariaTower_SlideAngles[] = {                                                               
+s16 gSlideOnIce_SteerAngles[] = {                                                               
       -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
       0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
       -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          
       0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              
   };
 
-s16 gTundariaTower_SlideAnglesByKey[] = {
+s16 gSlideOnIce_AnglesByKey[] = {
     -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
     0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
     0,

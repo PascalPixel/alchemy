@@ -44,7 +44,7 @@ s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
 // check the ground under it every frame. When it cannot hide where it
 // stands, show it again at once.
 void FieldPsynergy_StartCloak(void) {
-  struct CloakEvent *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct CloakCaster *caster =
       ((struct BattleFxScene *)Ram_HeapSlots->effectWork)->mainObject;
   struct CloakSprite *sprite = caster->sprite;
@@ -75,9 +75,9 @@ void FieldPsynergy_StartCloak(void) {
   Task_Add(check, order);
   gMainRoutineWork.cloaked = 1;
   check();
-  if (event->psynergyRequest == CLOAK_END) {
+  if (event->psynergy == CLOAK_END) {
     FieldPsynergy_EndCloak();
-    event->psynergyRequest = 0;
+    event->psynergy = 0;
   }
 }
 
@@ -116,7 +116,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
 
 void FieldPsynergy_DouseOnTarget(void) { FieldPsynergy_Douse(); }
 
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 
 static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;

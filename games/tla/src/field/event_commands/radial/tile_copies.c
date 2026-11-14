@@ -20,7 +20,7 @@
 /// catacombs call it after a Cyclone.
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
                               s16 height, s32 toX, s32 toZ) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchLayer *layer =
       ((struct TouchMap *)Ram_HeapSlots->mapWork)->layers;
@@ -151,9 +151,9 @@ void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
 
 void ParticleBurst_Start(void) {
   struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
-  u8 *effect = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->eventWork;
-  struct Actor *owner = *(struct Actor **)(effect + 16);
+  struct FxScene *effect = Ram_HeapSlots->effectWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
+  struct Actor *owner = effect->mainObject;
   struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
   s32 dx = (cell->x << 20) - owner->x + 0x80000;
   s32 dz = (cell->z << 20) - owner->z + 0x80000;

@@ -13,7 +13,7 @@
 /// gDailaInteriors_PillarFrozenFlags). Scoop on one spot digs up a Psy Crystal
 /// (Daila_DigUpPsyCrystal).
 
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -108,7 +108,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// Stepping onto one of the village's doors: the leader walks through it and
 /// the scene leaves by the exit of its number.
 void Daila_EnterDoor(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -119,7 +119,7 @@ void Daila_EnterDoor(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   Event_Wait(10);
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -462,7 +462,7 @@ void Actor_SetWideSprite(s32 actor, s32 flag);
 #include "shared/scene_raise_held_actor.h"
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila1)
     Actor_FallOverById(12, 0);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)

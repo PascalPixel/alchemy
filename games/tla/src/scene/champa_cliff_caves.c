@@ -9,7 +9,7 @@
 #include "field_event.h"
 #include "scene_call.h"
 #include "field/event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
@@ -52,7 +52,7 @@ struct RiseObject {
 /* VIEW(champa_cliff_caves): routine gData_02003d10 as this part declared it;
  * the joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02003d10[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:202: `gData_02003d10' undeclared
+ * games/tla/src/scene/champa_cliff_caves.c:189: `gData_02003d10' undeclared
  * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d10__champa_cliff_caves __asm__("gData_02003d10");
@@ -62,19 +62,6 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
                                        s32 mode);
 void Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_WatchActor(struct Actor *object, struct Actor *target);
-
-static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
-  Actor_CenterOnColumn(id, column, offset);
-}
-
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
-                                                           s32 dz) {
-  Actor_SetDestinationOffsetById(id, dx, dz);
-}
-
-static __inline__ void Func_02003534_(s32 actor, s32 angle) {
-  Actor_FaceDirectionById(actor, angle);
-}
 
 extern struct ActorPlacement gData_0200375c[];
 extern struct ActorPlacement gData_020037a4[];
@@ -196,7 +183,7 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
-    Actor_CenterOnColumn_(id, 2, -8);
+    Actor_CenterAndWalk(id, 2, -8);
   else
     Actor_SetDestinationOffset(id, 0, -8);
   Event_Wait(10);
@@ -213,21 +200,11 @@ void Func_020001f4(s32 door) {
 /* VIEW(champa_cliff_caves): routine gData_02003d18 as this part declared it;
  * the joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02003d18[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:252: `gData_02003d18' undeclared
+ * games/tla/src/scene/champa_cliff_caves.c:229: `gData_02003d18' undeclared
  * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d18__champa_cliff_caves __asm__("gData_02003d18");
 #define gData_02003d18 gData_02003d18__champa_cliff_caves
-
-static __inline__ void Actor_CommitPositionAndActivate_(s32 actor, s32 dx,
-                                                        s32 dz) {
-  Actor_WalkByAndWaitById(actor, dx, dz);
-}
-
-static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
-                                                 s32 acceleration) {
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
 
 void Func_02000208(void) {
   const struct WarpTarget *warp;
@@ -240,7 +217,7 @@ void Func_02000208(void) {
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;
   Actor_SetPosition(8, 184, 408);
-  Actor_SetSpeedParameters_(8, 0x1cccc, 0xe666);
+  Actor_SetSpeedFixed(8, 0x1cccc, 0xe666);
   Actor_WalkByAndWaitById(8, 0, 16);
   Actor_FaceDirectionById(8, FACING_WEST);
   msg = (s32)MsgHasMyGrandson;
@@ -254,8 +231,8 @@ void Func_02000208(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetSpeedParameters_(8, 0xcccc, 0x6666);
-  Actor_CommitPositionAndActivate_(8, 0, -14);
+  Actor_SetSpeedFixed(8, 0xcccc, 0x6666);
+  Actor_WalkByAndWait(8, 0, -14);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   warp = &gData_02003d18;
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
@@ -289,7 +266,7 @@ void Func_02000350(s32 actor) {
 void Func_0200038c(s32 actor) {
   Event_SetMessageId((s32)MsgAwComeOn);
   Event_ShowMessageAndWait(actor, 0);
-  Func_02003534_(actor, 0xd000);
+  Actor_FaceDirectionAndWait(actor, 0xd000);
   Actor_SetActionCallback(Actor_GetById(actor), 8);
 }
 
@@ -336,9 +313,9 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
 #if !TLA_PATCH_1
-  ((struct EventTransition *)Ram_HeapSlots->eventWork)->type = 516;
+  gFieldWork->transition = 516;
 #else
-  ((struct EventTransition *)Ram_HeapSlots->eventWork)->type = 513;
+  gFieldWork->transition = 513;
 #endif
   if (party->scene != (s32)&SceneId_ChampaCliffCaves1)
     Actor_GetById(party->currentOwner)->priorityFlags |= 32;
@@ -400,7 +377,7 @@ void Func_0200067c(s32 value) {
   Event_Wait(15);
   if (value == 0) {
     Actor_GetById(8)->actionFlags &= 0xfe;
-    Actor_CommitPositionAndActivate_(8, 0, -6);
+    Actor_WalkByAndWait(8, 0, -6);
     Event_Wait(1);
     ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
     Event_Wait(10);
@@ -445,7 +422,7 @@ void Func_02000804(s32 actor) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgThisLooksLike);
   Func_020005e8(actor);
-  Func_02003534_(8, 0x3000);
+  Actor_FaceDirectionAndWait(8, 0x3000);
   Actor_SetModeById(8, 7);
   Event_Wait(30);
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
@@ -476,15 +453,15 @@ void Func_02000804(s32 actor) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(8, 0, 5);
-    ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
-    ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(8, 0, 5);
   }
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageThenWait(8, 0, 5);
-  Func_02003534_(8, 0x5000);
+  Actor_FaceDirectionAndWait(8, 0x5000);
   Event_End();
 }
 
@@ -493,7 +470,7 @@ void Func_02000978(s32 actor) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAhHaveYou);
   Func_020005e8(actor);
-  Func_02003534_(8, 0x3000);
+  Actor_FaceDirectionAndWait(8, 0x3000);
   Actor_SetModeById(8, 7);
   Event_Wait(30);
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
@@ -510,7 +487,7 @@ void Func_02000978(s32 actor) {
   Actor_FaceDirectionById(8, FACING_WEST);
   Event_Wait(10);
   Event_ShowMessageThenWait(8, 0, 5);
-  Func_02003534_(8, 0x5000);
+  Actor_FaceDirectionAndWait(8, 0x5000);
   Event_End();
 }
 
@@ -569,10 +546,10 @@ void Func_02000a34(s32 value) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(8, 0, 5);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Event_Wait(40);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(8, 0, 5);
   }
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x2000, 0);
@@ -694,10 +671,6 @@ static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
-static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle, s32 frames) {
-  Actor_ArmCallback(actor, angle, frames);
-}
-
 void Func_02000f48(s32 actor) {
   s32 item;
   /* FAKEMATCH(dead): each owner stored and never read. */
@@ -705,7 +678,7 @@ void Func_02000f48(s32 actor) {
 
   if ((Actor_GetById(gMainRoutineWork.currentOwner)->x >> 20) <= 41)
     goto first;
-  ((struct EventFlags685 *)Ram_HeapSlots->eventWork)->field15a = 1;
+  gFieldWork->fieldMenu = 1;
   return;
 remove:
   PartyInventory_Remove(item);
@@ -755,7 +728,7 @@ chosen:
     else
       Event_SetMessageId((s32)MsgTheTridentSeems);
     Event_ShowMessageAndWait(actor, 0);
-    Actor_ArmCallback_(actor, 0x5000, 0);
+    Actor_FaceDirection(actor, 0x5000, 0);
   }
 }
 
@@ -790,7 +763,7 @@ void Func_0200115c(void) {
   Event_ResolvePendingActions(0);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 584, 248);
   if (Flag_IsSet(0x974)) {
-    Func_02003534_(gMainRoutineWork.currentOwner, 0);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
     Event_SetMessageId((s32)MsgBackForMore);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(MUS_036);
@@ -816,49 +789,49 @@ void Func_0200115c(void) {
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    Func_02003534_(8, 0x3000);
+    Actor_FaceDirectionAndWait(8, 0x3000);
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(8, 0, 5);
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    Func_02003534_(11, 0xb000);
+    Actor_FaceDirectionAndWait(11, 0xb000);
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Motion_SetModeAndWaitAnimation(8, 3);
     FieldEvent_ShowMessageThenWait(8, 0, 5);
-    Func_02003534_(8, 0x8000);
+    Actor_FaceDirectionAndWait(8, 0x8000);
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
     FieldEvent_ShowMessageThenWait(8, 0, 5);
-    Func_02003534_(11, 0x8000);
+    Actor_FaceDirectionAndWait(11, 0x8000);
     Event_Wait(30);
-    Func_02003534_(11, 0xb000);
+    Actor_FaceDirectionAndWait(11, 0xb000);
     Event_Wait(10);
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
-    Func_02003534_(11, 0x8000);
+    Actor_FaceDirectionAndWait(11, 0x8000);
     Event_Wait(20);
     Motion_SetVarCbAndRefresh(11, 2);
     Event_Wait(5);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     FieldEvent_ShowMessageThenWait(8, 0, 5);
-    Func_02003534_(11, 0xb000);
+    Actor_FaceDirectionAndWait(11, 0xb000);
     Event_Wait(10);
     FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
-    Func_02003534_(11, 0x300a);
+    Actor_FaceDirectionAndWait(11, 0x300a);
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    Func_02003534_(8, 0x3000);
+    Actor_FaceDirectionAndWait(8, 0x3000);
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(8, 0, 5);
-    Func_02003534_(11, 0xb000);
+    Actor_FaceDirectionAndWait(11, 0xb000);
     Event_Wait(10);
     Motion_SetModeAndWaitAnimation(8, 4);
     Event_Wait(5);
-    Func_02003534_(8, 0x8000);
+    Actor_FaceDirectionAndWait(8, 0x8000);
     Event_Wait(5);
     FieldEvent_ShowMessageThenWait(8, 0, 5);
     Motion_SetModeAndWaitAnimation(11, 3);
@@ -866,11 +839,11 @@ void Func_0200115c(void) {
     Motion_SetModeAndWaitAnimation(11, 3);
     Event_Wait(5);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
-    Func_02003534_(11, 0x8000);
+    Actor_FaceDirectionAndWait(11, 0x8000);
     Event_Wait(5);
   }
   Event_SetMessageId((s32)MsgOhAllRightListen);
-  Func_02003534_(8, 0xb000);
+  Actor_FaceDirectionAndWait(8, 0xb000);
   Event_Wait(20);
   Actor_GetById(8)->facing = 0x5000;
   Actor_SetModeById(8, 5);
@@ -888,12 +861,12 @@ void Func_0200115c(void) {
     Actor_SetModeById(8, 1);
     Actor_GetById(8)->facing = 0x8000;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
-    ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
     Actor_WalkByAndWaitById(4, -16, 0);
     Event_Wait(5);
   } else {
     Event_Wait(25);
-    ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
@@ -961,20 +934,8 @@ void Func_0200115c(void) {
   Event_End();
 }
 
-/* VIEW(s0a34): tag struct EventTransition as struct EventTransition__s0a34;
- * champa_cliff_caves.c has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:988: structure has no member named
- * `frames'. */
-struct EventTransition__s0a34 {
-  u8 unk000[0x1ac];
-  s32 type;
-  u8 unk1b0[4];
-  s32 frames;
-};
-
 void Func_02001774(void) {
-  struct EventTransition__s0a34 *work;
+  struct FieldWork *work;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -984,8 +945,8 @@ void Func_02001774(void) {
   Actor_SetPosition(8, 584, 224);
   Actor_SetPosition(13, 600, 240);
   Actor_SetPosition(11, 584, 264);
-  Actor_ArmCallback_(8, 0x5000, 0);
-  Actor_ArmCallback_(11, 0xb000, 0);
+  Actor_FaceDirection(8, 0x5000, 0);
+  Actor_FaceDirection(11, 0xb000, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 41);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
   Event_StartScreenTransition();
@@ -995,9 +956,9 @@ void Func_02001774(void) {
   Event_ShowMessageThenWait(11, 0, 5);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageThenWait(8, 0, 20);
-  work = Ram_HeapSlots->eventWork;
-  work->frames = 40;
-  work->type = 521;
+  work = Ram_HeapSlots->fieldWork;
+  work->transitionFrames = 40;
+  work->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetDestination((s16)gMainRoutineWork.savedScene,
@@ -1129,13 +1090,13 @@ void Func_02001868(void) {
     Motion_SetModeAndWaitAnimation(6, 3);
     Event_Wait(10);
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 6, 0, 5);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
     Actor_FaceDirectionById(6, FACING_SOUTHEAST);
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(6, 4);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 6, 0, 5);
   }
   Actor_ArmCallback(15, FACING_EAST, 0);
@@ -1269,10 +1230,10 @@ void Func_02001868(void) {
     Event_Wait(10);
     Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     Event_ShowMessageThenWait(11, 0, 5);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
   } else {
     Event_Wait(35);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
     Event_ShowMessageThenWait(8, 0, 5);
     Actor_FaceDirectionById(11, FACING_WEST);
     Event_Wait(5);
@@ -1334,12 +1295,12 @@ void Func_02001868(void) {
     Motion_SetModeAndWaitAnimation(15, 3);
     Event_Wait(10);
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 15, 0, 5);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
     Motion_SetModeAndWaitAnimation(15, 3);
     Event_Wait(10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 15, 0, 5);
   }
   Actor_FaceDirection(8, 0x5000, 0);
@@ -1616,7 +1577,7 @@ next:
 /* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1646: request for member
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1607: request for member
  * `value' in something not a structure or union. */
 struct ChampaCliffCavesWork__s2d34 {
   u8 tiles[0x1000];
@@ -1677,7 +1638,7 @@ next:
 /* VIEW(champa_cliff_caves): tag struct GlowSprite as struct
  * GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1727: structure has no
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1688: structure has no
  * member named `x'. */
 struct GlowSprite__champa_cliff_caves {
   u8 unk_0[12];
@@ -1863,7 +1824,7 @@ void Func_02003078(void) {
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1891: invalid operands to
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1852: invalid operands to
  * binary +. */
 struct ChampaCliffCavesWork__s3164 {
   u8 tiles[0x1000];
@@ -2011,11 +1972,9 @@ struct ThrowAnimations gData_02003634 = {{439, 440, 441}};
 
 #undef FIELD_AT
 #undef DEFINE_CHAMPA_CLIFF_CAVES_GROW
-#undef FIELD_AT
 #undef PALETTE
 #undef BYTE_AT
 #undef WORD_AT
-#undef FIELD_AT
 #undef gData_02003d10
 #undef gData_02003d18
 

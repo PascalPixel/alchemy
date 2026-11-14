@@ -23,6 +23,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "types.h"
+#include "system/iwram_call.h"
 #include "system/task.h"
 
 struct Actor;
@@ -102,6 +103,7 @@ void Actor_SetMovementTypeById(s32 actorId, const void *script);
 void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script);
 void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
 void Actor_SetModeById(u32 actorId, s32 animation);
+void Actor_ReturnHome(s32 mode, u32 actorId, s32 flag);
 void PaletteFade_StartInterpolation(s32 frames);
 void Icon_DrawItem(s32 item);
 s32 Trig_Sin(s32 angle);

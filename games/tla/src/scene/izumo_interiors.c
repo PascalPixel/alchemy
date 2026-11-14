@@ -19,7 +19,7 @@
 #include "scene_tables.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/scene/scene.h"
 #include "objcmd.h"
@@ -186,7 +186,7 @@ void IzumoInteriors_ReadPrayerForSusa(void) {
 }
 
 void IzumoInteriors_TalkToUzume(void) {
-  void *work = Ram_HeapSlots->eventWork;
+  void *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1092,7 +1092,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
 }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   if (gMainRoutineWork.entrance != 7)
     Event_ClearFlag(FLAG_AREA_TEMP_50);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&

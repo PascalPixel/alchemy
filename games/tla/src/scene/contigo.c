@@ -15,7 +15,7 @@
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"
 
@@ -29,15 +29,6 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d);
 void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
                                  s32 destX, s32 destY, s32 mode);
 
-static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH(pin): the height pinned to r1. */
-  register s32 h __asm__("r1") = height;
-  s32 f = frames;
-  s32 a = actor;
-
-  Actor_ShowEmoteById(a, h, f);
-}
-
 static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
                                  s32 destX, s32 destY, s32 mode) {
   TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, mode);
@@ -49,7 +40,7 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 #include "flags.h"
 #include "shared/tables.h"
 #include "system/field_effect.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -214,9 +205,9 @@ void Contigo_StartSlowPaletteCycle(void) {
 }
 
 void Contigo_StopPaletteCycle(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 256;
+  work->transition = 256;
   Task_Remove(PaletteCycle_Fade);
 }
 
@@ -243,13 +234,13 @@ s32 List_CountEntries(u16 *list) {
 void Teleport_PlayWhirl(void);
 
 void Func_02000328(void) {
-  struct ContigoEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->transition;
   BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Contigo_StartFastPaletteCycle();
@@ -264,7 +255,7 @@ void Func_02000328(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->transition = saved;
 }
 
 #include "../field/object/set_sprite_priority.c"
@@ -273,16 +264,14 @@ void Func_02000328(void) {
 
 /* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has
  * another; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/contigo.c:850: redefinition of `struct
+ * compile in tla-ja: games/tla/src/scene/contigo.c:839: redefinition of `struct
  * TalkActor'. */
 #define TalkActor TalkActor__contigo
 /* VIEW(contigo): tag struct ContigoEventWork as this part has it; the joined
  * file has another; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/contigo.c:2130: redefinition
+ * does not compile in tla-ja: games/tla/src/scene/contigo.c:2108: redefinition
  * of `struct ContigoEventWork'. */
 #define ContigoEventWork ContigoEventWork__contigo
-// @file
-#undef Func_02003f54
 #include "text/msg_ids.h"
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -383,7 +372,7 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 s32 Func_020006d0(struct Actor *self) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
   u32 mode;
   s8 *effect;
@@ -392,7 +381,7 @@ s32 Func_020006d0(struct Actor *self) {
   Actor_SetSpritePriorityDirect(
       self, BattleEffect_GetObjectPriority(
                 Actor_GetById(gMainRoutineWork.currentOwner)));
-  mode = 0x3ff & *(u16 *)(event + 0x166);
+  mode = 0x3ff & event->psynergy;
   state = &self->movementState;
   if (mode == 141) {
     effect = Ram_HeapSlots->effectWork;
@@ -424,7 +413,7 @@ near:
 }
 
 s32 Func_020007a4(void) {
-  Contigo_Jump(11, 257, 0);
+  FieldActor_ShowEmote(11, 257, 0);
   return 0;
 }
 
@@ -651,7 +640,7 @@ void Func_02000af4(void) {
   Motion_SetVarCbAndRefresh(17, 2);
   Event_ShowMessageAndWait(17, 0);
   Actor_SetModeById(17, 1);
-  Contigo_Jump(14, 259, 0);
+  FieldActor_ShowEmote(14, 259, 0);
   Actor_FaceDirection(14, FACING_WEST, 20);
   Event_ShowMessageAndWait(14, 0);
   Actor_FaceDirectionById(15, FACING_EAST);
@@ -860,14 +849,14 @@ struct TalkActor {
 };
 
 void Func_02001094(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_GetById(14));
   s16 angle = object->angle;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActorById(14, gMainRoutineWork.currentOwner, 0);
     if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo203);
@@ -884,7 +873,7 @@ void Func_02001094(void) {
       Event_SetMessageId((s32)MsgContigo49);
   }
   Event_ShowMessageAndWait(14, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Event_End();
@@ -898,14 +887,14 @@ struct ContigoObject {
 };
 
 void Func_0200118c(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ContigoObject *object = ((struct ContigoObject *)Actor_GetById(15));
   s16 angle = object->angle;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (event->unk166 == 0) {
+  if (event->psynergy == 0) {
     Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
     if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo143);
@@ -918,7 +907,7 @@ void Func_0200118c(void) {
       Event_SetMessageId((s32)MsgContigo50);
   }
   Event_ShowMessageAndWait(15, 0);
-  if (event->unk166 == 0)
+  if (event->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Event_End();
@@ -940,11 +929,6 @@ void Func_02001284(void) { Contigo_Tiles(3, 50, 1, 1, 8, 54, 0); }
 
 void Func_020012a4(void) { Contigo_Tiles(4, 43, 2, 1, 2, 43, 0); }
 
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
-                                                           s32 dz) {
-  Actor_SetDestinationOffsetById(id, dx, dz);
-}
-
 static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
@@ -961,8 +945,7 @@ void Func_020012c4(void) {
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
-                                          -16);
+      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
       leader->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
@@ -1002,14 +985,14 @@ void Func_020014b4(void) {
 
 void Func_020014d4(void) {
   if (!GameFlag_Get(62)) {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
     Event_ResolvePendingActions(1);
     Actor_SetHorizontalPositionWithTerrain(16, 664 << 16, 952 << 16);
     wait(1);
     Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
-    work->unk16a = 200;
+    work->raisedTrigger = 200;
     Event_End();
   }
 }
@@ -1217,11 +1200,6 @@ s32 Func_02001a60(s32 topic) {
   return gData_02004630[index + topic + variant];
 }
 
-struct ContigoEventCount {
-  u8 unk000[0x1c4];
-  u16 refusals;
-};
-
 extern u8 gSceneState[];
 
 // The dice game attendant: the fee is ten coins a level.
@@ -1251,7 +1229,7 @@ void Func_02001abc(void) {
     Event_LeaveFor(509, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 19);
   } else {
-    ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
+    gFieldWork->message++;
     Event_ShowMessageAndWait(14, 0);
   }
   Event_End();
@@ -1283,7 +1261,7 @@ void Func_02001b84(void) {
     Event_LeaveFor(507, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 18);
   } else {
-    ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
+    gFieldWork->message++;
     Event_ShowMessageAndWait(8, 0);
   }
   Event_End();
@@ -1400,7 +1378,7 @@ void Func_02001d50(void) {
   Event_ShowMessageAndWait(2, 0);
   Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(7, 0);
-  Contigo_Jump(0, 259, 0);
+  FieldActor_ShowEmote(0, 259, 0);
   Event_ShowMessageAndWait(0, 0);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_ShowMessageAndWait(9, 0);
@@ -1425,13 +1403,13 @@ void Func_02001d50(void) {
   Actor_SetModeById(3, 4);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 3, 0);
   Event_ShowMessageAndWait(2, 0);
-  Contigo_Jump(5, 261, 20);
+  FieldActor_ShowEmote(5, 261, 20);
   Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
   Event_ShowMessageAndWait(5, 0);
   Actor_ArmCallback(1, FACING_EAST, 0);
   Actor_ArmCallback(0, FACING_EAST, 0);
-  Contigo_Jump(0, 256, 0);
-  Contigo_Jump(1, 256, 40);
+  FieldActor_ShowEmote(0, 256, 0);
+  FieldActor_ShowEmote(1, 256, 40);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
   Motion_SetModeAndWaitAnimation(9, 4);
   Event_ShowMessageAndWait(9, 0);
@@ -1442,8 +1420,8 @@ void Func_02001d50(void) {
   Event_ShowMessageAndWait(5, 0);
   Actor_ArmCallback(1, FACING_EAST, 0);
   Actor_ArmCallback(0, FACING_EAST, 0);
-  Contigo_Jump(1, 256, 0);
-  Contigo_Jump(0, 256, 40);
+  FieldActor_ShowEmote(1, 256, 0);
+  FieldActor_ShowEmote(0, 256, 40);
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(5, 3);
   Event_ShowMessageAndWait(5, 0);
@@ -1451,26 +1429,26 @@ void Func_02001d50(void) {
   Motion_SetModeAndWaitAnimation(0, 3);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
-  Contigo_Jump(0, 265, 20);
+  FieldActor_ShowEmote(0, 265, 20);
   Actor_FaceDirection(0, FACING_NORTHEAST, 0);
   Event_ShowMessageThenWait(0, 0, 40);
-  Contigo_Jump(2, 257, 20);
+  FieldActor_ShowEmote(2, 257, 20);
   Event_ShowMessageAndWait(2, 0);
-  Contigo_Jump(3, 256, 0);
+  FieldActor_ShowEmote(3, 256, 0);
   Actor_FaceDirectionAndWait(3, FACING_SOUTH);
   Event_ShowMessageAndWait(3, 0);
   Actor_FaceDirectionAndWait(2, FACING_NORTH);
   Motion_SetModeAndWaitAnimation(2, 3);
   Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
   Actor_ArmCallback(0, FACING_EAST, 0);
-  Contigo_Jump(0, 256, 20);
+  FieldActor_ShowEmote(0, 256, 20);
   Event_ShowMessageAndWait(0, 0);
   Actor_ArmCallback(3, FACING_EAST, 0);
-  Contigo_Jump(1, 257, 0);
+  FieldActor_ShowEmote(1, 257, 0);
   Actor_FaceDirectionAndWait(1, FACING_NORTHEAST);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_ShowMessageAndWait(9, 0);
-  Contigo_Jump(3, 257, 20);
+  FieldActor_ShowEmote(3, 257, 20);
   Actor_FaceDirectionAndWait(3, FACING_SOUTHEAST);
   FieldMessage_ShowAtActor(3, 0);
   Actor_FaceDirection(1, FACING_SOUTHEAST, 0);
@@ -1483,10 +1461,10 @@ void Func_02001d50(void) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetModeById(2, 3);
     Event_ShowMessageAndWait(2, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(owner);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Actor_SetModeById(2, 4);
     Event_ShowMessageAndWait(2, 0);
   }
@@ -1499,9 +1477,9 @@ void Func_02001d50(void) {
   Actor_ArmCallback(3, FACING_EAST, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
-  Contigo_Jump(9, 265, 20);
+  FieldActor_ShowEmote(9, 265, 20);
   Event_ShowMessageAndWait(9, 0);
-  Contigo_Jump(0, 256, 0);
+  FieldActor_ShowEmote(0, 256, 0);
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
   Actor_FaceDirection(0, FACING_NORTHEAST, 20);
   Event_ShowMessageAndWait(0, 0);
@@ -1511,20 +1489,20 @@ void Func_02001d50(void) {
   Actor_ArmCallback(0, FACING_EAST, 0);
   Actor_ArmCallback(1, FACING_EAST, 0);
   Actor_ArmCallback(2, FACING_EAST, 0);
-  Contigo_Jump(0, 256, 0);
-  Contigo_Jump(1, 256, 0);
-  Contigo_Jump(3, 256, 0);
-  Contigo_Jump(2, 256, 20);
+  FieldActor_ShowEmote(0, 256, 0);
+  FieldActor_ShowEmote(1, 256, 0);
+  FieldActor_ShowEmote(3, 256, 0);
+  FieldActor_ShowEmote(2, 256, 20);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Motion_SetModeAndWaitAnimation(6, 3);
   Event_ShowMessageAndWait(6, 0);
   Actor_FaceDirection(1, FACING_SOUTH, 0);
   Actor_FaceDirection(0, FACING_NORTH, 20);
-  Contigo_Jump(3, 257, 20);
+  FieldActor_ShowEmote(3, 257, 20);
   Event_ShowMessageAndWait(3, 0);
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
   Actor_FaceDirection(0, FACING_NORTHEAST, 0);
-  Contigo_Jump(9, 265, 40);
+  FieldActor_ShowEmote(9, 265, 40);
   Event_ShowMessageAndWait(9, 0);
   Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
@@ -1546,24 +1524,24 @@ void Func_02001d50(void) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(owner);
-    Contigo_Jump(1, 264, 20);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    FieldActor_ShowEmote(1, 264, 20);
+    gFieldWork->message++;
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
   }
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_ArmCallback(0, FACING_EAST, 0);
-  Contigo_Jump(0, 265, 20);
+  FieldActor_ShowEmote(0, 265, 20);
   Event_ShowMessageAndWait(0, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(0, FACING_NORTHEAST, 0);
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
-  Contigo_Jump(0, 261, 0);
-  Contigo_Jump(1, 261, 20);
+  FieldActor_ShowEmote(0, 261, 0);
+  FieldActor_ShowEmote(1, 261, 20);
   Sound_Play(MUS_000);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 15);
   angle = 0xb000;
@@ -1586,7 +1564,7 @@ void Func_02001d50(void) {
   FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
   Actor_SetSpeed(8, 0.8);
   Actor_WalkToAndWait(8, 146, 406);
-  Contigo_Jump(3, 264, 20);
+  FieldActor_ShowEmote(3, 264, 20);
   Event_ShowMessageAndWait(3, 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(5);
@@ -1608,7 +1586,7 @@ void Func_02001d50(void) {
   Actor_SetModeById(3, 3);
   Motion_SetModeAndWaitAnimation(2, 3);
   Event_Wait(20);
-  Contigo_Jump(9, 257, 20);
+  FieldActor_ShowEmote(9, 257, 20);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetModeById(0, 3);
@@ -1619,15 +1597,15 @@ void Func_02001d50(void) {
   FieldEvent_ShowTwoMessagesAndWait(0, 5, 5, 8, 10, 8, 9, 20, 18, 10, 10);
 #endif
   Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
-  Contigo_Jump(gMainRoutineWork.currentOwner, 256, 0);
-  Contigo_Jump(5, 256, 0);
-  Contigo_Jump(7, 256, 0);
-  Contigo_Jump(6, 256, 0);
-  Contigo_Jump(0, 256, 0);
-  Contigo_Jump(1, 256, 0);
-  Contigo_Jump(3, 256, 0);
-  Contigo_Jump(2, 256, 0);
-  Contigo_Jump(9, 256, 40);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 0);
+  FieldActor_ShowEmote(5, 256, 0);
+  FieldActor_ShowEmote(7, 256, 0);
+  FieldActor_ShowEmote(6, 256, 0);
+  FieldActor_ShowEmote(0, 256, 0);
+  FieldActor_ShowEmote(1, 256, 0);
+  FieldActor_ShowEmote(3, 256, 0);
+  FieldActor_ShowEmote(2, 256, 0);
+  FieldActor_ShowEmote(9, 256, 40);
   Actor_SetModeById(8, 3);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1636,7 +1614,7 @@ void Func_02001d50(void) {
   Event_ShowMessageAndWait(3, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Event_ShowMessageAndWait(6, 0);
-  Contigo_Jump(8, 265, 0);
+  FieldActor_ShowEmote(8, 265, 0);
   Actor_FaceDirectionById(8, FACING_EAST);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
   Actor_SetSpeed(2, 0.8);
@@ -1644,7 +1622,7 @@ void Func_02001d50(void) {
   Actor_ArmCallback(2, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(8, FACING_WEST);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
-  Contigo_Jump(2, 256, 20);
+  FieldActor_ShowEmote(2, 256, 20);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0);
   Actor_FaceDirection(0, FACING_NORTHEAST, 0);
@@ -1710,7 +1688,7 @@ void Func_02001d50(void) {
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(7, 3);
-  Contigo_Jump(8, 264, 20);
+  FieldActor_ShowEmote(8, 264, 20);
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetModeById(8, 3);
@@ -1723,7 +1701,7 @@ void Func_02001d50(void) {
   FieldCamera_MoveWithinMapBounds(px(148), -1, px(368), 1);
   FieldCamera_WaitForArrival();
   Scene_PlayMusic();
-  Contigo_Jump(5, 265, 20);
+  FieldActor_ShowEmote(5, 265, 20);
   Event_ShowMessageAndWait(5, 0);
   Actor_FaceDirection(1, FACING_SOUTH, 0);
   Actor_FaceDirection(0, FACING_NORTH, 20);
@@ -1739,17 +1717,17 @@ void Func_02001d50(void) {
   Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(6, 0);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Contigo_Jump(3, 264, 20);
+  FieldActor_ShowEmote(3, 264, 20);
   Event_ShowMessageAndWait(3, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_SetModeById(7, 3);
   Event_ShowMessageAndWait(7, 0);
-  Contigo_Jump(1, 265, 20);
+  FieldActor_ShowEmote(1, 265, 20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTH);
   Actor_SetModeById(0, 3);
   Event_ShowMessageAndWait(0, 0);
-  Contigo_Jump(5, 264, 0);
+  FieldActor_ShowEmote(5, 264, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 20);
   FieldMessage_ShowAtActor(5, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -1757,10 +1735,10 @@ void Func_02001d50(void) {
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 9, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Actor_SetModeById(9, 4);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 9, 0);
   }
@@ -1807,7 +1785,7 @@ void Func_02002e18(void) {
     Actor_SetSpeed(2, 0.8);
     Actor_WalkToAndWaitById(2, 144, 374);
     Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
-    Contigo_Jump(8, 265, 20);
+    FieldActor_ShowEmote(8, 265, 20);
     Event_SetMessageId((s32)MsgReturnedToMyNewHome);
     Event_ShowMessageAndWait(8, 0);
     Motion_SetModeAndWaitAnimation(2, 3);
@@ -1822,29 +1800,29 @@ void Func_02002e18(void) {
     Actor_WalkToAndWait(2, 186, 388);
     Event_Wait(40);
     Actor_WalkToAndWait(2, 146, 380);
-    Contigo_Jump(2, 265, 20);
+    FieldActor_ShowEmote(2, 265, 20);
     Event_ShowMessageAndWait(2, 0);
-    Contigo_Jump(8, 259, 20);
+    FieldActor_ShowEmote(8, 259, 20);
     Event_ShowMessageAndWait(8, 0);
-    Contigo_Jump(2, 257, 0);
+    FieldActor_ShowEmote(2, 257, 0);
     Actor_FaceDirection(2, FACING_NORTHEAST, 40);
     Event_ShowMessageAndWait(8, 0);
-    Contigo_Jump(2, 256, 0);
+    FieldActor_ShowEmote(2, 256, 0);
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
     Actor_SetModeById(8, 4);
     Event_ShowMessageAndWait(8, 0);
     Actor_SetAttachedEffect(2, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
-    Contigo_Jump(8, 265, 20);
+    FieldActor_ShowEmote(8, 265, 20);
     Event_ShowMessageAndWait(8, 0);
     Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
     wait(1);
-    Contigo_Jump(0, 256, 0);
+    FieldActor_ShowEmote(0, 256, 0);
     Actor_SetSpeed(0, 1.2);
     Actor_WalkToAndWaitById(0, 168, 380);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
     Event_ShowMessageAndWait(0, 0);
-    Contigo_Jump(8, 256, 0);
+    FieldActor_ShowEmote(8, 256, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     wait(1);
@@ -1854,17 +1832,17 @@ void Func_02002e18(void) {
     Actor_WalkToAndWait(9, 182, 378);
     Actor_WalkToAndWaitById(9, 182, 360);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
-    Contigo_Jump(9, 265, 20);
+    FieldActor_ShowEmote(9, 265, 20);
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
     Actor_ArmCallback(8, FACING_EAST, 0);
     Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
     Motion_SetModeAndWaitAnimation(8, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
-    Contigo_Jump(9, 257, 0);
-    Contigo_Jump(gMainRoutineWork.currentOwner, 257, 0);
-    Contigo_Jump(0, 257, 0);
-    Contigo_Jump(2, 257, 40);
+    FieldActor_ShowEmote(9, 257, 0);
+    FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
+    FieldActor_ShowEmote(0, 257, 0);
+    FieldActor_ShowEmote(2, 257, 40);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Event_ShowMessageAndWait(8, 0);
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
@@ -1875,7 +1853,7 @@ void Func_02002e18(void) {
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
-    Contigo_Jump(8, 259, 0);
+    FieldActor_ShowEmote(8, 259, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 20);
     Event_ShowMessageAndWait(8, 0);
     Actor_FaceDirection(0, FACING_NORTHEAST, 0);
@@ -1886,10 +1864,10 @@ void Func_02002e18(void) {
     Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
-    Contigo_Jump(gMainRoutineWork.currentOwner, 256, 0);
-    Contigo_Jump(0, 256, 0);
-    Contigo_Jump(2, 256, 0);
-    Contigo_Jump(9, 256, 40);
+    FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 0);
+    FieldActor_ShowEmote(0, 256, 0);
+    FieldActor_ShowEmote(2, 256, 0);
+    FieldActor_ShowEmote(9, 256, 40);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(8, 4);
     Event_ShowMessageAndWait(8, 0);
@@ -1904,24 +1882,24 @@ void Func_02002e18(void) {
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_FaceDirection(9, FACING_WEST, 0);
     Actor_FaceDirection(2, FACING_NORTHEAST, 0);
-    Contigo_Jump(8, 265, 0);
+    FieldActor_ShowEmote(8, 265, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
     Motion_SetVarCbAndRefresh(2, 1);
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Event_ShowMessageAndWait(8, 0);
-    Contigo_Jump(9, 261, 20);
+    FieldActor_ShowEmote(9, 261, 20);
     Actor_FaceDirection(0, FACING_NORTHEAST, 0);
     Actor_ArmCallback(8, FACING_EAST, 80);
-    Contigo_Jump(9, 261, 40);
-    Contigo_Jump(0, 257, 0);
-    Contigo_Jump(gMainRoutineWork.currentOwner, 257, 0);
-    Contigo_Jump(2, 257, 40);
-    Contigo_Jump(9, 262, 0);
+    FieldActor_ShowEmote(9, 261, 40);
+    FieldActor_ShowEmote(0, 257, 0);
+    FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
+    FieldActor_ShowEmote(2, 257, 40);
+    FieldActor_ShowEmote(9, 262, 0);
     Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
-    Contigo_Jump(9, 264, 0);
+    FieldActor_ShowEmote(9, 264, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 20);
     Event_ShowMessageAndWait(9, 0);
     Actor_Jump(2, 2, 10);
@@ -1929,40 +1907,40 @@ void Func_02002e18(void) {
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Motion_SetModeAndWaitAnimation(9, 3);
     FieldMessage_ShowAtActor(9, 0);
-    Contigo_Jump(2, 257, 0);
+    FieldActor_ShowEmote(2, 257, 0);
     Actor_FaceDirection(2, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
       Actor_SetModeById(2, 3);
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
     } else {
       Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
       Actor_SetModeById(2, 4);
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
     }
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(9, 4);
     FieldMessage_ShowAtActor(9, 0);
-    Contigo_Jump(0, 257, 0);
+    FieldActor_ShowEmote(0, 257, 0);
     Actor_FaceDirection(0, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
       Actor_SetModeById(0, 3);
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
     } else {
       Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
       Actor_SetModeById(0, 4);
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
     }
     Motion_SetModeAndWaitAnimation(9, 3);
     Event_ShowMessageAndWait(9, 0);
-    Contigo_Jump(9, 265, 0);
+    FieldActor_ShowEmote(9, 265, 0);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     Event_ShowMessageAndWait(9, 0);
     Actor_SetAttachedEffect(2, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1972,13 +1950,13 @@ void Func_02002e18(void) {
     Event_ShowMessageAndWait(9, 0);
     Actor_SetModeById(0, 3);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
-    Contigo_Jump(8, 257, 20);
+    FieldActor_ShowEmote(8, 257, 20);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0);
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-    Contigo_Jump(9, 265, 0);
+    FieldActor_ShowEmote(9, 265, 0);
     Event_ShowMessageAndWait(9, 0);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
     Event_ShowMessageAndWait(0, 0);
@@ -2138,7 +2116,7 @@ struct ContigoEventWork {
 };
 
 void Contigo_InitializeRoom2(void) {
-  ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
+  gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
       Func_02001d50();
@@ -2191,7 +2169,7 @@ void Contigo_InitializeRoom3(void) {
   s8 *prize;
   s32 item;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Func_02001c44(13);
   Func_02001c44(16);
   Func_02001c44(17);
@@ -2396,7 +2374,7 @@ void Func_02003cd8(struct Actor *object) {
 /* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2432: structure has no member named `blend'. */
+ * games/tla/src/scene/contigo.c:2410: structure has no member named `blend'. */
 struct SparkleSprite__s3e54 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2411,7 +2389,7 @@ struct SparkleSprite__s3e54 {
 
 /* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2424:
+ * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2402:
  * incompatible types in assignment. */
 struct SparkleWork__s3e54 {
   struct SparkleSprite__s3e54 sprites[4];
@@ -2455,7 +2433,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
 /* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2456: structure has no member named `unk62'. */
+ * games/tla/src/scene/contigo.c:2434: structure has no member named `unk62'. */
 struct ContigoObject__s3e54 {
   u8 unk00[0x62];
   u8 unk62;
@@ -3068,7 +3046,5 @@ struct Trigger gContigo_Room3Triggers[] = {
 #undef MSG_FIRST_PRIZE
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
-#undef Func_02003e54
-#undef Palette_SetColors
 #undef ContigoEventWork
 #undef TalkActor

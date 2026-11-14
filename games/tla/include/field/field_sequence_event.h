@@ -1,7 +1,10 @@
-#ifndef TLA_EVENT_WORK_H
-#define TLA_EVENT_WORK_H
+#ifndef ALCHEMY_FIELD_SEQUENCE_EVENT_H
+#define ALCHEMY_FIELD_SEQUENCE_EVENT_H
 
-#include "field/event_work.h"
+/// @file
+/// The field sequence's event routines (field_sequence/event.c and items.c).
+
+#include "field/field_work.h"
 
 struct PendingEvent {
   u32 key;

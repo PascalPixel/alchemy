@@ -7,7 +7,7 @@
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/cell_target.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
@@ -21,10 +21,11 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
+#include "system/io_write.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "system/iwram_call.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "flags.h"
 #include "module/field/object.h"
@@ -39,11 +40,6 @@ struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
 struct Work;
-
-struct AnemosInnerSanctumEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
 
 struct Mover {
   u8 unk00[8];
@@ -193,7 +189,7 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 #include "shared/palette_cycle_start.h"
 
 void Func_02000158(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   FieldTask_Remove((s32)PaletteCycle_Fade);
 }
 
@@ -210,19 +206,14 @@ void Func_02000178(void) {
 
 #include "shared/palette_cycle_fade.h"
 
-static __inline__ void Func_02003458_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
 void Func_02000328(void) {
-  struct AnemosInnerSanctumEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->transition;
   PaletteFade_ApplyTarget(0x202108, 1);
-  Func_02003458_(0x10000, 2);
-  ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->eventWork)->value1ac =
-      0x100;
+  PaletteFade_ApplyTarget(0x10000, 2);
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02000178();
@@ -237,7 +228,7 @@ void Func_02000328(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->transition = saved;
 }
 
 #include "../field/object/set_sprite_priority.c"
@@ -247,7 +238,6 @@ void Func_02000328(void) {
 #include "../field/field_effect/move.c"
 
 #undef BG_PLTT_SET_RGB
-// @file
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 extern s32 gData_02003840[];
@@ -519,7 +509,7 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 /* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
  * scene/anemos_inner_sanctum/scene_tables has another definition; tried with
  * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:554: structure has no member named
+ * games/tla/src/scene/anemos_inner_sanctum.c:544: structure has no member named
  * `room'. */
 struct Work__s0ac8 {
   u8 pad[340];
@@ -809,8 +799,7 @@ void Func_0200109c(void) {
 // running the event at x 67, z 45 of room 3 and moving object 13 to object 12
 // at x 91, z 59 until flag 0xa84 is set.
 void Func_02001160(void) {
-  struct Actor *leader =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+  struct Actor *leader = gFieldWork->movedBlock;
   s32 x;
   s32 z;
 
@@ -879,7 +868,7 @@ extern s32 gData_02003574[];
 // 0x206 are all set, it moves object 8 in room 4 (else object 9) to mode 2 and
 // sets flag 0x207.
 void Func_02001398(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object;
   s32 all;
@@ -902,7 +891,7 @@ void Func_02001398(void) {
   Actor_SelectAnimation(object, 3);
   Actor_SetSpriteFlags(object, 0);
   Actor_StartScript(object, gData_02003574);
-  Event_SetFlag(work->exit + 0x1ce);
+  Event_SetFlag(work->stepTrigger + 0x1ce);
   all = Event_GetFlag(FLAG_SCENE_TEMP_00);
   for (i = 1; i != 7; i++)
     all &= Event_GetFlag(0x200 + i);
@@ -1095,10 +1084,10 @@ void Func_020017b4(struct Actor *self) {
     kind = FieldMapGrid_GetCellBehaviorAt(self->terrainId, x, next[1]);
   }
   if (kind == 52) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 201;
+    gFieldWork->raisedTrigger = 201;
     self->update = 0;
   } else if (kind == 51) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 200;
+    gFieldWork->raisedTrigger = 200;
     self->update = 0;
   }
 }
@@ -1278,16 +1267,6 @@ void Func_02001c60(void) {
   Func_02000158();
 }
 
-/* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938;
- * module/scene/scene.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:1312: structure has no member
- * named `value'. */
-struct EventWork154__s1938 {
-  u8 unk000[0x154];
-  s16 value;
-};
-
 extern s16 gData_020043e4[];
 extern struct MapGridCellAnimation gData_02004410[];
 
@@ -1298,7 +1277,7 @@ static __inline__ void Func_02003320_(const void *data, s32 a, s32 b) {
 // The scene opening: clears the actors' motion flags, plays the entrance's
 // map edit and steps the leader in.
 void Func_02001c94(void) {
-  struct EventWork154__s1938 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
   Event_Start();
@@ -1318,7 +1297,7 @@ loop:
   if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum1) {
     MapGrid_AnimateCells(gData_020043e4, 33, 7);
   } else {
-    s32 index = work->value / 2 - 1;
+    s32 index = work->stepTrigger / 2 - 1;
 
     Func_02003320_(gData_02004410[index].steps, gData_02004410[index].x,
                    gData_02004410[index].y);
@@ -1327,14 +1306,10 @@ loop:
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   FieldEvent_Wait(6);
-  FieldEvent_SetExitRequest(work->value);
+  FieldEvent_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
-}
-
-static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 void Func_02001d68(void) {
@@ -1344,7 +1319,7 @@ void Func_02001d68(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(9, 2);
   object->y = -px(64);
-  Func_020033e0_(9, px(728), px(120));
+  Actor_SetPositionFixed(9, px(728), px(120));
   Actor_SetPosition(gMainRoutineWork.currentOwner, 728, 120);
   Actor_Get(gMainRoutineWork.currentOwner)->y = -px(48);
   Event_StartScreenTransition();
@@ -1788,30 +1763,12 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map/cell_sprite.c"
 
 #include "shared/cracked_tiles_find.h"
 
-void Leader_CenterInCell(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = object->x;
-  s32 z = object->z;
-
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
-
-  x >>= 20;
-  z >>= 20;
-  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                          (z << 4) + 8);
-  System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
-                                       (z << 20) + 0x80000);
-  FieldEvent_Wait(4);
-  FieldCamera_GetActor()->y -= px(8);
-}
+#include "shared/leader_center_in_cell.h"
 
 // Map_CopyCellsRect through this overlay's import.
 
@@ -1821,74 +1778,17 @@ void Leader_CenterInCell(void) {
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-void CrackedTile_Fall(struct PushEvent *event) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 x;
-  s32 z;
-  s32 mask;
-
-  mask = 64;
-  x = object->x >> 20;
-  do {
-  } while (0);
-  x |= (s16)(event->x & mask);
-  z = object->z >> 20;
-  z |= (s16)(event->z & mask);
-  Leader_CenterInCell();
-  Sound_Play(SE_SPLASH);
-  Map_CopyCellsRect(event->x, event->z + 2, 1, 1, x, z);
-  Event_Wait(12);
-  {
-    u32 zero = 0;
-
-    object->facing = 0x4000;
-    object->motionFlags = zero;
-  }
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  {
-    u32 winout = 0xf1f;
-
-    REG_WINOUT = winout;
-  }
-  do {
-  } while (0);
-  REG_DISPCNT |= 0x8000;
-  event->busy = 1;
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
-  Event_Wait(16);
-  for (x = 0; x < 40; x++) {
-    if (x == 5)
-      Sound_Play(SE_DUST_PUFF);
-    object->scaleX += -0x400;
-    object->scaleY += -0x300;
-    object->y += -0x9999;
-    wait(1);
-  }
-  do {
-    Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
-  } while (0);
-  event->busy = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
 #undef BYTE_AT
-#undef BYTE_AT
 #undef FIELD_AT
 #undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
-#undef FIELD_AT
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Func_0200088c
 #undef Func_020009b8
 #undef Func_02000a78
-#undef Func_02000038
-#undef CrackedTile_PlaceLanding
-// @file
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
@@ -1904,7 +1804,7 @@ void CrackedTile_DropIn(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -1956,16 +1856,6 @@ loop:
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s2f48): routine CrackedTile_Fall as this part declared it; the joined
- * file has another; tried as the definition's void CrackedTile_Fall(struct
- * PushEvent *event), which the object already declares, it does not compile in
- * tla-ja: games/tla/src/scene/shared/cracked_tiles_step.h:23: too many
- * arguments to function `CrackedTile_Fall'. */
-void CrackedTile_Fall__s2f48(
-    struct CellTarget *work,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_Fall__s2f48
-
 #include "shared/cracked_tiles_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
@@ -2412,5 +2302,3 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_020037c8,
     (s32)gData_02003804,
 };
-#undef CrackedTile_Fall
-#undef CrackedTile_PlaceLanding

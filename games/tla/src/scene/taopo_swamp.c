@@ -17,7 +17,7 @@
 #include "system/frame.h"
 #include "system/vector3.h"
 #include "version.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
@@ -46,7 +46,6 @@ void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
@@ -146,10 +145,6 @@ static __inline__ void TaopoSwamp_CopyCellAttributes(s32 a, s32 b, s32 c, s32 d,
 
 static __inline__ void TaopoSwamp_JumpDownLedge(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
-}
-
-static __inline__ void TaopoSwamp_ReturnHome(s32 a, s32 b, s32 c) {
-  Actor_ReturnHome(a, b, c);
 }
 
 static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -330,11 +325,11 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
 }
 
 /// Scoop on the spot under actor 65 digs up its item (flag 0x301).
-void TaopoSwamp_ScoopHiddenItem(s32 a) { TaopoSwamp_ReturnHome(a, 65, 0x301); }
+void TaopoSwamp_ScoopHiddenItem(s32 a) { Event_DigUpTreasure(a, 65, 0x301); }
 
 /// Scoop on the spot under actor 64 digs up its item (flag 0x300).
 void TaopoSwamp_ScoopOtherHiddenItem(s32 a) {
-  TaopoSwamp_ReturnHome(a, 64, 0x300);
+  Event_DigUpTreasure(a, 64, 0x300);
 }
 
 /// Scoop digs into the mud at one of the two spots of the lowest level.
@@ -893,7 +888,7 @@ void TaopoSwamp_CoolLastRock(s32 a, s32 id) {
 }
 
 /// Scoop on the sparkle in the dark chamber digs up the Star Dust (flag 0x348).
-void TaopoSwamp_ScoopStarDust(s32 a) { TaopoSwamp_ReturnHome(a, 64, 0x348); }
+void TaopoSwamp_ScoopStarDust(s32 a) { Event_DigUpTreasure(a, 64, 0x348); }
 
 void TaopoSwamp_ShowSparkleMessage(void) { Func_020029a0((s32)&MsgIThoughtI); }
 
@@ -1023,7 +1018,7 @@ void TaopoSwamp_CycleDjinniVents(void) {
   }
   if ((u32)(timer - 251) <= 178 && Event_GetFlag(0xa6e) && !Event_GetFlag(59) &&
       !Event_GetFlag(FLAG_AREA_TEMP_10))
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 100;
+    gFieldWork->raisedTrigger = 100;
   Vents_AdvanceCounter(480);
 }
 
@@ -1208,7 +1203,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
+  gFieldWork->transition = 513;
   if (scene == (s32)&SceneId_TaopoSwamp2) {
     gMainRoutineWork.retreatScene = (s32)&SceneId_TaopoSwamp1;
     gMainRoutineWork.retreatEntrance = 1;
@@ -1396,7 +1391,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  s32 *effect = (s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac);
+  s32 *effect = &gFieldWork->transition;
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 
@@ -1948,7 +1943,6 @@ void Vent_SetGust(s32 index, s32 value) {
 #undef VENT_TOUCHING
 #undef VENT_BOUNCE
 #undef VENT_AT
-#undef gTaopoSwamp_DripFromCeilingScript
 
 void TaopoSwamp_FightFlower(void);
 void TaopoSwamp_DigHole(void);

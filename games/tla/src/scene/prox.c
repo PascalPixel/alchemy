@@ -1,8 +1,10 @@
-
+/// @file
+/// Prox, Felix's home in the frozen north, where the clan of Puelle lives in
+/// poverty in the shadow of the Mars Lighthouse, in six rooms that share this
+/// overlay (SceneId_Prox1 to SceneId_Prox6).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-/// @file
 #include "types.h"
 #include "flags.h"
 #include "system/main_routine_work.h"
@@ -11,7 +13,7 @@
 #include "field/event_inline.h"
 #include "shared/tables.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "actor.h"
 #include "version.h"
 #include "battle/battle.h"
@@ -134,16 +136,15 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 #ifndef TLA_PROX_LOCAL_H
 #define TLA_PROX_LOCAL_H
 
-/// @file
 /// Overlay 6A8's scene layer: the declarations its scenes share and the
 /// inline helpers some of their calls go through, as overlay 694's do.
 
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK gFieldWork
 
 #endif
 
@@ -185,7 +186,7 @@ extern u32 gData_020060cc[];
 extern u32 gData_0200617c[];
 extern u32 gData_020061fc[];
 extern u32 gData_0200622c[];
-void Func_020038e8(void);
+void Leader_StopIfPending(void);
 void Particles_UpdateFalling(void);
 
 void Func_02000290(void);
@@ -257,7 +258,7 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
     if (ahead == facing || right == facing || left == facing || force != 0) {
       /* FAKEMATCH(temporary): the count and movementState's address held in
        * locals before the test. */
-      s16 count = ((struct EventWork *)Ram_HeapSlots->eventWork)->blockedSteps;
+      s16 count = gFieldWork->blockedSteps;
       u8 *movementState = &object->movementState;
 
       if (count > 120) {
@@ -285,7 +286,7 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 /// work's halfword 0x160 or byte 4 of the window tiles is nonzero.
 s32 Func_020003bc(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 flag = 0;
   struct Actor *target;
 
@@ -303,7 +304,7 @@ s32 Func_020003bc(struct Actor *actor) {
     target = Actor_Get(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.currentOwner);
-    if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->timer & 2))
+    if ((work->talk != 0 || tiles[4] != 0) && (actor->timer & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);
   }
@@ -314,7 +315,7 @@ s32 Func_020003bc(struct Actor *actor) {
 
 s32 Func_020003bc(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 *action = &actor->timer;
   s32 flag = 0;
   struct Actor *target;
@@ -327,7 +328,7 @@ s32 Func_020003bc(struct Actor *actor) {
     target = Actor_Get(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.currentOwner);
-    if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (*action & 2))
+    if ((work->talk != 0 || tiles[4] != 0) && (*action & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);
   }
@@ -349,7 +350,7 @@ extern u32 gData_0200506c[];
  * 0, 104, 0, 0, 0, 196, 0x8000, 0, 172, - 1, 1, 0, 0, 128, 0, 0, 0, 106,
  * 0xb000, 1, 178, - 1, 1, 0, 0...; tried as the definition's extern s16
  * gData_0200521c[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:365: request for member `talkFacing' in something
+ * games/tla/src/scene/prox.c:366: request for member `talkFacing' in something
  * not a structure or union. */
 extern struct ActorPlacement gData_0200521c__prox[] __asm__("gData_0200521c");
 
@@ -392,9 +393,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Actor_ReturnHome();
-
-void Func_02000588(s32 a0) { Call3(Actor_ReturnHome, a0, 0x40, 0x300); }
+void Func_02000588(s32 a0) { Event_DigUpTreasure(a0, 64, 0x300); }
 
 extern struct Trigger gData_02005a20[];
 
@@ -493,63 +492,63 @@ struct TalkActor {
 };
 
 void Prox_TalkToPlayingChild(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(16));
   s16 angle = object->angle;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActor(16, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)MsgProx113);
   } else {
     FieldEvent_SetMessageId((s32)MsgProx117);
   }
   Event_ShowMessage(16, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Func_0200446c();
 }
 
 void Prox_TalkToRestlessChild(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(17));
   s16 angle = object->angle;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActor(17, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)MsgProx114);
   } else {
     FieldEvent_SetMessageId((s32)MsgProx118);
   }
   Event_ShowMessage(17, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Func_0200446c();
 }
 
 void Prox_TalkToTrainingChild(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(18));
   s16 angle = object->angle;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActor(18, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)MsgProx115);
   } else {
     FieldEvent_SetMessageId((s32)MsgProx119);
   }
   Event_ShowMessage(18, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Func_0200446c();
@@ -847,10 +846,10 @@ test_wait:
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
   } else {
     FieldActor_WaitForMoveById(owner);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
   }
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
@@ -965,7 +964,7 @@ void Func_020015d0(void) {
 
 void Func_02001770(void) {
   if (Event_GetFlag(0xa3d) == 0 && Event_GetFlag(64) == 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(1);
@@ -1052,13 +1051,8 @@ void Func_020018e0(void) {
   }
 }
 
-struct EventWork154 {
-  u8 unk000[0x154];
-  s16 returnEntrance;
-};
-
 void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
@@ -1086,7 +1080,7 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->returnEntrance);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 void Func_02001a9c(void) { Prox_EnterDoor(0x30, 0x27, 0x39, 0x1a, 1, 2); }
@@ -1106,8 +1100,8 @@ void Func_02001b44(void) { Prox_EnterDoor(0x57, 2, 0x50, 7, 1, 2); }
 void Func_02001b60(void) { Prox_EnterDoor(0x59, 0, 0x4d, 0x10, 1, 2); }
 
 void Func_02001b7c(void) {
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
-  s32 entrance = work->returnEntrance;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s32 entrance = work->stepTrigger;
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 cell;
   s32 id;
@@ -1200,7 +1194,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetPositionAndFacing(20, px(220), px(600), angleB000);
   Actor_SetPosition(5, 184, 684);
   System_Wait(1);
-  EVENT_WORK->screenEffect = 0x100;
+  EVENT_WORK->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(0.8);
@@ -1277,9 +1271,9 @@ void Prox_GiveThanksForBeacon(void) {
                                              0)) {
     Actor_SetAnimationAndWait(26, 3);
     Event_ShowMessage(26, 0);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
   } else {
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Actor_SetAnimationAndWait(26, 4);
     Event_ShowMessage(26, 0);
   }
@@ -1350,9 +1344,9 @@ void Prox_GiveThanksForBeacon(void) {
     Actor_WalkToAndWait(0, 168, 520);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
-    EVENT_WORK->messageId += 2;
+    EVENT_WORK->message += 2;
   } else {
-    EVENT_WORK->messageId += 2;
+    EVENT_WORK->message += 2;
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
     Actor_FaceDirectionAndWait(0, FACING_SOUTH);
@@ -1419,20 +1413,15 @@ void Prox_GiveThanksForBeacon(void) {
   FieldActor_WaitForMoveById(27);
   Actor_SetPosition(27, 0, 0);
   {
-    struct EventWork *work = EVENT_WORK;
+    struct FieldWork *work = EVENT_WORK;
 
-    work->screenEffect = 0x209;
-    work->delay = 0x10;
+    work->transition = 0x209;
+    work->transitionFrames = 0x10;
   }
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_SetFlag(0x9c5);
   Func_0200446c();
 }
-
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
 
 void Actor_SetWideSprite(s32 id, s32 wide);
 void Map_ClearLayerEntryFlag(s32 layer);
@@ -1449,14 +1438,13 @@ s32 Scene_Initialize(void) {
   }
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Prox4) {
-    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+    gFieldWork->transition = 0x209;
     Func_020029c8();
   } else if (scene == (s32)&SceneId_Prox5) {
-    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+    gFieldWork->transition = 0x209;
     Func_02002a38();
   } else if (scene == (s32)&SceneId_Prox6) {
-    s32 *effect =
-        &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
+    s32 *effect = &gFieldWork->transition;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
     register s32 skip __asm__("r0");
     s32 value = 0x209;
@@ -1693,9 +1681,9 @@ void Prox_SayFarewell(void) {
       Event_ShowMessage(0, 0);
       Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
       Event_ShowMessage(8, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId += 2;
+      EVENT_WORK->message += 2;
       Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
       Event_ShowMessage(8, 0);
     }
@@ -1724,9 +1712,9 @@ void Prox_SayFarewell(void) {
                                               0) == 0) {
       Actor_SetAnimationAndWait(0, 3);
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
       Actor_SetAnimationAndWait(0, 4);
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
     }
@@ -1804,9 +1792,9 @@ void Prox_SayFarewell(void) {
                                               0) == 0) {
       Actor_SetAnimationAndWait(11, 3);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
       Actor_SetAnimationAndWait(11, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     }
@@ -1841,9 +1829,9 @@ void Prox_SayFarewell(void) {
                                               0) == 0) {
       Actor_SetAnimationAndWait(11, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
       Actor_SetAnimationAndWait(11, 3);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     }
@@ -1907,9 +1895,9 @@ void Prox_SayFarewell(void) {
                                               0) == 0) {
       Actor_SetAnimationAndWait(11, 3);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
       Actor_SetAnimationAndWait(11, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     }
@@ -1994,45 +1982,11 @@ void Prox_SayFarewell(void) {
 }
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-extern s16 gData_02004740[];
+extern s16 gSlideOnIce_SteerAngles[];
 
-void Actor_SteerByPad(struct Actor *object) {
-  s32 angle;
-  s32 turn;
+#include "shared/actor_steer_by_pad.h"
 
-  if (object->timer != 0) {
-    object->timer--;
-    return;
-  }
-  *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (Event_GetFlag(FLAG_MENU_OPEN))
-    angle = -1;
-  else
-    angle = gData_02004740[(gInput.held >> 4) & 15];
-  if (angle == -1) {
-    Actor_SelectAnimation(object, 9);
-    return;
-  }
-  turn = (s16)(angle - object->facing);
-  if (turn > 0x1000)
-    turn = 0x1000;
-  if (turn < -0x1000)
-    turn = -0x1000;
-  object->facing += turn;
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-}
-
-void Func_020038e8(void) {
-  void *work = Ram_HeapSlots->eventWork;
-
-  if (FIELD_AT(work, s16, 0xca2) != 0) {
-    Event_SetFlag(FLAG_MENU_OPEN);
-    Leader_StopMoving();
-    Event_ResolveAllPendingActions();
-    Event_ClearFlag(FLAG_MENU_OPEN);
-  }
-}
+#include "shared/leader_stop_if_pending.h"
 #undef FIELD_AT
 
 // object the overlay links.
@@ -2046,167 +2000,15 @@ struct Position {
 
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
-extern s16 gData_02004780[];
+extern s16 gSlideOnIce_AnglesByKey[];
 
-void Leader_SlideOnIce(void) {
-  struct Vector3 probe;
-  s32 startBehavior;
-  s32 x;
-  s32 z;
-  s32 startX;
-  s32 startZ;
-  u8 *layer;
-  s32 radius;
-  struct Actor *actor;
-  struct Vector3 *position;
-  struct Vector3 *next;
-  s32 heading;
-  s32 nextBehavior;
-  s32 distance;
-  struct Actor *other;
-  u8 *flags;
-  s32 i;
-  s32 dx;
-  s32 dz;
+#include "shared/leader_slide_on_ice.h"
 
-  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
-
-top:
-  Func_020038e8();
-  actor->speedLimit = px(1);
-  actor->acceleration = px(1) / 2;
-  actor->targetX = 0x80000000;
-  actor->targetZ = 0x80000000;
-  actor->velocityX = 0;
-  actor->velocityZ = 0;
-  position = &probe;
-  position->x = startX = (actor->x & 0xfff00000) + px(8);
-  position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + px(8);
-  x = startX;
-  z = startZ;
-  layer = &actor->terrainId;
-  startBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, x, z);
-  dz = z - actor->z;
-  dx = x - actor->x;
-  distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
-  if (distance < px(4)) {
-    heading = gData_02004780[(gInput.held >> 4) & 15];
-    if ((heading << 16) == -0x10000) {
-      return;
-    }
-  } else {
-    heading = (s16)ArcTan2(z - actor->z, x - actor->x);
-    heading = (s16)((heading + 0x2000) & -0x4000);
-  }
-  FieldVector_AddPolarOffset(px(16), heading, &probe);
-  nextBehavior =
-      FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
-  if (nextBehavior == 255 ||
-      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
-          px(8)) {
-    actor->facing = heading;
-    actor->velocityX = 0;
-    actor->velocityZ = 0;
-    actor->x = startX;
-    actor->z = startZ;
-    goto done;
-  }
-  position->x = startX;
-  position->z = startZ;
-  actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
-  actor->timer = 0;
-  FieldActor_SetMoveTargetFixed(actor, startX, actor->y, startZ);
-  Actor_SelectAnimation(actor, 2);
-  Actor_SetAnimationSpeed(actor, 48);
-  FieldActor_WaitForMove(actor);
-  actor->update = Actor_SteerByPad;
-  goto test;
-body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
-    goto stop;
-  }
-  radius = actor->radius - 2;
-  other = Ram_HeapSlots->scriptObjects;
-  flags = &other->collisionFlags;
-  for (i = 0; i < 64; i++, flags += 128, other++) {
-    if (other->script != NULL && (*flags & 1) && other != actor) {
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
-       * next and actor. */
-      asm(""
-          :
-          : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
-            "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
-          : SFP_CLOBBER, "r4");
-      if (Field_CheckSpheresOverlap(&other->x, radius, &probe,
-                                    other->radius - 2) >= 0) {
-        goto stop;
-      }
-    }
-  }
-  x = next->x;
-  z = next->z;
-  actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
-  FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
-  FieldActor_WaitForMove(actor);
-  if (nextBehavior != startBehavior) {
-    goto blocked;
-  }
-test:
-  {
-    struct Vector3 *step;
-
-    step = &probe;
-    FieldVector_AddPolarOffset(px(16), heading, step);
-    /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the
-     * address. */
-    step = NULL;
-  }
-  next = &probe;
-  nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
-  if (nextBehavior != 255) {
-    goto body;
-  }
-stop:
-  actor->speedLimit = px(2);
-  actor->acceleration = px(1);
-  FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
-  FieldActor_WaitForMove(actor);
-  System_Wait(2);
-  goto top;
-
-blocked:
-  System_Wait(10);
-done:
-  actor->update = NULL;
-  actor->actionFlags |= 1;
-  actor->acceleration = px(1) / 4;
-  Actor_SelectAnimation(actor, 1);
-}
-
-extern volatile s16 gProx_SlideStopped;
+extern volatile s16 gSlideOnIce_Stopped;
 
 s32 Actor_HasArrived(struct Actor *object);
 
-#define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
-#define SLIDE_STOPPED gProx_SlideStopped
-#define SLIDE_STOP_LEADER Func_020038e8
-#define SLIDE_ANGLES gData_02004780
-#define SLIDE_SET_ANIMATION Actor_SelectAnimation
-#define SLIDE_HAS_ARRIVED Actor_HasArrived
-#define SLIDE_KEEP_SLIDING Actor_SteerByPad
-#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
 #include "shared/slide_on_ice_from_edge.c"
-#undef SLIDE_FROM_EDGE
-#undef SLIDE_STOPPED
-#undef SLIDE_STOP_LEADER
-#undef SLIDE_ANGLES
-#undef SLIDE_SET_ANIMATION
-#undef SLIDE_HAS_ARRIVED
-#undef SLIDE_KEEP_SLIDING
-#undef SLIDE_SPHERES_OVERLAP
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -2215,138 +2017,9 @@ s32 Actor_HasArrived(struct Actor *object);
    } *)(base))                                                                 \
        ->v)
 
-void Leader_SetSlideStopped(s32 a0) { gProx_SlideStopped = a0; }
+void Leader_SetSlideStopped(s32 a0) { gSlideOnIce_Stopped = a0; }
 
-void Leader_SlideOnIceAhead(void) {
-  struct Vector3 probe;
-  s32 heading;
-  s32 startBehavior;
-  s32 x;
-  s32 z;
-  s32 radius;
-  struct Actor *actor;
-  struct Vector3 *next;
-  s32 nextBehavior;
-  u8 *layer;
-  struct Actor *other;
-  struct Vector3 *position;
-  u8 *flags;
-  s32 i;
-  s32 cell;
-  s32 angle;
-  s32 zero;
-  struct Vector3 *step;
-  s32 startX;
-  s32 startZ;
-
-  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  heading = (s16)((actor->facing + 0x2000) & -0x4000);
-
-top:
-  Func_020038e8();
-  actor->speedLimit = px(1);
-  actor->acceleration = px(1) / 2;
-  actor->targetX = 0x80000000;
-  actor->targetZ = 0x80000000;
-  /* Default: one zero, spilled and reloaded at each use. */
-  zero = 0;
-  actor->velocityX = zero;
-  actor->velocityZ = zero;
-  /* FAKEMATCH(temporary): cell holds the masked x. */
-  cell = actor->x & 0xfff00000;
-  i = px(8);
-  position = &probe;
-  position->x = startX = cell + i;
-  position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + i;
-  x = startX;
-  z = startZ;
-  startBehavior = FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),
-                                                 startX, startZ);
-  FieldVector_AddPolarOffset(px(16), heading, position);
-  nextBehavior =
-      FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
-  if (nextBehavior == 255 ||
-      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
-    actor->facing = heading;
-    actor->velocityX = 0;
-    actor->velocityZ = 0;
-    actor->x = startX;
-    actor->z = startZ;
-    goto done;
-  }
-  position->x = x;
-  position->z = z;
-  actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
-  actor->timer = zero;
-  Actor_SelectAnimation(actor, 2);
-  Actor_SetAnimationSpeed(actor, 48);
-  actor->update = Actor_SteerByPad;
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading
-   * nextBehavior twice. */
-  asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);
-  goto test;
-body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
-    goto stop;
-  }
-  radius = actor->radius - 2;
-  other = Ram_HeapSlots->scriptObjects;
-  flags = &other->collisionFlags;
-  for (i = 0; i < 64; i++, flags += 128, other++) {
-    if (other->script != NULL && (*flags & 1) && other != actor) {
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
-       * next and actor. */
-      asm(""
-          :
-          : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
-            "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
-          : SFP_CLOBBER, "r4");
-      if (Field_CheckSpheresOverlap(&other->x, radius, &probe,
-                                    other->radius - 2) >= 0) {
-        goto stop;
-      }
-    }
-  }
-  x = next->x;
-  z = next->z;
-  actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
-  FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
-  FieldActor_WaitForMove(actor);
-  if (nextBehavior != startBehavior) {
-    goto blocked;
-  }
-test:
-  /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber. */
-  asm("" : "=r"(angle) : "0"(heading) : "r4");
-  step = &probe;
-  FieldVector_AddPolarOffset(px(16), angle, step);
-  /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address.
-   */
-  step = NULL;
-  next = &probe;
-  nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
-  if (nextBehavior != 255) {
-    goto body;
-  }
-stop:
-  actor->speedLimit = px(2);
-  actor->acceleration = px(1);
-  FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
-  FieldActor_WaitForMove(actor);
-  System_Wait(2);
-  goto top;
-
-blocked:
-  System_Wait(10);
-done:
-  actor->update = NULL;
-  actor->actionFlags |= 1;
-  actor->acceleration = px(1) / 4;
-  Actor_SelectAnimation(actor, 1);
-}
+#include "shared/leader_slide_on_ice_ahead.h"
 
 struct ParticleSprite {
   u8 unk0[8];
@@ -2410,7 +2083,7 @@ extern char ResourceId_FallingRock;
 
 /* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/prox.c:2433: structure has no
+ * does not compile in tla-ja: games/tla/src/scene/prox.c:2106: structure has no
  * member named `unk05_5'. */
 struct RockSprite__s4254 {
   u8 unk00[5];
@@ -2508,9 +2181,9 @@ s32 gProx_EnterDoorScript[] = {
     0, 1, 13, 24, 0, 17,
 };
 
-s16 gData_02004740[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1, -1, 0, -32768, -1, -16384, -1, -1, -16384, 16384, -1, -1, 16384, -1, 0, -32768, -1};
+s16 gSlideOnIce_SteerAngles[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1, -1, 0, -32768, -1, -16384, -1, -1, -16384, 16384, -1, -1, 16384, -1, 0, -32768, -1};
 
-s16 gData_02004780[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
+s16 gSlideOnIce_AnglesByKey[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
 
 s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_02004644,

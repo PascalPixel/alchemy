@@ -4,5 +4,5 @@
 	.global Data_02003ccc
 Data_02003ccc:
 	.space 0x00000004
-	.global gTundariaTower_SlideStopped
-gTundariaTower_SlideStopped:
+	.global gSlideOnIce_Stopped
+gSlideOnIce_Stopped:

@@ -13,7 +13,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -93,7 +93,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
 }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
+  gFieldWork->transition = 513;
   Actor_SetSpriteFlags(Actor_GetById(8), 0);
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   return 0;

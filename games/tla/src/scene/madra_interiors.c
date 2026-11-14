@@ -26,7 +26,7 @@
 #include "field/event_inline.h"
 #include "version.h"
 #include "field_sprite.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "objcmd.h"
 
 extern s32 gMadraInteriors_InterrogatorLifted[];
@@ -201,7 +201,7 @@ void MadraInteriors_TalkToMushroomLover(void) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors106);
       Event_ShowMessage(10, 0);
     }
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
+    gFieldWork->fieldMenu = 1;
   }
 }
 
@@ -328,7 +328,7 @@ static inline void MadraInteriors_PlaceFacing(s32 actorId, s32 x, s32 z,
 /// interrogators by the story flags.
 void MadraInteriors_SetUpJail(void) {
   if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 0xd4c) = 3;
+    gFieldWork->unkd4c = 3;
     if (!Event_GetFlag(0x911)) {
       MadraInteriors_InterrogatePiers();
     } else {
@@ -358,11 +358,11 @@ s32 Scene_Initialize(void) {
   struct FieldSprite *sprite;
   void *event;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
+  gFieldWork->transition = 521;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors1) {
-    event = Ram_HeapSlots->eventWork;
+    event = Ram_HeapSlots->fieldWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
     if (!Event_GetFlag(0x821)) {
       Actor_SetPosition(29, 0, 0);
@@ -633,11 +633,11 @@ void MadraInteriors_InterrogatePiers(void) {
     goto answeredNo;
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_ShowMessageThenWait(11, 0, 10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+  gFieldWork->message += 1;
   goto answered;
 answeredNo:
   Actor_SetAnimationAndWait(11, 4);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+  gFieldWork->message += 1;
   FieldEvent_ShowMessageThenWait(11, 0, 10);
 answered:
   Actor_RunRepeatedMotion(11, 2);
@@ -794,7 +794,7 @@ void MadraInteriors_GiveHealingFungus(void) {
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   Djinn_JoinParty(25, 2, 10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+  gFieldWork->message += 1;
   Actor_SetAnimation(4, 1);
   Actor_FaceDirection(10, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
@@ -932,12 +932,12 @@ void MadraInteriors_WelcomePiersHome(void) {
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(15, 0, 10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 3;
+  gFieldWork->message += 3;
   goto answered;
 answeredNo:
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Func_02001ef8();
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 3;
+  gFieldWork->message += 3;
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(7, 4);

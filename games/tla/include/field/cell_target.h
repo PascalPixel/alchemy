@@ -33,6 +33,20 @@ struct CellTarget {
   struct CellTargetEntry entries[1];
 };
 
+/// The head of a CellTarget: the fields the lighthouses' cracked-tile fall
+/// (CrackedTile_Fall) reads, ending at the sprite's tiles.
+struct CellTargetHead {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
 /// The map cell of a 16.16 coordinate with a watched cell's 64 bit ORed in,
 /// as each copy of the cell-target handler in the Jupiter and Mars Lighthouse
 /// overlays and overlay 6B0 builds its row. The name is ours.

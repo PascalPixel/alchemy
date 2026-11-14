@@ -8,6 +8,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "flags.h"
 #include "sounds.h"
 #include "system/affine.h"
 #include "flag_call.h"
@@ -62,31 +63,24 @@
 
 /* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile
  * u16 gLinkStatus; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/window/window/icon_menu.c:188:
+ * compile in tla-ja: games/tla/src/window/window/icon_menu.c:182:
  * `gLinkStatus__menus' undeclared (first use in this function). */
 extern u16 gLinkStatus__menus __asm__("gLinkStatus");
 /* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16
  * gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature
  * gLinkPeerSignatures[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/window/window/icon_menu.c:178:
+ * not compile in tla-ja: games/tla/src/window/window/icon_menu.c:172:
  * `gLinkPeerSignatures__battle_party_commands' undeclared (first use in this
  * function). */
 extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__(
     "gLinkPeerSignatures");
-/* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8
- * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
- * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
- * it does not compile in tla-ja: games/tla/src/window/window/icon_menu.c:76:
- * conflicting types for `gMainRoutineWork'. */
-extern u8 gMainRoutineWork__battle_party_commands[] __asm__("gMainRoutineWork");
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 /* VIEW(menus): routine BattleDjinnMenu_Run as s32 BattleDjinnMenu_Run(s32
  * member, s32 unused); window/screens has s32 BattleDjinnMenu_Run(s32 member)
- * {; tried as the definition's s32 BattleDjinnMenu_Run(s32 member), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/window/window/icon_menu.c:593: too many arguments to function
- * `BattleDjinnMenu_Run'. */
+ * {; tried as the definition's s32 BattleDjinnMenu_Run(s32 member), it does not
+ * compile in tla-ja: games/tla/src/window/window/icon_menu.c:588: too many
+ * arguments to function `BattleDjinnMenu_Run'. */
 s32 BattleDjinnMenu_Run__menus(s32 member,
                                s32 unused) __asm__("BattleDjinnMenu_Run");
 #define BattleDjinnMenu_Run BattleDjinnMenu_Run__menus
@@ -228,7 +222,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     state->iconShown[2] = 0;
     state->commandActor = -1;
     state->tutorialStep = 0;
-    if (GameFlag_Get(0x16e)) {
+    if (GameFlag_Get(FLAG_DJINN_LESSON)) {
       state->tutorialStep = 1;
       state->tutorialDelay = 60;
     }
@@ -252,10 +246,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       battle->partyUnits[state->swappedPlace] = swapped;
       shortSwapped = (s16)swapped;
       for (k = 0; k < 8; k++) {
-        if (gMainRoutineWork__battle_party_commands[0x218 + k] == shortSwapped)
-          gMainRoutineWork__battle_party_commands[0x218 + k] = old;
-        else if (gMainRoutineWork__battle_party_commands[0x218 + k] == old)
-          gMainRoutineWork__battle_party_commands[0x218 + k] = shortSwapped;
+        if (gMainRoutineWork.activeOwners[k] == shortSwapped)
+          gMainRoutineWork.activeOwners[k] = old;
+        else if (gMainRoutineWork.activeOwners[k] == old)
+          gMainRoutineWork.activeOwners[k] = shortSwapped;
       }
       PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
       BattleObject_PutFar();

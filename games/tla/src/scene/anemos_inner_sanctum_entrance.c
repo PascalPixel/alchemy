@@ -1,4 +1,7 @@
-
+/// @file
+/// The entrance to the Anemos Inner Sanctum, sealed under Contigo, which the
+/// party reaches with Teleport once it has all seventy-two Djinn
+/// (SceneId_AnemosInnerSanctumEntrance).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
@@ -30,7 +33,7 @@ void Leader_PushObjectAhead(void);
 #include "actor.h"
 #include "field/event_inline.h"
 #include "field/event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -316,9 +319,7 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
 // Under flag 0x201, runs a screen transition and Func_02000408, then clears
 // the flag.
 s32 Scene_Initialize(void) {
-  s32 *route =
-      &((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)
-           ->route;
+  s32 *route = &gFieldWork->transition;
   s32 value = 0x204;
 
   /* FAKEMATCH(barrier): an empty asm after the address and the value. */

@@ -28,7 +28,7 @@
 #include "system/ram_buffer.h"
 #include "bg_scroll.h"
 #include "system/frame.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/game/game.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
@@ -200,12 +200,7 @@ void Title_RevealSpriteRow(void) {
 
   p = gTitle_SpriteRow;
   w = gTitle_SpriteRow[0].attr;
-  {
-    register u32 offset asm("r3") =
-        gResourceTableEntries[gTitleVramBlock].offset;
-
-    tile = offset >> 5;
-  }
+  tile = gResourceTableEntries[gTitleVramBlock].offset >> 5;
   i = 0;
   y = 0x88;
   do {
@@ -256,11 +251,11 @@ fade:
   wait(3);
   if (++i <= 16)
     goto fade;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 1;
+  gFieldWork->transition = 0;
+  gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 60;
+  gFieldWork->transitionFrames = 60;
 }
 
 static __inline__ void Decode_(void *source, void *destination) {

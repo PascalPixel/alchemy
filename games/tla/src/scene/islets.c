@@ -15,7 +15,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "version.h"
 #include "system/dma.h"
@@ -128,15 +128,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "system/frame.h"
 #include "system/vector3.h"
 
-struct IsletsEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[4];
-  s16 field15a;
-  u8 unk15c[0x50];
-  s32 field1ac;
-};
-
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Func_020034ec(void);
@@ -200,7 +191,7 @@ extern s32 gData_0200519c;
 extern s32 gData_02004028[];
 /* VIEW(first): routine gData_020046bc as this part declared it; the joined file
  * has another; tried as the definition's extern s32 gData_020046bc[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:1579: `gData_020046bc'
+ * not compile in tla-ja: games/tla/src/scene/islets.c:1568: `gData_020046bc'
  * undeclared (first use in this function). */
 extern const struct IsletsExit
     gData_020046bc__first[] __asm__("gData_020046bc");
@@ -648,7 +639,7 @@ void Func_020006f4(void) {
       FieldPsynergy_RestoreMindReadPalette();
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
       FieldMessage_Show(noticed + 2, 1);
-      (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+      (gFieldWork->message)++;
       FieldPsynergy_GreyMindReadPalette();
       Actor_Jump(10, 6, 10);
       Event_SetMessageId(noticed + 3);
@@ -848,7 +839,7 @@ void Func_02001278(struct Actor *object) {
 
 /* VIEW(first): routine gData_02004004 as this part declared it; the joined file
  * has another; tried as the definition's extern s32 gData_02004004[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:853: `gData_02004004'
+ * not compile in tla-ja: games/tla/src/scene/islets.c:844: `gData_02004004'
  * undeclared (first use in this function). */
 extern struct ActionScript gData_02004004__first __asm__("gData_02004004");
 #define gData_02004004 gData_02004004__first
@@ -908,8 +899,7 @@ void Func_0200129c(struct Actor *gift) {
   Actor_SelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 288, 0, 538);
   FieldEvent_Wait(20);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      ISLETS_GIFT_TRANSITION;
+  gFieldWork->transition = ISLETS_GIFT_TRANSITION;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(3);
@@ -1034,7 +1024,7 @@ void Func_020014e0(void) {
         0) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
       FieldPsynergy_GreyMindReadPalette();
-      (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+      (gFieldWork->message)++;
       Event_ShowMessage(9, 0);
       ((u8 *)HeapSlot_AllocEwram(88, 664))[0x295] = 99;
       FieldActor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
@@ -1059,8 +1049,7 @@ void Func_020014e0(void) {
       Actor_GetById(10)->update = Actor_EmitSmoke;
       Actor_WalkTo(10, 288, 538);
       FieldEvent_Wait(20);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-          STORED_AT_1AC;
+      gFieldWork->transition = STORED_AT_1AC;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       FieldPsynergy_GreyMindReadPalette();
@@ -1128,7 +1117,7 @@ void Func_02001a68(void) {
     } while (*done == 0);
     Func_020034ec();
     System_Wait(1);
-    ((struct IsletsEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x201;
+    gFieldWork->transition = 0x201;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     FieldPsynergy_GreyMindReadPalette();
@@ -1153,9 +1142,9 @@ void Func_02001bf4(void) {
 }
 
 void Func_02001c38(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->field15a = 1;
+  work->fieldMenu = 1;
 }
 
 void Func_02001c4c(void) {
@@ -1562,7 +1551,7 @@ void Func_0200265c(void) {
 #endif
 
 void Func_0200267c(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
   s16 *exit;
@@ -1579,7 +1568,7 @@ void Func_0200267c(void) {
       object->z);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
-  exit = &work->exit;
+  exit = &work->stepTrigger;
   index = *exit;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
@@ -1595,7 +1584,7 @@ void Func_0200267c(void) {
 }
 
 void Func_0200274c(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1603,11 +1592,11 @@ void Func_0200274c(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 void Func_02002780(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
 
@@ -1627,11 +1616,11 @@ void Func_02002780(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 void Func_02002830(void) {
-  struct IsletsEventWork *work;
+  struct FieldWork *work;
   struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_Get(9);
 
@@ -1643,8 +1632,8 @@ void Func_02002830(void) {
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetAnimation(9, 3);
   System_Wait(1);
-  work = Ram_HeapSlots->eventWork;
-  work->field1ac = 0x201;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeed(9, 0.6);
@@ -1669,12 +1658,12 @@ void Func_02002830(void) {
   Event_ShowMessage(9, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
-  work = Ram_HeapSlots->eventWork;
-  work->field1ac = 0x100;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = 0x100;
   Func_020034d8();
 }
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 #define OBJECT(id) ((struct Actor *)((s32)Actor_Get((id))))
 
 extern u32 gData_02004508[];
@@ -1701,7 +1690,7 @@ void Func_020029c4(void) {
   Actor_SetAnimation(9, 3);
   System_Wait(1);
 #if TLA_PATCH_1 /* The Japanese release leaves the transition word. */
-  ((struct EventWork *)EVENT_WORK)->screenEffect = 513;
+  ((struct FieldWork *)EVENT_WORK)->transition = 513;
 #endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1734,15 +1723,15 @@ void Func_020029c4(void) {
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   Func_020034d8();
 #if TLA_PATCH_1
-  ((struct EventWork *)EVENT_WORK)->screenEffect = 0x100;
+  ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
 #endif
 }
 
 s32 Scene_Initialize(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 scene;
 
-  work->field1ac = 0x100;
+  work->transition = 0x100;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Islets1)
     Islets_InitializeRoom1();
@@ -1820,12 +1809,12 @@ void Func_02002d48(s32 id, s32 column, s32 row) {
 // (Func_02002d48) at 0, still at 100 and 220, and walking in place at 130.
 void Func_02002d7c(void) {
   u16 *step = (u16 *)((u8 *)gSceneState);
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u16 *owed = (u16 *)(((u8 *)gSceneState) + 2);
   s32 i;
   s32 count;
 
-  if (*(s16 *)(work + 0x166) != 0 || GameFlag_Get(FLAG_SCENE_TEMP_18)) {
+  if (work->psynergy != 0 || GameFlag_Get(FLAG_SCENE_TEMP_18)) {
     for (i = 11; i <= 18; i++)
       Actor_GetById(i)->movementState = 1;
     return;
@@ -1833,11 +1822,11 @@ void Func_02002d7c(void) {
   for (i = 11; i <= 18; i++)
     Actor_GetById(i)->movementState = 0;
   if (Actor_GetById(gMainRoutineWork.currentOwner)->y < -px(12)) {
-    work = Ram_HeapSlots->eventWork;
+    work = Ram_HeapSlots->fieldWork;
     for (i = 11; i <= 18; i++)
       Actor_GetById(i)->movementState = 1;
     {
-      s16 *countdown = (s16 *)(work + 0x16a);
+      s16 *countdown = &work->raisedTrigger;
       s32 ticks = 200;
 
       *countdown = ticks;
@@ -1846,7 +1835,7 @@ void Func_02002d7c(void) {
   }
   count = *owed + 1;
   *owed = count;
-  if (*(s16 *)(work + 0x156) != 0 || (u16)count == 0)
+  if (work->pushCell != 0 || (u16)count == 0)
     return;
   do {
     switch (*step) {
@@ -2235,14 +2224,14 @@ void Func_020034ec(void) {
 /* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410;
  * palette_snapshots.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islets.c:2243: structure has no member named `count'. */
+ * games/tla/src/scene/islets.c:2232: structure has no member named `count'. */
 struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;
 };
 
 #define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->unk70[0])
-#define EVENT_S16(offset) (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + (offset)))
+#define EVENT_S16(offset) (*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + (offset)))
 
 void Func_020034fc(void) {
   if (EVENT_S16(0x166) == 0 && EVENT_S16(0x15a) == 0 && EVENT_S16(0x15e) == 0) {
@@ -2289,7 +2278,7 @@ void Func_02003620(void) {
   Actor_SetSpriteFlags((s32)object0, 0);
   Actor_SetAnimation(*(s32 *)((u8 *)v5 + 0), 18);
   FieldEvent_Wait(40);
-  *(s32 *)((u8 *)((s32)Ram_HeapSlots->eventWork + 0x1ac) + 0) = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(3);
@@ -2455,7 +2444,7 @@ s32 Func_020037d8(struct PushTarget *push) {
 #define HI(v) (((s16 *)&(v))[1])
 
 struct Actor *Func_02003940(s32 *direction, s32 *slot, s32 *kind) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor **entry;
   struct Actor *object;
@@ -2464,7 +2453,7 @@ struct Actor *Func_02003940(s32 *direction, s32 *slot, s32 *kind) {
 
   *direction = leader->facing >> 12;
   i = 8;
-  entry = &work->objects[8];
+  entry = &work->actors[8];
 outer:
   object = *entry;
   k = 0;

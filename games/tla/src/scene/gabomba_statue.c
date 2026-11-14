@@ -20,7 +20,7 @@
 #include "field_sprite.h"
 #include "system/field_effect.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/scene/gabomba_statue.h"
 #include "module/scene/scene.h"
@@ -375,7 +375,7 @@ void GabombaStatue_LashRope(void) {
     Func_020020f0(0);
     Event_SetFlag(FLAG_SCENE_TEMP_03);
     /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it. */
-    *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;
+    gFieldWork->psynergy = zero;
     i = 0;
   loop:
     actor->phase += gData_02006b38[i] * direction;
@@ -597,7 +597,7 @@ void Func_02000a20(struct Actor *object) {
     if (i == 10)
       Event_PlaySound(SE_DUST_PUFF);
     if (i == 20) {
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+      gFieldWork->transition = 521;
       Event_FinishScreenTransition();
     }
   }
@@ -840,7 +840,7 @@ void GabombaStatue_HearTheOffering(void) {
   Event_PlaySound(MUS_011);
   result = Func_02004d48(11, 1);
   ObjectTable_Snapshot();
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   switch (result) {
@@ -890,7 +890,7 @@ const u8 *Scene_GetEvents(void) {
 }
 
 void Func_020011bc(s32 x, s32 z) {
-  struct GabombaStatueChamberEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct GabombaStatueChamberObject *object =
       Actor_Get(gMainRoutineWork.currentOwner);
 
@@ -909,7 +909,7 @@ void Func_020011bc(s32 x, s32 z) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 #define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(name, n1, n2, n3, n4, n5, n6, n7) \
@@ -1024,30 +1024,19 @@ void Func_02001564(void) {
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28,
                                           440, 288)
 
-/* VIEW(gabomba_statue): tag struct EventWork154 as struct
- * EventWork154__gabomba_statue; module/scene/scene.h has another definition;
- * tried with the definition the rest of the object has, its members read exit
- * as returnEntrance, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:912: structure has no member named
- * `returnEntrance'. */
-struct EventWork154__gabomba_statue {
-  u8 unk000[0x154];
-  s16 exit;
-};
-
 /// Jumps down the hole.
 void Func_02001630(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct Actor *leader;
-  struct EventWork154__gabomba_statue *work;
+  struct FieldWork *work;
 
   if (x == 28 && z == 9 && !(gInput.held & KEY_RIGHT))
     return;
   if (x == 29 && z == 10 && !(gInput.held & KEY_UP))
     return;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1064,7 +1053,7 @@ void Func_02001630(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 #define DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(name, n1, n2)                     \
@@ -1141,9 +1130,9 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
 }
 
 void GabombaStatue_PoundConePillar(s32 a, s32 b) {
-  Statue_Sink(gData_02005d7c, a, b);
+  Pound_SinkTarget(gData_02005d7c, a, b);
   if (Event_GetFlag(0x8ce) && Event_GetFlag(0x8cf))
-    ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
+    gFieldWork->raisedTrigger = 200;
 }
 
 void Func_020019d0(void) {
@@ -1174,7 +1163,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
   if (value == 1)
-    ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
+    gFieldWork->raisedTrigger = 200;
 }
 
 void Func_02001a8c(void) {
@@ -1191,7 +1180,7 @@ void Func_02001a8c(void) {
 
 void Func_02001ac0(void) {
   if (Func_020053a0() == 0)
-    ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 201;
+    gFieldWork->raisedTrigger = 201;
 }
 
 void Func_02001adc(s32 id) {
@@ -1234,10 +1223,10 @@ DEFINE_GABOMBA_STATUE_RAISE_ACTORS(Func_02001b68, 29, 2)
 void Func_02001b98(void) {
   s32 value = 16;
   s32 open = 0;
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 i;
 
-  if (Event_GetFlag(FLAG_MENU_OPEN) || *(s16 *)(event + 358) != 0) {
+  if (Event_GetFlag(FLAG_MENU_OPEN) || event->psynergy != 0) {
     open = 1;
     value = 0;
   }
@@ -1372,8 +1361,7 @@ void Func_02001c10(void) {
 /// Makes the scene more translucent the farther inside the object is.
 void Func_02002074(void) {
   s32 blend;
-  struct Actor *object =
-      ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->object;
+  struct Actor *object = gFieldWork->camera;
   s32 level = object->z;
 
   level = (level - 0xe80000) >> 19;
@@ -1473,13 +1461,11 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef DEFINE_GABOMBA_STATUE_RAISE_ACTORS
 #undef MARK
 #undef REG_BLDALPHA
-#undef REG_BLDALPHA
 #undef OBJECT_BYTE
 /* VIEW(s2394): tags Wanderer and SceneState as this part has them; the scene
  * before has its own. */
 #define Wanderer Wanderer__s2394
 #define SceneState SceneState__s2394
-// @file
 void Func_02002394(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
@@ -1494,7 +1480,7 @@ void Func_02002394(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -1533,7 +1519,7 @@ void Func_02002394(void) {
   actor->bounce = Q16_ONE / 4;
   System_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_End();
 }
 
@@ -1636,7 +1622,7 @@ void Func_020027cc(void) {
   Actor_SetPositionAndFacing(6, px(448), px(312), speed);
   Actor_SetPositionAndFacing(5, px(468), px(312), speed);
   System_Wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
+  gFieldWork->transition = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -1714,7 +1700,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_SetPositionAndFacing(6, 224 << 17, 156 << 17, north);
   Actor_SetPositionAndFacing(5, 234 << 17, 156 << 17, north);
   System_Wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -1743,9 +1729,9 @@ void GabombaStatue_SeeHowItWorks(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 7, 0);
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
   } else {
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
     Actor_SetSpeed(7, 2);
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
@@ -1861,7 +1847,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
+  gFieldWork->transition = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(1.2);
@@ -1941,16 +1927,11 @@ void GabombaStatue_FixTheChannel(void) {
   Func_02005364();
 }
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 // Prepares the current room.
 s32 Scene_Initialize(void) {
   s16 scene;
 
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+  gFieldWork->transition = 521;
   if (gMainRoutineWork.scene != (s32)&SceneId_GabombaStatue1) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       Func_020020f0(0);
@@ -2141,10 +2122,10 @@ L_0200b7e4:
     goto L_0200b856;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_ClearFlag(0x8fc);
   t59 = Event_GetFlag(0x9eb);
   if (t59 == 0)
@@ -2267,7 +2248,7 @@ void Func_02003974(void) {
  * turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction);
  * tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction),
  * which the object already declares, it does not compile in tla-ja (make
- * modern): games/tla/include/module/field/field.h:1157:42: note: expected
+ * modern): games/tla/include/module/field/field.h:1125:42: note: expected
  * 'struct Actor *' but argument is of type 'struct FieldEffect *'. */
 extern s32 Func_02004380__s2394(s32 col, s32 row,
                                 s32 turn) __asm__("Func_02004380");
@@ -2955,12 +2936,12 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
 /* VIEW(puzzle_turn): routine gData_02006f38 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02006f38[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:2990: `gData_02006f38__puzzle_turn'
+ * games/tla/src/scene/gabomba_statue.c:2972: `gData_02006f38__puzzle_turn'
  * undeclared (first use in this function). */
 /* VIEW(puzzle_turn): routine gData_02006ec0 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA u32
  * gData_02006ec0[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3112: `gData_02006ec0' undeclared (first
+ * games/tla/src/scene/gabomba_statue.c:3094: `gData_02006ec0' undeclared (first
  * use in this function). */
 extern const u8 gData_02006f38__puzzle_turn[] __asm__("gData_02006f38");
 extern const u8 gData_02006ec0__puzzle_turn[] __asm__("gData_02006ec0");
@@ -2982,8 +2963,8 @@ void Func_02004938(struct Actor *ball, s32 step) {
   s32 key = (heading << 8) + piece;
   s32 d = step - 8;
   s32 arc = step << 10;
-  s32 s = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Trig_Sin(arc));
-  s32 c = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Trig_Cos(arc));
+  s32 s = Math_MulQ16(0x80000, Trig_Sin(arc));
+  s32 c = Math_MulQ16(0x80000, Trig_Cos(arc));
   s32 z;
   s32 x;
 
@@ -3141,7 +3122,7 @@ done:
  * it has another declaration; tried as the definition's void
  * Func_02004938(struct Actor *ball, s32 step), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3189: too many arguments to function
+ * games/tla/src/scene/gabomba_statue.c:3171: too many arguments to function
  * `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 
@@ -3385,21 +3366,21 @@ s32 __divsi3(s32 numerator, s32 denominator);
 s32 __modsi3(s32 numerator, s32 denominator);
 
 void Func_02005210(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
-  if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
-      *(s16 *)(event + 350) == 0 && clock->timer > 0)
+  if (event->psynergy == 0 && event->fieldMenu == 0 && event->pauseMenu == 0 &&
+      clock->timer > 0)
     clock->timer--;
   Func_02005090();
 }
 
 void Func_0200525c(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
-  if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
-      *(s16 *)(event + 350) == 0 && clock->timer > 0)
+  if (event->psynergy == 0 && event->fieldMenu == 0 && event->pauseMenu == 0 &&
+      clock->timer > 0)
     clock->timer--;
 }
 
@@ -3465,81 +3446,15 @@ void Func_020053bc(const u16 *entry) {
 
     object->collisionFlags &= 0xfe;
     Actor_SetSpriteFlags(object, 0);
-    Func_020054ac(id, (u16)mode, (u16)flag, object->terrainId);
+    Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->terrainId);
     entry += 2;
   }
 }
 
 // Finds the current target's table row and shrinks it.
-void Statue_Sink(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+#include "shared/pound_sink_target.h"
 
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        GameFlag_Set(flag);
-        Func_020054ac(id, a, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
-
-void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
-  struct Actor *object = Actor_Get(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Actor_GetCellIndex(object);
-  if (Event_GetFlag(flag)) {
-    /* FAKEMATCH(temporary): the flags read into a local before the cell store
-     * and a local holding 2. */
-    u8 flags = object->priorityFlags;
-    s32 bits;
-
-    cell->collisionCode = 0;
-    bits = 2;
-    bits |= flags;
-    object->priorityFlags = bits;
-    switch (mode) {
-    case 0:
-      Actor_SelectAnimation(object, 2);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 4);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (mode) {
-    case 0:
-      Actor_SelectAnimation(object, 1);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 3);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 5);
-      break;
-    }
-  }
-}
+#include "shared/actor_set_cell_open.h"
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {                                                               
@@ -3581,7 +3496,6 @@ u32 gData_02005944[] = {
 };
 
 #undef FIELD_AT
-#undef FieldEffect_Spawn
 #undef gData_02006ec0
 #undef gData_02006f38
 #undef Wanderer

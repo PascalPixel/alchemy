@@ -12,7 +12,7 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/garoh.h"
 #include "module/scene/scene.h"
 #include "system/task.h"
@@ -138,7 +138,7 @@ void IsletCave_StartSlowPaletteCycle(void) {
 }
 
 void IsletCave_StopPaletteCycle(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Task_Remove(PaletteCycle_Fade);
 }
 
@@ -194,13 +194,13 @@ void PaletteCycle_Fade(void) {
 }
 
 void Func_02000328(void) {
-  struct IsletCaveEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->transition;
   BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct IsletCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   IsletCave_StartFastPaletteCycle();
@@ -215,7 +215,7 @@ void Func_02000328(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->transition = saved;
 }
 
 #include "text/msg_ids.h"
@@ -284,8 +284,8 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 void Func_020004ac(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  s32 effect = work->screenEffect;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s32 effect = work->transition;
 
   IsletCave_StartFastPaletteCycle();
   Teleport_PlayWhirl();
@@ -297,7 +297,7 @@ void Func_020004ac(void) {
 
   gMainRoutineWork.unk2c2 = 0;
   Actor_ConfigureSpriteColor(gMainRoutineWork.currentOwner, 0);
-  work->screenEffect = effect;
+  work->transition = effect;
 }
 
 #define DEFINE_ISLET_CAVE_ARRIVE_AT(name, n1, n2)                              \
@@ -353,7 +353,7 @@ void Func_02000580(s32 scale) {
 extern struct MapGridCellAnimation gData_020019ec[];
 
 void Func_020005fc(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 i;
   u32 index;
 
@@ -370,7 +370,7 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  index = ((struct EventWork *)work)->exit - 1;
+  index = work->stepTrigger - 1;
   Sound_Play(SE_DOOR_OPEN);
   index >>= 1;
   {
@@ -387,7 +387,7 @@ loop:
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Event_Wait(6);
-  Import_EventSetExitRequest(((struct EventWork *)work)->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -402,7 +402,7 @@ extern s32 gData_02001454[];
 s32 Scene_Initialize(void) {
   s32 scene, dim;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+  gFieldWork->transition = 521;
   FieldEffect_StartBlankOverlay(0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_IsletCave1) {

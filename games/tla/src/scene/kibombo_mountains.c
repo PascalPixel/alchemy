@@ -12,7 +12,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "battle/battle.h"
@@ -334,8 +334,7 @@ s32 Scene_Initialize(void) {
   s32 flag;
   s32 height;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      EVENT_WORK_VALUE;
+  gFieldWork->transition = EVENT_WORK_VALUE;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_KibomboMountains1) {

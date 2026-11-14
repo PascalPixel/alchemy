@@ -1,5 +1,5 @@
-	.ifndef GUARD_FLASHSET_S
-	.set GUARD_FLASHSET_S, 1
+	.ifndef ALCHEMY_FLASHSET_S
+	.set ALCHEMY_FLASHSET_S, 1
 
 @ Settings for each flash chip model (44 bytes).
 	.macro flash_setup program, erase_chip, erase_sector, wait, max_time, rom_size, sector_size, shift, count, top, wait0, wait1, id

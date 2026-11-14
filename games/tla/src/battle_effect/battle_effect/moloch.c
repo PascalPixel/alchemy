@@ -2991,15 +2991,8 @@ extern u8 Data_081380acCodeSize[];
 /// runs it there with the caller's two arguments and frees the block.
 void RamCode_RunKernel0(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32);
-  u32 size;
 
-  /* FAKEMATCH(dead): the size's load in a once-only block. */
-  do {
-    size = (u32)Data_081380acCodeSize;
-  } while (0);
-  routine = (void (*)(s32, s32))Heap_Alloc(size);
-  Dma_Set((const void *)Data_081380ac, routine, DMA_COPY_WORDS(size >> 2),
-          REG_DMA3);
+  RamCode_Load(routine, Data_081380ac, Data_081380acCodeSize);
   routine(arg0, arg1);
   Heap_Release(routine);
 }
@@ -3013,15 +3006,8 @@ extern u8 Data_0813b9a0CodeSize[];
 /// s8 vertices through the current transform into screen coordinates.
 void Render_TransformVertices(const void *corners, void *vertices, s32 count) {
   void (*routine)(const void *, void *, s32);
-  u32 size;
 
-  /* FAKEMATCH(dead): the size's load in a once-only block. */
-  do {
-    size = (u32)Data_0813b9a0CodeSize;
-  } while (0);
-  routine = (void (*)(const void *, void *, s32))Heap_Alloc(size);
-  Dma_Set((const void *)Data_0813b9a0, routine, DMA_COPY_WORDS(size >> 2),
-          REG_DMA3);
+  RamCode_Load(routine, Data_0813b9a0, Data_0813b9a0CodeSize);
   routine(corners, vertices, count);
   Heap_Release(routine);
 }

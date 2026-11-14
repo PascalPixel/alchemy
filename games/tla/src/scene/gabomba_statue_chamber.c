@@ -83,7 +83,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 void Func_02000100(void) {
   volatile u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
-  struct GabombaStatueChamberEventWork *work;
+  struct FieldWork *work;
 
   Actor_SetModeById(8, 2);
   PaletteFade_ApplySource(0x10000, 2);
@@ -92,15 +92,15 @@ void Func_02000100(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  work = Ram_HeapSlots->eventWork;
-  FieldMessage_ShowCentered((s16)work->field1c4++, 0, 2);
+  work = Ram_HeapSlots->fieldWork;
+  FieldMessage_ShowCentered((s16)work->message++, 0, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Actor_SetModeById(8, 1);
 }
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
 /* VIEW(first): routine gData_02002058 as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_02002058[], it does
@@ -236,8 +236,8 @@ void Func_02000184(void) {
   wait(10);
   *color = 0x7fff;
   wait(1);
-  FieldMessage_ShowCentered(
-      (s16)(((struct EventWork *)EVENT_WORK)->messageId)++, 0, 2);
+  FieldMessage_ShowCentered((s16)(((struct FieldWork *)EVENT_WORK)->message)++,
+                            0, 2);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -337,9 +337,9 @@ void Func_02000184(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetModeById(9, 4);
     Event_ShowMessageAndWait(9, 0);
-    ((struct EventWork *)EVENT_WORK)->messageId += 1;
+    ((struct FieldWork *)EVENT_WORK)->message += 1;
   } else {
-    ((struct EventWork *)EVENT_WORK)->messageId += 1;
+    ((struct FieldWork *)EVENT_WORK)->message += 1;
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(9, 0);
   }
@@ -350,9 +350,9 @@ void Func_02000184(void) {
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Event_ShowMessageAndWait(9, 0);
-    ((struct EventWork *)EVENT_WORK)->messageId += 1;
+    ((struct FieldWork *)EVENT_WORK)->message += 1;
   } else {
-    ((struct EventWork *)EVENT_WORK)->messageId += 1;
+    ((struct FieldWork *)EVENT_WORK)->message += 1;
     Event_ShowMessageAndWait(9, 0);
   }
   Actor_SetModeById(9, 4);
@@ -370,12 +370,12 @@ void Func_02000184(void) {
   BattleEffect_ApplyColorToTargetBuffer(0, 0);
   PaletteFade_StartInterpolation(60);
   wait(64);
-  ((struct EventWork *)EVENT_WORK)->screenEffect = 513;
-  ((struct EventWork *)EVENT_WORK)->delay = 10;
+  ((struct FieldWork *)EVENT_WORK)->transition = 513;
+  ((struct FieldWork *)EVENT_WORK)->transitionFrames = 10;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  ((struct EventWork *)EVENT_WORK)->delay = 1;
+  ((struct FieldWork *)EVENT_WORK)->transitionFrames = 1;
   PaletteFade_StartInterpolation(1);
   ActorSystem_SuspendProjectionAndShowSprites();
   FieldMessage_ShowCentered(MsgCarriedTheMessage, 0, 3);
@@ -391,7 +391,7 @@ void Func_02000184(void) {
 }
 
 void Func_02000a98(s32 x, s32 z) {
-  struct GabombaStatueChamberEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct GabombaStatueChamberObject *object =
       ((struct GabombaStatueChamberObject *)Actor_GetById(
           gMainRoutineWork.currentOwner));
@@ -413,7 +413,7 @@ void Func_02000a98(s32 x, s32 z) {
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void Func_02000b60(void) { Func_02000a98(312, 144); }
@@ -613,7 +613,7 @@ void Func_02001094(void) {
 
 // The scene after the statue is lifted in the Gabomba Statue's chamber.
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
 extern u32 gData_02001f18[];
 
@@ -656,7 +656,7 @@ void Func_020010d4(void) {
     HeapSlot_Release(68);
   }
   Func_02001010();
-  ((struct EventWork *)EVENT_WORK)->screenEffect = 0x100;
+  ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -753,9 +753,9 @@ void Func_020010d4(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(20);
     Event_ShowMessageAndWait(12, 0);
-    ((struct EventWork *)EVENT_WORK)->messageId += 1;
+    ((struct FieldWork *)EVENT_WORK)->message += 1;
   } else {
-    ((struct EventWork *)EVENT_WORK)->messageId += 1;
+    ((struct FieldWork *)EVENT_WORK)->message += 1;
     Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     Event_ShowMessageAndWait(12, 0);
   }
@@ -788,7 +788,7 @@ void Func_020010d4(void) {
   Event_Wait(10);
   Actor_SetMovementTypeById(12, gData_02001f18);
   Event_Wait(60);
-  ((struct EventWork *)EVENT_WORK)->screenEffect = 514;
+  ((struct FieldWork *)EVENT_WORK)->transition = 514;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
@@ -833,7 +833,7 @@ void Func_02001710(void) {
   heap = Ram_HeapSlots;
   System_Wait(1);
   {
-    s32 *effect = &((struct GroupWork *)heap->eventWork)->screenEffect;
+    s32 *effect = &((struct FieldWork *)heap->fieldWork)->transition;
 
     turn = 0x100;
     *effect = turn;
@@ -877,9 +877,9 @@ void Func_02001710(void) {
     Actor_FaceDirectionAndWait(7, FACING_EAST);
     Actor_SetAnimation(7, 3);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
-    ((struct GroupWork *)heap->eventWork)->unk1c4++;
+    ((struct FieldWork *)heap->fieldWork)->message++;
   } else {
-    ((struct GroupWork *)heap->eventWork)->unk1c4++;
+    ((struct FieldWork *)heap->fieldWork)->message++;
     Actor_FaceDirectionAndWait(7, angleC);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
     Func_02001f08();
@@ -919,11 +919,11 @@ void Func_02001710(void) {
 }
 
 s32 Scene_Initialize(void) {
-  struct GabombaStatueChamberEventWork *work;
+  struct FieldWork *work;
   s16 scene;
 
-  work = Ram_HeapSlots->eventWork;
-  work->screenEffect = 521;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = 521;
   ((struct GabombaStatueChamberObject *)Actor_GetById(Party_GetLeaderActor()))
       ->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;

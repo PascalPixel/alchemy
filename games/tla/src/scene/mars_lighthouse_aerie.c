@@ -9,7 +9,7 @@
 
 #include "flags.h"
 #include "item_ids.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/mars_lighthouse_aerie.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -242,8 +242,7 @@ void Func_020001d8(void) {
 
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
 s32 Scene_Initialize(void) {
-  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)
-      ->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Func_020001d8();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   if (gMainRoutineWork.entrance == 5) {
@@ -847,13 +846,13 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
     Actor_SetAnimation(6, 3);
     FieldActor_Jump(6, 4, 10);
     Event_ShowMessage(6, 0);
-    t419 = (s32)Ram_HeapSlots->eventWork;
+    t419 = (s32)Ram_HeapSlots->fieldWork;
     t420 = FIELD_AT(t419, u16, 452);
     FIELD_AT(t419, u16, 452) = (t420 + 1);
   } else {
     Actor_SetAnimation(6, 4);
     FieldActor_Jump(6, 4, 10);
-    t423 = (s32)Ram_HeapSlots->eventWork;
+    t423 = (s32)Ram_HeapSlots->fieldWork;
     t424 = FIELD_AT(t423, u16, 452);
     FIELD_AT(t423, u16, 452) = (t424 + 1);
     Event_ShowMessage(6, 0);
@@ -897,7 +896,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   if (!FieldEvent_AskYesNoWithActorAnimation(t461, 0)) {
     t463 = gMainRoutineWork.currentOwner;
     Actor_WaitForAnimationChange(t463);
-    t465 = (s32)Ram_HeapSlots->eventWork;
+    t465 = (s32)Ram_HeapSlots->fieldWork;
     t466 = FIELD_AT(t465, u16, 452);
     FIELD_AT(t465, u16, 452) = (t466 + 1);
   } else {
@@ -1219,7 +1218,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldActor_SetSpritePriority(19, 1);
   FieldActor_SetSpritePriority(26, 1);
   FieldActor_SetSpritePriority(25, 1);
-  t34 = (s32)Ram_HeapSlots->eventWork;
+  t34 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t34, s32, 428) = 0x204;
   FIELD_AT(t34, s32, 436) = 1;
   Event_StartScreenTransition();
@@ -1627,10 +1626,10 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
       0) {
     Actor_SetAnimationAndWait(5, 3);
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
     Actor_SetAnimationAndWait(5, 3);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Event_ShowMessage(5, 0);
   }
   Actor_SetSpeed(1, 0.8);
@@ -2150,7 +2149,7 @@ L_0200bcea:
   FieldPsynergy_StartMindReadWave(23, 24);
   Message_ShowCentered(((s32)MsgTheBeaconIs + 7), 1);
   FieldPsynergy_StopMindReadWave();
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   work->step.value = work->stepRead + 2;
   Func_02000610((OWNER));
   Func_02000610(7);
@@ -2245,7 +2244,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldCamera_MoveTo(512, 96, 288, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  t25 = (s32)Ram_HeapSlots->eventWork;
+  t25 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t25, s32, 428) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2796,7 +2795,7 @@ void Func_02004fac(void) {
 }
 
 void Func_02005010(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
+  gFieldWork->transition = 256;
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
@@ -2852,14 +2851,13 @@ void PaletteCycle_Fade(void) {
 }
 
 void Func_020051e0(void) {
-  struct MarsLighthouseAerieEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->screenEffect;
+  saved = work->transition;
   PaletteFade_ApplyTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)
-      ->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02005030();
@@ -2874,7 +2872,7 @@ void Func_020051e0(void) {
 
     party->unk2c2 = 0;
   }
-  work->screenEffect = saved;
+  work->transition = saved;
 }
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -2946,7 +2944,7 @@ void Func_02005268(struct Actor *object) {
 /* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:2994: structure has no member
+ * games/tla/src/scene/mars_lighthouse_aerie.c:2992: structure has no member
  * named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
@@ -2963,7 +2961,7 @@ struct SparkleSprite__s53e4 {
 
 /* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2985:
+ * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2983:
  * incompatible types in assignment. */
 struct SparkleWork__s53e4 {
   struct SparkleSprite__s53e4 sprites[4];
@@ -2979,7 +2977,7 @@ struct SparkleWork__s53e4 {
  * has void BattleEffect_GetObjectPriority(void); tried as the definition's s32
  * BattleEffect_GetObjectPriority(struct Actor *object), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:3004: too many arguments to
+ * games/tla/src/scene/mars_lighthouse_aerie.c:3002: too many arguments to
  * function `BattleEffect_GetObjectPriority'. */
 extern s32 Func_020057b4__s3370(struct Actor *object) __asm__(
     "BattleEffect_GetObjectPriority");

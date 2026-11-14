@@ -25,7 +25,7 @@
 #include "scene_ids.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "system/dma.h"
@@ -40,7 +40,7 @@
 #include "system/input.h"
 #include "macros.h"
 #include "version.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/scene.h"
 #include "system/object_effect.h"
 #include "game/item.h"
@@ -102,16 +102,6 @@ extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(
 #include "actor_view.h"
 
 typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
-
-// The field's event work (heap slot 0x6c): the placement tables spawned so
-// far, the actors by index and the field mode.
-struct FieldStepWork {
-  struct ActorPlacement *tables[4];
-  const struct Trigger *triggers;
-  struct Actor *actors[66];
-  u8 unk11c[0x6e];
-  s8 mode;
-};
 
 struct SpawnSpritePart {
   u8 unk00[2];
@@ -200,18 +190,6 @@ struct ItemDefinitionView {
   u16 actionId;
 };
 
-struct ItemFieldWork {
-  u8 unk000[0x158];
-  s16 exit;
-  u8 unk15a[0xcb6 - 0x15a];
-  u8 resolvingAction;
-};
-
-struct TriggerWork {
-  u8 unk000[0x10];
-  struct TriggerEvent *events;
-};
-
 struct PendingAction {
   u8 unk00[6];
   u8 eventKind;
@@ -250,10 +228,6 @@ struct SceneItemWork {
   struct Actor *objects[16];
   u8 unk154[0x18a - 0x154];
   s8 mode;
-};
-
-struct ActionDescriptorTables {
-  struct ActionDescriptor *tables[4];
 };
 
 struct ContainerRow {
@@ -295,14 +269,6 @@ struct BattleEffectCounterState {
   s16 counters[12];
 };
 
-struct DisplayBlock {
-  u8 unk000[0x18a];
-  s8 mode;
-  s8 pending;
-  u8 unk18c[0x40];
-  u8 *object;
-};
-
 // A box of the map in whole cells (16.16 when compared) and the value it
 // selects while its condition holds; a row with minX -1 ends the list.
 struct MapRegion {
@@ -328,26 +294,6 @@ struct MapFocusPosition {
   s32 x;
   s32 unk04;
   s32 y;
-};
-
-// The event work as this function reads it.
-struct StepWork {
-  u8 unk000[0x154];
-  s16 exit;     ///< the cell's exit code (1 to 230)
-  s16 pushCell; ///< the cell's attributes when any of 0xe2 is set
-  u8 unk158[0xc];
-  s16 encounterEnemyGroup;
-  s16 psynergy; ///< a pending Psynergy request
-  u8 unk168[2];
-  s16 raisedEvent;
-  s16 fallenCount;
-  s16 survivorCount;
-  s16 fallenOwners[8];
-  u8 unk180[0x1c];
-  s32 walkingDistanceScale;
-  s32 walkingDistance;
-  struct MapCell *currentCell;
-  struct MapCell *previousCell;
 };
 
 // A unit as this function reads it.

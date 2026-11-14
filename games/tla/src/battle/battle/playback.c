@@ -38,7 +38,6 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 }
 
 #define OBJ_VRAM 0x06010000
-#define KEYS_HELD (*(volatile u32 *)&gInput.held)
 
 /* VIEW(f11e3ac): tag struct ArrowSprite as struct ArrowSprite__presentation;
  * module/tla.h has another definition; not tried: struct ArrowSprite__f11e3ac
@@ -255,11 +254,9 @@ void BattlePlayback_Run(void) {
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
-      /* FAKEMATCH(volatile): the held keys reread through a volatile pointer
-       * for the last test. */
       if ((gInput.held & KEY_B) ||
           (gInput.pendingPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
-          ((u32)(gVBlankCount - events->timer) > 10 && (KEYS_HELD & 0x303))) {
+          ((u32)(gVBlankCount - events->timer) > 10 && (gInput.held & 0x303))) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_DISPATCH;
         events->timer = 0;

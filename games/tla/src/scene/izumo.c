@@ -13,7 +13,7 @@
 #include "shared/tables.h"
 #include "field/emote.h"
 #include "sounds.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "types.h"
 #include "flags.h"
 #include "system/task.h"
@@ -251,7 +251,7 @@ void Izumo_CycloneNinthPatch(void) {
 }
 
 void Izumo_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -259,7 +259,7 @@ void Izumo_EnterDoor(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
-  Func_02000db0(((struct EventWork *)work)->exit);
+  Func_02000db0(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -497,7 +497,7 @@ void Izumo_OfferATokenOfGratitude(void) {
 
 s32 Scene_Initialize(void) {
   GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
-  WORD_AT(Ram_HeapSlots->eventWork, 428) = 0x100;
+  WORD_AT(Ram_HeapSlots->fieldWork, 428) = 0x100;
   Task_Add(Izumo_RotateWaterColors, TASK_PASS_FRAME);
   Actor_PlaceBlocks(gIzumo_MovableStones);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
@@ -557,7 +557,7 @@ void Izumo_HideTheStoneCircle(void) {
 }
 
 void Izumo_DescendIntoTheRuins(void) {
-  s32 value = ((struct EventWork *)Ram_HeapSlots->eventWork)->exit;
+  s32 value = gFieldWork->stepTrigger;
 
   Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);

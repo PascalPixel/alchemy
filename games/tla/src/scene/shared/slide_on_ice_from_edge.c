@@ -1,15 +1,7 @@
-/// @file
 /// The leader slides over ice from the cell they stand on: from its centre in
 /// the direction the pad holds, or else from its edge toward the centre, then
-/// cell by cell until a wall, a raised cell or another actor stops them. Six
-/// scenes keep a copy; each includes this file as text after defining
-/// SLIDE_FROM_EDGE, its name, and the names its copy calls: SLIDE_STOPPED, the
-/// flag another routine sets to end the slide; SLIDE_STOP_LEADER;
-/// SLIDE_ANGLES, the heading for each pad direction (-1 for none);
-/// SLIDE_SET_ANIMATION; SLIDE_HAS_ARRIVED; SLIDE_KEEP_SLIDING, the update hook
-/// that steers the leader meanwhile; and SLIDE_SPHERES_OVERLAP.
-
-void SLIDE_FROM_EDGE(void) {
+/// cell by cell until a wall, a raised cell or another actor stops them.
+void Leader_SlideOnIceFromEdge(void) {
   struct Actor *object;
   s32 startCell;
   s32 targetX;
@@ -32,9 +24,9 @@ void SLIDE_FROM_EDGE(void) {
   /* FAKEMATCH(volatile): the stop flag read as a volatile s16, reread after
    * each test and for lsls #16. */
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  SLIDE_STOPPED = 0;
+  gSlideOnIce_Stopped = 0;
 retry:
-  SLIDE_STOP_LEADER();
+  Leader_StopIfPending();
   object->speedLimit = px(1);
   object->acceleration = px(1) / 2;
   object->targetX = 0x80000000;
@@ -52,7 +44,7 @@ retry:
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = SLIDE_ANGLES[(gInput.held >> 4) & 15];
+    angle = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
     // -1 for no direction, tested as its halfword.
     if ((u16)angle == 0xffff)
 #if !TLA_PATCH_1
@@ -81,23 +73,23 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
-  SLIDE_SET_ANIMATION(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 #if !TLA_PATCH_1
   FieldActor_WaitForMove(object);
 #else
-  for (i = 0; i <= 179 && SLIDE_HAS_ARRIVED(object) == 0; i++) {
-    if (SLIDE_STOPPED != 0)
+  for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
+    if (gSlideOnIce_Stopped != 0)
       goto end;
     System_Wait(1);
   }
 #endif
-  object->update = (void (*)(void))SLIDE_KEEP_SLIDING;
+  object->update = (void (*)(void))Actor_SteerByPad;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > px(8))
     goto blocked;
-  if (SLIDE_STOPPED != 0)
+  if (gSlideOnIce_Stopped != 0)
 #if !TLA_PATCH_1
     goto blocked;
 #else
@@ -110,7 +102,7 @@ walkNext:
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4. */
-    if (Value4((s32 (*)())SLIDE_SPHERES_OVERLAP, (s32)&entry->x, radius,
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
                (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -130,9 +122,9 @@ next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && SLIDE_HAS_ARRIVED(object) == 0 && SLIDE_STOPPED == 0)
+  if (i <= 179 && Actor_HasArrived(object) == 0 && gSlideOnIce_Stopped == 0)
     goto next;
-  if (SLIDE_STOPPED != 0)
+  if (gSlideOnIce_Stopped != 0)
     goto end;
   if (cell != startCell)
     goto changed;
@@ -158,5 +150,5 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = px(1) / 4;
-  SLIDE_SET_ANIMATION(object, 1);
+  Actor_SelectAnimation(object, 1);
 }

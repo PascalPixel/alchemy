@@ -22,7 +22,7 @@
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "call.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "fixed_math.h"
 #include "system/vector3.h"
 #include "inventory.h"
@@ -82,8 +82,6 @@ void Shop_Run(s32, s32);
 void TileCopies_CopyTouchedCells(s32, s32, s32, s32, s32, s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
 
-#define INPUT_HELD (*(volatile u32 *)&gInput.held)
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -124,17 +122,17 @@ void MenuTest_BrowseMessageRange(s32 message, s32 count) {
     MenuTest_ShowMessageAndWait(message);
     goto check;
   wait:
-    if (INPUT_HELD != 0)
+    if (gInput.held != 0)
       goto next;
     System_Wait(1);
   check:
-    if (INPUT_HELD & 2)
+    if (gInput.held & 2)
       goto done;
-    if ((INPUT_HELD & 1) || (INPUT_HELD & 0x80)) {
+    if ((gInput.held & 1) || (gInput.held & 0x80)) {
       message++;
       goto next;
     }
-    if (!(INPUT_HELD & 0x40))
+    if (!(gInput.held & 0x40))
       goto wait;
     message--;
   next:;
@@ -197,16 +195,11 @@ void Func_02000224(void) {
   Unit_Calculate(6);
 }
 
-static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
-  Unit_AddHp(owner, delta);
-}
-
 void Func_0200026c(void) {
   u8 *state;
 
   Message_ShowCentered((s32)MsgTheBodyIs, 1);
-  Unit_AddHpBy(4, -100);
+  FieldUnit_AddHp(4, -100);
   FieldUnit_AddHp(5, -100);
   FieldUnit_AddHp(6, -33);
   Unit_AddPp(4, -50);
@@ -418,11 +411,11 @@ void Actor_FallOverById(s32 actor, s32 angle);
 void Actor_DepartInRing(s32 actor);
 
 s32 Func_0200079c(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  *(s32 *)(work + 428) = 0x100;
-  work[3383] = 0;
-  work[3382] = 0;
+  work->transition = 0x100;
+  work->sceneAttributeHigh = 0;
+  work->sceneAttributeLow = 0;
   Item_AdjustCounter(5, 1);
   Item_AdjustCounter(5, 1);
   Item_AdjustCounter(5, 1);
@@ -802,46 +795,15 @@ struct Trigger gSceneEvents[] = {
      EVENT(Func_02000744)},
     {TRIGGER_TABLE_END},
 };
-#undef INPUT_HELD
+#undef gInput.held
 
 // Overlay 0x6b8's code from Func_02000c4c on, in ROM order.
 
-/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c;
- * psynergy_test.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:850: structure has no member named
- * `flag'. */
-struct SparkleSprite__s0c4c {
-  u8 unk00[5];
-  u8 attr5Low : 5;
-  u8 flag : 1;
-  u8 attr5High : 2;
-  u8 unk06[2];
-  u8 unk08;
-  u8 unk09 : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[0x1e];
-};
+void EffectSprite_Init(struct SparkleSprite *sprite, s32 width, s32 height,
+                       u32 attributes, s32 tile);
 
-/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c;
- * psynergy_test.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:841: incompatible types in assignment. */
-struct SparkleWork__s0c4c {
-  struct SparkleSprite__s0c4c sprites[4];
-  u16 unka0;
-  u16 unka2;
-  s16 vramEntry;
-  u16 unka6;
-  struct Actor *object;
-};
-
-void EffectSprite_Init(struct SparkleSprite__s0c4c *sprite, s32 width,
-                       s32 height, u32 attributes, s32 tile);
-
-void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
-  struct SparkleSprite__s0c4c *sprite;
+void Func_02000c4c(struct Actor *object, struct SparkleWork *work) {
+  struct SparkleSprite *sprite;
   s32 tile;
   s32 row;
   s32 col;
@@ -850,8 +812,8 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   work->vramEntry = VramCache_FindFreeEntry();
   Vram_Load(work->vramEntry, 256, gData_02000f44);
   work->unka6 = 0;
-  work->unka0 = 999;
-  work->unka2 = 999;
+  work->unka0[0] = 999;
+  work->unka0[1] = 999;
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
@@ -860,11 +822,11 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;
-    offset = (row * 2) * sizeof(struct SparkleSprite__s0c4c);
-    sprite = (struct SparkleSprite__s0c4c *)(offset + (s32)work);
+    offset = (row * 2) * sizeof(struct SparkleSprite);
+    sprite = (struct SparkleSprite *)(offset + (s32)work);
     for (; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
-      sprite->flag = 0;
+      sprite->fullColor = 0;
       sprite->palette = 0;
       sprite->priority = BattleEffect_GetObjectPriority(object) & 3;
       sprite++;

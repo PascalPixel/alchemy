@@ -180,7 +180,7 @@ void FieldPsynergy_Hover(void);
 /// Effect 20 cast on a target: runs the effect, ignoring the target.
 void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
 
-#include "field/event_work.h"
+#include "field/field_work.h"
 
 struct RiseParticle {
   s32 x;
@@ -192,12 +192,7 @@ struct RiseParticle {
   s32 timer;
 };
 
-/* VIEW(f0e6400): tag struct RiseWork as struct RiseWork__f0e6400; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:306: structure has no
- * member named `other'. */
-struct RiseWork__f0e6400 {
+struct ScoopWork {
   u8 tiles[0x400];
   u8 picture[0x400];
   struct EffectSprite sprites[64];
@@ -211,46 +206,6 @@ struct RiseWork__f0e6400 {
   struct Actor *other;
   s16 mode;
 };
-
-/* VIEW(f0e6400): tag struct FxScene as struct FxScene__f0e6400; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:276: structure has no
- * member named `facing'. */
-struct FxScene__f0e6400 {
-  u16 facing;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
-  u8 unk21[0x20];
-  s8 alternate;
-  u8 unk42[0x782];
-  s16 stage;
-  s16 frame;
-};
-
-/* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:241: structure has no
- * member named `unkd4c'. */
-struct FxEvent__f0e6400 {
-  struct EventWork work;
-  u8 unkd48[4];
-  /// Bit 0 clear runs Func_080dba5c; bit 1 set fixes the risen object's sprite
-  /// priority at 1 directly, else its priority flag is set.
-  u16 unkd4c;
-};
-
-STATIC_ASSERT(offsetof(struct FxEvent__f0e6400, unkd4c) == 0xd4c);
 
 extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
     ResourceId_Data1E9;
@@ -272,9 +227,9 @@ void Camera_WorldToScreen(s32 *position);
 void Scoop_DigUpItem(void);
 
 void FieldPsynergy_Scoop(void) {
-  struct RiseWork__f0e6400 *work = HeapSlot_Alloc(92, 0x193c);
-  struct FxScene__f0e6400 *scene = Ram_HeapSlots->effectWork;
-  struct FxEvent__f0e6400 *event = Ram_HeapSlots->eventWork;
+  struct ScoopWork *work = HeapSlot_Alloc(92, 0x193c);
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *other = NULL;
   struct Actor *object;
@@ -294,7 +249,7 @@ void FieldPsynergy_Scoop(void) {
   s32 frame;
   s32 i;
 
-  if (event->work.controlMode != 3) {
+  if (event->mode != 3) {
     SET_POSITION(scene, (caster->x & 0xfff00000) + 0x80000, caster->y,
                  (caster->z & 0xfff00000) + 0x80000);
     Vector_AddPolarOffset(px(16), scene->facing, &scene->x);
@@ -345,7 +300,7 @@ void FieldPsynergy_Scoop(void) {
 
   failed = 0;
   for (i = 0; i < 80; i++) {
-    target = event->work.objects[i];
+    target = event->actors[i];
     if (target != NULL && target->script != NULL &&
         (Actor_GetSpriteIdFar(target) == 406 || (target->collisionFlags & 1)) &&
         target != scene->mainObject && ((u8 *)target->sprite)[27] != 0 &&
@@ -543,14 +498,14 @@ struct Actor *Actor_GetById(u32 objectId);
  * BattleEffect_DropObjectAtAnchor(u32 objectId); tried as the definition's void
  * BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:539: conflicting types for
+ * games/tla/src/field/event_commands/radial/scoop.c:494: conflicting types for
  * `BattleEffect_DropObjectAtAnchor'. */
 void BattleEffect_DropObjectAtAnchor__psynergy(s32 id) __asm__(
     "BattleEffect_DropObjectAtAnchor");
 #define BattleEffect_DropObjectAtAnchor                                        \
   BattleEffect_DropObjectAtAnchor__psynergy
 void BattleEffect_DropObjectAtAnchor(s32 id) {
-  struct ModeEvent *event = Ram_HeapSlots->eventWork;
+  struct ModeEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *anchor;
   struct Actor *object;
 
@@ -590,14 +545,14 @@ extern const u16 gData_080f0fc0[];
 void Scoop_DigUpItem(void) {
   struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *anchor;
-  struct EventWork *event;
+  struct FieldWork *event;
   struct BattleUnit *unit;
   struct Actor *object;
   s32 item;
   s32 id = 79;
 
   anchor = work->anchor;
-  event = Ram_HeapSlots->eventWork;
+  event = Ram_HeapSlots->fieldWork;
   unit = Unit_Get(gMainRoutineWork.currentOwner);
 
   object = Actor_GetById(id);
@@ -605,7 +560,7 @@ void Scoop_DigUpItem(void) {
     object = Actor_CreateFar(489, anchor->x, anchor->y, anchor->z);
     if (object == NULL)
       return;
-    event->objects[id] = object;
+    event->actors[id] = object;
   }
   if (Random16() < 0xc000) {
     item = gData_080f0fc0[(Random16() * 16) >> 16];
@@ -633,12 +588,7 @@ struct WhirlSpark {
 };
 
 // Heap block 92: the decoded picture, then the sparks and their sprites.
-/* VIEW(f0e6400): tag struct WhirlWork as struct WhirlWork__f0e6400; f0e2c38.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:666: structure has no
- * member named `sparks'. */
-struct WhirlWork__f0e6400 {
+struct TeleportWhirlWork {
   u8 picture[0x400];
   struct WhirlSpark sparks[WHIRL_COUNT];
   struct EffectSprite sprites[WHIRL_COUNT];
@@ -655,7 +605,7 @@ void Func_080dc954(void);
 // a render of a Teleport circle would settle it.
 void Teleport_PlayWhirl(void) {
   s32 position[3];
-  struct WhirlWork__f0e6400 *work = HeapSlot_Alloc(92, sizeof(*work));
+  struct TeleportWhirlWork *work = HeapSlot_Alloc(92, sizeof(*work));
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
@@ -778,13 +728,7 @@ void Teleport_PlayWhirl(void) {
 
 #define SPARK_COUNT 100
 
-/* VIEW(psynergy): tag struct SparkParticle as struct SparkParticle__psynergy;
- * module/field/field.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:781: redefinition of
- * `struct SparkParticle'. */
-#define SparkParticle SparkParticle__psynergy
-struct SparkParticle {
+struct TeleportSpark {
   s32 x;
   s32 y;
   s32 z;
@@ -797,7 +741,7 @@ struct SparkParticle {
 // Heap block 92: the decoded picture, then the sparks and their sprites.
 struct SparkWork {
   u8 picture[0x400];
-  struct SparkParticle particles[SPARK_COUNT];
+  struct TeleportSpark particles[SPARK_COUNT];
   struct EffectSprite sprites[SPARK_COUNT];
 };
 
@@ -809,7 +753,7 @@ void Teleport_PlaySparks(void) {
   struct SparkWork *work = HeapSlot_Alloc(92, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
-  struct SparkParticle *particle;
+  struct TeleportSpark *particle;
   struct EffectSprite *sprite;
   s32 state;
   s32 entry;
@@ -955,7 +899,7 @@ void FieldPsynergy_TeleportOnTarget(void) {}
 /// Field Psynergy kind 30.
 void FieldPsynergy_Teleport(void) {
   ObjectTable_Get(Party_GetLeaderActor());
-  ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = 0xfc89;
+  ((struct ControlEvent *)Ram_HeapSlots->fieldWork)->cue = 0xfc89;
 }
 
 /// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.
@@ -985,18 +929,6 @@ struct PuffWork {
   struct PuffParticle particles[64];
 };
 
-/* VIEW(f0e6400): tag struct ObjectAnimation as struct ObjectAnimation__f0e6400;
- * f0e2c38.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:1053: structure has no
- * member named `unk18'. */
-struct ObjectAnimation__f0e6400 {
-  u8 unk00[24];
-  u8 unk18;
-  u8 unk19[15];
-  s16 *definition;
-};
-
 extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer);
@@ -1008,12 +940,12 @@ void BattleEffect_FadeToSavedPalettes(s32 frames);
 void FieldPsynergy_Parch(void) {
   struct PuffWork *work = HeapSlot_Alloc(92, 0x2160);
   struct HeapSlots *slots;
-  struct FxScene__f0e6400 *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 offset; // byte offset of the event work's 80 object pointers
   struct Actor *caster;
   struct Actor *object;
-  struct ObjectAnimation__f0e6400 *animation;
+  struct ObjectAnimation *animation;
   struct EffectSprite *sprite;
   struct EffectSprite *cursor;
   struct EffectSprite *fresh;
@@ -1058,7 +990,7 @@ void FieldPsynergy_Parch(void) {
   kind = 290;
   slots = Ram_HeapSlots;
   for (offset = 20; i < 80; i++, offset += 4) {
-    object = *(struct Actor **)((u8 *)slots->eventWork + offset);
+    object = *(struct Actor **)((u8 *)slots->fieldWork + offset);
     animation = object->sprite;
     if (object->script != NULL && animation->definition[0] == kind &&
         animation->unk18 == 1 &&
@@ -1403,19 +1335,11 @@ struct Unk_080e807cWork {
   u16 phase;
 };
 
-struct Unk_080e807cEvent {
-  u8 unk000[0x166];
-  u16 unk166;
-  u8 unk168[0xb45];
-  s8 unkcad;
-  s16 count;
-};
-
 /// Task of field Psynergy 28 (its name is question marks): its motes and
 /// colours each frame.
 void FieldPsynergy_UpdateUnnamed28(void) {
   struct Unk_080e807cWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct Unk_080e807cEvent *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 *pos = position;
@@ -1433,7 +1357,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   pos[1] = actor->y + 0x100000;
   pos[2] = actor->z;
   if (work->unk2985 != 0)
-    Vector_AddPolarOffset(px(2), -(event->count << 11), pos);
+    Vector_AddPolarOffset(px(2), -(event->unkcae << 11), pos);
   Camera_WorldToScreen(pos);
   x = pos[0] >> 16;
   gBgScroll[0].x = 64 - x;
@@ -1497,10 +1421,10 @@ void FieldPsynergy_UpdateUnnamed28(void) {
     }
   }
 
-  if (event->unkcad != 0 && event->count != 0)
-    event->count--;
-  if (event->count == 0)
-    event->unk166 = 0x209b;
+  if (event->unkcad != 0 && event->unkcae != 0)
+    event->unkcae--;
+  if (event->unkcae == 0)
+    event->psynergy = 0x209b;
 }
 #undef NEXT_PHASE
 #undef WHIRL_COUNT

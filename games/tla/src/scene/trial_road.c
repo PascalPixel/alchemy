@@ -24,7 +24,7 @@
 #include "system/main_routine_work.h"
 #include "macros.h"
 #include "system/vector3.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/window/window.h"
 #include "map.h"
 #include "system/field_effect.h"
@@ -148,11 +148,6 @@ void TrialRoad_TakeStairs(s32 direction) {
 struct Actor;
 struct FieldSprite;
 union FieldObject;
-
-struct EventWork184 {
-  u8 unk000[388];
-  s16 value;
-};
 
 /// A view of the map work's byte 23.
 struct MapWorkByte23 {
@@ -434,7 +429,7 @@ DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
 /// A step at a stage's foot asks; giving up takes the party back to the start.
 s32 TrialRoad_OfferToGiveUp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 message;
 
   if (Event_GetFlag(0x9ff)) {
@@ -447,9 +442,9 @@ s32 TrialRoad_OfferToGiveUp(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     message = (s32)&MsgTrialRoadGiveUpPrompt;
     FieldMessage_Show(message, 13);
-    work->unkcb0 = message + 1;
-    work->unkcb2 = 4;
-    work->unkcb4 = 1;
+    work->choiceMessage = message + 1;
+    work->choiceWidth = 4;
+    work->choiceSelection = 1;
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) ==
         0) {
       Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
@@ -538,16 +533,6 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   Event_End();
 }
 
-/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218;
- * module/tla.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:557: structure has no member named `value'.
- */
-struct EventWork15a__s0218 {
-  u8 unk000[0x15a];
-  u16 value;
-};
-
 void TrialRoad_ExamineChest(s32 id) {
   s32 flag;
 
@@ -563,7 +548,7 @@ void TrialRoad_ExamineChest(s32 id) {
   } else {
     FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) == 0)
-      ((struct EventWork15a__s0218 *)Ram_HeapSlots->eventWork)->value = 1;
+      gFieldWork->fieldMenu = 1;
   }
 }
 
@@ -773,7 +758,7 @@ void TrialRoad_BlowBushOffPoundPillar(void) {
 /* VIEW(s0218): routine gTrialRoad_PoundPartners as this part declared it; the
  * joined file has another; tried as the definition's extern u32
  * gTrialRoad_PoundPartners[], it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:783: `gTrialRoad_PoundPartners' undeclared
+ * games/tla/src/scene/trial_road.c:768: `gTrialRoad_PoundPartners' undeclared
  * (first use in this function). */
 extern const s8
     gTrialRoad_PoundPartners__s0218[4] __asm__("gTrialRoad_PoundPartners");
@@ -1015,7 +1000,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Vector3 unused;
 
   if ((dx != 0 && toX != x + dx) || (dz != 0 && toZ != z + dz)) {
-    ((struct EventWork184 *)Ram_HeapSlots->eventWork)->value = 13;
+    gFieldWork->blockedSteps = 13;
     return;
   }
   for (n = 0; n <= 5;) {
@@ -1169,7 +1154,6 @@ void TrialRoad_RevealVine(void) {
 #undef FIELD_AT
 #undef DEFINE_TRIAL_ROAD_ON_FOOT
 #undef gTrialRoad_PoundPartners
-// @file
 // Trial Road's effect spawner and the sand stage's stream.
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -1631,7 +1615,7 @@ void TrialRoad_GaspFlees(void) {
 /* VIEW(s15a8): routine gTrialRoad_PaletteCycleRunning as this part declared it;
  * the joined file has another; tried as the definition's extern LAST_DATA u32
  * gTrialRoad_PaletteCycleRunning[], it does not compile in tla-ja
- * (trial_road.c): games/tla/src/scene/trial_road.c:1653:
+ * (trial_road.c): games/tla/src/scene/trial_road.c:1637:
  * `gTrialRoad_PaletteCycleRunning' undeclared (first use in this function). */
 extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__(
     "gTrialRoad_PaletteCycleRunning");
@@ -1664,7 +1648,7 @@ void TrialRoad_SetPaletteCycleRunning(s32 value) {
 /* VIEW(s15a8): routine gTrialRoad_PaletteCycleFrame as this part declared it;
  * the joined file has another; tried as the definition's extern LAST_DATA s32
  * gTrialRoad_PaletteCycleFrame[], it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:1667: `gTrialRoad_PaletteCycleFrame'
+ * games/tla/src/scene/trial_road.c:1651: `gTrialRoad_PaletteCycleFrame'
  * undeclared (first use in this function). */
 extern s32
     gTrialRoad_PaletteCycleFrame__s15a8 __asm__("gTrialRoad_PaletteCycleFrame");
@@ -1678,14 +1662,14 @@ void PaletteCycle_StepAt(void) {
   u16 *p;
 
   if (gTrialRoad_PaletteCycleRunning != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
-    s16 *state = (s16 *)(work + 358);
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+    s16 *state = &work->psynergy;
 
     if (*state != 0 && (*state & 0x3ff) != 153)
       return;
-    if (((struct EventWork *)work)->pendingFirst != 0)
+    if (work->revealActive != 0)
       return;
-    if (*(s16 *)(work + 350) != 0)
+    if (work->pauseMenu != 0)
       return;
   }
   i = 0;
@@ -1763,7 +1747,7 @@ void TrialRoad_SetUpPeak(void) {
  * (*gTrialRoad_StageSetUps[])(void); called through the void type, the call's
  * result register moves 2 of 84 instructions of Scene_Initialize in tla-en;
  * tried as the rest of the object declares it, it does not compile in tla-ja
- * (trial_road.c): games/tla/src/scene/trial_road.c:1773:
+ * (trial_road.c): games/tla/src/scene/trial_road.c:1757:
  * `gTrialRoad_StageSetUps' undeclared (first use in this function). */
 extern s32 (*const gTrialRoad_StageSetUps__s1fc4[])(void) __asm__(
     "gTrialRoad_StageSetUps");
@@ -1773,7 +1757,7 @@ s32 Scene_Initialize(void) {
   s32 entrance = gMainRoutineWork.entrance;
   s32 pattern = gTrialRoadState->pattern;
 
-  if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 344) != 0)
+  if (gFieldWork->exit != 0)
     return 0;
   if (scene == (s32)&SceneId_TrialRoad1) {
     if (entrance <= 7) {
@@ -3409,7 +3393,7 @@ void TrialRoad_MoveRival(void) {
 /* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0;
  * s15a8.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:3463: structure has no member named
+ * games/tla/src/scene/trial_road.c:3447: structure has no member named
  * `vramEntry'. */
 struct TrialRoadLinkWork__s51a0 {
   u32 oam[54];
@@ -3486,12 +3470,12 @@ void TrialRoad_DrawProgress(void) {
   // One constant for its whole life: the markers' OAM size bits (attribute 1
   // size 1, 16 by 16), held in a register across both markers.
   u32 markerSize = 0x40000000;
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
 
   if (work->unke0 != 0) {
     work->fade = 2;
-  } else if (GameFlag_Get(FLAG_MENU_OPEN) || event->unk166 != 0) {
+  } else if (GameFlag_Get(FLAG_MENU_OPEN) || event->psynergy != 0) {
     if (work->fade > 0)
       work->fade--;
   } else if (work->fade <= 1) {

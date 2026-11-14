@@ -1,12 +1,10 @@
-
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/field_effect/move.c"
 /// @file
 /// The summit of Mt. Aleph, at the end of the game: the Golden Sun forms over
 /// the mountain, Alex claims its power, and the scene's colours and dust follow
-/// what happens. This file holds the effect spawner and the colour helpers;
-/// mt_aleph_summit/ holds the events.
+/// what happens.
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 
 #include "shared/tables.h"
 #include "types.h"
@@ -36,7 +34,7 @@
 #include "system/input.h"
 #include "call.h"
 #include "map.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
@@ -295,7 +293,6 @@ struct Trigger gSceneEvents[] = {
 
 #include "../field/field_effect/advance_motion.c"
 
-// @file
 // The summit's events: the Golden Sun's formation and what follows it.
 
 #include "text/msg_ids.h"
@@ -338,16 +335,6 @@ next:
 #define ACTOR(id) (Actor_Get(id))
 #define FIELD(p, off) (*(s32 *)((u8 *)(p) + (off)))
 
-/* VIEW(s0478): tag struct EventWorkView as struct EventWorkView__s0478;
- * module/tla.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mt_aleph_summit.c:373: dereferencing pointer to
- * incomplete type. */
-struct EventWorkView__s0478 {
-  u8 unk000[0x1ac];
-  s32 unk1ac;
-};
-
 void MtAlephSummit_StepColorsToward(u16 *colors, u16 *target, s32 count);
 void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta);
 void MtAlephSummit_PulseColors(void);
@@ -379,7 +366,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags((s32)(s32)Actor_Get(8), 0);
     Actor_SetAnimation(8, 12);
     Actor_SetAnimationSpeedById(8, 8);
-    ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
+    gFieldWork->transition = 0;
     REG_DISPCNT &= 0xfdff;
     REG_BG1CNT &= 0xfffc;
     REG_BG1CNT |= 3;
@@ -477,7 +464,7 @@ s32 Scene_Initialize(void) {
     REG_BG3CNT &= 0xfffc;
     REG_BG3CNT |= 2;
     System_Wait(1);
-    ((struct EventWorkView__s0478 *)slots->eventWork)->unk1ac = scale;
+    ((struct FieldWork *)slots->fieldWork)->transition = scale;
     REG_DISPCNT &= 0xfdff;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -797,7 +784,7 @@ s32 Scene_Initialize(void) {
     System_Wait(300);
     Event_SetDestination((s32)&SceneId_Epilogue, 1);
   } else {
-    ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
+    gFieldWork->transition = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     for (j = 0; j != 0x140; j++) {

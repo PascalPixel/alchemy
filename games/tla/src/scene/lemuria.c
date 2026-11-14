@@ -26,7 +26,7 @@
 #include "system/frame.h"
 #include "system/io_reg.h"
 #include "map.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "actor_view.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
@@ -71,7 +71,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 s32 Lemuria_NoticeLeader(struct Actor *self) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
   u32 mode;
   s8 *effect;
@@ -79,7 +79,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
 
   Actor_SetSpritePriorityDirect(self, BattleEffect_GetObjectPriority(Actor_Get(
                                           gMainRoutineWork.currentOwner)));
-  mode = 0x3ff & *(u16 *)(event + 0x166);
+  mode = 0x3ff & event->psynergy;
   state = &self->movementState;
   if (mode == 141) {
     effect = Ram_HeapSlots->effectWork;
@@ -112,7 +112,6 @@ struct WarpTarget {
   u16 z;
 };
 
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
@@ -213,14 +212,14 @@ void Lemuria_EnterDoor(s32 door) {
 /// leader, while the event work's halfword at 0x166 is 0, another once it is
 /// set; the actor's angle is restored after.
 void Lemuria_TalkToSpoiledChild(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_Get(18);
   s16 angle = object->facing;
 
   object->timer = 1;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (*(s16 *)(work + 0x166) == 0) {
+  if (work->psynergy == 0) {
     FieldEvent_SetMessageId((s32)&MsgItHasBeen);
     Actor_FaceEachOther(18, gMainRoutineWork.currentOwner, 2);
   } else {
@@ -236,14 +235,14 @@ void Lemuria_TalkToSpoiledChild(void) {
 
 /// The same for actor 19.
 void Lemuria_TalkToLonelyChild(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_Get(19);
   s16 angle = object->facing;
 
   object->timer = 1;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (*(s16 *)(work + 0x166) == 0) {
+  if (work->psynergy == 0) {
     FieldEvent_SetMessageId((s32)&MsgWeAreThe);
     Actor_FaceEachOther(19, gMainRoutineWork.currentOwner, 2);
   } else {
@@ -322,29 +321,22 @@ void Lemuria_GrowVine(void) {
   MapGrid_SetAttributeBAt(x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | 64);
 }
 
-/// Scoop digs up a buried treasure (Actor_ReturnHome): the helper, our name,
-/// Loho's, Taopo Swamp's and the Yampi Desert Cave's Scoop spots use too.
-static __inline__ void Lemuria_DigUpTreasure(s32 a, s32 b, s32 c) {
-  Actor_ReturnHome(a, b, c);
-}
+/// The Scoop spots: each digs up its treasure actor and sets its flag.
+void Lemuria_ScoopFirstTreasure(s32 a) { Event_DigUpTreasure(a, 64, 0x300); }
 
-void Lemuria_ScoopFirstTreasure(s32 a) { Lemuria_DigUpTreasure(a, 64, 0x300); }
+void Lemuria_ScoopSecondTreasure(s32 a) { Event_DigUpTreasure(a, 65, 0x301); }
 
-void Lemuria_ScoopSecondTreasure(s32 a) { Lemuria_DigUpTreasure(a, 65, 0x301); }
+void Lemuria_ScoopThirdTreasure(s32 a) { Event_DigUpTreasure(a, 66, 0x302); }
 
-void Lemuria_ScoopThirdTreasure(s32 a) { Lemuria_DigUpTreasure(a, 66, 0x302); }
+void Lemuria_ScoopFourthTreasure(s32 a) { Event_DigUpTreasure(a, 67, 0x303); }
 
-void Lemuria_ScoopFourthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 67, 0x303); }
+void Lemuria_ScoopFifthTreasure(s32 a) { Event_DigUpTreasure(a, 68, 0x304); }
 
-void Lemuria_ScoopFifthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 68, 0x304); }
+void Lemuria_ScoopSixthTreasure(s32 a) { Event_DigUpTreasure(a, 70, 0x306); }
 
-void Lemuria_ScoopSixthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 70, 0x306); }
+void Lemuria_ScoopSeventhTreasure(s32 a) { Event_DigUpTreasure(a, 71, 0x307); }
 
-void Lemuria_ScoopSeventhTreasure(s32 a) {
-  Lemuria_DigUpTreasure(a, 71, 0x307);
-}
-
-void Lemuria_ScoopEighthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 72, 0x308); }
+void Lemuria_ScoopEighthTreasure(s32 a) { Event_DigUpTreasure(a, 72, 0x308); }
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -365,7 +357,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
 
   if (Actor_Get(gMainRoutineWork.currentOwner)->y > px(96) ||
       Event_GetFlag(0x969)) {
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x15a), s16, 0) = 1;
+    gFieldWork->fieldMenu = 1;
     return;
   }
   if (!Event_GetFlag(0x966) || Event_GetFlag(0x968)) {
@@ -448,7 +440,7 @@ void Lemuria_DrinkFromSpring(void) {
     Event_PlaySound(SE_RECOVERY);
     Party_RestoreHpPp(1);
   } else {
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
+    gFieldWork->fieldMenu = 1;
   }
 }
 
@@ -477,7 +469,7 @@ void Lemuria_OfferSpringLuck(void) {
   } else {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(30, 3);
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (gFieldWork->message)++;
     FieldEvent_ShowMessageThenWait(30, 0, 5);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 464, 1040);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
@@ -580,7 +572,7 @@ void Actor_SetWideSprite();
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
+  gFieldWork->transition = 0x201;
   FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, 0xc80);
   FieldEffect_StartBlankOverlay(0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
@@ -750,11 +742,6 @@ void Lemuria_KeepLookingAround(void) {
   Event_End();
 }
 
-struct EventWork1c4 {
-  u8 unk000[0x1c4];
-  u16 count;
-};
-
 /// The party marvels at the city, and is stopped by a Lemurian who has never
 /// seen it before.
 /// "This place is remarkable... Truly remarkable..."
@@ -922,12 +909,12 @@ void Lemuria_MarvelAtCity(void) {
     FieldEvent_Wait(30);
     Actor_SetAnimationAndWait(7, 4);
     FieldEvent_ShowMessageThenWait(7, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(7, 3);
     FieldEvent_Wait(10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(7, 0, 10);
   }
   FieldActor_WatchAndSetScript(4, 7);

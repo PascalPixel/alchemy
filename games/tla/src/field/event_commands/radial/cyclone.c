@@ -9,40 +9,13 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct BurstSprite {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 unk08_10 : 6;
-  u8 unk0a[2];
-  s32 x;
-  s32 y;
-  u8 unk14[20];
-};
-
-/* VIEW(psynergy): tag struct BurstWork as struct BurstWork__psynergy;
- * module/field/event_commands.h has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/cyclone.c:22: redefinition of
- * `struct BurstWork'. */
-#define BurstWork BurstWork__psynergy
-struct BurstWork {
-  u8 tiles[384];
-  struct BurstSprite sprites[96];
-  struct BurstParticle particles[96];
-  s16 resource;
-  s16 vram;
-  s16 flash;
-  s16 frame;
-  s16 active;
-};
-
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 /* VIEW(psynergy): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
  * *position); module/field/event_commands.h has void
  * Camera_WorldToScreen(struct EffectVector *position); tried as the
  * definition's void Camera_WorldToScreen(struct EffectVector *position), which
  * the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/sand_sinking.c:54: conflicting
+ * games/tla/src/field/event_commands/radial/sand_sinking.c:24: conflicting
  * types for `Camera_WorldToScreen'. */
 void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
     "Camera_WorldToScreen");
@@ -58,7 +31,7 @@ void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
 void ParticleBurst_Update(void) {
   struct BurstWork *work;
   struct BurstParticle *particle;
-  struct BurstSprite *sprite;
+  struct EffectSprite *sprite;
   s32 position[3];
   s32 i;
 
@@ -68,7 +41,7 @@ void ParticleBurst_Update(void) {
   for (i = 0; i < 96; i++, particle++) {
     sprite = &work->sprites[i];
     if ((u32)particle->delay < 64) {
-      sprite->tile = work->vram + (particle->delay >> 3) % 6 * 2;
+      sprite->oam.index = work->vram + (particle->delay >> 3) % 6 * 2;
       position[0] = particle->x;
       position[1] = particle->y;
       position[2] = particle->z;
@@ -120,9 +93,9 @@ struct CarryWork {
 /// where it stood to the nearby kind 2 cell (a Cyclone teleporter), circling
 /// and arcing up and down on the way, its follower with it.
 void Cyclone_CarryLeader(void) {
-  u8 *effect = Ram_HeapSlots->effectWork;
+  struct FxScene *effect = Ram_HeapSlots->effectWork;
   struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleFxWork[0];
-  struct Actor *owner = *(struct Actor **)(effect + 16);
+  struct Actor *owner = effect->mainObject;
   s32 timer = work->timer;
   s32 position[3];
 
@@ -154,9 +127,9 @@ void Cyclone_CarryLeader(void) {
 /// Cyclone_CarryLeader for a kind 3 cell: the leader is carried there 32
 /// pixels up, circling, without the arc.
 void Cyclone_LiftLeader(void) {
-  u8 *effect = Ram_HeapSlots->effectWork;
+  struct FxScene *effect = Ram_HeapSlots->effectWork;
   struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleFxWork[0];
-  struct Actor *owner = *(struct Actor **)(effect + 16);
+  struct Actor *owner = effect->mainObject;
   s32 timer = work->timer;
   s32 position[3];
 
@@ -176,7 +149,7 @@ void Cyclone_LiftLeader(void) {
     break;
   case 1:
     owner->y -= 0x6666;
-    if (*(s8 *)(effect + 52) == 1) {
+    if (effect->childOption == 1) {
       if (timer == 40)
         work->state = 999;
     } else if (timer == 40) {
@@ -240,10 +213,10 @@ void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
 void FieldPsynergy_Cyclone(void) {
   struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
-  u8 *event = Ram_HeapSlots->eventWork;
-  u8 *effect = Ram_HeapSlots->effectWork;
-  struct Actor *owner = *(struct Actor **)(effect + 16);
-  s16 *points = (s16 *)(event + 0xcc0);
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FxScene *effect = Ram_HeapSlots->effectWork;
+  struct Actor *owner = effect->mainObject;
+  s16 *points = &event->psynergyCells[0];
   s32 spread = 0x40000;
   s32 step = 0xe000;
   struct CanvasSpriteWork *canvas;
@@ -260,7 +233,7 @@ void FieldPsynergy_Cyclone(void) {
 
   FieldPsynergy_FadeToCastColor();
   FieldPsynergy_GatherNearbyCells();
-  BattleEffect_SetObjectUpdateMode(*(struct Actor **)(effect + 16), 0);
+  BattleEffect_SetObjectUpdateMode(effect->mainObject, 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
   palette = (u16 *)(OBJ_PLTT + 14 * 16);
@@ -276,9 +249,9 @@ void FieldPsynergy_Cyclone(void) {
   }
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
-  pos[0] = (*(struct Actor **)(effect + 16))->x;
-  pos[1] = (*(struct Actor **)(effect + 16))->y;
-  pos[2] = (*(struct Actor **)(effect + 16))->z;
+  pos[0] = effect->mainObject->x;
+  pos[1] = effect->mainObject->y;
+  pos[2] = effect->mainObject->z;
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
@@ -326,9 +299,9 @@ void FieldPsynergy_Cyclone(void) {
   work->state = 0;
   work->timer = 0;
   work->state = 0;
-  if (*(s16 *)(event + 0xd40) != -1)
+  if (event->unkd40 != -1)
     mode = 3;
-  else if (*(s16 *)(event + 0xd3c) != -1)
+  else if (event->unkd3c != -1)
     mode = 2;
   else {
     point = points[0];
@@ -346,13 +319,13 @@ void FieldPsynergy_Cyclone(void) {
     FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
     Actor_SetSpriteFlagsFar(owner, 0);
-    Actor_SetSpritePriority(*(s16 *)(effect + 24), 1);
+    Actor_SetSpritePriority(effect->firstObjectId, 1);
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
-    work->to[0] = *(s16 *)(event + 0xd40) << 16;
+    work->to[0] = event->unkd40 << 16;
     work->to[1] = owner->y + 0x200000;
-    work->to[2] = *(s16 *)(event + 0xd42) << 16;
+    work->to[2] = event->unkd42 << 16;
     Task_Add(Cyclone_LiftLeader, 0x480);
     while (work->state != 999) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
@@ -363,7 +336,7 @@ void FieldPsynergy_Cyclone(void) {
       frame++;
     }
     Task_Remove(Cyclone_LiftLeader);
-    if (*(s8 *)(effect + 52) == 0)
+    if (effect->childOption == 0)
       owner->scaleX = 0;
     ring->scaleX = 0;
     if (work->kind)
@@ -381,9 +354,9 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetSpriteFlagsFar(owner, 0);
     owner->motionFlags = 0;
     wait(1);
-    work->to[0] = *(s16 *)(event + 0xd3c) << 16;
+    work->to[0] = event->unkd3c << 16;
     work->to[1] = owner->y;
-    work->to[2] = *(s16 *)(event + 0xd3e) << 16;
+    work->to[2] = event->unkd3e << 16;
     Task_Add(Cyclone_CarryLeader, 0x480);
     frame = 0;
     while (work->state != 999) {
@@ -590,11 +563,6 @@ struct SprayScene {
   struct Actor *otherObject;
 };
 
-struct SprayEvent {
-  u8 unk00[20];
-  struct Actor *objects[80];
-};
-
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 #define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
 s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
@@ -612,7 +580,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void Blaze_UpdateSpray(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
   struct SprayScene *scene = Ram_HeapSlots->effectWork;
-  struct SprayEvent *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct EffectSprite *sprite;
   struct SprayParticle *particle;
   struct SprayParticle *puff;
@@ -669,7 +637,7 @@ void Blaze_UpdateSpray(void) {
     if (++particle->timer == work->lifetime)
       particle->timer = -1;
     for (j = 0; j < 80; j++) {
-      struct Actor *other = event->objects[j];
+      struct Actor *other = event->actors[j];
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & 1) && other != scene->mainObject &&
           other != scene->otherObject &&

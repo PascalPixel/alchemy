@@ -20,7 +20,7 @@
 #include "field_sprite.h"
 #include "field/field.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -100,59 +100,9 @@ s32 Actor_GetCellIndex(struct Actor *object);
 // then lifts the leader if the new terrain is above the leader.
 #include "shared/pillars_raise.h"
 
-#define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
-
-/// Lowers the cells under the held actor, or the one the leader carries, for
-/// each listed actor it is: the shape grid takes the shape for its new height
-/// and the cell flags under it are cleared; the actor is kept at 0xcbc of the
-/// event work.
-void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
-  struct Actor *held = Leader_FindActorAhead();
-  void *work = Ram_HeapSlots->eventWork;
-  u8 *grid;
-
-  if (held == NULL) {
-    s32 id = Field_FindNearbyPsynergyTarget(gMainRoutineWork.currentOwner, 1);
-
-    if (id != -1)
-      held = Actor_GetById(id);
-  }
-  grid = Ram_MapShapeGrid;
-  HELD_OBJECT(work) = NULL;
-  if (*list != 0xffff) {
-  loop:
-    if (held == Actor_GetById(*list)) {
-      u8 *layer = &held->terrainId;
-      u8 *cell = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
-      u8 *shape =
-          grid + ((struct MapCell *)cell - (struct MapCell *)Ram_MapCellBuffer);
-      s32 kind = MapGrid_GetTerrainKind(*layer, held->x, held->z);
-      s32 height = Map_GetTerrainHeight(*layer, held->x, held->z);
-      s32 index = Actor_GetCellIndex(held);
-      s32 result = MapCollision_FindOrAddTag(*layer, kind, (height >> 19) - 4);
-
-      shape += index;
-      // The index goes on as the cell offset, four bytes a cell.
-      index <<= 2;
-      ((struct ShapeCell *)shape)->shape = result;
-      cell += index;
-      ((struct MapCell *)cell)->attributeB &= 63;
-      cell += 0x200;
-      ((struct MapCell *)cell)->attributeB &= 191;
-      HELD_OBJECT(work) = held;
-    }
-    list++;
-    if (*list != 0xffff)
-      goto loop;
-  }
-}
+#include "shared/pillars_lower_held_cells.h"
 
 #include "shared/held_actor_raise_cell.h"
-
-struct SceneWork {
-  u8 unk000[0x1ac];
-  s32 unk1ac;
-};
 
 extern struct Trigger gMadraCatacombs_Triggers[];
 
@@ -208,12 +158,12 @@ void Actor_LiftTargetBlock(const void *data);
 void FlagBlock_ApplyFlags(const void *data);
 
 void MadraCatacombs_TryLockedDoor(void) {
-  struct EventWork15a *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)&MsgFieldDoorWontBudge, 1);
-  work->flag = 1;
+  work->fieldMenu = 1;
   Event_End();
 }
 
@@ -314,11 +264,6 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   Event_End();
 }
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 flag;
-};
-
 void Actor_MoveToObject(s32 id, s32 value);
 void Rope_Initialize(void);
 void FlagBlock_PlaceAll(const void *data);
@@ -399,7 +344,7 @@ void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
 #include "shared/scene_run_if_held.h"
 
 void MadraCatacombs_StartMovingClimbablePillar(void) {
-  MadraCatacombs_LowerHeldPillarCells(gMadraCatacombs_ClimbablePillar);
+  Pillars_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
 }
 
 /// A door opens, sliding stone (mode 2) or swinging (mode 1), and the leader
@@ -407,10 +352,10 @@ void MadraCatacombs_StartMovingClimbablePillar(void) {
 void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void MadraCatacombs_FinishMovingClimbablePillar(void) {
-  struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (work->active != 0)
-    MadraCatacombs_SettleClimbablePillar(work->active);
+  if (work->movedBlock != 0)
+    MadraCatacombs_SettleClimbablePillar(work->movedBlock);
 }
 
 /// The tablet room's flames, lit: actors 10 to 19 stand in two columns and
@@ -464,7 +409,7 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
 /// The leader steps to the middle of a doorway, walks in and leaves by the exit
 /// the event work names.
 void MadraCatacombs_EnterDoorway(void) {
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
   s32 cell;
@@ -485,12 +430,12 @@ void MadraCatacombs_EnterDoorway(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->returnEntrance);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
                                      s32 f) {
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
@@ -517,7 +462,7 @@ void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->returnEntrance);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void MadraCatacombs_SlideOpenStoneDoor(void) {
@@ -557,7 +502,7 @@ DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedVillage, 3)
 DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel, 8)
 
 s32 Scene_Initialize(void) {
-  ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
+  gFieldWork->transition = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs1)
     MadraCatacombs_SetUpVillage();
   else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs3)

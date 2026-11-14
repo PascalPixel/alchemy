@@ -33,7 +33,7 @@
 #include "field_sprite.h"
 #include "macros.h"
 #include "system/main_routine_work.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -183,7 +183,7 @@ void JupiterLighthouse_UseBlueKey(s32 item) {
 }
 
 void JupiterLighthouse_TryLockedDoor(void) {
-  ((struct EventWorkLock *)Ram_HeapSlots->eventWork)->locked = 1;
+  gFieldWork->fieldMenu = 1;
   Message_ShowCentered(MsgFieldDoorLocked, 1);
 }
 
@@ -242,7 +242,7 @@ s32 Scene_Initialize(void) {
   s32 flag;
   s32 i;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   JupiterLighthouse_HideThePassage();
   if (Event_GetFlag(FLAG_RED_DOOR_OPENED))
     JupiterLighthouse_OpenRedDoor();
@@ -319,9 +319,7 @@ void Map_CenterOnFollowedPoint(void);
 
 extern s32 gPaletteCyclePausesInEvents;
 
-void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 extern s32 gPaletteCycleFrame;
 
@@ -344,14 +342,14 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_UpdateLower(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
@@ -389,7 +387,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;
-            *(u16 *)(work + 362) = delay;
+            work->raisedTrigger = delay;
           }
           gMainRoutineWork.renderMode = 0;
           *((u8 *)self + 0x62) = 1;
@@ -705,7 +703,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #undef FLAG_RED_DOOR_OPENED
 #undef FLAG_BLUE_DOOR_OPENED
 #undef FLAG_BRIDGE_BLOCK_RAISED
-// @file
 // The room of grey blocks and locked doors in Jupiter Lighthouse: its copy of
 // the effect spawner, and the cracked tiles, found, cracked and fallen
 // through.
@@ -793,30 +790,12 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
 #include "shared/cracked_tiles_find.h"
 
-void Leader_CenterInCell(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = object->x;
-  s32 z = object->z;
-
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
-
-  x >>= 20;
-  z >>= 20;
-  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                          (z << 4) + 8);
-  System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(object, (x << 20) + px(8), object->y,
-                                       (z << 20) + px(8));
-  FieldEvent_Wait(4);
-  ((struct Actor *)FieldCamera_GetActor())->y += 0xfff80000;
-}
+#include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
@@ -824,62 +803,11 @@ void Leader_CenterInCell(void) {
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-/* VIEW(s1888): tag struct CellTarget as struct CellTarget__s1888; cell_target.h
- * has another definition; tried with the definition the rest of the object has,
- * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
-struct CellTarget__s1888 {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-};
-
-void CrackedTile_Fall(struct CellTarget__s1888 *table,
-                      struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
-  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
-
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  leader->facing = 0x4000;
-  leader->motionFlags = 0;
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Io_Write16(0xf1f, &REG_WINOUT);
-  REG_DISPCNT |= 0x8000;
-  table->shown = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  x = 0;
-  do {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    leader->scaleX += -0x400;
-    leader->scaleY += -0x300;
-    leader->y += -0x9999;
-    System_Wait(1);
-    x++;
-  } while (x <= 39);
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 // The room of grey blocks and locked doors in Jupiter Lighthouse: the cracked
 // tiles' steps and the fall to the floor below.
 
@@ -927,7 +855,7 @@ s32 CrackedTiles_Step(void) {
 
 void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gCrackedTiles;
   s32 x = ((s32)FieldGameFlag_GetByte(work->flagByte));
   s32 z = ((s32)FieldGameFlag_GetByte(work->flagByte + 8));
@@ -944,6 +872,6 @@ void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
     shadow->z = object->z;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
+    gFieldWork->transition = value;
   }
 }

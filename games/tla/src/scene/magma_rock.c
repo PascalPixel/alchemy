@@ -1,3 +1,7 @@
+/// @file
+/// Magma Rock, outside and on its slopes, where the party climbs to the Magma
+/// Ball the diggers of Loho need for their cannon, in three rooms that share
+/// this overlay (SceneId_MagmaRock1 to SceneId_MagmaRock3).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
@@ -28,9 +32,9 @@
 #include "scene_ids.h"
 #include "system/frame.h"
 #include "field/event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "flag_call.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/field_effect.h"
 #include "macros.h"
 #include "call.h"
@@ -251,7 +255,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void Actor_LiftTargetBlock(s16 *table);
 
 void MagmaRock_UnblockMovedPillar(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock1) {
@@ -284,8 +288,7 @@ s32 Func_02003af4();
 // Rebuilds the room's opened passages on entry and sets the flag of the cell
 // the leader stands on.
 s32 MagmaRock_BlockMovedPillar(void) {
-  struct Actor *leader =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 3260);
+  struct Actor *leader = gFieldWork->movedBlock;
   s32 x, z;
 
   Event_Start();
@@ -447,11 +450,6 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
   }
 }
 
-struct MagmaRockEventWork {
-  u8 unk000[362];
-  u16 unk16a;
-};
-
 s32 Trig_Cos(s32 angle);
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -472,7 +470,7 @@ void MagmaRock_RollMagmaRock(struct Actor *object) {
       leader->z - px(8) < object->z + px(6) &&
       object->z - px(6) < leader->z + px(8) && leader->y < object->y + px(8) &&
       object->y - px(8) < leader->y + px(15)) {
-    ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->unk16a = 200;
+    gFieldWork->raisedTrigger = 200;
     object->update = NULL;
     object->x = 0;
     object->y = 0;
@@ -551,26 +549,8 @@ void MagmaRock_FlashStatue(struct Actor *object) {
 // Magma Rock's statues: the magma they fire, the flame columns that lift the
 // leader, the cracked columns, slides, pillars, vines and the final blast.
 
-/* VIEW(s0ff4): tag struct MagmaRockEventWork as struct
- * MagmaRockEventWork__s0ff4; scene/magma_rock has another definition; tried
- * with the definition the rest of the object has, it does not compile in tla-ja
- * (magma_rock.c): games/tla/src/scene/magma_rock.c:554: redefinition of `struct
- * MagmaRockEventWork'. */
-#define MagmaRockEventWork MagmaRockEventWork__s0ff4
-struct MagmaRockEventWork {
-  u8 unk000[0x15a];
-  s16 value15a;
-  u8 unk15c[2];
-  s16 value15e;
-  u8 unk160[6];
-  s16 value166;
-  s16 value168;
-  u8 unk16a[0x48];
-  u16 value1b2;
-};
-
 void MagmaRock_WarnStatue(struct Actor *object) {
-  struct MagmaRockEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (object->timer > 528) {
     if (object->timer & 2)
@@ -586,8 +566,8 @@ void MagmaRock_WarnStatue(struct Actor *object) {
     object->update = MagmaRock_BurnStatue;
     object->timer = 1;
   }
-  if (work->value166 == 0 && work->value15a == 0 && work->value15e == 0 &&
-      work->value168 == 0 && work->value1b2 != 0)
+  if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
+      work->item == 0 && work->transitionActive != 0)
     object->timer--;
 }
 
@@ -726,7 +706,7 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
     if (attributes == 212 || attributes == 222)
       goto stop;
     for (i = 8; i != 64; i++) {
-      other = ((struct EventWork *)Ram_HeapSlots->eventWork)->objects[i];
+      other = gFieldWork->actors[i];
       if (other->script == NULL)
         continue;
       if (source->x >> 20 == other->x >> 20 &&
@@ -857,7 +837,7 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
 /* VIEW(s0ff4): tag union Position as union Position__s0ff4;
  * module/scene/scene.h has struct Position; tried with the definition the rest
  * of the object has, it does not compile in tla-ja (magma_rock.c):
- * games/tla/src/scene/magma_rock.c:858: `Position' defined as wrong kind of
+ * games/tla/src/scene/magma_rock.c:838: `Position' defined as wrong kind of
  * tag. */
 #define Position Position__s0ff4
 // A 16.16 position word, read whole or by halves.
@@ -894,7 +874,7 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 /* VIEW(s0ff4): tag struct MagmaRockEffectConfig as struct
  * MagmaRockEffectConfig__s0ff4; scene/magma_rock has another definition; tried
  * with the definition the rest of the object has, it does not compile in tla-ja
- * (magma_rock.c): games/tla/src/scene/magma_rock.c:894: redefinition of `struct
+ * (magma_rock.c): games/tla/src/scene/magma_rock.c:874: redefinition of `struct
  * MagmaRockEffectConfig'. */
 #define MagmaRockEffectConfig MagmaRockEffectConfig__s0ff4
 struct MagmaRockEffectConfig {
@@ -984,7 +964,7 @@ struct ResourceSprite {
 };
 
 void MagmaRock_BurnStatue(struct Actor *object) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 type = 0x15f;
 
   if ((gFrameCount & 15) == 0)
@@ -1081,9 +1061,8 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     FieldActor_SetSpriteColor(object, 0);
     object->update = NULL;
   }
-  if (work->unk166 == 0 && *(s16 *)&work->unk15a == 0 &&
-      *(s16 *)&work->unk15c[2] == 0 && *(s16 *)work->unk168 == 0 &&
-      (u16)work->screenStatus != 0)
+  if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
+      work->item == 0 && (u16)work->transitionActive != 0)
     object->timer++;
 }
 
@@ -1171,7 +1150,7 @@ void Actor_SetActionById(s32 id, s32 action);
  * FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32
  * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
  * FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in
- * tla-ja (magma_rock.c): games/tla/src/scene/magma_rock.c:1170: conflicting
+ * tla-ja (magma_rock.c): games/tla/src/scene/magma_rock.c:1149: conflicting
  * types for `FieldCamera_MoveToActor'. */
 extern void Func_080d452c__s1c00(s32 a,
                                  s32 b) __asm__("FieldCamera_MoveToActor");
@@ -1434,10 +1413,8 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 #undef BYTE_AT
 
-#undef MagmaRockEventWork
 #undef MagmaRock_PlayBurst
 #undef MagmaRockEffectConfig
-#undef Blocks_MarkCells
 #undef Position
 
 #include "../field/field_effect/advance_motion.c"
@@ -1454,29 +1431,12 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef TLA_MAGMA_ROCK_H
-#undef BYTE_AT
 #undef HALF_AT
-#undef gMagmaRock_Room2LowerPlacements
-#undef gMagmaRock_Room2MiddlePlacements
-#undef gMagmaRock_Room2UpperPlacements
-#undef MagmaRockEventWork
 #undef MagmaRock_PlayBurst
 #undef Position
 #undef MagmaRockEffectConfig
-/* VIEW(s22ac): tag struct MagmaRockEventWork as this part has it; the joined
- * file has another; tried with the definition the rest of the object has, it
- * does not compile in tla-ja (magma_rock.c):
- * games/tla/src/scene/magma_rock.c:1470: redefinition of `struct
- * MagmaRockEventWork'. */
-#define MagmaRockEventWork MagmaRockEventWork__s22ac
-// @file
 // Magma Rock's rooms set up, the leader launched and landed, and the
 // crumbling pillars and traps.
-
-struct MagmaRockEventWork {
-  u8 unk000[0x1ac];
-  s32 field1ac;
-};
 
 s32 Trig_Cos(s32 angle);
 void FieldEffect_AdvanceMotion();
@@ -1498,7 +1458,7 @@ void MagmaRock_LaunchLeader(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -1533,7 +1493,7 @@ loop:
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;
+  gFieldWork->transition = 0x204;
   Func_02003af4();
 }
 
@@ -1645,7 +1605,7 @@ s32 Scene_Initialize(void) {
   s32 value1, value2, value3, value4;
   u8 zero;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   work = &gMainRoutineWork;
   work->retreatScene = (s32)&SceneId_MagmaRock1;
   work->retreatEntrance = 1;
@@ -2810,10 +2770,3 @@ struct Trigger gMagmaRock_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 #undef BYTE_AT
-#undef Func_02003af4
-#undef FieldEffect_Spawn
-#undef MagmaRock_RaiseFlameTop
-#undef MagmaRock_RaiseFlamePart
-#undef MagmaRockInside_RaiseActorCells
-#undef Blocks_MarkCells
-#undef MagmaRockEventWork

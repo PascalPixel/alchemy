@@ -7,6 +7,7 @@
 #include "types.h"
 #include "effect_sprite.h"
 #include "field/field_particle.h"
+#include "field/world_map_marker.h"
 
 struct Actor;
 struct AnimationEntry;
@@ -35,29 +36,6 @@ struct ObjectPartList {
   u8 count;
   u8 unk1c[0xc];
   struct ObjectPart *parts[1];
-};
-
-struct EventWaitWork {
-  u8 unk000[0x1b8];
-  s32 waitMode;
-};
-
-struct EventWordWork {
-  u8 unk00[0x10];
-  s32 word10;
-};
-
-struct OwnerVitals {
-  u8 unk000[20];
-  s16 hpRatio;
-  s16 ppRatio;
-  u8 unk018[28];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-  u8 unk03c[0x131 - 60];
-  u8 status;
 };
 
 struct ItemHead {
@@ -155,7 +133,7 @@ struct BurstWork {
   struct BurstParticle particles[96];
   s16 resource;
   s16 vram;
-  u8 unk1b04[2];
+  s16 flash; ///< set on frame 30 only
   s16 frame;
   s16 active;
 };
@@ -367,12 +345,6 @@ void Party_RemoveMemberRestored(s32 owner);
 
 struct Actor;
 
-// The field event work's pending Psynergy request (eventWork + 0x166).
-struct CloakEvent {
-  u8 unk000[0x166];
-  s16 psynergyRequest;
-};
-
 struct FallingObject {
   u8 unk00[0xc];
   s32 y;
@@ -455,24 +427,10 @@ struct WorldMapPlace {
   s16 unk02;
   s16 x;
   s16 z;
-  u8 unk08[12];
-};
-
-struct WorldMapMarker {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
+  u8 unk08[4];
+  s16 name;         ///< the place name's message
+  s16 nameEntrance; ///< the name's message for the entrance
+  u8 unk10[4];
 };
 
 // A halfword typed beside a word, for the FAKEMATCH that reads the name box's
@@ -480,22 +438,6 @@ struct WorldMapMarker {
 struct WorldMapAliasedHalfword {
   s16 value;
   s32 unk04;
-};
-
-struct LoadEventWork {
-  u8 unk000[0xca5];
-  u8 unkca5;
-  u8 unkca6[7];
-  u8 unkcad;
-  u8 unkcae[8];
-  s8 unkcb6;
-  u8 unkcb7[0x79];
-  u8 unkd30;
-  s8 target;
-  s8 targetY;
-  s8 targetZ;
-  u8 unkd34[4];
-  u8 unkd38;
 };
 
 struct PairScene {
@@ -548,18 +490,6 @@ struct CleanupWork {
   u8 unk710[8];
   u8 ownerByte;
   u8 layer;
-};
-
-struct CleanupEventWork {
-  u8 unk000[394];
-  s8 mode;
-  u8 unk18b[0xca5 - 395];
-  s8 unkca5;
-  u8 unkca6[7];
-  s8 unkcad;
-  u8 unkcae[8];
-  s8 unkcb6;
-  s8 unkcb7;
 };
 
 void FieldEffect_CheckCloakTile(void);
@@ -657,16 +587,6 @@ struct OrbitingParticleVector {
 struct OrbitingParticleChild {
   u8 reserved00[35];
   u8 flags;
-};
-
-// The field event work's Reveal state (eventWork + 0xca4).
-struct RevealEvent {
-  u8 unk000[0xca4];
-  s8 active;   // Reveal is showing
-  u8 markers;  // the nearby markers are up
-  s16 frames;  // how long it lasts
-  s16 centreX; // pixels
-  s16 centreY;
 };
 
 struct BurstParticleVector {

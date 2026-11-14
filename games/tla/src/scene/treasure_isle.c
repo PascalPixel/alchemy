@@ -37,7 +37,6 @@
 
 #include "../field/field_effect/move.c"
 
-// @file
 // Treasure Isle's copy of the field effect spawner.
 
 #define EFFECT_SPAWN FieldEffect_Spawn
@@ -434,14 +433,14 @@ extern volatile u16 gTreasureIsle_BgColors[];
 // A task: cycles four colours of a background and an object palette every
 // eight frames, saving both palettes the first time.
 void TreasureIsle_CycleWaterColors(void) {
-  struct TreasureIsleEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 phase;
   s32 i;
   s32 busy;
 
-  if (work->unk166 != 0)
+  if (work->psynergy != 0)
     return;
-  busy = (s8)work->unkca4;
+  busy = (s8)work->revealActive;
   if (busy != 0)
     return;
   if (gTreasureIsle_ColorCycleFrame[0] == -1) {
@@ -473,16 +472,6 @@ void TreasureIsle_CycleWaterColors(void) {
 
 // its code, then the overlay's data.
 
-/* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct
- * TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried
- * with the definition the rest of the object has, it does not compile in tla-ja
- * (treasure_isle.c): games/tla/src/scene/treasure_isle.c:484: structure has no
- * member named `route'. */
-struct TreasureIsleEventWork__s0cf4 {
-  u8 unk000[0x1ac];
-  s32 route;
-};
-
 // Treasure Isle's setup for each of its four rooms: places the objects whose
 // flags are set, schedules TreasureIsle_CycleWaterColors in rooms 2 and 3 and
 // opens again the cells already opened there (TreasureIsle_SetSpikyRock), and
@@ -490,8 +479,7 @@ struct TreasureIsleEventWork__s0cf4 {
 s32 Scene_Initialize(void) {
   s32 i;
 
-  ((struct TreasureIsleEventWork__s0cf4 *)Ram_HeapSlots->eventWork)->route =
-      0x204;
+  gFieldWork->transition = 0x204;
   Tightrope_Initialize();
   if (gMainRoutineWork.scene == (s32)&SceneId_TreasureIsle1) {
     Event_SetFlag(FLAG_AREA_TEMP_00);

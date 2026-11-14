@@ -151,7 +151,7 @@ bottom. This one walks the leader through one of Daila's doors:
 
 ```c
 void Daila_EnterDoor(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -162,7 +162,7 @@ void Daila_EnterDoor(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   Event_Wait(10);
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -204,6 +204,15 @@ ice raise their actor with one:
 ```c
 #include "shared/scene_raise_held_actor.h"
 ```
+
+A family of routines that works on one kind of thing keeps one set of
+names in every scene that has it: the cracked floors of the Jupiter
+Lighthouse rooms (`cracked_tile_fall.h` and its neighbours, over each
+room's `gCrackedTiles`), the pillars that are pounded, raised and lowered
+(`pillars_place.h`, `pound_sink_target.h`), the rubble (`rubble.h`), the
+slide over ice (`leader_slide_on_ice.h`) and the Mars Lighthouse rides
+(`ride_*.h`, over one `RideWork` in
+[`ride.h`](../../include/module/scene/ride.h)).
 
 Where a scene's copy differs in a number from the others, the scene writes
 its copy out.

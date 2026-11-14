@@ -8,7 +8,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "graphics/resource.h"
 #include "system/heap_release.h"
 #include "system/field_effect.h"
@@ -51,7 +51,7 @@ void Func_02003170(const s16 *script);
 extern u8 MsgThereSSomething[];
 extern s16 gData_02003264[];
 extern s16 gData_0200326e[];
-extern volatile s16 gTundariaTower_SlideStopped;
+extern volatile s16 gSlideOnIce_Stopped;
 
 void Func_02002e00(void);
 void Rocks_Spawn(s32 x, s32 y, s32 z, s32 frames);

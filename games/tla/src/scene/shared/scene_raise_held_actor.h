@@ -1,6 +1,6 @@
 /// Runs FlagBlock_ApplyFlags, then raises the held actor above the room.
 void Scene_RaiseHeldActor(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 flags;
 

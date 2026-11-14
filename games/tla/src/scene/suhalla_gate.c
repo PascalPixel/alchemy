@@ -21,7 +21,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 
 extern u32 gSceneExits[];
 
@@ -131,11 +131,11 @@ void SuhallaGate_SetUpRoom3(void) {
 }
 
 s32 Scene_Initialize(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s16 scene;
 
-  work = Ram_HeapSlots->eventWork;
-  work->screenEffect = 256;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = 256;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_SuhallaGate1)
     SuhallaGate_SetUpRoom1();
@@ -154,7 +154,7 @@ UNUSED void SuhallaGate_OpenRoom2Cell(void) {
 }
 
 void SuhallaGate_EnterHouse(void) {
-  s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
+  s32 value = gFieldWork->stepTrigger;
 
   Actor_GetById(0)->motionFlags = 0;
   Event_PlaySound(SE_DOOR_OPEN);
@@ -169,7 +169,7 @@ void SuhallaGate_EnterHouse(void) {
 
 /// The leader takes control again and the party leaves for Idejima.
 void SuhallaGate_LeaveForIdejima(void) {
-  s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
+  s32 value = gFieldWork->stepTrigger;
 
   gMainRoutineWork.currentOwner = 4;
   Event_PlaySound(SE_MAP_EXIT);

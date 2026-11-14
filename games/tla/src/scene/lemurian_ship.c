@@ -1,5 +1,6 @@
 /// @file
 #include "shared/tables.h"
+#include "field/field_work.h"
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -50,25 +51,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 // object the overlay links.
 
 #include "text/msg_ids.h"
-
-struct LemurianShipEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[4];
-  s16 field15a;
-  u8 unk15c[2];
-  s16 field15e;
-  u8 unk160[6];
-  s16 field166;
-  u8 unk168[2];
-  u16 field16a;
-  u8 unk16c[0x40];
-  s32 screenEffect;
-  u8 unk1b0[4];
-  s32 field1b4;
-  u8 unk1b8[0x0c];
-  u16 field1c4;
-};
 
 void Event_Start(void);
 void Event_End(void);
@@ -164,7 +146,7 @@ struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_0200021c(void) {
-  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   u8 *entry;
   s32 offset;
@@ -186,7 +168,7 @@ next:
   i = 0;
   offset = 0;
 next2:
-  if (work->exit == *(u16 *)(entry + offset))
+  if (work->stepTrigger == *(u16 *)(entry + offset))
     found = i;
   i++;
   offset += 12;
@@ -209,11 +191,11 @@ next2:
       Actor_CenterAndWalk(owner, 2, -4);
   }
   Event_Wait(4);
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void Func_02000324(void) {
-  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   u8 *entry;
   s32 offset;
@@ -235,7 +217,7 @@ next:
   i = 0;
   offset = 0;
 next2:
-  if (work->exit == *(u16 *)(entry + offset))
+  if (work->stepTrigger == *(u16 *)(entry + offset))
     found = i;
   i++;
   offset += 12;
@@ -253,12 +235,12 @@ next2:
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
   Event_Wait(4);
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void Func_02000438(void) {
   if (Event_GetFlag(0x982)) {
-    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MainRoutineWork *party = &gMainRoutineWork;
     struct Actor *leader;
     s32 x;
@@ -281,7 +263,7 @@ void Func_02000438(void) {
     Event_PlaySound(SE_MAP_EXIT);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Import_EventSetExitRequest(work->exit);
+    Import_EventSetExitRequest(work->stepTrigger);
   }
 }
 
@@ -715,13 +697,13 @@ void Func_02001128(void) {
 
 #define DEFINE_FUNC_02001138(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
-    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;             \
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;                         \
     struct Actor *object = ((struct Actor *)Actor_GetById(n1));                \
     u32 i;                                                                     \
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    work->field16a = 0;                                                        \
+    work->raisedTrigger = 0;                                                   \
     GameFlag_Clear(n2);                                                        \
     GameFlag_Clear(n3);                                                        \
     Event_Wait(20);                                                            \
@@ -854,20 +836,20 @@ void Func_02001474(void) {
 }
 
 void Func_0200155c(void) {
-  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
     object = ((struct Actor *)Actor_GetById(10));
     if ((object->x | object->z) == 0) {
-      work->field16a = 200;
+      work->raisedTrigger = 200;
       Actor_SetAnimation(8, 1);
     }
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_03)) {
     object = ((struct Actor *)Actor_GetById(11));
     if ((object->x | object->z) == 0) {
-      work->field16a = 201;
+      work->raisedTrigger = 201;
       Actor_SetAnimation(9, 1);
     }
   }
@@ -946,8 +928,7 @@ void LemurianShip_FindMonstersAboard(void) {
   Event_Wait(20);
   Event_PlaySound(SE_GLITTER);
   Event_Wait(80);
-  ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      513;
+  gFieldWork->transition = 513;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   PartyInventory_Remove(242);
@@ -1039,8 +1020,7 @@ void Func_02001a9c(void) {
 void Func_02001c88(void);
 
 s32 Scene_Initialize(void) {
-  ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      0x209;
+  gFieldWork->transition = 0x209;
   if (Event_GetFlag(0x9b4))
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
   if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip1) {

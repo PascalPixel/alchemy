@@ -410,7 +410,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                   /* FAKEMATCH(dead): the transform in a once-only block. */
                   do {
                     void (*transform)(const void *, s32 *) =
-                        Iwram_TransformVector;
+                        Iwram_TransformVectorEntry;
                     /* FAKEMATCH(pin): the result pointer in r1, set before the
                      * point in r0. */
                     register s32 *result __asm__("r1") = &screen.x;

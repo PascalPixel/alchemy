@@ -16,7 +16,7 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "actor.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "bg_scroll.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
@@ -182,7 +182,7 @@ void Func_0200020c(s32 stage) {
   gData_02003dbe = 0;
   wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
+  gFieldWork->transition = 0;
   palette = stage;
   buffer = Heap_AllocEwram(0x6000);
   Actor_SetSpriteFlags(Actor_GetById(8), 0);
@@ -199,7 +199,7 @@ void Func_0200020c(s32 stage) {
   Iwram_ClearWordsEntry((void *)0x050001c0, 32);
   wait(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 64;
+  gFieldWork->transitionFrames = 64;
   Event_StartScreenTransition();
   Camera_MoveWithinMapBounds_(gData_02003d34[stage][0] << 16,
                               gData_02003d34[stage][1] << 16, 1);
@@ -439,7 +439,7 @@ void Func_0200020c(s32 stage) {
     for (frame = 0; frame != 124;) {
       map->yaw += 0xffe0;
       if (frame == 60) {
-        ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 64;
+        gFieldWork->transitionFrames = 64;
         Event_FinishScreenTransition();
       }
       frame++;
@@ -464,12 +464,12 @@ void WorldMap_StartPlacedActors(void);
 /// after Func_0200020c's stage 0 to 4; entrance 6 leaves for
 /// SceneId_MtAlephSummit.
 s32 Scene_Initialize(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   Event_SetFlag(FLAG_RETREAT_BLOCKED);
-  work = Ram_HeapSlots->eventWork;
-  work->screenEffect = 0;
-  work->delay = 16;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = 0;
+  work->transitionFrames = 16;
   System_Wait(1);
   FieldCamera_SetSpeed(8);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
@@ -603,9 +603,9 @@ void Func_02001400(s32 mode) {
    * before each IoWriteQueue_Store16 call. */
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
+  gFieldWork->transition = 0;
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
+  gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (mode == 2) {

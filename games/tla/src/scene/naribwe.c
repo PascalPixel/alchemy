@@ -4,6 +4,7 @@
 /// shows the stone that hides the Unicorn Ring.
 
 #include "types.h"
+#include "field/field_work.h"
 #include "flags.h"
 #include "text/msg_ids.h"
 #include "system/ram_buffer.h"
@@ -39,7 +40,7 @@ extern struct Trigger gNaribwe_Triggers[];
 extern struct Trigger gNaribwe_TriggersOnReturn[];
 /* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
  * has another; tried as the definition's extern s32 gNaribwe_Doors[], it does
- * not compile in tla-ja: games/tla/src/scene/naribwe.c:212: `gNaribwe_Doors'
+ * not compile in tla-ja: games/tla/src/scene/naribwe.c:213: `gNaribwe_Doors'
  * undeclared (first use in this function). */
 extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
 #define gNaribwe_Doors gNaribwe_Doors__first
@@ -61,7 +62,7 @@ const u8 *Scene_GetPlacements(void) {
 /// Before Blaze is cast on the central fire, the event work notes whether the
 /// party came in by entrance 10.
 void Naribwe_PrepareBlaze(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   u8 *flag;
 
   flag = work + 0xd38;
@@ -195,7 +196,7 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
 /// The party leader walks into one of Naribwe's doors, which opens with its
 /// cell animation, and leaves by the exit of the door's number.
 void Naribwe_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 index;
   u32 id;
 
@@ -238,11 +239,11 @@ void Naribwe_BlowAwayIvy(void) {
 /// Unused: writes the rope's posts (24 and 25) into the event work; nothing
 /// calls it.
 UNUSED void Naribwe_SetRopeWork(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work[0xd31] = 0;
-  work[0xd32] = 24;
-  work[0xd33] = 25;
+  work->targetX = 0;
+  work->targetY = 24;
+  work->targetZ = 25;
 }
 
 /// Reveal shows the stone that hides the Unicorn Ring.
@@ -257,7 +258,7 @@ void Naribwe_HideStone(void) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  gFieldWork->transition = 0x100;
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
   Actor_SetSpriteFlags(Actor_GetById(23), 0);
@@ -277,7 +278,6 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 #undef gNaribwe_Doors
-// @file
 // Naribwe's data: its scripts, door, placements and triggers.
 
 #include "text/msg_ids.h"
@@ -527,4 +527,3 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      CONDITION_ALWAYS, EVENT(Naribwe_HideStone)},
     {TRIGGER_TABLE_END},
 };
-#undef Naribwe_PraiseFortuneTellerOnReturn

@@ -26,7 +26,7 @@
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "field_event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/object.h"
 #include "module/scene/scene.h"
 #include "module/window/window.h"
@@ -82,15 +82,6 @@ void Champa_ShrinkIntoDoorway(struct Actor *object) {
   object->scaleY += -1536;
 }
 
-static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
-  Actor_CenterOnColumn(id, column, offset);
-}
-
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
-                                                           s32 dz) {
-  Actor_SetDestinationOffsetById(id, dx, dz);
-}
-
 /// Stepping into a door: it opens, the leader walks through and the scene
 /// leaves by the exit given.
 void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
@@ -104,9 +95,9 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
-    Actor_CenterOnColumn_(id, 2, -8);
+    Actor_CenterAndWalk(id, 2, -8);
   else
-    Actor_OffsetPositionAndResetMotion_(id, 0, -8);
+    Actor_SetDestinationOffset(id, 0, -8);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(door);
   Event_FinishScreenTransition();
@@ -344,23 +335,16 @@ void Champa_FeizhiArrives(void) {
       Event_OpenMessage(29, 0);
       if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
         FieldEvent_ShowMessageThenWait(29, 0, 5);
-        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-            (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+        gFieldWork->message = (gFieldWork->message + 1);
       } else {
-        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-            (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+        gFieldWork->message = (gFieldWork->message + 1);
         FieldEvent_ShowMessageThenWait(29, 0, 5);
       }
       Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       FieldActor_LaunchFromLeader(30, 16, 0, 0x4000);
       FieldActor_WaitForMoveById(30);
       FieldEvent_Wait(20);
-      {
-        /* FAKEMATCH(pin): the emote pinned to r1. */
-        register s32 emote asm("r1") = 0x101;
-
-        Actor_ShowEmote(30, emote, 30);
-      }
+      Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
       FieldEvent_ShowMessageThenWait(30, 0, 5);
       Actor_RunRepeatedMotion(29, 2);
       FieldEvent_Wait(5);
@@ -507,7 +491,7 @@ s32 Tightrope_Initialize();
 
 s32 Scene_Initialize(void) {
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Task_AddFrame((s32)Champa_RotatePaletteColors, 0xc80);
   Map_SetLayerEntryFlag(8);
   Actor_SetSpriteFlags(((s32)Actor_Get(10)), 0);
@@ -602,7 +586,7 @@ void Champa_ShowTwoMessages(s32 firstId, s32 firstX, s32 firstY, s32 firstA,
                             volatile s32 frames) {
   /* FAKEMATCH(volatile): the frames volatile, read from their stack slot at
    * each use. */
-  struct ChampaEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 first = Actor_GetSpriteById(firstId);
   s32 second = Actor_GetSpriteById(secondId);
 
@@ -687,12 +671,10 @@ void Champa_CatchUpWithBriggs(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(15);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(35);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   }
   Actor_FaceDirection(7, FACING_EAST, 0);
@@ -722,16 +704,14 @@ void Champa_CatchUpWithBriggs(void) {
     Actor_FaceDirectionAndWait(6, FACING_NORTH);
     FieldEvent_Wait(10);
     Event_ShowMessage(6, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(6, 3);
     FieldEvent_Wait(10);
     Actor_FaceDirectionAndWait(6, FACING_NORTH);
     FieldEvent_Wait(10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     Event_ShowMessage(6, 0);
   }
   Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
@@ -1272,14 +1252,12 @@ void Champa_CatchUpWithBriggs(void) {
     FieldEvent_Wait(15);
     Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_ShowMessage(28, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
     Champa_CloseTwoMessages(5, 6);
     FieldEvent_Wait(35);
     Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     Event_ShowMessage(28, 0);
   }
   Actor_FaceDirection(4, FACING_WEST, 0);

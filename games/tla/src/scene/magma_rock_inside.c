@@ -52,7 +52,7 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "field/field_coordinate.h"
 #include "module/field/field.h"
@@ -109,7 +109,6 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 #include "../field/field_effect/move.c"
 
-// @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -355,12 +354,11 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
 #include "shared/block_clear_cells.h"
 
 void MagmaRockInside_PausePlatform(struct Actor *object) {
-  u8 *work = (u8 *)Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u8 *state = &object->movementState;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0 ||
-      *(u16 *)(work + 434) == 0)
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0 || work->transitionActive == 0)
     *state = 1;
   else
     *state = 0;
@@ -380,7 +378,7 @@ s32 GameFlag_Get();
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
  * compile in tla-ja (magma_rock_inside.c):
- * games/tla/src/scene/magma_rock_inside.c:385: too few arguments to function
+ * games/tla/src/scene/magma_rock_inside.c:383: too few arguments to function
  * `Actor_GetById'. */
 extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
 
@@ -466,10 +464,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void MagmaRockInside_UnblockMovedPillar(void) {
-  u8 *work;
+  struct FieldWork *work;
   s16 scene;
 
-  work = (u8 *)Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_MagmaRockInside2)
     Actor_LiftTargetBlock(gMagmaRockInside_Room2Pillars);
@@ -481,12 +479,11 @@ void MagmaRockInside_UnblockMovedPillar(void) {
     Actor_LiftTargetBlock(gMagmaRockInside_Room6Pillars);
   else if (scene == (s32)&SceneId_MagmaRockInside7)
     Actor_LiftTargetBlock(gMagmaRockInside_Room7Pillars);
-  MagmaRockInside_ClearBlockCells(*(s32 *)(work + 0xcbc));
+  MagmaRockInside_ClearBlockCells(work->movedBlock);
 }
 
 void MagmaRockInside_BlockMovedPillar(void) {
-  struct Actor *object =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+  struct Actor *object = gFieldWork->movedBlock;
   /* FAKEMATCH(pin): copy in r5. */
   register struct Actor *copy asm("r5");
   s32 scene;
@@ -758,7 +755,7 @@ next:
     goto end;
   id = 8;
 inner:
-  other = ((struct ActorTable *)Ram_HeapSlots->eventWork)->actors[id];
+  other = gFieldWork->actors[id];
   if (other->script == 0)
     goto skip;
   if (source->x >> 20 == other->x >> 20 && source->y >> 20 == other->y >> 20 &&
@@ -1393,7 +1390,7 @@ loop:
 }
 
 void MagmaRockInside_TakeFlame(void) {
-  u8 *work = (u8 *)Ram_HeapSlots->eventWork;
+  u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
 
   *(work + 0xd38) = 1;
   if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
@@ -1418,13 +1415,13 @@ DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInside_LightTorch, 0x303, 21, 600,
 struct Actor;
 
 void MagmaRockInside_GrowFlame(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   struct Actor *actor;
   struct Actor *other;
   s32 i;
 
-  object = Actor_GetById(((s8 *)work)[0xd30]);
+  object = Actor_GetById(work->unkd30);
   FieldActor_SetSpriteColor(object, 0);
   Event_PlaySound(SE_WHOOSH);
   i = 0;
@@ -1433,7 +1430,7 @@ void MagmaRockInside_GrowFlame(void) {
     wait(5);
     i++;
   } while (i != 16);
-  Event_SetFlag(((s8 *)work)[0xd30] + 0x2ee);
+  Event_SetFlag(work->unkd30 + 0x2ee);
   if (Event_GetFlag(FLAG_AREA_TEMP_03) && Event_GetFlag(FLAG_AREA_TEMP_04)) {
     other = Actor_GetById(11);
     Event_Start();
@@ -1471,7 +1468,7 @@ void MagmaRockInside_GrowFlame(void) {
 }
 
 void MagmaRockInside_PutOutFlames(void) {
-  if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
+  if (gFieldWork->unkd30 == -1) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_04))
       Actor_SetPosition(22, 0, 0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_03))
@@ -1534,7 +1531,7 @@ void MagmaRockInside_TrackStepCell(void) {
   s32 key = (x << 16) + z;
   s32 last;
   s32 value;
-  u8 *work;
+  struct FieldWork *work;
 
   if (object->velocityX != 0 || object->velocityZ != 0)
     return;
@@ -1549,13 +1546,13 @@ void MagmaRockInside_TrackStepCell(void) {
       gMagmaRockInside_StepCellX, gMagmaRockInside_StepCellZ);
   if (gMainRoutineWork.scene != (s32)&SceneId_MagmaRockInside8)
     return;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   value = MapCell_Get(2, x, z) >> 8;
   if (value != 0) {
     /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
      */
     s32 delay = value + 200;
-    *(s16 *)(work + 362) = delay;
+    work->raisedTrigger = delay;
   }
 }
 
@@ -1657,7 +1654,7 @@ fadeOut:
 // clears (MagmaRockInside_StampStepCell), redraws the marker in the row the
 // event work's counter gives, sets flag 0x200 and the counter's flag (312 on).
 void MagmaRockInside_StepOnMarker(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 cell, row = 54;
 
@@ -1688,7 +1685,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   struct Actor *other;
   s32 i;
 
-  object = Actor_Get(((s8 *)Ram_HeapSlots->eventWork)[0xd30]);
+  object = Actor_Get(gFieldWork->unkd30);
   FieldActor_SetSpriteColor(object, 0);
   Event_PlaySound(SE_WHOOSH);
   i = 0;
@@ -1733,7 +1730,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
 }
 
 void MagmaRockInside_PutOutTabletFlame(void) {
-  if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
+  if (gFieldWork->unkd30 == -1) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_05))
       Actor_SetPosition(11, 0, 0);
   }
@@ -1756,7 +1753,7 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
 /* VIEW(magma_rock_inside): tag struct Orbiter as struct
  * Orbiter__magma_rock_inside; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1760:
+ * tla-ja (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1757:
  * structure has no member named `parent'. */
 struct Orbiter__magma_rock_inside {
   u8 unk00[8];
@@ -1864,7 +1861,7 @@ extern s32 gMagmaRockInside_BlazeCasterReturnScript[];
  * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
  * *gFieldEffect_DurationScripts[] = {; tried as the definition's extern s32
  * gMagmaRockInside_BlazeWatcherReturnScript[], it does not compile in tla-ja
- * (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1996:
+ * (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1993:
  * `gMagmaRockInside_BlazeWatcherReturnScript' undeclared (first use in this
  * function). */
 extern const u8
@@ -2024,7 +2021,7 @@ column:
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK gFieldWork
 
 s32 Actor_MoveToObject();
 
@@ -2040,7 +2037,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Event_End();
   } else {
     FieldEvent_SetMessageId((s32)MsgBlazeTabletInscription);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.7);
     Actor_SetSpeed(5, 0.7);
     Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
@@ -2249,22 +2246,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 #undef FIELD_AT
 #undef EVENT_WORK
 
-#undef gMagmaRockInside_Room4Statues
-#undef gMagmaRockInside_Placements
-#undef gMagmaRockInside_Room2Placements
-#undef gMagmaRockInside_Room3Placements
-#undef gMagmaRockInside_Room4Placements
-#undef gMagmaRockInside_Room5Placements
-#undef gMagmaRockInside_Room6Placements
-#undef gMagmaRockInside_Room7Placements
-#undef gMagmaRockInside_Room8Placements
-#undef gMagmaRockInside_Room2Triggers
-#undef gMagmaRockInside_Room3Triggers
-#undef gMagmaRockInside_Room4Triggers
-#undef gMagmaRockInside_Room5Triggers
-#undef gMagmaRockInside_Room6Triggers
-#undef gMagmaRockInside_Room7Triggers
-#undef gMagmaRockInside_Room8Triggers
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 
 #undef gMagmaRockInside_BlazeWatcherReturnScript
@@ -2308,7 +2289,7 @@ static __inline__ void Lower(s32 id, s32 height) {
 s32 Scene_Initialize(void) {
   s32 i;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
+  gFieldWork->transition = 516;
   if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRockInside1) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath1, 768);
@@ -2686,9 +2667,6 @@ test:
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#undef MagmaRockInside_StartLavaPlatform
-
-#undef MagmaRockInside_StartLavaPlatform
 #undef CLOSED_BLEND
 // Magma Rock's inside: its falling rocks and rubble, and its tables.
 
@@ -3614,8 +3592,6 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-#undef MagmaRockInside_BurstCrackedPillar1
-#undef MagmaRockInside_BurstCrackedPillar2
 #undef gMagmaRockInside_BlazeWatcherReturnScript
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
@@ -3624,25 +3600,8 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef FIELD_AT
-#undef gMagmaRockInside_Placements
-#undef gMagmaRockInside_Room2Placements
-#undef gMagmaRockInside_Room3Placements
-#undef gMagmaRockInside_Room4Placements
-#undef gMagmaRockInside_Room5Placements
-#undef gMagmaRockInside_Room6Placements
-#undef gMagmaRockInside_Room7Placements
-#undef gMagmaRockInside_Room8Placements
-#undef gMagmaRockInside_Room4Statues
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 #undef DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH
 #undef BYTE_AT
-#undef gMagmaRockInside_BlazeWatcherReturnScript
 #undef EVENT_WORK
 #undef DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM
-#undef gMagmaRockInside_Room2Triggers
-#undef gMagmaRockInside_Room3Triggers
-#undef gMagmaRockInside_Room4Triggers
-#undef gMagmaRockInside_Room5Triggers
-#undef gMagmaRockInside_Room6Triggers
-#undef gMagmaRockInside_Room7Triggers
-#undef gMagmaRockInside_Room8Triggers

@@ -292,7 +292,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   }
   if (found == NULL)
     return NULL;
-  if (((struct ObjectAnimation *)found->sprite)->entries[0]->animId != id)
+  if (((struct ObjectAnimation *)found->sprite)->definition[0] != id)
     return NULL;
   return found;
 }
@@ -301,9 +301,9 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
 /// layered map; never on the world map or with no map.
 s32 MapGrid_BlocksJump(struct Actor *object, s32 *position) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s8 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  if (map == 0 || event[0x18a] == 3 ||
+  if (map == 0 || event->mode == 3 ||
       MapGrid_GetTerrainKindFar(object->terrainId, position[0], position[2]) <=
           2)
     return 0;
@@ -325,7 +325,7 @@ s32 Field_TryJumpForward(void) {
   s32 angle = leader->facing;
   u8 *flags = &leader->motionFlags;
   u8 saved = *flags;
-  struct JumpEventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 spriteFlags = 1;
   s32 position[3];
   s32 *positionWords;
@@ -737,7 +737,7 @@ s32 Leader_StepOntoRope(void) {
   struct RopeNode *node = Rope_FindNodeNear(&leader->x);
   u8 *flags;
 
-  ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
+  gFieldWork->blockedSteps = 0;
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
@@ -767,7 +767,7 @@ s32 Leader_StepOffRope(void) {
   s32 position[3];
   u32 angle;
 
-  ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
+  gFieldWork->blockedSteps = 0;
   angle = Data_080f0890[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;
@@ -842,7 +842,7 @@ s32 Leader_StepOntoTightrope(void) {
   struct TightropeNode *node = Tightrope_FindNodeNear(&leader->x);
   u8 *flags;
 
-  ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
+  gFieldWork->blockedSteps = 0;
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
@@ -872,7 +872,7 @@ s32 Leader_StepOffTightrope(void) {
   s32 position[3];
   u32 angle;
 
-  ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
+  gFieldWork->blockedSteps = 0;
   angle = Data_080f0890[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;

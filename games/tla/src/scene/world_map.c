@@ -20,7 +20,7 @@
 #include "actor.h"
 #include "field/field_coordinate.h"
 #include "owner_state.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field_sprite.h"
 #include "call.h"
 #include "system/task.h"
@@ -159,17 +159,17 @@ extern s32 Data_02006be8[8];
 #if !TLA_PATCH_1
 #define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
   {                                                                            \
-    struct EncounterWork *work;                                                \
+    struct FieldWork *work;                                                    \
     struct MainRoutineWork *party;                                             \
                                                                                \
-    work = Ram_HeapSlots->eventWork;                                           \
+    work = Ram_HeapSlots->fieldWork;                                           \
     party = &gMainRoutineWork;                                                 \
-    if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
+    if (party->encounterSteps >= work->encounterThreshold * 9 / 10) {          \
       if (Random16() < 0x8000) {                                               \
         Event_RequestDjinnBattle(a, b);                                        \
-        work->bias = 0;                                                        \
+        work->encounterBias = 0;                                               \
       } else {                                                                 \
-        party->encounterSteps = work->threshold;                               \
+        party->encounterSteps = work->encounterThreshold;                      \
       }                                                                        \
     }                                                                          \
   }
@@ -177,17 +177,17 @@ extern s32 Data_02006be8[8];
 #define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
   {                                                                            \
     struct MainRoutineWork *party;                                             \
-    struct EncounterWork *work;                                                \
+    struct FieldWork *work;                                                    \
                                                                                \
     party = &gMainRoutineWork;                                                 \
-    work = Ram_HeapSlots->eventWork;                                           \
+    work = Ram_HeapSlots->fieldWork;                                           \
     if (party->renderMode == 1) {                                              \
-      if (party->encounterSteps >= work->threshold * 9 / 10) {                 \
+      if (party->encounterSteps >= work->encounterThreshold * 9 / 10) {        \
         if (Random16() < 0x8000) {                                             \
           Event_RequestDjinnBattle(a, b);                                      \
-          work->bias = 0;                                                      \
+          work->encounterBias = 0;                                             \
         } else {                                                               \
-          party->encounterSteps = work->threshold;                             \
+          party->encounterSteps = work->encounterThreshold;                    \
         }                                                                      \
       }                                                                        \
     }                                                                          \
@@ -332,7 +332,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// The world map's render mode 8 start: with flag 0x147 a blank message is
 /// shown first, the event work's counters are cleared.
 void WorldMap_SetUpFlyingShip(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   gMainRoutineWork.renderMode = 8;
   if (Event_GetFlag(0x147)) {
@@ -344,25 +344,19 @@ void WorldMap_SetUpFlyingShip(void) {
     Actor_StartRenderModeScript();
   Leader_Search();
   if (Event_GetFlag(0x147))
-    work[3387] = 0;
+    work->climbing = 0;
   else
-    work[3387] = 1;
+    work->climbing = 1;
   if (Event_GetFlag(0x147)) {
     Message_CloseFinishedWindows();
     WorldMap_ReloadPendingAreaGraphics();
   }
   Gauge_Init();
-  {
-    s32 zero;
-
-    /* FAKEMATCH(temporary): the halfword counters take an s32 zero assigned
-     * inside the first store. */
-    *(u16 *)(work + 346) = zero = 0;
-    *(u16 *)(work + 350) = zero;
-    *(u16 *)(work + 348) = zero;
-    ((struct EventWork *)work)->encounterEnemyGroup = zero;
-    *(u16 *)(work + 358) = zero;
-  }
+  work->fieldMenu = 0;
+  work->pauseMenu = 0;
+  work->aButton = 0;
+  work->encounter = 0;
+  work->psynergy = 0;
 }
 
 /// Sets render mode 7, clears object 8's child flags, then adds up the PP of
@@ -395,7 +389,7 @@ void Actor_StartIdle(struct Actor *object);
 
 /// The leader jumps aboard the ship, actor 8, when close enough.
 void WorldMap_BoardShip(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   struct Actor *ship;
   s32 kind, dx, dz, distance;
@@ -438,9 +432,9 @@ void WorldMap_BoardShip(void) {
   Scene_ChooseMusic();
   Scene_PlayMusic();
   Event_End();
-  *(s16 *)work->unk15c = 0;
+  work->aButton = 0;
 #if TLA_PATCH_1
-  work->exit = 0;
+  work->stepTrigger = 0;
 #endif
   FieldEffect_ScheduleRatioTransition(0x10000, 30);
 }
@@ -449,7 +443,7 @@ void WorldMap_BoardShip(void) {
 void WorldMap_LeaveShip(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *ship = Actor_GetById(8);
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 cell = WorldMap_GetCollision(&ship->x);
   s32 position[3];
   s32 shore = 0;
@@ -520,7 +514,7 @@ void WorldMap_LeaveShip(void) {
     Event_End();
     Scene_ChooseMusic();
     Scene_PlayMusic();
-    *(s16 *)work->unk15c = 0;
+    work->aButton = 0;
   }
 }
 
@@ -528,7 +522,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 
 /// Back to the map: actor 8's position is kept in gMainRoutineWork.
 void Func_02000918(void) {
-  struct EventDestination *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(8);
 
   Event_Start();
@@ -543,7 +537,7 @@ void Func_02000918(void) {
   gMainRoutineWork.ownerOverride = 0;
   Event_ClearFlag(0x176);
   Event_PlaySound(SE_MAP_EXIT);
-  FieldEvent_SetExitRequest(work->scene);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 /// Brings the actor to the player character's position.
@@ -627,12 +621,12 @@ void WorldMap_RefuseToRunAway(void) {
     System_Wait(8);
     Event_End();
   } else {
-    struct EventDestination *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(SE_MAP_EXIT);
-    FieldEvent_SetExitRequest(work->scene);
+    FieldEvent_SetExitRequest(work->stepTrigger);
   }
 }
 
@@ -643,7 +637,7 @@ void WorldMap_GazeIntoPond(void) {
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)MsgGazedIntoThe, 1);
   if (roll == 0) {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s32 slot = 79;
     struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
     u8 *unit = Unit_Get(gMainRoutineWork.currentOwner);
@@ -664,7 +658,7 @@ void WorldMap_GazeIntoPond(void) {
       object = FieldActor_Create(0x1e9, x, position[1], position[2]);
       if (object == NULL)
         return;
-      work->objects[slot] = object;
+      work->actors[slot] = object;
     } else {
       object->x = x;
       object->y = position[1];
@@ -722,7 +716,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 extern s32 gData_0200632c[];
 
 s32 Scene_Initialize(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 && GameFlag_Get(0x8de) != 0 &&
       gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.savedX != 0) {
@@ -737,9 +731,9 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.ownerOverride != 0)
     FieldEffect_ScheduleRatioTransition(0x10000, 1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  work = Ram_HeapSlots->eventWork;
-  work->screenEffect = 0x400;
-  work->delay = 16;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = 0x400;
+  work->transitionFrames = 16;
   wait(1);
   FieldCamera_SetSpeed(8);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -1051,7 +1045,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_SetDestination(
         ((struct SavedDestination *)&gMainRoutineWork)->scene,
         ((struct SavedDestination *)&gMainRoutineWork)->entrance);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
+    gFieldWork->transition = 0;
   } else {
     Event_ClearFlag(0xa76);
     eastB = 0x4000;
@@ -1115,10 +1109,10 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       FieldEvent_ShowMessageThenWait(20, 0, 5);
-      (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+      (gFieldWork->message)++;
     } else {
       Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-      (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+      (gFieldWork->message)++;
       FieldEvent_ShowMessageThenWait(20, 0, 5);
     }
     Actor_TurnToFaceEachOther(4, 23, 0);
@@ -1686,14 +1680,14 @@ void Func_020029a4(void) {
   actor->timer = 0;
   Actor_SetScript(8, gData_02004eb8);
   Task_AddFrame(Func_020028cc, TASK_PASS_VBLANK);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   PaletteFade_ApplyTarget(0x10003, 1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 32;
+  gFieldWork->transitionFrames = 32;
   Event_StartScreenTransition();
   FieldEvent_Wait(120);
   FieldEffect_ScheduleRatioTransition(0x16666, 300);
   FieldEvent_Wait(270);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
+  gFieldWork->transitionFrames = 16;
   *(u16 *)BG_PLTT = RGB(31, 31, 31);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1799,18 +1793,9 @@ void Func_02002e00(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   FieldCamera_SetSpeed(4);
-  {
-    /* FAKEMATCH(pin): the mode pinned to r3 starts right after the 1 negated
-     * for y, before x loads. */
-    register s32 mode asm("r3") = 1;
-
-    FieldCamera_MoveTo(11890, CAMERA_KEEP, 10090, mode);
-  }
-  goto wait;
-  do {
+  FieldCamera_MoveTo(11890, CAMERA_KEEP, 10090, 1);
+  while (gInput.held == 0)
     wait(1);
-  wait:;
-  } while (gInput.held == 0);
   Event_SetDestination((s32)&SceneId_AlhafraManor, 80);
 }
 
@@ -1842,10 +1827,10 @@ void WorldMap_TakeTheTiller(void) {
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       FieldEvent_ShowMessageThenWait(9, 0, 10);
-      ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+      gFieldWork->message++;
     } else {
       Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-      ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+      gFieldWork->message++;
       FieldEvent_ShowMessageThenWait(9, 0, 10);
     }
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -2125,9 +2110,9 @@ void Func_02003d44(s32 mode) {
 
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
+  gFieldWork->transition = 0;
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
+  gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (mode == 2) {
@@ -2254,7 +2239,7 @@ void Func_020042e0(void) {
   }
   Event_PlaySound(SE_SCATTER);
   System_Wait(120);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   // mode holds one 0 for the rest of the function; the closing scroll reset
   // stores it again.
   mode = 0;

@@ -35,7 +35,7 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
 
   // DEAD: nothing uses the held keys read here; their load is in the ROM.
   if (effect->actors[0] > 0x7f)
-    (void)((volatile struct InputState *)&gInput)->held;
+    (void)gInput.held;
 }
 
 void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,

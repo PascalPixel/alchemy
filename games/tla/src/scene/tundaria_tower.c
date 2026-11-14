@@ -1,4 +1,7 @@
-
+/// @file
+/// Tundaria Tower, the ice-bound tower that holds the Center Prong, its floors
+/// slid over on ice, in seven rooms that share this overlay
+/// (SceneId_TundariaTower1 to SceneId_TundariaTower7).
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
@@ -37,7 +40,7 @@
 #include "call.h"
 #include "system/field_effect.h"
 #include "system/io_reg.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "field/event.h"
 #include "module/field/field.h"
@@ -182,28 +185,18 @@ const struct Trigger *Func_020004c8(void) {
   return (const struct Trigger *)gData_02003618;
 }
 
-static inline void TundariaTower_02002fe8(s32 a0, s32 a1, s32 a2, s32 a3,
-                                          s32 a4, s32 a5) {
-  Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
-}
-
-static inline void TundariaTower_02002fc0(s32 a0, s32 a1, s32 a2, s32 a3,
-                                          s32 a4, s32 a5) {
-  MapGrid_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
-}
-
 void Func_02000548(void) {
   Event_Start();
-  TundariaTower_02002fe8(19, 55, 7, 8, 24, 46);
-  TundariaTower_02002fc0(24, 102, 24, 110, 7, 8);
+  MapGrid_CopyCellAttributes(19, 55, 7, 8, 24, 46);
+  MapGrid_CopyCellsTo(24, 102, 24, 110, 7, 8);
   GameFlag_Set(2370);
   Event_End();
 }
 
 void Func_0200058c(void) {
   Event_Start();
-  TundariaTower_02002fe8(37, 55, 7, 8, 32, 46);
-  TundariaTower_02002fc0(32, 102, 32, 110, 7, 8);
+  MapGrid_CopyCellAttributes(37, 55, 7, 8, 32, 46);
+  MapGrid_CopyCellsTo(32, 102, 32, 110, 7, 8);
   GameFlag_Set(2371);
   Event_End();
 }
@@ -218,7 +211,7 @@ void Func_0200058c(void) {
        ->v)
 
 void Func_020005d0(void) {
-  u8 *work = (u8 *)Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 *choice;
   s32 x = 37;
   s32 *owner;
@@ -228,7 +221,7 @@ void Func_020005d0(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  choice = (s16 *)(work + 340);
+  choice = &work->stepTrigger;
   if (*choice == 3)
     x = 25;
   Event_PlaySound(SE_DOOR_OPEN);
@@ -372,14 +365,14 @@ void Func_02000920(void) {
   Event_ResolvePendingActions(0);
   FieldMessage_Show(MsgThereSSomething, 1);
   if (GameFlag_Get(0x949)) {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-    work->unk15a = 1;
+    work->fieldMenu = 1;
   }
   Event_End();
 }
 
-void Func_0200095c(void) { TundariaTower_SlideOnIce(); }
+void Func_0200095c(void) { Leader_SlideOnIce(); }
 
 extern u32 gData_02003370[];
 
@@ -473,7 +466,7 @@ void Func_02000b3c(void) {
 }
 
 void Func_02000bfc(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->scene == (s32)&SceneId_TundariaTower6) {
@@ -492,7 +485,7 @@ void Func_02000bfc(void) {
 /// the next cell's layer 1 attribute is 50 and its layer 2 attribute is not
 /// 255, then settles on the middle of its cell.
 void Func_02000c64(s32 unused, s32 actorArg) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   u16 actor;
   s32 dx;
@@ -527,7 +520,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
 /// with motion flags 3. In room 6, column 27 sets flag 0x947, and column 25
 /// with that flag set sets 0x946.
 void Func_02000d2c(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *object;
 
   object = *(struct Actor **)(event + 0xcbc);
@@ -706,12 +699,7 @@ struct Particle;
 struct ParticleSprite;
 union FieldObject;
 
-struct TundariaTowerEventWork {
-  u8 unk000[428];
-  s32 screenEffect;
-};
-
-void TundariaTower_StopLeader(void);
+void Leader_StopIfPending(void);
 
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
@@ -737,8 +725,8 @@ void Func_02000548(void);
 void Func_0200058c(void);
 void Func_02000404(const u8 *data);
 
-extern s16 gTundariaTower_SlideAngles[];
-extern s16 gTundariaTower_SlideAnglesByKey[];
+extern s16 gSlideOnIce_SteerAngles[];
+extern s16 gSlideOnIce_AnglesByKey[];
 
 extern u32 gData_020032d4[];
 
@@ -769,10 +757,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-static inline void TundariaTower_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
 void Func_020011e0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
@@ -781,14 +765,14 @@ void Func_020011e0(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  TundariaTower_CamBounds(-1, -1, -1, 0);
+  FieldCamera_MoveToFixed(-1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   leader->y = px(130);
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -824,7 +808,7 @@ void Func_020011e0(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Event_End();
 }
 
@@ -844,8 +828,7 @@ s32 Scene_Initialize(void) {
   s32 scene;
   s32 flag;
 
-  ((struct TundariaTowerEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      0x204;
+  gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_TundariaTower1) {
   } else if (scene == (s32)&SceneId_TundariaTower2) {
@@ -980,50 +963,23 @@ void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 #include "shared/actor_steer_by_pad.h"
 
-void TundariaTower_StopLeader(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-
-  if (work->actionCounter != 0) {
-    Event_SetFlag(0x106);
-    Leader_StopMoving();
-    Event_ResolveAllPendingActions();
-    GameFlag_Clear(FLAG_MENU_OPEN);
-  }
-}
+#include "shared/leader_stop_if_pending.h"
 
 #include "shared/leader_slide_on_ice.h"
 
-extern s16 gTundariaTower_SlideAnglesByKey[];
-void TundariaTower_KeepSliding(struct Actor *object);
-void TundariaTower_StopLeader(void);
+extern s16 gSlideOnIce_AnglesByKey[];
+void Actor_SteerByPad(struct Actor *object);
+void Leader_StopIfPending(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-#define SLIDE_FROM_EDGE TundariaTower_SlideOnIceFromEdge
-#define SLIDE_STOPPED gTundariaTower_SlideStopped
-#define SLIDE_STOP_LEADER TundariaTower_StopLeader
-#define SLIDE_ANGLES gTundariaTower_SlideAnglesByKey
-#define SLIDE_SET_ANIMATION Actor_SelectAnimation
-#define SLIDE_HAS_ARRIVED Actor_HasArrived
-#define SLIDE_KEEP_SLIDING TundariaTower_KeepSliding
-#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
 #include "shared/slide_on_ice_from_edge.c"
-#undef SLIDE_FROM_EDGE
-#undef SLIDE_STOPPED
-#undef SLIDE_STOP_LEADER
-#undef SLIDE_ANGLES
-#undef SLIDE_SET_ANIMATION
-#undef SLIDE_HAS_ARRIVED
-#undef SLIDE_KEEP_SLIDING
-#undef SLIDE_SPHERES_OVERLAP
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
-void TundariaTower_SetSlideStopped(s32 value) {
-  gTundariaTower_SlideStopped = value;
-}
+void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
@@ -1549,7 +1505,7 @@ next:
 /* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja (tundaria_tower.c):
- * games/tla/src/scene/tundaria_tower.c:1586: structure has no member named
+ * games/tla/src/scene/tundaria_tower.c:1544: structure has no member named
  * `blend'. */
 struct RockSprite__s29d0 {
   u8 unk00[5];
@@ -1660,14 +1616,14 @@ s16 gData_0200326e[] = {
     8, -1,
 };
 
-s16 gTundariaTower_SlideAngles[] = {                                                               
+s16 gSlideOnIce_SteerAngles[] = {                                                               
       -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
       0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
       -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          
       0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              
   };
 
-s16 gTundariaTower_SlideAnglesByKey[] = {
+s16 gSlideOnIce_AnglesByKey[] = {
     -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
     0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
     0,

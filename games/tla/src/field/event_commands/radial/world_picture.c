@@ -23,7 +23,7 @@ void WorldPicture_Initialize(void) {
   s32 left;
 
   markerTiles = Heap_AllocEwram(32);
-  oam = work->markers;
+  oam = (u32 *)work->markers;
   Actor_GetById(Party_GetLeaderActor());
   screenX = 0;
   screenY = 0;
@@ -124,13 +124,13 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
 /// (264, 16).
 void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 leader = Party_GetLeaderActor();
-  u8 *state = Ram_HeapSlots->eventWork;
+  struct FieldWork *state = Ram_HeapSlots->fieldWork;
   u8 *object;
   s32 x;
   s32 z;
 
   GameFlag_Clear(286);
-  if (*(s8 *)(state + 394) == 3) {
+  if (state->mode == 3) {
     object = ObjectTable_Get(leader);
     if (object == 0)
       return;

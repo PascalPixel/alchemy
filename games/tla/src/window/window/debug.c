@@ -382,8 +382,13 @@ void DebugWarp_Release(void) {
 /// One row of the debug warp menu: its name and what choosing it does.
 struct DebugWarpPreset {
   const u8 *name;
-  /// The handlers return nothing; see the FAKEMATCH tag in DebugWarp_Run.
+  // UB: the handlers return nothing; DebugWarp_Run calls them as returning
+  // s32.
+#ifdef UBFIX
+  void (*warp)(void);
+#else
   s32 (*warp)(void);
+#endif
 };
 
 extern const struct DebugWarpPreset gDebugWarp_Presets[];
@@ -473,7 +478,6 @@ done:
   Window_Close(window, 2);
   DebugWarp_Release();
   wait(1);
-  /* FAKEMATCH(signature): the handlers are typed as returning s32. */
   if (index != -1)
     gDebugWarp_Presets[index].warp();
   return index;
@@ -558,7 +562,7 @@ UNUSED s32 DebugShortcut_Run(void) {
   s32 column;
   s32 ability;
   s32 owner;
-  u8 *events;
+  struct FieldWork *events;
   s32 x;
   s32 y;
   s32 pp;
@@ -632,14 +636,14 @@ done:
   DebugShortcut_Release();
   wait(1);
   if (result != -1) {
-    events = Ram_HeapSlots->eventWork;
+    events = Ram_HeapSlots->fieldWork;
     ability = gDebugShortcut_Abilities[column][row];
     owner = Party_FindOwnerWithActionFar(ability);
     if (owner == -1)
       owner = gMainRoutineWork.currentOwner;
     if (ability == 0) {
       if (result == 0)
-        *(u16 *)(events + 0x166) = 0;
+        events->psynergy = 0;
       if (result == 1)
         gMainRoutineWork.packedEvents[0] = 0;
       if (result == 2) {
@@ -649,7 +653,7 @@ done:
     } else {
       owner = (owner << 10) | (ability & 0x3fff);
       if (result == 0)
-        *(u16 *)(events + 0x166) = owner;
+        events->psynergy = owner;
       if (result == 1)
         gMainRoutineWork.packedEvents[0] = owner;
       if (result == 2) {

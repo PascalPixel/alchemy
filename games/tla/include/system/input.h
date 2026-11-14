@@ -9,7 +9,9 @@
 #include "static_assert.h"
 
 struct InputState {
-  u32 held;
+  // volatile: the VBlank handler sets it while the code it interrupts reads
+  // it, so it is no device.
+  volatile u32 held;
   // volatile: the VBlank handler sets it while the code it interrupts reads
   // it, so it is no device.
   volatile u32 pressed;

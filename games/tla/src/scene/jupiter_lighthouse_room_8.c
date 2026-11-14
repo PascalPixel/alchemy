@@ -28,7 +28,7 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "field_event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -170,7 +170,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 s32 PushTarget_FillFootprint(s32 id);
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = Q16_ONE * 3 / 4;
   FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 1, 3);
@@ -217,9 +217,7 @@ void Map_CenterOnFollowedPoint(void);
 
 extern s32 gPaletteCyclePausesInEvents;
 
-void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 extern s32 gPaletteCycleFrame;
 
@@ -270,10 +268,8 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_222);
-  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Trig_Cos(source->angle));
-  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Sin(source->angle));
+  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
+  position.z = source->z + Math_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
   Import_ActorSelectAnimation(object, 2);
@@ -530,7 +526,6 @@ s32 gPushLeaderSteps[] = {
 #undef ABS
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 #undef PIXEL_PART
-// @file
 // The first room of Jupiter Lighthouse's left tower: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
@@ -617,8 +612,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
@@ -632,62 +625,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-/* VIEW(s1c30): tag struct CellTarget as struct CellTarget__s1c30; cell_target.h
- * has another definition; tried with the definition the rest of the object has,
- * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
-struct CellTarget__s1c30 {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-};
-
-void CrackedTile_Fall(struct CellTarget__s1c30 *table,
-                      struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
-  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
-
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  leader->facing = 0x4000;
-  leader->motionFlags = 0;
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Io_Write16(0xf1f, &REG_WINOUT);
-  REG_DISPCNT |= 0x8000;
-  table->shown = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  x = 0;
-  do {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    leader->scaleX += -0x400;
-    leader->scaleY += -0x300;
-    leader->y += -0x9999;
-    System_Wait(1);
-    x++;
-  } while (x <= 39);
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-// @file
 // The first room of Jupiter Lighthouse's left tower: the cracked tiles' steps
 // and the fall to the floor below.
 
@@ -707,7 +649,6 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 #include "shared/cracked_tile_place_landing.h"
 
-// @file
 // The tables of Jupiter Lighthouse's left-tower room that the scene's getters
 // return.
 
@@ -813,4 +754,3 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef JupiterLighthouse_DropBlockIntoHole

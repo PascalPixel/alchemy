@@ -13,7 +13,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "types.h"
 #include "actor.h"
@@ -565,7 +565,7 @@ s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t5, t8, t15, t16, t17, t19, t20, t21, t23, t24, t25, t26, t27,
       t28, t29, v5;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) + -3) << 16) > (u32)0x10000)
     goto L_02008e6e;
   t1 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
@@ -681,9 +681,7 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.c"
 
-void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 extern s32 gPaletteCycleFrame;
 
@@ -717,11 +715,6 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 
 #include "shared/actor_raise_from_cell.h"
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
-                                                   s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
 #include "shared/whirlwind_carry_leader.h"
 
 #include "shared/position_flat_distance.h"
@@ -734,14 +727,14 @@ s32 Trig_Cos(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_UpdateLower(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
@@ -779,7 +772,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;
-            *(u16 *)(work + 362) = delay;
+            work->raisedTrigger = delay;
           }
           gMainRoutineWork.renderMode = 0;
           *((u8 *)self + 0x62) = 1;
@@ -851,7 +844,8 @@ void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTargetHead *table,
+                      struct CellTargetEntry *entry);
 
 extern s16 gLightSpriteCount;
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
@@ -937,7 +931,6 @@ void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 #include "../field/field_effect/move.c"
 
 #undef FIELD_AT
-// @file
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1014,8 +1007,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE gCrackedTiles
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 /* VIEW(s1f74): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares
  * it; the joined file has another; tried as the definition's void
  * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot), which the object already
@@ -1039,134 +1030,16 @@ void Oam_AddSpriteAtDepthClamped__s1f74(void *entry, s32 priority) __asm__(
 
 struct CellTargetEntry;
 
-/* VIEW(s25a4): tag struct CellTarget as struct CellTarget__s25a4; cell_target.h
- * has another definition; tried with the definition the rest of the object has,
- * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
-struct CellTarget__s25a4 {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-};
-
-/* VIEW(s25a4): routine CrackedTile_Fall as this part defines it; the scene's
- * module header declares it with the joined file's CellTarget. */
-void CrackedTile_Fall__s25a4(
-    struct CellTarget__s25a4 *table,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-void CrackedTile_Fall__s25a4(struct CellTarget__s25a4 *table,
-                             struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
-  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
-
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  leader->facing = 0x4000;
-  leader->motionFlags = 0;
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Io_Write16(0xf1f, &REG_WINOUT);
-  REG_DISPCNT |= 0x8000;
-  table->shown = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  x = 0;
-  do {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    leader->scaleX += -0x400;
-    leader->scaleY += -0x300;
-    leader->y += -0x9999;
-    System_Wait(1);
-    x++;
-  } while (x <= 39);
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_SelectAnimation
-#undef Actor_StartScript
-// @file
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-void CrackedTile_DropIn(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  u32 i;
-  struct EffectOptions options;
-  s32 always;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Map_CenterOnFollowedPoint();
-  System_Wait(1);
-  actor->y = px(130);
-  actor->gravity = px(1) / 2;
-  actor->bounce = 0;
-  actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_PlaySound(SE_DUST_PUFF);
-  actor->motionFlags = 3;
-  FieldEvent_Wait(24);
-  options.palette = 7;
-  options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
-  always = 1;
-  i = 0;
-loop:
-  /* FAKEMATCH(dead): the body tested on a flag that is always set. */
-  if (always) {
-    s32 angle;
-    s32 velocity[3];
-
-    angle = i << 12;
-    velocity[0] = Trig_Cos(angle);
-    velocity[1] = 0;
-    velocity[2] = Math_Sin(angle);
-    velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
-    FieldEffect_Spawn(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                      velocity[2], 0x1090001, &options);
-  }
-  i++;
-  if (i <= 16)
-    goto loop;
-  Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(5, 5, 1);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  actor->gravity = px(1);
-  actor->bounce = Q16_ONE / 4;
-  FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Event_End();
-}
+#include "shared/cracked_tile_drop_in.h"
 
 extern struct CellTarget gCrackedTiles;
 

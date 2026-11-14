@@ -22,7 +22,7 @@ void Field_ClearRequests(void) {
   struct BattleEffectCounterState *state;
 
   value = 0;
-  state = Ram_HeapSlots->eventWork;
+  state = Ram_HeapSlots->fieldWork;
   state->counters[0] = value;
   state->counters[1] = 0;
   state->counters[2] = 0;
@@ -38,7 +38,7 @@ void Field_ClearRequests(void) {
 }
 
 s32 Field_CountRequests(void) {
-  struct BattleEffectCounterState *state = Ram_HeapSlots->eventWork;
+  struct BattleEffectCounterState *state = Ram_HeapSlots->fieldWork;
 
   return state->counters[0] + state->counters[1] + state->counters[2] +
          state->counters[3] + state->counters[4] + state->counters[5] +
@@ -50,16 +50,16 @@ s32 Field_CountRequests(void) {
 /// knows Hover (ABILITY_HOVER); clears it otherwise. The world map's pad
 /// movement reads it.
 void Field_UpdateHoverReady(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (GameFlag_Get(FLAG_SHIP_FLIES) && Party_FindOwnerWithActionFar(153) != -1)
-    work[0xd39] = 1;
+    work->hoverReady = 1;
   else
-    work[0xd39] = 0;
+    work->hoverReady = 0;
 }
 
 s32 Field_GetCollisionAheadOfLeader(void) {
-  struct DisplayBlock *block = Ram_HeapSlots->eventWork;
+  struct FieldWork *block = Ram_HeapSlots->fieldWork;
   struct Actor *object = WorldMap_Unfreeze();
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 position[3];
@@ -92,7 +92,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// The collision code of the cell under the leader (on the world map, of its
 /// block), or 0 with no leader. Teleport's triggers match it.
 s32 Field_GetCollisionUnderLeader(void) {
-  struct DisplayBlock *block = Ram_HeapSlots->eventWork;
+  struct FieldWork *block = Ram_HeapSlots->fieldWork;
   struct Actor *object = WorldMap_Unfreeze();
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Vector3 position;
@@ -119,7 +119,7 @@ s32 Field_GetCollisionUnderLeader(void) {
 
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 selectedValue;
-  struct EventWork *runtime;
+  struct FieldWork *runtime;
   s32 z;
   s32 y;
   s32 x;
@@ -137,7 +137,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   z = positionZ;
   region = ((struct MapRegion * (*)(void)) gOverlayArea[11])();
   if (region != 0 &&
-      (runtime = Ram_HeapSlots->eventWork, minX = region->minX, minX != -1)) {
+      (runtime = Ram_HeapSlots->fieldWork, minX = region->minX, minX != -1)) {
   loop:
     minY = region->minY;
     minZ = region->minZ;
@@ -150,12 +150,12 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
         y < REGION_FIXED(maxY) && x >= REGION_FIXED(minX) &&
         x < REGION_FIXED(maxX) && z >= REGION_FIXED(minZ) &&
         z < REGION_FIXED(maxZ)) {
-      runtime->countdown = (u16)selectedValue;
+      runtime->exit = (u16)selectedValue;
       Sound_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
-    runtime = Ram_HeapSlots->eventWork;
+    runtime = Ram_HeapSlots->fieldWork;
     region++;
     minX = region->minX;
     if (minX != -1)
@@ -169,7 +169,7 @@ s32 DjinnRecovery_CountDownFar(void);
 void FieldEffect_SetAttached(s32 owner, s32 mode);
 
 void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
-  struct StepWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 leaderId = Party_GetLeaderActor();
   struct Actor *leader = WorldMap_Unfreeze();
@@ -215,7 +215,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   if (attributes != 0)
     Field_CheckExitRegions(x, y, z);
   if (event - 1 <= 229)
-    work->exit = event;
+    work->stepTrigger = event;
   if (attributes & 0xe2)
     work->pushCell = attributes;
 
@@ -227,12 +227,11 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     if (GameFlag_Get(0x167))
       speed <<= 1;
     if (*((s8 *)work + 0x18a) == 3) {
-      work->encounterEnemyGroup =
-          Encounter_RollWorldMap((s32)&leader->x, speed);
+      work->encounter = Encounter_RollWorldMap((s32)&leader->x, speed);
     } else {
       if (attributes & 4)
         zone = 1;
-      work->encounterEnemyGroup = Encounter_RollTerrain(zone, speed);
+      work->encounter = Encounter_RollTerrain(zone, speed);
     }
 
     step = Iwram_MulQ16(work->walkingDistanceScale, leader->speedLimit);
@@ -291,7 +290,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
         work->fallenOwners[work->fallenCount++] = gPartyStep.activeOwners[i];
-        work->raisedEvent = -1;
+        work->raisedTrigger = -1;
         unit->poison = 0;
       }
     }
@@ -419,11 +418,11 @@ void WorldMap_Freeze(void) {
 /// On the world map (display mode 3), loads the area graphics a change left
 /// pending.
 void WorldMap_ReloadPendingAreaGraphics(void) {
-  struct DisplayBlock *block = HeapSlot_AllocEwram(108, 0xd50);
+  struct FieldWork *block = HeapSlot_AllocEwram(108, 0xd50);
 
-  if (block->mode == 3 && block->pending != 0) {
-    block->pending = 0;
-    block->object[91] = 0;
+  if (block->mode == 3 && block->unk18b != 0) {
+    block->unk18b = 0;
+    block->camera->movementState = 0;
     WorldMap_LoadAreaGraphicsFar();
   }
 }
@@ -432,7 +431,7 @@ void *WorldMap_Unfreeze(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   void **event;
 
-  event = Ram_HeapSlots->eventWork;
+  event = Ram_HeapSlots->fieldWork;
   if (party->ownerOverride == 0) {
     s32 offset = party->currentOwner * 4;
 

@@ -22,7 +22,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/task.h"
 #include "macros.h"
 #include "shared/tables.h"
@@ -146,7 +146,7 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
 /// the leader, forced when bit 1 is set and event word 352 or tile byte 4 is.
 s32 Yallam_WatchSongGame(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 force = 0;
 
@@ -173,7 +173,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
       target = Actor_Get(9);
     if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
       leader = Actor_Get(gMainRoutineWork.currentOwner);
-      if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
+      if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
         force = 1;
       Yallam_FaceIfNear(object, leader, 24, force);
     }
@@ -183,7 +183,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
 #else
 s32 Yallam_WatchSongGame(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 force = 0;
   struct Actor *target;
   u16 *flags = (u16 *)&object->timer;
@@ -195,7 +195,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
   if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
-    if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
+    if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;
     Yallam_FaceIfNear(object, leader, 24, force);
   }
@@ -225,7 +225,7 @@ const u8 *Scene_GetPlacements(void) {
 /// The party leader walks into one of Yallam's doors, which opens with its cell
 /// animation, and leaves by the exit of the door's number.
 void Yallam_EnterDoor(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u32 i;
   s32 index;
 
@@ -241,7 +241,7 @@ void Yallam_EnterDoor(void) {
       *flags = zero;
     }
   }
-  index = ((struct EventWork *)event)->exit;
+  index = event->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
@@ -257,7 +257,7 @@ void Yallam_EnterDoor(void) {
       Actor_CenterAndWalk(owner, 2, -4);
   }
   FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(((struct EventWork *)event)->exit);
+  FieldEvent_SetExitRequest(event->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -351,21 +351,21 @@ void Yallam_OfferYeppSong(void) {
 /// "Running around in circles here while singing one of Yepp's songs is pretty
 /// tough."
 void Yallam_TalkAboutSongCircles(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = (struct TalkActor *)Actor_Get(9);
   s16 angle = object->angle;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId(MsgRunningAroundIn);
   } else {
     FieldEvent_SetMessageId(MsgThereSALot);
   }
   Event_ShowMessage(9, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Event_End();
@@ -374,21 +374,21 @@ void Yallam_TalkAboutSongCircles(void) {
 /// "There's a game that goes along with the song, but it's tough. I want to
 /// play something else."
 void Yallam_TalkAboutSongGame(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = (struct TalkActor *)Actor_Get(10);
   s16 angle = object->angle;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId(MsgThereSAGame);
   } else {
     FieldEvent_SetMessageId(MsgIOnceHeard);
   }
   Event_ShowMessage(10, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Event_End();
@@ -1375,7 +1375,7 @@ void Yallam_StartRunner(s32 id) {
   actor->kind = 0;
 }
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
 extern u32 gYallam_SongGameGather9[];
 extern u32 gYallam_SongGameGather10[];

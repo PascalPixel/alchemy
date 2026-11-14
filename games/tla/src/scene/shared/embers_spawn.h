@@ -18,7 +18,7 @@ next:
       angle = 0x4000 + rise;
       radius = Random16() * 8;
       size = Random16();
-      Actor_StartScript(object, gData_02005714);
+      Actor_StartScript(object, gEmbers_Script);
       Actor_SetSpriteFlags(object, 0);
       /* FAKEMATCH(temporary): the scale is taken before the velocity
        * stores. */

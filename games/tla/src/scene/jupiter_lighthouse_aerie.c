@@ -14,7 +14,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "shared/jupiter_lighthouse_aerie.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -97,7 +97,8 @@ void Leader_CenterInCell(void);
 
 void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
 
-void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTargetHead *work,
+                      struct CellTargetEntry *entry);
 
 void CrackedTile_DropIn(void);
 
@@ -309,7 +310,7 @@ void Func_0200032c(s32 unused, s32 id) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
+  gFieldWork->transition = 513;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   JupiterLighthouse_LoadPalettesZero(0);
@@ -374,46 +375,9 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.c"
 
-void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
-void PaletteCycle_Step(void) {
-  u16 colors[16];
-  s32 phase = (gPaletteCycleFrame / 4) % 5;
-  s32 i;
-  s32 offset;
-  u16 *p;
-
-  if (gPaletteCyclePausesInEvents != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
-    s16 *state = (s16 *)(work + 358);
-
-    if (*state != 0 && (*state & 0x3ff) != 153)
-      return;
-    if (((struct EventWork *)work)->pendingFirst != 0)
-      return;
-    if (*(s16 *)(work + 350) != 0)
-      return;
-  }
-  i = 0;
-  offset = 4;
-next:
-  p = colors;
-  {
-    /* FAKEMATCH(temporary): the slot and the table's address held in locals. */
-    s32 slot = (phase + i) % 5;
-    u8 *table = (u8 *)gPaletteCycleColors;
-
-    colors[slot] = *(u16 *)(table + offset);
-  }
-  i++;
-  offset += 2;
-  if (i <= 4)
-    goto next;
-  Dma_Set(p, (void *)0x05000184, DMA_COPY_WORDS(2), REG_DMA3);
-  gPaletteCycleFrame++;
-}
+#include "shared/palette_cycle_step.h"
 
 void JupiterLighthouse_LoadPalettesZero(s32 mode) {
   gPaletteCyclePausesInEvents = 1;
@@ -437,13 +401,8 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 
 #include "shared/actor_raise_from_cell.h"
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
-                                                   s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
 void Func_02000930(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
@@ -453,7 +412,7 @@ void Func_02000930(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
-  work->unkd46 = 0;
+  work->glowHeld = 0;
   actor->motionFlags = 4;
   Actor_SetSpriteFlags(actor, 0);
   while (*((u8 *)linked + 0x63) != 0) {
@@ -466,8 +425,8 @@ void Func_02000930(void) {
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
-  work->unkd44 = 1;
-  work->unkd46 = 1;
+  work->glow = 1;
+  work->glowHeld = 1;
   facing = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (facing >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((facing >> 13) & 2) + 1) << 19;
@@ -475,7 +434,7 @@ void Func_02000930(void) {
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSpriteFlags(actor, 1);
-  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+  FieldCamera_MoveToFixed(-1, -1, -1, 0);
   shadow = FieldCamera_GetActor();
   shadow->speedLimit = px(8);
   shadow->acceleration = px(1);
@@ -496,8 +455,8 @@ void Func_02000930(void) {
   FieldActor_WaitForMove(shadow);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  work->unkd46 = 1;
-  work->exit = 0;
+  work->glowHeld = 1;
+  work->stepTrigger = 0;
   Event_End();
 }
 
@@ -510,14 +469,14 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_Update(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
@@ -555,7 +514,7 @@ void Whirlwind_Update(struct Actor *self) {
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;
-            *(u16 *)(work + 362) = delay;
+            work->raisedTrigger = delay;
           }
           gMainRoutineWork.renderMode = 0;
           *((u8 *)self + 0x62) = 1;
@@ -594,10 +553,8 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_222);
-  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Trig_Cos(source->angle));
-  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Sin(source->angle));
+  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
+  position.z = source->z + Math_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
   Import_ActorSelectAnimation(object, 2);
@@ -698,8 +655,7 @@ struct BeamWork {
 
 void Func_02001080(void) {
   struct BeamWork *work = Ram_HeapSlots->menuRuntime;
-  struct Actor *carrier =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
+  struct Actor *carrier = gFieldWork->camera;
   s32 t = work->frame;
   s32 position[3];
   s32 a[3];
@@ -860,7 +816,7 @@ void Func_02001080(void) {
 /* VIEW(s17a8): tag struct BeamWork as struct BeamWork__s17a8;
  * games/tla/src/scene/jupiter_lighthouse_aerie/s0d08 has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie.c:890: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie.c:845: structure has no
  * member named `smallTile'. */
 struct BeamWork__s17a8 {
   u8 tiles[0x200];
@@ -895,8 +851,7 @@ static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
 void Func_020017a8(s32 a, s32 b, s32 side) {
   struct BeamWork__s17a8 *work =
       HeapSlot_Alloc(220, sizeof(struct BeamWork__s17a8));
-  struct Actor *carrier =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
+  struct Actor *carrier = gFieldWork->camera;
   struct EffectSprite *sprite;
   struct EffectSprite *large;
   struct BeamSpark *spark;
@@ -1008,7 +963,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/field_effect/move.c"
 
 #undef LERP
-// @file
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -1085,8 +1039,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE gData_02003488
-#define CELL_SPRITE_DRAW CrackedTiles_Update
 /* VIEW(s1e78): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares
  * it; the joined file has another; tried as the definition's void
  * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot), which the object already
@@ -1098,111 +1050,7 @@ void Oam_AddSpriteAtDepthClamped__s1e78(void *entry, s32 priority) __asm__(
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1e78
 #include "../field/map/cell_sprite.c"
 
-s32 CrackedTiles_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
-  struct CellTarget *table = &gData_02003488;
-  struct CellTargetEntry *entry = table->entries;
-  struct CellMapWork *map;
-  struct CellMapLayer *layer;
-  struct CellMapCell *cells;
-  struct CellMapCell *rows;
-  struct CellMapCell *cell;
-  s32 x0, z0, width, height, i, j;
-  u32 *buffer;
-  u32 event, last;
-  s32 cx, cz;
-  s32 k;
-
-  Iwram_ClearWordsEntry(table, 4);
-  table->kind = kind;
-  table->firstFlag = flag;
-  table->flagByte = flagByte;
-  table->x = x;
-  table->z = z;
-  table->current = -1;
-  table->count = 0;
-  map = (struct CellMapWork *)Ram_HeapSlots->mapWork;
-  layer = &map->layers[0];
-  cells = layer->cells;
-  x0 = (layer->originX + map->minX) >> 20;
-  z0 = (layer->originZ + map->minZ) >> 20;
-  width = (map->maxX - map->minX) >> 20;
-  height = (map->maxZ - map->minZ) >> 20;
-  cells += ((map->minZ >> 20) << 7) + (map->minX >> 20);
-  /* Goto loops: as for loops (either one) loop.c moves the 64 of the cell
-   */
-  /* copy's masks out of them and 321 of 268 instructions differ. */
-  j = 0;
-  rows = cells;
-  if (j < height) {
-  row:
-    cell = rows + (j << 7);
-    i = 0;
-    if (i < width) {
-    column:
-      event = cell->event;
-      if (event != 0 && event >= kind) {
-        last = kind + 1;
-        if (event <= last) {
-          cx = i + x0;
-          entry->x = cx;
-          cz = j + z0;
-          entry->z = cz;
-          entry->flag = flag;
-          flag++;
-          if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-            if (event == last)
-              Event_SetFlag(entry->flag);
-          } else if (Event_GetFlag(entry->flag)) {
-            MapGrid_CopyCells(table->x, table->z + 1, 1, 1,
-                              cx | (s16)(table->x & 64),
-                              cz | (s16)(table->z & 64));
-          }
-          entry++;
-          table->count++;
-        }
-      }
-      i++;
-      cell++;
-      if (i < width)
-        goto column;
-    }
-    j++;
-    if (j < height)
-      goto row;
-  }
-  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-    s32 leaderX = leader->x >> 20;
-    s32 leaderZ = leader->z >> 20;
-
-    entry = table->entries;
-    k = 0;
-    if (k < table->count) {
-    search:
-      if (entry->x == leaderX && entry->z == leaderZ)
-        table->current = k;
-      entry++;
-      k++;
-      if (k < table->count)
-        goto search;
-    }
-  }
-  buffer = Heap_Alloc(0x100);
-  {
-    u32 *word = buffer;
-
-    k = 63;
-  fill:
-    *word++ = 0x11111111;
-    if (--k >= 0)
-      goto fill;
-  }
-  table->tile = VramCache_FindFreeEntry();
-  Vram_Load(table->tile, 0x100, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(CrackedTiles_Update, 0x480);
-  return table->count;
-}
+#include "shared/cracked_tiles_find.h"
 
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
@@ -1221,70 +1069,13 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 struct CellTargetEntry;
 
-/* VIEW(s24a8): tag struct CellTarget as struct CellTarget__s24a8; cell_target.h
- * has another definition; tried with the definition the rest of the object has,
- * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
-struct CellTarget__s24a8 {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-};
-
 void Leader_CenterInCell(void);
 
-/* VIEW(s24a8): routine CrackedTile_Fall as this part defines it; the scene's
- * module header declares it with the joined file's CellTarget. */
-void CrackedTile_Fall__s24a8(
-    struct CellTarget__s24a8 *table,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-void CrackedTile_Fall__s24a8(struct CellTarget__s24a8 *table,
-                             struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
-  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
-
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  leader->facing = 0x4000;
-  leader->motionFlags = 0;
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Io_Write16(0xf1f, &REG_WINOUT);
-  REG_DISPCNT |= 0x8000;
-  table->shown = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  x = 0;
-  do {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    leader->scaleX += -0x400;
-    leader->scaleY += -0x300;
-    leader->y += -0x9999;
-    System_Wait(1);
-    x++;
-  } while (x <= 39);
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
-// @file
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
 extern u16 gPaletteCycleColors[];
@@ -1292,21 +1083,13 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
-
 #include "shared/cracked_tile_drop_in.h"
 
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct CellTarget *work = &gData_02003488;
+  struct CellTarget *work = &gCrackedTiles;
   struct CellTargetEntry *entry = work->entries;
   s32 i;
 
@@ -1332,8 +1115,8 @@ s32 CrackedTiles_Step(void) {
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  u8 *event = Ram_HeapSlots->eventWork;
-  struct CellTarget *work = &gData_02003488;
+  u8 *event = Ram_HeapSlots->fieldWork;
+  struct CellTarget *work = &gCrackedTiles;
   s32 x = FieldGameFlag_GetByte(work->flagByte);
   s32 z = FieldGameFlag_GetByte(work->flagByte + 8);
 
@@ -1349,7 +1132,7 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
     shadow->z = object->z;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
+    gFieldWork->transition = value;
   }
 }
 
@@ -1436,4 +1219,3 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef CrackedTile_Fall

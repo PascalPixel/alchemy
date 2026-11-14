@@ -1,3 +1,7 @@
+/// @file
+/// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
+/// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
+/// leave, meet Alex and set off for Idejima (SceneId_VenusLighthouse).
 
 #include "../field/object/set_sprite_priority.c"
 #include "battle/battle.h"
@@ -24,7 +28,7 @@
 #include "system/frame.h"
 #include "shared/tables.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/event.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
@@ -155,12 +159,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "shared/distance.c"
 
 #include "../field/object/find_in_cell.c"
-
-// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
-// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
-// leave, meet Alex and set off for Idejima. This file holds the scene's entry
-// routines and the block push; the rest of the overlay is in
-// venus_lighthouse/.
 
 extern s32 gPushLeaderSteps[];
 
@@ -376,7 +374,8 @@ extern s32 gVenusLighthouse_LeaderFlashes[];
  * id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the
  * definition's struct Actor *Actor_GetById(u32 objectId), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:415: invalid type argument of `->'. */
+ * games/tla/src/scene/venus_lighthouse.c:407: structure has no member named
+ * `selectFlags'. */
 extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -391,7 +390,7 @@ void Actor_WaitForMove(struct Actor *actor);
  * actorId, s32 emote, s32 frames); tried as the definition's struct
  * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
  * state), it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:389: conflicting types for
+ * games/tla/src/scene/venus_lighthouse.c:388: conflicting types for
  * `Actor_ShowEmoteById'. */
 extern void
 Actor_ShowEmoteById__floor(s32 actor, s32 height,
@@ -409,14 +408,8 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_SetMovementTypeById(leader, gVenusLighthouse_LeaderFlashes);
   Actor_RefreshSelectorById(leader);
   Actor_SetSpriteColor(Actor_GetById__floor(leader), 6);
-  {
-    /* FAKEMATCH(pin): the leader pinned to r0. */
-    register s32 who __asm__("r0");
-
-    actor->speed = 0x40000;
-    who = leader;
-    Actor_SetSpeed(who, 4);
-  }
+  actor->speed = 0x40000;
+  Actor_SetSpeed(leader, 4);
   if (*(s32 *)&actor->zLow >> 20 <= 54) {
     Actor_GetById__floor(leader)->selectFlags &= ~1;
     z = 210;
@@ -574,21 +567,11 @@ void VenusLighthouse_FelixMovesStatue(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-/* VIEW(floor): tag struct AerieEventWork as struct AerieEventWork__floor;
- * module/scene/scene.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:582: structure has no member named
- * `mode'. */
-struct AerieEventWork__floor {
-  u8 unk000[0x1ac];
-  s32 mode;
-};
-
 // The Japanese form; from patch 1, the form below also saves this scene and
 // entrance 22.
 #if !TLA_PATCH_1
 s32 VenusLighthouse_Start(void) {
-  ((struct AerieEventWork__floor *)Ram_HeapSlots->eventWork)->mode = 0x204;
+  gFieldWork->transition = 0x204;
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -619,7 +602,7 @@ s32 VenusLighthouse_Start(void) {
   struct MainRoutineWork *routine;
 
   routine = &gMainRoutineWork;
-  ((struct AerieEventWork__floor *)Ram_HeapSlots->eventWork)->mode = 0x204;
+  gFieldWork->transition = 0x204;
   if (routine->entrance == ENTRANCE_OPENING) {
     // From patch 1 it also saves this scene and entrance 22.
     routine->savedScene = (s32)&SceneId_VenusLighthouse;
@@ -654,7 +637,7 @@ static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
 // The prologue's opening: Felix moves the statue aside with Psynergy and
 // climbs off alone, leaving Jenna and Kraden.
 void VenusLighthouse_FelixLeaves(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   Actor_SetPosition(4, 712, 816);
   Actor_SetPosition(5, 696, 840);
@@ -667,9 +650,9 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_SetSpeed(8, 1);
   Actor_SetSpeed(9, 1);
   FieldCamera_MoveTo(664, CAMERA_KEEP, 824, 0);
-  work = Ram_HeapSlots->eventWork;
-  work->screenEffect = 256;
-  work->delay = 60;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = 256;
+  work->transitionFrames = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
@@ -712,7 +695,7 @@ void VenusLighthouse_FelixLeaves(void) {
 
 void VenusLighthouse_DoubtLeaving(void) {
   struct VenusActor *actor;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   FieldEvent_SetMessageId((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
   EventCamera_FollowActor(8, 1);
@@ -1123,9 +1106,9 @@ void VenusLighthouse_DoubtLeaving(void) {
   gMainRoutineWork.currentOwner = 5;
   Party_RemoveMember(4);
   FieldEvent_Wait(50);
-  work = Ram_HeapSlots->eventWork;
-  work->delay = 60;
-  work->screenEffect = 256;
+  work = Ram_HeapSlots->fieldWork;
+  work->transitionFrames = 60;
+  work->transition = 256;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(22);

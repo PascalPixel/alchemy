@@ -45,11 +45,6 @@ struct Shot {
   u8 unk63; ///< set with unk62, cleared when it ends
 };
 
-struct AirsRockEventWork {
-  u8 unk000[0xcbc];
-  s32 valueCbc;
-};
-
 /// A field sprite's byte 9: the top of its first tile and its priority (OAM
 /// attribute 2), read as bit-fields.
 struct SpriteAttr2High {
@@ -106,18 +101,6 @@ struct DoorStep {
   u16 z;
 };
 
-struct AlhafraEventWork {
-  u8 unk000[0x15a];
-  s16 value15a;
-  u8 unk15c[0x68];
-  u16 value1c4;
-};
-
-struct EventWork1c4 {
-  u8 unk000[0x1c4];
-  u16 count;
-};
-
 struct CellMapCell {
   u8 unk00[2];
   u8 event;
@@ -148,18 +131,6 @@ struct PushEvent {
   s16 z;
   u8 unk0a[4];
   u16 busy;
-};
-
-struct JupiterLighthouseRoom8EventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c];
-  struct Actor *marker;
-};
-
-struct AnemosInnerSanctumEntranceEventWork {
-  u8 unk000[0x1ac];
-  s32 route;
 };
 
 struct LightOam {
@@ -208,20 +179,10 @@ struct ActorTail {
   u16 unk5e;
 };
 
-struct AquaRockEventWork {
-  u8 unk000[0x16a];
-  s16 field16a;
-};
-
 struct MapBits {
   u8 unk00[23];
   u8 low : 2;
   u8 mode : 2;
-};
-
-struct SlideWork {
-  u8 unk000[0x1cc];
-  struct Actor *camera;
 };
 
 struct CurrentUnit {
@@ -229,11 +190,6 @@ struct CurrentUnit {
   struct Actor *object;
   u8 unk18[4];
   s16 unk1c;
-};
-
-struct ChampaEventWork {
-  u8 unk000[0x1c4];
-  s16 message;
 };
 
 struct EventTransition {
@@ -247,18 +203,8 @@ struct ActorSolid {
   u8 solid : 8;
 };
 
-struct EventCounters {
-  u8 unk000[0x1c4];
-  u16 count;
-};
-
 struct ThrowAnimations {
   s32 animations[3];
-};
-
-struct EventFlags685 {
-  u8 unk000[0x15a];
-  u16 field15a;
 };
 
 struct FlashSprite {
@@ -340,11 +286,6 @@ struct ContigoEventWork {
   s32 value1ac;
 };
 
-struct DailaEventWork {
-  u8 unk000[0x1c4];
-  s16 message;
-};
-
 struct DailaMapWork {
   u8 unk000[0x17];
   u8 low17 : 2;
@@ -384,11 +325,6 @@ struct EffectView {
 struct MapCells {
   u8 unk000[0x138];
   u8 *cells;
-};
-
-struct EventWorkCbc {
-  u8 unk000[0xcbc];
-  struct Actor *active;
 };
 
 /* FAKEMATCH(signature): one-field views of the list's terminator and shape. */
@@ -468,13 +404,6 @@ struct PuzzleCell {
   u8 occupied;
 };
 
-struct GroupWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c4 - 0x1b0];
-  u16 unk1c4;
-};
-
 struct GabombaStatueChamberLayer {
   u8 unk00[12];
   s32 y;
@@ -484,11 +413,6 @@ struct GabombaStatueChamberLayer {
 struct GabombaStatueChamberMapWork {
   u8 unk000[0x108];
   struct GabombaStatueChamberLayer layers[3];
-};
-
-struct GarohEventWork {
-  u8 unk000[0xca4];
-  s8 fadeLock;
 };
 
 struct Vec {
@@ -511,11 +435,6 @@ struct ActorSprite {
 
 struct FadePalette {
   u16 colors[256];
-};
-
-struct IsletCaveEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
 };
 
 struct TrapEntry {
@@ -597,11 +516,6 @@ struct SceneEffectSource {
   s32 z;
 };
 
-struct EventWorkLock {
-  u8 unk000[0x15a];
-  u16 locked;
-};
-
 struct SparkActor {
   u8 unk00[8];
   s32 x;
@@ -620,25 +534,8 @@ struct EffectParams {
   u8 unk1c[12];
 };
 
-struct JupiterLighthouseRoom5EventWork {
-  u8 unk000[0x1c4];
-  u16 message;
-};
-
-struct JupiterLighthouseRoom5EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 value;
-};
-
 struct Probe {
   s32 unk00[6];
-};
-
-struct EventWorkRoute {
-  u8 unk000[0x1ac];
-  s32 route;
-  u8 unk1b0[4];
-  s32 countdown;
 };
 
 struct AnimationRecord26 {
@@ -698,11 +595,6 @@ struct LohoPicture {
   const void *data;
   u16 a;
   u16 b;
-};
-
-struct MadraEventWork {
-  u8 unk000[0x154];
-  s16 value154;
 };
 
 struct MadraPlacement {
@@ -767,11 +659,6 @@ struct CellWatch {
   struct Actor *object;
 };
 
-struct ActorTable {
-  u8 unk_0[20];
-  struct Actor *actors[64];
-};
-
 struct MagmaRockInsideWork {
   s32 unk00;
   s32 x;
@@ -789,11 +676,6 @@ struct EffectConfig {
   u8 unk1a[2];
   const u8 *data;
   u8 unk20[8];
-};
-
-struct MarsLighthouseAerieEventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
 };
 
 struct MarsLighthouseAerieSprite {
@@ -817,11 +699,6 @@ struct AerieEventWork {
 struct EffectHolder {
   u8 unk00[0x1a];
   s16 objectId;
-};
-
-struct Overlay6aaEventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
 };
 
 /// One halfword read as a struct's field.
@@ -884,13 +761,6 @@ struct WarpEntry {
   s16 unk6;
 };
 
-struct Overlay6acEventWork {
-  u8 unk000[0x166];
-  s16 unk166;
-  u8 unk168[0xb3c];
-  u8 unkca4;
-};
-
 struct UnitData {
   u8 filler[216];
   u16 items[15];
@@ -905,11 +775,6 @@ union SparkOam {
   struct OamData oam;
 };
 
-struct SeaOfTimeEventWork0154 {
-  u8 unk000[0x154];
-  s16 unk154;
-};
-
 struct Spot {
   s32 x;
   s32 z;
@@ -919,21 +784,11 @@ struct Spots {
   struct Spot spot[6];
 };
 
-struct EventWork687 {
-  u8 unk000[0x16a];
-  u16 unk16a;
-};
-
 /// The 14 colours of BG palette 3 (entries 1 to 14) that the fade returns to,
 /// copied from palette RAM by Scene_Initialize and rotated by Func_02001650 in
 /// step with BG palette entries 49 to 62.
 struct SavedColors {
   u16 colors[14];
-};
-
-struct ShamanVillageCaveSceneWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
 };
 
 struct LinkedEffectWork {
@@ -994,13 +849,6 @@ struct TreasureIsleCell {
   s32 unk08;
   u16 flag; ///< set once the cell has been opened (Func_020003fc)
   u16 unk0e;
-};
-
-struct TreasureIsleEventWork {
-  u8 unk000[0x166];
-  s16 unk166;
-  u8 unk168[0xb3c];
-  u8 unkca4;
 };
 
 struct SceneEffectParams {
@@ -1071,11 +919,6 @@ struct BobbingMarker {
   s16 stopped;
 };
 
-struct EventDestination {
-  u8 unk000[0x154];
-  s16 scene;
-};
-
 /// gMainRoutineWork.savedScene and savedEntrance as this script reads them.
 struct SavedDestination {
   u8 unk000[0x1e4];
@@ -1139,11 +982,6 @@ struct YampiDesertRideWork {
 struct HeapView {
   s32 pad[8];
   s32 word;
-};
-
-struct YampiDesertCaveEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
 };
 
 void Map_CenterOnFollowedPoint(void);
@@ -1264,11 +1102,6 @@ struct FieldPartBytes {
 struct FieldAnimation {
   u8 unk00[40];
   struct FieldPartBytes *part;
-};
-
-struct GateEventWork {
-  u8 unk000[362];
-  u16 gateTimer;
 };
 
 struct FieldPart {

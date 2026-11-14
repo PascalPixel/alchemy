@@ -10,7 +10,7 @@ enum BattleType {
   /// A battle the party cannot run from: a Mimic's, a hidden Mad Plant's and
   /// the bosses'.
   BATTLE_TYPE_NO_ESCAPE = 2,
-  BATTLE_TYPE_LINK = 4, ///< a link battle, from the lobby
+  BATTLE_TYPE_LINK = 4,  ///< a link battle, from the lobby
   BATTLE_TYPE_DEBUG = 5, ///< the debug battle menu's mark
   /// A battle the party is meant to lose: it is caught off guard and every
   /// hit downs its target, as when Karst and Agatio fight Isaac and Ivan.
@@ -94,12 +94,13 @@ struct MainRoutineWork {
   /// Not named by ⚓️ code; byte 6 is option 4, the idle sleep, as ☀️'s
   /// idleSleepEnabled.
   u8 unk244[7];
-  u8 battleType; ///< an enum BattleType, set back to BATTLE_TYPE_NORMAL at the end
-  u8 unk24c[6];    ///< not named by ⚓️ code
+  u8 battleType; ///< an enum BattleType, set back to BATTLE_TYPE_NORMAL at the
+                 ///< end
+  u8 unk24c[6];  ///< not named by ⚓️ code
   u16 hazardSteps; ///< reset on entering a new scene group
-  /// The Djinni battle pending (DJINNI_BATTLE_EVENT_FIRST plus its number, flags
-  /// in bits 15 to 11), or a Mimic's flag with CONDITION_FLAG_SET, resolved on
-  /// returning to the field.
+  /// The Djinni battle pending (DJINNI_BATTLE_EVENT_FIRST plus its number,
+  /// flags in bits 15 to 11), or a Mimic's flag with CONDITION_FLAG_SET,
+  /// resolved on returning to the field.
   s16 pendingDjinni;
   s16 sequenceResult; ///< the last battle's result, as ☀️'s; -1 for a defeat
   s32 encounterSteps; ///< reset on entering a new scene group

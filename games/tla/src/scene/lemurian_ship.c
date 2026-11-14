@@ -524,7 +524,7 @@ void Func_02000af4(void) {
     Actor_SetAttachedEffect(id,                                                \
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
     Event_Wait(20);                                                            \
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;                                        \
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;                       \
     Field_RequestBattleFromEncounterTable(11, 0);                              \
     GameFlag_Set(id + n1);                                                     \
   }

@@ -415,8 +415,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     // whose 32x32 area starts 8 pixels up and left; smaller, plain affine (1).
     if (scale > 256) {
       sprite->affine = 3;
-      // x read through a u16 pointer, which loads the -8 first; as sprite->x
-      // the two loads swap.
+      // x is read through a pointer to its own type.
       sprite->x = *(u16 *)&windowSprite->x - 8;
       sprite->y = (u16)windowSprite->y - 8;
     } else {

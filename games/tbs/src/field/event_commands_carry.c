@@ -117,9 +117,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->steeringFlags = 0;
   target->layer = 2;
 
-  //------------------------------------------------------------------
   // Move with the d-pad.
-  //------------------------------------------------------------------
   for (;;) {
     wait(1);
     if ((gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
@@ -197,10 +195,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     }
   }
 
-  //------------------------------------------------------------------
   // Shards fly from the target, the hands vanish, and the target hops and
   // drops.
-  //------------------------------------------------------------------
   Actor_SelectAnimationFar(hands[0], MOVE_HAND_ANIMATION_FLEX);
   Actor_SelectAnimationFar(hands[1], MOVE_HAND_ANIMATION_FLEX);
   Task_Remove(FieldEffect_SpawnFallingParticles);

@@ -65,8 +65,7 @@ UNUSED s32 FixedPoint_Multiply8_8(s16 left, s16 right) {
   s32 product;
   s32 roundedProduct;
 
-  // Rounded by hand: as left * right / 256, right is extended second and
-  // the rounding works in r0.
+  // Rounded toward zero, as a division by 256 rounds.
   product = left;
   product *= right;
   if (product >= 0)

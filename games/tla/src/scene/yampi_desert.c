@@ -629,11 +629,8 @@ void YampiDesert_WatchScorpionStop(void) {
     FieldCamera_FollowActor(21, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   }
-  goto test;
-  do {
+  while (gYampiDesert_RaisedEvent == 210)
     wait(1);
-  test:;
-  } while (gYampiDesert_RaisedEvent == 210);
   Event_End();
 }
 

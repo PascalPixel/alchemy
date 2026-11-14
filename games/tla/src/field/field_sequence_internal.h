@@ -86,7 +86,9 @@ struct Actor *Actor_GetById(u32 objectId);
 /* VIEW(field_sequence): routine MapGrid_GetTerrainHeightAboveFar as s32
  * MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height);
  * module/tla.h has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32
- * layer). */
+ * layer); tried as the rest of the object declares it, it does not compile in
+ * tla-ja: games/tla/src/field/field_sequence/targets.c:102: too many arguments
+ * to function `MapGrid_GetTerrainHeightAboveFar'. */
 extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(
     s32 x, s32 z, s32 layer,
     s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");

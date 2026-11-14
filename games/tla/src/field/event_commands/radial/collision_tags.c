@@ -11,16 +11,20 @@ void GameFlag_Clear(s32 flag);
 void FlagBlock_ApplyFlags(struct ActorFlag *list);
 /* VIEW(f0ea8d4): routine MapGrid_MarkRaisedIfOpen as void
  * MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer, s32 height); the definition
- * has void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer); not tried:
- * MapGrid_MarkRaisedIfOpen's bound declaration was not found. */
+ * has void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer); tried as the
+ * definition's void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer), it does
+ * not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/collision_tags.c:42: too many
+ * arguments to function `MapGrid_MarkRaisedIfOpen'. */
 extern void
 Func_080ea8a8__f0ea8d4(s32 x, s32 z, s32 layer,
                        s32 height) __asm__("MapGrid_MarkRaisedIfOpen");
 /* VIEW(f0ea8d4): routine MapGrid_GetTerrainHeightAboveFar as s32
  * MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height);
  * f0ea14c has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
- * not tried: MapGrid_GetTerrainHeightAboveFar's bound declaration was not
- * found. */
+ * tried as the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/collision_tags.c:59: too many
+ * arguments to function `MapGrid_GetTerrainHeightAboveFar'. */
 extern s32
 Func_08020310__f0ea8d4(s32 x, s32 z, s32 layer,
                        s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");

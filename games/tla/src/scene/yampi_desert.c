@@ -1056,17 +1056,17 @@ void YampiDesert_HideSlideActors(void) {
 
 /* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
  * declared it; the joined file has another; tried as the definition's extern
- * LATE_DATA u32 gYampiDesert_FinderRunsAhead[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:1119: `gYampiDesert_FinderRunsAhead'
- * undeclared (first use in this function). */
+ * LATE_DATA u32 gYampiDesert_FinderRunsAhead[], it does not compile in tla-ja
+ * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1108:
+ * `gYampiDesert_FinderRunsAhead' undeclared (first use in this function). */
 extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
     "gYampiDesert_FinderRunsAhead");
 #define gYampiDesert_FinderRunsAhead gYampiDesert_FinderRunsAhead__yampi_desert
 /* VIEW(yampi_desert): routine gYampiDesert_TravelersFollow as this part
  * declared it; the joined file has another; tried as the definition's extern
- * LATE_DATA u32 gYampiDesert_TravelersFollow[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:1169: `gYampiDesert_TravelersFollow'
- * undeclared (first use in this function). */
+ * LATE_DATA u32 gYampiDesert_TravelersFollow[], it does not compile in tla-ja
+ * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1155:
+ * `gYampiDesert_TravelersFollow' undeclared (first use in this function). */
 extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
     "gYampiDesert_TravelersFollow");
 #define gYampiDesert_TravelersFollow gYampiDesert_TravelersFollow__yampi_desert
@@ -2370,7 +2370,8 @@ void YampiDesert_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer) {
 // The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has
  * another definition; tried with the definition the rest of the object has,
- * YampiDesert_UpdateRisingSand moves: 33 of 212 instructions in tla-ja. */
+ * YampiDesert_UpdateRisingSand moves: 33 of 212 instructions in tla-ja
+ * (yampi_desert.c). */
 #define PIXELS__s3910(v) (((s16 *)&(v))[1])
 
 // One rising platform and what rides it.

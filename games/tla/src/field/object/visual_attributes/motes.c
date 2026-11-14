@@ -15,8 +15,8 @@
 /* VIEW(motes): tag struct MoteWork as struct MoteWork__motes;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:2854: structure has no member
- * named `motes'. */
+ * games/tla/src/field/object/visual_attributes/motes.c:32: structure has no
+ * member named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;
   s32 tileBase;

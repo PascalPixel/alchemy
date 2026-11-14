@@ -9,7 +9,10 @@
 
 // Kind 24's work (battle_fx_work[0]), as HoverGlow_Update's draft has it.
 /* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has
- * another definition; not tried: struct GlowWork__f0e9af4 was not found. */
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/hover.c:62: structure has no member
+ * named `resource'. */
 struct GlowWork__f0e9af4 {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;
@@ -32,8 +35,10 @@ struct GlowScene {
 };
 
 /* VIEW(f0e9af4): tag struct GlowEvent as struct GlowEvent__f0e9af4; f0e2c38.c
- * has another definition; not tried: struct GlowEvent__f0e9af4 was not found.
- */
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/hover.c:87: structure has no member
+ * named `objects'. */
 struct GlowEvent__f0e9af4 {
   u8 unk000[0x14];
   struct Actor *objects[80];
@@ -270,8 +275,8 @@ void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
 /* VIEW(psynergy): tag struct Mote as struct Mote__psynergy;
  * module/field/field.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:8290: redefinition of `struct
- * Mote'. */
+ * games/tla/src/field/event_commands/radial/hover.c:275: redefinition of
+ * `struct Mote'. */
 #define Mote Mote__psynergy
 struct Mote {
   s32 x;

@@ -40,8 +40,9 @@ void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountItemIcons(void);
 
 /* VIEW(window): routine Ability_Get as u8 *Ability_Get(s32);
- * battle/battle_system.h has struct BattleAct *Ability_Get(s32 abilityId); not
- * tried: Ability_Get's declaration holds a FAKEMATCH tag. */
+ * battle/battle_system.h has struct BattleAct *Ability_Get(s32 abilityId);
+ * tried as the rest of the object declares it, Ability_RequestGlyph moves: 2 of
+ * 21 instructions in tla-ja. */
 u8 *Ability_Get__window(s32) __asm__("Ability_Get");
 #define Ability_Get Ability_Get__window
 

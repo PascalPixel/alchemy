@@ -340,8 +340,8 @@ void Func_080dc954(void) {
 /* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene;
  * module/field/event_commands.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:7799: structure has no member
- * named `id'. */
+ * games/tla/src/field/object/visual_attributes/scene.c:351: structure has no
+ * member named `id'. */
 struct WaveFxWork__scene {
   u8 unk000[0x28b];
   s8 red;

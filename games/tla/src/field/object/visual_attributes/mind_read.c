@@ -276,8 +276,8 @@ struct PendingEvent;
  * BattleEffect_GetCycledTableWord(void); tried as the definition's u16
  * BattleEffect_GetCycledTableWord(void), which the object already declares, it
  * does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:8265: too many arguments to
- * function `BattleEffect_GetCycledTableWord'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:355: too many
+ * arguments to function `BattleEffect_GetCycledTableWord'. */
 extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__(
     "BattleEffect_GetCycledTableWord");
 /* VIEW(mind_read): routine Actor_ApplyRandomChildValues as void
@@ -285,8 +285,8 @@ extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__(
  * Actor_ApplyRandomChildValues(struct Actor *owner) {; tried as the
  * definition's void Actor_ApplyRandomChildValues(struct Actor *owner), which
  * the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:8890: conflicting types for
- * `Actor_ApplyRandomChildValues'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:960: conflicting
+ * types for `Actor_ApplyRandomChildValues'. */
 void Actor_ApplyRandomChildValues__mind_read(void) __asm__(
     "Actor_ApplyRandomChildValues");
 #define Actor_ApplyRandomChildValues Actor_ApplyRandomChildValues__mind_read
@@ -709,8 +709,8 @@ void FieldPsynergy_WatchLeaderDistance(void) {
  * BattleEffect_RunBusyWaitDelay(void); tried as the definition's void
  * BattleEffect_RunBusyWaitDelay(void), which the object already declares, it
  * does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:8647: too many arguments to
- * function `BattleEffect_RunBusyWaitDelay'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:722: too many
+ * arguments to function `BattleEffect_RunBusyWaitDelay'. */
 extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__(
     "BattleEffect_RunBusyWaitDelay");
 
@@ -1104,8 +1104,8 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
 /* VIEW(mind_read): tag struct EffectPosition as struct
  * EffectPosition__mind_read; field/effect_step.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/object/visual_attributes.c:9032: redefinition of
- * `struct EffectPosition'. */
+ * tla-ja: games/tla/src/field/object/visual_attributes/mind_read.c:1104:
+ * redefinition of `struct EffectPosition'. */
 #define EffectPosition EffectPosition__mind_read
 struct EffectPosition {
   s32 x;
@@ -1116,8 +1116,8 @@ struct EffectPosition {
 /* VIEW(mind_read): tag struct EffectWork as struct EffectWork__mind_read;
  * field/event_commands/scene has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:9040: redefinition of `struct
- * EffectWork'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1116: redefinition
+ * of `struct EffectWork'. */
 #define EffectWork EffectWork__mind_read
 struct EffectWork {
   u16 angle;
@@ -1205,8 +1205,11 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
 
 /* VIEW(f0dd820): routine FieldPsynergy_Force as void FieldPsynergy_Force(struct
  * BattleEffectArgument *effect); the definition has void
- * FieldPsynergy_Force(void); not tried: FieldPsynergy_Force's bound declaration
- * was not found. */
+ * FieldPsynergy_Force(void); tried as the definition's void
+ * FieldPsynergy_Force(void), which the object already declares, it does not
+ * compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1209: too many
+ * arguments to function `FieldPsynergy_Force'. */
 extern void Func_080de21c__f0dd820(struct BattleEffectArgument *effect) __asm__(
     "FieldPsynergy_Force");
 
@@ -1684,8 +1687,8 @@ void FieldPsynergy_Ply(void) {
 /* VIEW(f0de21c): tag struct EventWork as struct EventWork__f0de21c;
  * event_work.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:9646: structure has no member
- * named `state'. */
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1706: structure has
+ * no member named `state'. */
 struct EventWork__f0de21c {
   u8 unk000[0x166];
   u16 state;
@@ -1695,8 +1698,9 @@ struct EventWork__f0de21c {
  * x, s32 z, s32 layer); field/object/visual_attributes has s32
  * MapGrid_IsCloakCell(s32 x, s32 z) {; tried as the definition's s32
  * MapGrid_IsCloakCell(s32 x, s32 z), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:9646:
- * too many arguments to function `MapGrid_IsCloakCell'. */
+ * not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes/mind_read.c:1704: too many
+ * arguments to function `MapGrid_IsCloakCell'. */
 s32 MapGrid_IsCloakCell__mind_read(s32 x, s32 z,
                                    s32 layer) __asm__("MapGrid_IsCloakCell");
 #define MapGrid_IsCloakCell MapGrid_IsCloakCell__mind_read

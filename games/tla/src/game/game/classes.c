@@ -12,7 +12,7 @@ struct OwnerGrowthRecord;
  * gEnemy_ElementPresetTable[]; game/element_table has const struct
  * EnemyElementPreset gEnemy_ElementPresetTable[] = {; tried as the definition's
  * extern const struct EnemyElementPreset gEnemy_ElementPresetTable[], it does
- * not compile in tla-ja: games/tla/src/game/game.c:2679:
+ * not compile in tla-ja: games/tla/src/game/game/classes.c:24:
  * `gEnemy_ElementPresetTable' undeclared (first use in this function). */
 extern const struct ElementPreset
     gEnemy_ElementPresetTable__game[] __asm__("gEnemy_ElementPresetTable");
@@ -84,8 +84,8 @@ s32 Enemy_GetAttackElement(void *state) {
  * ElementLevelBonus gElement_PowerResistByLevel[16] = {; tried as the
  * definition's extern const struct ElementLevelBonus
  * gElement_PowerResistByLevel[16], it does not compile in tla-ja:
- * games/tla/src/game/game.c:2776: `gElement_PowerResistByLevel' undeclared
- * (first use in this function). */
+ * games/tla/src/game/game/classes.c:124: `gElement_PowerResistByLevel'
+ * undeclared (first use in this function). */
 extern struct ElementLevelBonus gElement_PowerResistByLevel__game[16] __asm__(
     "gElement_PowerResistByLevel");
 #define gElement_PowerResistByLevel gElement_PowerResistByLevel__game

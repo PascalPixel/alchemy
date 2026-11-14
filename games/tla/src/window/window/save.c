@@ -337,7 +337,7 @@ s32 Save_ScanFileSummaries(void) {
 
 /* VIEW(screens): variable gData_02001000 as u32 gData_02001000; module/tla.h
  * has s8 gData_02001000[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/window/window.c:10840:
+ * not compile in tla-ja: games/tla/src/window/window/save.c:353:
  * `gData_02001000__screens' undeclared (first use in this function). */
 extern u32 gData_02001000__screens __asm__("gData_02001000");
 

@@ -150,8 +150,8 @@ void Field_PlaceTreasureSpots(void) {
 /* VIEW(field_sequence): tag struct ObjectSprite as struct
  * ObjectSprite__field_sequence; module/field/field.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence.c:4041: structure has no member
- * named `yOffset'. */
+ * tla-ja: games/tla/src/field/field_sequence/treasure_spots.c:167: structure
+ * has no member named `yOffset'. */
 struct ObjectSprite__field_sequence {
   u8 unk00[5];
   u8 attr0High;
@@ -298,7 +298,7 @@ void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
  * ObjectEvent_PlaceOnGround(s32 object, s32 x, s32 z); tried as the
  * definition's void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:70: conflicting types for
+ * games/tla/include/field/event.h:84: conflicting types for
  * `ObjectEvent_PlaceOnGround'. */
 void ObjectEvent_PlaceOnGround__field_sequence(
     u32 objectId, s32 x, s32 z) __asm__("ObjectEvent_PlaceOnGround");

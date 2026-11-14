@@ -15,8 +15,8 @@ struct ScalePair {
 /* VIEW(f175f74): tag struct Particle as struct Particle__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:41100: structure has no member
- * named `timer'. */
+ * games/tla/src/battle_effect/battle_effect/charon.c:439: structure has no
+ * member named `timer'. */
 struct Particle__f175f74 {
   s32 x;
   s32 y;
@@ -30,8 +30,8 @@ struct Particle__f175f74 {
 /* VIEW(f175f74): tag struct SpriteObject as struct SpriteObject__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:40986: structure has no member
- * named `oamPriority'. */
+ * games/tla/src/battle_effect/battle_effect/charon.c:326: structure has no
+ * member named `oamPriority'. */
 struct SpriteObject__f175f74 {
   u16 unk00;
   u16 unk02;
@@ -58,8 +58,8 @@ struct ModelDesc {
 /* VIEW(f175f74): tag struct Model as struct Model__f175f74; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:41464: structure has no member
- * named `depth'. */
+ * games/tla/src/battle_effect/battle_effect/charon.c:801: structure has no
+ * member named `depth'. */
 struct Model__f175f74 {
   s32 kind;
   s32 unk04;
@@ -81,8 +81,8 @@ struct ActorPos {
 /* VIEW(f175f74): tag struct SummonWork as struct SummonWork__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:40934: structure has no member
- * named `transferMode'. */
+ * games/tla/src/battle_effect/battle_effect/charon.c:272: structure has no
+ * member named `transferMode'. */
 struct SummonWork__f175f74 {
   struct Particle__f175f74 drops[16];
   struct Particle__f175f74 members[16];
@@ -210,9 +210,8 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
  * *EffectSprite_Acquire(s32, s32, u32, u32); the definition has struct
  * EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value); tried as
  * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
- * s32 value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:41077: too many arguments to
- * function `EffectSprite_Acquire'. */
+ * s32 value), which the object already declares, BattleEffect_RunCharon moves:
+ * 1 of 4316 instructions in tla-ja. */
 extern struct SpriteObject__f175f74 *
 EffectSprite_Acquire__f175f74(s32, s32, u32,
                               u32) __asm__("EffectSprite_Acquire");

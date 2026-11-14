@@ -193,8 +193,9 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
 
 /* VIEW(screens): routine BattleDjinn_CountStandbyFar as s32
  * BattleDjinn_CountStandbyFar(s32 a, u8 *counts); module/window/window.h has
- * void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts); not tried:
- * BattleDjinn_CountStandbyFar's bound declaration was not found. */
+ * void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts); tried as the rest of
+ * the object declares it, PartyStatus_Draw moves: 2 of 495 instructions,
+ * BattleCommandRow_Run moves: 1 of 1120 instructions in tla-ja. */
 extern s32
 Func_08118130__screens(s32 a,
                        u8 *counts) __asm__("BattleDjinn_CountStandbyFar");

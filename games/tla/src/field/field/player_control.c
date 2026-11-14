@@ -16,7 +16,8 @@
 /* VIEW(f0267bc): tag struct PartyKeys as struct PartyKeys__f0267bc;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:5093: structure has no member named `keys23c'. */
+ * games/tla/src/field/field/player_control.c:54: structure has no member named
+ * `keys23c'. */
 struct PartyKeys__f0267bc {
   u8 unk000[0x23c];
   u16 keys23c;
@@ -31,8 +32,8 @@ s32 MapGrid_CheckCollision__resource_slot(
 /* VIEW(f0267bc): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/field.c:5337: request for member `hp' in
- * something not a structure or union. */
+ * in tla-ja: games/tla/src/field/field/player_control.c:253: request for member
+ * `hp' in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f0267bc(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
@@ -407,7 +408,8 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 /* VIEW(f027064): tag struct PartyKeys as struct PartyKeys__f027064;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:5534: structure has no member named `keys23c'. */
+ * games/tla/src/field/field/player_control.c:456: structure has no member named
+ * `keys23c'. */
 struct PartyKeys__f027064 {
   u8 unk000[0x23c];
   u16 keys23c;
@@ -423,8 +425,8 @@ s32 MapGrid_CheckCollision__resource_slot(
 /* VIEW(f027064): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/field.c:5776: request for member `hp' in
- * something not a structure or union. */
+ * in tla-ja: games/tla/src/field/field/player_control.c:651: request for member
+ * `hp' in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f027064(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 

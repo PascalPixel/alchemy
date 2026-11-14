@@ -33,10 +33,7 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define NAVIGATION ((struct CommandRowNavigation *)Ram_HeapSlots->unke4[0])
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
 
-/* VIEW(screens): variable gBgScroll as struct BgScrollPair gBgScroll[];
- * bg_scroll.h has struct BgScroll gBgScroll[]; not tried: gBgScroll's
- * declaration holds a FAKEMATCH tag. */
-extern struct BgScrollPair gBgScroll__screens[] __asm__("gBgScroll");
+extern struct BgScrollPair gBgScroll[];
 #include "system/main_routine_work.h"
 
 /// Runs a battle command row: the commands as icons along the bottom of the
@@ -144,8 +141,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
     pulseScale = (pulseScale - 256) / 4 + 304;
     selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
-    gBgScroll__screens[1].x = 0;
-    gBgScroll__screens[1].y = 32;
+    gBgScroll[1].x = 0;
+    gBgScroll[1].y = 32;
     if (stripDirty != 0) {
       stripDirty = 0;
       work->holdTilemapUpload = 1;

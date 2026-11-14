@@ -759,7 +759,7 @@ struct SpriteObject *EffectSprite_CreateWithTiles__battle_effect(
  * *EffectSprite_Acquire(s32 kind, s32 value) {; tried as the definition's
  * struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value),
  * which the object already declares, it does not compile in tla-ja (make
- * modern): games/tla/include/module/battle_effect/battle_effect.h:210:64: note:
+ * modern): games/tla/include/module/battle_effect/battle_effect.h:201:64: note:
  * expected 'struct BattleEffectArgument *' but argument is of type 'u8 *'. */
 struct RuinObject *
 EffectSprite_Acquire__battle_effect(s32 width, s32 height, u32 shape,

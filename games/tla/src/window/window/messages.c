@@ -9,8 +9,10 @@
 /// Expands message into buf without an upper length bound.
 /* VIEW(window): routine Message_DecodeRawUnbounded as void
  * Message_DecodeRawUnbounded(s32 message, s32 buf); field/event.h has void
- * Message_DecodeRawUnbounded(s32 message, u16 *buffer); not tried:
- * Message_DecodeRawUnbounded's declaration holds a FAKEMATCH tag. */
+ * Message_DecodeRawUnbounded(s32 message, u16 *buffer); tried as the
+ * definition's void Message_DecodeRawUnbounded(s32 message, s32 buf), it does
+ * not compile in tla-ja: games/tla/src/window/window/messages.c:9: conflicting
+ * types for `Message_DecodeRawUnbounded'. */
 void Message_DecodeRawUnbounded__window(s32 message, s32 buf) __asm__(
     "Message_DecodeRawUnbounded");
 #define Message_DecodeRawUnbounded Message_DecodeRawUnbounded__window
@@ -724,8 +726,11 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 /* VIEW(window): routine Portrait_Create as s32 Portrait_Create(s32 id, s32
  * kind, s32 slot, struct Window *window, s32 x, s32 y); window/screens has
  * struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
- * s32 arg3, s32 arg4, s32 arg5) {; tried with no declaration of its own, it
- * does not compile with a current GCC (make modern): conflicting types. */
+ * s32 arg3, s32 arg4, s32 arg5) {; tried as the definition's struct
+ * WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side, s32
+ * arg3, s32 arg4, s32 arg5), it does not compile in tla-ja (make modern):
+ * games/tla/include/system/task.h:53:23: note: expected 'TaskFunc' {aka 'void
+ * (*)(void)'} but argument is of type 'int'. */
 s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
                             s32 x, s32 y) __asm__("Portrait_Create");
 #define Portrait_Create Portrait_Create__window

@@ -25,8 +25,8 @@ enum {
 /* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:3270: structure has no member named
- * `terrainHeight'. */
+ * games/tla/src/field/field/script_commands.c:100: structure has no member
+ * named `terrainHeight'. */
 struct MotionObject__f02493c {
   void *script;
   u16 scriptCursor;

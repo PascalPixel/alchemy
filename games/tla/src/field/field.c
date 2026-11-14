@@ -35,7 +35,6 @@
 #undef Animation_ApplyChildValue
 #undef SpriteAnimation_Alloc
 #undef Render_ApplyProjectedPlacementAtDepth
-#undef MapGrid_CheckCollision
 
 #include "field/tile_animation.c"
 

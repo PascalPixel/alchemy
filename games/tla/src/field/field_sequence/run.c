@@ -26,7 +26,7 @@ s32 Field_GetSceneAttributes(s32 scene);
  * PartyInventory_GiveItem(s32 item, s32 flags); tried as the definition's s32
  * PartyInventory_GiveItem(s32 item, s32 unused), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:1612: `PartyInventory_GiveItem'
+ * games/tla/src/field/field_sequence/run.c:229: `PartyInventory_GiveItem'
  * undeclared (first use in this function). */
 s32 PartyInventory_GiveItem__field_sequence(s32 item) __asm__(
     "PartyInventory_GiveItem");
@@ -511,7 +511,7 @@ done:
 /* VIEW(field_sequence): tag struct Object as struct Object__field_sequence;
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:1908: structure has no member named
+ * games/tla/src/field/field_sequence/run.c:527: structure has no member named
  * `pos'. */
 struct Object__field_sequence {
   u8 pad0[6];

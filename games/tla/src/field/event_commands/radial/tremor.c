@@ -49,8 +49,8 @@ struct ShakeWork {
 /* VIEW(psynergy): tag struct ObjectSprite as struct ObjectSprite__psynergy;
  * module/field/field.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:7222: redefinition of `struct
- * ObjectSprite'. */
+ * games/tla/src/field/event_commands/radial/tremor.c:49: redefinition of
+ * `struct ObjectSprite'. */
 #define ObjectSprite ObjectSprite__psynergy
 struct ObjectSprite {
   u8 unk00[0x12];
@@ -64,8 +64,10 @@ struct ObjectSprite {
 };
 
 /* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0;
- * f0e2c38.c has another definition; not tried: struct EffectScene__f0e8db0 was
- * not found. */
+ * f0e2c38.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/tremor.c:83: structure has no
+ * member named `target'. */
 struct EffectScene__f0e8db0 {
   u8 unk00[0x10];
   void *mainObject;

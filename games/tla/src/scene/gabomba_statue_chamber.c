@@ -104,7 +104,7 @@ void Func_02000100(void) {
 
 /* VIEW(first): routine gData_02002058 as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_02002058[], it does
- * not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:129:
+ * not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:130:
  * `gData_02002058' undeclared (first use in this function). */
 extern struct Actor *gData_02002058__first __asm__("gData_02002058");
 #define gData_02002058 gData_02002058__first

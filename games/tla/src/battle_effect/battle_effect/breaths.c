@@ -46,8 +46,8 @@ struct ModelTexture__f18bc98 {
 /* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:57349: structure has no member
- * named `vertices'. */
+ * games/tla/src/battle_effect/battle_effect/breaths.c:368: structure has no
+ * member named `vertices'. */
 struct Model__f18bc98 {
   s32 kind;
   s32 next;

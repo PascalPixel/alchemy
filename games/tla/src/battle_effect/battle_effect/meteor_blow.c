@@ -42,12 +42,8 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(ability_effects): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model *model); battle_effect/summon_effects has
- * void Render_DrawModelList(struct Model *model); tried as the definition's
- * void Render_DrawModelList(struct Model *model), which the object already
- * declares, BattleEffect_RunUlysses moves: 2 of 1912 instructions,
- * BattleEffect_RunAzul moves: 4 of 2201 instructions,
- * BattleEffect_RunCastingImpact moves: 9 of 7568 instructions, 42 more in
- * tla-ja. */
+ * void Render_DrawModelList(struct Model *model); not tried:
+ * Render_DrawModelList's bound declaration was not found. */
 void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);

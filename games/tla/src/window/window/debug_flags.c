@@ -135,8 +135,9 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
 
 /* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as
  * void WindowSprite_PrepareForRedraw(void); resource_work has void
- * WindowSprite_PrepareForRedraw(struct Window *); not tried:
- * WindowSprite_PrepareForRedraw's declaration holds a FAKEMATCH tag. */
+ * WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's
+ * void WindowSprite_PrepareForRedraw(struct Window *work),
+ * DebugFlagEditor_DrawTable moves: 1 of 87 instructions in tla-ja. */
 extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(
     void) __asm__("WindowSprite_PrepareForRedraw");
 

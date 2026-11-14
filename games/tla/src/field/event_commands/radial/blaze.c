@@ -36,7 +36,7 @@ struct FxEvent {
 /* VIEW(psynergy): tag struct ObjectAnimation as struct
  * ObjectAnimation__psynergy; module/field/field.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial.c:3048: redefinition of
+ * tla-ja: games/tla/src/field/event_commands/radial/blaze.c:36: redefinition of
  * `struct ObjectAnimation'. */
 #define ObjectAnimation ObjectAnimation__psynergy
 struct ObjectAnimation {
@@ -59,10 +59,9 @@ void Field_StartColorTransition(s32 frames, s32 color);
 /* VIEW(psynergy): routine Resource_GetMetadataRecordFarFar as struct
  * ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
  * system/sprite_metadata.h has struct AnimationMetadata
- * *Resource_GetMetadataRecordFarFar(u32 number); tried as the 2 declarations'
- * struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id), it does not
- * compile in tla-ja: games/tla/src/field/event_commands/radial.c:3067:
- * conflicting types for `Resource_GetMetadataRecordFarFar'. */
+ * *Resource_GetMetadataRecordFarFar(u32 number); tried as the rest of the
+ * object declares it, FieldPsynergy_Blaze moves: 4 of 609 instructions in
+ * tla-ja. */
 struct ObjectMetadata *Resource_GetMetadataRecordFarFar__psynergy(
     s32 id) __asm__("Resource_GetMetadataRecordFarFar");
 #define Resource_GetMetadataRecordFarFar                                       \
@@ -341,9 +340,9 @@ struct CueEvent {
 
 /* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
  * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
- * as the 6 declarations' extern u8 gMainRoutineWork[], it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial.c:3344: conflicting types
- * for `gMainRoutineWork'. */
+ * as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in
+ * tla-ja: games/tla/src/field/event_commands/radial/blaze.c:341: conflicting
+ * types for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__f0e3d04[] __asm__("gMainRoutineWork");
 
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);

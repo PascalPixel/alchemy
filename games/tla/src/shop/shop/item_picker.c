@@ -24,8 +24,7 @@ s32 Forge_Run(s32 objectId) {
   shop->shopType = 1;
   shop->partyAction = 4;
   shop->keeperResource =
-      *((struct FieldObject *)Actor_GetByIdFar__shop(objectId))
-           ->sprite->portrait;
+      *((struct FieldObject *)Actor_GetByIdFar(objectId))->sprite->portrait;
   window = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   icon->sentinel = 255;
@@ -375,25 +374,24 @@ void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot) {
   if (window == 0)
     return;
   WindowSprite_RedrawSavedRectFar(window);
-  Text_DrawMessageAsTilesFar__shop(item + (s32)MsgItemName, window, 0, 0);
+  Text_DrawMessageAsTilesFar(item + (s32)MsgItemName, window, 0, 0);
   if (shop->itemMode == 0)
     flags = Inventory_CheckDiscardFar(unitId, slot);
   else
     flags = Inventory_CheckUnequipFar(unitId, slot);
   if (flags & 2) {
-    Text_DrawMessageAsTilesFar__shop((s32)MsgCannotDrop, window,
-                                     SHOP_PRICE_NOTE_X, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgCannotDrop, window, SHOP_PRICE_NOTE_X,
+                               8);
   } else if (flags & 1) {
-    Text_DrawMessageAsTilesFar__shop((s32)MsgCannotRemove, window,
-                                     SHOP_PRICE_NOTE_X, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgCannotRemove, window, SHOP_PRICE_NOTE_X,
+                               8);
   } else if (shop->itemMode == 0) {
     price = Shop_SalePrice(unit->inventory[slot]) * quantity;
     message = (s32)MsgPriceHeading;
-    Text_DrawMessageAsTilesFar__shop(message, window, 8, 8);
+    Text_DrawMessageAsTilesFar(message, window, 8, 8);
     Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
     // Five messages before the price heading: MsgCoins.
-    Text_DrawMessageAsTilesFar__shop(message - 5, window, SHOP_PRICE_COINS_X,
-                                     8);
+    Text_DrawMessageAsTilesFar(message - 5, window, SHOP_PRICE_COINS_X, 8);
   }
 }
 

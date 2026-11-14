@@ -2073,11 +2073,10 @@ s32 Func_020035e0(struct Actor *object) {
 #include "shared/actor_flicker.h"
 
 /* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA
- * DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, Func_020035e0, 17, 0)
- * LATE_DATA u32 gData_02006be4[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2101: `gData_02006be4' undeclared (first use
- * in this function). */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02006be4[],
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/shared/actor_cycle_child_values.h:5: `gData_02006be4'
+ * undeclared (first use in this function). */
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38
 

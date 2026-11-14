@@ -32,8 +32,8 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
  * x, s32 y, u16 *spacing, s32 flags) {; tried as the definition's struct
  * UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
  * u16 *spacing, s32 flags), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/window/window.c:12538: too few arguments to
- * function `Message_Start'. */
+ * compile in tla-ja: games/tla/src/window/window/joined.c:77: too few arguments
+ * to function `Message_Start'. */
 s32 Message_Start__screens() __asm__("Message_Start");
 #define Message_Start Message_Start__screens
 #endif

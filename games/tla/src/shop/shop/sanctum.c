@@ -142,7 +142,7 @@ s32 Sanctum_Run(s32 unitId) {
   shop->partyAction = listWindow;
 
   shop->keeperResource =
-      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar__shop(unitId) + 80) + 40);
+      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(unitId) + 80) + 40);
 
   listWindow = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {

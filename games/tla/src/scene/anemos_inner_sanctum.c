@@ -519,7 +519,7 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 /* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
  * scene/anemos_inner_sanctum/scene_tables has another definition; tried with
  * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:556: structure has no member named
+ * games/tla/src/scene/anemos_inner_sanctum.c:554: structure has no member named
  * `room'. */
 struct Work__s0ac8 {
   u8 pad[340];
@@ -1281,7 +1281,7 @@ void Func_02001c60(void) {
 /* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:1306: structure has no member
+ * games/tla/src/scene/anemos_inner_sanctum.c:1312: structure has no member
  * named `value'. */
 struct EventWork154__s1938 {
   u8 unk000[0x154];
@@ -1957,12 +1957,10 @@ loop:
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s2f48): routine CrackedTile_Fall as this part declared it; the joined
- * file has another; tried as the definition's
- * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
- * CrackedTile_Fall(struct PushEvent *event), which the object already declares,
- * it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:1955: too many arguments to
- * function `CrackedTile_Fall'. */
+ * file has another; tried as the definition's void CrackedTile_Fall(struct
+ * PushEvent *event), which the object already declares, it does not compile in
+ * tla-ja: games/tla/src/scene/shared/cracked_tiles_step.h:23: too many
+ * arguments to function `CrackedTile_Fall'. */
 void CrackedTile_Fall__s2f48(
     struct CellTarget *work,
     struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");

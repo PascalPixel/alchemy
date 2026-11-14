@@ -12,8 +12,8 @@
  * definition has u16 BattleEffect_GetCycledTableWord(void); tried as the
  * definition's u16 BattleEffect_GetCycledTableWord(void), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:10127: too many arguments to
- * function `BattleEffect_GetCycledTableWord'. */
+ * games/tla/src/field/object/visual_attributes/cloak.c:407: too many arguments
+ * to function `BattleEffect_GetCycledTableWord'. */
 s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
     "BattleEffect_GetCycledTableWord");
 #define BattleEffect_GetCycledTableWord BattleEffect_GetCycledTableWord__cloak
@@ -315,8 +315,8 @@ void FieldEffect_SpawnFallingParticles(void) {
 /* VIEW(f0decb8): tag struct EffectWork as struct EffectWork__f0decb8;
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:10056: structure has no member
- * named `source'. */
+ * games/tla/src/field/object/visual_attributes/cloak.c:343: structure has no
+ * member named `source'. */
 struct EffectWork__f0decb8 {
   u8 unk00[4];
   s32 x;

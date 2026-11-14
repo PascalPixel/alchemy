@@ -710,8 +710,8 @@ extern const u8 Data_0819a160[];
  * *EffectSprite_Acquire(s32 kind, s32 value) {; tried as the definition's
  * struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:63274: too many arguments to
- * function `EffectSprite_Acquire'. */
+ * games/tla/src/battle_effect/battle_effect/moloch.c:1348: too many arguments
+ * to function `EffectSprite_Acquire'. */
 struct IrisSprite *
 EffectSprite_Acquire__summon_effects(s32 width, s32 height, u32 shape,
                                      s32 mode) __asm__("EffectSprite_Acquire");

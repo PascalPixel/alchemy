@@ -16,7 +16,8 @@
 /* VIEW(f0298c0): tag struct PlayerSprite as struct PlayerSprite__f0298c0;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:8023: structure has no member named `entry'. */
+ * games/tla/src/field/field/map_grid.c:506: structure has no member named
+ * `entry'. */
 struct PlayerSprite__f0298c0 {
   u8 unk00[9];
   u8 low09 : 2;

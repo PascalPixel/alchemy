@@ -2946,7 +2946,7 @@ void Func_02005268(struct Actor *object) {
 /* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:2908: structure has no member
+ * games/tla/src/scene/mars_lighthouse_aerie.c:2994: structure has no member
  * named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
@@ -2963,7 +2963,7 @@ struct SparkleSprite__s53e4 {
 
 /* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2898:
+ * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2985:
  * incompatible types in assignment. */
 struct SparkleWork__s53e4 {
   struct SparkleSprite__s53e4 sprites[4];
@@ -2976,8 +2976,11 @@ struct SparkleWork__s53e4 {
 
 /* VIEW(s3370): routine BattleEffect_GetObjectPriority as s32
  * BattleEffect_GetObjectPriority(struct Actor *object); module/scene/scene.h
- * has void BattleEffect_GetObjectPriority(void); not tried:
- * BattleEffect_GetObjectPriority's bound declaration was not found. */
+ * has void BattleEffect_GetObjectPriority(void); tried as the definition's s32
+ * BattleEffect_GetObjectPriority(struct Actor *object), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_aerie.c:3004: too many arguments to
+ * function `BattleEffect_GetObjectPriority'. */
 extern s32 Func_020057b4__s3370(struct Actor *object) __asm__(
     "BattleEffect_GetObjectPriority");
 

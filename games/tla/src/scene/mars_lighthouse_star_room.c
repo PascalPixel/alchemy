@@ -1461,7 +1461,7 @@ void Ride_UpdateDrift();
 /* VIEW(s1b78): routine Actor_SetupScripted as void Actor_SetupScripted(struct
  * Actor *object, s32 priority); the definition has void
  * Actor_SetupScripted(struct Actor *object); not tried: Actor_SetupScripted's
- * bound declaration was not found. */
+ * declaration holds a FAKEMATCH tag. */
 extern void Func_02001b38__s1b78(struct Actor *object,
                                  s32 priority) __asm__("Actor_SetupScripted");
 

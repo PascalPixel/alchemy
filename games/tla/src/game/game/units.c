@@ -492,7 +492,7 @@ void GameFlag_RefreshLureCap(void) {
           effectKind = effect->kind;
           effect++;
           if (effectKind == 27) {
-            GameFlag_SetBit__game(0x167);
+            GameFlag_Set(0x167);
           }
         }
       }
@@ -745,7 +745,7 @@ void Party_GivePiersDjinn(void) {
   s32 count;
 
   for (i = 10; i < 12; i++) {
-    GameFlag_SetBit__game(i + 67);
+    GameFlag_Set(i + 67);
     Djinn_Give(7, 1, i - 1);
     Djinn_Set(7, 1, i - 1);
   }
@@ -1002,7 +1002,7 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
       s32 flag = 0x800 + k + j;
 
       if (FlagBits_Test(flags, 0x30 + i * 20 + j))
-        GameFlag_SetBit__game(flag);
+        GameFlag_Set(flag);
       else
         GameFlag_Clear(flag);
       /* FAKEMATCH(barrier): an empty asm reading j. */
@@ -1011,14 +1011,14 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
   }
   for (i = 0; i < 6; i++) {
     if (FlagBits_Test(flags, Data_080b1284[i]))
-      GameFlag_SetBit__game(0x820 + i);
+      GameFlag_Set(0x820 + i);
     else
       GameFlag_Clear(0x820 + i);
   }
   if (GameFlag_Get(0x822))
     GameFlag_Clear(0x822);
   else
-    GameFlag_SetBit__game(0x822);
+    GameFlag_Set(0x822);
 
   state = &gMainRoutineWork;
   *(s32 *)&state->unk284[8] = party->coins;
@@ -1052,8 +1052,8 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
   }
   Djinn_ActivateOfferedForParty();
   Party_RestoreHpPp(1);
-  GameFlag_SetBit__game((keepSettings & 1) + 44);
-  GameFlag_SetBit__game(47);
+  GameFlag_Set((keepSettings & 1) + 44);
+  GameFlag_Set(47);
   gFrameWaitCount = gMainRoutineWork.playTime;
 }
 
@@ -1115,7 +1115,7 @@ void Party_AddIsaacsParty(void) {
 
     for (j = 0; j < 7; j++) {
       if (GameFlag_Get(0x800 + k + j))
-        GameFlag_SetBit__game(0x30 + i * 20 + j);
+        GameFlag_Set(0x30 + i * 20 + j);
       /* FAKEMATCH(barrier): an empty asm reading j. */
       asm("" : : "r"(j));
     }
@@ -1133,7 +1133,7 @@ void Party_AddIsaacsParty(void) {
   for (i = 0; i < 8; i++)
     Unit_Calculate(i);
   Party_RestoreHpPp(1);
-  GameFlag_SetBit__game(34);
+  GameFlag_Set(34);
 
   for (i = 0; i < 4; i++) {
     count = 0;
@@ -1168,14 +1168,14 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
   Djinn_Give(owner, element, djinn);
   flag += 0x30;
   DjinnRecovery_AddStandby(owner, element, djinn);
-  GameFlag_SetBit__game(flag);
+  GameFlag_Set(flag);
 }
 
 /* VIEW(game): variable Data_080b1290 as const s16 Data_080b1290[4][7];
  * game/experience_table has const u16 Data_080b1290[4][7] = {; tried as the
  * definition's extern const u16 Data_080b1290[4][7], it does not compile in
- * tla-ja: games/tla/src/game/game.c:1266: `Data_080b1290' undeclared (first use
- * in this function). */
+ * tla-ja: games/tla/src/game/game/units.c:1226: `Data_080b1290' undeclared
+ * (first use in this function). */
 extern const s16 Data_080b1290__game[4][7] __asm__("Data_080b1290");
 #define Data_080b1290 Data_080b1290__game
 
@@ -1249,7 +1249,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
       // element carries the flag to read after the one to set.
       element = 0x30 + i * 20 + j;
       if (GameFlag_Get(element))
-        GameFlag_SetBit__game(flag);
+        GameFlag_Set(flag);
       GameFlag_Clear(element);
     }
   }

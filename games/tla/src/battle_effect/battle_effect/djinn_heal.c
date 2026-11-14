@@ -30,11 +30,8 @@ struct Model;
 
 /* VIEW(battle_effect): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model *model); battle_effect/summon_effects has
- * void Render_DrawModelList(struct Model *model); tried as the definition's
- * void Render_DrawModelList(struct Model *model), which the object already
- * declares, BattleEffect_RunTargetStrike moves: 1 of 1853 instructions,
- * BattleEffect_RunCruelRuin moves: 9 of 2565 instructions,
- * BattleEffect_RunEclipse moves: 7 of 2142 instructions, 3 more in tla-ja. */
+ * void Render_DrawModelList(struct Model *model); not tried:
+ * Render_DrawModelList's bound declaration was not found. */
 void Render_DrawModelList__battle_effect(struct Model *model);
 
 // Sixteen textured quads tumble down over the targets (or, from the first

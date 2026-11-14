@@ -307,8 +307,11 @@ void FieldPsynergy_StartMindReadWave(s32 sourceId, s32 targetId);
 #define FieldPsynergy_FrostOnTarget FieldPsynergy_FrostOnTarget
 /* VIEW(f0daecc): routine FieldPsynergy_WhirlwindOnTarget as void
  * FieldPsynergy_WhirlwindOnTarget(s32 targetId); battle.h has void
- * FieldPsynergy_WhirlwindOnTarget(void); not tried:
- * FieldPsynergy_WhirlwindOnTarget's bound declaration was not found. */
+ * FieldPsynergy_WhirlwindOnTarget(void); tried as the definition's void
+ * FieldPsynergy_WhirlwindOnTarget(void), which the object already declares, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes/psynergy_dispatch.c:455: too
+ * many arguments to function `FieldPsynergy_WhirlwindOnTarget'. */
 extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__(
     "FieldPsynergy_WhirlwindOnTarget");
 void FieldPsynergy_CatchOnTarget(s32 targetId);

@@ -260,8 +260,10 @@ extern char SceneId_JupiterLighthouseRoom4;
 /* VIEW(window): routine Event_SetDestinationFar as void
  * Event_SetDestinationFar(s32 scene, s32 entrance);
  * gamepak/far_call/field_sequence.h has void Event_SetDestinationFar(s16
- * primary, s16 secondary); not tried: Event_SetDestinationFar's declaration
- * holds a FAKEMATCH tag. */
+ * primary, s16 secondary); tried as the rest of the object declares it,
+ * DebugWarp_Jupiter moves: 1 of 11 instructions, DebugWarp_Arafura2 moves: 1 of
+ * 28 instructions, DebugWarp_Arafura3 moves: 1 of 24 instructions, 5 more in
+ * tla-ja. */
 void Event_SetDestinationFar__window(s32 scene, s32 entrance) __asm__(
     "Event_SetDestinationFar");
 #define Event_SetDestinationFar Event_SetDestinationFar__window

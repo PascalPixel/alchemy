@@ -194,8 +194,9 @@ struct RiseParticle {
 
 /* VIEW(f0e6400): tag struct RiseWork as struct RiseWork__f0e6400; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:5317:
- * structure has no member named `other'. */
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/scoop.c:306: structure has no
+ * member named `other'. */
 struct RiseWork__f0e6400 {
   u8 tiles[0x400];
   u8 picture[0x400];
@@ -213,8 +214,9 @@ struct RiseWork__f0e6400 {
 
 /* VIEW(f0e6400): tag struct FxScene as struct FxScene__f0e6400; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:5287:
- * structure has no member named `facing'. */
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/scoop.c:276: structure has no
+ * member named `facing'. */
 struct FxScene__f0e6400 {
   u16 facing;
   u16 angle;
@@ -237,8 +239,9 @@ struct FxScene__f0e6400 {
 
 /* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:5251:
- * structure has no member named `unkd4c'. */
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/scoop.c:241: structure has no
+ * member named `unkd4c'. */
 struct FxEvent__f0e6400 {
   struct EventWork work;
   u8 unkd48[4];
@@ -540,7 +543,7 @@ struct Actor *Actor_GetById(u32 objectId);
  * BattleEffect_DropObjectAtAnchor(u32 objectId); tried as the definition's void
  * BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:5582: conflicting types for
+ * games/tla/src/field/event_commands/radial/scoop.c:539: conflicting types for
  * `BattleEffect_DropObjectAtAnchor'. */
 void BattleEffect_DropObjectAtAnchor__psynergy(s32 id) __asm__(
     "BattleEffect_DropObjectAtAnchor");
@@ -633,8 +636,8 @@ struct WhirlSpark {
 /* VIEW(f0e6400): tag struct WhirlWork as struct WhirlWork__f0e6400; f0e2c38.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:5679: structure has no member
- * named `sparks'. */
+ * games/tla/src/field/event_commands/radial/scoop.c:666: structure has no
+ * member named `sparks'. */
 struct WhirlWork__f0e6400 {
   u8 picture[0x400];
   struct WhirlSpark sparks[WHIRL_COUNT];
@@ -778,8 +781,8 @@ void Teleport_PlayWhirl(void) {
 /* VIEW(psynergy): tag struct SparkParticle as struct SparkParticle__psynergy;
  * module/field/field.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:5792: redefinition of `struct
- * SparkParticle'. */
+ * games/tla/src/field/event_commands/radial/scoop.c:781: redefinition of
+ * `struct SparkParticle'. */
 #define SparkParticle SparkParticle__psynergy
 struct SparkParticle {
   s32 x;
@@ -985,8 +988,8 @@ struct PuffWork {
 /* VIEW(f0e6400): tag struct ObjectAnimation as struct ObjectAnimation__f0e6400;
  * f0e2c38.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:6068: structure has no member
- * named `unk18'. */
+ * games/tla/src/field/event_commands/radial/scoop.c:1053: structure has no
+ * member named `unk18'. */
 struct ObjectAnimation__f0e6400 {
   u8 unk00[24];
   u8 unk18;

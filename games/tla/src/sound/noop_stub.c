@@ -16,7 +16,7 @@ void UnusedDummyFunc2(void) {}
 
 /* VIEW(noop_stub): variable gBuildStamp as s32 gBuildStamp; sound.h has s32
  * gBuildStamp[]; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/sound/noop_stub.c:41: `gBuildStamp' has an
+ * compile in tla-ja: games/tla/src/sound/noop_stub.c:40: `gBuildStamp' has an
  * incomplete type. */
 extern s32 gBuildStamp__noop_stub __asm__("gBuildStamp");
 

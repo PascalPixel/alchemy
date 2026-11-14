@@ -216,8 +216,8 @@ typedef volatile s32 vs32;
 /* VIEW(f17e698): tag struct Particle as struct Particle__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47770: structure has no member
- * named `timer'. */
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:540: structure has no
+ * member named `timer'. */
 typedef struct Particle__f17e698 {
   s32 x;
   s32 y;
@@ -282,8 +282,8 @@ typedef struct Bitmap {
 /* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47663: structure has no member
- * named `transferMode'. */
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:434: structure has no
+ * member named `transferMode'. */
 struct SummonWork__f17e698 {
   Particle particles[48];
   u8 unk0540[0x1c0];
@@ -323,8 +323,8 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 /* VIEW(f17e698): tag struct SystemWork as struct SystemWork__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47662: structure has no member
- * named `map'. */
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:433: structure has no
+ * member named `map'. */
 struct SystemWork__f17e698 {
   u8 unk00[0x24];
   s32 *bank;
@@ -1537,8 +1537,8 @@ extern const u8 Data_081995ec[]; // the seven strike frames
 /* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:48946: structure has no member
- * named `x'. */
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:1719: structure has no
+ * member named `x'. */
 struct PlacementSource__f17e698 {
   s32 x;
   s32 y;
@@ -1550,7 +1550,7 @@ extern const u8 gData_081991b0[]; // their corners
 /* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep
  * gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest
  * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:48951: request for member
+ * games/tla/src/battle_effect/battle_effect/daedalus.c:1652: request for member
  * `variant' in something not a structure or union. */
 extern struct EffectStep
     gData_02014000__f17e698[] __asm__("gData_02014000"); // the sparks

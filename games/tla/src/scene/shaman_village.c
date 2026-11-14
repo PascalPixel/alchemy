@@ -145,13 +145,7 @@ void ShamanVillage_TalkToInnkeeper(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s00b8): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); shaman_village.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 value); not tried:
- * Actor_SetSpriteFlags's bound declaration was not found. */
-extern void
-Actor_SetSingleChildFlags__s00b8(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -174,7 +168,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       (struct Actor *)effect,
       gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags__s00b8(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -321,7 +315,7 @@ extern struct ActorPlacement gShamanVillage_Room3Placements[];
  * scene/shaman_village/s1fec has struct ActorPlacement
  * gShamanVillage_Room2Placements[] = {; tried as the definition's extern struct
  * ActorPlacement gShamanVillage_Room2Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/shaman_village.c:337:
+ * tla-ja: games/tla/src/scene/shaman_village.c:326:
  * `gShamanVillage_Room2Placements' undeclared (first use in this function). */
 extern struct ShamanVillageSceneBlock
     gShamanVillage_Room2Placements__s00b8 __asm__(

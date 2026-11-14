@@ -47,10 +47,10 @@ struct PendingEvent;
 
 /* VIEW(growing_particle): variable gMainRoutineWork as extern u8
  * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
- * gMainRoutineWork; tried as the 6 declarations' extern u8 gMainRoutineWork[],
+ * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:3663: conflicting types for
- * `gMainRoutineWork'. */
+ * games/tla/src/field/event_commands/radial/growing_particle.c:48: conflicting
+ * types for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__growing_particle[] __asm__("gMainRoutineWork");
 extern u8 Data_02000452;
 

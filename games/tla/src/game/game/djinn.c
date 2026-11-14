@@ -67,7 +67,7 @@ s32 Djinn_GiveToParty(s32 index, s32 bit) {
 
   Djinn_Give(bestNo, index, bit);
   DjinnRecovery_AddStandby(bestNo, index, bit);
-  GameFlag_SetBit__game(flag);
+  GameFlag_Set(flag);
   return bestNo;
 }
 

@@ -488,8 +488,8 @@ void KandoreanTemple_PushThroughTheSteam(void) {
 /* VIEW(kandorean_temple): tag struct EventWork1cc as struct
  * EventWork1cc__kandorean_temple; module/tla.h has another definition; tried
  * with the definition the rest of the object has, its members read focus as
- * object, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:497: dereferencing pointer to
+ * object, it does not compile in tla-ja (kandorean_temple.c):
+ * games/tla/src/scene/kandorean_temple.c:492: dereferencing pointer to
  * incomplete type. */
 struct EventWork1cc__kandorean_temple {
   u8 unk000[0x1cc];
@@ -1292,9 +1292,9 @@ void KandoreanTemple_WatchLifts(void) {
 
 /* VIEW(kandorean_temple): tag struct MapCell as struct
  * MapCell__kandorean_temple; map.h has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:1334: arithmetic on pointer to an
- * incomplete type. */
+ * definition the rest of the object has, it does not compile in tla-ja
+ * (kandorean_temple.c): games/tla/src/scene/kandorean_temple.c:1312: arithmetic
+ * on pointer to an incomplete type. */
 struct MapCell__kandorean_temple {
   u8 unk0[2];
   u8 unk2;

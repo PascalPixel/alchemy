@@ -434,7 +434,7 @@ void Inventory_Break(s32 owner, s32 slot);
 /* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition
  * *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried
  * as the definition's void Func_02000d48(struct Actor *shot), it does not
- * compile in tla-ja: games/tla/src/debug/shop_test.c:436: conflicting types for
+ * compile in tla-ja: games/tla/src/debug/shop_test.c:434: conflicting types for
  * `Func_02000d48'. */
 extern struct ItemDefinition *
 Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");

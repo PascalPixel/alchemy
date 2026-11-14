@@ -119,7 +119,7 @@ extern const u8 gData_08199364[];
  * value); tried as the definition's struct EffectSprite__f15b3b0
  * *EffectSprite_Acquire(s32 kind, s32 value), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:23109: too many arguments to
+ * games/tla/src/battle_effect/battle_effect/azul.c:224: too many arguments to
  * function `EffectSprite_Acquire'. */
 extern struct AzulObject *
 EffectSprite_Acquire__f15cde8(s32 width, s32 height, u32 shape,

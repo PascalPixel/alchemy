@@ -653,8 +653,8 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode);
 /* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:49937: structure has no member
- * named `size'. */
+ * games/tla/src/battle_effect/battle_effect/vengeance.c:881: structure has no
+ * member named `size'. */
 DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, BattleEffect_RunGeyser, 0)
 
 /// Abilities: Djinn Blast (kind 461).
@@ -683,8 +683,8 @@ struct Texture__f1811d4 {
 /* VIEW(f1811d4): tag struct RenderPrimitive as struct RenderPrimitive__f1811d4;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:49933: structure has no member
- * named `scrollU'. */
+ * games/tla/src/battle_effect/battle_effect/vengeance.c:877: structure has no
+ * member named `scrollU'. */
 struct RenderPrimitive__f1811d4 {
   s32 kind;
   s32 unk04;

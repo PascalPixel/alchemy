@@ -560,8 +560,8 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
 /* VIEW(resource_slot): tag struct IconSprite as struct
  * IconSprite__resource_slot; item_icon.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:2172: dereferencing pointer to incomplete type.
- */
+ * games/tla/src/field/field/actors.c:579: dereferencing pointer to incomplete
+ * type. */
 struct IconSprite__resource_slot {
   u8 unk00[4];
   struct RenderOam oam;

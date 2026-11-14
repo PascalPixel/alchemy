@@ -854,7 +854,8 @@ static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
  * s32 value, s32 timer); the definition has void Func_02001360(s32 x, s32 y,
  * s32 z, s16 value, s32 timer); tried as the definition's void
  * Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object
- * already declares, Func_020013b0 moves: 4 of 43 instructions in tla-ja. */
+ * already declares, Func_020013b0 moves: 4 of 43 instructions in tla-ja
+ * (garoh.c). */
 extern void Func_02001360__push(s32 x, s32 y, s32 z, s32 value,
                                 s32 timer) __asm__("Func_02001360");
 

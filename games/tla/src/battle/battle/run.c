@@ -120,7 +120,7 @@ s32 Tutorial_GetDjinnGiveMessage(void) {
 /* VIEW(battle): tag struct EncounterWork as struct EncounterWork__battle;
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/include/module/tla.h:95: redefinition of `struct EncounterWork'. */
+ * games/tla/include/module/tla.h:90: redefinition of `struct EncounterWork'. */
 #define EncounterWork EncounterWork__battle
 struct EncounterWork {
   s32 enemyGroup;
@@ -163,7 +163,7 @@ struct EncounterWork {
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
 /* VIEW(battle): variable Data_02018000 as u8 Data_02018000[]; module/tla.h has
  * u32 Data_02018000[]; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/battle/battle.c:1265: `Data_02018000'
+ * compile in tla-ja: games/tla/src/battle/battle/run.c:254: `Data_02018000'
  * undeclared (first use in this function). */
 extern u8 Data_02018000__battle[] __asm__("Data_02018000");
 #define Data_02018000 Data_02018000__battle
@@ -172,8 +172,8 @@ extern u8 Data_02018000__battle[] __asm__("Data_02018000");
  * game/game_flags.h has u8 GameFlag_GetByte(s32 flag); tried as the
  * definition's u8 GameFlag_GetByte(s32 flag), which the object already
  * declares, it does not compile in tla-ja (make modern):
- * games/tla/src/battle/battle.c:3270:3: note: in expansion of macro
- * 'Actor_StartIdleFar'. */
+ * games/tla/include/gamepak/far_call/window.h:19:42: note: expected 'struct
+ * RenderInput *' but argument is of type 's32' {aka 'int'}. */
 s32 GameFlag_GetByte__battle(s32 flag) __asm__("GameFlag_GetByte");
 #define GameFlag_GetByte GameFlag_GetByte__battle
 void ActorSystem_InitializeFar(s32 mode);

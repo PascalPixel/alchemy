@@ -9,8 +9,8 @@
 /* VIEW(psynergy_effects_11): tag struct EffectSprite as struct
  * EffectSprite__psynergy_effects_11; effect_sprite.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial.c:4985: structure has no
- * member named `tile'. */
+ * tla-ja: games/tla/src/field/event_commands/radial/growing_sprite.c:22:
+ * structure has no member named `tile'. */
 struct EffectSprite__psynergy_effects_11 {
   u8 unk00[4];
   u16 attr0_0 : 13;

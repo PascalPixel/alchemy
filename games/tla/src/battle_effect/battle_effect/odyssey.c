@@ -33,8 +33,8 @@ union BattleBackgroundId {
 /* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74;
  * render_model.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:61266: structure has no member
- * named `look'. */
+ * games/tla/src/battle_effect/battle_effect/odyssey.c:364: structure has no
+ * member named `look'. */
 struct RenderModel__f190b74 {
   s32 kind;
   s32 unk04;

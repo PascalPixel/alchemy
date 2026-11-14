@@ -349,7 +349,7 @@ extern u32 gData_0200506c[];
  * 0, 104, 0, 0, 0, 196, 0x8000, 0, 172, - 1, 1, 0, 0, 128, 0, 0, 0, 106,
  * 0xb000, 1, 178, - 1, 1, 0, 0...; tried as the definition's extern s16
  * gData_0200521c[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:371: request for member `talkFacing' in something
+ * games/tla/src/scene/prox.c:365: request for member `talkFacing' in something
  * not a structure or union. */
 extern struct ActorPlacement gData_0200521c__prox[] __asm__("gData_0200521c");
 
@@ -2410,7 +2410,7 @@ extern char ResourceId_FallingRock;
 
 /* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/prox.c:2168: structure has no
+ * does not compile in tla-ja: games/tla/src/scene/prox.c:2433: structure has no
  * member named `unk05_5'. */
 struct RockSprite__s4254 {
   u8 unk00[5];

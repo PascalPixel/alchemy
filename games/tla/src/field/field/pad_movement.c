@@ -13,7 +13,8 @@
 /* VIEW(f0279b0): tag struct PlayerSprite as struct PlayerSprite__f0279b0;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:6062: structure has no member named `entry'. */
+ * games/tla/src/field/field/pad_movement.c:157: structure has no member named
+ * `entry'. */
 struct PlayerSprite__f0279b0 {
   u8 unk00[5];
   u8 low05 : 2;
@@ -500,8 +501,8 @@ counted:
 /* VIEW(s28534): tag struct PlayerSprite as struct PlayerSprite__s28534;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:6683: structure has no member named `objectMode'.
- */
+ * games/tla/src/field/field/pad_movement.c:709: structure has no member named
+ * `objectMode'. */
 struct PlayerSprite__s28534 {
   u8 unk00[5];
   u8 low05 : 2;
@@ -518,7 +519,8 @@ struct PlayerSprite__s28534 {
 /* VIEW(s28534): tag struct PartyKeys as struct PartyKeys__s28534;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:6622: structure has no member named `keys23c'. */
+ * games/tla/src/field/field/pad_movement.c:648: structure has no member named
+ * `keys23c'. */
 struct PartyKeys__s28534 {
   u8 unk000[0x23c];
   u16 keys23c;
@@ -740,8 +742,8 @@ update_object:
 /* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:6943: structure has no member named `objectMode'.
- */
+ * games/tla/src/field/field/pad_movement.c:949: structure has no member named
+ * `objectMode'. */
 struct PlayerSprite__f028aac {
   u8 unk00[5];
   u8 low05 : 2;
@@ -758,8 +760,8 @@ struct PlayerSprite__f028aac {
 /* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:6963: structure has no member named `climbing'.
- */
+ * games/tla/src/field/field/pad_movement.c:969: structure has no member named
+ * `climbing'. */
 struct WorldEventWork__f028aac {
   u8 unk000[0xd3a];
   u8 terrainKind;

@@ -84,7 +84,7 @@ void Actor_DisableById(u32 id) {
  * Actor_SetSpriteRotationById(s32 actorId, s32 angle); tried as the
  * definition's void Actor_SetSpriteRotationById(u32 id, s32 rotation), which
  * the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:144: conflicting types for
+ * games/tla/include/field/event.h:158: conflicting types for
  * `Actor_SetSpriteRotationById'. */
 void Actor_SetSpriteRotationById__visual_attributes(
     u32 id, s32 rotation) __asm__("Actor_SetSpriteRotationById");
@@ -100,8 +100,10 @@ void Actor_SetSpriteRotationById(u32 id, s32 rotation) {
 
 /* VIEW(visual_attributes): routine Icon_DrawItemFar as void
  * Icon_DrawItemFar(s32 resource, u8 *buffer); module/field/field.h has void
- * Icon_DrawItemFar(s32 item); not tried: Icon_DrawItemFar's bound declaration
- * was not found. */
+ * Icon_DrawItemFar(s32 item); tried as the rest of the object declares it, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes/actor_commands.c:219: too many
+ * arguments to function `Icon_DrawItemFar'. */
 extern void
 Func_08038248__visual_attributes(s32 resource,
                                  u8 *buffer) __asm__("Icon_DrawItemFar");
@@ -200,7 +202,7 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
  * Actor_ShowItemIconById(u32 id, s32 resource); field/event.h has void
  * Actor_ShowItemIconById(s32 actorId, s32 item); tried as the definition's void
  * Actor_ShowItemIconById(u32 id, s32 resource), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/field/event.h:140:
+ * declares, it does not compile in tla-ja: games/tla/include/field/event.h:154:
  * conflicting types for `Actor_ShowItemIconById'. */
 void Actor_ShowItemIconById__visual_attributes(u32 id, s32 resource) __asm__(
     "Actor_ShowItemIconById");

@@ -8,8 +8,8 @@
 /* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:9007: structure has no member
- * named `flags'. */
+ * games/tla/src/field/event_commands/radial/actor_cells.c:48: structure has no
+ * member named `flags'. */
 struct SwitchCell__f0eabd0 {
   u8 unk00[2];
   u8 block;

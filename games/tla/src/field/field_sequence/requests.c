@@ -31,7 +31,7 @@ extern s8 gData_02001000[];
  * Field_RequestDjinnBattle(s32 flag, s32 no); tried as the definition's void
  * Field_RequestDjinnBattle(u32 flags, u32 djinn), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:6957: conflicting types for
+ * games/tla/src/field/field_sequence/requests.c:23: conflicting types for
  * `Field_RequestDjinnBattle'. */
 void Field_RequestDjinnBattle__event_commands(u32 flags, u32 djinn) __asm__(
     "Field_RequestDjinnBattle");
@@ -68,7 +68,7 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
  * void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance); tried as the
  * definition's void Event_SetAfterBattleDestination(u16 first, u16 second),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:6996: conflicting types for
+ * games/tla/src/field/field_sequence/requests.c:66: conflicting types for
  * `Event_SetAfterBattleDestination'. */
 void Event_SetAfterBattleDestination__event_commands(
     u16 first, u16 second) __asm__("Event_SetAfterBattleDestination");
@@ -84,7 +84,7 @@ void Event_SetAfterBattleDestination(u16 first, u16 second) {
  * Party_SetFields1f2And1f4(s32 sceneId, s32 entrance); tried as the
  * definition's void Party_SetFields1f2And1f4(u16 first, u16 second), which the
  * object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:7004: conflicting types for
+ * games/tla/src/field/field_sequence/requests.c:82: conflicting types for
  * `Party_SetFields1f2And1f4'. */
 void Party_SetFields1f2And1f4__event_commands(u16 first, u16 second) __asm__(
     "Party_SetFields1f2And1f4");
@@ -140,7 +140,7 @@ void Func_080d2cc4(s32 message) {
 /* VIEW(event_commands): tag struct EventWork1cc as struct
  * EventWork1cc__event_commands; module/tla.h has another definition; tried with
  * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:7056: redefinition of `struct
+ * games/tla/src/field/field_sequence/requests.c:140: redefinition of `struct
  * EventWork1cc'. */
 #define EventWork1cc EventWork1cc__event_commands
 struct EventWork1cc {

@@ -136,7 +136,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = ShopStock_GetType(stockRow);
   shop->keeperResource =
-      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar__shop(keeperId) + 80) + 40);
+      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(keeperId) + 80) + 40);
   // The shopkeeper's portrait window, or an empty one off the right edge when
   // there is no portrait.
   window = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
@@ -191,10 +191,9 @@ s32 Shop_OpenDebugShop(void) {
   gMainRoutineWork.coins = 200000;
   gMainRoutineWork.counterC = 28;
   // A broken Virtuous Armlet (141), a broken Muramasa (11) and a Bone (231)
-  Inventory_EquipFar__shop(GARET,
-                           Inventory_AddItemFar(GARET, INVENTORY_BROKEN | 141));
-  Inventory_EquipFar__shop(ISAAC,
-                           Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
+  Inventory_EquipFar(GARET,
+                     Inventory_AddItemFar(GARET, INVENTORY_BROKEN | 141));
+  Inventory_EquipFar(ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
   Inventory_AddItemFar(IVAN, 231);
   ((struct BattleUnit *)Unit_Get(MIA))->poison = 1;
   ((struct BattleUnit *)Unit_Get(JENNA))->poison = 1;

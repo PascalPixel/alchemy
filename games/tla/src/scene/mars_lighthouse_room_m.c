@@ -603,8 +603,11 @@ const struct Trigger *Scene_GetEvents(void) {
 
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 /* VIEW(s0b64): routine Actor_LaunchAhead as void Actor_LaunchAhead(void);
- * mars_lighthouse_room_m has void Actor_LaunchAhead(struct Actor *self); not
- * tried: Actor_LaunchAhead's bound declaration was not found. */
+ * mars_lighthouse_room_m has void Actor_LaunchAhead(struct Actor *self); tried
+ * as the definition's void Actor_LaunchAhead(struct Actor *self), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:665: too few arguments to
+ * function `Actor_LaunchAhead'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Actor_LaunchAhead");
 
 extern s16 gData_0200338c[];
@@ -698,13 +701,15 @@ s32 Scene_Initialize(void) {
 /* VIEW(s0b64): routine Func_02000058 as s32 Func_02000058(); the definition has
  * void Func_02000058(s32 id, s32 value); tried as the definition's void
  * Func_02000058(void), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:696: conflicting types for
+ * games/tla/src/scene/mars_lighthouse_room_m.c:701: conflicting types for
  * `Func_02000058'. */
 extern s32 Func_02000058__s0b64() __asm__("Func_02000058");
 /* VIEW(mars_lighthouse_room_m): routine Map_ClearLayerEntryFlag as void
  * Map_ClearLayerEntryFlag(s32 value); module/scene/scene.h has u32
- * Map_ClearLayerEntryFlag(struct FieldSprite *sprite, u32 frame); not tried:
- * Map_ClearLayerEntryFlag's bound declaration was not found. */
+ * Map_ClearLayerEntryFlag(struct FieldSprite *sprite, u32 frame); tried as the
+ * definition's void Map_ClearLayerEntryFlag(u32 no), it does not compile in
+ * tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:707: conflicting types
+ * for `Map_ClearLayerEntryFlag'. */
 extern void Func_02003150__mars_lighthouse_room_m(s32 value) __asm__(
     "Map_ClearLayerEntryFlag");
 void Weather_StartRain(s32 a);
@@ -1750,8 +1755,8 @@ void Func_020026f0(void) {
 #undef Unit_Get
 /* VIEW(s2708): routine Party_TakeFallDamage as int Party_TakeFallDamage(),
  * called with no declaration in scope as its bytes need; the definition has
- * void Party_TakeFallDamage(void); not tried: Party_TakeFallDamage's bound
- * declaration was not found. */
+ * void Party_TakeFallDamage(void); not tried: Party_TakeFallDamage's
+ * declaration holds a FAKEMATCH tag. */
 s32 Func_02002368__s2708() __asm__("Party_TakeFallDamage");
 #define Party_TakeFallDamage Func_02002368__s2708
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z);
@@ -2003,7 +2008,7 @@ void Func_02002ad4(struct Actor *object) {
 /* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:1666: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_m.c:2008: redefinition of `struct
  * Work020023c4'. */
 #define Work020023c4 Work020023c4__s2708
 struct Work020023c4 {

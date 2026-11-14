@@ -61,25 +61,32 @@
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 /* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile
- * u16 gLinkStatus; not tried: gLinkStatus's declaration holds a FAKEMATCH tag.
- */
+ * u16 gLinkStatus; tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/window/window/icon_menu.c:188:
+ * `gLinkStatus__menus' undeclared (first use in this function). */
 extern u16 gLinkStatus__menus __asm__("gLinkStatus");
 /* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16
  * gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature
- * gLinkPeerSignatures[]; not tried: gLinkPeerSignatures's declaration holds a
- * FAKEMATCH tag. */
+ * gLinkPeerSignatures[]; tried as the rest of the object declares it, it does
+ * not compile in tla-ja: games/tla/src/window/window/icon_menu.c:178:
+ * `gLinkPeerSignatures__battle_party_commands' undeclared (first use in this
+ * function). */
 extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__(
     "gLinkPeerSignatures");
 /* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8
  * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
- * gMainRoutineWork; not tried: gMainRoutineWork's declaration holds a FAKEMATCH
- * tag. */
+ * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
+ * it does not compile in tla-ja: games/tla/src/window/window/icon_menu.c:76:
+ * conflicting types for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__battle_party_commands[] __asm__("gMainRoutineWork");
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 /* VIEW(menus): routine BattleDjinnMenu_Run as s32 BattleDjinnMenu_Run(s32
  * member, s32 unused); window/screens has s32 BattleDjinnMenu_Run(s32 member)
- * {; not tried: BattleDjinnMenu_Run's declaration holds a FAKEMATCH tag. */
+ * {; tried as the definition's s32 BattleDjinnMenu_Run(s32 member), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/src/window/window/icon_menu.c:593: too many arguments to function
+ * `BattleDjinnMenu_Run'. */
 s32 BattleDjinnMenu_Run__menus(s32 member,
                                s32 unused) __asm__("BattleDjinnMenu_Run");
 #define BattleDjinnMenu_Run BattleDjinnMenu_Run__menus

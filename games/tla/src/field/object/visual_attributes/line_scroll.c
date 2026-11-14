@@ -344,7 +344,7 @@ void LineScroll_Stop(void) {
 /* VIEW(visual_attributes): tag struct GroundParticle as struct
  * GroundParticle__visual_attributes; ground_mask.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/object/visual_attributes.c:2397: field
+ * tla-ja: games/tla/src/field/object/visual_attributes/line_scroll.c:348: field
  * `particles' has incomplete type. */
 struct GroundParticle__visual_attributes {
   u8 unk00[4];

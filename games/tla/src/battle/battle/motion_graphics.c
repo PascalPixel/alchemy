@@ -19,10 +19,9 @@
 
 /* VIEW(presentation): routine BattleObject_Reset as void BattleObject_Reset();
  * the definition has another declaration; tried as the definition's void
- * BattleObject_Reset(struct BattleObj *actor, s32 keep), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/battle/battle.c:5440: too few arguments to function
- * `BattleObject_Reset'. */
+ * BattleObject_Reset(struct BattleObj *actor, s32 keep), it does not compile in
+ * tla-ja: games/tla/src/battle/battle/motion_graphics.c:150: too few arguments
+ * to function `BattleObject_Reset'. */
 void BattleObject_Reset__presentation() __asm__("BattleObject_Reset");
 #define BattleObject_Reset BattleObject_Reset__presentation
 

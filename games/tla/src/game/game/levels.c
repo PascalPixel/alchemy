@@ -200,7 +200,7 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
  * CharacterDefinition gCharacter_DefinitionTable[] = {; tried as the
  * definition's extern const struct CharacterDefinition
  * gCharacter_DefinitionTable[], it does not compile in tla-ja:
- * games/tla/src/game/game.c:2199: `gCharacter_DefinitionTable' undeclared
+ * games/tla/src/game/game/levels.c:202: `gCharacter_DefinitionTable' undeclared
  * (first use in this function). */
 extern struct OwnerGrowthRecord
     gCharacter_DefinitionTable__game[8] __asm__("gCharacter_DefinitionTable");
@@ -216,7 +216,7 @@ struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
 /* VIEW(game): variable gData_080b2340 as s32 gData_080b2340[];
  * game/artifact_slots has const s32 gData_080b2340[9] = {0, 1, 2, 3, 4, 5, 6,
  * 7, -1}; tried as the definition's extern const s32 gData_080b2340[9], it does
- * not compile in tla-ja: games/tla/src/game/game.c:2221: `gData_080b2340'
+ * not compile in tla-ja: games/tla/src/game/game/levels.c:222: `gData_080b2340'
  * undeclared (first use in this function). */
 extern s32 gData_080b2340__game[] __asm__("gData_080b2340");
 #define gData_080b2340 gData_080b2340__game
@@ -281,8 +281,8 @@ void Unit_LevelNoOp(void) {}
  * gCharacter_LevelExpTable[]; game/experience_table has const u32
  * gCharacter_LevelExpTable[] = {; tried as the definition's extern const u32
  * gCharacter_LevelExpTable[], it does not compile in tla-ja:
- * games/tla/src/game/game.c:2285: `gCharacter_LevelExpTable' undeclared (first
- * use in this function). */
+ * games/tla/src/game/game/levels.c:290: `gCharacter_LevelExpTable' undeclared
+ * (first use in this function). */
 extern u32 gCharacter_LevelExpTable__game[] __asm__("gCharacter_LevelExpTable");
 #define gCharacter_LevelExpTable gCharacter_LevelExpTable__game
 

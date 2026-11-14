@@ -199,9 +199,11 @@ extern u8 MsgAutoSleepLabel[];
 /* VIEW(window): routine CommandIcon_Create as void *CommandIcon_Create(s32
  * frame, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY);
  * window/screens has struct WindowSprite *CommandIcon_Create(s32 arg0, s32
- * arg1, struct RenderInput *arg2, s32 arg3, s32 arg4) {; tried with no
- * declaration of its own, it does not compile with a current GCC (make modern):
- * conflicting types. */
+ * arg1, struct RenderInput *arg2, s32 arg3, s32 arg4) {; tried as the
+ * definition's struct WindowSprite *CommandIcon_Create(s32 arg0, s32 arg1,
+ * struct RenderInput *arg2, s32 arg3, s32 arg4), it does not compile in tla-ja
+ * (make modern): games/tla/include/system/task.h:53:23: note: expected
+ * 'TaskFunc' {aka 'void (*)(void)'} but argument is of type 'int'. */
 void *CommandIcon_Create__window(s32 frame, s32 flags,
                                  struct RenderInput *input, s32 offsetX,
                                  s32 offsetY) __asm__("CommandIcon_Create");

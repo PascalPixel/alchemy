@@ -31,8 +31,10 @@
 #endif
 
 /* VIEW(screens): tag struct DjinnMenuWork as struct DjinnMenuWork__screens;
- * djinn_menu.h has another definition; not tried: struct DjinnMenuWork__screens
- * was not found. */
+ * djinn_menu.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/window/window/battle_djinn_menu.c:158: dereferencing pointer to
+ * incomplete type. */
 struct DjinnMenuWork__screens {
   u8 unk00[3];
   u8 dirty;

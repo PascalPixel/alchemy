@@ -168,8 +168,9 @@ void *Scene_FindActorTalkTrigger(s32 id) {
  * BattleEffect_GetFlags(s32 id); field/object/screen_transition has u8
  * BattleEffect_GetFlags(void) {; tried as the definition's u8
  * BattleEffect_GetFlags(void), which the object already declares, it does not
- * compile in tla-ja (make modern): games/tla/src/field/field_sequence.c:291:15:
- * note: in expansion of macro 'Scene_GetArea'. */
+ * compile in tla-ja (make modern):
+ * games/tla/src/field/field_sequence/encounter.c:272:15: note: in expansion of
+ * macro 'Scene_GetArea'. */
 s32 BattleEffect_GetFlags__field_sequence(s32 id) __asm__(
     "BattleEffect_GetFlags");
 #define BattleEffect_GetFlags BattleEffect_GetFlags__field_sequence
@@ -474,8 +475,8 @@ resume:
 /* VIEW(field_sequence): tag struct TouchWork as struct
  * TouchWork__field_sequence; module/field/field.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence.c:2782: structure has no member
- * named `blockedSteps'. */
+ * tla-ja: games/tla/src/field/field_sequence/triggers.c:508: structure has no
+ * member named `blockedSteps'. */
 struct TouchWork__field_sequence {
   u8 unk000[0x158];
   s16 exit;

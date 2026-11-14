@@ -46,19 +46,16 @@ extern u8 gMapCellBuffer[];
 /* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep
  * gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest
  * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:4045: `gData_02014000__f14153c'
- * undeclared (first use in this function). */
+ * games/tla/src/battle_effect/battle_effect/canvas.c:179:
+ * `gData_02014000__f14153c' undeclared (first use in this function). */
 extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
 
 /* VIEW(battle_effect): routine EffectSprite_CreateWithTiles as struct
  * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
  * u32 attributes); battle_effect/ability_effects has struct EffectSprite
  * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags) {; tried as the definition's struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags), which the object already declares, BattleEffect_RunCruelRuin moves: 1
- * of 2565 instructions, BattleEffect_RunEclipse moves: 2 of 2142 instructions
- * in tla-ja. */
+ * flags) {; not tried: EffectSprite_CreateWithTiles's bound declaration was not
+ * found. */
 struct SpriteObject *
 EffectSprite_CreateWithTiles__battle_effect(s32 width, s32 height, u32 shape,
                                             u32 attributes);
@@ -814,8 +811,8 @@ struct Model;
 /* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c;
  * battle_effect.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:4854: structure has no member
- * named `depthBias'. */
+ * games/tla/src/battle_effect/battle_effect/canvas.c:992: structure has no
+ * member named `depthBias'. */
 struct ModelDraw__f14153c {
   s32 kind;
   s32 next;

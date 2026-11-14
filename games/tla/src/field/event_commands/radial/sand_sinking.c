@@ -10,8 +10,8 @@
 /* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c;
  * effect_sprite.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:3536: structure has no member
- * named `priority'. */
+ * games/tla/src/field/event_commands/radial/sand_sinking.c:74: structure has no
+ * member named `priority'. */
 struct EffectSprite__f0e446c {
   u8 unk00[4];
   u16 attr0_0 : 13;

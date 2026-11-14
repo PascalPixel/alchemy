@@ -88,7 +88,7 @@ void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
  * FieldCamera_MoveToActor(s32 id, s32 use_setter); field/event.h has s32
  * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
  * FieldCamera_MoveToActor(s32 id, s32 use_setter), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/field/event.h:143:
+ * declares, it does not compile in tla-ja: games/tla/include/field/event.h:157:
  * conflicting types for `FieldCamera_MoveToActor'. */
 void FieldCamera_MoveToActor__visual_attributes(s32 id, s32 use_setter) __asm__(
     "FieldCamera_MoveToActor");

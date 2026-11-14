@@ -134,8 +134,8 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 /* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4;
  * f0ec2b8.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:10444: structure has no member
- * named `scrollX'. */
+ * games/tla/src/field/event_commands/radial/world_map_picture.c:208: structure
+ * has no member named `scrollX'. */
 struct WorldMapWork__f0ec4d4 {
   u16 vramBlock;
   u16 windowSlot;
@@ -155,8 +155,8 @@ struct WorldMapWork__f0ec4d4 {
 /* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4;
  * f0ec2b8.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:10517: structure has no member
- * named `name'. */
+ * games/tla/src/field/event_commands/radial/world_map_picture.c:281: structure
+ * has no member named `name'. */
 struct WorldMapPlace__f0ec4d4 {
   u8 flag;
   u8 value;

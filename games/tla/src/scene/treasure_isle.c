@@ -475,9 +475,9 @@ void TreasureIsle_CycleWaterColors(void) {
 
 /* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct
  * TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/treasure_isle.c:469: structure has no member
- * named `route'. */
+ * with the definition the rest of the object has, it does not compile in tla-ja
+ * (treasure_isle.c): games/tla/src/scene/treasure_isle.c:484: structure has no
+ * member named `route'. */
 struct TreasureIsleEventWork__s0cf4 {
   u8 unk000[0x1ac];
   s32 route;

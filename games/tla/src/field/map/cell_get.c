@@ -3,7 +3,10 @@
 #include "map.h"
 
 /* VIEW(cell_get): variable gMapCellBuffer as u8 gMapCellBuffer[];
- * field/map/cell_fill_byte has struct MapCell gMapCellBuffer[]. */
+ * field/map/cell_fill_byte has struct MapCell gMapCellBuffer[]; tried as the
+ * rest of the object declares it, it does not compile in tla-ja
+ * (tundaria_tower.c): games/tla/src/field/map/cell_get.c:16: `gMapCellBuffer'
+ * undeclared (first use in this function). */
 extern u8 gMapCellBuffer__cell_get[] __asm__("gMapCellBuffer");
 
 /// Returns a cell's collision code and attributes as a halfword.

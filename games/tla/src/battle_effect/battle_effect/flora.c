@@ -130,7 +130,7 @@ extern u16 Data_02014260[];
  * has struct SpriteObject *EffectSprite_Acquire(s32, s32, u32, u32); tried as
  * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
  * s32 value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:43988: too many arguments to
+ * games/tla/src/battle_effect/battle_effect/flora.c:234: too many arguments to
  * function `EffectSprite_Acquire'. */
 extern struct FloraObject *
 EffectSprite_Acquire__f179f18(s32 width, s32 height, u32 shape,

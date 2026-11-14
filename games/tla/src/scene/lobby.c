@@ -1044,7 +1044,7 @@ void Event_End(void);
  * actor, s32 animation, s32 flags); event.h has s32 Actor_ShowEmoteById(s32
  * actorId, s32 emote, s32 frames); tried as the definition's struct
  * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
- * state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1057:
+ * state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1043:
  * conflicting types for `Actor_ShowEmoteById'. */
 extern void Actor_ShowEmoteById__talk(s32 actor, s32 animation,
                                       s32 flags) __asm__("Actor_ShowEmoteById");
@@ -1231,7 +1231,7 @@ next:
 /* VIEW(scene_events): tag struct LobbyEventWork as struct
  * LobbyEventWork__scene_events; lobby.c has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/lobby.c:1285: structure has no member named
+ * games/tla/src/scene/lobby.c:1268: structure has no member named
  * `startTransition'. */
 struct LobbyEventWork__scene_events {
   u8 unk000[0x16a];

@@ -353,8 +353,8 @@ struct Spark {
 /* VIEW(step_vector): tag struct SparkWork as struct SparkWork__step_vector;
  * field/event_commands/psynergy has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:9718: redefinition of `struct
- * SparkWork'. */
+ * games/tla/src/field/event_commands/radial/step_vector.c:353: redefinition of
+ * `struct SparkWork'. */
 #define SparkWork SparkWork__step_vector
 struct SparkWork {
   u8 picture[0x400];

@@ -134,12 +134,7 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 }
 
 struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-/* VIEW(emitter): routine Reveal_EmitSparkles as void Reveal_EmitSparkles(void);
- * the definition has void Reveal_EmitSparkles(const struct ParticleSource
- * *source); not tried: Reveal_EmitSparkles's bound declaration was not found.
- */
-extern void BattleEffect_SpawnRandomParticleAtPosition__emitter(void) __asm__(
-    "Reveal_EmitSparkles");
+void Reveal_EmitSparkles(const struct ParticleSource *source);
 
 /// Shows the picture of item above actor (in front of the controlled owner,
 /// on the centre of the cell), clearing Reveal's sparkles first.
@@ -170,8 +165,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
     i = 63;
     do {
       if (object->script != NULL) {
-        if (object->update ==
-            BattleEffect_SpawnRandomParticleAtPosition__emitter)
+        if (object->update == Reveal_EmitSparkles)
           Actor_ReleaseFar(object);
         if (object->script == (s32 *)gBattleEffect_ParticleScript)
           Actor_ReleaseFar(object);
@@ -284,8 +278,8 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
 /* VIEW(rising): tag struct EffectVisual as struct EffectVisual__rising;
  * f0cf050.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:4492: structure has no member named
- * `flags09'. */
+ * games/tla/src/field/field_sequence/screen_transition.c:296: structure has no
+ * member named `flags09'. */
 struct EffectVisual__rising {
   u8 unk00[5];
   u8 flags05;
@@ -1974,8 +1968,8 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
 /* VIEW(f0cf050): tag struct EffectSprite as struct EffectSprite__f0cf050;
  * effect_sprite.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:6192: structure has no member named
- * `priority'. */
+ * games/tla/src/field/field_sequence/screen_transition.c:1976: structure has no
+ * member named `priority'. */
 struct EffectSprite__f0cf050 {
   u8 unk00[4];
   u16 y : 8;
@@ -2057,8 +2051,11 @@ s32 Speaker_GetActorSprite(u32 objectId) {
 
 /* VIEW(definition_flags): routine Speaker_GetActorSprite as s32
  * Speaker_GetActorSprite(void); the definition has s32
- * Speaker_GetActorSprite(u32 objectId); not tried: Speaker_GetActorSprite's
- * bound declaration was not found. */
+ * Speaker_GetActorSprite(u32 objectId); tried as the definition's s32
+ * Speaker_GetActorSprite(u32 objectId), which the object already declares, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/field_sequence/screen_transition.c:2070: too few
+ * arguments to function `Speaker_GetActorSprite'. */
 extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__(
     "Speaker_GetActorSprite");
 

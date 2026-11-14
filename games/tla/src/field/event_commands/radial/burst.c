@@ -8,8 +8,9 @@
 
 /* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:4366:
- * structure has no member named `facing'. */
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/burst.c:49: structure has no member
+ * named `facing'. */
 struct FxScene__f0e572c {
   u16 facing;
   u16 angle;

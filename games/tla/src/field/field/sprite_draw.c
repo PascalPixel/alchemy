@@ -428,7 +428,7 @@ void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
  * *sprite, s32 *position, s32 *scale, u16 angle); tried as the definition's
  * void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
  * s32 *scale, s32 mode), which the object already declares, it does not compile
- * in tla-ja: games/tla/include/field/field.h:107: conflicting types for
+ * in tla-ja: games/tla/src/field/field/sprite_draw.c:423: conflicting types for
  * `Render_ApplyProjectedPlacement'. */
 void Render_ApplyProjectedPlacement__field(
     struct LayeredSprite *object, s32 *pos, s32 *scale,

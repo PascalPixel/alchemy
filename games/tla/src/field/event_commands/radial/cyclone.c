@@ -22,8 +22,8 @@ struct BurstSprite {
 /* VIEW(psynergy): tag struct BurstWork as struct BurstWork__psynergy;
  * module/field/event_commands.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:2266: redefinition of `struct
- * BurstWork'. */
+ * games/tla/src/field/event_commands/radial/cyclone.c:22: redefinition of
+ * `struct BurstWork'. */
 #define BurstWork BurstWork__psynergy
 struct BurstWork {
   u8 tiles[384];
@@ -42,8 +42,8 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
  * Camera_WorldToScreen(struct EffectVector *position); tried as the
  * definition's void Camera_WorldToScreen(struct EffectVector *position), which
  * the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:3513: conflicting types for
- * `Camera_WorldToScreen'. */
+ * games/tla/src/field/event_commands/radial/sand_sinking.c:54: conflicting
+ * types for `Camera_WorldToScreen'. */
 void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
     "Camera_WorldToScreen");
 #define Camera_WorldToScreen Camera_WorldToScreen__psynergy

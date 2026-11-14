@@ -78,8 +78,8 @@ s32 BattleDjinn_CountStandby(u32 arg0, u8 *counts) {
 /* VIEW(presentation): routine Battle_GetUnitAtPlace as s32
  * Battle_GetUnitAtPlace(s32 tag); battle/battle has s16
  * Battle_GetUnitAtPlace(s32 slot) {; tried as the definition's s16
- * Battle_GetUnitAtPlace(s32 slot), which the object already declares,
- * BattleActionRun_Build moves: 4 of 1601 instructions in tla-ja. */
+ * Battle_GetUnitAtPlace(s32 slot), BattleActionRun_Build moves: 4 of 1601
+ * instructions in tla-ja. */
 s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
     "Battle_GetUnitAtPlace");
 #define Battle_GetUnitAtPlace Battle_GetUnitAtPlace__presentation

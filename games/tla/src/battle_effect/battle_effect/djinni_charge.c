@@ -70,12 +70,8 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
  * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
  * *screen, s32 count); battle_effect/summon_effects has void
  * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
- * *screen, s32 count) {; tried as the definition's void
- * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
- * *screen, s32 count), which the object already declares, BattleEffect_RunSerac
- * moves: 5 of 1094 instructions, BattleEffect_RunWaterColumn moves: 1 of 1741
- * instructions, BattleEffect_RunDjinniCharge moves: 1 of 1209 instructions in
- * tla-ja. */
+ * *screen, s32 count) {; not tried: Render_ProjectVertices's bound declaration
+ * was not found. */
 void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
                                              struct ProjectedVertex *screen,
                                              s32 count);

@@ -640,8 +640,8 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 #include "shared/cracked_tile_drop_in.h"
 
 void CrackedTile_Crack();
-/* VIEW(cracked_tile_steps): routine CrackedTile_Fall as this part declared
- * it, with no parameter list; the joined file defines it with one. */
+/* VIEW(cracked_tile_steps): routine CrackedTile_Fall as this part declared it,
+ * with no parameter list; the joined file defines it with one. */
 void CrackedTile_FallEvent__cracked_tile_steps() __asm__("CrackedTile_Fall");
 #define CrackedTile_Fall CrackedTile_FallEvent__cracked_tile_steps
 

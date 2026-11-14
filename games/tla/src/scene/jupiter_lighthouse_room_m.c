@@ -1865,10 +1865,9 @@ struct CellTarget__s41ac {
  * CellTarget__s41ac *table, struct CellTargetEntry *entry);
  * module/scene/jupiter_lighthouse_room_m.h has void CrackedTile_Fall(struct
  * CellTarget *table, struct CellTargetEntry *entry); tried as the definition's
- * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
- * CrackedTile_Fall(struct PushEvent *event), it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:1908: conflicting types for
- * `CrackedTile_Fall'. */
+ * void CrackedTile_Fall(struct PushEvent *event), it does not compile in
+ * tla-ja: games/tla/src/scene/shared/cracked_tile_fall.h:4: conflicting types
+ * for `CrackedTile_Fall'. */
 void CrackedTile_Fall__s41ac(
     struct CellTarget__s41ac *table,
     struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");

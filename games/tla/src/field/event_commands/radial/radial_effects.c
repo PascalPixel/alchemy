@@ -650,8 +650,8 @@ void FieldPsynergy_UpdateLash(void) {
 /* VIEW(radial): tag struct EffectSceneWork as struct EffectSceneWork__radial;
  * module/field/event_commands.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:760: structure has no member
- * named `failed'. */
+ * games/tla/src/field/event_commands/radial/radial_effects.c:661: structure has
+ * no member named `failed'. */
 struct EffectSceneWork__radial {
   u8 unk00[0x20];
   u8 failed;
@@ -1212,8 +1212,8 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 /* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:1374: structure has no member
- * named `x'. */
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1237: structure
+ * has no member named `x'. */
 struct ArcSprite__f0e150c {
   u8 unk00[12];
   s32 x;
@@ -1807,8 +1807,9 @@ void FieldPsynergy_RunTouchedEvents(void) {
 
 /* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:1978:
- * structure has no member named `unk02'. */
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1835: structure
+ * has no member named `unk02'. */
 struct MapCell__f0e150c {
   u8 unk00[2];
   u8 unk02;
@@ -1859,15 +1860,16 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
 /* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c
  * has extern struct TouchCopies gData_02001000; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:2009: incompatible types in
- * initialization. */
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1875: incompatible
+ * types in initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
 /* VIEW(f0e2718): routine MapGrid_GetCellAt as struct MapCell
  * *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); f0e150c has struct
  * MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); tried as the
  * definition's struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer), it
- * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2002:
- * conflicting types for `MapGrid_GetCellAt'. */
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial/radial_effects.c:1866: conflicting
+ * types for `MapGrid_GetCellAt'. */
 extern struct MapCell *
 MapGrid_GetCellAt__f0e2718(s32 x, s32 z,
                            s32 layer) __asm__("MapGrid_GetCellAt");

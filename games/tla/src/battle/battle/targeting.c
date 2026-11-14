@@ -537,8 +537,8 @@ void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
  * BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void
  * BattleMotion_FlashHit(s32 id); tried as the definition's void
  * BattleMotion_FlashHit(s32 id), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/battle/battle.c:6851: too many arguments to
- * function `BattleMotion_FlashHit'. */
+ * compile in tla-ja: games/tla/src/battle/battle/targeting.c:590: too many
+ * arguments to function `BattleMotion_FlashHit'. */
 extern void
 BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a,
                                s32 b) __asm__("BattleMotion_FlashHit");

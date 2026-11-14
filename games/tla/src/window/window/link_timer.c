@@ -13,8 +13,10 @@
 #define FRAMES_PER_SECOND 60
 
 /* VIEW(menus): variable gLinkPeerSignatures as struct LinkSignature
- * gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]; not
- * tried: gLinkPeerSignatures's declaration holds a FAKEMATCH tag. */
+ * gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]; tried
+ * as the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/window/window/link_timer.c:82: `gLinkPeerSignatures__menus'
+ * undeclared (first use in this function). */
 extern struct LinkSignature
     gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
 

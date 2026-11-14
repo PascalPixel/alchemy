@@ -525,8 +525,11 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 void MapGrid_SetCellHeight();
 /* VIEW(jupiter_lighthouse_room_2): routine MapGrid_SetAttributeBAt as void
  * MapGrid_SetAttributeBAt(); module/scene/scene.h has void
- * MapGrid_SetAttributeBAt(s32 actor); not tried: MapGrid_SetAttributeBAt's
- * bound declaration was not found. */
+ * MapGrid_SetAttributeBAt(s32 actor); tried as the definition's u8
+ * MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_2.c:539: too many arguments to
+ * function `MapGrid_SetAttributeBAt'. */
 extern void
 Func_0200230c__jupiter_lighthouse_room_2() __asm__("MapGrid_SetAttributeBAt");
 

@@ -30,8 +30,8 @@
 /* VIEW(f18b868): tag struct Model as struct Model__f18b868; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:56856: structure has no member
- * named `vertices'. */
+ * games/tla/src/battle_effect/battle_effect/triple_chomp.c:133: structure has
+ * no member named `vertices'. */
 struct Model__f18b868 {
   s32 kind;
   s32 next;

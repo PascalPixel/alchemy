@@ -19,8 +19,8 @@ extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
 /* VIEW(f15b3b0): tag struct EffectSprite as struct EffectSprite__f15b3b0;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:21641: structure has no member
- * named `kind'. */
+ * games/tla/src/battle_effect/battle_effect/spider_web.c:27: structure has no
+ * member named `kind'. */
 struct EffectSprite__f15b3b0 {
   u8 unk00[0x0c];
   s32 unk0c;

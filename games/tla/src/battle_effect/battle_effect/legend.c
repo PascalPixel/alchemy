@@ -27,8 +27,8 @@
 /* VIEW(f189b14): tag struct Model as struct Model__f189b14; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:55574: structure has no member
- * named `vertices'. */
+ * games/tla/src/battle_effect/battle_effect/legend.c:225: structure has no
+ * member named `vertices'. */
 struct Model__f189b14 {
   s32 kind;
   s32 next;

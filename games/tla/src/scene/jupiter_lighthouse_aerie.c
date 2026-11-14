@@ -97,7 +97,8 @@ void Leader_CenterInCell(void);
 
 void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
 
-void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTargetHead *work,
+                      struct CellTargetEntry *entry);
 
 void CrackedTile_DropIn(void);
 
@@ -1219,62 +1220,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 struct CellTargetEntry;
 
-/* VIEW(s24a8): tag struct CellTarget as struct CellTarget__s24a8; cell_target.h
- * has another definition; tried with the definition the rest of the object has,
- * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
-struct CellTarget__s24a8 {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-};
-
 void Leader_CenterInCell(void);
 
-/* VIEW(s24a8): routine CrackedTile_Fall as this part defines it; the scene's
- * module header declares it with the joined file's CellTarget. */
-void CrackedTile_Fall__s24a8(
-    struct CellTarget__s24a8 *table,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-void CrackedTile_Fall__s24a8(struct CellTarget__s24a8 *table,
-                             struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
-  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
-
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  leader->facing = 0x4000;
-  leader->motionFlags = 0;
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Io_Write16(0xf1f, &REG_WINOUT);
-  REG_DISPCNT |= 0x8000;
-  table->shown = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  x = 0;
-  do {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    leader->scaleX += -0x400;
-    leader->scaleY += -0x300;
-    leader->y += -0x9999;
-    System_Wait(1);
-    x++;
-  } while (x <= 39);
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  table->shown = 0;
-  gFieldWork->transition = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -1434,4 +1382,3 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef CrackedTile_Fall

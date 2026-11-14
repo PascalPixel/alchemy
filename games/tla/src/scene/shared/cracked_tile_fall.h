@@ -1,7 +1,8 @@
 /// Drops the leader through a cracked tile: it gives way and the leader spins
 /// down into it while the screen fades.
-void CrackedTile_Fall(struct CellTarget__s41ac *table,
+void CrackedTile_Fall(struct CellTargetHead *table,
                       struct CellTargetEntry *entry) {
+  /* FAKEMATCH(signature): the table typed as its head. */
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);

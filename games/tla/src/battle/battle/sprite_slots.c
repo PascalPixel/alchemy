@@ -14,7 +14,7 @@
 void BattleObject_Put(void) {
   s16 list[14];
 
-  BattleParty_ListActorIds(BATTLE_SIDE_MASK_BOTH, list);
+  BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
   BattleActor_SpawnObjectsForList(list, 1);
 }
 
@@ -23,7 +23,7 @@ void BattleObject_Put(void) {
 void BattleUnit_ListAllAndSubmit(void) {
   s16 list[14];
 
-  BattleParty_ListActorIds(BATTLE_SIDE_MASK_BOTH, list);
+  BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
   BattleActor_SpawnObjectsForList(list, 0);
 }
 

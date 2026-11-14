@@ -7697,7 +7697,7 @@ msgctxt "message"
 msgid "01907"
 msgstr "Voleur"
 
-msgctxt "MsgAbilityNothing"
+msgctxt "MsgAbilityName"
 msgid "01908"
 msgstr "Rien"
 

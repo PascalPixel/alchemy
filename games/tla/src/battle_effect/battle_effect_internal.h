@@ -467,7 +467,7 @@ extern u8 gVortices_Shapes[];
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 /// Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror
-/// and blend mode (BLIT_ADDITIVE to BLIT_COPY).
+/// and blend mode (BLITTER_ADDITIVE to BLITTER_COPY).
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
   BattleEffect_LoadBlitter(slot, (mode) << 4 | (flags))
 

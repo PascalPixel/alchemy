@@ -8,7 +8,7 @@ void CrackedTile_DropInLower(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CamBounds(-1, -1, -1, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = px(130);
   actor->gravity = px(1) / 2;

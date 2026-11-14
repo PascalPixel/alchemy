@@ -61,7 +61,7 @@ const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
   if (recordIndex > 999U)
 #endif
     recordIndex = 0;
-  return &gEnemy_DefinitionTable[recordIndex];
+  return &gEnemy_Definitions[recordIndex];
 }
 
 /// Copies `count` bytes from `first` to `second` when `direction` is set, and
@@ -590,7 +590,7 @@ void MainRoutineWork_InitializeDefaults(void) {
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
   gSceneLocalState[4] = 0xff;
   zero = 0;
-  START_DMA(&zero, gOwnerStates,
+  START_DMA(&zero, gCharacterUnits,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = 1;

@@ -494,7 +494,7 @@ extern const u8 gPauseMenu_Icons[];
 /// Draws the ability's name; ability 0 draws a dash placeholder.
 void DebugShortcut_DrawAbility(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
   if (ability != 0)
-    Text_DrawMessageAsTiles(ability + (s32)MsgAbilityNothing,
+    Text_DrawMessageAsTiles(ability + (s32)MsgAbilityName,
                             (struct RenderInput *)arg1, arg2, arg3);
   else
     Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, arg1, arg2, arg3);

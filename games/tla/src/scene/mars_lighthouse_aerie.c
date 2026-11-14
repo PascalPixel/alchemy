@@ -291,7 +291,7 @@ s32 Scene_Initialize(void) {
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     EventCamera_GetActor()->motionFlags = 0;
     FieldCamera_MoveTo(512, 96, 312, 1);
-    Map_CenterOnFollowedPoint();
+    MapGrid_CenterOnFollowedPoint();
     System_Wait(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -2407,7 +2407,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   t21 = FieldCamera_GetActor();
   ((struct Actor *)t21)->motionFlags = 0;
   FieldCamera_MoveTo(512, 96, 288, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   t25 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t25, s32, 428) = 0x201;

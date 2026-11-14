@@ -15,7 +15,7 @@
 /// forever.
 UNUSED void DebugBattle_RunForever(void) {
   for (;;)
-    Battle_RunEncounter(0);
+    Battle_Run(0);
 }
 
 /// After the scripted battles of enemy groups 74 and 75, snapshots the five
@@ -142,7 +142,7 @@ void ScriptedBattle_RestoreUnits(void) {
 
 void Unit_UpdateClassFar(s32 owner);
 
-s32 DebugParty_LoadPreset(s32 preset) {
+s32 DebugParameterSet_Load(s32 preset) {
   s32 nextDjinn[4];
   void *state;
   s32 owner;
@@ -282,7 +282,7 @@ restart:
       }
       if (preset != loadedPreset) {
         MainRoutineWork_InitializeDefaultsFar();
-        DebugParty_LoadPreset(preset);
+        DebugParameterSet_Load(preset);
         loadedPreset = preset;
       }
       if (input->held & KEY_DOWN)
@@ -295,7 +295,7 @@ restart:
       GameFlag_Set(FLAG_DEBUG_BATTLE);
       if (startModeSet)
         m->battleType = BATTLE_TYPE_DEBUG;
-      Battle_RunEncounter(encounter);
+      Battle_Run(encounter);
       gDebugTextEnabled = 1;
       Window_LoadGraphics();
       DebugText_Clear();
@@ -305,6 +305,6 @@ restart:
     }
   }
   GameFlag_Set(FLAG_DEBUG_BATTLE);
-  Battle_RunEncounter(69);
+  Battle_Run(69);
   goto restart;
 }

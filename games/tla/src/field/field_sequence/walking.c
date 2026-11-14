@@ -102,7 +102,8 @@ s32 Field_GetCollisionUnderLeader(void) {
     return 0;
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   if (block->mode == 3) {
-    // The block table at its fixed address: as the linked gMapBlocks it loads
+    // The block table at its fixed address: as the linked gCellPictures it
+    // loads
     cell =
         (struct MapCell *)Ram_MapBlocks +
         (((position.x / 0x200000) & 31) + ((position.z / 0x200000) & 31) * 32);

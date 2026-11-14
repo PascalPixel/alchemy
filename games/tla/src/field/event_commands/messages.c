@@ -414,7 +414,7 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
       SET_ACTOR_POSITION(target, obj->x.fixed, obj->y.fixed, obj->z.fixed);
       wait(1);
       if (work->mode != 3)
-        Map_CenterOnFollowedPointFar();
+        MapGrid_CenterOnFollowedPointFar();
     }
   }
 }

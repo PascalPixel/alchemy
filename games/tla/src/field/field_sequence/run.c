@@ -109,7 +109,7 @@ s32 FieldSequence_Run(void) {
   } else {
     Map_ApplySetFlagEditsFar();
     OVERLAY_CALL(13);
-    Map_CenterOnFollowedPointFar();
+    MapGrid_CenterOnFollowedPointFar();
   }
   GameFlag_Clear(287);
   PaletteFade_Initialize();
@@ -330,7 +330,7 @@ s32 FieldSequence_Run(void) {
             work->psynergy = 0;
           }
         } else {
-          Scene_RunRaisedEvent(work->raisedTrigger);
+          Scene_RunRaisedTrigger(work->raisedTrigger);
         }
         work->busy = 0;
         work->raisedTrigger = 0;

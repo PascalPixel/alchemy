@@ -702,7 +702,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FIELD_AT(t4, u8, 85) = 0;
   FieldCamera_MoveToFixed(0x2000000, 0x600000, 0xf00000, 0);
   wait_(1);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait_(1);
   JupiterLighthouse_SetMessage(MsgWeHaveIgnited);
   Actor_SetPositionAndFacing(ACTOR_FELIX, 0x1fc0000, 0x1160000,
@@ -2336,7 +2336,7 @@ void JupiterLighthouse_ScrollBeam(s32 mode) {
     }
   }
   work->height = gJupiterLighthouse_BeamLevel;
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(2);
 }
 

@@ -1,5 +1,5 @@
 /// @file
-/// A whole battle, Battle_RunEncounter, its tutorial helpers, and the lists of
+/// A whole battle, Battle_Run, its tutorial helpers, and the lists of
 /// the units in it.
 // Part of battle.c.
 
@@ -28,9 +28,9 @@ void BattleParty_SwapInReserves(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 i;
 
-  if (BattleUnit_ListLiving(1, 0) == 0)
+  if (BattleUnit_ListLivingWithReserve(1, 0) == 0)
     return;
-  count = actorCount = BattleParty_ListActorIds(1, actors);
+  count = actorCount = BattleUnit_ListIds(1, actors);
   reserveCount = BattleParty_PrepareReserveOwners(reserves);
   if (count > reserveCount)
     count = reserveCount;
@@ -181,7 +181,7 @@ void ActorSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
 struct BattleSortedUnitEntry;
 
-s32 Battle_RunEncounter(s32 enemyGroup) {
+s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   struct EncounterWork *battle;
   struct BattlePresentationTransition *transition;
@@ -316,7 +316,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   Task_Add(BattleObject_UpdateSpritePriorities, 0x480);
 
   for (round = 1;; round++) {
-    if (BattleUnit_ListIds(1, 0) == 0)
+    if (BattleUnit_ListLivingIds(1, 0) == 0)
       BattleParty_SwapInReserves();
     Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
@@ -354,11 +354,11 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       }
       if (enemyGroup == 638)
         goto party_lost;
-      if (BattleUnit_ListLiving(1, 0) == 0)
+      if (BattleUnit_ListLivingWithReserve(1, 0) == 0)
         goto party_lost;
-      if (BattleParty_ListLivingUnits(1, 0) == 0)
+      if (BattleUnit_ListLiving(1, 0) == 0)
         break;
-      if (BattleParty_ListLivingUnits(2, 0) == 0) {
+      if (BattleUnit_ListLiving(2, 0) == 0) {
         if (enemyGroup == 78 || enemyGroup == 79) {
           Battle_PlayFormChange(enemyGroup++);
           break;
@@ -593,7 +593,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
   return count;
 }
 
-s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
+s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;
   s32 remaining;
@@ -657,9 +657,9 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   return livingCount;
 }
 
-/// As BattleParty_ListLivingUnits, with the reserve owners listed after the
+/// As BattleUnit_ListLiving, with the reserve owners listed after the
 /// active ones.
-s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
+s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
   u16 members[10];
   u16 *base;
   s32 remaining;
@@ -724,7 +724,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   return livingCount;
 }
 
-s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
+s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
   struct BattleWork *order;
   s32 count;
   s32 i;
@@ -754,8 +754,8 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
   return count;
 }
 
-/// As BattleParty_ListActorIds, listing only the actors whose HP is not 0.
-s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
+/// As BattleUnit_ListIds, listing only the actors whose HP is not 0.
+s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
   struct BattleWork *order;
   s32 count;
   s32 i;

@@ -167,7 +167,7 @@ s32 Scene_PrepareMap(void) {
 #include "shared/scene_set_arrival_flags.c"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 extern s32 gPaletteCyclePausesInEvents;
 
@@ -424,7 +424,7 @@ struct CellTargetEntry;
 // Jupiter Lighthouse's ground floor: the cracked tiles' steps and landings.
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 void JupiterLighthouse_StepOnButton(void);
 void JupiterLighthouse_StepOffButton(void);

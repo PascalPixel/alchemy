@@ -508,7 +508,7 @@ void Battle_ProcessTurnEnd(void) {
     }
     groupList = order.group;
     for (group = 0; group <= 1; group++) {
-      count = BattleParty_ListActorIds(groupList[group], unitIds);
+      count = BattleUnit_ListIds(groupList[group], unitIds);
       if (groupList[group] == 1)
         count += BattleParty_PrepareReserveOwners(unitIds + count);
       for (unitIndex = 0; unitIndex < count; unitIndex++) {
@@ -728,8 +728,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       }
     }
   }
-  if (BattleParty_ListLivingUnits(1, 0) != 0 &&
-      BattleParty_ListLivingUnits(2, 0) != 0) {
+  if (BattleUnit_ListLiving(1, 0) != 0 && BattleUnit_ListLiving(2, 0) != 0) {
     battleContinues = 1;
   }
   {

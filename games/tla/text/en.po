@@ -5843,7 +5843,7 @@ msgctxt "message"
 msgid "01446"
 msgstr "Thief"
 
-msgctxt "MsgAbilityNothing"
+msgctxt "MsgAbilityName"
 msgid "01447"
 msgstr "Nothing"
 

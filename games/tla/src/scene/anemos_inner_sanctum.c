@@ -1824,7 +1824,7 @@ void CrackedTile_DropIn(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y.fixed = px(130);
   actor->gravity = px(1) / 2;

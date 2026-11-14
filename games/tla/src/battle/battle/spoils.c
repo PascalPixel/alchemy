@@ -30,7 +30,7 @@ u32 BattleSpoils_RankItem(u32 value) {
 }
 
 /// Empties the battle's spoils and the party's pending item. Called by
-/// Battle_RunEncounter.
+/// Battle_Run.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle;
   struct BattleSpoils *spoils;
@@ -226,8 +226,8 @@ void Battle_AwardSpoils(void) {
     BattleMessage_WaitForAdvance();
   }
   list = units;
-  living = BattleParty_ListLivingUnits(1, list);
-  count = BattleUnit_ListLiving(1, list);
+  living = BattleUnit_ListLiving(1, list);
+  count = BattleUnit_ListLivingWithReserve(1, list);
   backup = Heap_AllocEwram(sizeof(struct BattleUnit));
   for (i = 0; i < count; i++) {
     unitId = list[i];

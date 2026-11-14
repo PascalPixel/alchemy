@@ -40,7 +40,7 @@ FarCall_FieldTable:
 	export MapGrid_LoadMapFar, MapGrid_LoadMap
 	export WorldMap_InitializePerspectiveFar, WorldMap_InitializePerspective
 	export MapGrid_SetCameraCenterFar, MapGrid_SetCameraCenter
-	export Map_CenterOnFollowedPointFar, Map_CenterOnFollowedPoint
+	export MapGrid_CenterOnFollowedPointFar, MapGrid_CenterOnFollowedPoint
 	export WorldMap_UpdateCurrentTileBlockFar, WorldMap_UpdateCurrentTileBlock
 	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
 	export Actor_StartIdleFar, Actor_StartIdle

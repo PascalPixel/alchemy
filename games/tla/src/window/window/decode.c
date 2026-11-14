@@ -289,8 +289,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 
 extern const u8 Text_DecodeSymbolCode[];
 extern u8 Text_DecodeSymbolCodeSize[];
-extern u8 MsgClassName[], MsgItemName[], MsgAbilityNothing[],
-    MsgDebugAreaName[];
+extern u8 MsgClassName[], MsgItemName[], MsgAbilityName[], MsgDebugAreaName[];
 
 #if TLA_PATCH_2
 #if LANGUAGE == LANGUAGE_FRENCH
@@ -594,7 +593,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
-            Message_DecodeRaw(argument + (s32)MsgAbilityNothing, name,
+            Message_DecodeRaw(argument + (s32)MsgAbilityName, name,
                               MESSAGE_NAME_HALFWORDS);
             p = name;
             nextPosition = writePosition;
@@ -1049,7 +1048,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
-            Message_DecodeRaw(argument + (s32)MsgAbilityNothing, name,
+            Message_DecodeRaw(argument + (s32)MsgAbilityName, name,
                               MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);

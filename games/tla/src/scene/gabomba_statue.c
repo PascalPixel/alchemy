@@ -1524,7 +1524,7 @@ void GabombaStatue_LandFromFall(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y.fixed = px(130);
   actor->gravity = px(1) / 2;
@@ -1929,7 +1929,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPositionAndFacing(24, px(472), px(200), facing);
   System_Wait(1);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   gFieldWork->transition = 0x202;
   Event_StartScreenTransition();
@@ -2180,7 +2180,7 @@ L_0200b6f2:
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveToFixed(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16),
                           0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Event_End();
 L_0200b762:

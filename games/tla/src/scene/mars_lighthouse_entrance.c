@@ -2094,7 +2094,7 @@ void MarsLighthouseEntrance_LandFromCrack(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;
@@ -2200,7 +2200,7 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
     marker = work->camera;
     marker->x.fixed = leader->x.fixed;
     marker->z.fixed = leader->z.fixed;
-    Map_CenterOnFollowedPoint();
+    MapGrid_CenterOnFollowedPoint();
     MarsLighthouseEntrance_LandFromCrack();
     gFieldWork->transition = effect;
   }

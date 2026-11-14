@@ -321,7 +321,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   case 65:
     return gData_02006598;
   case 68:
-    if (!Event_GetFlag(0x8de))
+    if (!Event_GetFlag(FLAG_SHIP_SAILABLE))
       return gData_02006700;
   case 77:
     return gData_02006790;
@@ -396,7 +396,7 @@ void WorldMap_BoardShip(void) {
   struct Actor *ship;
   s32 kind, dx, dz, distance;
 
-  if (GameFlag_Get(0x8de) == 0)
+  if (GameFlag_Get(FLAG_SHIP_SAILABLE) == 0)
     return;
   kind = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -451,7 +451,7 @@ void WorldMap_LeaveShip(void) {
   s32 shore = 0;
   s32 blocked;
   u8 *block;
-  u8 *blocks = gMapBlocks;
+  u8 *blocks = gCellPictures;
   u8 flags;
 
   position[0] = ship->x.fixed;
@@ -729,7 +729,8 @@ extern s32 gData_0200632c[];
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
-  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 && GameFlag_Get(0x8de) != 0 &&
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
+      GameFlag_Get(FLAG_SHIP_SAILABLE) != 0 &&
       gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.savedX != 0) {
     struct Actor *ship = Actor_GetById(8);
 
@@ -821,7 +822,7 @@ s32 Scene_Initialize(void) {
     break;
   case 98:
     gMainRoutineWork.ownerOverride = 1;
-    Event_SetFlag(0x8de);
+    Event_SetFlag(FLAG_SHIP_SAILABLE);
     Event_SetFlag(FLAG_SHIP_FLIES);
     Event_SetFlag(FLAG_DEBUG_STEPS_OFF);
     Event_SetFlag(0x11d);
@@ -1884,7 +1885,7 @@ void Func_02002e00(void) {
 
 void WorldMap_TakeTheTiller(void) {
   s32 scale;
-  s32 seen = Event_GetFlag(0x8de);
+  s32 seen = Event_GetFlag(FLAG_SHIP_SAILABLE);
 
   if (seen == 0) {
     Event_Start();
@@ -1970,7 +1971,7 @@ void WorldMap_TakeTheTiller(void) {
     gMainRoutineWork.movementMode = 7;
     gMainRoutineWork.ownerOverride = 1;
     WorldMap_ReloadPendingAreaGraphics();
-    Event_SetFlag(0x8de);
+    Event_SetFlag(FLAG_SHIP_SAILABLE);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
     Actor_SetPosition(ACTOR_SHEBA, 0, 0);
     Actor_SetPosition(9, 0, 0);

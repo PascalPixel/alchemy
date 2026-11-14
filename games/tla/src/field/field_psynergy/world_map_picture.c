@@ -271,7 +271,7 @@ void WorldPicture_UpdateMarkers(void) {
       if (tile == 0)
         continue;
       if (tile == 15) {
-        if (!GameFlag_Get(0x8de))
+        if (!GameFlag_Get(FLAG_SHIP_SAILABLE))
           continue;
         if (gMainRoutineWork.ownerOverride != 0)
           continue;

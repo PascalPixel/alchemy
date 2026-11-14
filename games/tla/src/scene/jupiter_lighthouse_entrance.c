@@ -153,7 +153,7 @@ extern s32 gPaletteCyclePausesInEvents;
 #include "shared/palette_cycle_set_pauses_in_events.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 extern s32 gPaletteCycleFrame;
 
@@ -443,7 +443,7 @@ struct CellTargetEntry;
 // landings.
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

@@ -84,7 +84,7 @@ extern struct Trigger gGarohInteriors_HouseMorningTriggers[];
 
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 void ActorSystem_SuspendProjectionAndShowSprites(void);
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 void Event_End(void);
@@ -458,7 +458,7 @@ void GarohInteriors_WakeAtInn(void) {
   FieldMessage_ShowCentered((s32)MsgGarohInteriors33, 0, 0);
   Event_Wait(20);
   ActorSystem_ResumeProjectionAndHideLayers();
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // "You folks didn't sleep much last night..."

@@ -2163,7 +2163,7 @@ void Contigo_KeepPriorityWithLeader(void) {
   }
 }
 
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 // Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
 // flag bytes and Contigo_FaceTalker as their update (object 15 brought in and
@@ -2215,7 +2215,7 @@ void Contigo_InitializeRoom1(void) {
   if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
     Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
     FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
-    Map_CenterOnFollowedPoint();
+    MapGrid_CenterOnFollowedPoint();
     wait(1);
   }
   Palette_SetColors(gContigo_PaletteSlots, gContigo_PaletteColors,

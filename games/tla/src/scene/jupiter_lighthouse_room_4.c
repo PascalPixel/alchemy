@@ -315,7 +315,7 @@ s32 Scene_PrepareMap(void) {
 #include "shared/scene_set_arrival_flags.c"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 extern s32 gPaletteCyclePausesInEvents;
 
@@ -870,7 +870,7 @@ void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
     shadow = *(struct Actor **)(event + 460);
     shadow->x.fixed = object->x.fixed;
     shadow->z.fixed = object->z.fixed;
-    Map_CenterOnFollowedPoint();
+    MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = value;
   }

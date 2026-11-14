@@ -6,7 +6,7 @@
 #include "../game_internal.h"
 
 // clang-format off
-const struct EnemyDefinition gEnemy_DefinitionTable[] = {
+const struct EnemyDefinition gEnemy_Definitions[] = {
     // ???
     {
         .name = "              ",

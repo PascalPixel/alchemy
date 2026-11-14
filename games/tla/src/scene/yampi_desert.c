@@ -1954,7 +1954,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveToFixed(-1, -1, -1, 0);
   FieldCamera_MoveToFixed(px(232), -1, px(184), 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetSpriteFlags(Actor_GetById(party->leaderActorId), 0);
   leader->motionFlags = 0;

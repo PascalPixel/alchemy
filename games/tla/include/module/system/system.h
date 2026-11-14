@@ -106,7 +106,7 @@ void ScreenFade_FromWhite(s32 vblanks);
 
 void Scene_PlayMusic(void);
 
-s32 Battle_RunEncounterFar(s32 entrance);
+s32 Battle_RunFar(s32 entrance);
 
 s32 LuckyWheels_StartFar(s32 entrance);
 

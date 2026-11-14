@@ -692,7 +692,7 @@ fade:
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   Actor_GetById(14)->priorityFlags |= 1;
   REG_DISPCNT |= DISPCNT_BG2_ON;
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
@@ -2506,7 +2506,7 @@ void ShamanVillage_RestartTrial(void) {
   ((struct Actor *)Actor_GetById(15))->facing = FACING_NORTH;
   FieldCamera_MoveTo(224, CAMERA_KEEP, 182, 0);
   wait(1);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   angle = FACING_SOUTH;
   Event_StartScreenTransition();
@@ -2580,7 +2580,7 @@ void ShamanVillage_AdviseQuitting(void) {
   ((struct Actor *)Actor_GetById(17))->facing = FACING_WEST;
   FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 0);
   wait(1);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

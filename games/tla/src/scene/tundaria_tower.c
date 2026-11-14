@@ -754,7 +754,7 @@ void TundariaTower_SetLeaderCellShape(s32 a, s32 b);
 void TundariaTower_SpawnDustRing(void);
 
 void Actor_MoveToObject(s32 id, s32 target);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 extern union FieldObject *gTundariaTower_Reflection;
 
@@ -800,7 +800,7 @@ void TundariaTower_LandFromSlide(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveToFixed(-1, -1, -1, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;

@@ -24,7 +24,7 @@ struct Window;
 #define FIELD_TREASURE_ACTOR 64
 
 /// The values of FieldWork.raisedTrigger that the field sequence handles
-/// itself, rather than passing them to the scene (Scene_RunRaisedEvent).
+/// itself, rather than passing them to the scene (Scene_RunRaisedTrigger).
 enum FieldRaisedTrigger {
   /// Party members fell to poison or hazardous ground this step.
   FIELD_RAISED_TRIGGER_PARTY_FELL = -1,
@@ -82,7 +82,7 @@ struct FieldWork {
   s16 encounter;   ///< the enemy group of a random encounter
   s16 psynergy;    ///< a field Psynergy to use, as unit << 10 | Psynergy
   s16 item;        ///< an item to use, packed as Field_UseItem reads it
-  /// A raised trigger's number for Scene_RunRaisedEvent, or an enum
+  /// A raised trigger's number for Scene_RunRaisedTrigger, or an enum
   /// FieldRaisedTrigger.
   s16 raisedTrigger;
   ///@}

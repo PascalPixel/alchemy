@@ -118,6 +118,8 @@
 /// Retreat is blocked, whether cast or used from an item; the scenes that
 /// forbid Retreat set it.
 #define FLAG_RETREAT_BLOCKED 0x144
+/// No random encounters while set (Encounter_CountStepsAndSelectFormation).
+#define FLAG_NO_ENCOUNTERS 0x160
 /// No random battles until the party enters another area; Scene_Arrive clears
 /// it with a new area.
 #define FLAG_NO_ENCOUNTERS_IN_AREA 0x161
@@ -268,6 +270,9 @@
 /// Set as Scoop digs up the geyser in the yellow sand.
 #define FLAG_GONDOWAN_CLIFFS_GEYSER_DUG 0x886
 /// Set as Grind breaks up the rock that blocks the way south.
+/// Set once the leader takes the Lemurian Ship's tiller: the ship can sail, the
+/// world map marks its mooring and the party comes back to it there.
+#define FLAG_SHIP_SAILABLE 0x8de
 #define FLAG_GONDOWAN_CLIFFS_ROCK_GROUND 0x8e6
 
 /// Set once the pillar inside Jupiter Lighthouse's main gates stands on the

@@ -1067,7 +1067,7 @@ rise:
     }
     if (t == 0) {
       *(s32 *)&layer->unk08[4] -= 0x200000;
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
       Event_Wait(1);
     } else if (t <= 63) {
       REG_BLDALPHA = ((16 - (t >> 2)) << 8) | (t >> 2);

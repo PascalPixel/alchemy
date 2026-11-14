@@ -27,7 +27,7 @@ void BattleBackground_SetModeFar(s32 mode, s32 background, s32 value);
 void Battle_ChangeEnemyFormFar(s32 kind);
 s32 BattleMotion_GetSlotPaletteFar(s32 id);
 s32 BattleParty_PrepareReserveOwnersFar(u16 *owners);
-s32 BattleUnit_ListIdsFar(s32, s32);
+s32 BattleUnit_ListLivingIdsFar(s32, s32);
 void BattleSummon_UpdateAvailabilityFar(void);
 void BattleCamera_SetCommandViewFar(s32 mode);
 

@@ -622,7 +622,7 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   a->z += -px(12);
   b->z += -px(12);
   c->z += -px(12);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(4);
   gFieldWork->transition = 0x209;
   Event_StartScreenTransition();
@@ -715,7 +715,7 @@ void ShrineOfTheSeaGod_RiseOnWater(void) {
   leader->y = -50 << 16;
   leader->terrainHeight = -50 << 16;
   layer->y += -50 << 16;
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   gFieldWork->transition = 515;
   Event_StartScreenTransition();
@@ -2159,7 +2159,7 @@ void ShrineOfTheSeaGod_InitializeRoom11(void) {
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[2];
 
   layer->x += px(128);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   if (object != NULL) {
     object->motionFlags = 0;

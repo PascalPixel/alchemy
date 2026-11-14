@@ -210,7 +210,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
             if (!affordable)
               Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(SummonDefinition_Get(id)->nameMessageId +
-                                        (s32)MsgAbilityNothing,
+                                        (s32)MsgAbilityName,
                                     window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {

@@ -282,7 +282,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         side = 2;
       else
         side = 1;
-      count = BattleParty_ListActorIdsFar(side, block);
+      count = BattleUnit_ListIdsFar(side, block);
       if (side == 1)
         count += BattleParty_PrepareReserveOwnersFar(block + count);
       wait(1);
@@ -364,7 +364,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       wait(1);
       if (mode == -2) {
         u16 *block = Heap_Alloc(12);
-        s32 count = BattleParty_ListActorIdsFar(1, block);
+        s32 count = BattleUnit_ListIdsFar(1, block);
 
         state->iconShown[2] = 0;
         wait(1);
@@ -476,8 +476,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           Text_SetColor(TEXT_COLOR_RED);
         else if (unit->psySeal != 0)
           Text_SetColor(TEXT_COLOR_PINK);
-        Text_DrawMessageAsTiles(parameter + (s32)MsgAbilityNothing,
-                                commandWindow, 16, 0);
+        Text_DrawMessageAsTiles(parameter + (s32)MsgAbilityName, commandWindow,
+                                16, 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
         work->textPalette = 15;
         Text_SetColor(TEXT_COLOR_WHITE);
@@ -546,7 +546,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         if (ok == 0)
           Text_SetColor(TEXT_COLOR_RED);
         Text_DrawMessageAsTiles(SummonDefinition_Get(mode)->nameMessageId +
-                                    (s32)MsgAbilityNothing,
+                                    (s32)MsgAbilityName,
                                 commandWindow, 16, 0);
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] != 0) {

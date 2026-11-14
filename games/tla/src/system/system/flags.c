@@ -12,7 +12,7 @@ void *Unit_Get(s32 owner) {
   struct BattleUnit *unit;
 
   if ((u32)owner < 8) {
-    states = gOwnerStates;
+    states = gCharacterUnits;
     unit = &states[owner];
     return unit;
   }

@@ -1437,7 +1437,7 @@ void AirsRockInside_BlowGust(void) {
           Call6(Map_CopyCellAttributeRect, 15, 80, 1, 1, 15, 79);
           Call6(Map_CopyCellAttributeRect, 17, 15, 2, 1, 15, 15);
         }
-        Map_CenterOnFollowedPoint();
+        MapGrid_CenterOnFollowedPoint();
       }
       FieldEvent_Wait(1);
     }
@@ -3139,7 +3139,7 @@ void AirsRockInside_LandInHall(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;
@@ -3212,7 +3212,7 @@ s32 Scene_Initialize(void) {
         (!TLA_PATCH_1 || !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))) {
       Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 1;
       wait(8);
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
       wait(1);
     }
     if (gMainRoutineWork.entrance <= 11 || gMainRoutineWork.entrance == 16) {

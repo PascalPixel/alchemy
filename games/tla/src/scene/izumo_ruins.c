@@ -86,7 +86,7 @@ extern struct Trigger gIzumoRuins_SecondRoomTriggers[];
 void IzumoRuins_PlacePillars(u16 *list);
 void Rubble_Spray(s32 mode);
 void Rubble_Burst(void);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 s32 Actor_GetCellIndex(struct Actor *object);
 void Actor_PlaceBlocks(const void *data);
 void FieldEffect_StartBlankOverlay(s32 value);
@@ -373,7 +373,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_IZUMO_RUINS_POOL_PARCHED)) {
       MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
       MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
         object = Actor_Get(gMainRoutineWork.leaderActorId);

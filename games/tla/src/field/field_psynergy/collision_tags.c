@@ -155,7 +155,7 @@ s32 Actor_GetCellIndex(struct Actor *object) {
   return object->x.fixed / 0x100000 + (object->z.fixed / 0x100000) * 128;
 }
 
-/// Finds the tag (key, value) in the 4-byte entries at gMapCollision, or adds
+/// Finds the tag (key, value) in the 4-byte entries at gMapGridShapes, or adds
 /// it at the first free entry (key 0xff), and returns its index.
 /// Actor_PlaceBlocks gives a raised cell's shape this index.
 s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value) {

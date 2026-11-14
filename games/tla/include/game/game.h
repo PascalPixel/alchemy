@@ -101,7 +101,7 @@ extern const u16 gBattle_Effect90Classes[47];
 extern const u16 gBattle_Effect91Classes[29];
 extern const struct AbilityDefinition gAbilityDefinitions[];
 extern const struct DjinnDefinition gDjinn_DefinitionTable[];
-extern const struct EnemyDefinition gEnemy_DefinitionTable[];
+extern const struct EnemyDefinition gEnemy_Definitions[];
 extern u8 gGameFlagBytes[];
 void DjinnRecovery_CountDownTwentyFar(void);
 s32 Djinn_GiveFar(s32, s32, s32);

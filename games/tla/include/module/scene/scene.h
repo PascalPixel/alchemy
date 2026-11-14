@@ -995,7 +995,7 @@ struct HeapView {
   s32 word;
 };
 
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 extern char ResourceId_WhirlwindMap;
 extern char ResourceId_WhirlwindTiles;

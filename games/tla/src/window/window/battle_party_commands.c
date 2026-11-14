@@ -78,7 +78,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
 #else
         if (gInput.pressed & KEY_A) {
 #endif
-          if (BattleUnit_ListIdsFar(1, 0) == 0) {
+          if (BattleUnit_ListLivingIdsFar(1, 0) == 0) {
             Sound_PlayFar(SE_MENU_ERROR);
             goto test;
           }
@@ -146,7 +146,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
   }
 }
 
-s32 BattleParty_ListLivingUnitsFar(s32 sideMask, u16 *unitIds);
+s32 BattleUnit_ListLivingFar(s32 sideMask, u16 *unitIds);
 
 /// The first half of The Broken Seal's Battle_BuildPartyActions: each action
 /// of a living party member who is asleep, confused, charmed or stunned is lost
@@ -157,7 +157,7 @@ s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
                               s32 *forcedCount) {
   u16 *unitIds = Heap_AllocEwram(9);
   struct BattleActionRecord *entries = *cursor;
-  s32 count = BattleParty_ListLivingUnitsFar(1, unitIds);
+  s32 count = BattleUnit_ListLivingFar(1, unitIds);
   s32 readyCount = 0;
   s32 forced = 0;
   s32 i;

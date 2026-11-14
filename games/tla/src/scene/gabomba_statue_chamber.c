@@ -475,7 +475,7 @@ void GabombaStatueChamber_ArriveByLift(void) {
     *(s32 *)(lower + 12) += 0x10000;
     *(s32 *)(upper + 12) += 0x10000;
   }
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -852,7 +852,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   GabombaStatueChamber_OpenThePassage();
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   owner = (s32 *)&gMainRoutineWork;
   owner += 133;
@@ -1050,7 +1050,7 @@ void GabombaStatueChamber_InitializeRoom2(void) {
       i++;
       if (i < 352)
         goto loop;
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
       wait(1);
     }
   } else if (gMainRoutineWork.entrance == 2) {

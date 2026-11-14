@@ -32,7 +32,7 @@ u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
     y += 0x1fffff;
 
   index = tileX + (((y >> 21) & 31) << 5);
-  tile = gMapBlocks + index;
+  tile = gCellPictures + index;
   if (((u8 *)tile)[3] & 0x80)
     flag = 0x10;
 

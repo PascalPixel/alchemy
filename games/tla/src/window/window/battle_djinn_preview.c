@@ -310,7 +310,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       else
         Text_SetColor(TEXT_COLOR_WHITE);
       Text_DrawMessageAsTiles((changedAbilities[i] & 0x3fff) +
-                                  (s32)MsgAbilityNothing,
+                                  (s32)MsgAbilityName,
                               window, 16, visibleRow * 16);
       Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL, 11, visibleRow * 2,
                              0);

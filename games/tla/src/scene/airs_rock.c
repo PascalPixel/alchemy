@@ -566,14 +566,14 @@ void AirsRock_BlowGust(void) {
                                      gAirsRock_GustTargets[hit][1], 1, 1,
                                      gust->x.fixed >> 20, gust->z.fixed >> 20);
         }
-        Map_CenterOnFollowedPoint();
+        MapGrid_CenterOnFollowedPoint();
       }
       Event_Wait(1);
     }
     if (hit == 2) {
       MapGrid_CopyCellsTo(gAirsRock_GustTargets[2][0],
                           gAirsRock_GustTargets[2][1], cell.x, cell.z, 1, 1);
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
     }
     Sound_Play(SE_STOP_MUSIC_PLAYER_5);
     Event_SetFlag(flag + FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN);
@@ -760,7 +760,7 @@ glow:
   MapGrid_CopyCellsTo(68, 0, 79, 0, 11, 10);
   MapGrid_CopyCellAttributes(38, 9, 1, 1, 16, 9);
   MapGrid_CopyCellAttributes(38, 9, 1, 1, 24, 9);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   FieldEvent_Wait(1);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
@@ -1797,7 +1797,7 @@ s32 Scene_Initialize(void) {
       beam[3] = 0x2400000;
       beam[4] = 0x4000;
       beam[5] = 0x4000;
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       break;
     case 6:
@@ -1883,7 +1883,7 @@ s32 Scene_Initialize(void) {
         Actor_SetSpriteColor(Actor_GetById(14), 6);
       }
       Actor_SetSpritePriority(14, 1);
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         leader = LEADER();

@@ -137,7 +137,7 @@ void AnkohlRuins_LandFromFall(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;
@@ -1255,7 +1255,7 @@ void AnkohlRuins_FlowWithSand(void);
 void FieldEffect_StartBlankOverlay();
 void AnkohlRuins_LandFromFall(void);
 void Event_StartScreenTransition(void);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
@@ -1498,7 +1498,7 @@ s32 Scene_Initialize(s32 a0) {
       object->groundHeight = level;
       object->y.fixed = level;
       FieldEvent_Wait(1);
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
     }
   } else if (scene == SCENE_ANKOHL_RUINS_8) {
     object = Actor_GetById(64);
@@ -1528,7 +1528,7 @@ void AnkohlRuins_FlowWithSand(void);
 void FieldEffect_StartBlankOverlay();
 void Event_Start(void);
 void Event_StartScreenTransition(void);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
@@ -1764,7 +1764,7 @@ s32 Scene_Initialize(s32 a0) {
       object->groundHeight = level;
       object->y.fixed = level;
       FieldEvent_Wait(1);
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
     }
   } else if (scene == SCENE_ANKOHL_RUINS_8) {
     object = Actor_GetById(64);

@@ -50,7 +50,7 @@ void BattleMotion_HopBack(s32 objectId);
 void BattleMotion_PlayFall(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 objectId);
 #ifndef OWN_Battle_BuildOpponentActions
-s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries);
+s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries);
 #endif
 #ifndef OWN_Battle_BuildUnitActions
 s32 Battle_BuildUnitActions(struct BattleActionRecord *entries);

@@ -2040,7 +2040,7 @@ void KandoreanTemple_LandFromAbove(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;
@@ -2124,7 +2124,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
     next++;
     i = next;
   } while (next <= 15);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   gFieldWork->transition = 0x209;
   Event_StartScreenTransition();
@@ -2201,7 +2201,7 @@ void KandoreanTemple_RiseOnRightVent(void) {
     next++;
     i = next;
   } while (next <= 15);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   gFieldWork->transition = 0x209;
   Event_StartScreenTransition();

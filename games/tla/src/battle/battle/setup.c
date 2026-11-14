@@ -209,7 +209,7 @@ void BattleParty_ClearGuards(void) {
 
   count = BattleParty_PrepareMembers(ids);
   count += BattleParty_PrepareReserveOwners(ids + count);
-  count += BattleParty_ListActorIds(2, ids + count);
+  count += BattleUnit_ListIds(2, ids + count);
   if (count > 0) {
     do {
       struct BattleUnit *unit = Unit_Get(*id++);

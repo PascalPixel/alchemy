@@ -138,7 +138,7 @@ Evidence: plain English; the project's own word.
 For readers of the code: pret is the group of fans behind the
 decompilations of other Game Boy Advance games. This source borrows its
 habits so that anyone who has read one of pret's games can read this one. A
-named piece of code is spelled like `Battle_RunEncounter`, a value the whole
+named piece of code is spelled like `Battle_Run`, a value the whole
 game shares starts with `g`, like `gTasks`, and bugs are marked `BUG` and
 `BUGFIX`.
 
@@ -460,7 +460,7 @@ So each bank opens with a list, at a place that never moves, with one entry
 for each thing other banks may ask of it. The asker goes to the entry, and
 the entry, a [veneer](#veneer), sends it on. An entry is named after what it
 leads to with `Far` added: the main routine starts a battle through
-`Battle_RunEncounterFar`, which leads to `Battle_RunEncounter`
+`Battle_RunFar`, which leads to `Battle_Run`
 ([The Game Pak](src/gamepak/README.md#why-the-main-image-is-cut-into-banks)).
 
 Evidence: tradition: ジャンプテーブル for the table; "far call" is plain English.
@@ -471,8 +471,8 @@ A veneer is a tiny piece of code, 8 bytes long, that does one thing: it
 jumps on to a piece of code somewhere else. It stands at a place that never
 changes and points at something that may move, so everyone who needs that
 thing can go to the veneer and be sent the right way.
-`Battle_RunEncounterFar` is one, and all it does is jump to
-`Battle_RunEncounter`. The lists a [bank](#bank) and an
+`Battle_RunFar` is one, and all it does is jump to
+`Battle_Run`. The lists a [bank](#bank) and an
 [overlay](#overlay) open with are made of them
 ([The Game Pak](src/gamepak/README.md#a-veneer)).
 

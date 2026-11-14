@@ -95,7 +95,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 
 #define LEMURIAN_SHIP_TASK_ADD(func, priority) Task_Add((func), (priority))
 
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Actor_LiftTargetBlock(const void *script);
 void Actor_PlaceMovedBlock(void);
@@ -789,7 +789,7 @@ void LemurianShip_ParchHold(void) {
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   wait(1);
   MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   Event_SetFlag(FLAG_HOLD_PARCHED);
   PaletteFade_SetTarget(0x10000, 0);
@@ -971,7 +971,7 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_SetPosition(ACTOR_SHEBA, 784, 468);
   Actor_SetPosition(ACTOR_JENNA, 832, 468);
   Actor_SetPosition(8, 792, 488);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   Event_Wait(20);
   Event_PlaySound(SE_GLITTER);
   Event_Wait(80);
@@ -1492,7 +1492,7 @@ void LemurianShip_SetUpHold(void) {
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
     MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
     FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
-    Map_CenterOnFollowedPoint();
+    MapGrid_CenterOnFollowedPoint();
     wait(1);
   }
   if (Event_GetFlag((FLAG_JELLY_MELTING + 15))) {

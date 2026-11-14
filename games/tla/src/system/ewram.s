@@ -27,8 +27,8 @@ Data_0200024c:
 Data_02000500:
 	.space 0x00000004
 	.space 0x0000001c
-	.global gOwnerStates
-gOwnerStates:
+	.global gCharacterUnits
+gCharacterUnits:
 	.space 0x00000ae0
 	.global gSceneLocalState
 gSceneLocalState:
@@ -703,8 +703,8 @@ Data_02019600:
 	.global gDecodeBuffer
 gDecodeBuffer:
 	.space 0x00004000
-	.global gMapBlocks
-gMapBlocks:
+	.global gCellPictures
+gCellPictures:
 	.space 0x00000004
 	.global Data_02020004
 Data_02020004:
@@ -775,8 +775,8 @@ gWorldPicture_NameRedrawPending:
 	.global gWorldPicture_NameRedrawDelay
 gWorldPicture_NameRedrawDelay:
 	.space 0x000019aa
-	.global gMapCollision
-gMapCollision:
+	.global gMapGridShapes
+gMapGridShapes:
 	.space 0x00000001
 	.global Data_0202c001
 Data_0202c001:

@@ -111,7 +111,7 @@ enum StatusPanelKind {
 #define MESSAGE_CLASS_NAME ((s32)&MsgClassName)
 #define MESSAGE_EXP_LABEL ((s32)&MsgExpLabel)
 #define MESSAGE_PANEL_STAT_LABEL ((s32)&MsgPanelStatLabel)
-#define MESSAGE_ABILITY_NAME ((s32)&MsgAbilityNothing)
+#define MESSAGE_ABILITY_NAME ((s32)&MsgAbilityName)
 #define MESSAGE_POISON_LABEL ((s32)&MsgPoisonLabel)
 #define MESSAGE_VENOM_LABEL ((s32)&MsgVenomLabel)
 #define MESSAGE_CURSE_LABEL ((s32)&MsgCurseLabel)

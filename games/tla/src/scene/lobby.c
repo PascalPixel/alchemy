@@ -855,7 +855,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
 s32 Window_Create();
 void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
-s32 DebugParty_LoadPreset();
+s32 DebugParameterSet_Load();
 
 s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   s32 window;
@@ -901,7 +901,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
     s32 message;
 
     if (choice >= 0) {
-      ok = DebugParty_LoadPreset(choice);
+      ok = DebugParameterSet_Load(choice);
     } else {
       message = (s32)MsgWhatIsThis;
       goto show;
@@ -1045,7 +1045,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
 
 s32 LinkLobby_PartyContains(s32 id);
 void Serial_RemoveIrqHandlers(void);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 void MessageArgument_Push(s32 value, s32 digits);
@@ -1208,7 +1208,7 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 LinkLobby_PartyContains(s32 id);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 void MessageArgument_Push(s32 value, s32 digits);
 void Save_ProcessSelectedFile(void);
 void Event_End(void);
@@ -1239,7 +1239,7 @@ next:
   i++;
   if (i <= 2)
     goto next;
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
 }
 
 void Event_End(void);

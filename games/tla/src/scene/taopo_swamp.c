@@ -108,7 +108,7 @@ void Vent_Bounce(struct Actor *object);
 extern u32 gTaopoSwamp_PuffRises[];
 extern s32 gTaopoSwamp_SparkleFrame;
 extern u8 gMapShapeGrid[];
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 void BlendScript_Suspend(void);
 void TaopoSwamp_TwinkleStarDust(void);
 void TaopoSwamp_FocusMapOn(s32 x, s32 z);
@@ -1645,7 +1645,7 @@ void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   focus->scrolledX = Iwram_MulQ16(*(s32 *)(map + 0xe4), 0x10000) + focus->x;
   focus->scrolledZ =
       Iwram_MulQ16(*(s32 *)(map + 0xe8), focus->scaleZ) + focus->z;
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
 }
 

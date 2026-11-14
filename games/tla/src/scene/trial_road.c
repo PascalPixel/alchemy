@@ -2044,7 +2044,7 @@ s32 Scene_PrepareMap(void) {
         i++;
         if (i <= 9)
           goto hideUnused55;
-        Map_CenterOnFollowedPoint();
+        MapGrid_CenterOnFollowedPoint();
       } else {
         s32 x1;
         s32 x2;
@@ -2099,7 +2099,7 @@ s32 Scene_PrepareMap(void) {
         i++;
         if (i <= 9)
           goto hideUnused;
-        Map_CenterOnFollowedPoint();
+        MapGrid_CenterOnFollowedPoint();
         leader = Actor_GetById(gMainRoutineWork.leaderActorId);
         if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
           leader->y.fixed = leader->groundHeight =

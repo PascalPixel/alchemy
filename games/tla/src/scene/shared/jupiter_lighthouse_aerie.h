@@ -22,7 +22,7 @@ extern u8 gDecodeFillByte;
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 void Import_HangingVinePlace(s32 id, s32 a);
 
 #endif

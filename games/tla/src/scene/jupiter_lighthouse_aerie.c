@@ -1160,7 +1160,7 @@ void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
     shadow = *(struct Actor **)(event + 460);
     shadow->x.fixed = object->x.fixed;
     shadow->z.fixed = object->z.fixed;
-    Map_CenterOnFollowedPoint();
+    MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = value;
   }

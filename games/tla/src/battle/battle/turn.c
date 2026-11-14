@@ -56,7 +56,7 @@ void BattleUnit_ResetGuardLevels(void) {
   s32 count;
   s32 index;
 
-  count = BattleParty_ListActorIds(BATTLE_SIDE_MASK_BOTH, (u16 *)ids);
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)ids);
   for (index = 0; index < count; index++) {
     struct BattleUnit *actor;
 
@@ -82,14 +82,12 @@ s32 BattleFlee_CheckSuccess(void) {
   } else {
     levelTotal = 0;
     chance = 0x1388 + (escapeState->failedAttempts * 0x7D0);
-    livingCount =
-        BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_PARTY, livingUnits);
+    livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
     }
     chance += __divsi3(levelTotal * 0x1F4, livingCount);
-    livingCount =
-        BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
+    livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
@@ -118,7 +116,7 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   return result;
 }
 
-s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
+s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   u16 unitIds[14];
   s32 entryCount = 0;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -128,7 +126,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
   if (battle->firstStrike == 1)
     return 0;
 
-  unitCount = BattleParty_ListLivingUnits(2, unitIds);
+  unitCount = BattleUnit_ListLiving(2, unitIds);
   if (unitCount == 0)
     return 0;
 
@@ -505,7 +503,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
       goto finish;
     }
   } else {
-    cnt += Battle_BuildOpponentActions(acts + cnt);
+    cnt += Battle_BuildEnemyActions(acts + cnt);
   }
 
   // Sort by priority and set guards for Defend (3 and 7) first.

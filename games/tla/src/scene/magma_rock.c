@@ -1451,7 +1451,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 s32 Trig_Cos(s32 angle);
 void FieldEffect_AdvanceMotion();
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 void MagmaRock_LaunchLeader(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -1463,7 +1463,7 @@ void MagmaRock_LaunchLeader(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   leader->y.fixed += px(130);
   leader->gravity = px(1) / 2;

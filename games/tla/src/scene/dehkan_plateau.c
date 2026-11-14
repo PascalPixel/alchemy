@@ -1256,7 +1256,7 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;
@@ -1675,7 +1675,7 @@ void DehkanPlateau_LandFromFall(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;

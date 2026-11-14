@@ -669,7 +669,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   else
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 2, window, 0, -8);
 
-  name = &MsgAbilityNothing[gMainRoutineWork.firstShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.firstShortcut & 0x3ff];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
 #if TLA_PATCH_2
   if (width < 0 || width > OWNER_NAME_WIDTH_LIMIT)
@@ -690,7 +690,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 0, 0);
   }
 
-  name = &MsgAbilityNothing[gMainRoutineWork.secondShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.secondShortcut & 0x3ff];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
 #if TLA_PATCH_2
   if (width < 0 || width > OWNER_NAME_WIDTH_LIMIT)
@@ -726,7 +726,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   else
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 2, window, 0, -8);
 
-  name = &MsgAbilityNothing[gMainRoutineWork.firstShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.firstShortcut & 0x3ff];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
   if (gMainRoutineWork.firstShortcut != 0) {
     if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
@@ -743,7 +743,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 24, 0);
   }
 
-  name = &MsgAbilityNothing[gMainRoutineWork.secondShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.secondShortcut & 0x3ff];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
   if (gMainRoutineWork.secondShortcut != 0) {
     if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
@@ -1013,7 +1013,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
       }
 
       Text_DrawMessageAsTilesFar((0x3fff & *(const u16 *)(cursor + (s32)menu)) +
-                                     (s32)MsgAbilityNothing,
+                                     (s32)MsgAbilityName,
                                  window, NAME_X, row * 16 + 8);
       Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104, row * 16 + 8);
       Text_SetColorFar(TEXT_COLOR_NORMAL);

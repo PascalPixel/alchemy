@@ -633,8 +633,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               Text_SetColor(TEXT_COLOR_PINK);
             tileFlags = 0;
             work->textPalette = 5;
-            Text_DrawMessageAsTiles(id + (s32)MsgAbilityNothing, statusWindow,
-                                    16, 64 + j * 16);
+            Text_DrawMessageAsTiles(id + (s32)MsgAbilityName, statusWindow, 16,
+                                    64 + j * 16);
             Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104,
                                     64 + j * 16);
             Text_SetColor(TEXT_COLOR_WHITE);

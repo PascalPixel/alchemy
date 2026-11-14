@@ -1,6 +1,6 @@
 /// @file
 /// The 734 abilities, by ability id. Each name is the English release's
-/// (MsgAbilityNothing plus the ability id).
+/// (MsgAbilityName plus the ability id).
 // Part of game.c.
 
 #include "../game_internal.h"

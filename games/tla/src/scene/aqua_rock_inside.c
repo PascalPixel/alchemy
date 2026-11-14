@@ -375,7 +375,7 @@ void AquaRockInside_DouseFirstMoai(s32 unused, s32 id) {
   Actor_SetAnimation(objectId, 3);
   layer[3] -= 0x200000;
   Map_LoadCellsAndShapes();
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   column = (Actor_Get(12)->x.fixed >> 20) - 42;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -409,7 +409,7 @@ void AquaRockInside_DouseFirstWaterStone(s32 unused, s32 id) {
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Map_LoadCellsAndShapes();
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_556);
@@ -698,7 +698,7 @@ void AquaRockInside_DouseSecondWaterStone(s32 unused, s32 id) {
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Map_LoadCellsAndShapes();
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_557);
@@ -971,7 +971,7 @@ void AquaRockInside_DouseFourthWaterStone(s32 unused, s32 id) {
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Map_LoadCellsAndShapes();
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_556);
@@ -990,7 +990,7 @@ void AquaRockInside_WaterSinks(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   layer[3] -= 0x200000;
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   MapGrid_SetShake(1, 1, 1);
   i = 14;
 shake:

@@ -402,7 +402,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   s32 i;
   s32 j;
 
-  count = BattleParty_ListActorIdsFar(1, 0);
+  count = BattleUnit_ListIdsFar(1, 0);
   Window_HighlightRect(29 - count * 6, 0, 25, 5, 15);
   i = 0;
   if (ids[0] != 0xff) {

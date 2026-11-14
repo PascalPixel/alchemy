@@ -869,7 +869,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   System_Wait(1);
   FieldCamera_MoveTo(252, CAMERA_KEEP, 216, 0);
   System_Wait(1);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
   south = FACING_SOUTH;
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(184), px(168), south);
@@ -1122,7 +1122,7 @@ void Idejima_FindFelixAndSheba(void) {
   Actor_SetPosition(ACTOR_ALEX, 392, 172);
   System_Wait(1);
   FieldCamera_MoveTo(192, CAMERA_KEEP, 214, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetPosition(ACTOR_JENNA, 208, 218);
   Actor_SetAnimation(ACTOR_JENNA, 19);
@@ -1512,7 +1512,7 @@ void Idejima_FelixWakes(void) {
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 384, 728);
   Actor_SetPosition(ACTOR_NARRATOR, 384, 702);
   System_Wait(1);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   FelixWake_EndStep();
   Event_StartScreenTransition();

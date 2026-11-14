@@ -170,7 +170,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   if (single) {
     BattleHighlight_SetSpriteMode(saved->unitId, 1);
   } else {
-    count = BattleParty_ListActorIds((saved->unitId != 0) + 1, ids);
+    count = BattleUnit_ListIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++)
       BattleHighlight_SetSpriteMode(ids[i], 1);
   }
@@ -184,7 +184,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   if (single) {
     ReleaseBattleObjectRecords(saved->unitId);
   } else {
-    count = BattleParty_ListActorIds((saved->unitId != 0) + 1, ids);
+    count = BattleUnit_ListIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++) {
       ReleaseBattleObjectRecords(ids[i]);
       BattleObject_ReleaseSpriteSlots(ids[i]);
@@ -284,7 +284,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
     BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
     BattleHighlight_SetSpriteMode(unitId, 1);
   } else {
-    count = BattleParty_ListActorIds((saved->unitId != 0) + 1, ids);
+    count = BattleUnit_ListIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++) {
       s32 resource = EnemySprite_LoadIntoSlots(ids[i]);
 
@@ -305,7 +305,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
   if (saved->single) {
     BattleHighlight_SetSpriteMode(unitId, 0);
   } else {
-    s32 total = BattleParty_ListActorIds((saved->unitId != 0) + 1, ids);
+    s32 total = BattleUnit_ListIds((saved->unitId != 0) + 1, ids);
 
     for (i = 0; i < total; i++)
       BattleHighlight_SetSpriteMode(ids[i], 0);

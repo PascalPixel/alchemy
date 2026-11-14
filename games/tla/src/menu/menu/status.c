@@ -1333,8 +1333,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
       s32 y;
       s32 range;
       act = Ability_Get(ACT_ID_MASK & *(u16 *)(offset + (s32)menu));
-      msg =
-          (*(u16 *)(offset + (s32)menu) & ACT_ID_MASK) + (s32)MsgAbilityNothing;
+      msg = (*(u16 *)(offset + (s32)menu) & ACT_ID_MASK) + (s32)MsgAbilityName;
       y = row * 16 + FIRST_ROW_Y;
 
       Text_DrawMessageAsTilesFar(msg, window, NAME_X, y);

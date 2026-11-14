@@ -1862,7 +1862,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
         Text_SetColorFar(TEXT_COLOR_RED);
       else
         Text_SetColorFar(TEXT_COLOR_NORMAL);
-      Text_DrawMessageAsTilesFar((s32)MsgAbilityNothing +
+      Text_DrawMessageAsTilesFar((s32)MsgAbilityName +
                                      (actions[first] & 0x3fff),
                                  window, x * 8 + 16, (y + line * 2) * 8 + 8);
       Text_DrawNumberAtOffsetFar(Ability_Get(actions[first])->ppCost, 2, window,

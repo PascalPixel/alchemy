@@ -34,7 +34,7 @@ still keep each row at its place, with its name from the English release
 in a comment above it.
 
 The tables are `gItem_DefinitionTable` (516 items),
-`gAbilityDefinitions` (734 abilities), `gEnemy_DefinitionTable` (380
+`gAbilityDefinitions` (734 abilities), `gEnemy_Definitions` (380
 enemies), `gClass_DefinitionTable` (244 classes), `gDjinn_DefinitionTable`,
 `gSummon_DefinitionTable` and `gCharacter_DefinitionTable`. A row's fields
 are documented where its struct is declared. With more than 255 abilities,

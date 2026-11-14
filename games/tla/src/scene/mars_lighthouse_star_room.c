@@ -302,7 +302,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 a);
 void MarsLighthouseStarRoom_LayDownAdept(s32 actor);
 void Ride_Create(void);
 void CrackedTile_DropIn(void);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 void FieldEffect_StartBlankOverlay(s32 a);
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 
@@ -340,7 +340,7 @@ s32 Scene_Initialize(void) {
       other = work->camera;
       other->x.fixed = x;
       other->z.fixed = leader->z.fixed;
-      Map_CenterOnFollowedPoint();
+      MapGrid_CenterOnFollowedPoint();
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
     }
@@ -502,7 +502,7 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   FieldCamera_MoveTo(680, CAMERA_KEEP, 228, 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 680, 264);
   System_Wait(1);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2251,7 +2251,7 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
     marker = work->camera;
     marker->x.fixed = leader->x.fixed;
     marker->z.fixed = leader->z.fixed;
-    Map_CenterOnFollowedPoint();
+    MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = effect;
   }

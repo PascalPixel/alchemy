@@ -15,7 +15,7 @@
 // Battle: test whether a unit is in a battle formation.
 
 /// Returns 1 when the unit is in its side's list of units in the battle
-/// (BattleParty_ListActorIds), 0 otherwise.
+/// (BattleUnit_ListIds), 0 otherwise.
 u32 BattleUnit_IsListed(u32 unitId) {
   u16 list[8];
   s32 side;
@@ -25,7 +25,7 @@ u32 BattleUnit_IsListed(u32 unitId) {
   side = BATTLE_SIDE_MASK_PARTY;
   if (unitId > ALLY_MAX)
     side = BATTLE_SIDE_MASK_ENEMIES;
-  unitCount = BattleParty_ListActorIds(side, list);
+  unitCount = BattleUnit_ListIds(side, list);
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
     if (list[unitIndex] == unitId)
@@ -51,7 +51,7 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   sideMask = BATTLE_SIDE_MASK_PARTY;
   if (unitId > ALLY_MAX)
     sideMask = BATTLE_SIDE_MASK_ENEMIES;
-  unitCount = BattleParty_ListActorIds(sideMask, (u16 *)unitIds);
+  unitCount = BattleUnit_ListIds(sideMask, (u16 *)unitIds);
   enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
     enemySide = DJINN_RECOVERY_OPPONENT;

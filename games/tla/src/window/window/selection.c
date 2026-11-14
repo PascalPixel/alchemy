@@ -1365,7 +1365,7 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct ListNode *node,
     if (reuse != 0)
       src = node->src;
     Ability_LoadGlyph(base, 1, (s32 *)&src, &tile, reuse);
-    node->end = base + (s32)&MsgAbilityNothing;
+    node->end = base + (s32)&MsgAbilityName;
     break;
   }
 

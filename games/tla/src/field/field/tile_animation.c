@@ -109,7 +109,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
       Decompress_TaggedLz(Resource_GetTableEntry(resources[1]), anim);
       TilesetAnim_StartAll((const u16 *)anim);
     }
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[2]), gMapCollision);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[2]), gMapGridShapes);
     break;
   }
   case 11:
@@ -1116,18 +1116,18 @@ s32 MapGrid_IsWallAt(s32 *position) {
   return (cell[2] != 255) - 1;
 }
 
-/* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[];
- * module/tla.h has u32 gMapBlocks[]; tried as the rest of the object declares
- * it, it does not compile in tla-ja:
+/* VIEW(f02c58c): variable gCellPictures as struct WorldMapBlock
+ * gCellPictures[]; module/tla.h has u32 gCellPictures[]; tried as the rest of
+ * the object declares it, it does not compile in tla-ja:
  * games/tla/src/field/field/tile_animation.c:1118: request for member `unk2' in
  * something not a structure or union. */
-extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gMapBlocks");
+extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gCellPictures");
 
 /// Byte 2 of the world map block under position (blocks 32 pixels square on a
 /// 32 by 32 grid): the place the world map's searches look for among the
 /// scene's events of kind 2, and 255 where the ship may not go.
 // XXX: what the byte numbers besides 255; the world map scene's events of
-// kind 2 against the blocks in gMapBlocks would settle it.
+// kind 2 against the blocks in gCellPictures would settle it.
 s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;

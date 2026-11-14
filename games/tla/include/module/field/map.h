@@ -106,7 +106,7 @@ extern u8 gData_02038000[];
 extern u8 gData_0203a000[];
 extern u8 gData_0203c000[];
 extern u8 gData_0203e000[];
-extern u8 gMapCollision[];
+extern u8 gMapGridShapes[];
 
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
 

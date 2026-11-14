@@ -899,7 +899,7 @@ void PaletteEditor_Run(void);
 
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
 s32 Scene_TalkToActor(s32 id);
-s32 Scene_RunRaisedEvent(s32 id);
+s32 Scene_RunRaisedTrigger(s32 id);
 s32 Scene_RunStepTriggerOrExit(s32 value);
 s32 Field_RunPushCell(s32 keys);
 s32 Field_ExamineCell(s32 id);

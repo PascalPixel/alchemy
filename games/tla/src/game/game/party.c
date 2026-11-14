@@ -42,7 +42,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   }
   if (index >= ENEMY_COUNT)
     index = 0;
-  enemy = &gEnemy_DefinitionTable[index];
+  enemy = &gEnemy_Definitions[index];
   unit->level = enemy->level;
   unit->baseHp = enemy->hp;
   unit->hp = enemy->hp;

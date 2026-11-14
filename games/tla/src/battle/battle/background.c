@@ -545,7 +545,7 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
 /// except: unit ID to leave unchanged.
 void BattleHighlight_SetOtherSpriteModes(s32 except) {
   s16 list[14];
-  s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_MASK_BOTH, list);
+  s32 cnt = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
   s32 i;
 
   for (i = 0; i < cnt; i++) {
@@ -557,7 +557,7 @@ void BattleHighlight_SetOtherSpriteModes(s32 except) {
 /// Restores normal rendering (OBJ mode 0) for all units.
 void BattleHighlight_ClearAllSpriteModes(void) {
   s16 list[14];
-  s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_MASK_BOTH, list);
+  s32 cnt = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
   s32 i;
 
   for (i = 0; i < cnt; i++)
@@ -630,8 +630,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
     REG_BLDY = 0;
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
 
-    count =
-        BattleParty_ListActorIds(BATTLE_SIDE_MASK_BOTH, (u16 *)activeActors);
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)activeActors);
     for (i = 0; i < count; i++)
       BattleHighlight_SetSpriteMode(activeActors[i], mode & 1);
 

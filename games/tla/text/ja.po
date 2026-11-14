@@ -5837,7 +5837,7 @@ msgctxt "message"
 msgid "01446"
 msgstr "スナッチャー"
 
-msgctxt "MsgAbilityNothing"
+msgctxt "MsgAbilityName"
 msgid "01447"
 msgstr "なし"
 

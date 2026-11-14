@@ -278,7 +278,7 @@ void MainRoutine_Run(s32 mode) {
     if (gMainRoutineWork.next >= SEQUENCE_SUPER_DICE) {
       switch (gMainRoutineWork.next) {
       case SEQUENCE_BATTLE:
-        entrance = Battle_RunEncounterFar(entrance);
+        entrance = Battle_RunFar(entrance);
         break;
       case SEQUENCE_DICE:
         MAIN_ROUTINE_RUN_MINIGAME(LuckyDice_StartFar);

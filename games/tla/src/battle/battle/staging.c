@@ -51,7 +51,7 @@ void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
 
   if (source[0] > ALLY_MAX)
     side = 1;
-  count = BattleUnit_ListIds(side, ids);
+  count = BattleUnit_ListLivingIds(side, ids);
   Iwram_ClearWordsEntry(targets, sizeof *targets);
   own = 0;
   if (source[0] <= ALLY_MAX)
@@ -89,7 +89,7 @@ void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
 
   if (targets->actorId > ALLY_MAX)
     side = 2;
-  count = BattleUnit_ListIds(side, ids);
+  count = BattleUnit_ListLivingIds(side, ids);
   for (i = 0; i < count; i++) {
     targets->ids[i] = ids[i];
     targets->stateA[i] = 0;
@@ -113,7 +113,7 @@ void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
     count = BattleParty_PrepareMembers(ids);
     count += BattleParty_PrepareReserveOwners(&ids[count]);
   } else {
-    count = BattleParty_ListActorIds(2, ids);
+    count = BattleUnit_ListIds(2, ids);
   }
   for (i = 0; i < count; i++) {
     targets->ids[i] = ids[i];
@@ -135,7 +135,7 @@ void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
 /// Sends every battler back to its spot.
 void BattleParty_ReturnAllToSpots(void) {
   u16 ids[14];
-  s32 count = BattleParty_ListActorIds(3, ids);
+  s32 count = BattleUnit_ListIds(3, ids);
   s32 i;
 
   for (i = 0; i < count; i++)
@@ -289,9 +289,9 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     }
     case STAGING_MEGAERA:
       BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
-      if (BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_PARTY, 0) == 0)
+      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         break;
-      if (BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_ENEMIES, 0) == 0)
+      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0)
         break;
       BattleStaging_PlanHighImpact((struct ActionTargets *)&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
@@ -395,7 +395,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
       BattleMessage_WaitForAdvance();
     } else {
       s16 unitIds[14];
-      s32 index = BattleParty_ListLivingUnits(1, (u16 *)unitIds) - 1;
+      s32 index = BattleUnit_ListLiving(1, (u16 *)unitIds) - 1;
 
       while (index != -1) {
         struct BattleUnit *unit = Unit_Get(unitIds[index]);
@@ -465,7 +465,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   list = units;
   i = 0;
-  count = BattleParty_ListActorIds(3, list);
+  count = BattleUnit_ListIds(3, list);
   for (; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
@@ -548,7 +548,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   }
 
   BattleObject_Put();
-  count = BattleParty_ListActorIds(3, units);
+  count = BattleUnit_ListIds(3, units);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (i = 0; i != count; i++) {
     u32 unit;

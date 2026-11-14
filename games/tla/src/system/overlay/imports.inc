@@ -83,7 +83,7 @@
 	export Actor_Release, Actor_ReleaseFar
 	export WorldMap_UpdateCurrentTileBlock, WorldMap_UpdateCurrentTileBlockFar
 	export Actor_SetPositionAndResetMotion, Actor_SetPositionAndResetMotionFar
-	export Map_CenterOnFollowedPoint, Map_CenterOnFollowedPointFar
+	export MapGrid_CenterOnFollowedPoint, MapGrid_CenterOnFollowedPointFar
 	export Actor_StartIdle, Actor_StartIdleFar
 	export Actor_SetMoveTarget, Actor_SetMoveTargetFar
 	export Actor_WaitForMove, Actor_WaitForMoveFar
@@ -487,7 +487,7 @@
 	export Inn_CheckIn, Inn_CheckInFar
 	export Forge_Run, Forge_RunFar
 	export DjinnRecovery_CountDownTwenty, DjinnRecovery_CountDownTwentyFar
-	export DebugParty_LoadPreset, DebugParty_LoadPresetFar
+	export DebugParameterSet_Load, DebugParameterSet_LoadFar
 	export MenuCursor_Set, MenuCursor_SetFar
 	export Sound_WaitForJingle, Sound_WaitForJingleFar
 	export ItemPicker_RunToDrop, ItemPicker_RunToDropFar

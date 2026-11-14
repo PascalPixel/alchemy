@@ -140,7 +140,8 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 
   work = Ram_HeapSlots->fieldWork;
   if (GameFlag_Get(351) == 0) {
-    if (GameFlag_Get(352) != 0 || GameFlag_Get(FLAG_NO_ENCOUNTERS_IN_AREA) != 0)
+    if (GameFlag_Get(FLAG_NO_ENCOUNTERS) != 0 ||
+        GameFlag_Get(FLAG_NO_ENCOUNTERS_IN_AREA) != 0)
       return 0;
     if (zone == 0)
       return 0;
@@ -316,15 +317,15 @@ void Scene_SetRestartPoint(void) {
 }
 
 /// Where the party comes out on the world map after reaching scene and
-/// entrance (Teleport's choice calls it). With flag 0x8de set (the party has
-/// the ship, whose mooring the world map screen marks), finds the first rule of
-/// gParty_PairResolveRules for scene and entrance (-1 on either side matches
-/// any entrance) and copies its position, x and z in 16.16 and the third value
-/// as is, to gMainRoutineWork.savedX, savedZ and unk280.
+/// entrance (Teleport's choice calls it). With FLAG_SHIP_SAILABLE set (the
+/// party has the ship, whose mooring the world map screen marks), finds the
+/// first rule of gParty_PairResolveRules for scene and entrance (-1 on either
+/// side matches any entrance) and copies its position, x and z in 16.16 and the
+/// third value as is, to gMainRoutineWork.savedX, savedZ and unk280.
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
 
-  if (GameFlag_Get(0x8de) == 0)
+  if (GameFlag_Get(FLAG_SHIP_SAILABLE) == 0)
     return;
   while (rule[0] != -1) {
     if (rule[0] == scene &&
@@ -339,12 +340,12 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
 }
 
 /// WorldMap_SetReturnForScene's twin for the rule's return scene and entrance
-/// (its third and fourth values): with flag 0x8de set, clears ownerOverride and
-/// copies the rule's position to the party's saved position.
+/// (its third and fourth values): with FLAG_SHIP_SAILABLE set, clears
+/// ownerOverride and copies the rule's position to the party's saved position.
 void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
 
-  if (GameFlag_Get(0x8de) == 0)
+  if (GameFlag_Get(FLAG_SHIP_SAILABLE) == 0)
     return;
   gMainRoutineWork.ownerOverride = 0;
   while (rule[0] != -1) {

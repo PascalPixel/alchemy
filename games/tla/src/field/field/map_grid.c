@@ -39,7 +39,7 @@ void SpriteColor_RemapPixels(u8 *buf, s32 cnt) {
   }
 }
 
-// Map: unpack decoded block data into gMapBlocks.
+// Map: unpack decoded block data into gCellPictures.
 
 /// Decoded buffer [1] selects the method; halfword data starts at [2].
 /// size: length including the method byte (even means no data).
@@ -53,7 +53,7 @@ void TileMap_DecodeStagedBuffer(s32 size) {
   s32 i;
 
   src = (u16 *)(Ram_MapCellBuffer + 2);
-  dst = (u16 *)gMapBlocks;
+  dst = (u16 *)gCellPictures;
   n = (size - 1) / 2;
   if (size & 1) {
     switch (((u8 *)gMapGridCellBuffer)[1]) {
@@ -284,7 +284,7 @@ s32 MapGrid_LoadMap(s32 index) {
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-void Map_CenterOnFollowedPoint(void) {
+void MapGrid_CenterOnFollowedPoint(void) {
   struct MapWork *work = Ram_HeapSlots->mapGrid;
   s32 x = 0;
   s32 height = 0;

@@ -559,7 +559,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "system/system.h"
 void GameFlag_SetByte(s32 flag, s32 value);
-void Map_CenterOnFollowedPoint(void);
+void MapGrid_CenterOnFollowedPoint(void);
 
 extern u16 gPushKinds[];
 

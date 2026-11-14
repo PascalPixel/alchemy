@@ -2222,7 +2222,7 @@ void Kibombo_StatueFlashes(void) {
   PaletteFade_StartInterpolation(1);
   wait(1);
   Kibombo_CamMove(146 << 18, -1, px(248), 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   Kibombo_FadeTo(0x10000, 0);
   PaletteFade_StartInterpolation(1);
@@ -2237,7 +2237,7 @@ void Kibombo_StatueFlashes(void) {
   PaletteFade_StartInterpolation(1);
   wait(1);
   FieldCamera_MoveWithinMapBounds(px(248), -1, 134 << 18, 0);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(1);
@@ -2775,7 +2775,7 @@ void Kibombo_CeremonyEnds(void) {
   wait(1);
   Actor_SetHorizontalPositionAndAngleWithTerrain(
       gMainRoutineWork.leaderActorId, px(370), px(636), FACING_NORTH);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   wait(1);
   gFieldWork->transition = 0x100;
   PaletteFade_SetSource(0, 0);

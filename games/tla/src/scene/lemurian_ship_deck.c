@@ -241,7 +241,7 @@ static inline void LemurianShipDeck_PlaceFacing(s32 id, s32 x, s32 z,
 }
 
 /// The scene run from entrance 10: the crew takes its places on deck and the
-/// leader is asked to take the tiller; it ends by setting flag 0x8de.
+/// leader is asked to take the tiller; it ends by setting FLAG_SHIP_SAILABLE.
 void LemurianShipDeck_TakeTheTiller(void) {
   s32 turn;
 
@@ -259,7 +259,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   turn = 0x2000;
   LemurianShipDeck_PlaceFacing(6, px(568), px(408), turn);
   LemurianShipDeck_PlaceFacing(5, px(546), px(440), 0x4000);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetScript(ACTOR_JENNA, gLemurianShipDeck_FirstCrewLooksAround);
   Actor_SetScript(ACTOR_SHEBA, gLemurianShipDeck_SecondCrewLooksAround);
@@ -372,7 +372,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Event_WaitTransitionFrames();
   gMainRoutineWork.movementMode = 7;
   gMainRoutineWork.ownerOverride = 1;
-  Event_SetFlag(0x8de);
+  Event_SetFlag(FLAG_SHIP_SAILABLE);
   FieldEvent_SetExitRequest(10);
 }
 
@@ -412,7 +412,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldActor_LaunchFromLeader(9, -24, 8, FACING_EAST_NORTHEAST);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, -4, 24, FACING_NORTHEAST);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
-  Map_CenterOnFollowedPoint();
+  MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

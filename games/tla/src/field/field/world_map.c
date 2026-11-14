@@ -363,11 +363,11 @@ void WorldMap_ApplyAffinePage(void) {
   perspective->windowPending = 0;
 }
 
-/* VIEW(world_map): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has
- * extern u32 gMapBlocks[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/field/field/world_map.c:380:
+/* VIEW(world_map): variable gCellPictures as extern u8 gCellPictures[]; f0298c0
+ * has extern u32 gCellPictures[]; tried as the rest of the object declares it,
+ * it does not compile in tla-ja: games/tla/src/field/field/world_map.c:380:
  * `gMapBlocks__world_map' undeclared (first use in this function). */
-extern u8 gMapBlocks__world_map[] __asm__("gMapBlocks");
+extern u8 gMapBlocks__world_map[] __asm__("gCellPictures");
 
 /// Copies one world map cell's two tile entries (top and bottom) to a BG map.
 static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
@@ -380,7 +380,7 @@ static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
 }
 
 /// Draws world map tile row tileRow (two screen rows) into the BG map at
-/// 0x06004000, from the 32 by 32 cell grid in gMapBlocks.
+/// 0x06004000, from the 32 by 32 cell grid in gCellPictures.
 void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   u8 *cellBytes;
   u8 *screenTile;

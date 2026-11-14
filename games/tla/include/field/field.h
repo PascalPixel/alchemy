@@ -81,7 +81,7 @@ void Actor_SetSquareSprite(u32 objectId);
 void BattleEffect_DropObjectAtAnchor(u32 objectId);
 void SuperLuckyDice_Run(void);
 void GameFlag_RefreshLureCapFar(void);
-void Map_CenterOnFollowedPointFar(void);
+void MapGrid_CenterOnFollowedPointFar(void);
 s32 MapGrid_GetTerrainHeightFar(u8, s32, s32);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 s32 Actor_IsTargetUnset(struct Actor *object);

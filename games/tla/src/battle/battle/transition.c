@@ -335,7 +335,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       zero = 0;
       *slot = background;
     }
-    work.count = BattleParty_ListActorIds(2, (u16 *)work.actors);
+    work.count = BattleUnit_ListIds(2, (u16 *)work.actors);
     work.actors[work.count] = 255;
     BattleActor_SpawnObjectsForList(work.actors, 0);
     BattleEffect_RunShatteringOpeningFar(&work);
@@ -348,10 +348,10 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     IoWriteQueue_ClearBits16(0x04000008, 2);
     IoWriteQueue_SetBits16(0x04000008, 0);
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-    count = BattleParty_ListActorIds(3, shown);
+    count = BattleUnit_ListIds(3, shown);
     shown[count] = 255;
     BattleActor_SpawnObjectsForList((s16 *)shown, 0);
-    count = BattleParty_ListActorIds(1, shown);
+    count = BattleUnit_ListIds(1, shown);
     for (i = 0; i != count; i++)
       BattleHighlight_SetSpriteMode(shown[i], 1);
     for (i = 0; i != 16; i++) {

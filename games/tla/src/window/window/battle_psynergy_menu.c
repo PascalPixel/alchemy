@@ -183,8 +183,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           else if (unit->psySeal != 0)
             Text_SetColor(TEXT_COLOR_PINK);
           work->textPalette = 5;
-          Text_DrawMessageAsTiles(encodedAction + (s32)MsgAbilityNothing,
-                                  window, 16, i * 16);
+          Text_DrawMessageAsTiles(encodedAction + (s32)MsgAbilityName, window,
+                                  16, i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, COST_X, i * 16);
           Text_SetColor(TEXT_COLOR_WHITE);
           work->textPalette = 15;

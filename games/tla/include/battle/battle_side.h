@@ -67,9 +67,9 @@ struct DjinnRecoveryTable {
 
 s32 BattleParty_PrepareMembers(u16 *unit_ids);
 s32 BattleEnemy_List(s16 *unit_ids);
-s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
+s32 BattleUnit_ListLiving(s32 side_mask, u16 *unit_ids);
 s32 BattleParty_AssignOpponentSlots(void);
-s32 BattleParty_ListActorIds(s32 side_mask, u16 *unit_ids);
+s32 BattleUnit_ListIds(s32 side_mask, u16 *unit_ids);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias);
 s32 BattleUnit_CountDownAttackStage(s32 unitId);

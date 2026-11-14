@@ -67,7 +67,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
     SET_ACTOR_POSITION(object, positionX, positionY, positionZ);
     wait(1);
     if (runtimeBlock->mode != 3) {
-      Map_CenterOnFollowedPointFar();
+      MapGrid_CenterOnFollowedPointFar();
     }
   } else {
     Actor_SetMoveTargetFar(object, positionX, positionY, positionZ);

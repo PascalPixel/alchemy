@@ -7,7 +7,7 @@ fight in order and says which routine does each part.
 ## Starting a battle
 
 A battle is handed one number, a [formation](../../glossary.md#formation),
-and `Battle_RunEncounter` plays the whole fight from it.
+and `Battle_Run` plays the whole fight from it.
 
 ### The enemies of a formation
 

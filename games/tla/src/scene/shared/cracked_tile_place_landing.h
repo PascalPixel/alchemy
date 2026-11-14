@@ -16,7 +16,7 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
     marker = work->camera;
     marker->x.fixed = leader->x.fixed;
     marker->z.fixed = leader->z.fixed;
-    Map_CenterOnFollowedPoint();
+    MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = effect;
   }

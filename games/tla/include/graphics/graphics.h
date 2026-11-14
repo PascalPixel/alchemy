@@ -42,7 +42,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids);
 void FileList_UpdatePulse(void);
 void Transform_Reset(void);
 s32 Text_ClearCanvas(void);
-s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
+s32 BattleUnit_ListIdsFar(s32 side, s32 group);
 void Portrait_ReloadFar(s32 a, s32 b, s32 c);
 void Icon_DrawMisc(u32 index);
 s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);

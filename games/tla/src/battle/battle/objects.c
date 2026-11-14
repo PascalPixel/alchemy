@@ -351,8 +351,8 @@ void BattleObject_UpdateSpritePriorities(void) {
   struct TlaSpriteRecord *record;
   struct TlaSpriteRecord **records;
 
-  partyCount = BattleParty_ListActorIds(1, unitIds);
-  enemyCount = BattleParty_ListActorIds(2, &unitIds[partyCount]);
+  partyCount = BattleUnit_ListIds(1, unitIds);
+  enemyCount = BattleUnit_ListIds(2, &unitIds[partyCount]);
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {

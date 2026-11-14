@@ -22,13 +22,13 @@ FarCall_BattleTable:
 	export BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget
 	export BattleMotion_LeapBackFar, BattleMotion_LeapBack
 	export BattleMotion_ApplyKnockbackFar, BattleMotion_ApplyKnockback
-	export BattleParty_ListActorIdsFar, BattleParty_ListActorIds
+	export BattleUnit_ListIdsFar, BattleUnit_ListIds
 	export BattleObject_GetFar, BattleObject_Get
-	export Battle_RunEncounterFar, Battle_RunEncounter
+	export Battle_RunFar, Battle_Run
 	export BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition
 	export BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition
 	export BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition
-	export BattleParty_ListLivingUnitsFar, BattleParty_ListLivingUnits
+	export BattleUnit_ListLivingFar, BattleUnit_ListLiving
 	export BattleParty_PrepareMembersFar, BattleParty_PrepareMembers
 	export BattleCamera_SetCommandViewFar, BattleCamera_SetCommandView
 	export GetMotionRecordFar, GetMotionRecord
@@ -38,13 +38,13 @@ FarCall_BattleTable:
 	export DjinnRecovery_CountDownFar, DjinnRecovery_CountDown
 	export BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette
 	export DjinnRecovery_CountDownTwentyFar, DjinnRecovery_CountDownTwenty
-	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
+	export DebugParameterSet_LoadFar, DebugParameterSet_Load
 	export BattleObject_PutFar, BattleObject_Put
 	export ReleaseBattleObjectRecordsFar, ReleaseBattleObjectRecords
 	export BattleMessage_WaitForAdvanceAtFar, BattleMessage_WaitForAdvanceAt
 	export BattleDjinn_CountStandbyFar, BattleDjinn_CountStandby
 	export BattleParty_PrepareReserveOwnersFar, BattleParty_PrepareReserveOwners
-	export BattleUnit_ListIdsFar, BattleUnit_ListIds
+	export BattleUnit_ListLivingIdsFar, BattleUnit_ListLivingIds
 	export BattleObject_SpawnObjectsForListFar, BattleObject_SpawnObjectsForList
 	export Battle_ChangeEnemyFormFar, Battle_ChangeEnemyForm
 	export BattleSummon_UpdateAvailabilityFar, BattleSummon_UpdateAvailability

@@ -470,7 +470,7 @@ resume:
   return result;
 }
 
-s32 Scene_RunRaisedEvent(s32 id) {
+s32 Scene_RunRaisedTrigger(s32 id) {
   u8 *descriptor = (u8 *)Scene_FindTrigger(6, id);
   s32 result = -1;
 

@@ -2727,7 +2727,7 @@ UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
     other = *(struct Actor **)(event + 460);
     other->x.fixed = object->x.fixed;
     other->z.fixed = object->z.fixed;
-    Map_CenterOnFollowedPoint();
+    MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     WORD_AT(Ram_HeapSlots->fieldWork, 428) = value;
   }

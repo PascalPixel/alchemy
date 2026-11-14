@@ -1442,17 +1442,9 @@ void Func_02001bcc(void) {
 
 #include "shared/ride_update_carried.h"
 
-extern u32 gData_02005d8c[];
+extern u32 gScriptedPart_Script[];
 
-void Actor_ResetScriptedFor(struct Actor *object, s32 unused) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gData_02005d8c);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+#include "shared/actor_reset_scripted_for.h"
 
 void Func_02001fb4(s32 *position, s32 speed, s32 mode) {
   struct Actor *object =
@@ -1476,22 +1468,7 @@ void Func_02001fb4(s32 *position, s32 speed, s32 mode) {
 
 void Ride_UpdateDrift(struct Actor *object);
 
-/// Stops the object and sets its sprite part, then restarts its script at
-/// gData_02005d8c; Func_02001e1c of the Mars Lighthouse entrance is the same
-/// function.
-void Actor_SetupScriptedPart(struct Actor *object, s32 part) {
-  s32 zero = 0;
-
-  object->motionFlags = zero;
-  object->collisionFlags = zero;
-
-  ((struct SpriteParts *)object->sprite)->part = part;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gData_02005d8c);
-  object->timer = zero;
-  object->speedLimit = zero;
-  object->acceleration = zero;
-}
+#include "shared/actor_setup_scripted_part.h"
 
 void Func_020021a0(s32 *position, s32 speed, s32 mode) {
   struct Actor *object =
@@ -1545,17 +1522,7 @@ void Func_02002230(s32 *position, s32 speed, s32 mode) {
 
 #include "shared/ride_update_drift.h"
 
-void Actor_SetupScriptedFor(struct Actor *object, s32 unused) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_SelectAnimation(object, 2);
-  Actor_StartScript(object, gData_02005d8c);
-  FieldActor_SetSpriteColor(object, 10);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+#include "shared/actor_setup_scripted_for.h"
 
 void Ride_SpawnSpark(s32 *position, s32 speed) {
   struct Actor *object =
@@ -2143,48 +2110,9 @@ void Func_02002d08(struct Actor *actor) {
   }
 }
 
-extern u32 gData_02005e00[];
+extern u32 gEmbers_Script[];
 
-/// Throws two sparks (object kind 325) from (x, y, z), each upward at about
-/// speed plus 0x14000 with a random spread, at a random angle and size.
-void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed) {
-  s32 i;
-
-  i = 1;
-next:
-  {
-    struct Actor *object = FieldActor_Create(325, x, y, z);
-
-    if (object != NULL) {
-      s32 angle;
-      s32 rise;
-      s32 radius;
-      u32 size;
-      s32 scale;
-
-      rise = speed + (Random16() >> 4) - (Random16() >> 4);
-      angle = 0x4000 + rise;
-      radius = Random16() * 8;
-      size = Random16();
-      Actor_StartScript(object, gData_02005e00);
-      Actor_SetSpriteFlags(object, 0);
-      /* FAKEMATCH(temporary): the scale is taken before the velocity
-       * stores. */
-      scale = (size >> 1) + 0x4000;
-      object->velocityY = rise + 0x14000;
-      object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
-      object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));
-      object->acceleration = 0;
-      object->gravity = 0x547a;
-      object->scaleX = scale;
-      object->scaleY = object->scaleX;
-      object->bounce = Q16_ONE / 2;
-      Actor_SetSpriteColorMode(object, 1);
-    }
-  }
-  if (--i >= 0)
-    goto next;
-}
+#include "shared/embers_spawn.h"
 
 void Func_02002f6c(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -3166,7 +3094,7 @@ s32 gData_02005d3c[] = {
       SC_END,                                                                  
   };
 
-u32 gData_02005d8c[] = {                                                               
+u32 gScriptedPart_Script[] = {                                                               
       SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_FREE,                                                                 
   };
@@ -3177,7 +3105,7 @@ u32 gData_02005dbc[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-u32 gData_02005e00[] = {
+u32 gEmbers_Script[] = {
     0, 20, 0x80010000, 22, 25, 0,
     0, 1, 22, 25, 1, 0,
     1, 13, 10, 0xc0010000, 38,

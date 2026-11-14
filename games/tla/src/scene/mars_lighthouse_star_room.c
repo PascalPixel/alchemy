@@ -1128,7 +1128,7 @@ extern u8 gInventorySnapshot[];
 
 #include "shared/ride_update_carried.h"
 
-extern u32 gData_02004744[];
+extern u32 gScriptedPart_Script[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -1160,22 +1160,7 @@ s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
 void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 
-/// Stops the object and sets its sprite part, then restarts its script at
-/// gData_02004744; Func_02001e1c of the Mars Lighthouse entrance is the same
-/// function.
-void Actor_SetupScriptedPart(struct Actor *object, s32 part) {
-  s32 zero = 0;
-
-  object->motionFlags = zero;
-  object->collisionFlags = zero;
-
-  ((struct SpriteParts *)object->sprite)->part = part;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gData_02004744);
-  object->timer = zero;
-  object->speedLimit = zero;
-  object->acceleration = zero;
-}
+#include "shared/actor_setup_scripted_part.h"
 
 #define DEFINE_FUNC_0200196C_97(name, call1)                                   \
   void name(s32 *position, s32 speed, s32 flag) {                              \
@@ -1228,7 +1213,7 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
 
 #include "shared/ride_update_drift.h"
 
-extern u32 gData_02004744[];
+extern u32 gScriptedPart_Script[];
 
 #include "shared/actor_setup_scripted.h"
 
@@ -1792,48 +1777,9 @@ void Func_020024d4(struct Actor *actor) {
   }
 }
 
-extern u32 gData_020047b8[];
+extern u32 gEmbers_Script[];
 
-/// Throws two sparks (object kind 325) from (x, y, z), each upward at about
-/// speed plus 0x14000 with a random spread, at a random angle and size.
-void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed) {
-  s32 i;
-
-  i = 1;
-next:
-  {
-    struct Actor *object = FieldActor_Create(325, x, y, z);
-
-    if (object != NULL) {
-      s32 angle;
-      s32 rise;
-      s32 radius;
-      u32 size;
-      s32 scale;
-
-      rise = speed + (Random16() >> 4) - (Random16() >> 4);
-      angle = 0x4000 + rise;
-      radius = Random16() * 8;
-      size = Random16();
-      Actor_StartScript(object, gData_020047b8);
-      Actor_SetSpriteFlags(object, 0);
-      /* FAKEMATCH(temporary): the scale is taken before the velocity
-       * stores. */
-      scale = (size >> 1) + 0x4000;
-      object->velocityY = rise + 0x14000;
-      object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
-      object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));
-      object->acceleration = 0;
-      object->gravity = 0x547a;
-      object->scaleX = scale;
-      object->scaleY = object->scaleX;
-      object->bounce = Q16_ONE / 2;
-      Actor_SetSpriteColorMode(object, 1);
-    }
-  }
-  if (--i >= 0)
-    goto next;
-}
+#include "shared/embers_spawn.h"
 
 void Func_02002738(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -2397,7 +2343,7 @@ s32 gData_020045b8[] = {
     17,
 };
 
-u32 gData_02004744[] = {                                                               
+u32 gScriptedPart_Script[] = {                                                               
       SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_FREE,                                                                 
   };
@@ -2408,7 +2354,7 @@ u32 gData_02004774[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-u32 gData_020047b8[] = {
+u32 gEmbers_Script[] = {
     0, 20, 0x80010000, 22, 25, 0,
     0, 1, 22, 25, 1, 0,
     1, 13, 10, 0xc0010000, 38,

@@ -76,7 +76,7 @@ void Func_0200080c(void);
 void Actor_Blink(struct Actor *object);
 
 extern u32 gData_02003304[];
-extern u32 gData_02003348[];
+extern u32 gEmbers_Script[];
 
 void Func_020002c8(void);
 
@@ -207,7 +207,7 @@ void Actor_ResetScripted(struct Actor *object);
 void Actor_SetupScriptedPart(struct Actor *object, s32 layer);
 void Ride_UpdateLanding(struct Actor *object);
 
-extern u32 gData_020032d4[];
+extern u32 gScriptedPart_Script[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Placements[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Room6Placements[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[];
@@ -1099,15 +1099,7 @@ s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
-void Actor_ResetScripted(struct Actor *object) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gData_020032d4);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+#include "shared/actor_reset_scripted.h"
 
 void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
@@ -1135,22 +1127,7 @@ s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
-/// Stops the object and sets its sprite part, then restarts its script at
-/// gData_020032d4; Func_02001e1c of the Mars Lighthouse entrance is the same
-/// function.
-void Actor_SetupScriptedPart(struct Actor *object, s32 part) {
-  s32 zero = 0;
-
-  object->motionFlags = zero;
-  object->collisionFlags = zero;
-
-  ((struct SpriteParts *)object->sprite)->part = part;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gData_020032d4);
-  object->timer = zero;
-  object->speedLimit = zero;
-  object->acceleration = zero;
-}
+#include "shared/actor_setup_scripted_part.h"
 
 void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
@@ -1242,17 +1219,7 @@ void Func_02001e38(struct Actor *object) {
   }
 }
 
-void Actor_SetupScripted(struct Actor *object) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_SelectAnimation(object, 2);
-  Actor_StartScript(object, gData_020032d4);
-  FieldActor_SetSpriteColor(object, 10);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+#include "shared/actor_setup_scripted.h"
 
 void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
   struct Actor *object = FieldActor_Create(285, position->x, position->y,
@@ -1691,46 +1658,7 @@ void Func_02002870(struct Actor *actor) {
   }
 }
 
-/// Throws two sparks (object kind 325) from (x, y, z), each upward at about
-/// speed plus 0x14000 with a random spread, at a random angle and size.
-void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed) {
-  s32 i;
-
-  i = 1;
-next:
-  {
-    struct Actor *object = FieldActor_Create(325, x, y, z);
-
-    if (object != NULL) {
-      s32 angle;
-      s32 rise;
-      s32 radius;
-      u32 size;
-      s32 scale;
-
-      rise = speed + (Random16() >> 4) - (Random16() >> 4);
-      angle = 0x4000 + rise;
-      radius = Random16() * 8;
-      size = Random16();
-      Actor_StartScript(object, gData_02003348);
-      Actor_SetSpriteFlags(object, 0);
-      /* FAKEMATCH(temporary): the scale is taken before the velocity
-       * stores. */
-      scale = (size >> 1) + 0x4000;
-      object->velocityY = rise + 0x14000;
-      object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
-      object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));
-      object->acceleration = 0;
-      object->gravity = 0x547a;
-      object->scaleX = scale;
-      object->scaleY = object->scaleX;
-      object->bounce = Q16_ONE / 2;
-      Actor_SetSpriteColorMode(object, 1);
-    }
-  }
-  if (--i >= 0)
-    goto next;
-}
+#include "shared/embers_spawn.h"
 
 void Func_02002ad4(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -1796,7 +1724,7 @@ s32 gData_020032c8[] = {
 };
 
 // clang-format off
-u32 gData_020032d4[] = {                                                               
+u32 gScriptedPart_Script[] = {                                                               
       SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_FREE,                                                                 
   };
@@ -1807,7 +1735,7 @@ u32 gData_02003304[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-u32 gData_02003348[] = {
+u32 gEmbers_Script[] = {
     0, 20, 0x80010000, 22, 25, 0,
     0, 1, 22, 25, 1, 0,
     1, 13, 10, 0xc0010000, 38,

@@ -1198,7 +1198,7 @@ void Ride_UpdateDrift(struct Actor *object);
 
 #include "shared/ride_update_carried.h"
 
-extern u32 gData_020056a0[];
+extern u32 gScriptedPart_Script[];
 
 void Ride_UpdateDrift(struct Actor *object);
 
@@ -1208,12 +1208,12 @@ void Ride_UpdateDrift(struct Actor *object);
 
 #include "shared/ride_update_landing.h"
 
-extern u32 gData_020056a0[];
+extern u32 gScriptedPart_Script[];
 
 void Ride_UpdateDrift(struct Actor *object);
 
 /// Stops the object and sets its sprite part, then restarts its script at
-/// gData_020056a0. Overlays 6ab, 6ac and 6ad have the same function.
+/// gScriptedPart_Script. Overlays 6ab, 6ac and 6ad have the same function.
 #include "shared/actor_setup_scripted_part.h"
 
 #include "shared/ride_spawn_back.h"
@@ -1631,7 +1631,7 @@ void Func_020029c8(struct Actor *actor) {
   }
 }
 
-extern u32 gData_02005714[];
+extern u32 gEmbers_Script[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
@@ -2558,7 +2558,7 @@ s32 gData_02005644[] = {
       4,  0x800000,         0x160000, 0x2a80000, 1,  22, 37, (s32)Func_02000808, 46, (s32)Actor_Park, 17,      
   };
 
-u32 gData_020056a0[] = {                                                               
+u32 gScriptedPart_Script[] = {                                                               
       SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_FREE,                                                                 
   };
@@ -2569,7 +2569,7 @@ u32 gData_020056d0[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-u32 gData_02005714[] = {
+u32 gEmbers_Script[] = {
     0, 20, 0x80010000, 22, 25, 0,
     0, 1, 22, 25, 1, 0,
     1, 13, 10, 0xc0010000, 38,

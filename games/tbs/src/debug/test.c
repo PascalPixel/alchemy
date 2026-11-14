@@ -534,10 +534,8 @@ static void MenuTest_GivePartyDjinn(void) {
 
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
 static void MenuTest_DamageAndAfflictParty(void) {
-  /* FAKEMATCH(temporary): the unit written through a byte pointer moved on to
-   * haunt; as unit->poison, unit->haunt and unit->curse, 5 of 68 instructions
-   * differ in tbs-en. */
-  u8 *record;
+  struct Unit *isaac;
+  struct Unit *garet;
 
   FieldMessage_Show(MsgDebugBodyTornApart, FIELD_MESSAGE_ZOOM);
   FieldUnit_AddHp(ISAAC, -100);
@@ -548,13 +546,12 @@ static void MenuTest_DamageAndAfflictParty(void) {
   Unit_AddPp(GARET, -40);
   Unit_AddPp(IVAN, -35);
   Unit_AddPp(MIA, -20);
-  record = (u8 *)Unit_Get(ISAAC);
-  record[offsetof(struct Unit, poison)] = POISON_NORMAL;
-  record += offsetof(struct Unit, haunt);
-  *record = 1;
-  record = (u8 *)Unit_Get(GARET);
-  record[offsetof(struct Unit, curse)] = 1;
-  record[offsetof(struct Unit, poison)] = POISON_VENOM;
+  isaac = Unit_Get(ISAAC);
+  isaac->poison = POISON_NORMAL;
+  isaac->haunt = 1;
+  garet = Unit_Get(GARET);
+  garet->curse = 1;
+  garet->poison = POISON_VENOM;
   MenuTest_RecalculateParty();
 }
 

@@ -1452,8 +1452,6 @@ UNUSED void ItemMenu_NoOp(void) {}
 /// target's stats with it equipped; for a Psynergy item, the Psynergy it
 /// teaches.
 void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
-  /* FAKEMATCH(temporary): member, an s32, takes the saved unit's address, and
-   * for Psynergy items buffer copies it twice. */
   struct ItemMenuWork *menu = gMenuWork;
   s32 panelStyle = 0;
   struct Unit *unit = Unit_GetFar(member);
@@ -1513,8 +1511,7 @@ void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
 
       unit = Unit_GetFar(target);
       size = BATTLE_UNIT_SIZE;
-      member = (s32)Heap_Alloc(size);
-      buffer = (void *)member;
+      buffer = Heap_Alloc(size);
       Iwram_CopyWords(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
@@ -1528,8 +1525,7 @@ void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
       } else {
         StatusPanel_Draw(menu->statusWindow, target, slot, panelStyle);
       }
-      Iwram_CopyWords(unit, (void *)member, size);
-      buffer = (void *)member;
+      Iwram_CopyWords(unit, buffer, size);
       Heap_Release(buffer);
     }
     break;

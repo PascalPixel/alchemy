@@ -312,8 +312,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     Sound_PlayFar(SE_POWER_UP);
 
     // Phase 1, the gathering (CASTING_IMPACT_GATHER_FRAMES).
-    frame = 0;
-    do {
+    for (frame = 0; frame != CASTING_IMPACT_GATHER_FRAMES; frame++) {
       n = 0;
       for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
         struct Particle *step = &work->particles[i];
@@ -358,8 +357,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       }
       EFFECT_PRESENT_CANVAS(work);
-      frame++;
-    } while (frame != CASTING_IMPACT_GATHER_FRAMES);
+    }
     /* FAKEMATCH(dead): position set again to the &djinnPos it holds. */
     position = &djinnPos;
 

@@ -331,7 +331,6 @@ void Actor_ClosePortrait(s32 id) {
 /// portraitY), all in tiles. When delay is nonzero, the second message waits
 /// for the first to finish, checking every delay frames. Waits for A, B, L or
 /// R, then closes both.
-// As ☀️'s function of the same name, which has no delay.
 void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                   s32 firstPortraitX, s32 firstPortraitY,
                                   s32 second, s32 secondX, s32 secondY,

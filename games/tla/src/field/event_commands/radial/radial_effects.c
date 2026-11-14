@@ -144,7 +144,7 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object);
 #define ORB_OBJECT 280
 #define MOTE_OBJECT 308
 
-// The two targets ⚓️ treats apart, by their first animation.
+// The two targets Whirlwind treats apart, by their first animation.
 #define TARGET_ANIMATION_A 372
 #define TARGET_ANIMATION_B 373
 
@@ -791,7 +791,6 @@ void FieldEffect_UpdateSpinAngle(struct Actor *object) {
 
 /// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
 /// frame; released once its scale falls below 0x3000.
-// As ☀️'s FieldEffect_UpdateDescendingObject.
 void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
   u32 scale;
   u32 scaleX;
@@ -1033,7 +1032,6 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
 
 /// The caster during Avoid (FieldPsynergy_Avoid): sheds a pair of falling
 /// arcs every 5 frames (7 in scene Clear), and spins in phase 1.
-// As ☀️'s function of the same name.
 void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject *caster) {
   s16 phase;
   s32 elapsedFrames;

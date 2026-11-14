@@ -313,7 +313,6 @@ s32 Field_RequestShortcut(u32 assignment) {
 /// keys set their request and return 1, the two shortcut keys pass on their
 /// assignment (Field_RequestShortcut). While a second event is pending, any of
 /// the five requests command 0x209b instead. Returns 0 when none is pressed.
-// As ☀️'s function of the same name.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 result = 0;

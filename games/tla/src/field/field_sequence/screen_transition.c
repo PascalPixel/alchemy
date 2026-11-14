@@ -123,7 +123,6 @@ void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
 }
 
 /// Returns 1 while Reveal is active, else 0.
-// As ☀️'s Field_IsRevealActive.
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s32 revealState;
   u32 isActive = 0;
@@ -446,7 +445,6 @@ void FieldEffect_SpawnRevealMarkers(void) {
 /// Each frame, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
 /// copy the rest into WIN0H and WIN1H one word each HBlank.
-// As ☀️'s FieldEffect_StartWindowHBlankDma does.
 void FieldEffect_StartWindowHBlankDma(void) {
   struct ScreenTransitionState *work;
   u16 *src;
@@ -885,7 +883,7 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
   return state;
 }
 
-// Fades the screen in over frames frames, as ☀️'s ScreenTransition_Start.
+/// Fades the screen in over frames frames; mode's high byte is its style.
 void ScreenTransition_Start(s32 mode, s32 frames) {
   struct MapViewWork *display;
   s32 variant;

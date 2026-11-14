@@ -416,8 +416,7 @@ struct ParticleSprite {
   u8 flags;
 };
 
-// Kicks up a dust puff (object 285) where source stands, as ☀️'s
-// FieldEffect_SpawnBurstParticle.
+/// Kicks up a dust puff (object 285) where source stands.
 void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   struct Actor *object;
   struct ParticleSprite *child;

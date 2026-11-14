@@ -157,7 +157,6 @@ s32 MapGrid_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
 /// buffer, both cleared by DMA from one zero word, and the animation callbacks
 /// (mode 4 runs its own; modes 3 and 4 take ObjectSystem_UpdateCameraFixed at
 /// 0x480, the others ActorSystem_PlaceSprites).
-// No ☀️ twin found; ☀️'s field.c starts its map animations the same way.
 void ActorSystem_Initialize(s32 mode) {
   struct MapAnimationWork *work;
   void *buffer;
@@ -582,7 +581,6 @@ struct IconSprite__resource_slot {
 /// Shows icon id on its owner's 16 by 16 sprite: Icon_DrawItemFar prepares the
 /// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
 /// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.
-// No ☀️ twin found.
 void Actor_SetItemIcon(struct IconOwner *owner, s32 id) {
   struct IconSprite__resource_slot *sprite;
   u8 *buffer;
@@ -878,9 +876,8 @@ void ActorSystem_PlaceSprites(void) {
 }
 
 // The fixed camera: each frame it places every object's sprites, facing them
-// by the angle from the eye to the target. The Lost Age places each object in
-// a function of its own, the body of ☀️'s ObjectSystem_UpdateCameraFixed
-// loop.
+// by the angle from the eye to the target, each object in a function of its
+// own.
 
 s32 ActorCamera_ReturnTrue(void) { return 1; }
 

@@ -622,7 +622,6 @@ void FieldEffect_SnapScaleToFull(struct Actor *object) {
 
 /// The object spins as it rises for 31 frames, shrinks, and bursts into 8
 /// particles (object 673).
-// As ☀️'s UpdateRisingParticleBurst.
 void UpdateRisingParticleBurst(void *object) {
   struct Actor *src = object;
   struct Actor *child;

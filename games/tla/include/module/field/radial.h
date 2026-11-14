@@ -76,7 +76,7 @@ struct LaunchScene {
   struct LaunchObject *mainObject;
 };
 
-// ⚓️'s composite sprite, as far as this reads it.
+/// A composite sprite, as far as this reads it.
 struct OrbTargetSprite {
   u8 unk00[0x28];
   struct AnimationEntry *entries[4];
@@ -161,7 +161,7 @@ struct TimedObject {
   void *update;
 };
 
-// ⚓️'s effect work holds its slots 8 bytes earlier than ☀️'s.
+/// The effect work, its slots 8 bytes earlier than BattleFxScene has them.
 struct FallbackScene {
   u8 unk00[0x50];
   struct FieldParticle slots[16];

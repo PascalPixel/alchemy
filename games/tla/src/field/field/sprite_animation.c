@@ -468,7 +468,6 @@ void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
 /// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
 /// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
 /// entry 93 and copies the strided tile copier into RAM.
-// As ☀️'s function of the same name.
 void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
@@ -574,7 +573,6 @@ typedef char
 
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
-// As ☀️'s function of the same name.
 struct ResourceObject *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct ResourceSprite *sprite;

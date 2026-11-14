@@ -16,7 +16,6 @@ extern const u8 gData_080f0fe0[];
 /// its 24-step cycle and a brightness level (7 is neutral): three channels of
 /// the wave, each raised or lowered by the level and held to 0..31, packed as
 /// RGB555.
-// ⚓️'s form of ☀️'s GraphicsPalette_SetTintChannelsFromCounters.
 s32 HoverGlow_GetColor(s32 counter, s32 level) {
   s16 phase;
   s16 bias;

@@ -23,7 +23,6 @@
 /// depth. Refuses steps into an occupied cell, from or onto a cell without
 /// attribute bit 6, or onto ground too high (up) or too low (down), and
 /// records the held keys in the event work. Returns 1.
-// As ☀️'s Actor_MoveByKeys.
 s32 Actor_MoveByKeys(struct Actor *object) {
   struct FieldPosition position;
   struct MapCell *sourceCell;

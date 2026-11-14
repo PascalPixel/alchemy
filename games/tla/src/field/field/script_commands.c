@@ -711,7 +711,6 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
 /// SC_APPROACH_WATCHED: follows the watched object at its speed. More than 16
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
-// As ☀️'s function of the same name.
 s32 Actor_ApproachWatchedActor(struct Actor *object) {
   s32 distancePixels;
   s32 moveZ;

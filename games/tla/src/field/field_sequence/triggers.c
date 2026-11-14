@@ -491,7 +491,6 @@ s32 Scene_RunRaisedEvent(s32 id) {
 /// Runs the touch event (kind 2) of what the leader touched, or else takes its
 /// exit (kind 1): plays the exit's sound (and effect) and records where it
 /// leads. Returns 0 when something ran, -1 when there was nothing.
-// As ☀️'s Scene_RunStepTriggerOrExit.
 s32 Scene_RunStepTriggerOrExit(s32 value) {
   struct TouchEvent *event;
   s32 handled;

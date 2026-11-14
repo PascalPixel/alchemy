@@ -68,7 +68,7 @@ struct ParticleTimer {
   u16 timer;
 };
 
-// ⚓️'s composite sprite (as field.h's CompositeAnimation).
+/// A composite sprite, as field.h's CompositeAnimation.
 struct CloakSprite {
   u8 unk00[0x19];
   u8 dirty; // redraw the parts
@@ -621,7 +621,7 @@ struct BurstParticleVisual {
   } attributes;
 };
 
-// ⚓️'s sprite keeps its second part 28 bytes in.
+/// A sprite whose second part is 28 bytes in.
 struct BurstParticleVisualGroup {
   struct BurstParticleVisual primary;
   u8 reserved0c[16];

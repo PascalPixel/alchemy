@@ -395,7 +395,6 @@ void Field_StartPaletteTransition(s32 frames) {
 /// counter (so each cast looks a little different), fixed for some
 /// animations, and forced by the tint flags; then fades towards it over eight
 /// frames. The palettes are copied by Field_StartColorTransition.
-// ☀️'s function of the same name also copies the palettes.
 void FieldPsynergy_FadeToCastColor(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   s32 tint;

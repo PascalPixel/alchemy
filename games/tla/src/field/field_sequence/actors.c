@@ -17,7 +17,6 @@
 /// Picks the sprite a scene placement's character id shows: character 8
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is
 /// set.
-// As ☀️'s function of the same name.
 s32 Party_GetCharacterSprite(s32 character) {
   s32 sprite;
 

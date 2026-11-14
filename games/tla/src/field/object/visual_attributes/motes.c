@@ -26,7 +26,6 @@ struct MoteWork__motes {
 
 /// Starts the 64 floating motes (FieldMotes_Update): loads their tiles and puts
 /// each under the leader with staggered timers, drawn semi-transparent.
-// As ☀️'s function of the same name.
 void FieldMotes_Start(void) {
   struct MoteWork__motes *work;
   struct Mote *mote;

@@ -121,7 +121,6 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
 /// its tile, at the tile's south edge, stops it and gives it the animation's
 /// mode, then waits 18 frames. The leader's sprite gains a second part
 /// (metadata 267) for it.
-// As ☀️'s function of the same name.
 void Exit_PrepareAnimation(s32 animation) {
   u32 zero;
   u8 param;

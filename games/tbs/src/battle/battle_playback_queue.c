@@ -52,8 +52,8 @@ UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
 /// Shows the bobbing arrow at the message window and waits for the player to go
 /// on.
 UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
-  struct AdvanceArrowSprite *prompt;
-  struct AdvanceArrowSprite promptStorage;
+  struct MenuSprite *prompt;
+  struct MenuSprite promptStorage;
   s32 frame;
   s32 tileSlot;
   s32 pictureTiles;
@@ -76,13 +76,13 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     // Both attribute words are set whole, as PLAY_ADVANCE sets them.
-    ((u32 *)prompt)[1] = ADVANCE_ARROW_ATTR0;
-    ((u32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
-    prompt->x = window->x * 8 + (offset->x >> 8) + 4;
+    prompt->oam.word.attr01 = ADVANCE_ARROW_ATTR0;
+    prompt->oam.word.attr23 = 0;
+    prompt->oam.f.tile = VramCache_Reload(tileSlot, pictureTiles);
+    prompt->oam.f.x = window->x * 8 + (offset->x >> 8) + 4;
     // Bob up and down by up to 2 pixels every 16 frames.
-    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
-                (offset->y >> 8) + 6;
+    prompt->oam.f.y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
+                      (offset->y >> 8) + 6;
     Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one; B held goes on at once.
@@ -100,8 +100,8 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
 UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   struct MenuPoint position;
   s32 pointerTiles;
-  struct CursorSprite promptStorage;
-  struct CursorSprite *prompt;
+  struct MenuSprite promptStorage;
+  struct MenuSprite *prompt;
   s32 tileSlot;
 
   pointerTiles = WindowSprite_GetPointerTilesFar(0);
@@ -116,12 +116,12 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    ((s32 *)prompt)[1] = OBJ_SIZE_16X16;
-    ((s32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, pointerTiles);
+    prompt->oam.word.attr01 = OBJ_SIZE_16X16;
+    prompt->oam.word.attr23 = 0;
+    prompt->oam.f.tile = VramCache_Reload(tileSlot, pointerTiles);
     // Nudge it up and right every four frames.
-    prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
-    prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
+    prompt->oam.f.x = position.x + ((gFrameCount & 4) >> 1) - 4;
+    prompt->oam.f.y = position.y - ((gFrameCount & 4) >> 2) - 8;
     Oam_AddSpriteAtDepth(prompt, 240);
     if (gKeysPressed & KEY_ADVANCE)
       break;

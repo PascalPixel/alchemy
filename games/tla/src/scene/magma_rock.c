@@ -284,7 +284,7 @@ s32 Func_02003af4();
 // Rebuilds the room's opened passages on entry and sets the flag of the cell
 // the leader stands on.
 s32 MagmaRock_BlockMovedPillar(void) {
-  struct Actor *leader = gFieldWork->unkcbc;
+  struct Actor *leader = gFieldWork->movedBlock;
   s32 x, z;
 
   Event_Start();

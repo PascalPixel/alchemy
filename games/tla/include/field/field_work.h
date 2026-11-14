@@ -137,7 +137,8 @@ struct FieldWork {
   s8 castStarted;      ///< set once a cast has been announced
   s16 queuedSound;     ///< a sound Scene_PlayQueuedMusic plays; -1 for none
   u8 unkcba[2];
-  struct Actor *unkcbc;
+  struct Actor *movedBlock; ///< the block Actor_LiftTargetBlock lifted, for
+                            ///< Actor_PlaceMovedBlock
   /// The cells a Psynergy touches, as cell coordinates, ended by -1.
   s16 psynergyCells[56];
   s8 unkd30;

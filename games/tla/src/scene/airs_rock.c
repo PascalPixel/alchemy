@@ -1041,7 +1041,7 @@ void Func_02001ca4(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Actor_LiftTargetBlock(gData_02003d94);
-  Func_02000468(work->unkcbc);
+  Func_02000468(work->movedBlock);
 }
 
 /* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void
@@ -1053,7 +1053,7 @@ void Func_02001ca4(void) {
 extern void Func_02003cc0__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 
 void Func_02001cc8(void) {
-  struct Actor *object = gFieldWork->unkcbc;
+  struct Actor *object = gFieldWork->movedBlock;
   s32 x, z;
 
   Event_Start();

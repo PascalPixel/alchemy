@@ -209,7 +209,7 @@ static __inline__ s32 Half(u8 *base, s32 offset) {
   SetHeight(x, z, height)
 
 void Func_0200053c(s32 offset) {
-  u8 *work = (u8 *)gFieldWork->unkcbc;
+  u8 *work = (u8 *)gFieldWork->movedBlock;
   s32 height;
 
   offset <<= 3;

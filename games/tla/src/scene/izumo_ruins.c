@@ -302,7 +302,7 @@ void IzumoRuins_FreezePuddle(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FlagBlock_ApplyFlags(gIzumoRuins_Puddles);
-  object = work->unkcbc;
+  object = work->movedBlock;
   object->priorityFlags |= 1;
   object->priorityFlags &= ~2;
   Event_End();

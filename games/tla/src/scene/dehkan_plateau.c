@@ -69,11 +69,9 @@ void Actor_StartScript(struct Actor *object, const void *script);
 // then lifts the leader if the new terrain is above the leader.
 #include "shared/pillars_raise.h"
 
-#define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
-
-void Func_02000d78(u16 *list) {
+void Pillars_LowerHeldCells(u16 *list) {
   struct Actor *held = Leader_FindActorAhead();
-  void *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u8 *shapeGrid = gMapShapeGrid;
 
   if (held == NULL) {
@@ -82,7 +80,7 @@ void Func_02000d78(u16 *list) {
     if (id != -1)
       held = Actor_GetById(id);
   }
-  HELD_OBJECT(work) = NULL;
+  work->movedBlock = NULL;
   if (*list != 0xffff) {
   loop:
     if (held == Actor_GetById(*list)) {
@@ -103,7 +101,7 @@ void Func_02000d78(u16 *list) {
       cells->attributeB &= 63;
       cells += 128;
       cells->attributeB &= 191;
-      HELD_OBJECT(work) = held;
+      work->movedBlock = held;
     }
     list++;
     if (*list != 0xffff)
@@ -117,7 +115,6 @@ void Func_02000d78(u16 *list) {
 
 #include "../field/field_effect/move.c"
 
-#undef HELD_OBJECT
 // @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -772,7 +769,7 @@ void HeldActor_RaiseCell__dehkan_plateau(struct Actor *object) __asm__(
     "HeldActor_RaiseCell");
 #define HeldActor_RaiseCell HeldActor_RaiseCell__dehkan_plateau
 
-void Func_0200200c(struct Actor *object) {
+void DehkanPlateau_PlaceRaisedPillar(struct Actor *object) {
   s32 x;
   u8 *cell;
 
@@ -809,23 +806,23 @@ void Scene_RunIfHeld(void) {
   if (Leader_CanPushObjectAhead() != 0) {
     object = Actor_GetById(
         Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner));
-    Func_02000d78(gDehkanPlateau_Room3RaisedPillars);
+    Pillars_LowerHeldCells(gDehkanPlateau_Room3RaisedPillars);
     Leader_PushObjectAhead();
-    Func_0200200c(object);
+    DehkanPlateau_PlaceRaisedPillar(object);
   }
 }
 
 void DehkanPlateau_LiftRoom3RaisedPillar(void) {
-  Func_02000d78(gDehkanPlateau_Room3RaisedPillars);
+  Pillars_LowerHeldCells(gDehkanPlateau_Room3RaisedPillars);
 }
 
-void Func_02002124(void) {
+void DehkanPlateau_FinishMovingRaisedPillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *active;
 
-  active = work->unkcbc;
+  active = work->movedBlock;
   if (active != 0)
-    Func_0200200c(active);
+    DehkanPlateau_PlaceRaisedPillar(active);
 }
 
 void Func_02002140(void) {
@@ -1022,7 +1019,7 @@ void DehkanPlateau_CannonCastsPound(void) {
 #undef EFFECT_SCRIPTS
 #undef gDehkanPlateau_PoundCube
 #undef HeldActor_RaiseCell
-#undef Func_02000d78
+#undef Pillars_LowerHeldCells
 #undef CrumblingPillars_StepWithStandIn
 // @file
 void Actor_DisableById(s32 id);
@@ -2361,10 +2358,10 @@ struct Trigger gDehkanPlateau_Room3Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3RaisedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3RaisedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3RaisedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(Func_02002124)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_02002124)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(Func_02002124)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_02002124)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingRaisedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingRaisedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingRaisedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingRaisedPillar)},
     {STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom3Pillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom3Pillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnRoom3Pillars)},

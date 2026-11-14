@@ -100,15 +100,13 @@ s32 Actor_GetCellIndex(struct Actor *object);
 // then lifts the leader if the new terrain is above the leader.
 #include "shared/pillars_raise.h"
 
-#define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
-
 /// Lowers the cells under the held actor, or the one the leader carries, for
 /// each listed actor it is: the shape grid takes the shape for its new height
-/// and the cell flags under it are cleared; the actor is kept at 0xcbc of the
-/// event work.
+/// and the cell flags under it are cleared; the field work keeps the actor as
+/// its moved block.
 void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
   struct Actor *held = Leader_FindActorAhead();
-  void *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u8 *grid;
 
   if (held == NULL) {
@@ -118,7 +116,7 @@ void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
       held = Actor_GetById(id);
   }
   grid = Ram_MapShapeGrid;
-  HELD_OBJECT(work) = NULL;
+  work->movedBlock = NULL;
   if (*list != 0xffff) {
   loop:
     if (held == Actor_GetById(*list)) {
@@ -139,7 +137,7 @@ void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
       ((struct MapCell *)cell)->attributeB &= 63;
       cell += 0x200;
       ((struct MapCell *)cell)->attributeB &= 191;
-      HELD_OBJECT(work) = held;
+      work->movedBlock = held;
     }
     list++;
     if (*list != 0xffff)
@@ -399,8 +397,8 @@ void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void MadraCatacombs_FinishMovingClimbablePillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (work->unkcbc != 0)
-    MadraCatacombs_SettleClimbablePillar(work->unkcbc);
+  if (work->movedBlock != 0)
+    MadraCatacombs_SettleClimbablePillar(work->movedBlock);
 }
 
 /// The tablet room's flames, lit: actors 10 to 19 stand in two columns and

@@ -14,7 +14,7 @@ struct EffectWork1a {
 };
 
 /// A shape grid byte seen as a bit-field, so its store takes the struct's
-/// alias set (see the FAKEMATCH tag in Func_02000d78).
+/// alias set (see the FAKEMATCH tag in Pillars_LowerHeldCells).
 struct ShapeBits {
   u32 shape : 8;
 };
@@ -79,7 +79,7 @@ void Func_020017f4(void);
 void DehkanPlateau_StepOnCrack(void);
 void Scene_RunIfHeld(void);
 void DehkanPlateau_LiftRoom3RaisedPillar(void);
-void Func_02002124(void);
+void DehkanPlateau_FinishMovingRaisedPillar(void);
 void DehkanPlateau_CannonFleesOverCracks(void);
 void DehkanPlateau_CannonPoundsPillar(void);
 

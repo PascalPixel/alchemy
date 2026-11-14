@@ -480,11 +480,11 @@ void MagmaRockInside_UnblockMovedPillar(void) {
     Actor_LiftTargetBlock(gMagmaRockInside_Room6Pillars);
   else if (scene == (s32)&SceneId_MagmaRockInside7)
     Actor_LiftTargetBlock(gMagmaRockInside_Room7Pillars);
-  MagmaRockInside_ClearBlockCells(work->unkcbc);
+  MagmaRockInside_ClearBlockCells(work->movedBlock);
 }
 
 void MagmaRockInside_BlockMovedPillar(void) {
-  struct Actor *object = gFieldWork->unkcbc;
+  struct Actor *object = gFieldWork->movedBlock;
   /* FAKEMATCH(pin): copy in r5. */
   register struct Actor *copy asm("r5");
   s32 scene;

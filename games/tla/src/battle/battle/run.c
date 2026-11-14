@@ -349,7 +349,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
                                          i == 0 ? 10 : 0) == 1)
           goto fled;
       } else {
-        if (AutoBattle_RunAction((s16 *)&battle->actions[i]) == 1)
+        if (AutoBattle_RunAction(&battle->actions[i]) == 1)
           goto fled;
       }
       if (enemyGroup == 638)

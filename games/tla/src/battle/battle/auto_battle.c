@@ -85,52 +85,52 @@ void BattleCamera_AdjustByShoulderKeys(void) {
   }
 }
 
-s32 AutoBattle_RunAction(s16 *action) {
+s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   struct BattlePresentationTransition *transition;
-  s32 actorId;
-  s32 battleMode;
-  u8 *actor;
+  s32 unitId;
+  s32 yaw;
+  struct BattleUnit *actor;
 
-  actorId = action[0];
-  actor = Unit_Get(actorId);
-  if (*(s16 *)(actor + 0x38) == 0)
+  unitId = action->unitId;
+  actor = Unit_Get(unitId);
+  if (actor->hp == 0)
     return -1;
 
-  action[5] =
-      BattleAbility_ReplaceDefeated((const struct BattleActionRecord *)action);
+  action->target = BattleAbility_ReplaceDefeated(action);
   transition = Ram_HeapSlots->transitionWork;
-  if (action[0] > 4)
-    battleMode = -0x2000;
+  // Here any unit id above 4 counts as an enemy.
+  if (action->unitId > 4)
+    yaw = -0x2000;
   else
-    battleMode = 0x2000;
-  transition->targetYaw = battleMode;
+    yaw = 0x2000;
+  transition->targetYaw = yaw;
   transition->frames = 60;
   MessageArgument_ClearAllFar();
 
-  switch (action[3]) {
-  case 99:
+  switch (action->command) {
+  case COMMAND_FLEE:
     BattleMessage_ShowAndWaitFar((s32)&MsgPartyFlees);
-    if (BattleFlee_PlayRun((struct BattleActionRecord *)action) != 0)
+    if (BattleFlee_PlayRun(action) != 0)
       return 1;
     break;
-  case 3:
+  case COMMAND_DEFEND:
     wait(45);
-    AutoBattle_ShowDefend(action);
+    AutoBattle_ShowDefend((s16 *)action);
     break;
-  case 2:
+  case COMMAND_ITEM:
     wait(45);
-    AutoBattle_RunAttackOrItem((struct BattleActionRecord *)action);
+    AutoBattle_RunAttackOrItem(action);
     break;
-  case 0:
+  case COMMAND_ATTACK:
   default: {
-    struct BattlePresentationTransition *tr = Ram_HeapSlots->transitionWork;
-    tr->flag = 0;
-    AutoBattle_RunAttackOrItem((struct BattleActionRecord *)action);
-    tr->flag = 0;
+    struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
+    view->flag = 0;
+    AutoBattle_RunAttackOrItem(action);
+    view->flag = 0;
     break;
   }
-  case 1:
-    AutoBattle_RunPsynergy((struct BattleActionRecord *)action);
+  case COMMAND_PSYNERGY:
+    AutoBattle_RunPsynergy(action);
     break;
   }
 

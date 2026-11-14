@@ -267,7 +267,7 @@ extern s32 gData_020017b0;
 
 extern char SceneId_MarsLighthouseAerie1;
 
-void Func_02002f90(struct FieldEffect *effect, const s32 *script);
+void TundariaTower_StartEffectScript(struct FieldEffect *effect, const s32 *script);
 
 struct RenderInput *Portrait_OpenWindowFar(s32 resource, s32 x, s32 y,
                                            s32 mode);

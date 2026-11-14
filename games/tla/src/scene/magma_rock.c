@@ -283,7 +283,7 @@ void MagmaRock_UnblockMovedPillar(void) {
 
 void Event_Start();
 void Actor_PlaceMovedBlock();
-s32 Func_02003af4();
+s32 MagmaRock_EndEvent();
 
 // Rebuilds the room's opened passages on entry and sets the flag of the cell
 // the leader stands on.
@@ -335,7 +335,7 @@ s32 MagmaRock_BlockMovedPillar(void) {
       Event_SetFlag(0x8db);
     }
   }
-  return Func_02003af4();
+  return MagmaRock_EndEvent();
 }
 
 void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
@@ -669,7 +669,7 @@ s32 Position_FlatDistance(s32 *a, s32 *b);
 void MagmaRock_PlayBurst__s0ff4(u16 index) __asm__("MagmaRock_PlayBurst");
 #define MagmaRock_PlayBurst MagmaRock_PlayBurst__s0ff4
 void Actor_Release(struct Actor *object);
-s32 Func_02003af4(void);
+s32 MagmaRock_EndEvent(void);
 void FieldCamera_WaitForArrival(void);
 
 s32 MagmaRock_FireFromStatue(struct Actor *source) {
@@ -755,7 +755,7 @@ stop:
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
-  return Func_02003af4();
+  return MagmaRock_EndEvent();
 
 hit:
   object->acceleration = px(2);
@@ -773,7 +773,7 @@ hit:
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
-  return Func_02003af4();
+  return MagmaRock_EndEvent();
 }
 
 void MagmaRock_FireStatue(void) {
@@ -790,7 +790,7 @@ void MagmaRock_FireStatue(void) {
   FieldActor_SetSpriteColor(work->target, 0);
   FieldEvent_Wait(1);
   MagmaRock_FireFromStatue(work->target);
-  Func_02003af4();
+  MagmaRock_EndEvent();
 }
 
 void MagmaRock_IgniteStatue(void) {
@@ -802,7 +802,7 @@ void MagmaRock_IgniteStatue(void) {
   object = work->target;
   object->timer = 0x400;
   object->update = MagmaRock_WarnStatue;
-  Func_02003af4();
+  MagmaRock_EndEvent();
 }
 
 void MagmaRock_BurstStatue(s32 mode, s32 cue) {
@@ -1124,7 +1124,7 @@ void MagmaRock_SlideDown(void) {
     FieldEvent_Wait(5);
     Event_PlaySound(SE_MAP_EXIT);
     FieldEvent_SetExitRequest(2);
-    Func_02003af4();
+    MagmaRock_EndEvent();
   }
   Event_SetFlag(FLAG_SCENE_TEMP_F8);
 }
@@ -1228,7 +1228,7 @@ second:
   Event_ClearFlag(FLAG_SCENE_TEMP_60);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  Func_02003af4();
+  MagmaRock_EndEvent();
 }
 
 void MagmaRockInside_ClearBlockCells(struct Actor *object);
@@ -1494,7 +1494,7 @@ loop:
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   gFieldWork->transition = 0x204;
-  Func_02003af4();
+  MagmaRock_EndEvent();
 }
 
 #include "shared/leader_lift.h"
@@ -1591,7 +1591,7 @@ void MagmaRock_RebuildFlameParts(u16 id) {
 
 void MagmaRock_SettleBlocks();
 /// The overlay's import veneer to Rope_PlaceFar.
-void Func_02003bfc();
+void MagmaRock_PlaceRope();
 
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
@@ -1655,7 +1655,7 @@ s32 Scene_Initialize(void) {
       MagmaRock_RestoreCrumblingPillars(gMagmaRock_CrumblingPillars);
       MagmaRockInside_RaiseActorCells(gMagmaRock_Room2LowerStatues);
       Tightrope_Initialize();
-      Func_02003bf4(0, 11, 12);
+      MagmaRock_PlaceTightrope(0, 11, 12);
       if (Event_GetFlag(0x8d7))
         Actor_SetPosition(15, 440, 536);
       Actor_PlaceBlocks(gMagmaRock_Room2LowerPillars);
@@ -1742,7 +1742,7 @@ s32 Scene_Initialize(void) {
         Actor_PlaceBlocks(rise);
         Blocks_MarkCells(rise);
         Rope_Initialize();
-        Call4((void (*)())Func_02003bfc, 0, 0x250, 14, 13);
+        Call4((void (*)())MagmaRock_PlaceRope, 0, 0x250, 14, 13);
         MagmaRockInside_RaiseActorCells(gMagmaRock_Room2UpperStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(10);
@@ -1955,7 +1955,7 @@ body:
         Event_SetFlag(flag + 1);
       }
     }
-    Func_02003af4();
+    MagmaRock_EndEvent();
     return;
   }
 test:
@@ -1998,7 +1998,7 @@ body:
     Event_SetFlag(flag);
     Event_SetFlag(nextFlag);
   }
-  Func_02003af4();
+  MagmaRock_EndEvent();
   return;
 test:
   if (entry->id != 0xffff)
@@ -2104,7 +2104,7 @@ body:
         wait(20);
         Event_SetFlag(flag + 1);
       }
-      Func_02003af4();
+      MagmaRock_EndEvent();
       return;
     }
   }

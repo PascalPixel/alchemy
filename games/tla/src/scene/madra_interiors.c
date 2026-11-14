@@ -41,7 +41,7 @@ extern u32 gMadraInteriors_OldManComesBack[];
 
 extern u32 gMadraInteriors_CharFollows[];
 
-void Func_02001ef8();
+void MadraInteriors_CountAnswer();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -936,7 +936,7 @@ void MadraInteriors_WelcomePiersHome(void) {
   goto answered;
 answeredNo:
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Func_02001ef8();
+  MadraInteriors_CountAnswer();
   gFieldWork->message += 3;
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);

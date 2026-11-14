@@ -143,7 +143,7 @@ void Func_020001cc(void) { Sanctum_Run(); }
 
 void Party_AdjustCoins(s32 amount);
 void MessageArgument_Push(s32 value, s32 slot);
-u16 *Func_02000d48(s32 item);
+u16 *ShopTest_GetItem(s32 item);
 s32 PartyInventory_FindRoom(s32 item);
 void ItemDisplay_ShowItem(s32 item, s32 mode);
 void Forge_Run(s32 actor);
@@ -197,7 +197,7 @@ void Func_020002a8(s32 actor) {
     Event_ShowMessageAndWait(actor, 0);
   } else if (Forge_GetItem()) {
     s32 item = Forge_GetItem();
-    u32 price = *Func_02000d48(item);
+    u32 price = *ShopTest_GetItem(item);
     s32 message;
 
     MessageArgument_Push(item, 2);
@@ -425,13 +425,13 @@ struct Trigger gSceneEvents[] = {
 
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
-/* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition
- * *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried
- * as the definition's void Func_02000d48(struct Actor *shot), it does not
+/* VIEW(s0520): routine ShopTest_GetItem as struct ItemDefinition
+ * *ShopTest_GetItem(s32 item); shop_test has u16 *ShopTest_GetItem(s32 item); tried
+ * as the definition's void ShopTest_GetItem(struct Actor *shot), it does not
  * compile in tla-ja: games/tla/src/debug/shop_test.c:427: conflicting types for
- * `Func_02000d48'. */
+ * `ShopTest_GetItem'. */
 extern struct ItemDefinition *
-Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
+Func_02000d48__s0520(s32 item) __asm__("ShopTest_GetItem");
 void GameFlag_RefreshLureCap(void);
 
 void Func_02000520(void) {

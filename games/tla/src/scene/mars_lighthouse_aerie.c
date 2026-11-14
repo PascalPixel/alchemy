@@ -49,8 +49,6 @@
 #include "system/vector3.h"
 #include "objcmd.h"
 
-/// The Doom Dragon is beaten and the party has heard who it was.
-#define FLAG_DOOM_DRAGON_BEATEN 0xa3d
 /// Set as the party leaves the Mercury Lighthouse at the end: the beacon's
 /// fire burns at the aerie from then on.
 #define FLAG_MARS_BEACON_BURNING 0xa3c
@@ -304,7 +302,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(20, 8);
     Actor_SetAnimation(21, 8);
     Actor_SetAnimation(22, 7);
-    if (Event_GetFlag(FLAG_DOOM_DRAGON_BEATEN) == 0)
+    if (Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0)
       MarsLighthouseAerie_UrgeOnToBeacon();
   } else if (gMainRoutineWork.entrance == 2) {
     MarsLighthouseAerie_FindWhoTheDragonWas();
@@ -314,7 +312,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 &&
-      Event_GetFlag(FLAG_DOOM_DRAGON_BEATEN) == 0)
+      Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0)
     Weather_StartRain(1);
   TileMap_ConvertBuffer(
       gMainRoutineWork.map +
@@ -1694,7 +1692,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-  Event_SetFlag(FLAG_DOOM_DRAGON_BEATEN);
+  Event_SetFlag(FLAG_MARS_BEACON_LIT);
   Event_PlaySound(MUS_028);
   Actor_SetSpeed(0, 0.8);
   Actor_WalkToAndWait(0, 540, 286);
@@ -3474,7 +3472,7 @@ s16 gMarsLighthouseAerie_BeaconPlacements[] = {
 
 struct Trigger gSceneEvents[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
-    {TRIGGER_STEP, 10, FLAG_DOOM_DRAGON_BEATEN, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
+    {TRIGGER_STEP, 10, FLAG_MARS_BEACON_LIT, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
     {TRIGGER_TALK, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
     {TRIGGER_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgIWishICould)},
     {TRIGGER_TALK, 3, CONDITION_ALWAYS, MSGNO(MsgIfAlexSet)},

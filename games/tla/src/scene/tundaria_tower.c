@@ -15,7 +15,7 @@
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
-#define EFFECT_SET_SCRIPT Func_02002f90
+#define EFFECT_SET_SCRIPT TundariaTower_StartEffectScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
@@ -23,6 +23,7 @@
 
 #include "types.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "item_ids.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
@@ -64,7 +65,6 @@
 #include "gamepak/far_call/system.h"
 #include "field/particle.h"
 
-#define FLAG_REFLUX_JOINED 0x64 ///< Reflux, the Mars Djinni, joined
 #define FLAG_LEFT_WATER_PARCHED 0x942
 #define FLAG_RIGHT_WATER_PARCHED 0x943
 #define FLAG_CRYSTAL_BROKEN 0x944 ///< Burst broke the crystal round the prong
@@ -436,7 +436,7 @@ void TundariaTower_RefluxAppears(void) {
   object->actionFlags = 0;
   object->update = 0;
   Actor_SetDestination(8, 424, 536);
-  Func_02002f90(object, gTundariaTower_RefluxHops);
+  TundariaTower_StartEffectScript(object, gTundariaTower_RefluxHops);
   Actor_WaitForMoveById(8);
   GameFlag_Set(FLAG_REFLUX_APPEARED);
   Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
@@ -900,7 +900,7 @@ s32 Scene_Initialize(void) {
     switch (gMainRoutineWork.entrance) {
     case 6:
     case 7:
-      if (!GameFlag_Get(FLAG_REFLUX_JOINED)) {
+      if (!GameFlag_Get(FLAG_DJINNI(DJINNI_REFLUX))) {
         if (!GameFlag_Get(FLAG_REFLUX_APPEARED)) {
           Actor_SetPosition(8, 344, 536);
           MapCell_SetAttributes(0, 21, 33, 0x3300);
@@ -1432,7 +1432,7 @@ void TundariaTower_SpawnRubble(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Func_02002f90(effect, gTundariaTower_RubbleScript);
+      TundariaTower_StartEffectScript(effect, gTundariaTower_RubbleScript);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -1473,7 +1473,7 @@ void TundariaTower_SpawnDustRing(void) {
         effect->collisionFlags = zero;
         Actor_SetSpriteFlags(effect, 0);
         Actor_SelectAnimation(effect, 2);
-        Func_02002f90(effect, gTundariaTower_DustRingScript);
+        TundariaTower_StartEffectScript(effect, gTundariaTower_DustRingScript);
         angle = i << 12;
         effect->velocity.x = Trig_Cos(angle);
         effect->velocity.y = zero;
@@ -1778,7 +1778,7 @@ struct ActorPlacement gTundariaTower_Room3Placements[] = {
 };
 
 struct ActorPlacement gTundariaTower_Room4Placements[] = {
-    ACTOR_PLACEMENT(245, FLAG_REFLUX_JOINED, 7, 424, 0, 536, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(245, FLAG_DJINNI(DJINNI_REFLUX), 7, 424, 0, 536, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

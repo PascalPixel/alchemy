@@ -53,7 +53,7 @@ extern u8 gStaffCredit_BeamsPalette[];
 extern u8 gStaffCredit_BeamsMaps[];
 extern u8 gStaffCredit_BeamsTiles[];
 void WorldMap_ReloadPendingAreaGraphics(void);
-void Func_020020ac(s32 value);
+void StaffCredit_RunCredits(s32 value);
 s32 WorldMap_GetBlockPlace(s32 *position);
 extern s16 gGauge_Vram;
 extern u8 gGauge_SourceTiles[][32];
@@ -497,36 +497,36 @@ s32 Scene_Initialize(void) {
   switch (gMainRoutineWork.entrance) {
   case 0:
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
-    Func_020020ac(2);
+    StaffCredit_RunCredits(2);
     Event_SetDestination((s32)&SceneId_MtAlephSummit, 2);
     break;
   case 1:
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
-    Func_020020ac(3);
+    StaffCredit_RunCredits(3);
     Event_SetDestination((s32)&SceneId_StaffCredit, 2);
     break;
   case 2:
     StaffCredit_ShowBeacon(0);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
-    Func_020020ac(4);
+    StaffCredit_RunCredits(4);
     Event_SetDestination((s32)&SceneId_StaffCredit, 3);
     break;
   case 3:
     StaffCredit_ShowBeacon(1);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
-    Func_020020ac(5);
+    StaffCredit_RunCredits(5);
     Event_SetDestination((s32)&SceneId_StaffCredit, 4);
     break;
   case 4:
     StaffCredit_ShowBeacon(2);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
-    Func_020020ac(6);
+    StaffCredit_RunCredits(6);
     Event_SetDestination((s32)&SceneId_StaffCredit, 5);
     break;
   case 5:
     StaffCredit_ShowBeacon(3);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
-    Func_020020ac(7);
+    StaffCredit_RunCredits(7);
     Event_SetDestination((s32)&SceneId_StaffCredit, 6);
     break;
   case 6:

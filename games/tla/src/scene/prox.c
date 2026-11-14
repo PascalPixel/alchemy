@@ -14,6 +14,7 @@
 #include "../field/field_effect/move.c"
 #include "types.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "system/main_routine_work.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
@@ -49,7 +50,6 @@
 #include "system/iwram_call.h"
 #include "system/task.h"
 
-#define FLAG_MOLD_JOINED 0x40       ///< Mold, the Venus Djinni, joined
 #define FLAG_HEARD_OF_PARENTS 0x9c0 ///< overheard the talk of freeing them
 #define FLAG_CLAN_SPOKE_OF_LIGHTHOUSE 0x9c1
 #define FLAG_MET_PUELLE 0x9c2
@@ -394,12 +394,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Prox2)
     return gProx_Room2Placements;
   if (scene == (s32)&SceneId_Prox3) {
-    if (Event_GetFlag(0xa3d))
+    if (Event_GetFlag(FLAG_MARS_BEACON_LIT))
       return gProx_Room3PlacementsOnceLit;
     return gProx_Room3Placements;
   }
   if (scene == (s32)&SceneId_Prox4) {
-    if (Event_GetFlag(0xa3d)) {
+    if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
       gProx_Room4PlacementsOnceLit__prox[1].talkFacing = 3;
       gProx_Room4PlacementsOnceLit__prox[4].talkFacing = 3;
       return gProx_Room4PlacementsOnceLit__prox;
@@ -407,7 +407,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     return gProx_Room4Placements;
   }
   if (scene == (s32)&SceneId_Prox5) {
-    if (Event_GetFlag(0xa3d))
+    if (Event_GetFlag(FLAG_MARS_BEACON_LIT))
       return gProx_Room5PlacementsOnceLit;
     return gProx_Room5Placements;
   }
@@ -448,14 +448,14 @@ const u8 *Scene_GetEvents(void) {
   return gProx_Triggers;
 }
 
-s32 Func_0200446c();
+s32 Prox_EndEvent();
 
 void Prox_AskAboutIgloos(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgProx33);
   Event_AskYesNo(15, 0);
-  Func_0200446c();
+  Prox_EndEvent();
 }
 
 #include "shared/leader_is_facing_north.h"
@@ -467,13 +467,13 @@ void Prox_TalkAboutParents(void) {
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    if (Event_GetFlag(0xa3d)) {
+    if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
       FieldEvent_SetMessageId((s32)MsgProx135);
     } else {
       FieldEvent_SetMessageId((s32)MsgProx56);
     }
     Event_ShowMessage(22, 0);
-    Func_0200446c();
+    Prox_EndEvent();
   }
 }
 
@@ -486,13 +486,13 @@ void Prox_PraiseReturnedWarrior(void) {
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    if (Event_GetFlag(0xa3d)) {
+    if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
       FieldEvent_SetMessageId((s32)MsgProx132);
     } else {
       FieldEvent_SetMessageId((s32)MsgProx53);
     }
     Event_ShowMessage(10, 0);
-    Func_0200446c();
+    Prox_EndEvent();
   }
 }
 
@@ -505,13 +505,13 @@ void Prox_FearForWeyard(void) {
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    if (Event_GetFlag(0xa3d)) {
+    if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
       FieldEvent_SetMessageId((s32)MsgProx139);
     } else {
       FieldEvent_SetMessageId((s32)MsgProx60);
     }
     Event_ShowMessage(8, 0);
-    Func_0200446c();
+    Prox_EndEvent();
   }
 }
 
@@ -542,7 +542,7 @@ void Prox_TalkToPlayingChild(void) {
   if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
-  Func_0200446c();
+  Prox_EndEvent();
 }
 
 void Prox_TalkToRestlessChild(void) {
@@ -563,7 +563,7 @@ void Prox_TalkToRestlessChild(void) {
   if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
-  Func_0200446c();
+  Prox_EndEvent();
 }
 
 void Prox_TalkToTrainingChild(void) {
@@ -584,14 +584,14 @@ void Prox_TalkToTrainingChild(void) {
   if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
-  Func_0200446c();
+  Prox_EndEvent();
 }
 
 void Prox_SearchForParents(void) {
   s32 t0;
   s32 t8;
 
-  t0 = Event_GetFlag(0xa3d);
+  t0 = Event_GetFlag(FLAG_MARS_BEACON_LIT);
   if (t0 != 0) {
   } else {
     Event_Start();
@@ -638,7 +638,7 @@ void Prox_SearchForParents(void) {
     Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
     Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHWEST);
     Event_SetFlag(FLAG_HEARD_OF_PARENTS);
-    Func_0200446c();
+    Prox_EndEvent();
   }
 }
 
@@ -719,7 +719,7 @@ void Prox_DecideToGoToLighthouse(void) {
   Actor_SetAnimationAndWait(10, 4);
   Event_ShowMessage(10, 0);
   Event_SetFlag(FLAG_CLAN_SPOKE_OF_LIGHTHOUSE);
-  Func_0200446c();
+  Prox_EndEvent();
 }
 
 s32 Actor_MoveToObject();
@@ -945,7 +945,7 @@ test_wait:
   Actor_SetAnimationAndWait(11, 3);
   Event_ShowMessage(11, 0);
   Event_SetFlag(FLAG_MET_PUELLE);
-  Func_0200446c();
+  Prox_EndEvent();
 }
 
 void Prox_MoldHidesInSnow(void) {
@@ -992,11 +992,11 @@ void Prox_MoldHidesInSnow(void) {
   MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
   MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
   Event_SetFlag(FLAG_MOLD_HID_IN_SNOW);
-  Func_0200446c();
+  Prox_EndEvent();
 }
 
 void Prox_ScoopUpMold(void) {
-  if (Event_GetFlag(0xa3d) == 0 && Event_GetFlag(FLAG_MOLD_JOINED) == 0) {
+  if (Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0 && Event_GetFlag(FLAG_DJINNI(DJINNI_MOLD)) == 0) {
     u8 *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
@@ -1009,7 +1009,7 @@ void Prox_ScoopUpMold(void) {
     FieldActor_Jump(20, 4, 20);
     Actor_FaceActor(20, gMainRoutineWork.currentOwner, 0);
     FIELD_AT(work, u16, 362) = 200;
-    Func_0200446c();
+    Prox_EndEvent();
   }
 }
 
@@ -1184,7 +1184,7 @@ void Prox_ComeDownStairs(s32 a0) {
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, 8);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_0200446c();
+  Prox_EndEvent();
 }
 #undef BYTE_AT
 #undef FIELD_AT
@@ -1197,7 +1197,7 @@ void Prox_ComeDownStairs(s32 a0) {
        ->v)
 
 void FieldCamera_WaitForArrival(void);
-s32 Func_0200446c();
+s32 Prox_EndEvent();
 
 void Prox_GiveThanksForBeacon(void) {
   s32 t144;
@@ -1452,7 +1452,7 @@ void Prox_GiveThanksForBeacon(void) {
   }
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_SetFlag(FLAG_THANKED_FOR_BEACON);
-  Func_0200446c();
+  Prox_EndEvent();
 }
 
 void Actor_SetWideSprite(s32 id, s32 wide);
@@ -1464,7 +1464,7 @@ void Weather_StartRain(s32 a);
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  if (Event_GetFlag(0xa3d)) {
+  if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
     Event_SetFlag(FLAG_CANNOT_SAVE_HERE);
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
   }
@@ -1485,7 +1485,7 @@ s32 Scene_Initialize(void) {
     *effect = value;
     FieldEffect_StartBlankOverlay(skip);
   } else {
-    if (!Event_GetFlag(0xa3d))
+    if (!Event_GetFlag(FLAG_MARS_BEACON_LIT))
       Event_SetFlag(FLAG_STORM_RAGING);
     if (Event_GetFlag(FLAG_STORM_RAGING)) {
       Weather_StartRain(1);
@@ -1540,7 +1540,7 @@ void Prox_StartPlayingTag(s32 actor, s32 x, s32 z, s32 frames) {
 
 void Prox_InitializeRoom2(void) {
 
-  if (Event_GetFlag(0xa3d)) {
+  if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       Prox_StartPlayingTag(0x10, 536, 360, 0);
       Prox_StartPlayingTag(0x11, 536, 424, 1);
@@ -1561,7 +1561,7 @@ void Prox_InitializeRoom3(void) {
 
   FieldActor_SetSpritePriority(19, 1);
   FieldActor_SetSpriteColor(((s32)Actor_Get(19)), 0xf);
-  if (!Event_GetFlag(0xa3d)) {
+  if (!Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
     if (!Event_GetFlag(FLAG_HEARD_OF_PARENTS)) {
       Actor_SetPosition(8, 0, 0);
     }
@@ -1574,7 +1574,7 @@ void Prox_InitializeRoom3(void) {
       System_Wait(1);
     }
   }
-  if (Event_GetFlag(0xa3d)) {
+  if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
     MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
     MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
     MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
@@ -1584,7 +1584,7 @@ void Prox_InitializeRoom3(void) {
       MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
       MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
       MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
-      if (!Event_GetFlag(FLAG_MOLD_JOINED)) {
+      if (!Event_GetFlag(FLAG_DJINNI(DJINNI_MOLD))) {
         Actor_SetPosition(20, 0, 0);
       }
     }
@@ -2125,7 +2125,7 @@ struct RockSprite__s4254 {
   u8 unk20[8];
 };
 
-void Func_02004604(struct RockSprite__s4254 *sprite, s32 width, s32 height,
+void Prox_InitRockSprite(struct RockSprite__s4254 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
 UNUSED void Prox_StartFallingRocks(void) {
@@ -2145,7 +2145,7 @@ UNUSED void Prox_StartFallingRocks(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    Func_02004604(sprite, 8, 8, 0x40000000, tile);
+    Prox_InitRockSprite(sprite, 8, 8, 0x40000000, tile);
     sprite->unk05_5 = 1;
     sprite->palette = 0;
     sprite->priority = 0;
@@ -2357,7 +2357,7 @@ struct ActorPlacement gProx_Room3Placements[] = {
     ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(286, CONDITION_ALWAYS, 7, 436, 0, 208, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(243, FLAG_MOLD_JOINED, MOVEMENT_TYPE_STAND, 404, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(243, FLAG_DJINNI(DJINNI_MOLD), MOVEMENT_TYPE_STAND, 404, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

@@ -26,11 +26,11 @@
 #include "field/emote.h"
 #include "field/speaker.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "sounds.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 
-#define FLAG_BREATH_JOINED 0x73       ///< Breath, the Jupiter Djinni, joined
 #define FLAG_ROOM3_PILLAR_MOVED 0x84c ///< Move pushed the great hall's pillar
 #define FLAG_RIKI_GAVE_UP 0x872       ///< Riki missed with the rope, went off
 #define FLAG_DJINNI_FLED_EAST 0x874   ///< the Djinni ran from the great hall
@@ -1724,7 +1724,7 @@ void ShrineOfTheSeaGod_ChaseDjinni(void) {
 
   if (!GameFlag_Get(FLAG_DJINNI_ON_LEDGE))
     return;
-  if (GameFlag_Get(FLAG_BREATH_JOINED))
+  if (GameFlag_Get(FLAG_DJINNI(DJINNI_BREATH)))
     return;
   work = Ram_HeapSlots->fieldWork;
   object = Actor_GetById(14);
@@ -2020,7 +2020,7 @@ void ShrineOfTheSeaGod_InitializeRoom5(void) {
   Actor_PlaceBlocks(gShrineOfTheSeaGod_MovableActors);
   ShrineOfTheSeaGod_LightTorch();
   ShrineOfTheSeaGod_TaskAdd(ShrineOfTheSeaGod_KeepFlameOnTorch, 0x480);
-  if (GameFlag_Get(FLAG_BREATH_JOINED) || GameFlag_Get(FLAG_FIGHTING_BREATH)) {
+  if (GameFlag_Get(FLAG_DJINNI(DJINNI_BREATH)) || GameFlag_Get(FLAG_FIGHTING_BREATH)) {
     GameFlag_Set(FLAG_DJINNI_CHASE_OVER);
   } else if (GameFlag_Get(FLAG_DJINNI_ON_LEDGE)) {
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);
@@ -2396,7 +2396,7 @@ struct ActorPlacement gShrineOfTheSeaGod_Room5Placements[] = {
     ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(246, FLAG_BREATH_JOINED, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(246, FLAG_DJINNI(DJINNI_BREATH), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

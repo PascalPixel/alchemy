@@ -28,7 +28,7 @@
 	export HeapSlot_AllocEwram, HeapSlot_AllocEwramFar
 	export HeapSlot_Alloc, HeapSlot_AllocFar
 	export HeapSlot_Release, HeapSlot_ReleaseFar
-	export Func_02004c58, Decompress_TaggedLzFar
+	export MagmaRockInside_DecompressTaggedLz, Decompress_TaggedLzFar
 	export Import_DecompressTaggedLz, Decompress_TaggedLzFar
 	export Heap_Alloc, Heap_AllocFar
 	export Heap_AllocEwram, Heap_AllocEwramFar
@@ -76,7 +76,7 @@
 	export Import_ActorSelectAnimation, Actor_SelectAnimationFar
 	export Actor_SelectAnimation, Actor_SelectAnimationFar
 	export Actor_SetAnimationSpeed, Actor_SetAnimationSpeedFar
-	export Func_02002f90, Actor_StartScriptFar
+	export TundariaTower_StartEffectScript, Actor_StartScriptFar
 	export Actor_StartScript, Actor_StartScriptFar
 	export Actor_StartRenderModeScript, Actor_StartRenderModeScriptFar
 	export Import_ActorCreate, Actor_CreateFar
@@ -188,7 +188,7 @@
 	export Unit_Calculate, Unit_CalculateFar
 	export Item_GetDirect, Item_GetDirectFar
 	export Inventory_GetQuantity, Inventory_GetQuantityFar
-	export Func_02000d48, Item_GetDirectFar
+	export ShopTest_GetItem, Item_GetDirectFar
 	export PartyInventory_FindMember, PartyInventory_FindMemberFar
 	export Inventory_AddItem, Inventory_AddItemFar
 	export PartyInventory_Add, PartyInventory_AddFar
@@ -237,8 +237,8 @@
 	export ClearData_Apply, ClearData_ApplyFar
 	export Event_Wait, Event_WaitFar
 	export Event_Start, Event_StartFar
-	export Func_0200446c, Event_EndFar
-	export Func_02003af4, Event_EndFar
+	export Prox_EndEvent, Event_EndFar
+	export MagmaRock_EndEvent, Event_EndFar
 	export Event_End, Event_EndFar
 	export PartyInventory_GiveItem, PartyInventory_GiveItemFar
 	export Event_PrepareObjectAndApplyValue, Event_PrepareObjectAndApplyValueFar
@@ -372,7 +372,7 @@
 	export Actor_WatchAndSetScript, Actor_WatchAndSetScriptFar
 	export Actor_GetSpriteById, Actor_GetSpriteByIdFar
 	export WorldMap_StartZoom, WorldMap_StartZoomFar
-	export Func_02004604, EffectSprite_InitFar
+	export Prox_InitRockSprite, EffectSprite_InitFar
 	export DehkanPlateau_InitializeRopes, Rope_InitializeFar
 	export Idejima_CountAnswer, Func_080c8930
 	export ObjectTable_Snapshot, ObjectTable_SnapshotFar
@@ -391,11 +391,11 @@
 	export Tightrope_Place, Tightrope_PlaceFar
 	export Rope_Place, Rope_PlaceFar
 	export Rope_GetState, Rope_GetStateFar
-	export Func_02003bf4, Tightrope_PlaceFar
+	export MagmaRock_PlaceTightrope, Tightrope_PlaceFar
 	export FlagBlock_PlaceAllMarkingEdges, FlagBlock_PlaceAllMarkingEdgesFar
 	export FlagBlock_PlaceAll, FlagBlock_PlaceAllFar
 	export GabombaStatue_PlaceRope, Rope_PlaceFar
-	export Func_02003bfc, Rope_PlaceFar
+	export MagmaRock_PlaceRope, Rope_PlaceFar
 	export FlagBlock_ApplyFlags, FlagBlock_ApplyFlagsFar
 	export Actor_GetCellIndex, Actor_GetCellIndexFar
 	export Actor_PlaceBlocks, Actor_PlaceBlocksFar
@@ -413,8 +413,8 @@
 	export Party_GetLeaderActor, Party_GetLeaderActorFar
 	export HangingVine_Place, HangingVine_PlaceFar
 	export Actor_FallOverById, Actor_FallOverByIdFar
-	export Func_02004f10, EffectSprite_InitFar
-	export Func_020029a0, Func_080c8898
+	export MagmaRockInside_InitRockSprite, EffectSprite_InitFar
+	export TaopoSwamp_ShowMessage, Func_080c8898
 	export GabombaStatueChamber_CountAnswer, Func_080c8930
 	export Exit_PrepareActorAnimation, Exit_PrepareActorAnimationFar
 	export ItemMenu_DrawItemDetails, ItemMenu_DrawItemDetailsFar
@@ -422,10 +422,10 @@
 	export Actor_SetSpriteRotationById, Actor_SetSpriteRotationByIdFar
 	export Kibombo_CountAnswer, Func_080c8930
 	export Actor_FallOverWithAnimationById, Actor_FallOverWithAnimationByIdFar
-	export Func_02005a50, Cyclone_CopyTouchedCellsFar
-	export Func_02001ef8, Func_080c8930
+	export TrialRoad_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
+	export MadraInteriors_CountAnswer, Func_080c8930
 	export EasternAlhafra_InitializeRockSprite, EffectSprite_InitFar
-	export Func_02002a0c, EffectSprite_InitFar
+	export VenusLighthouseEntrance_InitGlowSprite, EffectSprite_InitFar
 	export EffectSprite_Init, EffectSprite_InitFar
 	export Exit_StartStairsUp, Exit_StartStairsUpFar
 	export Import_EffectSpriteDraw, EffectSprite_DrawFar
@@ -459,7 +459,7 @@
 	export EasternAlhafraShip_CountAnswer, Func_080c8930
 	export Actor_WatchActor, Actor_WatchActorFar
 	export MapGrid_SetAttributeBAt, MapGrid_SetAttributeBAtFar
-	export Func_020020ac, Resource_FarCall00A+1
+	export StaffCredit_RunCredits, Resource_FarCall00A+1
 	export DjinnMenu_Run, DjinnMenu_RunFar
 	export Actor_TakeLeaderLayer, Actor_TakeLeaderLayerFar
 	export Actor_DepartInRing, Actor_DepartInRingFar

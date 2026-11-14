@@ -80,7 +80,7 @@ struct DustPuffWork {
 };
 
 s32 Actor_FallOverWithAnimationById();
-void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
+void VenusLighthouseEntrance_InitGlowSprite(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
                    s32 tile);
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 
@@ -1329,7 +1329,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   state = work->states;
   sprite = work->sprites;
   for (i = 15; i >= 0;) {
-    Func_02002a0c(sprite, 8, 8, 0x40000000, tile);
+    VenusLighthouseEntrance_InitGlowSprite(sprite, 8, 8, 0x40000000, tile);
     sprite->unk1e = BattleEffect_GetObjectDepth(actor) - 2;
     sprite->priority = BattleEffect_GetObjectPriority(actor);
     sprite->fullColor = 1;
@@ -1481,7 +1481,7 @@ void VenusLighthouseEntrance_StartDust(void) {
   state = work->states;
   sprite = work->sprites;
   for (i = 95; i >= 0; i--) {
-    Func_02002a0c(sprite, 8, 8, 0x40000000, tileBase);
+    VenusLighthouseEntrance_InitGlowSprite(sprite, 8, 8, 0x40000000, tileBase);
     sprite->fullColor = 1;
     sprite->palette = 0;
     sprite->priority = 0;

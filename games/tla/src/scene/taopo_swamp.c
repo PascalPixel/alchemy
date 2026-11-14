@@ -58,7 +58,7 @@ extern s32 gTaopoSwamp_PoolFrames;
 extern u32 gTaopoSwamp_PuffSteamScript[];
 void Field_TryJumpForward(void);
 void TaopoSwamp_DarkenRoom(s32 a);
-void Func_020029a0(s32 message);
+void TaopoSwamp_ShowMessage(s32 message);
 void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 s32 Vents_GetCounter(void);
@@ -892,7 +892,7 @@ void TaopoSwamp_CoolLastRock(s32 a, s32 id) {
 /// Scoop on the sparkle in the dark chamber digs up the Star Dust (flag 0x348).
 void TaopoSwamp_ScoopStarDust(s32 a) { Event_DigUpTreasure(a, 64, 0x348); }
 
-void TaopoSwamp_ShowSparkleMessage(void) { Func_020029a0((s32)&MsgIThoughtI); }
+void TaopoSwamp_ShowSparkleMessage(void) { TaopoSwamp_ShowMessage((s32)&MsgIThoughtI); }
 
 extern struct Trigger gTaopoSwamp_Triggers[];
 extern struct Trigger gTaopoSwamp_Room1Triggers[];

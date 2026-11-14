@@ -79,7 +79,6 @@
 #include "system/system.h"
 #include "system/system_call.h"
 
-s32 Scene_Initialize(void);
 extern s32 gValeCave_WalkTargets[][2];
 extern struct SceneEntrance gValeCave_EntrancesOther[];
 extern struct SceneEntrance gValeCave_MouthEntrances[];

@@ -84,7 +84,6 @@ u16 gSolSanctumLunaSolRooms_Light1Timer BSS_DATA ALIGNED(4);
 s32 gSolSanctumLunaSolRooms_FlashState BSS_DATA;
 u16 gSolSanctumLunaSolRooms_Light4Timer BSS_DATA;
 
-s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
 extern u32 gSolSanctumLunaSolRoomsExits[];
 extern struct ActorPlacement gSolSanctumLunaSolRoomsActorPlacements[];
@@ -1463,7 +1462,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Scene_WalkIntoLeader(ACTOR_GARET);
-  palette = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
+  palette = gPaletteFadeWork;
   palette->target[0] = 0;
   palette->target[1] = 0;
   palette->target[2] = 0;

@@ -573,11 +573,9 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Event_Start();
   approach = Colosso_TakePrize(ITEM_IRON_SHIELD, ITEM_PADDED_GLOVES);
   Colosso_WaitForOpponentToFinish();
-  n = 9;
-  do {
+  for (n = 9; n >= 0; n--) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
-    n = n - 1;
-  } while (n >= 0);
+  }
   Actor_SetSpeed(ACTOR_OPPONENT, 1);
   Actor_WalkTo(ACTOR_OPPONENT, 1320, 192);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);

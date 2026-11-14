@@ -1378,8 +1378,9 @@ static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
 
 /// The travelling healer in the hold.
 static void ShipRooms_TalkToHealer(void) {
-  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
-      TRIG_TURN * 3 / 4) {
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+
+  if (leader->facing < FACING_SOUTHEAST || leader->facing > FACING_NORTHEAST) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0 &&
         GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
       Sanctum_Run(ACTOR_SEA_HOLD_HEALER);
@@ -3281,11 +3282,9 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     Actor_SetPosition(ACTOR_ROWING_KAJA, 438, 152);
     break;
   case SHIP_HIDE_OARS:
-    slot = 0;
-    do {
+    for (slot = 0; slot <= 7; slot++) {
       Actor_SetPosition(slot + ACTOR_ROWING_FIRST_OAR, 0, 0);
-      slot++;
-    } while (slot <= 7);
+    }
     break;
   case SHIP_SETUP_PASSENGER_HOLD:
     ShipRooms_PlaceActor(ACTOR_HOLD_SECOND_GUIDE, 152, 532,

@@ -1370,7 +1370,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
       FieldEffect_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
-      work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
+      work = gFadeOverlayWork;
       work->actor = NULL;
       break;
     }

@@ -94,8 +94,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-s32 Scene_Initialize(void);
 extern u32 gTunnelRuins_BalanceHeights[];
 extern s32 gTunnelRuins_DouseSplashScript[];
 extern u16 gTunnelRuins_DoorOpenSteps[];

@@ -12,10 +12,8 @@
 /// (FieldWork's talk) or Mind Read is on the range is 26 pixels, and a villager
 /// being talked to stops whichever way it faces.
 static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
-  // The heap slots from the window renderer's on.
-  u8 **slots = gWindowWork;
-  u8 *windowWork = slots[0];
-  struct FieldWork *work = FIELD_WORK_FROM(slots, HEAP_SLOT_WINDOW);
+  u8 *windowWork = gWindowWork[0];
+  struct FieldWork *work = gFieldWork;
   s32 force = 0;
   s32 range = 18;
   struct Actor *partner;

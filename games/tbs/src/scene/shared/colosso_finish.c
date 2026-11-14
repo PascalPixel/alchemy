@@ -37,13 +37,11 @@ static void Colosso_WaitForOpponentToFinish(void) {
 /// (gColosso_PrizeSparkleScript) appears somewhere within 16 pixels of it.
 static void Colosso_SparkleAroundPrize(struct Actor *prize) {
   s32 position[3];
-  u32 chance;
 
   if (prize->velocityY >= -255 && prize->velocityY <= 255) {
     prize->motionFlags = 0;
   }
-  chance = Random_Next();
-  if (chance * 100 >> 16 <= 9) {
+  if (Random_Below(100) < 10) {
     struct Actor *sparkle;
     s32 distance;
     s32 angle;

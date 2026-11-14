@@ -84,7 +84,6 @@
 #include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
 extern u32 gSanctum_LeaderCircleScript[];
 extern u32 gSanctum_GaretCircleScript[];
 extern s32 gItemIcon_GrowScript[];
@@ -1573,13 +1572,11 @@ static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
 
 /// Creates an orbiting effect with the requested angular step.
 static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
-  s32 orbitStep;
   struct Actor *center;
   struct Actor *effect;
   struct Sprite *sprite;
   struct Sprite *sourceSprite;
 
-  orbitStep = angleStep;
   center = Actor_Get(actorId);
   if (center != NULL) {
     effect = FieldActor_Create(SPRITE_SPARKLE, center->x.fixed,
@@ -1589,7 +1586,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
       effect->motionFlags = 0;
       effect->timer = 0;
-      effect->userValue = orbitStep;
+      effect->userValue = angleStep;
       effect->update = Sanctum_UpdateOrbitingEffect;
       sprite->flags = 0;
       sourceSprite = center->sprite;
@@ -1988,8 +1985,7 @@ static void Sanctum_RestoreQuestFloor(void) {
 static s32 Sanctum_IsLeaderFacingHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((u16)(leader->facing - (FACING_NORTHWEST + 1)) <
-      FACING_NORTHEAST - (FACING_NORTHWEST + 1)) {
+  if (leader->facing > FACING_NORTHWEST && leader->facing < FACING_NORTHEAST) {
     return 1;
   }
   return 0;

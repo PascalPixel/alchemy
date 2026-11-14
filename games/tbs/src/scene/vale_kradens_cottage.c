@@ -105,7 +105,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gValeKradensCottage_RockslideSurvivorEscapeActions[];
 extern s32 gValeKradensCottage_RockslideSurvivorSquashes[];
@@ -131,8 +130,7 @@ enum ValeKradensCottageActorId {
   ///
   /// Cast on it, Lift's two hands close on it and burst into sparkles. The
   /// boulder stays where it is, and no message follows, since the row answers
-  /// the cast (render probe kraden-lift, by day and after the party has left
-  /// Vale).
+  /// the cast.
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,
   /// The west rock. "It's a huge rock that Isaac's strength can't even budge."
   ACTOR_WEST_ROCK,

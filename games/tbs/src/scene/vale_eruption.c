@@ -50,7 +50,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern s32 gValeEruption_LeaderWalksDown[];
 extern s32 gValeEruption_GaretWalksDown[];
 extern s32 gValeEruption_EnterSanctum[];

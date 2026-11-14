@@ -1261,11 +1261,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   FieldCamera_SetSpeed(3);
   {
     struct MapGridLayerScroll *lift;
-    void **cells;
     FieldCamera_MoveTo(152, CAMERA_KEEP, 216, 1);
     lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
     lift->offsetY = px(896);
-    cells = gMapGridWork;
     MapGrid_CenterOnFollowedPoint();
     wait(1);
     Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
@@ -1301,9 +1299,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
       Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
       Event_Wait(20);
       Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
-      ((struct FieldWork *)cells[19])->message++;
+      gFieldWork->message++;
     } else {
-      ((struct FieldWork *)cells[19])->message++;
+      gFieldWork->message++;
       Event_Wait(20);
       Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
     }
@@ -1692,13 +1690,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   n = 0;
   for (i = 0; i <= 4; i++)
     ids[i] = 66;
-  // UB: the lift's layer is passed as a third argument to a routine that
-  // takes two; UBFIX passes the two.
-#ifdef UBFIX
   MercuryLighthouseAerie_FindLiftRiders(ids, lift->offsetY);
-#else
-  ((void (*)())MercuryLighthouseAerie_FindLiftRiders)(ids, lift->offsetY, lift);
-#endif
   for (i = 0; i <= 4; i++) {
     if (ids[i] == 66)
       break;

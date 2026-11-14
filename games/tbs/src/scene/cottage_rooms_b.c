@@ -517,10 +517,7 @@ s32 Scene_Initialize(void) {
                 SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
               Weather_StartLightning();
-              // Through its heap slot rather than gFieldBlendWork, the spelling
-              // this site matched with; the other is not measured.
-              ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD_BLEND))
-                  ->loud = 1;
+              ((struct FieldBlendWork *)gFieldBlendWork[0])->loud = 1;
               Weather_LastLightning();
               wait(30);
               Event_StartScreenTransition();
@@ -545,11 +542,10 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   struct Sprite *sprite;
   struct MapGridScrollWork *grid;
   struct Actor *viewCenter;
-  struct FieldWork **field = (struct FieldWork **)&gHeapSlots[HEAP_SLOT_FIELD];
   struct FieldWork *work;
 
-  work = *field;
-  grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
+  work = gFieldWork;
+  grid = gMapGridWork[0];
   viewCenter = work->camera;
   sprite = Actor_Get(ACTOR_TUNIC)->sprite;
   Event_Start();
@@ -589,12 +585,11 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   viewCenter->z.fixed = px(691);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  (*field)->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  (*field)->transitionFrames = 64;
+  gFieldWork->transitionFrames = 64;
   Weather_StartLightning();
-  ((struct FieldBlendWork **)field)[HEAP_SLOT_FIELD_BLEND - HEAP_SLOT_FIELD]
-      ->loud = 1;
+  ((struct FieldBlendWork *)gFieldBlendWork[0])->loud = 1;
   Weather_LastLightning();
   wait(30);
   Event_StartScreenTransition();
@@ -680,7 +675,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   // sorry, but we don't have time..."
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    (*field)->message++;
+    gFieldWork->message++;
   }
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
@@ -690,8 +685,8 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraLeavesScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacLeavesScript);
   Event_Wait(20);
-  (*field)->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  (*field)->transitionFrames = 16;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transitionFrames = 16;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
@@ -742,7 +737,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   SetBlendTarget(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Io_Write16(BLEND_ALPHA(12, 16), &REG_BLDALPHA);
   Weather_StartLightning();
-  ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD_BLEND))->loud = 1;
+  ((struct FieldBlendWork *)gFieldBlendWork[0])->loud = 1;
   Weather_LastLightning();
   wait(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).

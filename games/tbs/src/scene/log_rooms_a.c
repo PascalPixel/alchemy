@@ -63,8 +63,7 @@
 /// - LogRoomsA_DiscussSuspiciousGuests makes them
 ///   CELL_BEHAVIOR_LOG_ROOMS_A_CORNERING_START.
 /// - Every later arrival with FLAG_VAULT_SUSPECTS_APPROACHED set rewrites
-///   them again (render probe log-rooms-a: the room has no GUESTS_ROOM cell
-///   once the flag is set).
+///   them again.
 
 #include "scene/log_rooms_a.h"
 #include "ability_ids.h"
@@ -271,9 +270,9 @@ enum LogRoomsAAnimation {
 
 static void LogRoomsA_IvanJoinsRodSearch(void);
 static void LogRoomsA_DiscussMindReading(void);
+static void LogRoomsA_FaceSuspectsTowardLeader(void);
 static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
                                           const s32 *actions);
-static void LogRoomsA_FaceSuspectsTowardLeader(void);
 static void LogRoomsA_LoseToThieves(void);
 static void LogRoomsA_ConfrontThievesAgain(void);
 static void LogRoomsA_DefeatThieves(void);
@@ -3200,9 +3199,8 @@ static void LogRoomsA_StartActorStops(void) {
   Actor_SetSpeedAndAcceleration(ACTOR_SUSPECTED_THIEF, 1.5, 1.5);
   gLogRoomsA_StopTimer = 0;
   Task_AddOrUpdateFrame(LogRoomsA_UpdateActorStops, TASK_PASS_FRAME + 20);
-  // Flag 0x1ff holds nothing: no table, script or function sets or reads it,
-  // and render probe flag-reads sees no read of it, so clearing it changes
-  // nothing.
+  // Flag 0x1ff holds nothing: no table, script or function sets or reads it, so
+  // clearing it changes nothing.
   Event_ClearFlag(0x1ff);
   Event_End();
   Sound_Play(MUS_DJINN_LESSON);

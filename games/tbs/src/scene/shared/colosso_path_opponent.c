@@ -132,7 +132,7 @@ static void Colosso_DrawGauge(void) {
   } else if (gauge->level <= 1) {
     if (++gauge->level == 1) {
       Dma_Set(gColosso_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0),
-              (DMA_ENABLE << 16) | 16, REG_DMA3);
+              DMA_COPY_HALFWORDS(16), REG_DMA3);
       buf = Heap_CallAlternatePool(Heap_AllocEwram, 512);
       FieldDecompress_TaggedLz(gColosso_GaugeGraphics, buf);
       VramCache_Load(gauge->vramBlock, 512, buf);

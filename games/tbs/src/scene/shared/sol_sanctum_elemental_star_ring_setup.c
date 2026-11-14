@@ -89,9 +89,9 @@ static void SolSanctum_UpdateRing(void) {
         actor->scaleX = scale;
         actor->scaleY = scale;
       }
-      rx = (gSolSanctum_RingDrift[i][0] * (u32)Random_Next()) >> 16;
-      ry = (gSolSanctum_RingDrift[i][1] * (u32)Random_Next()) >> 16;
-      rz = (gSolSanctum_RingDrift[i][2] * (u32)Random_Next()) >> 16;
+      rx = Random_Below(gSolSanctum_RingDrift[i][0]);
+      ry = Random_Below(gSolSanctum_RingDrift[i][1]);
+      rz = Random_Below(gSolSanctum_RingDrift[i][2]);
       rx = rx != 0 ? (rx << 16) / 1000 : 0;
       ry = ry != 0 ? (ry << 16) / 1000 : 0;
       rz = rz != 0 ? (rz << 16) / 1000 : 0;

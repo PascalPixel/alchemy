@@ -733,13 +733,11 @@ static void Vale_WatchThePuppies(void) {
                leader->z.fixed);
     savedOrigin = grid->origin;
     grid->origin = cameraPosition;
-    frame = 0;
-    do {
+    for (frame = 0; frame != 40; frame++) {
       cameraPosition[2] += px(2);
       Event_Wait(1);
-      frame++;
       MapGrid_CenterOnFollowedPoint();
-    } while (frame != 40);
+    }
     Event_Wait(60);
     FieldMessage_Show(MsgValePuppiesPlayingOver, 1);
     frame = 0;

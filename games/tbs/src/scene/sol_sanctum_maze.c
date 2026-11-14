@@ -19,7 +19,7 @@
 /// The south exit leaves down stairs (EXIT_STYLE_STAIRS_DOWN). Walking north
 /// into its arch, the leader steps in and sinks out of sight as if down steps
 /// behind it, to SE_STAIRS_DOWN. He comes out walking down from a doorway in
-/// the room of steps (render probe maze-exit).
+/// the room of steps.
 
 #include "item_ids.h"
 #include "types.h"

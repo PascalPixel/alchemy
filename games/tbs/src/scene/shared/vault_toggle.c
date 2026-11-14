@@ -4,10 +4,9 @@
 /// the path below and the bridge's deck above: CELL_BEHAVIOR_VAULT_BRIDGE_END
 /// (vault.h) gives them the deck's ground, 32 pixels up, so the leader crosses
 /// on the bridge, and CELL_BEHAVIOR_VAULT_WEST_OF_BRIDGE gives them back the
-/// path's ground, so he walks under it (render probe vault-bridge: crossing
-/// either way he stays 32 pixels up, and walking the path he stays on the
-/// ground). FLAG_VAULT_ON_BRIDGE remembers the deck, which each scene restores
-/// on a kept-position return, such as after battle.
+/// path's ground, so he walks under it. FLAG_VAULT_ON_BRIDGE remembers the
+/// deck, which each scene restores on a kept-position return, such as after
+/// battle.
 
 /// The cells under Vault's rope bridge have the deck's ground, so the leader is
 /// on the bridge; kept through a battle.

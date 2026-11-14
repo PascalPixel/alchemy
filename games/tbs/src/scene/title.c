@@ -32,7 +32,6 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-s32 Scene_Initialize(void);
 extern struct SceneEntrance gTitleEntrances[];
 extern u32 gTitleExits[];
 extern struct ActorPlacement gTitleActorPlacements[];

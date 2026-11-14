@@ -80,8 +80,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(s32 unused);
 extern s32 gTolbiOlderBrotherRun[];
 extern s32 gTolbiYoungerSisterRun[];
 extern struct SceneEntrance gTolbiEntrances[];
@@ -256,7 +254,7 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 /// direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
-  struct FieldWork *field = FIELD_WORK_FROM(gWindowWork, HEAP_SLOT_WINDOW);
+  struct FieldWork *field = gFieldWork;
   s32 force = 0;
   s32 range = 18;
   struct Actor *other;

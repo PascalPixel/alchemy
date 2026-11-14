@@ -81,7 +81,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct ActorPlacement *Scene_GetActorPlacements(void);
 extern s32 gColosseumEntrance_GatherIntoIsaacScript[];
 extern s32 gColosseumEntrance_GatherIntoGaretScript[];
 extern s32 gColosseumEntrance_RejoinPartyScript[];

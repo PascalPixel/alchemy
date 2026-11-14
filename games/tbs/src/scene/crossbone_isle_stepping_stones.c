@@ -359,6 +359,12 @@ static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 actorId) {
   return 1;
 }
 
+/// Waits until the DMA channel clears its enable bit.
+static inline void Dma_Wait(volatile u32 *dma) {
+  while (dma[2] & (DMA_ENABLE << 16))
+    ;
+}
+
 /// Reads one map cell through DMA, waiting until the transfer finishes.
 static void CrossboneIsleSteppingStones_ReadMapGridCell(
     s32 layer, s32 x, s32 y, union CrossboneIslePillarCell *dst) {
@@ -368,15 +374,8 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
     struct MapGridCell *cell = grid->layers[layer].cells;
 
     cell += x + (y << 7);
-    Dma_Set(cell, dst,
-            ((u32)(DMA_ENABLE | DMA_32BIT) << 16) | sizeof(*cell) / sizeof(u32),
-            REG_DMA3);
-    {
-      volatile u32 *dma = REG_DMA3;
-
-      while (dma[2] & ((u32)DMA_ENABLE << 16))
-        ;
-    }
+    Dma_Set(cell, dst, DMA_COPY_WORDS(sizeof(*cell) / sizeof(u32)), REG_DMA3);
+    Dma_Wait(REG_DMA3);
   }
 }
 
@@ -712,12 +711,6 @@ static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
   *reg = *src;
 }
 
-/// Waits until the DMA channel clears its enable bit.
-static inline void Dma_Wait(volatile u32 *dma) {
-  while (dma[2] & ((u32)DMA_ENABLE << 16))
-    ;
-}
-
 /// Copies the three background scroll pairs and shifts their vertical offsets
 /// by 192 pixels.
 static void CrossboneIsleSteppingStones_PrepareWaterScroll(void) {
@@ -952,33 +945,24 @@ static void CrossboneIsleSteppingStones_SortPillarActors(void) {
         continue;
       }
       Dma_Set(secondActor, &savedActor,
-              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                  sizeof(savedActor) / sizeof(u32),
-              REG_DMA3);
+              DMA_COPY_WORDS(sizeof(savedActor) / sizeof(u32)), REG_DMA3);
       Dma_Wait(REG_DMA3);
       Dma_Set(firstActor, secondActor,
-              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                  sizeof(savedActor) / sizeof(u32),
-              REG_DMA3);
+              DMA_COPY_WORDS(sizeof(savedActor) / sizeof(u32)), REG_DMA3);
       Dma_Wait(REG_DMA3);
       Dma_Set(&savedActor, firstActor,
-              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                  sizeof(savedActor) / sizeof(u32),
-              REG_DMA3);
+              DMA_COPY_WORDS(sizeof(savedActor) / sizeof(u32)), REG_DMA3);
       Dma_Wait(REG_DMA3);
       Dma_Set(&sPillarSlots[j], &savedPlacement,
-              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                  sizeof(struct PillarPlacement) / sizeof(u32),
+              DMA_COPY_WORDS(sizeof(struct PillarPlacement) / sizeof(u32)),
               REG_DMA3);
       Dma_Wait(REG_DMA3);
       Dma_Set(&sPillarSlots[i], &sPillarSlots[j],
-              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                  sizeof(struct PillarPlacement) / sizeof(u32),
+              DMA_COPY_WORDS(sizeof(struct PillarPlacement) / sizeof(u32)),
               REG_DMA3);
       Dma_Wait(REG_DMA3);
       Dma_Set(&savedPlacement, &sPillarSlots[i],
-              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                  sizeof(struct PillarPlacement) / sizeof(u32),
+              DMA_COPY_WORDS(sizeof(struct PillarPlacement) / sizeof(u32)),
               REG_DMA3);
       Dma_Wait(REG_DMA3);
       if (GameFlag_Get(sPillarSlots[i].flag) &&
@@ -1014,9 +998,7 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       continue;
     }
     Dma_Set(&actor->x, &sProbePosition,
-            ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                sizeof(sProbePosition) / sizeof(u32),
-            REG_DMA3);
+            DMA_COPY_WORDS(sizeof(sProbePosition) / sizeof(u32)), REG_DMA3);
     Dma_Wait(REG_DMA3);
     if (FieldActor_CheckMovementCollision(actor, &sProbePosition) == -1) {
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -1123,8 +1105,7 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
 /// follows the leader, and the leader's rise counter starts.
 static void CrossboneIsleSteppingStones_StartRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))->actor =
-      leader;
+  gFadeOverlayWork->actor = leader;
   leader->riseCounter = 1;
 }
 
@@ -1133,8 +1114,7 @@ static void CrossboneIsleSteppingStones_StartRising(void) {
 static void CrossboneIsleSteppingStones_StopRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))->actor =
-      NULL;
+  gFadeOverlayWork->actor = NULL;
   leader->riseCounter = 0;
 }
 
@@ -1245,11 +1225,9 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   options.rotation = mask;
   options.update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 
-  draw = Random_Next();
-  velocityX = -(px((draw * 5) >> 16) + px(6));
+  velocityX = -(px(Random_Below(5)) + px(6));
   velocityX /= 2;
-  draw = Random_Next();
-  velocityY = -(px((draw * 5) >> 16) + px(5));
+  velocityY = -(px(Random_Below(5)) + px(5));
 
   FieldEffect_Spawn(px(324), px(48), px(228), velocityX, velocityY, 0,
                     EFFECT_USE_UPDATE | EFFECT_USE_ROTATION |

@@ -92,7 +92,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern s32 gVenusLighthouseAerie_JoinLeaderAction[];
 extern s32 gVenusLighthouseAerie_StepBackWestAction[];
 extern s32 gVenusLighthouseAerie_StepBackEastAction[];
@@ -453,16 +452,15 @@ s32 Scene_Initialize(void) {
   mirroredScale = -Q16_ONE;
   Actor_Get(ACTOR_BEACON_STATUE_NORTHEAST)->scaleX = mirroredScale;
   Actor_Get(ACTOR_BEACON_STATUE_SOUTHEAST)->scaleX = mirroredScale;
-  platformId = ACTOR_FIRST_PLATFORM;
-  do {
+  for (platformId = ACTOR_FIRST_PLATFORM; platformId <= ACTOR_LAST_PLATFORM;
+       platformId++) {
     platform = Actor_Get(platformId);
     Actor_SetSpriteFlags(Actor_Get(platformId), 0);
     Actor_SetSpritePriority(platformId, 1);
     platform->motionFlags = ACTOR_FLOATS;
     platform->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     platform->y.fixed = px(1) / 2;
-    platformId++;
-  } while (platformId <= ACTOR_LAST_PLATFORM);
+  }
 
   entrance = gMainRoutineWork.entrance;
 
@@ -936,12 +934,10 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Event_Wait(40);
   Scene_StartEventPsynergy();
   wait(1);
-  frame = 0;
-  do {
+  for (frame = 0; frame <= 39; frame++) {
     VenusLighthouseAerie_FlashActorPalette(Actor_Get(ACTOR_SHEBA));
-    frame++;
     wait(1);
-  } while (frame <= 39);
+  }
   Task_AddFrame(VenusLighthouseAerie_UpdateShebaPalette, TASK_PASS_FRAME);
   Event_Wait(80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -1899,8 +1895,7 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
     effect->timer = angle;
     effect->userValue = 0;
     effect->update = VenusLighthouseAerie_UpdateUpperOrbit;
-    effect->speedLimit =
-        Trig_Sin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
+    effect->speedLimit = Trig_Sin(Random_Below(0xffff) >> 4) * 24 >> 16;
     sprite->flags = 0;
     sprite->image.priority = 1;
   }
@@ -2915,8 +2910,8 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_WaitTransitionFrames();
   Event_Wait(80);
   ActorSystem_SuspendProjectionAndShowSprites();
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceSound = 0;
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceCountdown = 0;
+  ((struct WindowWork *)gWindowWork[0])->voiceSound = 0;
+  ((struct WindowWork *)gWindowWork[0])->voiceCountdown = 0;
   FieldMessage_ShowCentered(MsgVenusDespiteLongTiring, 0, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
   Event_Wait(80);
@@ -3035,9 +3030,9 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
       angle = Random_Next() & 0xffff000;
       effect->timer = angle;
       effect->userValue = 0;
-      effect->riseCounter = (u32)Random_Next() >> 13;
+      effect->riseCounter = Random_Below(8);
       effect->update = VenusLighthouseAerie_UpdateRisingOrbit;
-      effect->speedLimit = Trig_Sin((u32)(Random_Next() * 0xffff) >> 20) * 24;
+      effect->speedLimit = Trig_Sin(Random_Below(0xffff) >> 4) * 24;
       effect->speedLimit = center->speedLimit >> 16;
       sprite->flags = 0;
       sprite->image.priority = 1;

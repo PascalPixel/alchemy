@@ -236,13 +236,12 @@ close:
 /// Draws a page of seven stock items with their prices, the page arrows, and
 /// the chosen item lifted and pulsing.
 void Shop_DrawStock(struct Window *window, s32 selected) {
-
   struct ShopWork *shop;
   s16 *itemIds;
   s16 *stockCursor;
   s32 itemCount;
   s32 stockIndex;
-  s32 pageSlot;
+  u32 pageSlot;
   s32 priceX;
   s16 itemId;
   struct ItemDefinition *item;
@@ -272,8 +271,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
     if (stockIndex < (u32)itemCount) {
       stockCursor = (s16 *)((stockIndex * 2) + (u32)itemIds);
       priceX = 16;
-      for (;
-           (u32)pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
+      for (; pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
            priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
         itemId = *stockCursor;
         item = Item_GetDirectFar(itemId);

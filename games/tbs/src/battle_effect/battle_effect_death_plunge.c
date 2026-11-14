@@ -871,7 +871,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
           s32 x = (mote->y * Trig_Sin(mote->x) >> 16) + 64;
           s32 y = (mote->y * Trig_Cos(mote->x) >> 16) + ground.y;
 
-          /* FAKEMATCH(dead): size is at least 1 here. */
+          // DEAD: never true, as the variant is not negative here; the ROM
+          // keeps the test and the store.
           if (size <= 0)
             size = 1;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, x, y, size);

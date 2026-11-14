@@ -515,8 +515,8 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
     step = (ABS(x1 - x0) << 8) / ABS(y1 - y0);
     x = x0;
     for (i = y0; i != y1; i++) {
-      offset = (((((u32)i >> 3) << 4) + ((u32)x >> 3)) << 3) + (i & 7);
-      offset = (offset << 3) + (x & 7);
+      offset = ((u32)i / 8 * 16 + (u32)x / 8) * 8 + (i & 7);
+      offset = offset * 8 + (x & 7);
       if (canvas[offset] < color)
         canvas[offset] = color;
       frac += step;
@@ -544,8 +544,8 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
     step = (ABS(y1 - y0) << 8) / ABS(x1 - x0);
     y = y0;
     for (i = x0; i != x1; i++) {
-      offset = (((((u32)y >> 3) << 4) + ((u32)i >> 3)) << 3) + (y & 7);
-      offset = (offset << 3) + (i & 7);
+      offset = ((u32)y / 8 * 16 + (u32)i / 8) * 8 + (y & 7);
+      offset = offset * 8 + (i & 7);
       if (canvas[offset] < color)
         canvas[offset] = color;
       frac += step;

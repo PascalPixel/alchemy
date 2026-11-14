@@ -180,7 +180,7 @@ s32 Sanctum_RunPartyService(void) {
   s32 memberIndex;
   s32 unitId;
   s32 chooseAgain;
-  s32 donation;
+  u32 donation;
   s32 messageBase;
 
   priceWindow = 0;
@@ -248,7 +248,7 @@ s32 Sanctum_RunPartyService(void) {
         chooseAgain = 1;
         continue;
       }
-      if (donation > (u32)gMainRoutineWork.coins) {
+      if (donation > gMainRoutineWork.coins) {
         Sound_PlayFar(SE_MENU_CANCEL);
         Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
         chooseAgain = 1;

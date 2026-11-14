@@ -207,23 +207,19 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   // Free the text tiles while the tilemap still names them.
   Window_ClearTextTilesInRect(x, y, width, height);
 
-  row = 0;
-  if (row < height) {
-    do {
-      u32 column;
+  for (row = 0; row < height; row++) {
+    u32 column;
 
-      if (canvas->battleMode != 0) {
-        if ((y + row) > 16)
-          tile = WINDOW_TILE_COMMAND_PANEL;
-        else
-          tile = WINDOW_TILE_BLANK;
-      }
-      for (column = 0; column < width; column++) {
-        *cursor++ = tile;
-      }
-      row++;
-      cursor += 32 - width;
-    } while (row < height);
+    if (canvas->battleMode != 0) {
+      if ((y + row) > 16)
+        tile = WINDOW_TILE_COMMAND_PANEL;
+      else
+        tile = WINDOW_TILE_BLANK;
+    }
+    for (column = 0; column < width; column++) {
+      *cursor++ = tile;
+    }
+    cursor += 32 - width;
   }
   canvas->dirty = 1;
 }

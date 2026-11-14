@@ -428,10 +428,8 @@ void Serial_RemoveIrqHandlers(void) {
 /// Waits a frame at a time until every status bit in `mask` is set in
 /// gLinkStatus, then returns this console's multiplayer id.
 u32 Serial_WaitForStatusMask(s32 mask) {
-  if ((mask & gLinkStatus) != mask) {
-    do {
-      wait(1);
-    } while ((mask & gLinkStatus) != mask);
+  while ((mask & gLinkStatus) != mask) {
+    wait(1);
   }
   return SIO_ID_OF(REG_SIOCNT);
 }

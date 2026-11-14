@@ -548,12 +548,8 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     do {
       s32 remaining = width;
       u16 *cell = (u16 *)(offset + (s32)tilemap);
-      if (remaining != 0) {
-        do {
-          remaining--;
-          *cell++ = (HIGHLIGHT_PALETTE << 12) | 6;
-        } while (remaining != 0);
-      }
+      for (; remaining != 0; remaining--)
+        *cell++ = (HIGHLIGHT_PALETTE << 12) | 6;
       height--;
       offset += 64;
     } while (height != 0);

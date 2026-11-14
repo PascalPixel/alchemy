@@ -72,16 +72,14 @@ s32 Save_InitializeWork(void) {
     work->occupied[index] = 1;
     work->partId[index] = part;
     // An interrupted replacement can leave both copies valid.
-    if (status < index) {
-      do {
-        if (work->partId[status] == (u8)part) {
-          if (work->counter[status] < header->counter)
-            work->occupied[status] = 0;
-          else
-            work->occupied[index] = 0;
-        }
-        status++;
-      } while (status < index);
+    while (status < index) {
+      if (work->partId[status] == (u8)part) {
+        if (work->counter[status] < header->counter)
+          work->occupied[status] = 0;
+        else
+          work->occupied[index] = 0;
+      }
+      status++;
     }
   }
   return 0;

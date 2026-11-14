@@ -588,7 +588,6 @@ void Func_0200130c(void) {
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline. */
   FieldCamera_MoveToFixed(x, y, z, mode);
 }
 

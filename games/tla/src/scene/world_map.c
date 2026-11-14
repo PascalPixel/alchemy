@@ -1540,8 +1540,6 @@ void Func_02002594(void) {
 }
 
 static __inline__ void PosSet(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, the command
-   * takes pixels and shifts them into fixed point inside an inline. */
   Actor_SetPosition(id, x, z);
 }
 
@@ -2113,10 +2111,6 @@ void Func_02003c50(void) {
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, forwarding
-   * through the inline sets the arguments up in their own order: the native
-   * shifts z before it starts the -1, where called directly the -1 starts
-   * first. */
   FieldCamera_MoveToFixed(x, y, z, mode);
 }
 

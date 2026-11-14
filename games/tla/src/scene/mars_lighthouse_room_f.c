@@ -2457,9 +2457,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);
-      /* FAKEMATCH(wrapper): forwarded. */
       MapGrid_SetShake(5, 5, 1);
-      /* FAKEMATCH(wrapper): forwarded. */
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       if (actor->watchedObject != NULL)
         ((void (*)(struct Actor *))actor->watchedObject)(actor);

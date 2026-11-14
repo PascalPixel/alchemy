@@ -186,7 +186,6 @@ s32 Func_02000290(void) {
 /// Copies the map cells and sets the cell values that flags 0xa10 to 0xa15 call
 /// for.
 void Func_020002f0(void) {
-  /* FAKEMATCH(wrapper): every call forwarded through the call layer. */
   MapGrid_CopyCellsLayered(94, 60, 9, 8, 94, 10);
   Call4((void (*)())MapGrid_SetCellHeight, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x1f00000, 0x1000000, 0, -2);

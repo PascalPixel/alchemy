@@ -36,11 +36,6 @@ struct SparkWork {
 STATIC_ASSERT(offsetof(struct SparkWork, canvasOrigin) ==
               offsetof(struct BattleEffectWork, trackedCanvas.origin));
 
-/// A blitter loaded into a heap slot: draws a width by height picture at
-/// (x, y) on the canvas.
-typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
-                         s32 height);
-
 // Draws the star field's next frame: each spark falls towards the centre and
 // shrinks as its life runs out, and the three rings move outward.
 UNREAD_RESULT ElementGlow_UpdateStarField(void) {
@@ -53,7 +48,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   void *canvas;
   s32 sparkIndex;
   struct SparkWork *work;
-  DrawFunc draw;
+  DrawRectangle draw;
   struct Spark *spark;
   struct Ring *ring;
   s32 *axisPosition;
@@ -72,7 +67,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   canvas = gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   work = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   work->ready = 0;
-  draw = (DrawFunc)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   for (sparkIndex = 0; sparkIndex < STAR_FIELD_SPARKS; sparkIndex++) {
     spark = &work->sparks[sparkIndex];
     life = spark->life;
@@ -134,7 +129,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   }
   // The rings, 32 by 32, with the other blitter: each shows its four pictures
   // eight frames apiece, then is no longer drawn.
-  draw = (DrawFunc)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   for (ring = work->rings, ringIndex = STAR_FIELD_RINGS - 1; ringIndex >= 0;
        ringIndex--, ring++) {
     ring->x += ring->velocityX;

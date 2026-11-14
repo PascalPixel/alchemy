@@ -135,8 +135,9 @@ void BattleBackground_Free(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SCANLINES);
 }
 
-/// The bit decoder BattleBackground_Load copies to RAM and runs.
-typedef void (*BitDecoder)(const u8 *source, void *destination);
+/// The bit decoder BattleBackground_Load copies to RAM and runs. It returns
+/// the source after the last halfword it read.
+typedef const u8 *(*BitDecoder)(const u8 *source, void *destination);
 
 /// Loads a battle background, its picture, its palette darkened by level (none
 /// when negative) and both its maps.
@@ -149,20 +150,8 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, BitDecoder_DecodeImage,
                    BitDecoder_Size);
-  {
-    u32 offset = 256;
-    void *vram;
-
-    /* FAKEMATCH(dead): two updates that cancel, under a test that emits
-     * nothing, end a CSE block. */
-    if (battle) {
-      offset++;
-      offset--;
-    }
-    vram = BG_CHAR_BLOCK(2);
-    ((BitDecoder)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(
-        backgroundData + offset, vram);
-  }
+  ((BitDecoder)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(backgroundData + 256,
+                                                         BG_CHAR_BLOCK(2));
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
   palette = battle->palette;
   Dma_Set(backgroundData, palette, DMA_COPY_WORDS(64), REG_DMA3);

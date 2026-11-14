@@ -985,16 +985,16 @@ s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc) {
   return 1;
 }
 
-/// Clears byte54 and advances to the next command.
+/// Hides the sprites (spriteStorageKind 0) and advances to the next command.
 s32 ActorScript_HideSprites(struct ScriptInterpreter *sc) {
-  sc->byte54 = 0;
+  sc->spriteStorageKind = 0;
   sc->cursor++;
   return 1;
 }
 
-/// Sets byte54 to 1 and advances to the next command.
+/// Shows one sprite (spriteStorageKind 1) and advances to the next command.
 s32 ActorScript_ShowSprite(struct ScriptInterpreter *sc) {
-  sc->byte54 = 1;
+  sc->spriteStorageKind = 1;
   sc->cursor++;
   return 1;
 }

@@ -22,15 +22,6 @@
 #include "system/frame.h"
 #include "scene_tables.h"
 
-struct IzumoRuinsEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[0x56];
-  s32 field1ac;
-  u8 unk1b0[0xb0c];
-  struct Actor *objectCbc;
-};
-
 struct IzumoRuinsAnimation {
   u8 unk00[9];
   u8 unused09 : 2;
@@ -771,13 +762,13 @@ void IzumoRuins_PoundPillar(s32 aArg, s32 b) {
 }
 
 void IzumoRuins_FreezePuddle(void) {
-  struct IzumoRuinsEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FlagBlock_ApplyFlags(gIzumoRuins_Puddles);
-  object = work->objectCbc;
+  object = work->unkcbc;
   object->priorityFlags |= 1;
   object->priorityFlags &= ~2;
   Event_End();
@@ -838,11 +829,11 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 s32 Scene_Initialize(void) {
-  struct IzumoRuinsEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 height;
 
-  work->field1ac = 0x204;
+  work->transition = 0x204;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsFirstRoom) {

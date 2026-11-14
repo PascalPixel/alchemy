@@ -242,8 +242,7 @@ void Func_020001d8(void) {
 
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
 s32 Scene_Initialize(void) {
-  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->fieldWork)
-      ->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Func_020001d8();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   if (gMainRoutineWork.entrance == 5) {
@@ -2852,14 +2851,13 @@ void PaletteCycle_Fade(void) {
 }
 
 void Func_020051e0(void) {
-  struct MarsLighthouseAerieEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->screenEffect;
+  saved = work->transition;
   PaletteFade_ApplyTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->fieldWork)
-      ->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02005030();
@@ -2874,7 +2872,7 @@ void Func_020051e0(void) {
 
     party->unk2c2 = 0;
   }
-  work->screenEffect = saved;
+  work->transition = saved;
 }
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);

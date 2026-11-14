@@ -89,14 +89,6 @@ struct AlhafranCaveMapWork {
   struct AlhafranCaveMapLayer layers[1];
 };
 
-struct AlhafranCaveEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-  u8 unk1b0[0xb9a];
-  u16 valueD4a;
-  u16 valueD4c;
-};
-
 struct AlhafranCaveEffectWork {
   u8 unk00[0x1a];
   s16 objectId;
@@ -205,9 +197,9 @@ void AlhafranCave_CloseWayToJail(void) {
 }
 
 void AlhafranCave_CastSand(void) {
-  struct AlhafranCaveEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->valueD4a = 2;
+  work->unkd4a = 2;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -239,7 +231,7 @@ s32 AlhafranCave_DrawCrateSprite(void) {
 
 s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
-  ((struct AlhafranCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac = 0x201;
+  gFieldWork->transition = 0x201;
   if (gMainRoutineWork.scene == (s32)&SceneId_AlhafranCave)
     AlhafranCave_SetUpCave();
   else if (gMainRoutineWork.scene == (s32)&SceneId_AlhafraJail)
@@ -249,16 +241,13 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_AlhafranCave) {
-    ((struct AlhafranCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
-        0x201;
+    gFieldWork->transition = 0x201;
     AlhafranCave_SetUpCave();
   } else if (scene == (s32)&SceneId_AlhafraJail) {
     if (gMainRoutineWork.entrance == 8 || gMainRoutineWork.entrance == 9)
-      ((struct AlhafranCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
-          0x209;
+      gFieldWork->transition = 0x209;
     else
-      ((struct AlhafranCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
-          0x201;
+      gFieldWork->transition = 0x201;
     AlhafranCave_SetUpJail();
   }
   return 0;
@@ -342,7 +331,7 @@ void EffectSprite_InitFromSlot94(const void *data, s32 a, s32 b, s32 c);
 /// 0x109 is set.
 void AlhafranCave_SetUpJail(void) {
   const void *data;
-  struct AlhafranCaveEventWork *work;
+  struct FieldWork *work;
 
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Actor_Get(8)->priorityFlags |= 32;
@@ -354,7 +343,7 @@ void AlhafranCave_SetUpJail(void) {
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
     work = Ram_HeapSlots->fieldWork;
 
-    work->valueD4c = 3;
+    work->unkd4c = 3;
   }
   Rope_Initialize();
   Rope_Place(0, 0x200, 10, 11);

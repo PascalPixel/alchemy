@@ -454,8 +454,7 @@ void Func_02000810(s32 actor, s32 target) {
   Actor_SetAnimation(target, 1);
 }
 
-#define EVENT_WORK                                                             \
-  ((struct JupiterLighthouseRoom5EventWork *)Ram_HeapSlots->fieldWork)
+#define EVENT_WORK ((struct FieldWork *)Ram_HeapSlots->fieldWork)
 
 /// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
 /// about, actor 22 rises in sparks and talks with it, then joins it; flags
@@ -537,8 +536,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 angle;
 
-  ((struct JupiterLighthouseRoom5EventWork1ac *)Ram_HeapSlots->fieldWork)
-      ->value = 0x204;
+  gFieldWork->transition = 0x204;
   if (Event_GetFlag(0xa23))
     Event_ClearFlag(0xa22);
   if (Event_GetFlag(0xa22)) {

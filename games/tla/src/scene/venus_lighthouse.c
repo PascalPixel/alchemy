@@ -588,7 +588,7 @@ struct AerieEventWork__floor {
 // entrance 22.
 #if !TLA_PATCH_1
 s32 VenusLighthouse_Start(void) {
-  ((struct AerieEventWork__floor *)Ram_HeapSlots->fieldWork)->mode = 0x204;
+  gFieldWork->transition = 0x204;
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -619,7 +619,7 @@ s32 VenusLighthouse_Start(void) {
   struct MainRoutineWork *routine;
 
   routine = &gMainRoutineWork;
-  ((struct AerieEventWork__floor *)Ram_HeapSlots->fieldWork)->mode = 0x204;
+  gFieldWork->transition = 0x204;
   if (routine->entrance == ENTRANCE_OPENING) {
     // From patch 1 it also saves this scene and entrance 22.
     routine->savedScene = (s32)&SceneId_VenusLighthouse;

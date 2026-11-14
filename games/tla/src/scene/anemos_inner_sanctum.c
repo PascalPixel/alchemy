@@ -40,11 +40,6 @@ struct CellTarget;
 struct CellTargetEntry;
 struct Work;
 
-struct AnemosInnerSanctumEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
 struct Mover {
   u8 unk00[8];
   s32 x;
@@ -215,14 +210,13 @@ static __inline__ void Func_02003458_(s32 a, s32 b) {
 }
 
 void Func_02000328(void) {
-  struct AnemosInnerSanctumEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->transition;
   PaletteFade_ApplyTarget(0x202108, 1);
   Func_02003458_(0x10000, 2);
-  ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
-      0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02000178();
@@ -237,7 +231,7 @@ void Func_02000328(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->transition = saved;
 }
 
 #include "../field/object/set_sprite_priority.c"
@@ -1298,7 +1292,7 @@ static __inline__ void Func_02003320_(const void *data, s32 a, s32 b) {
 // The scene opening: clears the actors' motion flags, plays the entrance's
 // map edit and steps the leader in.
 void Func_02001c94(void) {
-  struct EventWork154__s1938 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
   Event_Start();
@@ -1318,7 +1312,7 @@ loop:
   if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum1) {
     MapGrid_AnimateCells(gData_020043e4, 33, 7);
   } else {
-    s32 index = work->value / 2 - 1;
+    s32 index = work->stepTrigger / 2 - 1;
 
     Func_02003320_(gData_02004410[index].steps, gData_02004410[index].x,
                    gData_02004410[index].y);
@@ -1327,7 +1321,7 @@ loop:
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   FieldEvent_Wait(6);
-  FieldEvent_SetExitRequest(work->value);
+  FieldEvent_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

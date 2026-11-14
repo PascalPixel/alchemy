@@ -782,10 +782,10 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   if (result == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(18, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(18, 0, 10);
   }
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
@@ -950,13 +950,13 @@ void LemuriaInteriors_AskWherePiersIs(void) {
     Actor_SetAnimationAndWait(18, 3);
     Event_Wait(10);
     Event_ShowMessageThenWait(18, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
     Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(18, 4);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(18, 0, 10);
   }
   Actor_RunRepeatedMotion(12, 2);
@@ -973,10 +973,10 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   if (result == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(12, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(12, 0, 10);
   }
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);

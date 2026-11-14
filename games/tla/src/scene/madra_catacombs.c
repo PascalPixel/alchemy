@@ -149,11 +149,6 @@ void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
 
 #include "shared/held_actor_raise_cell.h"
 
-struct SceneWork {
-  u8 unk000[0x1ac];
-  s32 unk1ac;
-};
-
 extern struct Trigger gMadraCatacombs_Triggers[];
 
 void MadraCatacombs_SetUpRoomBelowBookshelf(void);
@@ -208,12 +203,12 @@ void Actor_LiftTargetBlock(const void *data);
 void FlagBlock_ApplyFlags(const void *data);
 
 void MadraCatacombs_TryLockedDoor(void) {
-  struct EventWork15a *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)&MsgFieldDoorWontBudge, 1);
-  work->flag = 1;
+  work->fieldMenu = 1;
   Event_End();
 }
 
@@ -314,11 +309,6 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   Event_End();
 }
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 flag;
-};
-
 void Actor_MoveToObject(s32 id, s32 value);
 void Rope_Initialize(void);
 void FlagBlock_PlaceAll(const void *data);
@@ -407,10 +397,10 @@ void MadraCatacombs_StartMovingClimbablePillar(void) {
 void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void MadraCatacombs_FinishMovingClimbablePillar(void) {
-  struct EventWorkCbc *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (work->active != 0)
-    MadraCatacombs_SettleClimbablePillar(work->active);
+  if (work->unkcbc != 0)
+    MadraCatacombs_SettleClimbablePillar(work->unkcbc);
 }
 
 /// The tablet room's flames, lit: actors 10 to 19 stand in two columns and
@@ -464,7 +454,7 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
 /// The leader steps to the middle of a doorway, walks in and leaves by the exit
 /// the event work names.
 void MadraCatacombs_EnterDoorway(void) {
-  struct EventWork154 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
   s32 cell;
@@ -485,12 +475,12 @@ void MadraCatacombs_EnterDoorway(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->returnEntrance);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
                                      s32 f) {
-  struct EventWork154 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
@@ -517,7 +507,7 @@ void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->returnEntrance);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void MadraCatacombs_SlideOpenStoneDoor(void) {
@@ -557,7 +547,7 @@ DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedVillage, 3)
 DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel, 8)
 
 s32 Scene_Initialize(void) {
-  ((struct SceneWork *)Ram_HeapSlots->fieldWork)->unk1ac = 0x204;
+  gFieldWork->transition = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs1)
     MadraCatacombs_SetUpVillage();
   else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs3)

@@ -1,7 +1,7 @@
 /// An actor rolls forward, crumbling the cells it passes.
 void Actor_RollAndCrumble(struct Actor *actor) {
   struct Vector3 position;
-  struct WorkEvent *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 state = actor->timer;
 
   if (state == 0) {
@@ -25,12 +25,12 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 flag;
     struct MapWork *map;
     struct MapCell *cell;
-    struct WorkEvent *work2;
+    struct FieldWork *work2;
     struct Work020023c4 *other;
     struct Actor *target;
 
     flag = Event_GetFlag(FLAG_MENU_OPEN);
-    if (work->unk166 != 0)
+    if (work->psynergy != 0)
       flag |= 1;
     actor->movementState = flag;
 
@@ -104,7 +104,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ABS(actor->z - target->z) < 0x140000) {
       other->unk04 = 2;
       other->unk6c = actor;
-      work2->unk154 = other->unk0a + 2;
+      work2->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
     actor->movementState = 0;

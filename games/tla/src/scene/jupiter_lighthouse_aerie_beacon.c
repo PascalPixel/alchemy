@@ -185,18 +185,6 @@ struct Object6a5 {
   void (*update)(void);
 };
 
-/// The scene's event work, as far as this update reads it.
-struct EventWork6a5 {
-  u8 unk000[346];
-  s16 unk15a;
-  u8 unk15c[2];
-  s16 unk15e;
-  u8 unk160[6];
-  s16 unk166;
-  s16 unk168;
-  s16 unk16a;
-};
-
 extern s32 gData_02006a24;
 
 extern s32 gData_0200641c[];
@@ -2547,7 +2535,7 @@ void Func_020040f4(void) {
 extern u32 gData_020069fc[];
 
 void Whirlwind_Update(struct Object6a5 *object) {
-  struct EventWork6a5 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Vector3 position;
   s32 distance;
@@ -2555,8 +2543,8 @@ void Whirlwind_Update(struct Object6a5 *object) {
   s32 timer;
   u8 *flags;
 
-  if (work->unk166 != 0 || work->unk15a != 0 || work->unk15e != 0 ||
-      work->unk168 != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(object, 0);
     return;
   }
@@ -2591,7 +2579,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
             leader->facing = object->angle;
             flags = &leader->priorityFlags;
             *flags &= ~1;
-            work->unk16a = 200;
+            work->raisedTrigger = 200;
             gMainRoutineWork.renderMode = 0;
             object->unk62 = 1;
             object->unk63 = 1;

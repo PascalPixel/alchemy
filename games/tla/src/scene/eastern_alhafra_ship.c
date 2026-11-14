@@ -141,15 +141,10 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 99) {
     GameFlag_Set(0x8aa);
     GameFlag_Set(FLAG_BRIGGS_CAUGHT);
@@ -437,13 +432,13 @@ void EasternAlhafraShip_MayorArrives(void) {
     Actor_ArmCallback(5, FACING_WEST, 0);
     Event_Wait(20);
     Event_ShowMessageThenWait(5, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
   } else {
     Func_020032a0();
     Event_Wait(20);
     Actor_ArmCallback(5, FACING_WEST, 0);
     Event_Wait(20);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(5, 0, 10);
   }
   Actor_FaceDirection(5, FACING_SOUTH, 0);

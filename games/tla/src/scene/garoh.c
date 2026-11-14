@@ -728,7 +728,7 @@ void Func_02001104(void) {
 }
 
 void Func_02001144(void) {
-  struct GarohEventWork *work;
+  struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_SCENE_TEMP_10);
@@ -742,13 +742,13 @@ void Func_02001144(void) {
       Flag_Clear(FLAG_AREA_TEMP_18);
     }
     work = Ram_HeapSlots->fieldWork;
-    if (work->fadeLock == 0)
+    if (work->revealActive == 0)
       PaletteFade_Interpolate(120);
   }
 }
 
 void Func_020011c8(void) {
-  struct GarohEventWork *work;
+  struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_SCENE_TEMP_11);
@@ -762,7 +762,7 @@ void Func_020011c8(void) {
       Flag_Clear(FLAG_AREA_TEMP_18);
     }
     work = Ram_HeapSlots->fieldWork;
-    if (work->fadeLock == 0)
+    if (work->revealActive == 0)
       PaletteFade_Interpolate(120);
   }
 }

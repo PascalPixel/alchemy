@@ -101,11 +101,6 @@ struct Counted {
   u8 count;
 };
 
-struct EventWork900 {
-  u8 unk000[362];
-  u16 timer;
-};
-
 struct CellPoint {
   s16 position[2];
 };
@@ -130,11 +125,6 @@ struct GaiaRockInsideOrbit {
   u8 growth;
   s16 angle;
   s16 speed;
-};
-
-struct GaiaRockInsideEventWork {
-  u8 unk000[0x15a];
-  u16 unk15a;
 };
 
 struct SwayState {
@@ -549,7 +539,7 @@ void Func_02000900(struct Counted *object) {
   struct Counted *other = (struct Counted *)Actor_Get(9);
 
   if (object->count == 30 || other->count == 30) {
-    ((struct EventWork900 *)Ram_HeapSlots->fieldWork)->timer = 42;
+    gFieldWork->raisedTrigger = 42;
     if (object->count == 30)
       object->count = 31;
     if (other->count == 30)
@@ -1494,10 +1484,10 @@ void GaiaRockInside_CheckAltar(void) {
   owner = FieldPartyInventory_FindMember(451);
   next = message + 2;
   if (owner != -1) {
-    struct GaiaRockInsideEventWork *work = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Message_ShowCentered(next, 1);
-    work->unk15a = 1;
+    work->fieldMenu = 1;
   } else {
     Message_ShowCentered(next, 1);
   }
@@ -2227,8 +2217,7 @@ s32 Scene_Initialize(void) {
   s16 *early;
 
   work = &gMainRoutineWork;
-  ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->fieldWork)->screenEffect =
-      516;
+  gFieldWork->transition = 516;
   if (work->scene == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
     if (work->entrance > 8) {

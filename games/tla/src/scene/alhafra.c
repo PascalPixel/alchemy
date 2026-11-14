@@ -228,7 +228,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
 
 void Alhafra_TalkToHungryBoy(s32 id) {
   if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED)) {
-    ((struct AlhafraEventWork *)Ram_HeapSlots->fieldWork)->value15a = 1;
+    gFieldWork->fieldMenu = 1;
     Event_SetMessageId(MsgAlhafra65);
     Event_ShowMessageAndWait(id, 0);
   } else if (Event_GetFlag(FLAG_BOY_TOLD_OF_CAVE)) {
@@ -246,10 +246,10 @@ void Alhafra_TalkToHungryBoy(s32 id) {
       GameFlag_Set(FLAG_BOY_TOLD_OF_CAVE);
       Event_Wait(20);
       Event_ShowMessageThenWait(id, 0, 10);
-      ((struct AlhafraEventWork *)Ram_HeapSlots->fieldWork)->value1c4++;
+      gFieldWork->message++;
     } else {
       Event_Wait(30);
-      ((struct AlhafraEventWork *)Ram_HeapSlots->fieldWork)->value1c4++;
+      gFieldWork->message++;
       Event_ShowMessageThenWait(id, 0, 10);
     }
   }

@@ -131,7 +131,7 @@ void Loho_AskWantCannon(s32 actor) {
 /// "It looks like it's empty."
 void Loho_ExamineCannon(void) {
   FieldMessage_Show((s32)MsgLoho27, 1);
-  ((struct EventWork15a *)Ram_HeapSlots->fieldWork)->flag = 1;
+  gFieldWork->fieldMenu = 1;
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -643,7 +643,7 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  work = (u8 *)&((struct EventWork154 *)work)->returnEntrance;
+  work = (u8 *)&((struct FieldWork *)work)->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
@@ -659,7 +659,7 @@ loop:
 
 void Loho_EnterDoor(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct EventWork154 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
@@ -668,11 +668,11 @@ void Loho_EnterDoor(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Event_PlaySound(SE_MAP_EXIT);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
-  Import_EventSetExitRequest(work->returnEntrance);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 void Loho_ClimbDownLadder(void) {
-  s32 value = ((struct EventWork154 *)Ram_HeapSlots->fieldWork)->returnEntrance;
+  s32 value = gFieldWork->stepTrigger;
 
   if (value == 2)
     Actor_SetPosition(8, 144, 224);

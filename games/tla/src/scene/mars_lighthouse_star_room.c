@@ -231,11 +231,6 @@ void Func_020001e8(void) {
 
 void Func_02000d88(void);
 
-struct EventDelay {
-  u8 unk000[0x16a];
-  u16 frames;
-};
-
 /// Burst on the frozen dragons, actor 10: a flash, the ice gone, chips flying
 /// (flag 0x238).
 void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
@@ -248,7 +243,7 @@ void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
 #if TLA_PATCH_1
     Event_SetFlag(FLAG_SCENE_TEMP_38);
 #endif
-    ((struct EventDelay *)Ram_HeapSlots->fieldWork)->frames = 20;
+    gFieldWork->raisedTrigger = 20;
   }
   if ((u32)(frame - 97) <= 174 && frame % 30 == 0)
     MarsLighthouseStarRoom_ScatterIceChips(10);
@@ -261,13 +256,6 @@ void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 #include "shared/actor_freeze.h"
-
-struct Overlay6abEventWork {
-  u8 unk000[0x1ac];
-  s32 unk1ac;
-  u8 unk1b0[0x1c];
-  struct Actor *unk1cc;
-};
 
 void MarsLighthouseStarRoom_WakeAfterBattle(void);
 void MarsLighthouseStarRoom_CreateMarsStar(s32 a);
@@ -283,7 +271,7 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
 
-  ((struct Overlay6abEventWork *)Ram_HeapSlots->fieldWork)->unk1ac = 0x204;
+  gFieldWork->transition = 0x204;
   gMarsLighthouseStarRoom_MarsStar = NULL;
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_02001d7c();
@@ -298,7 +286,7 @@ s32 Scene_Initialize(void) {
     }
     if (entrance == 11) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-      struct Overlay6abEventWork *work = Ram_HeapSlots->fieldWork;
+      struct FieldWork *work = Ram_HeapSlots->fieldWork;
       /* FAKEMATCH(signature): GameFlag_GetByte declared returning s32, where
        * its definition returns u8. */
       s32 column = GameFlag_GetByte(0x340);
@@ -309,7 +297,7 @@ s32 Scene_Initialize(void) {
       x = (column << 20) + 0x80000;
       leader->x = x;
       leader->z = (row << 20) - 0x1280000;
-      other = work->unk1cc;
+      other = work->camera;
       other->x = x;
       other->z = leader->z;
       Map_CenterOnFollowedPoint();
@@ -1822,14 +1810,6 @@ s32 Func_02001fa8(s32 index) {
 
 #include "shared/ride_set_slot.h"
 
-struct MarsLighthouseEventWork {
-  u8 unk000[0x16a];
-  u16 unk16a;
-  u16 downCount;
-  u16 standingCount;
-  u16 downOwners[8];
-};
-
 /* VIEW(ride_handle): routine Unit_Get as struct BattleUnit *Unit_Get(s32
  * owner); scene/mars_lighthouse_star_room has void *Unit_Get(s32 owner); not
  * tried: Unit_Get's declaration holds a FAKEMATCH tag. */
@@ -1872,21 +1852,6 @@ void Func_02002354(void) {
 extern u8 gInventorySnapshot[];
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
-struct RideEvent {
-  u8 unk000[0x15a];
-  u16 field15a;
-  u16 field15c;
-  u16 field15e;
-  u8 unk160[4];
-  u16 field164;
-  u16 field166;
-  u8 unk168[0x44];
-  s32 field1ac;
-  u8 unk1b0[2];
-  u16 started;
-  s32 field1b4;
-};
-
 // XXX: is the car an actor (its stopped halfword sits where an actor's action
 // is, its steps in unk70)? The code that stores the car's pointer at the ride
 // state's 0x6c would settle it.
@@ -1909,21 +1874,21 @@ struct RideState {
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 s32 MarsLighthouseRoomF_SlideOnIce(void) {
-  struct RideEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct RideState *ride;
   struct Actor *leader;
   s32 frame[3]; // Unused: gives the stack frame its 12 bytes.
 
-  if (event->started == 0) {
-    ScreenTransition_Start(event->field1ac, event->field1b4);
-    event->started = 1;
+  if (event->transitionActive == 0) {
+    ScreenTransition_Start(event->transition, event->transitionFrames);
+    event->transitionActive = 1;
   }
   Event_ClearFlag(FLAG_MENU_OPEN);
-  event->field166 = 0;
-  event->field15a = 0;
-  event->field15e = 0;
-  event->field15c = 0;
-  event->field164 = 0;
+  event->psynergy = 0;
+  event->fieldMenu = 0;
+  event->pauseMenu = 0;
+  event->aButton = 0;
+  event->encounter = 0;
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else
@@ -2130,16 +2095,9 @@ struct Work020023c4__s236c {
   struct Actor *unk6c;
 };
 
-struct WorkEvent {
-  u8 unk000[340];
-  u16 unk154;
-  u8 unk156[358 - 342];
-  s16 unk166;
-};
-
 void Actor_RollAndCrumble(struct Actor *actor) {
   struct Vector3 position;
-  struct WorkEvent *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 state = actor->timer;
 
   if (state == 0) {
@@ -2163,12 +2121,12 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 flag;
     struct MapWork *map;
     struct MapCell *cell;
-    struct WorkEvent *work2;
+    struct FieldWork *work2;
     struct Work020023c4__s236c *other;
     struct Actor *target;
 
     flag = Event_GetFlag(FLAG_MENU_OPEN);
-    if (work->unk166 != 0)
+    if (work->psynergy != 0)
       flag |= 1;
     actor->movementState = flag;
 
@@ -2242,7 +2200,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ABS(actor->z - target->z) < 0x140000) {
       other->unk04 = 2;
       other->unk6c = actor;
-      work2->unk154 = other->unk0a + 2;
+      work2->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
     actor->movementState = 0;
@@ -2924,7 +2882,7 @@ s32 CrackedTiles_Step(void) {
 
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 dx = FieldGameFlag_GetByte(gData_02004cf4.flagByte);
   s32 dz = FieldGameFlag_GetByte(gData_02004cf4.flagByte + 8);
 
@@ -2935,13 +2893,12 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
     GameFlag_SetByte(gData_02004cf4.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
-    marker = work->marker;
+    marker = work->camera;
     marker->x = leader->x;
     marker->z = leader->z;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->fieldWork)
-        ->screenEffect = effect;
+    gFieldWork->transition = effect;
   }
 }
 

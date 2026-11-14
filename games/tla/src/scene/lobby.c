@@ -4,6 +4,7 @@
 /// a visitor takes song requests.
 
 #include "battle/battle.h"
+#include "field/field_work.h"
 #include "sound_driver_symbols.h"
 #include "flags.h"
 #include "field/field.h"
@@ -96,11 +97,6 @@ void LinkLobby_WriteSlotValue(s32 slot) {
   dst[gLinkLobby_SlotColumns[slot]] = *src;
 }
 
-struct LobbyEventWork {
-  u8 unk000[0x16a];
-  s16 raisedTrigger;
-};
-
 extern s32 gLinkLobby_WaitFrames;
 
 /// The lobby's task each frame: counts frames without the opponent, clears
@@ -108,7 +104,7 @@ extern s32 gLinkLobby_WaitFrames;
 /// are ready or the link is lost. Returns whether the peer answered.
 // Ported from ☀️'s LinkLobby_PollPeerReady.
 s32 LinkLobby_PollPeerReady(void) {
-  struct LobbyEventWork *work;
+  struct FieldWork *work;
   s32 result;
   s32 i;
   s32 set;
@@ -200,7 +196,7 @@ s32 LinkLobby_PromptToParticipate(void) {
 }
 
 s32 LinkLobby_ReportDisconnection(void) {
-  struct LobbyEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   LinkLobby_WriteSlotValue(4);
   Event_ClearFlag(FLAG_SCENE_TEMP_00);
@@ -575,7 +571,7 @@ extern char SceneId_Lobby;
 // Touching the lobby counter: waits for the opponent, walks the lead to the
 // arena door, swaps party records and starts the link battle.
 s32 LinkLobby_EnterBattle(void) {
-  struct LobbyEventWork *work;
+  struct FieldWork *work;
   s32 failed;
   struct Window *window;
   s32 cnt;
@@ -1039,7 +1035,6 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
 void MessageArgument_Push(s32 value, s32 digits);
 void Save_ProcessSelectedFile(void);
 void Event_Start(void);
-void Event_End(void);
 /* VIEW(talk): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
  * actor, s32 animation, s32 flags); event.h has s32 Actor_ShowEmoteById(s32
  * actorId, s32 emote, s32 frames); tried as the definition's struct
@@ -1228,17 +1223,7 @@ next:
   Map_CenterOnFollowedPoint();
 }
 
-/* VIEW(scene_events): tag struct LobbyEventWork as struct
- * LobbyEventWork__scene_events; lobby.c has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/lobby.c:1268: structure has no member named
- * `startTransition'. */
-struct LobbyEventWork__scene_events {
-  u8 unk000[0x16a];
-  s16 raisedTrigger;
-  u8 unk16c[0x40];
-  s32 startTransition;
-};
+void Event_End(void);
 
 extern s32 gLinkLobby_WaitFrames;
 extern s32 gLinkLobby_CallFrames;
@@ -1267,7 +1252,7 @@ s32 LinkLobby_Initialize(void) {
   s32 i;
   s32 wins;
   u32 score;
-  struct LobbyEventWork__scene_events *work;
+  struct FieldWork *work;
   void *func;
 
   Event_SetFlag(0x17e);
@@ -1275,8 +1260,7 @@ s32 LinkLobby_Initialize(void) {
   gMainRoutineWork.packedEvents[1] = 0;
   gLinkLobby_CallFrames = 0;
   gLinkLobby_WaitFrames = 0;
-  ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->fieldWork)
-      ->startTransition = 0x201;
+  gFieldWork->transition = 0x201;
   Sound_LoadReverbCode(2);
   LinkLobby_DrawThreeDigitValue(gMainRoutineWork.linkTallies[6]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);

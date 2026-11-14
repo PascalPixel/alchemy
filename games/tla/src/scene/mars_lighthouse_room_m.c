@@ -190,15 +190,6 @@ void Func_02000058(s32 id, s32 value) {
 #include "text/msg_ids.h"
 #include "system/frame.h"
 
-struct MarsLighthouseRoomMEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[0x10];
-  s16 field166;
-  u8 unk168[0x44];
-  s32 field1ac;
-};
-
 struct MarsLighthouseRoomMVector {
   s32 x;
   s32 y;
@@ -292,14 +283,14 @@ extern u16 gData_0200397c[];
 
 void Func_020000c0(void) {
   s32 entrance = gMainRoutineWork.entrance;
-  struct Overlay6acEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 base;
   s32 i;
   s8 busy;
 
-  if (work->unk166 != 0)
+  if (work->psynergy != 0)
     return;
-  busy = work->unkca4;
+  busy = work->revealActive;
   if (busy != 0)
     return;
   if (gData_020036c4 == -1) {
@@ -348,7 +339,7 @@ void Func_020002fc(void) {
 }
 
 void Func_0200030c(void) {
-  struct MarsLighthouseRoomMEventWork *work;
+  struct FieldWork *work;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -371,7 +362,7 @@ void Func_0200030c(void) {
     break;
   }
   work = Ram_HeapSlots->fieldWork;
-  work->field166 = 0;
+  work->psynergy = 0;
   FieldEvent_Wait(30);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(30);
@@ -384,14 +375,14 @@ extern s32 gData_02003704;
 extern u16 gData_02003a5c[];
 
 void Func_020003c4(void) {
-  struct Overlay6acEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 base;
   s32 i;
   s8 busy;
 
-  if (work->unk166 != 0)
+  if (work->psynergy != 0)
     return;
-  busy = work->unkca4;
+  busy = work->revealActive;
   if (busy != 0)
     return;
   if (gData_02003704 == -1) {
@@ -1095,22 +1086,16 @@ void PaletteCycle_Fade(void) {
     gData_02003938 = 0;
 }
 
-struct MarsLighthouseRoomMEventWork1ac {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
 void Func_020017b4(void);
 
 void Func_0200183c(void) {
-  struct MarsLighthouseRoomMEventWork1ac *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->transition;
   PaletteFade_ApplyTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct MarsLighthouseRoomMEventWork1ac *)Ram_HeapSlots->fieldWork)
-      ->value1ac = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200168c();
@@ -1125,7 +1110,7 @@ void Func_0200183c(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->transition = saved;
 }
 
 s32 Func_020018c4(struct Actor *a, struct Actor *b) {
@@ -1709,14 +1694,6 @@ s32 Func_02002344(s32 index) {
 
 #include "shared/ride_set_slot.h"
 
-struct MarsLighthouseEventWork {
-  u8 unk000[0x16a];
-  u16 unk16a;
-  u16 downCount;
-  u16 standingCount;
-  u16 downOwners[8];
-};
-
 /* VIEW(s2118): routine Unit_Get as struct BattleUnit *Unit_Get(s32 owner);
  * item_icon.h has void *Unit_Get(s32 owner); not tried: Unit_Get's declaration
  * holds a FAKEMATCH tag. */
@@ -1762,21 +1739,6 @@ s32 Func_02002368__s2708() __asm__("Party_TakeFallDamage");
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
-struct RideEvent {
-  u8 unk000[0x15a];
-  u16 field15a;
-  u16 field15c;
-  u16 field15e;
-  u8 unk160[4];
-  u16 field164;
-  u16 field166;
-  u8 unk168[0x44];
-  s32 field1ac;
-  u8 unk1b0[2];
-  u16 started;
-  s32 field1b4;
-};
-
 struct RideCar {
   u8 unk00[0x64];
   s16 stopped;
@@ -1794,22 +1756,22 @@ struct RideState {
 };
 
 s32 MarsLighthouseRoomF_SlideOnIce(void) {
-  struct RideEvent *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct RideState *ride;
   struct Actor *leader;
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
-  if (event->started == 0) {
-    ScreenTransition_Start(event->field1ac, event->field1b4);
-    event->started = 1;
+  if (event->transitionActive == 0) {
+    ScreenTransition_Start(event->transition, event->transitionFrames);
+    event->transitionActive = 1;
   }
   Event_ClearFlag(FLAG_MENU_OPEN);
-  event->field166 = 0;
-  event->field15a = 0;
-  event->field15e = 0;
-  event->field15c = 0;
-  event->field164 = 0;
+  event->psynergy = 0;
+  event->fieldMenu = 0;
+  event->pauseMenu = 0;
+  event->aButton = 0;
+  event->encounter = 0;
   Party_TakeFallDamage(-10, 0);
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -2018,13 +1980,6 @@ struct Work020023c4 {
   u16 unk0a;
   u8 unk0c[0x6c - 0x0c];
   struct Actor *unk6c;
-};
-
-struct WorkEvent {
-  u8 unk000[340];
-  u16 unk154;
-  u8 unk156[358 - 342];
-  s16 unk166;
 };
 
 #include "shared/actor_roll_and_crumble.h"

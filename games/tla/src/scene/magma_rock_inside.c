@@ -758,7 +758,7 @@ next:
     goto end;
   id = 8;
 inner:
-  other = ((struct ActorTable *)Ram_HeapSlots->fieldWork)->actors[id];
+  other = gFieldWork->actors[id];
   if (other->script == 0)
     goto skip;
   if (source->x >> 20 == other->x >> 20 && source->y >> 20 == other->y >> 20 &&

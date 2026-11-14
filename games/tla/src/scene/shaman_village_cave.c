@@ -64,11 +64,6 @@ done:
   return;
 }
 
-struct ShamanVillageCaveEventWork {
-  u8 unk000[0x154];
-  s16 value154;
-};
-
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 void ShamanVillageCave_DropPillarIntoGap(s32 id);
@@ -574,7 +569,7 @@ void ShamanVillageCave_BeatColossoFans(void) {
 /// The party goes through a passage in the rock: everyone stops and the screen
 /// fades.
 void ShamanVillageCave_EnterPassage(void) {
-  struct ShamanVillageCaveEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   u32 id;
 
@@ -593,7 +588,7 @@ next:
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(5);
   Event_PlaySound(SE_MAP_EXIT);
-  FieldEvent_SetExitRequest(work->value154);
+  FieldEvent_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -602,8 +597,7 @@ next:
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->fieldWork)
-      ->screenEffect = 516;
+  gFieldWork->transition = 516;
   if (Event_GetFlag(0x9a9))
     Actor_SetPosition(8, 0, 0);
   if (Event_GetFlag(0x9aa))

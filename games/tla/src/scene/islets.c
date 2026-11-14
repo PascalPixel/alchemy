@@ -128,15 +128,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "system/frame.h"
 #include "system/vector3.h"
 
-struct IsletsEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[4];
-  s16 field15a;
-  u8 unk15c[0x50];
-  s32 field1ac;
-};
-
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Func_020034ec(void);
@@ -1126,7 +1117,7 @@ void Func_02001a68(void) {
     } while (*done == 0);
     Func_020034ec();
     System_Wait(1);
-    ((struct IsletsEventWork *)Ram_HeapSlots->fieldWork)->field1ac = 0x201;
+    gFieldWork->transition = 0x201;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     FieldPsynergy_GreyMindReadPalette();
@@ -1151,9 +1142,9 @@ void Func_02001bf4(void) {
 }
 
 void Func_02001c38(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->field15a = 1;
+  work->fieldMenu = 1;
 }
 
 void Func_02001c4c(void) {
@@ -1560,7 +1551,7 @@ void Func_0200265c(void) {
 #endif
 
 void Func_0200267c(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
   s16 *exit;
@@ -1577,7 +1568,7 @@ void Func_0200267c(void) {
       object->z);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
-  exit = &work->exit;
+  exit = &work->stepTrigger;
   index = *exit;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
@@ -1593,7 +1584,7 @@ void Func_0200267c(void) {
 }
 
 void Func_0200274c(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1601,11 +1592,11 @@ void Func_0200274c(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 void Func_02002780(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
 
@@ -1625,11 +1616,11 @@ void Func_02002780(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 void Func_02002830(void) {
-  struct IsletsEventWork *work;
+  struct FieldWork *work;
   struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_Get(9);
 
@@ -1642,7 +1633,7 @@ void Func_02002830(void) {
   Actor_SetAnimation(9, 3);
   System_Wait(1);
   work = Ram_HeapSlots->fieldWork;
-  work->field1ac = 0x201;
+  work->transition = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeed(9, 0.6);
@@ -1668,7 +1659,7 @@ void Func_02002830(void) {
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   work = Ram_HeapSlots->fieldWork;
-  work->field1ac = 0x100;
+  work->transition = 0x100;
   Func_020034d8();
 }
 
@@ -1737,10 +1728,10 @@ void Func_020029c4(void) {
 }
 
 s32 Scene_Initialize(void) {
-  struct IsletsEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 scene;
 
-  work->field1ac = 0x100;
+  work->transition = 0x100;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Islets1)
     Islets_InitializeRoom1();

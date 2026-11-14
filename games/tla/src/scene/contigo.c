@@ -243,13 +243,13 @@ s32 List_CountEntries(u16 *list) {
 void Teleport_PlayWhirl(void);
 
 void Func_02000328(void) {
-  struct ContigoEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->transition;
   BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct ContigoEventWork *)Ram_HeapSlots->fieldWork)->value1ac = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Contigo_StartFastPaletteCycle();
@@ -264,7 +264,7 @@ void Func_02000328(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->transition = saved;
 }
 
 #include "../field/object/set_sprite_priority.c"
@@ -1217,11 +1217,6 @@ s32 Func_02001a60(s32 topic) {
   return gData_02004630[index + topic + variant];
 }
 
-struct ContigoEventCount {
-  u8 unk000[0x1c4];
-  u16 refusals;
-};
-
 extern u8 gSceneState[];
 
 // The dice game attendant: the fee is ten coins a level.
@@ -1251,7 +1246,7 @@ void Func_02001abc(void) {
     Event_LeaveFor(509, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 19);
   } else {
-    ((struct ContigoEventCount *)Ram_HeapSlots->fieldWork)->refusals++;
+    gFieldWork->message++;
     Event_ShowMessageAndWait(14, 0);
   }
   Event_End();
@@ -1283,7 +1278,7 @@ void Func_02001b84(void) {
     Event_LeaveFor(507, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 18);
   } else {
-    ((struct ContigoEventCount *)Ram_HeapSlots->fieldWork)->refusals++;
+    gFieldWork->message++;
     Event_ShowMessageAndWait(8, 0);
   }
   Event_End();
@@ -2138,7 +2133,7 @@ struct ContigoEventWork {
 };
 
 void Contigo_InitializeRoom2(void) {
-  ((struct ContigoEventWork *)Ram_HeapSlots->fieldWork)->value1ac = 0x209;
+  gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
       Func_02001d50();

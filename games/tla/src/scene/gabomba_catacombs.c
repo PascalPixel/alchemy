@@ -65,11 +65,6 @@ struct GabombaCatacombsFollower {
   s32 z;
 };
 
-struct GabombaCatacombsEventWork {
-  u8 unk000[0x1cc];
-  struct GabombaCatacombsFollower *follower;
-};
-
 struct GabombaCatacombsParty {
   u8 unk000[0x254];
   u16 value254;
@@ -263,8 +258,7 @@ void Func_020008a0(struct Actor *object, s32 dz) {
   struct GabombaCatacombsFollower *follower;
   struct GabombaCatacombsVec position;
 
-  follower =
-      ((struct GabombaCatacombsEventWork *)Ram_HeapSlots->fieldWork)->follower;
+  follower = gFieldWork->camera;
 
   position.x = object->x;
   position.y = object->y;

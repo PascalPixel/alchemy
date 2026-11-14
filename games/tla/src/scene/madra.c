@@ -86,7 +86,7 @@ extern struct MadraPlacement gMadra_Doors[];
 /// opens with its cell animation (gMadra_Doors), and the leader walks in and
 /// leaves by the exit of the door's number.
 void Madra_EnterDoor(void) {
-  struct MadraEventWork *work;
+  struct FieldWork *work;
   struct Actor *object;
   s16 *trigger;
   u32 id;
@@ -104,7 +104,7 @@ next:
   id++;
   if (id < 64)
     goto next;
-  trigger = &work->value154;
+  trigger = &work->stepTrigger;
   index = *trigger - 1;
   Event_PlaySound(SE_DOOR_OPEN);
   {

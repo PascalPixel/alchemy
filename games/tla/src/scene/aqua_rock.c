@@ -615,13 +615,13 @@ void Func_02000d80(void) {
   struct Actor *leader, *carried;
   struct Vector3 ahead;
   s32 owner;
-  struct EventWork1cc *work;
+  struct FieldWork *work;
   s32 result, i;
 
   if (GameFlag_Get(0xa68)) {
     work = Ram_HeapSlots->fieldWork;
     owner = gMainRoutineWork.currentOwner;
-    carried = work->object;
+    carried = work->camera;
     leader = Actor_GetById(owner);
     if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&
         leader->terrainHeight == 0)
@@ -697,7 +697,7 @@ static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
 
 void Func_02000f8c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct AquaRockEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 col;
   s32 row;
@@ -706,7 +706,7 @@ void Func_02000f8c(void) {
     col = object->x >> 20;
     row = (object->z - object->y - px(12)) >> 20;
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
-      work->field16a = 44;
+      work->raisedTrigger = 44;
   } else {
     col = object->x >> 20;
     row = (object->z - object->y) >> 20;
@@ -1187,10 +1187,10 @@ void Func_02001e00(void) {
   s32 result;
 
   {
-    struct EventWork1cc *work = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     owner = gMainRoutineWork.currentOwner;
-    anchor = work->object;
+    anchor = work->camera;
   }
   leader = Actor_GetById(owner);
   if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&

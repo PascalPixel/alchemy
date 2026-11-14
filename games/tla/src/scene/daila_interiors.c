@@ -475,7 +475,7 @@ struct ItemDefinition *Item_GetDirect(s32 item);
 /// Gives an item to the party, asking what to drop when no one has room for
 /// it; returns who took it, or -1.
 s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
-  struct DailaEventWork *work;
+  struct FieldWork *work;
   s32 saved;
   s32 owner;
   s32 result;

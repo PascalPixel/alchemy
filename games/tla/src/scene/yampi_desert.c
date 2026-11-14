@@ -34,13 +34,6 @@ void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
 #include "scene_ids.h"
 #include "system/frame.h"
 
-struct SceneEventWork {
-  u8 unk000[0x16a];
-  u16 unk16a;
-  u8 unk16c[0x40];
-  s32 screenEffect;
-};
-
 extern s16 gYampiDesert_Room1Stakes[];
 extern s16 gYampiDesert_Room3Stakes[];
 extern s16 gYampiDesert_Room4Stakes[];
@@ -904,7 +897,7 @@ step_5:
   if (i <= 5)
     goto step_5;
   Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
-  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(4);
@@ -1299,8 +1292,7 @@ void YampiDesert_RippleFollowsScorpion(void) {
   struct Actor *object;
   s16 scene;
 
-  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->unk16a =
-      gYampiDesert_RaisedEvent;
+  gFieldWork->raisedTrigger = gYampiDesert_RaisedEvent;
   if (gYampiDesert_SandRipple != 0) {
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_YampiDesert4)
@@ -1539,7 +1531,7 @@ void YampiDesert_PlayScorpionRumble(void) {
 }
 
 void YampiDesert_ClearRaisedEvent(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->unk16a = 0;
+  gFieldWork->raisedTrigger = 0;
   gYampiDesert_RaisedEvent = 0;
 }
 
@@ -2246,7 +2238,7 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
 
 // Room 10's setup.
 void YampiDesert_SetUpRoom10(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   if (gMainRoutineWork.entrance == 1 && !GameFlag_Get(0x88c)) {
     YampiDesert_LandAndFightKingScorpion();
@@ -2263,12 +2255,10 @@ void YampiDesert_SetUpRoom10(void) {
   wait(10);
 }
 
-void YampiDesert_SetUpRoom11(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->screenEffect = 0x204;
-}
+void YampiDesert_SetUpRoom11(void) { gFieldWork->transition = 0x204; }
 
 void YampiDesert_SetUpRoom12(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Scene_QueueMusic(SE_137);
   YampiDesert_PlaceStakes(gYampiDesert_Room12Stakes);
   YampiDesert_SetUpRoom12SlideActors();

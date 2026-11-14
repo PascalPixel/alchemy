@@ -155,11 +155,6 @@ void Func_0200015c(struct Actor *object) {
     Actor_SelectAnimation(object, 10);
 }
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 value;
-};
-
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
 void JupiterLighthouse_LoadPalettes(s32 mode);
@@ -232,7 +227,7 @@ void Func_02000298(void) {
 }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 0x204;
+  gFieldWork->transition = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement1) {
     JupiterLighthouse_LoadPalettes(1);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&

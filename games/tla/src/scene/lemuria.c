@@ -750,11 +750,6 @@ void Lemuria_KeepLookingAround(void) {
   Event_End();
 }
 
-struct EventWork1c4 {
-  u8 unk000[0x1c4];
-  u16 count;
-};
-
 /// The party marvels at the city, and is stopped by a Lemurian who has never
 /// seen it before.
 /// "This place is remarkable... Truly remarkable..."
@@ -922,12 +917,12 @@ void Lemuria_MarvelAtCity(void) {
     FieldEvent_Wait(30);
     Actor_SetAnimationAndWait(7, 4);
     FieldEvent_ShowMessageThenWait(7, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(7, 3);
     FieldEvent_Wait(10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
+    gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(7, 0, 10);
   }
   FieldActor_WatchAndSetScript(4, 7);

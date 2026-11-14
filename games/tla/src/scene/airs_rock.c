@@ -1039,10 +1039,10 @@ void Func_02001b54(struct Actor *object) {
 }
 
 void Func_02001ca4(void) {
-  struct AirsRockEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Actor_LiftTargetBlock(gData_02003d94);
-  Func_02000468(work->valueCbc);
+  Func_02000468(work->unkcbc);
 }
 
 /* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void

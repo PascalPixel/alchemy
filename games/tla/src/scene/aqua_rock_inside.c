@@ -104,13 +104,6 @@ struct VentRow {
 
 #define VENT_ROW(index) ((struct VentRow *)((u8 *)VENT_WORK + (index) * 20))
 
-struct SceneEventWork {
-  u8 unk000[0x15a];
-  s16 value15a;
-  u8 unk15c[0xe];
-  s16 value16a;
-};
-
 struct FieldSpriteFlags {
   u8 unk00[0x11];
   u8 flag0 : 1;
@@ -493,7 +486,7 @@ void Func_02000690(void) {
   Actor_SetAnimation(8, 4);
   FieldActor_SetSpriteColor(Actor_Get(8), 6);
   Func_02003d14_(123, 15, 5, 3, 110, 15);
-  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->value16a = 88;
+  gFieldWork->raisedTrigger = 88;
 }
 
 void Func_020006d0(void) {
@@ -631,7 +624,7 @@ void AquaRockInside_CheckColumn(void) {
     Message_ShowCentered(message, 1);
     Message_ShowCentered(message + 1, 1);
     if (FieldPartyInventory_FindMember(456) != -1)
-      ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->value15a = 1;
+      gFieldWork->fieldMenu = 1;
   } else {
     Message_ShowCentered(message, 1);
     MessageArgument_Push(0x1c8, 2);
@@ -1903,7 +1896,7 @@ void Func_02002ca4(void) {
   s32 hit;
 
   {
-    struct SlideWork *work = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     id = gMainRoutineWork.currentOwner;
     center = work->camera;

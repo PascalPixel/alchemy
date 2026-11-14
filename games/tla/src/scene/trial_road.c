@@ -149,11 +149,6 @@ struct Actor;
 struct FieldSprite;
 union FieldObject;
 
-struct EventWork184 {
-  u8 unk000[388];
-  s16 value;
-};
-
 /// A view of the map work's byte 23.
 struct MapWorkByte23 {
   u8 unk00[0x17];
@@ -563,7 +558,7 @@ void TrialRoad_ExamineChest(s32 id) {
   } else {
     FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) == 0)
-      ((struct EventWork15a__s0218 *)Ram_HeapSlots->fieldWork)->value = 1;
+      gFieldWork->fieldMenu = 1;
   }
 }
 
@@ -1015,7 +1010,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Vector3 unused;
 
   if ((dx != 0 && toX != x + dx) || (dz != 0 && toZ != z + dz)) {
-    ((struct EventWork184 *)Ram_HeapSlots->fieldWork)->value = 13;
+    gFieldWork->blockedSteps = 13;
     return;
   }
   for (n = 0; n <= 5;) {

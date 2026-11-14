@@ -600,7 +600,7 @@ void Champa_ShowTwoMessages(s32 firstId, s32 firstX, s32 firstY, s32 firstA,
                             volatile s32 frames) {
   /* FAKEMATCH(volatile): the frames volatile, read from their stack slot at
    * each use. */
-  struct ChampaEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 first = Actor_GetSpriteById(firstId);
   s32 second = Actor_GetSpriteById(secondId);
 

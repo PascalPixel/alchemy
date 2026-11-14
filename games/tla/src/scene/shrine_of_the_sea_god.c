@@ -50,15 +50,6 @@ struct ShrineOfTheSeaGodSprite {
   u16 rotation;
 };
 
-struct ShrineOfTheSeaGodEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[4];
-  u16 unk15a;
-  u8 unk15c[0x50];
-  s32 screenEffect;
-};
-
 struct ShrineOfTheSeaGodMapLayer {
   u8 unk00[8];
   s32 x;
@@ -354,12 +345,12 @@ const struct Trigger *Scene_GetEvents(void) {
 extern u32 gData_02003c10[];
 
 void ShrineOfTheSeaGod_ExamineStatue(void) {
-  struct ShrineOfTheSeaGodEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgFieldStatueLikeDailaShrine, 1);
-  work->unk15a = 1;
+  work->fieldMenu = 1;
   Event_End();
 }
 
@@ -379,9 +370,9 @@ void ShrineOfTheSeaGod_StartleCompanion(void) {
 }
 
 void Func_02000554(void) {
-  struct ShrineOfTheSeaGodEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->unk15a = 1;
+  work->fieldMenu = 1;
 }
 
 void Func_02000568(void) {
@@ -495,8 +486,7 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
     Func_02000618();
   for (i = 0; i < 24; i++)
     Func_02000568();
-  ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->fieldWork)
-      ->screenEffect = 521;
+  gFieldWork->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetExitRequest(3);
@@ -596,8 +586,7 @@ void Func_02000994(void) {
   c->z += -px(12);
   Map_CenterOnFollowedPoint();
   wait(4);
-  ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->fieldWork)
-      ->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
@@ -650,8 +639,7 @@ void Func_02000994(void) {
   ShrineOfTheSeaGod_CopyRect(46, 108, 9, 12, 12, 3);
   wait(10);
   MapGrid_WaitForShakeToSettle();
-  ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->fieldWork)
-      ->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Func_02003854(8);
   Func_02003854(9);
   Func_02003854(10);
@@ -691,8 +679,7 @@ void Func_02000ce8(void) {
   layer->y += -50 << 16;
   Map_CenterOnFollowedPoint();
   wait(1);
-  ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->fieldWork)
-      ->screenEffect = 515;
+  gFieldWork->transition = 515;
   Event_StartScreenTransition();
   Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   i = 0;
@@ -712,8 +699,7 @@ loop:
   Sound_Play(SE_288);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetScreenShake(0, 0, 0);
-  ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->fieldWork)
-      ->screenEffect = 521;
+  gFieldWork->transition = 521;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
   wait(1);
@@ -749,8 +735,7 @@ loop:
   layer->y -= 0x8000;
   wait(2);
   if (i == 90) {
-    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->fieldWork)
-        ->screenEffect = 0x203;
+    gFieldWork->transition = 0x203;
     Event_FinishScreenTransition();
   }
   i++;
@@ -1697,7 +1682,7 @@ DEFINE_FUNC_020027F8(Func_02002c50, 296, 216, 2)
 DEFINE_FUNC_02002B50(Func_02002c88, 0, 5, 392, 360, 1)
 
 void Func_02002d50(void) {
-  struct ShrineOfTheSeaGodEventWork *work;
+  struct FieldWork *work;
   struct ShrineOfTheSeaGodObject *object;
 
   if (!GameFlag_Get(0x87c))
@@ -1706,7 +1691,7 @@ void Func_02002d50(void) {
     return;
   work = Ram_HeapSlots->fieldWork;
   object = Actor_GetById(14);
-  switch (work->exit) {
+  switch (work->stepTrigger) {
   case 13:
     if (object->state == 0)
       Func_020027f8();
@@ -1785,8 +1770,7 @@ void Func_02002ea8(void) {
 s32 Scene_Initialize(void) {
   s16 scene;
 
-  ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->fieldWork)
-      ->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
     ShrineOfTheSeaGod_InitializeRoom1();

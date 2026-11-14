@@ -1024,24 +1024,13 @@ void Func_02001564(void) {
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28,
                                           440, 288)
 
-/* VIEW(gabomba_statue): tag struct EventWork154 as struct
- * EventWork154__gabomba_statue; module/scene/scene.h has another definition;
- * tried with the definition the rest of the object has, its members read exit
- * as returnEntrance, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:912: structure has no member named
- * `returnEntrance'. */
-struct EventWork154__gabomba_statue {
-  u8 unk000[0x154];
-  s16 exit;
-};
-
 /// Jumps down the hole.
 void Func_02001630(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct Actor *leader;
-  struct EventWork154__gabomba_statue *work;
+  struct FieldWork *work;
 
   if (x == 28 && z == 9 && !(gInput.held & KEY_RIGHT))
     return;
@@ -1064,7 +1053,7 @@ void Func_02001630(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 #define DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(name, n1, n2)                     \
@@ -1143,7 +1132,7 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
 void GabombaStatue_PoundConePillar(s32 a, s32 b) {
   Statue_Sink(gData_02005d7c, a, b);
   if (Event_GetFlag(0x8ce) && Event_GetFlag(0x8cf))
-    ((struct GateEventWork *)Ram_HeapSlots->fieldWork)->gateTimer = 200;
+    gFieldWork->raisedTrigger = 200;
 }
 
 void Func_020019d0(void) {
@@ -1174,7 +1163,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
   if (value == 1)
-    ((struct GateEventWork *)Ram_HeapSlots->fieldWork)->gateTimer = 200;
+    gFieldWork->raisedTrigger = 200;
 }
 
 void Func_02001a8c(void) {
@@ -1191,7 +1180,7 @@ void Func_02001a8c(void) {
 
 void Func_02001ac0(void) {
   if (Func_020053a0() == 0)
-    ((struct GateEventWork *)Ram_HeapSlots->fieldWork)->gateTimer = 201;
+    gFieldWork->raisedTrigger = 201;
 }
 
 void Func_02001adc(s32 id) {
@@ -1372,8 +1361,7 @@ void Func_02001c10(void) {
 /// Makes the scene more translucent the farther inside the object is.
 void Func_02002074(void) {
   s32 blend;
-  struct Actor *object =
-      ((struct EventWork1cc *)Ram_HeapSlots->fieldWork)->object;
+  struct Actor *object = gFieldWork->camera;
   s32 level = object->z;
 
   level = (level - 0xe80000) >> 19;
@@ -1941,16 +1929,11 @@ void GabombaStatue_FixTheChannel(void) {
   Func_02005364();
 }
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 // Prepares the current room.
 s32 Scene_Initialize(void) {
   s16 scene;
 
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->screenEffect = 521;
+  gFieldWork->transition = 521;
   if (gMainRoutineWork.scene != (s32)&SceneId_GabombaStatue1) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       Func_020020f0(0);

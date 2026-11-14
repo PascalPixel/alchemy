@@ -706,11 +706,6 @@ struct Particle;
 struct ParticleSprite;
 union FieldObject;
 
-struct TundariaTowerEventWork {
-  u8 unk000[428];
-  s32 screenEffect;
-};
-
 void TundariaTower_StopLeader(void);
 
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
@@ -844,8 +839,7 @@ s32 Scene_Initialize(void) {
   s32 scene;
   s32 flag;
 
-  ((struct TundariaTowerEventWork *)Ram_HeapSlots->fieldWork)->screenEffect =
-      0x204;
+  gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_TundariaTower1) {
   } else if (scene == (s32)&SceneId_TundariaTower2) {

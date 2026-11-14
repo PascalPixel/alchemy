@@ -4,6 +4,7 @@
 /// let him reach Taopo Swamp.
 
 #include "battle/battle.h"
+#include "field/field_work.h"
 #include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -57,23 +58,6 @@ struct YallamInteriorsObject {
   s16 field66;
   s32 field68;
   void *update;
-};
-
-struct YallamInteriorsEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[4];
-  s16 field15a;
-  u8 unk15c[2];
-  s16 field15e;
-  u8 unk160[6];
-  s16 field166;
-  u8 unk168[0x44];
-  s32 screenEffect;
-  u8 unk1b0[4];
-  s32 field1b4;
-  u8 unk1b8[0x0c];
-  u16 field1c4;
 };
 
 void Event_End(void);
@@ -503,8 +487,7 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  ((struct YallamInteriorsEventWork *)Ram_HeapSlots->fieldWork)->screenEffect =
-      0x209;
+  gFieldWork->transition = 0x209;
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

@@ -33,11 +33,6 @@ struct MarsLighthouseEntranceRideHead {
   struct Actor *handle;
 };
 
-struct MarsLighthouseEntranceEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
 void Leader_KnockBack(void);
 
 void Func_02001c74();

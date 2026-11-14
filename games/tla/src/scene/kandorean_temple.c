@@ -103,11 +103,6 @@ extern struct Actor *gKandoreanTemple_LashPebble;
 extern s32 gKandoreanTemple_MeditateScript[];
 extern s32 gKandoreanTemple_LevitateScript[];
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 value;
-};
-
 void KandoreanTemple_AskAboutPoi(void);
 void KandoreanTemple_TellOfTheMeditation(void);
 void KandoreanTemple_OpenTheTrapdoor(void);
@@ -485,21 +480,8 @@ void KandoreanTemple_PushThroughTheSteam(void) {
   KandoreanTemple_PushNorth(leader, 55705);
 }
 
-/* VIEW(kandorean_temple): tag struct EventWork1cc as struct
- * EventWork1cc__kandorean_temple; module/tla.h has another definition; tried
- * with the definition the rest of the object has, its members read focus as
- * object, it does not compile in tla-ja (kandorean_temple.c):
- * games/tla/src/scene/kandorean_temple.c:492: dereferencing pointer to
- * incomplete type. */
-struct EventWork1cc__kandorean_temple {
-  u8 unk000[0x1cc];
-  struct Actor *focus;
-};
-
 void KandoreanTemple_PushNorth(struct Actor *object, s32 dz) {
-  struct Actor *focus =
-      ((struct EventWork1cc__kandorean_temple *)Ram_HeapSlots->fieldWork)
-          ->focus;
+  struct Actor *focus = gFieldWork->camera;
   s32 position[3];
 
   position[0] = object->x;
@@ -1727,7 +1709,7 @@ void KandoreanTemple_CycloneFifthPatch(void) {
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 0x204;
+  gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_KandoreanTemple1)
     KandoreanTemple_StartLiftRoom();
@@ -2163,7 +2145,7 @@ void KandoreanTemple_LeaveBySteam(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -2217,7 +2199,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     if (i == 10)
       Sound_Play(SE_DUST_PUFF);
     if (i == 20) {
-      ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 521;
+      gFieldWork->transition = 521;
       Event_FinishScreenTransition();
     }
   }
@@ -2257,7 +2239,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     second->scaleY = 0x400;                                                    \
     Actor_SetModeById(n1, 4);                                                  \
     Actor_SetModeById(n2, 2);                                                  \
-    ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 521;            \
+    gFieldWork->transition = 521;                                              \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
     /* A goto loop, as in KandoreanTemple_RideWestLiftUp. */                   \
@@ -2270,7 +2252,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
       goto rise;                                                               \
     MapGrid_CopyCellAttributes(0, 0, 1, 1, n6, n7);                            \
     data1 = 2000;                                                              \
-    ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 516;            \
+    gFieldWork->transition = 516;                                              \
     Event_End();                                                               \
   }
 
@@ -2294,7 +2276,7 @@ rise:
   if (object->y > -px(20))
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 521;
+  gFieldWork->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(6);
@@ -2313,7 +2295,7 @@ rise:
   if (object->y > -px(20))
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 521;
+  gFieldWork->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(7);
@@ -2363,7 +2345,7 @@ void KandoreanTemple_StartMeditating(s32 id, s32 base) {
 }
 
 void KandoreanTemple_StartGate(void) {
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 0x100;
+  gFieldWork->transition = 0x100;
   if (GameFlag_Get(0x842)) {
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
@@ -2415,7 +2397,7 @@ void KandoreanTemple_PlaceTheLevitator(void) {
 void KandoreanTemple_MatchLiftPriority(void);
 
 void KandoreanTemple_StartPoisHall(void) {
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 521;
+  gFieldWork->transition = 521;
   Rope_Initialize();
   Func_020053a8_(0, 527, 8, 9);
   Rope_Place(1, 528, 10, 11);
@@ -2729,7 +2711,7 @@ void KandoreanTemple_PraiseTheLevitator(void) {
   Actor_ArmCallback(16, FACING_EAST, 0);
   Actor_WalkToAndWait(12, 468, 428);
   Actor_WalkToAndWait(12, 472, 454);
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 514;
+  gFieldWork->transition = 514;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(13);
@@ -2744,7 +2726,7 @@ void KandoreanTemple_FindTheRopeOnTheFloor(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
-  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 514;
+  gFieldWork->transition = 514;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetHorizontalPositionWithTerrain(12, px(472), px(648));

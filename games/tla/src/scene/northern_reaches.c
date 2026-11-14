@@ -360,15 +360,10 @@ done:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-struct SceneWork {
-  u8 unk000[0x1ac];
-  s32 unk1ac;
-};
-
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *state;
 
-  ((struct SceneWork *)Ram_HeapSlots->fieldWork)->unk1ac = 256;
+  gFieldWork->transition = 256;
   state = &gMainRoutineWork;
   Actor_Get(state->currentOwner)->priorityFlags |= 32;
   if (state->entrance == 90) {

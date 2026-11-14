@@ -99,7 +99,7 @@ struct FieldWork {
   s32 transitionFrames; ///< frames; 16 on entry and at each event
   s32 fastForward;      ///< debug: skip timed event waits and actor messages
   u8 unusedAfterFastForward[8];
-  u16 message; ///< the next message, advanced as each window opens
+  s16 message; ///< the next message, advanced as each window opens
   /// Set to 0xffff by Event_Start at each event; nothing reads it.
   u16 unusedAfterMessage;
   /// Both set to -1 by Event_Start at each event; nothing reads them.

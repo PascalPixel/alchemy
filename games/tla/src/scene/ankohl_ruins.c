@@ -12,17 +12,6 @@
 #include "field_sprite.h"
 #include "field/event_inline.h"
 
-/// The overlay's view of the event work heap slot.
-struct AnkohlRuinsEventWork {
-  u8 unk000[0x154];
-  s16 unk154; ///< 66 when Func_020010f4's step is refused; 40 lets it run
-  u8 unk156[0x14];
-  s16 alarm;
-  u8 unk16c[0x60];
-  /// Moved with the leader while the raft (object 9) carries them.
-  struct Actor *unk1cc;
-};
-
 void Func_02000b30(s32 id, s32 cue);
 void AnkohlRuins_RaiseFirstSand(void);
 void AnkohlRuins_RaiseSecondSand(void);
@@ -152,11 +141,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #if TLA_PATCH_1
 
-struct LandingEventWork {
-  u8 unk000[0x1ac];
-  s32 field1ac;
-};
-
 void Func_02000418(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
@@ -173,7 +157,7 @@ void Func_02000418(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct LandingEventWork *)Ram_HeapSlots->fieldWork)->field1ac = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -210,7 +194,7 @@ loop:
   leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  ((struct LandingEventWork *)Ram_HeapSlots->fieldWork)->field1ac = 0x204;
+  gFieldWork->transition = 0x204;
   Event_End();
 }
 
@@ -583,10 +567,9 @@ extern struct MapCell gMapCellBuffer[];
 
 void Func_020010f4(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct AnkohlRuinsEventWork *work =
-      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
-  struct Actor *companion = work->unk1cc;
+  struct Actor *companion = work->camera;
   struct MapCell *ground;
   struct MapCell *upper;
   s32 index;
@@ -612,7 +595,7 @@ void Func_020010f4(void) {
   position[1] = leader->y;
   position[2] = leader->z + px(8);
   if (MapGrid_CheckCollision(leader, position) < 0)
-    work->unk154 = 66;
+    work->stepTrigger = 66;
   leader->z += 0x8000;
   companion->z += 0x8000;
 }
@@ -825,16 +808,15 @@ fill:
 }
 
 void AnkohlRuins_CountSandTime(void) {
-  struct AnkohlRuinsEventWork *work =
-      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
 
   if (Event_GetFlag(0x104) == 0) {
     if (++gAnkohlRuins_SandTimer >= gAnkohlRuins_SandTime) {
       FieldTask_Remove(AnkohlRuins_CountSandTime);
       if (gAnkohlRuins_SandRoom == 1)
-        work->alarm = 68;
+        work->raisedTrigger = 68;
       else
-        work->alarm = 69;
+        work->raisedTrigger = 69;
     }
   }
 }
@@ -1072,16 +1054,14 @@ DEFINE_ANKOHL_RUINS_OPEN_ONCE(Func_02001f04, 0x9e3, 2, 83, 1, 23)
 // removes itself, stops the shaking, copies the landing cells and sets flag
 // 0x201.
 void Func_02001f7c(void) {
-  struct Actor *rider =
-      ((struct AnkohlRuinsEventWork *)Ram_HeapSlots->fieldWork)->unk1cc;
+  struct Actor *rider = gFieldWork->camera;
   struct Actor *raft = Actor_GetById(9);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct AnkohlRuinsEventWork *work =
-      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   s32 column;
   s32 row;
 
-  if (GameFlag_Get(0x104) && work->unk154 != 40)
+  if (GameFlag_Get(0x104) && work->stepTrigger != 40)
     return;
   raft->z += 0xcccc;
   column = leader->x >> 20;

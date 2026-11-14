@@ -183,7 +183,7 @@ void JupiterLighthouse_UseBlueKey(s32 item) {
 }
 
 void JupiterLighthouse_TryLockedDoor(void) {
-  ((struct EventWorkLock *)Ram_HeapSlots->fieldWork)->locked = 1;
+  gFieldWork->fieldMenu = 1;
   Message_ShowCentered(MsgFieldDoorLocked, 1);
 }
 

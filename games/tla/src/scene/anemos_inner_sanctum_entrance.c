@@ -316,9 +316,7 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
 // Under flag 0x201, runs a screen transition and Func_02000408, then clears
 // the flag.
 s32 Scene_Initialize(void) {
-  s32 *route =
-      &((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->fieldWork)
-           ->route;
+  s32 *route = &gFieldWork->transition;
   s32 value = 0x204;
 
   /* FAKEMATCH(barrier): an empty asm after the address and the value. */

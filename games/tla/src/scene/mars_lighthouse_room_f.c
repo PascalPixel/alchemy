@@ -64,8 +64,6 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->fieldWork)
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
@@ -572,7 +570,7 @@ void Func_0200055c(s32 id) {
 }
 
 void Func_02000670(void) {
-  ((struct SceneWork *)Ram_HeapSlots->fieldWork)->unk166 = 0;
+  gFieldWork->psynergy = 0;
   Event_ClearFlag(FLAG_MENU_OPEN);
   Event_ClearFlag(0x104);
   Event_Start();
@@ -685,7 +683,7 @@ step:
   if (++frame <= 39)
     goto step;
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  SCENE_WORK->unk1ac = 521;
+  gFieldWork->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(16);
@@ -725,12 +723,12 @@ void Func_02000aac(void) {
 }
 
 void Func_02000ad8(void) {
-  struct SceneWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  work->unk166 = 0;
+  work->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(0x104);
   FieldEvent_Wait(60);
@@ -914,13 +912,13 @@ s32 Scene_Initialize(void) {
 
   /* FAKEMATCH(temporary): the first flag update through other. */
 
-  ((struct SceneWork *)heap->fieldWork)->unk1ac = 516;
+  ((struct FieldWork *)heap->fieldWork)->transition = 516;
   value = 516;
   Flag_Set(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_020025b0();
   if (scene == (s32)&SceneId_MarsLighthouseRoomF1) {
     FieldEffect_StartBlankOverlay(0);
-    ((struct SceneWork *)heap->fieldWork)->unk1ac = value;
+    ((struct FieldWork *)heap->fieldWork)->transition = value;
     if (entrance - 1 <= 1U) {
       Beam_Start(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
       if (Flag_IsSet(0xa42))
@@ -945,7 +943,7 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == (s32)&SceneId_MarsLighthouseRoomF2) {
     FieldEffect_StartBlankOverlay(0);
-    ((struct SceneWork *)heap->fieldWork)->unk1ac = value;
+    ((struct FieldWork *)heap->fieldWork)->transition = value;
     Beam_Start(gData_02005c14, gData_02005c26, Func_02001468, 88);
     Func_020027cc(3, 1);
     if (entrance == 2)
@@ -1002,7 +1000,7 @@ s32 Scene_Initialize(void) {
     Task_Add(Func_02000e68, 0x480);
   } else if (scene == (s32)&SceneId_MarsLighthouseRoomF3) {
     FieldEffect_StartBlankOverlay(0);
-    ((struct SceneWork *)heap->fieldWork)->unk1ac = value;
+    ((struct FieldWork *)heap->fieldWork)->transition = value;
     JupiterLighthouse_LoadPalettesZero(1);
     LightSprites_InitB();
     Func_020053bc(2);
@@ -1033,7 +1031,7 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == (s32)&SceneId_MarsLighthouseRoomF4) {
     FieldEffect_StartBlankOverlay(0);
-    ((struct SceneWork *)heap->fieldWork)->unk1ac = value;
+    ((struct FieldWork *)heap->fieldWork)->transition = value;
     Tightrope_Initialize();
     Tightrope_Place(0, 8, 9);
     BYTE_AT(Actor_GetById(8), 98) = 1;
@@ -1175,7 +1173,7 @@ struct EventWork__s167c {
 };
 
 void Func_0200167c(void) {
-  struct EventWork__s167c *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
@@ -1188,7 +1186,7 @@ void Func_0200167c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
-  work->unk_d46 = 0;
+  work->glowHeld = 0;
   motion = &actor->motionFlags;
   *motion = 4;
   Actor_SetSpriteFlags(actor, 0);
@@ -1203,8 +1201,8 @@ void Func_0200167c(void) {
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
-  work->unk_d44 = 1;
-  work->unk_d46 = 1;
+  work->glow = 1;
+  work->glowHeld = 1;
   x = (linked->x >> 19) & ~1;
   facing = linked->facing;
   facing >>= 13;
@@ -1241,8 +1239,8 @@ void Func_0200167c(void) {
   FieldActor_WaitForMove(shadow);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  work->unk_d46 = 1;
-  work->unk_154 = 0;
+  work->glowHeld = 1;
+  work->stepTrigger = 0;
   Event_End();
 }
 
@@ -1955,14 +1953,6 @@ s32 Func_020027dc(s32 index) {
 
 #include "shared/ride_set_slot.h"
 
-struct MarsLighthouseEventWork {
-  u8 unk000[0x16a];
-  u16 unk16a;
-  u16 downCount;
-  u16 standingCount;
-  u16 downOwners[8];
-};
-
 /* VIEW(ride): routine Unit_Get as this part declared it; the joined file has
  * another; tried as the definition's void *Unit_Get(s32 owner), which the
  * object already declares, it does not compile in tla-ja:
@@ -2403,13 +2393,6 @@ struct Work020023c4__s2f80 {
   struct Actor *unk6c;
 };
 
-struct WorkEvent {
-  u8 unk000[340];
-  u16 unk154;
-  u8 unk156[358 - 342];
-  s16 unk166;
-};
-
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 void Func_02002d08(struct Actor *actor);
 void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed);
@@ -2417,7 +2400,7 @@ extern u8 gInventorySnapshot[];
 
 void Actor_RollAndCrumble(struct Actor *actor) {
   struct Vector3 position;
-  struct WorkEvent *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 state = actor->timer;
 
   if (state == 0) {
@@ -2441,12 +2424,12 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 flag;
     struct MapWork *map;
     struct MapCell *cell;
-    struct WorkEvent *work2;
+    struct FieldWork *work2;
     struct Work020023c4__s2f80 *other;
     struct Actor *target;
 
     flag = Event_GetFlag(FLAG_MENU_OPEN);
-    if (work->unk166 != 0)
+    if (work->psynergy != 0)
       flag |= 1;
     actor->movementState = flag;
 
@@ -2520,7 +2503,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ABS(actor->z - target->z) < 0x140000) {
       other->unk04 = 2;
       other->unk6c = actor;
-      work2->unk154 = other->unk0a + 2;
+      work2->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
     actor->movementState = 0;

@@ -4,6 +4,7 @@
 /// the quay.
 
 #include "battle/battle.h"
+#include "field/field_work.h"
 #include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -25,22 +26,11 @@
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
-struct SceneWork {
-  u8 unk000[0x166];
-  s16 unk166;
-  u8 unk168[0x44];
-  s32 unk1ac;
-  u8 unk1b0[0x14];
-  u16 unk1c4;
-};
-
 struct WarpTarget {
   s32 scene;
   u16 x;
   u16 z;
 };
-
-#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->fieldWork)
 
 extern u8 MsgAreWeSetting[];
 extern s32 gLemuriaDock_Exits[];
@@ -113,7 +103,7 @@ void LemuriaDock_AskSettingOff(void) {
   s32 limit;
   s32 z;
 
-  if (SCENE_WORK->unk166 != 0) {
+  if (gFieldWork->psynergy != 0) {
     Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   }
@@ -142,7 +132,7 @@ void LemuriaDock_AskSettingOff(void) {
     Import_EventSetExitRequest(1);
   } else {
     Event_Wait(20);
-    SCENE_WORK->unk1c4++;
+    gFieldWork->message++;
     Event_ShowMessage(8, 0);
   }
 }
@@ -211,7 +201,7 @@ void LemuriaDock_CyclePalette(void) {
 }
 
 s32 Scene_Initialize(void) {
-  SCENE_WORK->unk1ac = 256;
+  gFieldWork->transition = 256;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Task_Add(LemuriaDock_CyclePalette, 0x480);
   Flag_Clear(FLAG_SHOW_AREA_NAME);

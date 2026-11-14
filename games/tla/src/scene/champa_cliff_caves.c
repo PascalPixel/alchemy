@@ -974,7 +974,7 @@ struct EventTransition__s0a34 {
 };
 
 void Func_02001774(void) {
-  struct EventTransition__s0a34 *work;
+  struct FieldWork *work;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -996,8 +996,8 @@ void Func_02001774(void) {
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageThenWait(8, 0, 20);
   work = Ram_HeapSlots->fieldWork;
-  work->frames = 40;
-  work->type = 521;
+  work->transitionFrames = 40;
+  work->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetDestination((s16)gMainRoutineWork.savedScene,

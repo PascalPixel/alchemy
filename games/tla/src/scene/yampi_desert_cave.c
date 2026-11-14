@@ -501,14 +501,13 @@ void PaletteCycle_Fade(void) {
 /// Arriving by Teleport: the screen flashes as the marks' colours race, then
 /// fades back.
 void YampiDesertCave_ArriveByTeleport(void) {
-  struct YampiDesertCaveEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->transition;
   BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct YampiDesertCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
-      0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   YampiDesertCave_StartMarkFlash();
@@ -523,7 +522,7 @@ void YampiDesertCave_ArriveByTeleport(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->transition = saved;
 }
 
 void YampiDesertCave_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer);

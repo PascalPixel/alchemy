@@ -666,9 +666,9 @@ void Func_020010d8(struct Actor *object) {
 #include "shared/actor_emit_water_drop.h"
 
 void Func_020011a8(void) {
-  struct EventWork1cc *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 owner = gMainRoutineWork.currentOwner;
-  struct Actor *anchor = work->object;
+  struct Actor *anchor = work->camera;
   struct Actor *leader = Actor_Get(owner);
   s32 position[3];
   s32 result;

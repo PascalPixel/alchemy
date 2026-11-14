@@ -1316,10 +1316,10 @@ void Scene_RunIfHeld(void) {
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }
 
 void Func_02002124(void) {
-  struct EventWorkCbc *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *active;
 
-  active = work->active;
+  active = work->unkcbc;
   if (active != 0)
     Func_0200200c(active);
 }

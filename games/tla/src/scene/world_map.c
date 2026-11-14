@@ -177,17 +177,17 @@ extern s32 Data_02006be8[8];
 #define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
   {                                                                            \
     struct MainRoutineWork *party;                                             \
-    struct EncounterWork *work;                                                \
+    struct FieldWork *work;                                                    \
                                                                                \
     party = &gMainRoutineWork;                                                 \
     work = Ram_HeapSlots->fieldWork;                                           \
     if (party->renderMode == 1) {                                              \
-      if (party->encounterSteps >= work->threshold * 9 / 10) {                 \
+      if (party->encounterSteps >= work->encounterThreshold * 9 / 10) {        \
         if (Random16() < 0x8000) {                                             \
           Event_RequestDjinnBattle(a, b);                                      \
-          work->bias = 0;                                                      \
+          work->encounterBias = 0;                                             \
         } else {                                                               \
-          party->encounterSteps = work->threshold;                             \
+          party->encounterSteps = work->encounterThreshold;                    \
         }                                                                      \
       }                                                                        \
     }                                                                          \
@@ -528,7 +528,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 
 /// Back to the map: actor 8's position is kept in gMainRoutineWork.
 void Func_02000918(void) {
-  struct EventDestination *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(8);
 
   Event_Start();
@@ -543,7 +543,7 @@ void Func_02000918(void) {
   gMainRoutineWork.ownerOverride = 0;
   Event_ClearFlag(0x176);
   Event_PlaySound(SE_MAP_EXIT);
-  FieldEvent_SetExitRequest(work->scene);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 /// Brings the actor to the player character's position.
@@ -627,12 +627,12 @@ void WorldMap_RefuseToRunAway(void) {
     System_Wait(8);
     Event_End();
   } else {
-    struct EventDestination *work = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(SE_MAP_EXIT);
-    FieldEvent_SetExitRequest(work->scene);
+    FieldEvent_SetExitRequest(work->stepTrigger);
   }
 }
 
@@ -1842,10 +1842,10 @@ void WorldMap_TakeTheTiller(void) {
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       FieldEvent_ShowMessageThenWait(9, 0, 10);
-      ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
+      gFieldWork->message++;
     } else {
       Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-      ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
+      gFieldWork->message++;
       FieldEvent_ShowMessageThenWait(9, 0, 10);
     }
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);

@@ -194,13 +194,13 @@ void PaletteCycle_Fade(void) {
 }
 
 void Func_02000328(void) {
-  struct IsletCaveEventWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->transition;
   BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct IsletCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   IsletCave_StartFastPaletteCycle();
@@ -215,7 +215,7 @@ void Func_02000328(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->transition = saved;
 }
 
 #include "text/msg_ids.h"

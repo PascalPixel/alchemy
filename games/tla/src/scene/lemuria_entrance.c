@@ -61,7 +61,7 @@ void LemuriaEntrance_LeaveByExit3(s32 arg) {
   Event_ClearFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
   party->currentOwner = 8;
-  ((struct EventWorkRoute *)Ram_HeapSlots->fieldWork)->route = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->currentOwner = 4;
@@ -74,7 +74,7 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   Event_SetFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
   party->currentOwner = 8;
-  ((struct EventWorkRoute *)Ram_HeapSlots->fieldWork)->route = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->currentOwner = 4;

@@ -1052,13 +1052,8 @@ void Func_020018e0(void) {
   }
 }
 
-struct EventWork154 {
-  u8 unk000[0x154];
-  s16 returnEntrance;
-};
-
 void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
-  struct EventWork154 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
@@ -1086,7 +1081,7 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->returnEntrance);
+  FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
 void Func_02001a9c(void) { Prox_EnterDoor(0x30, 0x27, 0x39, 0x1a, 1, 2); }
@@ -1106,8 +1101,8 @@ void Func_02001b44(void) { Prox_EnterDoor(0x57, 2, 0x50, 7, 1, 2); }
 void Func_02001b60(void) { Prox_EnterDoor(0x59, 0, 0x4d, 0x10, 1, 2); }
 
 void Func_02001b7c(void) {
-  struct EventWork154 *work = Ram_HeapSlots->fieldWork;
-  s32 entrance = work->returnEntrance;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s32 entrance = work->stepTrigger;
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 cell;
   s32 id;
@@ -1429,11 +1424,6 @@ void Prox_GiveThanksForBeacon(void) {
   Func_0200446c();
 }
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 void Actor_SetWideSprite(s32 id, s32 wide);
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(u32 layer);
@@ -1449,14 +1439,13 @@ s32 Scene_Initialize(void) {
   }
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Prox4) {
-    ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->screenEffect = 0x209;
+    gFieldWork->transition = 0x209;
     Func_020029c8();
   } else if (scene == (s32)&SceneId_Prox5) {
-    ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->screenEffect = 0x209;
+    gFieldWork->transition = 0x209;
     Func_02002a38();
   } else if (scene == (s32)&SceneId_Prox6) {
-    s32 *effect =
-        &((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->screenEffect;
+    s32 *effect = &gFieldWork->transition;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
     register s32 skip __asm__("r0");
     s32 value = 0x209;

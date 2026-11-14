@@ -13,23 +13,6 @@
 #include "field_sprite.h"
 #include "system/frame.h"
 
-struct KibomboEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[4];
-  s16 field15a;
-  u8 unk15c[2];
-  s16 field15e;
-  u8 unk160[6];
-  s16 field166;
-  u8 unk168[0x44];
-  s32 screenEffect;
-  u8 unk1b0[4];
-  s32 field1b4;
-  u8 unk1b8[0x0c];
-  u16 field1c4;
-};
-
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);

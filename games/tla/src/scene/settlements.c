@@ -664,12 +664,11 @@ void Settlements_LashRope(void) {
 extern s32 gSettlements_WaterColorFrame;
 
 void Settlements_CycleWaterColors(void) {
-  struct PaletteCycleWork *work =
-      (struct PaletteCycleWork *)Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   s32 *frame;
   s32 phase, i;
 
-  if (work->unk166 != 0 || work->unkca4 != 0)
+  if (work->psynergy != 0 || work->revealActive != 0)
     return;
   frame = &gSettlements_WaterColorFrame;
   if (*frame == -1) {

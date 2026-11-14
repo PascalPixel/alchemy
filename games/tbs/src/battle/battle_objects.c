@@ -34,7 +34,7 @@ void BattleObject_UpdateSpritePriorities(void) {
           record = GetMotionRecord(actor, 0);
 
           if (record != 0) {
-            struct SpriteAnimationHeadView *shadow;
+            struct SpriteAnimation *shadow;
             s32 shadowPriority = 0;
 
             // Off the ground.
@@ -196,7 +196,7 @@ UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 
   // Move on when the time is up, when the shown status has ended, or when a
   // status appears with no icon shown.
-  shownIcon = (struct SpriteAnimation *)battleObject->animationEntry;
+  shownIcon = battleObject->animationEntry;
   if ((shownIcon == 0
            ? (s16)battleObject->activeStatuses != 0
            : (((s16)battleObject->activeStatuses >> battleObject->shownStatus) &
@@ -243,11 +243,10 @@ UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
       if (iconAnimation >= 0 && changed != 0) {
         // The handle is stored first and cleared again when registration fails.
         iconHandle = Sprite_AddAnimationFar(record, iconAnimation);
-        battleObject->animationEntry =
-            (struct SpriteAnimationHeadView *)iconHandle;
+        battleObject->animationEntry = (struct SpriteAnimation *)iconHandle;
         if (iconHandle == -1)
           battleObject->animationEntry = 0;
-        icon = (struct SpriteAnimation *)battleObject->animationEntry;
+        icon = battleObject->animationEntry;
         if (icon != 0) {
           icon->priority = 3;
           SpriteAnimation_StartFar(icon, 0);
@@ -319,7 +318,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   struct BattleObject *battleObject;
   struct BattleActor *actor;
   struct Sprite *record;
-  struct SpriteAnimationHeadView *entry;
+  struct SpriteAnimation *entry;
   struct Sprite **records;
   s32 spriteId;
   s32 releasedUnitId;
@@ -386,26 +385,26 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         actor->spriteStorageKind = ACTOR_SPRITE_ONE;
         actor->sprite = record;
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
-        entry = (struct SpriteAnimationHeadView *)record->entries[0];
+        entry = record->entries[0];
         entry->priority = 1;
-        entry->palette = battleObject->palette;
+        entry->colorMode = battleObject->palette;
         if ((spriteId = battleObject->overlay) != 0) {
-          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimationFar(
-              record, spriteId);
+          entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(record,
+                                                                   spriteId);
           entry->priority = 1;
         }
         if ((spriteId = battleObject->animation) != 0) {
-          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimationFar(
-              record, spriteId);
+          entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(record,
+                                                                   spriteId);
           battleObject->animationEntry = entry;
-          SpriteAnimation_StartFar((struct SpriteAnimation *)entry, 0);
+          SpriteAnimation_StartFar(entry, 0);
           entry->priority = 3;
         }
         if ((spriteId = battleObject->shadow) != 0) {
           if (record->width == 32)
             spriteId = SPRITE_BATTLE_SHADOW_NARROW;
-          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimationFar(
-              record, spriteId);
+          entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(record,
+                                                                   spriteId);
           battleObject->shadowEntry = entry;
           entry->priority = 0;
           record->flags = 0;

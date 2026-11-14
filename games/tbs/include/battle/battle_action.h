@@ -9,7 +9,7 @@
 #include "types.h"
 
 struct Actor;
-struct SpriteAnimationHeadView;
+struct SpriteAnimation;
 
 /// A unit's place on the battlefield: its actor, resources and
 /// animations, its anchor spot and scale, and the statuses it shows.
@@ -30,9 +30,8 @@ struct BattleObject {
   u16 activeStatuses; ///< a bit per status with an icon (ICON_)
   u8 shownStatus;     ///< the status whose icon is shown
   s8 cycleTimer;      ///< frames until the next status icon
-  struct SpriteAnimationHeadView
-      *animationEntry; ///< the status icon's sprite, or NULL
-  struct SpriteAnimationHeadView *shadowEntry; ///< the shadow's sprite, or NULL
+  struct SpriteAnimation *animationEntry; ///< the status icon's sprite, or NULL
+  struct SpriteAnimation *shadowEntry;    ///< the shadow's sprite, or NULL
   /// Set by BattleObject_MarkForRelease: its actor is released with the
   /// others by BattleObject_DestroyAll.
   s16 active;

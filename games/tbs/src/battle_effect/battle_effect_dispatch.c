@@ -191,9 +191,8 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
         for (partIndex = 0; partIndex != group->count; partIndex++) {
           struct SpriteAnimation *part = group->entries[partIndex];
 
-          if (part != NULL &&
-              part != (struct SpriteAnimation *)slot->shadowEntry &&
-              part != (struct SpriteAnimation *)slot->animationEntry) {
+          if (part != NULL && part != slot->shadowEntry &&
+              part != slot->animationEntry) {
             if (palette == SPRITE_COLOR_NORMAL)
               part->colorMode = BattleObject_GetPaletteFar(unitId);
             else

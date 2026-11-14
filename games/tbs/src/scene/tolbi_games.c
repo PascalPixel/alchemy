@@ -1171,8 +1171,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   }
 
   // Two obstacles slide across X; two follow timed elliptical paths.
-  index = 0;
-  do {
+  for (index = 0; index != 4; index++) {
     obstacle = &sObstacles[index];
 
     if (obstacle->reactionFrames > 0) {
@@ -1352,9 +1351,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           (obstacle->speedMode << 4) + 16);
       break;
     }
-
-    index++;
-  } while (index != 4);
+  }
 
   toss->shadow.x = toss->trail[0].x;
   toss->shadow.y = 0;

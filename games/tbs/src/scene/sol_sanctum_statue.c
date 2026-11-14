@@ -985,7 +985,7 @@ static void SolSanctumStatue_PrepareMoveOnLeftBeamStatue(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
 
-  if (row == 7 && (u32)(column - 13) <= 1) {
+  if (row == 7 && (column >= 13 && column <= 14)) {
     Field_SetCellBehaviorAt(2, 208, 112, CELL_BEHAVIOR_WALL);
   }
 }
@@ -996,7 +996,7 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
 
-  if (row == 7 && (u32)(column - 21) <= 1) {
+  if (row == 7 && (column >= 21 && column <= 22)) {
     Field_SetCellBehaviorAt(2, 352, 112, CELL_BEHAVIOR_WALL);
   }
 }

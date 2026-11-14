@@ -1151,13 +1151,11 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
       frame++;
     } while (frame != 120);
     Sound_Play(SE_WARP);
-    frame = 0;
-    do {
+    for (frame = 0; frame != 60; frame++) {
       actor->y.fixed += px(1) / 10;
       sprite->scale -= Q16_ONE / 64;
       wait(1);
-      frame++;
-    } while (frame != 60);
+    }
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_Jump(ACTOR_KRADEN, 4, 20);
     // Kraden: "Wait for me, Isaac... I'm on my way!"
@@ -1186,13 +1184,11 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
       frame++;
     } while (frame != 120);
     Sound_Play(SE_WARP);
-    frame = 0;
-    do {
+    for (frame = 0; frame != 60; frame++) {
       actor->y.fixed += px(1) / 10;
       sprite->scale -= Q16_ONE / 64;
       wait(1);
-      frame++;
-    } while (frame != 60);
+    }
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Event_Wait(80);
     gFieldWork->transition =

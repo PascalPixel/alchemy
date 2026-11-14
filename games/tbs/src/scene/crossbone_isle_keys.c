@@ -606,7 +606,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   if (!Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) &&
       gMainRoutineWork.cloaked == 0 &&
       gMainRoutineWork.haltedActor != ACTOR_FIRST_STATUE &&
-      (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
+      (column >= 21 && column <= 23) && row >= 10 && row <= 11) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     work->raisedTrigger = RAISED_FIRST_CHASE;
   }
@@ -648,7 +648,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   if (Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
       gMainRoutineWork.cloaked == 0 &&
       gMainRoutineWork.haltedActor != ACTOR_SECOND_STATUE && column == 10 &&
-      (u32)(row - 16) <= 2) {
+      (row >= 16 && row <= 18)) {
     Event_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     MapLocalState_StoreStep(&work->raisedTrigger, RAISED_SECOND_CHASE);
   }
@@ -796,7 +796,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
 
   if (state->haltedActor != ACTOR_FIFTH_STATUE &&
       Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
-      state->cloaked == 0 && column == 19 && (u32)(row - 15) <= 1) {
+      state->cloaked == 0 && column == 19 && (row >= 15 && row <= 16)) {
     Event_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     MapLocalState_StoreStep(&work->raisedTrigger, RAISED_FIFTH_CHASE);
   }

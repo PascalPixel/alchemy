@@ -107,21 +107,17 @@ s32 PartyInventory_HasSpace(void) {
   return 0;
 }
 
+/// Returns the free inventory slots of the whole party.
 s32 PartyInventory_CountFreeSlots(void) {
-  s16 owners[10];
-  s32 ownerCount = Party_ListMembers(owners);
-  s32 cnt = 0;
-  s16 *ownerCursor = owners;
+  s16 unitIds[10];
+  s32 unitCount = Party_ListMembers(unitIds);
+  s32 freeSlots = 0;
+  s16 *unitId = unitIds;
+  s32 i;
 
-  if (cnt < ownerCount) {
-    s32 n = ownerCount;
-
-    do {
-      cnt = cnt - Inventory_Count(*ownerCursor++) + 15;
-      n--;
-    } while (n != 0);
-  }
-  return cnt;
+  for (i = 0; i < unitCount; i++)
+    freeSlots = freeSlots - Inventory_Count(*unitId++) + INVENTORY_SLOTS;
+  return freeSlots;
 }
 
 s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
@@ -166,23 +162,19 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
   return -1;
 }
 
+/// Gives the item to the first party member with room. Returns who took it, or
+/// -1.
 s32 PartyInventory_Add(s32 itemId) {
-  s16 owners[10];
-  s32 ownerCount;
-  s32 ownerIndex;
-  s16 *ownerCursor;
+  s16 unitIds[10];
+  s32 unitCount = Party_ListMembers(unitIds);
+  s16 *cursor = unitIds;
+  s32 i;
 
-  ownerCount = Party_ListMembers(owners);
-  ownerCursor = owners;
-  ownerIndex = 0;
-  if (ownerIndex < ownerCount) {
-    do {
-      s16 ownerId = *ownerCursor++;
+  for (i = 0; i < unitCount; i++) {
+    s16 unitId = *cursor++;
 
-      if (Inventory_AddItem(ownerId, itemId) >= 0)
-        return ownerId;
-      ownerIndex++;
-    } while (ownerIndex < ownerCount);
+    if (Inventory_AddItem(unitId, itemId) >= 0)
+      return unitId;
   }
   return -1;
 }
@@ -410,21 +402,24 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   return result;
 }
 
-s32 PartyInventory_Remove(s32 item_id) {
-  s32 owner = PartyInventory_FindMember(item_id);
+/// Removes one `itemId` from whoever carries it first; always returns 0.
+s32 PartyInventory_Remove(s32 itemId) {
+  s32 unitId = PartyInventory_FindMember(itemId);
 
-  if (owner == -1)
+  if (unitId == -1)
     return 0;
-  Inventory_Remove(owner, Inventory_Find(owner, item_id));
+  Inventory_Remove(unitId, Inventory_Find(unitId, itemId));
   return 0;
 }
 
-s32 PartyInventory_Discard(s32 item_id) {
-  s32 owner = PartyInventory_FindMember(item_id);
+/// Discards one `itemId` from whoever carries it first, as Inventory_Discard
+/// does; always returns 0.
+s32 PartyInventory_Discard(s32 itemId) {
+  s32 unitId = PartyInventory_FindMember(itemId);
 
-  if (owner == -1)
+  if (unitId == -1)
     return 0;
-  Inventory_Discard(owner, Inventory_Find(owner, item_id));
+  Inventory_Discard(unitId, Inventory_Find(unitId, itemId));
   return 0;
 }
 
@@ -519,19 +514,14 @@ s32 Inventory_CountItem(s32 owner, s32 item_id) {
   return count;
 }
 
+/// Counts `itemId` across the party.
 s32 PartyInventory_CountItem(s32 itemId) {
-  u16 owners[16];
-  s32 itemCount = 0;
-  s32 ownerCount = Party_ListMembers(owners);
+  u16 unitIds[16];
+  s32 count = 0;
+  s32 unitCount = Party_ListMembers(unitIds);
+  s32 i;
 
-  if (itemCount < ownerCount) {
-    u16 *ownerCursor = owners;
-    s32 n = ownerCount;
-
-    do {
-      itemCount += Inventory_CountItem(*ownerCursor++, itemId);
-      n--;
-    } while (n != 0);
-  }
-  return itemCount;
+  for (i = 0; i < unitCount; i++)
+    count += Inventory_CountItem(unitIds[i], itemId);
+  return count;
 }

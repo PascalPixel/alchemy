@@ -6,7 +6,7 @@
 #include "fixed_math.h"
 
 void Oam_ResetFrame(void) {
-  gObjAffineCount = 0;
+  gOamMatrixCount = 0;
   Iwram_ClearWordsEntry(gOamBucketMasks, 32);
 }
 
@@ -23,13 +23,13 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   xScale = (s16)source->scaleX;
   angle = source->angle;
   yScale = (s16)source->scaleY;
-  index = gObjAffineCount;
+  index = gOamMatrixCount;
   if (index > 31)
     return 31;
 
-  matrix = &gObjAffineMatrices[index];
+  matrix = &gOamMatrices[index];
   coefficient = matrix->coefficients;
-  gObjAffineCount = index + 1;
+  gOamMatrixCount = index + 1;
   if ((xScale == yScale || xScale == -yScale) && angle == 0) {
     s32 reciprocal;
     s32 xReciprocal;
@@ -74,7 +74,7 @@ void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot) {
   }
   mask = &gOamBucketMasks[(u32)slot >> 3];
   bit = slot & 7;
-  buckets = gOamBuckets;
+  buckets = gOamDepthLists;
   if (((u32)*mask >> bit) & 1) {
     void **head = &buckets[slot];
     void *previous = *head;
@@ -99,7 +99,7 @@ void Oam_AddSpriteAtDepth(void *entry, s32 slot) {
   if (slot < 0)
     slot = 0;
   mask = &gOamBucketMasks[(u32)slot >> 3];
-  head = &gOamBuckets[slot];
+  head = &gOamDepthLists[slot];
   bit = slot & 7;
   if (((u32)*mask >> bit) & 1) {
     void *previous = *head;

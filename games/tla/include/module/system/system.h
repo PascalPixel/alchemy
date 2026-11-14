@@ -139,7 +139,7 @@ extern u8 Resource_ExecuteTransferSize[];
 
 extern u8 gOamBucketMasks[];
 
-extern void *gOamBuckets[];
+extern void *gOamDepthLists[];
 extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);
 
 s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
@@ -150,7 +150,7 @@ s32 Save_InvalidateSector(s32 index);
 u32 Save_SelectWriteSector(s32 partId);
 u32 Save_GetLatestCounter(s32 partId);
 
-extern const u8 Cartridge_Restart[];
+extern const u8 Rom_Start[];
 
 void System_CopyBuildStamp(void);
 

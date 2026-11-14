@@ -26,8 +26,8 @@ STATIC_ASSERT(offsetof(struct AffineTransform, scaleY) == 2);
 STATIC_ASSERT(offsetof(struct AffineTransform, angle) == 4);
 STATIC_ASSERT(sizeof(union AffineMatrix) == 8);
 
-extern u8 gObjAffineCount;
-extern union AffineMatrix gObjAffineMatrices[];
+extern u8 gOamMatrixCount;
+extern union AffineMatrix gOamMatrices[];
 
 s32 OamMatrix_AllocFromTransform(struct AffineTransform *source);
 s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale);

@@ -90,6 +90,7 @@ void RuntimeDispatch_ReservedNoOpD(void) {}
 
 void RuntimeDispatch_ReservedNoOpE(void) {}
 
+/// An exported stub that ignores its arguments and reports 0.
 s32 Stub_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
 
 /// Copies the build stamp resource (three words) into gBuildStamp and
@@ -103,54 +104,78 @@ void System_CopyBuildStamp(void) {
 
 void Resource_ReservedNoOp(s32 count) {}
 
+/// Returns the ROM address of resource `index` from the resource directory.
+/// Called throughout the game before decoding a resource.
 void *Resource_GetTableEntry(s32 index) {
   return Resource_DirectoryTable[index];
 }
 
-void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
-  s32 entryCount;
-  s32 entryIndex;
+/// Unused: resolves the Thumb long branches (BL pairs) of a block of code whose
+/// branch offsets are stored from the start of the block. A BL is two
+/// halfwords: the first carries the marker bits 0xf000 and the high eleven bits
+/// of the offset, the second the marker 0xf800 and the low eleven bits of the
+/// halfword offset. Each pair's offset is reduced by the pair's own position in
+/// the block, which turns it into the pc-relative offset the CPU expects; the
+/// pairs are rewritten in place. `byteLength` is the code size. Nothing calls
+/// it: Overlay_Load uses the ARM routine that does the same.
+UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
+  s32 entryCount = byteLength >> 1;
+  s32 i = 1;
 
-  entryCount = byteLength >> 1;
-  entryIndex = 1;
-  entries++;
-  if (entryIndex < entryCount) {
-    u32 nextMarkerMask;
-    u32 currentMarkerMask;
-    u32 payloadMask;
-    nextMarkerMask = 0xf800;
-    payloadMask = 0x7ff;
-    currentMarkerMask = 0xf000;
-    entries -= 2;
+  pair++;
+  if (i < entryCount) {
+    u32 lowMarker = 0xf800;
+    u32 offsetBits = 0x7ff;
+    u32 highMarker = 0xf000;
+
+#ifndef UBFIX
+    // UB: the walk starts a halfword before the block.
+    pair -= 2;
+#endif
+    // Each halfword from the second on is tried as the second of a pair.
     do {
-      u16 currentEntry;
-      u16 nextEntry;
-      u32 nextMarkerBits;
-      u32 currentMarkerBits;
+      u16 first, second;
+      u32 secondMarker, firstMarker;
 
-      nextEntry = entries[2];
-      nextMarkerBits = nextEntry & nextMarkerMask;
-      entries++;
-      if (nextMarkerBits == nextMarkerMask) {
-        currentEntry = entries[0];
-        currentMarkerBits = currentEntry & nextMarkerBits;
-        if (currentMarkerBits == currentMarkerMask) {
-          u32 packedOffset;
-          u32 adjustedCurrent;
-          u32 adjustedNext;
+#ifdef UBFIX
+      second = pair[0];
+#else
+      second = pair[2];
+#endif
+      secondMarker = second & lowMarker;
 
-          packedOffset = (((currentEntry & payloadMask) << 12) |
-                          ((nextEntry & payloadMask) * 2)) -
-                         (entryIndex * 2);
-          adjustedCurrent =
-              ((packedOffset >> 12) & payloadMask) | currentMarkerBits;
-          adjustedNext = ((packedOffset >> 1) & payloadMask) | nextMarkerBits;
-          entries[0] = adjustedCurrent;
-          entries[1] = adjustedNext;
+#ifndef UBFIX
+      pair++;
+#endif
+      if (secondMarker == lowMarker) {
+#ifdef UBFIX
+        first = pair[-1];
+#else
+        first = pair[0];
+#endif
+        firstMarker = first & secondMarker;
+
+        if (firstMarker == highMarker) {
+          u32 offset =
+              (((first & offsetBits) << 12) | ((second & offsetBits) * 2)) -
+              i * 2;
+          u32 newFirst = ((offset >> 12) & offsetBits) | firstMarker;
+          u32 newSecond = ((offset >> 1) & offsetBits) | secondMarker;
+
+#ifdef UBFIX
+          pair[-1] = newFirst;
+          pair[0] = newSecond;
+#else
+          pair[0] = newFirst;
+          pair[1] = newSecond;
+#endif
         }
       }
-      entryIndex++;
-    } while (entryIndex < entryCount);
+#ifdef UBFIX
+      pair++;
+#endif
+      i++;
+    } while (i < entryCount);
   }
 }
 
@@ -160,12 +185,13 @@ void Overlay_Load(u32 index, void *destination) {
 
   end = Decompress_TaggedLz((const void *)Resource_GetTableEntry(index),
                             destination);
-  RamCode_Load(routine, Resource_PatchThumbBranchCode,
+  RamCode_Load(routine, Resource_PatchThumbBranch,
                Resource_PatchThumbBranchCodeSize);
   routine(destination, end);
   Heap_Release(routine);
 }
 
+/// The handler of every interrupt nobody has claimed.
 void Irq_Ignore(void) {}
 
 void System_InstallIwramAndIrqs(void) {

@@ -10,8 +10,8 @@ gVBlankCount:
 	.global gTasksRunning
 gTasksRunning:
 	.space 0x00000004
-	.global gBlendVBlanksLeft
-gBlendVBlanksLeft:
+	.global gScreenFadeVBlanksLeft
+gScreenFadeVBlanksLeft:
 	.space 0x00000004
 	.global gDebugTextEnabled
 gDebugTextEnabled:
@@ -22,8 +22,8 @@ gBgScroll:
 	.global gSoundVBlankState
 gSoundVBlankState:
 	.space 0x00000004
-	.global gBlendStartLevel
-gBlendStartLevel:
+	.global gScreenFadeStartLevel
+gScreenFadeStartLevel:
 	.space 0x00000004
 	.global gCpuLoadTimer
 gCpuLoadTimer:
@@ -37,8 +37,8 @@ gInput:
 	.global gDecodeFillByte
 gDecodeFillByte:
 	.space 0x00000004
-	.global gBlendDuration
-gBlendDuration:
+	.global gScreenFadeVBlanks
+gScreenFadeVBlanks:
 	.space 0x00000004
 	.global gFrameWaitCount
 gFrameWaitCount:
@@ -52,8 +52,8 @@ gCpuLoadPeak:
 	.global gOamBucketMasks
 gOamBucketMasks:
 	.space 0x00000020
-	.global gBlendTargetLevel
-gBlendTargetLevel:
+	.global gScreenFadeTargetLevel
+gScreenFadeTargetLevel:
 	.space 0x00000008
 	.global gSerialExchangeActive
 gSerialExchangeActive:
@@ -79,8 +79,8 @@ gFrameVBlanks:
 	.global gLastFrameVBlanks
 gLastFrameVBlanks:
 	.space 0x00000004
-	.global gBlendBrighten
-gBlendBrighten:
+	.global gScreenFadeToWhite
+gScreenFadeToWhite:
 	.space 0x00000004
 	.global gCameraSceneParameters
 gCameraSceneParameters:
@@ -91,14 +91,14 @@ Data_030011ec:
 	.global Data_030011f0
 Data_030011f0:
 	.space 0x00000004
-	.global gBlendLayers
-gBlendLayers:
+	.global gScreenFadeLayers
+gScreenFadeLayers:
 	.space 0x00000004
 	.global gVBlankCallback
 gVBlankCallback:
 	.space 0x00000004
-	.global gObjAffineCount
-gObjAffineCount:
+	.global gOamMatrixCount
+gOamMatrixCount:
 	.space 0x00000004
 	.global gAutoSleepEnabled
 gAutoSleepEnabled:

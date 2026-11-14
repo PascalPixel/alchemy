@@ -6,8 +6,10 @@
 #include "gamepak/far_call/sound.h"
 #include "system/ram_buffer.h"
 
+/// Installs `handler` for interrupt `irq` and enables that interrupt, or with a
+/// null handler disables it and installs the do-nothing handler.
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
-  if (irq <= 13) {
+  if (irq <= IRQ_GAMEPAK) {
     u32 ime;
     u32 bit;
     u32 ie;
@@ -18,13 +20,15 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
     if (handler != 0)
       ie |= bit;
     REG_IE = ie;
-    if (irq <= 2) {
-      u32 enable = 8 << irq;
+    if (irq <= IRQ_VCOUNT) {
+      // The display interrupts also need their DISPSTAT enable
+      u32 enable = DISPSTAT_VBLANK_INTR << irq;
       u32 keep = ~enable;
       u32 stat;
 
-      if (irq == 2) {
-        enable |= vcount << 8;
+      if (irq == IRQ_VCOUNT) {
+        enable |= DISPSTAT_VCOUNT_LINE(vcount);
+        // Keep only the low byte, so the old line goes too
         keep &= 0xff;
       }
       stat = REG_DISPSTAT & keep;
@@ -82,7 +86,7 @@ static __inline__ void System_Reset(void) {
   register u32 entry __asm__("r4");
   gCartridgeResetMarker = 0x19670704;
   Sound_SuspendDirectSoundFar();
-  entry = Cart_Restart;
+  entry = Cart_Start;
   Io_Write16(0, &REG_IME);
   CAMELOT_ASM("the cartridge restart transfers control without returning.")
   __asm__ volatile("bx %0" : : "r"(entry));
@@ -339,7 +343,7 @@ void System_VBlankHandler(void) {
     Serial_StepBlockTransfer();
   }
   SoundDriver_VSyncRefresh();
-  if (gBlendDuration != 0)
+  if (gScreenFadeVBlanks != 0)
     ScreenFade_Update();
   if (gFrameRenderPending != 0) {
     gFrameRenderPending = 0;
@@ -411,13 +415,15 @@ s32 Sound_LoadReverbCode(s32 preset) {
   return 0;
 }
 
-void Sound_ReservedNoOpA(void) {}
+UNUSED void Sound_ReservedNoOpA(void) {}
 
-void Sound_ReservedNoOpB(void) {}
+UNUSED void Sound_ReservedNoOpB(void) {}
 
+/// The keypad interrupt, from the handler table: A+B+Select+Start was pressed,
+/// so it sets gResetRequested for the frame loop and disarms the interrupt.
 void Input_HandleKeyInterrupt(void) {
   if (gSleepActive == 0) {
-    Io_Write16(0xc3ff, &REG_KEYCNT);
+    Io_Write16(KEYCNT_DISARMED, &REG_KEYCNT);
     gResetRequested = 1;
   }
 }

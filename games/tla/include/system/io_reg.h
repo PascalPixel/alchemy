@@ -320,4 +320,67 @@ enum KeyMask {
 
 #define WAITCNT_GAME 0x4014
 
+// From The Broken Seal's io_reg.h: the same registers, bits and sizes.
+#define DISPSTAT_VBLANK_INTR 0x0008 ///< at the start of each VBlank
+#define DISPSTAT_HBLANK_INTR 0x0010 ///< at the end of each line
+#define DISPSTAT_VCOUNT_INTR 0x0020 ///< on the DISPSTAT_VCOUNT_LINE line
+/// DISPSTAT's high byte: the line the VCount interrupt fires on (the LYC
+/// compare).
+#define DISPSTAT_VCOUNT_LINE(line) ((line) << 8)
+/// The screen's size in pixels.
+#define DISPLAY_WIDTH 240
+#define DISPLAY_HEIGHT 160
+#define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
+/// A 15-bit colour's red, green and blue levels, 0 to 31 each.
+#define RGB_RED(color) ((color) & 0x1f)
+#define RGB_GREEN(color) (((color) >> 5) & 0x1f)
+#define RGB_BLUE(color) (((color) >> 10) & 0x1f)
+/// A colour channel's brightest level.
+#define RGB_LEVEL_MAX 31
+/// Video RAM, as pret names it: background tiles and maps, then sprite tiles.
+#define VRAM 0x06000000
+#define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB
+#define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
+/// A word of eight 4-bit pixels, all colour `color`: one row of a 16-colour
+/// tile.
+#define PIXELS_4BPP(color) ((color) * 0x11111111u)
+/// A word of four 8-bit pixels, all colour `color`.
+#define PIXELS_8BPP(color) ((color) * 0x01010101)
+#define SIO_MULTI_SI                                                           \
+  0x0004 ///< multiplayer: this console's SI pin, clear on the parent
+#define SIO_MULTI_SD 0x0008 ///< multiplayer: every console is ready
+#define SIO_ID 0x0030       ///< multiplayer: this console's id, 0 the parent
+#define SIO_ID_SHIFT 4      ///< SIO_ID's lowest bit
+/// The multiplayer id (SIO_ID) in a SIOCNT value, taken out by shifts.
+#define SIO_ID_OF(control) (((control) << 26) >> 30)
+#define SIO_ERROR 0x0040 ///< multiplayer: the last transfer failed
+/// OAM's size in bytes: 128 sprites of 8 bytes.
+#define OAM_SIZE 1024
+/// A sprite's attributes 0 and 1 as one word, attr0 | attr1 << 16, the way
+/// routines that build their own sprite lists write them; x, 0 to 511, is
+/// shifted into the high half and y, 0 to 255, is the low byte.
+#define OBJ_SIZE_8X8 0x00000000
+#define OBJ_SIZE_16X16 0x40000000
+#define OBJ_SIZE_32X32 0x80000000
+#define OBJ_SIZE_64X64 0xc0000000
+#define OBJ_SIZE_16X8 0x00004000
+#define OBJ_SIZE_32X8 0x40004000
+#define OBJ_SIZE_32X16 0x80004000
+#define OBJ_SIZE_64X32 0xc0004000
+#define OBJ_SIZE_8X16 0x00008000
+#define OBJ_SIZE_16X32 0x80008000
+#define OBJ_SIZE_32X64 0xc0008000
+#define OBJ_AFFINE 0x00000100 ///< drawn through its affine matrix
+/// An affine sprite drawn in a box twice its size, so turning never clips it.
+#define OBJ_DOUBLE_SIZE 0x00000200
+#define OBJ_MODE(mode) ((mode) << 10) ///< an enum ObjMode
+#define OBJ_256_COLORS 0x00002000     ///< 8bpp tiles, as BGCNT_256_COLORS
+#define OBJ_HFLIP 0x10000000          ///< a plain sprite mirrored left to right
+#define OBJ_VFLIP 0x20000000          ///< a plain sprite mirrored top to bottom
+/// Attribute 2 above its tile number: the sprite's priority, 0 in front to 3
+/// behind, and its 16-colour palette.
+#define OBJ_PRIORITY(n) ((n) << 10)
+/// Requires all ten keys together to prevent the reset chord retriggering it.
+#define KEYCNT_DISARMED 0xc3ff
+
 #endif

@@ -9,16 +9,16 @@
 
 struct Window;
 
-extern u8 gBlendBrighten;
+extern u8 gScreenFadeToWhite;
 // volatile: ScreenFade_Update, which the VBlank handler runs, clears it at the
 // fade's end while ScreenFade_Wait waits on it, so it is no device.
-extern volatile u8 gBlendDuration;
-extern u8 gBlendVBlanksLeft;
-extern u16 gBlendLayers;
-extern u8 gBlendStartLevel;
+extern volatile u8 gScreenFadeVBlanks;
+extern u8 gScreenFadeVBlanksLeft;
+extern u16 gScreenFadeLayers;
+extern u8 gScreenFadeStartLevel;
 // volatile: ScreenFade_Start sets it for ScreenFade_Update, which the VBlank
 // handler runs, so it is no device.
-extern volatile u8 gBlendTargetLevel;
+extern volatile u8 gScreenFadeTargetLevel;
 extern u8 gRomShiftedTilePair[];
 extern const u32 RelocatedQ16DotProduct[];
 extern u8 Resource_Decode2CodeSize[];

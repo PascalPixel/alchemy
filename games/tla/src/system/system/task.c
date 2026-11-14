@@ -19,7 +19,8 @@ void Task_ResetAll(void) {
   gTasksInitialized = 1;
 }
 
-void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
+/// Unused: copies `byteCount` bytes a word at a time.
+UNUSED void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
   u32 index;
   byteCount >>= 2;
   for (index = 0; index < byteCount; index++)
@@ -27,9 +28,11 @@ void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
 }
 
 /// Bubble-sorts the task table by priority, highest first, so each pass runs
-/// its tasks from the highest priority down; removed tasks rise to the front.
+/// its tasks from the highest priority down; removed tasks
+/// (TASK_PRIORITY_REMOVED) rise to the front.
 void Task_Sort(void) {
   struct Task saved;
+  // Default: the table's start, which every pass sets again.
   struct Task *task = gTasks;
   s32 pass;
   s32 index;
@@ -53,14 +56,15 @@ void Task_Sort(void) {
   }
 }
 
-s32 Task_Find(TaskFunc func) {
+/// Unused: returns the table index of the task running `func`, or -1.
+UNUSED s32 Task_Find(TaskFunc func) {
   s32 result;
   struct Task *task;
   u32 savedInterruptMaster;
   s32 i;
 
-  task = gTasks;
   result = -1;
+  task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
     if (task->func == (u32)func) {
@@ -72,16 +76,20 @@ s32 Task_Find(TaskFunc func) {
   return result;
 }
 
+/// Adds a task running `func` with priority `order`, or gives a task already
+/// running it the new priority, and re-sorts the table.
 s32 Task_Add(TaskFunc func, s32 order) {
   u32 savedInterruptState;
   s32 index;
   struct Task *task;
   s32 i;
 
+  // Adding re-sorts the table, which would shift the tasks after the new one
+  // if it came during a pass; no task adds one.
+  index = -1;
   task = gTasks;
   // DEAD: nothing uses the status read here; the ROM keeps the load.
   (void)gTasksRunning;
-  index = -1;
   IRQ_LOCK(savedInterruptState);
   // Update an existing task before looking for an unused task slot.
   for (i = 0; i < TASK_COUNT; i++, task++) {
@@ -108,9 +116,11 @@ s32 Task_Add(TaskFunc func, s32 order) {
   return index;
 }
 
-void Task_Idle(void) {}
+/// Unused: an empty routine.
+UNUSED void Task_Idle(void) {}
 
-void Task_Empty(void) {}
+/// Unused: an empty routine.
+UNUSED void Task_Empty(void) {}
 
 s32 Task_Remove(TaskFunc func) {
   struct Task *task;
@@ -184,14 +194,16 @@ s32 Task_SuspendOverlayTasks(void) {
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 extern struct Task gTasks[TASK_COUNT];
 
+/// Stores `mask` as the flags of the task running `func`; bit 0 keeps it
+/// running while the overlay tasks are suspended. Returns its index, or -1.
 s32 Task_SetFlags(TaskFunc func, u32 mask) {
   struct Task *task;
   u32 savedInterruptMaster;
   s32 result;
   s32 i;
 
-  task = gTasks;
   result = -1;
+  task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
     if (task->func == (u32)func) {
@@ -204,18 +216,20 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
   return result;
 }
 
+/// Resumes the task running `func`, or every task when `func` is null, by
+/// clearing bit 0 of its priority's high byte.
 s32 Task_ResumeAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
   s32 result;
   s32 i;
 
-  task = gTasks;
   result = -1;
+  task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
     if (func == 0 || task->func == (u32)func) {
-      TASK_STATE_HIGH(task) &= (u8)~1;
+      TASK_STATE_HIGH(task) &= ~1;
       result = i;
     }
   }
@@ -223,18 +237,20 @@ s32 Task_ResumeAll(TaskFunc func) {
   return result;
 }
 
+/// Resumes every task whose routine is in an overlay, flagged or not. Returns
+/// the last index changed, or -1.
 s32 Task_ResumeOverlayTasks(void) {
   struct Task *task;
   u32 savedInterruptMaster;
   s32 result;
   s32 i;
 
-  task = gTasks;
   result = -1;
+  task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
     if ((task->func >> 24) == 2) {
-      TASK_STATE_HIGH(task) &= (u8)~1;
+      TASK_STATE_HIGH(task) &= ~1;
       result = i;
     }
   }
@@ -242,20 +258,30 @@ s32 Task_ResumeOverlayTasks(void) {
   return result;
 }
 
+/// Runs one pass of the tasks: every task whose priority's high byte matches
+/// `pass`'s (TASK_PASS_FRAME or TASK_PASS_VBLANK), in table order.
 void Task_RunPass(s32 pass) {
   struct Task *task = gTasks;
-  s32 remaining;
+  s32 i;
 
+  // A pass matches the high byte only; the low byte has already ranked the
+  // tasks through the sort, and a suspended task's odd high byte matches no
+  // pass
   pass >>= 8;
   if (gTasksInitialized == 1) {
-    remaining = TASK_COUNT + 1;
+    i = TASK_COUNT + 1;
     task--;
     for (;;) {
-      if (--remaining == 0)
+      if (--i == 0)
         return;
       task++;
       if (TASK_STATE_HIGH(task) == pass) {
+        // UB: tasks return void, and the stored word is not a pointer object.
+#ifdef UBFIX
+        TaskFunc func = (TaskFunc)task->func;
+#else
         TaskIntFunc func = *(TaskIntFunc *)&task->func;
+#endif
 
         func();
       }

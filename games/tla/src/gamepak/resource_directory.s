@@ -10,7 +10,7 @@
 	.balign 4
 	.global Resource_DirectoryTable
 Resource_DirectoryTable:
-	resource , Cartridge_Restart
+	resource , Rom_Start
 	resource , Resource_DirectoryTable
 	resource BuildStamp, Resource_BuildStamp
 	resource , FarCall_FieldTable

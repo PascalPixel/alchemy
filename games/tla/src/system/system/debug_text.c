@@ -119,8 +119,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
   DebugText_Print((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
 }
 
-/// Blanks the debug text screen (screen block 4), homes the debug text cursor
-/// and points BG0 at the screen.
+/// Blanks the debug text screen, homes the cursor and points BG0 at it.
 void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 32 * 20 * 2);
   gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);

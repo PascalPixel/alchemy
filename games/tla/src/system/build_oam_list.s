@@ -104,10 +104,10 @@ AlchemyUncreditedEnd_080018b6:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
 	.4byte	gOamBucketMasks + 32
-	.4byte	gObjAffineCount
+	.4byte	gOamMatrixCount
 	.4byte	gOamUsage
-	.4byte	gOamBuckets
-	.4byte	gObjAffineMatrices
+	.4byte	gOamDepthLists
+	.4byte	gOamMatrices
 	.4byte	IwramFillWords
 
 @ The kernel's loader: copies the ARM kernel by DMA into a buffer on the stack

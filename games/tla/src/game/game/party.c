@@ -92,12 +92,12 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
 
 /// Returns the number of party members, counted from its FLAG_IN_PARTY flags.
 s32 Party_CountMembers(void) {
+  s32 unitId;
   s32 count;
-  s32 i;
 
   count = 0;
-  for (i = 0; i <= 7; i++) {
-    if (GameFlag_Get(i))
+  for (unitId = 0; unitId <= PIERS; unitId++) {
+    if (GameFlag_Get(FLAG_IN_PARTY(unitId)) != 0)
       count++;
   }
   return count;
@@ -164,16 +164,22 @@ s32 Party_ListMembers(s16 *owners) {
   return count;
 }
 
+/// Adds `amount` to the party's coins, kept between 0 and 999999, and returns
+/// the new total.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
+  struct MainRoutineWork *work;
 
-  value = gMainRoutineWork.coins;
+  work = &gMainRoutineWork;
+  value = work->coins;
   value += amount;
-  if (value > 0xf423f)
-    value = 0xf423f;
-  if (value < 0)
+  if (value > 999999) {
+    value = 999999;
+  }
+  if (value < 0) {
     value = 0;
-  gMainRoutineWork.coins = value;
+  }
+  work->coins = value;
   return value;
 }
 

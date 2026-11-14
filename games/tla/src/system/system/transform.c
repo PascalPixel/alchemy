@@ -16,7 +16,7 @@ struct ProjectedPoint {
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
 // Iwram_TransformMatrix multiplies the supplied matrix into the current one.
 
-#define MTX_DMA DMA_COPY_WORDS(12) ///< DMA for one matrix.
+#define TRANSFORM_DMA DMA_COPY_WORDS(12) ///< DMA for one matrix.
 
 /// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
 #define COS(a) Trig_Sin((a) + TRIG_TURN / 4)
@@ -37,30 +37,36 @@ void SceneTransform_RewindStack(void) {
   gTransformStackDepth = 0;
 }
 
-/// Saves the current matrix (one level deep).
+/// Saves gTransform into the save area (one level deep; a second save is
+/// ignored).
 void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
-    Dma_Set(gTransform, gTransformStackTop, MTX_DMA, REG_DMA3);
+    Dma_Set(gTransform, gTransformStackTop, TRANSFORM_DMA, REG_DMA3);
     gTransformStackDepth++;
     gTransformStackTop += sizeof(gTransform);
   }
 }
 
-void Transform_Store(void *dst) { Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3); }
-
-void Transform_Load(const void *src) {
-  Dma_Set(src, gTransform, MTX_DMA, REG_DMA3);
+/// Copies gTransform to `dst`.
+void Transform_Store(void *dst) {
+  Dma_Set(gTransform, dst, TRANSFORM_DMA, REG_DMA3);
 }
 
+/// Copies the matrix at `src` into gTransform.
+void Transform_Load(const void *src) {
+  Dma_Set(src, gTransform, TRANSFORM_DMA, REG_DMA3);
+}
+
+/// Restores gTransform from the save area, if Transform_Push saved it.
 void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
     --gTransformStackDepth;
     gTransformStackTop -= sizeof(gTransform);
-    Dma_Set(gTransformStackTop, gTransform, MTX_DMA, REG_DMA3);
+    Dma_Set(gTransformStackTop, gTransform, TRANSFORM_DMA, REG_DMA3);
   }
 }
 
-/// Sets the current matrix to identity.
+/// Resets gTransform to identity. Reached through the far-call table.
 void Transform_ResetMatrix(void) {
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_ResetCurrent();
@@ -384,10 +390,12 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   out[11] = -dot(ex, dx, ey, dy, ez, dz);
 }
 
+/// Makes the camera at `eye` looking at `target` the whole of gTransform.
 void Transform_SetLookAt(s32 *eye, s32 *target) {
   Transform_BuildLookAt(eye, target, gTransform);
 }
 
+/// Multiplies the camera at `eye` looking at `target` into gTransform.
 void Transform_ApplyLookAt(s32 *eye, s32 *target) {
   s32 work[12];
 
@@ -449,7 +457,7 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   return 0;
 }
 
-#undef MTX_DMA
+#undef TRANSFORM_DMA
 #undef COS
 #undef FixedSqrt
 #undef RelocatedQ16DotProduct

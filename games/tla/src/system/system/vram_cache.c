@@ -219,12 +219,14 @@ s32 VramCache_FindFreeEntry(void) {
   return ret;
 }
 
+/// Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns
+/// its number.
 s32 VramCache_AllocEntry(s32 size) {
-  s32 slot;
+  s32 no;
 
-  slot = VramCache_FindFreeEntry();
-  VramCache_Load(slot, size, 0);
-  return slot;
+  no = VramCache_FindFreeEntry();
+  VramCache_Load(no, size, 0);
+  return no;
 }
 
 /// Copies src into cache no again, keeping its current size. Returns the OBJ
@@ -241,13 +243,13 @@ s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale) {
   s16 *coefficient;
   u8 index;
 
-  index = gObjAffineCount;
+  index = gOamMatrixCount;
   if (index > 31)
     return 31;
 
-  matrix = &gObjAffineMatrices[index];
+  matrix = &gOamMatrices[index];
   coefficient = matrix->coefficients;
-  gObjAffineCount = index + 1;
+  gOamMatrixCount = index + 1;
   if ((x_scale == y_scale || x_scale == -y_scale) && angle == 0) {
     s32 reciprocal;
     s32 x_reciprocal;

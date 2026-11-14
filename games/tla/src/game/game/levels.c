@@ -197,8 +197,8 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
 
 struct LevelUpResult;
 
-/// Levels the character up once if it has the experience. Returns `gains`
-/// filled with the gains, or NULL. Only a far-call veneer reaches it.
+/// Levels the character up once if it has the experience, and returns gains, or
+/// NULL.
 struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
                                         struct LevelUpResult *gains) {
   return Unit_TryLevelUp(unitId, gains);
@@ -271,7 +271,7 @@ void Party_InitializeCharacters(void) {
 }
 
 /// Unused: reserved entry; keeps its place in the far-call table.
-void Unit_LevelNoOp(void) {}
+UNUSED void Unit_LevelNoOp(void) {}
 
 /// Returns the experience a character needs for `level`: 0 below level 1, and
 /// -1 for an enemy or a level past UNIT_LEVEL_MAX.

@@ -105,26 +105,29 @@ s32 ArcTan2(s32 x, s32 y) {
   return (u16)result;
 }
 
+/// Returns the integer square root of `value`, rounded down, a bit at a time;
+/// a negative `value` gives 0. Reached through the far-call table.
 s32 Math_IntegerSqrt(s32 value) {
   s32 trial;
   s32 remainder;
   s32 bit;
   s32 result;
 
+  // remainder is value - result squared.
   remainder = value;
   result = 0;
-  bit = 0xf;
-  do {
+  for (bit = 15; bit >= 0; bit -= 1) {
     trial = (result << (bit + 1)) + (1 << (bit * 2));
     if (trial <= remainder) {
       result |= 1 << bit;
       remainder -= trial;
     }
-    bit -= 1;
-  } while (bit >= 0);
+  }
   return result;
 }
 
+/// Square root of a 16.16 fixed-point value, in 16.16. The square root of
+/// the raw value is the result in 8.8, so the low eight bits are always 0.
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
 s32 Palette_GetBasicSpriteColors(void) {

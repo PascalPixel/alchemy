@@ -16,12 +16,11 @@ extern u16 gData_02003860;
 
 extern s16 gSaveSlot;
 
-/// Starts a new game: sets up a new game's state
-/// (MainRoutineWork_InitializeDefaults) and runs the main routine afresh from
-/// the Title (GAME_START_TITLE).
+/// Starts a new game: clears the main routine's work and restarts at the
+/// opening.
 void Game_RestartQuest(void) {
   MainRoutineWork_InitializeDefaults();
-  MainRoutine_RunFar(GAME_START_TITLE);
+  MainRoutine_RunFar(0);
 }
 
 struct TradeOfferState *Djinn_GetRecoveryTable(s32 which) {
@@ -66,24 +65,18 @@ const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
   return &gEnemy_DefinitionTable[recordIndex];
 }
 
+/// Copies `count` bytes from `first` to `second` when `direction` is set, and
+/// from `second` to `first` otherwise.
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                  s32 direction) {
-  s32 index;
+  s32 i;
 
   if (direction != 0) {
-    index = 0;
-    if (index < count) {
-      do {
-        *second++ = *first++;
-        index++;
-      } while (index < count);
-    }
-  } else if (count > 0) {
-    index = count;
-    do {
+    for (i = 0; i < count; i++)
+      *second++ = *first++;
+  } else {
+    for (i = 0; i < count; i++)
       *first++ = *second++;
-      index--;
-    } while (index != 0);
   }
 }
 

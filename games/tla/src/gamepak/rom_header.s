@@ -4,8 +4,8 @@
 	.include "games/tla/include/ed_asm.h"
 	.section .rodata
 	.arm
-	.global Cartridge_Restart
-Cartridge_Restart:
+	.global Rom_Start
+Rom_Start:
 	b	Entry				@ Entry.
 	.space	156				@ Nintendo logo (written by gbafix).
 	.ifdef TLA_EDITION_JA

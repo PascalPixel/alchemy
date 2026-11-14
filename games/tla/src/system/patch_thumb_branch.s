@@ -3,10 +3,7 @@
 @ the halfword after bx pc is never run.
 .syntax unified
 	.thumb
-	.global Resource_PatchThumbBranchCode
-Resource_PatchThumbBranchCode:
 	.global Resource_PatchThumbBranch
-	.thumb_func
 Resource_PatchThumbBranch:
 	bx	pc
 AlchemyUncredited_080130ce:
@@ -47,4 +44,4 @@ AlchemyUncreditedEnd_080130ce:
 	pop	{r5, r6}
 	bx	lr
 	.global Resource_PatchThumbBranchCodeSize
-	.set Resource_PatchThumbBranchCodeSize, . - Resource_PatchThumbBranchCode
+	.set Resource_PatchThumbBranchCodeSize, . - Resource_PatchThumbBranch

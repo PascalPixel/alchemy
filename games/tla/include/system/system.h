@@ -66,7 +66,7 @@ extern s32 gBattleMotion_VariantSpeedLimit[];
 extern s32 gBattleMotion_VariantVelocityY[];
 extern u8 gPartyStatusWork[];
 extern u16 gGraphics_ExpandNibbleTable[];
-extern const u8 Resource_PatchThumbBranchCode[];
+extern const u8 Resource_PatchThumbBranch[];
 s32 _call_via_r3(s32, u8 *, u8, s32);
 struct AnimationEntry;
 struct AnimationEntry *SpriteAnimation_Alloc(s32 id);

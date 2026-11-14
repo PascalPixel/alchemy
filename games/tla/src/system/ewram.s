@@ -77,8 +77,8 @@ gSoundFlags:
 	.global gSleepActive
 gSleepActive:
 	.space 0x00000010
-	.global gOamBuckets
-gOamBuckets:
+	.global gOamDepthLists
+gOamDepthLists:
 	.space 0x00000400
 	.global gResourceBlockOwners
 gResourceBlockOwners:
@@ -146,8 +146,8 @@ gSerialBlockNumber:
 	.global gBattleRandomSeed
 gBattleRandomSeed:
 	.space 0x00000008
-	.global gObjAffineMatrices
-gObjAffineMatrices:
+	.global gOamMatrices
+gOamMatrices:
 	.space 0x00000100
 	.global gSerialReceiveDest
 gSerialReceiveDest:

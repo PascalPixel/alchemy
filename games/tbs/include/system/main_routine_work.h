@@ -59,7 +59,7 @@ struct MainRoutineWork {
   u32 playTime; ///< frames, copied from gPlayTimeFrames when saving
   u8 unused[4];
   /// The summons the party can call, bit n for summon n: the first word of
-  /// the party's struct DjinnRecoveryTable (BattleSummonState.availableMask),
+  /// the party's struct DjinnRecoveryTable (its summonMask),
   /// which Djinn_GetRecoveryTable returns from here, its next word running
   /// over coins.
   u32 summonMask;

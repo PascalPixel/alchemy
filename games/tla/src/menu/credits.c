@@ -67,7 +67,7 @@ extern struct QueuedSprite *gEndingPicture_Strips;
 void Credits_InitCrawlSprites(void);
 void Credits_InitTextSpritesAtPage(s32 credits);
 void Credits_StopTextSprites(void);
-s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align);
+s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment);
 extern const u8 BattleEffect_ExpandCode[];
 extern u8 BattleEffect_ExpandCodeSize[];
 extern const u8 gCredits_GlyphWidths[];
@@ -646,101 +646,120 @@ void Credits_StopTextSprites(void) {
   Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
 }
 
-s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align) {
-  u8 *buf = (u8 *)Heap_AllocEwram(0x900);
-  s32 x = 0;
-  s32 width = 192;
-  const u8 *font = gDisplayScroll_Font;
-  s32 tiles;
-  s32 pos;
-  const u8 *p;
-  u8 *dst;
-  u32 c;
-  s32 glyph;
-  s32 w;
-  s32 row;
-  s32 bit;
-  u32 bits;
-  u32 mask;
-  /* FAKEMATCH(dead): an unused array for the stack frame's 32 bytes no
-   * instruction touches. */
-  u32 unused[8];
+#define CREDITS_LINE_PIXELS 192
+#define CREDITS_BUFFER_BYTES 2304
+#define CREDITS_RASTER_STRIDE 256
 
+/// A credits tile's row of 4 bytes in object VRAM.
+#define OBJ_TILE_ROW(tile, row)                                                \
+  (*(u32 *)(OBJ_VRAM0 + (row) * 4 + (tile) * TILE_SIZE_4BPP))
+
+/// Centers, right-aligns or left-aligns one credits line in a 192-pixel row,
+/// with its shadow, and writes it as tiles from `firstTile`. Returns -1 at the
+/// end of the text.
+s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
+  u8 *linePixels = (u8 *)Heap_AllocEwram(CREDITS_BUFFER_BYTES);
+  s32 startX = 0;
+  s32 lineWidth = CREDITS_LINE_PIXELS;
+  const u8 *font = gDisplayScroll_Font;
+  s32 tileCount;
+  s32 textAdvance;
+  const u8 *sourceBytes;
+  u8 *destination;
+  u32 sourceValue;
+  s32 glyphIndex;
+  s32 glyphWidth;
+  s32 row;
+  s32 columnIndex;
+  u32 glyphBits;
+  u32 glyphMask;
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
+  UNUSED u32 unused[8];
+
+  // BUG: the end marker is checked after allocation, leaking one line buffer.
   if (text == NULL)
     return -1;
+  // The ninth raster row holds the shadow below this line.
   if (!GameFlag_Get(0x200)) {
-    Iwram_FillWordsEntry(buf, 0x900, 0);
+    Iwram_FillWordsEntry(linePixels, CREDITS_BUFFER_BYTES, 0);
     GameFlag_Set(0x200);
   } else {
-    Iwram_CopyWords(buf, buf + 0x800, 0x100);
-    Iwram_FillWordsEntry(buf + 0x100, 0x800, 0);
+    Iwram_CopyWords(linePixels, linePixels + 2048, 256);
+    Iwram_FillWordsEntry(linePixels + 256, 2048, 0);
   }
 
-  p = text;
-  pos = 0;
-  while ((c = *p++) != 0) {
-    if (c > 31)
-      pos += gCredits_GlyphWidths[c - 32];
+  // Measure the line in the credits font, then choose where it starts.
+  // sourceBytes walks the text here, and each glyph's rows below.
+  sourceBytes = text;
+  textAdvance = 0;
+  while ((sourceValue = *sourceBytes++) != 0) {
+    if (sourceValue > 31)
+      textAdvance += gCredits_GlyphWidths[sourceValue - 32];
   }
-  if (align == 2)
-    x = width - pos;
-  else if (align == 1)
-    x = (width - pos) / 2;
+  if (alignment == 2)
+    startX = lineWidth - textAdvance;
+  else if (alignment == 1)
+    startX = (lineWidth - textAdvance) / 2;
 
-  p = text;
-  pos = 0;
-  while ((c = *text++) != 0) {
-    if (c > 31) {
-      glyph = c - 32;
-      p = font + glyph * 8;
-      dst = buf + x + pos;
+  // Rasterize each glyph and its one-pixel shadow at the aligned start.
+  sourceBytes = text;
+  textAdvance = 0;
+  while ((sourceValue = *text++) != 0) {
+    if (sourceValue > 31) {
+      glyphIndex = sourceValue - 32;
+      sourceBytes = font + glyphIndex * 8;
+      destination = linePixels + startX + textAdvance;
       for (row = 0; row < 8; row++) {
-        bits = *p++;
-        mask = 0x80;
-        for (bit = 7; bit >= 0; bit--) {
-          if (bits & mask) {
-            dst[0x101] = 1;
-            dst[0] = 15;
+        glyphBits = *sourceBytes++;
+        glyphMask = 0x80;
+        for (columnIndex = 7; columnIndex >= 0; columnIndex--) {
+          if (glyphBits & glyphMask) {
+            destination[257] = 1;
+            destination[0] = 15;
           }
-          dst++;
-          mask >>= 1;
+          destination++;
+          glyphMask >>= 1;
         }
-        dst += 248;
+        destination += CREDITS_RASTER_STRIDE - 8;
       }
-      w = 1;
-      if (c > 31)
-        w = gCredits_GlyphWidths[glyph];
-      pos += w;
+      glyphWidth = 1;
+      if (sourceValue > 31)
+        glyphWidth = gCredits_GlyphWidths[glyphIndex];
+      textAdvance += glyphWidth;
     }
   }
 
-  tiles = width / 8;
-  p = buf;
-  dst = buf;
+  // Pack pairs of pixel indices into bytes, keeping the 256-pixel stride.
+  tileCount = lineWidth / 8;
+  sourceBytes = linePixels;
+  destination = linePixels;
   for (row = 0; row < 8; row++) {
-    for (bit = 0; bit < tiles * 4; bit++) {
-      c = *p++;
-      c |= *p++ << 4;
-      *dst++ = c;
+    for (columnIndex = 0; columnIndex < tileCount * 4; columnIndex++) {
+      sourceValue = *sourceBytes++;
+      sourceValue |= *sourceBytes++ << 4;
+      *destination++ = sourceValue;
     }
-    dst += 256 - tiles * 4;
-    p += 256 - tiles * 8;
+    destination += CREDITS_RASTER_STRIDE - tileCount * 4;
+    sourceBytes += CREDITS_RASTER_STRIDE - tileCount * 8;
   }
 
-  for (row = 0; row < tiles; row++) {
-    s32 tile = slot + row;
-    u32 *words = (u32 *)buf + row;
+  // Transpose raster rows into the tile ring used by the scrolling sprites.
+  for (row = 0; row < tileCount; row++) {
+    s32 tileIndex = firstTile + row;
+    u32 *words = (u32 *)linePixels + row;
 
-    *(u32 *)(0x06010000 + tile * 32) = words[0x000];
-    *(u32 *)(0x06010004 + tile * 32) = words[0x040];
-    *(u32 *)(0x06010008 + tile * 32) = words[0x080];
-    *(u32 *)(0x0601000c + tile * 32) = words[0x0c0];
-    *(u32 *)(0x06010010 + tile * 32) = words[0x100];
-    *(u32 *)(0x06010014 + tile * 32) = words[0x140];
-    *(u32 *)(0x06010018 + tile * 32) = words[0x180];
-    *(u32 *)(0x0601001c + tile * 32) = words[0x1c0];
+    // A tile's eight rows of 4 bytes, each a 256-pixel raster row apart.
+    OBJ_TILE_ROW(tileIndex, 0) = words[0];
+    OBJ_TILE_ROW(tileIndex, 1) = words[64];
+    OBJ_TILE_ROW(tileIndex, 2) = words[128];
+    OBJ_TILE_ROW(tileIndex, 3) = words[192];
+    OBJ_TILE_ROW(tileIndex, 4) = words[256];
+    OBJ_TILE_ROW(tileIndex, 5) = words[320];
+    OBJ_TILE_ROW(tileIndex, 6) = words[384];
+    OBJ_TILE_ROW(tileIndex, 7) = words[448];
   }
-  Heap_Release(buf);
+  Heap_Release(linePixels);
   return 0;
 }
 

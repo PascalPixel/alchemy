@@ -3,6 +3,7 @@
 // Part of game.c.
 
 #include "../game_internal.h"
+#include "flags.h"
 #include "flag_call.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "module/game/game.h"
@@ -759,143 +760,60 @@ void Party_GivePiersDjinn(void) {
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
 /// cures poison and haunting.
 void Party_RestoreHpPp(s32 cureConditions) {
-  s32 count;
-  s32 n;
-  u8 *obj;
-  s32 t;
-  s32 v14;
-  s32 v16;
-  s32 one;
-  s16 v34;
+  s32 partySize;
+  s32 partyIndex;
+  struct BattleUnit *unit;
 
-  count = Party_CountMembers();
-  for (n = 0; n < count; n++) {
-    {
-      struct MainRoutineWork *party = &gMainRoutineWork;
+  partySize = Party_CountMembers();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    unit = Unit_Get(gMainRoutineWork.activeOwners[partyIndex]);
 
-      obj = Unit_Get(party->activeOwners[n]);
-    }
-
-    do {
-      *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);
-      *(u16 *)(obj + 0x3A) = *(u16 *)(obj + 0x36);
-    } while (0);
-
-    v34 = *(s16 *)(obj + 0x34);
-    t = __divsi3(v34 << 14, v34);
-    v14 = 0x4000;
-    if (t <= 0x4000) {
-      v14 = 0;
-      if (t >= 0) {
-        v14 = t;
-      }
-    }
-    *(s16 *)(obj + 0x14) = (s16)v14;
-    if (((v14 << 16) == 0) && (*(s16 *)(obj + 0x38) != 0)) {
-      one = 1;
-      *(s16 *)(obj + 0x14) = (s16)one;
-    }
-
-    t = __divsi3(*(s16 *)(obj + 0x3A) << 14, *(s16 *)(obj + 0x36));
-    v16 = 0x4000;
-    if (t <= 0x4000) {
-      v16 = 0;
-      if (t >= 0) {
-        v16 = t;
-      }
-    }
-    *(s16 *)(obj + 0x16) = (s16)v16;
-    if (((v16 << 16) == 0) && (*(s16 *)(obj + 0x3A) != 0)) {
-      one = 1;
-      *(s16 *)(obj + 0x16) = (s16)one;
-    }
+    unit->hp = unit->maxHp;
+    unit->pp = unit->maxPp;
+    Unit_UpdateGauges(unit);
 
     if (cureConditions == 1) {
-      *(s8 *)(obj + 0x131) = 0;
-      *(s8 *)(obj + 0x140) = 0;
+      unit->poison = 0;
+      unit->haunt = 0;
     }
   }
 }
 
-// Party_RestorePpOfLitElements from The Broken Seal.
 /// Restores the PP of each party member whose element group has a lit
 /// lighthouse: Venus or Mars for group 0, Mercury or Jupiter for the others.
 /// Called by the events at the top of the Mercury and Venus Lighthouses.
 void Party_RestorePpOfLitElements(void) {
-  s32 count;
-  s32 n;
-  u8 ownerId;
-  s32 group;
-  s32 doRefresh;
-  u8 *obj;
-  s32 t;
-  s32 v14;
-  s32 v16;
-  s32 v34;
-  s32 v36;
-  s32 v38;
-  s32 v3A;
-  s32 one;
+  s32 partySize;
+  s32 partyIndex;
+  u8 unitId;
+  s32 elementGroup;
+  s32 restorePp;
+  struct BattleUnit *unit;
 
-  count = Party_CountMembers();
-  for (n = 0; n < count; n++) {
-    {
-      struct MainRoutineWork *party = &gMainRoutineWork;
-
-      ownerId = party->activeOwners[n];
-    }
-    group = gCharacter_ElementGroupTable[ownerId];
-    doRefresh = 0;
-    if (group == 0) {
-      if (GameFlag_Get(0x110) || GameFlag_Get(0x112)) {
-        doRefresh = 1;
+  partySize = Party_CountMembers();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    unitId = gMainRoutineWork.activeOwners[partyIndex];
+    elementGroup = gCharacter_ElementGroupTable[unitId];
+    restorePp = 0;
+    if (elementGroup == 0) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT) ||
+          GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT)) {
+        restorePp = 1;
       }
     } else {
-      if (GameFlag_Get(0x111) || GameFlag_Get(0x113)) {
-        doRefresh = 1;
+      if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT) ||
+          GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT)) {
+        restorePp = 1;
       }
     }
 
-    if (doRefresh == 0) {
+    if (restorePp == 0) {
       continue;
     }
 
-    obj = Unit_Get(ownerId);
-    do {
-      *(u16 *)(obj + 0x3A) = *(u16 *)(obj + 0x36);
-    } while (0);
-
-    v38 = *(s16 *)(obj + 0x38);
-    v34 = *(s16 *)(obj + 0x34);
-    t = __divsi3(v38 << 14, v34);
-    v14 = 0x4000;
-    if (t <= 0x4000) {
-      v14 = 0;
-      if (t >= 0) {
-        v14 = t;
-      }
-    }
-    *(s16 *)(obj + 0x14) = (s16)v14;
-    if (((v14 << 16) == 0) && (*(s16 *)(obj + 0x38) != 0)) {
-      one = 1;
-      *(s16 *)(obj + 0x14) = (s16)one;
-    }
-
-    v3A = *(s16 *)(obj + 0x3A);
-    v36 = *(s16 *)(obj + 0x36);
-    t = __divsi3(v3A << 14, v36);
-    v16 = 0x4000;
-    if (t <= 0x4000) {
-      v16 = 0;
-      if (t >= 0) {
-        v16 = t;
-      }
-    }
-    *(s16 *)(obj + 0x16) = (s16)v16;
-    if (((v16 << 16) == 0) && (*(s16 *)(obj + 0x3A) != 0)) {
-      one = 1;
-      *(s16 *)(obj + 0x16) = (s16)one;
-    }
+    unit = Unit_Get(unitId);
+    unit->pp = unit->maxPp;
+    Unit_UpdateGauges(unit);
   }
 }
 

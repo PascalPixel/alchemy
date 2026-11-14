@@ -147,9 +147,7 @@ static void Ripple_Start(void) {
 
 /// The exit, Reveal and the Black Orb at the water's edge (cell behavior
 /// 10).
-const struct Trigger *Scene_GetTriggers(void) {
-  return gLemurianShipTriggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gLemurianShipTriggers; }
 
 /// Makes the ship's glow ripple.
 static void ShipGlow_CyclePalette(void) {

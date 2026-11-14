@@ -192,7 +192,8 @@ enum SoundId {
   /// Tolbi-bound ship rocks and as Saturos and Menardi combine.
   MUS_ERUPTION,
   /// The Title's music as the intro holds the title, without its prompt, after
-  /// the prologue and before Vale three years later (the title's Scene_Initialize).
+  /// the prologue and before Vale three years later (the title's
+  /// Scene_Initialize).
   MUS_TITLE_AFTER_PROLOGUE,
   MUS_065,
   MUS_066,

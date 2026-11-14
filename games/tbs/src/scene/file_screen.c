@@ -152,9 +152,7 @@ s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *Scene_GetExits(void) { return (u8 *)gFileScreen_Exits; }
 
-u8 *Scene_GetActorPlacements(void) {
-  return (u8 *)gFileScreen_ActorPlacements;
-}
+u8 *Scene_GetActorPlacements(void) { return (u8 *)gFileScreen_ActorPlacements; }
 
 u8 *Scene_GetTriggers(void) { return (u8 *)gFileScreen_Triggers; }
 
@@ -383,8 +381,8 @@ struct SaveMenuMapLocalState {
 /// A console's link payload as the cable transfer reads it from
 /// gLinkPeerSignatures.
 struct SaveLinkGreeting {
-  /// The greeting Scene_Initialize waits for: FILE_SCREEN_LINK_LANGUAGE_TAG, then
-  /// V, T and S.
+  /// The greeting Scene_Initialize waits for: FILE_SCREEN_LINK_LANGUAGE_TAG,
+  /// then V, T and S.
   ///
   /// Scene_Initialize sets every console's to "0000" before it waits.
   u16 code[4];

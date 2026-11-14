@@ -38,10 +38,10 @@
 
 struct Actor;
 
-extern s16 gData_02000f5c[];
-extern u32 gData_02000f8c[];
+extern s16 gGaiaRock_Room1Regions[];
+extern u32 gGaiaRock_Room2Regions[];
 
-void Func_02000bc0(s32 id, s32 flag);
+void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag);
 
 extern struct ActorPlacement gGaiaRock_Placements[];
 extern struct ActorPlacement gGaiaRock_Room1Placements[];
@@ -54,27 +54,27 @@ void Scene_TalkToActor(s32 a);
 extern struct Trigger gGaiaRock_Room1Triggers[];
 extern struct Trigger gGaiaRock_Room2Triggers[];
 extern struct Trigger gGaiaRock_Triggers[];
-extern u32 gData_020015c0[];
+extern u32 gGaiaRock_LeafScript[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 a);
 
-extern s32 gData_020015c4[];
+extern s32 gGaiaRock_WindScript[];
 
-void Func_02000dd0(void);
-void Func_02000b2c(s32 id, s32 x, s32 y, s32 z);
+void GaiaRock_StartWallTriggers(void);
+void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z);
 
-extern s32 gData_020016cc[];
+extern s32 gGaiaRock_StatueRiseScript[];
 
-extern u32 gData_02001688[];
-extern u32 gData_0200101c[];
+extern u32 gGaiaRock_DustScript[];
+extern u32 gGaiaRock_CrateScript[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct ActorPlacement *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1)
-    return (const struct ActorPlacement *)gData_02000f5c;
+    return (const struct ActorPlacement *)gGaiaRock_Room1Regions;
   if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2)
-    return (const struct ActorPlacement *)gData_02000f8c;
+    return (const struct ActorPlacement *)gGaiaRock_Room2Regions;
   return 0;
 }
 
@@ -90,17 +90,23 @@ const struct Trigger *Scene_GetPlacements(void) {
   return (const struct Trigger *)gGaiaRock_Placements;
 }
 
-void Func_020000d0(void) { Func_02000bc0(17, 0x300); }
+void GaiaRock_StepOnFirstStatueSpot(void) {
+  GaiaRock_StatueRisesUnderLeader(17, 0x300);
+}
 
-void Func_020000e0(void) { Func_02000bc0(18, 0x301); }
+void GaiaRock_StepOnSecondStatueSpot(void) {
+  GaiaRock_StatueRisesUnderLeader(18, 0x301);
+}
 
-void Func_020000f0(void) { Func_02000bc0(19, 0x302); }
+void GaiaRock_StepOnThirdStatueSpot(void) {
+  GaiaRock_StatueRisesUnderLeader(19, 0x302);
+}
 
 // Sets the object's motion flags to 3 while it moves, for at most 60 frames
 // until its vertical speed is 0, then clears them ten frames later. The
 // editions after the Japanese one also run the given cue first.
 #if !TLA_PATCH_1
-void Func_02000100(s32 id) {
+void GaiaRock_DropPillar(s32 id) {
   struct Actor *object = Actor_Get(id);
   /* FAKEMATCH(pin): the counter fixed to r6. */
   register s32 frames asm("r6");
@@ -115,7 +121,7 @@ void Func_02000100(s32 id) {
   object->motionFlags = 0;
 }
 #else
-void Func_02000100(s32 id, s32 cue) {
+void GaiaRock_DropPillar(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
   /* FAKEMATCH(pin): the flags' address fixed to r2. */
   register u8 *flags asm("r2");
@@ -144,23 +150,25 @@ void Func_02000100(s32 id, s32 cue) {
 }
 #endif
 
-void Func_02000148(void) { MapGrid_CopyCellAttributes(7, 90, 1, 1, 8, 91); }
+void GaiaRock_StartMovingPillar(void) {
+  MapGrid_CopyCellAttributes(7, 90, 1, 1, 8, 91);
+}
 
 // The Japanese edition drops an object with no cue; the later editions play
 // cue 181 as it drops. The first drop goes through the call layer.
 #if !TLA_PATCH_1
-#define DROP_OBJECT_CALLED(id) Func_02000100(id)
-#define DROP_OBJECT(id) Func_02000100(id)
+#define DROP_OBJECT_CALLED(id) GaiaRock_DropPillar(id)
+#define DROP_OBJECT(id) GaiaRock_DropPillar(id)
 #else
-#define DROP_OBJECT_CALLED(id) Func_02000100(id, 181)
-#define DROP_OBJECT(id) Func_02000100(id, 181)
+#define DROP_OBJECT_CALLED(id) GaiaRock_DropPillar(id, 181)
+#define DROP_OBJECT(id) GaiaRock_DropPillar(id, 181)
 #endif
 
 /// Copies cells by where the object with the given id has moved, its position
 /// counted in 8-pixel steps: object 16, at x 11 or less while flag 0x920 is
 /// clear, drops and sets the flag; object 19, while flag 0x921 is clear, copies
 /// cells at x 77, drops at (79, 12) and at x 81 sets the flag.
-void Func_02000164(s32 unused, s32 id) {
+void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   struct Actor *p;
 
@@ -195,19 +203,19 @@ void Func_02000164(s32 unused, s32 id) {
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 
-void Func_02000258(void) {
+void GaiaRock_StartPushingBlock(void) {
   MapGrid_CopyCellAttributes(13, 18, 1, 1, 13, Actor_Get(8)->z >> 20);
 }
 
-void Func_0200027c(void) {
+void GaiaRock_FinishPushingBlock(void) {
   MapGrid_CopyCellAttributes(11, 14, 1, 1, 13, Actor_Get(8)->z >> 20);
 }
 
-void Func_020002a0(void) {
+void GaiaRock_CycloneClearsWall(void) {
   Call7((void (*)())TileCopies_CopyTouchedCells, 110, 64, 14, 12, 110, 47, 1);
 }
 
-void Func_020002c0(void) {
+void GaiaRock_RevealIdol(void) {
   struct Actor *object = Actor_Get(64);
   s32 done;
 
@@ -221,12 +229,12 @@ void Func_020002c0(void) {
   }
 }
 
-void Func_020002fc(void) {
+void GaiaRock_HideIdol(void) {
   if (Actor_Get(64) != NULL)
     Actor_SetPosition(64, 0, 0);
 }
 
-void Func_02000314(void) {
+void GaiaRock_CheckAltar(void) {
   struct Actor *object = Actor_Get(64);
 
   Message_ShowCentered(MsgCheckedTheAltar, 1);
@@ -242,7 +250,7 @@ void Func_02000314(void) {
   }
 }
 
-void Func_02000378(void) {
+void GaiaRock_SusaRejoices(void) {
   if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -255,7 +263,7 @@ void Func_02000378(void) {
   }
 }
 
-void Func_020003c4(void) {
+void GaiaRock_TalkToSusa(void) {
   if (Event_GetFlag(0x9ab)) {
     FieldEvent_SetMessageId(MsgYouReGoing);
     Event_AskYesNo(20, 0);
@@ -265,7 +273,7 @@ void Func_020003c4(void) {
   }
 }
 
-void Func_020003fc(void) {
+void GaiaRock_MindReadSusa(void) {
   if (Event_GetFlag(0x9ab)) {
     FieldEvent_SetMessageId(MsgKushinadaSSafe);
     Event_ShowMessage(20, 0);
@@ -304,7 +312,7 @@ struct OrbitEffect {
 
 s32 Trig_Cos(s32 angle);
 
-void Func_02000474(struct OrbitEffect *effect) {
+void GaiaRock_CircleLeaf(struct OrbitEffect *effect) {
   s32 radius;
   s32 angle;
   s32 dx;
@@ -324,10 +332,10 @@ void Func_02000474(struct OrbitEffect *effect) {
     effect->pause = ((Random16() << 4) >> 16) + 8;
   }
   if (++effect->timer == 71)
-    Actor_StartScript((struct Actor *)effect, gData_020015c0);
+    Actor_StartScript((struct Actor *)effect, gGaiaRock_LeafScript);
 }
 
-s32 Func_02000528(struct OrbitEffect *source) {
+s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
   s32 i;
   s32 timer;
 
@@ -347,7 +355,7 @@ loop:
     effect = (struct OrbitEffect *)Value4(
         (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
     if (effect != NULL) {
-      effect->update = Func_02000474;
+      effect->update = GaiaRock_CircleLeaf;
       effect->timer = timer;
       effect->pause = 0;
       effect->speed = 0x1999;
@@ -390,14 +398,14 @@ static inline struct A4SlotValues *FindSlot(s32 id) {
   return found;
 }
 
-void Func_020005f0(void) {
+void GaiaRock_StartVineSwing(void) {
   struct A4SlotValues *slot = FindSlot(8);
 
   slot->value10 = 0x4000;
   slot->value04 = 64;
 }
 
-void Func_02000630(void) {
+void GaiaRock_SwingVineHarder(void) {
   struct A4SlotValues *slot = FindSlot(8);
 
   slot->value10 = 0x4000;
@@ -406,7 +414,7 @@ void Func_02000630(void) {
 
 void Event_PlayCueNearFocus(struct Actor *object, s32 a);
 
-void Func_02000670(void) {
+void GaiaRock_StatueBlowsWind(void) {
   struct Actor *object = Actor_Get(17);
   u8 phase = gFrameCount;
 
@@ -422,7 +430,7 @@ void Func_02000670(void) {
       Actor_SelectAnimation(object, 2);
       FieldActor_SetMoveTargetFixed(object, object->x - px(32), object->y,
                                     object->z);
-      Actor_StartScript(object, gData_020015c4);
+      Actor_StartScript(object, gGaiaRock_WindScript);
       Actor_SetSpritePriorityDirect(object, 2);
     }
   }
@@ -445,7 +453,7 @@ s32 Scene_Initialize(void) {
   gMainRoutineWork.retreatEntrance = 5;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
   if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1) {
-    Task_Add((s32)Func_02000670, 0x480);
+    Task_Add((s32)GaiaRock_StatueBlowsWind, 0x480);
     Call2((void (*)())HangingVine_Place, 8, 1);
     Call2((void (*)())HangingVine_Place, 9, 1);
     Call2((void (*)())HangingVine_Place, 10, 1);
@@ -508,16 +516,16 @@ s32 Scene_Initialize(void) {
     Call2((void (*)())HangingVine_Place, 13, 1);
     HangingVine_Place(14, 1);
     if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
-      Func_02000dd0();
+      GaiaRock_StartWallTriggers();
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
-      Func_02000b2c(17, 0x2fc0000, -0x1870000, 0x1a80000);
+      GaiaRock_PlaceStatue(17, 0x2fc0000, -0x1870000, 0x1a80000);
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
-      Func_02000b2c(18, 0x3150000, -0xf80000, 0x1a80000);
+      GaiaRock_PlaceStatue(18, 0x3150000, -0xf80000, 0x1a80000);
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
-      Func_02000b2c(19, 0x30a0000, -0x770000, 0x1a80000);
+      GaiaRock_PlaceStatue(19, 0x30a0000, -0x770000, 0x1a80000);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock3) {
     actor = Actor_GetById(64);
@@ -545,7 +553,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_02000ab4(void) {
+void GaiaRock_TriggerWallCell(void) {
   if (gMainRoutineWork.renderMode == 2) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -561,7 +569,7 @@ void Func_02000ab4(void) {
   }
 }
 
-void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
+void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[2].cells;
   s32 cellX = x / 0x100000;
@@ -577,7 +585,7 @@ void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
   Actor_SetSpriteFlags(object, 0);
 }
 
-void Func_02000bc0(s32 id, s32 flag) {
+void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 gravity = leader->gravity;
   struct Actor *pillar;
@@ -587,8 +595,8 @@ void Func_02000bc0(s32 id, s32 flag) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   pillar = Actor_Get(id);
-  Func_02000b2c(id, leader->x, leader->y, leader->z);
-  Actor_StartScript(pillar, gData_020016cc);
+  GaiaRock_PlaceStatue(id, leader->x, leader->y, leader->z);
+  Actor_StartScript(pillar, gGaiaRock_StatueRiseScript);
   i = 15;
 dust:
   {
@@ -601,7 +609,7 @@ dust:
       u32 size;
       s32 scale;
 
-      Actor_StartScript(dust, gData_02001688);
+      Actor_StartScript(dust, gGaiaRock_DustScript);
       angle = Random16();
       speed = Random16();
       size = Random16();
@@ -658,7 +666,9 @@ fall:
   Event_SetFlag(flag);
 }
 
-void Func_02000dd0(void) { Task_AddFrame(Func_02000ab4, TASK_PASS_VBLANK); }
+void GaiaRock_StartWallTriggers(void) {
+  Task_AddFrame(GaiaRock_TriggerWallCell, TASK_PASS_VBLANK);
+}
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 24, 0, 408, FACING_EAST, 0, -1, -1, -1, -1, 0},
@@ -666,13 +676,13 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-s16 gData_02000f5c[] = {
+s16 gGaiaRock_Room1Regions[] = {
     771, -28, 484, 779, -20, 492, -1, 2,
     771, 180, 707, 779, 188, 715, -1, 3,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gData_02000f8c[] = {
+u32 gGaiaRock_Room2Regions[] = {
     0x12800c3, 0xcb0143, 0x14b0130, 0x2ffff, 0xfdd602c3, 0x2cb01c4,
     0x1ccfdde, 0x3ffff, 0xffff, 0, 0, 0,
 };
@@ -694,7 +704,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-u32 gData_0200101c[] = {
+u32 gGaiaRock_CrateScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
@@ -712,10 +722,10 @@ struct ActorPlacement gGaiaRock_Room1Placements[] = {
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1000, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 936, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gData_0200101c, 120, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gGaiaRock_CrateScript, 120, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(377, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 295, 0, 442, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gData_0200101c, 600, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gGaiaRock_CrateScript, 600, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(29, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -759,9 +769,9 @@ struct Trigger gGaiaRock_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 42, 0x9ab, EVENT(Func_02000378)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_020003c4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT(Func_020003fc)},
+    {TRIGGER_STEP, 42, 0x9ab, EVENT(GaiaRock_SusaRejoices)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(GaiaRock_TalkToSusa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT(GaiaRock_MindReadSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
@@ -770,20 +780,20 @@ struct Trigger gGaiaRock_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(Func_020002a0)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x920, EVENT(Func_02000148)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x920, EVENT(Func_02000164)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x921, EVENT(Func_02000164)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02000164)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(GaiaRock_CycloneClearsWall)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x920, EVENT(GaiaRock_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x920, EVENT(GaiaRock_FinishMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x921, EVENT(GaiaRock_FinishMovingPillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(GaiaRock_FinishMovingPillar)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGaiaRock_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 20, 0x300, EVENT(Func_020000d0)},
-    {TRIGGER_STEP, 21, 0x301, EVENT(Func_020000e0)},
-    {TRIGGER_STEP, 22, 0x302, EVENT(Func_020000f0)},
+    {TRIGGER_STEP, 20, 0x300, EVENT(GaiaRock_StepOnFirstStatueSpot)},
+    {TRIGGER_STEP, 21, 0x301, EVENT(GaiaRock_StepOnSecondStatueSpot)},
+    {TRIGGER_STEP, 22, 0x302, EVENT(GaiaRock_StepOnThirdStatueSpot)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
@@ -796,21 +806,21 @@ struct Trigger gGaiaRock_Room2Triggers[] = {
 
 struct Trigger gGaiaRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000314)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000258)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_0200027c)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_02000258)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_0200027c)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_020002c0)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020002fc)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(GaiaRock_CheckAltar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingBlock)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingBlock)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingBlock)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(GaiaRock_RevealIdol)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(GaiaRock_HideIdol)},
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_020015c0[] = {
+u32 gGaiaRock_LeafScript[] = {
     38,
 };
 
-s32 gData_020015c4[] = {
+s32 gGaiaRock_WindScript[] = {
     SC_ADD(SW_SCALE_X, 0x1999),
     SC_ADD(SW_SCALE_Y, 0x1999),
     SC_WAIT(1),
@@ -820,29 +830,29 @@ s32 gData_020015c4[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(6),
-    SC_CALL(Func_020005f0),
+    SC_CALL(GaiaRock_StartVineSwing),
     SC_WAIT(2),
     SC_LABEL(1),
-    SC_CALL(Func_02000630),
+    SC_CALL(GaiaRock_SwingVineHarder),
     SC_WAIT(2),
     SC_LOOP(3, SC_TO(1)),
-    SC_CALL(Func_02000528),
+    SC_CALL(GaiaRock_SpawnCirclingLeaves),
     SC_LABEL(2),
-    SC_CALL(Func_02000630),
+    SC_CALL(GaiaRock_SwingVineHarder),
     SC_WAIT(2),
     SC_LOOP(14, SC_TO(2)),
-    SC_CALL(Func_02000630),
+    SC_CALL(GaiaRock_SwingVineHarder),
     SC_WAIT(10),
     SC_FREE,
 };
 
-u32 gData_02001688[] = {
+u32 gGaiaRock_DustScript[] = {
     0, 40, 0x80010000, 22, 25, 0,
     0, 1, 22, 25, 1, 0,
     1, 13, 10, 0xc0010000, 38,
 };
 
-s32 gData_020016cc[] = {                                                               
+s32 gGaiaRock_StatueRiseScript[] = {                                                               
       SC_ADD(SW_SCALE_X, 0x8000),                                              
       SC_ADD(SW_SCALE_Y, 0x8000),                                              
       SC_WAIT(2),                                                              

@@ -58,13 +58,12 @@ void Weather_UpdateRain(void) {
 void Weather_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
   struct PaletteFade *target = gPaletteFadeWork;
-  s16 *timer = &work->timer;
 
-  if (*timer < 0)
+  if (work->timer < 0)
     return;
   if (GameFlag_GetFar(FLAG_WEATHER_HELD))
     work->timer = 128;
-  switch ((*timer)--) {
+  switch (work->timer--) {
   case 0:
     // The burst ends: arm the next, 150 frames plus up to 399 less up to 99.
     if (work->enabled != 0) {

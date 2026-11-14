@@ -235,11 +235,10 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
 /// where it started, comes back and is freed.
 void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect) {
   struct Vector3 position;
-  s8 *statePtr = &effect->state;
   s32 state;
 
 next_state:
-  state = *statePtr;
+  state = effect->state;
   if (state == OUT_AND_BACK_AIM_OUT) {
     u32 angle;
 
@@ -252,13 +251,13 @@ next_state:
     effect->acceleration = px(4);
     effect->speedMax = px(4);
     effect->turnStepLimited = state;
-    (*statePtr)++;
+    effect->state++;
     return;
   }
 
   if (state == OUT_AND_BACK_FLYING_OUT) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
-      (*statePtr)++;
+      effect->state++;
       goto next_state;
     }
     return;
@@ -269,7 +268,7 @@ next_state:
     effect->targetZ = effect->originZ;
     effect->turnStepMax = TRIG_TURN / 64;
     effect->turnStepLimited = 1;
-    (*statePtr)++;
+    effect->state++;
     return;
   }
 

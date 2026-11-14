@@ -428,10 +428,8 @@ void Serial_RemoveIrqHandlers(void) {
 /// Waits a frame at a time until every status bit in `mask` is set in
 /// gLinkStatus, then returns this console's multiplayer id.
 u32 Serial_WaitForStatusMask(s32 mask) {
-  if ((mask & gLinkStatus) != mask) {
-    do {
-      wait(1);
-    } while ((mask & gLinkStatus) != mask);
+  while ((mask & gLinkStatus) != mask) {
+    wait(1);
   }
   return SIO_ID_OF(REG_SIOCNT);
 }
@@ -547,8 +545,7 @@ void Serial_StepBlockTransfer(void) {
   // Receiving advances only when the peer presents the expected block number.
   // peerFlags is the sender's block kind, an enum SerialSendState.
   {
-    s32 *receive = &gSerialReceiveDestination;
-    s32 dest = *receive;
+    s32 dest = gSerialReceiveDestination;
     if (dest != 0) {
       if (own->flags == SERIAL_RECEIVE_ACTIVE &&
           (u8)(peer->peerFlags - SERIAL_SEND_MORE) <=
@@ -559,7 +556,7 @@ void Serial_StepBlockTransfer(void) {
           case SERIAL_SEND_MORE:
             // A block with more to come: store it and move on
             Dma_Set(peer->payload, (void *)dest, DMA_COPY_WORDS(5), REG_DMA3);
-            *receive += SERIAL_BLOCK_BYTES;
+            gSerialReceiveDestination += SERIAL_BLOCK_BYTES;
             gSerialReceivedSize += SERIAL_BLOCK_BYTES;
             own->status = (own->status + 1) | SERIAL_STATUS_RUNNING;
             break;
@@ -593,30 +590,30 @@ void Serial_StepBlockTransfer(void) {
     }
   }
   {
-    s32 *send = &gSerialSendSource;
-    s32 src = *send;
+    s32 src = gSerialSendSource;
     // A peer behind our block number requests a rewind before the next block.
     if (src != 0) {
       if (peer->flags == SERIAL_RECEIVE_ACTIVE) {
         if (peer->active & SERIAL_BLOCK_REWIND) {
           gap = (gSerialBlockNumber - peer->active) & SERIAL_BLOCK_NUMBER_MASK;
-          *send = src - gap * SERIAL_BLOCK_BYTES;
+          gSerialSendSource = src - gap * SERIAL_BLOCK_BYTES;
           gSerialSendSize += gap * SERIAL_BLOCK_BYTES;
           gSerialBlockNumber -= gap;
           gSerialBlockNumber &= SERIAL_BLOCK_NUMBER_MASK;
         }
         // Send the next block, marked as the last when it empties the size
         if (gSerialSendSize != 0) {
-          Dma_Set((void *)*send, own->payload, DMA_COPY_WORDS(5), REG_DMA3);
+          Dma_Set((void *)gSerialSendSource, own->payload, DMA_COPY_WORDS(5),
+                  REG_DMA3);
           gSerialSendSize += -SERIAL_BLOCK_BYTES;
           if (gSerialSendSize != 0) {
             own->peerFlags = SERIAL_SEND_MORE;
             own->active = gSerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK;
-            *send += SERIAL_BLOCK_BYTES;
+            gSerialSendSource += SERIAL_BLOCK_BYTES;
           } else {
             own->peerFlags = SERIAL_SEND_LAST;
             own->active = gSerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK;
-            *send += SERIAL_BLOCK_BYTES;
+            gSerialSendSource += SERIAL_BLOCK_BYTES;
           }
           gSerialBlockNumber =
               (gSerialBlockNumber + 1) & SERIAL_BLOCK_NUMBER_MASK;

@@ -92,7 +92,8 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       continue;
     // Djinn_ResolvePending hides a Djinni after the party loses or flees.
     // Scene_Arrive clears these temporary flags on a normal entry.
-    if ((u32)(condition - FLAG_DJINN_FIRST) <= ACTOR_DJINNI_FLAG_COUNT - 1 &&
+    if (condition >= FLAG_DJINN_FIRST &&
+        condition < FLAG_DJINN_FIRST + ACTOR_DJINNI_FLAG_COUNT &&
         work->mode != ACTOR_SYSTEM_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + ACTOR_DJINNI_FLAG_COUNT))
       continue;
@@ -515,7 +516,6 @@ void Actor_Restore(void) {
   s32 animation;
   s32 priority;
   s32 y;
-  s32 *leaderId = &gMainRoutineWork.leaderActorId;
   struct FieldWork **work = &gFieldWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 
@@ -538,7 +538,7 @@ void Actor_Restore(void) {
       // Through the sprite union this store moves.
       *(struct Sprite **)&actor->sprite = sprite;
       // Re-anchor the camera only when restoring the selected leader.
-      if (actorIndex == *leaderId) {
+      if (actorIndex == gMainRoutineWork.leaderActorId) {
         camera = (*work)->camera;
         cameraPosition = (*grid)->origin;
         y = actor->y.fixed;

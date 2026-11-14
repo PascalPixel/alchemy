@@ -35,8 +35,8 @@ void IconMenu_ReleaseArrows(void) {
   struct ItemMenuWork *menu;
 
   menu = gMenuWork;
-  VramCache_FreeEntry((u16)menu->resourceSlots[0]);
-  VramCache_FreeEntry((u16)menu->resourceSlots[1]);
+  VramCache_FreeEntry(menu->resourceSlots[0]);
+  VramCache_FreeEntry(menu->resourceSlots[1]);
 }
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
@@ -85,9 +85,9 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
   struct ItemMenuWork *menu = gMenuWork;
 
   if (variant == 0)
-    resource = (u16)menu->resourceSlots[0];
+    resource = menu->resourceSlots[0];
   else
-    resource = (u16)menu->resourceSlots[1];
+    resource = menu->resourceSlots[1];
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1. */
@@ -112,10 +112,10 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
   struct ItemMenuWork *menu = gMenuWork;
 
   if (variant == 0) {
-    resource = (u16)menu->resourceSlots[0];
+    resource = menu->resourceSlots[0];
     y -= 3;
   } else {
-    resource = (u16)menu->resourceSlots[1];
+    resource = menu->resourceSlots[1];
     y -= 4;
   }
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);

@@ -73,8 +73,7 @@ void DjinnFigures_UpdateAllPositions(void) {
     struct Sprite *animation = state->figures[index];
 
     if (animation != 0) {
-      u32 vertical =
-          FOUR_OBJECT_MOTION_ORIGIN_Y - px((s32)state->memberY[index]);
+      u32 vertical = FOUR_OBJECT_MOTION_ORIGIN_Y - px(state->memberY[index]);
       animation->image.priority = 0;
       scale.x = FOUR_OBJECT_MOTION_FULL_SCALE;
       scale.y = FOUR_OBJECT_MOTION_FULL_SCALE;
@@ -103,7 +102,7 @@ void DjinnFigures_UpdateBottomRow(void) {
     struct Sprite *animation = menu->figures[figure];
 
     if (animation != 0) {
-      u32 projectedY = (241u << 17) - px((u32)(s32)menu->memberY[figure]);
+      u32 projectedY = FOUR_OBJECT_MOTION_ORIGIN_Y - px(menu->memberY[figure]);
       s32 phase;
       s32 limit;
       s32 rowY;
@@ -120,9 +119,9 @@ void DjinnFigures_UpdateBottomRow(void) {
         scale.y = scale.x;
         menu->figureScales[figure] = scale.x;
       }
-      placement.x = px((u32)(s32)menu->figureX[figure]);
+      placement.x = px(menu->figureX[figure]);
       placement.height = projectedY;
-      placement.y = px((u32)(s32)menu->figureY[figure]) + projectedY;
+      placement.y = px(menu->figureY[figure]) + projectedY;
       placement.groundHeight = 0;
       rowY = menu->figureY[figure];
       /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live.

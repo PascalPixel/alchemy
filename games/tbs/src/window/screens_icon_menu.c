@@ -89,9 +89,7 @@ void IconMenu_DrawIcons(void) {
       u32 tileOffset;
 
       word = entry->sprite;
-      /* FAKEMATCH(temporary): the word pointer stands in for entry, y read as
-       * its halfword 7; as entry->y, 2 of 401 instructions differ in tbs-en. */
-      spriteY = ((s16 *)word)[7];
+      spriteY = *(s16 *)&entry->y;
       *word++ = 0;
       attributes = spriteY | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
       tileOffset = gVramCacheEntries[entry->slot].offset;
@@ -575,12 +573,11 @@ void Menu_DrawModeIndicator(void) {
 void Menu_DrawModeIndicator(void) {
   struct IconMenuWork *state = gIconMenuWork;
   s16 *shown = &state->previousMode;
-  s16 *current = &state->selection;
 
-  if (*shown != *current) {
-    *shown = *current;
+  if (*shown != state->selection) {
+    *shown = state->selection;
     WindowSprite_PrepareForRedraw(state->lowerWindow);
-    if (*current == TRANSFER_METHOD_PASSWORD) {
+    if (state->selection == TRANSFER_METHOD_PASSWORD) {
       TRANSFER_MODE_DRAW_HELP(MsgPasswordTransferHelp, state->lowerWindow,
                               TRANSFER_PASSWORD_HELP_X,
                               TRANSFER_PASSWORD_HELP_FIRST_Y);

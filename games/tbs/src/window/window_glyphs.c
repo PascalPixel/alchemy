@@ -211,27 +211,25 @@ s32 Text_GetWideStringWidth(u16 *text) {
   code = *text;
   width = 0;
   cursor = text + 1;
-  if (code != 0) {
-    do {
-      if (code == TEXT_SPACE) {
-        width += 4;
-      } else if (code <= TEXT_LAST_FONT_CODE) {
+  while (code != 0) {
+    if (code == TEXT_SPACE) {
+      width += 4;
+    } else if (code <= TEXT_LAST_FONT_CODE) {
 #if defined(WIDE_WIDTH_FIXED)
-        width += 10;
+      width += 10;
 #else
-        glyphIndex = code - TEXT_MARK_VOICED;
-        if (glyphIndex > 1U) {
-          // The font starts at the space.
-          glyphIndex += TEXT_MARK_VOICED - TEXT_SPACE;
-          width += FONT_GLYPH(glyphIndex)->width;
-        }
-      } else {
-        width += 10;
-#endif
+      glyphIndex = code - TEXT_MARK_VOICED;
+      if (glyphIndex > 1U) {
+        // The font starts at the space.
+        glyphIndex += TEXT_MARK_VOICED - TEXT_SPACE;
+        width += FONT_GLYPH(glyphIndex)->width;
       }
-      code = *cursor;
-      cursor += 1;
-    } while (code != 0);
+    } else {
+      width += 10;
+#endif
+    }
+    code = *cursor;
+    cursor += 1;
   }
   return width;
 }
@@ -366,11 +364,9 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
   u32 cell;
 
   if (buffer == NULL) {
-    u16 *counter = &canvas->textBufferEnd;
-
     buffer = canvas->textBuffer;
-    canvas->textBuffer[*counter] = 0;
-    *counter = (*counter + 1) & TEXT_BUFFER_MASK;
+    canvas->textBuffer[canvas->textBufferEnd] = 0;
+    canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
 
   cell = ((window->y + offsetY + 1) << 5) + (window->x + offsetX) + 1;

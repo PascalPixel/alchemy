@@ -218,9 +218,8 @@ void Djinn_RestoreActorAfterBattle(void) {
 /// lost).
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
-  s16 *pending = &st->pendingDjinni;
-  s32 kind = *pending & DJINN_PENDING_KIND_MASK;
-  s32 flag = *pending & DJINN_PENDING_EVENT_MASK;
+  s32 kind = st->pendingDjinni & DJINN_PENDING_KIND_MASK;
+  s32 flag = st->pendingDjinni & DJINN_PENDING_EVENT_MASK;
 
   if (shown == 0) {
     if (kind == 0) {
@@ -233,11 +232,11 @@ void Djinn_ResolvePending(s32 shown) {
         return;
       // DJINNI_BATTLE_EVENT_FIRST + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
       GameFlag_SetFar(flag - 172);
-      *pending = kind;
+      st->pendingDjinni = kind;
     } else if (kind == CONDITION_FLAG_SET) {
       if (st->sequenceResult == 1)
         GameFlag_SetFar(flag);
-      *pending = shown;
+      st->pendingDjinni = shown;
     }
     return;
   }
@@ -323,13 +322,13 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;
-    if ((s16)particle->age == 60) {
+    if (particle->age == 60) {
       particle->age = 0;
       particle->state += 1;
     }
   } else if (particle->state == DJINNI_LIGHT_CIRCLING) {
     particle->orbitAngle += 1;
-    if ((s16)particle->age == 40) {
+    if (particle->age == 40) {
       particle->age = 0;
       particle->state += 1;
     }
@@ -342,14 +341,14 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;
-    if ((s16)particle->age == 40) {
+    if (particle->age == 40) {
       particle->age = 0;
       particle->state += 1;
     }
   } else if (particle->state == DJINNI_LIGHT_CLOSING) {
     particle->orbitRadius -= 1;
     particle->orbitAngle += 1;
-    if ((s16)particle->age == 60) {
+    if (particle->age == 60) {
       particle->age = 0;
       particle->state += 1;
     }

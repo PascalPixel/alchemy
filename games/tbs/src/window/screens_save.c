@@ -548,12 +548,8 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     do {
       s32 remaining = width;
       u16 *cell = (u16 *)(offset + (s32)tilemap);
-      if (remaining != 0) {
-        do {
-          remaining--;
-          *cell++ = (HIGHLIGHT_PALETTE << 12) | 6;
-        } while (remaining != 0);
-      }
+      for (; remaining != 0; remaining--)
+        *cell++ = (HIGHLIGHT_PALETTE << 12) | 6;
       height--;
       offset += 64;
     } while (height != 0);
@@ -566,8 +562,6 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
 /// The file list shows the chosen file's party as standing sprites in a row,
 /// and four Djinn sprites, one for each element, over the file's Djinn counts.
 #define FILE_LIST_SPRITE_SPACING 3
-/// Task priority of the tasks that place the sprites every frame.
-#define FILE_LIST_SPRITE_PRIORITY (200 << 4)
 
 /// Shows the party of save file `summary` (up to four party members) as sprites
 /// in a row from tile (x, y) inside `window`, and starts placing them every
@@ -576,7 +570,6 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
                                struct SaveFileSummary *summary) {
   struct ShopWork *menu = gMenuWork;
   s32 i;
-  s32 priority;
 
   for (i = 0; i < 4 && summary->party[i] != -1; i++) {
     struct Sprite *sprite = Sprite_CreateFar(Party_RemapCharacterIdIfEnabledFar(
@@ -596,9 +589,7 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
     menu->partyMemberScale[i] = Q16_ONE;
   }
 
-  priority = 200;
-  priority <<= 4;
-  Task_Add(FileList_PlacePartySprites, priority);
+  Task_Add(FileList_PlacePartySprites, TASK_PASS_FRAME);
 }
 
 /// Stops placing the party sprites of the file list and releases them.
@@ -666,7 +657,7 @@ void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
       menu->figureY[i] = (window->y + y) * 8 + 16;
     }
 
-    Task_Add(FileList_PlaceDjinnSprites, FILE_LIST_SPRITE_PRIORITY);
+    Task_Add(FileList_PlaceDjinnSprites, TASK_PASS_FRAME);
   }
 }
 

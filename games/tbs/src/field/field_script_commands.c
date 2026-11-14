@@ -76,11 +76,8 @@ s32 ActorScript_InvokeCallback(struct Actor *interpreter) {
 s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
-  s16 *waitCounter = &interpreter->wait;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take. */
-  s32 zero = 0;
 
-  *waitCounter = zero;
+  interpreter->wait = 0;
   if (labelKey == 0) {
     return 0;
   }
@@ -103,7 +100,6 @@ s32 ActorScript_RepeatOrJump(struct Actor *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
   s32 jumpKey;
-  u8 *repeatCount;
   s32 nextCount;
 
   arguments = &interpreter->script[interpreter->scriptCursor + 1];
@@ -112,13 +108,12 @@ s32 ActorScript_RepeatOrJump(struct Actor *interpreter) {
   if (repeatLimit == SC_FOREVER) {
     interpreter->scriptCursor = ActorScript_FindLabel(interpreter, jumpKey);
   } else {
-    repeatCount = &interpreter->repeatCount;
-    nextCount = *repeatCount + 1;
-    *repeatCount = nextCount;
+    nextCount = interpreter->repeatCount + 1;
+    interpreter->repeatCount = nextCount;
     if ((u8)nextCount < (s16)repeatLimit) {
       interpreter->scriptCursor = ActorScript_FindLabel(interpreter, jumpKey);
     } else {
-      *repeatCount = 0;
+      interpreter->repeatCount = 0;
       interpreter->scriptCursor += 3;
     }
   }
@@ -245,14 +240,11 @@ s32 ActorScript_PlaySound(struct Actor *interpreter) {
 /// (ACTOR_SOLID), each radius less 2 pixels; otherwise 0.
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
   s32 actorIndex;
-  u8 *collisionFlags;
   struct Actor *candidate = gActors;
 
-  collisionFlags = &candidate->collisionFlags;
-  for (actorIndex = 0; actorIndex < ACTOR_COUNT;
-       actorIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
-    if (candidate->script != NULL && (ACTOR_SOLID & *collisionFlags) &&
-        candidate != actor) {
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+    if (candidate->script != NULL &&
+        (candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
       if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
                                     values, actor->radius - 2) >= 0)
         return -1;
@@ -266,14 +258,11 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
 struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
                                                s32 *values) {
   s32 actorIndex;
-  u8 *collisionFlags;
   struct Actor *candidate = gActors;
 
-  collisionFlags = &candidate->collisionFlags;
-  for (actorIndex = 0; actorIndex < ACTOR_COUNT;
-       actorIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
-    if (candidate->script != NULL && (ACTOR_SOLID & *collisionFlags) &&
-        candidate != actor) {
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+    if (candidate->script != NULL &&
+        (candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
       if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
                                     values, actor->radius - 2) >= 0)
         return candidate;
@@ -317,7 +306,7 @@ s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter) {
 /// SC_MOVE_BY(x, y, z): sends the actor towards its position plus (x, y, z).
 s32 ActorScript_ApplyRelativePosition(struct Actor *actor) {
 
-  u8 *commandBytes = (u8 *)(actor->script + (s16)actor->scriptCursor);
+  u8 *commandBytes = (u8 *)(actor->script + actor->scriptCursor);
   s32 *arguments = (s32 *)(commandBytes + 4);
   s32 deltaX = *arguments++;
   s32 deltaY = *arguments++;
@@ -531,7 +520,7 @@ s32 Actor_Wander(struct Actor *actor) {
 
   // base and range are 16.16 pixels; limit is compared in whole pixels,
   // against homeX and homeZ.
-  operands = &actor->script[(s16)actor->scriptCursor + 1];
+  operands = &actor->script[actor->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / Q16_ONE;
@@ -619,7 +608,7 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
   s32 dx;
   s32 dz;
 
-  operands = &actor->script[(s16)actor->scriptCursor + 1];
+  operands = &actor->script[actor->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / Q16_ONE;

@@ -39,12 +39,12 @@ struct Window {
   u16 flags; ///< WINDOW_FLAG_ flags; 0 once closing or free
   /// The zoom's stage: counts down from 7 to 0 while opening, and up from 0 to
   /// duration while closing.
-  u16 zoomStage;
+  s16 zoomStage;
   s16 duration;       ///< frames of the zoom under way; 0 when none
-  u16 previousX;      ///< tiles
-  u16 previousY;      ///< tiles
-  u16 previousWidth;  ///< tiles
-  u16 previousHeight; ///< tiles
+  s16 previousX;      ///< tiles
+  s16 previousY;      ///< tiles
+  s16 previousWidth;  ///< tiles
+  s16 previousHeight; ///< tiles
 };
 
 STATIC_ASSERT(sizeof(struct Window) == 0x24);

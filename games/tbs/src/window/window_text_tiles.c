@@ -594,12 +594,10 @@ void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
 /// Copies a zero-terminated byte string into the text renderer's halfwords.
 /// The destination needs one halfword per input byte, including the terminator.
 static __inline__ void Text_WidenByteString(const u8 *input, u16 *output) {
-  if (*input != 0) {
-    do {
-      *output = *input;
-      input++;
-      output++;
-    } while (*input != 0);
+  while (*input != 0) {
+    *output = *input;
+    input++;
+    output++;
   }
   *output = 0;
 }

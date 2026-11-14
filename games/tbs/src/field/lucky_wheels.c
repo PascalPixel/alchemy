@@ -1452,14 +1452,13 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   current++;
   if (current < count) {
     u32 mask = PACK_WINDOW_MASK;
-    struct LzPackWork **root = &gLzPackWork;
 
     do {
       u32 slot = (start + current) & mask;
       struct LzPackWork *state;
 
       LzPack_RemoveSlotNode(slot);
-      state = *root;
+      state = gLzPackWork;
       current++;
       state->bucketBySlot[slot] = (-1);
     } while (current < count);

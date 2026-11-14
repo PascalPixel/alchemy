@@ -23,7 +23,7 @@ struct AnimationMetadata {
   s8 adjustY; ///< pixels
   /// Pixels from the actor's position up to the top of its sprite
   /// (Actor_GetScreenPosition).
-  u8 boxX;
+  s8 boxX;
   /// Pixels; half of it is a battle unit's radius, and can be an
   /// actor's radius (Actor.radius).
   u8 boxY;

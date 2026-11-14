@@ -25,18 +25,17 @@ loop:
   if (window->flags != 0) {
     // Opening: zoom out one stage a frame, then draw the window in full, which
     // clears the duration.
-    if ((s16)window->zoomStage != 0) {
+    if (window->zoomStage != 0) {
       Window_DrawZoomBorder(window, 0);
-      window->zoomStage = (s16)window->zoomStage - 1;
+      window->zoomStage--;
     } else if (window->duration != 0) {
       Window_DrawOpened(window);
     }
   } else if (window->duration != 0) {
     // Closing: zoom in one stage a frame, then erase it and free its slot.
-    if ((s16)window->zoomStage != window->duration) {
-      Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
-                             (s16)window->previousWidth,
-                             (s16)window->previousHeight);
+    if (window->zoomStage != window->duration) {
+      Window_EraseBorderRect(window->previousX, window->previousY,
+                             window->previousWidth, window->previousHeight);
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
       /* FAKEMATCH(temporary): the flag through a local. */
@@ -46,9 +45,8 @@ loop:
         state->dirty = dirty;
       }
     } else {
-      Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
-                             (s16)window->previousWidth,
-                             (s16)window->previousHeight);
+      Window_EraseBorderRect(window->previousX, window->previousY,
+                             window->previousWidth, window->previousHeight);
       window->sprites.head = NULL;
       window->sprites.tailLink = NULL;
       window->width = 0;
@@ -87,7 +85,7 @@ void Window_DrawZoomBorder(void *windowArg, s32 savePosition) {
   s32 width;
   s32 height;
 
-  stage = (s16)window->zoomStage;
+  stage = window->zoomStage;
   duration = window->duration;
   remaining = duration - stage;
   // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point.
@@ -258,7 +256,6 @@ void Text_ResetStyle(void) {
 /// (WindowSystem_Update).
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
-  s32 priority;
 
   // The glyph sheet, loaded with no source: 128 << 6 is 8192 bytes, 256 sprite
   // tiles, the four of a 16x16 glyph for each of the 64 window sprites.
@@ -268,11 +265,7 @@ void WindowSystem_StartFieldUpdate(void) {
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
-  // 200 << 4 is TASK_PASS_FRAME: the update runs in the frame
-  // pass.
-  priority = 200;
-  priority <<= 4;
-  Task_Add(WindowSystem_Update, priority);
+  Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
 }
 
 /// Resets the text style and starts the per-frame window update
@@ -280,7 +273,6 @@ void WindowSystem_StartFieldUpdate(void) {
 /// loadGlyphTiles is set.
 void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   struct WindowWork *state = WINDOW_WORK;
-  s32 priority;
 
   // As in the field's setup above.
   if (loadGlyphTiles != 0)
@@ -291,9 +283,7 @@ void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
-  priority = 200;
-  priority <<= 4;
-  Task_Add(WindowSystem_Update, priority);
+  Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
 }
 
 /// Closes the battle message window at once, if one is open, and forgets it,

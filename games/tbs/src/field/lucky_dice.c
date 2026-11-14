@@ -37,7 +37,6 @@ void Camera_ResetViewDefaults(void) {
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   s32 offset[3];
   u32 nearPlane;
-  u32 focalLength;
 
   camera->pitch = 152 << 8;
   camera->distance = 255 << 17;
@@ -57,13 +56,8 @@ void Camera_ResetViewDefaults(void) {
   SET_VECTOR(offset, 0, 0, camera->distance);
   Iwram_TransformVector(offset, camera->eye);
 
-  focalLength = 250;
-  focalLength <<= 16;
-  nearPlane = Iwram_RatioMulQ14(focalLength, 192 << 8);
-
-  focalLength = 250;
-  focalLength <<= 16;
-  Projection_Set(focalLength, nearPlane, 0x7fff0000);
+  nearPlane = Iwram_RatioMulQ14(px(250), 192 << 8);
+  Projection_Set(px(250), nearPlane, 0x7fff0000);
 }
 
 /// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.

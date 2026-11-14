@@ -458,15 +458,13 @@ void Message_SetVoiceFromActor(s32 actorId) {
   u8 rate;
   s32 voice;
 
-  /* FAKEMATCH(type): the u16 fields stored through s16 pointers; as plain
-   * stores, 5 of 37 instructions differ in tbs-en. */
   if (actorId == 0x80000000) {
-    *(s16 *)&state->voiceSound = (rate = 0);
-    *(s16 *)&state->voiceCountdown = rate;
+    state->voiceSound = 0;
+    state->voiceCountdown = 0;
   } else {
     voice = Speaker_GetVoice(Actor_GetSpriteById(actorId));
     rate = gMessageSpeed_VoiceRates[gMainRoutineWork.messageSpeed];
-    *(s16 *)&state->voiceSound = voice;
-    *(s16 *)&state->voiceCountdown = rate;
+    state->voiceSound = voice;
+    state->voiceCountdown = rate;
   }
 }

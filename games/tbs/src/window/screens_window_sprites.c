@@ -257,21 +257,12 @@ void ScanlineWindow_FillSpans(void *spans) {
 /// wide, with the tilemap entry `value`.
 void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
                        s32 value) {
-  u32 row = 0;
+  u32 row, column;
   s16 *dst = (s16 *)WINDOW_TILEMAP_VRAM;
 
-  if (row < height) {
-    do {
-      u32 column = 0;
-      if (column < width) {
-        do {
-          column++;
-          *dst = value;
-          dst++;
-        } while (column < width);
-      }
-      row++;
-      dst += 32 - width;
-    } while (row < height);
+  for (row = 0; row < height; row++) {
+    for (column = 0; column < width; column++)
+      *dst++ = value;
+    dst += 32 - width;
   }
 }

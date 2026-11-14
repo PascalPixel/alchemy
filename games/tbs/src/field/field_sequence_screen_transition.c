@@ -703,14 +703,11 @@ void ScreenTransition_Update(void) {
   struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
   struct ScreenTransitionWin *display =
       *(struct ScreenTransitionWin **)Ram_MapGridWork;
-  s8 *duration = &state->duration;
   u32 edgeDistance;
 
-  if (*duration != 0) {
-    s8 *step = &state->step;
-
-    if (*step >= *duration) {
-      *duration = 0;
+  if (state->duration != 0) {
+    if (state->step >= state->duration) {
+      state->duration = 0;
       Task_Remove(ScreenTransition_Update);
       Irq_SetHandler(IRQ_HBLANK, 0, 0);
       return;
@@ -718,8 +715,8 @@ void ScreenTransition_Update(void) {
       s32 delta = state->end - state->start;
       s32 value;
 
-      (*step)++;
-      value = Iwram_SignedDivide(delta * *step, *duration);
+      state->step++;
+      value = Iwram_SignedDivide(delta * state->step, state->duration);
       state->value = state->start + value;
     }
   }
@@ -741,14 +738,11 @@ void ScreenTransition_UpdateFromCentre(void) {
   struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
   struct ScreenTransitionWin *window =
       *(struct ScreenTransitionWin **)Ram_MapGridWork;
-  s8 *duration = &state->duration;
   u16 edgeDistance;
 
-  if (*duration != 0) {
-    s8 *step = &state->step;
-
-    if (*step >= *duration) {
-      *duration = 0;
+  if (state->duration != 0) {
+    if (state->step >= state->duration) {
+      state->duration = 0;
       Task_Remove(ScreenTransition_UpdateFromCentre);
       Irq_SetHandler(IRQ_HBLANK, 0, 0);
       return;
@@ -756,8 +750,8 @@ void ScreenTransition_UpdateFromCentre(void) {
       s32 delta = state->end - state->start;
       s32 edgeOffset;
 
-      (*step)++;
-      edgeOffset = Iwram_SignedDivide(delta * *step, *duration);
+      state->step++;
+      edgeOffset = Iwram_SignedDivide(delta * state->step, state->duration);
       state->value = state->start + edgeOffset;
     }
   }

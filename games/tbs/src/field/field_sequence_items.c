@@ -163,8 +163,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
       /* FAKEMATCH(type): called as returning a value, as a C89 call with no
-       * prototype is; as its void prototype, 2 of 253 instructions differ in
-       * tbs-en. */
+       * prototype is. */
       ((s32 (*)(s32, s32))FieldPsynergy_LoadResources)(abilityId, 0);
       work->psynergyActing = 1;
       FieldPsynergy_Run();

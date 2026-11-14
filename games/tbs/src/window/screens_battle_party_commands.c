@@ -20,9 +20,7 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
     targetKind = TARGET_HINT_HP;
   if (abilityKind == ABILITY_FORMULA_HEAL_PP)
     targetKind = TARGET_HINT_PP;
-  /* FAKEMATCH(temporary): the effect copied through a signed word, as at The
-   * Lost Age's twin; as a plain read, 5 of 30 instructions differ in tbs-en.
-   */
+  /* FAKEMATCH(temporary): the effect copied through a signed word. */
   signedEffect = (s8)act->effect;
   effect = signedEffect;
   if (effect == ABILITY_EFFECT_CURE_POISON)
@@ -106,8 +104,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   state->commandSelection[1] = 0;
   state->linkTimer = 0;
   state->timerHidden = 0;
-  /* FAKEMATCH(type): cleared as a word, among the other words; as a pointer
-   * store, 2 of 1727 instructions differ in tbs-en. */
+  /* FAKEMATCH(type): cleared as a word, among the other words. */
   *(s32 *)&state->timerWindow = 0;
   // Both peers announce the command-entry phase before accepting commands: this
   // side writes "VSST" into halfwords 4 to 7 of its signature, then waits for

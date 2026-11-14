@@ -360,14 +360,12 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
       u16 *cell = &((u16 (*)[32])work->tilemap)[y][x];
       s32 remaining = width;
 
-      if (remaining != 0) {
-        do {
-          u32 tile = *cell;
-          tile = (tile & ~0x1000) | paletteBit;
-          remaining--;
-          *cell = tile;
-          cell++;
-        } while (remaining != 0);
+      while (remaining != 0) {
+        u32 tile = *cell;
+        tile = (tile & ~0x1000) | paletteBit;
+        remaining--;
+        *cell = tile;
+        cell++;
       }
 
       Window_MarkTilemapRow(work, y);

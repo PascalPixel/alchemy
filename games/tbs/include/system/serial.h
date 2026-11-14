@@ -9,6 +9,7 @@
 #include "types.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/irq.h"
 #include "system/irq_lock.h"
 #include "system/system.h"
@@ -212,10 +213,7 @@ static __inline__ void Serial_ResetTransferState(void) {
   zero = 0;
   /* FAKEMATCH(dead): state set again. */
   state = &gSerialTransfer;
-  /* FAKEMATCH(dead): an empty once-only loop ends CSE's block. */
-  do {
-  } while (0);
-  state->status = SERIAL_STATUS_RUNNING;
+  Io_Write8(SERIAL_STATUS_RUNNING, &state->status);
   gSerialSendSource = zero;
   gSerialSendSize = zero;
   gSerialReceiveDestination = zero;

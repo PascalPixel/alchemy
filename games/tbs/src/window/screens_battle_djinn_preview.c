@@ -137,15 +137,12 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     if (sprite) {
       sprite->motion = 1;
       sprite->kind = WINDOW_SPRITE_ICON;
-      /* FAKEMATCH(type): the u8 index stored through an s8 pointer; as a plain
-       * store, 1 of 93 instructions differ in tbs-en. */
       *(s8 *)&sprite->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)sprite->link;
       sprite->sentinel = 240;
       sprite->x = 120;
       sprite->y = 120;
-      /* FAKEMATCH(type): the two words stored through pointer types; as
-       * the unions, 2 of 87 instructions differ in tbs-en. */
+      /* FAKEMATCH(type): the two words stored through pointer types. */
       *(struct Window **)&entry->attributes =
           (struct Window *)(OBJ_SIZE_16X16 |
                             OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));

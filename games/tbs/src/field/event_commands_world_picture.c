@@ -516,10 +516,8 @@ void WorldMap_ZoomOutWhileLHeld(void) {
     Field_UpdateActorVisibilityBounds();
     Leader_StopMoving();
     WorldMap_StartZoom(Q16_ONE * 8 / 13, 6);
-    if (gKeysHeld & KEY_L) {
-      do {
-        wait(1);
-      } while (gKeysHeld & KEY_L);
+    while (gKeysHeld & KEY_L) {
+      wait(1);
     }
     WorldMap_StartZoom(Q16_ONE, 6);
     Task_ResumeOverlayTasks();

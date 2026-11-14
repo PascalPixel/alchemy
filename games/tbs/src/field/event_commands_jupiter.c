@@ -138,7 +138,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     if ((gVBlankCount & 1) != 0)
       Sound_PlayFar(SE_HEAVY_IMPACT);
   } else if (state == MARS_SPARK_RISING) {
-    if ((s16)effect->age == 3) {
+    if (effect->age == 3) {
       ((struct Sprite *)effect->actor)->image.priority = 0;
       effect->flags = 4;
     }

@@ -19,8 +19,7 @@ s32 Field_TryJumpForward(void) {
   s32 result = -1;
   s32 angle =
       (leader->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter
-  u8 *flags = &leader->motionFlags;
-  u8 saved = *flags;
+  u8 saved = leader->motionFlags;
   struct FieldWork *work = gFieldWork;
   s32 spriteFlags = 1;
   struct FieldPosition positionStorage;
@@ -52,7 +51,7 @@ again:
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *flags &= ACTOR_JUMP_KEEPS_MOTION;
+    leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_MoveToAndWaitById(
         gMainRoutineWork.leaderActorId,
@@ -81,7 +80,7 @@ again:
     } else {
       wait(6);
     }
-    *flags = saved;
+    leader->motionFlags = saved;
     Event_End();
     if (work != NULL)
       work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, px(32));

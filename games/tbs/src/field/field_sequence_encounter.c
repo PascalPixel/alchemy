@@ -307,14 +307,12 @@ void BattleBackground_SelectForMap(void) {
   // The first scene_rules.s word names a battle background.
   s32 backdrop;
 
-  if (entry != 0 && entry != target) {
-    do {
-      // A battle background's word: bit 31 set, its resource id below.
-      if (entry & 0x80000000) {
-        backdrop = entry & 0xFFFF;
-      }
-      entry = *table++;
-    } while (entry != 0 && entry != target);
+  while (entry != 0 && entry != target) {
+    // A battle background's word: bit 31 set, its resource id below.
+    if (entry & 0x80000000) {
+      backdrop = entry & 0xFFFF;
+    }
+    entry = *table++;
   }
   gMainRoutineWork.battleBackground = backdrop;
 }

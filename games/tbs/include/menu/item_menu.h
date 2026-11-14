@@ -88,7 +88,7 @@ struct ItemMenuWork {
   u8 mode;           ///< not named through this struct; PsynergyMenuWork.mode
   u8 shopStock[297]; ///< ShopWork's stock, party and cursor; not named
                      ///< here
-  s16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
+  u16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
 };
 
 STATIC_ASSERT(offsetof(struct ItemMenuWork, sideIcons) == 0x14);

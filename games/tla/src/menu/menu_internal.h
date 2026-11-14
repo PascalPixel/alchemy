@@ -75,68 +75,97 @@
 #include "macros.h"
 #include "graphics/vram_tab.h"
 
-/// The item menu's work, Ram_HeapSlots->menuRuntime: The Broken Seal's
-/// ItemMenuWork, whose names its fields take. From itemWindow to the entry
-/// icons it lies 4 bytes further on than The Broken Seal's, and from
-/// questionWindow on 28 bytes closer.
+/// The item menu's work, Ram_HeapSlots->menuRuntime (heap slot 220): its
+/// windows, the party figures, the items listed and the two choices a command
+/// makes. The Broken Seal's ItemMenuWork, whose names its members take: from
+/// itemWindow to the entry icons it lies 4 bytes further on than The Broken
+/// Seal's, and from questionWindow on 28 bytes closer, with the figures' ids
+/// after their scales. The status, Psynergy and Djinn screens read the
+/// members they share with it through it too.
 struct ItemMenuWork {
-  u8 unused[8];
-  s32 selectedMember; ///< the party member chosen
-  u8 unk00c[4];
+  u8 unused[8];                    ///< no view of the menu work names it
+  s32 selectedMember;              ///< the party member chosen
+  struct RenderInput *moneyWindow; ///< ShopWork's; not named here
   struct RenderInput *mainWindow;
+  /// The two sides: the party member whose items are shown, and the one an item
+  /// is given to.
+  ///@{
   struct WindowSprite *sideIcons[2];
-  s8 sideIndex[2];
-  s8 sideCount[2];
+  s8 sideIndex[2]; ///< the party member chosen, in memberIds
+  s8 sideCount[2]; ///< party members to choose from
+  ///@}
   u8 unk020[4];
   struct RenderInput *itemWindow;
   struct RenderInput *statusWindow;
   struct RenderInput *buttonHelpWindow;
   struct RenderInput *infoWindow;
-  u8 unk034[4];
+  struct RenderInput *equipWindow;
   struct RenderInput *listWindow;
   u8 unk03c[4];
   struct RenderInput *modalWindow;
-  u8 unk044[8];
+  u8 unk044[4];
+  struct WindowSprite *gridCursor;
   struct WindowSprite *entryIcons[32];
   u8 unk0cc[0x24];
   struct RenderInput *questionWindow;
+  /// The cursor grid: its place and its size.
+  ///@{
   u8 selectedColumn;
   u8 selectedRow;
   u8 columnCount;
   u8 rowCount;
-  u8 unk0f8[0x30];
-  s16 memberY[8]; ///< screen pixels
-  u8 unk138[0x30];
+  ///@}
+  void *memberSprites[8]; ///< the party members' figures
+  s16 memberX[8];         ///< screen pixels
+  s16 memberY[8];         ///< screen pixels
+  s32 memberScale[8];     ///< 16.16 fixed point, Q16_ONE full size
+  /// The party member each figure shows, -1 for none
+  /// (Menu_CreateOwnerEntryObjects).
+  s16 memberSpriteIds[8];
   u16 selectedSlots[2]; ///< each side's inventory slot chosen
   u16 selectedItems[2]; ///< each side's inventory entry chosen
   struct WindowSprite *cursor;
   u8 unk174[4];
-  struct WindowSprite *ownerIcons[2];
+  /// The up and down arrows beside the party row (MenuCursor_Create).
+  struct WindowSprite *pageArrows[2];
   u8 unk180[0x44];
   u16 items[32];    ///< the inventory entries listed
-  s16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
+  u16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
   u8 itemCount;
   u8 partyCount;
   u8 sideMember[2]; ///< each side's party member
   struct WindowSprite *selectedItemIcon;
-  u8 unk21c[2];
+  /// bits: 1 the item's name and command grid are drawn (Details sets it in
+  /// Japanese)
+  u16 flags;
   s16 completionFlag; ///< set to 1 as item commands end
   u8 unk220[0x3e];
   s16 messageOffset; ///< the item use's result, after MsgItemUseResult
   s8 equipPreview;   ///< 1 while the stats preview a removal, not an equip
-  u8 listMode;       ///< the command chosen last; 0xff for none
+  s8 listMode;       ///< the command chosen last; -1 for none
+  u8 unk262[2];
+  s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
+  u8 unk26c[0x282];
+  u16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
 };
 
 STATIC_ASSERT(offsetof(struct ItemMenuWork, itemWindow) == 0x24);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, gridCursor) == 0x48);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, entryIcons) == 0x4c);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, questionWindow) == 0xf0);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSprites) == 0xf8);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, memberY) == 0x128);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpriteIds) == 0x158);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedSlots) == 0x168);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, pageArrows) == 0x178);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, items) == 0x1c4);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, sideMember) == 0x216);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, flags) == 0x21c);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, completionFlag) == 0x21e);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 0x25e);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, listMode) == 0x261);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 0x264);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 0x4ee);
 
 struct SpriteAttr {
   u16 y : 8;
@@ -213,38 +242,6 @@ struct OwnerMenuState {
   u8 unk216[6];
   u16 page;
   u16 skipSlide;
-};
-
-struct InventoryMenuState {
-  u8 unk000[8];
-  s32 selectedOwner;
-  u8 unk00c[0x10];
-  s8 paneIndex;
-  u8 unk01d[7];
-  s32 itemWindow;
-  s32 statusWindow;
-  u8 unk02c[4];
-  void *infoWindow;
-  s32 equipWindow;
-  u8 unk038[0xb8];
-  s32 messageWindow;
-  u8 unk0f4[0x74];
-  u16 selectedSlots[2];
-  u16 selectedItems[2];
-  u8 unk170[0x54];
-  u16 items[32];
-  s16 ownerIds[8];
-  u8 itemCount;
-  u8 partyCount;
-  u8 paneOwner[2];
-  struct WindowSprite *selectedItemIcon;
-  u8 unk21c[0x42];
-  u16 messageOffset;
-  u8 unk260[4];
-  s8 selectedIndexByOwner[8];
-  u8 unk26c[0x282];
-  s16 resourceSlots[2];
-  u8 unk4f2[2];
 };
 
 /// The Psynergy menu's work (the menu heap slot) as these functions read it.

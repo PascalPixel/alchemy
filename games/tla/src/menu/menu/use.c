@@ -7,7 +7,7 @@
 #include "sounds.h"
 
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   s32 useResult;
   s32 itemId;
   struct OwnerInventoryState *unit;
@@ -40,7 +40,7 @@ s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
   struct BattleAct *effect;
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct BattleUnit *target;
   struct BattleUnit *caster;
   s32 partyResultShown;
@@ -70,7 +70,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == 0xff) {
-      targetId = (u16)menu->ownerIds[targetIndex];
+      targetId = (u16)menu->memberIds[targetIndex];
       target = Unit_Get(targetId);
     }
 
@@ -289,7 +289,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   }
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++)
-    Unit_CalculateFar((u16)menu->ownerIds[targetIndex]);
+    Unit_CalculateFar((u16)menu->memberIds[targetIndex]);
   menu->messageOffset = messageOffset;
   return 0;
 }

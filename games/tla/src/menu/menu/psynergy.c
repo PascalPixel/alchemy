@@ -19,7 +19,7 @@ s32 PsynergyMenu_Run(void) {
   // German, Spanish, French and Italian also suspend the field tasks and keep
   // the tiles at 0x06004000 aside, filled with a pattern, while the picker is
   // open.
-  struct InventoryMenuState *screen;
+  struct ItemMenuWork *screen;
 #if TLA_PATCH_2
   void *savedTiles;
 #endif
@@ -42,9 +42,9 @@ s32 PsynergyMenu_Run(void) {
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
-  screen->partyCount = Party_ListMembersFar(screen->ownerIds);
+  screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
-  screen->messageWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
+  screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
   Palette_LightenHighlight(14);
   Link_DrawPageArrowsFar((void *)0x06002500);
 

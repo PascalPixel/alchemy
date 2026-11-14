@@ -577,12 +577,11 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element);
 /// list with Djinn_ListUnitEntries (owner, -1) and keeps its result byte at
 /// offset 160 of the list.
 void DjinnMenu_BuildLists(struct OwnerList *list) {
-  struct InventoryMenuState *menu =
-      (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   s32 i;
 
   for (i = 0; i < menu->partyCount; i++) {
-    s32 owner = (u16)menu->ownerIds[i];
+    s32 owner = (u16)menu->memberIds[i];
 
     list->results[i] = Djinn_ListUnitEntries(&list->entries[i], owner, -1);
   }

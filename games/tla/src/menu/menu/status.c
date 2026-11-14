@@ -1616,7 +1616,7 @@ s32 PsynergyMenu_SelectAction(void) {
 #endif
 
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct ItemDefinition *item;
   s32 base;
   s32 row;
@@ -1737,7 +1737,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
 /// Draws one page of the member's items into window: five names a page, or
 /// "no items", then the member's name, Attack and Defense.
 s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
-  struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit;
   u16 *inventoryEntry;
   s32 firstEntry;
@@ -1745,7 +1745,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
   u32 rowIndex;
   u8 *message;
 
-  unit = Unit_Get(menu->paneOwner[0]);
+  unit = Unit_Get(menu->sideMember[0]);
   Window_ClearInteriorTilesFar(window, 128, 8, 224, 96);
   firstEntry = state->page * PAGE_ROWS;
   rowCount = (u8)(state->entryCount - firstEntry);
@@ -1808,7 +1808,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
 #endif
 
 s32 ItemMenu_SelectItem(void) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct BattleUnit *owner;
   s32 result;
   s32 window;
@@ -1825,15 +1825,15 @@ s32 ItemMenu_SelectItem(void) {
   result = 0;
   refresh = 2;
   listNeedsRedraw = 1;
-  owner = Unit_Get(menu->paneOwner[0]);
+  owner = Unit_Get(menu->sideMember[0]);
   Window_UpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10, 2);
-  Menu_SpawnIconEntries(menu, menu->messageWindow);
+  Menu_SpawnIconEntries(menu, menu->questionWindow);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (refresh) {
       if (refresh == 2) {
-        owner = Unit_Get(menu->paneOwner[0]);
+        owner = Unit_Get(menu->sideMember[0]);
         menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
         WindowSprite_RedrawSavedRectFar(window);
         for (i = 0; i <= 14; i++)
@@ -1842,7 +1842,7 @@ s32 ItemMenu_SelectItem(void) {
         PagedList_Build(&state, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         WindowSprite_RedrawSavedRectFar(menu->equipWindow);
-        ItemMenu_DrawCategory(menu->equipWindow, menu->paneOwner[0], 1);
+        ItemMenu_DrawCategory(menu->equipWindow, menu->sideMember[0], 1);
         listNeedsRedraw = 1;
         wait(1);
       }
@@ -1881,8 +1881,8 @@ s32 ItemMenu_SelectItem(void) {
     }
     if ((gInput.repeat & KEY_R) || (gInput.repeat & KEY_L)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-      ownerIndex = menu->paneIndex;
-      menu->selectedIndexByOwner[(u16)menu->ownerIds[ownerIndex]] =
+      ownerIndex = menu->sideIndex[0];
+      menu->selectedIndexByMember[(u16)menu->memberIds[ownerIndex]] =
           state.selectedIndex;
       if (gInput.repeat & KEY_R)
         ownerIndex++;
@@ -1891,17 +1891,17 @@ s32 ItemMenu_SelectItem(void) {
       for (i = 0; i <= 14; i++)
         owner->inventory[i] = savedInventory[i];
       ownerIndex = (ownerIndex + menu->partyCount) % menu->partyCount;
-      menu->selectedOwner = (u16)menu->ownerIds[ownerIndex];
-      menu->paneOwner[0] = (u16)menu->ownerIds[ownerIndex];
-      menu->paneIndex = ownerIndex;
+      menu->selectedMember = (u16)menu->memberIds[ownerIndex];
+      menu->sideMember[0] = (u16)menu->memberIds[ownerIndex];
+      menu->sideIndex[0] = ownerIndex;
       PsynergyMenu_CallIconRoutineWithValue(menu,
-                                            (u16)menu->ownerIds[ownerIndex]);
+                                            (u16)menu->memberIds[ownerIndex]);
       refresh = 2;
     }
   }
   WindowSprite_PrepareForRedrawFar(menu->infoWindow);
   WindowSprite_RedrawSavedRectFar(window);
-  WindowSprite_ClearListFar(menu->messageWindow);
+  WindowSprite_ClearListFar(menu->questionWindow);
   return result;
 }
 

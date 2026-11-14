@@ -113,6 +113,6 @@ written safely, is in [System code](../system/README.md#saving).
 
 ## Windows the rest of the game borrows
 
-`screens/` holds the windows other parts of the game ask for: a battle's
-command row, its Psynergy, Djinn, item and summon menus and target cursor,
-the party status panel, the name entry screen, and the debug windows.
+The `screens_*.c` files hold the windows other parts of the game ask for: a
+battle's command row, its Psynergy, Djinn, item and summon menus and target
+cursor, the party status panel, the name entry screen, and the debug windows.

@@ -282,8 +282,6 @@ enum AbilityUse {
 /// How many actions a unit's list holds (Unit.psynergy).
 #define PSYNERGY_SLOTS 32
 
-/// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
-/// Djinn and statuses.
 /// An enemy's memory of its action choice (BattleAI_ChooseAction).
 struct BattleAIState {
   /// ACTION_STRATEGY_RANDOM_START has drawn its start.
@@ -292,6 +290,8 @@ struct BattleAIState {
   unsigned remaining : 28; ///< not used here
 };
 
+/// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
+/// Djinn and statuses.
 struct Unit {
   /// The name, one byte a character, ending in 0. An enemy's is its message
   /// name cut to 14 characters, with the suffix letter BattleUnit_Set is given

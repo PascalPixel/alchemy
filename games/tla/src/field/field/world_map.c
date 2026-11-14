@@ -11,6 +11,8 @@
 #include "resource_ids.h"
 #include "system/transform.h"
 #include "macros.h"
+#include "module/field/map.h"
+#include "module/field/object.h"
 
 /* VIEW(f02b998): routine Transform_Reset as u32 Transform_Reset(void);
  * graphics.h has void Transform_Reset(void); tried as the definition's void
@@ -205,14 +207,6 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
   WorldMap_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
   WorldMap_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
 }
-
-#include "fixed_math.h"
-#include "module/field/field.h"
-#include "module/field/map.h"
-#include "module/field/object.h"
-#include "module/field/resource_slot.h"
-#include "module/system/system.h"
-#include "system/transform.h"
 
 /* VIEW(world_map): variable gWorldMapWork as extern u8 gWorldMapWork[];
  * battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of

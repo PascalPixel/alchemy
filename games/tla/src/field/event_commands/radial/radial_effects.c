@@ -12,6 +12,15 @@
 #include "macros.h"
 
 #include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/field/radial.h"
+#include "field/event.h"
+#include "field/field_sequence_event.h"
+#include "scene_call.h"
+#include "flag_call.h"
+#include "gamepak/far_call/window.h"
+#include "text/msg_ids.h"
 
 extern const s32 gBattleEffect_SharedParticleScript[];
 
@@ -126,9 +135,6 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
 
 void FieldPsynergy_WhirlwindOnTarget(void) { FieldPsynergy_Whirlwind(); }
 #undef Actor_SetPositionAndResetMotionFar
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/field/radial.h"
 
 // An orbiting mote: radial.c's OrbitEffect.
 
@@ -845,9 +851,6 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
       FieldEffect_ClearOwnedSlot(slot);
   }
 }
-#include "field/event.h"
-#include "field/field_sequence_event.h"
-#include "scene_call.h"
 
 #define SLOT_MAX 24
 
@@ -1027,9 +1030,6 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
       (void *)FieldEffect_UpdateDescendingParticlePositiveArc;
   objects[1]->sprite->attr.byte.variant = leader->sprite->attr.byte.variant;
 }
-#include "flag_call.h"
-#include "gamepak/far_call/window.h"
-#include "text/msg_ids.h"
 
 /// The caster during Avoid (FieldPsynergy_Avoid): sheds a pair of falling
 /// arcs every 5 frames (7 in scene Clear), and spins in phase 1.

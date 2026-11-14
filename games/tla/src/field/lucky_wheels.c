@@ -29,6 +29,7 @@
 #include "module/system/system.h"
 #include "resource_ids.h"
 #include "graphics/graphics.h"
+#include "../graphics/lucky_wheels/reel_tables.h"
 
 void LuckyWheels_Run(void);
 extern const u8 gLuckyWheels_SymbolPrizes[];
@@ -961,8 +962,6 @@ void LuckyWheels_FinishFrame(void) {
   if (work->spriteCount > 0)
     Dma_Set(work->obj, OAM, DMA_COPY_WORDS(work->spriteCount * 2), REG_DMA3);
 }
-
-#include "../graphics/lucky_wheels/reel_tables.h"
 
 // The title's letters and the left edge of the first: the Spanish title has
 // nine letters and starts further left.

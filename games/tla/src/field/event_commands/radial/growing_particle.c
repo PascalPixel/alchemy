@@ -47,19 +47,8 @@ struct PendingEvent;
 
 extern u8 Data_02000452;
 
-void Func_080dc954(void);
-void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
-                           s32 action);
-void FieldPsynergy_WatchSandGround(void);
-extern char ResourceId_DustPuffA;
-void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
-void Sand_DrawLeaderSprite(void *sprite);
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
-                                        s32 z);
 void Actor_SetFirstSpriteAnimationFar(struct Actor *object, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
-struct Actor *Actor_GetById(u32 objectId);
 
 void FieldPsynergy_EndSand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
@@ -191,15 +180,6 @@ void FieldPsynergy_EndSand(void) {
   VramCache_FreeEntry(particleEntry);
   HeapSlot_Release(92);
 }
-
-void FieldPsynergy_Blaze(void);
-void FieldPsynergy_Sand(void);
-void FieldPsynergy_Burst(void);
-void FieldPsynergy_Pound(void);
-void FieldPsynergy_Scoop(void);
-void FieldPsynergy_Parch(void);
-void FieldPsynergy_Hover(void);
-void Teleport_PlaySparks(void);
 
 /// Psynergy effect 23 cast on a target: runs its effect.
 void FieldPsynergy_SandOnTarget(void) { FieldPsynergy_Sand(); }

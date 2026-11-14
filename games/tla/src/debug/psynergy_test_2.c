@@ -29,6 +29,8 @@
 #include "field/particle.h"
 #include "graphics/resource.h"
 #include "gamepak/far_call/system.h"
+#include "system/task.h"
+#include "fixed_math.h"
 
 // The battle the step on cell 30 starts, once.
 #define FLAG_BATTLE_FOUGHT FLAG_SCENE_TEMP_20
@@ -229,8 +231,6 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
   }
 }
 
-#include "system/task.h"
-
 /// Loads the rocks' tiles, hides all 64 and starts PsynergyTest2_UpdateRocks.
 void PsynergyTest2_StartRocks(void) {
   struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
@@ -263,8 +263,6 @@ void PsynergyTest2_StartRocks(void) {
   }
   FieldTask_AddFrame(PsynergyTest2_UpdateRocks, 0x480);
 }
-
-#include "fixed_math.h"
 
 /// Stops the rocks and frees their tiles and work.
 void PsynergyTest2_EndRocks(void) {

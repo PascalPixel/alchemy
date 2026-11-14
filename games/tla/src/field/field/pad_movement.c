@@ -10,14 +10,13 @@
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "macros.h"
+#include "module/field/resource_slot.h"
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 WorldMap_IsWalkable__resource_slot(
     struct Actor *object,
     struct FieldPosition *position) __asm__("WorldMap_IsWalkable");
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 s32 Actor_MoveOnWorldMap(struct Actor *object) {
   struct FieldPosition position;
@@ -474,15 +473,7 @@ counted:
 }
 #undef SAME_CELL
 
-#include "flag_call.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/field/resource_slot.h"
-
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gWorldMap_KeyHeadings[16];
-
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 /// Script command 0x20 (control mode 7): the ship sailing the world map, a
 /// sibling of Actor_MoveOnWorldMap in The Broken Seal's
@@ -687,14 +678,7 @@ update_object:
   return 1;
 }
 
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/field/resource_slot.h"
-
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gWorldMap_KeyHeadings[16];
-
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 /// Script command 0x21 (control mode 8): the ship with its wings on the world
 /// map, flying over the ground the sea alone would stop (WorldMap_IsFlyable).

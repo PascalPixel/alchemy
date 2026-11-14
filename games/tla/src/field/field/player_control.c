@@ -13,11 +13,9 @@
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 #include "macros.h"
+#include "version.h"
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gWorldMap_KeyHeadings[16];
-
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
@@ -393,17 +391,8 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 }
 #undef SAME_CELL
 
-#include "version.h"
-#include "system/frame.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/field/resource_slot.h"
-
 extern struct MapCell gMapCellBuffer[];
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gWorldMap_KeyHeadings[16];
-
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)

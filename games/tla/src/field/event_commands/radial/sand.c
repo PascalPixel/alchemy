@@ -11,24 +11,6 @@
 #include "system/main_routine_work.h"
 #include "system/io_reg.h"
 
-extern char ResourceId_DustPuffA;
-
-void Func_080dc954(void);
-void Actor_SetOthersPaused(struct Actor *excludedActor, s32 groupMode,
-                           s32 action);
-s32 MapGrid_IsSandCell(s32 x, s32 z, s32 terrain);
-void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
-void FieldPsynergy_WatchSandGround(void);
-void FieldPsynergy_EndSand(void);
-void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
-void Sand_DrawLeaderSprite(void *sprite);
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
-                                        s32 z);
-void Actor_SetFirstSpriteAnimationFar(struct Actor *actor, s32 index);
-void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
-struct Actor *Actor_GetById(u32 objectId);
-
 void FieldPsynergy_Sand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
   struct BattleFxScene *effect = Ram_HeapSlots->effectWork;
@@ -174,8 +156,6 @@ struct GlowWork {
 extern const u16 Data_080f0fa0[];
 
 void Camera_WorldToScreen(s32 *position);
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-void MapGrid_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 #define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -444,13 +424,6 @@ void FieldPsynergy_UpdateBurst(void) {
   }
   work->timer++;
 }
-
-void FieldPsynergy_Blaze(void);
-void FieldPsynergy_Burst(void);
-void FieldPsynergy_Pound(void);
-void FieldPsynergy_Scoop(void);
-void FieldPsynergy_Parch(void);
-void FieldPsynergy_Hover(void);
 
 /// Runs field Psynergy animation 21 for the dispatcher's targeted path.
 void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }

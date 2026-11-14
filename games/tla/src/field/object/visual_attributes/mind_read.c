@@ -27,6 +27,10 @@
 #include "field/field_sequence_event.h"
 #include "system/scene.h"
 #include "macros.h"
+#include "field/event.h"
+#include "module/field/event_commands.h"
+#include "module/field/object.h"
+#include "item_icon.h"
 
 // The parts, in ROM order.
 
@@ -548,8 +552,6 @@ void FieldPsynergy_Move(void) {
   UpdateRisingParticleBurst(object);
 }
 
-extern const s32 gFieldEffect_FragmentScript[];
-
 /// The Broken Seal's FieldEffect_SpawnMoveHand with this game's objects
 /// 278 and 673: spawns the breaking item above object and eight fragments
 /// that scatter from it.
@@ -700,9 +702,6 @@ void FieldPsynergy_WatchLeaderDistance(void) {
     *slot = request;
   }
 }
-#include "field/event.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
 
 /* VIEW(f0dd820): routine BattleEffect_RunBusyWaitDelay as void
  * BattleEffect_RunBusyWaitDelay(s32 value); the definition has void
@@ -800,8 +799,6 @@ void FieldPsynergy_EndReveal(void) {
     }
   }
 }
-
-extern const s32 gFieldEffect_HeavyImpactScript[];
 
 #define BURST_FALL_OBJECT 281 ///< the object that falls round the target
 
@@ -964,8 +961,6 @@ void FieldEffect_SpawnBurstParticleField(void) {
   }
   wait(8);
 }
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
 
 void Actor_ApplyRandomChildValues(void);
 
@@ -1026,8 +1021,6 @@ void FieldPsynergy_LiftOnTarget(void) {
   UpdateRisingParticleBurst(anchors[1]);
   FieldPsynergy_FadeFromCastColor();
 }
-
-extern const s32 gFieldEffect_FragmentScript[];
 
 void FieldPsynergy_Lift(void) {
   struct BattleFxScene *work;
@@ -1217,10 +1210,6 @@ extern void Func_080de21c__f0dd820(struct BattleEffectArgument *effect) __asm__(
 void FieldPsynergy_ForceOnTarget(struct BattleEffectArgument *effect) {
   Func_080de21c__f0dd820(effect);
 }
-#include "item_icon.h"
-#include "module/field/event_commands.h"
-
-void *Sprite_ShareVramCacheEntry(void *src, void *alt);
 
 // Twelve sparks burst over the user, two frames apart; a ball grows in
 // front of it and flies off with three trailing copies, and the target is
@@ -1514,8 +1503,6 @@ void FieldPsynergy_Frost(void) {
 
   FieldPsynergy_FadeFromCastColor();
 }
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
 
 /// Per-frame update: sways 4 pixels either side of the anchor, once every
 /// 128 frames.

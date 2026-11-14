@@ -6,6 +6,7 @@
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "field_event.h"
 
 struct GlowScene {
   u8 unk00[0x10];
@@ -18,10 +19,6 @@ struct GlowScene {
 };
 
 extern char ResourceId_RingOrb;
-
-s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
-s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void HoverGlow_Update(void);
 
 void FieldPsynergy_Hover(void) {
   struct HoverGlowWork *work = HeapSlot_Alloc(92, 0x1038);
@@ -124,8 +121,6 @@ void FieldPsynergy_Hover(void) {
 
 // Kind 24's work (battle_fx_work[0]).
 
-struct Actor *Actor_GetById(u32 objectId);
-
 void FieldPsynergy_EndHover(void) {
   struct HoverGlowWork *work =
       (struct HoverGlowWork *)Ram_HeapSlots->battleFxWork[0];
@@ -162,8 +157,6 @@ void FieldPsynergy_EndHover(void) {
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(92);
 }
-
-#include "field_event.h"
 
 struct SpritePictures {
   u8 unk00[5];
@@ -219,8 +212,6 @@ struct Chase {
   s32 targetZ;
 };
 
-s32 ArcTan2(s32 y, s32 x);
-
 /// Moves toward the target by speed, stopping on it on overshoot.
 void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
   s32 dx = chase->targetX - chase->x;
@@ -269,8 +260,6 @@ struct MoteWork {
   s32 targetX;
   s32 targetZ;
 };
-
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 /// Task of SummonTablet_PlayRunes: moves and draws the motes.
 void SummonTablet_UpdateMotes(void) {

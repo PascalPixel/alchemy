@@ -401,8 +401,6 @@ void FieldEffect_UpdateDustPuff(struct Actor *object) {
   object->acceleration = driftZ - driftZ / 16;
 }
 
-struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-
 /* VIEW(event_commands): tag struct ParticleSprite as struct
  * ParticleSprite__event_commands; module/tla.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
@@ -457,8 +455,6 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     child->priority = ((struct ParticleSprite *)source->sprite)->priority;
   }
 }
-
-void Actor_ArmCallback(s32 id, s32 value, s32 mode);
 
 /// Makes an object jump down off a ledge in front of it: it plays `mode` for 10
 /// frames, hops 12 pixels forward from its cell's centre line, then sinks 2

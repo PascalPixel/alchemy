@@ -44,6 +44,13 @@
 
 // The parts, in ROM order.
 #include "module/system/system.h"
+#include "module/field/screen_transition.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "field/event.h"
+#include "gamepak/far_call/window.h"
+#include "field/ground_mask.h"
+#include "resource_ids.h"
 
 /* VIEW(f0cf050): routine Vector_AddPolarOffset as void
  * Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position);
@@ -82,9 +89,6 @@ void Leader_StepAwayFromNearbyActor(void) {
       }
   }
 }
-#include "module/field/screen_transition.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
 
 void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
@@ -133,7 +137,6 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   return isActive;
 }
 
-struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Reveal_EmitSparkles(const struct ParticleSource *source);
 
 /// Shows the picture of item above actor (in front of the controlled owner,
@@ -492,8 +495,6 @@ void FieldEffect_StartWindowHBlankDma(void) {
           1,
       (volatile u32 *)channel);
 }
-#include "field/event.h"
-#include "gamepak/far_call/window.h"
 
 void ScreenTransition_UpdateScanlineTable(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1289,7 +1290,6 @@ void ScreenTransition_InitializeState(s32 value) {
   Task_Add((s32)(ScreenTransition_UpdateDissolve), TASK_PASS_VBLANK);
   wait(0x78);
 }
-#include "field/ground_mask.h"
 
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                      s32 frames) {
@@ -2027,7 +2027,6 @@ s32 Speaker_GetActorSprite(u32 objectId) {
   }
   return *object->animation->value28;
 }
-#include "resource_ids.h"
 
 /* VIEW(definition_flags): routine Speaker_GetActorSprite as s32
  * Speaker_GetActorSprite(void); the definition has s32

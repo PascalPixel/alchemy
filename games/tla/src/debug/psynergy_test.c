@@ -84,7 +84,6 @@ void Actor_SetSpriteColorMode(struct Actor *, u32);
 void Actor_ArriveInRing(s32 actor);
 void EffectSprite_Draw(struct SparkleSprite *sprite);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void Event_SetDestination(s32 scene, s32 entrance);
 void Field_RequestBattleFromEncounterTable(s32, s32);
 void Event_PickUpItem(s32, s32, s32);
 void Camera_WorldToScreen(struct Vector3 *v);

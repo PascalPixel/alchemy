@@ -11,8 +11,6 @@ extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 
 void Camera_WorldToScreen(s32 *position);
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
-void FieldPsynergy_UpdateBurst(void);
 
 void FieldPsynergy_Burst(void) {
   struct GlowWork *work = HeapSlot_Alloc(92, sizeof(struct GlowWork));
@@ -161,8 +159,6 @@ struct BlendWork {
   u8 unkb8[9];
   u8 mode;
 };
-
-void MapGrid_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
 /// Task of the Pound: its shine's colours and particles, each frame.
 void FieldPsynergy_UpdatePound(void) {

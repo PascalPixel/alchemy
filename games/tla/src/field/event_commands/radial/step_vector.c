@@ -5,6 +5,10 @@
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
+#include "system/dma.h"
+#include "window.h"
+#include "macros.h"
+#include "field_sprite.h"
 
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector2(vector, damping, gravity);
@@ -170,8 +174,6 @@ void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
   }
 }
 
-#include "system/dma.h"
-
 #define OBJ_TILES ((u8 *)OBJ_VRAM0)
 #define BG_VRAM ((void *)BG_CHAR_BLOCK(0))
 #define TILE_SIZE 32
@@ -280,8 +282,6 @@ void BattleEffect_DrawCanvasSprite(void) {
 }
 
 // The canvas sprite of the field Psynergy scenes.
-
-#include "window.h"
 
 /// Starts the canvas sprite of the field Psynergy scenes: its work, a cleared
 /// 64x64 canvas copied into the sprite's tiles, and a map from each canvas
@@ -490,8 +490,6 @@ void Actor_VanishInSparks(s32 objectId) {
   HeapSlot_Release(HEAP_SLOT_SPARKS);
 }
 
-#include "macros.h"
-
 void FieldParticle_Update(struct FieldParticle *effect) {
   if (effect->active != 0) {
     effect->age++;
@@ -590,8 +588,6 @@ u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
   value = (u32)effect->targetX ^ (u32)EFFECT_NO_TARGET;
   return ((0u - value) | value) >> 31;
 }
-
-#include "field_sprite.h"
 
 void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
   effect->targetX = EFFECT_NO_TARGET;

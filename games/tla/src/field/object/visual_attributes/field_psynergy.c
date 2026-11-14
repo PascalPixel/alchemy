@@ -277,8 +277,6 @@ struct ResourceSprite {
   u8 flags;
 };
 
-extern u8 gResourceBlockOwners[];
-
 s32 ResourceTable_CountFreeBlocks(void) {
   u8 *marker = gResourceBlockOwners;
   s32 freeCount;

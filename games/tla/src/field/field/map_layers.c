@@ -12,6 +12,10 @@
 #include "module/field/resource_slot.h"
 #include "module/system/system.h"
 #include "system/ram_buffer.h"
+#include "module/tla.h"
+#include "bg_scroll.h"
+#include "field/mapcopy.h"
+#include "game/game_flags.h"
 
 /// Loads a layered map, as The Broken Seal does: from
 /// layout index's entry in gMaps it decodes the blocks, the collision
@@ -173,10 +177,6 @@ s32 MapGrid_LoadMap(s32 index) {
   Task_Add(MapGrid_UpdateLayerScroll, 0x485);
   return 2;
 }
-
-#include "module/field/field.h"
-#include "module/field/resource_slot.h"
-#include "module/tla.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
@@ -340,8 +340,6 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
     screenRowOffset = (screenRowOffset + 64) & 0x3c0;
   }
 }
-
-#include "bg_scroll.h"
 
 void MapGrid_UpdateLayerScroll(void) {
   struct MapWork *work;
@@ -659,8 +657,6 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
 
 // Map: copy a cell rectangle.
 
-#include "field/mapcopy.h"
-
 /// Copies a rectangle's cells, including block indices and attributes.
 /// srcX, srcY: source top left, in cells.
 /// width, height: size in cells.
@@ -783,8 +779,6 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
     }
   }
 }
-
-#include "game/game_flags.h"
 
 /// Copies a rectangle of map cells as they are, with their shape grid bytes,
 /// from (srcX, srcY) to (dstX, dstY), width by height cells.

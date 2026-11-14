@@ -31,7 +31,6 @@ struct EffectSprite__psynergy_effects_11 {
 };
 
 void Camera_WorldToScreen(s32 *position);
-struct Actor *Actor_GetById(u32 objectId);
 
 /// Animates a particle's sprite through 8 tiles (4 frames each), grows its
 /// scale by 0.1 a frame up to 1.0, draws it at the particle's projected

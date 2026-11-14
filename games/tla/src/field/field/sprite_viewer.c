@@ -6,6 +6,7 @@
 #include "fixed_math.h"
 
 #include "system/input.h"
+#include "graphics/render_placement.h"
 
 /// The debug sprite viewer, in The Broken Seal's form with this game's
 /// changes; it never returns.
@@ -311,8 +312,6 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
   // UB: no return statement for a delta of 0; the native leaves value in r0.
 #endif
 }
-
-#include "graphics/render_placement.h"
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite

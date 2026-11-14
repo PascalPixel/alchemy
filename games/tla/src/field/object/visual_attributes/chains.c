@@ -9,6 +9,9 @@
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "macros.h"
+#include "module/system/system.h"
+#include "module/field/field_sequence.h"
+#include "item_icon.h"
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32
  * ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y),
@@ -128,8 +131,6 @@ void Rope_GetEndNodePosition(s32 index, s32 *position) {
   SET_VECTOR(position, node->x, node->y, node->z);
 }
 
-#include "module/field/field.h"
-
 extern s32 gRope_LashPhase;
 
 /// Lash: throws rope index from post fromId to post toId and ties it (both
@@ -182,8 +183,6 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
     }
   }
 }
-
-#include "module/system/system.h"
 
 /// Throws rope index from one point to another over twice its node count in
 /// frames: the end flies on an arc and each node follows its neighbour at 6
@@ -288,10 +287,6 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   }
 }
 
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
-
 /// Pulls a thrown rope back into its coil at the first point, one node a frame,
 /// clearing its flag; both posts take animation 3 first.
 s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
@@ -394,8 +389,6 @@ void Rope_DebugSwing(struct Actor *object) {
     Rope_SwingBetween(0, 12, 13, 0);
 }
 
-struct Actor *Actor_GetById(u32 objectId);
-
 /// Returns 1 when the leader stands on the cell of post firstId or secondId, or
 /// a cell beside it along an axis, at the same height.
 s32 Rope_IsLeaderAtEnd(s32 firstId, s32 secondId) {
@@ -497,11 +490,6 @@ void Tightrope_Initialize(void) {
   Task_Add(Tightrope_Update, TASK_PASS_VBLANK + 15);
   Heap_Release(buffer);
 }
-
-#include "module/field/field.h"
-#include "module/field/field_sequence.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
 
 void Tightrope_Draw(void) {
   struct TightropeWork *work = TIGHTROPE_WORK;
@@ -812,11 +800,6 @@ void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
     Actor_SelectAnimationFar(second, 2);
   }
 }
-
-#include "item_icon.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
 
 /// Rope_Throw for a tightrope.
 s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
@@ -1164,8 +1147,6 @@ void HangingVine_Draw(void) {
 #undef TILE_EFFECT_SLOT
 #undef TILE_EFFECT_KIND_ALT
 #undef PICTURE_SIZE
-
-struct Actor *Actor_GetById(u32 objectId);
 
 /// The vines' second per-frame task: sways each active vine's links below
 /// its anchor.

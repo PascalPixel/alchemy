@@ -8,6 +8,10 @@
 #include "sounds.h"
 
 #include "system/input.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/heap_release.h"
 
 struct FxEvent {
   u8 unk00[20];
@@ -28,7 +32,6 @@ extern char ResourceId_RedFlameBurst, ResourceId_VioletFlameBurst,
     ResourceId_YellowFlameBurst, ResourceId_BlueFlameBurst,
     ResourceId_DustPuffA;
 
-s32 Actor_GetSpriteIdFar(struct Actor *object);
 void Field_StartColorTransition(s32 frames, s32 color);
 /* VIEW(psynergy): routine Resource_GetMetadataRecordFarFar as struct
  * ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
@@ -40,12 +43,6 @@ struct ObjectMetadata *Resource_GetMetadataRecordFarFar__psynergy(
     s32 id) __asm__("Resource_GetMetadataRecordFarFar");
 #define Resource_GetMetadataRecordFarFar                                       \
   Resource_GetMetadataRecordFarFar__psynergy
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void Blaze_UpdateSpray(void);
 
 #define OBJECT_DEFINITION(object)                                              \
   (((struct ObjectAnimation *)(object)->sprite)->definition)
@@ -273,7 +270,6 @@ end:
 #define EVENT_MODE_NO_CELL_TEST 3
 
 s32 MapGrid_CheckCollisionAtFar(s32 x, s32 z, s32 layer, s32 height);
-s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
 /// Says whether object is blocked: 1 when, outside event mode 3,
 /// MapGrid_CheckCollisionAtFar reports its cell, ORed with 2 when it overlaps
@@ -302,12 +298,6 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   return result;
 }
 
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "system/heap_release.h"
-
-s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);
 s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 
 /// Task of the Sand: ends it (cue 0x208b) when the leader, not blocked, stands

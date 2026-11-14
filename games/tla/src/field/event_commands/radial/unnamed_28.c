@@ -7,6 +7,9 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
+#include "map.h"
+#include "view_move.h"
+#include "version.h"
 
 struct RingMote {
   s32 x;
@@ -36,8 +39,6 @@ struct RingWork {
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
 void Camera_WorldToScreen(s32 *position);
-void FieldPsynergy_UpdateUnnamed28(void);
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 
 void FieldPsynergy_Unnamed28(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
@@ -268,10 +269,6 @@ struct SparkleBurstWork {
   s16 resource;
 };
 
-struct Actor *Actor_GetById(u32 objectId);
-void Window_LoadGraphics(void);
-extern char ResourceId_SparkleFade;
-
 /// The burst of 64 sparkles that FieldPsynergy_UpdateUnnamed28's effect ends
 /// with: once the event work asks for it, it plays sound 167, fills the tiles
 /// at 0x06002000, reloads the window graphics, loads the sparkle picture
@@ -368,10 +365,6 @@ void FieldPsynergy_EndUnnamed28(void) {
   HeapSlot_Release(92);
 }
 
-#include "map.h"
-#include "view_move.h"
-#include "version.h"
-
 // How far the view stays from the edge it is beside, in pixels.
 #define VIEW_EDGE_MARGIN 12
 
@@ -384,7 +377,6 @@ struct MapBounds {
 };
 
 void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
-void MapGrid_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
 
 // Opens the whole map to the view: keeps the view centre's position and the
 // map's view bounds for ViewMove_End to restore, notes which edges the view

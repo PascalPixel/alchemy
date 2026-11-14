@@ -25,6 +25,13 @@
 
 #include "inventory.h"
 #include "item_ids.h"
+#include "owner_state.h"
+#include "version.h"
+#include "system/ram_buffer.h"
+#include "field/field_sequence_event.h"
+#include "system/dma.h"
+#include "actor.h"
+#include "fixed_math.h"
 
 /// The room's people, numbered in the order of gActorPlacements.
 enum ShopTestActorId {
@@ -141,7 +148,6 @@ void Summon_ShowLearnedMessage(s32 value);
 void Class_GetSeries(s32 value);
 void DebugBrowser_Icons(void);
 void DebugBrowser_Portraits(void);
-void ShopTest_BrowseMessageRange(s32 message, s32 count);
 
 // The shop and sanctum message browsers: talking to ACTOR_SANCTUM_MESSAGES and
 // the three after it.
@@ -179,7 +185,6 @@ void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
 void ShopTest_OpenSanctum(void) { Sanctum_Run(); }
 
 void Party_AdjustCoins(s32 amount);
-void MessageArgument_Push(s32 value, s32 slot);
 struct ItemDefinition *ShopTest_GetItem(s32 item);
 s32 PartyInventory_FindRoom(s32 item);
 void ItemDisplay_ShowItem(s32 item, s32 mode);
@@ -343,14 +348,6 @@ void ShopTest_GiveEquipmentTestStock(void) {
   Party_RemoveMember(MIA);
 }
 
-void ShopTest_BrowseWeaponShopMessages(void);
-void ShopTest_BrowseArmorShopMessages(void);
-void ShopTest_BrowseItemShopMessages(void);
-void ShopTest_BrowseSanctumMessages(void);
-void ShopTest_OpenSanctum(void);
-void ShopTest_TestItemSelection(void);
-void ShopTest_EditPartyNames(void);
-void ShopTest_GiveEquipmentTestStock(void);
 void ShopTest_DamageAndAfflictParty(void);
 void ShopTest_GivePartyDjinn(void);
 void ShopTest_GiveMuramasaAndSummon(void);
@@ -467,16 +464,6 @@ struct Trigger gSceneEvents[] = {
 };
 
 // Overlay 0x6ba's code from ShopTest_DamageAndAfflictParty on, in ROM order.
-
-#include "owner_state.h"
-#include "version.h"
-#include "system/ram_buffer.h"
-#include "field/field_sequence_event.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "actor.h"
-
-#include "fixed_math.h"
 
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
@@ -623,8 +610,6 @@ void ShopTest_AdjustPartyLevels(s32 levels) {
   }
 }
 
-extern char gShopTest_LvLabel[];
-
 void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 void Text_DrawStringAtOffset(const void *text, void *window, s32 x, s32 y);
@@ -671,10 +656,6 @@ void ShopTest_RunLevelEditor(void) {
   Sound_Play(SE_MENU_CANCEL);
   Window_Close(window, 2);
 }
-
-extern char gShopTest_ItemPrompt[];
-extern char gShopTest_ItemHelp[];
-extern char gShopTest_ItemFull[];
 
 void WindowSprite_PrepareForRedraw(void *window);
 void Text_DrawNumberAtOffset(s32 value, s32 digits, void *window, s32 x, s32 y);

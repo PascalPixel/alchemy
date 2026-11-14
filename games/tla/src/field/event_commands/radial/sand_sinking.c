@@ -6,6 +6,7 @@
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "macros.h"
+#include "field/field_sequence_event.h"
 
 /// A particle's position and velocity (16.16), integrated each frame, and its
 /// age in frames.
@@ -19,10 +20,7 @@ struct EffectParticle {
   s32 timer;
 };
 
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
-void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 
 /// Picture_ShiftColumnsByWave as the Sand sinks the leader into the ground:
 /// each column's pixels below a wave line move down by phase (1.3 pixels a
@@ -52,8 +50,6 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
     }
   }
 }
-
-#include "field/field_sequence_event.h"
 
 /// Sets up the sprite the Sand draws the sinking leader as: the leader's
 /// depth, priority, scale (three quarters on the world map) and place.

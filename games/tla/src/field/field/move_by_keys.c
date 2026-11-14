@@ -9,10 +9,10 @@
 #include "module/field/field.h"
 #include "module/field/resource_slot.h"
 #include "macros.h"
+#include "hanging_vine.h"
+#include "flag_call.h"
 
 /// The heading of each direction-pad combination, 0xffff for none.
-
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 /// The script command 0x1b: moves an object 8 pixels at a time by the
 /// direction pad, with up and down changing its height (y) rather than its
@@ -233,8 +233,6 @@ done:
   return 1;
 }
 
-#include "hanging_vine.h"
-
 static inline void TurnToward(struct Actor *object, u16 angle) {
   s16 delta = angle - object->facing;
 
@@ -349,8 +347,6 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   object->step++;
   return 1;
 }
-
-#include "flag_call.h"
 
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 

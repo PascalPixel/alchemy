@@ -5,17 +5,14 @@
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "field/field.h"
 
 extern const s32 gFieldEffect_TargetColors[];
 extern const u8 Data_080f1040[];
 extern const u8 gMovementType_SquashScript[];
 extern char ResourceId_Runes, ResourceId_Pebbles;
 
-void Field_StartColorTransition(s32 frames, s32 color);
 void Camera_WorldToScreen(s32 *position);
-void Actor_ArmCallback(s32 id, s32 value, s32 flags);
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-void SummonTablet_UpdateMotes(void);
 
 /// Plays a summon tablet's reading (a treasure of type 132, "examined the
 /// stone tablet"): the tablet's runes and pebbles fly as motes between it
@@ -266,17 +263,11 @@ void SummonTablet_PlayRunes(s32 targetId) {
   HeapSlot_Release(92);
 }
 
-#include "field/field.h"
-
 struct ActorFlag {
   u16 actor;
   s16 flag;
 };
 
-struct Actor *Actor_GetById(u32 objectId);
-s32 Actor_GetCellIndex(struct Actor *object);
-s32 GameFlag_Get(s32 flag);
-void GameFlag_Clear(s32 flag);
 void FlagBlock_ApplyFlags(struct ActorFlag *list);
 
 /// Sets up a scene's flag blocks (pairs of actor and game flag, ended by
@@ -327,16 +318,12 @@ struct DescriptorEntry {
   u8 unk02[6];
 };
 
-extern void *gOverlayArea[];
 extern struct DescriptorEntry gData_080eff28[];
 
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_RunDrainMotes(void *effect, s32 mode);
 void PartyStatus_CreateWindow(s32 flags);
-s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
-s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);

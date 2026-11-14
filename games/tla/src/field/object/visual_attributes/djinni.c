@@ -47,8 +47,6 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
 #define LEAP_SOUND 136
 #endif
 
-struct Actor *Actor_GetById(u32 objectId);
-
 void Djinn_RunBattleStartHop(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *leader;

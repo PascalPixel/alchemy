@@ -10,6 +10,13 @@
 #include "map.h"
 #include "graphics/graphics.h"
 #include "module/field/map.h"
+#include "system/system.h"
+#include "system/frame.h"
+#include "graphics/palette_snapshots.h"
+#include "system/io_write_queue.h"
+#include "flag_call.h"
+#include "curve.h"
+#include "edition.h"
 
 /* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];
  * battle/battle.h has struct WorldMapWork gWorldMapWork; tried as the rest of
@@ -134,9 +141,6 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   window->reloadSteps--;
   Heap_Release(buffer);
 }
-
-#include "system/system.h"
-#include "system/frame.h"
 
 void MapAnimation_PresentPicture(void) {
   s32 control;
@@ -437,8 +441,6 @@ void BlendScript_Suspend(void) { Task_SuspendAll((u32)BlendScript_Run); }
 
 void BlendScript_Resume(void) { Task_ResumeAll((u32)BlendScript_Run); }
 
-#include "graphics/palette_snapshots.h"
-
 void PaletteCycle_Initialize(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
@@ -501,9 +503,6 @@ void PaletteCycle_Step(void) {
     }
   }
 }
-
-#include "system/io_write_queue.h"
-#include "flag_call.h"
 
 /// Tints the world map for the encounter region under the party: region 9
 /// brightens it by 12 steps, region 18 darkens it by 6 until flag 0x8ef is
@@ -568,8 +567,6 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
     IO_WRITE_QUEUE_PUSH(0x4000054, (u16)-work->tint, 0x20000);
   }
 }
-
-#include "curve.h"
 
 s32 Terrain_GetFlatHeight(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
@@ -824,8 +821,6 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z) {
   code = Ram_MapCollision + *grid * 4;
   return gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15);
 }
-
-#include "edition.h"
 
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
 /// The Broken Seal's.

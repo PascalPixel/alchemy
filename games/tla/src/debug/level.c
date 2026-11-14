@@ -25,6 +25,13 @@
 #include "system/dma.h"
 #include "battle/battle_unit.h"
 #include "game/character_ids.h"
+#include "edition.h"
+#include "field/field_sequence_event.h"
+#include "module/game/game.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
+#include "graphics/text_render.h"
+#include "graphics/uiflow.h"
 
 extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
 extern struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[];
@@ -41,9 +48,6 @@ void IncreaseItemAndLevel_RunMotionTest(void);
 void IncreaseItemAndLevel_EnableEffectChildMode(void);
 void IncreaseItemAndLevel_OpenIconBrowser(void);
 void IncreaseItemAndLevel_OpenPortraitBrowser(void);
-
-#include "edition.h"
-#include "field/field_sequence_event.h"
 
 /// The entrances that open a room of names in place of the debug room: each
 /// has its own actor placements and the triggers of
@@ -66,13 +70,6 @@ enum IncreaseItemAndLevelActorId {
   /// IncreaseItemAndLevel_RunLevelEditor, drawn larger than the others.
   ACTOR_LEVEL_EDITOR
 };
-
-#include "scene_tables.h"
-#include "module/game/game.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
-#include "graphics/text_render.h"
-#include "graphics/uiflow.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

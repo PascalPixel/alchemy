@@ -17,6 +17,7 @@
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
+#include "fixed_math.h"
 
 void FieldPsynergy_Carry(void) {
   struct BattleFxScene *work;
@@ -60,8 +61,6 @@ void FieldPsynergy_Carry(void) {
   Actor_ReleaseFar(pair[1]);
   FieldPsynergy_FadeFromCastColor();
 }
-
-#include "fixed_math.h"
 
 /// Spawns object 278 and grows it from a quarter to full size, an eighth of a
 /// turn a frame, then faces it to angle.

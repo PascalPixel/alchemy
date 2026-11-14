@@ -14,9 +14,6 @@
 #include "macros.h"
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gWorldMap_KeyHeadings[16];
-
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 /// Script command 0x1e (control mode 5): the leader turned to sand by the Sand
 /// Psynergy, moved by the direction pad on a field map.

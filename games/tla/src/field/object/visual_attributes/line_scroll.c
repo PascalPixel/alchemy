@@ -83,8 +83,6 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   Actor_WaitForMoveFar(obj);
 }
 
-void FieldCamera_MoveWithinMapBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-
 s32 Entrance_PlayArrival(void) {
   s32 result = 0;
   s32 flag = 0x120;

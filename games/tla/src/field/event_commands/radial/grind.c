@@ -46,13 +46,6 @@ struct PendingEvent__f0e92b4 {
 
 extern char ResourceId_WaterSplash;
 
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-s32 Actor_GetSpriteIdFar(struct Actor *object);
-void Animation_ApplyChildValueFar(void *sprite, s32 value);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
-void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
-
 void FieldPsynergy_GrindOnTarget(void) {
   struct SplashWork *work = HeapSlot_Alloc(92, 0x1920);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
@@ -461,15 +454,6 @@ void HoverGlow_Update(void) {
   sprite->scaleY = scaleY;
   EffectSprite_Draw(sprite);
 }
-
-void FieldPsynergy_Blaze(void);
-void FieldPsynergy_Sand(void);
-void FieldPsynergy_Burst(void);
-void FieldPsynergy_Pound(void);
-void FieldPsynergy_Scoop(void);
-void FieldPsynergy_Parch(void);
-void FieldPsynergy_Hover(void);
-void Teleport_PlaySparks(void);
 
 /// Runs field Psynergy animation 24 for the dispatcher; the target is unused.
 void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }

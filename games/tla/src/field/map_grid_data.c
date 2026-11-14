@@ -8,6 +8,7 @@
 #include "module/field/field.h"
 #include "curve.h"
 #include "field/script.h"
+#include "objcmd.h"
 
 //--------------------------------------------------------------------------
 // Map terrain: the height curve of each cell kind, the world map's
@@ -97,8 +98,6 @@ const s32 gBattle_FormationPlacementScale[2] = {
     0x10000,
     0x10000,
 };
-
-#include "objcmd.h"
 
 //--------------------------------------------------------------------------
 // Field object scripts: the ones the field starts by itself, the command

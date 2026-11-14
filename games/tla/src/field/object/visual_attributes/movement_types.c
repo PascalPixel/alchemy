@@ -188,8 +188,6 @@ s32 Actor_TakeLeaderLayer(struct Actor *object) {
   return 0;
 }
 
-struct Actor *Actor_GetById(u32 objectId);
-
 extern const u8 gMovementType_StandScript[];
 extern const u8 gMovementType_WanderScript[];
 extern const u8 gMovementType_WanderNearScript[];

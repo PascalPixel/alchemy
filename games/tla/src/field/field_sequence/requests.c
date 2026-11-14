@@ -18,8 +18,6 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   BattleEffect_SelectBattleCue(row, column);
 }
 
-extern s8 gData_02001000[];
-
 /// Queues a Djinni battle. djinn / 20 is the element and djinn % 20 the
 /// Djinni, where 19 means the one recorded for the element in the save (none:
 /// nothing happens). Unless flag 0x800 is set the element's encounter is

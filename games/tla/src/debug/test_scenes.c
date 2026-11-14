@@ -12,12 +12,11 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "field/event_inline.h"
 
 void Test_ReceiveFizz(void);
 
 void Test_ReceiveForge(void);
-
-#include "field/event_inline.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -54,9 +53,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) { return 0; }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-void Test_ReceiveFlint(void);
-void Test_ReceiveGust(void);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},

@@ -631,8 +631,6 @@ void Render_ApplyProjectedPlacementAtDepth(struct LayeredSprite *object,
   }
 }
 
-s32 Render_ProjectPoint(const void *point, s32 *screen);
-
 /// Places a sprite at a 3D point for the fixed camera and queues it for
 /// drawing, projected to the screen and scaled by its distance, as The Broken
 /// Seal's Render_PlaceProjectedSprite does.

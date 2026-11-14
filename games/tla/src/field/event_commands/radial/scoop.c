@@ -8,6 +8,10 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
+#include "field/field_work.h"
+#include "battle/battle_unit.h"
+#include "window.h"
+#include "bg_scroll.h"
 
 struct Work080e6400 {
   u8 tiles[0x400];
@@ -23,8 +27,6 @@ struct Work080e6400 {
   struct Actor *other;
   s16 mode;
 };
-
-void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase);
 
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -169,18 +171,8 @@ void Scoop_Update(void) {
   work->timer++;
 }
 
-void FieldPsynergy_Blaze(void);
-void FieldPsynergy_Sand(void);
-void FieldPsynergy_Burst(void);
-void FieldPsynergy_Pound(void);
-void FieldPsynergy_Scoop(void);
-void FieldPsynergy_Parch(void);
-void FieldPsynergy_Hover(void);
-
 /// Effect 20 cast on a target: runs the effect, ignoring the target.
 void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
-
-#include "field/field_work.h"
 
 struct RiseParticle {
   s32 x;
@@ -210,19 +202,7 @@ struct ScoopWork {
 extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
     ResourceId_Data1E9;
 
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Func_080dba5c(void);
-void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
-void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
-s32 Actor_GetSpriteIdFar(struct Actor *object);
-s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer);
-struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
 void Scoop_DigUpItem(void);
 
@@ -489,8 +469,6 @@ end:
   HeapSlot_Release(92);
 }
 
-struct Actor *Actor_GetById(u32 objectId);
-
 /// Puts object id at the effect's anchor (if any) and lets it fall under
 /// gravity, waits 50 frames, then cues the event with id | 0x1000.
 /* VIEW(psynergy): routine BattleEffect_DropObjectAtAnchor as void
@@ -525,17 +503,12 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   event->cue = id | 0x1000;
 }
 
-#include "battle/battle_unit.h"
-
 struct DropEvent {
   u8 unk000[0xd34];
   u16 item;
 };
 
-struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void *Unit_Get(s32 owner);
-s32 PartyInventory_FindRoomFar(s32 item);
-void Actor_ShowItemIconById(s32 id, s32 item);
 extern const u16 gData_080f0fc0[];
 
 /// Object 79 at the anchor, fetched or spawned (kind 489), takes a random item
@@ -595,8 +568,6 @@ struct TeleportWhirlWork {
 };
 
 extern char ResourceId_ColouredOrbs;
-
-void Func_080dc954(void);
 
 /// A whirl of coloured orbs (ResourceId_ColouredOrbs) round the leader, with
 /// sound 200. The scenes with Teleport circles call it (Mars Lighthouse, the
@@ -744,8 +715,6 @@ struct SparkWork {
   struct TeleportSpark particles[SPARK_COUNT];
   struct EffectSprite sprites[SPARK_COUNT];
 };
-
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 
 /// Sparks burst from the leader, Teleport_PlayWhirl's companion in the same
 /// scenes.
@@ -905,8 +874,6 @@ void FieldPsynergy_Teleport(void) {
 /// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.
 void FieldPsynergy_ParchOnTarget(void) { FieldPsynergy_Parch(); }
 
-#include "window.h"
-
 struct PuffParticle {
   s32 x;
   s32 y;
@@ -931,10 +898,6 @@ struct PuffWork {
 
 extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
-s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer);
-s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
-void BattleEffect_ApplyColorToTargetBuffer(s32 packed, s32 mode);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 
 void FieldPsynergy_Parch(void) {
@@ -1308,8 +1271,6 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
     }
   }
 }
-
-#include "bg_scroll.h"
 
 struct Unk_080e807cEntry {
   s32 x;

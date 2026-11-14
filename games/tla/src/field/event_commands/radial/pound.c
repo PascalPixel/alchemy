@@ -30,18 +30,9 @@ struct PoundWork {
 
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
-s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_080dba5c(void);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
-void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
-void BattleEffect_SinkAndShrinkObject(void);
-struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-void FieldPsynergy_UpdatePound(void);
 
 void FieldPsynergy_Pound(void) {
   struct PoundWork *work = HeapSlot_Alloc(92, 0x18b4);

@@ -24,6 +24,17 @@
 #include "module/field/object.h"
 #include "text/msg_ids.h"
 #include "module/system/system.h"
+#include "map.h"
+#include "system/main_routine_work.h"
+#include "scene_ids.h"
+#include "system/iwram_call.h"
+#include "battle/battle_unit.h"
+#include "field/sprite.h"
+#include "actor.h"
+#include "system/frame.h"
+#include "actor_view.h"
+#include "field_sprite.h"
+#include "system/dma.h"
 
 /// Fades the palettes back to the saved ones over the given frames.
 void BattleEffect_FadeToSavedPalettes(s32 frames) {
@@ -79,12 +90,6 @@ void BattleEffect_UpdateAllEffectSlots(void) {
     slot++;
   } while (remainingSlots >= 0);
 }
-
-#include "map.h"
-#include "system/main_routine_work.h"
-#include "scene_ids.h"
-#include "system/iwram_call.h"
-#include "battle/battle_unit.h"
 
 struct EffectWork {
   u8 unk000[0x1c];
@@ -173,9 +178,6 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   Task_Add(BattleEffect_UpdateAllEffectSlots, 0x480);
 }
 
-#include "field/sprite.h"
-#include "actor.h"
-
 void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
@@ -261,17 +263,12 @@ void EventObject_Initialize(void) {
   event->castStarted = 1;
 }
 
-#include "system/frame.h"
-#include "actor_view.h"
-
 void BattleEffect_StopMainActor(void) {
   struct EffectSceneWork *work = Ram_HeapSlots->effectWork;
 
   BattleEffect_SetObjectUpdateMode(work->mainObject, 0);
   wait(1);
 }
-
-#include "field_sprite.h"
 
 void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupWork *work = Ram_HeapSlots->effectWork;
@@ -332,8 +329,6 @@ void Func_080dc954(void) {
   if (mode == 3)
     *((u8 *)slots->mapWork + 0x970) = mode;
 }
-
-#include "system/dma.h"
 
 #define WAVE_FX_SLOT 88
 

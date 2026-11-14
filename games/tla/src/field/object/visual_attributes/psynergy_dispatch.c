@@ -13,8 +13,6 @@
 #include "module/system/system.h"
 #include "macros.h"
 
-struct Actor *Actor_GetById(u32 objectId);
-
 #define CELL_MASK 0xfff00000 // 16-pixel cells
 
 /// Hangs a vine of seven links from the anchor object objectId, clearing the

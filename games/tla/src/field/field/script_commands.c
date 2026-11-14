@@ -12,6 +12,11 @@
 #include "module/tla.h"
 #include "system/scene.h"
 #include "macros.h"
+#include "field_event.h"
+#include "field/actor_script_view.h"
+#include "system/input.h"
+#include "system/frame.h"
+#include "field/field_sequence_event.h"
 
 enum {
   SCRIPT_WANDER_TRIES = 7, ///< random points a wander tries a frame
@@ -377,8 +382,6 @@ s32 ActorScript_SetAnimation(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-void Actor_Release();
-
 s32 Actor_ReleaseAndClear(void *object) {
   Actor_Release(object);
   return 0;
@@ -388,8 +391,6 @@ s32 ActorScript_Nop(struct ScriptInterpreter *interpreter) {
   interpreter->cursor += 2;
   return 1;
 }
-
-#include "field_event.h"
 
 s32 Script_PlaySound(struct ScriptInterpreter *interpreter) {
   Sound_PlayFar(interpreter->script[interpreter->cursor + 1]);
@@ -436,8 +437,6 @@ struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
   }
   return NULL;
 }
-
-#include "field/actor_script_view.h"
 
 s32 ActorScript_SetPositionAndResetMotion(struct ActorScriptView *object) {
   const s32 *argument = object->script + (s16)object->scriptCursor + 1;
@@ -1608,10 +1607,6 @@ void ScriptObject_SetValue(struct ScriptObject *object, s32 value) {
   if (object != NULL)
     object->value = value;
 }
-
-#include "system/input.h"
-#include "system/frame.h"
-#include "field/field_sequence_event.h"
 
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];

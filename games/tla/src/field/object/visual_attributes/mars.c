@@ -14,8 +14,6 @@
 #include "scene_call.h"
 #include "macros.h"
 
-struct Actor *Actor_GetById(u32 objectId);
-
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
 /// (FieldEffect_UpdateMarsSpark). The leader turns to the camera

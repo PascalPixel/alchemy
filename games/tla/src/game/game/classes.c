@@ -6,143 +6,133 @@
 #include "module/game/game.h"
 #include "system/mul_q16.h"
 
-struct OwnerGrowthRecord;
-
-/* VIEW(game): variable gEnemy_ElementPresetTable as const struct ElementPreset
- * gEnemy_ElementPresetTable[]; game/element_table has const struct
- * EnemyElementPreset gEnemy_ElementPresetTable[] = {; tried as the definition's
- * extern const struct EnemyElementPreset gEnemy_ElementPresetTable[], it does
- * not compile in tla-ja: games/tla/src/game/game/classes.c:24:
- * `gEnemy_ElementPresetTable' undeclared (first use in this function). */
-extern const struct ElementPreset
-    gEnemy_ElementPresetTable__game[] __asm__("gEnemy_ElementPresetTable");
-#define gEnemy_ElementPresetTable gEnemy_ElementPresetTable__game
-
-/// Each element's value, ten per digit: an enemy's from the preset its record
-/// names, a character's from its djinn counts plus its growth record's bonus.
+/// Writes ten times each element level: an enemy's from its preset, a
+/// character's from the Djinn set on it plus its own bonus. `source` points at
+/// the unit's Djinn bits (djinnAvailable); the counts of set Djinn by element
+/// follow them in the unit.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
-  if (record > 7) {
-    const struct ElementPreset *table;
-    const struct ElementPreset *preset;
+  if (record > PIERS) {
+    const struct EnemyElementPreset *table;
+    const struct EnemyElementPreset *preset;
     u32 index;
     s32 i;
 
-    index = Enemy_GetDefinition(record)[42];
-    if (index > 47)
+    index = Enemy_GetDefinition(record)->elementPreset;
+    if (index >= ENEMY_ELEMENT_PRESET_COUNT)
       index = 0;
     table = gEnemy_ElementPresetTable;
     preset = &table[index];
-    for (i = 0; i <= 3; i++)
-      output[i] = preset->digits[i] * 10;
+    for (i = 0; i < ELEMENT_COUNT; i++)
+      output[i] = preset->elementLevels[i] * 10;
   } else {
     s32 i;
 
-    for (i = 0; i <= 3; i++)
-      output[i] = source[36 + i] * 10;
-    if (record <= 7) {
-      const u8 *definition = (const u8 *)Character_GetDefinition(record);
+    for (i = 0; i < ELEMENT_COUNT; i++)
+      output[i] = source[offsetof(struct BattleUnit, djinnActiveCounts) -
+                         offsetof(struct BattleUnit, djinnAvailable) + i] *
+                  10;
+    if (record <= PIERS) {
+      const struct CharacterDefinition *definition =
+          Character_GetDefinition(record);
 
-      for (i = 0; i <= 3; i++)
-        output[i] += definition[146 + i];
+      for (i = 0; i < ELEMENT_COUNT; i++)
+        output[i] += definition->elementBonus[i];
     }
   }
   return 0;
 }
 
-s32 Unit_GetElementLevel(s32 owner, s32 index) {
-  struct OwnerInventoryState *state = Unit_Get(owner);
-  s32 values[4];
+/// Returns how strongly a unit is attuned to `element`, its whole element level
+/// (a tenth of what Unit_GetElementLevels counts), and 0 for `ELEMENT_NONE`.
+s32 Unit_GetElementLevel(s32 unitId, s32 element) {
+  struct BattleUnit *unit = Unit_Get(unitId);
+  s32 levels[ELEMENT_COUNT];
   s32 result = 0;
 
-  if (index <= 3) {
-    Unit_GetElementLevels(
-        state->classId,
-        (const u8 *)&((struct OwnerDjinnState *)state)->flags.banks.owned,
-        values);
-    result = values[index] / 10;
+  if (element < ELEMENT_COUNT) {
+    Unit_GetElementLevels(unit->enemyId, (const u8 *)unit->djinnAvailable,
+                          levels);
+    result = levels[element] / 10;
   }
   return result;
 }
 
-/// The element of the preset the unit's enemy record names; an id past the
-/// table's end reads the first preset.
+/// Returns the element an enemy attacks with, from its element preset; an id
+/// past the table's end reads the first preset.
 s32 Enemy_GetAttackElement(void *state) {
   struct BattleUnit *unit = state;
-  u8 preset = Enemy_GetDefinition(unit->enemyId)[42];
-  const struct ElementPreset *table;
+  u8 preset = Enemy_GetDefinition(unit->enemyId)->elementPreset;
+  const struct EnemyElementPreset *table;
   u32 offset;
 
-  if (preset > 47)
+  if (preset >= ENEMY_ELEMENT_PRESET_COUNT)
     preset = 0;
   table = gEnemy_ElementPresetTable;
-  offset = preset * sizeof(struct ElementPreset);
-  return *(u32 *)((u8 *)table + offset);
+  offset = preset * sizeof(struct EnemyElementPreset);
+  return ((const struct EnemyElementPreset *)((const u8 *)table + offset))
+      ->first;
 }
 
-/* VIEW(game): variable gElement_PowerResistByLevel as struct ElementLevelBonus
- * gElement_PowerResistByLevel[16]; game/element_table has const struct
- * ElementLevelBonus gElement_PowerResistByLevel[16] = {; tried as the
- * definition's extern const struct ElementLevelBonus
- * gElement_PowerResistByLevel[16], it does not compile in tla-ja:
- * games/tla/src/game/game/classes.c:124: `gElement_PowerResistByLevel'
- * undeclared (first use in this function). */
-extern struct ElementLevelBonus gElement_PowerResistByLevel__game[16] __asm__(
-    "gElement_PowerResistByLevel");
-#define gElement_PowerResistByLevel gElement_PowerResistByLevel__game
-
-void Unit_CalculateBaseElements(s32 owner,
+/// Writes a unit's base power and resistance in each element: an enemy's from
+/// its preset, a character's from its element levels.
+void Unit_CalculateBaseElements(s32 unitId,
                                 struct BattleElementStats *destination) {
-  struct BattleUnit *state = Unit_Get(owner);
+  struct BattleUnit *state = Unit_Get(unitId);
   u32 index;
-  s32 values[4];
+  s32 levels[ELEMENT_COUNT];
   s32 i;
 
-  if (state->classIndex == 0) {
-    index = Enemy_GetDefinition(state->enemyId)[42];
-    if (index > 47)
+  if (state->classIndex == CLASS_NONE) {
+    index = Enemy_GetDefinition(state->enemyId)->elementPreset;
+    if (index >= ENEMY_ELEMENT_PRESET_COUNT)
       index = 0;
 
+    // The copy returns from inside its loop, as the last element is written.
     i = 0;
     for (;;) {
-      destination[i] = gEnemy_ElementPresetTable[index].values[i];
+      destination[i] = gEnemy_ElementPresetTable[index].stats[i];
       i++;
-      if (i > 3)
+      if (i >= ELEMENT_COUNT)
         return;
     }
   }
 
+  // Element levels in tenths: the whole level picks the table's row, the
+  // tenths add to it.
   Unit_GetElementLevels(state->enemyId, (const u8 *)state->djinnAvailable,
-                        values);
-  for (i = 0; i < 4; i++) {
-    s32 ones;
-    s32 tens;
+                        levels);
+  for (i = 0; i < ELEMENT_COUNT; i++) {
+    s32 tenths;
+    s32 level;
 
-    tens = Math_UnsignedMulHigh(values[i], 0x1999999a);
-    ones = values[i] - tens * 10;
+    // levels[i] / 10, as a multiply by the reciprocal.
+    level = Math_UnsignedMulHigh(levels[i], 0x1999999a);
+    tenths = levels[i] - level * 10;
 
-    if (tens > 15)
-      tens = 15;
-    if (tens < 0)
-      tens = 0;
+    if (level > 15)
+      level = 15;
+    if (level < 0)
+      level = 0;
 
 #ifdef UBFIX
-    destination[i].power = gElement_PowerResistByLevel[tens].power + ones;
-    destination[i].resistance = gElement_PowerResistByLevel[tens].res + ones;
+    destination[i].power = gElement_PowerResistByLevel[level].power + tenths;
+    destination[i].resistance = gElement_PowerResistByLevel[level].res + tenths;
 #else
     // UB: the stats are stored through an s16 [4][2] view of the four structs.
     ((s16 (*)[2])destination)[i][0] =
-        gElement_PowerResistByLevel[tens].power + ones;
+        gElement_PowerResistByLevel[level].power + tenths;
     ((s16 (*)[2])destination)[i][1] =
-        gElement_PowerResistByLevel[tens].res + ones;
+        gElement_PowerResistByLevel[level].res + tenths;
 #endif
   }
 }
 
-/// Chooses a character's class: the series comes from its two strongest
-/// elements (or the item that picks one), and the class is the last of that
-/// series whose element requirements it meets.
+/// Returns the class a character has with these Djinn: the series of its two
+/// strongest elements, or the one its class-changing item (Mysterious Card,
+/// Trainer's Whip, Tomegathericon) picks, and the last class of that series
+/// whose element requirements it meets.
 s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
-  s32 levels[4];
+  s32 levels[ELEMENT_COUNT];
   s32 primary;
   s32 best;
   s32 series;
@@ -150,10 +140,10 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   s32 i;
   s32 second;
   s32 j;
-  s32 lastSeriesItem = 445; // One constant for its whole life.
+  s32 lastSeriesItem = ITEM_TOMEGATHERICON; // One constant for its whole life.
 
   result = -1;
-  if (character > 7)
+  if (character > PIERS)
     return 0;
   // UB: Unit_GetElementLevels returns a value; this call goes through a void
   // function type.
@@ -165,7 +155,7 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
 #endif
   best = result;
   primary = result;
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     if (best < levels[i]) {
       best = levels[i];
       primary = i;
@@ -173,33 +163,38 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   }
   second = -1;
   best = -1;
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     if (i != primary && best < levels[i]) {
       best = levels[i];
       second = i;
     }
   }
+  // A second element below level 1 does not count, and ties go to the lower
+  // element.
   if (levels[second] <= 9)
     second = primary;
   series = gClass_SeriesByElements[primary][second];
-  if (series == 2 && character == 5)
-    series = 13;
-  else if (series == 6 && character == 7)
-    series = 14;
-  if (item == 444)
-    series = 16;
-  else if (item == 443)
-    series = 15;
+  // Jenna and Piers have series of their own where the others would be a
+  // Guard or a Water Seer.
+  if (series == CLASS_SERIES_GUARD && character == JENNA)
+    series = CLASS_SERIES_FLAME_USER;
+  else if (series == CLASS_SERIES_WATER_SEER && character == PIERS)
+    series = CLASS_SERIES_MARINER;
+  if (item == ITEM_TRAINERS_WHIP)
+    series = CLASS_SERIES_TAMER;
+  else if (item == ITEM_MYSTERIOUS_CARD)
+    series = CLASS_SERIES_PIERROT;
   else if (item == lastSeriesItem)
-    series = 17;
-  for (i = 243; i >= 0; i--) {
+    series = CLASS_SERIES_DARK_MAGE;
+  // The last class of the series that the element levels reach.
+  for (i = CLASS_COUNT - 1; i >= 0; i--) {
     if (gClass_DefinitionTable[i].series != series)
       continue;
-    for (j = 0; j < 4; j++) {
+    for (j = 0; j < ELEMENT_COUNT; j++) {
       if (levels[j] < gClass_DefinitionTable[i].required[j] * 10)
         break;
     }
-    if (j == 4) {
+    if (j == ELEMENT_COUNT) {
       result = i;
       break;
     }
@@ -209,18 +204,24 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   return result;
 }
 
+/// Returns class `classId`'s definition: its series, element requirements,
+/// stat multipliers and the Psynergy it teaches by level.
 struct ClassDefinition *Class_GetDefinition(s32 classId) {
   return (struct ClassDefinition *)&gClass_DefinitionTable[classId];
 }
 
-void Unit_UpdateClass(s32 ownerId) {
-  struct BattleUnit *owner = Unit_Get(ownerId);
+/// Works out a character's class again after its Djinn or its class-changing
+/// item change, then its Psynergy list and its base elements.
+void Unit_UpdateClass(s32 unitId) {
+  struct BattleUnit *unit = Unit_Get(unitId);
 
-  owner->classIndex = Class_Determine(
-      owner->enemyId, owner->djinnAvailable,
-      Inventory_GetEquippedItem((struct OwnerInventoryState *)owner, 10));
-  Owner_UpdateClassActions(ownerId);
-  Unit_CalculateBaseElements(ownerId, owner->baseElement);
+  unit->classIndex = Class_Determine(
+      unit->enemyId, unit->djinnAvailable,
+      Inventory_GetEquippedItem((struct OwnerInventoryState *)unit,
+                                ITEM_TYPE_CLASS_CHANGE));
+  Owner_UpdateClassActions(unitId);
+  Unit_CalculateBaseElements(unitId, unit->baseElement);
 }
 
-void Unit_RefreshPsynergy(s32 owner_id) { Unit_UpdateClass(owner_id); }
+/// Works out a character's class, Psynergy and base elements again.
+void Unit_RefreshPsynergy(s32 unitId) { Unit_UpdateClass(unitId); }

@@ -477,25 +477,21 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
   return index;
 }
 
-/* VIEW(game): variable gData_080b1f40 as u16 gData_080b1f40[];
- * game/artifact_slots has const u16 gData_080b1f40[512] = {; tried as the
- * definition's extern const u16 gData_080b1f40[512], it does not compile in
- * tla-ja: games/tla/src/game/game/inventory.c:484: `gData_080b1f40' undeclared
- * (first use in this function). */
-extern u16 gData_080b1f40__game[] __asm__("gData_080b1f40");
-#define gData_080b1f40 gData_080b1f40__game
-
+/// Adds delta to how many of a rare item the shops may sell, and returns the
+/// new count; ordinary items have none.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   s32 result;
   s32 index = ITEM_ID_MASK;
-  u16 *table = gData_080b1f40;
+  const u16 *table = gItem_ArtifactSlotTable;
   u16 counter;
 
   /* FAKEMATCH(temporary): the index masked and doubled apart in the local that
    * held the mask. */
   index &= itemId;
   index <<= 1;
-  counter = *(u16 *)((u8 *)table + index);
+  // The table holds a rare item's counter number plus one, and 0 for an
+  // ordinary item.
+  counter = *(const u16 *)((const u8 *)table + index);
   result = 0;
   if (counter)
     result = RareItemStock_Adjust(counter - 1, delta);

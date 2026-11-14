@@ -12,10 +12,10 @@ const u8 Data_080b1f2c[4][5] = {
     {0, 1, 2, 3, 4},
 };
 
-/// 512 counter indices plus one (0 means uncounted); Item_AdjustCounter
-/// indexes it by item.
+/// Each item's rare item counter number plus one, 0 for an ordinary item; the
+/// shops' stock of a rare item is counted by it (Item_AdjustCounter).
 // clang-format off
-const u16 gData_080b1f40[512] = {
+const u16 gItem_ArtifactSlotTable[512] = {
     0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 0, 0, 0, 0,
     0, 0, 0, 0, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0,
     0, 0, 16, 17, 18, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 21,
@@ -51,4 +51,7 @@ const u16 gData_080b1f40[512] = {
 };
 // clang-format on
 
-const s32 gData_080b2340[9] = {0, 1, 2, 3, 4, 5, 6, 7, -1};
+/// The characters Party_InitializeCharacters gives their starting equipment,
+/// ended by -1.
+const s32 gCharacter_StartingEquipUnitIds[] = {ISAAC, GARET, IVAN,  MIA, FELIX,
+                                               JENNA, SHEBA, PIERS, -1};

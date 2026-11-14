@@ -9,13 +9,16 @@
 /// and Mars Adepts, 1 for the Jupiter and Mercury ones.
 const u8 gCharacter_ElementGroupTable[] = {0, 0, 1, 1, 0, 0, 1, 1};
 
-/// Six flags DataTransfer_Apply copies into game flags 0x820 to 0x825.
-const u16 Data_080b1284[6] = {0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868};
+/// The six flags of The Broken Seal's save DataTransfer_Apply copies into
+/// FLAG_TRANSFERRED_DODONPA_LOCKED_UP and the five after it, by The Broken
+/// Seal's names: Dodonpa locked up, the Colosso won, Hsu freed without the
+/// party, Deadbeard beaten, the sick Dora visited, and Vault warned of the
+/// escaped thieves.
+const u16 gDataTransfer_Flags[6] = {0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868};
 
-/// The percent chance of each of seven Djinn of each element that
-/// DataTransfer_GiveDefaultDjinn gives to Djinn_GiveToParty, one row per
-/// element.
-const u16 Data_080b1290[4][7] = {
+/// The percent chance that DataTransfer_GiveDefaultDjinn hands out each of The
+/// Broken Seal's seven Djinn of each element, one row per element.
+const s16 gDataTransfer_DjinnChances[4][7] = {
     {100, 70, 70, 30, 40, 50, 20},
     {100, 50, 70, 70, 30, 30, 70},
     {70, 50, 30, 60, 70, 40, 70},

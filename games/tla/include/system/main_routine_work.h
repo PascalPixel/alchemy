@@ -2,6 +2,7 @@
 #define ALCHEMY_MAIN_ROUTINE_WORK_H
 
 #include "types.h"
+#include "static_assert.h"
 
 /// gMainRoutineWork.battleType: how the next battle starts, as ☀️'s; it is
 /// set back to BATTLE_TYPE_NORMAL as the battle ends.
@@ -17,6 +18,9 @@ enum BattleType {
   BATTLE_TYPE_LOST = 6
 };
 
+/// The most coins the party carries, and the most shop credit.
+#define COINS_MAX 999999
+
 /// The first pending Djinni battle event: DJINNI_BATTLE_EVENT_FIRST plus the
 /// Djinni's number (Field_RequestDjinnBattle).
 #define DJINNI_BATTLE_EVENT_FIRST 300
@@ -25,15 +29,19 @@ enum BattleType {
 /// 0x20 bytes further on from the shop credit): play time, coins, the scene and
 /// the leader's position, the active party and the options.
 struct MainRoutineWork {
-  u8 unk000[4]; ///< 0 on a new game; not named by ⚓️ code
+  /// BuildStamp_GetTime's value when the game was last saved; 0 on a new
+  /// game.
+  u32 buildStamp;
   u32 playTime; ///< frames
-  /// Not named by ⚓️ code. Djinn_GetRecoveryTable's TradeOfferState starts at
-  /// byte 4, its first 8 bytes running over coins.
-  u8 unk008[8];
+  u8 unused[4];
+  /// The summons the party can call, bit n for summon n: the first word of
+  /// the party's TradeOfferState, which Djinn_GetRecoveryTable returns from
+  /// here, its next word running over coins.
+  u32 summonMask;
   s32 coins; ///< at most 999999 (Party_AdjustCoins)
   /// The party's Djinn recovery list (TradeOfferState from its offers on),
-  /// read through Djinn_GetRecoveryTable; not named by ⚓️ code.
-  u8 unk014[0x124];
+  /// read through Djinn_GetRecoveryTable.
+  u8 djinnRecovery[0x124];
   s32 counterB; ///< shop credit, at most 999999 (Party_AdjustShopCredit)
   s8 counterC;  ///< shop gifts, 0 to 28 (Party_AdjustShopGifts)
   /// Not named by ⚓️ code; a new game sets its first 15 bytes as ☀️'s
@@ -52,7 +60,7 @@ struct MainRoutineWork {
   u16 pair1f2[2]; ///< the defeat destination (scene, entrance); -1 for none
   s16 battleBackground; ///< the battle background chosen for the scene or
                         ///< terrain
-  u8 unk1f8[2];         ///< not named by ⚓️ code
+  u8 unusedAfterBackground[2];
   s16 map;
   s32 x; ///< the party's position on entering, as ☀️'s gMainRoutineWork
   s32 y;
@@ -64,14 +72,13 @@ struct MainRoutineWork {
   /// The leader's movement: 0 on foot, 2 climbing, 3 or 4 holding a
   /// workspace item or node; 7, 8 and 10 set by the world map and others.
   u8 renderMode;
-  u8 unk213;          ///< not named by ⚓️ code
   s32 currentOwner;   ///< the leader, as ☀️'s selectedActor
   u8 activeOwners[8]; ///< the party in order
   u8 unk220[5];       ///< not named by ⚓️ code
   u8 paletteGlow[2];  ///< window hue and brightness (options 0 and 1)
-  u8 unk227[3];       ///< not named by ⚓️ code
-  u8 battleFxEnabled; ///< option 3, on or off; 1 on a new game
-  u8 unk22b;          ///< 1 on a new game; not named by ⚓️ code
+  u8 unusedAfterBrightness[3];
+  u8 battleFxEnabled;   ///< option 3, on or off; 1 on a new game
+  u8 unusedAfterSpeech; ///< 1 on a new game; nothing reads it
   /// Option 2, the message speed, 0 to 2: 1 on a new game; some scenes set 2
   /// and restore it after.
   u8 eventMode;
@@ -96,8 +103,14 @@ struct MainRoutineWork {
   u8 unk244[7];
   u8 battleType; ///< an enum BattleType, set back to BATTLE_TYPE_NORMAL at the
                  ///< end
-  u8 unk24c[6];  ///< not named by ⚓️ code
+  /// Hazardous ground, as The Broken Seal's: when hazardSteps reaches
+  /// hazardLimit the party takes hazardDamage and the count starts again.
+  ///@{
+  s16 hazardLimit;
+  s16 hazardMode;
+  s16 hazardDamage;
   u16 hazardSteps; ///< reset on entering a new scene group
+  ///@}
   /// The Djinni battle pending (DJINNI_BATTLE_EVENT_FIRST plus its number,
   /// flags in bits 15 to 11), or a Mimic's flag with CONDITION_FLAG_SET,
   /// resolved on returning to the field.
@@ -117,8 +130,8 @@ struct MainRoutineWork {
   /// Nonzero runs packed action 0x208b with the pending actions, and idles
   /// the field's push and button handler; not written by name in ⚓️.
   s8 pendingThird;
-  s8 cloaked;        ///< Cloak: the leader is hidden
-  u8 unk26e[2];      ///< not named by ⚓️ code
+  s8 cloaked; ///< Cloak: the leader is hidden
+  u8 unusedAfterCloaked[2];
   u32 savedCallback; ///< the paused object's update, restored on resuming
   /// The answers events count: telling Kraden on Idejima that the Western
   /// Sea is not where they go, agreeing with Alhafra's mayor that the party
@@ -127,7 +140,6 @@ struct MainRoutineWork {
   // XXX: what the counted answers share; reading every site's question and
   // the Ancient Lemuria event that tests the count would settle it.
   u8 countedAnswers;
-  u8 unk275; ///< not named by ⚓️ code
   /// Nonzero makes actor 8, not currentOwner, the one events control.
   s16 ownerOverride;
   s32 savedX;      ///< the world map leader's x, kept on leaving
@@ -138,13 +150,24 @@ struct MainRoutineWork {
   /// SceneId_WorldMap after a destination is chosen on the world map, 0xffff
   /// after cancelling (WorldPicture_Show); not read by name in ⚓️ code.
   u16 unk2be;
-  u8 unk2c0[2]; ///< not named by ⚓️ code
-  u8 unk2c2;    ///< 0, 1 or 2, set by the Islet Cave and Contigo scenes
-  u8 unk2c3;    ///< 0 or 1, set by a Yampi Desert scene
+  u8 unusedAfterWorldPicture[2];
+  u8 unk2c2; ///< 0, 1 or 2, set by the Islet Cave and Contigo scenes
+  u8 unk2c3; ///< 0 or 1, set by a Yampi Desert scene
   /// The link lobby's tallies, as ☀️'s: 3 cleared on choosing a monster
   /// battle, 0 and 3 counted up together, 6 read by the lobby.
   u16 linkTallies[8];
+  u8 unusedAfterTallies[4];
+  u32 startStamp; ///< BuildStamp_GetTime's value at a new game
+  u8 unusedAfterStartStamp[4];
 };
+
+STATIC_ASSERT(offsetof(struct MainRoutineWork, coins) == 0x10);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, scene) == 0x1e0);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, currentOwner) == 0x214);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, battleType) == 0x24b);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, ownerOverride) == 0x276);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 0x2c4);
+STATIC_ASSERT(sizeof(struct MainRoutineWork) == 0x2e0);
 
 extern struct MainRoutineWork gMainRoutineWork;
 s32 Party_CountMembers(void);

@@ -195,46 +195,29 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
   return Unit_TryLevelUp(unitId, gains);
 }
 
-/* VIEW(game): variable gCharacter_DefinitionTable as struct OwnerGrowthRecord
- * gCharacter_DefinitionTable[8]; game/character_table has const struct
- * CharacterDefinition gCharacter_DefinitionTable[] = {; tried as the
- * definition's extern const struct CharacterDefinition
- * gCharacter_DefinitionTable[], it does not compile in tla-ja:
- * games/tla/src/game/game/levels.c:202: `gCharacter_DefinitionTable' undeclared
- * (first use in this function). */
-extern struct OwnerGrowthRecord
-    gCharacter_DefinitionTable__game[8] __asm__("gCharacter_DefinitionTable");
-#define gCharacter_DefinitionTable gCharacter_DefinitionTable__game
+/// Returns character `character`'s definition: its growth curves, element
+/// bonus, starting level and starting equipment.
+const struct CharacterDefinition *Character_GetDefinition(s32 character) {
+  const struct CharacterDefinition *base;
 
-struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
-  struct OwnerGrowthRecord *base;
-
-  base = (struct OwnerGrowthRecord *)gCharacter_DefinitionTable;
-  return &base[index];
+  base = gCharacter_DefinitionTable;
+  return &base[character];
 }
 
-/* VIEW(game): variable gData_080b2340 as s32 gData_080b2340[];
- * game/artifact_slots has const s32 gData_080b2340[9] = {0, 1, 2, 3, 4, 5, 6,
- * 7, -1}; tried as the definition's extern const s32 gData_080b2340[9], it does
- * not compile in tla-ja: games/tla/src/game/game/levels.c:222: `gData_080b2340'
- * undeclared (first use in this function). */
-extern s32 gData_080b2340__game[] __asm__("gData_080b2340");
-#define gData_080b2340 gData_080b2340__game
-
 void Party_InitializeCharacters(void) {
-  struct OwnerInventoryState *state;
-  struct OwnerStart *start;
+  struct BattleUnit *unit;
+  const struct CharacterDefinition *character;
   u16 nameBuf[16];
-  s32 owner;
-  s32 *remote = gData_080b2340;
+  s32 unitId;
+  const s32 *startingUnitId = gCharacter_StartingEquipUnitIds;
   s32 i;
   s32 slot;
   u8 *name;
 
-  for (owner = 0; owner <= 7; owner++) {
-    state = Unit_Get(owner);
-    Message_DecodeRawUnboundedFar(owner + (s32)MsgCharacterName, nameBuf);
-    name = ((struct OwnerName *)state)->name;
+  for (unitId = 0; unitId <= PIERS; unitId++) {
+    unit = Unit_Get(unitId);
+    Message_DecodeRawUnboundedFar(unitId + (s32)MsgCharacterName, nameBuf);
+    name = unit->name;
     name[0] = nameBuf[0];
     i = 0;
     if (nameBuf[0] != 0) {
@@ -245,32 +228,36 @@ void Party_InitializeCharacters(void) {
         name[i] = nameBuf[i];
       } while (nameBuf[i] != 0);
     }
-    ((struct OwnerName *)state)->nameFlags = 0;
+    unit->name[14] = 0;
   }
 
-  if (*remote != -1) {
+  // gCharacter_StartingEquipUnitIds lists the characters given starting
+  // equipment, ended by -1 (artifact_slots.c).
+  if (*startingUnitId != -1) {
     do {
-      state = Unit_Get(*remote);
-      if (state != 0) {
-        state->classId = *remote;
-        start = (struct OwnerStart *)Character_GetDefinition(state->classId);
-        for (i = 14; i >= 0; i--)
-          state->inventory[i] = 0;
+      unit = Unit_Get(*startingUnitId);
+      if (unit != 0) {
+        unit->enemyId = *startingUnitId;
+        character = Character_GetDefinition(unit->enemyId);
+        for (i = INVENTORY_SLOTS - 1; i >= 0; i--)
+          unit->inventory[i] = 0;
 
-        for (i = 0; i < sizeof(start->items) / sizeof(start->items[0]); i++) {
-          slot = Inventory_AddItem(*remote, start->items[i] & 0x1ff);
-          Inventory_Equip(*remote, slot);
+        for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
+             i++) {
+          slot = Inventory_AddItem(*startingUnitId,
+                                   character->items[i] & ITEM_ID_MASK);
+          Inventory_Equip(*startingUnitId, slot);
         }
 
-        Unit_UpdateClass(*remote);
-        ((struct OwnerName *)state)->ppRatio = 0x4000;
-        ((struct OwnerName *)state)->hpRatio = 0x4000;
-        Unit_LevelUpTo(*remote, start->level);
-        Unit_UpdateClass(*remote);
-        Unit_Calculate(*remote);
+        Unit_UpdateClass(*startingUnitId);
+        unit->ppGauge = UNIT_GAUGE_FULL;
+        unit->hpGauge = UNIT_GAUGE_FULL;
+        Unit_LevelUpTo(*startingUnitId, character->startingLevel);
+        Unit_UpdateClass(*startingUnitId);
+        Unit_Calculate(*startingUnitId);
       }
-      remote++;
-    } while (*remote != -1);
+      startingUnitId++;
+    } while (*startingUnitId != -1);
   }
 }
 

@@ -39,6 +39,9 @@
 #include "battle/battle_summon.h"
 #include "battle/battle_random.h"
 #include "game/enemy_definition.h"
+#include "djinn_ids.h"
+#include "enemy_ids.h"
+#include "item_ids.h"
 #include "battle/range_falloff.h"
 #include "module/game/game.h"
 

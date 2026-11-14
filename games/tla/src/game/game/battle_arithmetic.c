@@ -257,8 +257,8 @@ s32 BattleAbility_IsWeakToEffect(const struct BattleUnit *target,
   const u8 *entries;
   s32 i;
 
-  if (target->classIndex == 0) {
-    entries = Enemy_GetDefinition(target->enemyId) + 0x3e;
+  if (target->classIndex == CLASS_NONE) {
+    entries = Enemy_GetDefinition(target->enemyId)->weakEffects;
     for (i = 0; i < 3; i++) {
       if (*entries == effectId)
         return 1;

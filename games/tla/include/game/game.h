@@ -118,6 +118,14 @@ void *Resource_FarCall005(s32);
 void Message_DecodeRawUnboundedFar(s32, u16 *);
 
 extern const s16 gElement_PowerResistCurve[5][2];
+/// The power and resistance by element level (element_table.c): a table
+/// nothing writes, defined writable in .rodata as The Broken Seal's is.
+extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
+extern const struct EnemyElementPreset gEnemy_ElementPresetTable[];
+extern const struct CharacterDefinition gCharacter_DefinitionTable[];
+const struct CharacterDefinition *Character_GetDefinition(s32 character);
+extern const s32 gCharacter_StartingEquipUnitIds[];
+extern const u16 gItem_ArtifactSlotTable[512];
 
 extern const u8 gCharacter_ElementGroupTable[];
 

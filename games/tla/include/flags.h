@@ -22,6 +22,34 @@
 /// fled Djinni battle.
 #define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
 
+/// Set as Isaac's party joins Felix's (Party_AddIsaacsParty); a file saved
+/// after it is "Post-Reunion Data" (MsgSavePostReunion).
+#define FLAG_REUNITED 0x22
+
+// The Broken Seal's clear data, as "Transfer data from Golden Sun" brings it
+// in by link or by password (DataTransfer_Apply).
+/// Set once data was transferred by link.
+#define FLAG_TRANSFERRED_BY_LINK 0x2c
+/// Set once data was transferred by password.
+#define FLAG_TRANSFERRED_BY_PASSWORD 0x2d
+/// Set once data was transferred, either way.
+#define FLAG_DATA_TRANSFERRED 0x2f
+/// The first of the 28 flags of The Broken Seal's Djinn, seven to an element
+/// in element order: set for each Djinni the transferred data held, or for
+/// each DataTransfer_GiveDefaultDjinn handed out.
+#define FLAG_TRANSFERRED_DJINN_FIRST 0x800
+/// The Broken Seal's Djinn of each element.
+#define TRANSFERRED_DJINN_PER_ELEMENT 7
+/// The six flags DataTransfer_Apply copies from The Broken Seal's
+/// (gDataTransfer_Flags), named for those.
+#define FLAG_TRANSFERRED_DODONPA_LOCKED_UP 0x820
+#define FLAG_TRANSFERRED_WON_COLOSSO 0x821
+/// The opposite of The Broken Seal's FLAG_HSU_RESCUED_WITHOUT_PARTY: set when
+/// that was clear, so the party freed Hsu itself.
+#define FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY 0x822
+#define FLAG_TRANSFERRED_VISITED_SICK_DORA 0x824
+#define FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES 0x825
+
 /// The next scene change is silent: the scene loader clears it in place of
 /// playing its sound, once.
 #define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
@@ -168,9 +196,9 @@
 /// Set as Alhafra's inn tells that someone named Isaac picked Crossbone Isle
 /// clean, which it tells only while FLAG_ISAAC_CLEARED_CROSSBONE_ISLE is set.
 #define FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE 0x903
-/// XXX: what sets it; the code that reads a Broken Seal save or password would
-/// settle it. Alhafra's inn tells of Isaac picking Crossbone Isle clean only
-/// while it is set.
+/// Copied from The Broken Seal's FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED by
+/// DataTransfer_Apply: Isaac beat Deadbeard on the Pirate Ship. Alhafra's inn
+/// tells of Isaac picking Crossbone Isle clean only while it is set.
 #define FLAG_ISAAC_CLEARED_CROSSBONE_ISLE 0x823
 
 /// Set as the Great Serpent of Mikage is slain in Gaia Rock; Izumo then

@@ -41,7 +41,11 @@ enum ItemFlags {
   ITEM_RARE = 4,
   /// An important item: never dropped, and worth nothing to a shop.
   ITEM_INDISPENSABLE = 8,
-  ITEM_STACKABLE = 0x10 ///< kept in one inventory entry with a quantity
+  ITEM_STACKABLE = 0x10, ///< kept in one inventory entry with a quantity
+  /// Left behind when The Broken Seal's data is transferred
+  /// (DataTransfer_Apply): the Elemental Stars and their bags, and that
+  /// game's errands, from the Healing Fungus to the Lil' Turtle.
+  ITEM_NOT_TRANSFERRED = 0x20
 };
 
 /// What using an item costs (struct ItemDefinition's useType).

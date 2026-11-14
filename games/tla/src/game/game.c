@@ -36,14 +36,8 @@
 #include "game/djinn.c"
 #include "game/snapshot.c"
 
-#undef Data_080b1290
 #undef gCharacter_LevelExpTable
-#undef gData_080b1f40
-#undef gData_080b2340
-#undef gCharacter_DefinitionTable
 #undef gSummon_OrderList
-#undef gElement_PowerResistByLevel
-#undef gEnemy_ElementPresetTable
 
 // The tables, in ROM order.
 #include "game/experience_table.c"

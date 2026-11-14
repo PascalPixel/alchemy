@@ -8,6 +8,7 @@
 
 #include "types.h"
 #include "static_assert.h"
+#include "battle/battle_unit.h"
 
 /// A character's definition: the growth curves of its stats, its element
 /// bonus, starting level and starting equipment.
@@ -114,13 +115,17 @@ STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 0x48);
 /// attacks with, its level in each element, and its base power and resistance
 /// in each.
 struct EnemyElementPreset {
-  s32 first;    ///< the element it attacks with (enum Element)
-  u8 digits[4]; ///< its level in each element, in tens
-  struct {
-    s16 power;
-    s16 resistance;
-  } values[4]; ///< each element's base power and resistance
+  s32 first; ///< the element it attacks with (Enemy_GetAttackElement)
+  /// Its level in each element; Unit_GetElementLevels returns ten times each.
+  u8 elementLevels[4];
+  /// Its base power and resistance in each element, as
+  /// Unit_CalculateBaseElements gives them to the unit.
+  struct BattleElementStats stats[4];
 };
+
+/// How many element presets gEnemy_ElementPresetTable holds; an enemy naming
+/// one past the last reads the first.
+#define ENEMY_ELEMENT_PRESET_COUNT 48
 
 STATIC_ASSERT(sizeof(struct EnemyElementPreset) == 24);
 

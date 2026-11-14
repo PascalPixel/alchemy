@@ -82,7 +82,7 @@ struct TradeOfferState *Djinn_GetRecoveryTable(s32 which) {
   if (which != 0) {
     return Unit_Get(0x83);
   }
-  return (struct TradeOfferState *)&gMainRoutineWork.unk000[0xc];
+  return (struct TradeOfferState *)&gMainRoutineWork.summonMask;
 }
 
 u32 Party_GetAverageLevel(void) {
@@ -103,13 +103,21 @@ u32 Party_GetAverageLevel(void) {
   return total;
 }
 
-const u8 *Enemy_GetDefinition(s32 selector) {
+/// Returns the definition of enemy selector; enemy ids start past the eight
+/// characters', so that one id names any unit.
+const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex;
 
-  recordIndex = selector - 8;
+  recordIndex = selector - ENEMY_ID_FIRST;
+  // BUG: the table has ENEMY_COUNT rows, but only rows past 999 are refused, so
+  // the rows from ENEMY_COUNT read the tables after it.
+#ifdef BUGFIX
+  if (recordIndex > ENEMY_COUNT - 1U)
+#else
   if (recordIndex > 999U)
+#endif
     recordIndex = 0;
-  return (const u8 *)&gEnemy_DefinitionTable[recordIndex];
+  return &gEnemy_DefinitionTable[recordIndex];
 }
 
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
@@ -688,13 +696,12 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.countedAnswers = 0;
   gMainRoutineWork.eventMode = 1;
   gMainRoutineWork.battleFxEnabled = 1;
-  gMainRoutineWork.unk22b = 1;
+  gMainRoutineWork.unusedAfterSpeech = 1;
   gMainRoutineWork.paletteGlow[0] = 0;
   gMainRoutineWork.paletteGlow[1] = 8;
-  *(u32 *)gMainRoutineWork.unk000 = 0;
+  gMainRoutineWork.buildStamp = 0;
   // Its result taken as a whole word, where the definition returns u16.
-  *(u32 *)((u8 *)&gMainRoutineWork + 0x2d8) =
-      ((u32 (*)(void))BuildStamp_GetTime)();
+  gMainRoutineWork.startStamp = ((u32 (*)(void))BuildStamp_GetTime)();
   gFrameWaitCount = 0;
   gAutoSleepEnabled = 0;
   gMainRoutineWork.playTime = 0;
@@ -900,9 +907,10 @@ s32 FlagBits_Test(u8 *bytes, s32 flag) {
 }
 
 /// The data transfer from Golden Sun ("Transfer data from Golden Sun",
-/// MsgTransferDataFromGoldenSun): copies a The Broken Seal save's djinn, flags,
-/// coins, options (unless keepSettings) and units into this game's state.
-void DataTransfer_Apply(u8 *save, s32 keepSettings) {
+/// MsgTransferDataFromGoldenSun): copies a The Broken Seal save's Djinn, six of
+/// its flags, its coins, its options (when it came by link rather than by
+/// password) and its four units into this game's state.
+void DataTransfer_Apply(u8 *save, s32 byPassword) {
   u8 *flags = save + 0x40;
   struct MainRoutineWork *party = (struct MainRoutineWork *)(save + 0x240);
   struct BattleUnit *units = (struct BattleUnit *)(save + 0x520);
@@ -914,12 +922,15 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
   s32 count;
   s32 j;
 
-  for (i = 0, k = 0; i < 4; i++, k += 7) {
+  // Each element's first seven Djinn, The Broken Seal's, become the transferred
+  // Djinn flags.
+  for (i = 0, k = 0; i < ELEMENT_COUNT;
+       i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {
 
-    for (j = 0; j < 7; j++) {
-      s32 flag = 0x800 + k + j;
+    for (j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
+      s32 flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
 
-      if (FlagBits_Test(flags, 0x30 + i * 20 + j))
+      if (FlagBits_Test(flags, FLAG_DJINNI(i * DJINN_PER_ELEMENT + j)))
         GameFlag_Set(flag);
       else
         GameFlag_Clear(flag);
@@ -928,19 +939,19 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
     }
   }
   for (i = 0; i < 6; i++) {
-    if (FlagBits_Test(flags, Data_080b1284[i]))
-      GameFlag_Set(0x820 + i);
+    if (FlagBits_Test(flags, gDataTransfer_Flags[i]))
+      GameFlag_Set(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + i);
     else
-      GameFlag_Clear(0x820 + i);
+      GameFlag_Clear(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + i);
   }
-  if (GameFlag_Get(0x822))
-    GameFlag_Clear(0x822);
+  if (GameFlag_Get(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY))
+    GameFlag_Clear(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY);
   else
-    GameFlag_Set(0x822);
+    GameFlag_Set(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY);
 
   state = &gMainRoutineWork;
   *(s32 *)&state->unk284[8] = party->coins;
-  if (keepSettings == 0) {
+  if (byPassword == 0) {
     state->paletteGlow[0] = party->paletteGlow[0];
     state->paletteGlow[1] = party->paletteGlow[1];
     state->eventMode = party->eventMode;
@@ -956,12 +967,12 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
     memcpy(name, &units[i], 15);
     Iwram_CopyWordsEntry(unit, &units[i], sizeof(struct BattleUnit));
     memcpy(unit, name, 15);
-    if (keepSettings == 0)
+    if (byPassword == 0)
       unit->enemyId = unit->classId;
-    for (slot = 14; slot >= 0; slot--) {
+    for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--) {
       s32 item = unit->inventory[slot];
 
-      if (item != 0 && (Item_GetDirect(item)->flags & 0x20)) {
+      if (item != 0 && (Item_GetDirect(item)->flags & ITEM_NOT_TRANSFERRED)) {
         while (Inventory_Remove(i, slot) == 1)
           ;
       }
@@ -970,8 +981,8 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
   }
   Djinn_ActivateOfferedForParty();
   Party_RestoreHpPp(1);
-  GameFlag_Set((keepSettings & 1) + 44);
-  GameFlag_Set(47);
+  GameFlag_Set((byPassword & 1) + FLAG_TRANSFERRED_BY_LINK);
+  GameFlag_Set(FLAG_DATA_TRANSFERRED);
   gFrameWaitCount = gMainRoutineWork.playTime;
 }
 
@@ -1028,35 +1039,38 @@ void Party_AddIsaacsParty(void) {
   s32 count;
   s32 k;
 
-  for (i = 0, k = 0; i < 4; i++, k += 7) {
+  for (i = 0, k = 0; i < ELEMENT_COUNT;
+       i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {
     s32 j;
 
-    for (j = 0; j < 7; j++) {
-      if (GameFlag_Get(0x800 + k + j))
-        GameFlag_Set(0x30 + i * 20 + j);
+    for (j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
+      if (GameFlag_Get(FLAG_TRANSFERRED_DJINN_FIRST + k + j))
+        GameFlag_Set(FLAG_DJINNI(i * DJINN_PER_ELEMENT + j));
       /* FAKEMATCH(barrier): an empty asm reading j. */
       asm("" : : "r"(j));
     }
     /* FAKEMATCH(barrier): an empty asm on i. */
     asm("" : "+r"(i));
   }
-  PartyInventory_Remove(222);
-  Party_AddMember(0);
-  Party_AddMember(1);
-  Party_AddMember(2);
-  Party_AddMember(3);
+  PartyInventory_Remove(ITEM_MYTHRIL_BAG_MARS_STAR);
+  Party_AddMember(ISAAC);
+  Party_AddMember(GARET);
+  Party_AddMember(IVAN);
+  Party_AddMember(MIA);
   // Called with an argument it does not take.
   ((void (*)(s32))Party_BalanceDjinn)(0);
   Djinn_ActivateOfferedForParty();
-  for (i = 0; i < 8; i++)
+  for (i = 0; i <= PIERS; i++)
     Unit_Calculate(i);
   Party_RestoreHpPp(1);
-  GameFlag_Set(34);
+  GameFlag_Set(FLAG_REUNITED);
 
-  for (i = 0; i < 4; i++) {
+  // One of The Broken Seal's Djinn of each element the party lacks, picked at
+  // random, plus one; 0 when it has them all.
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     count = 0;
-    for (djinni = 0; djinni < 7; djinni++) {
-      if (!GameFlag_Get(0x30 + i * 20 + djinni))
+    for (djinni = 0; djinni < TRANSFERRED_DJINN_PER_ELEMENT; djinni++) {
+      if (!GameFlag_Get(FLAG_DJINNI(i * DJINN_PER_ELEMENT + djinni)))
         missing[count++] = djinni;
     }
     if (count != 0)
@@ -1065,15 +1079,16 @@ void Party_AddIsaacsParty(void) {
       djinni = 0;
     gData_02001000[0x1950 + i] = djinni;
   }
-  Party_GiveItemIfMissing(202, 3);
-  Party_GiveItemIfMissing(201, 3);
-  Party_GiveItemIfMissing(203, 1);
-  Party_GiveItemIfMissing(206, 0);
-  Party_GiveItemIfMissing(207, 2);
+  // The Psynergy items Isaac's party carried in The Broken Seal.
+  Party_GiveItemIfMissing(ITEM_FROST_JEWEL, MIA);
+  Party_GiveItemIfMissing(ITEM_DOUSE_DROP, MIA);
+  Party_GiveItemIfMissing(ITEM_LIFTING_GEM, GARET);
+  Party_GiveItemIfMissing(ITEM_CARRY_STONE, ISAAC);
+  Party_GiveItemIfMissing(ITEM_CATCH_BEADS, IVAN);
   gMainRoutineWork.coins += *(s32 *)&gMainRoutineWork.unk284[8];
 #if TLA_PATCH_4
-  if ((u32)gMainRoutineWork.coins > 999999)
-    gMainRoutineWork.coins = 999999;
+  if ((u32)gMainRoutineWork.coins > COINS_MAX)
+    gMainRoutineWork.coins = COINS_MAX;
 #endif
 }
 
@@ -1089,19 +1104,12 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
   GameFlag_Set(flag);
 }
 
-/* VIEW(game): variable Data_080b1290 as const s16 Data_080b1290[4][7];
- * game/experience_table has const u16 Data_080b1290[4][7] = {; tried as the
- * definition's extern const u16 Data_080b1290[4][7], it does not compile in
- * tla-ja: games/tla/src/game/game/units.c:1144: `Data_080b1290' undeclared
- * (first use in this function). */
-extern const s16 Data_080b1290__game[4][7] __asm__("Data_080b1290");
-#define Data_080b1290 Data_080b1290__game
-
-/// Unless flag 0x800 is set, sets the party aside, makes the first four owners
-/// the party, gives them their first djinn, then hands out 16 random djinn
-/// still unowned, keeping the elements' counts within one, each with the
-/// table's percentage chance; then moves the djinn flags to 0x800 (seven per
-/// element) and puts the party back.
+/// Stands in for transferred data when the player transfers none: unless the
+/// transferred Djinn are already set, sets the party aside, makes Isaac's
+/// party the party, gives it Flint and Fizz, then hands out 16 random Djinn of
+/// The Broken Seal's still unowned, keeping the elements' counts within one,
+/// each with its chance in gDataTransfer_DjinnChances; then moves the Djinn
+/// flags to the transferred ones and puts the party back.
 void DataTransfer_GiveDefaultDjinn(void) {
   s8 saved[8];
   s8 counts[4];
@@ -1112,7 +1120,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
   s32 i;
   s32 k;
 
-  if (GameFlag_Get(0x800))
+  if (GameFlag_Get(FLAG_TRANSFERRED_DJINN_FIRST))
     return;
 
   count = Party_CountMembers();
@@ -1120,10 +1128,11 @@ void DataTransfer_GiveDefaultDjinn(void) {
     saved[i] = gMainRoutineWork.activeOwners[i];
   for (i = 0; i < count; i++)
     Party_RemoveMember(saved[i]);
-  for (i = 0; i < 4; i++)
+  for (i = ISAAC; i <= MIA; i++)
     Party_AddMember(i);
-  Djinn_AddFoundToOwner(0, 0, 0);
-  Djinn_AddFoundToOwner(3, 1, 0);
+  // Isaac's Flint and Mia's Fizz, which The Broken Seal gives at its start.
+  Djinn_AddFoundToOwner(ISAAC, ELEMENT_VENUS, 0);
+  Djinn_AddFoundToOwner(MIA, ELEMENT_MERCURY, 0);
 
   counts[0] = 1;
   counts[1] = 1;
@@ -1131,9 +1140,9 @@ void DataTransfer_GiveDefaultDjinn(void) {
   counts[3] = 0;
   remaining = 16;
   do {
-    element = (Random16() * 4) >> 16;
-    djinn = (Random16() * 7) >> 16;
-    if (!GameFlag_Get(element * 20 + djinn + 0x30)) {
+    element = (Random16() * ELEMENT_COUNT) >> 16;
+    djinn = (Random16() * TRANSFERRED_DJINN_PER_ELEMENT) >> 16;
+    if (!GameFlag_Get(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinn))) {
       s8 low;
       s8 high;
 
@@ -1147,8 +1156,8 @@ void DataTransfer_GiveDefaultDjinn(void) {
           high = counts[i];
       }
       counts[element]--;
-      if (high - low <= 1 &&
-          ((Random16() * 100) >> 16) < Data_080b1290[element][djinn]) {
+      if (high - low <= 1 && ((Random16() * 100) >> 16) <
+                                 gDataTransfer_DjinnChances[element][djinn]) {
         Djinn_GiveToParty(element, djinn);
         counts[element]++;
         remaining--;
@@ -1157,21 +1166,22 @@ void DataTransfer_GiveDefaultDjinn(void) {
   } while (remaining != 0);
   Djinn_ActivateOfferedForParty();
 
-  for (i = 0, k = 0; i < 4; i++, k += 7) {
+  for (i = 0, k = 0; i < ELEMENT_COUNT;
+       i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {
     s32 j;
     s32 flag;
 
-    for (j = 0; j < 7; j++) {
+    for (j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
       /* FAKEMATCH(temporary): the flag number held in a local. */
-      flag = 0x800 + k + j;
+      flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
       // element carries the flag to read after the one to set.
-      element = 0x30 + i * 20 + j;
+      element = FLAG_DJINNI(i * DJINN_PER_ELEMENT + j);
       if (GameFlag_Get(element))
         GameFlag_Set(flag);
       GameFlag_Clear(element);
     }
   }
-  for (i = 0; i < 4; i++)
+  for (i = ISAAC; i <= MIA; i++)
     Party_RemoveMember(i);
   for (i = 0; i < count; i++)
     Party_AddMember(saved[i]);

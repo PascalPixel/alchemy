@@ -66,6 +66,40 @@ struct ClassAbility {
   u8 padding;  ///< padding
 };
 
+/// ClassDefinition.series, each named by its first class. The ten The Broken
+/// Seal has are the series a character's elements choose
+/// (gClass_SeriesByElements); 11 is in no row, 12 holds class 0, "NPC", an
+/// enemy's (CLASS_NONE), and the five after are The Lost Age's own, which
+/// Class_Determine gives for a character or an item.
+enum ClassSeries {
+  CLASS_SERIES_SQUIRE = 1,
+  CLASS_SERIES_GUARD,
+  CLASS_SERIES_SWORDSMAN,
+  CLASS_SERIES_BRUTE,
+  CLASS_SERIES_APPRENTICE,
+  CLASS_SERIES_WATER_SEER,
+  CLASS_SERIES_WIND_SEER,
+  CLASS_SERIES_SEER,
+  CLASS_SERIES_PILGRIM,
+  CLASS_SERIES_HERMIT,
+  CLASS_SERIES_FLAME_USER = 13, ///< Jenna's, where the others are Guards
+  CLASS_SERIES_MARINER,         ///< Piers's, where the others are Water Seers
+  CLASS_SERIES_PIERROT,         ///< with the Mysterious Card equipped
+  CLASS_SERIES_TAMER,           ///< with the Trainer's Whip equipped
+  CLASS_SERIES_DARK_MAGE        ///< with the Tomegathericon equipped
+};
+
+/// A full HP or PP gauge (BattleUnit.hpGauge, ppGauge): the gauge is the
+/// current value over the maximum in 2.14 fixed point.
+#define UNIT_GAUGE_SHIFT 14
+#define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
+
+/// BattleUnit.classIndex of an enemy, which has no class of its own.
+#define CLASS_NONE 0
+
+/// How many classes gClass_DefinitionTable holds.
+#define CLASS_COUNT 244
+
 /// A class: its series, the element levels it needs, its stat multipliers and
 /// the abilities it teaches.
 struct ClassDefinition {

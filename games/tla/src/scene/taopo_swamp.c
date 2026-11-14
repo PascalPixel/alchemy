@@ -147,8 +147,8 @@ static __inline__ void TaopoSwamp_JumpDownLedge(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }
 
-static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                      s32 g) {
+static __inline__ void TileCopies_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d,
+                                                    s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
@@ -157,7 +157,7 @@ static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
   return Import_ActorCreate(type, x, y, z);
 }
 
-static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
+static __inline__ void MadPlant_LeapAtLeader_(s32 a, s32 b, s32 c) {
   MadPlant_LeapAtLeader(a, b, c);
 }
 
@@ -333,14 +333,16 @@ void TaopoSwamp_ScoopOtherHiddenItem(s32 a) {
 }
 
 /// Scoop digs into the mud at one of the two spots of the lowest level.
-void TaopoSwamp_DigHole(void) { Func_02002990_(76, 70, 14, 8, 14, 37, 0); }
+void TaopoSwamp_DigHole(void) {
+  TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0);
+}
 
 /// As TaopoSwamp_DigHole, and the first time (until flag 0xf99) the buried item
 /// comes up, throwing the leader standing on it back a step.
 void TaopoSwamp_DigHoleUnderfoot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
-  Func_02002990_(76, 70, 14, 8, 14, 37, 0);
+  TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0);
   if (Event_GetFlag(0xf99) == 0) {
     Actor_SetPosition(64, 264, 664);
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
@@ -364,9 +366,9 @@ struct MainRoutineWork254 {
 /// Until flag 0x9b6 is set, the bush hides the Mad Plant, which the party
 /// fights from encounter table 106.
 void TaopoSwamp_StartMadPlantBattle(void) {
-  Func_02002990_(76, 70, 14, 8, 14, 37, 0);
+  TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0);
   if (!Event_GetFlag(0x9b6)) {
-    Func_020029a8_(249, 344, 648);
+    MadPlant_LeapAtLeader_(249, 344, 648);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b6;
     gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     Field_RequestBattleFromEncounterTable(106, 1);

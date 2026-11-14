@@ -1,17 +1,17 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global Data_02007064
-Data_02007064:
+	.global gWhirlwind_Active
+gWhirlwind_Active:
 	.space 0x00000004
-	.global gData_02007068
-gData_02007068:
+	.global gPaletteCycleColors
+gPaletteCycleColors:
 	.space 0x00000020
-	.global gData_02007088
-gData_02007088:
+	.global gPaletteCycleUnlitPalette
+gPaletteCycleUnlitPalette:
 	.space 0x00000004
-	.global gData_0200708c
-gData_0200708c:
+	.global gPaletteCycleUnlitColors
+gPaletteCycleUnlitColors:
 	.space 0x0000001c
 	.global gCrackedTiles
 gCrackedTiles:
@@ -19,20 +19,20 @@ gCrackedTiles:
 	.global gSlideOnIce_Stopped
 gSlideOnIce_Stopped:
 	.space 0x00000004
-	.global gData_020074cc
-gData_020074cc:
+	.global gLightSpriteTile
+gLightSpriteTile:
 	.space 0x00000002
-	.global gData_020074ce
-gData_020074ce:
+	.global gLightSpriteCount
+gLightSpriteCount:
 	.space 0x00000002
-	.global gData_020074d0
-gData_020074d0:
+	.global gLightSpriteActors
+gLightSpriteActors:
 	.space 0x00000040
-	.global Data_0200f510
-Data_0200f510:
+	.global gLightSpriteOams
+gLightSpriteOams:
 	.space 0x000000c0
-	.global gData_020075d0
-gData_020075d0:
+	.global gLightSpritesLarge
+gLightSpritesLarge:
 	.space 0x00000002
-	.global gData_020075d2
-gData_020075d2:
+	.global gLightSpritePriority
+gLightSpritePriority:

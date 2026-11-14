@@ -1,62 +1,33 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02003dbc
-gData_02003dbc:
+	.global gStaffCredit_BlendLevel
+gStaffCredit_BlendLevel:
 	.space 0x00000002
-	.global gData_02003dbe
-gData_02003dbe:
+	.global gStaffCredit_BlendSteady
+gStaffCredit_BlendSteady:
 	.space 0x00000002
 	.global gWorldMap_PlacedActors
 gWorldMap_PlacedActors:
 	.space 0x00000200
-	.global gData_02003fc0
-gData_02003fc0:
+	.global gStaffCredit_PictureBlend
+gStaffCredit_PictureBlend:
 	.space 0x00000004
-	.global gData_02003fc4
-gData_02003fc4:
+	.global gGauge_Shown
+gGauge_Shown:
 	.space 0x00000002
-	.global gData_02003fc6
-gData_02003fc6:
+	.global gGauge_Vram
+gGauge_Vram:
 	.space 0x00000002
-	.global gData_02003fc8
-gData_02003fc8:
+	.global gGauge_Countdown
+gGauge_Countdown:
 	.space 0x00000004
-	.global Data_02003fcc
-Data_02003fcc:
+	.global gGauge_Sprite
+gGauge_Sprite:
 	.space 0x0000000c
-	.global gData_02003fd8
-gData_02003fd8:
-	.space 0x00000004
-	.global Data_02003fdc
-Data_02003fdc:
-	.space 0x0000001c
-	.global Data_02003ff8
-Data_02003ff8:
-	.space 0x00000020
-	.global gData_02004018
-gData_02004018:
-	.space 0x00000020
-	.global Data_02004038
-Data_02004038:
-	.space 0x000000a0
-	.global gData_020040d8
-gData_020040d8:
-	.space 0x00000004
-	.global gData_020040dc
-gData_020040dc:
-	.space 0x0000001c
-	.global Data_020040f8
-Data_020040f8:
-	.space 0x00000020
-	.global Data_02004118
-Data_02004118:
-	.space 0x00000020
-	.global Data_02004138
-Data_02004138:
-	.space 0x00000020
-	.global Data_02004158
-Data_02004158:
-	.space 0x00000080
-	.global Data_020041d8
-Data_020041d8:
+	.global gGauge_Tiles
+gGauge_Tiles:
+	.space 0x00000100
+	.global gGauge_SourceTiles
+gGauge_SourceTiles:
+	.space 0x00000100

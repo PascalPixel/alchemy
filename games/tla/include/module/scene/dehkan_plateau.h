@@ -21,7 +21,7 @@ struct ShapeBits {
 
 void DehkanPlateau_CannonLeapsAway(void);
 
-void Pillars_Pound(const void *data, s32 mode, s32 timer);
+void Pillars_Pound(u16 *list, s32 mode, s32 count);
 
 void DehkanPlateau_SetActorsHidden(s32 show);
 
@@ -122,7 +122,7 @@ void DehkanPlateau_InitializeRoom4(void);
 void DehkanPlateau_InitializeRoom5(void);
 void DehkanPlateau_InitializeRoom6(void);
 
-void CrumblingPillars_Place(const void *data);
+void CrumblingPillars_Place(u16 *list);
 
 void Func_020012d8(void);
 void DehkanPlateau_HideRoom2Actors(void);

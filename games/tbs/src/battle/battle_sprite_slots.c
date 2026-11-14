@@ -99,10 +99,6 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
         return 0;
     }
 
-    /* FAKEMATCH(dead): two updates that cancel, raising sprite's priority in
-     * allocation. */
-    sprite ^= 1;
-    sprite ^= 1;
     if (spritePart == 0)
       result = (slot << 12) | sprite;
 

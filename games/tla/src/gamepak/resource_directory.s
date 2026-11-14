@@ -318,7 +318,7 @@ Resource_DirectoryTable:
 	resource ExplosionSheet, BattleEffect_ExplosionSheet
 	resource MagentaSwirlSheet, BattleEffect_MagentaSwirlSheet
 	resource MagentaTailSheet, BattleEffect_MagentaTailSheet
-	resource Data134, Resource_Data134
+	resource ParticleSpritesA, BattleEffect_ParticleSpritesA
 	resource Data135, Resource_Data135
 	resource ParticleSpritesC, BattleEffect_ParticleSpritesC
 	resource ParticleSpritesD, BattleEffect_ParticleSpritesD

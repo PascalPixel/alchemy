@@ -11,34 +11,20 @@
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 // The shards live in the map cell buffer, 21 for each boulder.
-#define SHARDS ((struct EffectStep *)Ram_MapCellBuffer)
+#define SHARDS ((struct Particle *)Ram_MapCellBuffer)
 #define SHARDS_PER_ROCK 21
 // A boulder shatters this many frames after it starts to fall.
 #define FALL_FRAMES 18
 
-extern char ResourceId_BoulderSheet;
-// ☀️'s gSpire_RockCounts, by variant.
-extern u8 gSpire_RockCounts[];
-// ☀️'s gSpire_ShardOffsets: x, y in the boulder for each shard.
-extern u8 gSpire_ShardOffsets[];
-// ☀️'s gSpire_RockX and gSpire_DropFrames, by boulder.
-extern s8 gSpire_RockX[];
-extern u8 gSpire_DropFrames[];
-// The shard cels: ☀️'s gSpire_ShardCells, _ShardWidths and
-// _ShardHeights.
-extern u16 gSpire_ShardCells[];
-extern u8 gSpire_ShardWidths[];
-extern u8 gData_081974ad[];
-
-void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
   s32 rocks;
-  struct EffectPosition first;
-  struct EffectPosition final;
-  struct EffectStep *rock;
-  struct EffectStep *shard;
+  struct ScreenPoint first;
+  struct ScreenPoint final;
+  struct Particle *rock;
+  struct Particle *shard;
   s32 frame;
   s32 i;
   s32 j;
@@ -50,27 +36,24 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER,
-      BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // The canvas is centred between the first and the last target.
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &first);
-  EffectPosition_ProjectScaledBattler(effect->actors[effect->count - 1],
+  EffectPosition_ProjectScaledBattler(args->targets[0], &first);
+  EffectPosition_ProjectScaledBattler(args->targets[args->targetCount - 1],
                                       &final);
   first.x += (final.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // Each boulder waits 64 pixels above the canvas; each shard sits at its
   // place in its boulder, ready to fly up at random.
-  rocks = gSpire_RockCounts[effect->variant];
+  rocks = gSpire_RockCounts[args->variant];
   for (i = 0; i != rocks; i++) {
     rock = &work->particles[i];
     rock->y = -px(64);
@@ -78,9 +61,9 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   }
   for (i = 0; i != rocks; i++) {
     for (j = 0; j != SHARDS_PER_ROCK; j++) {
-      struct EffectStep *seed = &SHARDS[i * SHARDS_PER_ROCK + j];
+      struct Particle *seed = &SHARDS[i * SHARDS_PER_ROCK + j];
 
-      seed->x = (gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]) << 16;
+      seed->x = px(gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]);
       seed->y = gSpire_ShardOffsets[j * 2 + 1] << 16;
       seed->velocityX = ((Random16() % 96) - 48) << 10;
       seed->velocityY = -((Random16() & 127) + 32) << 11;
@@ -92,13 +75,13 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != gSpire_DropFrames[rocks - 1] + 65; frame++) {
     // 48 frames after the last drop the battle resumes, hit cue 133.
     if (frame == gSpire_DropFrames[rocks - 1] + 48)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     for (i = 0; i != rocks; i++) {
       rock = &work->particles[i];
       // The crash: the first one resumes the battle, the others sound.
       if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {
         if (i == 0)
-          BattlePlayback_StartFar(134);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         else
           Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 4;
@@ -109,11 +92,13 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
         for (j = 0; j != SHARDS_PER_ROCK; j++) {
           shard = &SHARDS[i * SHARDS_PER_ROCK + j];
           cel = (j % 5) * 3 + shard->variant / 96 % 3;
-          blit(canvas, work->sheet + gSpire_ShardCells[cel] + 0x83c,
-               HI(shard->x) - ((width = gSpire_ShardWidths[cel]) >> 1),
-               HI(shard->y) - ((height = gData_081974ad[cel]) >> 1), width,
-               height);
-          BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
+          blit(canvas, work->sheet + gSpire_ShardPictures[cel] + 0x83c,
+               Q_16_16_UPPER_HALF(shard->x) -
+                   ((width = gSpire_ShardWidths[cel]) >> 1),
+               Q_16_16_UPPER_HALF(shard->y) -
+                   ((height = gSpire_ShardHeights[cel]) >> 1),
+               width, height);
+          BattleEffectKernels_IntegrateVector2(shard, 64, px(1) / 4);
           shard->variant += shard->z;
           if (shard->z > 1 && (frame & 1))
             shard->z--;
@@ -123,36 +108,34 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
       // and rests at y 50.
       if (frame < gSpire_DropFrames[i] + FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
-          blit(canvas, work->sheet, gSpire_RockX[i] + 47, HI(rock->y), 34, 62);
+          blit(canvas, work->sheet, gSpire_RockX[i] + 47,
+               Q_16_16_UPPER_HALF(rock->y), 34, 62);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
           rock->velocityY += px(1);
-        if (rock->y > 0x320000)
+        if (rock->y > px(50))
           rock->y = px(50);
       }
       // Every target flashes for eight frames at each crash.
       if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {
-        for (j = 0; j != effect->count; j++)
-          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 8);
+        for (j = 0; j != args->targetCount; j++)
+          BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, j, 8);
       }
     }
     BattleCamera_Shake(2, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 // Effects: burst effect entry points.
 
 /// Each entry passes a burst type to BattleEffect_RunBurstScene.
 /// step: effect arguments.
-void BattleEffect_RunGust(struct EffectStep *step) {
+void BattleEffect_RunGust(struct Particle *step) {
   if (step->variant == 0) {
     BattleEffect_RunBurstScene(step, 6);
     return;
@@ -164,6 +147,6 @@ void BattleEffect_RunGust(struct EffectStep *step) {
   BattleEffect_RunBurstScene(step, 8);
 }
 
-void BattleEffect_RunBearClaw(struct EffectStep *step) {
+void BattleEffect_RunBearClaw(struct Particle *step) {
   BattleEffect_RunBurstScene(step, 0);
 }

@@ -146,11 +146,11 @@ void PsynergyTest2_UpdateRocks(void) {
 
   i = 63;
   do {
-    if ((u32)particle->age <= 19) {
-      sprite->oam.index = work->tileBase + ((particle->age >> 2) & 7) * 8;
+    if ((u32)particle->variant <= 19) {
+      sprite->oam.index = work->tileBase + ((particle->variant >> 2) & 7) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, particle);
       BattleEffect_StepVector3(particle, 63, step);
-      particle->age++;
+      particle->variant++;
     }
     i--;
     sprite++;
@@ -213,7 +213,7 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
   loop:
     angle = Random16();
     rock = &work->rocks[work->next];
-    rock->age = 0;
+    rock->variant = 0;
     rock->x = x;
     rock->y = y;
     rock->z = z;
@@ -254,7 +254,7 @@ void PsynergyTest2_StartRocks(void) {
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;
-    rock->age = -1;
+    rock->variant = -1;
   }
   {
     s32 zero = 0;

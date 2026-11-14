@@ -9,7 +9,7 @@
 #include "system/vector3.h"
 
 struct BattleActionRecord;
-struct BattleEffectArgument;
+struct BattleEffectParams;
 struct BattlePlan;
 struct BattleUnit;
 struct Actor;
@@ -38,13 +38,12 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object);
 s32 Scene_GetArea(s32 sceneId);
 #endif
 void FieldPsynergy_FadeFromCastColor(void);
-void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);
+void BattleEffect_RunTargetMotes(struct BattleEffectParams *effect, u32 mode);
 void BattleEffect_DoNothing(void);
 void FieldPsynergy_Frost(void);
-void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
+void BattleEffect_RunProjectileVolley(struct BattleEffectParams *effect,
                                       s32 mode);
-void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
-                                  u32 mode);
+void BattleEffect_RunHealingMotes(struct BattleEffectParams *effect, u32 mode);
 void *FieldEffect_SpawnMoveHand(void *object);
 s32 BattleMotion_GetSlotPalette(s32 id);
 void BattleMotion_HopBack(s32 objectId);
@@ -128,9 +127,9 @@ s32 BattleEffect_HasMatchingEvent5(s32 effectId);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *);
-void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
+void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *effect,
                                        u32 mode);
-void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
+void BattleEffect_RunSparkGroups(struct BattleEffectParams *effect, s32 kind);
 void FieldEffect_SnapScaleToFull(struct Actor *object);
 void PaletteFade_StartInterpolation(s32 frames);
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item);
@@ -158,7 +157,7 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector);
 void FieldPsynergy_Cyclone(void);
 void BattleObject_SpawnObjectsForList(s16 *list, s32 refresh, s32 spawn);
-void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect, u32 mode);
+void BattleEffect_RunCanvasBurst(struct BattleEffectParams *effect, u32 mode);
 void GameFlag_ClearFar(s32 flag);
 void GameFlag_SetFar(s32 flag);
 s32 SpriteDissolve_RunFar(void *object);
@@ -171,8 +170,7 @@ void Unit_CalculateFar(s32);
 s32 Party_CountMembersFar(void);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
-void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
-                                  s32 mode);
+void BattleEffect_RunStatReduction(struct BattleEffectParams *effect, s32 mode);
 struct DjinnRecoveryTable *Djinn_GetRecoveryTableFar(s32 owner);
 s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
 void MessageArgument_PushFar(s32, s32);

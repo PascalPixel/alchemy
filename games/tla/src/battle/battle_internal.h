@@ -80,7 +80,7 @@
 #include "system/irq.h"
 #include "system/ram_code.h"
 #include "system/transform.h"
-#include "field/effect_step.h"
+#include "field/particle.h"
 #include "battle_formation.h"
 
 // Far calls the parts make, each passing its own view of the record:

@@ -539,9 +539,9 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       work.side ^= 1;
     Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
     if (plan->battleEffect & 0x8000)
-      BattleEffect_RunSceneEffectFar((s32 *)&work);
+      BattleEffect_RunSummonFar((s32 *)&work);
     else if (plan->battleEffect & 0x4000)
-      BattleEffect_DispatchByIdRangeFar(&work);
+      BattleEffect_RunByIdRangeFar(&work);
     else
       BattleEffect_RunFromTableFar(&work);
     BattlePlayback_WaitForReady();

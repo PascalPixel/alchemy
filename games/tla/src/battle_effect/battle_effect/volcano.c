@@ -16,13 +16,13 @@
 // another; each burns for the rest of the first 64 frames, scrolling its
 // flames upward, throws a burst of sparks when it starts and a few more
 // every frame after its sixteenth, and strikes every target as it starts.
-void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   s32 pillar;
   u8 *sheet;
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   DrawRectangle draw[2];
   struct MotionObject *object;
   struct BattleCamera *camera;
@@ -37,14 +37,14 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  if (effect->variant == 0) {
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  if (args->variant == 0) {
     const void *palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, palette, 128);
-  } else if (effect->variant == 2) {
+  } else if (args->variant == 2) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
@@ -52,12 +52,10 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
     copy((void *)BG_PLTT, palette, 128);
   }
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
-                                             COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                           BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
-                               COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   for (i = 0; i != SPARK_MAX; i++)
@@ -65,37 +63,35 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
   // The pillars stand in front of the first target, on its side of the
   // field, at the variant's depths.
-  object = BattleObject_GetFar(effect->actors[0])->object;
+  object = BattleObject_GetFar(args->targets[0])->object;
   for (i = 0; i != 4; i++) {
-    struct EffectStep *base = &work->particles[i];
+    struct Particle *base = &work->particles[i];
     s32 x;
 
     x = ((Random16() & 15) + 72) << 16;
-    SET_POSITION(base, x, 0, gVolcano_Depths[effect->variant][i] << 16);
+    SET_POSITION(base, x, 0, gVolcano_Depths[args->variant][i] << 16);
     if (object->x < 0)
       base->x = -x;
   }
 
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != PILLAR_FRAMES; frame++) {
     // The strongest variant turns the camera for 64 frames.
     camera = Ram_HeapSlots->cameraWork;
-    if (effect->variant == 2 && frame < 64) {
-      if (effect->side == 0)
+    if (args->variant == 2 && frame < 64) {
+      if (args->side == 0)
         camera->yaw = camera->yaw + 192;
       else
         camera->yaw = (s16)camera->yaw - 192;
     }
     if (frame == 16)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
 
     if (frame < 64) {
-      for (pillar = 0; pillar != gVolcano_Counts[effect->variant]; pillar++) {
+      for (pillar = 0; pillar != gVolcano_Counts[args->variant]; pillar++) {
         EffectPosition_ProjectPoint((s32 *)&work->particles[pillar], &screen);
         screen.x /= 2;
         screen.y -= 8;
@@ -131,7 +127,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
           s32 spawned = 0;
 
           for (i = 0; i != SPARK_MAX; i++) {
-            struct EffectStep *spark = &PARTICLES[i];
+            struct Particle *spark = &PARTICLES[i];
 
             if (spark->variant == 0) {
               s32 speed;
@@ -159,9 +155,10 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
         // The pillar strikes every target as it starts.
         if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
-          for (i = 0; i != effect->count; i++) {
-            BattleEffect_TintBattler(effect->actors[i], 10, 5, i, 8);
-            BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
+          for (i = 0; i != args->targetCount; i++) {
+            BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
+                                     POSE_DAMAGE, i, 8);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], 1);
           }
         }
       }
@@ -170,7 +167,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     // The sparks: 8.8 fixed point, z holding the x speed; they slow, fall,
     // bounce at half speed below line 120, and shrink as they burn out.
     for (i = 0; i != SPARK_MAX; i++) {
-      struct EffectStep *spark = &PARTICLES[i];
+      struct Particle *spark = &PARTICLES[i];
       s32 life = spark->variant;
 
       if (life > 0) {
@@ -192,21 +189,18 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
           if (size <= 0)
             size = 1;
-          draw[i & 1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw[i & 1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                       px - size / 2, py - size, size, size * 2);
         }
       }
     }
 
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

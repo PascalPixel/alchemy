@@ -44,7 +44,7 @@ void BattleEffect_RunLimeStreaks(void *object) {
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define RECORD(mode, field) gStreaks_Records[(mode) * 4 + (field)]
+#define RECORD(mode, field) gStreaks_Styles[(mode) * 4 + (field)]
 #define RECORD_ANIMATE 0 // cycle the streak through its three pictures
 #define RECORD_HIT 1     // sound the hit and flash the target
 #define RECORD_MOTION 2  // the target's recoil motion, or -1
@@ -63,9 +63,8 @@ void BattleEffect_RunLimeStreaks(void *object) {
 // the colour, whether the streak animates, the hit's sound and flash, a
 // recoil, and a tremble of the target.
 
-void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
-                                  s32 mode) {
-  struct EffectPosition position;
+void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
+  struct ScreenPoint position;
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
   void *canvas;
@@ -92,18 +91,18 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
 
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.
-  if (effect->side == 0) {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
+  if (args->side == 0) {
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
     drawUpper = heap->unk64[1];
-    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     drawLower = heap->unkb8[1];
   } else {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                        BLITTER_MAX);
     drawUpper = heap->unk64[1];
-    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     drawLower = heap->unkb8[1];
   }
 
@@ -128,20 +127,21 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  work->transferMode = 2;   // each transfer halves the old picture,
+  work->transferMode =
+      CANVAS_COPY_AND_FADE; // each transfer halves the old picture,
   work->transferValue = 50; // leaving a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
-  source = BattleObject_GetFar(effect->actor)->object;
+  source = BattleObject_GetFar(args->user)->object;
   {
-    s32 total = streaks * effect->count * 6 + 48;
+    s32 total = streaks * args->targetCount * 6 + 48;
 
     // Each streak flies from 20 pixels above the user to 20 pixels above
     // its target in 24 frames.
-    for (k = 0; k != effect->count; k++) {
-      target = BattleObject_GetFar(effect->actors[k])->object;
+    for (k = 0; k != args->targetCount; k++) {
+      target = BattleObject_GetFar(args->targets[k])->object;
       for (j = 0; j != streaks; j++) {
-        struct EffectStep *streak = &work->particles[k * streaks + j];
+        struct Particle *streak = &work->particles[k * streaks + j];
 
         SET_POSITION(streak, source->x, source->y + lift, source->z);
         streak->velocityX = (target->x - streak->x) / 24;
@@ -163,7 +163,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
 
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
-      for (k = 0; k != effect->count; k++) {
+      for (k = 0; k != args->targetCount; k++) {
         // Each target's streaks set out with the mode's cry.
         if (frame == k * 32) {
           if (mode == 1)
@@ -181,7 +181,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
             // differs.
             lift = k * 32 + j * 6;
             if (frame >= lift) {
-              struct EffectStep *streak = &work->particles[k * streaks + j];
+              struct Particle *streak = &work->particles[k * streaks + j];
               s32 step;
 
               // The picture changes every 8 frames, stopping at the sixth.
@@ -213,14 +213,15 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
           if (RECORD(mode, RECORD_SHAKE) && frame >= k * 32 + 30 &&
               frame < k * 32 + 62) {
             struct MotionObject *struck =
-                BattleObject_GetFar(effect->actors[k])->object;
+                BattleObject_GetFar(args->targets[k])->object;
 
             struck->x += gStreaks_Tremble[(frame - k * 32 - 30) % 8] << 16;
             if (struck->x > 0)
               struck->x += px(1) / 2;
             else
               struck->x -= px(1) / 2;
-            BattleEffect_TintBattler(effect->actors[k], -1, 5, -1, 0);
+            BattleEffect_TintBattler(args->targets[k], TINT_KEEP, POSE_DAMAGE,
+                                     TINT_KEEP, 0);
           }
 
           // The hit: a sound and two flashes, 16 frames apart. The first
@@ -229,30 +230,27 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
             if (frame == k * 32 + 24) {
               Sound_PlayFar(SE_IMPACT);
               if (k == 0)
-                BattlePlayback_StartFar(-1);
-              BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 8);
+                EFFECT_SHOW_DAMAGE(-1);
+              BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, k, 8);
             }
             if (frame == k * 32 + 40)
-              BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 8);
+              BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, k, 8);
           }
           if (RECORD(mode, RECORD_MOTION) != -1 && frame == k * 32 + 24) {
             work->shakeFrames = 4;
-            BattleMotion_ApplyKnockbackFar(effect->actors[k],
+            BattleMotion_ApplyKnockbackFar(args->targets[k],
                                            RECORD(mode, RECORD_MOTION));
           }
         }
       }
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(SLOT_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Abilities: Sleep Star (kind 349).
@@ -271,7 +269,7 @@ void BattleEffect_RunSlaver(void *object) {
 }
 
 // The motes live in the map cell buffer.
-#define EFFECT_STEPS ((struct EffectStep *)Ram_MapCellBuffer)
+#define EFFECT_STEPS ((struct Particle *)Ram_MapCellBuffer)
 
 // Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
 // Slaver (mode 2, kind 395).
@@ -287,10 +285,9 @@ void BattleEffect_RunSlaver(void *object) {
 // on the ground for 96 frames, and then Impair's canvas effect runs on the
 // targets.
 
-void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 point[3];
-  struct EffectPosition position;
+  struct ScreenPoint position;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -298,7 +295,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   u8 *sheet;
   s32 frames;
   struct MotionObject *source;
-  struct EffectStep *mote;
+  struct Particle *mote;
   s32 resource;
   s32 frame;
   s32 i;
@@ -315,12 +312,12 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
 
   // Motes draw at their maximum; the second blitter, mirrored top to
   // bottom, is loaded but not used.
-  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                           BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == MODE_SOOTHING_STAR)
     resource = (s32)&ResourceId_OrangePaletteA;
   else if (mode == MODE_SLEEP_STAR)
@@ -328,21 +325,19 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   else
     resource = (s32)&ResourceId_GreenPalette;
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Launch every mote from the user in 16.16 fixed point, with a speed and
   // a direction of its own. Slaver throws them up, faster, in a half-circle
   // fan turned by the user's side, from up to 16 pixels higher.
-  source = BattleObject_GetFar(effect->actor)->object;
+  source = BattleObject_GetFar(args->user)->object;
   for (i = 0; i != 256; i++) {
     s32 speed;
     s32 angle;
 
     mote = &EFFECT_STEPS[i];
     if (mode == MODE_SLAVER) {
-      if (effect->side == 0)
+      if (args->side == 0)
         angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
       else
         angle = Random16() & 0x7fff;
@@ -396,17 +391,17 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
         if (position.depth > 634)
           position.depth = 634;
         size = 6 - (position.depth - 314) / 64;
-        draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 position.x - size / 2, position.y - size, size, size * 2);
 
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.
         if (mode == MODE_SLAVER) {
-          BattleEffectKernels_IntegrateVector3(mote, 62, -0x2000);
+          BattleEffectKernels_IntegrateVector3(mote, 62, -px(1) / 8);
           if (mote->y <= 0x4ffff)
             mote->velocityY = -mote->velocityY;
         } else {
-          BattleEffectKernels_IntegrateVector3(mote, 62, 0x400);
+          BattleEffectKernels_IntegrateVector3(mote, 62, px(1) / 64);
         }
         if (mode == MODE_SLEEP_STAR) {
           if (source->x < 0)
@@ -420,35 +415,34 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
 
     // From frame 48, flash the targets one after another, 8 frames apart.
     if (mode == MODE_SLEEP_STAR) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 8 + 48) {
-          BattlePlayback_StartFar(-1);
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
+          EFFECT_SHOW_DAMAGE(-1);
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 8);
         }
       }
     } else if (mode == MODE_SOOTHING_STAR) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 8 + 48) {
           Sound_PlayFar(SE_RECOVERY);
-          BattlePlayback_StartFar(-1);
-          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
+          EFFECT_SHOW_DAMAGE(-1);
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, i, 8);
         }
       }
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(SLOT_BLITTER);
+  EFFECT_RELEASE_BLITTERS();
   if (mode == MODE_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
-    SummonEffect_RunCanvasMode1(effect);
+    BattleEffect_RunImpair(args);
   } else {
     BattleEffect_EndCanvasLayer();
   }

@@ -11,23 +11,17 @@
 #define PREPARE(kind, side, anchor) ((kind) | (side) << 4 | (anchor) << 5)
 
 // The ice chips live in the map cell buffer.
-#define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
+#define CHIPS ((struct Particle *)Ram_MapCellBuffer)
 #define CHIP_COUNT 64
 
-// The ice chip's four cels: ☀️'s gProjectileVolley_PelletOffsets,
-// gHail_CellWidths and gHail_CellHeights.
-extern u16 gHail_Pictures[];
-extern u8 gHail_CellWidths[];
-extern u8 gHail_CellHeights[];
-
-void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHail(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 screen[3];
   s32 otherPoint[3];
   s32 spawn[3];
   DrawRectangle blit[2];
-  struct EffectStep *chip;
+  struct Particle *chip;
   s32 i;
   s32 frame;
   s32 rise;
@@ -36,26 +30,24 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(effect, PREPARE(1, effect->side, 2), screen,
+  BattleEffect_RunDjinniEntrance(args, PREPARE(1, args->side, 2), screen,
                                  otherPoint);
-  BattleEffect_FetchRectangleBlitters(effect->side, blit);
+  BattleEffect_FetchRectangleBlitters(args->side, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The chips start in a 16-pixel spread at the first target and fly up
   // at random, each to live 32 to 47 frames.
-  EffectPosition_ProjectBattler(effect->actors[0], spawn);
+  EffectPosition_ProjectBattler(args->targets[0], spawn);
   for (i = 0; i != CHIP_COUNT; i++) {
     s32 angle;
     s32 speed;
 
     angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
     speed = (Random16() & 0x1ff) + 0x80;
-    CHIPS[i].x = ((spawn[0] / 2 + (Random16() & 0xf)) - 8) << 16;
-    CHIPS[i].y = (spawn[1] + 8) << 16;
+    CHIPS[i].x = px((spawn[0] / 2 + (Random16() & 0xf)) - 8);
+    CHIPS[i].y = px(spawn[1] + 8);
     CHIPS[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
     CHIPS[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
     CHIPS[i].z = Random16() & 0x7f;
@@ -75,7 +67,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     }
 
     // With its Djinn prelude, the Djinn hovers over the anchor.
-    if (effect->prelude == 1) {
+    if (args->prelude == 1) {
       s32 orbit;
       s32 x;
       s32 y;
@@ -83,7 +75,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
       orbit = frame << 11;
       x = ((-Trig_Sin(orbit) << 2) >> 16) + screen[0] / 2 - 10;
       y = ((Trig_Cos(orbit) << 1) >> 16) + screen[1] - 22;
-      // Never true in 64 frames; ☀️ has the same test.
+      // Never true in 64 frames.
       if (frame > 69)
         y = (y - frame * 2) + 138;
       blit[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
@@ -100,10 +92,12 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 
         cel = (chip->z / 128) & 3;
         blit[i & 1](canvas, work->sheet + 0x400 + gHail_Pictures[cel],
-                    HI(chip->x) - (width = gHail_CellWidths[cel]) / 2,
-                    HI(chip->y) - (height = gHail_CellHeights[cel]) / 2, width,
-                    height);
-        BattleEffectKernels_IntegrateVector3(chip, 63, 0x1000);
+                    Q_16_16_UPPER_HALF(chip->x) -
+                        (width = gHail_PictureWidths[cel]) / 2,
+                    Q_16_16_UPPER_HALF(chip->y) -
+                        (height = gHail_PictureHeights[cel]) / 2,
+                    width, height);
+        BattleEffectKernels_IntegrateVector3(chip, 63, px(1) / 16);
       }
     }
 
@@ -111,9 +105,10 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     // flashes for sixteen frames and recoils.
     if (frame == 8) {
       work->shakeFrames = frame;
-      BattlePlayback_StartFar(0x86);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 3);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 16);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], 3);
     }
 
     // The water rises 4 pixels a frame to 32 and drifts away from the
@@ -121,7 +116,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     rise = frame * 4;
     if (rise > 32)
       rise = 32;
-    if (effect->side == 0) {
+    if (args->side == 0) {
       for (i = 0; i != 5; i++)
         blit[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
                 32, 32);
@@ -132,16 +127,11 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(4, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // BattleEffect_RunGround, effect kind 203: the Venus Djinn's rock toss.
@@ -170,21 +160,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 // The chips' shapes and flips live in particles[32..63].
 #define FIRST_CHIP 32
 
-extern char ResourceId_PortalSheet;
-
-// The chips: ☀️'s gHail_ChipFlips (a blitter's flags), and, by shape,
-// gHail_ChipCells, _ChipX, _ChipY, _ChipWidths and _ChipHeights.
-extern const u8 gHail_ChipFlips[];
-extern const u16 gHail_ChipCells[];
-extern const u8 gHail_ChipX[];
-extern const u8 gHail_ChipY[];
-extern const u8 gHail_ChipWidths[];
-extern const u8 gHail_ChipHeights[];
-
-// Steps the background colours one shade toward a resource's palette.
-void BattleEffect_StepPaletteToResource(s32 resource);
-
-void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGround(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -194,7 +170,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   struct MotionObject *actor;
   s32 screen[3];
   s32 otherPoint[3];
-  struct EffectPosition position;
+  struct ScreenPoint position;
   s32 j;
 
   // Setup: the canvas, a max blitter for the side, the two sheets.
@@ -202,33 +178,28 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(effect, PREPARE(0, effect->side, 2), screen,
+  BattleEffect_RunDjinniEntrance(args, PREPARE(0, args->side, 2), screen,
                                  otherPoint);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (effect->side == 1)
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP_X));
+  if (args->side == 1)
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 1);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The rocks start at the caster, 66 high, flung out to the side away
   // from the caster with a random lift and drift.
-  actor = BattleObject_GetFar(effect->actor)->object;
+  actor = BattleObject_GetFar(args->user)->object;
   {
-    struct MotionObject *target =
-        BattleObject_GetFar(effect->actors[0])->object;
+    struct MotionObject *target = BattleObject_GetFar(args->targets[0])->object;
 
     for (i = 0; i != 8; i++) {
-      struct EffectStep *rock = &work->particles[i];
+      struct Particle *rock = &work->particles[i];
 
       SET_POSITION(rock, actor->x, px(66), actor->z);
       rock->velocityX = (i * 0x500000) >> 5;
@@ -246,43 +217,41 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
 
       // With its Djinn prelude, the Djinn hovers over the anchor and rises
       // off from frame 17; the first four frames add a bright copy.
-      if (effect->prelude == 1) {
+      if (args->prelude == 1) {
         s32 angle = frame << 11;
         s32 x = ((-Trig_Sin(angle) << 2) >> 16) + screen[0] / 2 - 10;
         s32 y = ((Trig_Cos(angle) << 1) >> 16) + screen[1] - 22;
 
         if (frame > 16)
           y = y - frame * 2 + 32;
-        if (effect->side == 1)
-          BattleEffect_LoadBlitter(
-              HEAP_BLITTER_ALTERNATE,
-              BLITTER(BLIT_ADDITIVE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
+        if (args->side == 1)
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                              EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                              BLITTER_ADDITIVE);
         else
-          BattleEffect_LoadBlitter(
-              HEAP_BLITTER_ALTERNATE,
-              BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                              BLITTER_ADDITIVE);
         if (frame <= 3)
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet + 0x65c0,
                                                    x, y, 20, 40);
-        HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
       }
 
       // Every other frame each chip takes a new shape (3 to 8) and flip.
       if ((frame & 1) == 0) {
         for (i = 0; i != 32; i++) {
-          struct EffectStep *chip = &work->particles[FIRST_CHIP + i];
+          struct Particle *chip = &work->particles[FIRST_CHIP + i];
 
           chip->velocityX = Random16() % 6 + 3;
-          chip->velocityY = gHail_ChipFlips[Random16() & 3];
+          chip->velocityY = gHail_CrackleFlips[Random16() & 3];
         }
       }
 
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       for (i = 0; i != ROCK_COUNT; i++) {
-        struct EffectStep *rock = &work->particles[i];
+        struct Particle *rock = &work->particles[i];
 
         if (rock->variant == 1) {
           // Rock i flies from frame 2i: the rock, its highlight (two shapes
@@ -297,22 +266,22 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
             y = position.y - 24;
             draw[0](canvas, work->sheet, x, y, 24, 48);
             if ((frame & 3) <= 1)
-              draw[0](canvas, work->sheet + gHail_ChipCells[1],
-                      x + gHail_ChipX[1], y + gHail_ChipY[1],
-                      gHail_ChipWidths[1], gHail_ChipHeights[1]);
+              draw[0](canvas, work->sheet + gHail_PortalPictures[1],
+                      x + gHail_PortalX[1], y + gHail_PortalY[1],
+                      gHail_PortalWidths[1], gHail_PortalHeights[1]);
             else
-              draw[0](canvas, work->sheet + gHail_ChipCells[2],
-                      x + gHail_ChipX[2], y + gHail_ChipY[2],
-                      gHail_ChipWidths[2], gHail_ChipHeights[2]);
+              draw[0](canvas, work->sheet + gHail_PortalPictures[2],
+                      x + gHail_PortalX[2], y + gHail_PortalY[2],
+                      gHail_PortalWidths[2], gHail_PortalHeights[2]);
             for (j = 0; j != CHIPS_PER_ROCK; j++) {
-              struct EffectStep *chip =
+              struct Particle *chip =
                   &work->particles[FIRST_CHIP + i * CHIPS_PER_ROCK + j];
               s32 chipX;
               s32 chipY;
 
               // A max blitter with the chip's own flip, for this chip only.
               {
-                s32 mode = BLIT_MAX;
+                s32 mode = BLITTER_MAX;
                 s32 flags = chip->velocityY;
                 /* FAKEMATCH(barrier): an empty asm after the mode and the flags
                  * are set. */
@@ -322,19 +291,20 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
               }
               draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
               if (chip->velocityY & COMPOSITE_FLIP_X)
-                chipX = x - gHail_ChipWidths[chip->velocityX] -
-                        gHail_ChipX[chip->velocityX] + 24;
+                chipX = x - gHail_PortalWidths[chip->velocityX] -
+                        gHail_PortalX[chip->velocityX] + 24;
               else
-                chipX = x + gHail_ChipX[chip->velocityX];
+                chipX = x + gHail_PortalX[chip->velocityX];
               if (chip->velocityY & COMPOSITE_FLIP_Y)
-                chipY = y - gHail_ChipHeights[chip->velocityX] -
-                        gHail_ChipY[chip->velocityX] + 48;
+                chipY = y - gHail_PortalHeights[chip->velocityX] -
+                        gHail_PortalY[chip->velocityX] + 48;
               else
-                chipY = y + gHail_ChipY[chip->velocityX];
-              draw[1](canvas, work->sheet + gHail_ChipCells[chip->velocityX],
-                      chipX, chipY, gHail_ChipWidths[chip->velocityX],
-                      gHail_ChipHeights[chip->velocityX]);
-              HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+                chipY = y + gHail_PortalY[chip->velocityX];
+              draw[1](canvas,
+                      work->sheet + gHail_PortalPictures[chip->velocityX],
+                      chipX, chipY, gHail_PortalWidths[chip->velocityX],
+                      gHail_PortalHeights[chip->velocityX]);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             }
             rock->x += rock->velocityX;
             rock->y += rock->velocityY;
@@ -351,27 +321,24 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
               rock->velocityY = rock->velocityY * 60 / 64;
               rock->velocityZ = rock->velocityZ * 60 / 64;
             }
-            if (rock->y < 0x140000) {
+            if (rock->y < px(20)) {
               work->shakeFrames = 8;
               rock->variant = 0;
               Sound_PlayFar(SE_HEAVY_IMPACT);
-              BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
-              BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+              BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, 0, 4);
+              BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
             }
           }
         }
       }
       BattleCamera_Shake(16, 16);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Shakes the battle view while the effect work's shakeFrames lasts, moving
@@ -435,22 +402,3 @@ void Camera_ApplyVerticalShake(s32 range) {
 // violet bolts strike the foes.
 
 struct FxPartyList;
-
-void BattleEffect_AdvanceScrollOnInterval(void);
-void BattleEffect_ConfigureEffectDisplay(void);
-
-void BattleEffect_WipeCanvas(s32 page, s32 value);
-
-void BattleEffect_SetupBlendedDisplay(void);
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-
-void BattleEffect_PlaceFormationObjects(s32 group, s32 x, s32 y);
-void BattleEffect_RunImpactBurst(s32 group, s32 x, s32 y);
-
-void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size); // four motes
-void SceneTransform_ApplyScale(s32 *scale);
-
-void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);

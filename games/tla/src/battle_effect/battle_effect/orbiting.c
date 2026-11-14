@@ -5,7 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "macros.h"
 
-#define STARS ((struct EffectStep *)Ram_MapCellBuffer)
+#define STARS ((struct Particle *)Ram_MapCellBuffer)
 
 // Sixty-four stars swirl about a point in front of the camera and are
 // drawn in.
@@ -14,13 +14,13 @@
 // (160 frames): four stars a frame join, each turning about one of four
 // axes as fast as its number, sized by depth; thirty frames after joining
 // a star accelerates toward the center by 1/256 of its distance a frame.
-void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 record[3];
-  struct EffectPosition pos;
+  struct ScreenPoint pos;
   DrawRectangle draw[2];
-  struct EffectStep *star;
+  struct Particle *star;
   s32 i;
   s32 frame;
 
@@ -28,7 +28,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(effect->side ^ 1, draw);
+  BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &STARS[i];
     SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
@@ -39,9 +39,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
     star->velocityZ = 0;
     star->variant = 0;
   }
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   record[0] = 0;
   record[1] = 160 << 15;
   record[2] = 0;
@@ -86,7 +84,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
         size = 9 - (pos.depth - 250) / 64;
         draw[0](canvas,
                 work->sheet +
-                    ((i & 3) * 770 + gBattleEffect_MoteCells[size - 1]),
+                    ((i & 3) * 770 + gBattleEffect_MotePictures[size - 1]),
                 pos.x - size / 2, pos.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(star, 60, 0);
 
@@ -102,13 +100,9 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #define BURST_IMAGE 0x1b00 // the burst pictures, after the smoke
@@ -119,16 +113,16 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
 // heading. Frame loop (96 frames): for 40 frames from its start a
 // target's puffs rise 40 pixels above it through six 24x48 pictures; the
 // sixth, drawn ADDITIVE, is the burst itself and falls faster.
-void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   void *palette;
   s32 frame;
   DrawRectangle rectangleB;
   DrawRectangle rectangleA;
-  struct EffectStep *step;
+  struct Particle *step;
   s32 i;
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 record[3];
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -139,9 +133,9 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
                              work->sheet + BURST_IMAGE, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
-  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   rectangleB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   for (i = 0; i != 64; i++) {
@@ -163,20 +157,18 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
     step->variant = 0;
   }
 
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != 96; frame++) {
     s32 member;
     s32 *camera;
 
     camera = Ram_HeapSlots->cameraWork;
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->targetCount; member++) {
       struct MotionObject *memberObject;
 
       // The puffs rise from 40 pixels above the target.
-      memberObject = BattleObject_GetFar(effect->actors[member])->object;
+      memberObject = BattleObject_GetFar(args->targets[member])->object;
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       record[0] = memberObject->x;
@@ -184,7 +176,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
       record[2] = memberObject->z;
       SceneTransform_ApplyPosition(record);
       if (frame >= member * 8 && frame < member * 8 + 40) {
-        struct EffectStep *p;
+        struct Particle *p;
 
         for (i = 0; i != 6; i++) {
           s32 cel;
@@ -197,7 +189,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
           EffectPosition_ProjectPoint((s32 *)p, &screen);
           screen.x >>= 1;
           if (i == 5) {
-            BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
+            BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
             rectangleA(canvas, work->sheet + cel * 0x480 + BURST_IMAGE,
                        screen.x - 12, screen.y - 36, 24, 48);
           } else {
@@ -209,13 +201,9 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #undef TRAILS

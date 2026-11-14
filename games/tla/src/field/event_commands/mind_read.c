@@ -1092,13 +1092,13 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   return object;
 }
 
-/* VIEW(mind_read): tag struct EffectPosition as struct
- * EffectPosition__mind_read; field/effect_step.h has another definition; tried
+/* VIEW(mind_read): tag struct ScreenPoint as struct
+ * ScreenPoint__mind_read; field/particle.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
  * tla-ja: games/tla/src/field/event_commands/mind_read.c:1104:
- * redefinition of `struct EffectPosition'. */
-#define EffectPosition EffectPosition__mind_read
-struct EffectPosition {
+ * redefinition of `struct ScreenPoint'. */
+#define ScreenPoint ScreenPoint__mind_read
+struct ScreenPoint {
   s32 x;
   s32 y;
   s32 z;
@@ -1118,7 +1118,7 @@ struct EffectWork {
 
 void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect) {
   struct EffectWork *work = Ram_HeapSlots->effectWork;
-  struct EffectPosition value;
+  struct ScreenPoint value;
   s32 state;
 
 again:
@@ -1195,17 +1195,17 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
 }
 
 /* VIEW(f0dd820): routine FieldPsynergy_Force as void FieldPsynergy_Force(struct
- * BattleEffectArgument *effect); the definition has void
+ * BattleEffectParams *effect); the definition has void
  * FieldPsynergy_Force(void); tried as the definition's void
  * FieldPsynergy_Force(void), which the object already declares, it does not
  * compile in tla-ja:
  * games/tla/src/field/event_commands/mind_read.c:1209: too many
  * arguments to function `FieldPsynergy_Force'. */
-extern void Func_080de21c__f0dd820(struct BattleEffectArgument *effect) __asm__(
+extern void Func_080de21c__f0dd820(struct BattleEffectParams *effect) __asm__(
     "FieldPsynergy_Force");
 
 /// Runs field Psynergy animation 4; the target is unused.
-void FieldPsynergy_ForceOnTarget(struct BattleEffectArgument *effect) {
+void FieldPsynergy_ForceOnTarget(struct BattleEffectParams *effect) {
   Func_080de21c__f0dd820(effect);
 }
 

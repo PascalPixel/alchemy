@@ -41,9 +41,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_DISPCNT = EFFECT_DISPCNT;
   gCameraSceneParameters[4] = 120;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
@@ -57,18 +55,17 @@ struct FxGroup {
 
 static __inline__ u8 GroupCount(struct FxGroup *group) { return group->count; }
 
-/// The Broken Seal's routine as The Lost Age has it: the
-/// member count is a byte at 0x1b, the timers sit at 0x78dc of the effect
-/// work, and a member's frame is reset only when its parameter changes.
+/// Updates every effect group of one unit's battle object: its palette, its
+/// pose (reset only when it changes) and the timer slot's frames.
 void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
                               s32 stateSlot, s32 stateValue) {
   struct FxSlot *set;
   struct FxGroup *group;
-  struct FxTimerWork *state;
+  struct BattleEffectWork *state;
   s32 groupIndex;
 
   set = BattleObject_GetFar(setId);
-  state = (struct FxTimerWork *)Ram_HeapSlots->battleFxWork[0];
+  state = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   groupIndex = 0;
 
   while ((group = GetMotionRecordFar(set->object, groupIndex)) != NULL) {

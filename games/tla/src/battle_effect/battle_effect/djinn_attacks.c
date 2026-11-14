@@ -48,17 +48,10 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The dots live in the map cell buffer: 32 for each of the five flames.
-#define DOTS ((struct EffectStep *)Ram_MapCellBuffer)
+#define DOTS ((struct Particle *)Ram_MapCellBuffer)
 #define DOTS_PER_FLAME 32
 #define FLAME_COUNT 5
 
-extern char ResourceId_BlueFlameSheet;
-/// The frames the Djinn throws its five flames on (☀️'s
-/// gDjinnAttacks_LaunchFrames).
-extern const u8 gDjinnAttacks_LaunchFrames[];
-
-/// Fetches the max and additive blitters, flipped or not.
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 /// A small Mercury Djinn circles over the targets, one turn every 32 frames, on
 /// a radius of 64 - 2 x frame pixels (half that across) that shrinks through
 /// the middle at frame 32 and opens out on the other side. At frames 4, 7, 10,
@@ -67,7 +60,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 /// each throw every target flashes and recoils. The dots shrink with age and
 /// fall back under gravity. The effect runs 96 frames; at frame 56 the battle
 /// resumes and resolves the targets (hit cue 133).
-void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
   void *canvas;
@@ -75,8 +68,8 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   u8 *sheet;
   DrawRectangle blit[2];
   DrawRectangle *draw;
-  struct EffectStep *flame;
-  struct EffectStep *dot;
+  struct Particle *flame;
+  struct Particle *dot;
   u8 *cells;
   s32 i;
   s32 j;
@@ -92,20 +85,17 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
 
   // The flame picture is the blue flame sheet turned on its side.
   cells = Ram_MapCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
   BattleEffect_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
   BattleEffect_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // No flame and no dot is alive yet.
-  for (i = 0; i != 8; i++)
-    work->particles[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, work->particles, 8);
   for (i = 0; i != 512; i++)
     DOTS[i].variant = -1;
 
@@ -114,7 +104,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   do {
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Flames fly 12 pixels left a frame and shatter on their fifth frame.
     for (i = 0; i != FLAME_COUNT; i++) {
@@ -154,7 +144,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
       for (i = 0; i != FLAME_COUNT; i++) {
         // On its launch frame a free flame leaves the Djinn's hand.
         if (frame == gDjinnAttacks_LaunchFrames[i]) {
-          struct EffectStep *shot = &work->particles[i];
+          struct Particle *shot = &work->particles[i];
 
           if (shot->variant == -1) {
             shot->x = x - 8;
@@ -166,9 +156,10 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
         }
         // Six frames later every target flashes and recoils.
         if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
-          for (j = 0; j != effect->count; j++) {
-            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
-            BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
+          for (j = 0; j != args->targetCount; j++) {
+            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, j, 6);
+            BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
           }
         }
       }
@@ -180,25 +171,21 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
-                HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
+        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
+                Q_16_16_UPPER_HALF(dot->x) - size / 2,
+                Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
+        BattleEffectKernels_IntegrateVector2(dot, 62, px(1) / 8);
         dot->variant--;
       }
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != 96);
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // The dots live in the map cell buffer: 32 for each of the eight balls.
@@ -207,17 +194,15 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
 #define DOTS_PER_BALL 32
 #define BALL_COUNT 8
 
-extern char ResourceId_FlameballSheet;
-
-void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
+void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   u8 *sheet;
   DrawRectangle blit[2];
   DrawRectangle *draw;
-  struct EffectStep *ball;
-  struct EffectStep *dot;
+  struct Particle *ball;
+  struct Particle *dot;
   s32 i;
   s32 j;
   s32 angle;
@@ -230,15 +215,13 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
                              work->sheet + 0x320, 1, 0);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The balls start above the canvas to the right; no dot is alive yet.
   for (i = 0; i != 32; i++) {
@@ -255,7 +238,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   do {
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The Djinn circles on a radius that shrinks through the middle.
     if (frame <= 95) {
@@ -291,9 +274,10 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
           Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
-          for (j = 0; j != effect->count; j++) {
-            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
-            BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
+          for (j = 0; j != args->targetCount; j++) {
+            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, j, 6);
+            BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
           }
         }
       }
@@ -305,26 +289,22 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 1;
 
-        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
-                HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
+        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
+                Q_16_16_UPPER_HALF(dot->x) - size / 2,
+                Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
+        BattleEffectKernels_IntegrateVector2(dot, 62, px(1) / 8);
         dot->variant--;
       }
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != 96);
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // Resources: decompress a resource with a palette.
@@ -351,15 +331,15 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
 #define DOTS_PER_COLUMN 32
 #define COLUMN_COUNT 10
 
-void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
   u8 *sheet;
-  struct EffectStep *column;
-  struct EffectStep *dot;
+  struct Particle *column;
+  struct Particle *dot;
   s32 i;
   s32 j;
   s32 start;
@@ -372,22 +352,18 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
   sheet = slots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                          COMPOSITE_FLIP_Y));
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER_ALTERNATE,
-      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                      BLITTER_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                      BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)slots->unk64[1];
   draw[1] = (DrawRectangle)slots->unkb8[1];
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
                              work->sheet + 0x2f8, 1, 0);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Each column starts somewhere in the canvas's 64 pixels, on the ground.
   for (i = 0; i != 32; i++) {
@@ -412,7 +388,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     }
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Column i starts at frame 16 + 4i and climbs 12 pixels a frame.
     for (i = 0, start = 16; i != COLUMN_COUNT; start += 4, i++) {
@@ -430,7 +406,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
             direction = (Random16() & 0x7fff) + 0x4000;
             speed = (Random16() & 0x1ff) + 256;
             dot->x = column->x << 16;
-            dot->y = (column->y + 16) << 16;
+            dot->y = px(column->y + 16);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 7;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 6;
             dot->variant = (Random16() & 15) + 32;
@@ -439,9 +415,10 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
             Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
-          for (j = 0; j != effect->count; j++) {
-            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
-            BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
+          for (j = 0; j != args->targetCount; j++) {
+            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, j, 6);
+            BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
           }
         }
         column->y -= 12;
@@ -454,51 +431,37 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
-                HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
+        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
+                Q_16_16_UPPER_HALF(dot->x) - size / 2,
+                Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
+        BattleEffectKernels_IntegrateVector2(dot, 62, px(1) / 8);
         dot->variant--;
       }
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != 96);
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // The sparks live in the map cell buffer: sixteen under each of nine puffs.
-#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+#define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define PUFF_COUNT 9
 #define SPARKS_PER_PUFF 16
 
-extern char ResourceId_GlowOrbSheet;
-extern char ResourceId_EmberStreakSheet;
-
-// The ember puff's six cels: ☀️'s gBattleEffect_PuffArcCellWidths, _CellHeights,
-// _CellBiasY and _CellSourceOffsets.
-extern u8 gData_08197467[];
-extern u8 gBattleEffect_PuffArcCellHeights[];
-extern u8 gBattleEffect_PuffArcCellBiasY[];
-extern u16 gBattleEffect_PuffArcCells[];
-
-void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
   DrawRectangle blit[2];
   DrawRectangle *draw;
-  struct EffectStep *puff;
-  struct EffectStep *spark;
+  struct Particle *puff;
+  struct Particle *spark;
   s32 member;
   s32 frame;
   s32 i;
@@ -511,14 +474,12 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320,
                              1, 1);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The puffs sit on an oval, alternately left and right of the middle,
   // each two frames behind the last; sixteen sparks wait under each one.
@@ -536,8 +497,8 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     puff->variant = -(member * 2);
     for (i = 0; i != SPARKS_PER_PUFF; i++) {
       spark = &SPARKS[member * SPARKS_PER_PUFF + i];
-      spark->x = (((Random16() & 15) + puff->x) - 8) << 16;
-      spark->y = ((Random16() & 7) + 96) << 16;
+      spark->x = px(((Random16() & 15) + puff->x) - 8);
+      spark->y = px((Random16() & 7) + 96);
       spark->velocityX = ((Random16() & 127) - 64) << 11;
       spark->velocityY = ((Random16() & 127) - 64) << 10;
       spark->z = Random16() & 0xffff;
@@ -553,7 +514,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   do {
     // The battle resumes and resolves the targets, hit cue 0x85.
     if (frame == 56)
-      BattlePlayback_StartFar(0x85);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The orb swells, a cel every four frames.
     if (frame <= 23)
@@ -586,10 +547,11 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
           s32 cel = puff->variant / 8;
           u32 width;
 
-          blit[0](canvas, work->sheet + gBattleEffect_PuffArcCells[cel],
-                  puff->x - ((width = gData_08197467[cel]) >> 1),
-                  puff->y + gBattleEffect_PuffArcCellBiasY[cel], width,
-                  gBattleEffect_PuffArcCellHeights[cel]);
+          blit[0](canvas, work->sheet + gBattleEffect_PuffArcPictures[cel],
+                  puff->x -
+                      ((width = gBattleEffect_PuffArcPictureWidths[cel]) >> 1),
+                  puff->y + gBattleEffect_PuffArcPictureBiasY[cel], width,
+                  gBattleEffect_PuffArcPictureHeights[cel]);
         }
         member++;
         puff->variant++;
@@ -608,10 +570,11 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
         s32 wobble;
 
         size = (member & 1) + 3;
-        x = HI(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
-        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
-                x - ((u32)size >> 1), HI(spark->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 64, -0x2000);
+        x = Q_16_16_UPPER_HALF(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
+        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
+                x - ((u32)size >> 1), Q_16_16_UPPER_HALF(spark->y) - size, size,
+                size * 2);
+        BattleEffectKernels_IntegrateVector2(spark, 64, -px(1) / 8);
         wobble = spark->z;
         spark->z = wobble + 0x800;
         if (spark->z > 0xffff)
@@ -623,23 +586,19 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
 
     // Every target flashes for sixteen frames and recoils.
     if (frame == 38) {
-      for (member = 0; member != effect->count; member++) {
-        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 16);
-        BattleMotion_ApplyKnockbackFar(effect->actors[member], 6);
+      for (member = 0; member != args->targetCount; member++) {
+        BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, member, 16);
+        BattleMotion_ApplyKnockbackFar(args->targets[member], 6);
       }
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     diveY += 8;
     frame++;
   } while (frame != 112);
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

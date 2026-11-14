@@ -19,13 +19,6 @@
 #define FLASH_FRAME 14
 #define BURST_FRAME 16 // the burst on the target, until frame 47
 
-#define PHASE_RESULTS 134
-
-extern char ResourceId_FireStreakSheet;
-extern char ResourceId_FireBurstSheet;
-
-void BattleEffect_CallDoNothing(s32 frames);
-
 // The user lunges, a streak of fire leaves them, and the target bursts into
 // flame, throwing 64 burning shards away from the user.
 //
@@ -33,21 +26,21 @@ void BattleEffect_CallDoNothing(s32 frames);
 // the user four frames toward the target, and seed the shards at the target
 // with random speeds (flipped to fly away from the user's side). Each frame:
 // the streak's six pictures at the user from frame 6; the hit at frame 8
-// (results phase, the stronger variant's cue, the canvas flooded, the target
+// (the damage shown, the stronger variant's cue, the canvas flooded, the target
 // knocked back); the burst's three pictures (two frames each, then held) on
 // the target from frame 16 to 47; from frame 4 the shards in 3D, their
 // picture shrinking with their life.
-void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   u8 *cells;
   struct BattleCamera *view;
   struct MotionObject *target;
-  struct EffectStep *shard;
-  struct EffectPosition user;
-  struct EffectPosition origin;
-  struct EffectPosition screen;
+  struct Particle *shard;
+  struct ScreenPoint user;
+  struct ScreenPoint origin;
+  struct ScreenPoint screen;
   DrawRectangle draw[2];
   s32 i;
   s32 size;
@@ -64,16 +57,16 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burst, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 4, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 4, 0);
   wait(1);
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(args->targets[0])->object;
 
   // The shards start inside the target; each group of four lives two frames
   // longer than the one before.
   i = 0;
   do {
-    struct EffectStep *seed = &work->particles[i];
+    struct Particle *seed = &work->particles[i];
 
     SET_POSITION(seed, target->x, target->y, target->z);
     seed->velocityX = (Random16() & 255) << 11;
@@ -85,31 +78,28 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     i++;
   } while (i != SHARD_COUNT);
 
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &origin);
+  EffectPosition_ProjectScaledBattler(args->targets[0], &origin);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  work->transferMode = 2;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != SHARDS_FRAMES; frame++) {
     if (frame == HIT_FRAME)
-      BattlePlayback_StartFar(PHASE_RESULTS);
-    if (effect->variant != 0 && frame == HIT_FRAME)
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+    if (args->variant != 0 && frame == HIT_FRAME)
       Sound_PlayFar(SE_POWER_UP);
 
     // The streak, drawn from the user toward the target.
-    EffectPosition_ProjectScaledBattler(effect->actor, &user);
+    EffectPosition_ProjectScaledBattler(args->user, &user);
     if (frame >= STREAK_FRAME && frame <= STREAK_FRAME + 5) {
-      if (effect->side == 0)
-        BattleEffect_LoadBlitter(
-            HEAP_BLITTER,
-            BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      if (args->side == 0)
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                            BLITTER_ADDITIVE);
       else
-        BattleEffect_LoadBlitter(HEAP_BLITTER,
-                                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                            COMPOSITE_CLIP_Y |
-                                                            COMPOSITE_FLIP_X));
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                            BLITTER_ADDITIVE);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      if (effect->side == 0)
+      if (args->side == 0)
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
                 user.x / 2 - 24, user.y - 24, 48, 72);
@@ -117,7 +107,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
                 user.x / 2, user.y - 24, 48, 72);
-      HeapSlot_Release(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
 
     // The burst on the target; the stronger variant has its own pictures.
@@ -125,19 +115,18 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       s32 step = (frame - BURST_FRAME) / 2;
       s32 strip;
 
-      BattleEffect_LoadBlitter(
-          HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       if (step > 2)
         step = 2;
-      if (effect->variant == 0)
+      if (args->variant == 0)
         strip = 0;
       else
         strip = BURST_STRIP_BYTES;
       draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_PICTURE_BYTES,
               origin.x / 2 - 20, origin.y - 48, 40, 80);
       BattleEffect_CallDoNothing(10000);
-      HeapSlot_Release(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
     if (frame == HIT_FRAME)
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
@@ -146,7 +135,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     Transform_Reset();
     Transform_SetLookAt(view->eye, view->focus);
     if (frame > 3) {
-      BattleEffect_FetchRectangleBlitters(effect->side, draw);
+      BattleEffect_FetchRectangleBlitters(args->side, draw);
       for (i = 0; i != SHARD_COUNT; i++) {
         s32 life;
 
@@ -157,30 +146,29 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
           screen.x >>= 1;
           screen.y = screen.y + origin.y - 112;
           size = (life >> 3) + 2;
-          draw[(i / 2) & 1](canvas, cells + gBattleEffect_MoteCells[size - 1],
-                            screen.x - size / 2, screen.y - size, size,
-                            size * 2);
-          BattleEffectKernels_IntegrateVector3(shard, 60, -0x400);
+          draw[(i / 2) & 1](
+              canvas, cells + gBattleEffect_MotePictures[size - 1],
+              screen.x - size / 2, screen.y - size, size, size * 2);
+          BattleEffectKernels_IntegrateVector3(shard, 60, -px(1) / 64);
           shard->variant--;
         }
       }
-      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-      HeapSlot_Release(HEAP_BLITTER);
+      EFFECT_RELEASE_BLITTERS();
     }
 
     // The hit's knock-back, and the target's flashes.
     if (frame == HIT_FRAME) {
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
       work->shakeFrames = 4;
     }
     if (frame == STREAK_FRAME)
-      BattleEffect_TintBattler(effect->actors[0], 10, -1, -1, 0);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_RED_TINT,
+                               TINT_KEEP, TINT_KEEP, 0);
     if (frame == FLASH_FRAME)
-      BattleEffect_TintBattler(effect->actors[0], 10, -1, -1, 0);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_RED_TINT,
+                               TINT_KEEP, TINT_KEEP, 0);
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

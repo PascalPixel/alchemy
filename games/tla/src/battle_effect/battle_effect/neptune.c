@@ -4,32 +4,21 @@
 
 #include "../battle_effect_internal.h"
 
-extern u8 gMapGridCellBuffer[];
-extern char ResourceId_SeaSerpentTiles;
-extern char ResourceId_DuskCloudsBackdrop;
-extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_BlueFlameSheet;
-extern struct Scale Data_08196e8c;        // the serpent's scale
-extern u16 gBattleEffect_FlarePictures[]; // the sparkle cells by size
-extern s32 Data_08198aec[];               // the spray's four gravities
-
-void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
-                                        s32 width);
-void BattleEffect_BuildWindowEdgeTable(void);
-
-// Summon 6: at dusk the window opens on a sea; a great serpent rises out of
-// the spray, light gathers at its mouth, rays reach out and it breathes a
-// blast; then blue flames fall as pillars on each enemy in turn, splashing.
-//
-// Act one (244 frames): the dusk backdrop, the serpent built from eight
-// 32 x 32 sprites, the spray and sparkle pictures, 712 drops of spray; the
-// window opens in 16 frames over a ragged edge; the serpent glides in from
-// frame 22 and settles; a second fountain at frame 76; glints converge on its
-// mouth from 152 and the glow grows; rays from 176; the breath from 222 with
-// a ring of sparks; the sea rolls along the bottom all the while. Act two
-// (144 frames): a flame pillar falls on each target 16 frames apart, splashing
-// sparks where it lands and striking that target; results at frame 96.
-void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
+/// Under storm clouds Neptune leaps out of the sea in a burst of spray, light
+/// gathers at its head and a beam of light joins its head to the sky, with a
+/// splash there; then columns of water crash down on the targets, throwing up
+/// drops.
+///
+/// Act one (244 frames): Neptune is built from eight 32x32 sprites and 712
+/// drops of spray wait; the window opens in 16 frames over a ragged edge;
+/// Neptune rises from frame 22, a second burst of spray at 76, light gathers
+/// at its head from 152, the beam from 176 and the splash from 222, the sea
+/// rolling along the bottom all the while. Act two (144 frames): a column of
+/// water falls on each target 16 frames apart, throwing up drops where it
+/// lands and striking that target; the damage shows at frame 96.
+///
+/// Abilities: Neptune.
+void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   s32 position[4];
   s32 target[3];
   void *canvas;
@@ -49,10 +38,10 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   s32 i;
   s32 rays;
   s32 glintSize;
-  struct EffectStep *glintSeed;
-  struct EffectStep *glint;
-  struct EffectStep *spark;
-  struct EffectStep *pillar;
+  struct Particle *glintSeed;
+  struct Particle *glint;
+  struct Particle *spark;
+  struct Particle *pillar;
   DrawRectangle draw[2];
   struct Scale scale;
   s32 ground = 112;
@@ -67,17 +56,17 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   // below the line the IRQ handler picks.
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  *(u16 *)BG_PLTT = 0;
-  *(u16 *)(BG_PLTT + 1) = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_FRAME);
   Irq_SetHandler(2, 0, BattleEffect_SetBg2AffineScaleHalf);
-  work->transferMode = 0;
+  work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_CLR;
-  BattleEffect_WipeCanvas(1, 0);
-  REG_WIN0H = 0xf0f0;
-  BattleEffect_SelectLivingTargets(work->effect);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+  REG_WIN0H = WIN_RANGE(240, 240);
+  BattleEffect_SelectLivingTargets(work->args);
   // Build the serpent: its palette, its tiles, and eight sprites.
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   {
@@ -90,7 +79,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
           EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
       object->priority = 1;
-      work->objects[i] = object;
+      work->sprites[i] = object;
       Iwram_CopyWords(
           (void *)(0x06010000 + gVramCacheEntries[object->slot].offset),
           tiles + i * 0x400, 0x400);
@@ -99,15 +88,13 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 240;
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + 0x4e20, 0, 0);
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  REG_BG2PA = 0x80;
+  REG_DISPCNT = EFFECT_DISPCNT;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // The serpent starts low on the right, rising to the left.
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -118,12 +105,11 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   serpentVY = -0x80000;
   savedScrollX = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->transitionWork;
-  work->transferMode = 2;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   transition[4] = 1;
-  BattleEffect_LoadBlitter(104, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(188, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
@@ -185,7 +171,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
 
     // The serpent rises, slows, then glides back right and settles.
     if (frame > 21) {
-      scale = Data_08196e8c;
+      scale = gNeptune_UnitScale;
       if (frame <= 83) {
         if (frame > 48)
           serpentVX = serpentVX * 60 / 64;
@@ -215,7 +201,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       for (i = 0; i != 8; i++) {
         position[0] = ((i & 3) * 48 << 16) + serpentX - 0x200000;
         position[2] = ((i / 4) * 48 << 16) + serpentY - 0x180000;
-        Render_ApplyProjectedPlacementFar(work->objects[i], position, &scale.x,
+        Render_ApplyProjectedPlacementFar(work->sprites[i], position, &scale.x,
                                           0);
       }
     }
@@ -246,8 +232,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     if (beamFrame >= 0 && beamFrame < 88) {
       for (i = 0, glint = work->particles; i != 32; i++, glint++) {
         if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
-          s32 fx = HI(glint->x) + 112;
-          s32 fy = HI(glint->y) + 62;
+          s32 fx = Q_16_16_UPPER_HALF(glint->x) + 112;
+          s32 fy = Q_16_16_UPPER_HALF(glint->y) + 62;
           s32 r = (i & 3) + 5;
 
           glintSize = r * 2;
@@ -391,13 +377,14 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
 
-          drawSpray(canvas, cells + gBattleEffect_MoteCells[k - 1],
-                    HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k,
-                    k * 2);
+          drawSpray(canvas, cells + gBattleEffect_MotePictures[k - 1],
+                    Q_16_16_UPPER_HALF(PARTICLES[i].x) - k / 2,
+                    Q_16_16_UPPER_HALF(PARTICLES[i].y) - k, k, k * 2);
           BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 62,
-                                               Data_08198aec[i & m]);
+                                               gNeptune_Gravity[i & m]);
           PARTICLES[i].variant++;
-          if (PARTICLES[i].velocityY > 0 && HI(PARTICLES[i].y) > 104)
+          if (PARTICLES[i].velocityY > 0 &&
+              Q_16_16_UPPER_HALF(PARTICLES[i].y) > 104)
             PARTICLES[i].variant = -1;
         }
       }
@@ -407,8 +394,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     for (i = 0; i != 5; i++)
       draw[1](canvas, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88, 32,
               32);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   } while (++frame != 244 &&
            (frame <= 16 || !(gInput.repeat & (KEY_A | KEY_B))));
 
@@ -422,9 +408,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
           (volatile u32 *)0x040000d4);
   *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   Task_Remove(BattleEffect_ResetBg2Pa);
-  REG_WIN0H = 0xf0;
-  work->transferMode = 2;
-  work->transferValue = 75;
+  REG_WIN0H = WIN_RANGE(0, 240);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = 0;
   for (i = 0; i != 16; i++) {
@@ -432,21 +417,21 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     work->particles[i].y = 0;
     work->particles[i].variant = 0;
   }
-  for (i = 0; i != effect->count; i++) {
-    EffectPosition_ProjectScaledBattler(effect->actors[i],
-                                        (struct EffectPosition *)target);
+  for (i = 0; i != args->targetCount; i++) {
+    EffectPosition_ProjectScaledBattler(args->targets[i],
+                                        (struct ScreenPoint *)target);
     work->particles[i].x = target[0] / 2;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   frame = 0;
   do {
     if (frame == 96)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     // Each pillar falls 16 pixels a frame and splashes where it lands.
     for (i = 0; i != 5; i++) {
       pillar = &work->particles[i];
@@ -492,10 +477,11 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         }
       }
     }
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->targetCount; i++) {
       if (frame == i * 16 + 8) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 2);
+        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 8);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], 2);
       }
     }
     for (i = 0; i != 1024; i++) {
@@ -504,7 +490,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         s32 y;
 
         PARTICLES[i].variant--;
-        BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 60, 0x4000);
+        BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 60, px(1) / 4);
         y = PARTICLES[i].y >> 16;
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;
@@ -512,21 +498,16 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
 
-          draw[i & 1](canvas, cells + gBattleEffect_MoteCells[k - 1], x - k / 2,
-                      y - k, k, k * 2);
+          draw[i & 1](canvas, cells + gBattleEffect_MotePictures[k - 1],
+                      x - k / 2, y - k, k, k * 2);
         }
       }
     }
     BattleCamera_Shake(4, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   } while (++frame != 144);
 
   for (i = 0; i != 8; i++)
-    Sprite_DestroyFar(work->objects[i]);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
-  BattleEffect_EndCanvasLayer();
+    Sprite_DestroyFar(work->sprites[i]);
+  EFFECT_FINISH_CANVAS();
 }

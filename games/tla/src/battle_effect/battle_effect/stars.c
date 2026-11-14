@@ -19,9 +19,9 @@
 // Three rings of light fly one after another from the caster to the target,
 // each growing as it spins, while the camera swings round; each ring that
 // lands throws the target back, and the last begins the results.
-void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
-  struct EffectPosition pos;
-  struct EffectPosition base;
+void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
+  struct ScreenPoint pos;
+  struct ScreenPoint base;
   s32 scale[3];
   struct BattleEffectWork *work;
   void *canvas;
@@ -33,40 +33,39 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct Actor *caster;
   struct Actor *source;
   struct Actor *target;
-  struct EffectStep *point;
-  struct EffectStep *bolt;
+  struct Particle *point;
+  struct Particle *bolt;
   s32 start;
   s32 nearest;
   s32 size;
   s32 j;
   s32 k;
-  struct EffectStep *ring;
+  struct Particle *ring;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
-  caster = ACTOR(effect->actor);
+  caster = ACTOR(args->user);
 
   // Set up: the rune palette, the dot sheet, the caster's casting pose, one
   // max blitter and the transfer.
   BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Actor_SelectAnimationFar(caster, 2);
   Actor_SetAnimationSpeedFar(caster, 48);
   BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  work->transferMode = 2;
-  work->transferValue = 75;
+      HEAP_BLITTER, BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The rings leave from above the caster and reach the target in twelve
   // frames; the second and third aim past it.
-  source = ACTOR(effect->actor);
-  target = ACTOR(effect->actors[0]);
+  source = ACTOR(args->user);
+  target = ACTOR(args->targets[0]);
   for (i = 0, point = work->particles; i != BOLT_COUNT; i++) {
     SET_POSITION(point, source->x, source->y + 0x280000, source->z);
     if (i == 0)
@@ -79,7 +78,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
     point++;
   }
 
-  ring = (struct EffectStep *)gMapGridCellBuffer;
+  ring = (struct Particle *)gMapGridCellBuffer;
   for (frame = 0; frame != 60; frame++) {
     // The camera turns toward the caster's side, slowing from frame 40.
     if (frame <= 47) {
@@ -90,7 +89,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         speed = 128;
       else
         speed = 0x300 - frame * 16;
-      if (effect->side == 0)
+      if (args->side == 0)
         view->yaw -= speed;
       else
         view->yaw += speed;
@@ -136,10 +135,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         }
         if (nearest <= FAR_DEPTH) {
           for (j = 0; j != RING_POINTS; j++) {
-            struct EffectStep *from =
-                &((struct EffectStep *)gMapGridCellBuffer)[j + i * 10];
-            struct EffectStep *to = &(
-                (struct EffectStep *)gMapGridCellBuffer)[(j + 1) % 10 + i * 10];
+            struct Particle *from =
+                &((struct Particle *)gMapGridCellBuffer)[j + i * 10];
+            struct Particle *to =
+                &((struct Particle *)gMapGridCellBuffer)[(j + 1) % 10 + i * 10];
 
             for (k = 0; k != RING_STEPS; k++) {
               s32 x =
@@ -147,7 +146,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
               s32 y =
                   from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
-              draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+              draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       x - size / 2, y - size, size, size * 2);
             }
           }
@@ -171,25 +170,21 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           else
             Actor_SetMoveTargetFar(target, target->x + 0x280000, 0, target->z);
           if (i == 2) {
-            BattlePlayback_StartFar(134);
+            EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
             Sound_PlayFar(SE_HEAVY_IMPACT);
-            BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+            BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, 0, 8);
           }
           work->shakeFrames = 4;
         }
       }
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #undef RING_STEPS
@@ -205,7 +200,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
 /// Eight rings of stars fly from the caster to the target, one every eight
 /// frames and spinning as they go; each bounces where it meets the ground,
 /// shaking the screen and flashing the targets.
-void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
+void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -216,13 +211,13 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   s32 *camera;
   struct MotionObject *source;
   struct MotionObject *target;
-  struct EffectStep *point;
-  struct EffectStep *star;
-  struct EffectPosition pos;
+  struct Particle *point;
+  struct Particle *star;
+  struct ScreenPoint pos;
   s32 size;
   s32 j;
   s32 k;
-  struct EffectStep *ring;
+  struct Particle *ring;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -233,18 +228,16 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      HEAP_BLITTER, BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Each star leaves from above the caster on its own course to the target,
   // the later ones after a longer delay (held in variant).
-  source = BattleObject_GetFar(effect->actor)->object;
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  source = BattleObject_GetFar(args->user)->object;
+  target = BattleObject_GetFar(args->targets[0])->object;
   for (i = 0, point = work->particles; i != STAR_COUNT; i++) {
     s32 delay = i * 8;
 
@@ -258,11 +251,11 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   }
 
   size = DOT_SIZE;
-  ring = (struct EffectStep *)gMapGridCellBuffer;
+  ring = (struct Particle *)gMapGridCellBuffer;
   for (frame = 0; frame != 128; frame++) {
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != STAR_COUNT; i++) {
       star = &work->particles[i];
       if (frame >= star->variant) {
@@ -290,8 +283,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
                      16);
               }
               for (j = 0; j != RING_POINTS; j++) {
-                struct EffectStep *from = &ring[j + i * 10];
-                struct EffectStep *to = &ring[i * 10 + (j + 1) % 10];
+                struct Particle *from = &ring[j + i * 10];
+                struct Particle *to = &ring[i * 10 + (j + 1) % 10];
 
                 for (k = 0; k != RING_STEPS; k++) {
                   s32 x = from->velocityX +
@@ -299,7 +292,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
                   s32 y = from->velocityY +
                           (to->velocityY - from->velocityY) * k / 12;
 
-                  draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+                  draw[0](canvas,
+                          graphics + gBattleEffect_MotePictures[size - 1],
                           x - size / 2, y - size, size, size * 2);
                 }
               }
@@ -314,8 +308,9 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
           star->velocityZ /= 2;
           work->shakeFrames = 4;
           Sound_PlayFar(SE_HEAVY_IMPACT);
-          for (j = 0; j != effect->count; j++)
-            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 8);
+          for (j = 0; j != args->targetCount; j++)
+            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, j, 8);
         }
         star->x += star->velocityX;
         star->y += star->velocityY;
@@ -323,13 +318,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

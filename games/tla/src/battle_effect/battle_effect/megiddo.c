@@ -21,108 +21,16 @@ struct ModelVertex {
   s8 pad;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
-void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
-
-extern u8 Data_02011000[];
-extern u8 Data_02012000[];
-extern u8 gMapGridCellBuffer[];
-extern u8 gData_02014000[];
-extern u16 gBattleEffect_MoteCells[];
-extern const u8 gData_08199364[];
-extern const u8 Data_081991e0[];
-extern const u8 gData_081991f0[];
-extern u8 Data_081992b0[];
-extern const u16 Data_08199ee0[]; // the five rings' start frames
-extern const s16 Data_08199ecc[];
-extern const s16 Data_08199ed6[];
-extern const s16 Data_08199eea[];
-extern const s16 Data_08199efa[];
-extern const s16 Data_08199f0a[];
-extern const s8 Data_08199f1a[];
-extern const s8 Data_08199f22[];
-
-extern char ResourceId_RedHazeBackdrop;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0C9;
-extern char ResourceId_DustBlobSheet;
-extern char ResourceId_Data0E9;
-extern char ResourceId_Data103;
-extern char ResourceId_Data134;
-extern char ResourceId_OrangePaletteB;
-
-void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
-                                    s32 speed);
-void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
-void BattleObject_PutFar(void);
-void BattleEffect_BuildRepeatingTilemap(void);
-void Palette_BrightenBattleBg(s32 red, s32 green, s32 blue);
-void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
-void BattleEffect_StepPaletteToResource(s32 palette);
-void Graphics_LoadGreyRamp(void);
-s32 Render_ProjectPoint(const void *point, s32 *screen);
-
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
 // Megiddo: the caster rises in a column of light, a winged figure gathers
 // above and dives in a storm of feathers and rings onto the target.
-void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
@@ -144,20 +52,20 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   s32 scale;
   u8 *transformed;
   u8 *strip;
-  u8 *sheet2;
+  u8 *scratchSheet;
   s32 i;
   s32 j;
   s32 m;
   struct RenderModel *model;
   void *verts;
-  struct EffectStep *p;
-  struct EffectPosition pos;
+  struct Particle *p;
+  struct ScreenPoint pos;
   s16 list[14];
-  s16 list2[14];
+  s16 targetList[14];
   s32 place[4];
   s32 screen[3];
   u8 req[8];
-  struct ModelTexture texture2;
+  struct ModelTexture scratchTexture;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -169,19 +77,17 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   ring = gMapGridCellBuffer;
   transformed = Data_02011000;
   strip = Data_02012000;
-  sheet2 = gData_02014000;
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 150, px(5));
+  scratchSheet = gData_02014000;
+  BattleMotion_ApproachTargetFar(args->user, args->user, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   meshA = work->sheet + 0x5f40;
   meshB = work->sheet + 0x6340;
-  caster = BattleObject_GetFar(effect->actor)->object;
+  caster = BattleObject_GetFar(args->user)->object;
   x = 0;
   z = 0;
   scale = Q16_ONE;
@@ -240,7 +146,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
                                  work->sheet + 0x2400, 1, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
-      if (!effect->side) {
+      if (!args->side) {
         x = 0xa00000;
       } else {
         x = 0x500000;
@@ -270,7 +176,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if (frame == 1) {
       transition[4] = 1;
-      list[0] = effect->actor;
+      list[0] = args->user;
       list[1] = 255;
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
@@ -278,12 +184,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       Palette_BrightenBattleBg(8, 2, 2);
       BattleEffect_SpawnObjects(1, 0x299, 2);
     }
-    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+    EffectPosition_ProjectScaledBattler(args->user, &pos);
     if (frame == 3) {
       savedYaw = camera[27];
     }
     if ((u32)(frame - 16) <= 61) {
-      if (!effect->side) {
+      if (!args->side) {
         camera[27] -= 256;
       } else {
         camera[27] += 256;
@@ -347,7 +253,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if ((u32)(frame - 84) <= 58) {
-      if (!effect->side) {
+      if (!args->side) {
         x -= 0x20000;
       } else {
         x += 0x20000;
@@ -361,15 +267,14 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       camera[27] = savedYaw;
       x = 0x780000;
       z = 0x300000;
-      list2[0] = effect->actors[0];
-      list2[1] = 255;
-      BattleActor_SpawnObjectsForListFar(list2, 0);
+      targetList[0] = args->targets[0];
+      targetList[1] = 255;
+      BattleActor_SpawnObjectsForListFar(targetList, 0);
       gCameraSceneParameters[4] = 556;
-      target = BattleObject_GetFar(effect->actors[0])->object;
+      target = BattleObject_GetFar(args->targets[0])->object;
       target[2] = zero;
       target[4] = zero;
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
@@ -406,17 +311,16 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       }
       Actor_SetAnimationSpeedFar(caster, 128);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      work->transferMode = 3;
-      work->transferValue = 0x06060606;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
     if (frame == 171) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
-      work->transferMode = 1;
-      work->transferValue = 0x10101010;
+      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 16);
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
     }
     /* FAKEMATCH(temporary): f, a copy of frame tested below. */
     f = frame;
@@ -447,7 +351,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       place[1] = 0xff0000;
       place[0] = x;
       place[2] = z;
-      obj = work->objects[0];
+      obj = work->sprites[0];
       obj[23] = 32;
       obj[22] = zero;
       if ((u32)(place[2] + 0x340000) <= 0xfbffff) {
@@ -562,7 +466,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           if (y < 0) {
             y += 128;
           }
-          blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1], mx, y,
+          blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1], mx, y,
                   size, 2);
         }
       }
@@ -587,23 +491,23 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         s32 size = 1;
 
         Render_ProjectPoint(p, screen);
-        blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1], screen[0],
-                screen[1], size, 4);
+        blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
+                screen[0], screen[1], size, 4);
         p->y -= 2;
       }
     }
 
     verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
-    texture2.logWidth = 7;
-    texture2.logHeight = 7;
-    texture2.pixels = sheet2;
+    scratchTexture.logWidth = 7;
+    scratchTexture.logHeight = 7;
+    scratchTexture.pixels = scratchSheet;
     model->kind = 7;
-    model->mesh = gData_08199364;
-    model->texture = &texture2;
+    model->mesh = gBattleEffect_LargeSquareMesh;
+    model->texture = &scratchTexture;
     model->vertices = verts;
     for (i = 0; i != 5; i++) {
-      s32 start = Data_08199ee0[i];
+      s32 start = gMegiddo_FlashStarts[i];
 
       if (frame >= start && frame < start + 20) {
         s32 t = frame - start;
@@ -624,18 +528,18 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyPosition3(0, 0x100000, 0);
           }
           SceneTransform_ApplyScale3(s, s * 2, s);
-          Transform_ApplyPitch(Data_08199ecc[i]);
-          Transform_ApplyYaw(Data_08199ed6[i]);
-          Render_TransformVertices(Data_081991e0, verts, 4);
+          Transform_ApplyPitch(gMegiddo_FlashPitches[i]);
+          Transform_ApplyYaw(gMegiddo_FlashYaws[i]);
+          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }
     }
     model->kind = 7;
-    texture2.logWidth = 5;
-    texture2.logHeight = 6;
-    texture2.pixels = work->sheet;
-    model->mesh = Data_081992b0;
+    scratchTexture.logWidth = 5;
+    scratchTexture.logHeight = 6;
+    scratchTexture.pixels = work->sheet;
+    model->mesh = gBattleEffect_TallMesh;
     for (i = 0; i != 8; i++) {
       s32 start = 16 + i * 2;
 
@@ -655,25 +559,25 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         }
         model->shade = shade;
         Transform_Reset();
-        if (!effect->side) {
+        if (!args->side) {
           SceneTransform_ApplyPosition3(
-              (pos.x / 2 + Data_08199f1a[i] - 64) << 16,
-              (Data_08199f22[i] + pos.y - 54) << 16, 0);
+              (pos.x / 2 + gMegiddo_RayX[i] - 64) << 16,
+              (gMegiddo_RayY[i] + pos.y - 54) << 16, 0);
         } else {
           SceneTransform_ApplyPosition3(
-              (pos.x / 2 - Data_08199f1a[i] - 62) << 16,
-              (Data_08199f22[i] + pos.y - 54) << 16, 0);
+              (pos.x / 2 - gMegiddo_RayX[i] - 62) << 16,
+              (gMegiddo_RayY[i] + pos.y - 54) << 16, 0);
         }
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        if (!effect->side) {
-          Transform_ApplyRoll(Data_08199f0a[i]);
+        if (!args->side) {
+          Transform_ApplyRoll(gMegiddo_RayRolls[i]);
         } else {
-          Transform_ApplyRoll(-Data_08199f0a[i]);
+          Transform_ApplyRoll(-gMegiddo_RayRolls[i]);
         }
-        Transform_ApplyPitch(Data_08199eea[i]);
-        Transform_ApplyYaw(Data_08199efa[i]);
+        Transform_ApplyPitch(gMegiddo_RayPitches[i]);
+        Transform_ApplyYaw(gMegiddo_RayYaws[i]);
         SceneTransform_ApplyScale3(s / 4, s * 4, s / 2);
-        Render_TransformVertices(gData_081991f0, verts, 4);
+        Render_TransformVertices(gBattleEffect_StandingSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
     }
@@ -687,22 +591,17 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         (void)*vblanks;
       } while (*vblanks <= 1);
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
-  Sprite_DestroyFar(work->objects[0]);
+  Sprite_DestroyFar(work->sprites[0]);
   caster[18] = casterValue;
   BattleObject_PutFar();
   transition[4] = 0;
   // The background id is the low halfword of the word at 0x670.
   BattleBackground_LoadFar(
       1, (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI

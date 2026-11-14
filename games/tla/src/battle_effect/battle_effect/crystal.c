@@ -25,33 +25,6 @@ struct BattleObjectPosition {
   s32 x;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-
-extern char ResourceId_Data0FB;
-extern char ResourceId_VenusDjinnSmallSheet;
-extern char ResourceId_BlastSheet;
-extern u8 gMapGridCellBuffer[];
-extern u8 gData_02014000[];
-extern const u8 gData_08199364[]; // the crystal's mesh
-extern const u8 gData_08199210[]; // its four corners
-
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 #define CRYSTAL_FRAMES 103
 #define CRYSTAL_SHARDS 32
@@ -64,7 +37,7 @@ extern const u8 gData_08199210[]; // its four corners
 /// shards, one every two frames, drift up from around the target, pulsing in
 /// size and jittering until they settle, and the targets flash at frames 64,
 /// 68, ... before the scene fades out from frame 96.
-void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   // Unused: draw[1] gives the stack frame its 4 bytes.
@@ -72,7 +45,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   u16 *discOffsets;
   s32 center[3];
   s32 other[3];
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   struct ModelTexture__f16c274 texture;
   s32 frame;
   s32 i;
@@ -93,7 +66,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, work->sheet, 0, 0);
   Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(effect, ((effect->side ^ 1) << 4) | 32, center,
+  BattleEffect_RunDjinniEntrance(args, ((args->side ^ 1) << 4) | 32, center,
                                  other);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 0);
@@ -101,26 +74,27 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
                        128);
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  if (effect->side == 1) {
-    BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  if (args->side == 1) {
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
   } else {
-    BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                      COMPOSITE_FLIP_X);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
   }
   draw[0] = BLITTER;
   {
     void *camera;
     struct BattleObjectPosition *target;
 
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     camera = Ram_HeapSlots->cameraWork;
-    target = BattleObject_GetFar(effect->actors[0])->object;
+    target = BattleObject_GetFar(args->targets[0])->object;
 
     for (frame = 0; frame != CRYSTAL_FRAMES; frame++) {
       if (frame == 0) {
-        struct EffectStep *shard;
+        struct Particle *shard;
         for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS;
              i++, shard++) {
           s32 angle = Random16();
@@ -155,7 +129,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
 
       // The shards, one more every two frames from frame 48.
       if (frame > 47) {
-        struct EffectStep *shard;
+        struct Particle *shard;
         for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS;
              i++, shard++) {
           if (frame >= i * 2 + 48) {
@@ -184,10 +158,11 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
         }
       }
 
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 4 + 64) {
           Sound_PlayFar(SE_RECOVERY);
-          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 24);
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, i, 24);
         }
       }
 
@@ -200,7 +175,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
 
         model->kind = 6;
         model->texture = &texture;
-        model->mesh = gData_08199364;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = vertices;
         texture.logWidth = 7;
         texture.logHeight = 7;
@@ -217,7 +192,8 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
                                         0);
           SceneTransform_ApplyUniformScale(scale >> 1);
           Transform_ApplyYaw(frame << 9);
-          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                   4);
           Render_DrawModelList(model);
         }
         Heap_Release(model);
@@ -225,14 +201,10 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
       }
       gCameraSceneParameters[3] = 120;
       gCameraSceneParameters[4] = 120;
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef BLITTER
 #undef CRYSTAL_FRAMES

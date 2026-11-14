@@ -25,49 +25,6 @@ struct RenderModel__f178710 {
   u8 scrollV;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // On every strike after the first, the target's motion goes to this percent of
 // its anchor's x, lowered from patch 1.
 #if TLA_PATCH_1
@@ -80,17 +37,6 @@ void Transform_Pop(void);
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
-
-extern char ResourceId_SmokeBandSheet;
-extern char ResourceId_Data134;
-extern char ResourceId_ClawSlashSheet;
-extern char ResourceId_BlueFlameSheet;
-extern u8 Data_02011000[];
-extern u8 Data_02012000[];
-extern u16 gBattleEffect_MoteCells[];
-extern const u8 gData_08199340[]; // a head's mesh
-extern const u8 Data_081991e0[];  // its corners
 
 #define DRAGON_SEGMENTS 33
 
@@ -114,7 +60,7 @@ extern struct StripVertex
 // from the caster and arcs onto the target, each a scrolling textured strip
 // of 33 segments with a clawed head; each strikes ten frames after the
 // last, scattering 32 sparks.
-void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit[2];
@@ -123,14 +69,14 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   u8 *sprites;
   void *caster;
   s32 arcs[4];
-  struct EffectPosition source;
-  struct EffectPosition target;
-  struct EffectPosition hit;
+  struct ScreenPoint source;
+  struct ScreenPoint target;
+  struct ScreenPoint hit;
   struct ModelTexture texture;
   struct RenderModel__f178710 *model;
   void *vertices;
-  struct EffectStep *spark;
-  struct EffectStep *mote;
+  struct Particle *spark;
+  struct Particle *mote;
   s32 i;
   s32 j;
 
@@ -139,39 +85,36 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  if (effect->side == 0) {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  if (args->side == 0) {
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
     s32 endX[2] = {0, 0};
     s32 endY[2] = {0, 0};
-    caster = BattleObject_GetFar(effect->actor)->object;
+    caster = BattleObject_GetFar(args->user)->object;
     Actor_SetAnimationSpeedFar(caster, 48);
     Actor_SelectAnimationFar(caster, 2);
-    EffectPosition_ProjectBattler(effect->actor, &source);
-    EffectPosition_ProjectBattler(effect->actors[0], &target);
+    EffectPosition_ProjectBattler(args->user, &source);
+    EffectPosition_ProjectBattler(args->targets[0], &target);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                                1);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
+                               0);
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                                work->sheet + 0x4000, 1, 1);
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
-    REG_BG2PA = 0x80;
+    REG_BG2PA = Q_8_8(0.5);
     Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
 
-    for (frame = 0; frame != effect->variant * 10 + 60; frame++) {
+    for (frame = 0; frame != args->variant * 10 + 60; frame++) {
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       if (frame == 0) {
@@ -185,19 +128,19 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
       }
 
       // Each dragon's strike.
-      for (i = 0; i != effect->variant + 1; i++) {
+      for (i = 0; i != args->variant + 1; i++) {
         if (frame != i * 10 + 28) {
           continue;
         }
-        EffectPosition_ProjectBattler(effect->actors[0], &hit);
+        EffectPosition_ProjectBattler(args->targets[0], &hit);
         for (j = 0; j != 32; j++) {
           s32 angle;
           s32 speed = 255;
 
           spark = &work->particles[i * 32 + j];
 
-          spark->x = (hit.x / 2) << 16;
-          spark->y = (hit.y - 16) << 16;
+          spark->x = px(hit.x / 2);
+          spark->y = px(hit.y - 16);
           angle = Random16();
           speed &= Random16();
           spark->velocityX = (Trig_Sin(angle) * (speed += 127)) >> 6;
@@ -207,28 +150,30 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->shakeFrames = 8;
         if (frame == 28) {
-          if (effect->variant == 0) {
-            BattlePlayback_StartFar(144);
+          if (args->variant == 0) {
+            EFFECT_SHOW_DAMAGE(SE_CLATTER);
           } else {
             Sound_PlayFar(SE_CLATTER);
           }
-          BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
+          BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x40000,
                                         0x40000, 150);
         } else {
-          BattlePlayback_StartFar(144);
-          BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
+          EFFECT_SHOW_DAMAGE(SE_CLATTER);
+          BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x40000,
                                         0x70000, TARGET_ANCHOR_PERCENT);
         }
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
       }
       for (i = 0; i != 64; i++) {
         mote = &work->particles[i];
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
-                  HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(mote, 60, 0x1000);
+          blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
+                  Q_16_16_UPPER_HALF(mote->x) - size / 2,
+                  Q_16_16_UPPER_HALF(mote->y) - size, size, size * 2);
+          BattleEffectKernels_IntegrateVector2(mote, 60, px(1) / 16);
           mote->variant--;
         }
       }
@@ -336,7 +281,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         model->texture = &texture;
         model->shade = 0;
         model->vertices = vertices;
-        for (i = 0; i != effect->variant + 1; i++) {
+        for (i = 0; i != args->variant + 1; i++) {
           if (arcs[i * 2 + 1] >= arcs[i * 2]) {
             continue;
           }
@@ -346,7 +291,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           model->mesh = stripMesh;
           model->scrollU = 127 & ~(frame << 3);
           Transform_Reset();
-          if (effect->side == 0) {
+          if (args->side == 0) {
             SceneTransform_ApplyPosition3((source.x / 2 - 68) << 16,
                                           (source.y << 16) - 0x600000, 0);
           } else {
@@ -354,7 +299,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
                                           (source.y << 16) - 0x600000, 0);
           }
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (effect->side == 1) {
+          if (args->side == 1) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Transform_ApplyRoll(i * 14192 - TRIG_TURN / 16);
@@ -365,12 +310,12 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;
-            model->mesh = gData_08199340;
+            model->mesh = gBattleEffect_SquareMesh;
             texture.pixels = work->sheet + 0x4000;
             SceneTransform_ApplyPosition3(endX[i] << 16, endY[i] << 16, 0);
             Transform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));
             SceneTransform_ApplyUniformScale(20768);
-            Render_TransformVertices(Data_081991e0, vertices, 4);
+            Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
             Render_DrawModelList(model);
           }
         }
@@ -378,26 +323,16 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
       }
       BattleEffect_CountDownBattlerTints();
       BattleCamera_Shake(2, 2);
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     }
     Actor_SetAnimationSpeedFar(caster, 16);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }
   BattleEffect_EndCanvasLayer();
 }
 
-#define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
-#define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
-
-// The Lost Age's blitter modes run the other way from The Broken Seal's:
-// additive 0, max 1, transparent 2, copy 3; 2 << 4 | 3 is transparent and
-// clipped, and | 4 mirrors it.
-#define BLITTER_TRANSPARENT 2
-
-#define CLIP_XY 3
-#define FLIP_X 4
+#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
 #define FIGURE_FRAMES 108
 #define FIGURE_SWING_FRAME 30 // the first blow
@@ -407,22 +342,9 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
 #define FIGURE_BODY 0             // 96x83
 #define FIGURE_ARM_LOWERED 0x1f20 // 42x35
 #define FIGURE_ARM_RAISED 0x24de  // 48x51
-#define FIGURE_SWING 0x2e6e       // four cels, Data_081993d0 to d8
-#define FIGURE_FIST 0x4e9d        // 32x29, then eight cels in Data_081993e0..f0
-
-extern char ResourceId_Data0DC;
-
-// The swing's cels: widths, heights and offsets; the fist's: heights,
-// y offsets and offsets.
-// Plain externs: const changes the code that reads them.
-extern u8 gData_081993d0[];
-extern u8 gData_081993d4[];
-extern u16 gData_081993d8[];
-extern u8 gData_081993e0[];
-extern u8 gData_081993e8[];
-extern u16 gData_081993f0[];
-
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
+#define FIGURE_SWING 0x2e6e       // four pictures, gHeartbreak_SwingPictures
+#define FIGURE_FIST                                                            \
+  0x4e9d // 32x29, then eight pictures, gHeartbreak_FistPictures
 
 // A great figure strikes. It sweeps down on the target from above the far
 // side, swaying on a small circle and fading in through the blend; its arm
@@ -431,13 +353,13 @@ void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 // and at frame 80 the blow lands and the result phase starts. From frame
 // 92 it fades out and rises away; the battle background is reloaded at the
 // end. On the far side the whole figure is drawn mirrored.
-void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
   u8 *canvas;
   u8 *parts;
   DrawRectangle draw[2];
-  struct EffectPosition target;
+  struct ScreenPoint target;
   s32 frame;
   s32 x;
   s32 y;
@@ -447,29 +369,29 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   canvas = heap->battleFxWork[1];
   parts = Ram_MapCellBuffer;
   BattleEffect_StartTiledCanvas(0x2001);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                           BLITTER(BLITTER_TRANSPARENT, CLIP_XY));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)heap->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER_ALTERNATE,
-                           BLITTER(BLITTER_TRANSPARENT, CLIP_XY | FLIP_X));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_TRANSPARENT);
   draw[1] = ((DrawRectangle *)heap)[47];
-  work->transferMode = 1;
-  work->transferValue = 0;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
+  EffectPosition_ProjectScaledBattler(args->targets[0], &target);
 
   for (frame = 0; frame != FIGURE_FRAMES; frame++) {
     // It starts 100 pixels above the canvas and to the target's far side,
     // and comes down at it for 32 frames.
     if (frame == 0) {
-      if (effect->side == 0)
-        work->particles[0].x = (target.x + 40) << 16;
+      if (args->side == 0)
+        work->particles[0].x = px(target.x + 40);
       else
-        work->particles[0].x = (target.x - 168) << 16;
+        work->particles[0].x = px(target.x - 168);
       work->particles[0].y = -px(100);
-      if (effect->side == 0)
+      if (args->side == 0)
         work->particles[0].velocityX = -px(6);
       else
         work->particles[0].velocityX = px(6);
@@ -489,115 +411,119 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
       s32 level = FIGURE_FRAMES - frame;
 
       REG_BLDALPHA = ((16 - level / 2) << 8) | level;
-      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, -0x8000);
+      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, -px(1) / 2);
     }
 
     // The sway, and the canvas moved with the figure.
-    x = HI(work->particles[0].x) + ((Trig_Sin(frame << 8) << 3) >> 16);
-    y = HI(work->particles[0].y) + ((Trig_Cos(frame << 8) << 3) >> 16);
+    x = Q_16_16_UPPER_HALF(work->particles[0].x) +
+        ((Trig_Sin(frame << 8) << 3) >> 16);
+    y = Q_16_16_UPPER_HALF(work->particles[0].y) +
+        ((Trig_Cos(frame << 8) << 3) >> 16);
     REG_BG2X = -x << 8;
 
     // The body, and the arm raised until frame 48.
-    if (effect->side == 0) {
-      draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 25, y + 2, 96,
-                         83);
+    if (args->side == 0) {
+      draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 25, y + 2, 96,
+                       83);
       if ((u32)frame < 48)
-        draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 31,
-                           y + 22, 48, 51);
+        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 31,
+                         y + 22, 48, 51);
       else
-        draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_LOWERED, 64,
-                           y + 16, 42, 35);
+        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_LOWERED, 64,
+                         y + 16, 42, 35);
     } else {
-      draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 7, y + 2, 96,
-                         83);
+      draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 7, y + 2, 96,
+                       83);
       if ((u32)frame < 48)
-        draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 49,
-                           y + 22, 48, 51);
+        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 49,
+                         y + 22, 48, 51);
       else
-        draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_LOWERED, 22,
-                           y + 16, 42, 35);
+        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_LOWERED, 22,
+                         y + 16, 42, 35);
     }
 
     // The swing, three frames a cel from frame 28.
     if (frame >= 28 && frame < 40) {
       s32 cel = (frame - 28) / 3;
 
-      if (effect->side == 0) {
-        draw[effect->side](
-            canvas, Ram_MapCellBuffer + FIGURE_SWING + gData_081993d8[cel],
-            46 - gData_081993d0[cel] / 2, y - gData_081993d4[cel] / 2 + 61,
-            gData_081993d0[cel], gData_081993d4[cel]);
+      if (args->side == 0) {
+        draw[args->side](
+            canvas,
+            Ram_MapCellBuffer + FIGURE_SWING + gHeartbreak_SwingPictures[cel],
+            46 - gHeartbreak_SwingWidths[cel] / 2,
+            y - gHeartbreak_SwingHeights[cel] / 2 + 61,
+            gHeartbreak_SwingWidths[cel], gHeartbreak_SwingHeights[cel]);
       } else {
-        draw[effect->side](
-            canvas, Ram_MapCellBuffer + FIGURE_SWING + gData_081993d8[cel],
-            gData_081993d0[cel] / 2 - gData_081993d0[cel] + 82,
-            y - gData_081993d4[cel] / 2 + 61, gData_081993d0[cel],
-            gData_081993d4[cel]);
+        draw[args->side](
+            canvas,
+            Ram_MapCellBuffer + FIGURE_SWING + gHeartbreak_SwingPictures[cel],
+            gHeartbreak_SwingWidths[cel] / 2 - gHeartbreak_SwingWidths[cel] +
+                82,
+            y - gHeartbreak_SwingHeights[cel] / 2 + 61,
+            gHeartbreak_SwingWidths[cel], gHeartbreak_SwingHeights[cel]);
       }
     }
 
     // The fist: raised to frame 47, then falling six frames a cel from 56.
     if (frame > 39) {
       if (frame <= 47) {
-        if (effect->side == 0)
-          draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_FIST, 30,
-                             y + 46, 32, 29);
+        if (args->side == 0)
+          draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_FIST, 30, y + 46,
+                           32, 29);
         else
-          draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_FIST, 66,
-                             y + 46, 32, 29);
+          draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_FIST, 66, y + 46,
+                           32, 29);
       } else {
         s32 cel = (frame - 56) / 6;
 
         if (cel < 0)
           cel = 0;
         if (cel <= 7) {
-          if (effect->side == 0)
-            draw[effect->side](
-                canvas, Ram_MapCellBuffer + FIGURE_FIST + gData_081993f0[cel],
-                63, y + gData_081993e8[cel] - 8, 32, gData_081993e0[cel]);
+          if (args->side == 0)
+            draw[args->side](canvas,
+                             Ram_MapCellBuffer + FIGURE_FIST +
+                                 gHeartbreak_FistPictures[cel],
+                             63, y + gHeartbreak_FistY[cel] - 8, 32,
+                             gHeartbreak_FistHeights[cel]);
           else
-            draw[effect->side](
-                canvas, Ram_MapCellBuffer + FIGURE_FIST + gData_081993f0[cel],
-                33, y + gData_081993e8[cel] - 8, 32, gData_081993e0[cel]);
+            draw[args->side](canvas,
+                             Ram_MapCellBuffer + FIGURE_FIST +
+                                 gHeartbreak_FistPictures[cel],
+                             33, y + gHeartbreak_FistY[cel] - 8, 32,
+                             gHeartbreak_FistHeights[cel]);
         }
       }
     }
 
     if (frame == FIGURE_HIT_FRAME) {
       work->shakeFrames = 6;
-      BattlePlayback_StartFar(134);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 16);
     }
     if (frame == FIGURE_SWING_FRAME) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       work->shakeFrames = 3;
       Sound_PlayFar(SE_POWER_UP);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 16);
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
-  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
 #undef TARGET_ANCHOR_PERCENT
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef DRAGON_SEGMENTS
 #undef HEAP_SLOT_BLITTER
-#undef HEAP_SLOT_BLITTER_ALTERNATE
-#undef BLITTER_TRANSPARENT
-#undef CLIP_XY
-#undef FLIP_X
 #undef FIGURE_FRAMES
 #undef FIGURE_SWING_FRAME
 #undef FIGURE_HIT_FRAME

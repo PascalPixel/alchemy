@@ -28,37 +28,13 @@ struct ModelTexture__f14153c {
   const u8 *pixels;
 };
 
-void Render_DrawModelList__battle_effect(struct Model *model);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-// Rows of Resource_DirectoryTable; the directory has yet to name most of them.
-extern char ResourceId_EarthHorizonBackdrop, ResourceId_AerialViewBackdrop;
-extern char ResourceId_GoldenDragonTiles, ResourceId_GoldenDragonHeadTiles;
-extern char ResourceId_BlueFlameSheet, ResourceId_DustBlobSheet;
-extern char ResourceId_Data134, ResourceId_TornadoSheet, ResourceId_Data0B4;
-extern char ResourceId_Data0C1, ResourceId_Data0C9, ResourceId_Data0CA;
-
-extern u8 gMapGridCellBuffer[];
-/* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep
- * gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest
- * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/canvas.c:179:
- * `gData_02014000__f14153c' undeclared (first use in this function). */
-extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
-
-/* VIEW(battle_effect): routine EffectSprite_CreateWithTiles as struct
- * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
- * u32 attributes); battle_effect/ability_effects has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags) {; not tried: EffectSprite_CreateWithTiles's bound declaration was not
- * found. */
-struct SpriteObject *
-EffectSprite_CreateWithTiles__battle_effect(s32 width, s32 height, u32 shape,
-                                            u32 attributes);
+/// The flashes, after the map cells.
+#define FLASHES ((struct Particle *)gData_02014000)
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->slot].offset)
@@ -71,7 +47,7 @@ EffectSprite_CreateWithTiles__battle_effect(s32 width, s32 height, u32 shape,
 // bursts.
 // XXX: what the player sees in each stage; a tbs-en-style render of the
 // effect would settle it.
-void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
+void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   // Unused: blit[1] gives the stack frame its 4 bytes.
@@ -100,12 +76,12 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   s32 fade;
   s16 list[14];
   s32 place[4];
-  struct WordPair req;
+  struct Scale req;
   struct ModelTexture__f14153c texture;
   struct ModelTexture__f14153c texture2;
   struct ModelTexture__f14153c texture3;
   struct RenderModel *model;
-  struct EffectStep *p;
+  struct Particle *p;
   struct EclipseObject *obj;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -116,8 +92,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   battle = (u8 *)Ram_HeapSlots->battleWork;
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
-  work->transferMode = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  work->transferMode = CANVAS_COPY;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   scroll = -80;
   for (frame = 0; frame != 52; frame++) {
     if (frame == 27) {
@@ -133,7 +109,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       work->scrollInterval = 1;
       work->scrollStepX = -1;
       work->scrollStepY = 0;
-      Task_Add(BattleEffect_AdvanceScrollOnInterval, 0x480);
+      Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
       transition[4] = 1;
       cells = Resource_GetTableEntry((s32)&ResourceId_GoldenDragonTiles);
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
@@ -143,7 +119,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       for (i = 0; i != 31; i++) {
         obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
         obj->priority = 2;
-        work->objects[i] = obj;
+        work->sprites[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 0x400);
         tiles += 0x400;
       }
@@ -152,37 +128,30 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       cells += 480;
       Decompress_TaggedLz(cells, gMapGridCellBuffer);
       obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
-      work->objects[31] = obj;
+      work->sprites[31] = obj;
       obj->priority = 2;
       Iwram_CopyWords((void *)OBJ_TILES(obj), gMapGridCellBuffer, 0x400);
     }
     scroll += 4;
     REG_BG2X = scroll << 8;
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   Iwram_FillWords(canvas, 0x3c00, 0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x3c00, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  REG_BG2PA = 0x80;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  EFFECT_SHOW_WIDE_CANVAS(16);
   REG_BG2X = 0;
   baseX = 0;
   baseY = 0;
   velX = 0;
   velY = 0;
-  work->transferMode = 2;
-  work->transferValue = 50;
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = Ram_HeapSlots->unk64[1];
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   {
-    const u8 *texturePixels = (const u8 *)gData_02014000__f14153c;
+    const u8 *texturePixels = (const u8 *)FLASHES;
 
     for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B));
          frame++) {
@@ -194,15 +163,14 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         work->fadeFrames = 1;
         work->fadeStep = frame;
         work->particles[16].variant = frame;
-        Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
-                                   gData_02014000__f14153c, 0, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, FLASHES, 0, 0);
       }
       if (frame == 136) {
         u8 *dst = Data_02010400;
         for (i = 0; i != 7; i++) {
 
           void *o = (void *)OBJ_TILES(
-              (struct EclipseObject *)work->objects[Data_08197748[i]]);
+              (struct EclipseObject *)work->sprites[gEclipse_TileObjects[i]]);
           // Default: set for real below; as s32 size = 0x400, 762 differ.
           s32 size = 0;
           size = 0x400;
@@ -219,11 +187,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         Sound_PlayFar(SE_CLATTER);
       }
       for (i = 0; i != 17; i++) {
-        if (frame == Data_0819774f[i]) {
-          Iwram_FillWords(canvas, 0x3c00, Data_08197760[i]);
+        if (frame == gEclipse_FillFrames[i]) {
+          Iwram_FillWords(canvas, 0x3c00, gEclipse_FillLevels[i]);
         }
       }
-      req = Data_08196de0;
+      req = gEclipse_Scales;
       place[3] = 0;
       place[1] = 0xff0000;
       baseX += velX;
@@ -256,11 +224,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           place[0] = baseX + 0x200000;
           place[2] = baseY + 0x400000;
         } else {
-          place[0] = baseX + (Data_081977a4[i] << 16);
-          place[2] = baseY + (Data_081977c4[i] << 16);
+          place[0] = baseX + (gEclipse_ObjectX[i] << 16);
+          place[2] = baseY + (gEclipse_ObjectZ[i] << 16);
         }
         if (place[2] <= 0xc7ffff) {
-          Render_ApplyProjectedPlacementFar(work->objects[i], place,
+          Render_ApplyProjectedPlacementFar(work->sprites[i], place,
                                             (s32 *)&req, 0);
         }
       }
@@ -339,7 +307,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         texture.logHeight = 2;
         texture.pixels = work->sheet + 0x4000;
         model->kind = 6;
-        model->mesh = Data_08199220;
+        model->mesh = gBattleEffect_SmallSquareMesh;
         model->texture = &texture;
         model->vertices = verts;
         for (i = 0; i != 8; i++) {
@@ -359,7 +327,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyScale3(
                 Trig_Sin(work->particles[i].variant * 682) + TRIG_TURN / 4,
                 0x20000, 0x10000);
-            Render_TransformVertices(gData_081991b0, verts, 4);
+            Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
+                                     4);
             Render_DrawModelList(model);
           }
         }
@@ -376,7 +345,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           model->kind = 7;
           texture.pixels = texturePixels;
           model->texture = &texture;
-          model->mesh = gData_08199340;
+          model->mesh = gBattleEffect_SquareMesh;
           model->vertices = verts;
           Transform_Reset();
           SceneTransform_ApplyPosition3(cx + -0x3e0000, cy + -0x420000, 0);
@@ -384,7 +353,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           Transform_ApplyPitch(TRIG_TURN / 8);
           Transform_ApplyRoll(0x2800);
           Transform_ApplyYaw(-frame << 10);
-          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
         if (frame >= 172 && frame <= 220) {
@@ -398,7 +367,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           } else {
             SceneTransform_ApplyScale3(0x80000, Q16_ONE * 2, Q16_ONE);
           }
-          Render_TransformVertices(Data_081991c0, verts, 4);
+          Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
           Render_DrawModelList(model);
         }
         Heap_Release(model);
@@ -415,42 +384,45 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             s32 size = work->particles[16].variant * 2;
 
             x = Random16() % size + (cx >> 16) - (size >> 1) -
-                (gData_08197492[t] >> 1);
+                (gBattleEffect_GlintPictureWidths[t] >> 1);
             y = Random16() % size + (cy >> 16) - (size >> 1) -
-                (gData_08197498[t] >> 1);
+                (gBattleEffect_GlintPictureHeights[t] >> 1);
           } else {
             u32 a = Random16() & 63;
             s32 r = work->particles[16].variant;
 
-            x = (cx >> 16) - (a >> 1) - (gData_08197492[t] >> 1) +
-                Random16() % r - r / 2 - 8;
-            y = a + (cy >> 16) - (gData_08197498[t] >> 1);
+            x = (cx >> 16) - (a >> 1) -
+                (gBattleEffect_GlintPictureWidths[t] >> 1) + Random16() % r -
+                r / 2 - 8;
+            y = a + (cy >> 16) - (gBattleEffect_GlintPictureHeights[t] >> 1);
           }
           BattleEffect_BuildBlitter(SLOT_ALT, 7, 7,
-                                    Data_08197744[Random16() & 3] | 3, 1);
+                                    gEclipse_GlintFlips[Random16() & 3] | 3, 1);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-              canvas, work->sheet + 0x2000 + gBattleEffect_GlintCells[t], x, y,
-              gData_08197492[t], gData_08197498[t]);
-          HeapSlot_Release(SLOT_ALT);
+              canvas, work->sheet + 0x2000 + gBattleEffect_GlintPictures[t], x,
+              y, gBattleEffect_GlintPictureWidths[t],
+              gBattleEffect_GlintPictureHeights[t]);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
-      HeapSlot_Release(SLOT_ALT);
-      work->transferPending = 1;
-      wait(1);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      EFFECT_PRESENT_CANVAS(work);
     }
   }
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   for (i = 0; i != 32; i++) {
-    Sprite_DestroyFar(work->objects[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   }
   VramBlock_Load93Far();
   *(s32 *)(battle + 84) = VramCache_AllocEntry(128);
-  BattleEffect_SelectLivingTargets(work->effect);
-  for (i = 0; i != effect->count; i++) {
-    BattleEffect_TintBattler(effect->actors[i], 1, -1, -1, 0);
-    BattleEffect_TintBattler(effect->actors[i], 0, -1, -1, 0);
+  BattleEffect_SelectLivingTargets(work->args);
+  for (i = 0; i != args->targetCount; i++) {
+    BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_GRB, TINT_KEEP,
+                             TINT_KEEP, 0);
+    BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_NORMAL, TINT_KEEP,
+                             TINT_KEEP, 0);
   }
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1;
@@ -467,16 +439,13 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_DISPCNT = EFFECT_DISPCNT;
   gCameraSceneParameters[4] = 120;
-  work->transferMode = 3;
-  work->transferValue = 0x02020202;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  effect->actors[effect->count] = 0xff;
-  BattleActor_SpawnObjectsForListFar(effect->actors, 0);
+  args->targets[args->targetCount] = 0xff;
+  BattleActor_SpawnObjectsForListFar(args->targets, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
                              0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -493,8 +462,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   fade = 0;
   for (frame = 0; frame != 48; frame++) {
     if (frame > 39) {
-      work->transferMode = 4;
-      work->transferValue = 0x04040404;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_BRIGHTEN, CANVAS_FILL_WORD(4));
     }
     if (frame == 16) {
       Sound_PlayFar(SE_SPIN);
@@ -503,8 +471,9 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       work->shakeFrames = 90;
       Sound_PlayFar(SE_CRASH);
       Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 4);
+      for (i = 0; i != args->targetCount; i++) {
+        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 4);
       }
     }
     if (frame <= 109) {
@@ -517,13 +486,13 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       texture2.logWidth = 5;
       texture2.logHeight = 2;
       texture2.pixels = work->sheet + 0x3840;
-      model->mesh = Data_08199220;
+      model->mesh = gBattleEffect_SmallSquareMesh;
       model->shade = fade;
       model->texture = &texture2;
       model->vertices = verts;
       model->kind = 6;
       if (frame > 15) {
-        struct EffectStep *q = &work->particles[63];
+        struct Particle *q = &work->particles[63];
 
         if (frame == 16) {
           q->x = px(128);
@@ -543,7 +512,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyRoll(0x9800);
         SceneTransform_ApplyScale3(0xdc500, 0x29c40, Q16_ONE / 2);
-        Render_TransformVertices(Data_081991c0, verts, 4);
+        Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
         Render_DrawModelList(model);
       }
       Heap_Release(model);
@@ -561,9 +530,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       }
       BattleCamera_Shake(r, r);
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   count = -1;
   transition[4] = 1;
@@ -578,7 +545,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
                              0);
   {
-    s32 *v = &gData_02014000__f14153c[0].variant;
+    s32 *v = &FLASHES[0].variant;
     s32 c = -1;
 
     for (i = 0; i != 512; i++) {
@@ -586,8 +553,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       v += 7;
     }
   }
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   gBgScroll[1].y = 32;
   {
     const void *mesh = Data_02011000;
@@ -623,9 +589,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       for (i = 0; i != 16; i++) {
         // A constant here and in p below, so both share one pool word (as
         // gData_02014000, 70 to 786 differ).
-        struct EffectStep *q =
-            (struct EffectStep *)(Ram_MapCellBuffer + 0x4000) +
-            ((frame * 16 + i) & 511);
+        struct Particle *q = (struct Particle *)(Ram_MapCellBuffer + 0x4000) +
+                             ((frame * 16 + i) & 511);
         // Default: set for real below.
         s32 a = 0;
         s32 r = 0;
@@ -639,9 +604,9 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         q->variant = (Random16() & 15) + 16;
       }
       {
-        const u16 *sizeOffsets = gBattleEffect_MoteCells;
+        const u16 *sizeOffsets = gBattleEffect_MotePictures;
         for (i = 0; i != 512; i++) {
-          p = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000) + i;
+          p = (struct Particle *)(Ram_MapCellBuffer + 0x4000) + i;
           if (p->variant >= 0) {
             s32 n = (p->variant >> 3) + 1;
             // sizeOffsets[n - 1] spelled as a byte offset: plain, 49 differ.
@@ -650,7 +615,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             blit[0](canvas,
                     sprites + *(const u16 *)((const u8 *)sizeOffsets + off),
                     (p->x >> 16) - n / 2, (p->y >> 16) - n, n, n * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, -0x4000);
+            BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 4);
             p->variant--;
           }
         }
@@ -666,7 +631,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         texture3.logWidth = 5;
         texture3.logHeight = 2;
         texture3.pixels = work->sheet + 0x3840;
-        model->mesh = Data_08199220;
+        model->mesh = gBattleEffect_SmallSquareMesh;
         model->shade = shade;
         model->vertices = gMapGridCellBuffer;
         model->kind = 6;
@@ -676,7 +641,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyRoll(0x9800);
         SceneTransform_ApplyScale3(s, Q16_ONE * 2, Q16_ONE / 2);
-        Render_TransformVertices(Data_081991c0, gMapGridCellBuffer, 4);
+        Render_TransformVertices(gBattleEffect_BeamCorners, gMapGridCellBuffer,
+                                 4);
         Render_DrawModelList(model);
       }
       if (frame == 0) {
@@ -741,7 +707,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           s32 t = frame + 24 - i * 6;
 
           if (t >= 0 && t <= 63) {
-            s32 s = (Data_081977e4[i] * t << 10) + 0x4000;
+            s32 s = (gEclipse_RingGrowth[i] * t << 10) + 0x4000;
 
             shade = 0;
             if (t <= 15) {
@@ -757,15 +723,14 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             Transform_ApplyPitch(10000);
             Transform_ApplyYaw((frame + i * 8) << 10);
             SceneTransform_ApplyScale3(Q16_ONE, 0x60000, Q16_ONE);
-            SceneTransform_ApplyPosition3(0, Data_081977e8[i] << 16, 0);
+            SceneTransform_ApplyPosition3(0, gEclipse_RingHeights[i] << 16, 0);
             Render_TransformVertices(Data_02012000, vertices, 64);
             Render_DrawModelList(model);
           }
         }
       }
       Heap_Release(model);
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     }
   }
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x3c00, 0x3f3f3f3f);
@@ -774,18 +739,14 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 120;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
   wait(1);
-  work->transferMode = 3;
-  work->transferValue = 0x02020202;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Graphics_LoadGreyRamp();
   Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-  BattlePlayback_StartFar(134);
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   for (frame = 0; frame != 32; frame++) {
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Unused: two empty functions the ROM keeps after Eclipse; nothing calls them.
@@ -796,16 +757,11 @@ void BattleEffect_ReservedNoOpB(void) {}
 struct Model;
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
-#define SLOT_BATTLE_EFFECT 92 // battleFxWork[0]
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
-#define BATTLE_EFFECT_WORK_SIZE 0x7b7c
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
-
-// The pixel half of a 16.16 value.
-#define HI(value) (((s16 *)&(value))[1])
 
 // One model for the IWRAM renderer.
 /* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c;
@@ -832,8 +788,8 @@ struct ModelDraw__f14153c {
 /// and 79 stand to either side and hand over to the battle
 /// (Battle_ChangeEnemyFormFar) at frame 62; kind 80 runs 100 frames, fades to
 /// white and restores the scene's view itself.
-void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
-  struct EffectPosition center;
+void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
+  struct ScreenPoint center;
   struct ModelTexture__f14153c texture;
   struct BattleEffectWork *work;
   void *canvas;
@@ -843,21 +799,19 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   s32 index;
   s32 i;
 
-  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   work->vblanksSinceTransfer = 1;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
@@ -867,7 +821,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   for (frame = 0; frame != frames; frame++) {
     index = (frame - 48) * 2;
     // The effect's centre, beside or above the user.
-    EffectPosition_ProjectBattler(effect->actor, &center);
+    EffectPosition_ProjectBattler(args->user, &center);
     if (kind == KIND_RIGHT) {
       center.x += 40;
       center.y -= 24;
@@ -882,8 +836,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
     }
 
     if (frame == 0) {
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       if (kind == KIND_LEFT)
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
@@ -900,14 +853,15 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
     if (frame == 56)
       Sound_PlayFar(SE_BOSS_ROAR);
     if (frame == 32)
-      BattleEffect_TintBattler(effect->actor, 7, -1, -1, -1);
+      BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, -1);
     if (frame == 68)
-      BattleEffect_TintBattler(effect->actor, 0, -1, -1, -1);
+      BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, -1);
     if (kind == KIND_FINALE) {
       // The finale fades to white from frame 62.
       if (frame > 61) {
-        work->transferMode = 1;
-        work->transferValue = 0x10101010;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
         Palette_BrightenBgEntries(2, 2, 2);
       }
     } else if (frame == 62) {
@@ -917,11 +871,11 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
     // From frame 48: shake, clear the canvas, and for 8 frames burst two
     // flashes a frame from a point near the centre.
     if (frame >= 48) {
-      struct EffectStep *flashes;
+      struct Particle *flashes;
 
       if (frame == 48) {
         {
-          s32 *variant = &gData_02014000__f14153c[0].variant;
+          s32 *variant = &FLASHES[0].variant;
 
           for (i = 0; i != 64; i++) {
             *variant = -1;
@@ -931,16 +885,16 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
         work->shakeFrames = 8;
         Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       }
-      flashes = gData_02014000__f14153c;
+      flashes = FLASHES;
       if (frame >= 48 && frame <= 55) {
         s32 x = ((Random16() & 63) + center.x / 2 - 32) << 16;
         s32 y = ((Random16() & 31) + center.y) << 16;
         s32 k = 0;
         s32 spread = 15;
-        struct EffectStep *burst = &flashes[index];
+        struct Particle *burst = &flashes[index];
 
         for (; k != 2; k++) {
-          struct EffectStep *flash = &burst[k];
+          struct Particle *flash = &burst[k];
           s32 speed = 31; // Set first: the mask is the tied operand.
           s32 angle;
 
@@ -955,13 +909,14 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
         }
       }
       {
-        struct EffectStep *flash = flashes;
+        struct Particle *flash = flashes;
 
         for (i = 0; i != 16; i++, flash++) {
           if (flash->variant >= 0 && flash->variant <= 17) {
             draw[0](canvas, work->sheet + (flash->variant / 3 << 11),
-                    HI(flash->x) - 16, HI(flash->y) - 48, 32, 64);
-            BattleEffectKernels_IntegrateVector2(flash, 62, -0x800);
+                    Q_16_16_UPPER_HALF(flash->x) - 16,
+                    Q_16_16_UPPER_HALF(flash->y) - 48, 32, 64);
+            BattleEffectKernels_IntegrateVector2(flash, 62, -px(1) / 32);
             flash->variant++;
           }
         }
@@ -991,7 +946,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
       // later ones 4 frames apart.
       if (frame == 0) {
         for (i = 0; i != 16; i++) {
-          struct EffectStep *ring = &work->particles[i];
+          struct Particle *ring = &work->particles[i];
 
           ring->x = Random16() & 0xffff;
           ring->y = (Random16() & 255) + 128;
@@ -1010,12 +965,12 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
       texture.pixels = work->sheet + 0x3000;
       model->kind = 7;
       model->texture = &texture;
-      model->model = Data_08199220;
+      model->model = gBattleEffect_SmallSquareMesh;
       model->corners = corners;
 
       // The rings rise for 24 frames, spinning and swelling.
       for (i = 0; i != 16; i++) {
-        struct EffectStep *ring = &work->particles[i];
+        struct Particle *ring = &work->particles[i];
 
         ring->variant += 2;
         ring->x += ring->y * 2;
@@ -1032,7 +987,8 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
           Transform_ApplyRoll(ring->x);
           SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + TRIG_TURN,
                                      0x20000, 0x10000);
-          Render_TransformVertices(gData_081991b0, corners, 4);
+          Render_TransformVertices(gBattleEffect_TaperedBeamCorners, corners,
+                                   4);
           Render_DrawModelList(model);
         }
       }
@@ -1044,9 +1000,9 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
       texture.pixels = Data_02012000;
       model->kind = 7;
       texture.logHeight = 6;
-      model->model = gData_081990d0;
+      model->model = gBattleEffect_RingMesh;
       for (i = 0; i != 4; i++) {
-        s32 start = Data_081977ec[i] + 48;
+        s32 start = gFormChange_WaveStarts[i] + 48;
 
         model->shade = (frame * 8 + i * 32) & 127;
         if (frame > start) {
@@ -1054,20 +1010,22 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
           if (bias > -16)
             bias = -16;
           if (bias > -64) {
-            s32 growth = (frame - start) * Data_081977f0[i] * 2000 + 0x4000;
+            s32 growth =
+                (frame - start) * gFormChange_WaveGrowth[i] * 2000 + 0x4000;
 
             model->depthBias = bias;
             Transform_Reset();
             SceneTransform_ApplyPosition3((center.x / 2 - 60) << 16, 0x200000,
                                           0);
             SceneTransform_ApplyScale3(
-                growth * 2, Data_081977f4[i] * growth + 0x40000, growth / 4);
+                growth * 2, gFormChange_WaveStretch[i] * growth + 0x40000,
+                growth / 4);
             Transform_ApplyPitch(1000);
             if (i & 1)
               Transform_ApplyYaw((i * 8 + frame) << 10);
             else
               Transform_ApplyYaw((i * 8 - frame) << 10);
-            Render_TransformVertices(gData_08199090, corners, 32);
+            Render_TransformVertices(gBattleEffect_RingCorners, corners, 32);
             Render_DrawModelList(model);
           }
         }
@@ -1077,13 +1035,11 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (kind == KIND_FINALE) {
     // Put the scene's view back by hand.
     Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
@@ -1096,13 +1052,14 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
     BattleEffect_EndCanvasLayer();
   }
   HeapSlot_Release(HEAP_SLOT_CANVAS);
-  HeapSlot_Release(SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /// The frame callback that copies the effect canvas to BG character block 1
 /// when a transfer is pending, in the way the transfer mode asks for.
 void BattleEffect_ProcessPendingGraphicsTransfer(void) {
-  struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *source = Ram_HeapSlots->battleFxWork[1];
   u32 ime;
 
@@ -1165,7 +1122,8 @@ void BattleEffect_ProcessPendingStampTransfer(void) {
 /// The same callback for the 0x7800-byte canvas in the map cell buffer, copied
 /// to BG character block 2.
 void BattleEffect_FlushPendingGraphicsTransfer(void) {
-  struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *source = Ram_MapCellBuffer;
   u32 ime;
 
@@ -1204,7 +1162,8 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
 
 /// The same for the canvas in the second effect work block.
 void BattleEffect_ProcessPendingBlock2Transfer(void) {
-  struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *source;
   u32 ime;
 
@@ -1268,8 +1227,8 @@ void BattleEffect_BuildCanvasTilemap(void) {
 
 /// Writes the window, display and blend registers, all at once.
 void BattleEffect_ApplyWindowBlendRegisters(void) {
-  struct BattleFxWork *work =
-      (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
 
   REG_WIN0H = work->win0h;
   REG_WIN0V = work->win0v;
@@ -1285,8 +1244,8 @@ void BattleEffect_ApplyWindowBlendRegisters(void) {
 /// Writes background 2's scale (BG2PA and BG2PD) and its reference point.
 void Display_ApplyBg2Affine(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2. */
-  register struct BattleFxWork *work asm("r2") =
-      (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  register struct BattleEffectWork *work asm("r2") =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
 
   {
     u32 value = work->bg2pa;
@@ -1306,8 +1265,8 @@ void Display_ApplyBg2Affine(void) {
 /// Writes background 2's reference point.
 void Display_ApplyBg2Reference(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2. */
-  register struct BattleFxWork *work asm("r2") =
-      (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  register struct BattleEffectWork *work asm("r2") =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u32 hold;
 
   {
@@ -1357,8 +1316,8 @@ void BattleEffect_CountDownBattlerTints(void) {
     if (base[0x78dc + i] != 0) {
       if ((base[0x78dc + i] = base[0x78dc + i] - 1) == 0) {
         index = i * 2 + 36;
-        BattleEffect_TintBattler(*(s16 *)(*(u8 **)(base + 0x78f0) + index), 0,
-                                 -1, -1, 0);
+        BattleEffect_TintBattler(*(s16 *)(*(u8 **)(base + 0x78f0) + index),
+                                 SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       }
     }
     i += 1;
@@ -1381,14 +1340,11 @@ void BattleEffect_SetupCanvasWindows(void) {
   REG_WINOUT = WINOUT_WINOBJ_ALL | WINOUT_WIN01_CLR | WINOUT_WIN01_BG0;
 }
 
-#undef HI
-
-// Twin: The Broken Seal's BattleEffect_StartCanvasLayer. The Lost Age's
-// changes: BattleEffect_ConfigureEffectDisplay for the display set-up, DISPCNT
-// 0x1741, Palette_StepFadeTransfer at 0x480, BattleEffect_SetupCanvasWindows
-// for the display registers and one more work word cleared.
+/// Opens the canvas layer on BG2 with control bgControl: the display, the
+/// canvas's tiles and map, the windows and the backdrop's fade.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
-  struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleBackgroundView *display =
@@ -1466,7 +1422,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 /// 16x16 characters, blended over the battle background, whose palette
 /// starts fading.
 void BattleEffect_OpenCanvasLayer(s32 bgControl) {
-  struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleBackgroundView *display =
@@ -1586,7 +1543,8 @@ void BattleEffect_StartTiledCanvasFilled(s32 bg_control) {
 /// Closes the effect canvas layer: BG1 back where it was, BG2 and its
 /// characters cleared, then the background palette faded back in.
 void BattleEffect_EndCanvasLayer(void) {
-  struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
 
@@ -1690,7 +1648,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-/// The Broken Seal's routine, with the fraction in
+/// Draws a line into the canvas, clipped to it, with the fraction kept in
 /// bit 31 (started at 0x80 << 23, carried when negative and cleared with a
 /// shift pair) and dx and dy reused as the step direction.
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,

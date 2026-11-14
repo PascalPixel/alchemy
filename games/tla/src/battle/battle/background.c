@@ -956,8 +956,8 @@ void BattleEffect_EndElementStreaksFar(void);
 // 1, the prepared canvas scene of the kind, centred on the unit (40
 // frames); 2, the ice fleck burst; 3, the gathering burst.
 void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
-  struct EffectPosition position;
-  struct EffectPosition position2;
+  struct ScreenPoint position;
+  struct ScreenPoint position2;
   struct BattlePresentationWork launch;
   struct BattlePresentationWork launch2;
   s32 origin[2];
@@ -967,7 +967,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   struct SparkWork *work;
   s32 frame;
   s32 *brightness;
-  struct EffectPosition *pos;
+  struct ScreenPoint *pos;
 
   wait(1);
   BattleBackground_SetMode(1, session->background, 0);

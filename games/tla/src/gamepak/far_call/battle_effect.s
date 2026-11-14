@@ -5,8 +5,8 @@
 	.global FarCall_BattleEffectTable
 FarCall_BattleEffectTable:
 	export BattleEffect_BuildBlitterFar, BattleEffect_BuildBlitter
-	export BattleEffect_DispatchByIdRangeFar, BattleEffect_DispatchByIdRange
-	export BattleEffect_RunSceneEffectFar, BattleEffect_RunSceneEffect
+	export BattleEffect_RunByIdRangeFar, BattleEffect_RunByIdRange
+	export BattleEffect_RunSummonFar, BattleEffect_RunSummon
 	export BattleEffect_RunFromTableFar, BattleEffect_RunFromTable
 	export BattleEffect_RunElementPillarFar, BattleEffect_RunElementPillar
 	export BattleEffect_RunShatteringOpeningFar, BattleEffect_RunShatteringOpening

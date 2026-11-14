@@ -5,8 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// Battle effect kind 1, the quake: rock pillars rise under the targets. The
-// Broken Seal's BattleEffect_RunQuake, call for call.
+// Battle effect kind 1, the quake: rock pillars rise under the targets.
 
 #define PILLAR_W 40        // pixels
 #define ROCK_OFFSET 0x1e00 // the rock picture in the sheet, after the band
@@ -24,7 +23,7 @@
 /// pillar is launched upward, and a target that lands flashes; the camera
 /// shakes all the while. The variant chooses the length, the rise time and
 /// the shake.
-void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
+void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -34,7 +33,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   s32 xOffset;
   struct RockWallHeights heights;
   s32 point[3];
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 member;
   s32 row;
   s32 col;
@@ -44,8 +43,8 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100; // no horizontal stretch
-  REG_BLDCNT = 0;    // no blending
+  REG_BG2PA = Q_8_8(1); // no horizontal stretch
+  REG_BLDCNT = 0;       // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + ROCK_OFFSET, 1, 1);
 
@@ -62,31 +61,32 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
 
   // On the far side the canvas moves 112 pixels right, and the targets'
   // screen positions with it.
-  if (effect->side == 1) {
+  if (args->side == 1) {
     REG_BG2X = -(112 << 8);
     xOffset = -112;
   } else {
     xOffset = 0;
   }
-  BattleEffect_LoadBlitter(
-      104, BLIT_MODE(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  for (member = 0; member != effect->count; member++)
+  for (member = 0; member != args->targetCount; member++)
     work->particles[member].variant = 0; // 1 once landed
-  work->transferMode = 1;                // clear the canvas on each transfer
+  work->transferMode =
+      CANVAS_COPY_AND_CLEAR; // clear the canvas on each transfer
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   heights = gRockWall_Heights;
   work->shakeFrames = 128;
   Sound_PlayFar(SE_RUMBLE);
 
-  for (frame = 0; frame != gQuake_Timings[effect->variant][TIMING_FRAMES];
+  for (frame = 0; frame != gQuake_Timings[args->variant][TIMING_FRAMES];
        frame++) {
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
     // The results begin 16 frames before the end.
-    if (frame == gQuake_Timings[effect->variant][TIMING_FRAMES] - 16)
-      BattlePlayback_StartFar(133);
+    if (frame == gQuake_Timings[args->variant][TIMING_FRAMES] - 16)
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The pillars rise from frames 16, 20 and 24.
     for (column = 0; column != 3; column++) {
@@ -95,7 +95,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
       if ((frame & 31) + 32 == start) // never true: the left side is >= 32
         heights.column[column] += 32;
       if (frame >= start &&
-          frame < start + gQuake_Timings[effect->variant][TIMING_RISE_FRAMES]) {
+          frame < start + gQuake_Timings[args->variant][TIMING_RISE_FRAMES]) {
         s32 height;
         s32 top;
 
@@ -111,10 +111,10 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
              16);
 
         // Launch the targets standing on the pillar.
-        for (member = 0; member != effect->count; member++) {
+        for (member = 0; member != args->targetCount; member++) {
           struct MotionObject *object;
 
-          object = BattleObject_GetFar(effect->actors[member])->object;
+          object = BattleObject_GetFar(args->targets[member])->object;
           point[0] = object->x;
           point[1] = object->y;
           point[2] = object->z;
@@ -126,31 +126,29 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)
-            BattleEffect_TintBattler(effect->actors[member], 0, 5, -1, 0);
+            BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
+                                     POSE_DAMAGE, TINT_KEEP, 0);
         }
       }
     }
 
     // A target that lands flashes in palette 7 for 5 frames.
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->targetCount; member++) {
       struct MotionObject *object;
-      struct EffectStep *state;
+      struct Particle *state;
 
-      object = BattleObject_GetFar(effect->actors[member])->object;
+      object = BattleObject_GetFar(args->targets[member])->object;
       state = &work->particles[member];
       if (state->variant == 0 && object->y <= 0 && object->velocityY < 0) {
         state->variant = 1;
-        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 5);
+        BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, member, 5);
       }
     }
-    BattleCamera_Shake(gQuake_Timings[effect->variant][TIMING_SHAKE],
-                       gQuake_Timings[effect->variant][TIMING_SHAKE]);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    BattleCamera_Shake(gQuake_Timings[args->variant][TIMING_SHAKE],
+                       gQuake_Timings[args->variant][TIMING_SHAKE]);
+    EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

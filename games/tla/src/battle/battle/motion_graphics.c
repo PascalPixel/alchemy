@@ -455,7 +455,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
       if (plan->battleEffect & 0x4000)
-        BattleEffect_DispatchByIdRangeFar(&work);
+        BattleEffect_RunByIdRangeFar(&work);
       else
         BattleEffect_RunFromTableFar(&work);
     }
@@ -558,7 +558,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
     if (plan->battleEffect & 0x4000)
-      BattleEffect_DispatchByIdRangeFar(&work);
+      BattleEffect_RunByIdRangeFar(&work);
     else
       BattleEffect_RunFromTableFar(&work);
   } else {
@@ -733,7 +733,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
       if (plan->battleEffect & 0x4000)
-        BattleEffect_DispatchByIdRangeFar(&work);
+        BattleEffect_RunByIdRangeFar(&work);
       else
         BattleEffect_RunFromTableFar(&work);
     } else {

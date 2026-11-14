@@ -21,7 +21,7 @@ A summon's row carries a mark that sends it another way. The Lost Age has
 more than one element: Zagan a Venus and a Mars Djinni, Iris four Mercury
 and nine Mars. The four named for the elements play from the table like
 any ability. Each of the other 25 has a handler of its own, Ramses the
-first and Iris the last, and `BattleEffect_RunSceneEffect` picks it by its
+first and Iris the last, and `BattleEffect_RunSummon` picks it by its
 number.
 
 ## The canvas

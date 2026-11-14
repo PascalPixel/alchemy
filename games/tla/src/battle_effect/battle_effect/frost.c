@@ -6,9 +6,9 @@
 #include "sounds.h"
 #include "macros.h"
 
-#define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
+#define CHIPS ((struct Particle *)Ram_MapCellBuffer)
 
-#define TIMING(field) gFrost_Timings[effect->variant * 3 + (field)]
+#define TIMING(field) gFrost_Timings[args->variant * 3 + (field)]
 
 // Motes swirl up around the targets while ice pillars rise one by one;
 // then everything bursts.
@@ -20,7 +20,7 @@
 // from below, and smoke rises half a pixel a frame through the height the
 // motes and chips cover. The variant chooses the number of motes and
 // pillars and the frame of the burst.
-void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -30,41 +30,39 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   s32 ymin;
   s32 ymax;
   s32 xyz[3];
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 point[3];
   DrawRectangle pair[2];
-  struct EffectStep *mote;
+  struct Particle *mote;
   s32 i;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   dots = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
   BattleEffect_FetchRectangleBlitters(0, draw = pair);
 
   // A mote: x holds its angle, z its radius, y its height.
   for (i = 0; i != 64; i++) {
-    struct EffectStep *seed = &work->particles[i];
+    struct Particle *seed = &work->particles[i];
 
     seed->x = Random16() & 0xffff;
     seed->z = (Random16() & 63) + 56;
-    seed->y = ((Random16() & 31) - 64) << 16;
+    seed->y = px((Random16() & 31) - 64);
   }
 
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  if (effect->side == 1)
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  if (args->side == 1)
     REG_BG2X = -0x7000;
 
   for (frame = 0; frame != TIMING(RISE_FRAME) + 50; frame++) {
     ymin = px(120);
     ymax = 0;
     if (frame == TIMING(RISE_FRAME) + 11)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     point[0] = 0;
     point[1] = 0;
     point[2] = px(512);
@@ -74,9 +72,10 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_ICE);
     if (frame == 85)
       Sound_PlayFar(SE_WHOOSH);
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->targetCount; i++) {
       if (frame == i * 4 + 40)
-        BattleEffect_TintBattler(effect->actors[i], 9, 5, -1, 0);
+        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_BLUE_TINT,
+                                 POSE_DAMAGE, TINT_KEEP, 0);
     }
 
     // The motes: before the burst they close in and climb to 48 pixels as
@@ -93,7 +92,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
 
           mote = &work->particles[i];
           if (mote->y < (48 - i / 2) << 16 && mote->y > -px(48)) {
-            struct EffectPosition *pos;
+            struct ScreenPoint *pos;
             u32 width;
             u32 height;
 
@@ -102,7 +101,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
             xyz[2] = mote->z * Trig_Cos(mote->x);
             EffectPosition_ProjectPoint(xyz, pos = &screen);
             pos->x = (pos->x >> 17) + 64;
-            pos->y = HI(pos->y) + 60;
+            pos->y = Q_16_16_UPPER_HALF(pos->y) + 60;
             draw[1](canvas, work->sheet + gFrost_MoteCells[cel],
                     pos->x - ((width = gFrost_MoteWidths[cel]) >> 1),
                     pos->y - ((height = gFrost_MoteHeights[cel]) >> 1), width,
@@ -118,7 +117,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
             }
           } else {
             mote->z += 8;
-            mote->y -= (i % 5 + 2) << 16;
+            mote->y -= px(i % 5 + 2);
             if (ymin > mote->y)
               ymin = mote->y;
             if (ymax < mote->y)
@@ -139,16 +138,16 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
           u32 height;
 
           if (frame >= TIMING(RISE_FRAME) - 7) {
-            draw[1](canvas, work->sheet + gFrost_ColumnCells[cel],
-                    gFrost_ColumnSpots[i * 2],
-                    gFrost_ColumnSpots[i * 2 + 1] -
-                        (height = gFrost_ColumnHeights[cel]),
+            draw[1](canvas, work->sheet + gFrost_MoundPictures[cel],
+                    gFrost_MoundSpots[i * 2],
+                    gFrost_MoundSpots[i * 2 + 1] -
+                        (height = gFrost_MoundHeights[cel]),
                     32, height);
           } else {
-            pair[0](canvas, work->sheet + gFrost_ColumnCells[cel],
-                    gFrost_ColumnSpots[i * 2],
-                    gFrost_ColumnSpots[i * 2 + 1] -
-                        (height = gFrost_ColumnHeights[cel]),
+            pair[0](canvas, work->sheet + gFrost_MoundPictures[cel],
+                    gFrost_MoundSpots[i * 2],
+                    gFrost_MoundSpots[i * 2 + 1] -
+                        (height = gFrost_MoundHeights[cel]),
                     32, height);
           }
         }
@@ -158,7 +157,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     // The chips: at the burst 32 leap up from below (24 are drawn).
     if (frame == TIMING(RISE_FRAME)) {
       for (i = 0; i != 32; i++) {
-        struct EffectStep *chip = &CHIPS[i];
+        struct Particle *chip = &CHIPS[i];
 
         SET_POSITION(chip, (Random16() & 127) << 16,
                      ((Random16() & 15) + 80) << 16,
@@ -169,13 +168,14 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     }
     if (frame >= TIMING(RISE_FRAME)) {
       for (i = 0; i != 24; i++) {
-        struct EffectStep *chip = &CHIPS[i];
+        struct Particle *chip = &CHIPS[i];
 
         if (chip->variant >= 0) {
           s32 cel = i % 8;
 
-          draw[1](canvas, work->sheet + gFrost_ChipCells[cel], HI(chip->x),
-                  HI(chip->y), gFrost_ChipWidths[cel], gFrost_ChipHeights[cel]);
+          draw[1](canvas, work->sheet + gFrost_ChipCells[cel],
+                  Q_16_16_UPPER_HALF(chip->x), Q_16_16_UPPER_HALF(chip->y),
+                  gFrost_ChipWidths[cel], gFrost_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->variant--;
@@ -195,13 +195,13 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     // and rises half a pixel a frame.
     if (frame == TIMING(RISE_FRAME)) {
       for (i = 0; i != 32; i++) {
-        struct EffectStep *puff = &work->particles[i];
+        struct Particle *puff = &work->particles[i];
 
-        puff->velocityX = (Random16() & 127) << 16;
+        puff->velocityX = px(Random16() & 127);
         if (ymax == ymin)
           puff->velocityY = ymin << 16;
         else
-          puff->velocityY = (Random16() % (ymax - ymin) + ymin) << 16;
+          puff->velocityY = px(Random16() % (ymax - ymin) + ymin);
         puff->variant = (Random16() & 15) + 20;
       }
     }
@@ -209,32 +209,31 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
       s32 rise = (frame - TIMING(RISE_FRAME)) / 2;
 
       for (i = 0; i != 32; i++) {
-        struct EffectStep *puff = &work->particles[i];
+        struct Particle *puff = &work->particles[i];
 
         if (puff->variant >= 0 && puff->variant <= 17) {
           s32 cel = (17 - puff->variant) / 2;
           u32 size;
 
-          draw[1](canvas, dots + gBattleEffect_PuffCells[cel],
-                  HI(puff->velocityX) -
-                      ((size = gBattleEffect_PuffSizes[cel]) >> 1),
-                  HI(puff->velocityY) - (size >> 1) - rise, size, size);
+          draw[1](canvas, dots + gBattleEffect_SparklePictures[cel],
+                  Q_16_16_UPPER_HALF(puff->velocityX) -
+                      ((size = gBattleEffect_SparkleSizes[cel]) >> 1),
+                  Q_16_16_UPPER_HALF(puff->velocityY) - (size >> 1) - rise,
+                  size, size);
         }
         puff->variant--;
         if ((puff->variant == -1 || puff->variant == 17) &&
             frame < TIMING(RISE_FRAME) + 35) {
           puff->variant = 17;
-          puff->velocityX = (Random16() & 127) << 16;
-          puff->velocityY = (Random16() % (ymax - ymin) + ymin) << 16;
+          puff->velocityX = px(Random16() & 127);
+          puff->velocityY = px(Random16() % (ymax - ymin) + ymin);
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

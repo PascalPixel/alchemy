@@ -26,57 +26,10 @@ struct RenderModel__f171430 {
   u8 scrollV;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
-
-void BattleEffect_StepPaletteToResource(s32 palette);
 
 struct SurgeTarget {
   u8 unk00[8];
@@ -84,18 +37,6 @@ struct SurgeTarget {
   s32 y;
   s32 z;
 };
-
-extern char ResourceId_Data0C4;
-extern char ResourceId_Data0C9;
-extern char ResourceId_Data134;
-extern char ResourceId_EffectPalette02;
-extern char ResourceId_MercuryDjinnSheet;
-extern u8 gMapGridCellBuffer[];
-extern const u8 Data_08199244[];   // a quad's mesh
-extern const u8 Data_081991e0[];   // its corners
-extern const s32 Data_08198bfc[4]; // per pillar: its size,
-extern const s8 Data_08198c0c[4];  // its shade
-extern s8 Data_08198c10[4];        // and its offset
 
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
@@ -106,7 +47,7 @@ extern s8 Data_08198c10[4];        // and its offset
 // it, four frames apart; each lands with a flash and a ring of light (two
 // rings of shaded circles), and four pillars of light rise and sway over
 // the target.
-void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
+void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -125,17 +66,17 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   s16 *circles;
   s32 x;
   s32 y;
-  struct EffectPosition screen;
-  struct EffectPosition *pos;
+  struct ScreenPoint screen;
+  struct ScreenPoint *pos;
   s32 head[3];
-  struct EffectPosition center;
+  struct ScreenPoint center;
   struct ModelTexture texture;
   struct RenderModel__f171430 *model;
-  struct EffectStep *fall;
-  struct EffectStep *bolt;
-  struct EffectStep *ring;
-  struct EffectStep *flash;
-  struct EffectStep *glow;
+  struct Particle *fall;
+  struct Particle *bolt;
+  struct Particle *ring;
+  struct Particle *flash;
+  struct Particle *glow;
   s16 *vertices;
   s32 offset;
   s32 size;
@@ -148,22 +89,19 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C4, work->sheet + 0x1000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000, 0,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                        128);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(args->targets[0])->object;
 
   // Shaded circles of 2 to 64 pixels, packed in the map buffer.
   cells = (s32)gMapGridCellBuffer;
@@ -179,13 +117,13 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
 
   frame = 0;
   /* FAKEMATCH(dead): pos first takes the camera's look-at point. */
-  pos = (struct EffectPosition *)camera->focus;
+  pos = (struct ScreenPoint *)camera->focus;
   /* FAKEMATCH(dead): the texture's address, computed as center's address
    * less 8. */
   vertices = (s16 *)((s32)&center - 8);
   for (pos = &screen; frame != LIGHT_SURGE_FRAMES; frame++) {
     if (frame == 64) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame > 31 && (frame & 3) == 0) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_MercuryDjinnSheet);
@@ -226,7 +164,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       } else {
         turn = 0xa00 - (frame << 5);
       }
-      if (effect->side == 0) {
+      if (args->side == 0) {
         camera->yaw += turn;
       } else {
         camera->yaw -= turn;
@@ -257,8 +195,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       index >>= 1;
       x = pos->x / 2;
       y = pos->y;
-      BattleEffect_LoadBlitter(
-          188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                          BLITTER_MAX);
       index <<= 1;
       index += (s32)circles;
       half = size >> 1;
@@ -268,26 +206,23 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       index = y - size;
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cel, left, index, half,
                                                size);
-      HeapSlot_Release(188);
-      BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                          COMPOSITE_CLIP_Y |
-                                                          COMPOSITE_FLIP_X));
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
                                                x, index, half, size);
-      HeapSlot_Release(188);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       if (i > 15) {
-        BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                            COMPOSITE_CLIP_Y |
-                                                            COMPOSITE_FLIP_Y));
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, (void *)(*entry + cells), x - half, y, half, size);
-        HeapSlot_Release(188);
-        BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                            COMPOSITE_CLIP_Y |
-                                                            COMPOSITE_FLIP));
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, (void *)(*entry + cells), x, y, half, size);
-        HeapSlot_Release(188);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
     }
 
@@ -298,7 +233,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     texture.logWidth = 5;
     texture.logHeight = 2;
     model->texture = &texture;
-    model->mesh = Data_08199244;
+    model->mesh = gBattleEffect_SmallSquareMeshReversed;
     model->vertices = vertices;
     model->shade = shade;
     model->kind = 7;
@@ -307,7 +242,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         bolt = &work->particles[32];
          i != SURGE_BOLTS; flash++, glow++, bolt++, i++) {
       s32 t = ++bolt->variant;
-      struct EffectPosition *out;
+      struct ScreenPoint *out;
 
       if ((u32)t > 17) {
         continue;
@@ -322,7 +257,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
           glow->variant = 0;
         }
         out = pos;
-        EffectPosition_ProjectPoint((struct EffectStep *)head, out);
+        EffectPosition_ProjectPoint((struct Particle *)head, out);
       } else {
         out = &screen;
         EffectPosition_ProjectPoint(bolt, out);
@@ -346,10 +281,11 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         flash->variant = 0;
         work->shakeFrames = 4;
         Sound_PlayFar(SE_CRASH);
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 2);
       }
-      EffectPosition_ProjectPoint((struct EffectStep *)head, out);
+      EffectPosition_ProjectPoint((struct Particle *)head, out);
       vertices[8] = out->x / 2 - 2;
       vertices[9] = out->y;
       vertices[12] = out->x / 2 + 2;
@@ -359,18 +295,18 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
 
     // The pillars.
     if ((u32)(frame - 16) <= 63) {
-      EffectPosition_ProjectBattler(effect->actors[0], &center);
+      EffectPosition_ProjectBattler(args->targets[0], &center);
       texture.logWidth = 5;
       texture.logHeight = 5;
       texture.pixels = work->sheet + 0x1000;
       model->kind = 6;
-      model->mesh = Data_08199244;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 4; i++) {
         s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
         s32 x = ((center.x / 2 - 64) << 16) -
-                (Data_08198c10[i] * sway / (TRIG_TURN)) *
+                (gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
                     Trig_Sin((s16)camera->yaw);
-        s32 z = -((Data_08198c10[i] * sway / (TRIG_TURN)) *
+        s32 z = -((gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
                   Trig_Cos((s16)camera->yaw));
         s32 growth;
         u32 scale;
@@ -383,19 +319,19 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         } else {
           growth = 0x10000;
         }
-        scale = (u32)(Data_08198bfc[i] * growth) >> 16;
+        scale = (u32)(gLightSurge_PillarSizes[i] * growth) >> 16;
         if (frame > 63) {
-          shade = Data_08198c0c[i] - frame * 8 + 512;
+          shade = gLightSurge_PillarShades[i] - frame * 8 + 512;
         } else if (frame <= 23) {
-          shade = Data_08198c0c[i] + frame * 8 - 192;
+          shade = gLightSurge_PillarShades[i] + frame * 8 - 192;
         } else {
-          shade = Data_08198c0c[i];
+          shade = gLightSurge_PillarShades[i];
         }
         model->shade = shade;
         Transform_Reset();
         SceneTransform_ApplyPosition3(x, z, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
-        Render_TransformVertices(Data_081991e0, vertices, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
       }
     }
@@ -403,16 +339,10 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     Heap_Release(vertices);
     /* FAKEMATCH(dead): a read of shade the compiler folds to nothing. */
     BattleCamera_Shake(4 + ((shade & 255) >> 8), 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-
-void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect, u32 mode);
 
 /// Abilities: Whorl (kind 232).
 void BattleEffect_RunWhorl(s32 a0) { BattleEffect_RunWaterColumn(a0, 0); }
@@ -430,6 +360,5 @@ void BattleEffect_RunPoisonFlow(s32 a0) { BattleEffect_RunWaterColumn(a0, 3); }
 void BattleEffect_RunRagingFlood(s32 a0) { BattleEffect_RunWaterColumn(a0, 4); }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef LIGHT_SURGE_FRAMES
 #undef SURGE_BOLTS

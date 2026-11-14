@@ -15,10 +15,10 @@
 // Variant 1, ⚓️'s own, loads orange colours, throws 128 sparks up from the
 // user's side at the start, sheds four sparks a frame from the head and
 // throws 128 more from the target with the embers.
-void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   struct Point2D trail[20];
-  struct EffectPosition target;
-  struct EffectPosition position;
+  struct ScreenPoint target;
+  struct ScreenPoint position;
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;
@@ -29,7 +29,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   s32 y;
   u8 *graphics;
   struct Actor *object;
-  struct EffectStep *step;
+  struct Particle *step;
   s32 i;
   s32 j;
   s32 angle;
@@ -59,28 +59,26 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              &work->sheet[0x3c00], 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapCellBuffer, 1, 0);
   /* FAKEMATCH(wrapper): the copy routine fetched through Iwram_GetCopyWords. */
-  if (effect->variant == 1)
+  if (args->variant == 1)
     Iwram_GetCopyWords()(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
-  BattleEffect_FetchRectangleBlitters(effect->side, draw);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The 56 embers wait at the target: sparks first, then flashes, which rise
   // more slowly.
-  object = BattleObject_GetFar(effect->actors[0])->object;
+  object = BattleObject_GetFar(args->targets[0])->object;
   for (i = 0; i != 56; i++) {
     step = &work->particles[8 + i];
     SET_POSITION(step, object->x, 0, object->z);
-    if (i >= Data_08199d5c[effect->variant]) {
+    if (i >= gDragonCloud_SparkCounts[args->variant]) {
       step->velocityX = ((Random16() & 63) - 32) << 14;
       step->velocityY = (Random16() & 63) << 12;
     } else {
@@ -110,7 +108,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   // The eight puffs, on an arc over the user, each two frames after the last.
   for (i = 0, angle = -TRIG_TURN / 4; i != 8; angle += TRIG_TURN / 16, i++) {
     step = &work->particles[i];
-    if (effect->side == 1)
+    if (args->side == 1)
       step->x = (Trig_Sin(angle) * 24 >> 16) + 88;
     else
       step->x = (-(Trig_Sin(angle) * 24) >> 16) + 16;
@@ -126,10 +124,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 83) {
-      if (effect->variant == 0)
-        BattlePlayback_StartFar(134);
+      if (args->variant == 0)
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        BattlePlayback_StartFar(145);
+        EFFECT_SHOW_DAMAGE(SE_CRASH);
     }
     if (frame == 0)
       Sound_PlayFar(SE_WHOOSH);
@@ -137,7 +135,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_WHOOSH);
 
     // For 64 frames the camera turns away from the user's side.
-    if (effect->side == 0) {
+    if (args->side == 0) {
       if (frame <= 63)
         camera->yaw -= 0x100;
     } else {
@@ -152,21 +150,24 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       s32 width;
       s32 offset;
 
-      offset = gBattleEffect_PuffArcCells[cell];
+      offset = gBattleEffect_PuffArcPictures[cell];
       /* FAKEMATCH(dead): width, read from the puff table and never used. */
-      width = gData_08197467[cell];
+      width = gBattleEffect_PuffArcPictureWidths[cell];
       draw[0](canvas, &work->sheet[offset + 0x3c00],
-              56 - gData_08197467[cell] / 2,
-              gBattleEffect_PuffArcCellBiasY[cell] + 60, gData_08197467[cell],
-              gBattleEffect_PuffArcCellHeights[cell]);
-      draw[1](canvas, &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
-              64 - gData_08197467[cell] / 2,
-              gBattleEffect_PuffArcCellBiasY[cell] + 60, gData_08197467[cell],
-              gBattleEffect_PuffArcCellHeights[cell]);
+              56 - gBattleEffect_PuffArcPictureWidths[cell] / 2,
+              gBattleEffect_PuffArcPictureBiasY[cell] + 60,
+              gBattleEffect_PuffArcPictureWidths[cell],
+              gBattleEffect_PuffArcPictureHeights[cell]);
+      draw[1](canvas,
+              &work->sheet[gBattleEffect_PuffArcPictures[cell] + 0x3c00],
+              64 - gBattleEffect_PuffArcPictureWidths[cell] / 2,
+              gBattleEffect_PuffArcPictureBiasY[cell] + 60,
+              gBattleEffect_PuffArcPictureWidths[cell],
+              gBattleEffect_PuffArcPictureHeights[cell]);
     }
 
     // Variant 1: 128 sparks thrown up from the user's side at the start.
-    if (effect->variant == 1) {
+    if (args->variant == 1) {
       if (frame == 0) {
         for (i = 0; i != 128; i++) {
           s32 angle;
@@ -187,10 +188,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
         if (step->variant >= 0 && frame >= i / 8) {
           s32 size = (step->variant >> 4) + 1;
 
-          draw[i & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
-                      HI(step->x) - size / 2, HI(step->y) - size, size,
-                      size * 2);
-          BattleEffectKernels_IntegrateVector2(step, 62, 0x4000);
+          draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
+                      Q_16_16_UPPER_HALF(step->x) - size / 2,
+                      Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
+          BattleEffectKernels_IntegrateVector2(step, 62, px(1) / 4);
           if (step->y > ((i & 3) + 108) << 16)
             step->velocityY = -step->velocityY / 2;
           step->variant--;
@@ -212,7 +213,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       }
     }
     if (frame >= 78 && frame <= 118) {
-      EffectPosition_ProjectBattler(effect->actors[0], &target);
+      EffectPosition_ProjectBattler(args->targets[0], &target);
       if (frame == 78) {
         x = target.x / 2;
         y = 48;
@@ -244,7 +245,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
 
       if (frame >= 78 && frame <= 118)
         position.x = x;
-      else if (effect->side == 1)
+      else if (args->side == 1)
         position.x = 64 - x / 2;
       else
         position.x = x / 2 + 64;
@@ -298,29 +299,29 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           if (position.depth > 799)
             position.depth = 799;
           size = 9 - (position.depth - 160) / 64;
-          if (i >= Data_08199d5c[effect->variant]) {
+          if (i >= gDragonCloud_SparkCounts[args->variant]) {
             s32 cell;
 
-            if (effect->variant == 0)
+            if (args->variant == 0)
               cell = step->variant / 2;
             else
               cell = step->variant / 4;
             if (cell <= 5) {
-              draw[effect->variant](canvas, Ram_MapCellBuffer + (cell << 11),
-                                    position.x - 16, position.y - 40, 32, 64);
+              draw[args->variant](canvas, Ram_MapCellBuffer + (cell << 11),
+                                  position.x - 16, position.y - 40, 32, 64);
               step->variant++;
-              BattleEffectKernels_IntegrateVector3(step, 62, 0x2000);
+              BattleEffectKernels_IntegrateVector3(step, 62, px(1) / 8);
             }
           } else {
-            draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+            draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 64, -0x2000);
+            BattleEffectKernels_IntegrateVector3(step, 64, -px(1) / 8);
           }
         }
       }
 
       // Variant 1's 128 sparks at the target.
-      if (effect->variant == 1) {
+      if (args->variant == 1) {
         for (i = 0; i != 128; i++) {
           s32 size;
 
@@ -331,10 +332,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
             size >>= 3;
             size += 1;
             position.x >>= 1;
-            draw[i & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+            draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         position.x - size / 2, position.y - size, size,
                         size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 62, 0x2000);
+            BattleEffectKernels_IntegrateVector3(step, 62, px(1) / 8);
             step->variant--;
           }
         }
@@ -342,17 +343,17 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     }
 
     // Variant 1: the sparks the head shed.
-    if (effect->variant == 1) {
-      struct EffectStep *spark = &SPARKS[256];
+    if (args->variant == 1) {
+      struct Particle *spark = &SPARKS[256];
 
       for (i = 0; i != 128; i++, spark++) {
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 4) + 1;
 
-          draw[i & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
-                      HI(spark->x) - size / 2, HI(spark->y) - size, size,
-                      size * 2);
-          BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
+          draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
+                      Q_16_16_UPPER_HALF(spark->x) - size / 2,
+                      Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
+          BattleEffectKernels_IntegrateVector2(spark, 60, -px(1) / 4);
           spark->variant--;
         }
       }
@@ -361,12 +362,14 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     // Frame 83: the strike. Frame 50: the puffs burst.
     if (frame == 83) {
       work->shakeFrames = 8;
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 8);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], 1);
     }
     if (frame == 50) {
       work->shakeFrames = 12;
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 8);
     }
     if (frame > 49) {
       for (i = 0; i != 8; i++) {
@@ -375,28 +378,22 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           s32 cell = step->variant / 2;
 
           draw[1](canvas,
-                  &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
-                  step->x - gData_08197467[cell] / 2,
-                  step->y + gBattleEffect_PuffArcCellBiasY[cell],
-                  gData_08197467[cell], gBattleEffect_PuffArcCellHeights[cell]);
+                  &work->sheet[gBattleEffect_PuffArcPictures[cell] + 0x3c00],
+                  step->x - gBattleEffect_PuffArcPictureWidths[cell] / 2,
+                  step->y + gBattleEffect_PuffArcPictureBiasY[cell],
+                  gBattleEffect_PuffArcPictureWidths[cell],
+                  gBattleEffect_PuffArcPictureHeights[cell]);
         }
         step->variant++;
       }
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 #undef HEAP_SLOT_BLITTER
 #undef BLITTER
-#undef HI
-#undef HEAP_SLOT_BLITTER_ALTERNATE
 #undef SPARKS
 #undef SPARK_COUNT

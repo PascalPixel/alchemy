@@ -286,13 +286,13 @@ void SelectionMenu_StartDrawing(void) {
 /// Stops drawing the selection screen.
 void SelectionMenu_StopDrawing(void) { Task_Remove(SelectionMenu_Draw); }
 
-/* VIEW(window): tag struct EffectPosition as struct EffectPosition__window;
- * field/effect_step.h has another definition; tried with the definition the
+/* VIEW(window): tag struct ScreenPoint as struct ScreenPoint__window;
+ * field/particle.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/include/field/effect_step.h:43: redefinition of `struct
- * EffectPosition'. */
-#define EffectPosition EffectPosition__window
-struct EffectPosition {
+ * games/tla/include/field/particle.h:43: redefinition of `struct
+ * ScreenPoint'. */
+#define ScreenPoint ScreenPoint__window
+struct ScreenPoint {
   s32 x;
   s32 y;
   s32 z;
@@ -314,7 +314,7 @@ void SelectionMenu_Draw(void) {
   s32 cnt = 0;
   s32 slot;
   s32 tmp;
-  struct EffectPosition pos;
+  struct ScreenPoint pos;
 
   node = state->head;
   while (node != 0) {

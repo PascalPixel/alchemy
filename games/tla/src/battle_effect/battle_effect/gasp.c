@@ -26,109 +26,13 @@ struct RenderModel__f173aac {
   u8 scrollV;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 // A second, larger particle table, always reached at its fixed address.
-#define EXTRA_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
-
-extern u16 gBattleEffect_MoteCells[];
-extern const s8 Data_08198c28[];
-extern const u8 Data_08198c34[];
-extern const u8 Data_08198c64[];
-extern const u8 Data_08198cac[];
-extern const u8 Data_08198ec4[];
-extern const u8 gData_081991b0[];
-extern const u8 Data_081991d0[];
-extern const u8 Data_081991e0[];
-extern const u8 gData_08199210[];
-extern const u8 Data_08199244[];
-extern const u8 gData_08199268[];
-extern const u8 gData_08199340[];
-extern const u8 gData_08199364[];
-
-extern char ResourceId_BlastSheet;
-extern char ResourceId_Data0B4;
-extern char ResourceId_Data0C1;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0C9;
-extern char ResourceId_LightBurstSheet;
-extern char ResourceId_CornerGlowSheet;
-extern char ResourceId_Data0D7;
-extern char ResourceId_Data0D8;
-extern char ResourceId_SmokeBandSheet;
-extern char ResourceId_EffectPalette02;
-extern char ResourceId_MarsDjinnSmallSheet;
-extern char ResourceId_JupiterDjinnSmallSheet;
-extern char ResourceId_VenusDjinnSheet;
-extern char ResourceId_VenusDjinnSmallSheet;
-extern char ResourceId_LightningBoltSheet;
-extern char ResourceId_MercuryDjinnSmallSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_Data134;
-extern char ResourceId_SmokeSheet;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_JupiterDjinnSheet;
-extern char ResourceId_MercuryDjinnSheet;
-
-void BattleEffect_StepPaletteToResource(s32 resource);
-void Palette_BrightenSavedBattleBg(s32 red, s32 green, s32 blue);
-void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
-                                     s32 bluePhase);
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
-                                    s32 percent);
-
-void Graphics_LoadGreyRamp(void);
-void Palette_LoadBasicSpriteColors(void);
+#define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 
 // The user's figure: a 20 x 40 cell drawn over the canvas.
 #define FIGURE(work) ((work)->sheet + 0x65c0)
@@ -162,7 +66,7 @@ void Palette_LoadBasicSpriteColors(void);
 /// Beat Dance (11), Element Swap (12), Cage (13), Clarion Cry (14) and Psy
 /// Boost (15). Mode 1 has no caller. Each mode loads its own sheets, then draws
 /// a canvas layer and a model layer every frame for the mode's length.
-void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -182,7 +86,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (mode == 0) {
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 35, screen,
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 35, screen,
                                    other);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                FIGURE(work), 1, 1);
@@ -191,7 +95,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
                  BGCNT_SCREEN_BASE(7);
     frames = 84;
   } else if (mode == 1) {
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 33, screen,
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 33, screen,
                                    other);
     Resource_LoadAndDecompress((s32)&ResourceId_LightBurstSheet, work->sheet, 1,
                                0);
@@ -203,8 +107,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
     s32 j;
     s32 k;
 
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 0x120,
-                                   screen, other);
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 0x120, screen,
+                                   other);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
@@ -219,8 +123,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         work->sheet[0x30c + k * 64 + j] = work->sheet[0x1000 + k * 40 + j];
     frames = 42;
   } else if (mode == 6) {
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 131,
-                                   screen, other);
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 131, screen,
+                                   other);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                FIGURE(work), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
@@ -257,8 +161,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == 5) {
-    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 226, screen,
-                                   other);
+    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 226, screen, other);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
@@ -307,17 +210,17 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       if (*p > 63)
         *p = 63;
     }
-    if (effect->variant == 2) {
+    if (args->variant == 2) {
       LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
     } else {
       LOAD_BG_PALETTE(ResourceId_BlastSheet);
     }
-    BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
+    BattleEffect_SetApproachMotion(args->user, args->targets[0], 10, 80);
     frames = 41;
   } else {
     if (mode == 2) {
-      BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 2,
-                                     screen, other);
+      BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 2, screen,
+                                     other);
       frames = 76;
     } else {
       work->fadeFrames = 24;
@@ -329,27 +232,33 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
                                FIGURE(work), 1, 1);
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (mode == 0 || mode == 6)
-    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (mode == 2 || mode == 7 || mode == 4) {
-    if (effect->side == 0)
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 7);
+    if (args->side == 0)
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                          BLITTER_ADDITIVE);
     else
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
   } else if (mode == 3 || mode == 5) {
-    if (effect->side == 1)
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 7);
+    if (args->side == 1)
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                          BLITTER_ADDITIVE);
     else
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
   } else {
-    if (effect->side == 0)
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 23);
+    if (args->side == 0)
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     else
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -399,11 +308,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     if (mode == 3) {
-      struct EffectPosition to;
-      struct EffectPosition from;
+      struct ScreenPoint to;
+      struct ScreenPoint from;
 
-      EffectPosition_ProjectScaledBattler(effect->actor, &from);
-      EffectPosition_ProjectScaledBattler(effect->actors[0], &to);
+      EffectPosition_ProjectScaledBattler(args->user, &from);
+      EffectPosition_ProjectScaledBattler(args->targets[0], &to);
       from.x /= 2;
       to.x /= 2;
       if ((u32)(frame - 32) <= 8) {
@@ -417,8 +326,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         if (n > 8)
           n = 8;
         dx = to.x - from.x;
-        head = from.x + Data_08198c28[n] * dx / 16;
-        tail = from.x + Data_08198c28[n - 1] * dx / 16;
+        head = from.x + gGaspFamily_StreakSteps[n] * dx / 16;
+        tail = from.x + gGaspFamily_StreakSteps[n - 1] * dx / 16;
         for (i = 0, step = head - tail, acc = 0; i != 4; i++, acc += step)
           draw[0](canvas, FIGURE(work), tail + acc / 3 - 10, from.y - 20, 20,
                   40);
@@ -426,7 +335,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       if (frame > 37) {
         if (frame == 38) {
           for (i = 0; i != 63; i++) {
-            struct EffectStep *p = &work->particles[i];
+            struct Particle *p = &work->particles[i];
             s32 s;
 
             p->x = to.x << 16;
@@ -437,20 +346,22 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
             p->velocityY = Trig_Cos(a) * s >> 7;
             p->variant = (Random16() & 15) + 16;
           }
-          BattlePlayback_StartFar(134);
-          BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+          BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+          BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 8);
         }
         for (i = 0; i != 63; i++) {
-          struct EffectStep *p = &work->particles[i];
+          struct Particle *p = &work->particles[i];
 
           if (p->variant >= 0) {
             s32 n = (p->variant >> 3) + 2;
 
-            draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
-                    HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, 0x400);
+            draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
+                    Q_16_16_UPPER_HALF(p->x) - n / 2,
+                    Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
+            BattleEffectKernels_IntegrateVector2(p, 60, px(1) / 64);
             p->variant--;
           }
         }
@@ -469,7 +380,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       draw[0](canvas, FIGURE(work), x, y, 20, 40);
       BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     } else if (mode == 2 || mode == 7) {
-      struct EffectPosition target;
+      struct ScreenPoint target;
 
       if (mode == 2) {
         s32 r = frame;
@@ -490,7 +401,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(SE_139);
       if (frame == 0) {
         for (i = 0; i != 63; i++) {
-          struct EffectStep *p = &work->particles[i];
+          struct Particle *p = &work->particles[i];
 
           p->z = Random16();
           p->velocityZ = (Random16() & 63) + 64;
@@ -498,9 +409,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           p->variant = i + 32;
         }
       }
-      EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
+      EffectPosition_ProjectScaledBattler(args->targets[0], &target);
       for (i = 0; i != 48; i++) {
-        struct EffectStep *p = &work->particles[i];
+        struct Particle *p = &work->particles[i];
 
         if ((u32)p->variant <= 31) {
           s32 n = p->variant / 8 + 2;
@@ -510,14 +421,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           p->z += 512;
           p->velocityZ -= 4;
           if (p->velocityZ > 0)
-            draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1], x - n / 2,
-                    y - n, n, n * 2);
+            draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
+                    x - n / 2, y - n, n, n * 2);
         }
         p->variant--;
       }
     } else if (mode == 5) {
-      struct EffectStep *ball = &work->particles[63];
-      struct EffectPosition pos;
+      struct Particle *ball = &work->particles[63];
+      struct ScreenPoint pos;
       s32 x;
       s32 y;
 
@@ -527,14 +438,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         ball->velocityZ = other[2];
       }
       if (frame <= 47) {
-        s32 *user = BattleObject_GetFar(effect->actor)->object;
+        s32 *user = BattleObject_GetFar(args->user)->object;
 
         ball->velocityX += (user[2] - other[0]) / 40;
         ball->velocityY += (0x3c0000 - other[1]) / 40;
         ball->velocityZ += (user[4] - other[2]) / 40;
       } else {
-        s32 *target = BattleObject_GetFar(effect->actors[0])->object;
-        struct EffectStep *fall = &work->particles[62];
+        s32 *target = BattleObject_GetFar(args->targets[0])->object;
+        struct Particle *fall = &work->particles[62];
 
         if (frame == 48) {
           SET_POSITION(fall, 0, 0, 0);
@@ -561,13 +472,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 0)
         Sound_PlayFar(SE_SPIN);
       if (frame == 55) {
-        struct EffectStep *flash = &work->particles[61];
+        struct Particle *flash = &work->particles[61];
 
         flash->x = pos.x;
         flash->y = pos.y;
-        BattlePlayback_StartFar(145);
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 24);
+        EFFECT_SHOW_DAMAGE(SE_CRASH);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 24);
         work->shakeFrames = 16;
       }
       BattleCamera_Shake(8, 8);
@@ -596,7 +508,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == 0) {
       if (frame == 0) {
         for (i = 0; i != 16; i++) {
-          struct EffectStep *p = &work->particles[i];
+          struct Particle *p = &work->particles[i];
 
           p->x = i << 15;
           p->y = px(56);
@@ -608,13 +520,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 4)
         Sound_PlayFar(SE_BEAST_CRY);
       if (frame == 48)
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
       texture.logWidth = 5;
       texture.logHeight = 5;
       model->kind = 7;
-      model->mesh = Data_08199244;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 6; i++) {
-        struct EffectStep *p = &work->particles[i];
+        struct Particle *p = &work->particles[i];
 
         if (p->variant >= 0) {
           s32 size = 30000;
@@ -636,7 +548,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
               (Trig_Sin(p->x) << 4) + ((screen[0] / 2 - 64) << 16), p->y, 0);
           SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
           Transform_ApplyPitch(-TRIG_TURN / 4);
-          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
         p->variant++;
@@ -648,7 +560,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       texture.logHeight = 5;
       model->kind = 6;
       model->texture = &texture;
-      model->mesh = Data_08199244;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       model->vertices = verts;
       for (k = 0; k != 1; k++) {
         if (frame >= k * 32) {
@@ -675,7 +587,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
             Transform_ApplyRoll(frame * 356 + i * 5461);
             SceneTransform_ApplyPosition3(0, 0x740000, 0);
             SceneTransform_ApplyScale3(half, half, half);
-            Render_TransformVertices(gData_08199210, verts, 4);
+            Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
+                                     4);
             Transform_Pop();
             Render_DrawModelList(model);
           }
@@ -685,13 +598,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       model->shade = 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->mesh = gData_08199340;
+      model->mesh = gBattleEffect_SquareMesh;
       model->kind = 6;
       texture.pixels = work->sheet;
-      for (i = 0; i != effect->count; i++) {
-        struct EffectPosition pos;
+      for (i = 0; i != args->targetCount; i++) {
+        struct ScreenPoint pos;
 
-        EffectPosition_ProjectScaledBattler(effect->actors[i], &pos);
+        EffectPosition_ProjectScaledBattler(args->targets[i], &pos);
         Transform_Reset();
         SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
                                       (pos.y - 48) << 16, 0);
@@ -699,12 +612,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         Transform_ApplyYaw((frame << 9) - TRIG_TURN / 16);
         SceneTransform_ApplyScale3(frame * 2596 >> 1, frame * 2596 >> 1,
                                    frame * 2596 >> 1);
-        Render_TransformVertices(gData_08199210, verts, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
     } else if (mode == 5) {
       if (frame <= 47) {
-        struct EffectStep *ball;
+        struct Particle *ball;
         s32 twist;
 
         model->shade = -16;
@@ -713,11 +626,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         texture.pixels = work->sheet + 0x4000;
         model->texture = &texture;
         model->kind = 7;
-        model->mesh = Data_08198c34;
+        model->mesh = gGaspFamily_StreakMesh;
         model->vertices = verts;
         if (frame == 0) {
           for (i = 0; i != 16; i++) {
-            struct EffectStep *p = &work->particles[i];
+            struct Particle *p = &work->particles[i];
 
             p->x = Random16() & 0xffff;
             p->y = (Random16() & 255) + 128;
@@ -728,7 +641,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         }
         for (i = 0, ball = &work->particles[63], twist = frame * 2; i != 8;
              i++) {
-          struct EffectStep *p = &work->particles[i];
+          struct Particle *p = &work->particles[i];
 
           p->variant++;
           p->x += p->y * 2;
@@ -742,21 +655,22 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
             SceneTransform_ApplyScale3(Trig_Sin(p->variant * 682) * 3 +
                                            TRIG_TURN * 3 / 4,
                                        0x20000, 0x10000);
-            Render_TransformVertices(gData_081991b0, verts, 4);
+            Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
+                                     4);
             Render_DrawModelList(model);
           }
         }
       }
       {
-        struct EffectPosition pos;
+        struct ScreenPoint pos;
 
-        EffectPosition_ProjectBattler(effect->actors[0], &pos);
+        EffectPosition_ProjectBattler(args->targets[0], &pos);
         texture.logWidth = 7;
         texture.logHeight = 7;
         texture.pixels = cells;
         model->kind = 7;
         model->texture = &texture;
-        model->mesh = gData_08199364;
+        model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = verts;
         for (i = 0; i != 3; i++) {
           s32 t = frame - i * 4 - 55;
@@ -776,7 +690,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
               Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
               Transform_ApplyPitch(-TRIG_TURN / 16);
               SceneTransform_ApplyUniformScale(scale);
-              Render_TransformVertices(gData_08199210, verts, 4);
+              Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
+                                       4);
               Render_DrawModelList(model);
             }
           }
@@ -786,7 +701,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       if ((u32)(frame - 16) <= 64) {
         s32 t = frame - 16;
         s32 scale;
-        struct EffectPosition pos;
+        struct ScreenPoint pos;
 
         if (t <= 23)
           work->transferValue = 75;
@@ -794,10 +709,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           work->transferValue = 50;
         texture.logWidth = 6;
         texture.logHeight = 6;
-        model->mesh = gData_08199340;
+        model->mesh = gBattleEffect_SquareMesh;
         model->kind = 7;
         texture.pixels = work->sheet;
-        EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
+        EffectPosition_ProjectScaledBattler(args->targets[0], &pos);
         for (i = 0, scale = t * -4592 + Q16_ONE; i != 2;
              scale += Q16_ONE / 4, i++) {
           if (scale > 0) {
@@ -811,7 +726,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
                                           (pos.y - 48) << 16, 0);
             Transform_ApplyPitch(TRIG_TURN * 3 / 4);
             SceneTransform_ApplyScale3(scale, scale, scale);
-            Render_TransformVertices(gData_08199210, verts, 4);
+            Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
+                                     4);
             Render_DrawModelList(model);
           }
         }
@@ -820,23 +736,23 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(SE_POWER_UP);
       }
       if (frame == 24) {
-        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 12);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, 0, 12);
       }
     } else if (mode == 9) {
-      struct EffectPosition from;
-      struct EffectStep *p;
+      struct ScreenPoint from;
+      struct Particle *p;
 
-      EffectPosition_ProjectBattler(effect->actor, &from);
+      EffectPosition_ProjectBattler(args->user, &from);
       if (frame == 0) {
-        struct EffectPosition to;
-        struct EffectStep *ball = &work->particles[63];
-        struct EffectStep *q;
+        struct ScreenPoint to;
+        struct Particle *ball = &work->particles[63];
+        struct Particle *q;
 
-        EffectPosition_ProjectScaledBattler(effect->actors[0], &to);
+        EffectPosition_ProjectScaledBattler(args->targets[0], &to);
         ball->x = to.x;
         ball->y = to.y;
-        for (i = 0; i != 32; i++)
-          work->particles[i].variant = -1;
+        EFFECT_FREE_PARTICLES(i, work->particles, 32);
         for (i = 0, q = EXTRA_PARTICLES; i != 256; i++, q++) {
           s32 s = 511;
           s32 a;
@@ -846,15 +762,15 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           s += 64;
           q->velocityX = Trig_Sin(a) * s >> 6;
           q->velocityY = Trig_Cos(a) * s >> 4;
-          if (effect->variant == 0) {
+          if (args->variant == 0) {
             q->velocityX /= 4;
             q->velocityY /= 4;
-          } else if (effect->variant == 1) {
+          } else if (args->variant == 1) {
             q->velocityX /= 2;
             q->velocityY /= 2;
           }
           q->x = to.x / 2 << 16;
-          q->y = (to.y + 16) << 16;
+          q->y = px(to.y + 16);
           q->variant = (Random16() & 15) + 8;
         }
       }
@@ -867,10 +783,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         // Index first, as a plain integer sum: the add takes the offset first.
         p = (void *)((twice * 28) + (s32)work->particles);
         p->x = from.x / 2 << 16;
-        p->y = (from.y + 8) << 16;
+        p->y = px(from.y + 8);
         v = ((Random16() & mask) + 256) << 8;
         p->velocityX = v;
-        if (effect->side == 1)
+        if (args->side == 1)
           p->velocityX = -v;
         p->velocityY = -((Random16() & mask) + 256) << 4;
         p->variant = i;
@@ -879,34 +795,36 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         p = &work->particles[i];
 
         if ((u32)p->variant <= 23) {
-          draw[0](canvas, work->sheet + p->variant / 4 * 1152, HI(p->x) - 12,
-                  HI(p->y) - 24, 24, 48);
-          BattleEffectKernels_IntegrateVector2(p, 60, -0x1000);
+          draw[0](canvas, work->sheet + p->variant / 4 * 1152,
+                  Q_16_16_UPPER_HALF(p->x) - 12, Q_16_16_UPPER_HALF(p->y) - 24,
+                  24, 48);
+          BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 16);
           p->variant++;
         }
       }
       if (frame > 9) {
-        for (i = 0; i != Data_08198c64[effect->variant]; i++) {
-          struct EffectStep *q = &EXTRA_PARTICLES[i];
+        for (i = 0; i != gGaspFamily_Counts[args->variant]; i++) {
+          struct Particle *q = &EXTRA_PARTICLES[i];
 
           if (q->variant >= 0) {
             s32 n = q->variant / 4 + 3;
 
-            draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
-                    HI(q->x) - n / 2, HI(q->y) - n, n, n * 2);
+            draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
+                    Q_16_16_UPPER_HALF(q->x) - n / 2,
+                    Q_16_16_UPPER_HALF(q->y) - n, n, n * 2);
             BattleEffectKernels_IntegrateVector2(q, 62, 0);
             q->variant--;
           }
         }
       }
       if (frame > 9) {
-        struct EffectStep *ball = &work->particles[63];
+        struct Particle *ball = &work->particles[63];
         s32 scale = ((frame - 10) << 15) + Q16_ONE / 4;
         s32 shade = 0;
 
-        if (effect->variant == 0)
+        if (args->variant == 0)
           scale /= 4;
-        else if (effect->variant == 1)
+        else if (args->variant == 1)
           scale /= 2;
         if (frame > 15)
           shade = (16 - frame) * 8;
@@ -914,31 +832,32 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           model->shade = shade;
           texture.logWidth = 7;
           texture.logHeight = 7;
-          model->mesh = gData_08199364;
+          model->mesh = gBattleEffect_LargeSquareMesh;
           model->kind = 7;
           texture.pixels = work->sheet + 0x3080;
           Transform_Reset();
           SceneTransform_ApplyPosition3((ball->x / 2 - 64) << 16,
                                         (ball->y - 48) << 16, 0);
           SceneTransform_ApplyScale3(scale / 4, scale, scale / 2);
-          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }
       if (frame == 10) {
-        BattlePlayback_StartFar(134);
-        work->shakeFrames = effect->variant * 2 + 8;
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+        work->shakeFrames = args->variant * 2 + 8;
+        BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 12);
       }
-      BattleCamera_Shake(effect->variant * 2 + 8, effect->variant * 2 + 8);
+      BattleCamera_Shake(args->variant * 2 + 8, args->variant * 2 + 8);
     } else if (mode == 11) {
       if (frame == 0) {
-        struct EffectPosition pos;
+        struct ScreenPoint pos;
 
-        EffectPosition_ProjectBattler(effect->actors[0], &pos);
+        EffectPosition_ProjectBattler(args->targets[0], &pos);
         for (i = 0; i != 32; i++) {
-          struct EffectStep *p = &work->particles[i];
+          struct Particle *p = &work->particles[i];
           s32 s = 255;
           s32 a;
 
@@ -953,16 +872,17 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         }
         Sound_PlayFar(SE_POWER_UP);
         work->shakeFrames = 16;
-        BattleEffect_TintBattler(effect->actors[0], 10, -1, 0, 32);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_RED_TINT,
+                                 TINT_KEEP, 0, 32);
       }
       texture.logWidth = 5;
       texture.logHeight = 5;
       model->kind = 6;
       model->texture = &texture;
-      model->mesh = Data_08199244;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       model->vertices = verts;
       for (i = 0; i != 12; i++) {
-        struct EffectStep *p = &work->particles[i];
+        struct Particle *p = &work->particles[i];
 
         if (frame >= i * 2) {
           s32 t = frame - i * 2;
@@ -977,7 +897,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           texture.pixels = work->sheet + (i % 3 << 10);
           PLACE_PARTICLE(p);
           SceneTransform_ApplyUniformScale(Q16_ONE / 2);
-          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
           BattleEffectKernels_IntegrateVector3(p, 60, 0);
         }
@@ -985,11 +905,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       BattleCamera_Shake(8, 8);
     } else if (mode == 14) {
       if (frame == 0) {
-        struct EffectPosition pos;
+        struct ScreenPoint pos;
 
-        EffectPosition_ProjectBattler(effect->actor, &pos);
+        EffectPosition_ProjectBattler(args->user, &pos);
         for (i = 0; i != 32; i++) {
-          struct EffectStep *p = &work->particles[i];
+          struct Particle *p = &work->particles[i];
           s32 s = 255;
           s32 a;
 
@@ -1008,10 +928,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       texture.logHeight = 5;
       model->kind = 6;
       model->texture = &texture;
-      model->mesh = Data_08199244;
+      model->mesh = gBattleEffect_SmallSquareMeshReversed;
       model->vertices = verts;
       for (i = 0; i != 12; i++) {
-        struct EffectStep *p = &work->particles[i];
+        struct Particle *p = &work->particles[i];
 
         if (frame >= i * 2) {
           s32 t = frame - i * 2;
@@ -1026,16 +946,16 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           texture.pixels = work->sheet + (i % 3 << 10);
           PLACE_PARTICLE(p);
           SceneTransform_ApplyUniformScale(Q16_ONE / 2);
-          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
           BattleEffectKernels_IntegrateVector3(p, 60, 0);
         }
       }
     } else if (mode == 10) {
-      struct EffectPosition pos;
+      struct ScreenPoint pos;
 
       if (frame == 0) {
-        void *user = BattleObject_GetFar(effect->actor)->object;
+        void *user = BattleObject_GetFar(args->user)->object;
 
         Actor_SelectAnimationFar(user, 0);
         Actor_SelectAnimationFar(user, 2);
@@ -1043,23 +963,23 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(SE_POWER_UP);
       }
       if (frame == 14)
-        Actor_SetAnimationSpeedFar(BattleObject_GetFar(effect->actor)->object,
-                                   16);
+        Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object, 16);
       if (frame == 22)
         Sound_PlayFar(SE_POWER_UP);
       if (frame == 26) {
-        BattlePlayback_StartFar(144);
+        EFFECT_SHOW_DAMAGE(SE_CLATTER);
         work->shakeFrames = 8;
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 12);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       if (frame > 27) {
-        struct EffectStep *q;
-        struct EffectStep *p;
+        struct Particle *q;
+        struct Particle *p;
 
         if (frame == 28) {
-          EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
+          EffectPosition_ProjectScaledBattler(args->targets[0], &pos);
           for (q = EXTRA_PARTICLES, i = 0; i != 128; i++, q++) {
             s32 s = 511;
             s32 a;
@@ -1081,10 +1001,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
             for (j = 0; j != 4; j++) {
               s32 n = p->variant / 8 + 1;
 
-              draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
-                      HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
-              BattleEffectKernels_IntegrateVector2(p, 63, 0x800);
-              if (p->y > 0x680000) {
+              draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
+                      Q_16_16_UPPER_HALF(p->x) - n / 2,
+                      Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
+              BattleEffectKernels_IntegrateVector2(p, 63, px(1) / 32);
+              if (p->y > px(104)) {
                 p->y = px(104);
                 p->velocityY = -p->velocityY / 2;
               }
@@ -1093,16 +1014,16 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+      EffectPosition_ProjectScaledBattler(args->user, &pos);
       texture.logWidth = 5;
       texture.logHeight = 7;
       model->kind = 7;
       model->texture = &texture;
-      model->mesh = gData_08199268;
+      model->mesh = gBattleEffect_ColumnMesh;
       model->vertices = verts;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
-      if (effect->side == 0)
+      if (args->side == 0)
         SceneTransform_ApplyPosition3((pos.x - 136) << 16, (pos.y - 48) << 16,
                                       0);
       else
@@ -1123,19 +1044,19 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
             continue;
           if (d > 80)
             d = 80;
-          if (effect->side == 0)
+          if (args->side == 0)
             SceneTransform_ApplyPosition3(d * 3 << 13, d * 7 << 11, 0);
           else
             SceneTransform_ApplyPosition3(-(d * 3 << 13), d * 7 << 11, 0);
           angle = d * 48152 / 80 + TRIG_TURN * 3 / 8;
-          if (effect->side == 0)
+          if (args->side == 0)
             angle = -angle;
           Transform_ApplyRoll(angle);
         } else {
           if (i != 0)
             continue;
-          Transform_ApplyRoll(effect->side == 0 ? -TRIG_TURN * 3 / 8
-                                                : TRIG_TURN * 3 / 8);
+          Transform_ApplyRoll(args->side == 0 ? -TRIG_TURN * 3 / 8
+                                              : TRIG_TURN * 3 / 8);
         }
         model->shade = -i << 3;
         if (frame <= 23)
@@ -1146,24 +1067,23 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           scale = Q16_ONE;
         if (scale > 0) {
           SceneTransform_ApplyScale3(scale * 6, scale * 2, Q16_ONE);
-          Render_TransformVertices(Data_081991d0, verts, 4);
+          Render_TransformVertices(gBattleEffect_LongBeamCorners, verts, 4);
           Render_DrawModelList(model);
           Transform_Pop();
         }
       }
       BattleCamera_Shake(8, 8);
     } else if (mode == 8) {
-      struct EffectPosition pos;
+      struct ScreenPoint pos;
 
       work->transferValue = 50;
       texture.logWidth = 7;
       texture.logHeight = 7;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = 6;
-      work->transferMode = 1;
-      work->transferValue = 0;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
       texture.pixels = work->sheet;
-      EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+      EffectPosition_ProjectScaledBattler(args->user, &pos);
       if (frame <= 15) {
         for (i = 0; i != 2; i++) {
           s32 scale = Trig_Sin(frame << 11) * 5;
@@ -1175,7 +1095,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
                                           (pos.y - 64) << 16, 0);
             SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
             Transform_ApplyRoll(TRIG_TURN / 8);
-            Render_TransformVertices(Data_081991e0, verts, 4);
+            Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
           }
         }
@@ -1184,17 +1104,18 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(SE_POWER_UP);
         work->shakeFrames = 8;
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-        for (i = 0; i != effect->count; i++)
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 7);
+        for (i = 0; i != args->targetCount; i++)
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 7);
       }
       BattleCamera_Shake(8, 8);
     } else if (mode == 13) {
-      struct EffectPosition pos;
+      struct ScreenPoint pos;
       s32 shade;
 
       if (frame == 0)
         Sound_PlayFar(SE_104);
-      EffectPosition_ProjectBattler(effect->actors[0], &pos);
+      EffectPosition_ProjectBattler(args->targets[0], &pos);
       shade = frame * 4 - 64;
       if (shade >= -16)
         shade = -16;
@@ -1202,13 +1123,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       model->texture = &texture;
       model->vertices = verts;
       model->kind = 6;
-      model->mesh = Data_08198ec4;
+      model->mesh = gBattleEffect_CylinderMesh;
       texture.pixels = work->sheet;
       texture.logWidth = 7;
       texture.logHeight = 4;
       if (frame == 26) {
         work->shakeFrames = 8;
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       for (i = 0; i != 8; i++) {
         s32 scale = Q16_ONE * 2;
@@ -1225,20 +1146,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           Transform_ApplyYaw(frame << 9);
           Transform_ApplyRoll((frame + i * 16) << 9);
           SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE / 2, Q16_ONE);
-          Render_TransformVertices(Data_08198cac, verts, 32);
+          Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);
           Render_DrawModelList(model);
         }
       }
     } else if (mode == 12) {
-      struct EffectPosition pos;
+      struct ScreenPoint pos;
       s32 j;
 
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = cells;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = 6;
-      EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+      EffectPosition_ProjectScaledBattler(args->user, &pos);
       Transform_Reset();
       SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16, (pos.y - 48) << 16,
                                     0);
@@ -1247,7 +1168,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
 
         model->shade = 0;
         SceneTransform_ApplyScale3(scale >> 1, scale, scale >> 1);
-        Render_TransformVertices(Data_081991e0, verts, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
       Transform_Reset();
@@ -1259,12 +1180,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         texture.pixels = work->sheet;
         SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
         Transform_ApplyRoll((frame << 9) + TRIG_TURN / 8);
-        Render_TransformVertices(Data_081991e0, verts, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
       if (frame == 0) {
         for (i = 0; i != 64; i++) {
-          struct EffectStep *p = &work->particles[i];
+          struct Particle *p = &work->particles[i];
 
           Random16();
           p->x = 768 + i * 24;
@@ -1275,15 +1196,15 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame <= 15) {
         for (i = 0; i != 64; i++) {
-          struct EffectStep *p = &work->particles[i];
+          struct Particle *p = &work->particles[i];
 
           for (j = 0; j != 3; j++) {
             s32 x = (Trig_Sin(p->y) * p->x >> 21) + pos.x / 2;
             s32 y = (p->x * Trig_Cos(p->y) >> 20) + 60;
             s32 n = 4;
 
-            draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1], x - n / 2,
-                    y - n, n, n * 2);
+            draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
+                    x - n / 2, y - n, n, n * 2);
             p->x += p->velocityX;
           }
         }
@@ -1302,19 +1223,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame == 16) {
         Sound_PlayFar(SE_POWER_UP);
-        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 30);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, 0, 30);
       }
       if (frame == 28)
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
     } else if (mode == 15) {
-      struct EffectPosition pos;
+      struct ScreenPoint pos;
 
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = cells;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = 6;
-      EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+      EffectPosition_ProjectScaledBattler(args->user, &pos);
       for (i = 0; i != 2; i++) {
         s32 t = frame - i * 8;
 
@@ -1331,7 +1253,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
           Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
-          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }
@@ -1344,24 +1266,25 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         texture.pixels = work->sheet;
         SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
         Transform_ApplyRoll((frame << 9) + TRIG_TURN / 8);
-        Render_TransformVertices(Data_081991e0, verts, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
       if (frame == 0)
         Graphics_LoadGreyRamp();
       if (frame == 16) {
         Sound_PlayFar(SE_POWER_UP);
-        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 30);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, 0, 30);
       }
       if (frame == 28)
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
     } else {
       s32 scale;
 
       model->shade = 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->mesh = gData_08199340;
+      model->mesh = gBattleEffect_SquareMesh;
       model->kind = 7;
       texture.pixels = work->sheet;
       if (mode == 2 || mode == 7) {
@@ -1380,12 +1303,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           scale = 48000;
       }
       if (scale > 0) {
-        struct EffectPosition pos;
+        struct ScreenPoint pos;
 
         if (mode == 2 || mode == 7)
-          EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
+          EffectPosition_ProjectScaledBattler(args->targets[0], &pos);
         else
-          EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+          EffectPosition_ProjectScaledBattler(args->user, &pos);
         Transform_Reset();
         SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
                                       (pos.y - 48) << 16, 0);
@@ -1395,7 +1318,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           Transform_ApplyYaw(-frame << 10);
         else
           Transform_ApplyYaw(frame << 10);
-        Render_TransformVertices(gData_08199210, verts, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
     }
@@ -1406,10 +1329,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
     BattleEffect_CountDownBattlerTints();
     if (mode == 1)
       WAIT_TRANSFER(work) {}
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == 0 || mode == 6)
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -1417,7 +1339,6 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef EXTRA_PARTICLES
 #undef FIGURE
 #undef LOAD_BG_PALETTE

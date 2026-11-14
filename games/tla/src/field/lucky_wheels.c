@@ -14,7 +14,7 @@
 #include "graphics/resource.h"
 #include "system/input.h"
 #include "system/frame.h"
-#include "field/effect_step.h"
+#include "field/particle.h"
 #include "edition.h"
 #include "version.h"
 #include "tla_edition.h"
@@ -795,7 +795,7 @@ void LuckyWheels_Update(void) {
 
   if (work->state == 3) {
     for (i = 0; i != REEL_TITLE_LETTERS; i++) {
-      struct EffectStep *p = &fx->particles[i];
+      struct Particle *p = &fx->particles[i];
 
       if (REEL_TITLE_FIRST_TURNED && i == 0)
         work->obj[work->spriteCount].attr01 =
@@ -935,7 +935,7 @@ void LuckyWheels_FinishFrame(void) {
   fx = (struct ReelEffectWork *)Ram_HeapSlots->battleFxWork[0];
   if (work->state == 3) {
     for (i = 0; i != 8; i++) {
-      struct EffectStep *p = &fx->particles[i];
+      struct Particle *p = &fx->particles[i];
 
       p->y += p->velocityY;
       p->velocityY += px(1) / 4;
@@ -973,7 +973,7 @@ void LuckyWheels_FinishFrame(void) {
 #define REEL_TITLE_LEFT 24
 #endif
 
-#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+#define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 
 /// Sets up the bouncing title letters of a win, as The Broken Seal does, on
 /// this game's heap slots (the reel work at 0xb4, the effect work at 0x5c with
@@ -981,7 +981,7 @@ void LuckyWheels_FinishFrame(void) {
 void LuckyWheels_InitializeTitle(void) {
   struct ReelWork *state;
   struct ReelEffectWork *work;
-  struct EffectStep *letter;
+  struct Particle *letter;
   s32 left;
   s32 i;
   s32 angle;
@@ -1258,7 +1258,7 @@ void LuckyWheels_Run(void) {
         if (state->timer > 16 && (frame & 7) == 0) {
           s32 x = (Random16() & 127) + 56;
           s32 y = (Random16() & 31) + 48;
-          struct EffectStep *spark = &SPARKS[(frame / 8 & 3) * 256];
+          struct Particle *spark = &SPARKS[(frame / 8 & 3) * 256];
 
           for (j = 0; j != 256; j++) {
             s32 speed;
@@ -1276,7 +1276,7 @@ void LuckyWheels_Run(void) {
           }
         }
         for (j = 0; j != 1024; j++) {
-          struct EffectStep *spark = &SPARKS[j];
+          struct Particle *spark = &SPARKS[j];
 
           if (spark->variant > 0) {
             s32 x;

@@ -281,7 +281,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
     context.side = 1;
   else
     context.side = 0;
-  BattleEffect_RunSceneEffectFar((s32 *)&context);
+  BattleEffect_RunSummonFar((s32 *)&context);
 
   wait(10);
   BattleObject_Put();
@@ -338,7 +338,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   work.flags = 0;
 
   wait(4);
-  BattleEffect_DispatchByIdRangeFar(&work);
+  BattleEffect_RunByIdRangeFar(&work);
   BattleMotion_ReturnToSpot(work.actors[0]);
   BattleMotion_ReturnToSpot(work.actor);
   return 0;

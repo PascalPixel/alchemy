@@ -1,5 +1,5 @@
 /// @file
-/// The Procne summon, and the scene of summon 7.
+/// The Procne summon, and the Tiamat summon and Dragon Driver.
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
@@ -14,21 +14,9 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-// Summon 8 (BattleEffect_RunSceneEffect's case 8). Twin: The Broken Seal's
-// BattleEffect_RunProcne, ported by trial 2 and rewritten here. The
-// Lost Age's changes: BattleEffect_FetchRectangleBlitters for the pair; the
-// whirlwind unpacked with its palette by Resource_LoadAndDecompress into the
-// work sheet, the comets into work->sheet + 0x3600; frame / 4 % 3 written
-// through Math_UnsignedMulHighAdd(x, 0x55555556, -3) and the depth divisions by
-// 36 and 90 through Math_UnsignedMulHigh with their reciprocals (calls the
-// source makes: agscc emits __modsi3 and __divsi3 for the operators);
-// Iwram_TransformVector at the comet sparks; formation resource 646; the effect
-// argument for the actor loops; gCameraSceneParameters declared unsized (with
-// the shared u32[3], word 3 folds into the address).
-
 // frame / 4 % 3, as the source writes it: the multiply-high routine with the
 // reciprocal of 3, where a plain % calls __modsi3.
-#define MOD3(v) Math_UnsignedMulHighAdd((v), 0x55555556, -3)
+#define MODULO_THREE(v) Math_UnsignedMulHighAdd((v), 0x55555556, -3)
 
 #define WHIRLWIND_CEL (48 * 64) // one of the whirlwind's three frames
 #define DUST_SHEET 0x2400       // the dust motes, after the whirlwind
@@ -36,13 +24,14 @@
 #define COMETS 9
 #define FORMATION_RESOURCE 646
 
-// Summon 8: a whirlwind rises under the enemies and lifts them, spinning,
-// while dust motes swirl up through it (frames 0 to 159; A or B skips to
-// 160). Then the sky turns violet and a formation of nine comets wheels
-// in; a cloud of sparks gathers on its centre, and from frame 330 four
-// comets strike one after another, each with a burst of sparks, throwing
-// the enemies down. A or B skips frames 161 to 394.
-void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
+/// A whirlwind lifts the targets, then Procne, a great bird in a violet sky,
+/// strikes them with comets: the whirlwind spins them while dust swirls up
+/// through it (frames 0 to 159; A or B skips to 160), a cloud of sparks
+/// gathers, and from frame 330 four comets strike one after another, each
+/// with a burst of sparks. A or B skips frames 161 to 394.
+///
+/// Abilities: Procne.
+void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   void *canvas;
   void *camera;
   struct BattleEffectWork *work;
@@ -51,9 +40,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   u8 *graphics;
   struct MotionObject *object;
   struct BattleObj *context;
-  struct EffectStep *point;
-  struct EffectStep *spark;
-  struct EffectStep *mark;
+  struct Particle *point;
+  struct Particle *spark;
+  struct Particle *mark;
   s32 index;
   s32 slot;
   s32 size;
@@ -66,7 +55,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   struct Point2D home[8];
   s32 baseAngle[8];
   s32 vector[3];
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 shake[3];
   s32 place[4];
   struct Scale scale;
@@ -85,10 +74,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     struct Point2D drift;
     Resource_LoadAndDecompress((s32)&ResourceId_WhirlwindSheet, work->sheet, 1,
                                1);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-    work->transferMode = 2;
-    work->transferValue = 50;
-    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0,
+                               0);
+    EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     wave.x = px(128);
     wave.y = px(40);
     drift.x = 0;
@@ -96,8 +84,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
     // Each enemy's place, heading, distance and facing, to restore at the
     // end; its bobbing stops.
-    for (index = 0; index != effect->count; index++) {
-      context = BattleObject_GetFar(effect->actors[index]);
+    for (index = 0; index != args->targetCount; index++) {
+      context = BattleObject_GetFar(args->targets[index]);
       object = context->object;
       home[index].x = object->x;
       home[index].y = object->z;
@@ -150,9 +138,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
       // The enemies, one every 16 frames, spiral in toward the centre and
       // rise, spinning faster; each comet strike knocks them down.
-      for (index = 0; index != effect->count; index++) {
+      for (index = 0; index != args->targetCount; index++) {
         if (frame > index * 16) {
-          context = BattleObject_GetFar(effect->actors[index]);
+          context = BattleObject_GetFar(args->targets[index]);
           object = context->object;
           object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
           object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
@@ -164,7 +152,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               object->y += px(6);
             else
               object->y += px(1) / 2;
-            if (object->y > 0x7c0000)
+            if (object->y > px(124))
               object->y = px(124);
           }
 
@@ -182,7 +170,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           do {
             if (frame == gProcne_Frames[slot]) {
               object->velocityY = 0;
-              BattleEffect_TintBattler(effect->actors[index], 7, 5, index, 8);
+              BattleEffect_TintBattler(args->targets[index], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, index, 8);
             }
             slot++;
           } while (slot != 4);
@@ -198,25 +187,25 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         size = frame * 2 - 32;
         if (size > 48)
           size = 48;
-        draw[0](
-            canvas,
-            &work->sheet[MOD3(frame / 4) * WHIRLWIND_CEL + (48 - size) * 48],
-            32, 112 - size, 48, size);
+        draw[0](canvas,
+                &work->sheet[MODULO_THREE(frame / 4) * WHIRLWIND_CEL +
+                             (48 - size) * 48],
+                32, 112 - size, 48, size);
       }
       if ((u32)(frame - 48) <= 111) {
         size = frame * 2 - 96;
         if (size > 64)
           size = 64;
-        draw[0](
-            canvas,
-            &work->sheet[MOD3(frame / 4) * WHIRLWIND_CEL + (64 - size) * 48],
-            32, 64 - size, 48, size);
+        draw[0](canvas,
+                &work->sheet[MODULO_THREE(frame / 4) * WHIRLWIND_CEL +
+                             (64 - size) * 48],
+                32, 64 - size, 48, size);
       }
       if ((u32)(frame - 160) <= 239) {
-        draw[0](canvas, &work->sheet[MOD3(frame / 4) * WHIRLWIND_CEL], 8, 0, 48,
-                64);
-        draw[0](canvas, &work->sheet[MOD3(frame / 4) * WHIRLWIND_CEL], 8, 64,
-                48, 64);
+        draw[0](canvas, &work->sheet[MODULO_THREE(frame / 4) * WHIRLWIND_CEL],
+                8, 0, 48, 64);
+        draw[0](canvas, &work->sheet[MODULO_THREE(frame / 4) * WHIRLWIND_CEL],
+                8, 64, 48, 64);
       }
 
       // The dust motes swirl up the whirlwind, speeding up, and start again
@@ -237,14 +226,14 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
             if (point[index].z > 24)
               point[index].z -= 4;
             point[index].velocityY += point[index].velocityX * 2;
-            if (point[index].velocityY > 0x10000)
+            if (point[index].velocityY > px(1))
               point[index].velocityY -= px(1);
             point[index].velocityX += 50;
             if (point[index].velocityX > 4096)
               point[index].velocityX = 4096;
             point[index].velocityY += 2048;
             point[index].y += point[index].velocityY * 2;
-            if (point[index].y > 0x300000) {
+            if (point[index].y > px(48)) {
               point[index].y = 0;
               point[index].z = 100;
               point[index].velocityY = 0;
@@ -265,7 +254,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
         BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
         BattleBackground_SetModeFar(1, (s32)&ResourceId_VioletSkyBackdrop, 8);
-        BattleEffect_SelectLivingTargets(work->effect);
+        BattleEffect_SelectLivingTargets(work->args);
         BattleEffect_SpawnObjects(COMETS, FORMATION_RESOURCE, 2);
         Resource_LoadAndDecompress((s32)&ResourceId_VioletCometSheet,
                                    work->sheet + COMET_SHEET, 1, 1);
@@ -276,10 +265,10 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           index++;
         } while (index != 512);
 
-        for (index = 0; index != effect->count; index++) {
-          context = BattleObject_GetFar(effect->actors[index]);
+        for (index = 0; index != args->targetCount; index++) {
+          context = BattleObject_GetFar(args->targets[index]);
           object = context->object;
-          object->y = ((Random16() & 15) + 8) << 16;
+          object->y = px((Random16() & 15) + 8);
         }
 
         gCameraSceneParameters[3] = 72;
@@ -290,12 +279,12 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           angle = (Random16() & 0x7fff) + 0x9fff;
           work->particles[index].x = Trig_Sin(angle) * speed;
           work->particles[index].y = Trig_Cos(angle) * speed;
-          work->particles[index].z = (Random16() % 200 - 100) << 16;
+          work->particles[index].z = px(Random16() % 200 - 100);
           work->particles[index].variant = 0;
           index++;
         } while (index != 32);
 
-        for (index = 0; index != effect->count; index++) {
+        for (index = 0; index != args->targetCount; index++) {
           radius[index] = 16;
           spin[index] = 6000;
         }
@@ -303,7 +292,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
       if (frame > 159) {
         // The formation sways on a slow wave, pushed back by each strike.
-        scale = Data_08196df8;
+        scale = gProcne_UnitScale;
         size = 16;
         if (frame - 160 <= 64)
           size = 32;
@@ -323,7 +312,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           place[1] = 0xff0000 + index * 0x400000;
           place[2] = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
           Render_ApplyProjectedPlacementFar(
-              (struct ScaledSprite *)work->objects[index], place, &scale.x, 0);
+              (struct ScaledSprite *)work->sprites[index], place, &scale.x, 0);
           index++;
         } while (index != COMETS);
 
@@ -362,7 +351,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 if (screen.depth > 350)
                   screen.depth = 350;
                 span = 6 - Math_UnsignedMulHigh(screen.depth - 170, 0x071c71c8);
-                draw[1](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+                draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
                         screen.x - span / 2, screen.y - span, span, span * 2);
                 point->x -= point->x / dist;
                 point->y -= point->y / dist;
@@ -375,7 +364,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
             if (alive > 0) {
               span = alive / 10 + 1;
-              draw[1](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+              draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
                       (wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4,
                       span, span * 2);
             }
@@ -425,7 +414,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                     screen.depth = 350;
                   span =
                       3 - Math_UnsignedMulHigh(screen.depth - 170, 0x02d82d83);
-                  draw[0](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+                  draw[0](canvas,
+                          graphics + gBattleEffect_MotePictures[span - 1],
                           screen.x - span / 2, screen.y - span, span, span * 2);
                   spark[index].x += spark[index].velocityX;
                   spark[index].y += spark[index].velocityY;
@@ -468,9 +458,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               cel = (frame - threshold) / 2;
               if (cel > 2)
                 cel = 2;
-              draw[1](canvas, work->sheet + gProcne_Cells[cel], mark->x,
-                      mark->y - gProcne_CellBiasY[cel], gProcne_CellWidths[cel],
-                      gProcne_CellHeights[cel]);
+              draw[1](canvas, work->sheet + gProcne_Pictures[cel], mark->x,
+                      mark->y - gProcne_PictureBiasY[cel],
+                      gProcne_PictureWidths[cel], gProcne_PictureHeights[cel]);
               mark->x -= 8;
               mark->y += 2;
 
@@ -481,7 +471,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 slot = 0;
                 spark = &work->particles[32];
                 do {
-                  struct EffectStep *ring;
+                  struct Particle *ring;
 
                   ring = &spark[slot];
                   vector[0] = 0;
@@ -500,7 +490,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                     screen.depth = 350;
                   span =
                       3 - Math_UnsignedMulHigh(screen.depth - 170, 0x02d82d83);
-                  draw[0](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+                  draw[0](canvas,
+                          graphics + gBattleEffect_MotePictures[span - 1],
                           screen.x - span / 2, screen.y - span, span, span * 2);
                   slot++;
                 } while (slot != 28);
@@ -511,18 +502,16 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         }
       }
 
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
       frame++;
     } while (frame != 400);
 
     // The results; the enemies go back where they stood, facing as before.
-    BattlePlayback_StartFar(134);
-    for (index = 0; index != effect->count; index++) {
+    EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+    for (index = 0; index != args->targetCount; index++) {
       struct MotionObject *enemy;
 
-      context = BattleObject_GetFar(effect->actors[index]);
+      context = BattleObject_GetFar(args->targets[index]);
       enemy = context->object;
       enemy->x = home[index].x;
       enemy->z = home[index].y;
@@ -533,14 +522,11 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
     index = 0;
     do {
-      Sprite_DestroyFar(work->objects[index]);
+      Sprite_DestroyFar(work->sprites[index]);
       index++;
     } while (index != COMETS);
 
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
-    BattleEffect_EndCanvasLayer();
+    EFFECT_FINISH_CANVAS();
   }
 }
 
@@ -554,20 +540,17 @@ DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
 
 // The rising grains live in the map buffer.
 
-// The high halfword of a 16.16 value: its whole pixels.
-#define HI(v) (((s16 *)&(v))[1])
-
 #define STREAK_SHEET 0x3000 // the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647
 
-// Summon 7 (mode 0; mode 1 is the same scene cast from the caster's side,
-// without the formation): streaks rain down and splash, sparks and grains
-// rise from where the formation stands, a burst of flashes at frame 128,
-// then the screen whitens and the canvas fades away. In mode 0 a formation
+// Tiamat (mode 0) and Dragon Driver (mode 1, the same scene cast from the
+// caster's side, without the formation): streaks rain down and splash, sparks
+// and grains rise from where the formation stands, a burst of flashes at frame
+// 128, then the screen whitens and the canvas fades away. In mode 0 a formation
 // of eight drops in at frame 40 and bursts at the end. A or B skips frames
 // 49 to 159.
-void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
-  struct EffectPosition origin;
+void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
+  struct ScreenPoint origin;
   DrawRectangle draw[2];
   void *canvas;
   s32 *camera;
@@ -592,7 +575,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              work->sheet + STREAK_SHEET, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == 1) {
     const void *lightning =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
@@ -601,9 +584,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
     copy((void *)BG_PLTT, lightning, 128);
   }
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
     s32 dir;
@@ -613,7 +594,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     // pixels further right and lower, with its sparks and flashes.
     alternate = 0;
 
-    if (((struct Actor *)BattleObject_GetFar(effect->actors[0])->object)
+    if (((struct Actor *)BattleObject_GetFar(args->targets[0])->object)
             ->spriteStorageKind == 2)
       alternate = 1;
 
@@ -621,15 +602,15 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     // the caster.
     if (mode == 0)
       dir = 1;
-    else if (effect->side == 1)
+    else if (args->side == 1)
       dir = -1;
     else
       dir = 1;
     if (mode == 1) {
-      EffectPosition_ProjectScaledBattler(effect->actor, &origin);
+      EffectPosition_ProjectScaledBattler(args->user, &origin);
       origin.x /= 2;
       origin.y = 66;
-      if (effect->side == 1)
+      if (args->side == 1)
         origin.x = 76;
       else
         origin.x = 44;
@@ -643,10 +624,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
       focus.x = px(212);
       focus.y = -px(60);
     }
-    for (i = 0; i != 64; i++)
-      work->particles[i].variant = -1;
+    EFFECT_FREE_PARTICLES(i, work->particles, 64);
     for (i = 0; i != 16; i++) {
-      struct EffectStep *streak = &work->particles[24 + i];
+      struct Particle *streak = &work->particles[24 + i];
 
       if (dir == 1)
         streak->x = (Random16() & 127) + 128;
@@ -658,7 +638,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     for (i = 0; i != 512; i++)
       PARTICLES[i].variant = -1;
     if (mode == 0) {
-      BattleEffect_SelectLivingTargets(work->effect);
+      BattleEffect_SelectLivingTargets(work->args);
       wait(1);
       BattleEffect_SpawnObjects(8, FORMATION_RESOURCE, 2);
     }
@@ -666,37 +646,36 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     for (frame = 0; frame != 208; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
         if (mode == 0) {
-          Animation_ApplyChildArgumentFar(work->objects[0], 8);
-          Animation_ApplyChildArgumentFar(work->objects[1], 9);
-          Animation_ApplyChildArgumentFar(work->objects[3], 10);
-          Animation_ApplyChildArgumentFar(work->objects[4], 11);
+          Animation_ApplyChildArgumentFar(work->sprites[0], 8);
+          Animation_ApplyChildArgumentFar(work->sprites[1], 9);
+          Animation_ApplyChildArgumentFar(work->sprites[3], 10);
+          Animation_ApplyChildArgumentFar(work->sprites[4], 11);
         }
-        for (i = 0; i != effect->count; i++) {
-          BattleEffect_TintBattler(effect->actors[i], 10, 5, -1, 0);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+        for (i = 0; i != args->targetCount; i++) {
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
+                                   POSE_DAMAGE, TINT_KEEP, 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
         }
         frame = 160;
       }
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       if (frame == 178)
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
       // From frame 128 the trails halve; from 160 to 175 the canvas is filled
       // and the palette brightens; from 176 the canvas fades by 2 a frame.
       if (frame == 128)
         work->transferValue = 50;
       if (frame == 176) {
-        work->transferMode = 3;
-        work->transferValue = 0x02020202;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet), 128);
       } else if (frame >= 160 && frame <= 175) {
-        work->transferMode = 1;
-        work->transferValue = 0x10101010;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
         if (frame > 173)
-          work->transferValue = 0x3f3f3f3f;
+          work->transferValue = CANVAS_FILL_WORD(63);
         Palette_BrightenBgEntries(2, 2, 2);
       }
 
@@ -708,15 +687,15 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
         if (frame > 103)
           limit = 8;
         for (i = 0; i != 512; i++) {
-          struct EffectStep *grain = &PARTICLES[i];
+          struct Particle *grain = &PARTICLES[i];
 
           if (grain->variant == -1) {
-            grain->x = ((Random16() & 255) - 32) << 16;
+            grain->x = px((Random16() & 255) - 32);
             grain->y = px(112);
-            grain->velocityX = ((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
+            grain->velocityX = ((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
                                << 9;
-            grain->velocityY = -((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
-                               << 11;
+            grain->velocityY =
+                -((Random16() & 127) + gTiamat_EmberSpeeds[i & 3]) << 11;
             grain->variant = 0;
             spawned++;
             if (spawned == limit)
@@ -731,7 +710,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
         if (frame & 1) {
           for (i = 0; i != 24; i++) {
-            struct EffectStep *spark = &work->particles[40 + i];
+            struct Particle *spark = &work->particles[40 + i];
 
             if (spark->variant == -1) {
               s32 speed = (Random16() & 255) + 128;
@@ -739,14 +718,14 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
               if (mode == 0) {
                 if (alternate == 1) {
-                  spark->x = ((Random16() & 7) + 78) << 16;
+                  spark->x = px((Random16() & 7) + 78);
                   spark->y = px(78);
                 } else {
-                  spark->x = ((Random16() & 7) + 78) << 16;
+                  spark->x = px((Random16() & 7) + 78);
                   spark->y = px(70);
                 }
               } else {
-                spark->x = ((Random16() & 7) + origin.x - 8) << 16;
+                spark->x = px((Random16() & 7) + origin.x - 8);
                 spark->y = origin.y << 16;
               }
               spark->velocityX = speed * Trig_Sin(angle) >> 9;
@@ -769,7 +748,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
         s32 spawned = 0;
 
         for (i = 0; i != 24; i++) {
-          struct EffectStep *flash = &work->particles[i];
+          struct Particle *flash = &work->particles[i];
 
           if (flash->variant == -1) {
             s32 speed = (Random16() & 255) + 128;
@@ -800,11 +779,12 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
       // A flash steps its picture every four frames and lives 24.
       if (frame <= 175) {
         for (i = 0; i != 24; i++) {
-          struct EffectStep *flash = &work->particles[i];
+          struct Particle *flash = &work->particles[i];
 
           if (flash->variant >= 0) {
             draw[0](canvas, work->sheet + ((flash->variant >> 2) << 11),
-                    HI(flash->x) - 16, HI(flash->y) - 32, 32, 64);
+                    Q_16_16_UPPER_HALF(flash->x) - 16,
+                    Q_16_16_UPPER_HALF(flash->y) - 32, 32, 64);
             flash->x += flash->velocityX * dir;
             flash->y += flash->velocityY;
             flash->variant++;
@@ -816,12 +796,12 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
       // A spark is two pixels, speeding upward, and lives 48 frames.
       for (i = 0; i != 24; i++) {
-        struct EffectStep *spark = &work->particles[40 + i];
+        struct Particle *spark = &work->particles[40 + i];
         s32 size = 1;
 
         if (spark->variant >= 0) {
-          draw[1](canvas, gTiamat_SparkPixels, HI(spark->x),
-                  HI(spark->y) - size, size, size * 2);
+          draw[1](canvas, gTiamat_SparkPixels, Q_16_16_UPPER_HALF(spark->x),
+                  Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX * dir;
           spark->y += spark->velocityY;
           spark->velocityY += -(px(1) / 64);
@@ -835,14 +815,15 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
       // ones harder); each lives 256 frames.
       if (frame <= 175) {
         for (i = 0; i != 512; i++) {
-          struct EffectStep *grain = &PARTICLES[i];
+          struct Particle *grain = &PARTICLES[i];
 
           if (grain->variant >= 0) {
-            u8 size = gTiamat_DropSizes[i & 3];
+            u8 size = gTiamat_EmberSizes[i & 3];
             s32 height = size * 2;
 
-            draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
-                    HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
+            draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
+                    Q_16_16_UPPER_HALF(grain->x) - size / 2,
+                    Q_16_16_UPPER_HALF(grain->y) - size, size, height);
             grain->x += grain->velocityX * dir;
             grain->y += grain->velocityY;
             if (frame > 128) {
@@ -872,26 +853,29 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (mode == 0) {
         if (frame == 128) {
-          Animation_ApplyChildArgumentFar(work->objects[0], 8);
-          Animation_ApplyChildArgumentFar(work->objects[1], 9);
-          Animation_ApplyChildArgumentFar(work->objects[3], 10);
-          Animation_ApplyChildArgumentFar(work->objects[4], 11);
+          Animation_ApplyChildArgumentFar(work->sprites[0], 8);
+          Animation_ApplyChildArgumentFar(work->sprites[1], 9);
+          Animation_ApplyChildArgumentFar(work->sprites[3], 10);
+          Animation_ApplyChildArgumentFar(work->sprites[4], 11);
         }
         if (frame == 176) {
-          Animation_ApplyChildArgumentFar(work->objects[0], 0);
-          Animation_ApplyChildArgumentFar(work->objects[1], 1);
-          Animation_ApplyChildArgumentFar(work->objects[3], 3);
-          Animation_ApplyChildArgumentFar(work->objects[4], 4);
+          Animation_ApplyChildArgumentFar(work->sprites[0], 0);
+          Animation_ApplyChildArgumentFar(work->sprites[1], 1);
+          Animation_ApplyChildArgumentFar(work->sprites[3], 3);
+          Animation_ApplyChildArgumentFar(work->sprites[4], 4);
         }
         if (alternate == 1)
-          BattleEffect_PlaceFormationObjects(6, focus.x, focus.y);
+          BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT_ALTERNATE,
+                                             focus.x, focus.y);
         else
-          BattleEffect_PlaceFormationObjects(3, focus.x, focus.y);
+          BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
+                                             focus.y);
       }
       if (frame == 138) {
-        for (i = 0; i != effect->count; i++) {
-          BattleEffect_TintBattler(effect->actors[i], 10, 5, -1, 0);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+        for (i = 0; i != args->targetCount; i++) {
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
+                                   POSE_DAMAGE, TINT_KEEP, 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
         }
       }
 
@@ -899,7 +883,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
       // splashes through six pictures, two frames each, over and over.
       if (frame <= 175) {
         for (i = 0; i != 16; i++) {
-          struct EffectStep *streak = &work->particles[24 + i];
+          struct Particle *streak = &work->particles[24 + i];
 
           if (streak->y > 55) {
             if (streak->variant >= 0 && streak->variant <= 11) {
@@ -908,7 +892,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
               draw[0](canvas,
                       work->sheet + gTiamat_FlamePictures[cel] + STREAK_SHEET,
                       streak->x - gTiamat_FlameWidths[cel] / 2,
-                      streak->y + gTiamat_StreakDrops[cel],
+                      streak->y + gTiamat_FlameDrops[cel],
                       gTiamat_FlameWidths[cel], gTiamat_FlameHeights[cel]);
             }
             streak->variant++;
@@ -921,7 +905,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
             streak->y += 6;
             if (frame <= 47 && streak->y > 55)
               Sound_PlayFar(SE_WHOOSH);
-            draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+            draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                     streak->x - size / 2, streak->y + 30, size, size * 2);
           } else {
             streak->variant++;
@@ -929,24 +913,22 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
 
     // Tear down: the formation bursts where it stands and is released.
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
+    EFFECT_RELEASE_BLITTERS();
     if (mode == 0) {
       if (alternate == 1)
-        BattleEffect_RunImpactBurst(6, focus.x, focus.y);
+        BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT_ALTERNATE, focus.x,
+                                    focus.y);
       else
-        BattleEffect_RunImpactBurst(3, focus.x, focus.y);
+        BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     }
     if (mode == 0) {
       for (i = 0; i != 8; i++)
-        Sprite_DestroyFar(work->objects[i]);
+        Sprite_DestroyFar(work->sprites[i]);
     }
   }
   BattleEffect_EndCanvasLayer();

@@ -49,17 +49,17 @@ struct BattlePresentationTransition {
   s32 unk1c;      ///< cleared at the battle's start; not read by name in TLA
 };
 
-/// A presentation's effect command, laid out as BattleEffectArgument with a
+/// A presentation's effect command, laid out as BattleEffectParams with a
 /// ninth actor, and the animation state it keeps.
 struct BattlePresentationWork {
   s32 kind;         ///< the effect's index in the handler table
   s32 side;         ///< 1 when the targets are the party, 0 for enemies
   s32 actor;        ///< the user's unit id
   s32 firstTarget;  ///< the action's first target
-  s32 initialValue; ///< BattleEffectArgument's range: the action's, or 1
+  s32 initialValue; ///< BattleEffectParams's range: the action's, or 1
   s32 count;        ///< targets in actors
   s32 variant;      ///< the ability's size, from 0
-  s32 flags;        ///< BattleEffectArgument's prelude, at the same offset
+  s32 flags;        ///< BattleEffectParams's prelude, at the same offset
   u8 unk20[4];      ///< not named by TLA code
   s16 actors[9];    ///< the targets' unit ids, count of them
   u8 params[8][4];  ///< each target's animation entries' param, kept
@@ -115,14 +115,14 @@ s32 BattleObject_IsValidId(u32 objectId);
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 mode);
 void BattleHighlight_SetSpriteMode(s32 actor, s32 mode);
 void BattleObject_Put(void);
-void BattleEffect_RunSceneEffectFar(s32 *context);
+void BattleEffect_RunSummonFar(s32 *context);
 /// Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 /// Steps the background palette fade.
 void Palette_StepFadeTransfer(void);
-struct BattleEffectArgument;
-void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);
+struct BattleEffectParams;
+void BattleEffect_RunBurstShower(struct BattleEffectParams *effect, s32 mode);
 
 #endif

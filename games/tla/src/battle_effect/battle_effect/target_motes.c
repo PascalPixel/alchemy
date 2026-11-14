@@ -16,16 +16,15 @@
 
 /// Each entry passes a particle type (color and count) to
 /// BattleEffect_RunTargetMotes. effect: effect arguments.
-void BattleEffect_RunTaint(struct BattleEffectArgument *effect) {
-  if (effect->variant == 0) {
-    BattleEffect_RunTargetMotes(effect, 0);
+void BattleEffect_RunTaint(struct BattleEffectParams *args) {
+  if (args->variant == 0) {
+    BattleEffect_RunTargetMotes(args, 0);
     return;
   }
-  BattleEffect_RunTargetMotes(effect, 1);
+  BattleEffect_RunTargetMotes(args, 1);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunTargetMotesMode1,
-                   BattleEffect_RunTargetMotes, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunPoisonGel, BattleEffect_RunTargetMotes, 1)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunDelude, BattleEffect_RunTargetMotes, 2)
 
@@ -53,17 +52,16 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDrown, BattleEffect_RunTargetMotes, 6)
 // rippling canvas: smoke, hearts, glowing orbs or vortex motes by mode,
 // in the mode's palette; mode 3 adds the tornado's glints, and mode 7 sends
 // the caster at the first target for the final blow.
-void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
-                                 u32 mode) {
+void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   s32 total;
   s32 member;
   s32 count;
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 point[3];
-  struct EffectPosition base;
+  struct ScreenPoint base;
   DrawRectangle draw[2];
   void *palette;
   s32 *row;
@@ -108,7 +106,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 
   // Scatter the motes around the origin.
   for (i = 0; i != MOTE_MAX; i++) {
-    struct EffectStep *mote = &PARTICLES[i];
+    struct Particle *mote = &PARTICLES[i];
 
     if (CONVERGES(mode)) {
       SET_POSITION(mote, ((Random16() & 0xff) - 127) << 15,
@@ -123,31 +121,30 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
   }
 
   if (CONVERGES(mode))
-    total = effect->count * 8 + 64;
+    total = args->targetCount * 8 + 64;
   else
-    total = effect->count * 8 + 32;
+    total = args->targetCount * 8 + 32;
   if (!(mode <= 1 || mode == 3))
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     // Mode 7 sends the caster at the first target 46 frames before the
-    // end and strikes it 14 frames later; the others begin phase 133.
+    // end and strikes it 14 frames later; the others let the battle show the
+    // damage.
     if (mode == 7) {
       if (frame == total - 46)
-        BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
+        BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
       if (frame == total - 32) {
-        BattlePlayback_StartFar(134);
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
 
     // Ripple the canvas: one horizontal offset for each line.
@@ -155,14 +152,14 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
     for (i = 0; i != 160; i++)
       *row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 0x800) << 2)) >> 10;
 
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->targetCount; member++) {
       struct MotionObject *object =
-          BattleObject_GetFar(effect->actors[member])->object;
+          BattleObject_GetFar(args->targets[member])->object;
 
       // Mode 3: two tornado glints a frame around the target, each drawn
       // with a blitter of its own, mirrored at random.
       if (mode == 3 && frame > member * 8 && frame < member * 8 + 32) {
-        EffectPosition_ProjectScaledBattler(effect->actors[member], &base);
+        EffectPosition_ProjectScaledBattler(args->targets[member], &base);
 
         for (i = 0; i != 2; i++) {
           s32 angle;
@@ -178,7 +175,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (({
-                 w = gData_08197492;
+                 w = gBattleEffect_GlintPictureWidths;
                  w;
                })[frame & 3] >>
                1);
@@ -187,7 +184,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           __asm__("" : "=r"(w) : "0"(w));
           y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
               (({
-                 h = gData_08197498;
+                 h = gBattleEffect_GlintPictureHeights;
                  h;
                })[frame & 3] >>
                1);
@@ -196,25 +193,23 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           __asm__("" : "=r"(h) : "0"(h));
           BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
                                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                        Data_08197a34[Random16() & 3],
+                                        gTargetMotes_GlintFlips[Random16() & 3],
                                     BLITTER_MAX);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas,
-              work->sheet + gBattleEffect_GlintCells[frame & 3] +
+              work->sheet + gBattleEffect_GlintPictures[frame & 3] +
                   RENDER_MODE_TORNADO,
               x, y + 16, w[frame & 3], h[frame & 3]);
-          HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
 
       // An additive and a max blitter for this target's motes.
-      BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 |
-                                                 COMPOSITE_CLIP_X |
-                                                 COMPOSITE_CLIP_Y);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 |
-                                                           COMPOSITE_CLIP_X |
-                                                           COMPOSITE_CLIP_Y);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                          BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
@@ -229,7 +224,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
         if (mode <= 1 || mode == 4)
           Transform_ApplyPitch(frame << 9);
         for (i = 0; i != count; i++) {
-          struct EffectStep *mote = &PARTICLES[member * 64 + i];
+          struct Particle *mote = &PARTICLES[member * 64 + i];
           s32 distance;
 
           if (frame > member * 8 + i) {
@@ -278,8 +273,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           }
         }
       }
-      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-      HeapSlot_Release(HEAP_BLITTER);
+      EFFECT_RELEASE_BLITTERS();
 
       // The target flashes 16 frames into its turn, until the end.
       if (frame == member * 8 + 16) {
@@ -287,14 +281,13 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 
         if (delay > 31)
           delay = 31;
-        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, delay);
+        BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, member, delay);
       }
     }
 
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.
@@ -313,13 +306,13 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 // A flock of sheep cards drops in over the targets, one every four frames,
 // and bounces on the ground, tumbling through eight cels; at frame 80 the
 // next phase begins, and each target turns back to its own palette in turn.
-void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  struct EffectPosition middle;
+  struct ScreenPoint middle;
   s32 record[3];
-  struct EffectStep *one;
-  struct EffectStep *sheep;
+  struct Particle *one;
+  struct Particle *sheep;
   s32 i;
   s32 frame;
   DrawRectangle drawB;
@@ -329,28 +322,26 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
 
   // Set up: the canvas layer, the sheep sheet and a transparent blitter
   // pair, the second mirrored.
-  sheep = (struct EffectStep *)Ram_MapCellBuffer;
+  sheep = (struct Particle *)Ram_MapCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   scroll = 0;
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = scroll;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
                              1);
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
-                                             COMPOSITE_CLIP_X |
-                                             COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   drawA = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                           BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X |
-                               COMPOSITE_CLIP_Y | COMPOSITE_FLIP);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                      BLITTER_TRANSPARENT);
   drawB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   // The sheep wait above the screen with a random spin and starting cel.
   for (i = 0; i != 32; i++) {
     one = &sheep[i];
-    one->x = ((Random16() & 63) + 32) << 16;
+    one->x = px((Random16() & 63) + 32);
     one->y = -px(32);
     one->velocityY = Random16() & 0;
     one->z = Random16() & 3;
@@ -368,9 +359,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
     middle.x = 112;
   }
   REG_BG2X = -middle.x << 8;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != SHEEP_FRAMES; frame++) {
@@ -378,14 +367,14 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
 
     camera = Ram_HeapSlots->cameraWork;
     if (frame == 80)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
 
     // Place each target, and from frame 64 restore its palette, one
     // target every 16 frames.
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->targetCount; member++) {
       struct MotionObject *object;
 
-      object = BattleObject_GetFar(effect->actors[member])->object;
+      object = BattleObject_GetFar(args->targets[member])->object;
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       record[0] = object->x;
@@ -393,7 +382,8 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
       record[2] = object->z;
       SceneTransform_ApplyPosition(record);
       if (frame == member * 16 + 64)
-        BattleEffect_TintBattler(effect->actors[member], 0, 5, -1, 0);
+        BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
+                                 POSE_DAMAGE, TINT_KEEP, 0);
     }
 
     // The sheep fall and bounce, each spinning through its eight cels:
@@ -421,68 +411,63 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #define MARKER_FRAMES 72 // how long each marker stays
 #define MARKER_STAGGER 16
 #define MARKER_CELS 9
 
-// As in The Broken Seal's twin, which loads the same sheet: a small flame
+// A small flame
 // burns above each target in turn, MARKER_STAGGER frames apart, for up to
 // MARKER_FRAMES frames each, over a marker at its feet.
-void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
   DrawRectangle draw[2];
-  struct EffectStep *marker;
+  struct Particle *marker;
   s32 i;
   s32 frame;
   s32 start;
   s32 cel;
   s32 y;
-  struct EffectPosition pos;
+  struct ScreenPoint pos;
 
   // Set up: the canvas layer, unscaled; for side 1 the canvas shows the
   // right half of the field.
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
-  if (effect->side == 1) {
+  if (args->side == 1) {
     REG_BG2X = -0x7000;
   }
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
-                                             COMPOSITE_CLIP_X |
-                                             COMPOSITE_CLIP_Y);
-  work->transferMode = 1;
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
+  work->transferMode = CANVAS_COPY_AND_CLEAR;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Each flame starts at a random point in its turn.
-  for (i = 0; i != effect->count; i++) {
+  for (i = 0; i != args->targetCount; i++) {
     work->particles[i].variant = Random16() & 63;
   }
 
   frame = 0;
-  while (frame != (effect->count << 5) + 32) {
+  while (frame != (args->targetCount << 5) + 32) {
     if (frame == 32) {
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     }
     i = 0;
-    if (effect->count != 0) {
+    if (args->targetCount != 0) {
       do {
         start = i * MARKER_STAGGER;
         if (frame == start) {
@@ -491,8 +476,8 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
         if (frame >= start && frame < start + MARKER_FRAMES) {
           // The marker at the target's feet, then the flame, six frames a cel.
           marker = &work->particles[i];
-          EffectPosition_ProjectScaledBattler(effect->actors[i], &pos);
-          if (effect->side == 1) {
+          EffectPosition_ProjectScaledBattler(args->targets[i], &pos);
+          if (args->side == 1) {
             pos.x -= 112;
           }
           y = pos.y;
@@ -506,23 +491,20 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
           }
         }
         i++;
-      } while (i != effect->count);
+      } while (i != args->targetCount);
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
     frame += 1;
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 // A Djinn rides a swarm of sparks from the caster to the first target: 32
 // sparks spin around it in four planes while it travels, then it hovers
 // over the targets while puffs of sparkle gather on each in turn.
-void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 member;
@@ -536,9 +518,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
   s32 target[3];
   s32 delta[3];
   s32 rider[3];
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 point[3];
-  struct EffectPosition view;
+  struct ScreenPoint view;
   DrawRectangle callbacks[2];
 
   // Set up: the canvas layer, the Djinn and the particle sprites, and the
@@ -549,14 +531,14 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  BattleEffect_FetchRectangleBlitters(effect->side ^ 1, draw = callbacks);
-  actor = BattleObject_GetFar(effect->actor)->object;
-  goal = BattleObject_GetFar(effect->actors[0])->object;
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw = callbacks);
+  actor = BattleObject_GetFar(args->user)->object;
+  goal = BattleObject_GetFar(args->targets[0])->object;
 
   // The swarm: 64 sparks thrown out level from the Djinn.
   for (i = 0; i != 64; i++) {
-    struct EffectStep *spark = &PARTICLES[i];
+    struct Particle *spark = &PARTICLES[i];
     s32 heading = Random16() & 0xffff;
     s32 speed = (Random16() & 0xff) + 128;
 
@@ -566,9 +548,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
     spark->velocityZ = (Trig_Cos(heading) * speed) >> 5;
     spark->variant = 0;
   }
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The Djinn travels from the caster to above the first target in 40
   // frames.
@@ -600,14 +580,16 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
 
     // The caster flashes for the first 24 frames.
     if (frame == 0)
-      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == 24)
-      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, 0);
 
     // Each spark spins in one of four planes, smaller further away, and
     // after 30 frames is pulled back toward the Djinn.
     for (i = 0; i != 32; i++) {
-      struct EffectStep *spark = &PARTICLES[i];
+      struct Particle *spark = &PARTICLES[i];
 
       if (frame > i && spark->variant == 0) {
         s32 size;
@@ -636,7 +618,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
         if (screen.depth > 634)
           screen.depth = 634;
         size = 9 - (screen.depth - 250) / 64;
-        callbacks[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        callbacks[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                      screen.x - size / 2, screen.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(spark, 60, 0);
         if (frame > i + 30) {
@@ -660,13 +642,12 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       screen.x >>= 1;
       draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // The second part: 64 puffs of sparkle for each target.
   for (i = 0; i != 512; i++) {
-    struct EffectStep *spark = &PARTICLES[i];
+    struct Particle *spark = &PARTICLES[i];
 
     SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
                  ((Random16() & 0x7f) + 64) << 15,
@@ -675,14 +656,14 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
 
-  for (frame = 0; frame != effect->count * 8 + 72; frame++) {
+  for (frame = 0; frame != args->targetCount * 8 + 72; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     // The Djinn sways over the targets, then rises away for the last 32
     // frames.
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
-    if (frame >= effect->count * 8 + 40)
+    if (frame >= args->targetCount * 8 + 40)
       target[1] += 0x40000;
     point[0] = target[0];
     point[1] = target[1];
@@ -693,9 +674,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
 
     // Each target in turn, eight frames apart: its puffs close in around
     // it, and it flashes from 40 to 64 frames into its turn.
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->targetCount; member++) {
       struct MotionObject *object =
-          BattleObject_GetFar(effect->actors[member])->object;
+          BattleObject_GetFar(args->targets[member])->object;
       s32 start = member * 8;
 
       Transform_Reset();
@@ -707,13 +688,15 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       if (frame == start + 30)
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
-        BattleEffect_TintBattler(effect->actors[member], 7, -1, -1, 0);
+        BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, TINT_KEEP, 0);
       if (frame == start + 64)
-        BattleEffect_TintBattler(effect->actors[member], 0, -1, -1, 0);
+        BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
+                                 TINT_KEEP, TINT_KEEP, 0);
       if (frame > start) {
         Transform_ApplyYaw((frame - start) << 9);
         for (i = 0; i != 64; i++) {
-          struct EffectStep *spark = &PARTICLES[member * 64 + i];
+          struct Particle *spark = &PARTICLES[member * 64 + i];
 
           if (frame > start + i / 2) {
             s32 xx = (spark->x >> 8) * (spark->x >> 8);
@@ -735,8 +718,8 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
               cel = 3 - (view.depth - 314) / 128;
               cel = (i * 4 + frame) % 9;
               {
-                u8 *cell = sheet + gBattleEffect_PuffCells[cel];
-                u32 edge = gBattleEffect_PuffSizes[cel];
+                u8 *cell = sheet + gBattleEffect_SparklePictures[cel];
+                u32 edge = gBattleEffect_SparkleSizes[cel];
                 u32 half = edge >> 1;
 
                 draw[1](canvas, cell, view.x - half, view.y - half, edge, edge);
@@ -749,34 +732,29 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Abilities: Balm (kind 230).
-void BattleEffect_RunBalm(struct BattleEffectArgument *effect) {
-  BattleEffect_RunTumblingQuads(effect, 0);
+void BattleEffect_RunBalm(struct BattleEffectParams *args) {
+  BattleEffect_RunTumblingQuads(args, 0);
 }
 
 /// Abilities: Tinder (kind 231).
-void BattleEffect_RunTinder(struct BattleEffectArgument *effect) {
-  BattleEffect_RunTumblingQuads(effect, 1);
+void BattleEffect_RunTinder(struct BattleEffectParams *args) {
+  BattleEffect_RunTumblingQuads(args, 1);
 }
 
 /// Abilities: Phoenix, Regen Dance (kind 436).
-void BattleEffect_RunPhoenix(struct BattleEffectArgument *effect) {
-  BattleEffect_RunTumblingQuads(effect, 2);
+void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
+  BattleEffect_RunTumblingQuads(args, 2);
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef HEAP_BLITTER
 #undef GROUND_Y
 #undef MOTE_MAX

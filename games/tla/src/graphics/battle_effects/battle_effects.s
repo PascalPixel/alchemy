@@ -635,8 +635,8 @@ BattleEffect_MagentaSwirlSheet:
 BattleEffect_MagentaTailSheet:
 	.incbin "games/tla/src/graphics/battle_effects/magenta_tail.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/magenta_tail.bitmap.lz"
-	.global Resource_Data134
-Resource_Data134:
+	.global BattleEffect_ParticleSpritesA
+BattleEffect_ParticleSpritesA:
 	.incbin "games/tla/src/graphics/battle_effects/dot_cells_134.parts.lz"
 	.byte 0x59, 0x45	@ PACKER: left in the buffer by BattleEffect_MagentaTailSheet+0x1ba
 	.global Resource_Data135

@@ -30,56 +30,14 @@ struct RenderModel__f17c6ac {
   u8 scrollV;
 };
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-
 struct StarTarget {
   u8 unk00[8];
   s32 x;
   s32 y;
   s32 z;
 };
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-
-// Columns of Data_08199484, one row per Fume level (effect->variant): the
+// Columns of gFume_Levels, one row per Fume level (effect->variant): the
 // plume's width, the frame its tail starts, its arc's height, the sparks'
 // spread, count and lift.
 enum {
@@ -92,22 +50,13 @@ enum {
   FUME_COLUMNS
 };
 
-extern char ResourceId_SmokeBandSheet;
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_ClawSlashSheet;
-extern u8 gMapGridCellBuffer[];
-extern const u16 Data_08199484[][FUME_COLUMNS];
-extern u8 Data_02011000[];
-extern u8 Data_02012000[];
-extern const u8 gData_08199340[]; // the head's mesh
-extern const u8 Data_081991e0[];  // its corners
+extern const u16 gFume_Levels[][FUME_COLUMNS];
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-#define HI(v) (((s16 *)&(v))[1])
 #define FUME_FRAMES 50
 #define FUME_SEGMENTS 33
 
@@ -118,7 +67,7 @@ extern const u8 Data_081991e0[];  // its corners
 // frame and its tail following from the level's start frame; a claw strikes
 // at the arc's end until frame 22, when the target is hit, pushed back and
 // sparks burst from it. The camera shakes harder at higher levels.
-void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFume(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   // Unused: the second word gives the stack frame its 4 bytes (as a plain
@@ -135,12 +84,12 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
     s32 head;
     s32 tail;
   } arc;
-  struct EffectPosition caster;
-  struct EffectPosition target;
+  struct ScreenPoint caster;
+  struct ScreenPoint target;
   struct ModelTexture texture;
   struct RenderModel__f17c6ac *model;
-  struct EffectStep *spark;
-  struct EffectStep *particle;
+  struct Particle *spark;
+  struct Particle *particle;
   s32 i;
   void *buffer;
   u8 *strip;
@@ -149,24 +98,21 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   endX = 0;
   endY = 0;
-  EffectPosition_ProjectBattler(effect->actor, &caster);
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(args->user, &caster);
+  EffectPosition_ProjectBattler(args->targets[0], &target);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x800, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                              work->sheet + 0x4000, 1, 0);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
 
   for (frame = 0; frame != FUME_FRAMES; frame++) {
@@ -179,33 +125,35 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
     }
     if (frame == 22) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-      BattlePlayback_StartFar(144);
+      EFFECT_SHOW_DAMAGE(SE_CLATTER);
       work->shakeFrames = 8;
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
+      BattleEffect_StartActorMotion(args->targets[0], 1, 0x20000, 0x40000,
                                     0x20000, 120);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 20);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 20);
       for (i = 0; i != 32; i++) {
         spark = &work->particles[i];
         spark->variant = -i / 4 + 2;
-        spark->x = (target.x / 2) << 16;
-        spark->y = (target.y + (Random16() & 15) - 32) << 16;
+        spark->x = px(target.x / 2);
+        spark->y = px(target.y + (Random16() & 15) - 32);
         spark->velocityX =
-            ((Random16() % Data_08199484[effect->variant][FUME_SPREAD]) -
-             (Data_08199484[effect->variant][FUME_SPREAD] >> 1))
+            ((Random16() % gFume_Levels[args->variant][FUME_SPREAD]) -
+             (gFume_Levels[args->variant][FUME_SPREAD] >> 1))
             << 12;
         spark->velocityY = (192 - (Random16() & 255)) << 10;
       }
     }
-    for (i = 0; i != Data_08199484[effect->variant][FUME_SPARKS]; i++) {
+    for (i = 0; i != gFume_Levels[args->variant][FUME_SPARKS]; i++) {
       particle = &work->particles[i];
       if ((u32)particle->variant <= 23) {
         if (particle->variant > 1) {
           blit.draw(canvas,
                     work->sheet + 0x800 + ((particle->variant / 4) << 11),
-                    HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
+                    Q_16_16_UPPER_HALF(particle->x) - 16,
+                    Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
         }
         BattleEffectKernels_IntegrateVector2(
-            particle, 60, -Data_08199484[effect->variant][FUME_LIFT]);
+            particle, 60, -gFume_Levels[args->variant][FUME_LIFT]);
       }
       particle->variant++;
     }
@@ -222,14 +170,13 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       s32 vertex;
       s32 shade;
 
-      width = Data_08199484[effect->variant][FUME_WIDTH];
+      width = gFume_Levels[args->variant][FUME_WIDTH];
       arc.head = frame * 44;
       if (arc.head > 988) {
         arc.head = 988;
       }
-      if (frame >= Data_08199484[effect->variant][FUME_TAIL_START]) {
-        arc.tail =
-            (frame - Data_08199484[effect->variant][FUME_TAIL_START]) * 44;
+      if (frame >= gFume_Levels[args->variant][FUME_TAIL_START]) {
+        arc.tail = (frame - gFume_Levels[args->variant][FUME_TAIL_START]) * 44;
         if (arc.tail > 988) {
           arc.tail = 988;
         }
@@ -251,7 +198,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         if (distance < 0) {
           distance = -distance;
         }
-        height = Data_08199484[effect->variant][FUME_HEIGHT];
+        height = gFume_Levels[args->variant][FUME_HEIGHT];
         thickness = j * 4;
         if (thickness > 24) {
           thickness = 24;
@@ -297,7 +244,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3((caster.x / 2 - 64) << 16,
                                         (caster.y << 16) + 0xffc00000, 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (effect->side == 1) {
+          if (args->side == 1) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           SceneTransform_ApplyUniformScale(Q16_ONE * 4);
@@ -306,7 +253,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
 
           // The claw at the arc's end.
           if (frame <= 22) {
-            model->mesh = gData_08199340;
+            model->mesh = gBattleEffect_SquareMesh;
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;
@@ -314,7 +261,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyPosition3(endX << 16, endY << 16, 0);
             Transform_ApplyRoll(TRIG_TURN / 4 - arc.head * 32);
             SceneTransform_ApplyUniformScale(width * 28 / 32);
-            Render_TransformVertices(Data_081991e0, buffer, 4);
+            Render_TransformVertices(gBattleEffect_SquareCorners, buffer, 4);
             Render_DrawModelList(model);
           }
         }
@@ -322,16 +269,14 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       }
     }
     BattleEffect_CountDownBattlerTints();
-    BattleCamera_Shake(effect->variant * 2 + 2, effect->variant * 2 + 2);
-    work->transferPending = 1;
-    wait(1);
+    BattleCamera_Shake(args->variant * 2 + 2, args->variant * 2 + 2);
+    EFFECT_PRESENT_CANVAS(work);
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef FUME_FRAMES
 #undef FUME_SEGMENTS

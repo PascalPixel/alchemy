@@ -18,12 +18,6 @@
 #define COLUMN_PEAK_FRAME 31
 #define COLUMN_MAX_HEIGHT 80
 
-#define PHASE_HIT 212
-
-extern char ResourceId_LimeColumnSheet;
-extern const u16 gData_08198afc[]; // ☀️ gUndeadSword_SparkCells
-extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
-
 // Two lime columns burst out of the ground under the target and a spray of
 // sparks flies up between them.
 //
@@ -33,14 +27,14 @@ extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
 // rise 12 pixels a frame to 80, held there with the brighter MAX blitter, and
 // from frame 32 sink 6 a frame; each spark shows its blast picture for its
 // age and falls under gravity. The target is struck at frame 10.
-void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
+void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   void *sprites;
   DrawRectangle draw[2];
-  struct EffectPosition target;
-  struct EffectStep *spark;
-  struct EffectStep *particle;
+  struct ScreenPoint target;
+  struct Particle *spark;
+  struct Particle *particle;
   s32 frame;
   s32 i;
   s32 height;
@@ -59,19 +53,17 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
   // Open the canvas and load the pictures.
   BattleEffect_StartCanvasLayer(0);
   {
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + BLAST_SHEET_OFFSET, 1, 0);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Slide the canvas so that its x = 64 is under the target.
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(args->targets[0], &target);
   REG_BG2X = (64 - target.x) << 8;
 
   // The sparks start together at the columns' foot and fly apart, upward
@@ -89,12 +81,13 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
   work->shakeFrames = 8;
 
   for (frame = 0; frame != BURST_FRAMES; frame++) {
-    // The hit: results phase, shake, knock-back and a flash.
+    // The hit: the damage shown, a shake, knock-back and a flash.
     if (frame == BURST_HIT_FRAME) {
       work->shakeFrames = 8;
-      BattlePlayback_StartFar(PHASE_HIT);
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+      EFFECT_SHOW_DAMAGE(SE_POWER_UP);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 8);
     }
 
     // The columns: up 12 pixels a frame until frame 31, then down 6.
@@ -106,9 +99,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
       if (height > 0) {
         if (height > COLUMN_MAX_HEIGHT) {
           height = COLUMN_MAX_HEIGHT;
-          mode = BLIT_MAX;
+          mode = BLITTER_MAX;
         } else {
-          mode = BLIT_ADDITIVE;
+          mode = BLITTER_ADDITIVE;
         }
         for (i = 0, x = 50; i != 2; i++, x += 14) {
           if (i == 0)
@@ -120,53 +113,45 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
           (draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1])(
               canvas, work->sheet, x, 112 - height, 14, height);
-          HeapSlot_Release(HEAP_BLITTER);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
     }
 
     // The sparks: a new blast picture every third frame, seven in all; the
     // pairs leave one frame apart from frame 8.
-    BattleEffect_FetchRectangleBlitters(effect->side, draw);
+    BattleEffect_FetchRectangleBlitters(args->side, draw);
     for (i = 0, particle = work->particles; i != SPARK_COUNT; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= SPARK_LIFE) {
         s32 px;
         s32 py;
 
         cell = particle->variant / 3;
-        px = HI(particle->x);
-        py = HI(particle->y);
+        px = Q_16_16_UPPER_HALF(particle->x);
+        py = Q_16_16_UPPER_HALF(particle->y);
         if (cell > 6)
           cell = 6;
-        picture = work->sheet + gData_08198afc[cell] + BLAST_SHEET_OFFSET;
-        size = gData_08198b0a[cell];
+        picture =
+            work->sheet + gUndeadSword_SparkPictures[cell] + BLAST_SHEET_OFFSET;
+        size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, picture, px - size / 2, py - size / 2, size, size);
         particle->variant++;
-        BattleEffectKernels_IntegrateVector2(particle, 62, -0x2000);
+        BattleEffectKernels_IntegrateVector2(particle, 62, -px(1) / 8);
       }
       particle++;
     }
-    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-    HeapSlot_Release(HEAP_BLITTER);
+    EFFECT_RELEASE_BLITTERS();
 
     if (frame < COLUMN_RISE_FRAME)
       BattleCamera_Shake(4, 4);
     else
       BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-extern char ResourceId_Data0DA;
-extern char ResourceId_MercuryDjinnSmallSheet;
-
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
-                                    s32 percent);
 
 // Plume Edge: the user dashes at the target, which a fan of white flashes
 // throws back; a pillar of light scrolls up through it for half a second and
@@ -177,7 +162,7 @@ void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
 // sheet and the light palette over the background's.
 // Frame loop (80 frames): the fan of 64 flashes at frame 0, the user's dash
 // at frames 18 and 21, the spark burst at frame 32, then the sparks fall.
-void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
+void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -185,8 +170,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   struct MotionObject *target;
   s32 pillarY;
   DrawRectangle draw[2];
-  struct EffectPosition position;
-  struct EffectStep *step;
+  struct ScreenPoint position;
+  struct Particle *step;
   s32 i;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -195,17 +180,15 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  target = BattleObject_GetFar(args->targets[0])->object;
   pillarY = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
                              0);
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
       Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet), 128);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -214,7 +197,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
     PARTICLES[i].variant = -1;
 
   for (frame = 0; frame != 80; frame++) {
-    EffectPosition_ProjectBattler(effect->actors[0], &position);
+    EffectPosition_ProjectBattler(args->targets[0], &position);
 
     // Frame 0: 64 flashes fan out upward from the target, one more each
     // frame, and the target turns white and stops bouncing.
@@ -224,7 +207,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
         s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
         step = &work->particles[i];
-        step->x = (position.x / 2) << 16;
+        step->x = px(position.x / 2);
         step->y = position.y << 16;
         step->velocityX = (Trig_Sin(angle) * speed) >> 8;
         step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 8;
@@ -233,7 +216,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
       target->verticalMotionStrength = 0;
       target->y = 0;
       pillarY = position.y;
-      BattleEffect_TintBattler(effect->actors[0], -1, 5, 0, -1);
+      BattleEffect_TintBattler(args->targets[0], TINT_KEEP, POSE_DAMAGE, 0, -1);
       work->shakeFrames = 4;
       Sound_PlayFar(SE_CLATTER);
     }
@@ -246,16 +229,17 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
         s32 angle = Random16();
 
         step = &PARTICLES[256 + i];
-        step->x = (position.x / 2) << 16;
-        step->y = (position.y - 16) << 16;
+        step->x = px(position.x / 2);
+        step->y = px(position.y - 16);
         step->velocityX = (Trig_Sin(angle) * speed) >> 7;
         step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 7;
         step->variant = (Random16() & 7) + 48;
       }
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 16);
       work->shakeFrames = 8;
-      BattlePlayback_StartFar(145);
+      EFFECT_SHOW_DAMAGE(SE_CRASH);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
 
@@ -264,10 +248,9 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
     if (frame >= 0 && frame < 24)
       target->y += px(2);
     if (frame == 18)
-      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
+      BattleEffect_SetApproachMotion(args->user, args->targets[0], 8, 80);
     if (frame == 21)
-      BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 12,
-                                     px(8));
+      BattleMotion_ApproachTargetFar(args->user, args->targets[0], 12, px(8));
 
     // Sparks fall and shrink: a spark is drawn at its life / 6 pixels wide,
     // two pixels at the least.
@@ -279,9 +262,10 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
         if (size < 2)
           size = 2;
         step->variant--;
-        BattleEffectKernels_IntegrateVector2(step, 60, 0x2000);
-        draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
-                HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
+        BattleEffectKernels_IntegrateVector2(step, 60, px(1) / 8);
+        draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
+                Q_16_16_UPPER_HALF(step->x) - size / 2,
+                Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
       }
     }
 
@@ -293,9 +277,10 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
       if (step->variant >= 0 && step->variant < 18) {
         s32 picture = step->variant / 3;
 
-        BattleEffectKernels_IntegrateVector2(step, 60, -0x2000);
+        BattleEffectKernels_IntegrateVector2(step, 60, -px(1) / 8);
         draw[0](canvas, work->sheet + 0x2000 + picture * 0x800,
-                HI(step->x) - 16, HI(step->y) - 32, 32, 64);
+                Q_16_16_UPPER_HALF(step->x) - 16,
+                Q_16_16_UPPER_HALF(step->y) - 32, 32, 64);
       }
     }
 
@@ -310,13 +295,11 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
               34, scroll);
     }
 
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(104);
-  HeapSlot_Release(188);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -339,8 +322,6 @@ void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height) {
   }
 }
 
-void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Dreamtide (kind 106).
 void BattleEffect_RunDreamtide(s32 a0) { BattleEffect_RunWaterSheet(a0, 0); }
 
@@ -360,9 +341,9 @@ struct WaterVertex {
 // One triangle of the water's mesh: three vertex indices, then a texture
 // coordinate for each.
 struct WaterTriangle {
-  u32 index0 : 8;
-  u32 index1 : 8;
-  u32 index2 : 8;
+  u32 vertexA : 8;
+  u32 vertexB : 8;
+  u32 vertexC : 8;
   u32 : 8;
   u32 u0 : 8;
   u32 v0 : 8;
@@ -371,12 +352,6 @@ struct WaterTriangle {
   u32 u2 : 8;
   u32 v2 : 8;
 };
-
-extern char ResourceId_CrackedTextureSheet;
-extern char ResourceId_Data0B4;
-extern char ResourceId_SmokeSheet;
-extern char ResourceId_CrystalSheet;
-extern const u8 gData_08199340[]; // the splash's mesh
 
 #define WATER_COLUMNS 16
 #define WATER_ROWS 8
@@ -389,7 +364,7 @@ extern const u8 gData_08199340[]; // the splash's mesh
 /// the targets in waves while the camera turns; Dreamtide strikes the first
 /// target with two splashes at frame 17, Watery Grave strikes every target
 /// at frames 17 and 46 while bubbles rise from the deep.
-void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   s32 frame;
   DrawRectangle blit[2]; // Unused: [1] is the rest of its two-word pseudo.
@@ -397,11 +372,11 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleCamera *camera;
   s16 savedYaw;
   s32 frames;
-  struct EffectPosition screen;
-  struct EffectPosition target;
+  struct ScreenPoint screen;
+  struct ScreenPoint target;
   struct ModelTexture texture;
   struct RenderModel *model;
-  struct EffectStep *bubble;
+  struct Particle *bubble;
   s32 height;
   s32 phase;
   s32 row;
@@ -419,12 +394,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
   } else {
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
   }
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER,
-      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = (s16)camera->yaw;
@@ -498,19 +469,19 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         quad[1].v1 = q;
         quad[1].u2 = u;
         quad[1].v2 = v + 15;
-        quad[0].index0 = b;
-        quad[0].index1 = d;
-        quad[0].index2 = c;
-        quad[1].index0 = a;
-        quad[1].index1 = b;
-        quad[1].index2 = c;
+        quad[0].vertexA = b;
+        quad[0].vertexB = d;
+        quad[0].vertexC = c;
+        quad[1].vertexA = a;
+        quad[1].vertexB = b;
+        quad[1].vertexC = c;
       }
     }
   }
   // A triangle of three zero indices ends the mesh.
-  WATER_MESH[WATER_QUADS * 2].index0 = 0;
-  WATER_MESH[WATER_QUADS * 2].index1 = 0;
-  WATER_MESH[WATER_QUADS * 2].index2 = 0;
+  WATER_MESH[WATER_QUADS * 2].vertexA = 0;
+  WATER_MESH[WATER_QUADS * 2].vertexB = 0;
+  WATER_MESH[WATER_QUADS * 2].vertexC = 0;
   frames = 48;
   if (mode != 0) {
     frames = 81;
@@ -528,7 +499,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         work->particles[i].variant = -1;
       }
     }
-    if (effect->side == 0) {
+    if (args->side == 0) {
       if ((s16)camera->yaw <= 11999) {
         camera->yaw = (s16)camera->yaw + 128;
       }
@@ -538,26 +509,29 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
 
     if (mode == 0) {
       if (frame == 17) {
-        BattlePlayback_StartFar(144);
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0x80000, 100);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
+        EFFECT_SHOW_DAMAGE(SE_CLATTER);
+        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, 0x80000, 100);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 16);
         work->shakeFrames = 8;
       }
     } else {
       if (frame == 17) {
         Sound_PlayFar(SE_CRASH);
-        for (i = 0; i != effect->count; i++) {
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+        for (i = 0; i != args->targetCount; i++) {
+          BattleMotion_ApplyKnockbackFar(args->targets[i], 0);
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 16);
         }
         work->shakeFrames = 8;
       }
       if (frame == 46) {
-        BattlePlayback_StartFar(134);
-        for (i = 0; i != effect->count; i++) {
-          BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x80000,
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+        for (i = 0; i != args->targetCount; i++) {
+          BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, 0x80000,
                                         100);
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 16);
         }
         work->shakeFrames = 8;
       }
@@ -635,7 +609,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     if (mode != 0) {
       Transform_ApplyPitch(4000);
     }
-    if (effect->side == 0) {
+    if (args->side == 0) {
       Transform_ApplyYaw((s16)camera->yaw);
     } else {
       Transform_ApplyYaw((s16)camera->yaw + TRIG_TURN / 2);
@@ -673,9 +647,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (mode == 1) {
       for (i = 0; i != 20; i++) {
-        struct EffectStep *step = &work->particles[i];
+        struct Particle *step = &work->particles[i];
         s32 picture = step->variant;
-        struct EffectPosition *position;
+        struct ScreenPoint *position;
 
         if (picture < 0) {
           continue;
@@ -683,16 +657,16 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         /* FAKEMATCH(temporary): position holds &screen. */
         position = &screen;
         if (EffectPosition_ProjectPoint(step, position) == 0 &&
-            HI(position->depth) > 10) {
-          s32 x = HI(position->x);
+            Q_16_16_UPPER_HALF(position->depth) > 10) {
+          s32 x = Q_16_16_UPPER_HALF(position->x);
           s32 y;
 
           position->x = x + 64;
-          y = HI(position->y);
+          y = Q_16_16_UPPER_HALF(position->y);
           position->y = y + 64;
           blit[0](canvas, work->sheet + 0x3000 + picture * 0x480, x + 52,
                   y + 40, 24, 48);
-          BattleEffectKernels_IntegrateVector3(step, 62, -0x2000);
+          BattleEffectKernels_IntegrateVector3(step, 62, -px(1) / 8);
         }
         if (++step->variant == 6) {
           step->variant = 0;
@@ -701,10 +675,10 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     } else {
       s32 t;
 
-      EffectPosition_ProjectBattler(effect->actors[0], &target);
+      EffectPosition_ProjectBattler(args->targets[0], &target);
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->mesh = gData_08199340;
+      model->mesh = gBattleEffect_SquareMesh;
       model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;
@@ -729,39 +703,26 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         Transform_ApplyPitch(TRIG_TURN / 16);
         Transform_ApplyYaw(angle);
         SceneTransform_ApplyUniformScale(t * 0x3000);
-        Render_TransformVertices(gData_08199210, vertices, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                 4);
         Render_DrawModelList(model);
       }
     }
     Heap_Release(model);
     Heap_Release(vertices);
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Waft (kind 234).
 void BattleEffect_RunWaft(s32 a0) { BattleEffect_RunWindFunnel(a0, 0); }
 
 /// Abilities: Aroma (kind 247).
 void BattleEffect_RunAroma(s32 a0) { BattleEffect_RunWindFunnel(a0, 1); }
-
-extern char ResourceId_Data0D3;
-
-extern char ResourceId_JupiterDjinnSmallSheet;
-extern char ResourceId_CyanPalette;
-extern char ResourceId_TanPalette;
-
-extern u8 Data_02010108[];
-extern u8 Data_02010318[];
-extern const u8 Data_08198b24[]; // the funnels per mode
 
 #define WAFT_SEGMENTS 33
 
@@ -770,17 +731,16 @@ extern const u8 Data_08198b24[]; // the funnels per mode
 /// vertices, each frame's head copied down the tail) twists up from it; Waft
 /// strikes the first target at frame 28, Aroma touches each target in turn,
 /// four frames apart.
-void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
-  // Unused: the second blitter, as in The Broken Seal's pair, gives the
-  // stack frame its 84 bytes (the word at sp 40); as one DrawRectangle, 48
-  // of 609 differ (2026-11-08).
+  // Unused: the second blitter, the idle half of the pair, gives the stack
+  // frame its 84 bytes.
   DrawRectangle blit[2];
   struct BattleCamera *camera;
-  struct EffectPosition other;
-  struct EffectPosition screen;
+  struct ScreenPoint other;
+  struct ScreenPoint screen;
   struct ModelTexture texture;
   struct RenderModel *model;
   s32 yaw;
@@ -796,40 +756,36 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
-  // Read through funnel at the corner loop and the transform only; through it
-  // at the head loop, 14 of 609 differ (2026-11-08).
+  // Read through funnel at the corner loop and the transform only.
   funnel = gMapGridCellBuffer;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
-    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 3,
-                                   (s32 *)&screen, (s32 *)&other);
+    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 3, (s32 *)&screen,
+                                   (s32 *)&other);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   } else {
-    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 35,
-                                   (s32 *)&screen, (s32 *)&other);
+    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 35, (s32 *)&screen,
+                                   (s32 *)&other);
   }
-  if (effect->side == 0) {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  if (args->side == 0) {
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   transfer = BattleEffect_ProcessPendingGraphicsTransfer;
   Task_Add(transfer, TASK_PASS_FRAME);
   yaw = 0; // Default: set again at frame 0 before it is read.
   frames = 36;
-  if (mode == 1 && effect->count > 4) {
-    frames = effect->count * 6 + 12;
+  if (mode == 1 && args->targetCount > 4) {
+    frames = args->targetCount * 6 + 12;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet + 0x2000, 1, 1);
   Render_BuildQuadStrip(Data_02010318, 4, 32, 32);
@@ -932,17 +888,19 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == 0) {
       if (frame == 28) {
         work->shakeFrames = 6;
-        BattlePlayback_StartFar(133);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
       }
     } else {
       if (frame == 12) {
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
       }
-      for (k = 0; k != effect->count; k++) {
+      for (k = 0; k != args->targetCount; k++) {
         if (frame == k * 4 + 12) {
           Sound_PlayFar(SE_RECOVERY);
-          BattleEffect_TintBattler(effect->actors[k], 7, -1, k, 8);
+          BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, k, 8);
         }
       }
     }
@@ -974,7 +932,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[4] = 104;
     model->vertices = vertices;
     model->shade = shade;
-    for (k = 0; k != Data_08198b24[mode]; k++) {
+    for (k = 0; k != gWindFunnel_Counts[mode]; k++) {
       Transform_Reset();
       if (mode == 0) {
         s32 scale;
@@ -1007,29 +965,12 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[4] = 120;
     Heap_Release(model);
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(transfer);
   BattleEffect_EndCanvasLayer();
 }
-
-extern char ResourceId_CrystalBitmapSheet;
-extern char ResourceId_Data0C1;
-
-extern u8 Data_02014e20[];         // gMapGridCellBuffer + 20000, the berg
-extern s32 gData_08197834[];       // the shards' cells: offsets,
-extern u8 gPrism_ShardWidths[];    // widths
-extern u8 gData_08197826[];        // and heights
-extern const u8 Data_08198ec4[];   // the ripple's mesh
-extern const u8 Data_08198cac[];   // its corners
-extern const u8 Data_08198b26[4];  // per ripple: its start,
-extern const u8 Data_08198b2a[4];  // its growth
-extern const s8 Data_08198b2e[4];  // and its height
-extern const s16 Data_08198b32[8]; // per flash: its roll
-extern const s16 Data_08198b42[8]; // and pitch
 
 #define DIAMOND_BERG_FRAMES 148
 
@@ -1038,15 +979,15 @@ extern const s16 Data_08198b42[8]; // and pitch
 // An iceberg drops onto the target and is driven down in eight blows (every
 // eighth frame from 31), each throwing eight shards; the last shatters it
 // into a burst of light. Ripples of frost spread over the ground beneath.
-void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
-  // Unused: gives the stack frame its 4 bytes. (blit[1], at sp 28, as The
-  // Broken Seal's pair; as one DrawRectangle, 68 differ.)
+  // Unused: blit[1], the idle half of the pair, gives the stack frame its 4
+  // bytes.
   DrawRectangle blit[2];
-  struct EffectPosition pos;
-  struct EffectPosition target;
+  struct ScreenPoint pos;
+  struct ScreenPoint target;
   struct ModelTexture texture;
   struct RenderModel *model;
   s32 centerX;
@@ -1061,10 +1002,9 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EffectPosition_ProjectBattler(effect->actors[0], &pos);
+  EffectPosition_ProjectBattler(args->targets[0], &pos);
   centerX = pos.x / 2;
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 0);
   cells = gMapGridCellBuffer;
@@ -1072,12 +1012,10 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, cells + 0x1000, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x3080, 0,
                              0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // DEAD: frame 0 sets top to -104 before anything reads it.
   top = -128;
 
@@ -1089,10 +1027,10 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       }
     }
     if (frame <= 63) {
-      EffectPosition_ProjectBattler(effect->actors[0], &target);
+      EffectPosition_ProjectBattler(args->targets[0], &target);
     }
     if (frame == 20) {
-      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 60);
+      BattleEffect_SetApproachMotion(args->user, args->targets[0], 8, 60);
     }
     if (frame == 2) {
       Sound_PlayFar(SE_POWER_UP);
@@ -1116,17 +1054,18 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           work->shakeFrames = 4;
           if (frame <= 79) {
             Sound_PlayFar(SE_CLATTER);
-            BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16,
+            BattleEffect_SetApproachMotion(args->user, args->targets[0], 16,
                                            70);
           } else {
-            BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-            BattlePlayback_StartFar(144);
+            BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+            EFFECT_SHOW_DAMAGE(SE_CLATTER);
             Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           }
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
+          BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 6);
           top += 8;
           for (k = 0; k != 8; k++) {
-            struct EffectStep *shard;
+            struct Particle *shard;
 
             shard = &work->particles[((t - 7) / 8 * 8 + k + 32) & 63];
             shard->y = px(96);
@@ -1148,7 +1087,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 7) {
-      struct EffectStep *shard;
+      struct Particle *shard;
 
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
@@ -1164,7 +1103,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
 
     // The shards tumble and bounce; z is their spin.
     if (frame > 6) {
-      struct EffectStep *shard;
+      struct Particle *shard;
 
       for (i = 0, shard = work->particles; i != 64; i++, shard++) {
         s32 cell;
@@ -1179,18 +1118,18 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           continue;
         }
         cell = i % 5 * 3 + shard->variant / 96 % 3;
-        pixels = work->sheet + 0x800 + gData_08197834[cell];
+        pixels = work->sheet + 0x800 + gPrism_ShardPictures[cell];
         width = gPrism_ShardWidths[cell];
-        x = HI(shard->x) - (width >> 1);
-        y = HI(shard->y);
-        // The heights table through a local: as gData_08197826[cell] the
+        x = Q_16_16_UPPER_HALF(shard->x) - (width >> 1);
+        y = Q_16_16_UPPER_HALF(shard->y);
+        // The heights table through a local: as gPrism_ShardHeights[cell] the
         // width moves to the stack one place early.
-        heights = gData_08197826;
+        heights = gPrism_ShardHeights;
         height = heights[cell];
         y -= height >> 1;
         blit[0](canvas, pixels, x, y, width, height);
-        BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
-        if (HI(shard->y) > 104) {
+        BattleEffectKernels_IntegrateVector2(shard, 64, px(1) / 4);
+        if (Q_16_16_UPPER_HALF(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
         }
         shard->variant += shard->z;
@@ -1211,21 +1150,21 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       model->texture = &texture;
       texture.pixels = cells;
       model->unk04 = 0;
-      model->mesh = Data_08198ec4;
+      model->mesh = gBattleEffect_CylinderMesh;
       model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;
 
       // The frost ripples.
       for (k = 0; k != 4; k++) {
-        s32 start = Data_08198b26[k] + 6;
+        s32 start = gDiamondBerg_RingStarts[k] + 6;
         s32 scale;
         s32 shade;
 
         if (frame <= start) {
           continue;
         }
-        scale = (frame - start) * Data_08198b2a[k] * 1400 + 16768;
+        scale = (frame - start) * gDiamondBerg_RingGrowth[k] * 1400 + 16768;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -1236,11 +1175,11 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         model->shade = shade;
         Transform_Reset();
         SceneTransform_ApplyPosition3((centerX - 64) << 16,
-                                      Data_08198b2e[k] << 16, 0);
+                                      gDiamondBerg_RingHeights[k] << 16, 0);
         SceneTransform_ApplyScale3(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
-        Render_TransformVertices(Data_08198cac, vertices, 32);
+        Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);
         Render_DrawModelList(model);
       }
 
@@ -1248,7 +1187,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = work->sheet + 0x3080;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->scrollU = 0;
       model->scrollV = 0;
       for (k = 0; k != 8; k++) {
@@ -1272,26 +1211,22 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
                                       (target.y - 80) << 16, 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        Transform_ApplyYaw((effect->side << 15) + TRIG_TURN / 2);
-        Transform_ApplyRoll(Data_08198b32[k]);
-        Transform_ApplyPitch(Data_08198b42[k]);
+        Transform_ApplyYaw((args->side << 15) + TRIG_TURN / 2);
+        Transform_ApplyRoll(gDiamondBerg_ShardRolls[k]);
+        Transform_ApplyPitch(gDiamondBerg_ShardPitches[k]);
         SceneTransform_ApplyUniformScale(scale);
-        Render_TransformVertices(gData_08199210, vertices, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                 4);
         Render_DrawModelList(model);
       }
       Heap_Release(model);
       Heap_Release(vertices);
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef HI
 #undef EMBERS
 #undef BLITTER
 #undef SPARKS
@@ -1307,7 +1242,6 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
 #undef COLUMN_RISE_FRAME
 #undef COLUMN_PEAK_FRAME
 #undef COLUMN_MAX_HEIGHT
-#undef PHASE_HIT
 #undef WATER_COLUMNS
 #undef WATER_ROWS
 #undef WATER_QUADS

@@ -48,7 +48,7 @@
 #undef Portrait_Create
 #undef MenuSprite
 #undef CommandIcon_Create
-#undef EffectPosition
+#undef ScreenPoint
 #undef Event_SetDestinationFar
 
 /* VIEW(screens): routine Text_DrawPrefixedNumberAtOffset as int

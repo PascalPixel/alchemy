@@ -13,61 +13,10 @@ struct MeshTriangle;
 struct Model;
 struct StripQuad;
 
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                              s32 timerFrames);
-void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
-                                    u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Transform_ApplyRoll(s32 angle);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
-
-struct AzulPoint {
-  s32 x;
-  s32 y;
-};
 
 struct AzulVertex {
   s8 x;
@@ -94,49 +43,6 @@ struct AzulObject {
   u16 shape;
 };
 
-extern char ResourceId_Data134;
-extern char ResourceId_BlueBeamSheet;
-extern char ResourceId_WispSheet;
-extern char ResourceId_CornerRuneASheet;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data0B4;
-extern u8 gMapGridCellBuffer[];
-extern u8 gData_02014000[];
-extern const u8 Data_081986f2[][2];
-extern const u8 Data_08198828[];
-extern const u8 Data_08198830[];
-extern const u8 Data_0819883c[];
-extern const u8 Data_08198848[];
-extern const s8 Data_08198850[];
-extern const s8 Data_08198858[];
-extern const u8 Data_081991e0[];
-extern const u8 gData_08199340[];
-extern const u8 gData_08199364[];
-
-/* VIEW(f15cde8): routine EffectSprite_Acquire as struct AzulObject
- * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); the
- * definition has struct EffectSprite *EffectSprite_Acquire(s32 kind, s32
- * value); tried as the definition's struct EffectSprite__f15b3b0
- * *EffectSprite_Acquire(s32 kind, s32 value), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/azul.c:224: too many arguments to
- * function `EffectSprite_Acquire'. */
-extern struct AzulObject *
-EffectSprite_Acquire__f15cde8(s32 width, s32 height, u32 shape,
-                              s32 mode) __asm__("EffectSprite_Acquire");
-
-void BattleEffect_ConfigureEffectDisplay(void);
-void BattleEffect_ArmPaletteHBlankDma(void);
-void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                    s32 cellWidth, s32 cellHeight);
-void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
-                          s32 count);
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void ReleaseBattleObjectRecordsFar(s32 actor);
-void *GetMotionRecordFar(void *object, s32 index);
-void Sprite_RemoveAnimationFar(void *record, s32 entry);
-void BattleObject_SpawnObjectsForListFar(s16 *actors, s32 a, s32 b);
-
 #define SLOT_ALT 188 // unkb8[1]
 
 // Clamps a sprite's projected y to the screen's band.
@@ -152,7 +58,7 @@ void BattleObject_SpawnObjectsForListFar(s16 *actors, s32 a, s32 b);
 // and swallows the foes, then the wave breaks over them in a spray.
 /// Azul: the sea rises into a wall of water, a great serpent coils out of it
 /// and swallows the foes, then the wave breaks over them in a spray.
-void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -160,9 +66,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   DrawRectangle blit;
   s32 frame;
   u8 *battle;
-  struct AzulPoint base;
-  struct AzulPoint pos;
-  struct AzulPoint vel;
+  struct Point2D base;
+  struct Point2D pos;
+  struct Point2D vel;
   struct AzulVertex *verts;
   struct AzulFace *faces;
   u8 *sphere;
@@ -175,8 +81,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   u32 u;
   s32 place[4];
   struct ModelTexture texture;
-  struct ModelTexture texture2;
-  struct EffectStep *p;
+  struct ModelTexture scratchTexture;
+  struct Particle *p;
   struct RenderModel *model;
   void *vertices;
   struct AzulObject *obj;
@@ -191,14 +97,13 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(3);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit = Ram_HeapSlots->unk64[1];
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  BattleEffect_SelectLivingTargets(work->effect);
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ArmPaletteHBlankDma, 0xcfe);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  BattleEffect_SelectLivingTargets(work->args);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   battle = (u8 *)Ram_HeapSlots->battleWork;
   verts = (struct AzulVertex *)work->sheet;
   faces = (struct AzulFace *)(work->sheet + 0x1f0);
@@ -232,10 +137,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   wait(1);
   BattleEffect_SpawnObjects(12, 0x28c, 1);
   for (i = 0; i != 16; i++) {
-    obj = EffectSprite_Acquire__f15cde8(32, 32, 0x80002000, 0);
-    work->objects[i + 12] = obj;
-    Iwram_CopyWordsEntry(obj, work->objects[5 + (i & 3)], 24);
-    ((struct AzulObject *)work->objects[i])->priority = 1;
+    obj = EffectSprite_Acquire(32, 32, 0x80002000, 0);
+    work->sprites[i + 12] = obj;
+    Iwram_CopyWordsEntry(obj, work->sprites[5 + (i & 3)], 24);
+    ((struct AzulObject *)work->sprites[i])->priority = 1;
   }
   mapCells = gMapGridCellBuffer;
   planes = gData_02014000;
@@ -243,12 +148,11 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 228; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
       frame = 186;
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != 28; i++) {
-        ((struct AzulObject *)work->objects[i])->shape = 0x4000;
+        ((struct AzulObject *)work->sprites[i])->shape = 0x4000;
       }
     }
     if (frame <= 8) {
@@ -265,10 +169,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       REG_BLDALPHA = BLEND_ALPHA(16, 0);
-      work->transferMode = 1;
-      work->transferValue = frame;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, frame);
       for (i = 0; i != 28; i++) {
-        ((struct AzulObject *)work->objects[i])->shape = 0xc000;
+        ((struct AzulObject *)work->sprites[i])->shape = 0xc000;
       }
       base.x = px(120);
       base.y = -px(120);
@@ -278,9 +181,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       for (n = 0; n != 31; n++) {
         for (i = 0; i != 4; i++) {
           verts[n * 4 + i].x =
-              Data_081986f2[n * 5 + i + 1][0] - Data_081986f2[n * 5][0];
+              gAzul_PartPoints[n * 5 + i + 1][0] - gAzul_PartPoints[n * 5][0];
           verts[n * 4 + i].y =
-              Data_081986f2[n * 5 + i + 1][1] - Data_081986f2[n * 5][1];
+              gAzul_PartPoints[n * 5 + i + 1][1] - gAzul_PartPoints[n * 5][1];
           verts[n * 4 + i].z = 0;
         }
         faces[n * 3].corner[1] = 1;
@@ -294,17 +197,17 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         faces[n * 3 + 2].corner[2] = 0;
         for (i = 0; i != 3; i++) {
           faces[n * 3].uv[i][0] =
-              Data_081986f2[n * 5 + faces[n * 3].corner[i] + 1][0];
+              gAzul_PartPoints[n * 5 + faces[n * 3].corner[i] + 1][0];
           faces[n * 3].uv[i][1] =
-              Data_081986f2[n * 5 + faces[n * 3].corner[i] + 1][1];
+              gAzul_PartPoints[n * 5 + faces[n * 3].corner[i] + 1][1];
           faces[n * 3 + 1].uv[i][0] =
-              Data_081986f2[n * 5 + faces[n * 3 + 1].corner[i] + 1][0];
+              gAzul_PartPoints[n * 5 + faces[n * 3 + 1].corner[i] + 1][0];
           faces[n * 3 + 1].uv[i][1] =
-              Data_081986f2[n * 5 + faces[n * 3 + 1].corner[i] + 1][1];
+              gAzul_PartPoints[n * 5 + faces[n * 3 + 1].corner[i] + 1][1];
         }
       }
-      for (i = 0; i != effect->count; i++) {
-        ((s32 *)BattleObject_GetFar(effect->actors[i])->object)[3] = 0;
+      for (i = 0; i != args->targetCount; i++) {
+        ((s32 *)BattleObject_GetFar(args->targets[i])->object)[3] = 0;
       }
       REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                    BGCNT_SCREEN_BASE(7);
@@ -321,8 +224,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         mask = 31;
         p = &work->particles[31];
         for (; i != 27; i++, p++) {
-          p->x = ((Random16() & 63) + 32) << 16;
-          p->y = ((Random16() & 15) + 120) << 16;
+          p->x = px((Random16() & 63) + 32);
+          p->y = px((Random16() & 15) + 120);
           p->velocityX = ((Random16() & mask) - 16) << 13;
           p->velocityY = ((Random16() & mask) - 63) << 12;
           p->variant = (Trig_Cos(i << 9) << 5 >> 16) - 32;
@@ -335,8 +238,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           s32 s = Trig_Sin((frame << 10) + i * 0x1a16);
 
           blit(canvas, work->sheet + 0x2df8, ((p->x + (s << 4)) >> 16) - 6,
-               HI(p->y) - 12, 12, 24);
-          BattleEffectKernels_IntegrateVector2(p, 63, -0x4000);
+               Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
+          BattleEffectKernels_IntegrateVector2(p, 63, -px(1) / 4);
         }
         p->variant++;
       }
@@ -397,12 +300,12 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       vel.x = 0;
       vel.y = -px(6);
       for (i = 0; i != 28; i++) {
-        ((struct AzulObject *)work->objects[i])->shape = 0x4000;
+        ((struct AzulObject *)work->sprites[i])->shape = 0x4000;
       }
-      for (i = 0; i != effect->count; i++) {
-        s32 *actor = BattleObject_GetFar(effect->actors[i])->object;
+      for (i = 0; i != args->targetCount; i++) {
+        s32 *actor = BattleObject_GetFar(args->targets[i])->object;
 
-        BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x40000, 100);
+        BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, 0x40000, 100);
         actor[18] = 0;
       }
     }
@@ -417,19 +320,19 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       }
       if (frame <= 53) {
         for (i = 0; i != 12; i++) {
-          place[0] = ((40 - Data_08198830[i]) << 16) + base.x;
-          place[2] = ((128 - Data_0819883c[i] * 31 / 32) << 16) + base.y;
+          place[0] = ((40 - gAzul_ObjectX[i]) << 16) + base.x;
+          place[2] = ((128 - gAzul_ObjectZ[i] * 31 / 32) << 16) + base.y;
           if (i > 8) {
             place[2] += -0xf00000;
           }
           CLAMP_Y(place);
-          Render_ApplyProjectedPlacementFar(work->objects[i], place,
-                                            (s32 *)Data_08198828, 0);
+          Render_ApplyProjectedPlacementFar(work->sprites[i], place,
+                                            (s32 *)gAzul_UnitScale, 0);
         }
         for (i = 0; i != 16; i++) {
-          place[0] = ((39 - Data_08198830[(i & 3) + 5]) << 16) + base.x;
+          place[0] = ((39 - gAzul_ObjectX[(i & 3) + 5]) << 16) + base.x;
           place[2] =
-              ((-(Data_0819883c[(i & 3) + 5] * 30 / 32) - i / 4 * 60) << 16) +
+              ((-(gAzul_ObjectZ[(i & 3) + 5] * 30 / 32) - i / 4 * 60) << 16) +
               base.y + 0x420000;
           // CLAMP_Y written out: the macro's once-only block holds the clamp's
           // constant after the store (4 of 2209 differ).
@@ -437,35 +340,35 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
             place[2] = -0x10000;
           if (place[2] > 0x9fffff)
             place[2] = 0xa00000;
-          obj = work->objects[i + 12];
-          obj->tile = ((struct AzulObject *)work->objects[(i & 3) + 5])->tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)Data_08198828,
+          obj = work->sprites[i + 12];
+          obj->tile = ((struct AzulObject *)work->sprites[(i & 3) + 5])->tile;
+          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)gAzul_UnitScale,
                                             0);
         }
       } else {
         for (i = 0; i != 12; i++) {
-          place[0] = (Data_08198830[i] << 16) + base.x;
-          place[2] = (Data_0819883c[i] << 16) + base.y;
+          place[0] = (gAzul_ObjectX[i] << 16) + base.x;
+          place[2] = (gAzul_ObjectZ[i] << 16) + base.y;
           if (i > 8) {
             place[2] += 0x1000000;
           }
           CLAMP_Y(place);
-          Render_ApplyProjectedPlacementFar(work->objects[i], place,
-                                            (s32 *)Data_08198828, 0);
+          Render_ApplyProjectedPlacementFar(work->sprites[i], place,
+                                            (s32 *)gAzul_UnitScale, 0);
         }
         i = 0;
-        xs = Data_08198830;
+        xs = gAzul_ObjectX;
         for (; i != 16; i++) {
           s32 m = i & 3;
           s32 row = m + 5;
 
           place[0] = (xs[row] << 16) + base.x + -0x10000;
           place[2] =
-              ((Data_0819883c[row] + i / 4 * 64) << 16) + base.y + 0x400000;
+              ((gAzul_ObjectZ[row] + i / 4 * 64) << 16) + base.y + 0x400000;
           CLAMP_Y(place);
-          obj = work->objects[i + 12];
-          obj->tile = ((struct AzulObject *)work->objects[m + 5])->tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)Data_08198828,
+          obj = work->sprites[i + 12];
+          obj->tile = ((struct AzulObject *)work->sprites[m + 5])->tile;
+          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)gAzul_UnitScale,
                                             0);
         }
       }
@@ -475,7 +378,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
 
       if (frame == 54) {
         for (i = 0; i != 28; i++) {
-          ((struct AzulObject *)work->objects[i])->shape = 0;
+          ((struct AzulObject *)work->sprites[i])->shape = 0;
         }
         base.x = px(256);
         base.y = px(72);
@@ -499,10 +402,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         y = (Trig_Cos(frame << 9) << 3) + base.y;
       }
       for (i = 0; i != 8; i++) {
-        place[0] = (Data_08198850[i] << 16) + x;
-        place[2] = (Data_08198858[i] << 16) + y;
-        Render_ApplyProjectedPlacementFar(work->objects[i], place,
-                                          (s32 *)Data_08198848, 0);
+        place[0] = (gAzul_LateObjectX[i] << 16) + x;
+        place[2] = (gAzul_LateObjectZ[i] << 16) + y;
+        Render_ApplyProjectedPlacementFar(work->sprites[i], place,
+                                          (s32 *)gAzul_LateUnitScale, 0);
       }
     }
     if ((u32)(frame - 138) <= 29) {
@@ -531,7 +434,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_CLATTER);
       i = 0;
       p = work->particles;
-      piece = Data_081986f2[0];
+      piece = gAzul_PartPoints[0];
       for (; i != 31; i++, piece += 10, p++) {
         s32 cx = piece[0] >> 1;
         s32 cy = piece[1];
@@ -547,34 +450,35 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
     }
     if (frame == 10 || frame == 186) {
-      for (i = 0; i != effect->count; i++) {
-        struct BattleObj *slot = BattleObject_GetFar(effect->actors[i]);
+      for (i = 0; i != args->targetCount; i++) {
+        struct BattleObj *slot = BattleObject_GetFar(args->targets[i]);
         s32 *actor = slot->object;
         void *record;
 
         if (frame == 186) {
-          ReleaseBattleObjectRecordsFar(effect->actors[i]);
+          ReleaseBattleObjectRecordsFar(args->targets[i]);
         }
         if (frame == 10) {
           for (j = 0; (record = GetMotionRecordFar(slot->object, j)) != 0;
                j++) {
             Sprite_RemoveAnimationFar(record, (s32)slot->effectEntry);
           }
-          BattleEffect_TintBattler(effect->actors[i], 9, 5, i, 8);
-          BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0,
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_BLUE_TINT,
+                                   POSE_DAMAGE, i, 8);
+          BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0,
                                         (Random16() << 1) + 0x10000, 100);
           // record is 0 here; the store reuses its register.
           actor[18] = (s32)record;
         }
       }
       if (frame == 186) {
-        effect->actors[effect->count] = 0xff;
-        BattleObject_SpawnObjectsForListFar(effect->actors, 0, 0);
+        args->targets[args->targetCount] = 0xff;
+        BattleObject_SpawnObjectsForListFar(args->targets, 0, 0);
       }
     }
     if (frame > 9) {
-      for (i = 0; i != effect->count; i++) {
-        s32 *actor = BattleObject_GetFar(effect->actors[i])->object;
+      for (i = 0; i != args->targetCount; i++) {
+        s32 *actor = BattleObject_GetFar(args->targets[i])->object;
 
         actor[10] = actor[10] * 60 / 64;
       }
@@ -659,8 +563,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       Picture_MirrorIntoQuadrants(gData_02014000, gMapGridCellBuffer, 64, 64);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
                                  0);
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 152) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, gData_02014000, 0,
@@ -679,7 +582,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         s32 width;
         s32 height;
 
-        BattleEffect_LoadBlitter(SLOT_ALT, 7);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                            BLITTER_ADDITIVE);
         blit2 = Ram_HeapSlots->unkb8[1];
         i = 0;
         y = (base.y >> 16) - 32;
@@ -692,7 +597,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           blit(canvas, cells, 30, y, width, height);
           blit2(canvas, cells, 46, y, width, height);
         }
-        HeapSlot_Release(SLOT_ALT);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
       if (frame > 185) {
         goto spray;
@@ -703,11 +608,11 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       if (scale > Q16_ONE) {
         scale = Q16_ONE;
       }
-      texture2.logWidth = 7;
-      texture2.logHeight = 7;
-      texture2.pixels = mapCells;
+      scratchTexture.logWidth = 7;
+      scratchTexture.logHeight = 7;
+      scratchTexture.pixels = mapCells;
       model->kind = 7;
-      model->texture = &texture2;
+      model->texture = &scratchTexture;
       model->mesh = grid;
       model->vertices = verts;
       model->shade = shade;
@@ -730,19 +635,19 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           shade = 0;
         }
         if (shade > -64) {
-          texture2.pixels = gData_02014000;
-          texture2.logWidth = 7;
-          model->mesh = gData_08199364;
+          scratchTexture.pixels = gData_02014000;
+          scratchTexture.logWidth = 7;
+          model->mesh = gBattleEffect_LargeSquareMesh;
           /* FAKEMATCH(dead): a once-only block. */
           do {
-            texture2.logHeight = 7;
+            scratchTexture.logHeight = 7;
           } while (0);
           model->shade = shade;
           Transform_Reset();
           SceneTransform_ApplyPosition3(0x2c0000, 0, 0);
           Transform_ApplyYaw(0x3448);
           SceneTransform_ApplyUniformScale(size);
-          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }
@@ -750,16 +655,16 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         work->shakeFrames = 2;
         shade = 0;
         size = (frame << 13) + -0x130000;
-        texture2.logWidth = 6;
-        texture2.logHeight = 6;
-        texture2.pixels = gData_02014000;
+        scratchTexture.logWidth = 6;
+        scratchTexture.logHeight = 6;
+        scratchTexture.pixels = gData_02014000;
         model->shade = shade;
-        model->mesh = gData_08199340;
+        model->mesh = gBattleEffect_SquareMesh;
         Transform_Reset();
         SceneTransform_ApplyPosition3(-0x100000, pos.y + -0x500000, 0);
         SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
         Transform_ApplyRoll(frame << 11);
-        Render_TransformVertices(Data_081991e0, verts, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
       Heap_Release(model);
@@ -767,7 +672,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     if (frame > 185) {
     spray:
       if (frame == 186) {
-        struct EffectStep *drop = (struct EffectStep *)gMapGridCellBuffer;
+        struct Particle *drop = (struct Particle *)gMapGridCellBuffer;
 
         for (i = 0; i != 256; i++, drop++) {
           s32 angle = i << 8;
@@ -782,13 +687,13 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           drop->variant = (Random16() & 31) + 32;
         }
       }
-      p = (struct EffectStep *)gMapGridCellBuffer;
+      p = (struct Particle *)gMapGridCellBuffer;
       for (i = 0; i != 256; i++, p++) {
         if (p->variant >= 0) {
-          blit(canvas, work->sheet + 0x2df8, HI(p->x) - 6, HI(p->y) - 12, 12,
-               24);
-          BattleEffectKernels_IntegrateVector2(p, 63, 0x10000);
-          if (p->y > 0x600000) {
+          blit(canvas, work->sheet + 0x2df8, Q_16_16_UPPER_HALF(p->x) - 6,
+               Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
+          BattleEffectKernels_IntegrateVector2(p, 63, px(1));
+          if (p->y > px(96)) {
             p->velocityY = -p->velocityY / 2;
             p->velocityX <<= 2;
             p->variant -= 8;
@@ -801,15 +706,16 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+      for (i = 0; i != args->targetCount; i++) {
+        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
       }
       Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 16;
     }
     if (frame == 214) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame > 185) {
       BattleCamera_Shake(8, 8);
@@ -819,19 +725,18 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     if (frame > 185) {
       BattleEffect_CountDownBattlerTints();
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   for (i = 0; i != 28; i++) {
-    Sprite_DestroyFar(work->objects[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   }
   BattleEffect_EndCanvasLayer();
 }
 
-void Particle_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
+void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   s32 vx = step->velocityX;
   s32 vy = step->velocityY;
@@ -844,7 +749,7 @@ void Particle_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
                vz * damping / 64);
 }
 
-void Particle_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
+void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   s32 x = step->x;
   s32 vx = step->velocityX;
@@ -857,53 +762,42 @@ void Particle_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
 }
 
 s32 EffectPosition_ProjectPoint(const void *point,
-                                struct EffectPosition *position) {
-  s32 result = Render_ProjectPoint(point, EffectPosition_Coordinates(position));
+                                struct ScreenPoint *position) {
+  s32 result = Render_ProjectPoint(point, ScreenPoint_Coordinates(position));
   position->y -= 16;
   return result;
 }
 
-void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position) {
-  BattleUnit_ProjectToScreen(id, EffectPosition_Coordinates(position));
+void EffectPosition_ProjectSprite(s32 id, struct ScreenPoint *position) {
+  BattleUnit_ProjectToScreen(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
-void EffectPosition_ProjectScaledBattler(s32 id,
-                                         struct EffectPosition *position) {
-  BattleMotion_ProjectScaledPositionFar(id,
-                                        EffectPosition_Coordinates(position));
+void EffectPosition_ProjectScaledBattler(s32 id, struct ScreenPoint *position) {
+  BattleMotion_ProjectScaledPositionFar(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position) {
-  BattleMotion_ProjectPositionFar(id, EffectPosition_Coordinates(position));
+void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position) {
+  BattleMotion_ProjectPositionFar(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
-
-struct BattleFxWorkTail {
-  u8 unk0000[0x78e4];
-  s32 active;
-  s32 unk78e8;
-  s32 unk78ec;
-  struct BattleEffectArgument *effect;
-};
 
 // Midpoint between the first and last targets.
-void BattleEffect_GetTargetsMidpoint(struct EffectPosition *position) {
-  struct BattleFxWorkTail *work;
-  struct EffectPosition first;
-  struct EffectPosition last;
+void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
+  struct BattleEffectWork *work;
+  struct ScreenPoint first;
+  struct ScreenPoint last;
 
-  work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
-  EffectPosition_ProjectBattler(work->effect->actors[0], &first);
-  EffectPosition_ProjectBattler(work->effect->actors[work->effect->count - 1],
-                                &last);
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  EffectPosition_ProjectBattler(work->args->targets[0], &first);
+  EffectPosition_ProjectBattler(
+      work->args->targets[work->args->targetCount - 1], &last);
   position->x = first.x + (last.x - first.x) / 2;
   position->y = first.y;
   position->depth = first.depth;
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef SLOT_ALT
 #undef CLAMP_Y

@@ -48,35 +48,6 @@ struct RenderModel__f173588 {
   s32 brightness;
 };
 
-extern char ResourceId_MercuryDjinnSheet;
-extern char ResourceId_RuneSheet;
-extern char ResourceId_JupiterDjinnSheet;
-extern char ResourceId_StarCrossSheet;
-
-extern const u8 gData_08199340[]; // a textured square
-extern const u8 gData_08199210[]; // its four corners
-
-// The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-s32 BattleEffect_LoadBlitter(
-    s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter, packed
-void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                              s32 frames);
-void BattleEffect_CountDownBattlerTints(void);
-void BattlePlayback_StartFar(s32 phase);
-void BattleEffect_StepPaletteToResource(s32 resource);
-void BattleEffect_RunDjinniEntrance(
-    struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-    s32 *world); // BattleEffect_RunDjinniEntrance
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model);
-
 // Rime and Haze: the Djinni rises swaying through the canvas over the
 // party while its sign turns in the air: for Rime a crystal that spins in
 // two mirrored copies and shrinks, for Haze sixteen stars that bloom and
@@ -87,7 +58,7 @@ void Render_DrawModelList__ability_effects(struct Model *model);
 // rune picture mirrored into a 48x48 crystal, Haze's star sheet; one additive
 // blitter, flipped on the player's side.
 // Frame loop (48 frames).
-void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   s32 center[3];
   s32 base[3];
   struct BattleEffectWork *work;
@@ -107,7 +78,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
     s32 row;
     s32 column;
 
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 1, center,
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 1, center,
                                    base);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + DJINNI_OFFSET, 1, 1);
@@ -123,30 +94,28 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
             work->sheet[row * 24 + column];
       }
     }
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     s32 haze[3];
 
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 3, center,
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 3, center,
                                    haze);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
                                work->sheet + DJINNI_OFFSET, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet, work->sheet, 1,
                                0);
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - center[0]) << 8;
-  if (effect->side == 0)
-    BattleEffect_LoadBlitter(104, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                             COMPOSITE_CLIP_Y |
-                                                             COMPOSITE_FLIP_X));
+  if (args->side == 0)
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
   else
-    BattleEffect_LoadBlitter(
-        104, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   for (frame = 0; frame != 48; frame++) {
@@ -154,7 +123,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
     // every two frames.
     if (frame == 0) {
       for (i = 0; i != 32; i++) {
-        struct EffectStep *star = &work->particles[i];
+        struct Particle *star = &work->particles[i];
 
         SET_POSITION(star, ((Random16() & 31) - 16) << 16,
                      ((Random16() & 63) - 16) << 16, (Random16() & 127) + 128);
@@ -163,7 +132,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     if (frame == 38)
-      BattlePlayback_StartFar(-1);
+      EFFECT_SHOW_DAMAGE(-1);
     if (mode == 0) {
       if (frame == 32)
         Sound_PlayFar(SE_POWER_UP);
@@ -171,7 +140,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       if (frame > 7)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_StarCrossSheet);
       if (frame == 32)
-        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 24);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, 0, 24);
     }
 
     // The Djinni rises a pixel a frame, swaying, until it leaves the top.
@@ -193,7 +163,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
     texture.logHeight = 6;
     model->kind = 6;
     model->texture = &texture;
-    model->mesh = gData_08199340;
+    model->mesh = gBattleEffect_SquareMesh;
     model->vertices = vertices;
     if (mode == 0) {
       // Rime's crystal fades in over the first eight frames and turns in
@@ -223,13 +193,14 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
             Transform_ApplyYaw((frame << 9) - TRIG_TURN / 4);
         }
         SceneTransform_ApplyScale3(scale >> 1, scale >> 1, scale >> 1);
-        Render_TransformVertices(gData_08199210, vertices, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                 4);
         Render_DrawModelList(model);
       }
     } else {
       // Each of Haze's stars swells and shrinks over 16 frames, and every
       // fourth one chimes as it opens.
-      struct EffectStep *star;
+      struct Particle *star;
 
       model->brightness = 0;
       texture.pixels = work->sheet;
@@ -247,7 +218,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
           Transform_ApplyYaw(frame << 9);
           size /= 2;
           SceneTransform_ApplyScale3(size, size, size);
-          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                   4);
           Render_DrawModelList(model);
         }
         star->variant++;
@@ -258,17 +230,13 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
 
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Gasp (kind 242).
 void BattleEffect_RunGasp(s32 a0) { BattleEffect_RunGaspFamily(a0, 0); }

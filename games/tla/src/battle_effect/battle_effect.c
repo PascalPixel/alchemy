@@ -36,7 +36,6 @@
 #include "battle_effect/dispatch.c"
 #include "battle_effect/battler_tint.c"
 
-#undef PHASE_RESULTS
 #undef SHARD_COUNT
 #undef DROP_COUNT
 #undef EFFECT_STEPS
@@ -50,8 +49,6 @@
 #undef MOTE_COUNT
 #undef PILLAR_FRAMES
 
-#undef EffectSprite_CreateWithTiles
-#undef EffectSprite_Acquire
 #undef Render_DrawModelList
 #undef SLOT_ALT
 #undef OBJ_TILES
@@ -62,7 +59,6 @@
 #undef HEAP_BLITTER
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 
 // The effects from the Cybele summon to Bolt.
 #include "battle_effect/cybele.c"
@@ -82,11 +78,9 @@
 #include "battle_effect/growth.c"
 #include "battle_effect/bolt.c"
 
-#undef HI
 #undef HEAP_BLITTER
 #undef HEAP_BLITTER_ALTERNATE
 #undef PARTICLES
-#undef BLIT_MODE
 #undef SHARDS
 #undef MOTES
 #undef SPARKS
@@ -101,14 +95,10 @@
 #undef ALTERNATE_BLITTER_SLOT
 #undef OBJ_VRAM
 #undef COLUMN_COUNT
-#undef PHASE_RESULTS
-#undef BLITTER_TRANSPARENT
 #undef PREPARE_KIND
 #undef PREPARE_ANCHOR
-#undef BLITTER_MAX
 
 #undef FxGroup
-#undef EffectSprite_CreateWithTiles
 #undef PUFF_COUNT
 
 // The effects of abilities and summons from the opening every Djinn effect
@@ -118,7 +108,6 @@
 #define FxSlot FxSlot__ability_effects
 #define SpriteObject SpriteObject__ability_effects
 #define Texture Texture__ability_effects
-#define Particle Particle__ability_effects
 
 #include "battle_effect/projectiles.c"
 #include "battle_effect/djinn_attacks.c"
@@ -175,7 +164,6 @@
 #include "battle_effect/trident.c"
 #include "battle_effect/meteor_blow.c"
 
-#undef Particle
 #undef Texture
 #undef SpriteObject
 #undef FxSlot
@@ -185,7 +173,6 @@
 
 #include "battle_effect/liquifier.c"
 
-#undef HI
 #undef Actor_SetAnimationSpeedFar
 
 // The Megiddo, Moloch and Iris summons, Odyssey, and the model renderers the
@@ -202,7 +189,5 @@
 
 #undef ModelVertex
 #undef BattleBackgroundId
-#undef EffectSprite_CreateWithTiles
-#undef EffectSprite_Acquire
 #undef Texture
 #undef Model

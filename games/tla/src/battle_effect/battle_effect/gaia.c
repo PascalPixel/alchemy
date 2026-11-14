@@ -10,7 +10,7 @@
 #undef ROCK_COUNT
 
 // The dust lives in the map cell buffer once the picture is laid out.
-#define DUST ((struct EffectStep *)Ram_MapCellBuffer)
+#define DUST ((struct Particle *)Ram_MapCellBuffer)
 #define ROCK_COUNT 11
 // The rocks' motion is particles[10..20], the late rocks' columns [16..21].
 #define FIRST_ROCK 10
@@ -38,29 +38,7 @@ struct RockObject {
   u8 flags;
 };
 
-extern char ResourceId_EarthWallSheet;
-extern char ResourceId_OrangePaletteA;
-
-// ☀️'s gGaia_Bg2Shifts, by side and variant.
-extern s8 gGaia_Bg2Shifts[][3];
-// The growing wall's nine rows: ☀️'s gGaia_RowWidths and
-// gGaia_RowCells.
-extern u8 gGaia_RowWidths[];
-extern u16 gGaia_RowCells[];
-// The mound's three cels: ☀️'s gGaia_MoundWidths, _MoundHeights and
-// _MoundSheetOffsets.
-extern u8 gGaia_FlameWidths[];
-extern u8 gGaia_FlameHeights[];
-extern u16 gGaia_MoundCells[];
-// ☀️'s gGaia_LateRockColumns.
-extern u8 gGaia_LateRockColumns[];
-
-// ☀️'s gRisingWall_UnitScale.
-extern struct Scale Data_08196e44;
-
-void Animation_ApplyChildArgumentFar(void *object, s32 value);
-
-void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -84,15 +62,15 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
 
   // The larger variants stretch the wall wider: BG2 at 1.25 and 1.5.
-  if (effect->variant == 0)
+  if (args->variant == 0)
     REG_BG2PA = 204;
-  else if (effect->variant == 1)
+  else if (args->variant == 1)
     REG_BG2PA = 170;
-  if (effect->side == 1) {
+  if (args->side == 1) {
     wallX = 8;
-    if (effect->variant == 0)
+    if (args->variant == 0)
       rockX = 40;
-    else if (effect->variant == 1)
+    else if (args->variant == 1)
       rockX = 36;
     else
       rockX = 40;
@@ -100,7 +78,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     wallX = -16;
     rockX = -12;
   }
-  REG_BG2X = gGaia_Bg2Shifts[effect->side][effect->variant] << 8;
+  REG_BG2X = gGaia_Bg2Shifts[args->side][args->variant] << 8;
 
   // The palette: BG colours 1-63 darkened eight steps in each channel.
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer,
@@ -155,40 +133,35 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
       work->sheet[offset++] = *source++;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
   // The rocks: eleven animated objects, four of each size.
   for (i = 0; i != ROCK_COUNT; i++) {
     struct RockObject *object = Sprite_CreateFar(653);
 
-    work->objects[i] = object;
+    work->sprites[i] = object;
     if (object != 0) {
       object->flags = 0;
       Animation_ApplyChildArgumentFar(object, i / 4);
-      ((struct RockObject *)work->objects[i])->part[0].priority = 1;
+      ((struct RockObject *)work->sprites[i])->part[0].priority = 1;
     }
   }
   // Two max blitters, the second mirrored for the right half.
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                           BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                 COMPOSITE_CLIP_Y |
-                                                 COMPOSITE_FLIP_X));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // A rock's x is its column, y counts down from 128 by z, velocityX cycles
   // 1 to 12 as its animation step, and variant is its wait before it flies.
   for (i = 0; i != ROCK_COUNT; i++) {
-    struct EffectStep *rock = &work->particles[FIRST_ROCK + i];
+    struct Particle *rock = &work->particles[FIRST_ROCK + i];
 
     SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
     rock->velocityX = i;
@@ -201,10 +174,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
 
   // The dust rises from the foot of the wall after a random wait.
   for (i = 0; i != 256; i++) {
-    struct EffectStep *dust = &DUST[i];
+    struct Particle *dust = &DUST[i];
 
-    dust->x = ((Random16() & 63) + wallX + 32) << 16;
-    dust->y = ((Random16() & 7) + 96) << 16;
+    dust->x = px((Random16() & 63) + wallX + 32);
+    dust->y = px((Random16() & 7) + 96);
     dust->velocityY = ((Random16() & 63) + 32) << 13;
     dust->variant = Random16() & 31;
   }
@@ -221,7 +194,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_CRASH);
     // The battle resumes and resolves the targets, hit cue 134.
     if (frame == 120)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // The ground heaves up (frames 0-81), then pulses between two cels.
     if (frame <= 81) {
@@ -229,11 +202,11 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
 
       if (cel > 2)
         cel = (cel & 1) + 1;
-      draw[0](canvas, work->sheet + gGaia_MoundCells[cel],
+      draw[0](canvas, work->sheet + gGaia_FlamePictures[cel],
               wallX - gGaia_FlameWidths[cel] + 64,
               116 - gGaia_FlameHeights[cel], gGaia_FlameWidths[cel],
               gGaia_FlameHeights[cel]);
-      draw[1](canvas, work->sheet + gGaia_MoundCells[cel], wallX + 64,
+      draw[1](canvas, work->sheet + gGaia_FlamePictures[cel], wallX + 64,
               116 - gGaia_FlameHeights[cel], gGaia_FlameWidths[cel],
               gGaia_FlameHeights[cel]);
     }
@@ -247,10 +220,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       if (row > 7)
         row = 7;
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gGaia_RowCells[row],
+        draw[0](canvas, work->sheet + gGaia_RowPictures[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
                 gGaia_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gGaia_RowCells[row], wallX + 64,
+        draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }
@@ -264,10 +237,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       if (row > 7)
         row = 7;
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gGaia_RowCells[row],
+        draw[0](canvas, work->sheet + gGaia_RowPictures[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
                 gGaia_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gGaia_RowCells[row], wallX + 64,
+        draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }
@@ -284,13 +257,14 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     // until frame 159.
     if (frame > 87) {
       for (i = 0; i != 64; i++) {
-        struct EffectStep *dust = &DUST[i];
+        struct Particle *dust = &DUST[i];
 
         if (dust->variant == 0) {
           s32 size = (i & 3) + 5;
 
-          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
-                  HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
+          draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
+                  Q_16_16_UPPER_HALF(dust->x) - size / 2,
+                  Q_16_16_UPPER_HALF(dust->y) - size, size, size * 2);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
             dust->y = px(96);
@@ -307,14 +281,14 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       if (frame > 71)
         rocks = ROCK_COUNT;
       for (k = 0; k != rocks; k++) {
-        struct EffectStep *rock = &work->particles[FIRST_ROCK + k];
+        struct Particle *rock = &work->particles[FIRST_ROCK + k];
         s32 slot;
 
         if (rock->variant == 0) {
-          scale = Data_08196e44;
+          scale = gGaia_UnitScale;
           if (frame > 71) {
             scale.x = (k << 12) + Q16_ONE / 2;
-            scale.x += effect->variant << 14;
+            scale.x += args->variant << 14;
           } else {
             scale.x = Q16_ONE / 2;
           }
@@ -325,7 +299,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
           position[2] = 0x2000000;
           slot = (frame / 2 + k) % ROCK_COUNT;
           if (slot != -1)
-            Render_ApplyProjectedPlacementFar(work->objects[slot], position,
+            Render_ApplyProjectedPlacementFar(work->sprites[slot], position,
                                               &scale, 0);
           rock->y -= rock->z;
           rock->velocityX += rock->velocityY;
@@ -339,9 +313,9 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
             } else {
               if (frame > 87) {
                 rock->z = (Random16() & 7) + 8;
-                if (effect->variant == 0)
+                if (args->variant == 0)
                   rock->x = Random16() % 96 + 42;
-                else if (effect->variant == 1)
+                else if (args->variant == 1)
                   rock->x = Random16() % 112 + 34;
                 else
                   rock->x = Random16() % 160 + 10;
@@ -359,12 +333,13 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     // The targets (frames 86-158): a flash every 12 frames, a recoil
     // every 4.
     if (frame <= 158) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->targetCount; i++) {
         if (frame > 85) {
           if (frame % 12 == 0)
-            BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 6);
+            BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, i, 6);
           if ((frame & 3) == 0)
-            BattleMotion_ApplyKnockbackFar(effect->actors[i], 5);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], 5);
         }
       }
     }
@@ -373,17 +348,14 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       BattleCamera_Shake(2, 2);
     else
       BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  EFFECT_RELEASE_BLITTERS();
   for (i = 0; i != ROCK_COUNT; i++)
-    Sprite_DestroyFar(work->objects[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -450,8 +422,8 @@ struct EffectSprite {
 /// cache entry and the first free effect sprite of the 64, as
 /// EffectSprite_Acquire takes, set up for Animation_ApplyChildArgumentFar. The
 /// Lost Age's own.
-struct EffectSprite *EffectSprite_CreateWithTiles(s32 width, s32 height,
-                                                  s32 attributes, s32 flags) {
+void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
+                                   s32 flags) {
   struct EffectSprite *found = NULL;
   s32 vramEntry = VramCache_FindFreeEntry();
   struct EffectSprite *sprite = Ram_HeapSlots->unk0c[1];
@@ -510,19 +482,13 @@ struct EffectSprite *EffectSprite_CreateWithTiles(s32 width, s32 height,
 }
 #undef Actor_SetAnimationSpeedFar
 #undef PARTICLES
-#undef HI
-#undef BLITTER_ADDITIVE
-#undef BLITTER_MAX
 #undef CLIP
-#undef PHASE_RESULTS
 #undef HEAP_BLITTER
 #undef HEAP_BLITTER_ALTERNATE
 #undef BLITTER
 #undef SPARKS
 #undef PUFF_COUNT
 #undef ROCK_COUNT
-#undef BLIT_MODE
-#undef BLIT_CLIP
 #undef MOTES
 #undef DUST
 #undef FIRST_ROCK

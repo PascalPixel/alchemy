@@ -7,13 +7,13 @@
 // affine scales after the BG2 reference point, 64 object slots and one more
 // word before the effect.
 
-#include "field/effect_step.h"
-#include "battle/battle_effect_argument.h"
+#include "field/particle.h"
+#include "battle/battle_effect_params.h"
 #include "static_assert.h"
 #include "types.h"
 
 struct BattleEffectWork {
-  struct EffectStep particles[64];
+  struct Particle particles[64];
   u8 sheet[0x6980];   ///< the effect's decoded pictures, at fixed offsets
   s32 bg2xLines[160]; ///< BG2X for each scanline, for an HBlank DMA
   u8 unk7300[0x480];  ///< some drafts keep a colour table at 0x340
@@ -24,7 +24,7 @@ struct BattleEffectWork {
   /// The transfer mode's argument: the fill value, the share kept (50 or 75
   /// percent) or the darken or brighten amount.
   s32 transferValue;
-  s32 unk_7788;       ///< not named by TLA code
+  s32 unused7788;     ///< named by no code in either game
   s32 frame;          ///< frame counter some effects keep, from 0
   s32 scrollTimer;    ///< frames since the last interval scroll step
   s32 scrollInterval; ///< frames between interval scroll steps
@@ -52,7 +52,7 @@ struct BattleEffectWork {
   u16 bldcnt;
   u16 bldalpha;
   ///@}
-  u16 unk_77ce; ///< not named by TLA code
+  u16 padding; ///< aligns bg2x
   /// BG2's reference point, written to BG2X and BG2Y by
   /// Display_ApplyBg2Reference and Display_ApplyBg2Affine.
   ///@{
@@ -64,8 +64,8 @@ struct BattleEffectWork {
   u16 bg2pa;
   u16 bg2pd;
   ///@}
-  void *objects[64]; ///< the effect's animation objects
-  /// Each target's flash timer in frames, for effect->actors[n]: set by
+  void *sprites[64]; ///< the effect's sprites
+  /// Each target's flash timer in frames, for args->targets[n]: set by
   /// BattleEffect_TintBattler, counted down by
   /// BattleEffect_CountDownBattlerTints.
   u8 actorTimers[8];
@@ -74,7 +74,7 @@ struct BattleEffectWork {
   /// the canvas and clears it.
   s32 transferPending;
   s32 unk78ec; ///< one draft sets 1 for a frame range; no reader found
-  struct BattleEffectArgument *effect; ///< the command being run
+  struct BattleEffectParams *args; ///< the command being run
 };
 
 STATIC_ASSERT(offsetof(struct BattleEffectWork, sheet) == 0x700);
@@ -85,10 +85,10 @@ STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 0x77b8);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 0x77bc);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 0x77d0);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2pa) == 0x77d8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, objects) == 0x77dc);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, sprites) == 0x77dc);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 0x78dc);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x78e8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, effect) == 0x78f0);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, args) == 0x78f0);
 
 /// The heap slot of the battle canvas, as canvas_sprite.h has it.
 #define HEAP_SLOT_CANVAS 96

@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "bg_scroll.h"
-#include "field/effect_step.h"
+#include "field/particle.h"
 #include "field/sprite.h"
 #include "module/field/event_commands.h"
 #include "system/sprite_metadata.h"
@@ -167,8 +167,8 @@ struct Reel {
 };
 
 struct ReelEffectWork {
-  struct EffectStep particles[REEL_TITLE_LETTERS];
-  u8 unkAfterParticles[0x700 - REEL_TITLE_LETTERS * sizeof(struct EffectStep)];
+  struct Particle particles[REEL_TITLE_LETTERS];
+  u8 unkAfterParticles[0x700 - REEL_TITLE_LETTERS * sizeof(struct Particle)];
   u16 bgShade[0x100];
   u16 objShade[0x100];
   u8 unk0b00[0x7780 - 0xb00];

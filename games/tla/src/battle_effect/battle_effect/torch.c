@@ -14,12 +14,6 @@
 #define RIPPLE_FADE_OUT_FRAME 72
 #define RIPPLE_HIT_FRAME 48
 
-#define PHASE_RESULTS 134
-
-void BattleEffect_RunDjinniEntrance(
-    struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-    s32 *world); // BattleEffect_RunDjinniEntrance
-
 /// A disc of rings rises on BG2 over the target's side, its colour ramp
 /// cycling outward one ring a frame while each scanline sways on a sine wave.
 /// Abilities: Torch (kind 214).
@@ -29,7 +23,7 @@ void BattleEffect_RunDjinniEntrance(
 /// per-scanline BG2 offsets. Each frame: fade in over the first 8 frames,
 /// rebuild the 160 sway offsets, rotate the ramp by one colour, shake the
 /// camera. At frame 48 the target is struck; from frame 72 the disc fades.
-void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 screenX[3];
@@ -58,16 +52,14 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
 
   // Open the canvas on BG2 over the target's side.
   BattleEffect_StartCanvasLayer(0x2000);
-  BattleEffect_RunDjinniEntrance(effect, 6 | effect->side << 4 | 2 << 5,
-                                 screenX, screenY);
+  BattleEffect_RunDjinniEntrance(args, 6 | args->side << 4 | 2 << 5, screenX,
+                                 screenY);
   REG_BG2CNT =
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = 0xaa;
-  BattleEffect_FetchRectangleBlitters(effect->side, draw);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The distance map, one quarter at a time mirrored into the other three,
   // the centre an eighth lower than the middle so the disc leans back.
@@ -137,11 +129,11 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
     if (frame > RIPPLE_FADE_OUT_FRAME)
       REG_BLDALPHA = BLEND_ALPHA(RIPPLE_FRAMES * 2 - frame * 2, 16);
 
-    // The hit: results phase, shake, and the target knocked back.
+    // The hit: the damage shown, a shake, and the target knocked back.
     if (frame == RIPPLE_HIT_FRAME) {
-      BattlePlayback_StartFar(PHASE_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
     }
 
     // One BG2 X offset per scanline, a sine wave running down the screen.
@@ -168,18 +160,15 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Abilities: Kite (kind 217).
-void BattleEffect_RunKite(struct BattleEffectArgument *effect) {
+void BattleEffect_RunKite(struct BattleEffectParams *args) {
   s32 b[3];
   s32 a[3];
 
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(effect, ((effect->side ^ 1) << 4) | 7, b, a);
+  BattleEffect_RunDjinniEntrance(args, ((args->side ^ 1) << 4) | 7, b, a);
   BattleEffect_EndCanvasLayer();
 }

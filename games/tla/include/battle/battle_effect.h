@@ -4,14 +4,14 @@
 #include "edition.h"
 #include "types.h"
 
-struct BattleEffectArgument;
-void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
+struct BattleEffectParams;
+void BattleEffect_RunParticleStreams(struct BattleEffectParams *effect,
                                      s32 mode);
-void BattleEffect_RunMeteor(struct BattleEffectArgument *effect);
-void BattleEffect_RunOuterSpace(struct BattleEffectArgument *effect);
-void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
+void BattleEffect_RunMeteor(struct BattleEffectParams *effect);
+void BattleEffect_RunOuterSpace(struct BattleEffectParams *effect);
+void BattleEffect_RunPaletteParticles(struct BattleEffectParams *effect,
                                       s32 mode);
-void BattleEffect_RunCybele(struct BattleEffectArgument *effect);
+void BattleEffect_RunCybele(struct BattleEffectParams *effect);
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 

@@ -18,15 +18,15 @@
 // Crystals fall one after another, eight frames apart, onto the targets'
 // ground and shatter into sixteen spinning shards each; the screen darkens
 // over the last eight frames.
-void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
+void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  struct EffectStep *seed;
-  struct EffectStep *cry;
-  struct EffectStep *shards;
-  struct EffectStep *shard;
+  struct Particle *seed;
+  struct Particle *cry;
+  struct Particle *shards;
+  struct Particle *shard;
   s32 x;
   s32 cell;
   s32 i;
@@ -34,25 +34,23 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   s32 k;
 
   // Set up: the canvas layer, the two sheets and the blitter pair.
-  shards = (struct EffectStep *)Ram_MapCellBuffer;
+  shards = (struct Particle *)Ram_MapCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(effect->side, draw);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
-  for (k = 0; k != Data_081979b7[effect->variant * 3]; k++) {
+  for (k = 0; k != gPrism_Counts[args->variant * 3]; k++) {
     seed = &work->particles[k];
     x = Random16() & 31;
     seed->y = -px(64);
-    if (effect->side == 1) {
+    if (args->side == 1) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;
     } else {
@@ -65,9 +63,9 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
     seed->variant = k * 8;
   }
 
-  for (frame = 0; frame != Data_081979b7[effect->variant * 3 + 1]; frame++) {
+  for (frame = 0; frame != gPrism_Counts[args->variant * 3 + 1]; frame++) {
     // The strongest variant turns the camera, slowing from frame 96.
-    if (effect->variant == 2 && frame <= 103) {
+    if (args->variant == 2 && frame <= 103) {
       struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
       s32 speed;
 
@@ -75,22 +73,21 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
         speed = 192;
       else
         speed = 2496 - frame * 24;
-      if (effect->side == 0)
+      if (args->side == 0)
         camera->yaw -= speed;
       else
         camera->yaw += speed;
     }
-    if (frame == Data_081979b7[effect->variant * 3 + 2])
-      BattlePlayback_StartFar(134);
+    if (frame == gPrism_Counts[args->variant * 3 + 2])
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // Darken over the last eight frames.
-    if (frame == Data_081979b7[effect->variant * 3 + 1] - 8) {
-      work->transferMode = 3;
-      work->transferValue = 0x06060606;
+    if (frame == gPrism_Counts[args->variant * 3 + 1] - 8) {
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
 
-    if (frame <= Data_081979b7[effect->variant * 3 + 1] - 8) {
-      for (i = 0; i != Data_081979b7[effect->variant * 3]; i++) {
+    if (frame <= gPrism_Counts[args->variant * 3 + 1] - 8) {
+      for (i = 0; i != gPrism_Counts[args->variant * 3]; i++) {
         cry = &work->particles[i];
         if (cry->z == SHATTERED) {
           // A shattered crystal: its shards fly and spin, slowing down.
@@ -98,19 +95,21 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
             cell = (j % 5) * 3 +
                    (shards[i * SHARDS_PER_CRYSTAL + j].variant / 96) % 3;
             shard = &shards[i * SHARDS_PER_CRYSTAL + j];
-            draw[j <= 2](canvas, work->sheet + gData_08197834[cell] + 0x800,
-                         HI(shard->x) - gPrism_ShardWidths[cell] / 2,
-                         HI(shard->y) - gData_08197826[cell] / 2,
-                         gPrism_ShardWidths[cell], gData_08197826[cell]);
-            BattleEffectKernels_IntegrateVector2(shard, 64, 0x2000);
+            draw[j <= 2](
+                canvas, work->sheet + gPrism_ShardPictures[cell] + 0x800,
+                Q_16_16_UPPER_HALF(shard->x) - gPrism_ShardWidths[cell] / 2,
+                Q_16_16_UPPER_HALF(shard->y) - gPrism_ShardHeights[cell] / 2,
+                gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
+            BattleEffectKernels_IntegrateVector2(shard, 64, px(1) / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
           }
         } else if (frame >= cry->variant) {
           // A falling crystal (32x64), until it reaches the ground.
-          draw[i & 1](canvas, work->sheet, HI(cry->x) - 16, HI(cry->y), 32, 64);
-          BattleEffectKernels_IntegrateVector2(cry, 64, 0x10000);
+          draw[i & 1](canvas, work->sheet, Q_16_16_UPPER_HALF(cry->x) - 16,
+                      Q_16_16_UPPER_HALF(cry->y), 32, 64);
+          BattleEffectKernels_IntegrateVector2(cry, 64, px(1));
           if (cry->y > GROUND_Y) {
             cry->z = SHATTERED;
             cry->y = GROUND_Y;
@@ -129,24 +128,20 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
             }
             work->shakeFrames = 8;
             Sound_PlayFar(SE_CLATTER);
-            for (j = 0; j != effect->count; j++)
-              BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 4);
+            for (j = 0; j != args->targetCount; j++)
+              BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, j, 4);
           }
         }
       }
     }
 
-    BattleCamera_Shake(effect->variant * 2 + 4, effect->variant * 4 + 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    BattleCamera_Shake(args->variant * 2 + 4, args->variant * 4 + 8);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #undef SPARK_COUNT

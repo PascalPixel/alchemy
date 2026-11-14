@@ -5,7 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-#include "battle/battle_effect_argument.h"
+#include "battle/battle_effect_params.h"
 
 /// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
 DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, BattleEffect_RunEruption, 1)
@@ -26,13 +26,13 @@ DEFINE_EFFECT_KIND(BattleEffect_RunBlast, BattleEffect_RunEruption, 0)
 // through seven pictures. The targets are hit from frame 6, a frame apart;
 // in mode 0 they also recoil. The variant chooses the number of motes and
 // puffs and the length.
-void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   s32 variant;
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 frame;
   s32 i;
 
@@ -52,14 +52,14 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet), 128);
-    variant = effect->variant;
+    variant = args->variant;
   }
 
   // Everything starts 100 pixels out on the user's side.
   for (i = 0; i != 32; i++) {
-    struct EffectStep *puff = &work->particles[i];
+    struct Particle *puff = &work->particles[i];
 
-    if (effect->side == 1)
+    if (args->side == 1)
       puff->x = 200 << 14;
     else
       puff->x = -(200 << 14);
@@ -71,9 +71,9 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     puff->variant = 0;
   }
   for (i = 0; i != 1024; i++) {
-    struct EffectStep *mote = &MOTES[i];
+    struct Particle *mote = &MOTES[i];
 
-    if (effect->side == 1)
+    if (args->side == 1)
       mote->x = 200 << 14;
     else
       mote->x = -(200 << 14);
@@ -85,12 +85,9 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     mote->variant = 0;
   }
 
-  BattleEffect_LoadBlitter(
-      104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != gEruption_Counts[variant][FIELD_FRAMES]; frame++) {
     struct BattleCamera *camera;
@@ -101,18 +98,18 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 2)
       Sound_PlayFar(SE_CLATTER);
     if (frame == gEruption_Counts[variant][FIELD_FRAMES] - 48)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The motes: depth 160-799 gives sizes 9 down to 1.
     for (i = 0; i != gEruption_Counts[variant][FIELD_MOTES]; i++) {
-      struct EffectStep *mote = &MOTES[i];
+      struct Particle *mote = &MOTES[i];
 
       if (mote->y >= 0) {
         s32 size;
 
         EffectPosition_ProjectPoint((s32 *)mote, &screen);
         screen.x >>= 1;
-        screen.x += effect->side * 32 - 16;
+        screen.x += args->side * 32 - 16;
         if (screen.depth < 160)
           screen.depth = 160;
         if (screen.depth > 799)
@@ -120,62 +117,60 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         size = 9 - (screen.depth - 160) / 64;
         draw[0](canvas,
                 work->sheet +
-                    (gBattleEffect_MoteCells[size - 1] + (i & 1) * 770) +
+                    (gBattleEffect_MotePictures[size - 1] + (i & 1) * 770) +
                     MOTE_SHEET,
                 screen.x - size / 2, screen.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(mote, 64, -0x2000);
+        BattleEffectKernels_IntegrateVector3(mote, 64, -px(1) / 8);
       }
     }
 
     // The puffs: one more each frame; a picture every three frames.
     if (frame > 2) {
       for (i = 0; i != gEruption_Counts[variant][FIELD_PUFFS]; i++) {
-        struct EffectStep *puff = &work->particles[i];
+        struct Particle *puff = &work->particles[i];
 
         if (i < frame && puff->y >= 0) {
           EffectPosition_ProjectPoint((s32 *)puff, &screen);
           screen.x >>= 1;
-          screen.x += effect->side * 32 - 16;
+          screen.x += args->side * 32 - 16;
           if (puff->variant >= 0 && puff->variant <= 20) {
             s32 cel = puff->variant / 3;
             u32 width;
 
-            draw[0](canvas, work->sheet + gEruption_PuffCells[cel],
+            draw[0](canvas, work->sheet + gEruption_PuffPictures[cel],
                     screen.x - ((width = gEruption_PuffSizes[cel]) >> 1),
                     screen.y - (width >> 1), width, width);
           }
           if (puff->variant <= 20)
             puff->variant++;
-          BattleEffectKernels_IntegrateVector3(puff, 64, -0x2000);
+          BattleEffectKernels_IntegrateVector3(puff, 64, -px(1) / 8);
         }
       }
     }
 
     // Hit the targets a frame apart; in mode 0 they recoil too.
     if (mode == 0) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->targetCount; i++) {
         if (frame == i + 6) {
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 2);
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 10);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], 2);
         }
       }
     } else {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->targetCount; i++) {
         if (frame == i + 6)
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 10);
       }
     }
     if (frame == 2)
       work->shakeFrames = 6;
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #include "field_sprite.h"
@@ -193,11 +188,11 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   do {
     struct FieldSprite *object = (struct FieldSprite *)Sprite_CreateFar(kind);
 
-    work->objects[entryIndex] = object;
+    work->sprites[entryIndex] = object;
     if (object != NULL) {
       object->nextFrame = 0;
       Animation_ApplyChildArgumentFar(object, entryIndex);
-      ((struct FieldSprite *)work->objects[entryIndex])->priority = variant;
+      ((struct FieldSprite *)work->sprites[entryIndex])->priority = variant;
     }
     entryIndex++;
   } while (entryIndex != entryCount);

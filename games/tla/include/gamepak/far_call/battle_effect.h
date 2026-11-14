@@ -9,7 +9,7 @@
 
 struct BattleFxRequest;
 struct BattlePresentationWork;
-void BattleEffect_DispatchByIdRangeFar(struct BattlePresentationWork *work);
+void BattleEffect_RunByIdRangeFar(struct BattlePresentationWork *work);
 void BattleEffect_RunFromTableFar(struct BattlePresentationWork *work);
 void BattleEffect_RunElementPillarFar(struct BattlePresentationWork *work);
 void BattleEffect_RunFormChangeFar(struct BattleFxRequest *request, s32 value);

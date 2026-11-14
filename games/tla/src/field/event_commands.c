@@ -42,7 +42,7 @@
 #undef CLOAK_FLICKER_PALETTE
 
 #undef Actor_ApplyRandomChildValues
-#undef EffectPosition
+#undef ScreenPoint
 #undef EffectWork
 #undef MapGrid_IsCloakCell
 

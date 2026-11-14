@@ -6,7 +6,7 @@
 #include "actor.h"
 
 struct Actor;
-struct EffectPosition;
+struct ScreenPoint;
 
 extern const s32 gCamera_FixedViewMatrix[];
 extern s32 gIwram_Data1;
@@ -33,8 +33,8 @@ s32 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
 struct AnimationObject;
-struct EffectPosition;
-struct EffectStep;
+struct ScreenPoint;
+struct Particle;
 struct FacingObject;
 struct Actor;
 struct Actor;
@@ -64,9 +64,8 @@ void BattleEffect_SelectBattleCue(s32 row, s32 column);
 void FieldPsynergy_SetupActorPair(s32 actor, s32 target);
 s32 PaletteFade_StartInterpolationFar(s32);
 s32 BattleMotion_ProjectScaledPositionFar(s32, s32 *);
-struct BattleEffectArgument;
-void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
-                                s32 variant);
+struct BattleEffectParams;
+void BattleEffect_RunBurstScene(struct BattleEffectParams *effect, s32 variant);
 void BattleEffect_StopMainActor(void);
 struct ActorPlacement;
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);

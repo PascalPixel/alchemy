@@ -131,20 +131,6 @@ struct BgScrollPair {
   s16 y;
 };
 
-struct DjinnMenuWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-};
-
-struct DjinnMenuPartyStatus {
-  struct DjinnMenuWindow *window;
-  u8 unk04[8];
-  u16 flags;
-};
-
 struct DjinnSlot {
   u16 id;
   u16 state;
@@ -156,22 +142,6 @@ struct PreviewAbility {
   u8 unk03[5];
   u8 range; ///< 255 for everyone
   u8 ppCost;
-};
-
-struct ItemMenuWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-};
-
-struct PsynergyMenuWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
 };
 
 struct PsynergyMenuUnit {
@@ -280,14 +250,6 @@ struct SummaryRecovery {
 struct SummaryResourceEntry {
   u16 unk00;
   u16 offset;
-};
-
-struct SummonMenuWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
 };
 
 struct SummonMenuWork {

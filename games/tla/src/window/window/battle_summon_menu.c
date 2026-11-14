@@ -38,15 +38,15 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   u8 visibleSummons[4];
   s32 glyph;
   s32 count;
-  struct SummonMenuWindow *window;
+  struct RenderInput *window;
   struct SummonMenuWork *work;
   s32 drawnRow;
   s32 drawnFirstEntry;
   s32 selectedRow;
   s32 firstEntry;
   s32 cursorHandle;
-  struct SummonMenuWindow *description;
-  struct SummonMenuWindow *counts;
+  struct RenderInput *description;
+  struct RenderInput *counts;
   s32 mask;
   s32 preferredRow;
   struct {
@@ -93,8 +93,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     sprite = &sprites[index];
     sprites[index].oam.word.attr01 = 0x40000000;
     sprites[index].oam.word.attr23 = t;
-    sprite->oam.f.x = window->x * 8 + 8;
-    t = window->y;
+    sprite->oam.f.x = (s16)window->x * 8 + 8;
+    t = (s16)window->y;
     sprite->oam.f.y = (y + t) * 8 + 4;
   }
   for (index = 0; index < 4; index++) {
@@ -146,11 +146,11 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       {
-        s32 x = window->x + 1;
+        s32 x = (s16)window->x + 1;
         /* FAKEMATCH(barrier): an empty asm on x. */
         asm("" : "=r"(x) : "0"(x));
-        Window_HighlightRect(x, window->y + drawnRow * 2 + 1, window->width - 2,
-                             1, 15);
+        Window_HighlightRect(x, (s16)window->y + drawnRow * 2 + 1,
+                             window->width - 2, 1, 15);
       }
       Text_FillCanvasBackground();
       {
@@ -242,7 +242,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
               window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
         }
       }
-      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+      Window_HighlightRect((s16)window->x + 1,
+                           (s16)window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
@@ -253,8 +254,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         Oam_AddSpriteAtDepth(&sprites[index], 240);
     }
 
-    cursorPosition.x = window->x * 8 - 2;
-    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    cursorPosition.x = (s16)window->x * 8 - 2;
+    cursorPosition.y = (selectedRow * 2 + (s16)window->y) * 8 + 20;
     ((u32 *)cur)[1] = 0x40000000;
     ((u32 *)cur)[2] = 0;
     cur->oam.index =
@@ -272,8 +273,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         tile = 15 - (blink != 0);
         if ((1 << element & mask) == 0)
           tile = 15;
-        Window_HighlightRect(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
-                             tile);
+        Window_HighlightRect((s16)counts->x + element * 2 + 1,
+                             (s16)counts->y + 1, 2, 1, tile);
       }
     }
 
@@ -289,7 +290,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                              window->width - (count + 3) / 4 - 3, -1, 0);
       Window_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
       do {
-        work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+        work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
       } while (0);
     }
 

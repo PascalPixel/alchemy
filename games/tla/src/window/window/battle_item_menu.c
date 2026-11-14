@@ -125,14 +125,14 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 drawnFirstEntry;
   s32 drawnRow;
   s32 cursorHandle;
-  struct ItemMenuWindow *messageWindow;
+  struct RenderInput *messageWindow;
   s32 iconCount;
   s32 preferredRow;
   struct {
     s32 x, y;
   } cursorPosition;
   struct BattleMenuWork *navigation;
-  struct ItemMenuWindow *window;
+  struct RenderInput *window;
   s32 firstEntry;
   s32 selectedRow;
   s32 item;
@@ -174,8 +174,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     iconSprite = &sprites[i];
     sprites[i].oam.word.attr01 = 0x40000000;
     sprites[i].oam.word.attr23 = t;
-    iconSprite->oam.f.x = window->x * 8 + 8;
-    t = window->y;
+    iconSprite->oam.f.x = (s16)window->x * 8 + 8;
+    t = (s16)window->y;
     iconSprite->oam.f.y = (y + t) * 8 + 4;
   }
   for (i = 0; i < 5; i++) {
@@ -193,8 +193,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
-                           window->width - 2, 1, 15);
+      Window_HighlightRect((s16)window->x + 1,
+                           (s16)window->y + drawnRow * 2 + 1, window->width - 2,
+                           1, 15);
       Text_FillCanvasBackground();
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
@@ -238,7 +239,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
               window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
         }
       }
-      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+      Window_HighlightRect((s16)window->x + 1,
+                           (s16)window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
@@ -259,7 +261,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                              window->width - (count + 4) / 5 - 3, pageTile, 0);
       Window_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
       do {
-        work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+        work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
       } while (0);
     }
 
@@ -268,8 +270,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       Oam_AddSpriteAtDepth(iconSprite, 240);
     }
 
-    cursorPosition.x = window->x * 8 - 2;
-    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    cursorPosition.x = (s16)window->x * 8 - 2;
+    cursorPosition.y = (selectedRow * 2 + (s16)window->y) * 8 + 20;
     /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds. */
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = 0x40000000;

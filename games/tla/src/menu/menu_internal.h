@@ -295,12 +295,6 @@ struct PsynergyMenuState {
   u8 unk26d[3];
 };
 
-struct DjinnUnit {
-  u8 unk000[0xf8];
-  u32 djinnHeld[4];
-  u32 djinnSet[4];
-};
-
 // The menu object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
 void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window);

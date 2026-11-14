@@ -260,7 +260,7 @@ void PartyStatus_Draw(s32 flags) {
   if (flags & PARTY_STATUS_SHOW_DJINN)
     x = PARTY_STATUS_DJINN_WIDTH;
   for (i = 0; i != count; i++) {
-    struct StatusUnit *unit = Unit_Get(members[i]);
+    struct BattleUnit *unit = Unit_Get(members[i]);
     s32 hp = unit->hp;
     s32 maxHp = unit->maxHp;
     s32 barLength;

@@ -454,15 +454,6 @@ struct SummaryNavigation {
   u16 list[64];
 };
 
-struct SummaryAbility {
-  u8 unk00;
-  u8 flags; ///< bit 7: usable in battle
-  u8 element;
-  u8 unk03[5];
-  u8 range;
-  u8 ppCost;
-};
-
 struct SummaryStatCursor {
   u8 entry;
   u8 column;
@@ -596,14 +587,6 @@ struct UiWindowBounds {
   u16 right;
   u16 height;
   u16 flags;
-};
-
-struct StatusUnit {
-  u8 name[0x34];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
 };
 
 struct SaveGameWords {

@@ -906,13 +906,6 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
     Text_DrawMessageFar((s32)MsgStatusNormal, target, 0, 0);
 }
 
-struct StatusOwner {
-  u8 unk000[15];
-  u8 level;
-  u8 unk010[276];
-  s32 experience;
-};
-
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define HELP_LENGTH 80
@@ -938,7 +931,7 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
     help++;
   if (help == 1) {
     u8 *owner = menu + 0x216;
-    struct StatusOwner *state = Unit_Get(*owner);
+    struct BattleUnit *state = Unit_Get(*owner);
 
     if (state->level == 99)
       help = 8;

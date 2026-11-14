@@ -685,7 +685,7 @@ s32 Djinn_CheckGiveBalance(s32 from, s32 to) {
 /// column.
 void Djinn_CountOwned(u8 *counts) {
   struct DjinnMenuWork *work;
-  struct DjinnUnit *unit;
+  struct BattleUnit *unit;
   s32 ownerIndex;
   s32 element;
   s32 bit;
@@ -697,9 +697,9 @@ void Djinn_CountOwned(u8 *counts) {
     count = 0;
     for (element = 0; element <= 3; element++) {
       for (bit = 0; bit <= 19; bit++) {
-        if (unit->djinnSet[element] & (1 << bit))
+        if (unit->djinnActive[element] & (1 << bit))
           count++;
-        else if (unit->djinnHeld[element] & (1 << bit))
+        else if (unit->djinnAvailable[element] & (1 << bit))
           count++;
       }
     }

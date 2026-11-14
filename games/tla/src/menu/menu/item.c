@@ -1447,24 +1447,14 @@ struct PreviewMenu {
   void *statusWindow;
 };
 
-struct PreviewUnit {
-  u8 unk000[0xd8];
-  u16 inventory[15];
-};
-
-struct PreviewItem {
-  u8 unk00[2];
-  u8 type;
-};
-
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   struct PreviewMenu *menu = Ram_HeapSlots->menuRuntime;
   s32 style = 0;
-  struct PreviewUnit *unit = Unit_Get(owner);
+  struct BattleUnit *unit = Unit_Get(owner);
   s32 entry = unit->inventory[slot];
   s32 previewSlot;
   void *buffer;
-  struct PreviewItem *item = Item_GetDirectFar(entry & ITEM_ID_MASK);
+  struct ItemDefinition *item = Item_GetDirectFar(entry & ITEM_ID_MASK);
 
   if (mode == 1)
     style = 0x100;

@@ -1587,7 +1587,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 #define DJINN_ENTRY_SET (-0x8000)
 
 s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
-  struct DjinnUnit *unit = Unit_Get(memberId);
+  struct BattleUnit *unit = Unit_Get(memberId);
   s32 count = 0;
   s32 elementIndex;
   s32 djinnIndex;
@@ -1596,11 +1596,11 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
   if (element == -1) {
     for (elementIndex = 0; elementIndex < 4; elementIndex++) {
       for (djinnIndex = 0; djinnIndex < 20; djinnIndex++) {
-        if (unit->djinnSet[elementIndex] & (1 << djinnIndex)) {
+        if (unit->djinnActive[elementIndex] & (1 << djinnIndex)) {
           encodedDjinn = (elementIndex << 5) | djinnIndex | DJINN_ENTRY_SET;
           encodedDjinn |= memberId << 8;
           entriesOut[count++] = encodedDjinn;
-        } else if (unit->djinnHeld[elementIndex] & (1 << djinnIndex)) {
+        } else if (unit->djinnAvailable[elementIndex] & (1 << djinnIndex)) {
           entriesOut[count++] =
               (elementIndex << 5) | djinnIndex | (memberId << 8);
         }
@@ -1608,9 +1608,9 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
     }
   } else {
     for (djinnIndex = 0; djinnIndex < 20; djinnIndex++) {
-      if (unit->djinnSet[element] & (1 << djinnIndex))
+      if (unit->djinnActive[element] & (1 << djinnIndex))
         entriesOut[count++] = (element << 5) | djinnIndex | DJINN_ENTRY_SET;
-      else if (unit->djinnHeld[element] & (1 << djinnIndex))
+      else if (unit->djinnAvailable[element] & (1 << djinnIndex))
         entriesOut[count++] = (element << 5) | djinnIndex;
     }
   }

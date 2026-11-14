@@ -614,7 +614,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (rowBase != j) {
           Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
           for (j = 0; j <= 3 && (id = entries[rowBase + j]) != 0; j++) {
-            struct SummaryAbility *ability = Ability_Get(id);
+            struct BattleAct *ability = Ability_Get(id);
             s32 range;
             s32 tileFlags;
 

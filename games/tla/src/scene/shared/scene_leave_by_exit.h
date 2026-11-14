@@ -1,5 +1,5 @@
-/// Leaves by exit 1 after Teleport_StartShimmer and Teleport_PlaySparks, then runs
-/// Teleport_StopShimmer.
+/// Leaves by exit 1 after Teleport_StartShimmer and Teleport_PlaySparks, then
+/// runs Teleport_StopShimmer.
 void Scene_LeaveByExit(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();

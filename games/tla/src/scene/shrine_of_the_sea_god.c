@@ -2020,7 +2020,8 @@ void ShrineOfTheSeaGod_InitializeRoom5(void) {
   Actor_PlaceBlocks(gShrineOfTheSeaGod_MovableActors);
   ShrineOfTheSeaGod_LightTorch();
   ShrineOfTheSeaGod_TaskAdd(ShrineOfTheSeaGod_KeepFlameOnTorch, 0x480);
-  if (GameFlag_Get(FLAG_DJINNI(DJINNI_BREATH)) || GameFlag_Get(FLAG_FIGHTING_BREATH)) {
+  if (GameFlag_Get(FLAG_DJINNI(DJINNI_BREATH)) ||
+      GameFlag_Get(FLAG_FIGHTING_BREATH)) {
     GameFlag_Set(FLAG_DJINNI_CHASE_OVER);
   } else if (GameFlag_Get(FLAG_DJINNI_ON_LEDGE)) {
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);

@@ -1094,8 +1094,8 @@ s32 Scene_Initialize(void) {
     ((struct FieldWork *)heap->fieldWork)->transition = value;
     if (entrance - 1 <= 1U) {
       FlameThrowers_Start(gMarsLighthouseRoomF_MarsButtonFlameThrowers,
-                 gMarsLighthouseRoomF_MarsButtonFlameStops,
-                 MarsLighthouseRoomF_LightTorch, 88);
+                          gMarsLighthouseRoomF_MarsButtonFlameStops,
+                          MarsLighthouseRoomF_LightTorch, 88);
       if (Flag_IsSet(FLAG_MARS_TORCH_LIT))
         Actor_SetPosition(ACTOR_MARS_TORCH_STATUE, 0, 0);
       else
@@ -1110,7 +1110,7 @@ s32 Scene_Initialize(void) {
         MarsLighthouseRoomF_BurstCenterWall(1, 0);
     } else {
       FlameThrowers_Start(gMarsLighthouseRoomF_MarsPipeFlameThrowers,
-                 gMarsLighthouseRoomF_MarsPipeFlameStops, 0, 88);
+                          gMarsLighthouseRoomF_MarsPipeFlameStops, 0, 88);
       Actor_DisableById(ACTOR_MARS_PIPE_A);
       Actor_DisableById(ACTOR_MARS_PIPE_B);
       PushTarget_FillFootprint(ACTOR_MARS_PIPE_A);
@@ -1121,8 +1121,8 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
     FlameThrowers_Start(gMarsLighthouseRoomF_MercuryFlameThrowers,
-               gMarsLighthouseRoomF_MercuryFlameStops,
-               MarsLighthouseRoomF_ShootFireballAtIcebergs, 88);
+                        gMarsLighthouseRoomF_MercuryFlameStops,
+                        MarsLighthouseRoomF_ShootFireballAtIcebergs, 88);
     Ride_SetEntryCount(3, 1);
     if (entrance == 2)
       Ride_ReleaseHandle();
@@ -1193,12 +1193,12 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_JUPITER_STATUE, 120, 296);
     if (entrance - 14 <= 1U) {
       FlameThrowers_Start(gMarsLighthouseRoomF_JupiterUpperFlameThrowers,
-                 gMarsLighthouseRoomF_JupiterUpperFlameStops,
-                 MarsLighthouseRoomF_DropFireball, 88);
+                          gMarsLighthouseRoomF_JupiterUpperFlameStops,
+                          MarsLighthouseRoomF_DropFireball, 88);
       Ride_SetEntryCount(0, 1);
     } else {
       FlameThrowers_Start(gMarsLighthouseRoomF_JupiterFlameThrowers,
-                 gMarsLighthouseRoomF_JupiterFlameStops, 0, 88);
+                          gMarsLighthouseRoomF_JupiterFlameStops, 0, 88);
     }
     if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 7 ||
@@ -1219,14 +1219,14 @@ s32 Scene_Initialize(void) {
     BYTE_AT(Actor_GetById(ACTOR_TIGHTROPE_FAR_POST), 98) = 1;
     if (entrance - 5 <= 1U || entrance == 8) {
       FlameThrowers_Start(gMarsLighthouseRoomF_VenusFlameThrowers,
-                 gMarsLighthouseRoomF_VenusFlameStops, 0, 88);
+                          gMarsLighthouseRoomF_VenusFlameStops, 0, 88);
 #if TLA_PATCH_1
       MarsLighthouseRoomF_FillGapsWithStones();
 #endif
     } else if (entrance == 11 || entrance == 13 || entrance == 14 ||
                entrance == 1 || entrance == 15) {
       FlameThrowers_Start(gMarsLighthouseRoomF_VenusStatueFlameThrowers,
-                 gMarsLighthouseRoomF_VenusStatueFlameStops, 0, 88);
+                          gMarsLighthouseRoomF_VenusStatueFlameStops, 0, 88);
     }
     if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       if (entrance == 15)
@@ -1921,7 +1921,8 @@ struct RideRow {
 void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
 
 void Ride_ReleaseHandle(void) {
-  struct FlameHitWork *work = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work =
+      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
 
   Actor_Release(work->handle);
   work->handle = NULL;
@@ -1959,7 +1960,8 @@ void Ride_SetEntry__ride(s32 index, s32 value) __asm__("Ride_SetEntry");
 #include "shared/ride_set_entry.h"
 
 void Ride_SetEntryCount(s32 index, s16 value) {
-  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
+  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->entries[index].c =
+      value;
 }
 
 s32 Ride_GetEntryFlags(s32 index) {

@@ -50,17 +50,18 @@ s32 Trig_Cos(s32 angle);
 
 void Func_02001e1c(struct Actor *object, s32 part);
 
-static inline void Map_CopyCellAttributeRect_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
-                                  s32 a5) {
+static inline void Map_CopyCellAttributeRect_(s32 a0, s32 a1, s32 a2, s32 a3,
+                                              s32 a4, s32 a5) {
   Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
 }
 
-static inline void MapGrid_CopyCellPictureCellsRect_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
-                                  s32 a5) {
+static inline void MapGrid_CopyCellPictureCellsRect_(s32 a0, s32 a1, s32 a2,
+                                                     s32 a3, s32 a4, s32 a5) {
   MapGrid_CopyCellPictureCellsRect(a0, a1, a2, a3, a4, a5);
 }
 
-static inline void Actor_SetHorizontalPositionWithTerrain_(s32 id, s32 x, s32 z) {
+static inline void Actor_SetHorizontalPositionWithTerrain_(s32 id, s32 x,
+                                                           s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 

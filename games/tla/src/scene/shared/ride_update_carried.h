@@ -1,7 +1,8 @@
 /// A ridden object's update: it drifts and slows, and lands the leader where it
 /// touches down.
 void Flame_UpdateForward(struct Actor *object) {
-  struct FlameHitWork *work = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work =
+      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;

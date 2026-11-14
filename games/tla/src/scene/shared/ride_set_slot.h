@@ -1,6 +1,7 @@
 /// Sets a ride slot's value.
 void Ride_SetSlot(u32 index, s32 value) {
-  struct FlameHitWork *work = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work =
+      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
 
   if (index <= 3)
     work->slots[index].id = value;

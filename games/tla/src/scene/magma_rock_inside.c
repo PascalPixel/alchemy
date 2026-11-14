@@ -188,8 +188,8 @@ extern u32 gMagmaRockInside_RubbleScript[];
 extern u32 gMagmaRockInside_DustScript[];
 
 void MagmaRockInside_DecompressTaggedLz(void *entry, void *destination);
-void MagmaRockInside_InitRockSprite(struct RockSprite__s4b18 *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
+void MagmaRockInside_InitRockSprite(struct RockSprite__s4b18 *sprite, s32 width,
+                                    s32 height, u32 attributes, s32 tile);
 
 void Particles_UpdateFalling(void);
 
@@ -2833,7 +2833,8 @@ void MagmaRockInside_StartFallingRocks(void) {
   struct Rock *rock;
   struct RockSprite *sprite;
 
-  MagmaRockInside_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  MagmaRockInside_DecompressTaggedLz(
+      Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

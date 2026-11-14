@@ -52,11 +52,12 @@ struct MainRoutineWork254 {
 };
 
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void TrialRoad_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void TrialRoad_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                s32 g);
 void Import_MadPlantLeapAtLeader(s32 a, s32 b, s32 c);
 
-static __inline__ void Cyclone_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                      s32 g) {
+static __inline__ void Cyclone_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d,
+                                                 s32 e, s32 f, s32 g) {
   TrialRoad_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 

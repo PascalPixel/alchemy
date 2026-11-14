@@ -1567,7 +1567,8 @@ s32 Ride_GetCounter(void) {
 #include "shared/ride_set_entry.h"
 
 void Ride_SetEntryCount(s32 index, s16 value) {
-  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
+  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->entries[index].c =
+      value;
 }
 
 s32 Ride_GetEntryFlags(s32 index) {

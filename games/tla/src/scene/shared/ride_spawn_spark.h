@@ -1,7 +1,7 @@
 /// Spawns a spark thrown up at `speed`.
 void Ride_SpawnSpark(s32 *position, s32 speed) {
-  struct Actor *object =
-      Import_ActorCreate_(285, position[0], position[1], position[2] + 0xfffe0000);
+  struct Actor *object = Import_ActorCreate_(285, position[0], position[1],
+                                             position[2] + 0xfffe0000);
   s32 spin;
 
   if (object != NULL) {

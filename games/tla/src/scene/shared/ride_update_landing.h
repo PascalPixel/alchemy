@@ -1,6 +1,7 @@
 /// Flame_UpdateForward for the rides that set the direction through their work.
 void Flame_UpdateLanding(struct Actor *object) {
-  struct FlameHitWork *work = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work =
+      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;

@@ -83,7 +83,6 @@
 /// The way in from the cracked floor above, landing below the crack.
 #define ENTRANCE_FROM_CRACK 11
 
-
 enum {
   /// The dragon statue before the statue with the face, in two halves; Blaze
   /// is cast at the east half and hits the west one.
@@ -732,7 +731,8 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     i = 0;
     offset = 216;
     for (; i <= 14; offset += 2, i++) {
-      if ((*(u16 *)(Unit_Get(4) + offset) & 0x1ff) == ITEM_MYTHRIL_BAG_MARS_STAR) {
+      if ((*(u16 *)(Unit_Get(4) + offset) & 0x1ff) ==
+          ITEM_MYTHRIL_BAG_MARS_STAR) {
         Inventory_Equip(4, i);
         break;
       }
@@ -1500,7 +1500,8 @@ struct RideAnimation {
 extern u8 gInventorySnapshot[];
 
 void Ride_Create(void) {
-  struct FlameHitWork *work = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work =
+      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   struct Actor *object;
   struct RideAnimation *animation;
 
@@ -1655,7 +1656,8 @@ s32 Ride_GetCounter(void) {
 #include "shared/ride_set_entry.h"
 
 void Ride_SetEntryCount(s32 index, s16 value) {
-  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
+  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->entries[index].c =
+      value;
 }
 
 s32 Ride_GetEntryFlags(s32 index) {

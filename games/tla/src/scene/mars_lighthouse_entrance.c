@@ -312,7 +312,7 @@ next:
     s32 x = source->x + (Random16() << 4) - (Random16() << 4);
     struct Actor *object =
         Import_ActorCreate_(0x145, x, (Random16() << 3) + source->y + px(4),
-                       source->z + (Random16() << 4) - (Random16() << 4));
+                            source->z + (Random16() << 4) - (Random16() << 4));
 
     if (object != NULL) {
       s32 angle;
@@ -379,7 +379,8 @@ void MarsLighthouseEntrance_Teleport(void) {
     Teleport_PlaySparks();
     WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
-    Actor_SetHorizontalPositionWithTerrain_(gMainRoutineWork.currentOwner, px(688), px(360));
+    Actor_SetHorizontalPositionWithTerrain_(gMainRoutineWork.currentOwner,
+                                            px(688), px(360));
     FieldCamera_MoveTo(688, CAMERA_KEEP, 360, 1);
     FieldCamera_WaitForArrival();
     Teleport_PlayWhirl();
@@ -822,11 +823,12 @@ extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
 /* VIEW(mars_lighthouse_entrance): routine Actor_HoldDuringEvent as void
  * Actor_HoldDuringEvent(void); scene/mars_lighthouse_entrance/s263c has void
  * Actor_HoldDuringEvent(struct Actor *object) {; tried as the definition's void
- * Actor_HoldDuringEvent(struct Actor *object), which the object already declares, it
- * does not compile in tla-ja:
+ * Actor_HoldDuringEvent(struct Actor *object), which the object already
+ * declares, it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_entrance.c:1630: conflicting types for
  * `Actor_HoldDuringEvent'. */
-void Func_02002c2c__mars_lighthouse_entrance(void) __asm__("Actor_HoldDuringEvent");
+void Func_02002c2c__mars_lighthouse_entrance(void) __asm__(
+    "Actor_HoldDuringEvent");
 #define Actor_HoldDuringEvent Func_02002c2c__mars_lighthouse_entrance
 
 /// The dragon face wakes and begins its slow way left, breathing fire.
@@ -1065,7 +1067,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance3) {
     FieldEffect_StartBlankOverlay(0);
     FlameThrowers_Start((s32)gMarsLighthouseEntrance_Room3BeamTargets,
-               (s32)gMarsLighthouseEntrance_Room3BeamStops, 0, 88);
+                        (s32)gMarsLighthouseEntrance_Room3BeamStops, 0, 88);
     MarsLighthouseEntrance_PlaceIceCones(
         (s32)gMarsLighthouseEntrance_Room3IceCones);
     if (Event_GetFlag(FLAG_ROOM3_SHEET_BURST)) {
@@ -1128,8 +1130,8 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     if (entrance == 10 || entrance == 1) {
       FlameThrowers_Start((s32)gMarsLighthouseEntrance_Room4BeamTargets,
-                 (s32)gMarsLighthouseEntrance_Room4BeamStops,
-                 (s32)MarsLighthouseEntrance_ShootRoom4Fireball, 88);
+                          (s32)gMarsLighthouseEntrance_Room4BeamStops,
+                          (s32)MarsLighthouseEntrance_ShootRoom4Fireball, 88);
       Ride_SetEntryCount(0, 1);
     }
     MarsLighthouseEntrance_PlaceIceCones(
@@ -1152,16 +1154,18 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 13) {
       FlameThrowers_Start((s32)gMarsLighthouseEntrance_Room6UpperBeamTargets,
-                 (s32)gMarsLighthouseEntrance_Room6UpperBeamStops,
-                 (s32)MarsLighthouseEntrance_ShootRoom6UpperFireball, 88);
+                          (s32)gMarsLighthouseEntrance_Room6UpperBeamStops,
+                          (s32)MarsLighthouseEntrance_ShootRoom6UpperFireball,
+                          88);
       Ride_SetEntryCount(0, 1);
     }
     if ((u32)(entrance - 7) <= 1 || entrance == 11) {
       struct Actor *target;
 
       FlameThrowers_Start((s32)gMarsLighthouseEntrance_Room6LowerBeamTargets,
-                 (s32)gMarsLighthouseEntrance_Room6LowerBeamStops,
-                 (s32)MarsLighthouseEntrance_ShootRoom6LowerFireball, 88);
+                          (s32)gMarsLighthouseEntrance_Room6LowerBeamStops,
+                          (s32)MarsLighthouseEntrance_ShootRoom6LowerFireball,
+                          88);
       Ride_SetEntryCount(0, 1);
       if (entrance == 11) {
         Actor_SetScript(11, gMarsLighthouseEntrance_DragonFaceAtLeft);
@@ -2265,7 +2269,9 @@ void PaletteCycle_Fade(void) {
     return;
   src = gPaletteCycle_Colors;
   for (i = 0; i < gPaletteCycle_Count; i++) {
-    dst = &BG_PLTT[gPaletteCycle_Order[gPaletteCycle_Step * gPaletteCycle_Count + i]];
+    dst =
+        &BG_PLTT[gPaletteCycle_Order[gPaletteCycle_Step * gPaletteCycle_Count +
+                                     i]];
     red = *src++;
     green = *src++;
     blue = *src++;

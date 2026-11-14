@@ -243,10 +243,10 @@
 #define FLAG_ISAAC_AND_IVAN_FELL 0xa23
 /// Set as the Jupiter Star lights the beacon; Contigo's people speak of it.
 #define FLAG_JUPITER_BEACON_LIT 0xa21
-/// Set in the Mars Lighthouse's aerie as the talk after the Doom Dragon's battle
-/// ends, just before the voice asks for the Mars Star; Prox's people say "only
-/// Mars Lighthouse still needs lighting" while it is clear and thank the party
-/// for lighting the beacon once it is set.
+/// Set in the Mars Lighthouse's aerie as the talk after the Doom Dragon's
+/// battle ends, just before the voice asks for the Mars Star; Prox's people say
+/// "only Mars Lighthouse still needs lighting" while it is clear and thank the
+/// party for lighting the beacon once it is set.
 #define FLAG_MARS_BEACON_LIT 0xa3d
 /// Set at the end of the reunion in Contigo, where the two parties hear what
 /// happened on Mt. Aleph; the shipwrights at Atteka Inlet then wait with the

@@ -892,7 +892,9 @@ void TaopoSwamp_CoolLastRock(s32 a, s32 id) {
 /// Scoop on the sparkle in the dark chamber digs up the Star Dust (flag 0x348).
 void TaopoSwamp_ScoopStarDust(s32 a) { Event_DigUpTreasure(a, 64, 0x348); }
 
-void TaopoSwamp_ShowSparkleMessage(void) { TaopoSwamp_ShowMessage((s32)&MsgIThoughtI); }
+void TaopoSwamp_ShowSparkleMessage(void) {
+  TaopoSwamp_ShowMessage((s32)&MsgIThoughtI);
+}
 
 extern struct Trigger gTaopoSwamp_Triggers[];
 extern struct Trigger gTaopoSwamp_Room1Triggers[];

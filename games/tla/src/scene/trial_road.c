@@ -1262,7 +1262,9 @@ void TrialRoad_DriftWithStream(void) {
 
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_SCENE_TEMP_89); }
 
-void TrialRoad_CutBushes(void) { Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64); }
+void TrialRoad_CutBushes(void) {
+  Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
+}
 
 void TrialRoad_CutMadPlantBushes(void) {
   Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);

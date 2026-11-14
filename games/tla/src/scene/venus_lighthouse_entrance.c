@@ -80,8 +80,9 @@ struct DustPuffWork {
 };
 
 s32 Actor_FallOverWithAnimationById();
-void VenusLighthouseEntrance_InitGlowSprite(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
-                   s32 tile);
+void VenusLighthouseEntrance_InitGlowSprite(struct GlowSprite *sprite,
+                                            s32 width, s32 height, s32 attr,
+                                            s32 tile);
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

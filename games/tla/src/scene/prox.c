@@ -996,7 +996,8 @@ void Prox_MoldHidesInSnow(void) {
 }
 
 void Prox_ScoopUpMold(void) {
-  if (Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0 && Event_GetFlag(FLAG_DJINNI(DJINNI_MOLD)) == 0) {
+  if (Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0 &&
+      Event_GetFlag(FLAG_DJINNI(DJINNI_MOLD)) == 0) {
     u8 *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
@@ -2125,8 +2126,8 @@ struct RockSprite__s4254 {
   u8 unk20[8];
 };
 
-void Prox_InitRockSprite(struct RockSprite__s4254 *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
+void Prox_InitRockSprite(struct RockSprite__s4254 *sprite, s32 width,
+                         s32 height, u32 attributes, s32 tile);
 
 UNUSED void Prox_StartFallingRocks(void) {
   struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));

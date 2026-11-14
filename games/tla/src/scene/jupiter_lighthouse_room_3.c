@@ -13,6 +13,7 @@
 /// cached pictures.
 
 #include "system/system.h"
+#include "system/io_write.h"
 #include "flags.h"
 #include "shared/tables.h"
 #include "types.h"
@@ -554,59 +555,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-void CrackedTile_Fall(struct PushEvent *event) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x;
-  s32 z;
-  s32 mask;
-
-  mask = 64;
-  x = object->x >> 20;
-  do {
-  } while (0);
-  x |= (s16)(event->x & mask);
-  z = object->z >> 20;
-  z |= (s16)(event->z & mask);
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  {
-    u32 zero = 0;
-
-    object->facing = 0x4000;
-    object->motionFlags = zero;
-  }
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  {
-    /* FAKEMATCH(temporary): a word local holding 0xf1f, built with movs,
-     * lsls, adds as the native does. */
-    u32 winout = 0xf1f;
-
-    REG_WINOUT = winout;
-  }
-  do {
-  } while (0);
-  REG_DISPCNT |= 0x8000;
-  event->busy = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  for (x = 0; x < 40; x++) {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    object->scaleX += -0x400;
-    object->scaleY += -0x300;
-    object->y += -0x9999;
-    System_Wait(1);
-  }
-  do {
-    Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  } while (0);
-  event->busy = 0;
-  gFieldWork->transition = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -638,16 +587,9 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 #include "shared/cracked_tile_drop_in.h"
 
 void CrackedTile_Crack();
-/* VIEW(cracked_tile_steps): routine CrackedTile_Fall as this part declared it,
- * with no parameter list; the joined file defines it with one. */
-void CrackedTile_FallEvent__cracked_tile_steps() __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_FallEvent__cracked_tile_steps
-
 #include "shared/cracked_tiles_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
-
-#undef CrackedTile_Fall
 
 // @file
 // The tables of Jupiter Lighthouse's room of gaps and logs that the scene's

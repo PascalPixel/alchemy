@@ -93,10 +93,10 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
-extern u32 gData_0200116c[];
+extern u32 gFieldEffect_ShortScript[];
 
-extern u32 gData_020011a8[];
-extern u32 gData_020011e4[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -640,19 +640,19 @@ void Func_02000fe4(void) {
 }
 
 // clang-format off
-u32 gData_0200116c[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020011a8[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020011e4[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
@@ -663,9 +663,9 @@ s16 gData_02001220[] = {
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
-    gData_0200116c,
-    gData_020011a8,
-    gData_020011e4,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

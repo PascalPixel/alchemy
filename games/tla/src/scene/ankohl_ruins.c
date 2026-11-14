@@ -1225,9 +1225,9 @@ void Func_020022a8(void);
 void Func_02002318(void);
 void Func_02002328(void);
 
-extern u32 gData_02002ef4[];
-extern u32 gData_02002f30[];
-extern u32 gData_02002f6c[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 extern s32 gData_02003268[];
 extern u32 gData_02003280[];
 extern u32 gData_02003290[];
@@ -1782,19 +1782,19 @@ void AnkohlRuins_RaiseSecondSand(void);
 void Func_020022e0(void);
 
 // clang-format off
-u32 gData_02002ef4[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02002f30[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02002f6c[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
@@ -1814,9 +1814,9 @@ struct AnkohlRuinsSandRow gAnkohlRuins_SecondSandRows[] = {
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
-    gData_02002ef4,
-    gData_02002f30,
-    gData_02002f6c,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

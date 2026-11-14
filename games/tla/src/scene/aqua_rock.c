@@ -1535,19 +1535,19 @@ void Func_02002834(s32 id) {
 }
 
 // clang-format off
-u32 gData_02002a78[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02002ab4[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02002af0[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
@@ -1666,9 +1666,9 @@ LATE_DATA s16 gGroundParticleFrames[] = {
   };
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
-    gData_02002a78,
-    gData_02002ab4,
-    gData_02002af0,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {

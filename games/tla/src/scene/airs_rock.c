@@ -423,7 +423,7 @@ void Func_0200095c(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02000840;
@@ -662,7 +662,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1213,7 +1213,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1439,7 +1439,7 @@ void Func_020026b8(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1868,19 +1868,19 @@ s32 Scene_PrepareMap(void) {
 void Func_02000620(void);
 
 // clang-format off
-u32 gData_02003ce0[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02003d1c[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02003d58[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
@@ -1891,9 +1891,9 @@ s16 gData_02003d94[] = {
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
-    gData_02003ce0,
-    gData_02003d1c,
-    gData_02003d58,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gData_02003dac[] = {

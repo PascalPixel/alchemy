@@ -72,9 +72,9 @@ void Func_02001da8(void);
 void Func_02001f7c(void);
 void Func_020026b8(void);
 
-extern u32 gData_02003ce0[];
-extern u32 gData_02003d1c[];
-extern u32 gData_02003d58[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 extern s32 gData_02003dac[];
 
 void Func_02002b88(void);

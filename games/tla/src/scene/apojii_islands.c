@@ -149,9 +149,9 @@ void Func_02000ba8(void);
 void ApojiiIslands_EnterDoor(void);
 void Func_02000d74(void);
 void Func_020010d0(void);
-extern u32 gData_02001e34[];
-extern u32 gData_02001e70[];
-extern u32 gData_02001eac[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 extern s32 gData_02002044[];
 
 extern u16 gData_02002a58[16];
@@ -916,19 +916,19 @@ void Func_02001ba0(s32 id) {
 #endif
 
 // clang-format off
-u32 gData_02001e34[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02001e70[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02001eac[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
@@ -959,9 +959,9 @@ s16 gGroundParticleFrames[] = {
   };
 
 const s32 *gFieldEffect_DurationScripts[] = {
-    gData_02001e34,
-    gData_02001e70,
-    gData_02001eac,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gData_02002044[] = {

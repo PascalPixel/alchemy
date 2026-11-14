@@ -478,19 +478,19 @@ void Func_02000bd4(u16 value) { gData_02001de2 = value; }
 void Func_02000be0(u16 value) { gData_02001de4 = value; }
 
 // clang-format off
-u32 gData_02000d6c[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02000da8[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02000de4[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
@@ -529,9 +529,9 @@ s8 gData_02000eec[] = {
 #undef EFFECT_SPRITE_PRIORITY
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
-    gData_02000d6c,
-    gData_02000da8,
-    gData_02000de4,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 LATE_DATA s32 gData_02001970[] = {

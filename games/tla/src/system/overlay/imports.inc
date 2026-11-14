@@ -373,7 +373,7 @@
 	export Actor_GetSpriteById, Actor_GetSpriteByIdFar
 	export WorldMap_StartZoom, WorldMap_StartZoomFar
 	export Func_02004604, EffectSprite_InitFar
-	export Func_02003d90, Rope_InitializeFar
+	export DehkanPlateau_InitializeRopes, Rope_InitializeFar
 	export Idejima_CountAnswer, Func_080c8930
 	export ObjectTable_Snapshot, ObjectTable_SnapshotFar
 	export Actor_Spawn, Actor_SpawnFar

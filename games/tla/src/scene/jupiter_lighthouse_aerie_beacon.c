@@ -2751,7 +2751,7 @@ LATE_DATA u32 gFieldEffect_MediumScript[] = {
       SC_END,                                                                  
   };
 
-LATE_DATA s32 gData_02005f10[] = {
+LATE_DATA s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
     SC_WAIT(1),
@@ -3039,5 +3039,5 @@ LATE_DATA u32 gData_020069fc[] = {
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
     gFieldEffect_MediumScript,
-    gData_02005f10,
+    gFieldEffect_LongScript,
 };

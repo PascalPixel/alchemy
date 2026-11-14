@@ -2471,19 +2471,19 @@ void Func_02003c00(s32 index, s32 value) {
 #include "shared/vents_set_id.h"
 
 // clang-format off
-u32 gData_02003f04[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02003f40[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02003f7c[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
@@ -2588,9 +2588,9 @@ LATE_DATA u32 gTaopoSwamp_PuffRises[] = {
 };
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
-    gData_02003f04,
-    gData_02003f40,
-    gData_02003f7c,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {

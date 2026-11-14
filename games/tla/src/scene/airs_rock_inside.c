@@ -236,7 +236,7 @@ void Func_02004ab8(void);
 void AirsRockInside_CheckPsynergyStone(void);
 void Func_02004880(void);
 
-extern u32 gData_02005fd8[];
+extern u32 gFieldEffect_MediumScript[];
 extern u32 gData_020061f8[];
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
@@ -1192,7 +1192,7 @@ void Func_02001828(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02005fd8);
+      Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02002bd0;
@@ -1809,7 +1809,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02005fd8);
+      Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02002c40;
@@ -2111,7 +2111,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02005fd8);
+      Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02002c40;
@@ -3349,23 +3349,23 @@ s32 Scene_PrepareMap(void) {
 
 void Func_02000610(void);
 
-extern u32 gData_02005f9c[];
-extern u32 gData_02006014[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-u32 gData_02005f9c[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02005fd8[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02006014[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
@@ -3440,9 +3440,9 @@ s32 gData_02006158[] = {
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
-    gData_02005f9c,
-    gData_02005fd8,
-    gData_02006014,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 u32 gData_02006194[] = {

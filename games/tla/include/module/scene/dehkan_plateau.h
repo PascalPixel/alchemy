@@ -42,9 +42,6 @@ extern u16 gDehkanPlateau_Room1HolePictures[];
 extern u16 gDehkanPlateau_Room2HolePictures[];
 extern u16 gDehkanPlateau_Room3HolePictures[];
 extern u16 gDehkanPlateau_Room5HolePictures[];
-extern u16 gData_02004068[];
-extern u16 gData_02004110[];
-extern u16 gData_02004170[];
 
 void DehkanPlateau_JoltCamera(void);
 void DehkanPlateau_CannonCastsPound(void);
@@ -68,7 +65,7 @@ void DehkanPlateau_LiftRoom3Pillar(void);
 
 void DehkanPlateau_PushRoom3SecondPillar(void);
 
-void Func_020017f4(void);
+void DehkanPlateau_StepOffCrack(void);
 
 void DehkanPlateau_StepOnCrack(void);
 void Scene_RunIfHeld(void);
@@ -83,8 +80,8 @@ void DehkanPlateau_MeetCannon(void);
 void DehkanPlateau_TakePoundCube(void);
 void DehkanPlateau_LeaveRoom(void);
 
-extern u32 gData_02003e60[];
-extern u32 gData_02003e9c[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
 
 void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
@@ -102,7 +99,7 @@ struct AnimationFacing {
   u8 high : 4;
 };
 
-void Func_02002140(void);
+void DehkanPlateau_EnterConeCell(void);
 
 void DehkanPlateau_CannonCastsPoundOnLeader(void);
 
@@ -118,22 +115,20 @@ void DehkanPlateau_InitializeRoom6(void);
 
 void CrumblingPillars_Place(u16 *list);
 
-void Func_020012d8(void);
+void DehkanPlateau_SetRoom2StandingPillarCells(void);
 void DehkanPlateau_HideRoom2Actors(void);
 
-void Func_020013b0(void);
+void DehkanPlateau_SetRoom3StandingPillarCells(void);
 void DehkanPlateau_RestoreRoom3Cracks(void);
 void DehkanPlateau_HideRoom3Actors(void);
 
-void Func_02003d90(void);
+void DehkanPlateau_InitializeRopes(void);
 
-s32 Func_02003da0(s32 a, s32 b, s32 c);
 
-void Func_02003da8(s32 a, s32 b, s32 c, s32 d);
 
 void DehkanPlateau_HideRoom4Actors(void);
 
-void Func_02003764(void);
+void DehkanPlateau_LandFromFall(void);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -142,13 +137,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void DehkanPlateau_RestoreRoom5Cracks(void);
 
 void DehkanPlateau_CannonDropsPoundCube(void);
-void Func_020035ec(void);
-void Func_02003a30(void);
+void DehkanPlateau_DrawRoom5FallLanding(void);
+void DehkanPlateau_CreatePoundCube(void);
 
 void DehkanPlateau_HideRoom6Actors(void);
 
-void Func_02003de8(void);
-s32 Func_02003db0(struct Actor *object);
 extern s32 gDehkanPlateau_CrackX;
 
 #endif

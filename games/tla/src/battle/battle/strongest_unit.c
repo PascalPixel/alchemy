@@ -21,7 +21,6 @@ extern u32 Battle_RandomFar__strongest_unit(void) __asm__("Battle_RandomFar");
 /// Picks a random living target on one side: the party (target codes 0x100 +
 /// slot) when party is set, otherwise the enemies (0x180 + slot); 0 when none
 /// lives.
-// No ☀️ twin found.
 s32 BattleAI_ChooseRandomTarget(s32 party) {
   struct BattleWork *work;
   u16 targets[6];
@@ -52,7 +51,6 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
 /// Finds the living unit with the highest Attack on unitId's side (the party
 /// for ids 0 to 7, else the enemies), other than unitId itself; unitId when no
 /// other lives.
-// No ☀️ twin found.
 s32 BattleUnit_FindStrongestAlly(u32 unitId) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u32 best = unitId;

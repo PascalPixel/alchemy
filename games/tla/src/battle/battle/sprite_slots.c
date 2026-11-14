@@ -54,8 +54,6 @@ s32 Enemy_HasSpriteRoom(s32 arg0) {
 /// two neighbouring ones for a wide sprite. A few sprites load a second part
 /// into the next free slots. Returns the first slot in bits 12 and up with
 /// the sprite value below, or 0 when a load fails.
-// The Broken Seal's function of the same name, keyed by the enemy id, with
-// seven two-part sprites.
 s32 EnemySprite_LoadIntoSlots(s32 unit) {
   s32 pass;
   struct BattleSpriteSlots *table =

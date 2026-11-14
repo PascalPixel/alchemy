@@ -138,7 +138,6 @@ void BattleMotion_LeapBack(s32 objectId) {
 /// when it stands on the ground or for the strong variants (5 and up). Four
 /// enemies stay where they stand, and every object gets its vertical motion
 /// before it takes mode 5.
-// The Broken Seal's BattleMotion_ApplyVariantMotion.
 /// Knocks unit id back by the speed, hop and distance of the knockback
 /// variant (enum BattleKnockback), and puts it in POSE_DAMAGE.
 /// The Fusion Dragon only takes the pose. Reached through its far stub from

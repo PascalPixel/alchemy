@@ -844,7 +844,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   return commandCount;
 }
 
-// The command icon menu's frame task (The Broken Seal's IconMenu_DrawIcons):
+// The command icon menu's frame task:
 // pulses the selected icon with one affine matrix, draws the others plain,
 // and while the screen transition runs widens window 1 over the icon row.
 
@@ -1086,7 +1086,6 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
 
 /// Steps the selection from start to goal, redrawing the label each step and
 /// slowing as it nears the goal, then confirms.
-// ☀️'s function of the same name in window/battle_command.c.
 /// Animates a cursor from start to goal with table-driven delays. Draws each
 /// intervening label, pauses at the destination, and returns its position.
 /// It moves one icon at a time with the cursor sound, waiting
@@ -1302,9 +1301,6 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
 /// Offers the actions the files allow (plus two optional entries
 /// behind EWRAM flags) and maps the chosen position to an action. The second
 /// optional entry is 31, and with the first option off, action 4 becomes 5.
-// As ☀️'s FileList_SelectAction. A module of its own: in the Japanese
-// edition it follows Menu_AnimateSelectionToEntry, which is still scaffolded
-// there.
 /// Builds the File Screen's menu from the save summaries and optional send
 /// flags. Translates the chosen visible position back to its action (enum
 /// FileAction), or -1 when cancelled or the backup memory cannot be read. With
@@ -1371,7 +1367,6 @@ s32 FileList_SelectAction(void) {
 /// When the selected mode changes, clears the lower window's label area and
 /// writes the mode's lines of text. The area starts at x 8 and ends at
 /// LABEL_RIGHT; a mode past 2 draws nothing.
-// ☀️'s function of the same name.
 void Menu_DrawModeLabel(void) {
   struct MenuModeLabelState *state = Ram_HeapSlots->menuSelectWork;
 

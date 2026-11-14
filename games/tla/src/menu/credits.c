@@ -90,8 +90,7 @@ extern u8 gDebugTextEnabled;
 /// alt: 0 selects the first half (VRAM 0x06000000, palette colours 0-127);
 ///      1 selects the second (VRAM 0x06008000, colours 128-255, fill colour
 ///      129).
-// The twin of The Broken Seal's Credits_ClearBuffer.
-void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
+void Credits_ClearBuffer(s32 alt) {
   u32 v;
   u32 vram;
   u32 pal;
@@ -137,7 +136,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   s32 i;
 
   if (resourceId == 0) {
-    Graphics_ClearCharacterBlockAndPalette(alternate);
+    Credits_ClearBuffer(alternate);
     return;
   }
   resourceData = Resource_GetTableEntry(resourceId);
@@ -220,8 +219,8 @@ s32 Credits_Run(s32 mode) {
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
-  Graphics_ClearCharacterBlockAndPalette(0);
-  Graphics_ClearCharacterBlockAndPalette(1);
+  Credits_ClearBuffer(0);
+  Credits_ClearBuffer(1);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(31),
              &REG_BG2CNT);
@@ -422,10 +421,6 @@ void Credits_InitCrawlSprites(void) {
   for (i = 0; i < 32; i++)
     Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }
-
-// The clear goes through an inline wrapper, as the Broken Seal's iwram_call.h
-// writes Iwram_ClearWords; through this game's direct entry, the build shifts
-// the size before loading the routine's address.
 
 /// Draws one line of the credits' scrolling text: the message is drawn into a
 /// canvas of one byte a pixel, packed to two pixels a byte, and copied into
@@ -905,8 +900,8 @@ void EndingPicture_Start(void) {
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
-  Graphics_ClearCharacterBlockAndPalette(0);
-  Graphics_ClearCharacterBlockAndPalette(1);
+  Credits_ClearBuffer(0);
+  Credits_ClearBuffer(1);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(31),
              &REG_BG2CNT);
@@ -1078,7 +1073,6 @@ void EndingPicture_LowerTopStrip(s32 enable) {
 }
 
 /// The slideshow backdrops, ending in 0. Nothing reads this list.
-// The Broken Seal's list less one.
 // clang-format off
 const u32 gDisplayScroll_UnusedSlideResources[] = {
     (u32)&ResourceId_ValeStormBackdrop,

@@ -862,7 +862,6 @@ s32 TitleIntro_Run(void) {
 /// frames, or 5400 with the prompt; after the first 120 the prompt's three
 /// sprites blink by gTitle_PromptBlendLevels's levels, and A or Start ends it
 /// early, returning 1 (else 0).
-// As the end of The Broken Seal's Title_RunIntro.
 s32 Title_ShowIntro(s32 prompt) {
   s32 blankTile = 0x1ff;
   s32 result = 0;
@@ -977,13 +976,11 @@ s32 Title_ShowIntro(s32 prompt) {
 }
 
 /// An empty entry the far-call table keeps.
-// As The Broken Seal's.
 void Title_NoOpPalette(void) {}
 
 /// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
 /// two seconds; otherwise it waits a second, fades in, holds three seconds and
 /// fades out, faster once skipped. Returns -1 when A or Start skipped it.
-// As The Broken Seal's function of the same name.
 s32 Title_ShowNintendoLogo(s32 mode) {
   s32 result;
   u8 *data;

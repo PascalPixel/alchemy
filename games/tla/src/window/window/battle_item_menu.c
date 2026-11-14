@@ -113,8 +113,7 @@ struct ItemMenuWork {
 #define NAVIGATION ((struct ItemMenuNavigation *)Ram_HeapSlots->unke4[0])
 #define ITEM_BROKEN 0x400
 
-// Sets a menu sprite's attribute words, as The Broken Seal's
-// MenuSprite_Initialize.
+// Sets a menu sprite's attribute words.
 #define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \

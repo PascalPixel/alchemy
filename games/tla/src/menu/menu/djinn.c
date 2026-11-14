@@ -32,11 +32,6 @@ s32 Menu_GetDjinnGiveMessage(void) {
   return (s32)MsgDjinnGiveTutorialA;
 }
 
-// DjinnMenu_Run runs the Djinn menu, keeping the field's tiles and the party's
-// event mode; the twin of The Broken Seal's DjinnMenu_Run
-// (games/tbs/src/menu/menu/djinn.c), rewritten with this game's heap block
-// (220, 0xcec), menu work and calls (DjinnMenu_RunScreen is the screen loop).
-
 void Resource_LoadPairedBlocksIfAvailable(void);
 
 s32 DjinnMenu_RunScreen(void);
@@ -149,10 +144,9 @@ void DjinnMenu_BuildLists(struct DjinnMenuBackdrop *backdrop);
     (menu)->selection[0] = column + found * 10;                                \
   } while (0)
 
-/// The Djinn menu's screen loop, the twin of The Broken Seal's
-/// DjinnMenu_RunScreen. The Lost Age drops the pair steps 4 and 8, hides the
-/// page arrows before each confirmation and adds DjinnMenu_ShowMemberStatus
-/// (step 10) and DjinnMenu_ShowHelp (step 15) as its status and help pages.
+/// The Djinn menu's screen loop, one step at a time: DjinnMenu_ShowMemberStatus
+/// (step 10) and DjinnMenu_ShowHelp (step 15) are its status and help pages,
+/// and the page arrows are hidden before each confirmation.
 s32 DjinnMenu_RunScreen(void) {
   // icon holds the cursor, then each arrow in turn.
   struct DjinnMenuWork *menu;
@@ -423,22 +417,15 @@ void DjinnMenu_AdjustPalettes(s32 d) {
   } while (n <= 2);
 }
 
-// Opens the Djinn menu's backdrop screen, the twin of The Broken Seal's
-// Menu_OpenBackdropScreen: saves the tiles and palettes it covers, draws the
-// backdrop, lists the owners (DjinnMenu_BuildLists), then makes the list's
-// cursor and the two page arrows and places the arrows at the list window's
-// corners.
-
 extern char ResourceId_ShopGemTiles;
 
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 s32 Palette_GetBasicSpriteColors(void);
 
-/// Opens the Djinn menu's backdrop screen, the twin of The Broken Seal's
-/// Menu_OpenBackdropScreen: saves the tiles and palettes it covers, draws the
-/// backdrop, lists the owners (DjinnMenu_BuildLists), then makes the list's
-/// cursor and the two page arrows and places the arrows at the list window's
-/// corners.
+/// Opens the Djinn menu's backdrop screen: saves the tiles and palettes it
+/// covers, draws the backdrop, lists the owners (DjinnMenu_BuildLists), then
+/// makes the list's cursor and the two page arrows and places the arrows at the
+/// list window's corners.
 void Menu_OpenBackdropScreen(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
@@ -600,7 +587,6 @@ s32 DjinnMenu_GetEntryState(u32 entry) {
 /// Draws a packed djinni entry in a window: its name 8 pixels right of (x, y)
 /// and its element's icon tile at the tile under (x, y), then resets the text
 /// colour. The names run 20 to an element.
-// As ☀️'s MsgDjinnName (games/tbs/src/menu/menu.c).
 void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
   s32 element = (entry & 0xe0) / 32;
 
@@ -1631,12 +1617,6 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
 
 #undef ALT_PARAM
 
-// Previews a djinni change on a member's status, the twin of The Broken
-// Seal's DjinnMenu_DrawStatPreview: the unit is saved, the change applied and
-// the unit recalculated; page 0 draws the stats with an arrow beside each one
-// that changes, later pages the Psynergy gained and lost; then the saved unit
-// is copied back.
-
 // The stat preview's columns, in pixels from x * 8: the Japanese edition draws
 // Attack, Defense and Agility with four digits from HP's column and Luck a tile
 // further left, sets every arrow in one column, and puts the Psynergy page's PP
@@ -1683,11 +1663,10 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
 s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
                                    s32 variant);
 
-/// Previews a djinni change on a member's status, the twin of The Broken Seal's
-/// DjinnMenu_DrawStatPreview: the unit is saved, the change applied and the
-/// unit recalculated; page 0 draws the stats with an arrow beside each one that
-/// changes, later pages the Psynergy gained and lost; then the saved unit is
-/// copied back.
+/// Previews a djinni change on a member's status: the unit is saved, the change
+/// applied and the unit recalculated; page 0 draws the stats with an arrow
+/// beside each one that changes, later pages the Psynergy gained and lost; then
+/// the saved unit is copied back.
 s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
                               s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side) {

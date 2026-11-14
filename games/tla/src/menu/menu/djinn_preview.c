@@ -628,7 +628,6 @@ s32 Djinn_CheckGiveBalance(s32 self, s32 other);
 
 /// Marks in table each other owner a djinn can move to from self and keep the
 /// party's djinn balanced, and returns how many there are.
-// The Broken Seal's Djinn_MarkBalancedEntries.
 /// Marks recipients that would leave unequal Djinn totals after a direct give.
 /// Returns how many recipients would need a trade instead.
 ///
@@ -677,8 +676,6 @@ s32 Djinn_CheckGiveBalance(s32 from, s32 to) {
     balanced = 0;
   return balanced;
 }
-
-// Djinn_CountOwned: The Broken Seal's Djinn_CountTurns.
 
 /// Counts each party member's Djinn across its set and available bitmasks:
 /// writes every party member's total, set or not, into ownedCounts by list

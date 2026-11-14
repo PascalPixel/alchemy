@@ -41,16 +41,14 @@
 #define RANGE_COLUMN 15
 #endif
 
-// Sets a menu sprite's attribute words, as The Broken Seal's
-// MenuSprite_Initialize.
+// Sets a menu sprite's attribute words.
 #define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
-// The menu's page, row and preferred row, as The Broken Seal's
-// BATTLE_MENU_GET_CURSOR and BATTLE_MENU_SET_CURSOR.
+// Reads and sets the menu's page, row and preferred row.
 #define MENU_GET_CURSOR(page_, row_, preferred)                                \
   do {                                                                         \
     (page_) = NAVIGATION->page;                                                \
@@ -65,8 +63,7 @@
     NAVIGATION->preferredRow = (preferred);                                    \
   } while (0)
 
-// Marks a window's tilemap row for upload, as The Broken Seal's
-// Window_MarkTilemapRow.
+// Marks a window's tilemap row for upload.
 #define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
   do {                                                                         \
     (work)->dirty |= 2 << ((u32)(row) >> 2);                                   \

@@ -63,7 +63,6 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
 
 /// Creates the stat change arrow from the up or down arrow resource the
 /// menu loaded.
-// The Broken Seal's Icon_CreateStatChangeArrow.
 s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
                                s32 variant) {
   struct WindowSprite *object;

@@ -314,7 +314,6 @@ void Battle_TurnEndNoOp(void) {}
 /// 175, the flash and its message) before it is Set. The message is
 /// "... is set to ...!" Returns 1 when a count fell, 2 when one was Set, else
 /// 0.
-// ☀️'s DjinnRecovery_CountDown with ⚓️'s presentation.
 s32 DjinnRecovery_CountDownSide(s32 side) {
   struct PlacementList *list;
   struct DjinnRecoveryEntry *timedEntry;

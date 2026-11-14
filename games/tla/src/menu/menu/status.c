@@ -559,7 +559,6 @@ void StatusScreen_DrawStatusAilments(s32, s32,
 /// icon entries in mode 3, then draws the status ailments (with 0x100 when the
 /// window was just made). The work block holds the window at 0x28, the object
 /// at 0x170 and the mode at 0x21c. frame is not used.
-// ☀️'s version also creates eight entry objects.
 void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   s32 created;
   s32 handle;
@@ -1848,7 +1847,6 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
 }
 
 /// Places each of the 32 entry icons on the grid.
-// The Broken Seal's Menu_PlaceEntryObjectsInGrid.
 void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   s32 i;
   struct WindowSprite *obj;

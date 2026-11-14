@@ -11,7 +11,6 @@
 /// average level, chooses one randomly and returns its level adjustment
 /// through outMargin. It first sets flags from others, clears the enemy flags
 /// of Data_08130c5c, sets flags 71, 230 and 117, and searches 660 formations.
-// As The Broken Seal's function of the same name, which has no flag setup.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
   struct FormationCandidate *pool = Heap_AllocEwram(128);
@@ -228,7 +227,6 @@ struct UnitBaseStats__presentation {
 /// Raises a unit's base HP by half and base Attack and Defense by a quarter (at
 /// least 7/10 of the old values, at most 16383 and 999), from a copy of its
 /// base block, then recalculates its stats.
-// No ☀️ twin found.
 void BattleUnit_Strengthen(s32 unitId) {
   struct UnitBaseStats__presentation *saved = Heap_AllocEwram(36);
   struct BattleUnit *unit = Unit_Get(unitId);

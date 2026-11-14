@@ -78,7 +78,6 @@ void ItemMenu_HideAllIcons(void);
 /// a command. Owns the menu work while it runs and frees it before returning.
 /// Returns ItemMenu_RunCommands' result: 1 when an item is to be used on the
 /// field, -1 when the player backed out or pressed Start.
-// The twin of The Broken Seal's routine.
 s32 ItemMenu_Run(void) {
 #if TLA_PATCH_1
   void *backup;
@@ -940,7 +939,6 @@ s32 ItemMenu_CountItems(s32 owner);
 /// members are paged four at a time by Menu_MoveGridCursor, which moves the
 /// selection and says what to redraw (2 for a new page). Returns the chosen
 /// member's id, or -1.
-// As The Broken Seal's routineOwnerSelection.
 s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 selection = menu->sideIndex[0];

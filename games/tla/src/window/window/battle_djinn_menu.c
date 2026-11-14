@@ -33,8 +33,7 @@
 
 #define NAVIGATION ((struct DjinnMenuNavigation *)Ram_HeapSlots->unke4[0])
 
-// A statement macro, as The Broken Seal's BATTLE_MENU_GET_CURSOR: the three
-// cursor reads stay together.
+// Reads the menu's page, row and preferred row.
 #define DJINN_MENU_GET_CURSOR(page_, row_, preferred_)                         \
   do {                                                                         \
     (page_) = NAVIGATION->page;                                                \
@@ -42,7 +41,7 @@
     (preferred_) = NAVIGATION->preferredRow;                                   \
   } while (0)
 
-// As The Broken Seal's Window_MarkTilemapRow, on a signed row.
+// Marks a window's tilemap row for upload, on a signed row.
 #define DJINN_MENU_MARK_ROW(render, y)                                         \
   do {                                                                         \
     (render)->dirty |= 2 << ((y) >> 2);                                        \

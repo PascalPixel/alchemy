@@ -6,8 +6,7 @@
 #include "../window_internal.h"
 #include "flag_call.h"
 
-// The debug selection row's keys (The Broken Seal's
-// DebugSceneSelect_HandleRowInput): A returns -1 and B -2; Up or Down switches
+// The debug selection row's keys: A returns -1 and B -2; Up or Down switches
 // the field, Left and Right step the value (0 to 324) or the second number
 // (0 to 99) by one, R and L by ten, and the row is redrawn after a step.
 

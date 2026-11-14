@@ -507,18 +507,12 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
   Portrait_ReloadFar(0, unit, 0);
 }
 
-// The menu work, Ram_HeapSlots->menuRuntime, as the hand cursor and the party
-// figures read it: The Broken Seal's PsynergyMenuWork, whose names the first
-// three fields take.
-
 extern char ResourceId_ShopUpArrowTiles;
 extern char ResourceId_ShopDownArrowTiles;
 
 /// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
 /// hand cursor in it, hidden, and adds the up and down arrow icons at its right
 /// edge when a VRAM entry is free. Returns the window.
-// The twin of The Broken Seal's routine, which has no divider or
-// arrows.
 struct RenderInput *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *work = source;
   struct RenderInput *window;
@@ -745,8 +739,6 @@ void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
 /// window sized to the message opens at (x, y). With x == -1 the message stays
 /// up and flag 337 records that the info window holds it; otherwise it waits
 /// for A, B or Start and clears it again.
-// As The Broken Seal's ItemMenu_ShowMessage: in Japanese its first
-// form, from patch 1 its TBS_PATCH_1 form less the redraw after the wait.
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   struct RenderInput *window;

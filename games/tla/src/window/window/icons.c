@@ -47,7 +47,6 @@ u8 *Ability_Get__window(s32) __asm__("Ability_Get");
 #define Ability_Get Ability_Get__window
 
 /// Builds the icon of a battle action's item.
-// As ☀️'s Ability_RequestGlyph.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
   Icon_BuildItemIconTiles(*(u16 *)(Ability_Get(action) + 4), withBase, slot,
@@ -57,7 +56,6 @@ void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 /// Builds item icon glyph, over the icon base when withBase is set, and loads
 /// it into *cacheSlot (a free slot unless reuse is set). Returns the tile in
 /// *tileOut.
-// As ☀️'s function of the same name.
 void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                              s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
@@ -96,7 +94,7 @@ extern u8 *gIcon_DigitPointers[];
 
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 
-// The layers ItemIcon_Compose draws over an item's icon, as The Broken Seal's.
+// The layers ItemIcon_Compose draws over an item's icon.
 #define ICON_BASE 1            ///< the base under the icon
 #define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
 #define ICON_COUNT 4           ///< the count, always
@@ -235,7 +233,6 @@ void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
 /// Builds Psynergy icon glyph, over the icon base when withBase is set, and
 /// loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
 /// in *tileOut.
-// As ☀️'s function of the same name.
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                 s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;

@@ -511,7 +511,6 @@ void Text_StartCanvasScroll(struct UiChannelSlot *channel);
 /// window. A channel that already serves a finished window continues below
 /// its last line (scrolling up once both lines are used) unless keepPosition
 /// is set. Returns the channel, or NULL when all three are busy.
-// As ☀️'s BattleMessage_Continue.
 struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
                                              s32 keepPosition) {
   struct UiChannelSlot *slot;

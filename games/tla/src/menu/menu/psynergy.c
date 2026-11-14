@@ -321,7 +321,6 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
 /// How the selected psynergy is used: 0 acts at once, 1 picks a target,
 /// 2 cannot be used here.
-// The Broken Seal's PsynergyMenu_ClassifySelectedPsynergy.
 /// Says how the selected Psynergy is used from the menu: 0 on the field once
 /// the menu closes (the scene has an event for its field Psynergy,
 /// fieldPsynergy, and what the leader faces), 2 on the whole party (range
@@ -1030,10 +1029,6 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 #undef PAGE_X
 #undef HEADING_X
 #undef NAME_X
-
-// PsynergyMenu_RunList runs the Psynergy list of the member in paneIndex, the
-// twin of The Broken Seal's PsynergyMenu_RunList
-// (games/tbs/src/menu/menu/psynergy.c).
 
 // The Japanese list puts its cursor and its help line at other columns.
 #if LANGUAGE == LANGUAGE_JAPANESE

@@ -99,8 +99,6 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 }
 
-// BattleUnit_Collect: The Broken Seal's BattleParty_CollectUnitList.
-
 void BattleUnit_Collect(void) {
   u16 buf[14];
   struct BattleWork *battle;
@@ -256,10 +254,6 @@ void DjinnRecovery_Reconcile(void) {
     }
   }
 }
-
-// BattleSummon_UpdateAvailability: The Broken Seal's
-// BattleSummon_UpdateAvailability; this game keeps the high half of the offer
-// state's mask, tests 16 summons and writes the mask back.
 
 /// Works out which summons the party can call: one whose Djinn requirement
 /// of every element is met by the Djinn the party holds of that element

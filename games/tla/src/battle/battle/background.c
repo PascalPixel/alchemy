@@ -282,12 +282,10 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   Projection_Set(width, result, half * 4);
 }
 
-// BattleCamera_SetView: The Broken Seal's function of that name
-// with the camera from its heap slot. Places the battle camera at a position
-// and zoom for a transition: sets the projection, turns the scene to the
-// camera's yaw and pitch, projects the origin and gives the camera its
-// range from where the origin lands on the screen.
-
+/// Places the battle camera at a position and zoom for a transition: sets the
+/// projection, turns the scene to the camera's yaw and pitch, projects the
+/// origin and gives the camera its range from where the origin lands on the
+/// screen.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
   s32 *pos = scene->pos;
@@ -682,7 +680,7 @@ struct SparkWork {
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
                          s32 height);
 
-// The Broken Seal's star tables: each frame's size and sheet offset, and
+// The star tables: each frame's size and sheet offset, and
 // the ring's four frames.
 extern const u8 gElementGlow_StarSizes[];
 extern const s32 gElementGlow_StarPictures[];

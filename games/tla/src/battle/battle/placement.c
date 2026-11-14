@@ -12,7 +12,6 @@
 /// the anchors cleared unless keep is set, no sprite, animation, effect or
 /// state, facing ArcTan2(0, 0) + 0x8000, visible, then the actor object
 /// script.
-// The tail of The Broken Seal's BattleObject_Make, for an actor without a unit.
 void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   struct MotionObject *object;
   s32 facingAngle;
@@ -447,8 +446,6 @@ void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
 /// width of each actor on either side, centred on the column's middle.
 /// Actors 254 and 255 are 25 wide; others are 27 when their summon entry is
 /// flagged and 38 when not.
-// The Broken Seal's function of the same name, keyed by the enemy id, with
-// nine enemies forward where it names two.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
@@ -538,10 +535,7 @@ void Enemy_Update(void) {
   }
 }
 
-// BattleUnit_RefreshPlacement: The Broken Seal's source plus the reserve
-// owners; the second fill loop needs its pointer set inside the for
-// initialiser.
-
+/// Places every unit of the battle again, the reserve party members too.
 void BattleUnit_RefreshPlacement(void) {
   u16 ids[14];
   s32 x[6];

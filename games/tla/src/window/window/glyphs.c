@@ -330,8 +330,6 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
 /// both the work block's copy and VRAM. A NULL buffer draws the decoded text
 /// in WindowWork.entries. The window's position is read signed.
-// As ☀️'s function of the same name, which passes the VRAM base where this
-// one passes offsetX & 7.
 void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
                                     s32 offsetX, s32 offsetY) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
@@ -424,7 +422,6 @@ u32 Math_UnsignedMulHigh(u32 a, u32 b);
 /// negative; otherwise it is right-aligned in width characters (up to 12) and
 /// unsigned. Each digit divides by 10 through the long-multiply helpers:
 /// 0x1999999a is 2^32 / 10, rounded up.
-// As ☀️'s String_FormatNumber.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;

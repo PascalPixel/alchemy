@@ -43,7 +43,6 @@ extern u8 Text_DecodeSymbolCodeSize[];
 /// Decodes message into text as a zero-terminated string of 16-bit codes, with
 /// at most capacity entries, keeping style codes with their operands.
 /// capacity includes the terminating halfword.
-// As ☀️'s function of the same name.
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   struct TextReader reader;
   void *original;

@@ -633,19 +633,6 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
   }
 }
 
-// BattleStaging_RunPsynergyCast: The Broken Seal's
-// BattleStaging_RunPsynergyCast (games/tbs/src/battle/battle/staging.c),
-// ported: turns the camera to the caster (across the field or reversed when the
-// plan's flags say so), raises the caster's hand with its element's glow, then
-// either fails ("But the Psynergy was blocked!" or "...But doesn't have enough
-// PP!") or plays the effect with the events. This game adds a second effect
-// object (BattleMotion_CallBeast, shown by BattleMotion_ReleaseBuffer, put back
-// and freed by BattleMotion_DismissBeast), sets the caster's mode from the
-// battle work's byte 0x869, and skips the playback callback and its wait when
-// the plan's word at 100 is set. mode: 1 a Djinni, 2 an enemy's cast. The two
-// fixed yaws are stores in each arm of an if (as a ternary or one value the
-// arms are folded into a default and an override).
-
 /// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
 /// the targets from the caster's side, the caster raises its hand and glows
 /// in its element (no glow for a Djinni); then the cast fails ("blocked" or

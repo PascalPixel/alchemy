@@ -185,7 +185,6 @@ void SelectionMenu_AddEntry(u32 first, u32 second) {
 /// Creates icons for the first five listed entries in a row along the bottom of
 /// the screen, then loads the selected entry's preview. Reached through the
 /// far-call table and from Menu_RunSelectionForValue.
-// As ☀️'s SelectionMenu_BuildEntries.
 /// Creates icons for the first five listed entries in a row along the bottom of
 /// the screen.
 /// Builds the linked row before placing the visible icons and loading the

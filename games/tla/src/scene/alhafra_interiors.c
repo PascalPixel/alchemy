@@ -328,7 +328,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(32, 0, 0);
     }
   } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    if (Event_GetFlag(FLAG_ALEX_LEFT_ALHAFRA))
+    if (Event_GetFlag(FLAG_CHAMPA_MET_ALEX))
       Actor_SetPosition(31, 0, 0);
   } else {
     FieldActor_SetSpritePriority(24, 2);
@@ -365,7 +365,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(32, 0, 0);
     }
   } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    if (Event_GetFlag(FLAG_ALEX_LEFT_ALHAFRA))
+    if (Event_GetFlag(FLAG_CHAMPA_MET_ALEX))
       Actor_SetPosition(31, 0, 0);
   } else {
     FieldActor_SetSpritePriority(24, 2);
@@ -738,10 +738,10 @@ struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[] = {
      FIND_MESSAGE(MSGNO(MsgAlhafraInteriors124))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
-    {TRIGGER_TALK, 30, IF_FLAG_SET(FLAG_ALEX_LEFT_ALHAFRA),
+    {TRIGGER_TALK, 30, IF_FLAG_SET(FLAG_CHAMPA_MET_ALEX),
      MSGNO(MsgAlhafraInteriors84)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30,
-     IF_FLAG_SET(FLAG_ALEX_LEFT_ALHAFRA), MSGNO(MsgAlhafraInteriors85)},
+     IF_FLAG_SET(FLAG_CHAMPA_MET_ALEX), MSGNO(MsgAlhafraInteriors85)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors51)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors52)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,

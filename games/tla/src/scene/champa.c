@@ -2,11 +2,11 @@
 /// Champa, the pirates' village on the coast of the Great Western Sea, whose
 /// people are fed once Briggs returns with the Ankohl jewels. Two of its
 /// sailors spot Felix and run to warn Briggs (Champa_SailorsSpotFelix); at the
-/// cliff where Obaba lives the party catches up with him
-/// (Champa_CatchUpWithBriggs), Jenna and Sheba glaring at each other on the way
-/// (Champa_JennaAndShebaGlare). In a game linked with The Broken Seal, Feizhi
-/// arrives with a gift (Champa_FeizhiArrives). The getters pick later tables
-/// once Briggs has sailed from Alhafra.
+/// cliff where Obaba lives Alex, who had left Alhafra before them, meets the
+/// party again (Champa_MeetAlex), Jenna and Sheba glaring at each other on the
+/// way (Champa_JennaAndShebaGlare). In a game linked with The Broken Seal,
+/// Feizhi arrives with a gift (Champa_FeizhiArrives). The getters pick later
+/// tables once Briggs has sailed from Alhafra.
 
 #include "shared/tables.h"
 #include "battle/battle.h"
@@ -57,8 +57,7 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
 
 // The town's own story, which no other scene reads.
 #define FLAG_NEAR_THE_CLIFF 0x970 ///< the party walked up to Obaba's cliff
-#define FLAG_CAUGHT_UP_WITH_BRIGGS 0x971 ///< Briggs ran from them inside
-#define FLAG_TOLD_OF_OBABA 0x972         ///< a villager told of Obaba
+#define FLAG_TOLD_OF_OBABA 0x972  ///< a villager told of Obaba
 #define FLAG_SAILORS_SPOTTED_FELIX 0x973 ///< two sailors ran to warn Briggs
 #define FLAG_FEIZHIS_GIFT_WAITING 0xa74  ///< Feizhi holds out her gift
 #define FLAG_FEIZHI_CAME 0xa75 ///< Feizhi came, taking Felix for a friend
@@ -624,12 +623,14 @@ static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   FieldMessage_ShowAtActor(speaker, flags);
 }
 
-void Champa_CatchUpWithBriggs(void) {
+/// Near Obaba's cliff Alex waits: "I see you've caught up with me again"
+/// (MsgChampa25), and the party answers him.
+void Champa_MeetAlex(void) {
 
   if (!Event_GetFlag(FLAG_NEAR_THE_CLIFF)) {
     return;
   }
-  Event_SetFlag(FLAG_CAUGHT_UP_WITH_BRIGGS);
+  Event_SetFlag(FLAG_CHAMPA_MET_ALEX);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgChampa25);
@@ -1467,8 +1468,7 @@ struct Trigger gChampa_Triggers[] = {
      CONDITION_ALWAYS, EVENT(Champa_HideTreasureSpot)},
     {TRIGGER_STEP, 100, FLAG_FEIZHI_CAME, EVENT(Champa_FeizhiArrives)},
     {TRIGGER_STEP, 19, FLAG_NEAR_THE_CLIFF, EVENT(Champa_ApproachTheCliff)},
-    {TRIGGER_STEP, 20, FLAG_CAUGHT_UP_WITH_BRIGGS,
-     EVENT(Champa_CatchUpWithBriggs)},
+    {TRIGGER_STEP, 20, FLAG_CHAMPA_MET_ALEX, EVENT(Champa_MeetAlex)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgChampa01)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgChampa02)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgChampa03)},
@@ -1539,8 +1539,7 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
      CONDITION_ALWAYS, EVENT(Champa_HideTreasureSpot)},
     {TRIGGER_STEP, 100, FLAG_FEIZHI_CAME, EVENT(Champa_FeizhiArrives)},
     {TRIGGER_STEP, 19, FLAG_NEAR_THE_CLIFF, EVENT(Champa_ApproachTheCliff)},
-    {TRIGGER_STEP, 20, FLAG_CAUGHT_UP_WITH_BRIGGS,
-     EVENT(Champa_CatchUpWithBriggs)},
+    {TRIGGER_STEP, 20, FLAG_CHAMPA_MET_ALEX, EVENT(Champa_MeetAlex)},
     {TRIGGER_STEP, 26, FLAG_SAILORS_SPOTTED_FELIX,
      EVENT(Champa_SailorsSpotFelix)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgChampa26)},

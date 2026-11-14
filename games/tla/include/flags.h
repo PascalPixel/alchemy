@@ -155,8 +155,10 @@
 #define FLAG_ALHAFRA_MAST_CLEARED 0x8a7
 /// Set as Alex greets the party at Alhafra's inn.
 #define FLAG_ALHAFRA_MET_ALEX 0x8b2
-/// Set once Alex has left Alhafra's inn.
-#define FLAG_ALEX_LEFT_ALHAFRA 0x971
+/// Set as Alex meets the party again by Obaba's cliff in Champa ("I see you've
+/// caught up with me again", MsgChampa25); Alhafra's inn is without him from
+/// then on ("That cute boy next door left already").
+#define FLAG_CHAMPA_MET_ALEX 0x971
 /// Set as the party from Madra, its mayor among them, reaches Alhafra across
 /// the Yampi Desert.
 #define FLAG_ALHAFRA_MADRANS_ARRIVED 0x8b3

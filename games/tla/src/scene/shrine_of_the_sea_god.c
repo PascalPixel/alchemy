@@ -401,6 +401,7 @@ void ShrineOfTheSeaGod_StartleCompanion(void) {
   Event_End();
 }
 
+/// Talking to actors 25 to 27 opens the field menu, as talking to nothing does.
 void ShrineOfTheSeaGod_OpenFieldMenu(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 

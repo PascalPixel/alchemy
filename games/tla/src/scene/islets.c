@@ -56,7 +56,7 @@ void Islets_RideBackToIsland(void);
 
 void Islets_TalkToSailorsSon(void);
 
-void Islets_IgnoreTalk(void);
+void Islets_OpenFieldMenu(void);
 void Islets_JumpDownLedge(void);
 void Leader_SetLayer(void);
 void Islets_StepOntoGround(void);
@@ -1155,7 +1155,8 @@ void Islets_TalkToSailorsSon(void) {
   Event_End();
 }
 
-void Islets_IgnoreTalk(void) {
+/// Talking to actors 11 or 12 opens the field menu, as talking to nothing does.
+void Islets_OpenFieldMenu(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->fieldMenu = 1;
@@ -3014,8 +3015,8 @@ struct Trigger gIslets_Room5Triggers[] = {
      EVENT(Islets_GiveTurtle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      EVENT(Islets_RideBackToIsland)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Islets_IgnoreTalk)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Islets_IgnoreTalk)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Islets_OpenFieldMenu)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Islets_OpenFieldMenu)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
      CONDITION_ALWAYS, EVENT(Leader_SetLayer)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,

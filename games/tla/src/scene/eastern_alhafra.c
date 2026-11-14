@@ -348,13 +348,12 @@ void EasternAlhafra_FinishPushingLastCrate(s32 mode, s32 id) {
 }
 
 void EasternAlhafra_OverhearWorkers(void);
-/* VIEW(s0514): routine PushTarget_PushFill as void PushTarget_PushFill(struct
- * PushSlide); eastern_alhafra has void PushTarget_PushFill(struct DoorPlan);
- * tried as the definition's void PushTarget_PushFill(struct PushTarget target),
+/* VIEW(s0514): routine PushTarget_Push as void PushTarget_Push(struct
+ * PushSlide); eastern_alhafra has void PushTarget_Push(struct DoorPlan);
+ * tried as the definition's void PushTarget_Push(struct PushTarget target),
  * which the object already declares, EasternAlhafra_RollLog moves: 1 of 198
  * instructions in tla-ja. */
-extern void
-    PushTarget_PushFill__log(struct PushSlide) __asm__("PushTarget_PushFill");
+extern void PushTarget_Push__log(struct PushSlide) __asm__("PushTarget_Push");
 
 void EasternAlhafra_RollLog(void) {
   struct Actor *actor15;
@@ -371,13 +370,13 @@ void EasternAlhafra_RollLog(void) {
     MapGrid_SetCellBehavior(actor16->x, actor16->z, 2, 255);
   if (PushTarget_FindSlide(&unk) != 0) {
     if (Event_GetFlag(FLAG_LAST_CRATE_SUNK) == 0 || facing == 0xc000) {
-      PushTarget_PushFill__log(unk);
+      PushTarget_Push__log(unk);
     } else {
       Event_SetFlag(FLAG_LOG_ROLLED);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
-      PushTarget_PushFill__log(unk);
+      PushTarget_Push__log(unk);
       MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 0, 0);
       MapGrid_SetCellBehavior(actor15->x + px(8), actor15->z, 0, 0);
       MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 2, 0);
@@ -2345,7 +2344,7 @@ struct PushTarget {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-void PushTarget_PushFill(struct PushTarget target) {
+void PushTarget_Push(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_Get(target.id);

@@ -181,7 +181,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     // Called through a local, as field/object/visual_attributes.c calls it:
     // the routine's address is then loaded ahead of the shift that finishes
     // param.
-    s32 (*ratioMul)(s32, s32) = Iwram_RatioMulQ14;
+    s32 (*ratioMul)(s32, s32) = Iwram_RatioMulQ14Entry;
 
     param = 255;
     param <<= 17;

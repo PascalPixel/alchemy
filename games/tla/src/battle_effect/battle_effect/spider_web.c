@@ -1150,6 +1150,15 @@ void SummonEffect_RunCanvasMode1(void *action);
   ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, y, size,    \
                                            size)
 
+// Releases the quarter's blitter.
+// UB: HeapSlot_Release returns nothing; the releases between the quarters
+// call it through a function type that returns s64.
+#ifdef UBFIX
+#define RELEASE_QUARTER() HeapSlot_Release(HEAP_BLITTER)
+#else
+#define RELEASE_QUARTER() ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER)
+#endif
+
 void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition middle;
   void *canvas;
@@ -1188,22 +1197,20 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
     // both. Each blitter is built, drawn with and released before the next
     // is built; each once-only block holds a draw, its release and the next
     // build (as one block per quarter, 12 differ); the last draw needs none.
-    /* FAKEMATCH(signature): the three releases between draws called as
-     * returning s64. */
     LOAD_QUARTER(CLIP);
     do {
       DRAW_QUARTER(33, 41);
-      ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER);
+      RELEASE_QUARTER();
       LOAD_QUARTER(CLIP | COMPOSITE_FLIP_X);
     } while (0);
     do {
       DRAW_QUARTER(64, 41);
-      ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER);
+      RELEASE_QUARTER();
       LOAD_QUARTER(CLIP | COMPOSITE_FLIP_Y);
     } while (0);
     do {
       DRAW_QUARTER(33, 72);
-      ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER);
+      RELEASE_QUARTER();
       LOAD_QUARTER(CLIP | COMPOSITE_FLIP);
     } while (0);
     DRAW_QUARTER(64, 72);
@@ -1233,6 +1240,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
 #undef LOAD_QUARTER
 #undef DRAW_QUARTER
+#undef RELEASE_QUARTER
 #undef SLOT_BLITTER
 #undef BLITTER
 #undef HI

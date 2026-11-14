@@ -133,56 +133,31 @@ void Party_ClearUnusableShortcuts(void) {
     gMainRoutineWork.packedEvents[1] = 0;
 }
 
-static __inline__ s32 Vitals_Ratio(s32 value, s32 max) {
-  s32 ratio = (value << 14) / max;
-  s32 clamped = 0x4000;
+void Party_RemoveMemberRestored(s32 unit) {
+  struct BattleUnit *vitals;
+  s32 partyIndex;
+  s32 partyCount;
+  s32 survivingMembers;
 
-  if (ratio <= 0x4000) {
-    clamped = 0;
-    if (ratio >= 0)
-      clamped = ratio;
-  }
-  return clamped;
-}
-
-void Party_RemoveMemberRestored(s32 owner) {
-  struct OwnerVitals *vitals;
-  s32 i;
-  s32 count;
-  s32 standing;
-
-  Party_RemoveMemberFar(owner);
+  Party_RemoveMemberFar(unit);
   Party_ClearUnusableShortcuts();
-  vitals = Unit_Get(owner);
-  /* FAKEMATCH(dead): the two copies in a once-only block keep both ahead of the
-   * ratio. */
-  do {
-    vitals->hp = vitals->maxHp;
-    vitals->pp = vitals->maxPp;
-  } while (0);
-  vitals->hpRatio = Vitals_Ratio(vitals->hp, vitals->maxHp);
-  if (vitals->hpRatio == 0 && vitals->hp != 0)
-    vitals->hpRatio = 1;
-  vitals->ppRatio = Vitals_Ratio(vitals->pp, vitals->maxPp);
-  if (vitals->ppRatio == 0 && vitals->pp != 0)
-    vitals->ppRatio = 1;
-  vitals->status = 0;
-  standing = 0;
-  count = Party_CountMembersFar();
-  for (i = 0; i < count; i++) {
-    vitals = Unit_Get(gMainRoutineWork.activeOwners[i]);
+  vitals = Unit_Get(unit);
+  vitals->hp = vitals->maxHp;
+  vitals->pp = vitals->maxPp;
+  Unit_UpdateGauges(vitals);
+  vitals->poison = 0;
+  // Count the party members who remain and still have HP.
+  survivingMembers = 0;
+  partyCount = Party_CountMembersFar();
+  for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+    vitals = Unit_Get(gMainRoutineWork.activeOwners[partyIndex]);
     if (vitals->hp != 0)
-      standing++;
+      survivingMembers++;
   }
-  if (standing == 0) {
+  if (survivingMembers == 0) {
     vitals = Unit_Get(gMainRoutineWork.currentOwner);
     vitals->hp = 1;
-    vitals->hpRatio = Vitals_Ratio(vitals->hp, vitals->maxHp);
-    if (vitals->hpRatio == 0 && vitals->hp != 0)
-      vitals->hpRatio = 1;
-    vitals->ppRatio = Vitals_Ratio(vitals->pp, vitals->maxPp);
-    if (vitals->ppRatio == 0 && vitals->pp != 0)
-      vitals->ppRatio = 1;
+    Unit_UpdateGauges(vitals);
   }
 }
 

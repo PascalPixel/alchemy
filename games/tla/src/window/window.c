@@ -45,7 +45,6 @@
 
 #undef Unit_Get
 #undef Ability_Get
-#undef Message_DecodeRawUnbounded
 #undef Portrait_Create
 #undef MenuSprite
 #undef CommandIcon_Create

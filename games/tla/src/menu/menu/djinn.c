@@ -3,6 +3,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "flags.h"
 #include "sounds.h"
 
 s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1) { return (arg0 + arg1) % arg1; }
@@ -66,7 +67,7 @@ s32 DjinnMenu_Run(void) {
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = 0;
-  if (GameFlag_Get(0x16e)) {
+  if (GameFlag_Get(FLAG_DJINN_LESSON)) {
     if (!GameFlag_Get(0x16f)) {
       if (!GameFlag_Get(0x171))
         backdrop->tutorialStep = enabled;

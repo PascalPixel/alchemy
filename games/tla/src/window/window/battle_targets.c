@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "flags.h"
 #include "sounds.h"
 #include "flag_call.h"
 #include "gamepak/far_call/battle.h"
@@ -46,8 +47,15 @@ extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
  * priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry,
  * s32 slot), BattleTarget_RunSelection moves: 2 of 1647 instructions in tla-ja.
  */
-extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
-    "Oam_AddSpriteAtDepth"); // Returns void; see the tag.
+// UB: Oam_AddSpriteAtDepth returns nothing; the target screen calls it as
+// returning s32.
+#ifdef UBFIX
+#define Oam_AddSpriteAtDepth__menus Oam_AddSpriteAtDepth
+#else
+extern s32
+Oam_AddSpriteAtDepth__menus(void *sprite,
+                            s32 depth) __asm__("Oam_AddSpriteAtDepth");
+#endif
 
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \
@@ -95,8 +103,6 @@ extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
   }
 
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
-  /* FAKEMATCH(signature): Oam_AddSpriteAtDepth declared returning s32, though
-   * it returns nothing. */
   u16 candidateIds[8];
   struct TargetSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
@@ -226,7 +232,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == 254 ||
-         (GameFlag_Get(0x16c) && mode == 1 &&
+         (GameFlag_Get(FLAG_LINK_BATTLE) && mode == 1 &&
           Unit_Get__menus(candidateIds[targetIndex])->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;

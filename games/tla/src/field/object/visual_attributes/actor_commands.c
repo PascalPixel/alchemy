@@ -79,18 +79,7 @@ void Actor_DisableById(u32 id) {
   Actor_SetSpriteFlagsFar(object, 0);
 }
 
-/* VIEW(visual_attributes): routine Actor_SetSpriteRotationById as void
- * Actor_SetSpriteRotationById(u32 id, s32 rotation); field/event.h has void
- * Actor_SetSpriteRotationById(s32 actorId, s32 angle); tried as the
- * definition's void Actor_SetSpriteRotationById(u32 id, s32 rotation), which
- * the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:158: conflicting types for
- * `Actor_SetSpriteRotationById'. */
-void Actor_SetSpriteRotationById__visual_attributes(
-    u32 id, s32 rotation) __asm__("Actor_SetSpriteRotationById");
-#define Actor_SetSpriteRotationById                                            \
-  Actor_SetSpriteRotationById__visual_attributes
-void Actor_SetSpriteRotationById(u32 id, s32 rotation) {
+void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
 
@@ -198,16 +187,7 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
 /// Gives an actor's sprite a still picture: resource, drawn by Icon_DrawItemFar
 /// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
 /// into the sprite's VRAM block as its tile.
-/* VIEW(visual_attributes): routine Actor_ShowItemIconById as void
- * Actor_ShowItemIconById(u32 id, s32 resource); field/event.h has void
- * Actor_ShowItemIconById(s32 actorId, s32 item); tried as the definition's void
- * Actor_ShowItemIconById(u32 id, s32 resource), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/field/event.h:154:
- * conflicting types for `Actor_ShowItemIconById'. */
-void Actor_ShowItemIconById__visual_attributes(u32 id, s32 resource) __asm__(
-    "Actor_ShowItemIconById");
-#define Actor_ShowItemIconById Actor_ShowItemIconById__visual_attributes
-void Actor_ShowItemIconById(u32 id, s32 resource) {
+void Actor_ShowItemIconById(s32 id, s32 resource) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite;
   u8 *buffer;

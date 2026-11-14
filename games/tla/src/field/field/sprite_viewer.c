@@ -7,9 +7,6 @@
 
 #include "system/input.h"
 
-// The native reads the held keys afresh at each test.
-#define HELD (*(volatile u32 *)&gInput.held)
-
 /// The debug sprite viewer, in The Broken Seal's form with this game's
 /// changes; it never returns.
 void SpriteViewer_Run(void) {
@@ -93,14 +90,14 @@ restart:
 next:
   wait(1);
   for (;;) {
-    if (HELD & 8) {
-      if (HELD & 32)
+    if (gInput.held & 8) {
+      if (gInput.held & 32)
         x--;
-      if (HELD & 16)
+      if (gInput.held & 16)
         x++;
-      if (HELD & 64)
+      if (gInput.held & 64)
         y--;
-      if (HELD & 128)
+      if (gInput.held & 128)
         y++;
       SpriteViewer_BuildProbeRing(x, y, ring);
     } else {
@@ -152,7 +149,7 @@ next:
 
       changed = 0;
       steps = 1;
-      if (HELD & 8)
+      if (gInput.held & 8)
         steps = 10;
       if (gInput.repeat & KEY_L) {
         layers[selectedLayer].spriteId =
@@ -423,7 +420,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 }
 
 #undef FIELD_AT_OFFSET
-#undef HELD
+#undef gInput.held
 
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->unk0c[1];

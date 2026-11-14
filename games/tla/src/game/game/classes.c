@@ -155,9 +155,14 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   result = -1;
   if (character > 7)
     return 0;
-  /* FAKEMATCH(signature): called as a void function, though it returns 0. */
+  // UB: Unit_GetElementLevels returns a value; this call goes through a void
+  // function type.
+#ifdef UBFIX
+  Unit_GetElementLevels(character, (const u8 *)djinn, levels);
+#else
   ((void (*)(s32, const u8 *, s32 *))Unit_GetElementLevels)(
       character, (const u8 *)djinn, levels);
+#endif
   best = result;
   primary = result;
   for (i = 0; i < 4; i++) {

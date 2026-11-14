@@ -46,13 +46,7 @@ struct ShakeWork {
 };
 
 // An object's sprite; the sway shakes it sideways by its offset.
-/* VIEW(psynergy): tag struct ObjectSprite as struct ObjectSprite__psynergy;
- * module/field/field.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/tremor.c:49: redefinition of
- * `struct ObjectSprite'. */
-#define ObjectSprite ObjectSprite__psynergy
-struct ObjectSprite {
+struct TremorSprite {
   u8 unk00[0x12];
   u16 offsetX;
   u8 width;
@@ -61,17 +55,6 @@ struct ObjectSprite {
   u8 unk19;
   u8 unk1a[0xe];
   void *pictures;
-};
-
-/* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0;
- * f0e2c38.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/tremor.c:83: structure has no
- * member named `target'. */
-struct EffectScene__f0e8db0 {
-  u8 unk00[0x10];
-  void *mainObject;
-  struct Actor *target;
 };
 
 // The two 8x8 tiles of the shaken sprites (Resource_Data1EE): the row
@@ -88,10 +71,10 @@ void Animation_ApplyChildValueFar(void *sprite, s32 value);
 // than 2,048 pixels gets no sway.
 void FieldPsynergy_TremorOnTarget(void) {
   struct ShakeWork *work = HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, sizeof(*work));
-  struct EffectScene__f0e8db0 *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *target = scene->target;
-  struct ObjectSprite *targetSprite = target->sprite;
+  struct Actor *target = scene->child;
+  struct TremorSprite *targetSprite = target->sprite;
   s32 tiles;
   s32 shown;
   s32 width;
@@ -150,7 +133,7 @@ void FieldPsynergy_TremorOnTarget(void) {
     // Shake the gathered objects' sprites with the view.
     if (event->mode == 2) {
       for (i = 0; i < work->view.count; i++) {
-        struct ObjectSprite *sprite = work->view.objects[i]->sprite;
+        struct TremorSprite *sprite = work->view.objects[i]->sprite;
         s32 offset = work->view.spriteOffsets[i];
 
         if (amplitude > SWAY_SHAKE)
@@ -208,7 +191,7 @@ void FieldPsynergy_TremorOnTarget(void) {
 
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 16);
-    ((struct ObjectSprite *)target->sprite)->unk19 = 1;
+    ((struct TremorSprite *)target->sprite)->unk19 = 1;
   }
   ViewMove_End();
   ViewMove_RestoreNearbySprites();
@@ -240,7 +223,7 @@ release:
 void FieldPsynergy_Tremor(void) {
   struct ViewMoveWork *work =
       HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
-  struct EffectScene__f0e8db0 *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 frameCount;
   s32 phase;
@@ -267,7 +250,7 @@ void FieldPsynergy_Tremor(void) {
     // Shake the gathered objects' sprites with the view.
     if (event->mode == 2) {
       for (i = 0; i < work->count; i++) {
-        struct ObjectSprite *sprite = work->objects[i]->sprite;
+        struct TremorSprite *sprite = work->objects[i]->sprite;
         s32 offset = work->spriteOffsets[i];
 
         if (amplitude > 0)

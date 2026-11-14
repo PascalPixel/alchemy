@@ -1288,9 +1288,8 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       state->y = work->y + (work->height << 16);
       state->z = work->z;
       state->frame++;
-      state->y += Value2((s32 (*)())Iwram_MulQ16, 0xfffe0000,
-                         Math_Sin(state->frame << 12)) +
-                  0xfffe0000;
+      state->y +=
+          Math_MulQ16(0xfffe0000, Math_Sin(state->frame << 12)) + 0xfffe0000;
       sprite = &work->sprites[i];
       sprite->tile = work->tile + ((state->frame >> 2) & 3) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, state);

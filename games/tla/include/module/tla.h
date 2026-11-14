@@ -16,7 +16,15 @@ struct RenderInput;
 struct WindowSprite;
 
 struct SparkleSprite {
-  u8 unk00[12];
+  u8 unk00[5];
+  u8 attr5Low : 5;
+  u8 fullColor : 1;
+  u8 shape : 2;
+  u8 unk06[3];
+  u8 tileHigh : 2;
+  u8 priority : 2;
+  u8 palette : 4;
+  u8 unk0a[2];
   s32 unk0c;
   s32 unk10;
   s32 unk14;

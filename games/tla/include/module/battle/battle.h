@@ -41,7 +41,7 @@ void Battle_TurnStartNoOp(void);
 s32 Battle_GatherActions(struct BattleActionRecord *actions);
 s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries);
 s32 BattleStaging_DispatchAction(struct BattleActionRecord *action, s32 delay);
-s32 AutoBattle_RunAction(s16 *action);
+s32 AutoBattle_RunAction(struct BattleActionRecord *action);
 s32 Battle_FindUnitPlace(u32 id);
 void Battle_ProcessTurnEnd(void);
 void Battle_AwardSpoils(void);

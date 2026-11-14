@@ -6,18 +6,9 @@
 
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
-/// Expands message into buf without an upper length bound.
-/* VIEW(window): routine Message_DecodeRawUnbounded as void
- * Message_DecodeRawUnbounded(s32 message, s32 buf); field/event.h has void
- * Message_DecodeRawUnbounded(s32 message, u16 *buffer); tried as the
- * definition's void Message_DecodeRawUnbounded(s32 message, s32 buf), it does
- * not compile in tla-ja: games/tla/src/window/window/messages.c:9: conflicting
- * types for `Message_DecodeRawUnbounded'. */
-void Message_DecodeRawUnbounded__window(s32 message, s32 buf) __asm__(
-    "Message_DecodeRawUnbounded");
-#define Message_DecodeRawUnbounded Message_DecodeRawUnbounded__window
-void Message_DecodeRawUnbounded(s32 message, s32 buf) {
-  Message_DecodeRaw(message, buf, 0x7fffffff);
+/// Expands message into buffer without an upper length bound.
+void Message_DecodeRawUnbounded(s32 message, u16 *buffer) {
+  Message_DecodeRaw(message, buffer, 0x7fffffff);
 }
 
 /// Builds message key's text entries and copies them to destination, at most
@@ -293,15 +284,12 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
-  /* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
-  volatile u32 *held;
 
   if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancel = 1;
-  held = &gInput.held;
-  if (*held & (KEY_A | KEY_B | KEYS_SHOULDERS))
+  if (gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancel = 1;
-  if (*held & KEY_B)
+  if (gInput.held & KEY_B)
     cancel = 1;
   if (cancel) {
     ch->countdown = 0;
@@ -608,15 +596,8 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
 
 void Message_Find(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
-  u32 size;
 
-  /* FAKEMATCH(dead): the size's load in a once-only block. */
-  do {
-    size = (u32)Text_LookupSymbolCodeSize;
-  } while (0);
-  routine = (void (*)(struct TextReader *, s32))Heap_Alloc(size);
-  Dma_Set((const void *)Text_LookupSymbolCode, routine,
-          DMA_COPY_WORDS(size >> 2), REG_DMA3);
+  RamCode_Load(routine, Text_LookupSymbolCode, Text_LookupSymbolCodeSize);
   routine(reader, message);
   Heap_Release(routine);
 }

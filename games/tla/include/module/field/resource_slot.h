@@ -9,11 +9,6 @@
 struct Actor;
 struct AnimationEntry;
 
-struct PartyKeys {
-  u8 unk000[0x23c];
-  u16 dashKeys;
-};
-
 struct MetadataSlotState {
   u8 unk00[0x0c];
   s32 scale;

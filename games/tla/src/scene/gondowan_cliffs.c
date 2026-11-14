@@ -615,9 +615,7 @@ void Geysers_Draw(void) {
     x = (x >> 16) - 8;
     /* FAKEMATCH(wrapper): forwarded. */
     screenY =
-        ((screenY +
-          Value2((s32 (*)())Iwram_MulQ16, -0x20000, Trig_Sin(swing->phase)) +
-          -0x20000) >>
+        ((screenY + Math_MulQ16(-0x20000, Trig_Sin(swing->phase)) + -0x20000) >>
          16) -
         4;
     depth = ((y + z) >> 16) + 58;

@@ -1012,10 +1012,8 @@ void Func_02001b54(struct Actor *object) {
       position.z = object->z;
     } else {
       /* FAKEMATCH(wrapper): forwarded. */
-      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Cos(object->facing));
-      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Sin(object->facing));
+      position.x = object->x + Math_MulQ16(0x80000, Trig_Cos(object->facing));
+      position.z = object->z + Math_MulQ16(0x80000, Math_Sin(object->facing));
     }
     shot = FieldActor_Create(280, position.x, object->y, position.z);
     Actor_SelectAnimation(shot, 2);

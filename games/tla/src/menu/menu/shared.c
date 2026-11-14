@@ -738,9 +738,6 @@ void ItemMenu_RefreshEntry(s32 layout) {
 void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
                             s32 *height);
 
-// gInput through a volatile view: its one use below says why.
-#define INPUT ((volatile struct InputState *)&gInput)
-
 /// Shows message in the item menu, with the hand cursor hidden meanwhile.
 ///
 /// With y == -1 the message goes into the info window; otherwise a modal
@@ -781,9 +778,8 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
     wait(1);
     do {
       wait(1);
-      /* FAKEMATCH(volatile): a volatile view of gInput (INPUT). */
-    } while (!(INPUT->pressed & KEY_A) && !(INPUT->pressed & KEY_B) &&
-             !(INPUT->pressed & KEY_START));
+    } while (!(gInput.pressed & KEY_A) && !(gInput.pressed & KEY_B) &&
+             !(gInput.pressed & KEY_START));
     WindowSprite_ClearListFar(window);
   } else {
     GameFlag_Set(337);

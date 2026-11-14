@@ -6,6 +6,7 @@
 
 #include "types.h"
 #include "static_assert.h"
+#include "field/world_map_marker.h"
 
 /// gWorldMapWork, the world map screen's state while it is open: its
 /// resources, the cursor and the marker sprites.
@@ -17,11 +18,13 @@ struct WorldMapWork {
   u8 padding0c[6];
   s16 shown; ///< the FlagEntry whose name is drawn; -1 for none
   u8 padding14[4];
-  s32 speed;            ///< the cursor's speed, 16.16 pixels per frame
-  void *window;         ///< the name window
-  u32 markers[129 * 3]; ///< the marker sprites' OAM entries
-  s32 *cursor;          ///< the cursor the picture scrolls to
-  u8 padding630[0x10];
+  s32 speed;    ///< the cursor's speed, 16.16 pixels per frame
+  void *window; ///< the name window
+  struct WorldMapMarker markers[129]; ///< the marker sprites
+  s32 *cursor;                        ///< the cursor the picture scrolls to
+  s32 scrollX;                        ///< the picture's scroll, 16.16 pixels
+  s32 scrollZ;
+  u8 padding638[8];
   s16 centered; ///< nonzero draws resource 35 at the origin
                 ///< (WorldMapPicture_Draw)
   u16 mode;     ///< 0 to look, nonzero to choose a destination

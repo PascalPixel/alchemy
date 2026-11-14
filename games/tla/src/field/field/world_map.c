@@ -16,11 +16,14 @@
  * graphics.h has void Transform_Reset(void); tried as the definition's void
  * Transform_Reset(void), which the object already declares,
  * WorldMap_InitializePerspective moves: 1 of 372 instructions in tla-ja. */
-extern u32 Render_ResetTransformState__f02b998(void) __asm__(
-    "Transform_Reset"); // Returns void; see the tag.
+// UB: Transform_Reset returns nothing; this object calls it as returning u32.
+#ifdef UBFIX
+#define Render_ResetTransformState__f02b998 Transform_Reset
+#else
+extern u32 Render_ResetTransformState__f02b998(void) __asm__("Transform_Reset");
+#endif
 
 void WorldMap_InitializePerspective(void) {
-  /* FAKEMATCH(signature): Transform_Reset declared returning u32. */
   u8 *perspective;
   struct WorldView *view;
   u8 *camera;

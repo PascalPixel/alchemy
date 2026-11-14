@@ -67,7 +67,7 @@ extern struct QueuedSprite *gEndingPicture_Strips;
 void Credits_InitCrawlSprites(void);
 void Credits_InitTextSpritesAtPage(s32 credits);
 void Credits_StopTextSprites(void);
-s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align);
+s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment);
 extern const u8 BattleEffect_ExpandCode[];
 extern u8 BattleEffect_ExpandCodeSize[];
 extern const u8 gCredits_GlyphWidths[];
@@ -114,12 +114,12 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
 }
 
-/* VIEW(credits): variable gFlash_Handler3 as u16 gFlash_Handler3[];
- * sound_driver_symbols.h has struct LzPackWork *gFlash_Handler3; tried as the 3
- * declarations' extern FlashWaitProc gFlash_Handler3, it does not compile in
- * tla-ja: games/tla/src/menu/credits.c:117: parse error before
- * `gFlash_Handler3'. */
-extern u16 gFlash_Handler3__credits[] __asm__("gFlash_Handler3");
+/* VIEW(credits): variable gWaitForFlashWrite as u16 gWaitForFlashWrite[];
+ * lucky_wheels_lzpack.h has struct LzPackWork *gWaitForFlashWrite; tried as the
+ * 3 declarations' extern FlashWaitProc gWaitForFlashWrite, it does not compile
+ * in tla-ja: games/tla/src/menu/credits.c:117: parse error before
+ * `gWaitForFlashWrite'. */
+extern u16 gWaitForFlashWrite__credits[] __asm__("gWaitForFlashWrite");
 
 /// Loads a backdrop resource (its 128 colours, then its packed tiles) into
 /// one half of BG VRAM and queues its palette for the next VBlank, as The
@@ -127,14 +127,13 @@ extern u16 gFlash_Handler3__credits[] __asm__("gFlash_Handler3");
 /// becomes (2 red + 4 green + blue + 5 * channel) / 16. A zero resource
 /// clears that half instead. The tiles are unpacked by the
 /// BattleEffect_Expand kernel, copied by DMA into a heap block for the call;
-/// the grey colours are built in the EWRAM buffer at gFlash_Handler3.
+/// the grey colours are built in the EWRAM buffer at gWaitForFlashWrite.
 void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
   u32 paletteOffset;
   void *tileDestination;
   PackedDecoder decoder;
-  u32 size;
   s32 i;
 
   if (resourceId == 0) {
@@ -151,10 +150,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     tileDestination = (void *)BG_CHAR_BLOCK(2);
     paletteDestination = 0x05000100;
   }
-  size = (u32)BattleEffect_ExpandCodeSize;
-  decoder = (PackedDecoder)Heap_Alloc(size);
-  Dma_Set(BattleEffect_ExpandCode, decoder, DMA_COPY_WORDS(size >> 2),
-          REG_DMA3);
+  RamCode_Load(decoder, BattleEffect_ExpandCode, BattleEffect_ExpandCodeSize);
   decoder(resourceData + 256, tileDestination, paletteOffset);
   Heap_Release(decoder);
 
@@ -169,9 +165,9 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     blue = (sum + blue * 5) / 16;
     green = (sum + green * 5) / 16;
     red = (sum + red * 5) / 16;
-    gFlash_Handler3__credits[i] = blue << 10 | green << 5 | red;
+    gWaitForFlashWrite__credits[i] = blue << 10 | green << 5 | red;
   }
-  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gFlash_Handler3__credits,
+  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gWaitForFlashWrite__credits,
                       DMA_COPY_WORDS(64));
 }
 
@@ -354,7 +350,6 @@ void Credits_DrawEnteringCrawlLine(void) {
 /// adds Credits_UpdateCrawlSprites and Credits_DrawEnteringCrawlLine, as The
 /// Broken Seal's Credits_InitTextSprites starts its credits.
 void Credits_InitCrawlSprites(void) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 fill;
   u32 *entry;
   u32 i;
@@ -540,7 +535,6 @@ void Credits_DrawEnteringLine(void) {
 /// Credits_UpdateTextSprites and Credits_DrawEnteringLine to the task table and
 /// draws the first 32 lines blank.
 void Credits_InitTextSpritesAtPage(s32 page) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 fill;
   s32 marks;
   u32 *entry;
@@ -648,101 +642,120 @@ void Credits_StopTextSprites(void) {
   Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
 }
 
-s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align) {
-  u8 *buf = (u8 *)Heap_AllocEwram(0x900);
-  s32 x = 0;
-  s32 width = 192;
-  const u8 *font = gDisplayScroll_Font;
-  s32 tiles;
-  s32 pos;
-  const u8 *p;
-  u8 *dst;
-  u32 c;
-  s32 glyph;
-  s32 w;
-  s32 row;
-  s32 bit;
-  u32 bits;
-  u32 mask;
-  /* FAKEMATCH(dead): an unused array for the stack frame's 32 bytes no
-   * instruction touches. */
-  u32 unused[8];
+#define CREDITS_LINE_PIXELS 192
+#define CREDITS_BUFFER_BYTES 2304
+#define CREDITS_RASTER_STRIDE 256
 
+/// A credits tile's row of 4 bytes in object VRAM.
+#define OBJ_TILE_ROW(tile, row)                                                \
+  (*(u32 *)(OBJ_VRAM0 + (row) * 4 + (tile) * TILE_SIZE_4BPP))
+
+/// Centers, right-aligns or left-aligns one credits line in a 192-pixel row,
+/// with its shadow, and writes it as tiles from `firstTile`. Returns -1 at the
+/// end of the text.
+s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
+  u8 *linePixels = (u8 *)Heap_AllocEwram(CREDITS_BUFFER_BYTES);
+  s32 startX = 0;
+  s32 lineWidth = CREDITS_LINE_PIXELS;
+  const u8 *font = gDisplayScroll_Font;
+  s32 tileCount;
+  s32 textAdvance;
+  const u8 *sourceBytes;
+  u8 *destination;
+  u32 sourceValue;
+  s32 glyphIndex;
+  s32 glyphWidth;
+  s32 row;
+  s32 columnIndex;
+  u32 glyphBits;
+  u32 glyphMask;
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
+  UNUSED u32 unused[8];
+
+  // BUG: the end marker is checked after allocation, leaking one line buffer.
   if (text == NULL)
     return -1;
+  // The ninth raster row holds the shadow below this line.
   if (!GameFlag_Get(0x200)) {
-    Iwram_FillWordsEntry(buf, 0x900, 0);
+    Iwram_FillWordsEntry(linePixels, CREDITS_BUFFER_BYTES, 0);
     GameFlag_Set(0x200);
   } else {
-    Iwram_CopyWords(buf, buf + 0x800, 0x100);
-    Iwram_FillWordsEntry(buf + 0x100, 0x800, 0);
+    Iwram_CopyWords(linePixels, linePixels + 2048, 256);
+    Iwram_FillWordsEntry(linePixels + 256, 2048, 0);
   }
 
-  p = text;
-  pos = 0;
-  while ((c = *p++) != 0) {
-    if (c > 31)
-      pos += gCredits_GlyphWidths[c - 32];
+  // Measure the line in the credits font, then choose where it starts.
+  // sourceBytes walks the text here, and each glyph's rows below.
+  sourceBytes = text;
+  textAdvance = 0;
+  while ((sourceValue = *sourceBytes++) != 0) {
+    if (sourceValue > 31)
+      textAdvance += gCredits_GlyphWidths[sourceValue - 32];
   }
-  if (align == 2)
-    x = width - pos;
-  else if (align == 1)
-    x = (width - pos) / 2;
+  if (alignment == 2)
+    startX = lineWidth - textAdvance;
+  else if (alignment == 1)
+    startX = (lineWidth - textAdvance) / 2;
 
-  p = text;
-  pos = 0;
-  while ((c = *text++) != 0) {
-    if (c > 31) {
-      glyph = c - 32;
-      p = font + glyph * 8;
-      dst = buf + x + pos;
+  // Rasterize each glyph and its one-pixel shadow at the aligned start.
+  sourceBytes = text;
+  textAdvance = 0;
+  while ((sourceValue = *text++) != 0) {
+    if (sourceValue > 31) {
+      glyphIndex = sourceValue - 32;
+      sourceBytes = font + glyphIndex * 8;
+      destination = linePixels + startX + textAdvance;
       for (row = 0; row < 8; row++) {
-        bits = *p++;
-        mask = 0x80;
-        for (bit = 7; bit >= 0; bit--) {
-          if (bits & mask) {
-            dst[0x101] = 1;
-            dst[0] = 15;
+        glyphBits = *sourceBytes++;
+        glyphMask = 0x80;
+        for (columnIndex = 7; columnIndex >= 0; columnIndex--) {
+          if (glyphBits & glyphMask) {
+            destination[257] = 1;
+            destination[0] = 15;
           }
-          dst++;
-          mask >>= 1;
+          destination++;
+          glyphMask >>= 1;
         }
-        dst += 248;
+        destination += CREDITS_RASTER_STRIDE - 8;
       }
-      w = 1;
-      if (c > 31)
-        w = gCredits_GlyphWidths[glyph];
-      pos += w;
+      glyphWidth = 1;
+      if (sourceValue > 31)
+        glyphWidth = gCredits_GlyphWidths[glyphIndex];
+      textAdvance += glyphWidth;
     }
   }
 
-  tiles = width / 8;
-  p = buf;
-  dst = buf;
+  // Pack pairs of pixel indices into bytes, keeping the 256-pixel stride.
+  tileCount = lineWidth / 8;
+  sourceBytes = linePixels;
+  destination = linePixels;
   for (row = 0; row < 8; row++) {
-    for (bit = 0; bit < tiles * 4; bit++) {
-      c = *p++;
-      c |= *p++ << 4;
-      *dst++ = c;
+    for (columnIndex = 0; columnIndex < tileCount * 4; columnIndex++) {
+      sourceValue = *sourceBytes++;
+      sourceValue |= *sourceBytes++ << 4;
+      *destination++ = sourceValue;
     }
-    dst += 256 - tiles * 4;
-    p += 256 - tiles * 8;
+    destination += CREDITS_RASTER_STRIDE - tileCount * 4;
+    sourceBytes += CREDITS_RASTER_STRIDE - tileCount * 8;
   }
 
-  for (row = 0; row < tiles; row++) {
-    s32 tile = slot + row;
-    u32 *words = (u32 *)buf + row;
+  // Transpose raster rows into the tile ring used by the scrolling sprites.
+  for (row = 0; row < tileCount; row++) {
+    s32 tileIndex = firstTile + row;
+    u32 *words = (u32 *)linePixels + row;
 
-    *(u32 *)(0x06010000 + tile * 32) = words[0x000];
-    *(u32 *)(0x06010004 + tile * 32) = words[0x040];
-    *(u32 *)(0x06010008 + tile * 32) = words[0x080];
-    *(u32 *)(0x0601000c + tile * 32) = words[0x0c0];
-    *(u32 *)(0x06010010 + tile * 32) = words[0x100];
-    *(u32 *)(0x06010014 + tile * 32) = words[0x140];
-    *(u32 *)(0x06010018 + tile * 32) = words[0x180];
-    *(u32 *)(0x0601001c + tile * 32) = words[0x1c0];
+    // A tile's eight rows of 4 bytes, each a 256-pixel raster row apart.
+    OBJ_TILE_ROW(tileIndex, 0) = words[0];
+    OBJ_TILE_ROW(tileIndex, 1) = words[64];
+    OBJ_TILE_ROW(tileIndex, 2) = words[128];
+    OBJ_TILE_ROW(tileIndex, 3) = words[192];
+    OBJ_TILE_ROW(tileIndex, 4) = words[256];
+    OBJ_TILE_ROW(tileIndex, 5) = words[320];
+    OBJ_TILE_ROW(tileIndex, 6) = words[384];
+    OBJ_TILE_ROW(tileIndex, 7) = words[448];
   }
-  Heap_Release(buf);
+  Heap_Release(linePixels);
   return 0;
 }
 
@@ -944,7 +957,6 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
 /// resource's 64-colour palette. Then it copies the map at position into the
 /// tilemap (CopyScrollMap), flips the block and restarts the fade-in counter.
 void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 cell;
   u32 word;
   u32 fill = 0;

@@ -50,7 +50,7 @@ void WorldMap_StartZoom(s32 zoom, s32 frames) {
   if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->mode != 3)
     return;
   {
-    s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14;
+    s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14Entry;
     result = ratio(zoom, 0x10000);
   }
   map->zoomFrom = map->zoomTo;

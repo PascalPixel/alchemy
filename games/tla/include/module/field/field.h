@@ -765,13 +765,11 @@ struct ObjectLayerAnimation {
   u8 shadowLayer : 2;
 };
 
-struct ObjectAnimationEntry {
-  s16 animId;
-};
-
 struct ObjectAnimation {
-  u8 unk00[0x28];
-  struct ObjectAnimationEntry *entries[1];
+  u8 unk00[0x18];
+  u8 unk18;
+  u8 unk19[0x0f];
+  s16 *definition; ///< the sprite definition, its animation id first
 };
 
 struct JumpSprite {

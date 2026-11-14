@@ -7,36 +7,6 @@
 #include "fixed_math.h"
 #include "macros.h"
 
-/* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c;
- * effect_sprite.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/sand_sinking.c:74: structure has no
- * member named `priority'. */
-struct EffectSprite__f0e446c {
-  u8 unk00[4];
-  u16 attr0_0 : 13;
-  u16 color : 1;
-  u16 attr0_14 : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
-  s32 x;
-  s32 y;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk1c[2];
-  u16 depth;
-  u8 unk20[8];
-};
-
-struct EffectScene {
-  u16 mode;
-  u8 unk02[14];
-  struct Actor *mainObject;
-};
-
 /// A particle's position and velocity (16.16), integrated each frame, and its
 /// age in frames.
 struct EffectParticle {
@@ -87,16 +57,16 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 
 /// Sets up the sprite the Sand draws the sinking leader as: the leader's
 /// depth, priority, scale (three quarters on the world map) and place.
-void Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles) {
-  struct EffectScene *scene = Ram_HeapSlots->effectWork;
+void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 position[3];
 
   EffectSprite_Init(sprite, 16, 30, 0x80000000, tiles);
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
-  sprite->priority = BattleEffect_GetObjectPriority(scene->mainObject);
-  sprite->color = 1;
-  sprite->palette = 0;
+  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
+  sprite->oam.palette256 = 1;
+  sprite->oam.palette = 0;
   if (event->mode == 3) {
     sprite->scaleX = Q16_ONE * 3 / 4;
     sprite->scaleY = Q16_ONE * 3 / 4;
@@ -118,11 +88,11 @@ void Sand_DrawLeaderSprite(void *sprite) { EffectSprite_Draw(sprite); }
 /// One grain of sand thrown up round the leader as it sinks: placed 2 pixels
 /// up and 2 out when the leader stands (high), else 4 out, drifting outward,
 /// drawn small just in front of the leader.
-void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite,
+void Sand_SpawnGrain(struct EffectSprite *sprite,
                      struct EffectParticle *particle, s32 unused, s32 tiles,
                      s32 high) {
   struct Actor *mainObject =
-      ((struct EffectScene *)Ram_HeapSlots->effectWork)->mainObject;
+      ((struct FxScene *)Ram_HeapSlots->effectWork)->mainObject;
   s32 position[3];
   s32 y;
 
@@ -148,8 +118,8 @@ void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite,
   EffectSprite_Init(sprite, 8, 8, 0x40000000, tiles);
   sprite->scaleX = 0x3333;
   sprite->scaleY = 0x3333;
-  sprite->priority = BattleEffect_GetObjectPriority(mainObject);
+  sprite->oam.priority = BattleEffect_GetObjectPriority(mainObject);
   sprite->depth = BattleEffect_GetObjectDepth(mainObject) + 2;
-  sprite->color = 1;
-  sprite->palette = 0;
+  sprite->oam.palette256 = 1;
+  sprite->oam.palette = 0;
 }

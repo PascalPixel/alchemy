@@ -260,12 +260,7 @@ struct BurstMote {
   s32 timer;
 };
 
-/* VIEW(f0e82cc): tag struct BurstWork as struct BurstWork__f0e82cc; f0e2c38.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/unnamed_28.c:337: structure has no
- * member named `motes'. */
-struct BurstWork__f0e82cc {
+struct SparkleBurstWork {
   u8 unk0000[0x1000];
   struct EffectSprite sprites[64];
   struct BurstMote motes[64];
@@ -284,7 +279,7 @@ extern char ResourceId_SparkleFade;
 /// owner, starting a quarter of them a frame later than the last, then moves
 /// and animates them for 40 frames before releasing the effect.
 void FieldPsynergy_EndUnnamed28(void) {
-  struct BurstWork__f0e82cc *work = Ram_HeapSlots->battleFxWork[0];
+  struct SparkleBurstWork *work = Ram_HeapSlots->battleFxWork[0];
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   struct BurstMote *mote;
@@ -534,22 +529,12 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   SET_POSITION(center, x, work->y, z);
 }
 
-/* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc;
- * f0e2c38.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/unnamed_28.c:572: structure has no
- * member named `firstObjectId'. */
-struct EffectScene__f0e82cc {
-  u8 unk00[0x18];
-  s16 firstObjectId;
-};
-
 // Ends a view move: gives the map back the view bounds ViewMove_Start kept
 // and lets the view follow the scene's first object again. Where the view
 // was held, it only stops the screen shake.
 void ViewMove_End(void) {
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct EffectScene__f0e82cc *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
 

@@ -359,14 +359,6 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 
 #undef FLAG_MENU_START_PRESSED
 
-struct Rec5 {
-  u8 pad[5];
-  unsigned int flag : 8;
-};
-struct Cur {
-  unsigned short mark : 8;
-};
-
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode);
 s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
@@ -375,50 +367,32 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
 /// there last (the first when none was) and runs PsynergyMenu_SelectMember on
 /// them. Returns its result.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
-  void *menu = Ram_HeapSlots->menuRuntime;
-  s32 offset = partySlot + 28;
-  s32 cursorOffset = partySlot * 4 + 20;
-  void *icon;
-  u8 byteVal;
-  s32 ownerIndex;
-  s32 combinedOffset;
-  s32 objOff;
-  s32 objId;
-  void *objPtr;
-  void *p456;
-  u8 *p2;
-  s32 badge;
+  struct PsynergyMenuState *menu = Ram_HeapSlots->menuRuntime;
+  s32 memberIndex = menu->tabIndex[partySlot];
+  struct MenuIcon *icon;
+  struct BattleUnit *unit;
+  u16 *actions;
   s32 result;
-  s32 cursorOffset2;
 
   result = 0;
-  icon = *(void **)(menu + cursorOffset);
-  *(u8 *)(icon + 5) = 1;
-  *(u16 *)(icon + 12) = result;
-  ((struct Rec5 *)(*(u8 **)(menu + 536)))->flag = 13;
-  p2 = (u8 *)menu + 2;
-  ownerIndex = *(s8 *)(menu + offset);
-  byteVal = ((struct Cur *)(menu + 533))->mark;
-  p2[offset] = byteVal;
+  icon = menu->sideIcons[partySlot];
+  icon->active = 1;
+  icon->animStep = result;
+  menu->cursorIcon->active = 13;
+  menu->tabCounts[partySlot] = menu->memberCount;
 
-  if (ownerIndex == -1) {
-    *(u8 *)(menu + offset) = 0;
-    combinedOffset = 0;
+  if (memberIndex == -1) {
+    menu->tabIndex[partySlot] = 0;
+    memberIndex = 0;
   } else {
-    combinedOffset = ownerIndex * 2;
-    MenuCursor_Slide(ownerIndex * 24 - 10, 16);
+    MenuCursor_Slide(memberIndex * 24 - 10, 16);
   }
 
-  objOff = combinedOffset + 516;
-  objId = *(u16 *)(menu + objOff);
-  objPtr = Unit_Get(objId);
-  p456 = menu + 452;
-  badge = PsynergyMenu_CollectActions(objPtr, p456, 2);
-  *(u8 *)(menu + 532) = (u8)badge;
-  result = PsynergyMenu_SelectMember(menu + 516, p456);
-
-  cursorOffset2 = partySlot * 4 + 20;
-  icon = *(void **)(menu + cursorOffset2);
+  unit = Unit_Get(menu->ownerIds[memberIndex]);
+  actions = menu->psynergies;
+  menu->psynergyCount = PsynergyMenu_CollectActions(unit, actions, 2);
+  result = PsynergyMenu_SelectMember(menu->ownerIds, actions);
+  icon = menu->sideIcons[partySlot];
   Icon_PrepareActor(icon);
   wait(1);
   return result;
@@ -446,7 +420,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
 
   menu = Ram_HeapSlots->menuRuntime;
   selection = menu->tabIndex[0];
-  count = menu->tabCount;
+  count = menu->tabCounts[0];
   redraw = 2;
   result = 0;
   shown = 0;
@@ -629,7 +603,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   menu->selectedOwner = menu->ownerIds[selection];
   menu->memberIds[1] = menu->ownerIds[selection];
   selection = menu->tabIndex[0];
-  count = menu->tabCount;
+  count = menu->tabCounts[0];
   Menu_CreateOwnerEntryObjects(selection / 4 * 4);
   Menu_HighlightPageEntry(menu->rowWindow, selection, count);
   menu->paneIcon[0]->active = 13;
@@ -1178,9 +1152,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
             Text_DrawMessageAsTilesFar(MsgShortcutHelp, window, 0, 88);
           }
         }
-        /* FAKEMATCH(volatile): held read afresh for this test. */
-        if ((*(volatile u32 *)&gInput.held & KEY_SELECT) == 0 &&
-            shortcutHelp == 1) {
+        if ((gInput.held & KEY_SELECT) == 0 && shortcutHelp == 1) {
           shortcutHelp = 0;
           menu->flags &= ~2;
           Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);

@@ -2963,8 +2963,8 @@ void Func_02004938(struct Actor *ball, s32 step) {
   s32 key = (heading << 8) + piece;
   s32 d = step - 8;
   s32 arc = step << 10;
-  s32 s = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Trig_Sin(arc));
-  s32 c = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Trig_Cos(arc));
+  s32 s = Math_MulQ16(0x80000, Trig_Sin(arc));
+  s32 c = Math_MulQ16(0x80000, Trig_Cos(arc));
   s32 z;
   s32 x;
 

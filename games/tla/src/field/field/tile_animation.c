@@ -5,6 +5,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "flags.h"
 
 #include "map.h"
 #include "graphics/graphics.h"
@@ -520,7 +521,7 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
     else
       work->target = 0;
   }
-  if (GameFlag_Get(0x106))
+  if (GameFlag_Get(FLAG_MENU_OPEN))
     return;
   if (gradual == 0) {
     work->tint = work->target;

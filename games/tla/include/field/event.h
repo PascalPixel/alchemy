@@ -23,6 +23,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "types.h"
+#include "system/iwram_call.h"
 #include "system/task.h"
 
 struct Actor;

@@ -29,9 +29,7 @@
 
 #undef Actor_ShowEmoteById
 #undef BattleEffect_ApplyColorToTargetBuffer
-#undef Actor_ShowItemIconById
 #undef FieldCamera_MoveToActor
-#undef Actor_SetSpriteRotationById
 #undef MapGrid_SetCellBehavior
 #undef FieldPsynergy_SteerPushedTarget
 #undef FieldPsynergy_ForceOnTarget

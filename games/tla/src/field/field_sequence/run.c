@@ -20,7 +20,12 @@
 extern u8 gMapCellBuffer[];
 
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
+// UB: declared returning s32; the definition (main_routine.c) returns s16.
+#ifdef UBFIX
+s16 Field_GetSceneAttributes(s32 scene);
+#else
 s32 Field_GetSceneAttributes(s32 scene);
+#endif
 /* VIEW(field_sequence): routine PartyInventory_GiveItem as s32
  * PartyInventory_GiveItem(s32 item); field/event.h has s32
  * PartyInventory_GiveItem(s32 item, s32 flags); tried as the definition's s32
@@ -35,28 +40,6 @@ s32 Leader_StepOntoRope(void);
 s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);
 s32 Leader_StepOffTightrope(void);
-
-static __inline__ s32 Unit_ClampGauge(s32 ratio) {
-  s32 clamped;
-
-  if (ratio > 0x4000)
-    clamped = 0x4000;
-  else if (ratio < 0)
-    clamped = 0;
-  else
-    clamped = ratio;
-  return clamped;
-}
-
-#define Unit_UpdateGauges(unit)                                                \
-  do {                                                                         \
-    (unit)->hpGauge = Unit_ClampGauge(((unit)->hp << 14) / (unit)->maxHp);     \
-    if ((unit)->hpGauge == 0 && (unit)->hp != 0)                               \
-      (unit)->hpGauge = 1;                                                     \
-    (unit)->ppGauge = Unit_ClampGauge(((unit)->pp << 14) / (unit)->maxPp);     \
-    if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
-      (unit)->ppGauge = 1;                                                     \
-  } while (0)
 
 #define HAZARD (*(struct HazardView *)&gMainRoutineWork)
 #define ARRIVAL (*(struct ArrivalView *)&gMainRoutineWork)
@@ -83,7 +66,7 @@ s32 FieldSequence_Run(void) {
 
   work = HeapSlot_AllocEwram(108, 0xd50);
   Iwram_ClearWordsEntry(work, 0xd50);
-  GameFlag_Clear(259);
+  GameFlag_Clear(FLAG_IN_BATTLE);
   gMainRoutineWork.primary = gMainRoutineWork.scene;
   gMainRoutineWork.secondary = gMainRoutineWork.entrance;
   gMainRoutineWork.pair1ee[0] = -1;
@@ -138,7 +121,7 @@ s32 FieldSequence_Run(void) {
   work->walkingDistance = 0;
   if (gMainRoutineWork.sceneVariant == 2) {
     work->walkingDistanceScale = 0;
-    GameFlag_Set(324);
+    GameFlag_Set(FLAG_RETREAT_BLOCKED);
   }
   work->previousCell = gMapCellBuffer;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -150,8 +133,6 @@ s32 FieldSequence_Run(void) {
     gMainRoutineWork.cloaked = 0;
   }
   FieldPsynergy_ResumeCloakCheck();
-  /* FAKEMATCH(signature): field_GetSceneAttributes declared returning s32,
-   * though it returns s16. */
   value = Field_GetSceneAttributes(gMainRoutineWork.scene);
   work->sceneAttributeHigh = (value >> 4) & 15;
   work->sceneAttributeLow = value & 15;
@@ -215,8 +196,8 @@ s32 FieldSequence_Run(void) {
       ARRIVAL.state = 0;
       Teleport_PlayWhirl();
     }
-    if (GameFlag_Get(303)) {
-      GameFlag_Clear(303);
+    if (GameFlag_Get(FLAG_SHOW_AREA_NAME)) {
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       AreaNameWindow_ShowFar(gMainRoutineWork.scene);
     }
     if (gMainRoutineWork.pendingDjinnEvent != 0) {
@@ -398,11 +379,11 @@ s32 FieldSequence_Run(void) {
         Leader_StopMoving();
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         WorldMap_Freeze();
-        GameFlag_Set(262);
-        if (gDebugMode && (*(volatile u32 *)&gInput.held & KEY_B) != 0 &&
-            ((*(volatile u32 *)&gInput.held & KEY_SELECT) != 0)) {
+        GameFlag_Set(FLAG_MENU_OPEN);
+        if (gDebugMode && (gInput.held & KEY_B) != 0 &&
+            ((gInput.held & KEY_SELECT) != 0)) {
           DebugFlagEditor_RunFar();
-        } else if (GameFlag_Get(263)) {
+        } else if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER)) {
           work->raisedTrigger = 250;
         } else {
           work->effectTimerRunning = 0;
@@ -411,7 +392,7 @@ s32 FieldSequence_Run(void) {
           Field_UpdateHoverReady();
         }
         WorldMap_ReloadPendingAreaGraphics();
-        GameFlag_Clear(262);
+        GameFlag_Clear(FLAG_MENU_OPEN);
         GameFlag_RefreshLureCapFar();
         work->fieldMenu = 0;
       } else if (work->talk != 0) {
@@ -445,12 +426,12 @@ s32 FieldSequence_Run(void) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Leader_StopMoving();
         WorldMap_Freeze();
-        GameFlag_Set(262);
+        GameFlag_Set(FLAG_MENU_OPEN);
         if (*(volatile u8 *)&gDebugMode && (gInput.held & KEY_B)) {
           DebugSceneSelect_RunFar();
         } else if (*(volatile u8 *)&gDebugMode && (gInput.held & KEY_L)) {
           PaletteEditor_Run();
-        } else if (GameFlag_Get(263)) {
+        } else if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER)) {
           work->raisedTrigger = 250;
         } else {
           Event_ResolveAllPendingActions();
@@ -477,7 +458,7 @@ s32 FieldSequence_Run(void) {
           }
         }
         WorldMap_ReloadPendingAreaGraphics();
-        GameFlag_Clear(262);
+        GameFlag_Clear(FLAG_MENU_OPEN);
         work->pauseMenu = 0;
       }
     }
@@ -488,7 +469,7 @@ s32 FieldSequence_Run(void) {
     do {
       wait(1);
       leader = WorldMap_Unfreeze();
-      if (gDebugMode == 0 || !GameFlag_Get(355)) {
+      if (gDebugMode == 0 || !GameFlag_Get(FLAG_DEBUG_STEPS_OFF)) {
         if (*pending == 0 ||
             (leader->timer == 0 && *(s16 *)&leader->unk66 == 0))
           Field_UpdateWalking(leader->terrainId, leader->x, leader->y,

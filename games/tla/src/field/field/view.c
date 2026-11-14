@@ -89,13 +89,6 @@ void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {
   Heap_Release(routine);
 }
 
-// An inline function over the fixed address, as ☀️'s iwram_call.h reaches
-// this entry (☀️'s returns the entry's s32).
-#undef Iwram_TransformVector
-static inline void Iwram_TransformVector(const void *vector, s32 *result) {
-  Iwram_TransformVectorEntry(vector, result);
-}
-
 void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
                                  struct ScanlineRow *row) {
   s32 vector[3];
@@ -113,7 +106,6 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   vector[0] = position[0];
   vector[1] = zero;
   vector[2] = position[2];
-  /* FAKEMATCH(wrapper): the call through this file's inline. */
   Iwram_TransformVector(vector, result);
   height = result[1] - Iwram_MulQ16(result[2], pitchSlope);
   nearZ = -gCameraSceneParameters[0];

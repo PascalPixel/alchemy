@@ -63,33 +63,12 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   BattleEffect_SelectBattleCue(0, 0);
 }
 
-/* VIEW(event_commands): routine Event_SetAfterBattleDestination as void
- * Event_SetAfterBattleDestination(u16 first, u16 second); field/event.h has
- * void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance); tried as the
- * definition's void Event_SetAfterBattleDestination(u16 first, u16 second),
- * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence/requests.c:66: conflicting types for
- * `Event_SetAfterBattleDestination'. */
-void Event_SetAfterBattleDestination__event_commands(
-    u16 first, u16 second) __asm__("Event_SetAfterBattleDestination");
-#define Event_SetAfterBattleDestination                                        \
-  Event_SetAfterBattleDestination__event_commands
-void Event_SetAfterBattleDestination(u16 first, u16 second) {
+void Event_SetAfterBattleDestination(s32 first, s32 second) {
   gMainRoutineWork.pair1ee[0] = first;
   gMainRoutineWork.pair1ee[1] = second;
 }
 
-/* VIEW(event_commands): routine Party_SetFields1f2And1f4 as void
- * Party_SetFields1f2And1f4(u16 first, u16 second); field/event.h has void
- * Party_SetFields1f2And1f4(s32 sceneId, s32 entrance); tried as the
- * definition's void Party_SetFields1f2And1f4(u16 first, u16 second), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence/requests.c:82: conflicting types for
- * `Party_SetFields1f2And1f4'. */
-void Party_SetFields1f2And1f4__event_commands(u16 first, u16 second) __asm__(
-    "Party_SetFields1f2And1f4");
-#define Party_SetFields1f2And1f4 Party_SetFields1f2And1f4__event_commands
-void Party_SetFields1f2And1f4(u16 first, u16 second) {
+void Party_SetFields1f2And1f4(s32 first, s32 second) {
   gMainRoutineWork.pair1f2[0] = first;
   gMainRoutineWork.pair1f2[1] = second;
 }

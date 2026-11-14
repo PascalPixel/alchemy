@@ -305,7 +305,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
     if (group != gMainRoutineWork.sceneGroup) {
       for (flag = 0x300; flag <= 0x3ff; flag++)
         GameFlag_Clear(flag);
-      GameFlag_Set(0x12f);
+      GameFlag_Set(FLAG_SHOW_AREA_NAME);
       gMainRoutineWork.encounterSteps = 0;
       gMainRoutineWork.hazardSteps = 0;
       GameFlag_Clear(0x110);
@@ -317,9 +317,9 @@ void Scene_Arrive(s32 unused, s32 keep) {
     }
     for (flag = 0x80; flag <= 0xdf; flag++)
       GameFlag_Clear(flag);
-    GameFlag_Clear(0x16c);
-    GameFlag_Clear(0x144);
-    GameFlag_Clear(0x161);
+    GameFlag_Clear(FLAG_LINK_BATTLE);
+    GameFlag_Clear(FLAG_RETREAT_BLOCKED);
+    GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_Clear(0x123);
     GameFlag_Clear(0x11c);
     GameFlag_Clear(0x146);

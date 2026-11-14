@@ -6,12 +6,7 @@
 #include "sounds.h"
 #include "macros.h"
 
-/* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c;
- * f0e2c38.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/pound.c:195: structure has no
- * member named `velocityX'. */
-struct ShineParticle__f0e5d5c {
+struct PoundParticle {
   s32 x;
   s32 y;
   s32 unk08;
@@ -21,14 +16,9 @@ struct ShineParticle__f0e5d5c {
   s32 timer;
 };
 
-/* VIEW(f0e5d5c): tag struct ShineWork as struct ShineWork__f0e5d5c; f0e2c38.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/pound.c:164: structure has no
- * member named `glow'. */
-struct ShineWork__f0e5d5c {
+struct PoundWork {
   u8 tiles[0x1000];
-  struct ShineParticle__f0e5d5c particles[32];
+  struct PoundParticle particles[32];
   struct EffectSprite sprites[32];
   struct EffectSprite glow;
   struct Actor *object;
@@ -36,29 +26,6 @@ struct ShineWork__f0e5d5c {
   s16 timer;
   s8 sparkles;
   s8 fading;
-};
-
-/* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/pound.c:88: structure has no member
- * named `facing'. */
-struct FxScene__f0e5d5c {
-  u16 facing;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
-  u8 unk21[0x7a3];
-  s16 fading;
-  s16 frame;
 };
 
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
@@ -77,8 +44,8 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void FieldPsynergy_UpdatePound(void);
 
 void FieldPsynergy_Pound(void) {
-  struct ShineWork__f0e5d5c *work = HeapSlot_Alloc(92, 0x18b4);
-  struct FxScene__f0e5d5c *scene = Ram_HeapSlots->effectWork;
+  struct PoundWork *work = HeapSlot_Alloc(92, 0x18b4);
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct FxEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *child = scene->child;
   struct Actor *caster = scene->mainObject;
@@ -102,7 +69,7 @@ void FieldPsynergy_Pound(void) {
   s32 angle;
   s32 frame;
   s32 j;
-  struct ShineParticle__f0e5d5c *particle;
+  struct PoundParticle *particle;
 
   lift = 0x200000;
   if (child == NULL) {
@@ -247,7 +214,7 @@ void FieldPsynergy_Pound(void) {
     frame = 0;
     while (work->state != 999) {
       wait(1);
-      scene->fading = work->fading;
+      scene->stage = work->fading;
       scene->frame = frame;
       if (((s8 *)event)[394] != 3 && !(*(u16 *)((u8 *)event + 0xd4c) & 1)) {
         glow = &work->glow;

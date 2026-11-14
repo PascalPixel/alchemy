@@ -5,8 +5,6 @@
 #include "types.h"
 
 struct SoundPlayer;
-struct LzPackWork;
-extern struct LzPackWork *gFlash_Handler3;
 extern struct SoundPlayer gMPlayInfo_BGM;
 
 enum AudioCommandMask {

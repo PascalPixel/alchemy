@@ -536,7 +536,7 @@ void LuckyDice_Run(void) {
     } else if (state == 0 && frame > 17) {
       (void)gInput.repeat;
       (void)gInput.repeat;
-      if (*(volatile u32 *)&gInput.held & KEY_UP) {
+      if (gInput.held & KEY_UP) {
         diceWork->particles[0].y += px(4);
         diceWork->particles[1].y += px(4);
       }

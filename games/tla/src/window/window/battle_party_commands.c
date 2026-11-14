@@ -37,9 +37,6 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   return kind;
 }
 
-// The keys, read through a volatile view: the loop reloads them on each test.
-#define INPUT ((volatile struct InputState *)&gInput)
-
 /// Lets the player choose which reserve member takes a party slot in battle,
 /// previewing each choice in place: left and right cycle through the reserve,
 /// A confirms and swaps the two in gMainRoutineWork.activeOwners, and B puts
@@ -77,9 +74,9 @@ s32 BattleParty_ChooseReserve(s32 slot) {
         // Japanese also takes A on the first frame, before the first preview
         // has been drawn.
 #if TLA_PATCH_1
-        if ((INPUT->pressed & KEY_A) && !redraw) {
+        if ((gInput.pressed & KEY_A) && !redraw) {
 #else
-        if (INPUT->pressed & KEY_A) {
+        if (gInput.pressed & KEY_A) {
 #endif
           if (BattleUnit_ListIdsFar(1, 0) == 0) {
             Sound_PlayFar(SE_MENU_ERROR);
@@ -96,11 +93,11 @@ s32 BattleParty_ChooseReserve(s32 slot) {
           }
           goto done;
         }
-        if (INPUT->repeat & KEY_LEFT) {
+        if (gInput.repeat & KEY_LEFT) {
           sel = (sel + count - 1) % count;
           Sound_PlayFar(SE_MENU_CONFIRM);
           redraw = 1;
-        } else if (INPUT->repeat & KEY_RIGHT) {
+        } else if (gInput.repeat & KEY_RIGHT) {
           sel = (sel + 1) % count;
           Sound_PlayFar(SE_MENU_CONFIRM);
           redraw = 1;
@@ -131,7 +128,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
         wait(1);
       test:
         newId = battle->partyUnits[slot] = owners[sel];
-        if (INPUT->pressed & KEY_B)
+        if (gInput.pressed & KEY_B)
           break;
       }
       battle->partyUnits[slot] = current;

@@ -3,6 +3,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "flags.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/battle.h"
@@ -285,12 +286,12 @@ restart:
         loadedPreset = preset;
       }
       if (input->held & KEY_DOWN)
-        GameFlag_Set(364);
+        GameFlag_Set(FLAG_LINK_BATTLE);
       Unit_CalculateFar(0);
       *backdropId = (s32)&ResourceId_ColossoBackdrop;
       m = &gMainRoutineWork;
       if (encounter == 28)
-        GameFlag_Set(366);
+        GameFlag_Set(FLAG_DJINN_LESSON);
       GameFlag_Set(354);
       if (startModeSet)
         m->battleRule24b = 5;

@@ -45,13 +45,6 @@ void GrowingParticle_Update(struct EffectSprite *sprite,
 
 struct PendingEvent;
 
-/* VIEW(growing_particle): variable gMainRoutineWork as extern u8
- * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
- * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/growing_particle.c:48: conflicting
- * types for `gMainRoutineWork'. */
-extern u8 gMainRoutineWork__growing_particle[] __asm__("gMainRoutineWork");
 extern u8 Data_02000452;
 
 void Func_080dc954(void);
@@ -70,10 +63,10 @@ struct Actor *Actor_GetById(u32 objectId);
 
 void FieldPsynergy_EndSand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
-  u8 *effect = Ram_HeapSlots->effectWork;
+  struct FxScene *effect = Ram_HeapSlots->effectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 pictureEntry;
-  struct Actor *owner = *(struct Actor **)(effect + 16);
+  struct Actor *owner = effect->mainObject;
   s32 particleEntry;
   s32 particleTiles;
   u8 *motionFlags;
@@ -83,7 +76,7 @@ void FieldPsynergy_EndSand(void) {
   u8 *particle;
   u8 *particleSprite;
   u8 *animation;
-  u8 *party;
+  struct MainRoutineWork *party;
   s32 pictureOffset;
   s32 ripple;
   s32 frame;
@@ -92,7 +85,7 @@ void FieldPsynergy_EndSand(void) {
   s32 mask;
 
   Func_080dc954();
-  gMainRoutineWork__growing_particle[620] = 0;
+  gMainRoutineWork.pendingThird = 0;
   Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(FieldPsynergy_WatchSandGround);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
@@ -117,8 +110,8 @@ void FieldPsynergy_EndSand(void) {
   mask = 63;
   Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
                                      owner->z);
-  party = gMainRoutineWork__growing_particle;
-  Actor_SetFirstSpriteAnimationFar(owner, *(s32 *)(party + 532));
+  party = &gMainRoutineWork;
+  Actor_SetFirstSpriteAnimationFar(owner, party->currentOwner);
   ((u8 *)owner->sprite)[5] &= mask;
   mask &= ((u8 *)owner->sprite)[7];
   mask |= 128;
@@ -165,8 +158,8 @@ void FieldPsynergy_EndSand(void) {
     if (frame == 66) {
       Actor_SelectAnimationFar(owner, 1);
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
-      Actor_SetSpriteFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
-      FieldCamera_FollowActor(*(s16 *)(effect + 24), 1);
+      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstObjectId), 1);
+      FieldCamera_FollowActor(effect->firstObjectId, 1);
       Sound_PlayFar(SE_539);
       if (event->mode == 3) {
         Data_02000452 = 1;
@@ -178,9 +171,9 @@ void FieldPsynergy_EndSand(void) {
       if (event->standing == 0)
         Field_RunPsynergyEvent(
             Scene_FindPsynergyTrigger(
-                0x40000005, *(s16 *)(effect + 30),
-                Scene_SelectPsynergyTarget(*(s16 *)(effect + 30))),
-            *(s16 *)(effect + 24), -1);
+                0x40000005, effect->fieldKind,
+                Scene_SelectPsynergyTarget(effect->fieldKind)),
+            effect->firstObjectId, -1);
     }
     i = 0;
     particle = work + 0x1200;

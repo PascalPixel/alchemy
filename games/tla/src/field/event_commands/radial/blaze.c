@@ -9,21 +9,6 @@
 
 #include "system/input.h"
 
-struct FxScene {
-  u16 angleFraction;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
-};
-
 struct FxEvent {
   u8 unk00[20];
   struct Actor *objects[80];
@@ -31,17 +16,6 @@ struct FxEvent {
   u8 unkd30;
   u8 unkd31[7];
   s8 unkd38;
-};
-
-/* VIEW(psynergy): tag struct ObjectAnimation as struct
- * ObjectAnimation__psynergy; module/field/field.h has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial/blaze.c:36: redefinition of
- * `struct ObjectAnimation'. */
-#define ObjectAnimation ObjectAnimation__psynergy
-struct ObjectAnimation {
-  u8 unk00[40];
-  s16 *definition;
 };
 
 struct ObjectMetadata {
@@ -333,13 +307,6 @@ s32 Actor_CheckBlocked(struct Actor *object) {
 #include "system/io_reg.h"
 #include "system/heap_release.h"
 
-/* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
- * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
- * as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial/blaze.c:341: conflicting
- * types for `gMainRoutineWork'. */
-extern u8 gMainRoutineWork__f0e3d04[] __asm__("gMainRoutineWork");
-
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);
 s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 
@@ -348,15 +315,15 @@ s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 /// it leaves a climbable cell or faces one that is not.
 void FieldPsynergy_WatchSandGround(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  u8 *party = gMainRoutineWork__f0e3d04;
-  struct Actor *object = ObjectTable_Get(*(s32 *)(party + 532));
+  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct Actor *object = ObjectTable_Get(party->currentOwner);
   s32 reason = 0;
 
-  if (*(s8 *)(party + 707) != 0)
+  if ((s8)party->unk2c3 != 0)
     reason = 1;
   if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0)
     reason = 2;
-  if (party[530] == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
+  if (party->renderMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
       object->timer == 0) {
     s32 x;
     s32 z;

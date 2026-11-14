@@ -4,31 +4,12 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "flags.h"
 #include "fixed_math.h"
 #include "flag_call.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "macros.h"
-
-/* VIEW(f0279b0): tag struct PlayerSprite as struct PlayerSprite__f0279b0;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:157: structure has no member named
- * `entry'. */
-struct PlayerSprite__f0279b0 {
-  u8 unk00[5];
-  u8 low05 : 2;
-  u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unk06[3];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-  u8 unk1b[0x11];
-  u8 *entry;
-};
 
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
@@ -55,15 +36,15 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   s32 targetCameraYaw;
   struct WorldCamera *camera;
   s32 yawStep;
-  struct PlayerSprite__f0279b0 *playerSprite;
+  struct PlayerSprite *playerSprite;
   struct Actor *ripple;
-  struct PlayerSprite__f0279b0 *rippleSprite;
+  struct PlayerSprite *rippleSprite;
   struct FieldWork *work;
 
   movementAnimation = 2;
   collision = 0;
   count = 0;
-  if (gInput.held & ((struct PartyKeys *)&gMainRoutineWork)->dashKeys) {
+  if (gInput.held & gMainRoutineWork.dashKeys) {
     object->speedLimit = px(1);
     object->acceleration = px(1) / 2;
     movementAnimation = 5;
@@ -80,8 +61,8 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
     collision = 0;
     SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction, &position);
-    if (gDebugMode == 0 ||
-        ((gInput.held & KEY_L) == 0 && GameFlag_Get(0x163) == 0)) {
+    if (gDebugMode == 0 || ((gInput.held & KEY_L) == 0 &&
+                            GameFlag_Get(FLAG_DEBUG_STEPS_OFF) == 0)) {
       SET_POSITION(&leftPosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
       SET_POSITION(&rightPosition, object->x, object->y, object->z);
@@ -197,7 +178,7 @@ update_object:
     }
   }
   Field_CheckConfiguredKeys();
-  if (gInput.pressed & gMainRoutineWork.keys230)
+  if (gInput.pressed & gMainRoutineWork.aKeys)
     gFieldWork->raisedTrigger = 251;
   object->step++;
   return 1;
@@ -444,7 +425,7 @@ counted:
   else
     Actor_SelectAnimation(object, 2);
 
-  if (gInput.pressed & gMainRoutineWork.keys230) {
+  if (gInput.pressed & gMainRoutineWork.aKeys) {
     gFieldWork->raisedTrigger = 252;
     collision |= 4;
   }
@@ -498,34 +479,6 @@ counted:
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 
-/* VIEW(s28534): tag struct PlayerSprite as struct PlayerSprite__s28534;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:709: structure has no member named
- * `objectMode'. */
-struct PlayerSprite__s28534 {
-  u8 unk00[5];
-  u8 low05 : 2;
-  u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unk06[3];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-};
-
-/* VIEW(s28534): tag struct PartyKeys as struct PartyKeys__s28534;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:648: structure has no member named
- * `keys23c'. */
-struct PartyKeys__s28534 {
-  u8 unk000[0x23c];
-  u16 keys23c;
-};
-
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
@@ -554,7 +507,7 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   struct WorldCamera *camera;
   s32 yawStep;
   struct Actor *ripple;
-  struct PlayerSprite__s28534 *rippleSprite;
+  struct PlayerSprite *rippleSprite;
   struct FieldWork *work;
   struct FieldWork *worldWork;
   u32 kind;
@@ -649,12 +602,11 @@ update_object:
   else
     Actor_SelectAnimation(object, 2);
 
-  if (gInput.pressed & gMainRoutineWork.keys230) {
+  if (gInput.pressed & gMainRoutineWork.aKeys) {
     gFieldWork->raisedTrigger = 252;
     collision |= 4;
   }
-  if (gInput.pressed &
-      ((struct PartyKeys__s28534 *)&gMainRoutineWork)->keys23c) {
+  if (gInput.pressed & gMainRoutineWork.dashKeys) {
     struct FieldWork *keyWork = Ram_HeapSlots->fieldWork;
     if (keyWork->hoverReady != 0) {
       GameFlag_Clear(0x147);
@@ -739,24 +691,6 @@ update_object:
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 
-/* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:949: structure has no member named
- * `objectMode'. */
-struct PlayerSprite__f028aac {
-  u8 unk00[5];
-  u8 low05 : 2;
-  u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unk06[3];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[0x10];
-  u8 flags;
-};
-
 /* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
@@ -791,7 +725,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   struct WorldCamera *camera;
   s32 yawStep;
   struct Actor *ripple;
-  struct PlayerSprite__f028aac *rippleSprite;
+  struct PlayerSprite *rippleSprite;
   struct FieldWork *work;
   struct FieldWork *worldWork;
   struct Actor *other;
@@ -975,7 +909,7 @@ update_object:
   }
 
   flightWork = Ram_HeapSlots->fieldWork;
-  if (gInput.held & (gMainRoutineWork.keys230 | gMainRoutineWork.unk232)) {
+  if (gInput.held & (gMainRoutineWork.aKeys | gMainRoutineWork.bKeys)) {
     flightWork->climbing = 1;
     object->y += px(1) / 8;
   } else {

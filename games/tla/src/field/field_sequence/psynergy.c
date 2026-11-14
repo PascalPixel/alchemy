@@ -59,7 +59,7 @@ s32 Field_UsePsynergy(u32 code) {
     return 0;
   }
   if (abilityId == 149) {
-    if (GameFlag_Get(324)) {
+    if (GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
       FIELD_PSYNERGY_MESSAGE(userId, 149, MsgKey0dbd);
       return 0;
     }

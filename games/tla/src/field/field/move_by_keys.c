@@ -14,10 +14,6 @@
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
-/// The held keys, read again at each use, as The Broken Seal's gKeysHeld is.
-/* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
-#define INPUT_HELD (((volatile struct InputState *)&gInput)->held)
-
 /// The script command 0x1b: moves an object 8 pixels at a time by the
 /// direction pad, with up and down changing its height (y) rather than its
 /// depth. Refuses steps into an occupied cell, from or onto a cell without
@@ -43,8 +39,8 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   half = 0x8000;
   object->speedLimit = half;
   if (gDebugMode)
-    keys = INPUT_HELD;
-  keys = INPUT_HELD;
+    keys = gInput.held;
+  keys = gInput.held;
   {
     const u16 *table = gWorldMap_KeyHeadings;
 
@@ -80,12 +76,12 @@ s32 Actor_MoveByKeys(struct Actor *object) {
         !(sourceCell->attributeB & 64) || !(destinationCell->attributeB & 64)) {
       collisionFlags = 4;
       animation = 12;
-    } else if (INPUT_HELD & 64) {
+    } else if (gInput.held & 64) {
       terrainHeight = MapGrid_GetTerrainHeight(object->terrainId, position.x,
                                                position.z - 0x100000);
       if (terrainHeight - object->y < 0x100000)
         goto refused;
-    } else if (INPUT_HELD & 128) {
+    } else if (gInput.held & 128) {
       terrainHeight =
           MapGrid_GetTerrainHeight(object->terrainId, position.x, position.z);
       if (terrainHeight - object->y > -0x80000) {
@@ -101,7 +97,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
-    work->heldKeys = INPUT_HELD;
+    work->heldKeys = gInput.held;
   }
   Actor_SelectAnimation(object, animation);
   if (collisionFlags != 0) {
@@ -145,7 +141,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   object->speedLimit = px(1) / 2;
   object->acceleration = px(1) / 2;
   object->motionFlags = 0;
-  angle = gWorldMap_KeyHeadings[(INPUT_HELD >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
     best = (struct RopeNode *)object->watchedObject;
     value = 0;
@@ -219,7 +215,7 @@ done:
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
-    work->heldKeys = INPUT_HELD;
+    work->heldKeys = gInput.held;
   }
   Actor_SelectAnimation(object, 29);
   Actor_SetAnimationSpeed(object, value);
@@ -386,9 +382,9 @@ s32 Sand_CheckEndKeys(s32 arg) {
 
   if (work == NULL)
     return 0;
-  if ((gInput.pressed & gMainRoutineWork.keys234) ||
-      (gInput.pressed & gMainRoutineWork.keys230) ||
-      (gInput.pressed & gMainRoutineWork.keys236))
+  if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
+      (gInput.pressed & gMainRoutineWork.aKeys) ||
+      (gInput.pressed & gMainRoutineWork.startKeys))
     pressed = 1;
   if (pressed) {
     if (Actor_CheckBlockedFar(arg)) {
@@ -400,6 +396,6 @@ s32 Sand_CheckEndKeys(s32 arg) {
   }
   return 0;
 }
-#undef INPUT_HELD
+#undef gInput.held
 #undef CHAIN_WORK
 #undef HALF_AT

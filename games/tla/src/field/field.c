@@ -33,7 +33,6 @@
 #undef ResourceMetadata_Register
 #undef Animation_ApplyChildArgument
 #undef Animation_ApplyChildValue
-#undef SpriteAnimation_Alloc
 #undef Render_ApplyProjectedPlacementAtDepth
 
 #include "field/tile_animation.c"

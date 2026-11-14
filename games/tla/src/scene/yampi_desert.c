@@ -2437,9 +2437,7 @@ void YampiDesert_DrawRisingSand(void) {
     sy = z - y;
     x = (x >> 16) - 8;
     /* FAKEMATCH(wrapper): forwarded. */
-    sy = ((sy +
-           Value2((s32 (*)())Iwram_MulQ16, -0x20000, Trig_Sin(entry->phase)) +
-           -0x20000) >>
+    sy = ((sy + Math_MulQ16(-0x20000, Trig_Sin(entry->phase)) + -0x20000) >>
           16) -
          4;
     depth = ((y + z) >> 16) + 58;

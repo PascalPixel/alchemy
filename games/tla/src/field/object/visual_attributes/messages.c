@@ -186,10 +186,6 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   return handle;
 }
 
-/// The held keys, read again at each test.
-/* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
-#define HELD (*(volatile u32 *)&gInput.held)
-
 /// Opens the message at the object and waits for its window; after ten
 /// seconds, or with Select, R, L and A held, the text is finished at once.
 void FieldMessage_ShowAtActorAndWait(s32 object, s32 message) {
@@ -213,8 +209,8 @@ void FieldMessage_ShowAtActorAndWait(s32 object, s32 message) {
     while (Window_IsClosedFar((s32)window) == 0) {
       wait(1);
       frames++;
-      if (frames > 600 ||
-          ((HELD & 4) && (HELD & 0x100) && (HELD & 0x200) && (HELD & 1)))
+      if (frames > 600 || ((gInput.held & 4) && (gInput.held & 0x100) &&
+                           (gInput.held & 0x200) && (gInput.held & 1)))
         Message_CloseFinishedWindowsFar();
     }
   }

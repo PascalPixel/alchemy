@@ -292,7 +292,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   }
   if (found == NULL)
     return NULL;
-  if (((struct ObjectAnimation *)found->sprite)->entries[0]->animId != id)
+  if (((struct ObjectAnimation *)found->sprite)->definition[0] != id)
     return NULL;
   return found;
 }

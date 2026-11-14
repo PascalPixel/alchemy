@@ -1299,7 +1299,7 @@ void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
   s32 (*divide)(s32, s32);
 
   if (frames > 0) {
-    divide = Iwram_SignedDivide;
+    divide = Iwram_SignedDivideEntry;
     index = 0x53F;
     do {
       first = *source;
@@ -1965,59 +1965,39 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
   HeapSlot_Release(56);
 }
 
-/* VIEW(f0cf050): tag struct EffectSprite as struct EffectSprite__f0cf050;
- * effect_sprite.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence/screen_transition.c:1976: structure has no
- * member named `priority'. */
-struct EffectSprite__f0cf050 {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affineMode : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 palette256 : 1;
-  u16 shape : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[20];
-  u16 depth;
-};
-
 /// Sets up sprite through EffectSprite_Init with resource 94's tiles, at
 /// priority 1 in palette 0.
-void EffectSprite_InitFromSlot94(struct EffectSprite__f0cf050 *sprite, s32 a,
-                                 s32 b, s32 c) {
+void EffectSprite_InitFromSlot94(struct EffectSprite *sprite, s32 a, s32 b,
+                                 s32 c) {
   EffectSprite_Init(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
-  sprite->priority = 1;
-  sprite->palette256 = 0;
-  sprite->palette = 0;
+  sprite->oam.priority = 1;
+  sprite->oam.palette256 = 0;
+  sprite->oam.palette = 0;
 }
 
 /// Projects the world position (x, y, z) to the screen, stores it as the
 /// effect sprite's position and draws the sprite.
-void BattleEffect_DrawSpriteAtWorldPosition(s32 *sprite, s32 x, s32 y, s32 z) {
+void BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
+                                            s32 y, s32 z) {
   s32 position[3];
 
   SET_VECTOR(position, x, y, z);
   Camera_WorldToScreen(position);
-  sprite[3] = position[0];
-  sprite[4] = position[2];
+  sprite->x = position[0];
+  sprite->y = position[2];
   EffectSprite_Draw(sprite);
 }
 
 /// The twin of EffectSprite_InitFromSlot94 with object mode 1 and priority 0.
-void EffectSprite_InitFromSlot94Blended(struct EffectSprite__f0cf050 *sprite,
-                                        s32 a, s32 b, s32 c) {
+void EffectSprite_InitFromSlot94Blended(struct EffectSprite *sprite, s32 a,
+                                        s32 b, s32 c) {
   EffectSprite_Init(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
-  sprite->priority = 0;
-  sprite->palette256 = 0;
-  sprite->palette = 0;
-  sprite->objectMode = 1;
+  sprite->oam.priority = 0;
+  sprite->oam.palette256 = 0;
+  sprite->oam.palette = 0;
+  sprite->oam.objectMode = 1;
 }
 
 /// Finds the battle effect definition of id among the first 243 entries; when

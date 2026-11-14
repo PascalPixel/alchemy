@@ -805,10 +805,8 @@ void Func_02000f34(struct Actor *object) {
       position.z = object->z;
     } else {
       /* FAKEMATCH(wrapper): forwarded. */
-      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Cos(object->facing));
-      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Sin(object->facing));
+      position.x = object->x + Math_MulQ16(0x80000, Trig_Cos(object->facing));
+      position.z = object->z + Math_MulQ16(0x80000, Trig_Sin(object->facing));
     }
     shot = (struct Actor *)Import_ActorCreate(280, position.x, object->y,
                                               position.z);
@@ -930,10 +928,8 @@ void Func_02001290(struct Actor *object) {
       position.z = object->z;
     } else {
       /* FAKEMATCH(wrapper): forwarded. */
-      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Cos(object->facing));
-      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Trig_Sin(object->facing));
+      position.x = object->x + Math_MulQ16(0x80000, Trig_Cos(object->facing));
+      position.z = object->z + Math_MulQ16(0x80000, Trig_Sin(object->facing));
     }
     for (i = 0; i != 3; i++) {
       shot = Actor_GetById(13 + i);

@@ -104,7 +104,7 @@ void WindowSprite_PrepareForRedraw(struct Window *window);
 s32 Message_Type(struct UiChannelSlot *channel) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   // DEAD: the ROM reads the held keys here once and never uses the value.
-  u32 keys = *(volatile u32 *)&gInput.held;
+  u32 keys = gInput.held;
   s32 glyphsLeft = gMessageSpeed_Steps[TEXT_SPEED];
   s32 frameVBlanks;
   u32 code;

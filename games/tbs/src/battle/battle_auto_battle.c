@@ -148,22 +148,15 @@ s32 BattleObject_IsValidId(u32 unitId) {
 s32 BattleFlee_PlayRun(struct BattleAction *action) {
   s16 partyMembers[UNIT_MAX];
   s32 partySize;
-  s32 animated;
   s32 memberSlot;
 
   (void)action;
   // The roll's top four bits: flee unless all are clear, 15 in 16.
   if (((Random16() << 4) >> 16) != 0) {
     partySize = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, partyMembers);
-    animated = 0;
-    if (partySize != 0) {
-      memberSlot = 0;
-      do {
-        BattleMotion_SetupEscapeObject(partyMembers[memberSlot]);
-        animated++;
-        wait(8);
-        memberSlot++;
-      } while (animated != partySize);
+    for (memberSlot = 0; memberSlot != partySize; memberSlot++) {
+      BattleMotion_SetupEscapeObject(partyMembers[memberSlot]);
+      wait(8);
     }
     wait(22);
     return 1;

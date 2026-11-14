@@ -221,17 +221,13 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
     *slot = standbyCount;
     counts[0] = standbyCount;
   }
-  entryIndex = 0;
-  if (recoveryTable->list.count != 0) {
-    do {
-      if (entry->turns == -1) {
-        if (counts != 0)
-          counts[entry->element]++;
-        standbyCount++;
-      }
-      entryIndex++;
-      entry++;
-    } while (entryIndex != recoveryTable->list.count);
+  for (entryIndex = 0; entryIndex != recoveryTable->list.count; entryIndex++) {
+    if (entry->turns == -1) {
+      if (counts != 0)
+        counts[entry->element]++;
+      standbyCount++;
+    }
+    entry++;
   }
   return standbyCount;
 }

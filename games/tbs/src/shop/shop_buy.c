@@ -684,7 +684,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
     do {
       lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
       Party_AdjustCoinsFar(0 - item->price);
-      remainingQuantity -= 1;
+      remainingQuantity--;
       Party_AdjustShopCreditFar(item->price);
       Shop_DrawMoney();
     } while (remainingQuantity != 0);

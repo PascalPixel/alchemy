@@ -277,12 +277,12 @@ s32 Sanctum_RunPartyService(void) {
     if ((gKeysRepeat & KEY_LEFT) != 0) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
-      memberIndex -= 1;
+      memberIndex--;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
-      memberIndex += 1;
+      memberIndex++;
     }
     wait(1);
     continue;
@@ -453,9 +453,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   position.z = px(shop->partyMemberY[member]) - px(12);
 
   // Spawn eighteen particles while the task continues updating all twenty-four.
-  effectIndex = 0;
-  effect = shop->effects;
-  do {
+  for (effectIndex = 0; effectIndex <= 17; effectIndex++) {
+    effect = &shop->effects[effectIndex];
     FieldParticle_InitializeFar(effect, SPRITE_PARTICLE, position.x,
                                 position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
@@ -467,9 +466,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     if (effectIndex == 5) {
       shop->burstMember = member;
     }
-    effectIndex++;
-    effect++;
-  } while (effectIndex <= 17);
+  }
 
   // Let active particles finish, then release remaining slots and restore UI.
   Sound_WaitForJingle();

@@ -133,13 +133,13 @@ s32 Shop_SelectSell(s32 unitId) {
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        slot -= 1;
+        slot--;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        slot += 1;
+        slot++;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }

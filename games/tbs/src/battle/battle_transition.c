@@ -151,7 +151,6 @@ void BattleTransition_AdvanceTimer(void) {
 void BattleTransition_DrawRows(void) {
   u32 column;
   s32 transitionFrame;
-  s32 alignedFrame;
   s32 tileEntry;
   u32 tileRow;
   u16 *tilemap;
@@ -159,45 +158,24 @@ void BattleTransition_DrawRows(void) {
   transitionFrame = *gBattleEntryTimer;
   if (transitionFrame >= 0 && transitionFrame <= 79) {
     tileEntry = (7 & transitionFrame) + TRANSITION_CURTAIN_ENTRY(1);
-    if (transitionFrame >= 0) {
-      alignedFrame = transitionFrame;
-    } else {
-      alignedFrame = transitionFrame + 7;
-    }
-    tileRow = 13 - (alignedFrame >> 3);
-    column = 0;
-    tilemap = (u16 *)(BG_SCREEN_BLOCK(12) + (tileRow << 6));
-    do {
-      column++;
-      *tilemap = tileEntry;
-      tilemap++;
-    } while (column != 32);
+    tileRow = 13 - transitionFrame / 8;
+    tilemap = (u16 *)BG_SCREEN_BLOCK(12) + tileRow * 32;
+    for (column = 0; column != 32; column++)
+      tilemap[column] = tileEntry;
 
     // The lower half: the same tile flipped vertically.
     tileEntry |= TILE_VFLIP;
-    alignedFrame = transitionFrame;
-    if (transitionFrame < 0) {
-      alignedFrame += 7;
-    }
-    tileRow = (alignedFrame >> 3) + 13;
+    tileRow = transitionFrame / 8 + 13;
     if (tileRow <= 20) {
-      column = 0;
-      tilemap = (u16 *)(BG_SCREEN_BLOCK(12) + (tileRow << 6));
-      do {
-        column++;
-        *tilemap = tileEntry;
-        tilemap++;
-      } while (column != 32);
+      tilemap = (u16 *)BG_SCREEN_BLOCK(12) + tileRow * 32;
+      for (column = 0; column != 32; column++)
+        tilemap[column] = tileEntry;
     }
   }
 }
 
 /// Clears BG0's scroll from the line the interrupt fires on.
-void BattleTransition_ClearBg0Vofs(void) {
-  u32 top = 0;
-
-  REG_BG0VOFS = top;
-}
+void BattleTransition_ClearBg0Vofs(void) { Io_Write16(0, &REG_BG0VOFS); }
 
 /// Opens a battle: the curtain opening, or for the Fusion Dragon the storm on
 /// the Venus Lighthouse aerie; then announces the enemies.

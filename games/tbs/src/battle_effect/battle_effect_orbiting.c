@@ -266,7 +266,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
             drawSmoke(canvas, work->sheet + picture * (24 * 48), screen.x - 12,
                       screen.y - 36, 24, 48);
           }
-          puff->variant += 1;
+          puff->variant++;
         }
       }
     }

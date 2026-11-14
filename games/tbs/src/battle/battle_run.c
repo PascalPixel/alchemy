@@ -406,16 +406,16 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
       remaining = activeCount;
       do {
         unitId = *member;
-        member += 1;
+        member++;
         hp = Unit_GetFar(unitId)->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
-            output += 1;
+            output++;
           }
-          livingCount += 1;
+          livingCount++;
         }
-        remaining -= 1;
+        remaining--;
       } while (remaining != 0);
     }
   }
@@ -428,11 +428,11 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
         if ((unit->side != BATTLE_SIDE_NONE) && (unit->hp > 0)) {
           if (output != NULL) {
             *output = remaining;
-            output += 1;
+            output++;
           }
-          livingCount += 1;
+          livingCount++;
         }
-        remaining += 1;
+        remaining++;
       } while (remaining < lastEnemy);
     }
   }

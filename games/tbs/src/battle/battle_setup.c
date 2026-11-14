@@ -145,11 +145,7 @@ s32 Battle_ShiftVramTiles(void) {
 }
 
 /// Nothing in the source calls it.
-void Battle_ClearBg0Vofs(void) {
-  u32 top = 0;
-
-  REG_BG0VOFS = top;
-}
+void Battle_ClearBg0Vofs(void) { Io_Write16(0, &REG_BG0VOFS); }
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set
 /// up.

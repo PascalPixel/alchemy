@@ -270,7 +270,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         }
         spark->x += spark->velocityX;
         spark->y += spark->velocityY;
-        spark->variant += 1;
+        spark->variant++;
         if (spark->variant == BURST_SHOWER_BURST_LIFE) {
           spark->variant = -1;
         }

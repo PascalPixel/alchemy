@@ -47,7 +47,7 @@ s32 LinkBattle_ReceiveParty(void) {
     }
     Serial_WaitForReceive();
     if (opponent->side != 0) {
-      memberCount += 1;
+      memberCount++;
     }
     wait(2);
 
@@ -60,7 +60,7 @@ s32 LinkBattle_ReceiveParty(void) {
     }
 #if APPEND_NAME_SPACE
     label[i] = ' ';
-    i += 1;
+    i++;
 #endif
     labelLength = i;
     for (i = UNIT_NAME_LENGTH; i >= labelLength; i--) {

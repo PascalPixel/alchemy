@@ -732,16 +732,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                  mode == CASTING_IMPACT_IMPACT_STUN_VOLTAGE) {
         // Two bolts strike the target.
         if (frame >= 6 && frame <= 19) {
-          phase = frame;
-          i = 0;
-          do {
+          for (i = 0; i != 2; i++) {
             blitters[0](canvas,
-                        ((phase / 2) & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
+                        (((frame + i * 3) / 2) & 3) *
+                                LIGHTNING_BOLT_PICTURE_BYTES +
                             (pictures + GLINT_SET_BYTES),
                         targetPos.x / 2 - 8, 0, 24, 104);
-            i++;
-            phase += 3;
-          } while (i != 2);
+          }
         }
         if (frame >= 8 && frame <= 23) {
           for (i = 0; i != 3; i++) {
@@ -750,15 +747,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             s32 imageX;
             s32 imageY;
             s32 drawFlags;
-            imageX = Trig_Sin(angle);
-            imageX <<= 3;
-            imageX >>= 16;
-            imageX += targetPos.x / 2;
-            imageX -= gBattleEffect_GlintPictureWidths[image] / 2;
-            imageY = Trig_Cos(angle);
-            imageY <<= 5;
-            imageY >>= 16;
-            imageY -= gBattleEffect_GlintPictureHeights[image] / 2;
+            imageX = ((Trig_Sin(angle) << 3) >> 16) + targetPos.x / 2 -
+                     gBattleEffect_GlintPictureWidths[image] / 2;
+            imageY = ((Trig_Cos(angle) << 5) >> 16) -
+                     gBattleEffect_GlintPictureHeights[image] / 2;
             EFFECT_RELEASE_BLITTERS();
             drawFlags = Random16();
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
@@ -897,9 +889,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         s32 sway;
         // Condemn's reaper and crescent.
         Trig_Sin(frame * (TRIG_TURN / 128));
-        sway = Trig_Cos(frame * (TRIG_TURN / 128));
-        sway <<= 2;
-        sway >>= 16;
+        sway = (Trig_Cos(frame * (TRIG_TURN / 128)) << 2) >> 16;
         // targetPos.y is in whole pixels, so the shift leaves 0 for any
         // target on the screen: the pictures stand at a fixed height.
         imageY = (targetPos.y >> 16) + sway + 16;

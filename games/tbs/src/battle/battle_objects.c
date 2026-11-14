@@ -302,7 +302,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
       recordIndex = 0;
       while ((record = GetMotionRecord(actor, recordIndex)) != NULL) {
         Sprite_DestroyFar(record);
-        recordIndex += 1;
+        recordIndex++;
       }
       actor->spriteStorageKind = ACTOR_SPRITE_NONE;
       actor->sprite = NULL;

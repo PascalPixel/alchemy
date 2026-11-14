@@ -56,11 +56,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
                                     Q16_ONE - level * BACKGROUND_LEVEL_STEP,
                                 BATTLE_BG_PALETTE_COLORS);
   }
-  {
-    u32 saved = *savedInterruptEnable;
-
-    REG_IME = saved;
-  }
+  Io_Write16(*savedInterruptEnable, &REG_IME);
 }
 
 /// Switches the background's display mode, optionally fades its palette by
@@ -423,9 +419,9 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
     for (;;) {
       battle = gBattleWork;
       if (gKeysRepeat & KEY_LEFT)
-        battle->debugValue -= 1;
+        battle->debugValue--;
       if (gKeysRepeat & KEY_RIGHT)
-        battle->debugValue += 1;
+        battle->debugValue++;
       if (gKeysRepeat & KEY_UP)
         battle->debugValue -= 100;
       if (gKeysRepeat & KEY_DOWN)

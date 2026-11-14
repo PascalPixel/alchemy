@@ -295,9 +295,8 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
     }
-    i = 0;
-    column = work->particles;
-    do {
+    for (i = 0; i != VINE_COLUMNS; i++) {
+      column = &work->particles[i];
       if (frame == i * 4 + 5)
         work->shakeFrames = 2;
 
@@ -316,9 +315,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
           draw[i & 1](canvas, work->sheet + (picture << 10), column->x - 16,
                       (i & 7) - height + 104, 32, height);
       }
-      i++;
-      column++;
-    } while (i != VINE_COLUMNS);
+    }
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
   }

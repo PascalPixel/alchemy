@@ -358,7 +358,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
               // when it lands on the party.
               message = MsgCritical;
               if (IS_PARTY_UNIT(targetId))
-                message += 1;
+                message++;
               BattlePlayback_Push(PLAYBACK_MESSAGE_NO_WAIT, message);
             }
           }
@@ -825,7 +825,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       break;
 
     case ABILITY_EFFECT_ATTACK_DOWN:
-      target->attackStage -= 1;
+      target->attackStage--;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
       BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->atk - target->atk);
@@ -843,7 +843,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       break;
 
     case ABILITY_EFFECT_ATTACK_UP:
-      target->attackStage += 1;
+      target->attackStage++;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
       BattlePlayback_Push(PLAYBACK_NUMBER, target->atk - savedTarget->atk);
@@ -861,7 +861,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       break;
 
     case ABILITY_EFFECT_DEFENSE_DOWN:
-      target->defenseStage -= 1;
+      target->defenseStage--;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
       BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->def - target->def);
@@ -879,7 +879,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       break;
 
     case ABILITY_EFFECT_DEFENSE_UP:
-      target->defenseStage += 1;
+      target->defenseStage++;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
       BattlePlayback_Push(PLAYBACK_NUMBER, target->def - savedTarget->def);
@@ -931,7 +931,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     // A Resistance change needs no recalculation to show: it is the change
     // in stages times RESISTANCE_PER_STAGE.
     case ABILITY_EFFECT_RESISTANCE_DOWN:
-      target->resistanceStage -= 1;
+      target->resistanceStage--;
       CLAMP_STAT_STAGE(target->resistanceStage);
       BattlePlayback_Push(PLAYBACK_NUMBER, (savedTarget->resistanceStage -
                                             target->resistanceStage) *
@@ -951,7 +951,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       break;
 
     case ABILITY_EFFECT_RESISTANCE_UP:
-      target->resistanceStage += 1;
+      target->resistanceStage++;
       CLAMP_STAT_STAGE(target->resistanceStage);
       BattlePlayback_Push(PLAYBACK_NUMBER, (target->resistanceStage -
                                             savedTarget->resistanceStage) *
@@ -1154,7 +1154,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       }
       if (target->grimReaper <= 1)
         break;
-      target->grimReaper -= 1;
+      target->grimReaper--;
       BattlePlayback_Push(PLAYBACK_NUMBER, target->grimReaper);
       PUSH_MESSAGE(MsgDeathCount);
       break;

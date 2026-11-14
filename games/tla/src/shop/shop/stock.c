@@ -10,7 +10,7 @@
 #include "flag_call.h"
 
 void Shop_GiveGameTicket(void *window, void *itemWindow) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   u32 savedSelectedItem;
   s32 memberIndex;
   s32 unitId;

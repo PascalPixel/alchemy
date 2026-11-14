@@ -20,11 +20,11 @@ s32 Shop_RepairPrice(s32 item) {
 /// Repair.
 s32 Shop_RunRepairMemberChoice(void) { return Shop_ChooseMember(); }
 
-/// In The Lost Age the sell screen serves repairs too, by shop->partyAction.
+/// In The Lost Age the sell screen serves repairs too, by shop->action.
 s32 Shop_SelectRepair(s32 unitId) { return Shop_SelectSell(unitId); }
 
 void Shop_RepairItem(s32 unitId, s32 slot) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);

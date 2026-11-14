@@ -8,6 +8,8 @@
 /// no bytes.
 
 #include "types.h"
+#include "stddef.h"
+#include "static_assert.h"
 #include "system/ram_buffer.h"
 #include "system/dma.h"
 #include "system/heap_release.h"
@@ -63,23 +65,6 @@ void WindowSprite_RedrawSavedRectFar(void *window);
 struct ShopCursorSprite {
   u8 unk00[5];
   u8 active;
-};
-
-struct ShopWork_08109188 {
-  u8 unk00[12];
-  void *coinWindow;
-};
-
-struct ShopWork {
-  u8 unk000[0x24];
-  void *itemWindow;
-  u8 unk028[0x4cc];
-  u16 statUpIcon;
-  u16 statDownIcon;
-  u8 unk4f8[0xd];
-  u8 mode;
-  u8 unk506;
-  s8 partyAction;
 };
 
 struct UiSprite {
@@ -175,16 +160,8 @@ struct Effect_080b2f4c {
   u8 unk043[5];
 };
 
-struct ShopFxWork {
-  u8 unk000[248];
-  void *children[0x104];
-  s8 selected;
-  u8 unk509[3];
-  u8 slots[24][72];
-};
-
 struct BurstSprite {
-  s32 object;
+  void *object;
   s32 x, z, targetX, targetZ, originX, originZ, speed, speedMax, acceleration;
   s32 scaleX;
   s32 scaleY;
@@ -203,29 +180,8 @@ struct BurstSprite {
   s8 active;
 };
 
-struct BurstShop {
-  u8 unk000[0xf8];
-  s32 partyMemberIcons[8];
-  s16 partyMemberX[8];
-  s16 partyMemberY[8];
-  u8 unk138[0x4dc - 0x138];
-  struct ShopCursor cursor;
-  u8 unk4ec[0x507 - 0x4ec];
-  s8 action;
-  s8 burstMember;
-  u8 unk509[3];
-  struct BurstSprite effects[24];
-};
-
-struct ShopSellWork {
-  u8 unk000[0x4dc];
-  struct ShopCursor cursor;
-  u8 unk4ec[0x19];
-  u8 mode;
-};
-
 /// What the player chose at a shop's counter, in the order of its menu's
-/// Buy, Sell, Artifacts and Repair, held in shop->partyAction while it runs.
+/// Buy, Sell, Artifacts and Repair, held in shop->action while it runs.
 enum ShopAction {
   SHOP_ACTION_BUY,
   SHOP_ACTION_SELL,
@@ -252,43 +208,70 @@ struct TileQuantityBarSegmentView {
   u8 values[21];
 };
 
-/// The shop's work (heap slot 220), as far as these functions use it.
-struct ShopRuntime {
-  u8 unk000[0xc];
-  void *moneyWindow;
-  u8 unk010[0x14];
+/// The shop's work (heap slot 220, the menus' work), as The Broken Seal's
+/// struct ShopWork, its lists longer here: the windows, the party row, the
+/// stock, the hand cursor and its icons, what the player chose, and the
+/// sanctum service's particles.
+struct ShopWork {
+  u8 unused[8];       ///< no view of the menu work names it
+  s32 selectedMember; ///< the menu screens' chosen party member; not named here
+  void *moneyWindow;  ///< the coins window
+  /// The menu screens' first window and their two sides; not named here.
+  u8 menuSides[20];
   void *itemWindow;
-  u8 unk028[0xd0];
-  void *partyMemberIcons[4];
-  u8 unk108[0x30];
-  s32 partyMemberScale[4];
-  u8 unk148[0x128];
-  s16 stockItemIds[0x12d];
-  s16 partyMemberIds[8];
-  u8 unk4da[2];
-  struct ShopCursor cursor;
-  u16 cursorIcon;
+  /// The menu screens' windows, icons and cursor grid; not named here.
+  u8 menuWindows[208];
+  void *partyMemberIcons[8]; ///< the party row's sprites
+  s16 partyMemberX[8];       ///< pixels
+  s16 partyMemberY[8];       ///< pixels
+  s32 partyMemberScale[8];   ///< 16.16 fixed point, Q16_ONE full size
+  /// The menu screens' choices, entries and party and the row of figures; not
+  /// named here.
+  u8 menuLists[280];
+  s16 stockItemIds[301];    ///< the items on sale, ended by 0
+  s16 partyMemberIds[9];    ///< the party in order
+  struct ShopCursor cursor; ///< the hand cursor
+  /// VRAM cache slots of the six cursor icons, loaded when the work is set up
+  /// and freed with it.
+  ///@{
+  u16 cursorIcon; ///< the hand
   u16 previousPageIcon;
   u16 nextPageIcon;
   u16 gemIcon;
   u16 statUpIcon;
   u16 statDownIcon;
-  u8 unk4f8[2];
-  u16 keeperResource;
-  u16 selectedItem;
-  u8 unk4fe[4];
+  ///@}
+  u8 unusedBeforeKeeper[2]; ///< no view of the menu work names it
+  u16 keeperGraphics;       ///< the shopkeeper's animation; picks the portrait
+  u16 selectedItem;         ///< the item being bought, sold or repaired
+  u8 unusedAfterSelection[4]; ///< no view of the menu work names it
   s16 stockCount;
   s8 partyMemberCount;
-  u8 mode;
-  s8 shopType;
-  s8 partyAction;
-  u8 unk508;
+  u8 mode;        ///< passed on as the hand cursor's kind
+  s8 shopType;    ///< the stock row's type (enum ShopType)
+  s8 action;      ///< the counter chosen (enum ShopAction)
+  s8 burstMember; ///< the sanctum's party member whose pose is randomized; -1
+                  ///< none
   u8 detailsHidden;
   u8 unk50a;
   s8 itemMode;
-  u8 unk50c[0x7dc];
+  struct BurstSprite effects[24]; ///< the sanctum service's particles
+  u8 unkbcc[0x11c];
   void *listWindow;
 };
+
+STATIC_ASSERT(offsetof(struct ShopWork, itemWindow) == 0x024);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIcons) == 0x0f8);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberScale) == 0x138);
+STATIC_ASSERT(offsetof(struct ShopWork, stockItemIds) == 0x270);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIds) == 0x4ca);
+STATIC_ASSERT(offsetof(struct ShopWork, cursor) == 0x4dc);
+STATIC_ASSERT(offsetof(struct ShopWork, keeperGraphics) == 0x4fa);
+STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 0x502);
+STATIC_ASSERT(offsetof(struct ShopWork, action) == 0x507);
+STATIC_ASSERT(offsetof(struct ShopWork, effects) == 0x50c);
+STATIC_ASSERT(offsetof(struct ShopWork, listWindow) == 0xce8);
+STATIC_ASSERT(sizeof(struct ShopWork) == 0xcec);
 
 struct ShopCursorAnchor {
   u8 unk00[5];

@@ -28,7 +28,7 @@ extern char ResourceId_ShopDownArrowTiles;
 /// Shop_Run when the player picks Artifacts, and by Shop_SelectBuy to refresh
 /// the list after a purchase.
 s32 Shop_ListAvailableArtifacts(void) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   s32 count = 0;
   s32 itemId;
 
@@ -55,8 +55,7 @@ s32 Shop_ListAvailableArtifacts(void) {
 /// Advances the hand cursor one frame. Runs every frame as a task while a
 /// counter is open.
 void MenuCursor_Step(void) {
-  MenuCursor_Advance(
-      &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
+  MenuCursor_Advance(&((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor);
 }
 
 /// Allocates and clears the work block in the menu's heap slot, lists the
@@ -65,7 +64,7 @@ void MenuCursor_Step(void) {
 /// the inn, the sanctum, the forge and the item picker. The block, the icons'
 /// cache entries and the task last until Shop_ReleaseWork.
 void Shop_InitializeWork(void) {
-  struct ShopRuntime *work;
+  struct ShopWork *work;
   s32 slot;
 
   work = HeapSlot_Alloc(220, 0xcec);
@@ -101,7 +100,7 @@ void Shop_InitializeWork(void) {
 /// Releases the item icon grid, stops the cursor task, frees the six cursor
 /// icons and the work block. Every counter closes with it.
 void Shop_ReleaseWork(void) {
-  struct ShopRuntime *state;
+  struct ShopWork *state;
 
   state = Ram_HeapSlots->menuRuntime;
   ItemIconGrid_Release();
@@ -123,7 +122,7 @@ void Shop_ReleaseWork(void) {
 /// the work block while it runs. Called by the town scenes' shopkeepers through
 /// the far-call table, and by the debug shop. Returns 0.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct WindowSprite *anchor;
   struct RenderInput *window;
   s32 action = 0;
@@ -135,11 +134,11 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   Shop_InitializeWork();
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = ShopStock_GetType(stockRow);
-  shop->keeperResource =
+  shop->keeperGraphics =
       **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(keeperId) + 80) + 40);
   // The shopkeeper's portrait window, or an empty one off the right edge when
   // there is no portrait.
-  window = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
+  window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   if (window == 0)
     window = Window_CreateFar(30, 0, 2, 2, WINDOW_FLAG_INSTANT);
   anchor =
@@ -153,7 +152,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   Shop_ShowKeeperMessage((s32)MsgWeaponShopWelcome);
   while (1) {
     action = Menu_SelectShopCommandFar(action);
-    shop->partyAction = action;
+    shop->action = action;
     if (action == SHOP_ACTION_BUY) {
       shop->stockCount = ShopStock_CopyItems(stockRow, shop->stockItemIds);
       Shop_ShowKeeperMessage((s32)MsgWhatWouldYouLike);
@@ -212,13 +211,13 @@ void Sound_WaitForJingle(void) {
 }
 
 void Shop_ShowKeeperMessage(s32 messageId) {
-  struct ShopRuntime *state = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *state = Ram_HeapSlots->menuRuntime;
   s32 message;
   s32 value;
   s8 mode;
 
   message = messageId;
-  value = Speaker_GetVoiceFar(state->keeperResource);
+  value = Speaker_GetVoiceFar(state->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   mode = state->shopType;
   if (mode == 3)
@@ -238,14 +237,14 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   s32 no;
   s8 mode;
   u8 saved;
-  struct ShopRuntime *state;
+  struct ShopWork *state;
   struct WindowSprite **slot;
 
   state = Ram_HeapSlots->menuRuntime;
   slot = &state->cursor.anchor;
   saved = (*slot)->active;
   no = messageId;
-  variant = Speaker_GetVoiceFar(state->keeperResource);
+  variant = Speaker_GetVoiceFar(state->keeperGraphics);
   mode = state->shopType;
   if (mode == 3)
     no += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
@@ -268,7 +267,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
 /// or repair, and by the inn.
 s32 Shop_AskYesNo(s32 choice) {
   struct WindowSprite **slot =
-      &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
+      &((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
   u8 saved = (*slot)->active;
 
   Icon_PrepareActorFar(*slot);
@@ -287,7 +286,7 @@ s32 Shop_AskYesNo(s32 choice) {
 /// Sanctum_RunPartyService.
 s32 Sanctum_AskYesNo(s32 choice) {
   struct WindowSprite **slot =
-      &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
+      &((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
   u8 saved = (*slot)->active;
 
   Icon_PrepareActorFar(*slot);

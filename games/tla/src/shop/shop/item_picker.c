@@ -13,7 +13,7 @@
 /// forge, until the player leaves. `objectId` is the actor whose portrait the
 /// messages show. Called through the far-call table; returns 0.
 s32 Forge_Run(s32 objectId) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct WindowSprite *icon;
   void *window;
   s32 message;
@@ -22,10 +22,10 @@ s32 Forge_Run(s32 objectId) {
   Shop_InitializeWork();
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = 1;
-  shop->partyAction = 4;
-  shop->keeperResource =
+  shop->action = 4;
+  shop->keeperGraphics =
       *((struct FieldObject *)Actor_GetByIdFar(objectId))->sprite->portrait;
-  window = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
+  window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   icon->sentinel = 255;
   icon->active = WINDOW_SPRITE_MOTION_STILL;
@@ -56,7 +56,7 @@ s32 Forge_SelectItem(s32 unitId) { return Shop_SelectSell(unitId); }
 /// and on yes takes the item, redraws the count and stores the rolled result.
 /// Returns 0 when the item was taken, else -1.
 s32 Forge_OfferItem(s32 unitId, s32 slot) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   struct ShopUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];
   s32 item;
@@ -106,7 +106,7 @@ void ItemPicker_RunToDrop(s32 a, s32 b) { ItemPicker_Run(a, b, 0); }
 /// members a page, returning the unit and slot through the pointers (both -1
 /// when cancelled): the twin of The Broken Seal's Shop_PickUnitItem.
 s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   s32 unitId = 0;
   s32 redraw = 1;
   s32 memberIndex = 0;
@@ -205,7 +205,7 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
 
 s32 ItemPicker_SelectItem(s32 unitId) {
   void *nameWindow;
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   void *priceWindow;
   struct ShopUnit *unit;
   s32 slot;
@@ -364,7 +364,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 /// check chosen by the list's mode. Called by ItemPicker_SelectItem each time
 /// the cursor moves.
 void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   struct ShopUnit *unit = Unit_Get(unitId);
   s32 item = unit->inventory[slot] & ITEM_ID_MASK;
   u32 raw = unit->inventory[slot];

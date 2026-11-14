@@ -16,7 +16,7 @@
 #endif
 
 s32 Shop_ChooseMember(void) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   s32 unitId = 0;
   s32 memberIndex = 0;
   void *listWindow;
@@ -53,9 +53,9 @@ s32 Shop_ChooseMember(void) {
       }
       WindowSprite_PrepareForRedrawFar(listWindow);
       Sound_PlayFar(SE_MENU_CONFIRM);
-      if (shop->partyAction == 1) {
+      if (shop->action == 1) {
         Shop_SelectSell(unitId);
-      } else if (shop->partyAction == 3) {
+      } else if (shop->action == 3) {
         Shop_SelectRepair(unitId);
       } else {
         result = Forge_SelectItem(unitId);
@@ -107,7 +107,7 @@ s32 Shop_ChooseMember(void) {
 #endif
 
 s32 Shop_SelectSell(s32 unitId) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   void *nameWindow;
   void *priceWindow;
   struct ShopUnit *unit;
@@ -139,10 +139,10 @@ s32 Shop_SelectSell(s32 unitId) {
         itemId = ITEM_ID_MASK & unit->inventory[slot];
         MenuCursor_Place(shop->itemWindow, slot % 5 * 16, slot / 5 * 16 + 8);
         shop->mode = 3;
-        if (shop->partyAction == 1)
+        if (shop->action == 1)
           Shop_DrawItemPrice(priceWindow, itemId,
                              Shop_SalePrice(unit->inventory[slot]), 1);
-        else if (shop->partyAction == 3)
+        else if (shop->action == 3)
           Shop_DrawItemPrice(priceWindow, itemId,
                              Shop_RepairPrice(unit->inventory[slot]), 2);
         else
@@ -222,12 +222,12 @@ s32 Shop_SelectSell(s32 unitId) {
     wait(1);
     if (result != 0)
       break;
-    if (shop->partyAction == 1) {
+    if (shop->action == 1) {
       count = Shop_SelectSellCount(unitId, slot);
       if (count != -1)
         Shop_SellItem(unitId, slot, count);
       Shop_ShowKeeperMessage((s32)MsgSellAnythingElse);
-    } else if (shop->partyAction == 3) {
+    } else if (shop->action == 3) {
       Shop_RepairItem(unitId, slot);
       Shop_ShowKeeperMessage((s32)MsgRepairAnythingElse);
     } else {
@@ -278,7 +278,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 count;
   s32 selection;
   struct ItemDefinition *item;
-  struct ShopSellWork *shop;
+  struct ShopWork *shop;
   struct ShopUnit *unit;
 
   shop = Ram_HeapSlots->menuRuntime;
@@ -306,7 +306,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 #undef QUANTITY_CURSOR_X
 
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
 
   shop = Ram_HeapSlots->menuRuntime;
   {

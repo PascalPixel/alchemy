@@ -215,7 +215,7 @@ void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
 }
 
 void MenuCursor_Place(void *window, s32 x, s32 y) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
 
   if (window != NULL) {
     x += (s16)((struct RenderInput *)window)->x * 8 + 8;

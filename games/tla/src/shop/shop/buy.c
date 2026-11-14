@@ -42,7 +42,7 @@
 #endif
 
 s32 Shop_SelectBuy(void) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   void *priceWindow = 0;
   void *stockWindow;
   void *messageWindow;
@@ -241,7 +241,7 @@ next_page:
   Window_CloseFar(itemWindow, 2);
   Window_CloseFar(partyWindow, 2);
   wait(1);
-  if (purchaseResult == 0 && shop->partyAction == 2) {
+  if (purchaseResult == 0 && shop->action == 2) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
       Item_AdjustCounterFar(shop->selectedItem, -1);
     if (Shop_ListAvailableArtifacts() == 0)
@@ -263,7 +263,7 @@ close:
 #undef MONEY_WINDOW_WIDTH
 
 void Shop_DrawStock(struct RenderInput *window, s32 selected) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   s16 *itemIds;
   s16 *stockCursor;
   s32 itemCount;
@@ -324,8 +324,7 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
 }
 
 void Shop_DrawMoney(void) {
-  void *window =
-      ((struct ShopWork_08109188 *)Ram_HeapSlots->menuRuntime)->coinWindow;
+  void *window = ((struct ShopWork *)Ram_HeapSlots->menuRuntime)->moneyWindow;
 #if LANGUAGE == LANGUAGE_JAPANESE
   s32 message;
 #endif
@@ -441,7 +440,7 @@ void Shop_DrawMessage(s32 win, s32 message) {
 #undef WindowSprite_ClearListFar
 
 void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   s32 page = selected / 4;
   s32 first = page * 4;
   s32 count = shop->partyMemberCount;
@@ -616,7 +615,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
     if ((u16)item->price != 0)
       chance = __udivsi3(gMainRoutineWork.coins, (u16)item->price);
 
-    if (shop->partyAction == 2) {
+    if (shop->action == 2) {
       maximum = Item_AdjustCounterFar(itemId, 0);
       if (chance > maximum)
         maximum = Item_AdjustCounterFar(itemId, 0);

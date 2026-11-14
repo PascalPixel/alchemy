@@ -1,8 +1,6 @@
-#ifndef ALCHEMY_TEST_ROWS_H
-#define ALCHEMY_TEST_ROWS_H
-
 /// @file
-/// The Menu test scene and the test scenes: a table both overlays keep.
+/// The Menu test scene and the test scenes: a table both overlays keep, included
+/// at its place in each.
 
 #include "types.h"
 
@@ -19,4 +17,3 @@ u32 gTest_UnusedRows[] = {
     0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
 };
 
-#endif

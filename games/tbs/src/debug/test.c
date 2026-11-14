@@ -796,7 +796,7 @@ static s32 MenuTest_ConfirmShopAction(s32 unitId) {
 }
 #endif
 
-#include "debug/test_rows.h"
+#include "test_rows.c"
 
 char gDebugItemPrompt[12] = "Item No:";
 

@@ -65,7 +65,7 @@ u8 *Scene_GetTriggers(void) { return (u8 *)gTest_Triggers; }
 /// Nothing to set up.
 s32 Scene_Initialize(void) { return 0; }
 
-#include "debug/test_rows.h"
+#include "test_rows.c"
 
 struct SceneEntrance gTest_Entrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},

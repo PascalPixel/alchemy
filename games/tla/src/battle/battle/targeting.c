@@ -531,16 +531,6 @@ void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
   runtime->flags |= 1;
 }
 
-/* VIEW(f11f66c): routine BattleMotion_FlashHit as void
- * BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void
- * BattleMotion_FlashHit(s32 id); tried as the definition's void
- * BattleMotion_FlashHit(s32 id), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/battle/battle/targeting.c:589: too many
- * arguments to function `BattleMotion_FlashHit'. */
-extern void
-BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a,
-                               s32 b) __asm__("BattleMotion_FlashHit");
-
 /// Runs the queued battle events in order, then resets the queue.
 u32 BattlePlayback_RunAll(void) {
   struct BattleWork *work;
@@ -596,7 +586,7 @@ u32 BattlePlayback_RunAll(void) {
       case BATTLE_EVENT_HIT:
         if (runtime->pendingCue > 0)
           Sound_PlayFar(runtime->pendingCue);
-        BattleMotion_FlashHit__f11f66c(queue->operands[i], 0, 0);
+        BattleMotion_FlashHit(queue->operands[i], 0, 0);
         break;
       case BATTLE_EVENT_DEFEAT:
         BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);

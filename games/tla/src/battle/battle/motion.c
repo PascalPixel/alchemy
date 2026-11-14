@@ -320,26 +320,18 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   return 0;
 }
 
-/* VIEW(battle): routine BattleSprite_GetEffectHeight as u8
- * BattleSprite_GetEffectHeight(s32 index); battle/presentation has u32
- * BattleSprite_GetEffectHeight(u32 index) {; tried as the definition's u32
- * BattleSprite_GetEffectHeight(u32 index), which the object already declares,
- * BattleUnit_GetEffectHeight moves: 2 of 27 instructions in tla-ja. */
-u8 BattleSprite_GetEffectHeight__battle(s32 index) __asm__(
-    "BattleSprite_GetEffectHeight");
-#define BattleSprite_GetEffectHeight BattleSprite_GetEffectHeight__battle
-
+/// Returns the height above a unit where its battle effects play: its class's
+/// own, else 24 pixels for a small enemy and 48 for others.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
-  s32 value = BattleSprite_GetEffectHeight(
-                  ((struct SummonOwnerState *)Unit_Get(unitId))->summon)
-              << 16;
+  s32 value = px((u8)BattleSprite_GetEffectHeight(
+      ((struct SummonOwnerState *)Unit_Get(unitId))->summon));
 
   if (value == 0) {
     if (BattleSprite_IsSmall(
             ((struct SummonOwnerState *)Unit_Get(unitId))->summon) != 0)
-      value = 0x180000;
+      value = px(24);
     else
-      value = 0x300000;
+      value = px(48);
   }
   return value;
 }

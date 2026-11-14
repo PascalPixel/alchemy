@@ -55,8 +55,8 @@ gBattlePlacement_StepPairs:
 	.byte 0, 0
 	.byte 0, 0
 @ The fixed view matrix (The Broken Seal's gCamera_FlagTransformWork)
-	.global gData_08128868
-gData_08128868:
+	.global gBattleCamera_CommandMatrix
+gBattleCamera_CommandMatrix:
 	.4byte 0x10000, 0x0, 0x0, -0xcccc
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0

@@ -765,7 +765,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-void BattleMotion_FlashHit(s32 id) {
+/// Flashes a unit as it is hit, white and back twice in its damage pose.
+void BattleMotion_FlashHit(s32 id, s32 unused0, s32 unused1) {
   u16 selection[2];
   u16 *selected;
   s32 target;

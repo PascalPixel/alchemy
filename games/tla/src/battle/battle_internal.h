@@ -320,6 +320,15 @@ struct BattleLinkedActionState {
 /// The keys that take the player on past a message: A, B, L and R.
 #define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
 
+/// The result of a routine whose callers never read it, as The Broken Seal's
+/// types.h: the ROM's routine leaves r0 as its last call set it, as one with an
+/// int result does. Under UBFIX it returns nothing.
+#ifdef UBFIX
+#define UNREAD_RESULT void
+#else
+#define UNREAD_RESULT s32
+#endif
+
 /// The battle camera's distance from its focus in the default view.
 #define BATTLE_CAMERA_DISTANCE px(510)
 
@@ -430,7 +439,7 @@ extern const s32 gBattleKnockback_VelocityY[]; ///< upward velocity
 extern const s32 gBattleKnockback_DistancePercent[]; ///< distance, in percent
                                                      ///< of the anchor's x
 
-extern const s32 gData_08128868[];
+extern const s32 gBattleCamera_CommandMatrix[];
 
 extern const s32 gBattleObject_EmptyScript[];
 
@@ -455,6 +464,7 @@ extern const u16 gBattleUnit_WeaponAnimationsJenna[];
 extern struct BattlePresentationTransition *gTransitionWork;
 
 u32 BattleSprite_GetAttackHop(u32 index);
+u32 BattleSprite_GetEffectHeight(u32 index);
 s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 
 #endif

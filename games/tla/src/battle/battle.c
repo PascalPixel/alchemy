@@ -34,7 +34,6 @@
 #undef EncounterWork
 #undef Data_02018000
 #undef GameFlag_GetByte
-#undef BattleSprite_GetEffectHeight
 #undef Unit_CalculateFar
 
 #include "battle/motion_graphics.c"

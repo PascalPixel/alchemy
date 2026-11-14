@@ -63,10 +63,10 @@ struct Actor *Actor_GetById(u32 objectId);
 
 void FieldPsynergy_EndSand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
-  u8 *effect = Ram_HeapSlots->effectWork;
+  struct FxScene *effect = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
   s32 pictureEntry;
-  struct Actor *owner = *(struct Actor **)(effect + 16);
+  struct Actor *owner = effect->mainObject;
   s32 particleEntry;
   s32 particleTiles;
   u8 *motionFlags;
@@ -158,8 +158,8 @@ void FieldPsynergy_EndSand(void) {
     if (frame == 66) {
       Actor_SelectAnimationFar(owner, 1);
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
-      Actor_SetSpriteFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
-      FieldCamera_FollowActor(*(s16 *)(effect + 24), 1);
+      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstObjectId), 1);
+      FieldCamera_FollowActor(effect->firstObjectId, 1);
       Sound_PlayFar(SE_539);
       if (*(s8 *)(event + 394) == 3) {
         Data_02000452 = 1;
@@ -171,9 +171,9 @@ void FieldPsynergy_EndSand(void) {
       if (*(s16 *)(event + 0xd48) == 0)
         Field_RunPsynergyEvent(
             Scene_FindPsynergyTrigger(
-                0x40000005, *(s16 *)(effect + 30),
-                Scene_SelectPsynergyTarget(*(s16 *)(effect + 30))),
-            *(s16 *)(effect + 24), -1);
+                0x40000005, effect->fieldKind,
+                Scene_SelectPsynergyTarget(effect->fieldKind)),
+            effect->firstObjectId, -1);
     }
     i = 0;
     particle = work + 0x1200;

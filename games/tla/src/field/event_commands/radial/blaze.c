@@ -9,26 +9,6 @@
 
 #include "system/input.h"
 
-struct FxScene {
-  u16 facing; ///< 1/65536 turns
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
-  u8 unk21[0x20];
-  s8 alternate;
-  u8 unk42[0x782];
-  s16 stage;
-  s16 frame;
-};
-
 struct FxEvent {
   u8 unk00[20];
   struct Actor *objects[80];

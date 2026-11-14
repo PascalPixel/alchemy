@@ -51,6 +51,30 @@
 #include "system/io_reg.h"
 #include "map.h"
 
+/// The effect scene of the Psynergy these parts run (effect_work): its caster
+/// and target, where it takes place, and what each kind keeps there.
+struct FxScene {
+  u16 facing; ///< 1/65536 turns
+  u16 angle;
+  s32 x;
+  s32 y;
+  s32 z;
+  struct Actor *mainObject;
+  struct Actor *child;
+  s16 firstObjectId;
+  s16 secondObjectId;
+  u16 action;
+  s16 fieldKind;
+  s8 enabled;
+  u8 unk21[0x13];
+  s8 childOption;
+  u8 unk35[0x0c];
+  s8 alternate;
+  u8 unk42[0x782];
+  s16 stage;
+  s16 frame;
+};
+
 void FieldEffect_AdvanceMotion(union FieldObject *object);
 
 #endif // ALCHEMY_RADIAL_INTERNAL_H

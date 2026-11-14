@@ -257,8 +257,8 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
         action->targetMode == TARGET_MODE_SELF)
       ownSide = 1;
 
-    if (((actorId < 0 || actorId > 7) && ownSide == 0) ||
-        (actorId >= 0 && actorId <= 7 && ownSide != 0)) {
+    if (((actorId < 0 || actorId > ALLY_MAX) && ownSide == 0) ||
+        (actorId >= 0 && actorId <= ALLY_MAX && ownSide != 0)) {
       targetIndex = 0;
       while (turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END) {
         slot = &turnOrder->partyUnits[targetIndex];
@@ -458,9 +458,8 @@ void BattleMessage_WaitForAdvance(void) {
     Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
-    if ((gInput.held & KEY_B) ||
-        (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
-        (frame > 15 && (gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))))
+    if ((gInput.held & KEY_B) || (gInput.pressed & KEY_ADVANCE) ||
+        (frame > 15 && (gInput.held & KEY_ADVANCE)))
       break;
     wait(1);
   }
@@ -495,7 +494,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
     Oam_AddSpriteAtDepth(prompt, 240);
-    if (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS))
+    if (gInput.pressed & KEY_ADVANCE)
       break;
     wait(1);
   }
@@ -532,16 +531,6 @@ void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
   runtime->flags |= 1;
 }
 
-/* VIEW(f11f66c): routine BattleMotion_FlashHit as void
- * BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void
- * BattleMotion_FlashHit(s32 id); tried as the definition's void
- * BattleMotion_FlashHit(s32 id), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/battle/battle/targeting.c:589: too many
- * arguments to function `BattleMotion_FlashHit'. */
-extern void
-BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a,
-                               s32 b) __asm__("BattleMotion_FlashHit");
-
 /// Runs the queued battle events in order, then resets the queue.
 u32 BattlePlayback_RunAll(void) {
   struct BattleWork *work;
@@ -564,16 +553,18 @@ u32 BattlePlayback_RunAll(void) {
         BattleObject_DestroyTemporaryObject(queue->operands[i]);
         break;
       case BATTLE_EVENT_UNIT_NAME:
-        MessageArgument_PushFar(queue->operands[i], 1);
+        MessageArgument_PushFar(queue->operands[i], MESSAGE_ARGUMENT_ACTOR);
         break;
       case BATTLE_EVENT_NUMBER:
-        MessageArgument_PushFar(queue->operands[i], 5);
+        MessageArgument_PushFar(queue->operands[i], MESSAGE_ARGUMENT_NUMBER);
         break;
       case BATTLE_EVENT_ITEM_NAME:
-        MessageArgument_PushFar(queue->operands[i] & 0x1ff, 2);
+        MessageArgument_PushFar(queue->operands[i] & 0x1ff,
+                                MESSAGE_ARGUMENT_ITEM);
         break;
       case BATTLE_EVENT_ABILITY_NAME:
-        MessageArgument_PushFar(queue->operands[i] & 0x3fff, 4);
+        MessageArgument_PushFar(queue->operands[i] & 0x3fff,
+                                MESSAGE_ARGUMENT_ABILITY);
         break;
       case BATTLE_EVENT_MARK:
         ((struct BattleDisplayFlags *)Ram_HeapSlots->unk84[4])->marked = 1;
@@ -595,7 +586,7 @@ u32 BattlePlayback_RunAll(void) {
       case BATTLE_EVENT_HIT:
         if (runtime->pendingCue > 0)
           Sound_PlayFar(runtime->pendingCue);
-        BattleMotion_FlashHit__f11f66c(queue->operands[i], 0, 0);
+        BattleMotion_FlashHit(queue->operands[i], 0, 0);
         break;
       case BATTLE_EVENT_DEFEAT:
         BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);
@@ -765,9 +756,8 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
     (f) = 7;                                                                   \
   }
 
-/// Applies the acting unit's ability to one of its targets: damage or
-/// healing by the ability kind, then its added effect, as The Broken Seal's
-/// BattleAbility_ApplyToTarget does, with this game's differences.
+/// Applies the acting unit's ability to one of its targets: damage or healing
+/// by the ability kind, then its added effect, with this game's differences.
 s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   struct BattleAct *action;
   s32 abilityId;
@@ -915,7 +905,7 @@ power_end:
     res = plan->targetHit[slot];
     if (res == -1)
       hit = Battle_RollEffectSuccessFar(aid, tid, element, action->effect,
-                                        gHitTable[dist]);
+                                        gRangeFalloff_EffectChance[dist]);
     else
       hit = res;
   }
@@ -959,13 +949,13 @@ power_end:
         s32 i;
 
         for (i = 0; i < 6; i++) {
-          if (work->enemyIds[i] == 254) {
+          if (work->enemyIds[i] == BATTLE_UNIT_REMOVED) {
             work->enemyIds[i] = ent;
             break;
           }
-          if (work->enemyIds[i] == 255) {
+          if (work->enemyIds[i] == BATTLE_UNIT_LIST_END) {
             work->enemyIds[i] = ent;
-            work->enemyIds[i + 1] = 255;
+            work->enemyIds[i + 1] = BATTLE_UNIT_LIST_END;
             break;
           }
         }
@@ -1147,7 +1137,7 @@ power_end:
       ELEMENT_BONUS();
       ap = action->power;
       dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
-      dmg = dmg * gPpLossTable[dist] / 100;
+      dmg = dmg * gRangeFalloff_PpLoss[dist] / 100;
       dmg *= adj;
       GUARD_CUT();
       if (action->effect == 32 && dmg > pp)
@@ -1186,7 +1176,7 @@ power_end:
 
       ap = action->power;
       dmg = Battle_CalculateRecoveryFar(ap, element == 4 ? 100 : power, 256);
-      dmg = dmg * gHpRecoveryTable[dist] / 100;
+      dmg = dmg * gRangeFalloff_HealHp[dist] / 100;
       dmg *= adj;
       dmg += Battle_RandomFar() & 3;
       cur += dmg;
@@ -1216,7 +1206,7 @@ power_end:
       ELEMENT_BONUS();
       ap = action->power;
       dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
-      dmg = dmg * gPpDmgTable[dist] / 100;
+      dmg = dmg * gRangeFalloff_PpDamage[dist] / 100;
       dmg *= adj;
       GUARD_CUT();
       BattlePlayback_Push(BATTLE_EVENT_HIT, tid);
@@ -1257,7 +1247,8 @@ power_end:
           bonus = 0;
         ap = action->power;
         if (abilityId == 683 || abilityId == 673 || abilityId == 724 ||
-            plan->command == 6 || plan->command == 10) {
+            plan->command == COMMAND_SUMMON ||
+            plan->command == COMMAND_DAEDALUS) {
           s32 rate;
 
           rate = 0;
@@ -1333,13 +1324,13 @@ power_end:
         dmg *= adj;
         switch (type & 15) {
         case 5:
-          dmg = gHpDmgTable5[dist] * dmg / 100;
+          dmg = gRangeFalloff_PsynergyDamage[dist] * dmg / 100;
           break;
         case 8:
-          dmg = dmg * gHpDmgTable8[dist] / 100;
+          dmg = dmg * gRangeFalloff_SummonDamage[dist] / 100;
           break;
         case 6:
-          dmg = dmg * gHpDmgTable6[dist] / 100;
+          dmg = dmg * gRangeFalloff_EnemyDamage[dist] / 100;
           break;
         }
         dmg += Battle_RandomFar() & 3;
@@ -1396,7 +1387,7 @@ power_end:
       pp = target->pp;
       ap = action->power;
       dmg = Battle_CalculateRecoveryFar(ap, element == 4 ? 100 : power, 256);
-      dmg = dmg * gPpRecoveryTable[dist] / 100;
+      dmg = dmg * gRangeFalloff_HealPp[dist] / 100;
       dmg *= adj;
       pp += dmg;
       if (pp > target->maxPp) {
@@ -1431,7 +1422,7 @@ power_end:
         ap = action->power;
         dmg = Battle_CalculatePsynergyPowerFar(ap, bonus, 256);
         dmg *= adj;
-        dmg = dmg * gHpDmgTable[dist] / 100;
+        dmg = dmg * gRangeFalloff_EffectDamage[dist] / 100;
         GUARD_CUT();
         BattlePlayback_Push(BATTLE_EVENT_HIT, tid);
         BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
@@ -2132,11 +2123,10 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 
 #define AI_BATTLE ((struct AIBattleWork *)Ram_HeapSlots->battleWork)
 
-/// Chooses an enemy's action, as The Broken Seal's BattleAI_ChooseAction does:
-/// one of the eight in its definition, picked by its action strategy, with an
-/// item instead where its item mask says so, and a target worth the ability.
-/// Called with retry 0 for each enemy as the turn is built and with retry 1
-/// when it acts (BattleStaging_DispatchAction).
+/// Chooses an enemy's action: one of the eight in its definition, picked by its
+/// action strategy, with an item instead where its item mask says so, and a
+/// target worth the ability. Called with retry 0 for each enemy as the turn is
+/// built and with retry 1 when it acts (BattleStaging_DispatchAction).
 s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   struct BattleUnit *unit;
   u32 selection;
@@ -2242,7 +2232,8 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   } else if (unit->enemyId == 218) {
     if (selectionMemory->initialized == 0)
       selectionMemory->form = (Random16() * 3) >> 16;
-    enemy = Enemy_GetDefinitionFar(Data_08128960[selectionMemory->form]);
+    enemy =
+        Enemy_GetDefinitionFar(gBattleAI_DullahanForms[selectionMemory->form]);
   }
 
   if (retry != 0 && request->command != COMMAND_ABILITY) {
@@ -2297,7 +2288,7 @@ select_again:
   abilityId = halfwords->abilities[selection];
   request->command = COMMAND_ABILITY;
   if (useItem != 0 && retry != 0) {
-    if (!(0x1ff & unit->inventory[0])) {
+    if (!(ITEM_ID_MASK & unit->inventory[0])) {
       useItem = 0;
       if (enemy->targetStrategy == 0) {
         request->command = COMMAND_ITEM;
@@ -2406,7 +2397,7 @@ select_again:
         allyTarget = BattleAI_ChooseTarget(request->unitId, ability);
       if (allyTarget == -2) {
         allyIsParty = 0;
-        if ((u16)request->unitId <= 7)
+        if ((u16)request->unitId <= ALLY_MAX)
           allyIsParty = 1;
         allyTarget = BattleAI_ChooseRandomTarget(allyIsParty);
       }
@@ -2419,7 +2410,7 @@ select_again:
       opponentTarget = BattleAI_ChooseTarget(request->unitId, ability);
       if (opponentTarget == -2) {
         opponentIsParty = 0;
-        if ((u16)request->unitId <= 7)
+        if ((u16)request->unitId <= ALLY_MAX)
           opponentIsParty = 1;
         opponentTarget = BattleAI_ChooseRandomTarget(opponentIsParty);
       }

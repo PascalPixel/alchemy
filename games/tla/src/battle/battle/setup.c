@@ -77,7 +77,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   if (enemyCount != 0) {
     enemy = enemies;
     do {
-      MessageArgument_PushFar((u16)*enemy++, 1);
+      MessageArgument_PushFar((u16)*enemy++, MESSAGE_ARGUMENT_ACTOR);
       if (announced == enemyCount - 1)
         BattleMessage_ShowAndWaitFar((s32)MsgLastEnemyAppeared);
       else
@@ -99,8 +99,6 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 }
 
-// BattleUnit_Collect: The Broken Seal's BattleParty_CollectUnitList.
-
 void BattleUnit_Collect(void) {
   u16 buf[14];
   struct BattleWork *battle;
@@ -113,7 +111,7 @@ void BattleUnit_Collect(void) {
   count = BattleParty_PrepareMembers(buf);
   for (i = 0; i < count; i++)
     battle->partyUnits[i] = buf[i];
-  battle->partyUnits[count] = 0xff;
+  battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
 
   count = BattleEnemy_List(buf);
   kind = battle->unk042;
@@ -129,7 +127,7 @@ void BattleUnit_Collect(void) {
     battle->enemyIds[index] = buf[i];
   }
 done:
-  battle->enemyIds[count] = 0xff;
+  battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
 /// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the
@@ -256,10 +254,6 @@ void DjinnRecovery_Reconcile(void) {
     }
   }
 }
-
-// BattleSummon_UpdateAvailability: The Broken Seal's
-// BattleSummon_UpdateAvailability; this game keeps the high half of the offer
-// state's mask, tests 16 summons and writes the mask back.
 
 /// Works out which summons the party can call: one whose Djinn requirement
 /// of every element is met by the Djinn the party holds of that element

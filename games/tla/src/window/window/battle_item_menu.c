@@ -110,11 +110,10 @@ struct ItemMenuWork {
   u8 holdTilemapUpload;
 };
 
-#define NAVIGATION ((struct ItemMenuNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 #define ITEM_BROKEN 0x400
 
-// Sets a menu sprite's attribute words, as The Broken Seal's
-// MenuSprite_Initialize.
+// Sets a menu sprite's attribute words.
 #define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
@@ -126,14 +125,14 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 drawnFirstEntry;
   s32 drawnRow;
   s32 cursorHandle;
-  struct ItemMenuWindow *messageWindow;
+  struct RenderInput *messageWindow;
   s32 iconCount;
   s32 preferredRow;
   struct {
     s32 x, y;
   } cursorPosition;
-  struct ItemMenuNavigation *navigation;
-  struct ItemMenuWindow *window;
+  struct BattleMenuWork *navigation;
+  struct RenderInput *window;
   s32 firstEntry;
   s32 selectedRow;
   s32 item;
@@ -142,18 +141,20 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 unusableReason;
   s32 result;
   s32 i;
-  struct ItemMenuOam cursorStorage;
-  struct ItemMenuSprite *iconSprite;
-  struct ItemMenuOam *sprite;
+  struct QueuedSprite cursorStorage;
+  struct MenuSprite *iconSprite;
+  struct QueuedSprite *sprite;
   u16 messageText[64];
   s32 iconSlots[5];
-  struct ItemMenuSprite sprites[5];
+  struct MenuSprite sprites[5];
 
   work = (struct ItemMenuWork *)Ram_HeapSlots->windowTiles;
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);
-  messageWindow = Window_Create(0, 5, 30, 4, 42);
+  messageWindow = Window_Create(0, 5, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = 0;
   do {
     firstEntry = NAVIGATION->page;
@@ -173,8 +174,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     iconSprite = &sprites[i];
     sprites[i].oam.word.attr01 = 0x40000000;
     sprites[i].oam.word.attr23 = t;
-    iconSprite->oam.f.x = window->x * 8 + 8;
-    t = window->y;
+    iconSprite->oam.f.x = (s16)window->x * 8 + 8;
+    t = (s16)window->y;
     iconSprite->oam.f.y = (y + t) * 8 + 4;
   }
   for (i = 0; i < 5; i++) {
@@ -192,15 +193,16 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
-                           window->width - 2, 1, 15);
+      Window_HighlightRect((s16)window->x + 1,
+                           (s16)window->y + drawnRow * 2 + 1, window->width - 2,
+                           1, 15);
       Text_FillCanvasBackground();
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
                                     entries[firstEntry + selectedRow]) == 2)
           MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, CURSOR_TEXT_LENGTH);
         else
-          MENU_TEXT_COPY((entries[firstEntry + selectedRow] & 0x1ff) +
+          MENU_TEXT_COPY((entries[firstEntry + selectedRow] & ITEM_ID_MASK) +
                              (s32)MsgItemPlainName,
                          messageText, CURSOR_TEXT_LENGTH);
       } else {
@@ -215,14 +217,14 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           if (item == 0)
             break;
           Item_GetDirectFar(item);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           if (Item_ClassifyUseAbility(member, item) != 0)
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           else if (item & ITEM_BROKEN)
-            Text_SetColor(2);
-          Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName, window, 16,
-                                  i * 16);
-          Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_RED);
+          Text_DrawMessageAsTiles((item & ITEM_ID_MASK) + (s32)MsgItemName,
+                                  window, 16, i * 16);
+          Text_SetColor(TEXT_COLOR_WHITE);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
         iconCount = i;
@@ -237,7 +239,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
               window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
         }
       }
-      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+      Window_HighlightRect((s16)window->x + 1,
+                           (s16)window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
@@ -258,7 +261,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                              window->width - (count + 4) / 5 - 3, pageTile, 0);
       Window_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
       do {
-        work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+        work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
       } while (0);
     }
 
@@ -267,15 +270,16 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       Oam_AddSpriteAtDepth(iconSprite, 240);
     }
 
-    cursorPosition.x = window->x * 8 - 2;
-    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    cursorPosition.x = (s16)window->x * 8 - 2;
+    cursorPosition.y = (selectedRow * 2 + (s16)window->y) * 8 + 20;
     /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds. */
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = 0x40000000;
     ((u32 *)sprite)[2] = 0;
-    sprite->tile = VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
-    sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
-    sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite->oam.index =
+        VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
+    sprite->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    sprite->oam.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
       Oam_AddSpriteAtDepth(sprite, 242);
 

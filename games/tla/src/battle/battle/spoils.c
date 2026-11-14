@@ -29,8 +29,8 @@ u32 BattleSpoils_RankItem(u32 value) {
   return bank;
 }
 
-/// Empties the battle's spoils and the party's pending item, as The Broken
-/// Seal's BattleSpoils_Clear does. Called by Battle_RunEncounter.
+/// Empties the battle's spoils and the party's pending item. Called by
+/// Battle_RunEncounter.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle;
   struct BattleSpoils *spoils;
@@ -220,7 +220,7 @@ void Battle_AwardSpoils(void) {
 
   spoils = (struct BattleSpoils *)((u8 *)Ram_HeapSlots->battleWork + 0x550);
   if (spoils->experience != 0) {
-    MessageArgument_PushFar(spoils->experience, 5);
+    MessageArgument_PushFar(spoils->experience, MESSAGE_ARGUMENT_NUMBER);
     // "You got N experience points."
     BattleMessage_ShowAndWaitFar((s32)MsgGotExperience);
     BattleMessage_WaitForAdvance();
@@ -240,9 +240,9 @@ void Battle_AwardSpoils(void) {
            Unit_TryLevelUpFar(unitId, gains) != 0) {
       Sound_PlayFar(MUS_089);
       MessageArgument_ClearAllFar();
-      MessageArgument_PushFar(unit->classIndex, 3);
-      MessageArgument_PushFar(list[i], 1);
-      MessageArgument_PushFar(unit->level, 5);
+      MessageArgument_PushFar(unit->classIndex, MESSAGE_ARGUMENT_CLASS);
+      MessageArgument_PushFar(list[i], MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(unit->level, MESSAGE_ARGUMENT_NUMBER);
       // "<name> is now a level N ..."
       BattleMessage_ShowAndWaitFar((s32)MsgLevelUp);
       BattleMessage_WaitForAdvance();
@@ -255,9 +255,10 @@ void Battle_AwardSpoils(void) {
           }
           if (j == 32) {
             MessageArgument_ClearAllFar();
-            MessageArgument_PushFar(unit->classIndex, 3);
-            MessageArgument_PushFar(unitId, 1);
-            MessageArgument_PushFar(learned & ACTION_ID_MASK, 4);
+            MessageArgument_PushFar(unit->classIndex, MESSAGE_ARGUMENT_CLASS);
+            MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+            MessageArgument_PushFar(learned & ACTION_ID_MASK,
+                                    MESSAGE_ARGUMENT_ABILITY);
             Sound_PlayFar(SE_CAST);
             // "Mastered the <class>'s <ability>"
             BattleMessage_ShowAndWaitFar((s32)MsgMasteredAbility);
@@ -266,33 +267,33 @@ void Battle_AwardSpoils(void) {
         }
       }
       if (gains[2] != 0) {
-        MessageArgument_PushFar(gains[2], 5);
+        MessageArgument_PushFar(gains[2], MESSAGE_ARGUMENT_NUMBER);
         // "Maximum HP rises by N!"
         BattleMessage_ShowAndWaitFar((s32)MsgMaxHpRises);
         BattleMessage_WaitForAdvance();
       }
       if (gains[3] != 0) {
-        MessageArgument_PushFar(gains[3], 5);
+        MessageArgument_PushFar(gains[3], MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar((s32)MsgMaxPpRises);
         BattleMessage_WaitForAdvance();
       }
       if (gains[4] != 0) {
-        MessageArgument_PushFar(gains[4], 5);
+        MessageArgument_PushFar(gains[4], MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar((s32)MsgAttackRises);
         BattleMessage_WaitForAdvance();
       }
       if (gains[5] != 0) {
-        MessageArgument_PushFar(gains[5], 5);
+        MessageArgument_PushFar(gains[5], MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar((s32)MsgDefenseRises);
         BattleMessage_WaitForAdvance();
       }
       if (gains[6] != 0) {
-        MessageArgument_PushFar(gains[6], 5);
+        MessageArgument_PushFar(gains[6], MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar((s32)MsgAgilityRises);
         BattleMessage_WaitForAdvance();
       }
       if (gains[7] != 0) {
-        MessageArgument_PushFar(gains[7], 5);
+        MessageArgument_PushFar(gains[7], MESSAGE_ARGUMENT_NUMBER);
         // "Luck rises by N!"
         BattleMessage_ShowAndWaitFar((s32)MsgLuckRises);
         BattleMessage_WaitForAdvance();
@@ -301,7 +302,7 @@ void Battle_AwardSpoils(void) {
   }
   Heap_Release(backup);
   if (spoils->coins != 0) {
-    MessageArgument_PushFar(spoils->coins, 5);
+    MessageArgument_PushFar(spoils->coins, MESSAGE_ARGUMENT_NUMBER);
     // "You got N coins."
     BattleMessage_ShowAndWaitFar((s32)MsgGotCoins);
     Party_AdjustCoinsFar(spoils->coins);
@@ -322,7 +323,7 @@ void Battle_AwardSpoils(void) {
     }
     if (bestSlot == -1)
       break;
-    MessageArgument_PushFar(spoils->items[bestSlot], 2);
+    MessageArgument_PushFar(spoils->items[bestSlot], MESSAGE_ARGUMENT_ITEM);
     // "You got <item>."
     BattleMessage_ShowAndWaitFar((s32)MsgGotItem);
     BattleMessage_WaitForAdvance();

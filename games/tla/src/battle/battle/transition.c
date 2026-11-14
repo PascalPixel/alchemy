@@ -324,7 +324,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       u16 enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
 
       if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376)
-        battleObject->scale = 0xb333;
+        battleObject->scale = Q16_ONE * 7 / 10;
     }
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x6041, 0x20000);
     wait(1);
@@ -347,7 +347,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     IoWriteQueue_ClearBits16(0x04000008, 2);
     IoWriteQueue_SetBits16(0x04000008, 0);
-    REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+    REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
     count = BattleParty_ListActorIds(3, shown);
     shown[count] = 255;
     BattleActor_SpawnObjectsForList((s16 *)shown, 0);

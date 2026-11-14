@@ -24,6 +24,20 @@ enum BattleSideMask {
   BATTLE_SIDE_BOTH = BATTLE_SIDE_PARTY | BATTLE_SIDE_ENEMIES
 };
 
+/// The Djinn recovery list's two tables (Djinn_GetRecoveryTableFar): the
+/// party's and the link opponent's.
+#define DJINN_RECOVERY_PARTY 0
+#define DJINN_RECOVERY_OPPONENT 1
+
+/// DjinnRecoveryEntry.turns of a Djinni on standby. In battle it stays so
+/// until a Djinn command sets it again or a summon uses it
+/// (DJINN_RECOVERY_SUMMONED), both in BattleActionRun_Build.
+#define DJINN_RECOVERY_AFTER_BATTLE -1
+
+/// DjinnRecoveryEntry.turns of a standby Djinni a summon has just used, until
+/// the summoner's action ends and sets its count of turns to recover.
+#define DJINN_RECOVERY_SUMMONED -2
+
 /// A Djinni on standby or recovering: its element and index, its owner, and
 /// the turns until it is set again.
 struct DjinnRecoveryEntry {

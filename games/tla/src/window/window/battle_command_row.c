@@ -30,7 +30,7 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define WINDOW_X 23
 #endif
 
-#define NAVIGATION ((struct CommandRowNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
 
 extern struct BgScrollPair gBgScroll[];
@@ -54,8 +54,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   u8 party[4];
   struct CommandRowWindowWork *work;
   struct CommandRowWork *selectionUi;
-  struct CommandRowNavigation *battleMenu;
-  struct CommandRowNavigation *navigation;
+  struct BattleMenuWork *battleMenu;
+  struct BattleMenuWork *navigation;
   s32 stripDirty;
   s32 tradeCount;
   s32 pulseScale;
@@ -85,7 +85,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     kindCount = 0;
     selectionUi->commandKinds[kindCount++] = 14;
     if (((u8 *)Ram_HeapSlots->battleWork)[0x44] == 0 &&
-        battleMenu->reserveChoice == -1 && Party_CountMembersFar() > 4)
+        battleMenu->swappedUnit == -1 && Party_CountMembersFar() > 4)
       selectionUi->commandKinds[kindCount++] = 49;
     if (fleeAllowed > 0 && gMainRoutineWork.battleType != BATTLE_TYPE_NO_ESCAPE)
       selectionUi->commandKinds[kindCount++] = 4;

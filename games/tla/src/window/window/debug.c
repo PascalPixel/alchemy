@@ -46,7 +46,7 @@ struct RenderInput *DebugSoundTest_Open(void) {
   struct ScreenCursorWork *work = Ram_HeapSlots->unkd0[0];
   struct RenderInput *window;
 
-  window = Window_Create(7, 3, 15, 9, 2);
+  window = Window_Create(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
   work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
                                      OUTPUT_SIZE_16X16, window, 0, 0);
   {
@@ -183,7 +183,7 @@ extern u8 MsgFullPpAndMoney[];
 /// (MsgFullPpAndMoney) to "Change of hero", with a divider under each.
 struct Window *DebugMenu_Open(void) {
   void *work = Ram_HeapSlots->unkd0[0];
-  struct Window *window = Window_Create(6, 2, 18, 16, 2);
+  struct Window *window = Window_Create(6, 2, 18, 16, WINDOW_FLAG_INSTANT);
   s32 i;
 
   for (i = 0; i < 4; i++)
@@ -403,7 +403,7 @@ struct RenderInput *DebugWarp_Open(void) {
   s32 row;
   s32 y;
 
-  window = Window_Create(0, 0, 30, 19, 2);
+  window = Window_Create(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
   y = 4;
   i = 0;
   row = 2;
@@ -521,7 +521,7 @@ extern const s16 gDebugShortcut_Abilities[4][9];
 /// of gDebugShortcut_Abilities in nine rows, as DebugMenu_Open draws its grid.
 struct Window *DebugShortcut_Open(void) {
   void *work = Ram_HeapSlots->unkd0[0];
-  struct Window *window = Window_Create(0, 0, 30, 19, 2);
+  struct Window *window = Window_Create(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
   const s16 *abilities;
   s32 i;
   s32 y;

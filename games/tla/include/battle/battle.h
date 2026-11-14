@@ -60,10 +60,23 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries);
 s32 LinkBattle_WaitSync(void);
 s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
 void BattleUnit_ResetGuardLevels(void);
-void Camera_InitializeDefaultTransform(void);
+void BattleCamera_SetDefaultView(void);
 void FieldParticle_UpdateMotion(struct FieldParticle *effect);
 void FieldPsynergy_Douse(void);
 s32 BattleSprite_IsSmall(s32 index);
+/// BattleHighlight_SetModes's modes: the units listed take one blend and
+/// every other unit the other (mode bit 0), and the battle steps the blend
+/// each frame (BattleBackground_StepHighlightBlend).
+enum BattleHighlight {
+  HIGHLIGHT_OFF = 0,      ///< every unit opaque, the blend stopped
+  HIGHLIGHT_SELECTED = 1, ///< the units listed lighten by the ramp
+  /// The units listed, semi-transparent, pulse by the ramp: the reserve member
+  /// a party command offers.
+  HIGHLIGHT_PULSE = 2,
+  HIGHLIGHT_FADE_OUT = 4, ///< the units listed fade out over 32 frames
+  HIGHLIGHT_FADE_IN = 6   ///< the units listed fade in over 32 frames
+};
+
 void BattleHighlight_SetModesFar(u16 *, s32);
 void SpriteDissolve_RunManyFar(void **, s32);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,

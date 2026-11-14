@@ -1,6 +1,6 @@
 /// @file
-/// A whole battle, Battle_RunEncounter (The Broken Seal's Battle_Run), its
-/// tutorial helpers, and the lists of the units in it.
+/// A whole battle, Battle_RunEncounter, its tutorial helpers, and the lists of
+/// the units in it.
 // Part of battle.c.
 
 #include "../battle_internal.h"
@@ -34,7 +34,7 @@ void BattleParty_SwapInReserves(void) {
   reserveCount = BattleParty_PrepareReserveOwners(reserves);
   if (count > reserveCount)
     count = reserveCount;
-  BattleHighlight_SetModes(actors, 4);
+  BattleHighlight_SetModes(actors, HIGHLIGHT_FADE_OUT);
   wait(32);
   for (i = 0; i < count; i++) {
     s32 unit = work->partyUnits[i];
@@ -55,7 +55,7 @@ void BattleParty_SwapInReserves(void) {
     gMainRoutineWork.activeOwners[actorCount + i] = actors[i];
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   BattleObject_Put();
-  BattleHighlight_SetModes(reserves, 6);
+  BattleHighlight_SetModes(reserves, HIGHLIGHT_FADE_IN);
   wait(32);
 }
 
@@ -67,9 +67,9 @@ void BattleCamera_Create(void) {
 
   SET_VECTOR(focus, 0, px(64), 0);
   SET_VECTOR(camera->eye, 0, px(180), px(64));
-  camera->yaw = 0x2800;
-  camera->pitch = 0x5000;
-  camera->distance = 0x1000000;
+  camera->yaw = TRIG_TURN * 5 / 32;
+  camera->pitch = TRIG_TURN * 5 / 16;
+  camera->distance = 256 << 16;
 }
 
 /// Replaces enemy 128 with the next form of the three-part battle of enemy
@@ -89,7 +89,7 @@ void Battle_ChangeEnemyForm(s32 id) {
   BattleEnemy_ClaimNameLetter(unit, 1);
   BattleUnit_SetFar(128, unit, 255);
   work->enemyIds[0] = 128;
-  work->enemyIds[1] = 255;
+  work->enemyIds[1] = BATTLE_UNIT_LIST_END;
   Enemy_Update();
   object = (s32 *)BattleObject_Get(128);
   BattleObject_Make((struct BattleObj *)object, 128, object[3] / Q16_ONE,
@@ -206,7 +206,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   result = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->unkd0[2], 0x7c8);
   Task_ResetAll();
-  transition->targetYaw = TRIG_TURN / 8;
+  transition->targetYaw = YAW_PARTY_ACTION;
   transition->frames = 0;
   transition->flag = 1;
   transition->unk18 = 0;
@@ -288,7 +288,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   if (enemyGroup == 75 || enemyGroup == 76)
     ScriptedBattle_RestoreUnits();
   PartyStatus_CreateWindowFar(9);
-  Camera_InitializeDefaultTransform();
+  BattleCamera_SetDefaultView();
   BattleObject_Put();
   BattleBackground_Init();
   BattleBackground_Load(1, battle->background, 0);
@@ -330,7 +330,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
 
     Iwram_ClearWordsEntry(battle->actions, sizeof(battle->actions));
     VramCache_FreeEntry(battle->promptSlot);
-    if (GameFlag_Get(0x16a) == 0)
+    if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0)
       actionCount = Battle_GatherActions(battle->actions);
     else
       actionCount = AutoBattle_BuildActions(
@@ -344,7 +344,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       actingUnit = battle->actions[i].unitId;
       battle->pendingUnit = -1;
       battle->actionEnded = 0;
-      if (GameFlag_Get(0x16a) == 0) {
+      if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0) {
         if (BattleStaging_DispatchAction(&battle->actions[i],
                                          i == 0 ? 10 : 0) == 1)
           goto fled;
@@ -365,7 +365,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         }
         if (enemyGroup == 80)
           Battle_PlayFormChange(80);
-        if (actingUnit <= 7 && battle->defeated == 1) {
+        if (actingUnit <= ALLY_MAX && battle->defeated == 1) {
           /* FAKEMATCH(barrier): an empty asm before the defeatState store. */
           asm("");
           battle->defeatState = 3;
@@ -375,7 +375,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       if (battle->pendingUnit != -1 &&
           Battle_FindUnitPlace(battle->pendingTag) != -1) {
         battle->actions[i].unitId = battle->pendingUnit;
-        battle->actions[i].command = 9;
+        battle->actions[i].command = COMMAND_DJINN_COUNTER;
         battle->actions[i].parameter = 0;
         battle->actions[i].target = Battle_FindUnitPlace(battle->pendingTag);
         battle->actions[i].range = 1;
@@ -390,7 +390,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         queue &= 1;
         battle->extraCount--;
         battle->actions[i].unitId = queue << 7;
-        battle->actions[i].command = 10;
+        battle->actions[i].command = COMMAND_DAEDALUS;
         battle->actions[i].parameter = 0;
         battle->actions[i].target = queue != 0 ? 0 : 0x80;
         battle->actions[i].range = 255;
@@ -450,7 +450,7 @@ won_scripted:
           BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                             26);
           MessageArgument_ClearAllFar();
-          MessageArgument_PushFar(128, 1);
+          MessageArgument_PushFar(128, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);
           BattleMessage_WaitForAdvance();
         }
@@ -732,8 +732,8 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
   order = Ram_HeapSlots->battleWork;
   count = 0;
   if (groups & 1) {
-    for (i = 0; order->partyUnits[i] != 255; i++) {
-      if (order->partyUnits[i] != 254) {
+    for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (order->partyUnits[i] != BATTLE_UNIT_REMOVED) {
         if (dst != NULL)
           *dst++ = order->partyUnits[i];
         count++;
@@ -741,8 +741,8 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
     }
   }
   if (groups & 2) {
-    for (i = 0; order->enemyIds[i] != 255; i++) {
-      if (order->enemyIds[i] != 254) {
+    for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (order->enemyIds[i] != BATTLE_UNIT_REMOVED) {
         if (dst != NULL)
           *dst++ = order->enemyIds[i];
         count++;
@@ -763,8 +763,8 @@ s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
   order = Ram_HeapSlots->battleWork;
   count = 0;
   if (groups & 1) {
-    for (i = 0; order->partyUnits[i] != 255; i++) {
-      if (order->partyUnits[i] != 254 &&
+    for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (order->partyUnits[i] != BATTLE_UNIT_REMOVED &&
           ((struct BattleUnit *)Unit_Get(order->partyUnits[i]))->hp != 0) {
         if (dst != NULL)
           *dst++ = order->partyUnits[i];
@@ -773,8 +773,8 @@ s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
     }
   }
   if (groups & 2) {
-    for (i = 0; order->enemyIds[i] != 255; i++) {
-      if (order->enemyIds[i] != 254 &&
+    for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (order->enemyIds[i] != BATTLE_UNIT_REMOVED &&
           ((struct BattleUnit *)Unit_Get(order->enemyIds[i]))->hp != 0) {
         if (dst != NULL)
           *dst++ = order->enemyIds[i];

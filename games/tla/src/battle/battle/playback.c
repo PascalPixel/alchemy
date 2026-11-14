@@ -125,18 +125,20 @@ void BattlePlayback_Run(void) {
                                            events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_UNIT_NAME:
-            MessageArgument_PushFar(events->queue.operands[eventIndex], 1);
+            MessageArgument_PushFar(events->queue.operands[eventIndex],
+                                    MESSAGE_ARGUMENT_ACTOR);
             break;
           case BATTLE_EVENT_NUMBER:
-            MessageArgument_PushFar(events->queue.operands[eventIndex], 5);
+            MessageArgument_PushFar(events->queue.operands[eventIndex],
+                                    MESSAGE_ARGUMENT_NUMBER);
             break;
           case BATTLE_EVENT_ITEM_NAME:
             MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x1ff,
-                                    2);
+                                    MESSAGE_ARGUMENT_ITEM);
             break;
           case BATTLE_EVENT_ABILITY_NAME:
             MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x3fff,
-                                    4);
+                                    MESSAGE_ARGUMENT_ABILITY);
             break;
           case BATTLE_EVENT_MARK:
             ((struct BattleMessageDisplay *)Ram_HeapSlots->unk84[4])->marked =
@@ -254,8 +256,7 @@ void BattlePlayback_Run(void) {
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
-      if ((gInput.held & KEY_B) ||
-          (gInput.pendingPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
+      if ((gInput.held & KEY_B) || (gInput.pendingPressed & KEY_ADVANCE) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (gInput.held & 0x303))) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_DISPATCH;
@@ -271,13 +272,13 @@ void BattlePlayback_Run(void) {
         if (events->timer & 2) {
           struct BattleObj *slot;
 
-          selection[0] = 255;
+          selection[0] = BATTLE_UNIT_LIST_END;
           slot = BattleObject_Get(events->actorId);
           BattleObject_SetColorMode(
               slot->object, BattleMotion_GetSlotPalette(events->actorId));
         } else {
           selection[0] = events->actorId;
-          selection[1] = 255;
+          selection[1] = BATTLE_UNIT_LIST_END;
           BattleObject_SetColorMode(BattleObject_Get(events->actorId)->object,
                                     7);
         }

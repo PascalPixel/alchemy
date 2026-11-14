@@ -80,6 +80,68 @@
 #include "scene_call.h"
 #include "field/sprite.h"
 
+// Window animation lengths.
+#define WINDOW_OPEN_FRAMES 8
+#define WINDOW_CLOSE_FRAMES 4
+
+/// Set when the cleared game's menu goes to the Battle Arena: there the Pause
+/// menu offers only Change settings (The Broken Seal's flag of the same
+/// number; for flags.h).
+#define FLAG_IN_BATTLE_ARENA 0x17e
+
+/// The ring of decoded text (WindowWork.entries): 512 codes, 256 in Japanese.
+#define TEXT_BUFFER_MASK (UI_TEXT_ENTRY_COUNT - 1)
+
+/// Writes code at position in the ring of decoded text and steps position on,
+/// wrapping at the ring's end.
+#define TEXT_APPEND(entries, position, code)                                   \
+  ((entries)[position] = (code),                                               \
+   (position) = ((position) + 1) & TEXT_BUFFER_MASK)
+
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
+#define TEXT_ARGUMENT_SPACE ' '
+#else
+#define TEXT_ARGUMENT_SPACE 143
+#endif
+
+#define MESSAGE_ARGUMENT_COUNT 8 ///< the message argument table's places
+/// A name the decoder writes out into a message, decoded first into a buffer
+/// of this many halfwords.
+#define MESSAGE_NAME_HALFWORDS 24
+#define TEXT_NUMBER_BUFFER_SIZE 16 ///< String_FormatNumber writes 14 of them
+
+/// The control codes of decoded message text (WindowWork.entries). Codes from
+/// TEXT_SPACE up are characters.
+enum {
+  TEXT_END = 0,  ///< the text ends; the window stays open
+  TEXT_PAGE = 1, ///< wait for a button, then clear the window for a new page
+  TEXT_WAIT_KEY = 2, ///< wait for a button, then close the window
+  TEXT_NEWLINE = 3,
+  TEXT_PAUSE_LONG = 4,    ///< a 60-frame pause
+  TEXT_PAUSE_SHORT = 5,   ///< a 20-frame pause a button can cut short
+  TEXT_PAUSE_LONGEST = 6, ///< a 120-frame pause a button can cut short
+  TEXT_COLORS_RESET = 7,  ///< the colour, style and line spacing set at start
+  TEXT_COLOR = 8,         ///< the next entry is the text colour
+  TEXT_OUTLINE = 9,       ///< the next entry is the text style
+  /// The next entry is the line spacing; a glyph sprite sits half of it below
+  /// its line's top.
+  TEXT_LINE_SPACING = 10,
+  TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
+  TEXT_END_ALT = 30,      ///< ends the text as TEXT_END does
+  /// The message runs the codes below it as control codes and draws the rest.
+  TEXT_COMMANDS = 31,
+  TEXT_SPACE = 32,
+  // Characters the decoder tests by code, as the fonts draw them: the Japanese
+  // one by charmap_ja.tsv, the others by Latin-1 and its CP1252 extension.
+  TEXT_OPENING_QUOTE = 142,             ///< “, outside Japanese
+  TEXT_INVERTED_EXCLAMATION_MARK = 161, ///< ¡, outside Japanese
+  TEXT_JAPANESE_FULL_STOP = 161,        ///< 。
+  TEXT_JAPANESE_COMMA = 164,            ///< 、
+  TEXT_JAPANESE_MIDDLE_DOT = 165,       ///< ・
+  TEXT_INVERTED_QUESTION_MARK = 191     ///< ¿, outside Japanese
+};
+
 // The window object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height);

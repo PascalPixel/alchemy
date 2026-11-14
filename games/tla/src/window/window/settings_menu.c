@@ -251,7 +251,8 @@ struct RenderInput *SettingsMenu_Open(void) {
   s32 msg;
 
   work = (struct WorkspaceWork *)Ram_HeapSlots->unkd0[0];
-  win = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
+  win = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14,
+                      WINDOW_FLAG_INSTANT);
   Window_DrawDividerLine((struct Window *)win, 0, 2, OPTION_DIVIDER_END, 2);
   Window_DrawDividerLine((struct Window *)win, 0, 4, OPTION_DIVIDER_END, 4);
   Window_DrawDividerLine((struct Window *)win, 0, 7, OPTION_DIVIDER_END, 7);
@@ -428,7 +429,8 @@ s32 SettingsMenu_Run(void) {
   selectedOption = 0;
   SettingsMenu_InitializeWork();
   work = Ram_HeapSlots->unkd0[0];
-  helpWindow = Window_Create(HELP_WINDOW_X, 2, HELP_WINDOW_WIDTH, 3, 2);
+  helpWindow = Window_Create(HELP_WINDOW_X, 2, HELP_WINDOW_WIDTH, 3,
+                             WINDOW_FLAG_INSTANT);
   settingsWindow = SettingsMenu_Open();
   pair = MenuTitle_Create(SETTINGS_HEADING, settingsWindow, 64, -48);
   wait(1);
@@ -641,7 +643,7 @@ struct RenderInput *PauseMenu_Open(void) {
 
   rows = 3;
   work = Ram_HeapSlots->unkd0[0];
-  settingsOnly = GameFlag_Get(0x17e);
+  settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   if (settingsOnly != 0) {
     rows = 1;
@@ -655,7 +657,7 @@ struct RenderInput *PauseMenu_Open(void) {
     top = 1;
     height = 19;
   }
-  win = Window_Create(5, top, 20, height, 2);
+  win = Window_Create(5, top, 20, height, WINDOW_FLAG_INSTANT);
   for (i = 1; i < rows; i++)
     Window_DrawDividerLine((struct Window *)win, 0, i * 3, 19, i * 3);
   y = 4;
@@ -747,7 +749,7 @@ s32 PauseMenu_Choose(s32 initial) {
   redraw = -1;
   selected = initial;
   rows = 3;
-  settingsOnly = GameFlag_Get(0x17e);
+  settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   PauseMenu_Initialize();
   work = Ram_HeapSlots->unkd0[0];
@@ -816,12 +818,12 @@ s32 PauseMenu_Choose(s32 initial) {
       continue;
     }
     if (gDebugMode != 0) {
-      if (KEYS_PRESSED & 0x100) {
+      if (KEYS_PRESSED & KEY_R) {
         result = 20;
         Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
-      if (KEYS_PRESSED & 0x200) {
+      if (KEYS_PRESSED & KEY_L) {
         result = 21;
         Sound_PlayFar(SE_MENU_CONFIRM);
         break;

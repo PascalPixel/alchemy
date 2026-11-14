@@ -6,8 +6,7 @@
 #include "../window_internal.h"
 #include "flag_call.h"
 
-// The debug selection row's keys (The Broken Seal's
-// DebugSceneSelect_HandleRowInput): A returns -1 and B -2; Up or Down switches
+// The debug selection row's keys: A returns -1 and B -2; Up or Down switches
 // the field, Left and Right step the value (0 to 324) or the second number
 // (0 to 99) by one, R and L by ten, and the row is redrawn after a step.
 
@@ -94,7 +93,7 @@ s32 DebugFlagEditor_Run(void) {
   win = 0;
   cur[0] = win;
   cur[1] = win;
-  win = Window_Create(1, 0, 28, 20, 2);
+  win = Window_Create(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
   DebugFlagEditor_DrawTable(win, page);
   MenuArrow_Create(obj, &res);
   for (;;) {

@@ -1,10 +1,9 @@
 /// @file
-/// Collecting the party's battle commands, as The Broken Seal's
-/// Battle_CollectPartyCommands does on this game's work and menus, then
+/// Collecting the party's battle commands on this game's work and menus, then
 /// IconMenu_DrawIcons, which draws a menu's icons each frame, the selected one
-/// bouncing, and fits the window's lines around it.
-/// Then the resource selection menus: shop commands, sanctum services, Yes or
-/// No, coins or medals, and the save screen's actions.
+/// bouncing, and fits the window's lines around it. Then the resource selection
+/// menus: shop commands, sanctum services, Yes or No, coins or medals, and the
+/// save screen's actions.
 // Part of window.c.
 
 #include "../window_internal.h"
@@ -127,7 +126,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
     data[0] = 255;
     PartyStatus_HighlightMembers(data);
-    BattleHighlight_SetModesFar(data, 1);
+    BattleHighlight_SetModesFar(data, HIGHLIGHT_SELECTED);
   }
 
   target = 256;
@@ -358,7 +357,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
       signatureHeader[0] = actorId;
       signatureHeader[1] = 255;
-      BattleHighlight_SetModesFar(signatureHeader, 1);
+      BattleHighlight_SetModesFar(signatureHeader, HIGHLIGHT_SELECTED);
       PartyStatus_HighlightMembers(signatureHeader);
       wait(1);
       mode = BattleCommandRow_Run(1, 0);
@@ -374,7 +373,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Heap_Release(block);
         continue;
       }
-      BattleHighlight_SetModesFar(signatureHeader, 0);
+      BattleHighlight_SetModesFar(signatureHeader, HIGHLIGHT_OFF);
       if (mode == -1) {
         if (commandIndex == 0)
           break;
@@ -474,14 +473,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         state->iconShown[1] = 1;
         work->level = 5;
         if (ability->ppCost > unit->pp)
-          Text_SetColor(2);
+          Text_SetColor(TEXT_COLOR_RED);
         else if (unit->psySeal != 0)
-          Text_SetColor(9);
+          Text_SetColor(TEXT_COLOR_PINK);
         Text_DrawMessageAsTiles(parameter + (s32)MsgAbilityNothing,
                                 commandWindow, 16, 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
         work->level = 15;
-        Text_SetColor(15);
+        Text_SetColor(TEXT_COLOR_WHITE);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
                                0);
@@ -545,7 +544,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             summon->nameMessageId & 0x3fff, summonIconSlot);
         state->iconShown[1] = 1;
         if (ok == 0)
-          Text_SetColor(2);
+          Text_SetColor(TEXT_COLOR_RED);
         Text_DrawMessageAsTiles(SummonDefinition_Get(mode)->nameMessageId +
                                     (s32)MsgAbilityNothing,
                                 commandWindow, 16, 0);
@@ -633,11 +632,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         commandWindow = Window_Create(11, 17, 10, 3, 6);
         COMMAND_ICON_X(state) = 64;
-        Text_SetColor(2);
+        Text_SetColor(TEXT_COLOR_RED);
         Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
         Text_DrawMessageAsTiles(element * 20 + index + (s32)MsgDjinnName,
                                 commandWindow, 16, 0);
-        Text_SetColor(15);
+        Text_SetColor(TEXT_COLOR_WHITE);
         command->range = 1;
         wait(1);
         Sound_PlayFar(SE_MENU_CONFIRM);
@@ -721,7 +720,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
         state->iconShown[1] = 1;
-        Text_DrawMessageAsTiles((unit->inventory[selection] & 0x1ff) +
+        Text_DrawMessageAsTiles((unit->inventory[selection] & ITEM_ID_MASK) +
                                     (s32)MsgItemName,
                                 commandWindow, 24, 0);
         command->range = cost;
@@ -800,7 +799,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     link = Ram_HeapSlots->battleWork;
     mode = 0;
     if (state->timerWindow == NULL && link->linkPaused == 0) {
-      state->timerWindow = Window_Create(0, 16, 30, 4, 42);
+      state->timerWindow =
+          Window_Create(0, 16, 30, 4,
+                        WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                            WINDOW_FLAG_BORDERED_CANVAS);
       Text_FillCanvasBackground();
       Link_DrawWaitingForOpponent();
     } else {
@@ -841,7 +843,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   return commandCount;
 }
 
-// The command icon menu's frame task (The Broken Seal's IconMenu_DrawIcons):
+// The command icon menu's frame task:
 // pulses the selected icon with one affine matrix, draws the others plain,
 // and while the screen transition runs widens window 1 over the icon row.
 
@@ -1083,7 +1085,6 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
 
 /// Steps the selection from start to goal, redrawing the label each step and
 /// slowing as it nears the goal, then confirms.
-// ☀️'s function of the same name in window/battle_command.c.
 /// Animates a cursor from start to goal with table-driven delays. Draws each
 /// intervening label, pauses at the destination, and returns its position.
 /// It moves one icon at a time with the cursor sound, waiting
@@ -1205,7 +1206,7 @@ void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
     entry->y = row * 8;
     x += 3;
   }
-  menu->window = Window_Create(x, row, menu->width, 3, 2);
+  menu->window = Window_Create(x, row, menu->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Lays the entries out in a row three cells apart from x, on row y, and
@@ -1227,7 +1228,7 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
     entry->x = x << 3;
     x += 3;
   }
-  work->window = Window_Create(x, y, *widthp, 3, 2);
+  work->window = Window_Create(x, y, *widthp, 3, WINDOW_FLAG_INSTANT);
 }
 
 static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
@@ -1299,9 +1300,6 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
 /// Offers the actions the files allow (plus two optional entries
 /// behind EWRAM flags) and maps the chosen position to an action. The second
 /// optional entry is 31, and with the first option off, action 4 becomes 5.
-// As ☀️'s FileList_SelectAction. A module of its own: in the Japanese
-// edition it follows Menu_AnimateSelectionToEntry, which is still scaffolded
-// there.
 /// Builds the File Screen's menu from the save summaries and optional send
 /// flags. Translates the chosen visible position back to its action (enum
 /// FileAction), or -1 when cancelled or the backup memory cannot be read. With
@@ -1368,7 +1366,6 @@ s32 FileList_SelectAction(void) {
 /// When the selected mode changes, clears the lower window's label area and
 /// writes the mode's lines of text. The area starts at x 8 and ends at
 /// LABEL_RIGHT; a mode past 2 draws nothing.
-// ☀️'s function of the same name.
 void Menu_DrawModeLabel(void) {
   struct MenuModeLabelState *state = Ram_HeapSlots->menuSelectWork;
 
@@ -1595,12 +1592,14 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   if (mode != 0) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4, 2);
+    window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4,
+                           WINDOW_FLAG_INSTANT);
     msg = (s32)MsgPasswordEntry;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(msg, window, 0, 4);
-    window = Window_Create(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, 2);
+    window = Window_Create(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12,
+                           WINDOW_FLAG_INSTANT);
     work->lowerWindow = window;
     Text_DrawMessage(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
 #if LANGUAGE == LANGUAGE_FRENCH
@@ -1618,12 +1617,13 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   } else {
     Task_Add(Menu_DrawModeIndicator, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, 2);
+    window = Window_Create(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4,
+                           WINDOW_FLAG_INSTANT);
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage((s32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
-    work->lowerWindow =
-        Window_Create(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
+    work->lowerWindow = Window_Create(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH,
+                                      7, WINDOW_FLAG_INSTANT);
   }
   result = IconMenu_Run(0);
   if (mode != 0)

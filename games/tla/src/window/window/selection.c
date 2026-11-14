@@ -185,7 +185,6 @@ void SelectionMenu_AddEntry(u32 first, u32 second) {
 /// Creates icons for the first five listed entries in a row along the bottom of
 /// the screen, then loads the selected entry's preview. Reached through the
 /// far-call table and from Menu_RunSelectionForValue.
-// As ☀️'s SelectionMenu_BuildEntries.
 /// Creates icons for the first five listed entries in a row along the bottom of
 /// the screen.
 /// Builds the linked row before placing the visible icons and loading the
@@ -1142,7 +1141,7 @@ void Menu_ClearBattleHighlight(u8 *arg0) {
     count++;
   }
   data[count] = 0xff;
-  BattleHighlight_SetModesFar(data, 0);
+  BattleHighlight_SetModesFar(data, HIGHLIGHT_OFF);
 }
 
 /// Scrolls the row one entry: forward brings an icon in from the right as the
@@ -1388,7 +1387,6 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct ListNode *node,
   obj->field8a = 0;
 }
 
-/// The Broken Seal's Menu_ConfirmSelection in this game's form.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;

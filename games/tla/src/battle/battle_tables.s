@@ -55,22 +55,26 @@ gBattlePlacement_StepPairs:
 	.byte 0, 0
 	.byte 0, 0
 @ The fixed view matrix (The Broken Seal's gCamera_FlagTransformWork)
-	.global gData_08128868
-gData_08128868:
+	.global gBattleCamera_CommandMatrix
+gBattleCamera_CommandMatrix:
 	.4byte 0x10000, 0x0, 0x0, -0xcccc
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.include "games/tla/src/battle/range_falloff.s"
-	.global Data_08128960
-Data_08128960:
+@ The enemy definitions Dullahan (enemy 218) acts as, one drawn at random:
+@ its three entries, 218 to 220.
+	.global gBattleAI_DullahanForms
+gBattleAI_DullahanForms:
 	.2byte 0xda, 0xdb, 0xdc, 0, 0, 0
-@ A second hit rate by distance, the same as gHitTable
-	.global Data_0812896c
-Data_0812896c:
+@ The effect chance by distance BattleActionRun_Build rolls ahead for
+@ Annihilation and Whorl, the same as gRangeFalloff_EffectChance
+	.global gActionRun_EffectChance
+gActionRun_EffectChance:
 	.byte 100, 60, 30, 30, 30, 30
-@ 734 ability statuses (same layout as The Broken Seal's actstat.table).
-	.global Data_08128972
-Data_08128972:
+@ Each ability's staging (BattlePlan.outcome, enum BattleStaging), 0 for the
+@ default, by ability id, as The Broken Seal's gAbilityStaging.
+	.global gAbilityStaging
+gAbilityStaging:
 	.byte 0
 	.byte 0
 	.byte 0
@@ -805,9 +809,10 @@ Data_08128972:
 	.byte 0
 	.byte 6
 	.byte 0
-@ 733 ability effects (effect ID, stage, flags), like TBS's gBattle_ActionFlags.
-	.global Data_08128c50
-Data_08128c50:
+@ Each ability's staging bits (BattlePlan.presentationFlags, the EFFECT_ bits),
+@ by ability id, as The Broken Seal's gAbilityBattleEffects.
+	.global gAbilityBattleEffects
+gAbilityBattleEffects:
 	.2byte 0x000, 0x0
 	.2byte 0x000, 0x0
 	.2byte 0x000, 0x0
@@ -2106,24 +2111,23 @@ gBattleUnit_WeaponKinds:
 	.2byte 0x0939, 0x093a, 0x093b, 0x093c, 0x093d, 0x093e, 0x093f, 0x0940
 	.2byte 0x0941, 0x0942, 0x0b43, 0x0944, 0x03a1, 0x01a2, 0x03a3, 0x01a4
 	.2byte 0x05a5, 0x05a6, 0x07a7, 0x07a8, 0x09a9, 0x09aa, 0x09ab, 0xffff
-@ The Broken Seal's gBattleMotion_VariantAcceleration in form, ten for its eight
-	.global Data_0812cbb0
-Data_0812cbb0:
+@ A knocked-back unit's motion by variant, as The Broken Seal's knockback tables,
+@ ten rows for its eight: acceleration, speed limit, upward velocity and
+@ distance in percent of the anchor's x.
+	.global gBattleKnockback_Acceleration
+gBattleKnockback_Acceleration:
 	.4byte 1 << 16, 1 << 16, 1 << 16, 1 << 16, 8 << 16, 1 << 16, 1 << 16, 1 << 16
 	.4byte 1 << 16, 8 << 16
-@ gBattleMotion_VariantSpeedLimit
-	.global Data_0812cbd8
-Data_0812cbd8:
+	.global gBattleKnockback_SpeedLimit
+gBattleKnockback_SpeedLimit:
 	.4byte 4 << 16, 4 << 16, 4 << 16, 4 << 16, 20 << 16, 4 << 16, 4 << 16, 4 << 16
 	.4byte 4 << 16, 20 << 16
-@ gBattleMotion_VariantVelocityY
+	.global gBattleKnockback_VelocityY
+gBattleKnockback_VelocityY:
+	.4byte 3 << 16, 6 << 16, 7 << 16, 10 << 16, 5 << 16, 2 << 16, 3 << 16, 11 << 15
+	.4byte 10 << 16, 5 << 16
 	.global gBattleKnockback_DistancePercent
 gBattleKnockback_DistancePercent:
-	.4byte 3 << 16, 6 << 16, 7 << 16, 10 << 16, 5 << 16, 2 << 16, 3 << 16, 0x58000
-	.4byte 10 << 16, 5 << 16
-@ gBattleMotion_VariantDistancePercent
-	.global Data_0812cc28
-Data_0812cc28:
 	.4byte 140, 140, 150, 200, 200, 150, 100, 100
 	.4byte 100, 300
 	.4byte 0, 20, 38

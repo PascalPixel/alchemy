@@ -3,34 +3,41 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "graphics/palette_buffers.h"
 #include "module/shop/shop.h"
 #include "module/tla.h"
 
-void QuantityBar_Fill(s32 count, s32 selector, u8 *base) {
-  u32 shifted = selector << 4;
-  u16 *offset;
+/// Colours the first itemCount segments of the quantity bar, each two pixels
+/// wide.
+void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
+  u32 shifted = paletteSelector << 4;
+  const u16 *offset;
 
-  selector = shifted + 1;
+  // One byte holds two 4-bit pixels, the left one in the low nibble.
+  paletteSelector = shifted + 1;
 
-  if (count > 0) {
-    offset = gShop_SelectorOffsets;
+  if (itemCount > 0) {
+    offset = gShop_SelectorTileOffsets;
     do {
-      struct TileQuantityBarSegmentView *record =
-          (struct TileQuantityBarSegmentView *)(base + *offset++);
-      record->values[0] = selector;
-      record->values[4] = selector;
-      record->values[8] = selector;
-      record->values[12] = selector;
-      record->values[16] = selector;
-      record->values[20] = selector;
-      count--;
-    } while (count != 0);
+      // A tile row is 4 bytes; the segment's byte in rows 1 to 6.
+      u8 *column = tileBuffer + *offset++;
+
+      column[4] = paletteSelector;
+      column[8] = paletteSelector;
+      column[12] = paletteSelector;
+      column[16] = paletteSelector;
+      column[20] = paletteSelector;
+      column[24] = paletteSelector;
+      itemCount--;
+    } while (itemCount != 0);
   }
 }
 
-void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place) {
+/// Copies decimal glyph `digit` into its price-tile position, stopping at zero
+/// source bytes.
+void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   u8 *src = gShop_GlyphBytes + ((u32)digit << 5);
-  u8 *dst = tiles + gShop_GlyphRowOffsets[place] + 2;
+  u8 *dst = tileBuffer + gShop_PriceDigitTileOffsets[digitPosition] + 2;
   s32 count = 3;
 
   do {
@@ -50,96 +57,108 @@ void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place) {
   } while (count >= 0);
 }
 
-struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
-                                            s32 y) {
-  u8 *buf;
-  s32 slot;
-  struct WindowSprite *sprite;
+/// Builds a price of up to five digits as a sprite on window at (x, y). Returns
+/// the sprite, or NULL with no free slot.
+struct WindowSprite *
+Shop_CreatePriceSprite(s32 value, struct RenderInput *window, s32 x, s32 y) {
+  u8 *tileBuffer;
+  s32 resourceSlot;
+  struct WindowSprite *priceSprite;
 
-  buf = HeapSlot_AllocEwram(56, 0x400);
-  sprite = 0;
-  Dma_Set(gShop_PriceTiles, buf, DMA_COPY_WORDS(64), REG_DMA3);
-  Shop_CopyGlyphs(value % 10, buf, 0);
+  tileBuffer = HeapSlot_AllocEwram(56, 1024);
+  priceSprite = 0;
+  // the blank price's eight tiles (8 * TILE_SIZE_4BPP bytes)
+  Dma_Set(gShop_PriceTiles, tileBuffer, DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
+          REG_DMA3);
+  Shop_CopyGlyphs(value % 10, tileBuffer, 0);
   value = value / 10;
   if (value != 0) {
-    Shop_CopyGlyphs(value % 10, buf, 1);
+    Shop_CopyGlyphs(value % 10, tileBuffer, 1);
     value = value / 10;
     if (value != 0) {
-      Shop_CopyGlyphs(value % 10, buf, 2);
+      Shop_CopyGlyphs(value % 10, tileBuffer, 2);
       value = value / 10;
       if (value != 0) {
-        s32 last;
+        s32 remainingDigits;
 
-        Shop_CopyGlyphs(value % 10, buf, 3);
-        last = value / 10;
-        if (last != 0)
-          Shop_CopyGlyphs(last % 10, buf, 4);
+        Shop_CopyGlyphs(value % 10, tileBuffer, 3);
+        remainingDigits = value / 10;
+        if (remainingDigits != 0)
+          Shop_CopyGlyphs(remainingDigits % 10, tileBuffer, 4);
       }
     }
   }
-  slot = VramCache_FindFreeEntry();
-  if (slot != 96) {
-    VramCache_Load(slot, 0x100, buf);
-    sprite = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X32,
-                                    (struct RenderInput *)window, x, y);
+  resourceSlot = VramCache_FindFreeEntry();
+  if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
+    VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
+    priceSprite =
+        WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_16X32, window, x, y);
   }
   HeapSlot_Release(56);
-  return sprite;
+  return priceSprite;
 }
 
+/// Saves the field colours in the field work and fades to `layer` over 16
+/// frames.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
-  u8 *map = Ram_HeapSlots->fieldWork;
-  u8 *work = Ram_HeapSlots->block32;
-  u8 *saved = work + 0xe00;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct BattleEffectBuffers *paletteBuffers = Ram_HeapSlots->block32;
+  u16 *savedPalette = paletteBuffers->target;
 
-  Dma_Set(saved, map + 0x222, DMA_COPY_WORDS(336), REG_DMA3);
-  Dma_Set(saved, work + 0x380, DMA_COPY_WORDS(672), REG_DMA3);
+  Dma_Set(savedPalette, field->savedFadeTarget, DMA_COPY_WORDS(336), REG_DMA3);
+  Dma_Set(savedPalette, paletteBuffers->current,
+          DMA_COPY_WORDS(sizeof(paletteBuffers->current) / 4), REG_DMA3);
   BattleEffect_ApplyColorToTargetBufferFar(layer, 1);
   PaletteFade_StartInterpolationFar(16);
 }
 
+/// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
+/// frames.
 void Shop_RestoreFieldPalette(void) {
   BattleEffect_ApplyColorToTargetBufferFar((s32)gFieldWork->savedFadeTarget, 1);
   PaletteFade_StartInterpolationFar(16);
 }
 
+/// Moves the cursor a frame along its straight line toward its target.
 void MenuCursor_Advance(struct ShopCursor *cursor) {
   struct WindowSprite *sprite;
-  s32 kind;
-  s32 step;
-  s32 x;
-  s32 y;
+  s32 durationFrames;
+  s32 frame;
+  s32 cursorX;
+  s32 cursorY;
   u32 mask;
 
   if (cursor == NULL)
     return;
-  kind = cursor->kind;
-  if (kind == 0)
+  durationFrames = cursor->kind;
+  if (durationFrames == 0)
     return;
   sprite = cursor->anchor;
-  step = ++cursor->active;
-  x = cursor->x + (cursor->targetX - (s16)cursor->x) * step / kind;
-  sprite->x = x;
+  frame = ++cursor->active;
+  cursorX =
+      cursor->x + (cursor->targetX - (s16)cursor->x) * frame / durationFrames;
+  sprite->x = cursorX;
   mask = 0x1ff;
-  mask &= x;
+  mask &= cursorX;
   sprite->sprite.oam.x = mask;
-  y = cursor->y + (cursor->targetY - (s16)cursor->y) * step / kind;
-  sprite->y = y;
-  sprite->sprite.oam.y = y;
-  if (step == kind) {
+  cursorY =
+      cursor->y + (cursor->targetY - (s16)cursor->y) * frame / durationFrames;
+  sprite->y = cursorY;
+  sprite->sprite.oam.y = cursorY;
+  if (frame == durationFrames) {
     cursor->kind = 0;
     cursor->active = 0;
   }
 }
 
-/// Moves the cursor's sprite a quarter of the way to its target on each
-/// axis, at least one pixel.
+/// Moves each cursor axis one quarter of the remaining distance, with a minimum
+/// one-pixel step.
 void MenuCursor_MoveTowardTarget(struct ShopCursor *cursor) {
-  struct ShopCursorSprite3 *sprite;
+  struct WindowSprite *sprite;
   s32 delta;
   s32 step;
 
-  sprite = (struct ShopCursorSprite3 *)cursor->anchor;
+  sprite = cursor->anchor;
   if (sprite != NULL) {
     delta = sprite->x - cursor->targetX;
     step = delta / 4;
@@ -150,13 +169,13 @@ void MenuCursor_MoveTowardTarget(struct ShopCursor *cursor) {
         sprite->x = sprite->x - step;
       else
         sprite->x = sprite->x - 1;
-      sprite->oam.x = sprite->x;
+      sprite->sprite.oam.x = sprite->x;
     } else if (delta < 0) {
       if (step != 0)
         sprite->x = sprite->x + step;
       else
         sprite->x = sprite->x + 1;
-      sprite->oam.x = sprite->x;
+      sprite->sprite.oam.x = sprite->x;
     }
 
     delta = sprite->y - cursor->targetY;
@@ -168,17 +187,19 @@ void MenuCursor_MoveTowardTarget(struct ShopCursor *cursor) {
         sprite->y = sprite->y - step;
       else
         sprite->y = sprite->y - 1;
-      sprite->oam.y = sprite->y;
+      sprite->sprite.oam.y = sprite->y;
     } else if (delta < 0) {
       if (step != 0)
         sprite->y = sprite->y + step;
       else
         sprite->y = sprite->y + 1;
-      sprite->oam.y = sprite->y;
+      sprite->sprite.oam.y = sprite->y;
     }
   }
 }
 
+/// Starts a glide of the cursor from where it is to (targetX, targetY) over
+/// `kind` frames, for MenuCursor_Advance to run.
 void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY,
                     s8 kind) {
   struct WindowSprite *anchor = cursor->anchor;
@@ -191,47 +212,49 @@ void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY,
   cursor->active = 0;
 }
 
-/// Puts the cursor at x, y at once: both its position and its target, and its
-/// sprite with them.
+/// Places the cursor and its sprite at (x, y) at once, with a one-frame glide
+/// that has already arrived.
 void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
   {
-    struct ShopCursorSprite3 *sprite =
-        (struct ShopCursorSprite3 *)cursor->anchor;
+    struct WindowSprite *sprite = cursor->anchor;
 
     cursor->targetX = x;
     cursor->kind = 1;
     cursor->active = 0;
     cursor->x = x;
-    sprite->oam.x = sprite->x = x;
+    sprite->sprite.oam.x = sprite->x = x;
   }
   {
-    struct ShopCursorSprite3 *sprite;
+    struct WindowSprite *sprite;
 
     cursor->targetY = y;
     cursor->y = y;
-    sprite = (struct ShopCursorSprite3 *)cursor->anchor;
-    sprite->oam.y = sprite->y = y;
+    sprite = cursor->anchor;
+    sprite->sprite.oam.y = sprite->y = y;
   }
 }
 
-void MenuCursor_Place(void *window, s32 x, s32 y) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+/// Starts the hand cursor's glide to (x, y) pixels inside `window` (the screen
+/// when it is NULL), over the frames shop->mode holds.
+void MenuCursor_Place(struct RenderInput *window, s32 x, s32 y) {
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
 
+  // A window's position is in tiles, and its interior starts one tile (its
+  // frame) in
   if (window != NULL) {
-    x += (s16)((struct RenderInput *)window)->x * 8 + 8;
-    y += (s16)((struct RenderInput *)window)->y * 8 + 8;
+    x += (s16)window->x * 8 + 8;
+    y += (s16)window->y * 8 + 8;
   }
   MenuCursor_Set(&shop->cursor, x, y, (s8)shop->mode);
 }
 
-#define Resource_DecodeByteLzInRam                                             \
-  ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
-
+/// Decompresses resource `resourceId` and loads its first `size` bytes into
+/// VRAM cache entry `entryId`; does nothing for an entry past the cache.
 void VramBlock_LoadResource(s32 entryId, s32 size, s32 resourceId) {
   void *source;
   void *buffer;
 
-  if (entryId > 95)
+  if (entryId >= VRAM_CACHE_ENTRY_COUNT)
     return;
   source = Resource_GetTableEntry(resourceId);
   buffer = Heap_Alloc(size);
@@ -239,5 +262,3 @@ void VramBlock_LoadResource(s32 entryId, s32 size, s32 resourceId) {
   VramCache_Load(entryId, size, buffer);
   Heap_Release(buffer);
 }
-
-#undef Resource_DecodeByteLzInRam

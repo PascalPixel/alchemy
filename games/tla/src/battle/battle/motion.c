@@ -138,7 +138,6 @@ void BattleMotion_LeapBack(s32 objectId) {
 /// when it stands on the ground or for the strong variants (5 and up). Four
 /// enemies stay where they stand, and every object gets its vertical motion
 /// before it takes mode 5.
-// The Broken Seal's BattleMotion_ApplyVariantMotion.
 /// Knocks unit id back by the speed, hop and distance of the knockback
 /// variant (enum BattleKnockback), and puts it in POSE_DAMAGE.
 /// The Fusion Dragon only takes the pose. Reached through its far stub from
@@ -155,13 +154,13 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
   object = slot->object;
   enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376) {
-    object->acceleration = Data_0812cbb0[variant];
-    object->speedLimit = Data_0812cbd8[variant];
+    object->acceleration = gBattleKnockback_Acceleration[variant];
+    object->speedLimit = gBattleKnockback_SpeedLimit[variant];
     if (object->y == 0 || variant > 4)
-      object->velocityY = gBattleKnockback_DistancePercent[variant];
+      object->velocityY = gBattleKnockback_VelocityY[variant];
     Actor_StartIdleFar(object);
     scale = slot->anchorX;
-    x = (scale * Data_0812cc28[variant]) / 100;
+    x = (scale * gBattleKnockback_DistancePercent[variant]) / 100;
     Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
@@ -320,26 +319,18 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   return 0;
 }
 
-/* VIEW(battle): routine BattleSprite_GetEffectHeight as u8
- * BattleSprite_GetEffectHeight(s32 index); battle/presentation has u32
- * BattleSprite_GetEffectHeight(u32 index) {; tried as the definition's u32
- * BattleSprite_GetEffectHeight(u32 index), which the object already declares,
- * BattleUnit_GetEffectHeight moves: 2 of 27 instructions in tla-ja. */
-u8 BattleSprite_GetEffectHeight__battle(s32 index) __asm__(
-    "BattleSprite_GetEffectHeight");
-#define BattleSprite_GetEffectHeight BattleSprite_GetEffectHeight__battle
-
+/// Returns the height above a unit where its battle effects play: its class's
+/// own, else 24 pixels for a small enemy and 48 for others.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
-  s32 value = BattleSprite_GetEffectHeight(
-                  ((struct SummonOwnerState *)Unit_Get(unitId))->summon)
-              << 16;
+  s32 value = px((u8)BattleSprite_GetEffectHeight(
+      ((struct BattleUnit *)Unit_Get(unitId))->enemyId));
 
   if (value == 0) {
     if (BattleSprite_IsSmall(
-            ((struct SummonOwnerState *)Unit_Get(unitId))->summon) != 0)
-      value = 0x180000;
+            ((struct BattleUnit *)Unit_Get(unitId))->enemyId) != 0)
+      value = px(24);
     else
-      value = 0x300000;
+      value = px(48);
   }
   return value;
 }

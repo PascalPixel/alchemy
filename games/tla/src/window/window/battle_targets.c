@@ -26,7 +26,7 @@
 #define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
-#define NAVIGATION ((struct TargetNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 #if TLA_PATCH_2
 extern const u8 gOwnerStatus_KpString[];
@@ -116,8 +116,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct TargetAffine effect;
   struct BattleUnit *unit;
   struct TargetBattle *battle;
-  struct TargetWindow *window;
-  struct TargetWindow *conditionWindow;
+  struct RenderInput *window;
+  struct RenderInput *conditionWindow;
   s32 targetIndex;
   s32 targetCount;
   s32 candidateCount;
@@ -152,7 +152,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   redraw = 0xffff;
   cursorSlot = VramCache_AllocEntry(256);
   /* FAKEMATCH(dead): a null computed from selection. */
-  conditionWindow = (struct TargetWindow *)((u32)(u16)selection >> 16);
+  conditionWindow = (struct RenderInput *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
   if (mode == 2 || mode == 4)
@@ -248,7 +248,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
    * mode are dead. */
   __asm__("" : : : "r8", "r10");
 #endif
-  window = Window_Create(0, 12, 30, 4, 74);
+  window = Window_Create(0, 12, 30, 4,
+                         WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                             WINDOW_FLAG_OUTLINED_TEXT);
 
   for (;;) {
     /* FAKEMATCH(dead): a once-only block. */
@@ -334,7 +336,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           cursorTracks[i].index = 6;
       }
       spreadActorIds[targetCount] = 255;
-      BattleHighlight_SetModesFar(spreadActorIds, 1);
+      BattleHighlight_SetModesFar(spreadActorIds, HIGHLIGHT_SELECTED);
       // The (u32) compares the stored id unsigned, as the bytes do.
       if ((u32)(NAVIGATION->lastTarget = candidateIds[targetIndex]) <= 7) {
         if (spread != 255 && kind != 0) {
@@ -369,9 +371,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             conditionWindow =
                 Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
 #endif
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles((s32)MsgSetDjinni, conditionWindow, 0, 0);
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             break;
           case 1:
             TARGET_HELP_COLUMN(7, 6, 17);
@@ -547,9 +549,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               break;
           }
           no_condition:
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles((s32)MsgEffectNone, conditionWindow, 0, 0);
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             break;
           }
         }
@@ -689,7 +691,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (conditionWindow != NULL)
     Window_Close(conditionWindow, 1);
   Window_Close(window, 1);
-  BattleHighlight_SetModesFar(candidateIds, 0);
+  BattleHighlight_SetModesFar(candidateIds, HIGHLIGHT_OFF);
   NAVIGATION->targetViewOffset = 0;
   wait(1);
   return targetIndex;

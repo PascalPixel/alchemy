@@ -31,10 +31,9 @@
 #define DJINN_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-#define NAVIGATION ((struct DjinnMenuNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
-// A statement macro, as The Broken Seal's BATTLE_MENU_GET_CURSOR: the three
-// cursor reads stay together.
+// Reads the menu's page, row and preferred row.
 #define DJINN_MENU_GET_CURSOR(page_, row_, preferred_)                         \
   do {                                                                         \
     (page_) = NAVIGATION->page;                                                \
@@ -42,7 +41,7 @@
     (preferred_) = NAVIGATION->preferredRow;                                   \
   } while (0)
 
-// As The Broken Seal's Window_MarkTilemapRow, on a signed row.
+// Marks a window's tilemap row for upload, on a signed row.
 #define DJINN_MENU_MARK_ROW(render, y)                                         \
   do {                                                                         \
     (render)->dirty |= 2 << ((y) >> 2);                                        \
@@ -54,16 +53,16 @@
 #define DJINN_ENTRY_END 0x80000000
 
 s32 BattleDjinnMenu_Run(s32 member) {
-  struct DjinnMenuOam cursorSprite;
+  struct QueuedSprite cursorSprite;
   u16 messageText[64];
-  struct DjinnMenuWork *work;
-  struct DjinnMenuWindow *previewWindow;
+  struct WindowWork *work;
+  struct RenderInput *previewWindow;
   s32 drawnRow;
   s32 cursorSlot;
   u32 *djinnEntries;
   s32 djinnCount;
   s32 drawnFirstEntry;
-  struct DjinnMenuWindow *messageWindow;
+  struct RenderInput *messageWindow;
   s32 standbyElements;
   s32 preferredRow;
   s32 previewPage;
@@ -73,12 +72,12 @@ s32 BattleDjinnMenu_Run(s32 member) {
 #if TLA_PATCH_1
   s32 redrawList;
 #endif
-  struct DjinnMenuNavigation *navigation;
-  struct DjinnMenuUnit *unit;
+  struct BattleMenuWork *navigation;
+  struct BattleUnit *unit;
   struct DjinnRecoveryList *list;
-  struct DjinnMenuWindow *listWindow;
-  struct DjinnMenuWindow *iconWindow;
-  struct DjinnMenuPartyStatus *partyStatus;
+  struct RenderInput *listWindow;
+  struct RenderInput *iconWindow;
+  struct PartyStatusWindow *partyStatus;
   u32 *entryCursor;
   s32 listEntry;
   u32 selectedDjinn;
@@ -97,7 +96,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
   s32 i;
   s32 j;
 
-  work = (struct DjinnMenuWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   previewWindow = NULL;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);
@@ -113,7 +112,9 @@ s32 BattleDjinnMenu_Run(s32 member) {
 #if TLA_PATCH_1
   redrawList = 0;
 #endif
-  messageWindow = Window_Create(0, 4, 30, 4, 42);
+  messageWindow = Window_Create(0, 4, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_BORDERED_CANVAS);
   Text_UseExtraTiles(1);
   listWindow = Window_Create(DJINN_LIST_X, 9, DJINN_LIST_WIDTH, 11, 6);
   DJINN_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
@@ -125,11 +126,11 @@ s32 BattleDjinnMenu_Run(s32 member) {
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
          djinnIndex <= 19; djinnIndex++) {
-      if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
+      if (unit->djinnActive[element] & (u32)(1 << djinnIndex)) {
         *entryCursor = (u32)((element << 8) | djinnIndex);
         entryCursor++;
         djinnCount++;
-      } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
+      } else if (unit->djinnAvailable[element] & (u32)(1 << djinnIndex)) {
         u32 v;
         s32 k;
 
@@ -159,7 +160,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
 
   for (;;) {
     /* FAKEMATCH(temporary): sprite holds &cursorSprite. */
-    struct DjinnMenuOam *sprite = &cursorSprite;
+    struct QueuedSprite *sprite = &cursorSprite;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||
         redraw != 0) {
@@ -167,12 +168,16 @@ s32 BattleDjinnMenu_Run(s32 member) {
       standbyElements = 0;
       // Spelt *&: a byte store that may alias the window it highlights next,
       // which keeps the work load before the entry index's add.
-      *&work->holdTilemapUpload = 1;
-      Window_HighlightRect(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
+      *&work->menuBusy = 1;
+      Window_HighlightRect((s16)listWindow->x + 1,
+                           (s16)listWindow->y + drawnRow * 2 + 1,
                            listWindow->width - 2, 1, 15);
       if (previewPage != 0) {
         Window_Close(messageWindow, 1);
-        messageWindow = Window_Create(0, 4, 30, 4, 42);
+        messageWindow =
+            Window_Create(0, 4, 30, 4,
+                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                              WINDOW_FLAG_BORDERED_CANVAS);
         Text_FillCanvasBackground();
       }
       redraw = 0;
@@ -203,7 +208,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
           if (selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
             MessageArgument_Push((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT,
-                                 5);
+                                 MESSAGE_ARGUMENT_NUMBER);
             DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) * 20 +
                                    (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
                                messageText, DJINN_MESSAGE_CAPACITY);
@@ -234,12 +239,15 @@ s32 BattleDjinnMenu_Run(s32 member) {
         DJINN_MESSAGE_COPY((s32)MsgNoDjinn, messageText,
                            DJINN_MESSAGE_CAPACITY);
       }
-      work->holdTilemapUpload = 0;
+      work->menuBusy = 0;
       if (previewPage == 0) {
-        work->holdTilemapUpload = 1;
+        work->menuBusy = 1;
         Window_Close(messageWindow, 1);
-        messageWindow = Window_Create(0, 4, 30, 4, 42);
-        work->holdTilemapUpload = previewPage;
+        messageWindow =
+            Window_Create(0, 4, 30, 4,
+                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                              WINDOW_FLAG_BORDERED_CANVAS);
+        work->menuBusy = previewPage;
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -256,9 +264,9 @@ s32 BattleDjinnMenu_Run(s32 member) {
           Window_SetTilemapEntry(
               listWindow, ((encodedDjinn & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           Text_DrawMessageAsTiles(((encodedDjinn & 0xf00) >> 8) * 20 +
                                       (encodedDjinn & 0xff) + (s32)MsgDjinnName,
                                   listWindow, 8, j * 16);
@@ -267,7 +275,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
                 (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                     DJINN_ENTRY_RECOVERY_SHIFT,
                 2, listWindow, DJINN_TURNS_X, j * 16);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           j++;
           if (j > 4)
             break;
@@ -289,11 +297,11 @@ s32 BattleDjinnMenu_Run(s32 member) {
                                  listWindow->width - listPages + j - 2, -1, 0);
         }
       }
-      Window_HighlightRect(listWindow->x + 1,
-                           listWindow->y + selectedRow * 2 + 1,
+      Window_HighlightRect((s16)listWindow->x + 1,
+                           (s16)listWindow->y + selectedRow * 2 + 1,
                            listWindow->width - 2, 1, 14);
       work->dirty = 1;
-      work->holdTilemapUpload = 0;
+      work->menuBusy = 0;
     }
 
     if (djinnCount > 5) {
@@ -321,7 +329,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
         Window_SetTilemapEntry(listWindow, 0xf012, listWindow->width - 2, -1,
                                0);
       }
-      work->dirty |= 2 << ((u32)(listWindow->y - 1) >> 2);
+      work->dirty |= 2 << ((u32)((s16)listWindow->y - 1) >> 2);
     }
 
     pressed = gInput.pressed;
@@ -364,7 +372,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
           MessageArgument_ClearAll();
           MessageArgument_Push((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                    DJINN_ENTRY_RECOVERY_SHIFT,
-                               5);
+                               MESSAGE_ARGUMENT_NUMBER);
           Message_CopyExpanded((s32)MsgDjinniStillRecovering, messageText,
                                DJINN_MESSAGE_CAPACITY);
           Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
@@ -409,7 +417,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
                                  0);
           Window_SetTilemapEntry(previewWindow, 0xf335,
                                  previewWindow->width - 2, -1, 0);
-          DJINN_MENU_MARK_ROW(work, previewWindow->y);
+          DJINN_MENU_MARK_ROW(work, (s16)previewWindow->y);
         }
         if (previewPage == 0 && previewPages != 0) {
           if (previewWindow != NULL)
@@ -478,31 +486,33 @@ s32 BattleDjinnMenu_Run(s32 member) {
       }
     }
 
-    cursorPos.x = listWindow->x * 8 - 2;
-    cursorPos.y = (selectedRow * 2 + listWindow->y) * 8 + 20;
-    ((struct DjinnMenuSprite *)sprite)->attr01 = 0x40000000;
-    ((struct DjinnMenuSprite *)sprite)->attr23 = 0;
+    cursorPos.x = (s16)listWindow->x * 8 - 2;
+    cursorPos.y = (selectedRow * 2 + (s16)listWindow->y) * 8 + 20;
+    ((struct MenuSprite *)sprite)->oam.word.attr01 = 0x40000000;
+    ((struct MenuSprite *)sprite)->oam.word.attr23 = 0;
     // Once-only: keeps cursorSlot's load before the tiles address.
     do {
     } while (0);
-    sprite->tile = VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
-    sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
-    sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite->oam.index =
+        VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
+    sprite->oam.x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
+    sprite->oam.y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0)
       Oam_AddSpriteAtDepth(sprite, 242);
 
     partyStatus = Ram_HeapSlots->windowLayout;
     blinkPhase = gFrameCount & 4;
-    iconWindow = partyStatus->window;
+    iconWindow = (struct RenderInput *)partyStatus->window;
     if (partyStatus->flags & 2) {
       for (i = 0; i <= 3; i++) {
         s32 palette = 15 - (blinkPhase != 0);
 
         if (((1 << i) & standbyElements) == 0)
           palette = 15;
-        Window_HighlightRect(iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
-                             iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1,
-                             2, 1, palette);
+        Window_HighlightRect(
+            (s16)iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
+            (s16)iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1, 2, 1,
+            palette);
       }
     }
     if (gFrameCount & 4) {
@@ -516,11 +526,11 @@ s32 BattleDjinnMenu_Run(s32 member) {
   }
 
   {
-    struct DjinnMenuPartyStatus *owner = Ram_HeapSlots->windowLayout;
+    struct PartyStatusWindow *owner = Ram_HeapSlots->windowLayout;
 
     if (owner->flags & 2)
-      Window_HighlightRect(owner->window->x + 1, owner->window->y + 1, 4, 4,
-                           15);
+      Window_HighlightRect((s16)owner->window->x + 1, (s16)owner->window->y + 1,
+                           4, 4, 15);
   }
   VramCache_FreeEntry(cursorSlot);
   Window_Close(messageWindow, 1);

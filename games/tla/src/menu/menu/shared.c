@@ -18,13 +18,13 @@ s32 GameFlag_Set(s32 flag_no);
 void Menu_ResumeFieldTasks(void) {
   Task_ResumeOverlayTasks();
   TilesetAnim_ResumeAllFar();
-  GameFlag_Clear(0x166);
-  GameFlag_Clear(0x152);
+  GameFlag_Clear(FLAG_WEATHER_HELD);
+  GameFlag_Clear(FLAG_PALETTE_BLEND_HELD);
 }
 
 s32 Menu_SuspendFieldTasks(void) {
-  GameFlag_Set(0x152);
-  GameFlag_Set(0x166);
+  GameFlag_Set(FLAG_PALETTE_BLEND_HELD);
+  GameFlag_Set(FLAG_WEATHER_HELD);
   TilesetAnim_SuspendAllFar();
   return Task_SuspendOverlayTasks();
 }
@@ -396,13 +396,13 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
   Text_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
   if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    Text_SetColorFar(4);
+    Text_SetColorFar(TEXT_COLOR_YELLOW);
   }
   if (value == 0) {
-    Text_SetColorFar(2);
+    Text_SetColorFar(TEXT_COLOR_RED);
   }
   Text_DrawNumberRightAligned(value, window, 48, 40);
-  Text_SetColorFar(15);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawStringAtOffsetFar(gStatusPanel_PpString, window, 0, 48);
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 48);
   value = unit->pp;
@@ -420,13 +420,13 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
   Text_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
   if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    Text_SetColorFar(4);
+    Text_SetColorFar(TEXT_COLOR_YELLOW);
   }
   if (value == 0) {
-    Text_SetColorFar(2);
+    Text_SetColorFar(TEXT_COLOR_RED);
   }
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
-  Text_SetColorFar(15);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_PpRowString, window, 0, 48);
   value = unit->pp;
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
@@ -492,7 +492,7 @@ s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
 /// OAM attributes, with no affine matrix.
 void Icon_PrepareActor(struct WindowSprite *object) {
   if (object != NULL) {
-    object->active = 1;
+    object->active = ICON_SHOWN;
     object->sprite.oam.x = object->x;
     object->sprite.oam.y = object->y;
     object->sprite.oam.matrix = 0;
@@ -507,19 +507,14 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
   Portrait_ReloadFar(0, unit, 0);
 }
 
-// The menu work, Ram_HeapSlots->menuRuntime, as the hand cursor and the party
-// figures read it: The Broken Seal's PsynergyMenuWork, whose names the first
-// three fields take.
-
 extern char ResourceId_ShopUpArrowTiles;
 extern char ResourceId_ShopDownArrowTiles;
 
 /// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
 /// hand cursor in it, hidden, and adds the up and down arrow icons at its right
 /// edge when a VRAM entry is free. Returns the window.
-// The twin of The Broken Seal's routine, which has no divider or
-// arrows.
-struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
+struct RenderInput *MenuCursor_Create(void *source) {
+  struct PsynergyMenuWork *work = source;
   struct RenderInput *window;
   struct WindowSprite *icon;
   s32 zero = 0;
@@ -531,7 +526,7 @@ struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
   window = work->auxiliaryWindow;
   Window_DrawDividerLineFar((s32)window, 0, 3, 12, 3);
   icon = (struct WindowSprite *)Icon_CreateWithResource(window, -8, 11);
-  icon->active = 13;
+  icon->active = ICON_HIDDEN;
   work->tabIndex[0] = 255;
   work->sideIcon[0] = icon;
   sentinel = 254;
@@ -543,22 +538,22 @@ struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
-    icon->active = 13;
-    work->arrows[0] = icon;
+    icon->active = ICON_HIDDEN;
+    work->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
-    icon->active = 13;
-    work->arrows[1] = icon;
+    icon->active = ICON_HIDDEN;
+    work->pageArrows[1] = icon;
   }
   return window;
 }
 
 void Menu_PlacePartyFigures(void) {
-  struct OwnerMenuState *menu =
-      (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu =
+      (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 i;
@@ -566,13 +561,13 @@ void Menu_PlacePartyFigures(void) {
 
   count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
-    struct AnimationObject *figure = menu->tabObjects[i];
+    struct AnimationObject *figure = menu->tabSprites[i];
     s32 placeY = 0x00728000 - (menu->rowPositions[i] << 15);
 
     if (figure != 0) {
       figure->image.priority = 0;
-      scale.x = menu->ownerScale[i];
-      scale.y = menu->ownerScale[i];
+      scale.x = menu->memberScale[i];
+      scale.y = menu->memberScale[i];
       position.x = menu->tabX[i] << 16;
       position.height = placeY;
       position.y = (menu->rowPositions[i] << 16) + placeY;
@@ -589,10 +584,10 @@ extern u8 gMenuCursor_BobY[];
 #define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
 
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's window,
-/// bobbing; the twin of The Broken Seal's routine.
+/// bobbing.
 void MenuCursor_Position(s32 xOffset, s32 yOffset) {
-  struct OwnerMenuState *work =
-      (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *work =
+      (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
   struct WindowSprite *cursor = work->sideIcon[0];
 
   cursor->sprite.oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] +
@@ -601,10 +596,9 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
                                      yOffset + work->auxiliaryWindow->y * 8 + 8;
 }
 
-/// The twin of The Broken Seal's MenuCursor_Slide.
 void MenuCursor_Slide(s32 x, s32 y) {
-  struct OwnerMenuState *work =
-      (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *work =
+      (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
   struct WindowSprite *cursor;
   s32 steps;
   s32 startX;
@@ -744,8 +738,6 @@ void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
 /// window sized to the message opens at (x, y). With x == -1 the message stays
 /// up and flag 337 records that the info window holds it; otherwise it waits
 /// for A, B or Start and clears it again.
-// As The Broken Seal's ItemMenu_ShowMessage: in Japanese its first
-// form, from patch 1 its TBS_PATCH_1 form less the redraw after the wait.
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   struct RenderInput *window;
@@ -754,7 +746,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   s32 top;
   s32 left;
 
-  menu->sideIcons[0]->active = 13;
+  menu->sideIcons[0]->active = ICON_HIDDEN;
   if (y != -1) {
     Text_GetMessageSizeFar(message, &left, &top, &width, &height);
     if (Window_UpdateOrCreate((s32 *)&menu->modalWindow, x, y, width, height,
@@ -785,7 +777,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
     GameFlag_Set(337);
   }
   menu->completionFlag = 1;
-  menu->sideIcons[0]->active = 1;
+  menu->sideIcons[0]->active = ICON_SHOWN;
 #if TLA_PATCH_1
   if (y != -1)
     ((void (*)(void **, s32))Window_CloseIfOpen)((void **)&menu->modalWindow,
@@ -834,9 +826,9 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
         item = Item_GetDirectFar(items[i]);
         if ((order[pass] & 0x7f) != item->type)
           continue;
-        if ((order[pass] & 0x80) && (items[i] & 0x200) == 0)
+        if ((order[pass] & 0x80) && (items[i] & INVENTORY_EQUIPPED) == 0)
           continue;
-        value = items[i] & 0x1ff;
+        value = items[i] & ITEM_ID_MASK;
         if (best < value) {
           best_slot = i;
           best = value;
@@ -1081,30 +1073,24 @@ void Palette_LoadIconsIntoHighlight(void) {
           DMA_COPY_HALFWORDS(1), REG_DMA3);
 }
 
-struct MenuPageIcon {
-  u8 reserved00[5];
-  u8 state;
-  u16 x;
-  u16 y;
-};
-
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
-  struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
-  struct MenuPageIcon *icon;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct WindowSprite *icon;
   s32 i;
 
   for (i = 0; i < 32; i++) {
-    icon = menu->icons[i];
+    icon = menu->entryIcons[i];
     if (icon != NULL)
-      icon->state = 13;
+      icon->active = WINDOW_SPRITE_MOTION_HIDDEN;
   }
-  for (i = first; i < pageSize + first && (icon = menu->icons[i]) != NULL &&
-                  i <= menu->entryCount - 1;
+  for (i = first;
+       i < pageSize + first && (icon = menu->entryIcons[i]) != NULL &&
+       i <= menu->itemCount - 1;
        i++) {
     icon->x = x;
     icon->y = y + (i - first) * 16;
-    Icon_PrepareActor((struct WindowSprite *)icon);
-    icon->state = 1;
+    Icon_PrepareActor(icon);
+    icon->active = WINDOW_SPRITE_MOTION_STILL;
   }
 }
 
@@ -1149,7 +1135,7 @@ void Menu_UpdateCancelSound(void) {
   mask = 8;
   if (input->pressed & mask) {
     Sound_PlayFar(SE_MENU_CANCEL);
-    GameFlag_Set(0x150);
+    GameFlag_Set(FLAG_MENU_START_PRESSED);
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
   node = (u32 *)(Ram_HeapSlots->windowTiles + 0xE30);
@@ -1158,21 +1144,21 @@ void Menu_UpdateCancelSound(void) {
 }
 
 void Menu_StartWatchingStart(void) {
-  GameFlag_Clear(0x150);
+  GameFlag_Clear(FLAG_MENU_START_PRESSED);
   Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
 }
 
 void Menu_StopWatchingStart(void) {
-  if (GameFlag_Get(0x150) == 0) {
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
 }
 
-void UiPalette_SetColor15(void) { Text_SetColorFar(15); }
+void UiPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_NORMAL); }
 
-void UiPalette_SetColor2(void) { Text_SetColorFar(2); }
+void UiPalette_SetColor2(void) { Text_SetColorFar(TEXT_COLOR_RED); }
 
-void UiPalette_SetColor4(void) { Text_SetColorFar(4); }
+void UiPalette_SetColor4(void) { Text_SetColorFar(TEXT_COLOR_YELLOW); }
 
 #undef DRAW_LEVEL_LABEL
 #undef STATUS_PANEL_LEARN_NOTE_Y

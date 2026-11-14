@@ -188,6 +188,20 @@ enum BattleActionUse {
   ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle
 };
 
+/// BattleUnit.restraint bits, The Broken Seal's Unit.curse.
+enum CurseFlag {
+  CURSE_BOUND = 0x01 ///< the unit is bound: one action in four is lost
+};
+
+/// BattleUnit.classIndex of an enemy, which has no class of its own.
+#define CLASS_NONE 0
+
+/// The last party unit id: ids 0 to 7, one for each character, ISAAC to PIERS.
+#define ALLY_MAX 7
+
+/// BattleUnit.guardLevel set by Defend, when no guard effect has set one.
+#define DEFEND_NORMAL 1
+
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and ailments.
 struct BattleUnit {

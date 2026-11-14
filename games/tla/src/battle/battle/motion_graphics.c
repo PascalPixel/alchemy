@@ -155,7 +155,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     if (BattleObject_Get(saved->unitId)->object == NULL) {
       saved->reactivate = 1;
       BattleObject_Reset(BattleObject_Get(saved->unitId));
-      BattleObject_Get(saved->unitId)->scale = 0x13333;
+      BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
     }
   } else {
     saved->unitId = plan->actorId;
@@ -192,7 +192,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   }
   Iwram_CopyWordsEntry(saved, BattleObject_Get(saved->unitId), 44);
   BattleObject_Reset(BattleObject_Get(saved->unitId), single);
-  BattleObject_Get(saved->unitId)->scale = 0x13333;
+  BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
   if (single)
     saved->buffer = Heap_AllocEwram(0x8000);
   else
@@ -211,10 +211,10 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     saved->buffer = (u32 *)i;
   }
   ids[0] = saved->unitId;
-  ids[1] = 255;
+  ids[1] = BATTLE_UNIT_LIST_END;
   BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
   object->y = px(40);
-  object->angle = plan->targetIds[0] <= 7 ? 0 : TRIG_TURN / 2;
+  object->angle = plan->targetIds[0] <= ALLY_MAX ? 0 : TRIG_TURN / 2;
   BattleHighlight_SetSpriteMode(saved->unitId, 1);
   for (i = 0; i <= 29; i++) {
     object->y = (29 - i) * 3 << 16;
@@ -280,7 +280,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
   SpritePictureCache_LoadFar(7, 0, 0, 0);
   if (saved->single) {
     ids[0] = unitId;
-    ids[1] = 255;
+    ids[1] = BATTLE_UNIT_LIST_END;
     BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
     BattleHighlight_SetSpriteMode(unitId, 1);
   } else {
@@ -343,7 +343,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     battleObject->object->z = z;
     angle = (u16)ArcTan2(x, z);
     adjusted = angle - TRIG_TURN / 8;
-    if (actorId > 7)
+    if (actorId > ALLY_MAX)
       adjusted = angle + TRIG_TURN * 3 / 8;
   }
   adjusted &= 0x7fff;
@@ -356,7 +356,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     wait(1);
   }
 
-  BattleHighlight_SetModes(0, 0);
+  BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   BattleStaging_BuildTargetList(plan, &work);
   if (work.kind == 135)
     PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
@@ -393,7 +393,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   Actor_SetAnimationSpeedFar(
       (struct Actor *)BattleObject_Get(work.actor)->object, 16);
 
-  if ((u16)work.actors[0] <= 7)
+  if ((u16)work.actors[0] <= ALLY_MAX)
     work.side = 1;
   else
     work.side = 0;
@@ -430,7 +430,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       view->flag = 1;
       criticalPair[0] = work.actor;
       criticalPair[1] = work.firstTarget;
-      criticalPair[2] = 255;
+      criticalPair[2] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForList(criticalPair, 0);
     }
     frames -= 8;
@@ -501,13 +501,13 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   s32 targetYaw;
 
   if (plan->actorId > 4)
-    targetYaw = -TRIG_TURN / 8;
+    targetYaw = YAW_ENEMY_ACTION;
   else
-    targetYaw = TRIG_TURN / 8;
+    targetYaw = YAW_PARTY_ACTION;
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
   BattleStaging_BuildTargetList(plan, &work);
-  BattleHighlight_SetModes(0, 0);
+  BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   {
     struct BattleObj *slot = BattleObject_Get(work.actor);
     struct BattleWork *battle;
@@ -519,7 +519,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     Actor_SelectAnimationFar(object, *mode);
   }
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
-  if (plan->targetIds[0] <= 7)
+  if (plan->targetIds[0] <= ALLY_MAX)
     work.side = 1;
   else
     work.side = 0;
@@ -633,19 +633,6 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
   }
 }
 
-// BattleStaging_RunPsynergyCast: The Broken Seal's
-// BattleStaging_RunPsynergyCast (games/tbs/src/battle/battle/staging.c),
-// ported: turns the camera to the caster (across the field or reversed when the
-// plan's flags say so), raises the caster's hand with its element's glow, then
-// either fails ("But the Psynergy was blocked!" or "...But doesn't have enough
-// PP!") or plays the effect with the events. This game adds a second effect
-// object (BattleMotion_CallBeast, shown by BattleMotion_ReleaseBuffer, put back
-// and freed by BattleMotion_DismissBeast), sets the caster's mode from the
-// battle work's byte 0x869, and skips the playback callback and its wait when
-// the plan's word at 100 is set. mode: 1 a Djinni, 2 an enemy's cast. The two
-// fixed yaws are stores in each arm of an if (as a ternary or one value the
-// arms are folded into a default and an override).
-
 /// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
 /// the targets from the caster's side, the caster raises its hand and glows
 /// in its element (no glow for a Djinni); then the cast fails ("blocked" or
@@ -667,10 +654,10 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   s32 targetIndex;
 
   if (plan->presentationFlags & 0x40000) {
-    if (plan->actorId <= 7)
-      transition->targetYaw = -TRIG_TURN / 8;
+    if (plan->actorId <= ALLY_MAX)
+      transition->targetYaw = YAW_ENEMY_ACTION;
     else
-      transition->targetYaw = 0x5000;
+      transition->targetYaw = YAW_BEHIND_ENEMIES;
     transition->frames = 60;
   } else {
     struct MotionObject *actor = BattleObject_Get(plan->actorId)->object;
@@ -679,23 +666,24 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     s32 angle = (u16)ArcTan2(actor->x, actor->z);
     s32 targetYaw;
 
-    if (actorId <= 7)
+    if (actorId <= ALLY_MAX)
       targetYaw = angle - 0x1800;
     else
       targetYaw = angle + 0x1800;
     targetYaw = (s16)targetYaw;
-    targetYaw +=
-        ((actorId <= 7 ? TRIG_TURN / 8 : -TRIG_TURN / 8) - targetYaw) * 3 / 4;
-    if (!((actorId <= 7) ^ (target <= 7)))
-      targetYaw = actorId <= 7 ? 0x2400 : -0x2400;
+    targetYaw += ((actorId <= ALLY_MAX ? YAW_PARTY_ACTION : YAW_ENEMY_ACTION) -
+                  targetYaw) *
+                 3 / 4;
+    if (!((actorId <= ALLY_MAX) ^ (target <= ALLY_MAX)))
+      targetYaw = actorId <= ALLY_MAX ? 0x2400 : -0x2400;
     if (transition->targetYaw != targetYaw)
       transition->targetYaw = targetYaw;
   }
   if (plan->presentationFlags & 0x80000) {
-    if (plan->actorId <= 7)
-      transition->targetYaw = -TRIG_TURN / 8;
+    if (plan->actorId <= ALLY_MAX)
+      transition->targetYaw = YAW_ENEMY_ACTION;
     else
-      transition->targetYaw = TRIG_TURN / 8;
+      transition->targetYaw = YAW_PARTY_ACTION;
     transition->frames = 60;
   }
 
@@ -703,7 +691,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   isDjinni = mode & 1;
   if (isDjinni)
     work.flags = 1;
-  BattleHighlight_SetModes(0, 0);
+  BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   heap = Ram_HeapSlots;
   PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
   saved = BattleMotion_CallBeast(plan, &work);
@@ -715,7 +703,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     ElementGlow_Play(work.actor, plan->element, 1, 0);
   else if (!isDjinni)
     ElementGlow_Play(work.actor, plan->element, 0, 0);
-  if (plan->targetIds[0] <= 7)
+  if (plan->targetIds[0] <= ALLY_MAX)
     work.side = 1;
   else
     work.side = 0;
@@ -764,7 +752,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-void BattleMotion_FlashHit(s32 id) {
+/// Flashes a unit as it is hit, white and back twice in its damage pose.
+void BattleMotion_FlashHit(s32 id, s32 unused0, s32 unused1) {
   u16 selection[2];
   u16 *selected;
   s32 target;

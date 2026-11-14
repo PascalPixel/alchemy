@@ -8,36 +8,34 @@
 #include "gamepak/far_call/menu.h"
 #include "module/shop/shop.h"
 
-// The Japanese money window is a tile narrower, as in Shop_SelectBuy.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define MONEY_WINDOW_WIDTH 11
-#else
-#define MONEY_WINDOW_WIDTH 12
-#endif
-
+/// Lets the player choose whose items to sell, repair or forge, by
+/// shop->action, until B or, at the forge, an item is taken.
 s32 Shop_ChooseMember(void) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   s32 unitId = 0;
   s32 memberIndex = 0;
-  void *listWindow;
+  struct RenderInput *listWindow;
   s32 redraw = 1;
   s32 result;
 
-  shop->moneyWindow = Window_CreateFar(0, 9, MONEY_WINDOW_WIDTH, 4, 2);
+  shop->moneyWindow =
+      Window_CreateFar(0, 9, SHOP_COIN_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
-  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, 2);
-  listWindow = Window_CreateFar(0, 14, 13, 3, 2);
+  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
+  listWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->listWindow = listWindow;
-  shop->cursor.anchor->active = 4;
+  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->mode = 12;
   Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
-      MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
+      MenuCursor_Place(listWindow,
+                       (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->mode = 3;
       if (redraw == 2) {
-        Menu_CreateOwnerEntryObjectsFar(memberIndex / 4 * 4);
+        Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
+                                        SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
       }
       Shop_DrawParty(listWindow, memberIndex, 0);
@@ -52,16 +50,16 @@ s32 Shop_ChooseMember(void) {
       }
       WindowSprite_PrepareForRedrawFar(listWindow);
       Sound_PlayFar(SE_MENU_CONFIRM);
-      if (shop->partyAction == 1) {
+      if (shop->action == SHOP_ACTION_SELL) {
         Shop_SelectSell(unitId);
-      } else if (shop->partyAction == 3) {
+      } else if (shop->action == SHOP_ACTION_REPAIR) {
         Shop_SelectRepair(unitId);
       } else {
         result = Forge_SelectItem(unitId);
         if (result == 0)
           break;
       }
-      shop->cursor.anchor->active = 4;
+      shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
       shop->mode = 12;
       redraw = 2;
     } else if (gInput.pressed & KEY_B) {
@@ -69,7 +67,8 @@ s32 Shop_ChooseMember(void) {
       result = -1;
       break;
     } else {
-      redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4);
+      redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount,
+                                   SHOP_PARTY_PAGE_MEMBERS);
       wait(1);
     }
   }
@@ -83,8 +82,6 @@ s32 Shop_ChooseMember(void) {
   wait(1);
   return result;
 }
-
-#undef MONEY_WINDOW_WIDTH
 
 // The price window and the item details window are sized to their text.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -105,14 +102,18 @@ s32 Shop_ChooseMember(void) {
 #define DETAILS_WINDOW_WIDTH 18
 #endif
 
+/// Lets the player choose items to sell, repair or forge from the party
+/// member's grid, one at a time, with each one's price and description, until
+/// B or the inventory is empty. Returns -1 when cancelled, 0 when the
+/// inventory ran out or, at the forge, an item was taken.
 s32 Shop_SelectSell(s32 unitId) {
-  struct ShopRuntime *shop;
-  void *nameWindow;
-  void *priceWindow;
-  struct ShopUnit *unit;
+  struct ShopWork *shop;
+  struct RenderInput *nameWindow;
+  struct RenderInput *priceWindow;
+  struct BattleUnit *unit;
   s32 inventoryCount;
   s32 slot;
-  void *window;
+  struct RenderInput *window;
   s32 redraw;
   s32 itemId;
   s32 result;
@@ -122,10 +123,11 @@ s32 Shop_SelectSell(s32 unitId) {
   unit = Unit_Get(unitId);
   slot = 0;
   inventoryCount = 1;
-  priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4, 2);
+  priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4,
+                                 WINDOW_FLAG_INSTANT);
   do {
-    nameWindow = Window_CreateFar(0, 5, 30, 3, 2);
-    shop->cursor.anchor->active = 18;
+    nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+    shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
     shop->mode = 12;
     redraw = 1;
     while (1) {
@@ -134,18 +136,22 @@ s32 Shop_SelectSell(s32 unitId) {
         inventoryCount = Inventory_CountFar(unitId);
         if (slot > inventoryCount - 1)
           slot = inventoryCount - 1;
-        itemId = 0x1ff & unit->inventory[slot];
-        MenuCursor_Place(shop->itemWindow, slot % 5 * 16, slot / 5 * 16 + 8);
+        itemId = ITEM_ID_MASK & unit->inventory[slot];
+        MenuCursor_Place(shop->itemWindow, slot % SHOP_INVENTORY_COLUMNS * 16,
+                         slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
         shop->mode = 3;
-        if (shop->partyAction == 1)
+        if (shop->action == SHOP_ACTION_SELL)
           Shop_DrawItemPrice(priceWindow, itemId,
-                             Shop_SalePrice(unit->inventory[slot]), 1);
-        else if (shop->partyAction == 3)
+                             Shop_SalePrice(unit->inventory[slot]),
+                             SHOP_PRICE_KIND_SELL);
+        else if (shop->action == SHOP_ACTION_REPAIR)
           Shop_DrawItemPrice(priceWindow, itemId,
-                             Shop_RepairPrice(unit->inventory[slot]), 2);
+                             Shop_RepairPrice(unit->inventory[slot]),
+                             SHOP_PRICE_KIND_REPAIR);
         else
           Shop_DrawItemPrice(priceWindow, itemId,
-                             Forge_GetMaterialChance(itemId), 3);
+                             Forge_GetItemCondition(itemId),
+                             SHOP_PRICE_KIND_FORGE);
         Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
       }
       if (gInput.pressed & KEY_A) {
@@ -159,15 +165,16 @@ s32 Shop_SelectSell(s32 unitId) {
         break;
       }
       if (gInput.held & KEY_SELECT) {
-        u32 item = unit->inventory[slot];
+        u32 inventoryEntry = unit->inventory[slot];
 
         Sound_PlayFar(SE_RECOVERY);
-        window = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
-        ItemMenu_DrawItemDetailsFar(window, item);
-        *(u8 *)&shop->detailsHidden = 0;
+        window = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10,
+                                  WINDOW_FLAG_INSTANT);
+        ItemMenu_DrawItemDetailsFar(window, inventoryEntry);
+        *(u8 *)&shop->memberSpritesShown = 0;
         while (gInput.held & KEY_SELECT)
           wait(1);
-        shop->detailsHidden = 1;
+        shop->memberSpritesShown = 1;
         Window_CloseFar(window, 2);
         Shop_DrawMoney();
         WindowSprite_PrepareForRedrawFar(shop->listWindow);
@@ -195,20 +202,20 @@ s32 Shop_SelectSell(s32 unitId) {
           redraw = 1;
         }
         if (gInput.repeat & KEY_UP) {
-          slot -= 5;
+          slot -= SHOP_INVENTORY_COLUMNS;
           if (slot < 0)
-            slot += 15;
+            slot += INVENTORY_SLOTS;
           while (slot >= inventoryCount)
-            slot -= 5;
+            slot -= SHOP_INVENTORY_COLUMNS;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
         }
         if (gInput.repeat & KEY_DOWN) {
-          slot += 5;
+          slot += SHOP_INVENTORY_COLUMNS;
           if (slot >= inventoryCount)
-            slot -= 15;
+            slot -= INVENTORY_SLOTS;
           while (slot < 0)
-            slot += 5;
+            slot += SHOP_INVENTORY_COLUMNS;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
         }
@@ -219,12 +226,12 @@ s32 Shop_SelectSell(s32 unitId) {
     wait(1);
     if (result != 0)
       break;
-    if (shop->partyAction == 1) {
+    if (shop->action == SHOP_ACTION_SELL) {
       count = Shop_SelectSellCount(unitId, slot);
       if (count != -1)
         Shop_SellItem(unitId, slot, count);
       Shop_ShowKeeperMessage((s32)MsgSellAnythingElse);
-    } else if (shop->partyAction == 3) {
+    } else if (shop->action == SHOP_ACTION_REPAIR) {
       Shop_RepairItem(unitId, slot);
       Shop_ShowKeeperMessage((s32)MsgRepairAnythingElse);
     } else {
@@ -242,31 +249,33 @@ s32 Shop_SelectSell(s32 unitId) {
 #undef PRICE_WINDOW_WIDTH
 #undef DETAILS_WINDOW_WIDTH
 
-void Shop_DrawMemberItems(void *window, s32 item) {
+// Where the item grid writes MsgNoItems for a party member with no items, in
+// pixels.
+#if LANGUAGE == LANGUAGE_ITALIAN
+#define SHOP_EMPTY_GRID_X 20
+#define SHOP_EMPTY_GRID_Y 12
+#else
+#define SHOP_EMPTY_GRID_X 8
+#define SHOP_EMPTY_GRID_Y 20
+#endif
+
+/// Draws the party member's items as icons in rows of five, or a line saying it
+/// has none.
+void Shop_DrawMemberItems(struct RenderInput *window, s32 unitId) {
   if (window != NULL) {
     WindowSprite_PrepareForRedrawFar(window);
-    ItemIconGrid_ShowInventory(window, 8, 0, item);
-    if (Inventory_CountFar(item) == 0)
-#if (LANGUAGE == LANGUAGE_ITALIAN)
-      Text_DrawMessageFar((s32)MsgNoItems, window, 20, 12);
-#else
-      Text_DrawMessageFar((s32)MsgNoItems, window, 8, 20);
-#endif
+    ItemIconGrid_ShowInventory(window, 8, 0, unitId);
+    if (Inventory_CountFar(unitId) == 0)
+      Text_DrawMessageFar((s32)MsgNoItems, (s32)window, SHOP_EMPTY_GRID_X,
+                          SHOP_EMPTY_GRID_Y);
   }
 }
 
-#if (LANGUAGE == LANGUAGE_GERMAN)
-#define QUANTITY_CURSOR_X 120
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||       \
-    (LANGUAGE == LANGUAGE_ITALIAN)
-#define QUANTITY_CURSOR_X 104
-#else
-#define QUANTITY_CURSOR_X 128
-#endif
+#undef SHOP_EMPTY_GRID_X
+#undef SHOP_EMPTY_GRID_Y
 
-/// Asks how many of a stackable item to sell, when the unit holds more than
-/// one, and returns the count; 1 otherwise.
-// The Broken Seal's Shop_SelectSellCount.
+/// Asks how many of a stack to sell, when the party member holds more than
+/// one, and returns the count, -1 when cancelled; 1 otherwise.
 s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
@@ -275,8 +284,8 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 count;
   s32 selection;
   struct ItemDefinition *item;
-  struct ShopSellWork *shop;
-  struct ShopUnit *unit;
+  struct ShopWork *shop;
+  struct BattleUnit *unit;
 
   shop = Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(unitId);
@@ -289,9 +298,9 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessage((s32)MsgHowManyToSell);
     savedX = shop->cursor.targetX;
     savedY = shop->cursor.targetY;
-    shop->cursor.anchor->active = 4;
+    shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
     shop->mode = 12;
-    MenuCursor_Place(NULL, QUANTITY_CURSOR_X, 0x30);
+    MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
     result = Shop_SelectQuantity(0, selection, price);
     wait(1);
     Icon_PrepareActorFar(shop->cursor.anchor);
@@ -300,17 +309,17 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   return result;
 }
 
-#undef QUANTITY_CURSOR_X
-
+/// Sells count of the item in slot, after asking with the offer that fits.
+/// count -1 sells the old equipment the equip prompt offers.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
 
   shop = Ram_HeapSlots->menuRuntime;
   {
     struct BattleUnit *unit = Unit_Get(unitId);
-    s32 itemId = unit->inventory[slot] & 0x1ff;
+    s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
     struct ItemDefinition *item = Item_GetDirectFar(itemId);
-    u8 rare = item->flags & 4;
+    u8 rare = item->flags & ITEM_RARE;
     s32 all = 0;
     s32 total;
     s32 message;
@@ -322,18 +331,19 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     }
     total = Shop_SalePrice(unit->inventory[slot]) * count;
     if (total == 0) {
-      MessageArgument_PushFar(itemId, 2);
+      MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       Shop_ShowKeeperMessageHidingCursor((s32)MsgWeDoNotBuy);
       return;
     }
-    if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
-      MessageArgument_PushFar(itemId, 2);
+    if ((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
+        (item->flags & ITEM_CANNOT_UNEQUIP)) {
+      MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       Shop_ShowKeeperMessageHidingCursor((s32)MsgCannotSellEquipped);
       return;
     }
     if (all)
       message = (s32)MsgOldItemSellOffer;
-    else if (unit->inventory[slot] & 0x400)
+    else if (unit->inventory[slot] & INVENTORY_BROKEN)
       message = (s32)MsgDamagedSellOffer;
     else if (count > 1)
       message = (s32)MsgSellTotal;
@@ -341,8 +351,8 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
       message = (s32)MsgRareSellOffer;
     else
       message = (s32)MsgSellOffer;
-    MessageArgument_PushFar(itemId, 2);
-    MessageArgument_PushFar(total, 5);
+    MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_PushFar(total, MESSAGE_ARGUMENT_NUMBER);
     Shop_ShowKeeperMessageHidingCursor(message);
     if (Shop_AskYesNo(0) != 0) {
       if (rare || all)

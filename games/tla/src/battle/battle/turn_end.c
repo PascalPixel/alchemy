@@ -305,8 +305,7 @@ s32 DjinnRecovery_CountDownTwenty(void) {
   return 0;
 }
 
-/// Does nothing; Battle_Run calls it at the end of each turn and of the
-/// battle (The Broken Seal's Battle_ReservedNoOpF674).
+/// Does nothing; Battle_Run calls it at the end of each turn and of the battle.
 void Battle_TurnEndNoOp(void) {}
 
 /// Counts down one side's Djinn recovery at the turn's end: an owner must be in
@@ -314,7 +313,6 @@ void Battle_TurnEndNoOp(void) {}
 /// 175, the flash and its message) before it is Set. The message is
 /// "... is set to ...!" Returns 1 when a count fell, 2 when one was Set, else
 /// 0.
-// ☀️'s DjinnRecovery_CountDown with ⚓️'s presentation.
 s32 DjinnRecovery_CountDownSide(s32 side) {
   struct PlacementList *list;
   struct DjinnRecoveryEntry *timedEntry;
@@ -415,7 +413,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 #define ANNOUNCE_END(test, message)                                            \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
-    MessageArgument_PushFar(unitId, 1);                                        \
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);                   \
     BattleMessage_ShowAndWaitFar(message);                                     \
     BattleMessage_WaitForAdvance();                                            \
   }
@@ -423,7 +421,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 #define ANNOUNCE_END_POSE(test, message)                                       \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
-    MessageArgument_PushFar(unitId, 1);                                        \
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);                   \
     BattleObject_UpdatePose(unitId);                                           \
     BattleMessage_ShowAndWaitFar(message);                                     \
     BattleMessage_WaitForAdvance();                                            \
@@ -542,8 +540,8 @@ void Battle_ProcessTurnEnd(void) {
               hpAmount = unit->maxHp - unit->hp;
             }
             Unit_AddHpFar(unitId, hpAmount);
-            MessageArgument_PushFar(unitId, 1);
-            MessageArgument_PushFar(hpAmount, 5);
+            MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+            MessageArgument_PushFar(hpAmount, MESSAGE_ARGUMENT_NUMBER);
             if (unit->hp == unit->maxHp) {
               BattleMessage_ShowAndWaitFar((s32)&MsgHpFull);
             } else {
@@ -558,8 +556,8 @@ void Battle_ProcessTurnEnd(void) {
               ppAmount = unit->maxPp - unit->pp;
             }
             Unit_AddPpFar(unitId, ppAmount);
-            MessageArgument_PushFar(unitId, 1);
-            MessageArgument_PushFar(ppAmount, 5);
+            MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+            MessageArgument_PushFar(ppAmount, MESSAGE_ARGUMENT_NUMBER);
             if (unit->pp == unit->maxPp) {
               BattleMessage_ShowAndWaitFar((s32)&MsgPpFull);
             } else {
@@ -650,14 +648,14 @@ again:
       return;
     }
 
-    list = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > 7)->list;
+    list = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
     for (i = 0; i < list->count; i++) {
       if (list->entries[i].element == element &&
           list->entries[i].index == djinni && list->entries[i].turns == -1)
         list->entries[i].turns = -2;
     }
 
-    pending = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > 7)->list;
+    pending = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
     for (;;) {
       owner = -1;
       for (i = 0; i < pending->count; i++) {
@@ -694,7 +692,7 @@ again:
 
         BattlePlayback_Push(3, element * 20 + djinni + 300);
         message = (u32)&MsgDjinnDrained;
-        if (unitId < 0 || unitId > 7)
+        if (unitId < 0 || unitId > ALLY_MAX)
           message++;
         BattlePlayback_Push(4, message);
       } else {
@@ -718,9 +716,9 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   unitId = plan->actorId;
   battleContinues = 0;
   unit = Unit_Get(unitId);
-  if (unitId <= 7 ||
+  if (unitId <= ALLY_MAX ||
       ((struct BattleWork *)Ram_HeapSlots->battleWork)->twoSided != 0) {
-    list = &Djinn_GetRecoveryTableFar(unitId > 7)->list;
+    list = &Djinn_GetRecoveryTableFar(unitId > ALLY_MAX)->list;
     for (strongestElement = 0; strongestElement < list->count;
          strongestElement++) {
       if (list->entries[strongestElement].unitId == unitId &&
@@ -741,7 +739,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
 
     pending =
         &Djinn_GetRecoveryTableFar(
-             unitId > 7 &&
+             unitId > ALLY_MAX &&
              ((struct BattleWork *)Ram_HeapSlots->battleWork)->twoSided != 0)
              ->list;
     for (i = 0; i < 4; i++) {
@@ -833,8 +831,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
           BattlePlayback_Push(BATTLE_EVENT_DEFEAT, unitId);
           BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
           BattlePlayback_Push(BATTLE_EVENT_MESSAGE,
-                              unitId <= 7 ? (u32)MsgGoesDown
-                                          : (u32)MsgStrengthExhausted);
+                              unitId <= ALLY_MAX ? (u32)MsgGoesDown
+                                                 : (u32)MsgStrengthExhausted);
         }
       } else {
         BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
@@ -864,8 +862,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
           BattlePlayback_Push(BATTLE_EVENT_DEFEAT, unitId);
           BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
           BattlePlayback_Push(BATTLE_EVENT_MESSAGE,
-                              unitId <= 7 ? (u32)MsgGoesDown
-                                          : (u32)MsgStrengthExhausted);
+                              unitId <= ALLY_MAX ? (u32)MsgGoesDown
+                                                 : (u32)MsgStrengthExhausted);
         }
       } else {
         BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
@@ -881,7 +879,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       BattlePlayback_Push(BATTLE_EVENT_HIT, unitId);
       BattlePlayback_Push(BATTLE_EVENT_DEFEAT, unitId);
       BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-      if (unitId <= 7) {
+      if (unitId <= ALLY_MAX) {
         BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls - 3);
       } else {
         BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls + 3);

@@ -200,7 +200,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
     for (unitIndex = 0; unitIndex < 14; unitIndex++) {
       if (!BattlePlacement_ContainsId(unitIds, unitIndex)) {
         releasedUnitId = unitIndex + 120;
-        if (unitIndex <= 7)
+        if (unitIndex <= ALLY_MAX)
           releasedUnitId = unitIndex;
         ReleaseBattleObjectRecords(releasedUnitId);
       }
@@ -209,9 +209,10 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   if (gTasksRunning == 0)
     wait(1);
 
-  for (unitIndex = 0; unitIndex < 14 && (unitId = unitIds[unitIndex]) != 255;
+  for (unitIndex = 0;
+       unitIndex < 14 && (unitId = unitIds[unitIndex]) != BATTLE_UNIT_LIST_END;
        unitIndex++) {
-    if (unitId == 254)
+    if (unitId == BATTLE_UNIT_REMOVED)
       continue;
     battleObject = BattleObject_Get(unitId);
     if (battleObject == 0)
@@ -290,14 +291,15 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
 
   if (refreshPoses) {
     unitIndex = 0;
-    if ((spriteId = unitIds[0]) != 255) {
+    if ((spriteId = unitIds[0]) != BATTLE_UNIT_LIST_END) {
       for (;;) {
-        if (unitIds[unitIndex] != 254 &&
+        if (unitIds[unitIndex] != BATTLE_UNIT_REMOVED &&
             (battleObject = BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
           BattleObject_UpdatePose(spriteId);
         unitIndex++;
-        if (unitIndex >= 14 || (spriteId = unitIds[unitIndex]) == 255)
+        if (unitIndex >= 14 ||
+            (spriteId = unitIds[unitIndex]) == BATTLE_UNIT_LIST_END)
           break;
       }
     }
@@ -325,7 +327,7 @@ static inline struct BattleObj *BattleObject_GetInline(s32 unitId) {
   struct BattleObj *objects = battle->slots;
   s32 placementIndex;
 
-  if (unitId > 7)
+  if (unitId > ALLY_MAX)
     unitId -= 120;
   placementIndex = unitId;
   if (battle->placement[placementIndex] == 0xff)
@@ -335,7 +337,7 @@ static inline struct BattleObj *BattleObject_GetInline(s32 unitId) {
 
 /// Task, each frame of a battle: advances every unit's status icon, sets its
 /// shadow's priority by whether it is airborne and draws the nearer side in
-/// front, as in The Broken Seal.
+/// front.
 void BattleObject_UpdateSpritePriorities(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u16 unitIds[14];
@@ -352,7 +354,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   partyCount = BattleParty_ListActorIds(1, unitIds);
   enemyCount = BattleParty_ListActorIds(2, &unitIds[partyCount]);
   unitIndex = 0;
-  if (unitIds[unitIndex] != 255) {
+  if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
       /* FAKEMATCH(pin): slot held in r5. */
       register struct BattleObj *slot asm("r5");
@@ -381,7 +383,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       }
       objects[unitIndex] = object;
       unitIndex++;
-      if (unitIndex >= 14 || unitIds[unitIndex] == 255)
+      if (unitIndex >= 14 || unitIds[unitIndex] == BATTLE_UNIT_LIST_END)
         break;
     }
   }
@@ -486,7 +488,7 @@ static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
   u8 *work = (u8 *)Ram_HeapSlots->battleWork;
   struct BattleObj *slots = ((struct BattleWork *)work)->slots;
 
-  if (id > 7)
+  if (id > ALLY_MAX)
     id -= 0x78;
   id += 0x74;
   if (work[id] == 0xff)
@@ -536,32 +538,17 @@ s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
   return result;
 }
 
-/* VIEW(battle): routine Transform_ApplyLookAt as s32 Transform_ApplyLookAt(void
- * *, void *); transform.h has void Transform_ApplyLookAt(s32 *eye, s32
- * *target); tried as the definition's void Transform_ApplyLookAt(s32 *eye, s32
- * *target), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle/battle/objects.c:554: void value not ignored as it ought
- * to be. */
-extern s32
-Transform_ApplyLookAt__battle(void *, void *) __asm__("Transform_ApplyLookAt");
-/* VIEW(battle): routine Transform_SetLookAt as s32 Transform_SetLookAt(void *,
- * void *); transform.h has void Transform_SetLookAt(s32 *eye, s32 *target);
- * tried as the definition's void Transform_SetLookAt(s32 *eye, s32 *target),
- * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle/battle/objects.c:556: void value not ignored as it ought
- * to be. */
-extern s32 Transform_SetLookAt__battle(void *,
-                                       void *) __asm__("Transform_SetLookAt");
-
-s32 BattleCamera_ApplyTransform(void) {
+/// Sets up the camera's view for projecting points, tilted further while
+/// commands are chosen.
+UNREAD_RESULT BattleCamera_ApplyTransform(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
 
   Transform_Reset();
-  if (GameFlag_Get(0x16B) != 0) {
-    Iwram_TransformMatrix(gData_08128868);
-    return Transform_ApplyLookAt__battle(state, state->pos);
+  if (GameFlag_Get(FLAG_CHOOSING_COMMANDS) != 0) {
+    Iwram_TransformMatrix(gBattleCamera_CommandMatrix);
+    Transform_ApplyLookAt(state->eye, state->pos);
   } else {
-    return Transform_SetLookAt__battle(state, state->pos);
+    Transform_SetLookAt(state->eye, state->pos);
   }
 }
 
@@ -603,13 +590,15 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
   return NULL;
 }
 
-void Camera_InitializeDefaultTransform(void) {
+/// Puts the battle camera at its default view of the battlefield's centre.
+void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition transfer;
 
-  state->yaw = 192 << 6;
-  state->pitch = 254 << 8;
-  state->distance = 255 << 17;
+  // A pitch of -1/128 of a turn, 510 pixels away.
+  state->yaw = TRIG_TURN * 3 / 16;
+  state->pitch = TRIG_TURN - TRIG_TURN / 128;
+  state->distance = BATTLE_CAMERA_DISTANCE;
   SET_VECTOR(state->pos, 0, 0, 0);
   state->followPos = 0;
   state->unk18 = 0;
@@ -628,7 +617,7 @@ struct BattleObj *BattleObject_Get(s32 objectId) {
   struct BattleObj *slots = work->slots;
   s32 index;
 
-  if (objectId > 7) {
+  if (objectId > ALLY_MAX) {
     objectId -= 0x78;
   }
   index = objectId;

@@ -3,43 +3,50 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "item_ids.h"
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/shop/shop.h"
 #include "gamepak/far_call/menu.h"
 #include "flag_call.h"
 
-void Shop_GiveGameTicket(void *window, void *itemWindow) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+/// Gives a Game Ticket once the party's spending in shops reaches the next
+/// ticket's cost, and lets the player choose who takes it.
+void Shop_GiveGameTicket(struct RenderInput *window,
+                         struct RenderInput *itemWindow) {
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   u32 savedSelectedItem;
   s32 memberIndex;
   s32 unitId;
   s32 creditCost;
   s32 redraw;
   s32 slot;
-  s32 message;
+  s32 messageBase;
 
   memberIndex = 0;
   savedSelectedItem = shop->selectedItem;
   unitId = 0;
-  creditCost = sGameTicketCreditCosts[gMainRoutineWork.counterC];
+  creditCost = gShop_GameTicketCreditCosts[gMainRoutineWork.counterC];
 
+  // Gifts spend accumulated shop credit; they do not debit the party's coins.
   if (creditCost > gMainRoutineWork.counterB)
     return;
-  shop->selectedItem = 228;
-  MessageArgument_PushFar(228, 2);
-  message = (s32)MsgLetMeGiveYouThis;
-  Shop_ShowKeeperMessageHidingCursor(message);
-  MessageArgument_PushFar(shop->selectedItem, 2);
-  Shop_ShowKeeperMessageHidingCursor(message + 1);
+  shop->selectedItem = ITEM_GAME_TICKET;
+  MessageArgument_PushFar(ITEM_GAME_TICKET, MESSAGE_ARGUMENT_ITEM);
+  messageBase = (s32)MsgLetMeGiveYouThis;
+  Shop_ShowKeeperMessageHidingCursor(messageBase);
+  MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
+  Shop_ShowKeeperMessageHidingCursor(messageBase + 1);
   redraw = 2;
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
-      MenuCursor_Place(window, (memberIndex % 4) * 24 - 12, 0);
+      MenuCursor_Place(window,
+                       (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->mode = 3;
       if (redraw == 2) {
-        Menu_CreateOwnerEntryObjectsFar(memberIndex / 4 * 4);
+        Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
+                                        SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
       }
       Shop_DrawParty(window, memberIndex, shop->selectedItem);
@@ -47,12 +54,14 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
       redraw = 0;
     }
     if (gInput.pressed & KEY_A) {
+      // Probe capacity before the keeper's confirmation; the gift is committed
+      // only after that line finishes.
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
-        MessageArgument_PushFar(unitId, 1);
-        MessageArgument_PushFar(shop->selectedItem, 2);
-        if (Inventory_CountFar(unitId) == 15)
+        MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+        MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
+        if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
           Shop_ShowKeeperMessage((s32)MsgPackFull);
         else
           Shop_ShowKeeperMessage((s32)MsgCannotCarryItem);
@@ -70,37 +79,45 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
       Sound_PlayFar(SE_MENU_CANCEL);
       break;
     } else {
-      redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4);
+      redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount,
+                                   SHOP_PARTY_PAGE_MEMBERS);
       wait(1);
     }
   }
   shop->selectedItem = savedSelectedItem;
 }
 
-s32 ShopStock_GetRowCount(void) { return 32; }
+/// Returns how many stock rows there are; Shop_Run refuses a row past them.
+s32 ShopStock_GetRowCount(void) { return SHOP_STOCK_ROWS; }
 
-void ShopStock_AddArtifacts(s32 rowNo) {
-  s32 flag = rowNo + 0x400;
-  s32 i;
+/// Adds a shop's artifacts to the shared stock on its first visit, so an item
+/// two shops list can be bought twice.
+void ShopStock_AddArtifacts(s32 stockRow) {
+  s32 stockedFlag = stockRow + FLAG_SHOP_ARTIFACTS_STOCKED;
+  s32 artifactIndex;
 
-  if (GameFlag_Get(flag) == 0) {
-    GameFlag_Set(flag);
+  if (GameFlag_Get(stockedFlag) == 0) {
+    GameFlag_Set(stockedFlag);
 #if TLA_PATCH_1
     // From patch 1 an empty entry is skipped; the Japanese release stops at the
     // row's first one.
-    for (i = 0; i <= 7; i++) {
-      s16 value = sStockTable[rowNo][24 + i];
+    for (artifactIndex = 0; artifactIndex < SHOP_STOCK_ARTIFACT_COUNT;
+         artifactIndex++) {
+      s16 itemId =
+          gShop_StockTable[stockRow][SHOP_STOCK_ARTIFACTS + artifactIndex];
 
-      if (value != 0)
-        Item_AdjustCounterFar(value, 1);
+      if (itemId != 0)
+        Item_AdjustCounterFar(itemId, 1);
     }
 #else
-    for (i = 0; i <= 7; i++) {
-      s16 value = sStockTable[rowNo][24 + i];
+    for (artifactIndex = 0; artifactIndex < SHOP_STOCK_ARTIFACT_COUNT;
+         artifactIndex++) {
+      s16 itemId =
+          gShop_StockTable[stockRow][SHOP_STOCK_ARTIFACTS + artifactIndex];
 
-      if (value == 0)
+      if (itemId == 0)
         break;
-      Item_AdjustCounterFar(value, 1);
+      Item_AdjustCounterFar(itemId, 1);
     }
 #endif
   }
@@ -114,9 +131,9 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   s32 count;
 
   count = 0;
-  if (sStockTable[stockRow][0] != 0) {
+  if (gShop_StockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
     dst = output;
-    src = sStockTable[stockRow];
+    src = gShop_StockTable[stockRow];
     do {
       /* FAKEMATCH(volatile): the row's halfword read through a volatile
        * pointer. */
@@ -124,7 +141,7 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
       count++;
       src++;
       dst++;
-      if (count > 23)
+      if (count > SHOP_STOCK_ITEM_COUNT - 1)
         break;
     } while (*src != 0);
   }
@@ -132,12 +149,8 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   return count;
 }
 
-s32 ShopStock_GetType(s32 index) {
-  s32 offset = index << 5;
-  u8 *table = (u8 *)sStockTable;
-
-  offset += index;
-  offset <<= 1;
-  offset += 64;
-  return *(s16 *)(table + offset);
+/// Returns the shop's type from the last column of its stock row (enum
+/// ShopType).
+s32 ShopStock_GetType(s32 stockRow) {
+  return gShop_StockTable[stockRow][SHOP_STOCK_TYPE];
 }

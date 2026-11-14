@@ -7,18 +7,13 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-struct ItemMenuBlocks {
-  u8 unk000[0x4ee];
-  s16 resourceSlots[2];
-};
-
 extern char ResourceId_ItemMenuTilesA;
 extern char ResourceId_ItemMenuTilesB;
 
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
-  struct ItemMenuBlocks *activeState;
+  struct ItemMenuWork *activeState;
 
   activeState = Ram_HeapSlots->menuRuntime;
   firstSlot = VramCache_FindFreeEntry();
@@ -35,7 +30,7 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 }
 
 void Menu_ResetTwoResourceEntries(void) {
-  struct ItemMenuBlocks *state = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *state = Ram_HeapSlots->menuRuntime;
 
   VramCache_FreeEntry((u16)state->resourceSlots[0]);
   VramCache_FreeEntry((u16)state->resourceSlots[1]);
@@ -68,12 +63,11 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
 
 /// Creates the stat change arrow from the up or down arrow resource the
 /// menu loaded.
-// The Broken Seal's Icon_CreateStatChangeArrow.
 s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
                                s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  struct ItemMenuBlocks *data = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *data = Ram_HeapSlots->menuRuntime;
 
   if (variant == 0)
     resource = (u16)data->resourceSlots[0];
@@ -89,7 +83,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animStep = 0;
-  object->active = 1;
+  object->active = ICON_SHOWN;
   return 1;
 }
 
@@ -99,7 +93,7 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
                                    s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  struct ItemMenuBlocks *data = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *data = Ram_HeapSlots->menuRuntime;
 
   if (variant == 0) {
     resource = (u16)data->resourceSlots[0];
@@ -118,7 +112,7 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animStep = 0;
-  object->active = 1;
+  object->active = ICON_SHOWN;
   return 1;
 }
 
@@ -156,118 +150,91 @@ s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
   return result;
 }
 
+/// Shows the up arrow when the page of four starting at `index`'s page has one
+/// above it and the down arrow when one follows, among `count` entries.
 void Menu_SetPageArrowsA(s32 index, s32 count) {
-  struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
-  struct MenuArrow *arrow;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct WindowSprite *arrow;
 
   if (index < 0)
     index += 3;
   index = index >> 2 << 2;
-  arrow = menu->up;
-  arrow->mode = 13;
+  arrow = menu->pageArrows[0];
+  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index != 0) {
-    arrow->mode = 17;
-    arrow->timer = 0;
+    arrow->active = WINDOW_SPRITE_MOTION_HOP_UP;
+    arrow->animStep = 0;
   }
-  arrow = menu->down;
-  arrow->mode = 13;
+  arrow = menu->pageArrows[1];
+  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index + 4 < count) {
-    arrow->mode = 15;
-    arrow->timer = 0;
+    arrow->active = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
+    arrow->animStep = 0;
   }
 }
 
+/// As Menu_SetPageArrowsA, with the arrows hopping left and right: the Djinn
+/// menu's columns of party members.
 void Menu_SetPageArrowsB(s32 index, s32 count) {
-  struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
-  struct MenuArrow *arrow;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct WindowSprite *arrow;
 
   if (index < 0)
     index += 3;
   index = index >> 2 << 2;
-  arrow = menu->up;
-  arrow->mode = 13;
+  arrow = menu->pageArrows[0];
+  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index != 0) {
-    arrow->mode = 16;
-    arrow->timer = 0;
+    arrow->active = WINDOW_SPRITE_MOTION_HOP_LEFT;
+    arrow->animStep = 0;
   }
-  arrow = menu->down;
-  arrow->mode = 13;
+  arrow = menu->pageArrows[1];
+  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index + 4 < count) {
-    arrow->mode = 14;
-    arrow->timer = 0;
+    arrow->active = WINDOW_SPRITE_MOTION_HOP_RIGHT;
+    arrow->animStep = 0;
   }
 }
 
+/// Sets the page arrows for `index` and sets the chosen party member's figure
+/// apart from the others on its page of four: its y 30, theirs 26.
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
-  struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 top = index / 4 * 4;
   s32 i;
 
   Menu_SetPageArrowsA(index, count);
   for (i = 0; i <= 3; i++) {
     if (top + i == index)
-      menu->colours[i] = 30;
+      menu->memberY[i] = 30;
     else
-      menu->colours[i] = 26;
+      menu->memberY[i] = 26;
   }
 }
 
-struct MenuEntryWork {
-  u8 unk000[0x1e];
-  u8 count;
-  u8 unk01f[0xd9];
-  void *objects[8];
-  s16 x[8];
-  s16 y[8];
-  s32 scale[8];
-  s16 ids[8];
-  u8 unk168[0x3a1];
-  s8 active;
-  u8 hidden;
-  u8 unk50b[1];
-};
-
 void Menu_UpdateEntryObjectTransforms(void) {
-  struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 scale[2];
   s32 transform[4];
   s32 i;
 
-  if (menu->active != 0) {
+  if (menu->memberSpritesShown != 0) {
     for (i = 0; i <= 7; i++) {
-      s32 top = 0x728000 - (menu->y[i] << 15);
+      s32 top = 0x728000 - (menu->memberY[i] << 15);
 
-      if (menu->objects[i] != NULL) {
-        scale[0] = menu->scale[i];
-        scale[1] = menu->scale[i];
-        transform[0] = menu->x[i] << 16;
+      if (menu->memberSprites[i] != NULL) {
+        scale[0] = menu->memberScale[i];
+        scale[1] = menu->memberScale[i];
+        transform[0] = menu->memberX[i] << 16;
         transform[1] = top;
-        transform[2] = (menu->y[i] << 16) + top;
+        transform[2] = (menu->memberY[i] << 16) + top;
         transform[3] = 0;
-        Render_ApplyProjectedPlacementAtDepthFar(menu->objects[i], transform,
-                                                 scale, Q16_ONE / 4, 250);
+        Render_ApplyProjectedPlacementAtDepthFar(
+            menu->memberSprites[i], transform, scale, Q16_ONE / 4, 250);
       }
     }
   }
 }
-
-struct FigureMenuState {
-  u8 unk000[0xf8];
-  struct AnimationObject *entryObjects[8];
-  u8 unk118[0x10];
-  s16 rows[4];
-  u8 unk130[0x28];
-  s16 ids[8];
-  u8 unk168[0xb8];
-  struct AnimationObject *figures[4];
-  s16 tabX[4];
-  s16 tabY[4];
-  s32 scales[4];
-  u16 depths[4];
-  u8 unk258[0x2b2];
-  s8 active;
-  u8 unk50b[1];
-};
 
 s32 Party_GetCharacterSpriteFar(s32 id);
 
@@ -275,18 +242,17 @@ s32 Party_GetCharacterSpriteFar(s32 id);
 /// figures in entries 0 and 1, as the Djinn preview shows the pair a Djinni
 /// passes between.
 void Menu_CreatePairEntryObjects(s32 first, s32 second) {
-  struct FigureMenuState *menu =
-      (struct FigureMenuState *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   struct AnimationObject *figure;
   s32 id;
   s32 i;
 
   for (i = 0; i < 8; i++) {
-    figure = menu->entryObjects[i];
+    figure = menu->memberSprites[i];
     if (figure != NULL) {
       Sprite_DestroyFar(figure);
-      menu->entryObjects[i] = NULL;
-      menu->ids[i] = -1;
+      menu->memberSprites[i] = NULL;
+      menu->memberSpriteIds[i] = -1;
     }
   }
   for (i = 0; i < 2; i++) {
@@ -294,73 +260,67 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second) {
     if (i != 0)
       id = second;
     if (id != -1) {
-      menu->ids[i] = id;
+      menu->memberSpriteIds[i] = id;
       figure = Sprite_CreateFar(Party_GetCharacterSpriteFar(id));
       if (figure != NULL) {
         Animation_ApplyChildArgumentFar(figure, 1);
         figure->image.priority = 0;
         ((u8 *)figure)[26] = 0;
       }
-      menu->entryObjects[i] = figure;
+      menu->memberSprites[i] = figure;
     }
   }
 }
 
 void Menu_CreateOwnerEntryObjects(s32 first) {
-  struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   u16 owners[14];
   u8 *object;
   s32 i;
 
   for (i = 0; i < 8; i++) {
-    object = menu->objects[i];
+    object = menu->memberSprites[i];
     if (object != NULL) {
       Sprite_DestroyFar(object);
-      menu->objects[i] = NULL;
-      menu->ids[i] = -1;
+      menu->memberSprites[i] = NULL;
+      menu->memberSpriteIds[i] = -1;
     }
   }
-  menu->count = Party_ListMembersFar(owners);
+  menu->sideCount[0] = Party_ListMembersFar(owners);
   for (i = 0; i < 4 && owners[first + i] != 255; i++) {
-    menu->ids[i] = owners[first + i];
+    menu->memberSpriteIds[i] = owners[first + i];
     object = Sprite_CreateFar(Party_GetCharacterSpriteFar(owners[first + i]));
     if (object != NULL) {
       Animation_ApplyChildArgumentFar(object, 1);
       ((s8 *)object)[9] &= -13;
       object[26] = 0;
     }
-    menu->objects[i] = object;
+    menu->memberSprites[i] = object;
   }
 }
 
-struct MenuEntryWindow {
-  u8 unk00[12];
-  s16 x;
-  s16 y;
-};
-
-void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
+void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
                                  s32 originY) {
-  struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 i;
 
   for (i = 7; i >= 0; i--)
-    menu->objects[i] = NULL;
+    menu->memberSprites[i] = NULL;
   Menu_CreateOwnerEntryObjects(0);
   for (i = 0; i <= 3; i++) {
-    if (menu->objects[i] != NULL) {
-      menu->x[i] = (i * 3 + (window->x + originX)) * 8;
-      menu->y[i] = (window->y + originY) * 8 + 16;
-      menu->scale[i] = Q16_ONE;
+    if (menu->memberSprites[i] != NULL) {
+      menu->memberX[i] = (i * 3 + ((s16)window->x + originX)) * 8;
+      menu->memberY[i] = ((s16)window->y + originY) * 8 + 16;
+      menu->memberScale[i] = Q16_ONE;
     }
   }
-  menu->active = 1;
+  menu->memberSpritesShown = ICON_SHOWN;
   Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
 }
 
 void Menu_ReleaseEntryObjects(void) {
-  struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
-  void **objects = menu->objects;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  void **objects = menu->memberSprites;
   s32 i;
 
   for (i = 7; i >= 0; i--) {
@@ -373,26 +333,25 @@ void Menu_ReleaseEntryObjects(void) {
 }
 
 void Menu_SetEntryObjectsHidden(s32 hidden) {
-  struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
-  menu->hidden = hidden;
+  menu->figuresShown = hidden;
 }
 
 void MenuIcon_UpdateTransforms(void) {
-  struct FigureMenuState *menu =
-      (struct FigureMenuState *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 i;
 
-  if (menu->active == 0)
+  if (menu->figuresShown == 0)
     return;
   for (i = 0; i <= 3; i++) {
     struct AnimationObject *figure = menu->figures[i];
 
     if (figure != NULL) {
-      s32 placeY = 0x00728000 - (menu->rows[i] << 15);
-      s32 value = menu->scales[i];
+      s32 placeY = 0x00728000 - (menu->memberY[i] << 15);
+      s32 value = menu->figureScales[i];
 
       s32 next;
 
@@ -404,53 +363,29 @@ void MenuIcon_UpdateTransforms(void) {
         next = value + (0x10000 - value) / 4;
         scale.x = next;
         scale.y = next;
-        menu->scales[i] = next;
+        menu->figureScales[i] = next;
       }
-      position.x = menu->tabX[i] << 16;
+      position.x = menu->figureX[i] << 16;
       position.height = placeY;
-      position.y = (menu->tabY[i] << 16) + placeY;
+      position.y = (menu->figureY[i] << 16) + placeY;
       position.groundHeight = 0;
       Render_ApplyProjectedPlacementAtDepthFar(figure, &position, &scale,
-                                               menu->depths[i], 250);
+                                               menu->figureDepths[i], 250);
     }
   }
 }
 
-struct MenuSlotEntry {
-  u8 unk00[4];
-  u32 attributes;
-  u16 tile : 10;
-  u16 unk08 : 6;
-  u8 unk0a[2];
-};
-
-struct MenuIconWork {
-  u8 unk000[0x220];
-  void *objects[4];
-  s16 x[4];
-  s16 y[4];
-  s32 scale[4];
-  s16 frame[4];
-  u8 unk258[0x2b2];
-  s8 transformsActive;
-  u8 unk50b[0x6c1];
-  struct MenuSlotEntry slots[5];
-  u16 resources[5];
-  s8 active;
-  u8 unkc13[1];
-};
-
 extern s32 gDjinnFigures_SpriteIds[];
 
 void DjinnFigures_InitializeTopRow(void) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s8 *object;
   s32 i;
 
   for (i = 0; i < 4; i++) {
-    if (menu->objects[i] != NULL) {
-      Sprite_DestroyFar(menu->objects[i]);
-      menu->objects[i] = NULL;
+    if (menu->figures[i] != NULL) {
+      Sprite_DestroyFar(menu->figures[i]);
+      menu->figures[i] = NULL;
     }
   }
   for (i = 0; i < 4; i++) {
@@ -459,75 +394,75 @@ void DjinnFigures_InitializeTopRow(void) {
       Animation_ApplyChildArgumentFar(object, 2);
       object[9] &= -13;
     }
-    menu->objects[i] = object;
-    menu->x[i] = 16;
-    menu->y[i] = 200;
-    menu->scale[i] = Q16_ONE;
-    menu->frame[i] = 0x4000;
+    menu->figures[i] = object;
+    menu->figureX[i] = 16;
+    menu->figureY[i] = 200;
+    menu->figureScales[i] = Q16_ONE;
+    menu->figureDepths[i] = 0x4000;
   }
-  menu->transformsActive = 1;
+  menu->figuresShown = 1;
   Task_Add(MenuIcon_UpdateTransforms, TASK_PASS_VBLANK);
 }
 
 void DjinnFigures_ReleaseTopRow(void) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 i;
 
   for (i = 0; i < 4; i++) {
-    if (menu->objects[i] != NULL) {
-      Sprite_DestroyFar(menu->objects[i]);
-      menu->objects[i] = NULL;
+    if (menu->figures[i] != NULL) {
+      Sprite_DestroyFar(menu->figures[i]);
+      menu->figures[i] = NULL;
     }
   }
   Task_Remove(MenuIcon_UpdateTransforms);
 }
 
 void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s8 *object;
 
-  if (menu->objects[index] != NULL) {
-    Sprite_DestroyFar(menu->objects[index]);
-    menu->objects[index] = NULL;
+  if (menu->figures[index] != NULL) {
+    Sprite_DestroyFar(menu->figures[index]);
+    menu->figures[index] = NULL;
   }
   object = Sprite_CreateFar(gDjinnFigures_SpriteIds[kind]);
   if (object != NULL) {
     Animation_ApplyChildArgumentFar(object, animation);
     object[9] &= -13;
   }
-  menu->objects[index] = object;
+  menu->figures[index] = object;
 }
 
 void MenuIcon_SetPosition(s32 index, s32 x, s32 y) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
-  if (menu->objects[index] != NULL) {
-    menu->x[index] = x;
-    menu->y[index] = y;
+  if (menu->figures[index] != NULL) {
+    menu->figureX[index] = x;
+    menu->figureY[index] = y;
   }
 }
 
 void MenuIcon_SetPicture(s32 index, s32 frame) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
-  if (menu->objects[index] != NULL)
-    menu->frame[index] = frame;
+  if (menu->figures[index] != NULL)
+    menu->figureDepths[index] = frame;
 }
 
 void DjinnFigures_SetSlotPhase(s32 index, s32 scale) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
-  if (menu->objects[index] != NULL)
-    menu->scale[index] = scale;
+  if (menu->figures[index] != NULL)
+    menu->figureScales[index] = scale;
 }
 
 void MenuIcon_PushSlots(void) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
-  struct MenuSlotEntry *slot;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct IconSprite *slot;
   s32 i;
 
-  if (menu->active != 0) {
-    slot = menu->slots;
+  if (menu->menuIconsShown != 0) {
+    slot = menu->menuIcons;
     for (i = 4; i >= 0; i--) {
       Oam_AddSpriteAtDepth(slot, 240);
       slot++;
@@ -541,10 +476,10 @@ extern u16 gData_08105a50[5];
 /// each slot its sprite attributes and tile, keeps the entries for
 /// MenuIcon_ReleaseSlots and starts MenuIcon_PushSlots.
 void MenuIcon_LoadSlots(void) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
-  struct MenuSlotEntry *slot = menu->slots;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct IconSprite *slot = menu->menuIcons;
   u16 *ids = gData_08105a50;
-  u16 *resource = menu->resources;
+  u16 *resource = menu->menuIconSlots;
   s32 entry;
   s32 i;
   s32 offset = 0;
@@ -556,67 +491,50 @@ void MenuIcon_LoadSlots(void) {
 
       /* FAKEMATCH(temporary): the table read at a byte offset of its own. */
       Resource_LoadByModeIntoSlotFar(8, *(u16 *)(offset + (u32)ids), entry, 0);
-      attributes = &slot->attributes;
-      *attributes++ = 0x40000000;
+      attributes = (u32 *)&slot->attr;
+      *attributes++ = OUTPUT_SIZE_16X16;
       *attributes = 0;
-      slot->tile = gResourceTableEntries[entry].offset >> 5;
+      slot->attr.tile = gResourceTableEntries[entry].offset >> 5;
     }
     *resource++ = entry;
     slot++;
     offset += 2;
   }
-  menu->active = 1;
+  menu->menuIconsShown = ICON_SHOWN;
   Task_Add(MenuIcon_PushSlots, TASK_PASS_VBLANK + 10);
 }
 
 void MenuIcon_ReleaseSlots(void) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   u16 *resource;
   s32 i;
 
   Task_Remove(MenuIcon_PushSlots);
-  resource = menu->resources;
+  resource = menu->menuIconSlots;
   for (i = 4; i >= 0; i--)
     VramCache_FreeEntry(*resource++);
 }
 
-struct MenuSlotAttr {
-  u8 mode;
-  u8 unk01;
-  u16 x : 9;
-  u8 unk04[8];
-};
+void MenuIcon_SetSlot(s32 index, u32 x, s32 y) {
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
-void MenuIcon_SetSlot(s32 index, u32 x, s32 mode) {
-  u8 *menu = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH(temporary): the offset as a local of its own. */
-  s32 offset =
-      index * sizeof(struct MenuSlotAttr) + 0xbd0; /* slots[index] + 4 */
-  struct MenuSlotAttr *slot = (struct MenuSlotAttr *)(menu + offset);
-
-  slot->x = x;
-  slot->mode = mode;
+  menu->menuIcons[index].attr.x = x;
+  menu->menuIcons[index].attr.y = y;
 }
 
 void MenuIcon_SetActive(s32 active) {
-  struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
-  menu->active = active;
+  menu->menuIconsShown = active;
 }
-
-struct MenuPanel {
-  u8 unk00[12];
-  s16 x;
-  s16 y;
-};
 
 /// Lists usable entries with icons and names, or "none" when no entries
 /// qualify.
-void MenuPanel_DrawEntryList(struct MenuPanel *panel, s32 x, s32 y,
+void MenuPanel_DrawEntryList(struct RenderInput *panel, s32 x, s32 y,
                              const u8 *enabled) {
   s32 count = 0;
-  s32 icon_x = panel->x * 8 + x + 8;
-  s32 icon_y = panel->y * 8 + y + 8;
+  s32 icon_x = (s16)panel->x * 8 + x + 8;
+  s32 icon_y = (s16)panel->y * 8 + y + 8;
   s32 i;
 
   for (i = 0; i <= 4; i++) {

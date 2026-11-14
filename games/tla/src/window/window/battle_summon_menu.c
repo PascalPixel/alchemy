@@ -25,12 +25,12 @@
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-#define NAVIGATION ((struct SummonMenuNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 #define SUMMON_END 32
 
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
-  struct SummonMenuOam cursorStorage;
-  struct SummonMenuSprite sprites[4];
+  struct QueuedSprite cursorStorage;
+  struct MenuSprite sprites[4];
   u8 learnedSummons[33];
   u8 orderedSummons[33];
   u16 text[64];
@@ -38,24 +38,24 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   u8 visibleSummons[4];
   s32 glyph;
   s32 count;
-  struct SummonMenuWindow *window;
+  struct RenderInput *window;
   struct SummonMenuWork *work;
   s32 drawnRow;
   s32 drawnFirstEntry;
   s32 selectedRow;
   s32 firstEntry;
   s32 cursorHandle;
-  struct SummonMenuWindow *description;
-  struct SummonMenuWindow *counts;
+  struct RenderInput *description;
+  struct RenderInput *counts;
   s32 mask;
   s32 preferredRow;
   struct {
     s32 x, y;
   } cursorPosition;
   const struct SummonDefinition *summon;
-  struct SummonMenuNavigation *navigation;
-  struct SummonMenuSprite *sprite;
-  struct SummonMenuOam *cur;
+  struct BattleMenuWork *navigation;
+  struct MenuSprite *sprite;
+  struct QueuedSprite *cur;
   s32 orderedCount;
   s32 id;
   s32 tile;
@@ -69,7 +69,9 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = (s16)VramCache_AllocEntry(128);
-  description = Window_Create(0, 4, 30, 4, 42);
+  description = Window_Create(0, 4, 30, 4,
+                              WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                  WINDOW_FLAG_BORDERED_CANVAS);
   counts = Window_Create(20, 8, 10, 3, 6);
   mask = 0;
   do {
@@ -91,8 +93,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     sprite = &sprites[index];
     sprites[index].oam.word.attr01 = 0x40000000;
     sprites[index].oam.word.attr23 = t;
-    sprite->oam.f.x = window->x * 8 + 8;
-    t = window->y;
+    sprite->oam.f.x = (s16)window->x * 8 + 8;
+    t = (s16)window->y;
     sprite->oam.f.y = (y + t) * 8 + 4;
   }
   for (index = 0; index < 4; index++) {
@@ -144,11 +146,11 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       {
-        s32 x = window->x + 1;
+        s32 x = (s16)window->x + 1;
         /* FAKEMATCH(barrier): an empty asm on x. */
         asm("" : "=r"(x) : "0"(x));
-        Window_HighlightRect(x, window->y + drawnRow * 2 + 1, window->width - 2,
-                             1, 15);
+        Window_HighlightRect(x, (s16)window->y + drawnRow * 2 + 1,
+                             window->width - 2, 1, 15);
       }
       Text_FillCanvasBackground();
       {
@@ -206,7 +208,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             if (!affordable)
-              Text_SetColor(2);
+              Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(SummonDefinition_Get(id)->nameMessageId +
                                         (s32)MsgAbilityNothing,
                                     window, 16, index * 16);
@@ -219,7 +221,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                 col++;
               }
             }
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             visibleSummons[index++] = 1;
             if (index <= 3 &&
                 (id = orderedSummons[firstEntry + index]) != SUMMON_END)
@@ -240,7 +242,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
               window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
         }
       }
-      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+      Window_HighlightRect((s16)window->x + 1,
+                           (s16)window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
@@ -251,14 +254,15 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         Oam_AddSpriteAtDepth(&sprites[index], 240);
     }
 
-    cursorPosition.x = window->x * 8 - 2;
-    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    cursorPosition.x = (s16)window->x * 8 - 2;
+    cursorPosition.y = (selectedRow * 2 + (s16)window->y) * 8 + 20;
     ((u32 *)cur)[1] = 0x40000000;
     ((u32 *)cur)[2] = 0;
-    cur->tile = VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
-    cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
-    cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
-    sprite = (struct SummonMenuSprite *)&cursorStorage;
+    cur->oam.index =
+        VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
+    cur->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    cur->oam.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite = (struct MenuSprite *)&cursorStorage;
     Oam_AddSpriteAtDepth(sprite, 242);
 
     {
@@ -269,8 +273,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         tile = 15 - (blink != 0);
         if ((1 << element & mask) == 0)
           tile = 15;
-        Window_HighlightRect(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
-                             tile);
+        Window_HighlightRect((s16)counts->x + element * 2 + 1,
+                             (s16)counts->y + 1, 2, 1, tile);
       }
     }
 
@@ -286,7 +290,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                              window->width - (count + 3) / 4 - 3, -1, 0);
       Window_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
       do {
-        work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+        work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
       } while (0);
     }
 

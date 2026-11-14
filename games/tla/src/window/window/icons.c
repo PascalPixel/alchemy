@@ -47,7 +47,6 @@ u8 *Ability_Get__window(s32) __asm__("Ability_Get");
 #define Ability_Get Ability_Get__window
 
 /// Builds the icon of a battle action's item.
-// As ☀️'s Ability_RequestGlyph.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
   Icon_BuildItemIconTiles(*(u16 *)(Ability_Get(action) + 4), withBase, slot,
@@ -57,7 +56,6 @@ void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 /// Builds item icon glyph, over the icon base when withBase is set, and loads
 /// it into *cacheSlot (a free slot unless reuse is set). Returns the tile in
 /// *tileOut.
-// As ☀️'s function of the same name.
 void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                              s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
@@ -96,11 +94,16 @@ extern u8 *gIcon_DigitPointers[];
 
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 
-#define ICON_BASE 1 ///< the base under the icon
-#define ICON_COUNT_ABOVE_ONE 2
-#define ICON_COUNT 4
-#define ICON_EQUIPPED 8
-#define ICON_BROKEN 16
+// The layers ItemIcon_Compose draws over an item's icon.
+#define ICON_BASE 1            ///< the base under the icon
+#define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
+#define ICON_COUNT 4           ///< the count, always
+/// Mark 1, the cross, on an item with INVENTORY_BROKEN.
+#define ICON_BROKEN 8
+/// Mark 0, the equip mark, on an item with INVENTORY_EQUIPPED.
+#define ICON_EQUIPPED 16
+/// Mark 2 on a cursed item that cannot be unequipped (ITEM_CURSED and
+/// ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
 #define ICON_ARTIFACT 32
 
 s32 ItemIcon_Compose(u32 code, u32 layers) {
@@ -111,7 +114,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
 
   overlay = 0;
   count = 0;
-  item = Item_GetDirectFar(code & 0x1ff);
+  item = Item_GetDirectFar(code & ITEM_ID_MASK);
   work = Ram_HeapSlots->glyphWork;
   if (work == NULL)
     return -1;
@@ -126,33 +129,33 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   work->width = 2;
   work->height = 2;
   Icon_Decode(work, overlay);
-  if ((layers & ICON_EQUIPPED) && (code & 0x400)) {
+  if ((layers & ICON_BROKEN) && (code & INVENTORY_BROKEN)) {
     work->encoded = gIcon_MarkPointers[1];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 1);
   }
-  if ((layers & ICON_BROKEN) && (code & 0x200)) {
+  if ((layers & ICON_EQUIPPED) && (code & INVENTORY_EQUIPPED)) {
     work->encoded = gIcon_MarkPointers[0];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 1);
   }
-  if ((layers & ICON_ARTIFACT) && (code & 0x200) && (item->flags & 1) &&
-      (item->flags & 2)) {
+  if ((layers & ICON_ARTIFACT) && (code & INVENTORY_EQUIPPED) &&
+      (item->flags & ITEM_CURSED) && (item->flags & ITEM_CANNOT_UNEQUIP)) {
     work->encoded = gIcon_MarkPointers[2];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 1);
   }
   if (layers & ICON_COUNT_ABOVE_ONE) {
-    count = (code & 0xf800) >> 11;
+    count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
     count++;
     if (count <= 1)
       count = 0;
   }
   if (layers & ICON_COUNT) {
-    count = (code & 0xf800) >> 11;
+    count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
     count++;
   }
   if (count != 0 && count <= 30) {
@@ -197,7 +200,7 @@ void Icon_Decode(GlyphTransfer *work, s32 layer);
 /// Decodes item code's icon (the first icon for code 0) into the glyph work.
 void Icon_DrawItem(s32 code) {
   GlyphTransfer *state = Ram_HeapSlots->glyphWork;
-  struct ItemDefinition *item = Item_GetDirectFar(0x1ff & code);
+  struct ItemDefinition *item = Item_GetDirectFar(ITEM_ID_MASK & code);
 
   if (code != 0)
     state->encoded = gItemIcons[item->icon];
@@ -230,7 +233,6 @@ void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
 /// Builds Psynergy icon glyph, over the icon base when withBase is set, and
 /// loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
 /// in *tileOut.
-// As ☀️'s function of the same name.
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                 s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;

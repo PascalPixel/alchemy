@@ -4,15 +4,15 @@
 #include "types.h"
 #include "edition.h"
 
-extern u8 gHitTable[];
-extern s32 gPpLossTable[];
-extern s32 gHpRecoveryTable[];
-extern s32 gPpDmgTable[];
-extern s32 gHpDmgTable5[];
-extern s32 gHpDmgTable8[];
-extern s32 gHpDmgTable6[];
-extern s32 gPpRecoveryTable[];
-extern s32 gHpDmgTable[];
+extern u8 gRangeFalloff_EffectChance[];
+extern s32 gRangeFalloff_PpLoss[];
+extern s32 gRangeFalloff_HealHp[];
+extern s32 gRangeFalloff_PpDamage[];
+extern s32 gRangeFalloff_PsynergyDamage[];
+extern s32 gRangeFalloff_SummonDamage[];
+extern s32 gRangeFalloff_EnemyDamage[];
+extern s32 gRangeFalloff_HealPp[];
+extern s32 gRangeFalloff_EffectDamage[];
 
 s32 Battle_RollEffectSuccessFar(s32 actor, s32 target, s32 range, s32 effect,
                                 s32 table);

@@ -6,9 +6,8 @@
 #include "sounds.h"
 #include "window_tile.h"
 #include "module/window/screens.h"
-#include "menu/psynergy_menu.h"
 
-#define NAVIGATION ((struct PsynergyMenuNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 // How much of the description under the cursor is copied: more outside
 // Japanese.
@@ -41,16 +40,14 @@
 #define RANGE_COLUMN 15
 #endif
 
-// Sets a menu sprite's attribute words, as The Broken Seal's
-// MenuSprite_Initialize.
+// Sets a menu sprite's attribute words.
 #define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
-// The menu's page, row and preferred row, as The Broken Seal's
-// BATTLE_MENU_GET_CURSOR and BATTLE_MENU_SET_CURSOR.
+// Reads and sets the menu's page, row and preferred row.
 #define MENU_GET_CURSOR(page_, row_, preferred)                                \
   do {                                                                         \
     (page_) = NAVIGATION->page;                                                \
@@ -65,8 +62,7 @@
     NAVIGATION->preferredRow = (preferred);                                    \
   } while (0)
 
-// Marks a window's tilemap row for upload, as The Broken Seal's
-// Window_MarkTilemapRow.
+// Marks a window's tilemap row for upload.
 #define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
   do {                                                                         \
     (work)->dirty |= 2 << ((u32)(row) >> 2);                                   \
@@ -83,20 +79,20 @@
 /// or a sealed party member's, can be chosen. The Psynergy command runs it
 /// (Battle_CollectPartyCommands), listing only abilities usable in battle.
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
-  struct PsynergyMenuWork *work;
+  struct WindowWork *work;
   s32 drawnFirstEntry;
   s32 firstEntry;
   s32 drawnRow;
   s32 cursorHandle;
-  struct PsynergyMenuUnit *unit;
-  struct PsynergyMenuWindow *messageWindow;
+  struct BattleUnit *unit;
+  struct RenderInput *messageWindow;
   s32 iconCount;
   s32 preferredRow;
   struct {
     s32 x, y;
   } cursorPosition;
-  struct PsynergyMenuNavigation *navigation;
-  struct PsynergyMenuWindow *window;
+  struct BattleMenuWork *navigation;
+  struct RenderInput *window;
   s32 selectedRow;
   s32 encodedAction;
   s32 iconTile;
@@ -104,19 +100,21 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   s32 rangePattern;
   s32 result;
   s32 i;
-  struct PsynergyMenuSprite cursor;
-  struct PsynergyMenuSprite *iconSprite;
+  struct MenuSprite cursor;
+  struct MenuSprite *iconSprite;
   u16 messageText[64];
   s32 iconSlots[5];
-  struct PsynergyMenuSprite sprites[5];
+  struct MenuSprite sprites[5];
   s32 glyph;
 
-  work = (struct PsynergyMenuWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
   unit = Unit_Get(unitId);
-  messageWindow = Window_Create(0, 5, 30, 4, 42);
+  messageWindow = Window_Create(0, 5, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = 5;
   MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(LIST_WINDOW_X, 9, LIST_WINDOW_WIDTH, 11, 6);
@@ -132,8 +130,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     iconSprite = &sprites[i];
     sprites[i].oam.word.attr01 = 0x40000000;
     sprites[i].oam.word.attr23 = t;
-    iconSprite->oam.f.x = window->x * 8 + 8;
-    t = window->y;
+    iconSprite->oam.f.x = (s16)window->x * 8 + 8;
+    t = (s16)window->y;
     iconSprite->oam.f.y = (y + t) * 8 + 4;
   }
   for (i = 0; i < 5; i++) {
@@ -149,9 +147,10 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     /* FAKEMATCH(temporary): iconSprite holds &cursor. */
     iconSprite = &cursor;
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
-      work->holdTilemapUpload = 1;
-      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
-                           window->width - 2, 1, 15);
+      work->menuBusy = 1;
+      Window_HighlightRect((s16)window->x + 1,
+                           (s16)window->y + drawnRow * 2 + 1, window->width - 2,
+                           1, 15);
       Text_FillCanvasBackground();
       if (count != 0)
         CURSOR_TEXT_COPY((actions[firstEntry + selectedRow] & 0x3fff) +
@@ -164,7 +163,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       if (firstEntry != drawnFirstEntry) {
         WindowSprite_RedrawSavedRect(window);
         for (i = 0; i < 5; i++) {
-          struct PsynergyAbility *action;
+          struct BattleAct *action;
 
           encodedAction = actions[firstEntry + i];
           if (encodedAction == 0)
@@ -178,17 +177,17 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                             1);
           sprites[i].oam.f.tile = glyph;
           if ((action->flags & 0x80) == 0)
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           else if (action->ppCost > unit->pp)
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           else if (unit->psySeal != 0)
-            Text_SetColor(9);
-          work->textPalette = 5;
+            Text_SetColor(TEXT_COLOR_PINK);
+          work->level = 5;
           Text_DrawMessageAsTiles(encodedAction + (s32)MsgAbilityNothing,
                                   window, 16, i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, COST_X, i * 16);
-          Text_SetColor(15);
-          work->textPalette = 15;
+          Text_SetColor(TEXT_COLOR_WHITE);
+          work->level = 15;
           if (action->element != 4)
             Window_SetTilemapEntry(window, action->element + 0x5001,
                                    RANGE_COLUMN, i * 2, 0);
@@ -212,10 +211,11 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
               window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
         }
       }
-      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+      Window_HighlightRect((s16)window->x + 1,
+                           (s16)window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, 14);
       work->dirty = 1;
-      work->holdTilemapUpload = 0;
+      work->menuBusy = 0;
     }
 
     if (count > 5) {
@@ -232,14 +232,14 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       Window_SetTilemapEntry(window, 0xf334,
                              window->width - (count + 4) / 5 - 3, pageTile, 0);
       Window_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
-      WINDOW_MARK_TILEMAP_ROW(work, window->y - 1);
+      WINDOW_MARK_TILEMAP_ROW(work, (s16)window->y - 1);
     }
 
     for (i = 0; i < iconCount; i++)
       Oam_AddSpriteAtDepth(&sprites[i], 240);
 
-    cursorPosition.x = window->x * 8 - 4;
-    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    cursorPosition.x = (s16)window->x * 8 - 4;
+    cursorPosition.y = (selectedRow * 2 + (s16)window->y) * 8 + 20;
     ((u32 *)iconSprite)[1] = 0x40000000;
     ((u32 *)iconSprite)[2] = 0;
     iconSprite->oam.f.tile =

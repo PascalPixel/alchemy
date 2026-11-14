@@ -75,8 +75,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     work->speakerVoiceSound = zero;
     work->speakerVoiceCountdown = zero;
 
-    MessageArgument_Push(member, 1);
-    MessageArgument_Push(element * 20 + djinn + 300, 4);
+    MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_Push(element * 20 + djinn + 300, MESSAGE_ARGUMENT_ABILITY);
 
     text = Message_DecodeMode1(element + (s32)MsgFoundVenusDjinni);
 
@@ -136,7 +136,7 @@ void Party_ShowJoinedMessage(s32 member) {
     *p = tile | (14 << 12);
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;
-    MessageArgument_Push(member, 1);
+    MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
 #ifdef UBFIX
     Message_Start(window, Message_DecodeMode1((s32)MsgJoinedParty), 36, 2, NULL,
                   0);
@@ -203,8 +203,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;
 
-    MessageArgument_Push(first, 1);
-    MessageArgument_Push(second, 1);
+    MessageArgument_Push(first, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_Push(second, MESSAGE_ARGUMENT_ACTOR);
 
 #ifdef UBFIX
     Message_Start(window, Message_DecodeMode1((s32)MsgPairJoinedParty), 68, 2,
@@ -274,7 +274,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
   work->dirty = 1;
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;
-  MessageArgument_Push(Data_0805f676[summon & 31], 4);
+  MessageArgument_Push(Data_0805f676[summon & 31], MESSAGE_ARGUMENT_ABILITY);
   entries = Message_DecodeMode1((s32)MsgCanNowSummon);
   // UB: five of Message_Start's six arguments, as above; the flags are the
   // stack word resource takes, which nothing sets. UBFIX passes 0.
@@ -295,7 +295,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
                          TO_SUMMON_WINDOW_HEIGHT, 0);
   if (window == NULL)
     return;
-  MessageArgument_Push(Data_0805f676[summon & 31], 4);
+  MessageArgument_Push(Data_0805f676[summon & 31], MESSAGE_ARGUMENT_ABILITY);
   entries = Message_DecodeMode1((s32)MsgToSummon);
   djinn = (const u8 *)SummonDefinition_Get(summon) + 4;
   for (i = 0; i < 4; i++)
@@ -312,7 +312,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
     }
     // MsgSummonVenus is the first of four Djinn counts (Venus, Mercury, Mars,
     // Jupiter); the message four past it ends their line.
-    MessageArgument_Push(most, 5);
+    MessageArgument_Push(most, MESSAGE_ARGUMENT_NUMBER);
     Message_DecodeAppend((s32)MsgSummonVenus + best);
     counts[best] = 0;
   }

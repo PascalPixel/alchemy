@@ -214,7 +214,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   groundEndLine =
       (Iwram_RatioMulQ14((s16)affine->pd, 0x4000 - affine->y) >> 16) + 1;
   scanline = 0;
-  if (!GameFlag_Get(0x16b)) {
+  if (!GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     for (; scanline < 16; scanline++)
       *line++ = 0x3f8e;
   }
@@ -282,12 +282,10 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   Projection_Set(width, result, half * 4);
 }
 
-// BattleCamera_SetView: The Broken Seal's function of that name
-// with the camera from its heap slot. Places the battle camera at a position
-// and zoom for a transition: sets the projection, turns the scene to the
-// camera's yaw and pitch, projects the origin and gives the camera its
-// range from where the origin lands on the screen.
-
+/// Places the battle camera at a position and zoom for a transition: sets the
+/// projection, turns the scene to the camera's yaw and pitch, projects the
+/// origin and gives the camera its range from where the origin lands on the
+/// screen.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
   s32 *pos = scene->pos;
@@ -566,73 +564,65 @@ void BattleHighlight_ClearAllSpriteModes(void) {
 
 // Steps the battle highlight's blend.
 
-// The battle work block, as this function reads it.
-struct HighlightWork {
-  u8 unk000[0x676];
-  u16 highlightStep;
-  u16 highlightMode;
-};
+extern s8 gBattleHighlight_BlendRamp[];
 
-extern s8 gBattleEffect_HighlightBlendRamp[];
-
-/// Advances the battle highlight while its mode is set: modes 6 and 4 fade the
-/// blend in or out over 32 frames at half steps, mode 2 blends by the
-/// sixteen-step ramp, and any other nonzero mode brightens by the ramp.
-void Graphics_AdvancePaletteCycle(void) {
-  struct HighlightWork *battle =
-      (struct HighlightWork *)Ram_HeapSlots->battleWork;
+/// Steps the highlight's blend: HIGHLIGHT_FADE_IN and HIGHLIGHT_FADE_OUT fade
+/// the units listed in or out over 32 frames, HIGHLIGHT_PULSE blends them by
+/// the ramp, and HIGHLIGHT_SELECTED lightens them by it: the first sixteen
+/// steps once, then the second sixteen over and over.
+void BattleBackground_StepHighlightBlend(void) {
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
   if (battle != NULL) {
-    if (battle->highlightMode == 6) {
+    if (battle->highlightMode == HIGHLIGHT_FADE_IN) {
       u32 level = battle->highlightStep >> 1;
 
       if (level > 16)
         level = 16;
-      REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+      REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
       REG_BLDALPHA = ((0x10 - level) << 8) | level;
       battle->highlightStep++;
-    } else if (battle->highlightMode == 4) {
+    } else if (battle->highlightMode == HIGHLIGHT_FADE_OUT) {
       u32 level = battle->highlightStep >> 1;
 
       if (level > 16)
         level = 16;
-      REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+      REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
       REG_BLDALPHA = (level << 8) | (0x10 - level);
       battle->highlightStep++;
-    } else if (battle->highlightMode == 2) {
-      REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-      REG_BLDALPHA =
-          (gBattleEffect_HighlightBlendRamp[battle->highlightStep] << 8) |
-          (0x10 - gBattleEffect_HighlightBlendRamp[battle->highlightStep]);
+    } else if (battle->highlightMode == HIGHLIGHT_PULSE) {
+      REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
+      REG_BLDALPHA = (gBattleHighlight_BlendRamp[battle->highlightStep] << 8) |
+                     (0x10 - gBattleHighlight_BlendRamp[battle->highlightStep]);
       battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
-    } else if (battle->highlightMode != 0) {
+    } else if (battle->highlightMode != HIGHLIGHT_OFF) {
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = BLEND_ALPHA(16, 0);
-      REG_BLDY = gBattleEffect_HighlightBlendRamp[battle->highlightStep];
+      REG_BLDY = gBattleHighlight_BlendRamp[battle->highlightStep];
       battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
     }
   }
 }
 
-/// Mode 0 clears every actor's OBJ mode and stops the palette cycle. Any other
-/// mode starts the cycle: every actor takes mode & 1, and the actors listed
-/// (up to 14, ended by 0xff) take the other.
+/// Highlights the units in actors (up to 14, ended by BATTLE_UNIT_LIST_END),
+/// the others taking the other blend, or with HIGHLIGHT_OFF stops the
+/// highlight.
 void BattleHighlight_SetModes(u16 *actors, s32 mode) {
   s16 activeActors[14];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u32 count;
   u32 i;
 
-  if (mode == 0) {
-    Task_Remove(Graphics_AdvancePaletteCycle);
+  if (mode == HIGHLIGHT_OFF) {
+    Task_Remove(BattleBackground_StepHighlightBlend);
     Io_Write16(mode, &REG_BLDY);
     BattleHighlight_ClearAllSpriteModes();
     wait(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
-  if (battle != NULL && mode != 0) {
+  if (battle != NULL && mode != HIGHLIGHT_OFF) {
     battle->highlightMode = mode;
     battle->highlightStep = 0;
     REG_BLDY = 0;
@@ -647,19 +637,19 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
 
       i = 0;
       actors++;
-      if (actor != 0xff) {
+      if (actor != BATTLE_UNIT_LIST_END) {
         do {
           BattleHighlight_SetSpriteMode(actor, (mode & 1) ^ 1);
           i++;
           if (i > 13)
             break;
           actor = *actors++;
-        } while (actor != 0xff);
+        } while (actor != BATTLE_UNIT_LIST_END);
       }
     }
     wait(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
-    Task_Add(Graphics_AdvancePaletteCycle, TASK_PASS_FRAME);
+    Task_Add(BattleBackground_StepHighlightBlend, TASK_PASS_FRAME);
   }
 }
 
@@ -690,7 +680,7 @@ struct SparkWork {
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
                          s32 height);
 
-// The Broken Seal's star tables: each frame's size and sheet offset, and
+// The star tables: each frame's size and sheet offset, and
 // the ring's four frames.
 extern const u8 gElementGlow_StarSizes[];
 extern const s32 gElementGlow_StarPictures[];
@@ -839,12 +829,11 @@ static __inline__ s32 PolarY(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Sin(angle), radius);
 }
 
-/// Sets up the star field behind a summon, the twin of The Broken Seal's
-/// ElementGlow_InitializeStarField: sixteen sparks on random rings around the
-/// centre, three rings leaving it at thirds of a turn, the blue ring sheet and
-/// its palette with the mode's colour (0 yellow, 1 blue, 2 red, else violet)
-/// over the first 32 colours, BG2 unscaled at the origin, the additive and max
-/// blitters (BattleEffect_LoadBlitterFar, the veneer of
+/// Sets up the star field behind a summon: sixteen sparks on random rings
+/// around the centre, three rings leaving it at thirds of a turn, the blue ring
+/// sheet and its palette with the mode's colour (0 yellow, 1 blue, 2 red, else
+/// violet) over the first 32 colours, BG2 unscaled at the origin, the additive
+/// and max blitters (BattleEffect_LoadBlitterFar, the veneer of
 /// BattleEffect_LoadBlitter), and the two frame callbacks.
 s32 ElementGlow_InitializeStarField(s32 mode) {
   struct SparkWork *work;
@@ -1080,7 +1069,8 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
     enemy = Enemy_GetDefinitionFar(enemyId + 8);
     if (enemy == 0)
       continue;
-    if (!GameFlag_Get(0x174) && !GameFlag_Get(enemyId + 0x608))
+    if (!GameFlag_Get(FLAG_MONSTER_BATTLE_ANY_ENEMY) &&
+        !GameFlag_Get(enemyId + 0x608))
       return -2;
     levelTotal += enemy->level;
     enemyCount++;

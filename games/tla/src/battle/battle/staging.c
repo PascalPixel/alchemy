@@ -36,8 +36,7 @@ s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
   return characterId;
 }
 
-/// Called by Battle_Run at the start of every turn; does nothing, as in The
-/// Broken Seal.
+/// Called by Battle_Run at the start of every turn; does nothing.
 void Battle_TurnStartNoOp(void) {}
 
 /// The plan of an extra action queued for the turn's end (command 10): ability
@@ -50,12 +49,12 @@ void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
   s32 side = 2;
   s32 own;
 
-  if (source[0] > 7)
+  if (source[0] > ALLY_MAX)
     side = 1;
   count = BattleUnit_ListIds(side, ids);
   Iwram_ClearWordsEntry(targets, sizeof *targets);
   own = 0;
-  if (source[0] <= 7)
+  if (source[0] <= ALLY_MAX)
     own = 1;
   own = Battle_GetUnitAtPlace(BattleAI_ChooseRandomTarget(own));
   targets->value50 = 2;
@@ -88,7 +87,7 @@ void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
   s32 i;
   s32 side = 1;
 
-  if (targets->actorId > 7)
+  if (targets->actorId > ALLY_MAX)
     side = 2;
   count = BattleUnit_ListIds(side, ids);
   for (i = 0; i < count; i++) {
@@ -110,7 +109,7 @@ void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
   s32 count;
   s32 i;
 
-  if (targets->actorId <= 7) {
+  if (targets->actorId <= ALLY_MAX) {
     count = BattleParty_PrepareMembers(ids);
     count += BattleParty_PrepareReserveOwners(&ids[count]);
   } else {
@@ -143,10 +142,10 @@ void BattleParty_ReturnAllToSpots(void) {
     BattleMotion_ReturnToSpot(ids[i]);
 }
 
-/// Plays one action of the turn after delay frames, as The Broken Seal's
-/// BattleStaging_DispatchAction does: an enemy picks its ability now, the
-/// action is built and staged, and every unit returns to its spot. Returns 1
-/// when the party got away, 0 otherwise, and -1 when the unit is already down.
+/// Plays one action of the turn after delay frames: an enemy picks its ability
+/// now, the action is built and staged, and every unit returns to its spot.
+/// Returns 1 when the party got away, 0 otherwise, and -1 when the unit is
+/// already down.
 s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
                                  s32 delay) {
   struct BattlePresentationTransition *view;
@@ -159,22 +158,22 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
 
   battle = (struct DispatchBattleWork *)Ram_HeapSlots->battleWork;
   fled = 0;
-  if (request->unitId == 255)
+  if (request->unitId == BATTLE_UNIT_LIST_END)
     return 0;
   unit = Unit_Get(request->unitId);
   if (unit->hp == 0)
     return -1;
   battle->actorMode = 3;
-  if (unit->classIndex == 0)
+  if (unit->classIndex == CLASS_NONE)
     BattleAI_ChooseAction(request, 1);
 
   view = Ram_HeapSlots->transitionWork;
   view->frames = 60;
   view->flag = 0;
   camera = Ram_HeapSlots->cameraWork;
-  battle->brightness = 0x10000;
+  battle->brightness = Q16_ONE;
   Transform_Reset();
-  Transform_SetLookAt__battle(camera->eye, camera->pos);
+  Transform_SetLookAt(camera->eye, camera->pos);
   {
     s32 param;
     s32 ratio;
@@ -191,10 +190,10 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     Projection_Set(param, ratio, 0x7fff0000);
   }
   if (delay != 0) {
-    view->targetYaw = TRIG_TURN / 8;
+    view->targetYaw = YAW_PARTY_ACTION;
     wait(delay);
   }
-  if (request->command == 10) {
+  if (request->command == COMMAND_DAEDALUS) {
     BattleStaging_PlanDaedalus((u16 *)request,
                                (struct ActionTargets *)&battle->plan);
     /* FAKEMATCH(dead): an empty once-only block after the call. */
@@ -203,53 +202,55 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     result = 0;
   } else {
     actingUnit[0] = request->unitId;
-    actingUnit[1] = 255;
-    BattleHighlight_SetModes(actingUnit, 1);
+    actingUnit[1] = BATTLE_UNIT_LIST_END;
+    BattleHighlight_SetModes(actingUnit, HIGHLIGHT_SELECTED);
     result = BattleActionRun_Build(request, &battle->plan);
   }
   if (result == 0) {
     switch (battle->plan.outcome) {
     case 0:
       break;
-    case 1:
+    case STAGING_MESSAGES:
       BattleStaging_RunActorEntries(&battle->plan, 0);
       break;
-    case 2:
+    case STAGING_ATTACK:
       BattleStaging_RunAttack(&battle->plan, 0);
       break;
-    case 15:
+    case STAGING_BEAST_ATTACK:
       BattleStaging_RunAttack(&battle->plan, 2);
       break;
-    case 5:
-      BattleStaging_HideField(&battle->plan, 1);
+    case STAGING_SUMMON:
+      BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
       break;
-    case 9:
+    case STAGING_FULL_SCREEN:
       BattleStaging_HideField(&battle->plan, 0);
       break;
+    // XXX: no ability's staging is 14 or 17 (gAbilityStaging), and no code sets
+    // them; a debug battle or a table row another edition has would settle it.
     case 14:
       BattleStaging_HideField(&battle->plan, 3);
       break;
-    case 3:
+    case STAGING_CAST:
     case 17:
-      BattleStaging_RunPsynergyCast(&battle->plan, 0);
+      BattleStaging_RunPsynergyCast(&battle->plan, CAST_PSYNERGY);
       break;
-    case 6:
-      BattleStaging_RunPsynergyCast(&battle->plan, 1);
+    case STAGING_DJINNI:
+      BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       break;
-    case 8:
-    case 16:
-      BattleStaging_RunPsynergyCast(&battle->plan, 2);
+    case STAGING_ENEMY_CAST:
+    case STAGING_BEAST_CAST:
+      BattleStaging_RunPsynergyCast(&battle->plan, CAST_ENEMY);
       break;
-    case 4:
+    case STAGING_ITEM:
       BattleStaging_RunItem(&battle->plan, 0, request);
       break;
-    case 10: {
+    case STAGING_TEAM_STRIKE: {
       u8 swap = battle->plan.targetIds[0];
 
       battle->unk84e = 1;
       battle->plan.targetIds[0] = battle->plan.actorId2;
       battle->skipPlayback = 1;
-      BattleStaging_RunPsynergyCast(&battle->plan, 1);
+      BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       battle->skipPlayback = 0;
       battle->plan.targetIds[0] = swap;
       swap = battle->plan.actorId;
@@ -258,48 +259,49 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       battle->plan.presentationFlags = BattleUnit_GetPartyAttackEffect(
           ((struct BattleUnit *)Unit_Get(battle->plan.actorId))->enemyId);
       if (((battle->plan.actorId ^ battle->plan.targetIds[0]) >> 7) == 0) {
-        MessageArgument_PushFar(battle->plan.actorId, 1);
+        MessageArgument_PushFar(battle->plan.actorId, MESSAGE_ARGUMENT_ACTOR);
         if (battle->plan.actorId == battle->plan.targetIds[0])
           BattleMessage_ShowAndWaitFar((s32)&MsgStopHittingYourself);
         else
           BattleMessage_ShowAndWaitFar((s32)&MsgAttacksAlly);
       }
-      BattleStaging_RunAttack(&battle->plan,
-                              battle->plan.abilityId == 312 ? 32 : 0);
+      BattleStaging_RunAttack(
+          &battle->plan,
+          battle->plan.abilityId == ABILITY_MELD ? ATTACK_WITH_PARTNER : 0);
       swap = battle->plan.actorId;
       battle->plan.actorId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
       break;
     }
-    case 11: {
+    case STAGING_DJINN_RECOVERY: {
       s32 kept;
 
       battle->skipPlayback = 1;
-      BattleStaging_RunPsynergyCast(&battle->plan, 1);
+      BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       battle->skipPlayback = 0;
       BattleMessage_ShowAndWaitFar((s32)&MsgDjinnRecoverFaster);
-      kept = DjinnRecovery_CountDownSide(battle->plan.targetIds[0] > 7);
+      kept = DjinnRecovery_CountDownSide(battle->plan.targetIds[0] > ALLY_MAX);
       if (kept == 0)
         BattleMessage_ShowAndWaitFar((s32)(MsgDjinnRecoverFaster + 1));
       if (kept <= 1)
         BattleMessage_WaitForAdvance();
       break;
     }
-    case 12:
-      BattleStaging_HideField(&battle->plan, 1);
-      if (BattleParty_ListLivingUnits(1, 0) == 0)
+    case STAGING_MEGAERA:
+      BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
+      if (BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, 0) == 0)
         break;
-      if (BattleParty_ListLivingUnits(2, 0) == 0)
+      if (BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) == 0)
         break;
       BattleStaging_PlanHighImpact((struct ActionTargets *)&battle->plan);
-      BattleStaging_RunPsynergyCast(&battle->plan, 1);
+      BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       break;
-    case 13:
-      BattleStaging_HideField(&battle->plan, 1);
+    case STAGING_IRIS:
+      BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
       BattleStaging_PlanAuroraField((struct ActionTargets *)&battle->plan);
-      BattleStaging_RunPsynergyCast(&battle->plan, 1);
+      BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       break;
-    case 7:
+    case STAGING_FLEE:
       if (BattleStaging_RunFlee(&battle->plan) != 0)
         fled = 1;
       if (fled != 0)
@@ -307,11 +309,11 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       break;
     }
   } else {
-    if (result == -1) {
+    if (result == ACTION_REPORTED) {
       BattleMessage_WaitForAdvance();
       wait(3);
     }
-    BattleHighlight_SetModes(0, 0);
+    BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   }
 
   BattleMotion_DestroyAllSlotObjects();
@@ -319,7 +321,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   BattleObject_Put();
   Enemy_Update();
   BattleParty_ReturnAllToSpots();
-  request->unitId = 255;
+  request->unitId = BATTLE_UNIT_LIST_END;
 finish:
   BattleBackground_SetMode(
       2, ((struct DispatchBattleWork *)Ram_HeapSlots->battleWork)->background,
@@ -379,11 +381,11 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 partyMode = 0;
 
   completed = 0;
-  presentation->targetYaw = TRIG_TURN / 8;
+  presentation->targetYaw = YAW_PARTY_ACTION;
   presentation->active = 1;
-  BattleHighlight_SetModes(0, 0);
+  BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
 
-  if (aid <= 7) {
+  if (aid <= ALLY_MAX) {
     partyMode = completed;
     if (scene->encounterMode != 2)
       partyMode = 1;
@@ -441,36 +443,36 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   if (plan->presentationFlags & 0x8000) {
     struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
 
-    if (actor <= 7)
-      view->targetYaw = TRIG_TURN / 8;
+    if (actor <= ALLY_MAX)
+      view->targetYaw = YAW_PARTY_ACTION;
     else
-      view->targetYaw = 0x5000;
+      view->targetYaw = YAW_BEHIND_ENEMIES;
     view->frames = 60;
   } else {
     struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
     s32 yaw;
 
-    yaw = -TRIG_TURN / 8;
-    if (actor <= 7)
-      yaw = TRIG_TURN / 8;
+    yaw = YAW_ENEMY_ACTION;
+    if (actor <= ALLY_MAX)
+      yaw = YAW_PARTY_ACTION;
     if (view->targetYaw != yaw)
       view->targetYaw = yaw;
   }
 
-  BattleHighlight_SetModes(0, 0);
+  BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(actor)->object;
-  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   list = units;
   i = 0;
   count = BattleParty_ListActorIds(3, list);
   for (; i != count; i++) {
-    if (units[i] == 254)
+    if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
     if ((mode & 2) || units[i] != actor) {
       u32 unit = units[i];
 
-      if ((target <= 7) != (unit <= 7))
+      if ((target <= ALLY_MAX) != (unit <= ALLY_MAX))
         BattleHighlight_SetSpriteMode(unit, 1);
     } else {
       Actor_SelectAnimationFar((struct Actor *)object,
@@ -505,15 +507,15 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       if (unit == actor) {
         if (!(mode & 1))
           units[kept++] = actor;
-      } else if ((target <= 7) == (unit <= 7)) {
+      } else if ((target <= ALLY_MAX) == (unit <= ALLY_MAX)) {
         units[kept++] = unit;
       }
     }
-    units[kept] = 255;
+    units[kept] = BATTLE_UNIT_LIST_END;
     BattleActor_SpawnObjectsForList((s16 *)units, 0);
     for (i = 0; i < plan->targetCount; i++)
       units[i] = plan->targetIds[i];
-    units[i] = 255;
+    units[i] = BATTLE_UNIT_LIST_END;
     for (i = 0; i != work.count; i++) {
       struct CastAnimation *animation =
           GetMotionRecord(BattleObject_Get(work.actors[i])->object, 0);
@@ -523,12 +525,12 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
         work.params[i][child] = animation->entries[child]->param;
     }
     if (plan->presentationFlags & 0x8000) {
-      if (target <= 7)
+      if (target <= ALLY_MAX)
         work.side = 1;
       else
         work.side = 0;
     } else {
-      if (plan->targetIds[0] <= 7)
+      if (plan->targetIds[0] <= ALLY_MAX)
         work.side = 1;
       else
         work.side = 0;
@@ -547,16 +549,16 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 
   BattleObject_Put();
   count = BattleParty_ListActorIds(3, units);
-  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (i = 0; i != count; i++) {
     u32 unit;
 
-    if (units[i] == 254)
+    if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
     if (!(mode & 2) && units[i] == actor && work.kind == 3)
       continue;
     unit = units[i];
-    if ((target <= 7) != (unit <= 7))
+    if ((target <= ALLY_MAX) != (unit <= ALLY_MAX))
       BattleHighlight_SetSpriteMode(unit, 1);
   }
   for (i = 0; i != 16; i++) {
@@ -576,7 +578,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   s32 i;
 
-  BattleHighlight_SetModes(0, 0);
+  BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   if (plan->targetCount == 0) {
     BattleMessage_WaitForAdvance();
   } else {

@@ -1015,7 +1015,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
 
   Dma_Fill32(0, spriteWork, 0xcec);
   FileList_StartPulse();
-  fileList = Window_Create(1, 2, 28, 7, 2);
+  fileList = Window_Create(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
     if (save->summary[i].level == 0) {
       Text_DrawMessage((s32)MsgSaveNoData, (s32)fileList, 10, i * 16);
@@ -1049,12 +1049,12 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         WindowColor_Apply(save->summary[selectedFile].paletteGlow,
                           save->summary[selectedFile].paletteGlowSub);
         if (summaryWindow == NULL)
-          summaryWindow = Window_Create(1, 10, 14, 9, 2);
+          summaryWindow = Window_Create(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
         FileList_DrawSummary((s32)summaryWindow,
                              (u8 *)&save->summary[selectedFile]);
         wait(1);
         if (partyWindow == NULL)
-          partyWindow = Window_Create(16, 10, 13, 3, 2);
+          partyWindow = Window_Create(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
         FileList_ShowPartySprites((struct RenderInput *)partyWindow, 0, 0,
                                   &save->summary[selectedFile]);
@@ -1065,7 +1065,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                 (s8)save->summary[selectedFile].djinn[3] !=
             0) {
           if (djinnWindow == NULL)
-            djinnWindow = Window_Create(16, 14, 13, 5, 2);
+            djinnWindow = Window_Create(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
           FileList_DrawDjinnCounts(
               (struct RenderInput *)djinnWindow,
               (struct NumberRow *)&save->summary[selectedFile]);

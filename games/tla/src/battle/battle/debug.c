@@ -245,11 +245,11 @@ restart:
   Heap_Initialize();
   VramCache_Reset();
   encounter = 69;
-  GameFlag_Set(362);
+  GameFlag_Set(FLAG_AUTO_BATTLE);
   if (down) {
     preset = 0;
     loadedPreset = -1;
-    GameFlag_Clear(362);
+    GameFlag_Clear(FLAG_AUTO_BATTLE);
     input = &gInput;
     // Held for the loop's life: the backdrop id's value loads before its
     // address.
@@ -292,7 +292,7 @@ restart:
       m = &gMainRoutineWork;
       if (encounter == 28)
         GameFlag_Set(FLAG_DJINN_LESSON);
-      GameFlag_Set(354);
+      GameFlag_Set(FLAG_DEBUG_BATTLE);
       if (startModeSet)
         m->battleType = BATTLE_TYPE_DEBUG;
       Battle_RunEncounter(encounter);
@@ -304,7 +304,7 @@ restart:
       VramCache_Reset();
     }
   }
-  GameFlag_Set(354);
+  GameFlag_Set(FLAG_DEBUG_BATTLE);
   Battle_RunEncounter(69);
   goto restart;
 }

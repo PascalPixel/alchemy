@@ -40,7 +40,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   frame = 0;
   page = 2;
   help = menu->helpWindow;
-  menu->cursor->active = 13;
+  menu->cursor->active = ICON_HIDDEN;
   selectedPages[0] = 0;
   selectedPages[1] = 0;
   Party_ListMembersFar(owners);
@@ -177,15 +177,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   if (mode == 1)
     row = 1;
   if ((entry0 & 0x8000) == 0)
-    Text_SetColorFar(2);
+    Text_SetColorFar(TEXT_COLOR_RED);
   DjinnMenu_DrawEntry(help, 40, row * 8, entry0);
   if (mode == 0) {
     if ((entry1 & 0x8000) == 0)
-      Text_SetColorFar(2);
+      Text_SetColorFar(TEXT_COLOR_RED);
     DjinnMenu_DrawEntry(help, 40, 16, entry1);
   } else if (mode - 2 <= 1) {
     if ((entry0 & 0x8000) != 0)
-      Text_SetColorFar(2);
+      Text_SetColorFar(TEXT_COLOR_RED);
     DjinnMenu_DrawEntry(help, 40, 16, entry0);
     Window_SetTilemapEntryFar(help, 0xf296, 7, 1, 0);
   }
@@ -227,7 +227,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3, 8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
-            menu->cursor->active = 1;
+            menu->cursor->active = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(2, 96);
           gMainRoutineWork.eventMode = 1;
@@ -242,7 +242,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           backdrop->tutorialStep = 11;
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
-            menu->cursor->active = 13;
+            menu->cursor->active = ICON_HIDDEN;
           } while (0);
         }
         break;
@@ -255,7 +255,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2, 8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
-            menu->cursor->active = 1;
+            menu->cursor->active = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(106, 56);
           gMainRoutineWork.eventMode = 1;
@@ -271,7 +271,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           backdrop->tutorialStep = 12;
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
-            menu->cursor->active = 13;
+            menu->cursor->active = ICON_HIDDEN;
           } while (0);
         }
         break;
@@ -286,7 +286,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         if (page == 1) {
           Text_DrawMessageAsTilesFar((s32)MsgDjinnStatusHelp, help, 128, 16);
         } else {
-          MessageArgument_PushFar(menu->shownMember[page != 2], 1);
+          MessageArgument_PushFar(menu->shownMember[page != 2],
+                                  MESSAGE_ARGUMENT_ACTOR);
           Text_DrawMessageAsTilesFar((s32)MsgDjinnPsyHelp, help, 128, 16);
         }
       }
@@ -493,7 +494,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   redraw = 1;
   result = 0;
   frame = 0;
-  menu->cursor->active = 13;
+  menu->cursor->active = ICON_HIDDEN;
   /* FAKEMATCH(temporary): selected = selectedPages, the page array read through
    * a pointer. */
   selected = selectedPages;
@@ -627,7 +628,6 @@ s32 Djinn_CheckGiveBalance(s32 self, s32 other);
 
 /// Marks in table each other owner a djinn can move to from self and keep the
 /// party's djinn balanced, and returns how many there are.
-// The Broken Seal's Djinn_MarkBalancedEntries.
 /// Marks recipients that would leave unequal Djinn totals after a direct give.
 /// Returns how many recipients would need a trade instead.
 ///
@@ -677,14 +677,12 @@ s32 Djinn_CheckGiveBalance(s32 from, s32 to) {
   return balanced;
 }
 
-// Djinn_CountOwned: The Broken Seal's Djinn_CountTurns.
-
 /// Counts each party member's Djinn across its set and available bitmasks:
 /// writes every party member's total, set or not, into ownedCounts by list
 /// column.
 void Djinn_CountOwned(u8 *counts) {
   struct DjinnMenuWork *work;
-  struct DjinnUnit *unit;
+  struct BattleUnit *unit;
   s32 ownerIndex;
   s32 element;
   s32 bit;
@@ -692,13 +690,13 @@ void Djinn_CountOwned(u8 *counts) {
 
   work = Ram_HeapSlots->menuRuntime;
   for (ownerIndex = 0; ownerIndex < work->memberCount; ownerIndex++) {
-    unit = Unit_Get(work->owners[ownerIndex]);
+    unit = Unit_Get(work->members[ownerIndex]);
     count = 0;
     for (element = 0; element <= 3; element++) {
       for (bit = 0; bit <= 19; bit++) {
-        if (unit->djinnSet[element] & (1 << bit))
+        if (unit->djinnActive[element] & (1 << bit))
           count++;
-        else if (unit->djinnHeld[element] & (1 << bit))
+        else if (unit->djinnAvailable[element] & (1 << bit))
           count++;
       }
     }

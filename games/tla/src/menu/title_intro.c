@@ -862,7 +862,6 @@ s32 TitleIntro_Run(void) {
 /// frames, or 5400 with the prompt; after the first 120 the prompt's three
 /// sprites blink by gTitle_PromptBlendLevels's levels, and A or Start ends it
 /// early, returning 1 (else 0).
-// As the end of The Broken Seal's Title_RunIntro.
 s32 Title_ShowIntro(s32 prompt) {
   s32 blankTile = 0x1ff;
   s32 result = 0;
@@ -977,13 +976,11 @@ s32 Title_ShowIntro(s32 prompt) {
 }
 
 /// An empty entry the far-call table keeps.
-// As The Broken Seal's.
 void Title_NoOpPalette(void) {}
 
 /// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
 /// two seconds; otherwise it waits a second, fades in, holds three seconds and
 /// fades out, faster once skipped. Returns -1 when A or Start skipped it.
-// As The Broken Seal's function of the same name.
 s32 Title_ShowNintendoLogo(s32 mode) {
   s32 result;
   u8 *data;
@@ -1147,10 +1144,10 @@ void PaletteFade_CalculateSteps(s16 *src, s16 *dst, s16 *step, s32 frames) {
   }
 }
 
-/// Steps the palette fade on heap slot 0x80 by one frame, as The Broken Seal's
-/// PaletteFade_Update does: adds each channel's step until the last frame,
-/// which copies the target instead, packs the channels into the hidden page
-/// of RGB555 colours and queues that page for the BG and OBJ palettes.
+/// Steps the palette fade on heap slot 0x80 by one frame: adds each channel's
+/// step until the last frame, which copies the target instead, packs the
+/// channels into the hidden page of RGB555 colours and queues that page for the
+/// BG and OBJ palettes.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = Ram_HeapSlots->block32;
   u16 *delta = work->delta;

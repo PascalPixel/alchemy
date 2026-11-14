@@ -24,6 +24,14 @@
 #include "objcmd.h"
 #include "text/msg_ids.h"
 
+/// Set once Galahad has met the party and warned it of Isaac's enemies.
+#define FLAG_MIKASALLA_GALAHAD_MET 0xa39
+/// Set if the party told Galahad it knows Isaac.
+#define FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC FLAG_AREA_TEMP_40
+/// Set as Galahad meets the party, for this visit: he stays in the inn until
+/// the party leaves the area.
+#define FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT FLAG_AREA_TEMP_41
+
 extern struct ActorPlacement gMikasallaInteriors_InnPlacements[];
 extern struct ActorPlacement gMikasallaInteriors_SanctumPlacements[];
 extern struct Trigger gMikasallaInteriors_InnTriggers[];
@@ -201,7 +209,8 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 5)
       Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(0x821) ||
-             (Event_GetFlag(0xa39) && !Event_GetFlag(FLAG_AREA_TEMP_41)) ||
+             (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET) &&
+              !Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT)) ||
              Event_GetFlag(34))
       Actor_SetPosition(18, 0, 0);
     else
@@ -236,8 +245,8 @@ void MikasallaInteriors_MeetGalahad(void);
 /// Galahad, in the inn in a linked game, tells of Isaac's enemies once he has
 /// met the party.
 void MikasallaInteriors_TalkToGalahad(void) {
-  if (Event_GetFlag(0xa39)) {
-    FieldEvent_SetMessageId(Event_GetFlag(FLAG_AREA_TEMP_40)
+  if (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET)) {
+    FieldEvent_SetMessageId(Event_GetFlag(FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC)
                                 ? (s32)MsgMikasallaInteriors20
                                 : (s32)MsgMikasallaInteriors21);
     Event_ShowMessage(18, 0);
@@ -247,7 +256,7 @@ void MikasallaInteriors_TalkToGalahad(void) {
 }
 
 void MikasallaInteriors_MindReadGalahad(void) {
-  if (!Event_GetFlag(0xa39)) {
+  if (!Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET)) {
     MikasallaInteriors_MeetGalahad();
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors22);
@@ -256,8 +265,7 @@ void MikasallaInteriors_MindReadGalahad(void) {
 }
 
 /// Galahad introduces himself, asks whether the party knows Isaac, and warns
-/// that the three gladiators Isaac beat are seeking revenge (flags 0xa39 and
-/// 0x341; 0x340 if the party says it knows him).
+/// that the three gladiators Isaac beat are seeking revenge.
 void MikasallaInteriors_MeetGalahad(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -278,13 +286,13 @@ void MikasallaInteriors_MeetGalahad(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
     Event_ShowMessage(18, 0);
-    Event_SetFlag(FLAG_AREA_TEMP_40);
+    Event_SetFlag(FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC);
   } else {
     gFieldWork->message += 1;
     Event_ShowMessage(18, 0);
   }
-  Event_SetFlag(0xa39);
-  Event_SetFlag(FLAG_AREA_TEMP_41);
+  Event_SetFlag(FLAG_MIKASALLA_GALAHAD_MET);
+  Event_SetFlag(FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT);
   Event_End();
 }
 

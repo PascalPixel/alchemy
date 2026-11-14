@@ -27,6 +27,12 @@
 #include "field/event_inline.h"
 #include "objcmd.h"
 
+/// Set once Scoop has dug up the ladder down to the tunnels by the sheep; the
+/// village redraws it on every visit.
+#define FLAG_MIKASALLA_LADDER_DUG_UP 0x85b
+/// Set once Parch has dried the tunnels for this visit.
+#define FLAG_MIKASALLA_TUNNELS_PARCHED FLAG_SCENE_TEMP_00
+
 extern s16 gMikasalla_TunnelRegions[];
 extern struct ActorPlacement gMikasalla_VillagePlacements[];
 extern struct ActorPlacement gMikasalla_TunnelPlacements[];
@@ -168,19 +174,19 @@ void Mikasalla_AskLookingForSomeone(void) {
 }
 
 /// Scoop on the patch of ground by the sheep digs up the ladder down to the
-/// tunnels, and it stays dug (flag 0x85b), Scene_PrepareMap redrawing it on
+/// tunnels, and it stays dug, Scene_PrepareMap redrawing it on
 /// every visit.
 void Mikasalla_DigUpLadder(void) {
   MapGrid_CopyCellsTo(5, 49, 5, 41, 1, 1);
   MapGrid_CopyCellAttributes(4, 48, 3, 2, 4, 40);
-  Event_SetFlag(0x85b);
+  Event_SetFlag(FLAG_MIKASALLA_LADDER_DUG_UP);
 }
 
 /// Parch on cell 60 in the tunnels redraws three stretches of the cave and its
-/// ground, once a visit (flag 0x200), as Scene_PrepareMap redraws them on a
+/// ground, once a visit, as Scene_PrepareMap redraws them on a
 /// return.
 void Mikasalla_CastParch(void) {
-  if (Event_GetFlag(FLAG_SCENE_TEMP_00) == 0) {
+  if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED) == 0) {
     Map_SetLayerEntryFlag(0);
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
@@ -193,7 +199,7 @@ void Mikasalla_CastParch(void) {
     MapGrid_CopyCells(28, 90, 2, 2, 19, 91);
     MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
     MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
-    Event_SetFlag(FLAG_SCENE_TEMP_00);
+    Event_SetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED);
   }
 }
 
@@ -215,7 +221,7 @@ s32 Scene_PrepareMap(void) {
   object->priorityFlags = flags;
   Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
   if (party->scene == (s32)&SceneId_Mikasalla2) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+    if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED)) {
       Map_SetLayerEntryFlag(0);
       Map_SetLayerEntryFlag(1);
       Map_SetLayerEntryFlag(2);
@@ -229,7 +235,7 @@ s32 Scene_PrepareMap(void) {
       MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
       MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
     }
-  } else if (Event_GetFlag(0x85b)) {
+  } else if (Event_GetFlag(FLAG_MIKASALLA_LADDER_DUG_UP)) {
     Mikasalla_DigUpLadder();
   }
   return 0;
@@ -634,7 +640,7 @@ struct Trigger gMikasalla_TunnelTriggers[] = {
      EVENT(Mikasalla_StepOntoLadderFacingNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS,
      EVENT(Mikasalla_StepOntoLadderAhead)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, 0x200,
-     EVENT(Mikasalla_CastParch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60,
+     FLAG_MIKASALLA_TUNNELS_PARCHED, EVENT(Mikasalla_CastParch)},
     {TRIGGER_TABLE_END},
 };

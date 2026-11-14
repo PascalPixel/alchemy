@@ -14,6 +14,34 @@
 #include "system/main_routine_work.h"
 #include "system/frame.h"
 
+/// Set once Move has left the first inner room's pillar on cell (103, 41) in
+/// half cells.
+#define FLAG_AIRS_ROCK_FIRST_ROOM_PILLAR_PLACED 0xa8e
+/// Set once Move has left the second inner room's western pillar on (13, 49).
+#define FLAG_AIRS_ROCK_SECOND_ROOM_WEST_PILLAR_PLACED 0x898
+/// Set once Move has left its eastern pillar on (41, 49).
+#define FLAG_AIRS_ROCK_SECOND_ROOM_EAST_PILLAR_PLACED 0x897
+/// Set once Move has left the third inner room's first pillar on (33, 79).
+#define FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED 0x89b
+/// Its second, on (77, 71).
+#define FLAG_AIRS_ROCK_THIRD_ROOM_SECOND_PILLAR_PLACED 0x89c
+/// Its third, on (59, 65).
+#define FLAG_AIRS_ROCK_THIRD_ROOM_THIRD_PILLAR_PLACED 0x89d
+/// Set once Move has left the fourth inner room's pillar on (81, 37).
+#define FLAG_AIRS_ROCK_FOURTH_ROOM_PILLAR_PLACED 0x89e
+/// Set once Move has moved the statue (AirsRockInside_MoveStatue).
+#define FLAG_AIRS_ROCK_STATUE_MOVED 0x89f
+/// Set once Move has left the seventh inner room's pillar on (43, 87).
+#define FLAG_AIRS_ROCK_SEVENTH_ROOM_PILLAR_PLACED 0x8d0
+/// Set once Move has left the eighth inner room's first pillar on (35, 59).
+#define FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED 0x8d1
+/// Its second, on (45, 105).
+#define FLAG_AIRS_ROCK_EIGHTH_ROOM_SECOND_PILLAR_PLACED 0x8d2
+/// Its third, on (23, 77).
+#define FLAG_AIRS_ROCK_EIGHTH_ROOM_THIRD_PILLAR_PLACED 0xa8f
+/// Set once Move has left the ninth inner room's pillar on (45, 33).
+#define FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED 0x8d3
+
 // Story flags: the statues of rooms 1 and 2 woken by Whirlwind, and the Reveal
 // tablet read.
 #define FLAG_AIRS_ROCK_ROOM1_STATUE_WOKEN 0x89a
@@ -1074,9 +1102,10 @@ void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
 
 // Every eighth frame pair, while none of the event work's four busy counters
 // is set, starts a drip (AirsRockInside_PuffVent) at a place chosen by scene
-// and frame: in one room one of two spots by flag 0x89b, in the other one of
-// six by the leader's position and flags 0x200 to 0x202. Places the two frame
-// arms share are one call, reached by goto from the other arm.
+// and frame: in one room one of two spots by
+// FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED, in the other one of six by the
+// leader's position and flags 0x200 to 0x202. Places the two frame arms share
+// are one call, reached by goto from the other arm.
 void AirsRockInside_PuffVents(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 frame;
@@ -1092,7 +1121,8 @@ void AirsRockInside_PuffVents(void) {
   if (scene == (s32)&SceneId_AirsRockInside3) {
     s32 x;
 
-    if ((frame & 1) && !GameFlag_Get(0x89b))
+    if ((frame & 1) &&
+        !GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED))
       x = 0x1780000;
     else
       x = 0x1180000;
@@ -1315,7 +1345,7 @@ void AirsRockInside_BlowGust(void) {
     if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6) {
       object->terrainHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
-      GameFlag_Set(0x89f);
+      GameFlag_Set(FLAG_AIRS_ROCK_STATUE_MOVED);
     } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
       Call6(Map_CopyCellAttributeRect, 19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(object);
@@ -2010,27 +2040,27 @@ void AirsRockInside_FinishPushingPillar(void) {
   z = pushed->z >> 19;
   if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1) {
     if (x == 103 && z == 41)
-      GameFlag_Set(0xa8e);
+      GameFlag_Set(FLAG_AIRS_ROCK_FIRST_ROOM_PILLAR_PLACED);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside2) {
     if (x == 13 && z == 49)
-      GameFlag_Set(0x898);
+      GameFlag_Set(FLAG_AIRS_ROCK_SECOND_ROOM_WEST_PILLAR_PLACED);
     else if (x == 41 && z == 49)
-      GameFlag_Set(0x897);
+      GameFlag_Set(FLAG_AIRS_ROCK_SECOND_ROOM_EAST_PILLAR_PLACED);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3) {
     if (x == 33 && z == 79)
-      GameFlag_Set(0x89b);
+      GameFlag_Set(FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED);
     else if (x == 77 && z == 71)
-      GameFlag_Set(0x89c);
+      GameFlag_Set(FLAG_AIRS_ROCK_THIRD_ROOM_SECOND_PILLAR_PLACED);
     else if (x == 59 && z == 65)
-      GameFlag_Set(0x89d);
+      GameFlag_Set(FLAG_AIRS_ROCK_THIRD_ROOM_THIRD_PILLAR_PLACED);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4) {
     if (x == 81 && z == 37)
-      GameFlag_Set(0x89e);
+      GameFlag_Set(FLAG_AIRS_ROCK_FOURTH_ROOM_PILLAR_PLACED);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside7) {
     Call4((void (*)())MapGrid_SetCellHeight, 0x2600000, 0x1500000, 2, -4);
     Call4((void (*)())MapGrid_SetCellHeight, 0x2700000, 0x1500000, 2, -4);
     if (x == 43 && z == 87)
-      GameFlag_Set(0x8d0);
+      GameFlag_Set(FLAG_AIRS_ROCK_SEVENTH_ROOM_PILLAR_PLACED);
     if ((Actor_GetById(9)->x >> 19 == 73 && Actor_GetById(9)->z >> 19 == 43) ||
         (Actor_GetById(10)->x >> 19 == 73 && Actor_GetById(10)->z >> 19 == 43))
       ((u8 *)Actor_GetById(13))[99] = 1;
@@ -2045,12 +2075,12 @@ void AirsRockInside_FinishPushingPillar(void) {
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
     if (x == 35 && z == 59)
-      GameFlag_Set(0x8d1);
+      GameFlag_Set(FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED);
     if (x == 45 && z == 105)
-      GameFlag_Set(0x8d2);
+      GameFlag_Set(FLAG_AIRS_ROCK_EIGHTH_ROOM_SECOND_PILLAR_PLACED);
     if (x == 23 && z == 77) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
-      GameFlag_Set(0xa8f);
+      GameFlag_Set(FLAG_AIRS_ROCK_EIGHTH_ROOM_THIRD_PILLAR_PLACED);
     }
     if (z == 59 && (x == 67 || x == 71 || x == 73))
       GameFlag_Set(FLAG_SCENE_TEMP_01);
@@ -2066,7 +2096,7 @@ void AirsRockInside_FinishPushingPillar(void) {
                           Actor_GetById(9)->z >> 20, 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
     if (x == 45 && z == 33)
-      GameFlag_Set(0x8d3);
+      GameFlag_Set(FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED);
     MapCell_SetAttributes(2, Actor_GetById(10)->x >> 20,
                           Actor_GetById(10)->z >> 20, 0);
   }
@@ -3145,7 +3175,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 516;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   GameFlag_Set(FLAG_AREA_TEMP_00);
-  GameFlag_Set(0x89f);
+  GameFlag_Set(FLAG_AIRS_ROCK_STATUE_MOVED);
   if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1) {
     AirsRockInside_StartRestoringCells();
     // The Japanese release arrives here whatever flag 265 says.
@@ -3163,7 +3193,7 @@ s32 Scene_Initialize(void) {
       AirsRockInside_SpawnMotes();
     }
     if (gMainRoutineWork.entrance > 13) {
-      if (GameFlag_Get(0xa8e))
+      if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_ROOM_PILLAR_PLACED))
         Call3(Actor_SetHorizontalPositionWithTerrain, 12, px(824), px(328));
       Actor_PlaceBlocks(gAirsRockInside_Room1Pillars);
     }
@@ -3197,9 +3227,9 @@ s32 Scene_Initialize(void) {
     REG_BLDALPHA = 0x1008;
     REG_BLDCNT = 0x3f10;
     AirsRockInside_StartRestoringCells();
-    if (GameFlag_Get(0x897))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_SECOND_ROOM_EAST_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(328), px(392));
-    if (GameFlag_Get(0x898))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_SECOND_ROOM_WEST_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 11, px(104), px(392));
     Actor_PlaceBlocks(gAirsRockInside_Room2Pillars);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN)) {
@@ -3219,11 +3249,11 @@ s32 Scene_Initialize(void) {
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(AirsRockInside_PuffVents, 0x480);
-    if (GameFlag_Get(0x89b))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(264), px(632));
-    if (GameFlag_Get(0x89c))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_SECOND_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 11, px(616), px(568));
-    if (GameFlag_Get(0x89d))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_THIRD_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 12, px(472), px(520));
     Actor_PlaceBlocks(gAirsRockInside_Room3Pillars);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN)) {
@@ -3266,7 +3296,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 23, 92, 2, 1, 23, 89);
       Call6(Map_CopyCellAttributeRect, 18, 33, 2, 1, 23, 25);
     }
-    if (GameFlag_Get(0x89e))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FOURTH_ROOM_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(648), px(296));
     Actor_PlaceBlocks(gAirsRockInside_Room4Pillars);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside5) {
@@ -3306,7 +3336,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_03))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(520), px(296));
-    if (GameFlag_Get(0x89f)) {
+    if (GameFlag_Get(FLAG_AIRS_ROCK_STATUE_MOVED)) {
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(312), px(296));
       Actor_SetSpritePriority(8, 2);
       Actor_GetById(8)->motionFlags = 2;
@@ -3325,7 +3355,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Set(FLAG_SCENE_TEMP_02);
     }
     AirsRockInside_PlaceCones(gAirsRockInside_Room7Cones);
-    if (GameFlag_Get(0x8d0))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_SEVENTH_ROOM_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(344), px(696));
     Actor_PlaceBlocks(gAirsRockInside_Room7Pillars);
     if (GameFlag_Get(FLAG_AREA_TEMP_04)) {
@@ -3343,11 +3373,11 @@ s32 Scene_Initialize(void) {
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(AirsRockInside_PuffVents, 0x480);
-    if (GameFlag_Get(0x8d1))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(280), px(472));
-    if (GameFlag_Get(0x8d2))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_SECOND_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(360), px(840));
-    if (GameFlag_Get(0xa8f)) {
+    if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_THIRD_PILLAR_PLACED)) {
       Call3(Actor_SetHorizontalPositionWithTerrain, 12, px(184), px(616));
       GameFlag_Set(FLAG_SCENE_TEMP_00);
     }
@@ -3364,7 +3394,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(11), 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
     AirsRockInside_StartRestoringCells();
-    if (GameFlag_Get(0x8d3))
+    if (GameFlag_Get(FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(360), px(264));
     Actor_PlaceBlocks(gAirsRockInside_Room9Pillars);
     MapCell_SetAttributes(2, Actor_GetById(10)->x >> 20,
@@ -3738,10 +3768,10 @@ struct Trigger gAirsRockInside_Room2Triggers[] = {
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x897, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x897, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, 0x898, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x898, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, FLAG_AIRS_ROCK_SECOND_ROOM_EAST_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_AIRS_ROCK_SECOND_ROOM_EAST_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, FLAG_AIRS_ROCK_SECOND_ROOM_WEST_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_AIRS_ROCK_SECOND_ROOM_WEST_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 10, FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN, EVENT(AirsRockInside_StartWhirlwind)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 10, FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN, EVENT(AirsRockInside_TakeOverWhirlwind)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN, EVENT(AirsRockInside_WakeRoom2Statue)},
@@ -3755,12 +3785,12 @@ struct Trigger gAirsRockInside_Room3Triggers[] = {
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x89b, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x89b, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, 0x89c, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x89c, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0x89d, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x89d, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, FLAG_AIRS_ROCK_THIRD_ROOM_SECOND_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_AIRS_ROCK_THIRD_ROOM_SECOND_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, FLAG_AIRS_ROCK_THIRD_ROOM_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_AIRS_ROCK_THIRD_ROOM_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
@@ -3775,8 +3805,8 @@ struct Trigger gAirsRockInside_Room4Triggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x89e, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x89e, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, FLAG_AIRS_ROCK_FOURTH_ROOM_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_AIRS_ROCK_FOURTH_ROOM_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 8, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(AirsRockInside_BlowGust)},
@@ -3811,7 +3841,7 @@ struct Trigger gAirsRockInside_Room6Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x89f, EVENT(AirsRockInside_MoveStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_AIRS_ROCK_STATUE_MOVED, EVENT(AirsRockInside_MoveStatue)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 9, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(AirsRockInside_BlowGust)},
@@ -3828,8 +3858,8 @@ struct Trigger gAirsRockInside_Room7Triggers[] = {
     {TRIGGER_STEP, 212, CONDITION_ALWAYS, EVENT(AirsRockInside_TradePairedStatues)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x8d0, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x8d0, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_AIRS_ROCK_SEVENTH_ROOM_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_AIRS_ROCK_SEVENTH_ROOM_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
@@ -3856,12 +3886,12 @@ struct Trigger gAirsRockInside_Room8Triggers[] = {
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0xa8f, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0xa8f, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x8d1, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x8d1, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x8d2, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x8d2, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, FLAG_AIRS_ROCK_EIGHTH_ROOM_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_AIRS_ROCK_EIGHTH_ROOM_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, FLAG_AIRS_ROCK_EIGHTH_ROOM_SECOND_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_AIRS_ROCK_EIGHTH_ROOM_SECOND_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
@@ -3879,8 +3909,8 @@ struct Trigger gAirsRockInside_Room9Triggers[] = {
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x8d3, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x8d3, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 8, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(AirsRockInside_BlowGust)},

@@ -4,6 +4,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "flags.h"
 #include "fixed_math.h"
 #include "flag_call.h"
 #include "module/field/field.h"
@@ -80,8 +81,8 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
     collision = 0;
     SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction, &position);
-    if (gDebugMode == 0 ||
-        ((gInput.held & KEY_L) == 0 && GameFlag_Get(0x163) == 0)) {
+    if (gDebugMode == 0 || ((gInput.held & KEY_L) == 0 &&
+                            GameFlag_Get(FLAG_DEBUG_STEPS_OFF) == 0)) {
       SET_POSITION(&leftPosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
       SET_POSITION(&rightPosition, object->x, object->y, object->z);

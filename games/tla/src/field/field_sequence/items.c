@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "flags.h"
 #include "fixed_math.h"
 #include "gamepak/far_call/window.h"
 #include "module/field/event_commands.h"
@@ -190,7 +191,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       GameFlag_Set(0x145);
       GameFlag_Clear(0x142);
 
-      if (actionId == 149 && !GameFlag_Get(0x144)) {
+      if (actionId == 149 && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
         MessageArgument_PushFar(itemId, 2);
         FieldMessage_ShowFar((s32)&MsgUseItemQuestion, 13);
         i = FieldYesNo_Ask(1);

@@ -178,7 +178,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
       return;
     djinni = recorded - 1;
   }
-  if (GameFlag_Get(366)) {
+  if (GameFlag_Get(FLAG_DJINN_LESSON)) {
     owner = gMainRoutineWork.currentOwner;
     GameFlag_Set(element * 20 + djinni + 48);
   } else {

@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "flags.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
@@ -1100,7 +1101,8 @@ power_end:
               dmg = 1;
           }
         }
-        if (GameFlag_Get(366) != 0 && plan->command == 5 && hp <= dmg) {
+        if (GameFlag_Get(FLAG_DJINN_LESSON) != 0 && plan->command == 5 &&
+            hp <= dmg) {
           dmg = hp - 1;
         }
         pass++;
@@ -1343,7 +1345,7 @@ power_end:
         dmg += Battle_RandomFar() & 3;
         GUARD_CUT();
         if ((gMainRoutineWork.battleRule24b == 6 ||
-             (GameFlag_Get(366) != 0 && plan->command == 6)) &&
+             (GameFlag_Get(FLAG_DJINN_LESSON) != 0 && plan->command == 6)) &&
             cur > dmg) {
           dmg = cur;
         }

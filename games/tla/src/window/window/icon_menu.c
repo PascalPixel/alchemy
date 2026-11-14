@@ -8,6 +8,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "flags.h"
 #include "sounds.h"
 #include "system/affine.h"
 #include "flag_call.h"
@@ -222,7 +223,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     state->iconShown[2] = 0;
     state->commandActor = -1;
     state->tutorialStep = 0;
-    if (GameFlag_Get(0x16e)) {
+    if (GameFlag_Get(FLAG_DJINN_LESSON)) {
       state->tutorialStep = 1;
       state->tutorialDelay = 60;
     }

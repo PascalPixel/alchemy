@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "flags.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "flag_call.h"
@@ -211,7 +212,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   transition->unk18 = 0;
   transition->unk1c = 0;
   *(volatile u16 *)0x04000000 = 1;
-  GameFlag_Set(0x103);
+  GameFlag_Set(FLAG_IN_BATTLE);
   GameFlag_Set(0x169);
   Transform_Reset();
 
@@ -225,7 +226,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   HeapSlot_AllocEwram(16, 0xe00);
   HeapSlot_AllocEwram(12, 0x600);
   ActorSystem_InitializeFar(4);
-  if (GameFlag_Get(0x16e) != 0)
+  if (GameFlag_Get(FLAG_DJINN_LESSON) != 0)
     WindowSystem_InitBattleFar(1);
   else
     WindowSystem_InitBattleFar(0);
@@ -233,7 +234,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattleCamera_Create();
   enemyCount = BattleFormation_BuildEnemyList(battle->enemyGroup);
 
-  if (GameFlag_Get(0x16c) != 0) {
+  if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     battle->twoSided = 1;
     /* FAKEMATCH(dead): an empty once-only block after the twoSided store. */
     do {
@@ -268,7 +269,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   cue = gMainRoutineWork.sceneCue;
   if (cue != 0) {
     Sound_PlayFar(cue);
-    if (GameFlag_Get(0x16c) != 0) {
+    if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
       Sound_PlayFar(MUS_055);
       Sound_LoadReverbCode(4);
     }
@@ -299,7 +300,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   battle->promptSlot = VramCache_AllocEntry(128);
 
   battle->encounterMode = 0;
-  if (GameFlag_Get(0x16e) != 0) {
+  if (GameFlag_Get(FLAG_DJINN_LESSON) != 0) {
     battle->encounterMode = 1;
   } else if (gMainRoutineWork.battleRule24b == 0) {
     if ((Battle_RandomFar() & 15) == 0)
@@ -420,7 +421,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     } else {
       wait(20);
     }
-    if (GameFlag_Get(0x16e) == 0)
+    if (GameFlag_Get(FLAG_DJINN_LESSON) == 0)
       continue;
 
     window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 7, 0, 4, 1);
@@ -440,7 +441,7 @@ won:
 won_scripted:
   Battle_ClearSerialTransferPayload();
   if ((u32)scripted > 1) {
-    if (enemyGroup != 80 && GameFlag_Get(0x16e) == 0) {
+    if (enemyGroup != 80 && GameFlag_Get(FLAG_DJINN_LESSON) == 0) {
       if (battle->twoSided != 0)
         Sound_PlayFar(MUS_058);
       if (battle->defeated != 0) {
@@ -575,7 +576,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
   limit = 6;
   count = 0;
   if (output != NULL) {
-    if (GameFlag_Get(0x16c) != 0)
+    if (GameFlag_Get(FLAG_LINK_BATTLE) != 0)
       limit = 3;
     id = 0x80;
     limit += 0x80;

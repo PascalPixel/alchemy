@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "flags.h"
 #include "sounds.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
@@ -591,7 +592,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       if ((Battle_RandomFar() & 31) == 0)
         plan->targetMultiplier[0] = 0;
     } while (0);
-    if (GameFlag_Get(366))
+    if (GameFlag_Get(FLAG_DJINN_LESSON))
       plan->targetMultiplier[0] = 0;
     if (target->hp != 0) {
       if ((Battle_RandomFar() & 31) == 0)

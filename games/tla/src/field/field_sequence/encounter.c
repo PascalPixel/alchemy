@@ -141,7 +141,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 
   work = Ram_HeapSlots->eventWork;
   if (GameFlag_Get(351) == 0) {
-    if (GameFlag_Get(352) != 0 || GameFlag_Get(353) != 0)
+    if (GameFlag_Get(352) != 0 || GameFlag_Get(FLAG_NO_ENCOUNTERS_IN_AREA) != 0)
       return 0;
     if (zone == 0)
       return 0;
@@ -450,7 +450,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   u16 music;
   u16 value;
 
-  if (GameFlag_Get(0x16c)) {
+  if (GameFlag_Get(FLAG_LINK_BATTLE)) {
     music = 79;
   } else {
     for (;;) {

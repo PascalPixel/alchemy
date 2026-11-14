@@ -25,12 +25,12 @@
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-#define NAVIGATION ((struct SummonMenuNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 #define SUMMON_END 32
 
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
-  struct SummonMenuOam cursorStorage;
-  struct SummonMenuSprite sprites[4];
+  struct QueuedSprite cursorStorage;
+  struct MenuSprite sprites[4];
   u8 learnedSummons[33];
   u8 orderedSummons[33];
   u16 text[64];
@@ -53,9 +53,9 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     s32 x, y;
   } cursorPosition;
   const struct SummonDefinition *summon;
-  struct SummonMenuNavigation *navigation;
-  struct SummonMenuSprite *sprite;
-  struct SummonMenuOam *cur;
+  struct BattleMenuWork *navigation;
+  struct MenuSprite *sprite;
+  struct QueuedSprite *cur;
   s32 orderedCount;
   s32 id;
   s32 tile;
@@ -257,10 +257,11 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
     ((u32 *)cur)[1] = 0x40000000;
     ((u32 *)cur)[2] = 0;
-    cur->tile = VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
-    cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
-    cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
-    sprite = (struct SummonMenuSprite *)&cursorStorage;
+    cur->oam.index =
+        VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
+    cur->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    cur->oam.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite = (struct MenuSprite *)&cursorStorage;
     Oam_AddSpriteAtDepth(sprite, 242);
 
     {

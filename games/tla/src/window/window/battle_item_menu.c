@@ -110,7 +110,7 @@ struct ItemMenuWork {
   u8 holdTilemapUpload;
 };
 
-#define NAVIGATION ((struct ItemMenuNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 #define ITEM_BROKEN 0x400
 
 // Sets a menu sprite's attribute words.
@@ -131,7 +131,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   struct {
     s32 x, y;
   } cursorPosition;
-  struct ItemMenuNavigation *navigation;
+  struct BattleMenuWork *navigation;
   struct ItemMenuWindow *window;
   s32 firstEntry;
   s32 selectedRow;
@@ -141,12 +141,12 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 unusableReason;
   s32 result;
   s32 i;
-  struct ItemMenuOam cursorStorage;
-  struct ItemMenuSprite *iconSprite;
-  struct ItemMenuOam *sprite;
+  struct QueuedSprite cursorStorage;
+  struct MenuSprite *iconSprite;
+  struct QueuedSprite *sprite;
   u16 messageText[64];
   s32 iconSlots[5];
-  struct ItemMenuSprite sprites[5];
+  struct MenuSprite sprites[5];
 
   work = (struct ItemMenuWork *)Ram_HeapSlots->windowTiles;
   drawnFirstEntry = -1;
@@ -274,9 +274,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = 0x40000000;
     ((u32 *)sprite)[2] = 0;
-    sprite->tile = VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
-    sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
-    sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite->oam.index =
+        VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
+    sprite->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    sprite->oam.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
       Oam_AddSpriteAtDepth(sprite, 242);
 

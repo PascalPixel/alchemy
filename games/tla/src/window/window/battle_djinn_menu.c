@@ -31,7 +31,7 @@
 #define DJINN_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-#define NAVIGATION ((struct DjinnMenuNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 // Reads the menu's page, row and preferred row.
 #define DJINN_MENU_GET_CURSOR(page_, row_, preferred_)                         \
@@ -53,7 +53,7 @@
 #define DJINN_ENTRY_END 0x80000000
 
 s32 BattleDjinnMenu_Run(s32 member) {
-  struct DjinnMenuOam cursorSprite;
+  struct QueuedSprite cursorSprite;
   u16 messageText[64];
   struct WindowWork *work;
   struct DjinnMenuWindow *previewWindow;
@@ -72,7 +72,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
 #if TLA_PATCH_1
   s32 redrawList;
 #endif
-  struct DjinnMenuNavigation *navigation;
+  struct BattleMenuWork *navigation;
   struct BattleUnit *unit;
   struct DjinnRecoveryList *list;
   struct DjinnMenuWindow *listWindow;
@@ -160,7 +160,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
 
   for (;;) {
     /* FAKEMATCH(temporary): sprite holds &cursorSprite. */
-    struct DjinnMenuOam *sprite = &cursorSprite;
+    struct QueuedSprite *sprite = &cursorSprite;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||
         redraw != 0) {
@@ -487,14 +487,15 @@ s32 BattleDjinnMenu_Run(s32 member) {
 
     cursorPos.x = listWindow->x * 8 - 2;
     cursorPos.y = (selectedRow * 2 + listWindow->y) * 8 + 20;
-    ((struct DjinnMenuSprite *)sprite)->attr01 = 0x40000000;
-    ((struct DjinnMenuSprite *)sprite)->attr23 = 0;
+    ((struct MenuSprite *)sprite)->oam.word.attr01 = 0x40000000;
+    ((struct MenuSprite *)sprite)->oam.word.attr23 = 0;
     // Once-only: keeps cursorSlot's load before the tiles address.
     do {
     } while (0);
-    sprite->tile = VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
-    sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
-    sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite->oam.index =
+        VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
+    sprite->oam.x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
+    sprite->oam.y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0)
       Oam_AddSpriteAtDepth(sprite, 242);
 

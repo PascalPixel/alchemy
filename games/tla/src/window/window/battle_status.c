@@ -44,7 +44,7 @@
 #define SUMMARY_STAT_VALUE_X 184
 #endif
 
-#define NAVIGATION ((struct SummaryNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 #if TLA_PATCH_2
 extern const u8 gOwnerStatus_NivString[];
@@ -117,7 +117,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct BattleUnit *unit;
   s32 i;
   s32 j;
-  struct SummaryNavigation *navigation;
+  struct BattleMenuWork *navigation;
   s32 rowBase;
   s32 row;
   s32 groupPosition;
@@ -507,7 +507,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
     if (page == 3) {
       // Items: those the member can use in battle first.
-      u16 *entries = NAVIGATION->list;
+      u16 *entries = NAVIGATION->listAbilities;
       s32 count;
       s32 index;
       s32 item;
@@ -575,7 +575,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     } else if (page == 1) {
       // Battle Psynergy: grey when it cannot be used in battle, red when the
       // PP are short, another colour while Psynergy is sealed.
-      u16 *entries = NAVIGATION->list;
+      u16 *entries = NAVIGATION->listAbilities;
       s32 count;
       s32 shownRow;
       s32 index;

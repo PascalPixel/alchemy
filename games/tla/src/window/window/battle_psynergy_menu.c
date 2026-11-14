@@ -7,7 +7,7 @@
 #include "window_tile.h"
 #include "module/window/screens.h"
 
-#define NAVIGATION ((struct PsynergyMenuNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 // How much of the description under the cursor is copied: more outside
 // Japanese.
@@ -91,7 +91,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   struct {
     s32 x, y;
   } cursorPosition;
-  struct PsynergyMenuNavigation *navigation;
+  struct BattleMenuWork *navigation;
   struct PsynergyMenuWindow *window;
   s32 selectedRow;
   s32 encodedAction;
@@ -100,11 +100,11 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   s32 rangePattern;
   s32 result;
   s32 i;
-  struct PsynergyMenuSprite cursor;
-  struct PsynergyMenuSprite *iconSprite;
+  struct MenuSprite cursor;
+  struct MenuSprite *iconSprite;
   u16 messageText[64];
   s32 iconSlots[5];
-  struct PsynergyMenuSprite sprites[5];
+  struct MenuSprite sprites[5];
   s32 glyph;
 
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;

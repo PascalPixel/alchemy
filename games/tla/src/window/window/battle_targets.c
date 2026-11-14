@@ -26,7 +26,7 @@
 #define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
-#define NAVIGATION ((struct TargetNavigation *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 #if TLA_PATCH_2
 extern const u8 gOwnerStatus_KpString[];

@@ -171,12 +171,20 @@
 #define FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED 0xa0a
 /// The same for the right tower's archer and the right angel.
 #define FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED 0xa0b
-
-/// Set as the left tower's archer statue shoots its arrow at the left angel
-/// on Jupiter Lighthouse's aerie, which starts to lift its half of the lid.
-#define FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED 0xa0a
-/// The same for the right tower's archer and the right angel.
-#define FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED 0xa0b
+/// Set once both angels are energized and the lid is off the well on Jupiter
+/// Lighthouse's aerie, where Isaac's party is found.
+#define FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED 0xa1f
+/// Set as the party comes out by the aerie to watch Karst and Agatio fight
+/// Isaac and Ivan; cleared once the two have fallen.
+#define FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED 0xa24
+/// Set as Alex stops the party on its way to the fight and heals it; while
+/// set there are no encounters and Retreat is blocked.
+#define FLAG_JUPITER_LIGHTHOUSE_ALEX_HEALED_THE_PARTY 0xa25
+/// Set once Isaac and Ivan have fallen to Karst and Agatio and gone up to the
+/// aerie, where the two wait for Felix.
+#define FLAG_ISAAC_AND_IVAN_FELL 0xa23
+/// Set as the Jupiter Star lights the beacon; Contigo's people speak of it.
+#define FLAG_JUPITER_BEACON_LIT 0xa21
 
 /// Set once Felix has woken on Idejima's shore.
 #define FLAG_IDEJIMA_FELIX_WOKE 0x844

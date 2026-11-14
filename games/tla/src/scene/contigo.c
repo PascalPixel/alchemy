@@ -437,7 +437,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     if (gMainRoutineWork.entrance == 4) {
       if (GameFlag_Get(0x9b2) != 0)
         return gContigo_Room2Placements;
-      if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
+      if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 && GameFlag_Get(0x9d0) == 0)
         return gContigo_Room2PlacementsReunion;
     }
     return gContigo_Room2PlacementsBeforeReunion;
@@ -712,7 +712,7 @@ void Contigo_TalkToInnkeeper(void) {
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(0x9b2))
       Event_SetMessageId((s32)MsgContigo178);
-    else if (GameFlag_Get(0xa21))
+    else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT))
       Event_SetMessageId((s32)MsgContigo128);
     else
       Event_SetMessageId((s32)MsgContigo76);
@@ -729,7 +729,7 @@ void Contigo_TalkToHealer(void) {
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(0x9b2))
       Event_SetMessageId((s32)MsgContigo186);
-    else if (GameFlag_Get(0xa21))
+    else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT))
       Event_SetMessageId((s32)MsgContigo136);
     else
       Event_SetMessageId((s32)MsgContigo88);
@@ -861,14 +861,14 @@ void Contigo_TalkToWanderer(void) {
     Actor_FaceActorById(14, gMainRoutineWork.currentOwner, 0);
     if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo203);
-    else if (GameFlag_Get(0xa21) != 0)
+    else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
       Event_SetMessageId((s32)MsgContigo199);
     else
       Event_SetMessageId((s32)MsgContigo41);
   } else {
     if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo205);
-    else if (GameFlag_Get(0xa21) != 0)
+    else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
       Event_SetMessageId((s32)MsgContigo201);
     else
       Event_SetMessageId((s32)MsgContigo49);
@@ -2044,7 +2044,7 @@ void Contigo_InitializeRoom1(void) {
   BYTE_AT(object, 98) = 1;
   BYTE_AT(object, 99) = zero;
   *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
-  if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9b2) == 0) {
+  if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 && GameFlag_Get(0x9b2) == 0) {
     Actor_Stop(15);
     Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
@@ -2086,7 +2086,7 @@ void Contigo_InitializeRoom1(void) {
 
 void Contigo_InitializeRoom4(void) {
   Contigo_ShrinkActor(18);
-  if (GameFlag_Get(0xa21) != 0) {
+  if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0) {
     MapGrid_CopyCellAttributes(44, 40, 8, 3, 44, 36);
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
@@ -2131,7 +2131,7 @@ struct ContigoEventWork {
 void Contigo_InitializeRoom2(void) {
   gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 4) {
-    if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
+    if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 && GameFlag_Get(0x9d0) == 0)
       Contigo_TheReunion();
   } else if (gMainRoutineWork.entrance == 21) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);

@@ -313,7 +313,7 @@ void JupiterLighthouse_PlaceAngelBlock(s32 unused, s32 id) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED))
-    Event_SetFlag(2591);
+    Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED);
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

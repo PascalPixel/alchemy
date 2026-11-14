@@ -363,7 +363,7 @@ void JupiterLighthouse_OpenFloor(void) {
   s32 x;
   s32 i;
 
-  if (Event_GetFlag(2591))
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED))
     return;
   GameFlag_Set(FLAG_SCENE_TEMP_02);
   Event_Start();
@@ -455,7 +455,7 @@ void JupiterLighthouse_OpenFloor(void) {
 }
 
 void JupiterLighthouse_CloseFloor(void) {
-  if (Event_GetFlag(0xa1f) != 0)
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED) != 0)
     return;
   Event_ClearFlag(FLAG_SCENE_TEMP_02);
   Event_Start();
@@ -1599,19 +1599,19 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
     MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);
   }
-  if (Event_GetFlag(2591)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED)) {
     MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
     MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);
     Actor_SetPosition(23, 0, 0);
-    if (Event_GetFlag(2595)) {
-      if (!Event_GetFlag(2593)) {
+    if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL)) {
+      if (!Event_GetFlag(FLAG_JUPITER_BEACON_LIT)) {
         JupiterLighthouse_PlaceForTheFight();
         JupiterLighthouse_PlaceTheHurt();
       }
-    } else if (!Event_GetFlag(2596)) {
+    } else if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED)) {
       if (gMainRoutineWork.entrance == 3) {
         JupiterLighthouse_PlaceForTheFight();
-        Event_SetFlag(2596);
+        Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED);
         JupiterLighthouse_PartyArrivesAtTheFight(gMainRoutineWork.entrance ==
                                                  3);
       }
@@ -1621,8 +1621,8 @@ s32 Scene_Initialize(void) {
         JupiterLighthouse_IsaacAndIvanAreHurt();
       } else if (gMainRoutineWork.entrance == 77) {
         JupiterLighthouse_IsaacAndIvanFall();
-        Event_SetFlag(2595);
-        Event_ClearFlag(2596);
+        Event_SetFlag(FLAG_ISAAC_AND_IVAN_FELL);
+        Event_ClearFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED);
       } else {
         JupiterLighthouse_StartTheFight();
       }
@@ -2036,11 +2036,11 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideWhirlwind)},
     {TRIGGER_STEP, 32, 0x202, EVENT(JupiterLighthouse_OpenFloor)},
     {TRIGGER_STEP, 33, IF_FLAG_SET(0x202), EVENT(JupiterLighthouse_CloseFloor)},
-    {TRIGGER_TALK, 0, IF_FLAG_SET(0xa23), EVENT(JupiterLighthouse_TalkToReunitedParty)},
-    {TRIGGER_TALK, 2, IF_FLAG_SET(0xa23), EVENT(JupiterLighthouse_TalkToReunitedParty)},
-    {TRIGGER_TALK, 6, IF_FLAG_SET(0xa23), EVENT(JupiterLighthouse_TalkToReunitedParty)},
-    {TRIGGER_TALK, 5, IF_FLAG_SET(0xa23), EVENT(JupiterLighthouse_TalkToReunitedParty)},
-    {TRIGGER_TALK, 28, IF_FLAG_SET(0xa23), EVENT(JupiterLighthouse_TalkToReunitedParty)},
+    {TRIGGER_TALK, 0, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},
+    {TRIGGER_TALK, 2, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},
+    {TRIGGER_TALK, 6, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},
+    {TRIGGER_TALK, 5, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},
+    {TRIGGER_TALK, 28, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 20, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},

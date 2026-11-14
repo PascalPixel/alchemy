@@ -1,14 +1,13 @@
-/// Orbs rise round actor 23, faster once flag 0x201 is set.
 void Orbs_SpawnRising(void) {
   struct Actor *center;
   struct OrbitEffect *effect;
   struct FieldSprite *sprite;
   s32 angle;
 
-  if (Event_GetFlag(0x201) == 0 && gFrameCount % 3 != 0)
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01) == 0 && gFrameCount % 3 != 0)
     return;
-  center = Actor_Get(23);
-  if (Event_GetFlag(0x201) != 0) {
+  center = Actor_Get(ACTOR_LOWER_BEAM);
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01) != 0) {
     u32 random;
 
     random = Random16();

@@ -337,9 +337,9 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
 
 void JupiterLighthouse_KarstAndAgatioWait(void) {
 
-  if (Event_GetFlag(0xa23)) {
+  if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL)) {
     Event_SetFlag(FLAG_SCENE_TEMP_00);
-    if (!Event_GetFlag(0xa21)) {
+    if (!Event_GetFlag(FLAG_JUPITER_BEACON_LIT)) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgYouReLate);
@@ -446,7 +446,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
   u8 *buffer;
   u8 *flags;
 
-  if (GameFlag_Get(0xa23) != 0) {
+  if (GameFlag_Get(FLAG_ISAAC_AND_IVAN_FELL) != 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered((s32)MsgThereSeemsTo, 5);
@@ -455,9 +455,9 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       Actor_SetSpeed(4, 1);
       Actor_WalkToAndWait(4, 514, 309);
     } else {
-      Event_SetFlag(0xa21);
+      Event_SetFlag(FLAG_JUPITER_BEACON_LIT);
       Event_SetFlag(FLAG_SHIP_FLIES);
-      Event_ClearFlag(0xa25);
+      Event_ClearFlag(FLAG_JUPITER_LIGHTHOUSE_ALEX_HEALED_THE_PARTY);
       Event_ClearFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
       Event_ClearFlag(FLAG_RETREAT_BLOCKED);
       Actor_FaceDirection(27, FACING_NORTH_NORTHEAST, 0);
@@ -2291,7 +2291,7 @@ s32 Scene_Initialize(void) {
   FIELD_AT((t7 + 0x23), u8, 0) = (FIELD_AT((t7 + 0x23), u8, 0) | 0x80);
   t8 = Actor_Get(22);
   FIELD_AT((t8 + 0x23), u8, 0) = (0x80 | FIELD_AT((t8 + 0x23), u8, 0));
-  if (!Event_GetFlag(0xa21)) {
+  if (!Event_GetFlag(FLAG_JUPITER_BEACON_LIT)) {
     JupiterLighthouse_EnergizeAngels();
   } else {
     t11 = Actor_Get(24);
@@ -2323,7 +2323,7 @@ s32 Scene_Initialize(void) {
           if (gMainRoutineWork.entrance == 0xd) {
             JupiterLighthouse_KarstAndAgatioRetreat();
           } else {
-            if (Event_GetFlag(0xa21)) {
+            if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT)) {
               Actor_SetPosition(27, 0, 0);
               Actor_SetPosition(28, 0, 0);
             }

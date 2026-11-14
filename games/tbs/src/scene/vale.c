@@ -151,7 +151,6 @@ extern s32 gVale_GuardFromSecondPausePath[];
 extern struct Trigger gVale_TriggersAfterKalay[];
 extern s32 gVale_JennaWalksToTheHouse[];
 
-
 #include "field/event_inline.h"
 #include "system/iwram_call.h"
 #include "text/msg_ids.h"
@@ -322,7 +321,7 @@ enum ValeOpeningActorId {
   ACTOR_OPENING_FIRST_BOARD,
   ACTOR_OPENING_SECOND_BOARD,
   ACTOR_OPENING_THIRD_BOARD,
-  /// SPRITE_MOVE_HAND, the hand of Move (event_commands/catch.c). It pushes the
+  /// SPRITE_MOVE_HAND, the hand of Move (event_commands_catch.c). It pushes the
   /// pillar for Garet, shedding sparkles.
   ACTOR_OPENING_MOVE_HAND
 };

@@ -50,9 +50,9 @@
 /// suspects.
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
 // Lit lighthouses. Inside a lit lighthouse, the Adepts of its element regain
-// PP faster (units.c). Each lighthouse's scenes set its flag on every arrival,
-// and Scene_Arrive clears all four when the party enters another
-// area, so a flag is set only while the party is inside.
+// PP faster (game_units.c). Each lighthouse's scenes set its flag on every
+// arrival, and Scene_Arrive clears all four when the party enters another area,
+// so a flag is set only while the party is inside.
 /// The party is inside Venus Lighthouse, which is lit.
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
 /// The party is inside Mercury Lighthouse, which is already lit when the

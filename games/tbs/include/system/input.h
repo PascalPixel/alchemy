@@ -6,7 +6,7 @@
 ///
 /// The VBlank handler reads the keypad into these cells, and
 /// Input_UpdateKeyRepeatAndDirection turns them into repeats after each frame
-/// (system/system/frame.c). The first three are volatile because the VBlank
+/// (system/system_frame.c). The first three are volatile because the VBlank
 /// handler sets them while the code it interrupts reads them, so they are no
 /// device; the next two are volatile only to match, and their tags name what
 /// differs without it.

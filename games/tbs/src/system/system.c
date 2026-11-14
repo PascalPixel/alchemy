@@ -10,34 +10,35 @@
 /// README.md in this folder gives the words and prefixes the parts use. Where
 /// to start:
 ///
-///   Power-up        start_up.c: System_Initialize
-///   Frames          frame.c: wait(), System_VBlankHandler,
-///                   Irq_SetHandler; task.c:
+///   Power-up        system_start_up.c: System_Initialize
+///   Frames          system_frame.c: wait(), System_VBlankHandler,
+///                   Irq_SetHandler; system_task.c:
 ///                   Task_Add
-///   Screen          screen_fade.c: ScreenFade_Start; oam.c: Oam_BuildBuffer;
-///                   vram_cache.c: VramCache_Load
-///   Memory          heap.c: HeapSlot_Alloc, Heap_Alloc
-///   3D              transform.c: Transform_ApplyRotationTranslation,
+///   Screen          system_screen_fade.c: ScreenFade_Start; system_oam.c:
+///   Oam_BuildBuffer;
+///                   system_vram_cache.c: VramCache_Load
+///   Memory          system_heap.c: HeapSlot_Alloc, Heap_Alloc
+///   3D              system_transform.c: Transform_ApplyRotationTranslation,
 ///                   Transform_ProjectPoint
-///   Saving          save.c: Save_WritePart,
+///   Saving          system_save.c: Save_WritePart,
 ///                   Save_ReadPart
-///   Link cable      serial.c: Serial_Initialize,
+///   Link cable      system_serial.c: Serial_Initialize,
 ///                   Serial_ExchangePayloads
 
 #include "system_internal.h"
 
 // The parts, in ROM order (src/README.md, "Objects and parts").
-#include "system/start_up.c"
-#include "system/frame.c"
-#include "system/io_write_queue.c"
-#include "system/screen_fade.c"
-#include "system/oam.c"
-#include "system/vram_cache.c"
-#include "system/task.c"
-#include "system/math.c"
-#include "system/debug_text.c"
-#include "system/heap.c"
-#include "system/transform.c"
-#include "system/decompress.c"
-#include "system/save.c"
-#include "system/serial.c"
+#include "system_start_up.c"
+#include "system_frame.c"
+#include "system_io_write_queue.c"
+#include "system_screen_fade.c"
+#include "system_oam.c"
+#include "system_vram_cache.c"
+#include "system_task.c"
+#include "system_math.c"
+#include "system_debug_text.c"
+#include "system_heap.c"
+#include "system_transform.c"
+#include "system_decompress.c"
+#include "system_save.c"
+#include "system_serial.c"

@@ -856,7 +856,7 @@ static s32 BattleArena_EnterBattle(void) {
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
     // HEAP_SLOT_ENEMY_UNITS is gEnemyUnits, the battle's enemy
-    // units (ENEMY_UNITS_SIZE, battle/battle/run.c). While it is
+    // units (ENEMY_UNITS_SIZE, battle/battle_run.c). While it is
     // allocated, the exchange below receives the partner's party members and
     // Djinn into units 128 to 131. The copy to gActorSpriteSlots
     // (gMapGridCellBuffer + 0x8000) hands them to Battle_Run, which copies
@@ -925,7 +925,8 @@ static s32 BattleArena_EnterBattle(void) {
     }
     // Publish EXEC only after the battle and return destinations are ready.
     // It fills the payload's first four halfwords, where the link battle's
-    // command entry looks for it in the partner's (battle_party_commands.c).
+    // command entry looks for it in the partner's
+    // (screens_battle_party_commands.c).
     Battle_SetType(BATTLE_TYPE_LINK);
     Field_RequestBattleFromEncounterTable(1, 1);
     signature = (u16 *)gSerialTransfer.payload;

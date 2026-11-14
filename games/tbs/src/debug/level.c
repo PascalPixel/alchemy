@@ -492,7 +492,7 @@ static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
 
 /// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run at phase 1 of Force
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
-/// its target where it is (field/event_commands/force.c).
+/// its target where it is (field/event_commands_force.c).
 static void IncreaseItemAndLevel_EnableEffectChildMode(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;

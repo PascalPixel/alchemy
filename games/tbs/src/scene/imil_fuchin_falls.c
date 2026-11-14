@@ -87,7 +87,7 @@
 /// (FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST
 /// and _WEST) or up by
 /// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE starts the
-/// fade overlay (field/field_sequence/ground_mask.c). The overlay follows the
+/// fade overlay (field/field_sequence_ground_mask.c). The overlay follows the
 /// leader, except from
 /// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE. Step
 /// triggers 15 and 16 start and stop its following. When Reveal ends, the room

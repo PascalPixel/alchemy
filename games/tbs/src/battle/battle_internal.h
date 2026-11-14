@@ -153,7 +153,7 @@
 
 /// The frames a link battle tolerates without a connection before it gives
 /// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
-/// the sync or transfer under way (link.c, turn.c).
+/// the sync or transfer under way (battle_link.c, battle_turn.c).
 #define LINK_MAX_MISSED_FRAMES 24
 
 /// The two battle sprites drawn in two parts: the sprite after each is its
@@ -192,7 +192,7 @@ enum BattleCastKind {
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
 
-/// The list place codes the target pickers return (targeting.c,
+/// The list place codes the target pickers return (battle_targeting.c,
 /// Battle_FindUnitPlace): a place in the party's list or the enemies',
 /// or'd with the side's tag.
 #define PLACE_PARTY 0x100

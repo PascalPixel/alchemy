@@ -307,8 +307,8 @@ enum BattleTargetHint {
 #define SAVE_SCAN_ALL_CLEARED 100
 
 /// One icon of the command row (struct BattleCommandRowWork): its sprite, where
-/// it stands and the command it stands for. menu_titles.c loads it,
-/// battle_command_row.c runs the row.
+/// it stands and the command it stands for. screens_menu_titles.c loads it,
+/// screens_battle_command_row.c runs the row.
 struct BattleCommandRowIcon {
   /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
   /// the others show as tiles of BG1.

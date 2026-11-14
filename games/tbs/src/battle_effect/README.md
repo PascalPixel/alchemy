@@ -101,7 +101,7 @@ live.
 
 A handler reads the way its effect plays: set up, then one frame's work
 after another with a wait of one frame between, then tidy up. Anything that
-happens once is tied to a frame number. [`bolt.c`](battle_effect/bolt.c) is
+happens once is tied to a frame number. [`battle_effect_bolt.c`](battle_effect_bolt.c) is
 a short one to start with.
 
 One of those frames is the signal to the battle. From it on, the battle

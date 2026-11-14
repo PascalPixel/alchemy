@@ -23,7 +23,7 @@ One [task](../../glossary.md#task) runs every frame and does three things in
 order: step every window that is opening or closing, type the next letters
 of every message whose window is open, and draw. Everything on this page
 happens inside it, which is why a window keeps typing while the code that
-opened it stands still (`window/windows.c`).
+opened it stands still (`window_windows.c`).
 
 ## Decoding a message
 
@@ -34,7 +34,7 @@ name. The text itself is in
 [`text/en.po`](../../text/en.po), one file for each language. On the
 cartridge a message is packed, and has blanks in it. Before the first
 letter is typed the whole message is decoded: unpacked and filled in
-(`window/decode.c`).
+(`window_decode.c`).
 
 A blank is written in braces in the text file:
 
@@ -77,8 +77,8 @@ change colour, stop.
 
 The message speed in the settings decides how many letters come in a
 frame. Lines are also set level at the right edge, by measuring a line
-before it is typed and widening its spaces a little (`window/typing.c`,
-`window/measure.c`).
+before it is typed and widening its spaces a little (`window_typing.c`,
+`window_measure.c`).
 
 ## Drawing text
 
@@ -107,7 +107,7 @@ is drawn from one set of colours, so changing it changes them all at once.
 ![Isaac opens the Pause menu by Vale's river and chooses `Save your quest`: the file list shows three files with `No saved data`, the first is chosen, `Saving...` shows and `Your game was saved.` confirms it.](https://alchemy.pascalpixel.com/guides/window/save.gif)
 
 The Save command and the File Screen's list are here
-(`screens/save.c`). Each file carries a short summary, so the list is
+(`screens_save.c`). Each file carries a short summary, so the list is
 drawn without reading any file whole. What a save holds, and how it is
 written safely, is in [System code](../system/README.md#saving).
 

@@ -80,7 +80,7 @@ extern u8 gItemMenu_EquipmentKeyString[];
 /// background (TEXT_CANVAS_BACKGROUND_WORD) in turn every four frames.
 extern const u8 gMenu_BackdropBorderTile[];
 /// The colon the debug menus' scene and flag rows draw
-/// (window/screens/debug.c): `:`.
+/// (window/screens_debug.c): `:`.
 extern const u8 gMenu_ColonString[];
 /// The selection screen's left arrow, 8 by 16 at 256 colours
 /// (graphics/ui/sprite_cursors/left).
@@ -143,7 +143,6 @@ extern const u16 gSettingsMenu_SliderPalette[];
 extern const u8 gSettingsMenu_SliderTiles[];
 void Import_TitleShowCamelotLogo(s32 mode);
 void Import_CreditsRun(s32 mode);
-
 
 struct Unit;
 struct DjinnListTable;

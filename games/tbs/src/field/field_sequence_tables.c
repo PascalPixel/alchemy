@@ -8,8 +8,8 @@
 #include "field/scene_tables.h"
 
 // Their readers declare them in battle.h, field.h, graphics.h, line_scroll.h,
-// field_effect_scripts.h and field_sequence_internal.h, and palette_fade.c
-// declares the colour curves.
+// field_effect_scripts.h and field_sequence_internal.h, and
+// field_sequence_palette_fade.c declares the colour curves.
 
 /// The message of each searchable cell behavior from 242 to 247, as an
 /// offset from MsgTileChecked and MsgTileResult.
@@ -65,7 +65,7 @@ const s32 gFieldEffect_ParticleEmitterScript[] = {
 };
 
 /// Pulses twice, to 1.5 times full size, then rests, over and over: the found
-/// item's picture held over the leader (field_sequence/item_display.c).
+/// item's picture held over the leader (field_sequence_item_display.c).
 const s32 gFieldEffect_RisingPulseScript[] = {
     SC_WAIT(10),
     SC_SET(SW_SCALE_X, Q16_ONE * 11 / 8),
@@ -133,7 +133,7 @@ const u8 gScreenTransition_DitherTable[64] = {
     62, 45, 19, 60, 57, 49, 25, 55, 38, 14, 44, 13, 33, 37, 1, 21,
 };
 
-/// Colour channel curves of the palette tints (field_sequence/palette_fade.c):
+/// Colour channel curves of the palette tints (field_sequence_palette_fade.c):
 /// each maps a 5-bit channel (0 to 31) to a palette fade channel, shifted up 10
 /// bits, so 31 is 0x7c00.
 const u16 gColorBuffer_ChannelCurve[32] = {
@@ -379,7 +379,7 @@ const s16 gLineScroll_WaveSine[256] = {
 };
 
 /// {dx, dy, tile, shape, size} for each of 16 frames of a ground particle
-/// (weather.c): dx and dy in screen pixels from its spot, tile from its first
+/// (event_commands_weather.c): dx and dy in screen pixels from its spot, tile from its first
 /// tile.
 const s16 gFieldEffect_GroundParticleFrames[80] = {
     -8, -12, 20, 0, 1,
@@ -400,7 +400,7 @@ const s16 gFieldEffect_GroundParticleFrames[80] = {
     64, -160, 0, 2, 2,
 };
 
-/// {dy, tile} of a sparkle (weather.c): dy in screen pixels from its spot, a
+/// {dy, tile} of a sparkle (event_commands_weather.c): dy in screen pixels from its spot, a
 /// row every two frames.
 const struct SparklePicture gFieldEffect_SparklePictures[32] = {
     {-2, 12},
@@ -438,7 +438,7 @@ const struct SparklePicture gFieldEffect_SparklePictures[32] = {
 };
 
 /// Two scales that alternate ((gVBlankCount >> 2) & 1): full size and 0.97 of
-/// it (FieldEffect_PulseActorScale, jupiter.c); nothing reads the
+/// it (FieldEffect_PulseActorScale, event_commands_jupiter.c); nothing reads the
 /// third word.
 const u32 gFieldEffect_PulseScales[3] = {Q16_ONE, Q16_ONE * 97 / 100, 16};
 
@@ -470,7 +470,7 @@ const s32 gFieldEffect_FragmentScript[] = {
 };
 
 /// An angle for each value of the right, left, up and down bits of the +Control
-/// Pad; DPAD_ANGLE_NONE for none (Input_GetDpadAngle, move.c).
+/// Pad; DPAD_ANGLE_NONE for none (Input_GetDpadAngle, event_commands_move.c).
 const u16 gFieldEffect_CyclePatternWords[16] = {
     DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
     FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,
@@ -479,7 +479,7 @@ const u16 gFieldEffect_CyclePatternWords[16] = {
 };
 
 /// Move's hand animation by the quarter turns from its side of the target to
-/// the push (move.c): 3 toward its side, 2 away from it, 1 either way across.
+/// the push (event_commands_move.c): 3 toward its side, 2 away from it, 1 either way across.
 const u8 gFieldEffect_QuadrantModes[4] = {3, 1, 2, 1};
 
 /// Waits 60 frames and releases the actor. Word +4 is
@@ -492,7 +492,7 @@ const s32 gFieldEffect_BurstParticleActorScript[] = {
 /// The same four bytes as gFieldEffect_QuadrantModes; nothing reads them.
 const u8 gUnused_BattleEffectBytes[4] = {3, 1, 2, 1};
 
-/// Waits to arrive, sets off SpawnHeavyImpactEffect (lift.c) and releases the
+/// Waits to arrive, sets off SpawnHeavyImpactEffect (event_commands_lift.c) and releases the
 /// actor.
 const s32 gFieldEffect_HeavyImpactScript[] = {
     SC_SYNC,
@@ -517,7 +517,7 @@ const s32 gFieldEffect_LongEffectScript[] = {
 };
 
 /// The sprite params a paused actor flickers through at random
-/// (FieldPsynergy_UpdateHaltedActor, halt.c): 0 twice as often as
+/// (FieldPsynergy_UpdateHaltedActor, event_commands_halt.c): 0 twice as often as
 /// each of 1 to 6.
 const s8 gFieldEffect_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 

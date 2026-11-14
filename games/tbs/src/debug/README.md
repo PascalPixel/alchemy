@@ -54,5 +54,5 @@ of people who each run one test: a shop, an inn, a message.
 ## Where the code is
 
 - `test_scenes.c`, `level.c` and `test.c` are the three overlays.
-- The debug windows are in `window/screens/debug.c`, and the palette editor
-  in `field/field_sequence/palette_editor.c`.
+- The debug windows are in `window/screens_debug.c`, and the palette editor
+  in `field/field_sequence_palette_editor.c`.

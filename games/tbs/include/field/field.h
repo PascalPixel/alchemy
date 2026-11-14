@@ -246,7 +246,6 @@ extern const u8 gActor_ShadowTiles[];
 
 #include "graphics/render_placement.h"
 
-
 struct SpriteAnimation;
 struct Sprite;
 struct Actor;
@@ -453,7 +452,7 @@ void Actor_SetAnimationSpeed(struct Actor *actor, s32 val);
 s32 ActorScript_SetFlagAndTest(struct Actor *interpreter);
 s32 ActorScript_ClearFlagAndTest(struct Actor *interpreter);
 // The work values of SC_SET, SC_ADD and SC_CMP, one handler each
-// (gActorScript_OperandHandlerTable, field/field/script_commands.c): by
+// (gActorScript_OperandHandlerTable, field/field_script_commands.c): by
 // operation, each sets one of the actor's fields to value, adds value to it, or
 // compares the two into conditionResult.
 void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *state,

@@ -1,0 +1,483 @@
+/// @file
+/// The debug menus (scenes, flags, icon browsers) and the Pause menu's
+/// choices.
+// Part of screens.c.
+
+#include "screens_internal.h"
+
+/// Schedules the debug scene and entrance selector;
+/// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
+/// Nothing in the game calls it.
+UNUSED void DebugSceneSelect_Schedule(void) {
+  Task_Add((TaskFunc)DebugSceneSelect_Run, TASK_PASS_FRAME);
+}
+
+/// Draws the debug scene and entrance numbers with their scene code and area
+/// name.
+void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,
+                              const s16 *entrance) {
+  s16 mapIndex = sceneId;
+  s32 label = Area_GetNameIndexFar(mapIndex, *entrance) + MsgDebugAreaName;
+  WindowSprite_PrepareForRedraw(window);
+  Text_DrawNumber(mapIndex, 3, window, 0, 14);
+  Text_DrawNumber(*entrance, 3, window, MENU_LABEL_X, 14);
+  Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 0);
+  Text_DrawMessage(mapIndex + MsgDebugSceneCode, window, 0, 0);
+  Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 14);
+  Text_DrawMessage(label, window, MENU_LABEL_X, 0);
+}
+
+// The debug scene selector: a scene and an entrance number, starting from the
+// scene being run (DebugSceneSelect_HandleRowInput has the keys).
+#ifdef UBFIX
+void DebugSceneSelect_Run(void) {
+#else
+s16 DebugSceneSelect_Run(void) {
+#endif
+  s32 cursorSlot;
+  s16 selectedField;
+  s16 entrance;
+  struct MenuSprite cursor;
+  s16 sceneId;
+  struct Window *window;
+  s16 result;
+
+  window = 0;
+  selectedField = 0;
+  sceneId = gMainRoutineWork.returnScene;
+  entrance = gMainRoutineWork.returnEntrance;
+  window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
+  DebugSceneSelect_DrawRow(window, sceneId, &entrance);
+  MenuArrow_Create(&cursor, &cursorSlot);
+
+  // Wait for the keys that opened it to be let go.
+  while (gKeysHeld != 0)
+    wait(1);
+
+  for (;;) {
+    result = DebugSceneSelect_HandleRowInput(window, sceneId, &entrance,
+                                             &selectedField);
+    if (result == -1) {
+      MenuArrow_Release(cursorSlot);
+      Window_Close(window, 2);
+      Event_SetDestinationFar(sceneId, entrance);
+      RETURN_UNREAD(result);
+    }
+    if (result == -2) {
+      MenuArrow_Release(cursorSlot);
+      Window_Close(window, 2);
+      RETURN_UNREAD(result);
+    }
+
+    MenuArrow_SetPosition(&cursor, MENU_TEXT_X,
+                          selectedField * 14 + MENU_TEXT_Y);
+    sceneId = result;
+    wait(1);
+  }
+}
+
+/// Edits the debug scene or entrance, returning -1 to exit and -2 to cancel.
+/// Shoulder buttons step by ten; it keeps the original 99-step entrance wrap.
+s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
+                                    s16 *entrance, s16 *selectedField) {
+  if (gKeysRepeat & KEY_A)
+    return -1;
+  if (gKeysRepeat & KEY_B)
+    return -2;
+  if (gKeysRepeat & KEY_DOWN) {
+    *selectedField ^= 1;
+  } else if (gKeysRepeat & KEY_UP) {
+    *selectedField ^= 1;
+  } else if (gKeysRepeat & KEY_RIGHT) {
+    if (*selectedField == 0) {
+      sceneId++;
+    } else {
+      (*entrance)++;
+      if (*entrance > 99)
+        *entrance = 0;
+    }
+    if (sceneId > 200)
+      sceneId = 0;
+    DebugSceneSelect_DrawRow(window, sceneId, entrance);
+  } else if (gKeysRepeat & KEY_LEFT) {
+    if (*selectedField == 0) {
+      sceneId--;
+    } else {
+      (*entrance)--;
+      if (*entrance < 0)
+        *entrance = 99;
+    }
+    if (sceneId < 0)
+      sceneId = 200;
+    DebugSceneSelect_DrawRow(window, sceneId, entrance);
+  } else if (gKeysRepeat & KEY_R) {
+    if (*selectedField == 0) {
+      *entrance = 0;
+      sceneId += 10;
+    } else {
+      *entrance += 10;
+      if (*entrance > 99)
+        *entrance -= 99;
+    }
+    if (sceneId > 200)
+      sceneId = 0;
+    DebugSceneSelect_DrawRow(window, sceneId, entrance);
+  } else if (gKeysRepeat & KEY_L) {
+    if (*selectedField == 0) {
+      *entrance = 0;
+      sceneId -= 10;
+    } else {
+      *entrance -= 10;
+      if (*entrance < 0)
+        *entrance += 99;
+    }
+    if (sceneId < 0)
+      sceneId = 200;
+    DebugSceneSelect_DrawRow(window, sceneId, entrance);
+  }
+  return sceneId;
+}
+
+/// Shows a 16x16 flag grid per page and processes input until closed. Starts on
+/// page 8 and always returns 0.
+s32 DebugFlagEditor_Run(void) {
+  struct MenuSprite cursorSprite; // Cursor sprite
+  s32 cursor[2];                  // Cursor column and row
+  s32 cursorSlot;
+  s32 page;
+  struct Window *window;
+  s32 change;
+
+  page = 8;
+  window = 0;
+  cursor[0] = 0;
+  cursor[1] = 0;
+  window = Window_Create(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
+  DebugFlagEditor_DrawTable(window, page);
+  MenuArrow_Create(&cursorSprite, &cursorSlot);
+  for (;;) {
+    wait(1);
+    change = DebugFlagEditor_HandleInput(window, &page, cursor);
+    // B closes the table; a change of flag or page redraws it.
+    if (change == -1)
+      break;
+    if (change == 1)
+      DebugFlagEditor_DrawTable(window, page);
+    MenuArrow_SetPosition(&cursorSprite, cursor[0] * 8 + 58,
+                          cursor[1] * 8 + 20);
+  }
+  MenuArrow_Release(cursorSlot);
+  Window_Close(window, 2);
+  return 0;
+}
+
+/// Writes the lowest count digits of value, up to five, most significant first
+/// as uppercase hexadecimal in out, without a null terminator.
+void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
+  u8 digits[8];
+  u32 i;
+
+  if (count > 5)
+    count = 5;
+
+  for (i = 0; i != count; i++) {
+    u32 digit = value & 15;
+    if (digit <= 9)
+      digits[i] = digit + '0';
+    else
+      digits[i] = digit + 'A' - 10;
+    value >>= 4;
+  }
+
+  for (i = count - 1; (s32)i >= 0; i--)
+    *out++ = digits[i];
+}
+
+/// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
+void DebugFlagEditor_DrawTable(struct Window *window, s32 page) {
+  s32 row;
+  s32 y;
+  s32 flag;
+  char label[5];
+  char bits[17];
+
+  WindowSprite_PrepareForRedraw(window);
+  Text_DrawStringInWindow((u8 *)gMenu_HexDigitsString, window, 48, 0);
+
+  flag = page << 8;
+  for (row = 0; row != 16; row++) {
+    s32 i;
+
+    y = row * 8 + 16;
+
+    for (i = 0; i != 5; i++) {
+      label[i] = 0;
+    }
+    String_FormatHexDigits(flag, 3, label);
+    Text_DrawStringInWindow((u8 *)label, window, 0, y);
+    Text_DrawStringInWindow((u8 *)gMenu_ColonString, window, 32, y);
+
+    for (i = 0; i < 16; i++) {
+      s32 set = GameFlag_GetFar(flag);
+      bits[i] = (set != 0) + 48;
+      flag++;
+    }
+    bits[i] = 0;
+    Text_DrawStringInWindow((u8 *)bits, window, 48, y);
+  }
+}
+
+/// Moves within the flag grid, changes pages, or toggles the selected flag.
+/// Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise.
+s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor) {
+  s32 *row = &cursor[1];
+
+  if (gKeysRepeat & KEY_A) {
+    s32 flag = (((*page << 4) + *row) << 4) + cursor[0];
+
+    if (GameFlag_GetFar(flag))
+      GameFlag_ClearFar(flag);
+    else
+      GameFlag_SetFar(flag);
+    return 1;
+  }
+  if ((gKeysPressed & KEY_B) || (gKeysRepeat & KEY_SELECT))
+    return -1;
+  if (gKeysRepeat & KEY_UP) {
+    if (--*row < 0)
+      *row = 15;
+  } else if (gKeysRepeat & KEY_DOWN) {
+    if (++*row > 15)
+      *row = 0;
+  } else if (gKeysRepeat & KEY_LEFT) {
+    if (--cursor[0] < 0)
+      cursor[0] = 15;
+  } else if (gKeysRepeat & KEY_RIGHT) {
+    if (++cursor[0] > 15)
+      cursor[0] = 0;
+  } else if ((gKeysRepeat & KEY_L) && (gKeysRepeat & KEY_START)) {
+    *page -= 10;
+    if (*page < 0)
+      *page = 15;
+    return 1;
+  } else if ((gKeysRepeat & KEY_R) && (gKeysRepeat & KEY_START)) {
+    *page += 10;
+    if (*page > 15)
+      *page = 0;
+    return 1;
+  } else if (gKeysRepeat & KEY_L) {
+    if (--*page < 0)
+      *page = 15;
+    return 1;
+  } else if (gKeysRepeat & KEY_R) {
+    if (++*page > 15)
+      *page = 0;
+    return 1;
+  }
+  return 0;
+}
+
+/// Reserved menu entry. Nothing calls it.
+void Menu_ReservedNoOp(void) {}
+
+/// Sets the Djinni's collected flag, then adds it to the specified party
+/// member. The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index.
+void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
+  GameFlag_SetFar((element * DJINN_PER_ELEMENT) + index + FLAG_DJINN_FIRST);
+  Djinn_GiveFar(member, element, index);
+}
+
+/// Handles Save, Sleep and Options from the Pause menu. A cancelled save
+/// or settings menu reopens the Pause menu; cancelling the Pause menu returns
+/// -1. Sleep shows its message and sets gSleepRequested. Otherwise returns
+/// 0. The field reaches it by far call (field/field_sequence_run.c).
+s32 PauseMenu_Run(void) {
+  s32 result;
+
+  result = PauseMenu_Choose();
+  if (result == -1) {
+    return -1;
+  }
+  if (result == PAUSE_MENU_SAVE_QUEST) {
+    if (Save_ToChosenFile() == -1) {
+      return PauseMenu_Run();
+    }
+  } else if (result == PAUSE_MENU_SLEEP) {
+    FieldMessage_Show(MsgSleepMode, FIELD_MESSAGE_ZOOM);
+    gSleepRequested = result;
+  } else if (result == PAUSE_MENU_CHANGE_SETTINGS) {
+    if (SettingsMenu_Run() == -1) {
+      return PauseMenu_Run();
+    }
+  }
+  return 0;
+}
+
+/// Browses pages of item, Psynergy and status-pattern icons, suspending the
+/// field's actor system while the browser owns its window and cache entries.
+s32 DebugBrowser_Icons(void) {
+  s32 redraw;
+  s32 tile;
+  s32 page;
+  s32 mode;
+  struct Window *window;
+  s32 slot;
+  s32 base;
+  s32 i;
+  s32 row;
+  s32 x;
+  s32 y;
+
+  window = NULL;
+  page = 0;
+  mode = 0;
+  redraw = 1;
+  gActorSystemWork->suspended = redraw;
+  wait(1);
+
+  while (1) {
+    if (gKeysRepeat & KEY_LEFT) {
+      page--;
+      redraw = 1;
+    }
+    if (gKeysRepeat & KEY_RIGHT) {
+      redraw = 1;
+      page++;
+    }
+    if (gKeysRepeat & KEY_L) {
+      mode--;
+      redraw = 1;
+    }
+    if (gKeysRepeat & KEY_R) {
+      redraw = 1;
+      mode++;
+    }
+    if (gKeysRepeat & KEY_A)
+      break;
+    if (gKeysRepeat & KEY_B)
+      break;
+    if (redraw != 0) {
+      redraw = 0;
+      page = (page + 8) % 8;
+      mode = (mode + 3) % 3;
+      Window_Close(window, 2);
+      window = Window_Create(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
+      if (mode == 0)
+        Text_DrawStringInWindow(gDebugMenu_ItemTitle, window, 0, 0);
+      else if (mode == 1)
+        Text_DrawStringInWindow(gDebugMenu_EnergyTitle, window, 0, 0);
+      else
+        Text_DrawStringInWindow(gDebugMenu_StatusTitle, window, 0, 0);
+      Text_DrawStringInWindow(gDebugMenu_PageLabel, window, 0, 8);
+      Text_DrawNumberInWindow(page, 0, window, 40, 8);
+      base = page << 5;
+      Text_DrawNumberInWindow(base, 3, window, 64, 8);
+      Text_DrawStringInWindow(gDebugMenu_RangeDash, window, 88, 8);
+      Text_DrawNumberInWindow(base + 31, 3, window, 96, 8);
+      for (i = 0; i <= 31; i++) {
+        slot = -1;
+        row = i / 8;
+        x = (i - row * 8) * 16;
+        y = row * 16 + 16;
+        if (mode == 0) {
+          Icon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
+          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+        } else if (mode == 1) {
+          Icon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
+          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+        } else {
+          slot = VramCache_FindFreeEntry();
+          Icon_BuildMiscIconTiles(i, 0, slot);
+          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+        }
+      }
+    }
+    wait(1);
+  }
+  Window_Close(window, 2);
+  gActorSystemWork->suspended = 0;
+  return 0;
+}
+
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
+#define DEBUG_GLYPH_NAME MsgDebugGlyphName
+#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
+#define DEBUG_GLYPH_NAME MsgEnd
+#else
+#define DEBUG_GLYPH_NAME MsgDebugSecondForm
+#endif
+
+/// Browses the character and sprite portrait maps as one circular list. Shows
+/// each entry's glyph and label, then releases both windows on A or B.
+s32 DebugBrowser_Portraits(void) {
+  struct WindowWork *work;
+  struct Window *portrait;
+  s32 redraw;
+  struct Window *window;
+  s32 characterCount;
+  s32 entryCount;
+  s32 index;
+  s32 i;
+  s32 glyph;
+  s32 tile;
+  s32 slot;
+  s32 cancelKey;
+  s32 palette = 15;
+  u32 slotOffset = offsetof(struct WindowWork, portraitSprites[1]);
+
+  work = WINDOW_WORK;
+  redraw = 1;
+  portrait = Portrait_OpenWindow(0, 0, 10, 5);
+  window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
+  index = 0;
+  for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
+  }
+  characterCount = i;
+  for (i = 0; gPortrait_SpriteMap[i * 2] != -1; i++) {
+  }
+  entryCount = characterCount + i;
+
+  /* FAKEMATCH(dead): a zero from the count; as cancelKey = KEY_B, 7 of 179
+   * instructions differ in tbs-en. */
+  cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
+  while (1) {
+    if (gKeysRepeat & KEY_LEFT) {
+      redraw = 1;
+      index--;
+    }
+    if (gKeysRepeat & KEY_RIGHT) {
+      redraw = 1;
+      index++;
+    }
+    if (gKeysRepeat & KEY_L) {
+      redraw = 1;
+      index -= 10;
+    }
+    if (gKeysRepeat & KEY_R) {
+      redraw = 1;
+      index += 10;
+    }
+    if (gKeysRepeat & KEY_A)
+      break;
+    if (gKeysRepeat & cancelKey)
+      break;
+    if (redraw) {
+      redraw = 0;
+      index = (index + entryCount) % entryCount;
+      WindowSprite_PrepareForRedraw(window);
+      if (index < characterCount)
+        glyph = gPortrait_CharacterMap[index * 2 + 1];
+      else
+        glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] + 128;
+      slot = *(u16 *)((u8 *)work + slotOffset);
+      Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
+      Text_DrawNumberInWindow(index, 2, window, 0, 0);
+      Text_DrawMessageAsTiles(index + DEBUG_GLYPH_NAME, window, 24, 0);
+    }
+    wait(1);
+  }
+  Window_Close(window, 2);
+  Window_Close(portrait, 2);
+  wait(1);
+  return 0;
+}

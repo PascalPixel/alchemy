@@ -70,9 +70,9 @@ struct ItemMenuWork {
   u16 flags;          ///< 1 while the item's name and command grid are drawn
   s16 completionFlag; ///< set to 1 as item commands end; not read by name
   /// The row of four figures the Djinn and status screens show
-  /// (djinn_figures.c): each one's sprite and place in screen pixels, and its
-  /// scale in 16.16, which closes a third of its gap to Q16_ONE each frame, or
-  /// holds -scale while negative.
+  /// (menu_djinn_figures.c): each one's sprite and place in screen pixels, and
+  /// its scale in 16.16, which closes a third of its gap to Q16_ONE each frame,
+  /// or holds -scale while negative.
   ///@{
   struct Sprite *figures[4];
   s16 figureX[4];

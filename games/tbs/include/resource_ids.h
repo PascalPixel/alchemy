@@ -205,7 +205,7 @@ extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
 #define RESOURCE_LUCKY_DICE_SPRITES ((s32)&ResourceId_LuckyDiceSprites)
 
-// The flashing strikes' pictures (battle_effect/battle_effect/thrash.c). Each
+// The flashing strikes' pictures (battle_effect/battle_effect_thrash.c). Each
 // holds two pictures; the first of a pair fills work->imageStorage, the second
 // the start of Ram_MapGridCellBuffer.
 
@@ -248,7 +248,8 @@ extern char ResourceId_ProjectileVolleyImage;
 /// The Shuriken volley's spinning shurikens.
 extern char ResourceId_ShurikenSheet;
 #define RESOURCE_SHURIKEN_SHEET ((s32)&ResourceId_ShurikenSheet)
-extern char ResourceId_TargetBurstImage; ///< The target bursts of orbiting.c.
+extern char ResourceId_TargetBurstImage; ///< The target bursts of
+                                         ///< battle_effect_orbiting.c.
 #define RESOURCE_TARGET_BURST_IMAGE ((s32)&ResourceId_TargetBurstImage)
 /// Hail, the Neptune summon and the blessings' burst showers; Nereid takes
 /// its colours.
@@ -290,7 +291,8 @@ extern char ResourceId_GreenPillarSheet;
 /// BattleEffect_RunGrowingColumns' other modes.
 extern char ResourceId_VineSheet;
 #define RESOURCE_VINE_SHEET ((s32)&ResourceId_VineSheet)
-extern char ResourceId_StarDotSheet; ///< The swirling stars of orbiting.c.
+extern char ResourceId_StarDotSheet; ///< The swirling stars of
+                                     ///< battle_effect_orbiting.c.
 #define RESOURCE_STAR_DOT_SHEET ((s32)&ResourceId_StarDotSheet)
 /// Borrowed mostly for its colours: by the showers, the casting impact,
 /// Rumble's lights, the healing motes, the lobbed shells, the walls, the
@@ -317,7 +319,8 @@ extern char ResourceId_CounterRevealSheet; ///< Condemn and the casting impact.
 /// Condemn and the casting impact, beside CounterRevealSheet.
 extern char ResourceId_RedCrescentSheetA;
 #define RESOURCE_RED_CRESCENT_SHEET_A ((s32)&ResourceId_RedCrescentSheetA)
-extern char ResourceId_SpiralSheet; ///< The orbiting spirals of planet_diver.c.
+extern char ResourceId_SpiralSheet; ///< The orbiting spirals of
+                                    ///< battle_effect_planet_diver.c.
 #define RESOURCE_SPIRAL_SHEET ((s32)&ResourceId_SpiralSheet)
 /// The fire family: Fire, Flare, Atalanta, Dragon Cloud, Tiamat, the casting
 /// impact, the Djinn attacks, Death Plunge, the streaks and the strikes;
@@ -535,7 +538,7 @@ extern char ResourceId_FireSwirlSheet; ///< Helm Splitter.
 #define RESOURCE_FIRE_SWIRL_SHEET ((s32)&ResourceId_FireSwirlSheet)
 extern char ResourceId_FireBurstSheet; ///< Annihilation.
 #define RESOURCE_FIRE_BURST_SHEET ((s32)&ResourceId_FireBurstSheet)
-/// Heat Wave's fireballs, and the walls of mirrored_wall.c.
+/// Heat Wave's fireballs, and the walls of battle_effect_mirrored_wall.c.
 extern char ResourceId_FireballSheet;
 #define RESOURCE_FIREBALL_SHEET ((s32)&ResourceId_FireballSheet)
 /// The three lights of Demon Night, Rumble and Haunting.
@@ -546,7 +549,8 @@ extern char ResourceId_WaveSheet;
 #define RESOURCE_WAVE_SHEET ((s32)&ResourceId_WaveSheet)
 extern char ResourceId_PinkStarSheet; ///< Helm Splitter.
 #define RESOURCE_PINK_STAR_SHEET ((s32)&ResourceId_PinkStarSheet)
-/// Gaia, the walls, Revive and its family (djinn_beams.c) and the streaks.
+/// Gaia, the walls, Revive and its family (battle_effect_djinn_beams.c) and the
+/// streaks.
 extern char ResourceId_EarthWallSheet;
 #define RESOURCE_EARTH_WALL_SHEET ((s32)&ResourceId_EarthWallSheet)
 /// Volcano, Titan Blade and the Nereid summon.
@@ -576,7 +580,7 @@ extern char ResourceId_PaletteRampImage;
 #define RESOURCE_PALETTE_RAMP_IMAGE ((s32)&ResourceId_PaletteRampImage)
 extern char ResourceId_HeartSheet; ///< Heartrender, among the status motes.
 #define RESOURCE_HEART_SHEET ((s32)&ResourceId_HeartSheet)
-/// Revive and its family (djinn_beams.c).
+/// Revive and its family (battle_effect_djinn_beams.c).
 extern char ResourceId_CrescentMoonSheet;
 #define RESOURCE_CRESCENT_MOON_SHEET ((s32)&ResourceId_CrescentMoonSheet)
 /// The beams and the rush bursts.

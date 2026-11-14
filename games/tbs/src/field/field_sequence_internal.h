@@ -52,9 +52,9 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 /// A map region's bounds, in pixels, as 16.16 fixed point.
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
-// A field Psynergy or item use, packed into one value (items.c, psynergy.c), as
-// work->psynergy and work->item hold it. bits: 13..10 the user (13 is
-// ACT_PACKED) | 9..0 the Psynergy or item.
+// A field Psynergy or item use, packed into one value (field_sequence_items.c,
+// field_sequence_psynergy.c), as work->psynergy and work->item hold it.
+// bits: 13..10 the user (13 is ACT_PACKED) | 9..0 the Psynergy or item.
 #define ABILITY_ID(c) ((c) & 0x3ff) ///< the Psynergy
 #define ACT_ITEM_ID(c) ((c) & 0x3ff)
 #define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it

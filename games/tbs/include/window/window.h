@@ -309,7 +309,7 @@ enum {
   WINDOW_TILE_BATTLE_BORDER_BOTTOM = WINDOW_TILE(129),
   WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(130),
   /// In battle, the tile the command row fills its empty panels with
-  /// (screens/battle_command_row.c), and Window_EraseBorderRect below row 16.
+  /// (screens_battle_command_row.c), and Window_EraseBorderRect below row 16.
   WINDOW_TILE_COMMAND_PANEL = WINDOW_TILE(127),
   /// The HP and PP labels before a number (Text_DrawPrefixedNumberAtOffset)
   /// or a Psynergy's cost: each label's first tile, and the second tile the

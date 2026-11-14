@@ -15,18 +15,21 @@ struct Particle;
 /// kind.
 enum SummonEffectId {
   SUMMON_EFFECT_NONE,     ///< no row uses it; runs Meteor's effect too
-  SUMMON_EFFECT_RAMSES,   ///< BattleEffect_RunRamses (ramses.c)
-  SUMMON_EFFECT_NEREID,   ///< BattleEffect_RunNereid (nereid.c)
-  SUMMON_EFFECT_KIRIN,    ///< BattleEffect_RunKirin (kirin.c)
-  SUMMON_EFFECT_ATALANTA, ///< BattleEffect_RunAtalanta (atalanta.c)
-  SUMMON_EFFECT_CYBELE,   ///< BattleEffect_RunCybele (cybele.c)
-  SUMMON_EFFECT_NEPTUNE,  ///< BattleEffect_RunNeptune (neptune.c)
-  SUMMON_EFFECT_TIAMAT,   ///< BattleEffect_RunTiamat (tiamat.c)
-  SUMMON_EFFECT_PROCNE,   ///< BattleEffect_RunProcne (procne.c)
-  SUMMON_EFFECT_JUDGMENT, ///< BattleEffect_RunJudgment (judgment.c)
-  SUMMON_EFFECT_BOREAS,   ///< BattleEffect_RunBoreas (boreas.c)
-  SUMMON_EFFECT_METEOR,   ///< BattleEffect_RunMeteor (particle_streams.c)
-  SUMMON_EFFECT_THOR      ///< BattleEffect_RunThor (thor.c)
+  SUMMON_EFFECT_RAMSES,   ///< BattleEffect_RunRamses (battle_effect_ramses.c)
+  SUMMON_EFFECT_NEREID,   ///< BattleEffect_RunNereid (battle_effect_nereid.c)
+  SUMMON_EFFECT_KIRIN,    ///< BattleEffect_RunKirin (battle_effect_kirin.c)
+  SUMMON_EFFECT_ATALANTA, ///< BattleEffect_RunAtalanta
+                          ///< (battle_effect_atalanta.c)
+  SUMMON_EFFECT_CYBELE,   ///< BattleEffect_RunCybele (battle_effect_cybele.c)
+  SUMMON_EFFECT_NEPTUNE,  ///< BattleEffect_RunNeptune (battle_effect_neptune.c)
+  SUMMON_EFFECT_TIAMAT,   ///< BattleEffect_RunTiamat (battle_effect_tiamat.c)
+  SUMMON_EFFECT_PROCNE,   ///< BattleEffect_RunProcne (battle_effect_procne.c)
+  SUMMON_EFFECT_JUDGMENT, ///< BattleEffect_RunJudgment
+                          ///< (battle_effect_judgment.c)
+  SUMMON_EFFECT_BOREAS,   ///< BattleEffect_RunBoreas (battle_effect_boreas.c)
+  SUMMON_EFFECT_METEOR,   ///< BattleEffect_RunMeteor
+                          ///< (battle_effect_particle_streams.c)
+  SUMMON_EFFECT_THOR      ///< BattleEffect_RunThor (battle_effect_thor.c)
 };
 
 /// An effect handler: plays one effect over the battle, frame by frame,
@@ -269,17 +272,17 @@ typedef DrawRectangle BlitterPair[2];
 // The functions the parts of battle_effect.c define, part by part in include
 // order.
 
-// display.c
+// battle_effect_display.c
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 void BattleEffect_AdvanceBg2OnInterval(void);
 void BattleEffect_ArmWin0HBlankDma(void);
 
-// falling.c
+// battle_effect_falling.c
 void BattleEffect_RunIce(struct BattleEffectParams *args);
 void BattleEffect_RunDouse(struct BattleEffectParams *args);
 
-// streaks.c
+// battle_effect_streaks.c
 void BattleEffect_RunSonicWave(struct BattleEffectParams *args);
 void BattleEffect_RunShriek(struct BattleEffectParams *args);
 void BattleEffect_RunBansheeHowl(struct BattleEffectParams *args);
@@ -291,7 +294,7 @@ void BattleEffect_RunSleepStar(struct BattleEffectParams *args);
 void BattleEffect_RunSoothingStar(struct BattleEffectParams *args);
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode);
 
-// target_strike.c
+// battle_effect_target_strike.c
 void BattleEffect_RunNumbingSting(struct BattleEffectParams *args);
 void BattleEffect_RunCannibalFang(struct BattleEffectParams *args);
 void BattleEffect_RunPoisonousBite(struct BattleEffectParams *args);
@@ -306,7 +309,7 @@ void BattleEffect_RunAcidBite(struct BattleEffectParams *args);
 void BattleEffect_RunDrainFang(struct BattleEffectParams *args);
 void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode);
 
-// death_plunge.c
+// battle_effect_death_plunge.c
 void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args);
 void BattleEffect_RunBladeRain(struct BattleEffectParams *args);
 void BattleEffect_RunElementPillar(struct BattleEffectParams *args);
@@ -316,13 +319,13 @@ void BattleEffect_DrawStreaks(void);
 void BattleEffect_StartElementStreaks(s32 element);
 void BattleEffect_EndElementStreaks(void);
 
-// spider_web.c
+// battle_effect_spider_web.c
 void BattleEffect_RunPoisonBeat(struct BattleEffectParams *args);
 void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args);
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode);
 void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args);
 
-// canvas.c
+// battle_effect_canvas.c
 void BattleEffect_WipeCanvas(s32 direction, s32 fill);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_FlushPendingGraphicsTransfer(void);
@@ -340,30 +343,30 @@ void BattleEffect_SetupCanvasTileMap(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 
-// planet_diver.c
+// battle_effect_planet_diver.c
 void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args);
 void BattleEffect_RunHaunt(struct BattleEffectParams *args);
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args);
 
-// gathering_lights.c
+// battle_effect_gathering_lights.c
 void BattleEffect_RunDemonNight(struct BattleEffectParams *args);
 void BattleEffect_RunRumble(struct BattleEffectParams *args);
 void BattleEffect_RunHaunting(struct BattleEffectParams *args);
 void BattleEffect_RunGatheringLights(struct BattleEffectParams *args, s32 mode);
 
-// mirrored_wall.c
+// battle_effect_mirrored_wall.c
 void BattleEffect_FetchRectangleBlitters(s32 flip, BlitterPair out);
 void BattleEffect_RunBerserk(struct BattleEffectParams *args);
 void BattleEffect_RunSpasm(struct BattleEffectParams *args);
 void BattleEffect_RunRecovery(struct BattleEffectParams *args);
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode);
 
-// djinn_beams.c
+// battle_effect_djinn_beams.c
 void BattleEffect_RunRevive(struct BattleEffectParams *args);
 void BattleEffect_RunDew(struct BattleEffectParams *args);
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element);
 
-// lobbed_shells.c
+// battle_effect_lobbed_shells.c
 void BattleEffect_RunMadSpatter(struct BattleEffectParams *args);
 void BattleEffect_RunDecompose(struct BattleEffectParams *args);
 void BattleEffect_RunBoneChiller(struct BattleEffectParams *args);
@@ -373,48 +376,48 @@ void BattleEffect_RunStickyPoison(struct BattleEffectParams *args);
 void BattleEffect_RunRottenBlood(struct BattleEffectParams *args);
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode);
 
-// condemn.c
+// battle_effect_condemn.c
 void BattleEffect_RunCondemn(struct BattleEffectParams *args);
 
-// bind.c
+// battle_effect_bind.c
 void BattleEffect_ConvertBackgroundToBlueRamp(void);
 void BattleEffect_RunBind(struct BattleEffectParams *args);
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args);
 
-// stars.c
+// battle_effect_stars.c
 void BattleEffect_RunAstralBlast(struct BattleEffectParams *args);
 void BattleEffect_RunShiningStar(struct BattleEffectParams *args);
 
-// procne.c
+// battle_effect_procne.c
 void BattleEffect_RunProcne(struct BattleEffectParams *args);
 
-// tiamat.c
+// battle_effect_tiamat.c
 void BattleEffect_RunDragonDriver(struct BattleEffectParams *args);
 void BattleEffect_RunTiamat(struct BattleEffectParams *args);
 void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode);
 
-// nereid.c
+// battle_effect_nereid.c
 void BattleEffect_RunNereid(struct BattleEffectParams *args);
 
-// vortices.c
+// battle_effect_vortices.c
 void BattleEffect_RunFroth(struct BattleEffectParams *args);
 void BattleEffect_RunWhirlwind(struct BattleEffectParams *args);
 
-// prism.c
+// battle_effect_prism.c
 void BattleEffect_RunPrism(struct BattleEffectParams *args);
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                      s32 bluePhase);
 
-// plasma.c
+// battle_effect_plasma.c
 void BattleEffect_RunPlasma(struct BattleEffectParams *args);
 void BattleEffect_RunNova(struct BattleEffectParams *args);
 void BattleEffect_RunDynamite(struct BattleEffectParams *args);
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode);
 
-// volcano.c
+// battle_effect_volcano.c
 void BattleEffect_RunVolcano(struct BattleEffectParams *args);
 
-// target_motes.c
+// battle_effect_target_motes.c
 void BattleEffect_RunTaint(struct BattleEffectParams *args);
 void BattleEffect_RunUnusedPinkSmoke(struct BattleEffectParams *args);
 void BattleEffect_RunDelude(struct BattleEffectParams *args);
@@ -427,11 +430,11 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode);
 void BattleEffect_RunSleep(struct BattleEffectParams *args);
 void BattleEffect_RunCurse(struct BattleEffectParams *args);
 
-// djinn_heal.c
+// battle_effect_djinn_heal.c
 void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args);
 void BattleCamera_ApplyPhasedDelta(void);
 
-// dispatch.c
+// battle_effect_dispatch.c
 void BattleEffect_CallDoNothing(s32 count);
 void BattleEffect_RunSummon(struct BattleEffectParams *args);
 void BattleEffect_RunFromTable(struct BattleEffectParams *args);
@@ -445,17 +448,17 @@ void BattleEffect_TintBattler(s32 actorId, s32 palette, s32 animation,
                               s32 timerSlot, s32 timerFrames);
 void BattleEffect_InitializeTilemapAndFlushQueue(void);
 
-// cybele.c
+// battle_effect_cybele.c
 void BattleEffect_RunCybele(struct BattleEffectParams *args);
 
-// boreas.c
+// battle_effect_boreas.c
 void BattleEffect_RunBoreas(struct BattleEffectParams *args);
 
-// drain.c
+// battle_effect_drain.c
 void BattleEffect_RunBreak(struct BattleEffectParams *args);
 void BattleEffect_RunDrain(struct BattleEffectParams *args);
 
-// healing.c
+// battle_effect_healing.c
 void BattleEffect_RunPly(struct BattleEffectParams *args);
 void BattleEffect_RunWish(struct BattleEffectParams *args);
 void BattleEffect_RunCure(struct BattleEffectParams *args);
@@ -465,7 +468,7 @@ void BattleEffect_RunTonic(struct BattleEffectParams *args);
 void BattleEffect_RunPsyCrystal(struct BattleEffectParams *args);
 void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode);
 
-// stat_change.c
+// battle_effect_stat_change.c
 void BattleEffect_RunImpact(struct BattleEffectParams *args);
 void BattleEffect_RunGuard(struct BattleEffectParams *args);
 void BattleEffect_RunWard(struct BattleEffectParams *args);
@@ -479,31 +482,31 @@ void BattleEffect_RunWeaken(struct BattleEffectParams *args);
 void BattleEffect_RunUnusedStatReduction(struct BattleEffectParams *args);
 void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode);
 
-// flare.c
+// battle_effect_flare.c
 void BattleEffect_RunFlare(struct BattleEffectParams *args);
 s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                         s16 *output);
 
-// quake.c
+// battle_effect_quake.c
 void BattleEffect_RunQuake(struct BattleEffectParams *args);
 
-// fire.c
+// battle_effect_fire.c
 void BattleEffect_RunFire(struct BattleEffectParams *args);
 
 // frost.c
 void BattleEffect_RunFrost(struct BattleEffectParams *args);
 
-// ray.c
+// battle_effect_ray.c
 void BattleEffect_RunRay(struct BattleEffectParams *args);
 
-// eruption.c
+// battle_effect_eruption.c
 void BattleEffect_RunSmokeBomb(struct BattleEffectParams *args);
 void BattleEffect_RunBlast(struct BattleEffectParams *args);
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority);
 void BattleEffect_DoNothing(void);
 
-// burst_shower.c
+// battle_effect_burst_shower.c
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 void BattleEffect_RunFireBlessing(struct BattleEffectParams *args);
 void BattleEffect_RunWaterBlessing(struct BattleEffectParams *args);
@@ -514,12 +517,12 @@ void BattleEffect_RunEvilBlessing(struct BattleEffectParams *args);
 void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args);
 void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode);
 
-// orbiting.c
+// battle_effect_orbiting.c
 void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args);
 void BattleEffect_RunOrbitingSkulls(void);
 void BattleEffect_RunTargetBursts(struct BattleEffectParams *args);
 
-// atalanta.c
+// battle_effect_atalanta.c
 void BattleEffect_RunAtalanta(struct BattleEffectParams *args);
 
 // growth.c
@@ -529,10 +532,10 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode);
 void BattleEffect_RunVine(struct BattleEffectParams *args);
 void BattleEffect_RunThorn(struct BattleEffectParams *args);
 
-// bolt.c
+// battle_effect_bolt.c
 void BattleEffect_RunBolt(struct BattleEffectParams *args);
 
-// projectiles.c
+// battle_effect_projectiles.c
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
                                     s32 element, s32 side, s32 anchor,
                                     s32 *outX, s32 *outY);
@@ -552,7 +555,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 void BattleEffect_InitializeRisingObject(s32 id);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames);
 
-// rushing_strike.c
+// battle_effect_rushing_strike.c
 void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount);
 void BattleEffect_RunBoneCharge(struct BattleEffectParams *args);
 void BattleEffect_RunBruteForce(struct BattleEffectParams *args);
@@ -560,7 +563,7 @@ void BattleEffect_RunOnslaught(struct BattleEffectParams *args);
 void BattleEffect_RunHeadbutt(struct BattleEffectParams *args);
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode);
 
-// djinn_attacks.c
+// battle_effect_djinn_attacks.c
 void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h);
 void BattleEffect_RunMercury(struct BattleEffectParams *args);
 void BattleEffect_RunJupiter(struct BattleEffectParams *args);
@@ -569,18 +572,18 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 void BattleEffect_RunVenus(struct BattleEffectParams *args);
 void BattleEffect_RunMars(struct BattleEffectParams *args);
 
-// hail.c
+// battle_effect_hail.c
 void BattleEffect_RunHail(struct BattleEffectParams *args);
 void BattleEffect_RunGround(struct BattleEffectParams *args);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
-// thor.c
+// battle_effect_thor.c
 void BattleEffect_RunThor(struct BattleEffectParams *args);
 
-// spire.c
+// battle_effect_spire.c
 void BattleEffect_RunSpire(struct BattleEffectParams *args);
 
-// flurry.c
+// battle_effect_flurry.c
 void BattleEffect_RunGust(struct BattleEffectParams *args);
 void BattleEffect_RunBearClaw(struct BattleEffectParams *args);
 void BattleEffect_RunRansack(struct BattleEffectParams *args);
@@ -589,10 +592,10 @@ void BattleEffect_RunFreebiteRush(struct BattleEffectParams *args);
 void BattleEffect_RunFlyingAttack(struct BattleEffectParams *args);
 void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode);
 
-// gaia.c
+// battle_effect_gaia.c
 void BattleEffect_RunGaia(struct BattleEffectParams *args);
 
-// positions.c
+// battle_effect_positions.c
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                                    s32 gravity);
 void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
@@ -605,67 +608,67 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 void BattleEffect_ProbeKeysForExtendedActor(void);
 void BattleEffect_RunByIdRange(struct BattleEffectParams *args);
 
-// beams.c
+// battle_effect_beams.c
 void BattleEffect_RunAttackSlash(struct BattleEffectParams *args);
 void BattleEffect_RunCriticalHit(struct BattleEffectParams *args);
 
-// casting_impact.c
+// battle_effect_casting_impact.c
 void BattleEffect_StepPaletteToResource(s32 resourceId);
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode);
 
-// torch.c
+// battle_effect_torch.c
 void BattleEffect_RunTorch(struct BattleEffectParams *args);
 void BattleEffect_RunKite(struct BattleEffectParams *args);
 
-// helm_splitter.c
+// battle_effect_helm_splitter.c
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args);
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y);
 
-// particle_streams.c
+// battle_effect_particle_streams.c
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep);
 void BattleEffect_ArmPaletteHBlankDma(void);
 void BattleEffect_RunMeteor(struct BattleEffectParams *args);
 void BattleEffect_RunOuterSpace(struct BattleEffectParams *args);
 void BattleEffect_RunParticleStreams(struct BattleEffectParams *args, s32 mode);
 
-// ramses.c
+// battle_effect_ramses.c
 void BattleEffect_RunRamses(struct BattleEffectParams *args);
 
-// dragon_cloud.c
+// battle_effect_dragon_cloud.c
 void BattleEffect_RunDragonCloud(struct BattleEffectParams *args);
 
-// annihilation.c
+// battle_effect_annihilation.c
 void BattleEffect_RunAnnihilation(struct BattleEffectParams *args);
 
-// ragnarok.c
+// battle_effect_ragnarok.c
 void BattleEffect_RunRagnarok(struct BattleEffectParams *args);
 
-// titan_blade.c
+// battle_effect_titan_blade.c
 void BattleEffect_RunTitanBlade(struct BattleEffectParams *args);
 
-// judgment.c
+// battle_effect_judgment.c
 void BattleEffect_RunJudgment(struct BattleEffectParams *args);
 
-// kirin.c
+// battle_effect_kirin.c
 void BattleEffect_RunKirin(struct BattleEffectParams *args);
 
-// neptune.c
+// battle_effect_neptune.c
 void BattleEffect_ResetBg2Pa(void);
 void BattleEffect_SetBg2AffineScaleHalf(void);
 void BattleEffect_RunNeptune(struct BattleEffectParams *args);
 
-// thrash.c
+// battle_effect_thrash.c
 void BattleEffect_RunThrash(struct BattleEffectParams *args);
 void BattleEffect_RunUnusedSevereBlowLeap(struct BattleEffectParams *args);
 void BattleEffect_RunQuickStrike(struct BattleEffectParams *args);
 void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args);
 void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode);
 
-// undead_sword.c
+// battle_effect_undead_sword.c
 void BattleEffect_RunUndeadSword(struct BattleEffectParams *args);
 
-// blitter.c
+// battle_effect_blitter.c
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 

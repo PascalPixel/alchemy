@@ -1,10 +1,10 @@
 #include "field/field_effect.h"
 #include "gamepak/far_call.h"
 
-// Twenty-four scenes, and the main image's field Psynergy (whirlwind.c, with
-// EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn, which places a small effect moving
-// at a velocity, its script one of gFieldEffect_DurationScripts and its options
-// chosen by the EFFECT_USE_ flags.
+// Twenty-four scenes, and the main image's field Psynergy
+// (event_commands_whirlwind.c, with EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn,
+// which places a small effect moving at a velocity, its script one of
+// gFieldEffect_DurationScripts and its options chosen by the EFFECT_USE_ flags.
 
 /// Integrates linear motion, scale changes and rotation once per effect frame.
 void FieldEffect_UpdateMotionScaleAndSpin(struct Actor *actor) {

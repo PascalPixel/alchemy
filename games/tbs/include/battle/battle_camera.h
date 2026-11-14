@@ -64,8 +64,8 @@ struct BattleBackgroundWork {
 
 /// A presentation step's stack work: the battle effect command it builds and
 /// runs, and the targets' sprite colour modes saved beside it. The
-/// presentation steps of staging.c and auto_battle.c, BattleTransition_Run
-/// and ElementGlow_Play keep one as a local.
+/// presentation steps of battle_staging.c and battle_auto_battle.c,
+/// BattleTransition_Run and ElementGlow_Play keep one as a local.
 struct BattleStagingWork {
   struct BattleEffectParams effect;
   /// Each target's sprite animations' SpriteColorMode

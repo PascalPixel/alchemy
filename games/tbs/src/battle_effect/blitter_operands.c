@@ -1,6 +1,6 @@
 /// @file
 /// The ARM immediate operands for powers of two, which the blitter builder
-/// (battle_effect/blitter.c) adds to its clip words to fit the canvas width.
+/// (battle_effect_blitter.c) adds to its clip words to fit the canvas width.
 
 #include "battle_effect/blitter_operands.h"
 #include "types.h"
@@ -23,7 +23,7 @@
 /// Two identical tables; the first has no references.
 u16 gUnused_BitOperands[] = {ARM_IMMEDIATE_POWERS};
 /// The operand for 1 << n, by n from 0 to 15: BattleEffect_BuildBlitter
-/// (battle_effect/blitter.c) adds entry widthShift, the canvas width as a power
+/// (battle_effect_blitter.c) adds entry widthShift, the canvas width as a power
 /// of two (7 for the 128-pixel canvas), to horizontal clip template words 8 and
 /// 11, counting from 0.
 u16 gBattleEffect_BitOperands[] = {ARM_IMMEDIATE_POWERS};

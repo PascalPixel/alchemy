@@ -263,9 +263,9 @@ enum AbilityUse {
 #define POISON_VENOM 2
 
 /// Unit.defendLevel, 0 for no Defend: Defend and Granite halve the damage,
-/// Total Defense and Flash cut it to a tenth (REDUCE_BY_GUARD, ability.c).
-/// It lasts the turn: BattleUnit_ResetGuardLevels clears it as the next
-/// one's commands are gathered.
+/// Total Defense and Flash cut it to a tenth (REDUCE_BY_GUARD,
+/// battle_ability.c). It lasts the turn: BattleUnit_ResetGuardLevels clears it
+/// as the next one's commands are gathered.
 #define DEFEND_NORMAL 1
 #define DEFEND_TOTAL 2
 

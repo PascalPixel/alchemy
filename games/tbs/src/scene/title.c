@@ -100,7 +100,7 @@ s32 Title_Run(void) {
     Event_SetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_TITLE);
     return 0;
   }
-  // The stub does nothing with its argument (system/system/start_up.c), the
+  // The stub does nothing with its argument (system/system_start_up.c), the
   // far-call bank the logo and intro calls below go through.
   // XXX (no evidence): what the call once did; the stub is empty in every
   // edition, so only an earlier build of the game would show.

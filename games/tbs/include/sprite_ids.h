@@ -538,9 +538,9 @@ enum SpriteId {
   SPRITE_337,
   SPRITE_338,
   SPRITE_339,
-  /// The status icons over a unit 32 pixels wide, in the order of objects.c's
-  /// ICON_ bits (BattleStatusIcon_Cycle); from SPRITE_STATUS_WIDE_POISON on,
-  /// the same over wider units.
+  /// The status icons over a unit 32 pixels wide, in the order of
+  /// battle_objects.c's ICON_ bits (BattleStatusIcon_Cycle); from
+  /// SPRITE_STATUS_WIDE_POISON on, the same over wider units.
   SPRITE_STATUS_POISON,
   SPRITE_STATUS_VENOM,
   SPRITE_STATUS_STUN,

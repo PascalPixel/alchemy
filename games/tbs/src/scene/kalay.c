@@ -91,7 +91,7 @@
 ///   Once FLAG_KALAY_TUNNEL_OPEN is set a man (ACTOR_WAITING_MAN) waits here,
 ///   thinking `The things beyond these doors belong to you all.`
 ///
-///   The fade overlay (field/field_sequence/ground_mask.c) follows the leader
+///   The fade overlay (field/field_sequence_ground_mask.c) follows the leader
 ///   through the treasure room unless he comes down from the town
 ///   (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY). Step triggers 10 and 11 stop and
 ///   restart it, and 18 and 19 fix and free his depth priority.

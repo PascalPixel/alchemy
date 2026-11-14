@@ -90,7 +90,7 @@ struct SelectionMenuWork {
   u16 cursorIndex;
   u16 verticalScroll; ///< pixels added to the icons' y; 32 at setup
   /// NODE_STATUS_SCROLLING while the cursor steps, NODE_STATUS_SHOWN after
-  /// (selection.c); each frame drawn adds 1.
+  /// (window_selection.c); each frame drawn adds 1.
   u16 status;
   u16 pathTop[5];    ///< top, kept for each icon chosen on the path
   u16 pathCursor[5]; ///< cursorIndex, kept for each icon chosen on the path

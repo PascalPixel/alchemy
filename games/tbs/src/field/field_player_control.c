@@ -1,0 +1,929 @@
+/// @file
+/// Player control: the configured keys and moving actors by the pad.
+// Part of field.c.
+
+#include "field_internal.h"
+
+// What differs by edition.
+#if TBS_PATCH_1
+#define FIELD_SHORTCUT_KEYS gKeysPressed
+#define WORLD_MAP_PROBE_RADIUS px(7)
+#else
+#define FIELD_SHORTCUT_KEYS gKeysHeld
+#define WORLD_MAP_PROBE_RADIUS px(8)
+#endif
+
+// The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
+// point: the top 16 bits are whole pixels, so px(1) is one pixel.
+#define FIELD_WALK_SPEED px(1)         ///< 1 pixel a frame
+#define FIELD_RUN_SPEED (px(3) / 2)    ///< 1.5, with a dash key held
+#define FIELD_ACCELERATION (px(1) / 4) ///< a quarter pixel faster each frame
+#define FIELD_FAST_WALK_SPEED px(4)    ///< 4, B held with FLAG_FAST_WALK
+#define FIELD_FAST_WALK_ACCELERATION px(1)
+#define WORLD_MAP_WALK_SPEED (px(1) / 2) ///< half a pixel a frame
+#define WORLD_MAP_RUN_SPEED px(1)        ///< 1, with a dash key held
+#define WORLD_MAP_RUN_ACCELERATION (px(5) / 4)
+#define WORLD_MAP_ACCELERATION (px(1) / 4)
+#define WORLD_MAP_FAST_SPEED px(4) ///< 4, while L repeats
+
+/// What a shortcut key's assignment requests: its top two bits.
+enum FieldShortcutKind {
+  FIELD_SHORTCUT_PSYNERGY = 0, ///< fieldWork->psynergy, an ability
+  FIELD_SHORTCUT_ITEM = 1      ///< fieldWork->item
+};
+
+/// A shortcut key's request id: the assignment's low 14 bits, below its kind.
+#define FIELD_SHORTCUT_ID_MASK 0x3fff
+
+/// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
+/// Actor_MoveOnWorldMap).
+enum PlayerStepBlock {
+  PLAYER_STEP_BLOCKED_BY_MAP = 1, ///< every heading tried runs into the map
+  /// A solid actor ahead, or one with no room to be pushed.
+  PLAYER_STEP_BLOCKED_BY_ACTOR = 2,
+  PLAYER_STEP_BLOCKED = 3,     ///< either of the two
+  PLAYER_STEP_NO_DIRECTION = 4 ///< the direction pad is not held
+};
+
+/// The footprints left in snow such as Imil's (FIELD_SPRITE_FOOTPRINT,
+/// footprints.png), and the leader's userValue that asks for the pair next.
+enum FootprintAnimation {
+  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
+  /// Two prints side by side, fading: laid first after a stop.
+  FOOTPRINT_BOTH_FEET = 2
+};
+
+/// Unused: stores value as a word in the actor's update routine.
+UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
+  struct Actor *actor = rawActor;
+
+  if (actor != NULL)
+    *(s32 *)&actor->update = value;
+}
+
+/// Handles a shortcut key's assignment: its top two bits choose what it
+/// requests (enum FieldShortcutKind) and the low 14 bits which one.
+u32 Field_RequestShortcut(u32 encodedAssignment) {
+  u32 assignmentKind = encodedAssignment >> 14;
+  u32 requestId = FIELD_SHORTCUT_ID_MASK & encodedAssignment;
+  struct FieldWork *work = gFieldWork;
+
+  if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
+    work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
+  } else if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    if (FIELD_SHORTCUT_KEYS & KEY_R) {
+      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_PICTURE;
+    } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
+      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM;
+    }
+  } else {
+    switch (assignmentKind) {
+    case FIELD_SHORTCUT_PSYNERGY:
+      work->psynergy = requestId;
+      break;
+    case FIELD_SHORTCUT_ITEM:
+      work->item = requestId;
+      break;
+    }
+  }
+
+  return requestId;
+}
+
+/// Checks the keys the player has configured: Select, A and Start set their
+/// flag in the field work and return 1; the two shortcut keys pass on their
+/// assignment (Field_RequestShortcut) and return its request id.
+s32 Field_CheckConfiguredKeys(void) {
+  struct FieldWork *work = gFieldWork;
+  s32 result = 0;
+
+  if (work == NULL)
+    return 0;
+  if (gKeysPressed & gMainRoutineWork.selectKeys) {
+    work->fieldMenu = 1;
+    result = 1;
+  } else if (gKeysPressed & gMainRoutineWork.aKeys) {
+    work->aButton = 1;
+    result = 1;
+  } else if (gKeysPressed & gMainRoutineWork.startKeys) {
+    work->pauseMenu = 1;
+    result = 1;
+  } else if (gKeysPressed & gMainRoutineWork.firstShortcutKeys) {
+    result = Field_RequestShortcut(gMainRoutineWork.firstShortcut);
+  } else if (gKeysPressed & gMainRoutineWork.secondShortcutKeys) {
+    result = Field_RequestShortcut(gMainRoutineWork.secondShortcut);
+  }
+  return result;
+}
+
+/// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels) with
+/// radii radiusA and radiusB (pixels); -1 otherwise.
+s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
+                              s32 *secondPosition, s32 radiusB) {
+  const struct FieldPosition *firstPoint =
+      (const struct FieldPosition *)firstPosition;
+  const struct FieldPosition *secondPoint =
+      (const struct FieldPosition *)secondPosition;
+  const s32 *firstCoordinate = &firstPoint->x;
+  const s32 *secondCoordinate = &secondPoint->x;
+  s32 dx = (*firstCoordinate++ - *secondCoordinate++) >> 16;
+  s32 dy = (*firstCoordinate++ - *secondCoordinate++) >> 16;
+  s32 dz = (*firstCoordinate - *secondCoordinate) >> 16;
+  s32 radius = radiusA + radiusB;
+
+  // The bound is 64 pixels in 16.16, the units before the shift, but dx and dz
+  // are already whole pixels (at most 32768), so these tests always pass and
+  // only the distance decides.
+  if (!(dx > px(64)) && !(dz > px(64)) &&
+      dx * dx + dy * dy + dz * dz < radius * radius)
+    return 0;
+  return -1;
+}
+
+/// SC_PLAYER: moves the player on the field by the direction pad: walking or
+/// running, sliding around walls, pushing movable actors, turning, playing the
+/// matching animation and leaving footprints.
+s32 Actor_UpdatePlayerControl(struct Actor *actor) {
+
+  struct FieldPosition position;
+  struct FieldPosition testPosition;
+  struct FieldPosition contact;
+  s16 angleOffsets[22];
+  s32 collision;
+  s32 pushed;
+  s16 heading;
+  s32 angle;
+  s32 movementAnimation;
+  u16 direction;
+  s32 footprintAngle;
+  s32 angleIndex;
+  s32 headingCount;
+  struct Actor *pushedActor;
+
+  collision = 0;
+  pushed = 0;
+  // Debug (FLAG_DEBUG_RESOURCE_BEEP): beep when fewer than 136 of the 512
+  // resource blocks are free.
+  if (gDebugMode != 0 && GameFlag_GetFar(FLAG_DEBUG_RESOURCE_BEEP) != 0) {
+    s32 freeBlocks;
+    s32 blockIndex;
+
+    freeBlocks = 0;
+    for (blockIndex = 0; blockIndex < VRAM_BLOCK_COUNT; blockIndex++) {
+      if (gVramCacheBlockOwners[blockIndex] == VRAM_BLOCK_OWNER_FREE)
+        freeBlocks++;
+    }
+    if (freeBlocks - 136 < 0)
+      Sound_PlayFar(SE_CLICK);
+  }
+  // Debug: holding L spins through four empty loops (511, 96, 64 and 64
+  // passes), a short stall each frame.
+  if (gDebugMode != 0) {
+    s32 delayKeyMask = KEY_L;
+    if (gKeysHeld & delayKeyMask) {
+      s32 delayIterations;
+
+      delayIterations = delayKeyMask;
+    wait_a:
+      --delayIterations;
+      if (delayIterations != 0)
+        goto wait_a;
+      delayIterations = 95;
+    wait_b:
+      delayIterations--;
+      if (delayIterations >= 0)
+        goto wait_b;
+      delayIterations = 63;
+    wait_c:
+      delayIterations--;
+      if (delayIterations >= 0)
+        goto wait_c;
+      delayIterations = 63;
+    wait_d:
+      delayIterations--;
+      if (delayIterations >= 0)
+        goto wait_d;
+    }
+  }
+  // Walk, or run with the dash keys; with FLAG_FAST_WALK, B moves faster
+  // still.
+  if (gKeysHeld & gMainRoutineWork.dashKeys) {
+    actor->speedLimit = FIELD_RUN_SPEED;
+    actor->acceleration = FIELD_ACCELERATION;
+    movementAnimation = ANIM_LEADER_RUN;
+  } else {
+    actor->speedLimit = FIELD_WALK_SPEED;
+    actor->acceleration = FIELD_ACCELERATION;
+    movementAnimation = ANIM_WALK;
+  }
+  if (GameFlag_GetFar(FLAG_FAST_WALK) != 0 && (gKeysHeld & KEY_B)) {
+    actor->speedLimit = FIELD_FAST_WALK_SPEED;
+    actor->acceleration = FIELD_FAST_WALK_ACCELERATION;
+    movementAnimation = ANIM_LEADER_RUN;
+  }
+
+  // Step 8 pixels the way the direction pad points, when that step and the
+  // ones 22.5 and 45 degrees either side are clear (debug L walks through
+  // walls); otherwise try headings up to 67.5 degrees off.
+  angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+  if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+    collision |= PLAYER_STEP_NO_DIRECTION;
+  } else {
+    collision = 0;
+    position.x = actor->x.fixed;
+    position.y = actor->y.fixed;
+    position.z = actor->z.fixed;
+    Vector_AddPolarOffset(px(8), (u16)angle, &position);
+    if (gDebugMode != 0 && (gKeysHeld & KEY_L)) {
+      heading = angle;
+    } else {
+      if (MapGrid_CheckCollision(actor, &position) == COLLISION_NONE) {
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16,
+                              &testPosition);
+        if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE) {
+          testPosition.x = actor->x.fixed;
+          testPosition.y = actor->y.fixed;
+          testPosition.z = actor->z.fixed;
+          Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16,
+                                &testPosition);
+          if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE) {
+            testPosition.x = actor->x.fixed;
+            testPosition.y = actor->y.fixed;
+            testPosition.z = actor->z.fixed;
+            Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 8,
+                                  &testPosition);
+            if (MapGrid_CheckCollision(actor, &testPosition) ==
+                COLLISION_NONE) {
+              testPosition.x = actor->x.fixed;
+              testPosition.y = actor->y.fixed;
+              testPosition.z = actor->z.fixed;
+              Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 8,
+                                    &testPosition);
+              if (MapGrid_CheckCollision(actor, &testPosition) ==
+                  COLLISION_NONE) {
+                heading = angle;
+                goto push_actors;
+              }
+            }
+          }
+        }
+      }
+      // The pad's way is blocked: try 22.5, 45 and 67.5 degrees off, nearest
+      // first, each needing the same three clear probes.
+      direction = angle;
+      headingCount = 0;
+      angleOffsets[headingCount++] = direction + TRIG_TURN / 16;
+      angleOffsets[headingCount++] = direction - TRIG_TURN / 16;
+      angleOffsets[headingCount++] = direction + TRIG_TURN / 8;
+      angleOffsets[headingCount++] = direction - TRIG_TURN / 8;
+      angleOffsets[headingCount++] = direction + TRIG_TURN * 3 / 16;
+      angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
+      for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
+        heading = angleOffsets[angleIndex];
+        position.x = actor->x.fixed;
+        position.y = actor->y.fixed;
+        position.z = actor->z.fixed;
+        Vector_AddPolarOffset(px(8), (u16)heading, &position);
+        if (MapGrid_CheckCollision(actor, &position) != COLLISION_NONE)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16,
+                              &testPosition);
+        if (MapGrid_CheckCollision(actor, &testPosition) != COLLISION_NONE)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16,
+                              &testPosition);
+        if (MapGrid_CheckCollision(actor, &testPosition) != COLLISION_NONE)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 8,
+                              &testPosition);
+        if (MapGrid_CheckCollision(actor, &testPosition) != COLLISION_NONE)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8,
+                              &testPosition);
+        if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE)
+          goto push_actors;
+      }
+      // Nothing passed: the step is the actor's own position.
+      position.x = actor->x.fixed;
+      position.y = actor->y.fixed;
+      position.z = actor->z.fixed;
+      collision |= PLAYER_STEP_BLOCKED_BY_MAP;
+
+    push_actors:
+      // Push the movable actors (ACTOR_PUSHABLE) just ahead 4 pixels
+      // further, when they have room; any other solid actor there blocks the
+      // step (bit 1 of collision). Pushing slows the player down.
+      contact.x = actor->x.fixed;
+      contact.y = actor->y.fixed;
+      contact.z = actor->z.fixed;
+      Vector_AddPolarOffset(px(4), (u16)heading, &contact);
+      pushedActor = gActors;
+      for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, pushedActor++) {
+        s32 radius;
+
+        radius = actor->radius - 2;
+        if (pushedActor->script == 0)
+          continue;
+        if ((pushedActor->collisionFlags & ACTOR_SOLID) == 0)
+          continue;
+        if (pushedActor == actor)
+          continue;
+        if (Field_CheckSpheresOverlap(&pushedActor->x.fixed, radius, &contact.x,
+                                      pushedActor->radius - 2) < 0)
+          continue;
+        // A movable actor that is not paused slides a quarter pixel away from
+        // the player, if no solid actor is there and the ground 10 pixels on,
+        // straight and 22.5 degrees either side, is clear.
+        if ((pushedActor->collisionFlags & ACTOR_PUSHABLE) != 0 &&
+            pushedActor->paused == 0) {
+          direction = ArcTan2(pushedActor->z.fixed - actor->z.fixed,
+                              pushedActor->x.fixed - actor->x.fixed);
+          testPosition.x = pushedActor->x.fixed;
+          testPosition.y = pushedActor->y.fixed;
+          testPosition.z = pushedActor->z.fixed;
+          heading = direction;
+          Vector_AddPolarOffset(px(1) / 4, direction, &testPosition);
+          if (!ActorScript_CheckOverlap(pushedActor, (s32 *)&testPosition)) {
+            testPosition.x = pushedActor->x.fixed;
+            testPosition.y = pushedActor->y.fixed;
+            testPosition.z = pushedActor->z.fixed;
+            Vector_AddPolarOffset(px(10), direction, &testPosition);
+            if (MapGrid_CheckCollision(pushedActor, &testPosition) ==
+                COLLISION_NONE) {
+              testPosition.x = pushedActor->x.fixed;
+              testPosition.y = pushedActor->y.fixed;
+              testPosition.z = pushedActor->z.fixed;
+              Vector_AddPolarOffset(px(10), direction + TRIG_TURN / 16,
+                                    &testPosition);
+              // The same probe is tested twice.
+              if (MapGrid_CheckCollision(pushedActor, &testPosition) ==
+                      COLLISION_NONE &&
+                  MapGrid_CheckCollision(pushedActor, &testPosition) ==
+                      COLLISION_NONE) {
+                testPosition.x = pushedActor->x.fixed;
+                testPosition.y = pushedActor->y.fixed;
+                testPosition.z = pushedActor->z.fixed;
+                Vector_AddPolarOffset(px(10), direction - TRIG_TURN / 16,
+                                      &testPosition);
+                if (MapGrid_CheckCollision(pushedActor, &testPosition) ==
+                    COLLISION_NONE) {
+                  Vector_AddPolarOffset(
+                      px(1) / 4, direction,
+                      (struct FieldPosition *)&pushedActor->x.fixed);
+                  pushedActor->targetX = TARGET_UNSET;
+                  pushedActor->targetY = TARGET_UNSET;
+                  pushedActor->targetZ = TARGET_UNSET;
+                  pushed |= 1;
+                  continue;
+                }
+              }
+            }
+          }
+        }
+        collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
+      }
+      // Pushing: a quarter pixel a frame.
+      if (collision == 0 && pushed != 0) {
+        actor->speedLimit = px(1) / 4;
+        actor->acceleration = px(1) / 8;
+      }
+    }
+  }
+  // Count the blocked steps, and pick the animation: pushing; stopped,
+  // standing and in time glancing about (leaning back when the leader has no
+  // HP); or walking or running.
+  if (gFieldWork != NULL) {
+    if (collision & PLAYER_STEP_BLOCKED)
+      gFieldWork->blockedSteps++;
+    else
+      gFieldWork->blockedSteps = 0;
+  }
+  if (pushed != 0) {
+    Actor_SelectAnimation(actor, ANIM_PUSH);
+  } else if (collision != 0) {
+    s32 action;
+
+    action = ANIM_LEADER_LOOK_AROUND;
+    if (Unit_GetFar(gMainRoutineWork.leaderActorId)->hp == 0)
+      action = ANIM_LEADER_LEAN_BACK;
+    Actor_SelectAnimation(actor, action);
+  } else {
+    Actor_SelectAnimation(actor, movementAnimation);
+  }
+
+  // Blocked: stop and turn towards the pad, at most 22.5 degrees a frame; the
+  // next footprint is the pair.
+  if (collision != 0) {
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
+    if (collision & PLAYER_STEP_BLOCKED) {
+      s32 difference;
+
+      difference = (u16)angle - actor->facing;
+      difference = (s16)difference;
+      if (difference > TRIG_TURN / 16)
+        difference = TRIG_TURN / 16;
+      if (difference < -TRIG_TURN / 16)
+        difference = -TRIG_TURN / 16;
+      actor->facing += difference;
+    }
+    actor->timer = 0;
+    actor->userValue = FOOTPRINT_BOTH_FEET;
+  } else {
+    s32 speed;
+
+    Actor_SetMoveTarget(actor, position.x, position.y, position.z);
+    speed = FixedSqrt(Iwram_MulQ16(actor->velocityX, actor->velocityX) +
+                      Iwram_MulQ16(actor->velocityZ, actor->velocityZ));
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
+    Vector_AddPolarOffset(speed, (u16)heading,
+                          (struct FieldPosition *)&actor->velocityX);
+    if (actor->timer != 0)
+      actor->timer--;
+  }
+
+  // Leave a footprint every 18 walking or 12 running
+  // frames on maps that show them, alternating left and right; timer
+  // counts down the frames to the next one.
+  footprintAngle = (u16)angle;
+  if (((struct MapGridScrollWork *)gMapGridWork[0])->footprints != 0 &&
+      actor->timer == 0 && collision == 0) {
+    struct Actor *effect;
+
+    effect = Actor_Create(FIELD_SPRITE_FOOTPRINT, actor->x.fixed,
+                          actor->y.fixed, actor->z.fixed);
+    if (effect != 0) {
+      struct Sprite *animation;
+
+      // collision is 0 here: the footprint takes no motion flags (it stays
+      // where it is laid) and its sprite no shadow.
+      effect->groundHeight = actor->groundHeight;
+      animation = effect->sprite;
+      Actor_StartScript(effect, gWorldMap_FootprintActions);
+      effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      effect->motionFlags = collision;
+      if (animation != 0) {
+        Sprite_StartAnimation(animation, FOOTPRINT_ONE_FOOT);
+        animation->flags = collision;
+        animation->rotation = footprintAngle + TRIG_TURN / 4;
+        animation->image.priority = 3;
+      }
+      // The first footprint after a stop is the pair and restarts the sides;
+      // each second one faces a half turn round.
+      if (*(s16 *)&actor->userValue == FOOTPRINT_BOTH_FEET) {
+        Sprite_StartAnimation(animation, FOOTPRINT_BOTH_FEET);
+        actor->userValue = collision;
+      }
+      if (*(s16 *)&actor->userValue != 0)
+        effect->facing = TRIG_TURN / 2;
+      if (movementAnimation == ANIM_LEADER_RUN)
+        actor->timer = 12;
+      else
+        actor->timer = 18;
+      actor->userValue ^= 1;
+    }
+  }
+  Field_CheckConfiguredKeys();
+  actor->scriptCursor++;
+  return 1;
+}
+
+/// SC_WORLD: moves the player on the world map by the direction pad, as
+/// SC_PLAYER does on the field, and turns the world map camera with the pad.
+s32 Actor_MoveOnWorldMap(struct Actor *actor) {
+
+  struct FieldPosition position;
+#if TBS_PATCH_1
+  struct FieldPosition testPosition;
+  s16 angleOffsets[28];
+#else
+  struct FieldPosition leftPosition;
+  struct FieldPosition rightPosition;
+  s16 angleOffsets[22];
+#endif
+  s32 collision;
+  s32 angle;
+  u16 direction;
+  s32 angleIndex;
+  s32 movementAnimation;
+  s32 count;
+  s32 difference;
+  s32 terrainCollision;
+  s32 speed;
+  s32 targetCameraYaw;
+  struct WorldMapView *perspective;
+  s32 yawStep;
+  struct Sprite *playerSprite;
+  struct Actor *ripple;
+  struct Sprite *rippleSprite;
+
+  movementAnimation = ANIM_WALK;
+  collision = 0;
+#if !TBS_PATCH_1
+  count = 0;
+#endif
+  // Walk, or run with the dash keys.
+  if (gKeysHeld & gMainRoutineWork.dashKeys) {
+    actor->speedLimit = WORLD_MAP_RUN_SPEED;
+    actor->acceleration = WORLD_MAP_RUN_ACCELERATION;
+    movementAnimation = ANIM_LEADER_RUN;
+  } else {
+    actor->speedLimit = WORLD_MAP_WALK_SPEED;
+    actor->acceleration = WORLD_MAP_ACCELERATION;
+  }
+  if ((gKeysRepeat & KEY_L) != 0)
+    actor->speedLimit = WORLD_MAP_FAST_SPEED;
+
+  angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+  direction = angle;
+  if (direction == WORLD_MAP_KEY_HEADING_NONE) {
+    collision |= PLAYER_STEP_NO_DIRECTION;
+  } else {
+    collision = 0;
+    position.x = actor->x.fixed;
+    position.y = actor->y.fixed;
+    position.z = actor->z.fixed;
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
+    // Debug L walks anywhere.
+    if (gDebugMode == 0 || (gKeysHeld & KEY_L) == 0) {
+#if TBS_PATCH_1
+      if (WorldMap_IsWalkable((s32)actor, (struct WorldPosition *)&position) ==
+          0) {
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction + TRIG_TURN / 16, &testPosition);
+        if (WorldMap_IsWalkable((s32)actor,
+                                (struct WorldPosition *)&testPosition) == 0) {
+          testPosition.x = actor->x.fixed;
+          testPosition.y = actor->y.fixed;
+          testPosition.z = actor->z.fixed;
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction - TRIG_TURN / 16, &testPosition);
+          if (WorldMap_IsWalkable((s32)actor,
+                                  (struct WorldPosition *)&testPosition) == 0) {
+            testPosition.x = actor->x.fixed;
+            testPosition.y = actor->y.fixed;
+            testPosition.z = actor->z.fixed;
+            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                  direction + TRIG_TURN / 8, &testPosition);
+            if (WorldMap_IsWalkable(
+                    (s32)actor, (struct WorldPosition *)&testPosition) == 0) {
+              testPosition.x = actor->x.fixed;
+              testPosition.y = actor->y.fixed;
+              testPosition.z = actor->z.fixed;
+              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                    direction - TRIG_TURN / 8, &testPosition);
+              if (WorldMap_IsWalkable(
+                      (s32)actor, (struct WorldPosition *)&testPosition) == 0)
+                goto update_actor;
+            }
+          }
+        }
+      }
+      count = 0;
+      angleOffsets[count++] = direction + TRIG_TURN / 16;
+      angleOffsets[count++] = direction - TRIG_TURN / 16;
+      angleOffsets[count++] = direction + TRIG_TURN / 8;
+      angleOffsets[count++] = direction - TRIG_TURN / 8;
+      angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
+      angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
+      angleOffsets[count++] = direction + TRIG_TURN / 4;
+      angleOffsets[count++] = direction - TRIG_TURN / 4;
+      for (angleIndex = 0; angleIndex < count; angleIndex++) {
+        direction = angleOffsets[angleIndex];
+        position.x = actor->x.fixed;
+        position.y = actor->y.fixed;
+        position.z = actor->z.fixed;
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
+        if (WorldMap_IsWalkable((s32)actor,
+                                (struct WorldPosition *)&position) != 0)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction + TRIG_TURN / 16, &testPosition);
+        if (WorldMap_IsWalkable((s32)actor,
+                                (struct WorldPosition *)&testPosition) != 0)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction - TRIG_TURN / 16, &testPosition);
+        if (WorldMap_IsWalkable((s32)actor,
+                                (struct WorldPosition *)&testPosition) != 0)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + TRIG_TURN / 8,
+                              &testPosition);
+        if (WorldMap_IsWalkable((s32)actor,
+                                (struct WorldPosition *)&testPosition) != 0)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - TRIG_TURN / 8,
+                              &testPosition);
+        if (WorldMap_IsWalkable((s32)actor,
+                                (struct WorldPosition *)&testPosition) != 0)
+          continue;
+        angle = (s16)direction;
+        goto update_actor;
+      }
+      collision |= PLAYER_STEP_BLOCKED_BY_MAP;
+
+#else
+      leftPosition.x = actor->x.fixed;
+      leftPosition.y = actor->y.fixed;
+      leftPosition.z = actor->z.fixed;
+      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + TRIG_TURN / 12,
+                            &leftPosition);
+      rightPosition.x = actor->x.fixed;
+      rightPosition.y = actor->y.fixed;
+      rightPosition.z = actor->z.fixed;
+      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - TRIG_TURN / 12,
+                            &rightPosition);
+      if ((WorldMap_IsWalkable((s32)actor, (struct WorldPosition *)&position) |
+           WorldMap_IsWalkable((s32)actor,
+                               (struct WorldPosition *)&leftPosition) |
+           WorldMap_IsWalkable((s32)actor,
+                               (struct WorldPosition *)&rightPosition)) != 0) {
+        angleOffsets[count++] = direction + TRIG_TURN / 16;
+        angleOffsets[count++] = direction - TRIG_TURN / 16;
+        angleOffsets[count++] = direction + TRIG_TURN / 8;
+        angleOffsets[count++] = direction - TRIG_TURN / 8;
+        angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
+        angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
+        for (angleIndex = 0; angleIndex < count; angleIndex++) {
+          direction = angleOffsets[angleIndex];
+          position.x = actor->x.fixed;
+          position.y = actor->y.fixed;
+          position.z = actor->z.fixed;
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
+          leftPosition.x = actor->x.fixed;
+          leftPosition.y = actor->y.fixed;
+          leftPosition.z = actor->z.fixed;
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction + TRIG_TURN / 12, &leftPosition);
+          rightPosition.x = actor->x.fixed;
+          rightPosition.y = actor->y.fixed;
+          rightPosition.z = actor->z.fixed;
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction - TRIG_TURN / 12, &rightPosition);
+          if ((WorldMap_IsWalkable((s32)actor,
+                                   (struct WorldPosition *)&position) |
+               WorldMap_IsWalkable((s32)actor,
+                                   (struct WorldPosition *)&leftPosition) |
+               WorldMap_IsWalkable(
+                   (s32)actor, (struct WorldPosition *)&rightPosition)) != 0)
+            continue;
+          angle = (s16)direction;
+          goto update_actor;
+        }
+        collision |= PLAYER_STEP_BLOCKED_BY_MAP;
+      }
+#endif
+    }
+  }
+
+update_actor:
+  if (gFieldWork != NULL) {
+    if ((collision & PLAYER_STEP_BLOCKED) != 0)
+      gFieldWork->blockedSteps++;
+    else
+      gFieldWork->blockedSteps = 0;
+  }
+  if (collision != 0)
+    Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
+  else
+    Actor_SelectAnimation(actor, movementAnimation);
+
+  if (collision != 0) {
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
+    if ((collision & PLAYER_STEP_BLOCKED) != 0) {
+      direction = angle;
+      difference = (s16)(direction - actor->facing);
+      if (difference > TRIG_TURN / 16)
+        difference = TRIG_TURN / 16;
+      if (difference < -TRIG_TURN / 16)
+        difference = -TRIG_TURN / 16;
+      actor->facing += difference;
+    }
+    actor->timer = 0;
+    actor->userValue = FOOTPRINT_BOTH_FEET;
+  } else {
+    Actor_SetMoveTarget(actor, position.x, position.y, position.z);
+    speed = FixedSqrt(Iwram_MulQ16(actor->velocityX, actor->velocityX) +
+                      Iwram_MulQ16(actor->velocityZ, actor->velocityZ));
+    // collision is 0 here: keep the speed, along the chosen heading.
+    actor->velocityX = collision;
+    actor->velocityZ = collision;
+    Vector_AddPolarOffset(speed, (u16)angle,
+                          (struct FieldPosition *)&actor->velocityX);
+    if (actor->timer != 0)
+      actor->timer--;
+  }
+
+  // Turn the camera towards the pad's yaw by an eighth of the difference a
+  // frame, at most TRIG_TURN / 128 (about 2.8 degrees), finishing the turn once
+  // the step falls under 16.
+  perspective = gMapGridWork[0];
+  targetCameraYaw = gWorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
+  yawStep = (s16)(targetCameraYaw - perspective->yaw) / 8;
+  if (yawStep > TRIG_TURN / 128)
+    yawStep = TRIG_TURN / 128;
+  if (yawStep < -TRIG_TURN / 128)
+    yawStep = -TRIG_TURN / 128;
+  if (yawStep > -16 && yawStep < 16)
+    yawStep = targetCameraYaw - perspective->yaw;
+  perspective->yaw += yawStep;
+
+  if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+    playerSprite = actor->sprite;
+    terrainCollision =
+        WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
+    // In a forest the sprite's second sprite animation is drawn (priority 1)
+    // and its shadow is not; elsewhere that sprite animation takes priority 9,
+    // and a sprite animation above 3 is not drawn.
+    if (terrainCollision == WORLD_MAP_COLLISION_FOREST) {
+      playerSprite->entries[1]->priority = 1;
+      playerSprite->flags = 0;
+    } else {
+      playerSprite->entries[1]->priority = 9;
+      playerSprite->flags = SPRITE_FLAG_SHADOW;
+    }
+    // In shallow water a ripple follows every 10 frames of
+    // walking: it lasts 30 frames, takes no motion flags, and its sprite,
+    // with no shadow, is drawn semi-transparent at priority 2.
+    if (terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&
+        actor->timer == 0 && collision == 0) {
+      ripple = Actor_Create(FIELD_SPRITE_RIPPLE, actor->x.fixed, actor->y.fixed,
+                            actor->z.fixed);
+      if (ripple != 0) {
+        rippleSprite = ripple->sprite;
+        Actor_StartScript(ripple, gWorldMap_FootprintActions + 3);
+        ripple->motionFlags = collision;
+        ripple->layer = 1;
+        if (rippleSprite != 0) {
+          Sprite_StartAnimation(rippleSprite, 1);
+          rippleSprite->flags = collision;
+          rippleSprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
+          rippleSprite->image.priority = 2;
+        }
+        actor->timer = 10;
+      }
+    }
+  }
+  Field_CheckConfiguredKeys();
+  actor->scriptCursor++;
+  return 1;
+}
+
+/// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
+/// Returns 1.
+s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
+
+  Field_CheckConfiguredKeys();
+  actor->scriptCursor++;
+  return 1;
+}
+
+/// SC_KEYS: moves an actor 8 pixels at a time by the direction pad, with up and
+/// down changing its height (y) rather than its depth.
+s32 Actor_MoveByKeys(struct Actor *actor) {
+
+  struct FieldPosition position;
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches: of the 80 bytes it reserves (sub sp, #80), no instruction
+   * addresses the 68 at sp+0 to sp+67, below the position; as without it, 8 of
+   * 213 instructions differ in tbs-en. */
+  UNUSED u8 unused[68];
+  struct MapGridCell *sourceCell;
+  struct MapGridCell *destinationCell;
+  u16 angle;
+  s32 animation;
+  s32 collisionFlags;
+  s32 deltaZ;
+  s32 groundHeight;
+
+  actor->speedLimit = px(1) / 2;
+  actor->acceleration = px(1) / 4;
+  animation = 12;
+  angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
+    collisionFlags = 4;
+  } else {
+    // The animation by the pad's heading: 14 for headings below a sixteenth of
+    // a turn, 15 for the sixteenth from a half turn on, 10 for the rest.
+    animation = 14;
+    if ((angle & 0xf000) != 0) {
+      animation = 15;
+      if ((angle & 0xf000) != 0x8000)
+        animation = 10;
+    }
+    collisionFlags = 0;
+    position.x = 0;
+    position.y = 0;
+    position.z = 0;
+    Vector_AddPolarOffset(px(8), angle, &position);
+    // The step's depth becomes height: pad up climbs, pad down descends, and
+    // the actor's angle becomes FACING_NORTH going up the map and FACING_SOUTH
+    // going down.
+    position.x += actor->x.fixed;
+    deltaZ = position.z;
+    if (deltaZ < 0)
+      actor->facing = FACING_NORTH;
+    if (deltaZ > 0)
+      actor->facing = FACING_SOUTH;
+    position.y = actor->y.fixed - position.z;
+    position.z = actor->z.fixed;
+    // The cells (16 pixels) under the actor and the step; a step
+    // into a cell with another cell behavior is refused.
+    sourceCell = &((struct MapGridCell *)
+                       Ram_MapGridCellBuffer)[actor->x.fixed / px(16) +
+                                              (position.z / px(16)) * 128];
+    destinationCell = &((struct MapGridCell *)
+                            Ram_MapGridCellBuffer)[position.x / px(16) +
+                                                   (position.z / px(16)) * 128];
+    if (MapGrid_IsWallAt((struct WorldPosition *)&position) != 0 ||
+        sourceCell->behavior != destinationCell->behavior) {
+      collisionFlags = 4;
+      animation = 12;
+    } else if (gKeysHeld & KEY_UP) {
+      // Climbing needs the ground a cell further up to stand at least 16
+      // pixels above the actor; descending needs the ground at the step
+      // at least 8 pixels below it.
+      groundHeight = MapGrid_GetTerrainHeight(actor->layer, position.x,
+                                              position.z - px(16));
+      if (groundHeight - actor->y.fixed < px(16))
+        goto refused;
+    } else if (gKeysHeld & KEY_DOWN) {
+      groundHeight =
+          MapGrid_GetTerrainHeight(actor->layer, position.x, position.z);
+      if (groundHeight - actor->y.fixed > -px(8)) {
+      refused:
+        collisionFlags = 1;
+        animation = 12;
+      }
+    }
+  }
+  if (gFieldWork != NULL) {
+    if (collisionFlags & 3)
+      gFieldWork->blockedSteps++;
+    else
+      gFieldWork->blockedSteps = 0;
+  }
+  Actor_SelectAnimation(actor, animation);
+  if (collisionFlags != 0) {
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    SET_VELOCITY(actor, 0, 0, 0);
+  } else {
+    Actor_SetMoveTarget(actor, position.x, position.y, position.z);
+  }
+  actor->scriptCursor++;
+  return 1;
+}
+
+#undef FIELD_SHORTCUT_KEYS
+#undef WORLD_MAP_PROBE_RADIUS
+#undef FIELD_WALK_SPEED
+#undef FIELD_RUN_SPEED
+#undef FIELD_ACCELERATION
+#undef FIELD_FAST_WALK_SPEED
+#undef FIELD_FAST_WALK_ACCELERATION
+#undef WORLD_MAP_WALK_SPEED
+#undef WORLD_MAP_RUN_SPEED
+#undef WORLD_MAP_RUN_ACCELERATION
+#undef WORLD_MAP_ACCELERATION
+#undef WORLD_MAP_FAST_SPEED
+#undef FIELD_SHORTCUT_ID_MASK

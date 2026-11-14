@@ -13,7 +13,7 @@ enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
 /// BattlePlaybackWork.phase: how far BattlePlayback_Run has got through the
 /// action's targets. Its message phases (PLAY_MESSAGE and the like) are
-/// private to playback.c.
+/// private to battle_playback.c.
 enum BattlePlaybackPhase {
   BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the effect resumes it
   BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET =

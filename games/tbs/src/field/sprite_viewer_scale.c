@@ -1,6 +1,6 @@
 /// @file
 /// Unused: the scale of the debug sprite viewer's ring of sprites, which
-/// nothing in the game opens (sprite_viewer.c).
+/// nothing in the game opens (field_sprite_viewer.c).
 
 #include "field/sprite_viewer_scale.h"
 #include "fixed_math.h"

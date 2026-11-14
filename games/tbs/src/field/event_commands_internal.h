@@ -41,9 +41,9 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-/// gMainRoutineWork.pendingDjinni of DJINNI_FLINT (requests.c, djinni.c): a
-/// Djinni battle's event is this plus the Djinni's id (DJINN_PER_ELEMENT to
-/// an element), with DJINN_NO_HOP beside it.
+/// gMainRoutineWork.pendingDjinni of DJINNI_FLINT (event_commands_requests.c,
+/// event_commands_djinni.c): a Djinni battle's event is this plus the Djinni's
+/// id (DJINN_PER_ELEMENT to an element), with DJINN_NO_HOP beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
 /// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them.

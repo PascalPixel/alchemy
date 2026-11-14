@@ -31,7 +31,7 @@
 #include "system/number_text.h"
 #include "system/savedata.h"
 
-/// The compiler library's call through r3, which oam.c uses to run code
+/// The compiler library's call through r3, which system_oam.c uses to run code
 /// copied to RAM.
 s32 _call_via_r3(s32, s32, s32, s32);
 

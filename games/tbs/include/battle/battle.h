@@ -117,8 +117,8 @@ extern u16 gEncounterZones[];
 /// battle's parent sends it as the turn's gBattleRandomSeed.
 extern u32 gRandomSeed;
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which
-/// staging.c, auto_battle.c and turn.c set for each action, and the
-/// background's display mode.
+/// battle_staging.c, battle_auto_battle.c and battle_turn.c set for each
+/// action, and the background's display mode.
 #define gBattleBackgroundWork                                                  \
   (*(struct BattleBackgroundWork **)&gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
 /// SC_FACE_WATCHED every frame, forever: the script of an actor told to
@@ -202,7 +202,6 @@ enum BattleElementGlow {
   GLOW_PILLAR,  ///< the element's pillar, at a strength: a summon's boost
   GLOW_BURST    ///< the element's burst: a Djinni set
 };
-
 
 struct BattleAction;
 struct BattlePlaybackWork;

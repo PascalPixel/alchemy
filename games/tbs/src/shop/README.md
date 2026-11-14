@@ -18,7 +18,7 @@ runs until the player backs out, and B on the icons ends the visit.
 Three ideas carry the whole folder:
 
 - **A shop is a row.** Every shop in the game is one row of the stock table
-  in [`shop/stock.c`](shop/stock.c): its kind, its ordinary stock, and its
+  in [`shop_stock.c`](shop_stock.c): its kind, its ordinary stock, and its
   rare stock. That is the file to open to see or change what a shop sells.
 - **One shop, three voices.** A weapon shop, an armor shop and an item shop
   word every line differently, yet the code is written once. Each kind has
@@ -41,21 +41,21 @@ tally passes the next threshold. It looks like luck and is not.
 
 A priest offers four services, Revive, Cure poison, Repel evil and Remove
 curse, to one party member at a time. All four share one light show, and
-differ only in what they check and what they clear (`shop/sanctum.c`).
+differ only in what they check and what they clear (`shop_sanctum.c`).
 
 ## Inns
 
 An inn charges by the guest, and a guest is a party member still standing.
 Each town's inn has its own price for one. A member who is down is not
-charged and not healed (`shop/inn.c`).
+charged and not healed (`shop_inn.c`).
 
 ## The item picker
 
 When the party finds an item and every pack is full, the game asks what to
 drop. The screen it shows is the selling screen with the shopkeeper taken
-away, which is why it lives here (`shop/item_picker.c`).
+away, which is why it lives here (`shop_item_picker.c`).
 
 ## Where the code is
 
-`shop/run.c` is the visit's loop, and `buy.c`, `sell.c` and `repair.c`
-its three trades. `stock.c` is the table.
+`shop_run.c` is the visit's loop, and `shop_buy.c`, `shop_sell.c` and `shop_repair.c`
+its three trades. `shop_stock.c` is the table.

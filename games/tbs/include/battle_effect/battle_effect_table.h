@@ -155,7 +155,7 @@ extern s32 gNereid_Gravity[];
 
 /// Each Froth variant: its motes and frames.
 enum {
-  FROTH_BUBBLE_COUNT, ///< bubbles, at most 30 (vortices.c)
+  FROTH_BUBBLE_COUNT, ///< bubbles, at most 30 (battle_effect_vortices.c)
   FROTH_FRAMES        ///< the effect's frames; the damage shows 16 before
 };
 extern u8 gVortices_Counts[][2];

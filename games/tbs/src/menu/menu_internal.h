@@ -236,7 +236,7 @@ enum DjinnSelectMode {
 #define DJINN_ELEMENT_TILE 0x5001
 
 /// The tile of BG character block 1 the Djinn backdrop's border tile is copied
-/// to (menu/djinn.c); the preview screens blink it (menu/djinn_preview.c).
+/// to (menu_djinn.c); the preview screens blink it (menu_djinn_preview.c).
 #define DJINN_BACKDROP_BORDER_TILE 150
 #define DJINN_BACKDROP_BORDER_VRAM                                             \
   (BG_CHAR_BLOCK(1) + DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP)

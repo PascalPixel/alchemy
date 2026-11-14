@@ -215,7 +215,7 @@ static void MenuTest_IgnorePsynergy(void) {}
 
 /// Keeps Force from moving ACTOR_IVY: run at phase 1 of Force cast at it,
 /// this sets the effect's childMode, and Force's shot then leaves its target
-/// where it is (field/event_commands/force.c).
+/// where it is (field/event_commands_force.c).
 static void MenuTest_EnableEffectChildMode(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childMode = 1;
 }

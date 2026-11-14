@@ -2489,7 +2489,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
 static void WorldMap_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 
 /// Starting to cast Douse on the storm gathers Douse's rain cloud 80 pixels
-/// up, where the party floats (douse.c reads childOption).
+/// up, where the party floats (event_commands_douse.c reads childOption).
 static void WorldMap_StartDousingStorm(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }

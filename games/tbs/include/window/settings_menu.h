@@ -16,8 +16,8 @@
 /// many values each takes, the page, and the cursor, markers and icons.
 struct OptionMenuWork {
   u8 unused[1024];
-  /// Seven 52-byte entries (struct OptionMenuEntry in settings_menu.c), whose
-  /// state only the unused SettingsMenu_ResetEntries writes.
+  /// Seven 52-byte entries (struct OptionMenuEntry in window_settings_menu.c),
+  /// whose state only the unused SettingsMenu_ResetEntries writes.
   u8 entries[7][52];
   u8 unusedAfterEntries[8];
   /// The row the cursor is on: on the settings menu 0 to 4, indexing option

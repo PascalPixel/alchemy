@@ -1,6 +1,6 @@
 
 // Babi Lighthouse, Crossbone Isle, Tret's rooms, the Tunnel Ruins and Venus
-// Lighthouse, and the main image's Carry (whirlwind.c, with
+// Lighthouse, and the main image's Carry (event_commands_whirlwind.c, with
 // EFFECT_SPAWN_RESIDENT), whose landing ring of particles it moves. It is
 // static in each overlay and global in the main image.
 #ifdef EFFECT_SPAWN_RESIDENT

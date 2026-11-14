@@ -16,6 +16,7 @@ enum SoundId {
   /// rules give it to the Epilogue, and to Kibombo and the Gabomba Statue once
   /// flag 0x8f7 is set.
   MUS_000,
+  /// Super Lucky Dice's music, started with each new bet (SuperLuckyDice_Run).
   MUS_001,
   /// The field music of Alhafra and Eastern Alhafra.
   MUS_002,
@@ -87,6 +88,9 @@ enum SoundId {
   MUS_037,
   MUS_038,
   MUS_039,
+  /// The title intro's music at power-on, when a save file exists, and before
+  /// a new game's intro (the title's Scene_Initialize), as The Broken Seal's
+  /// MUS_TITLE.
   MUS_040,
   /// The field music of the Lemurian Ship and the Northern Reaches, and of the
   /// World Map once flag 0x176 is set.
@@ -129,6 +133,8 @@ enum SoundId {
   MUS_SEA_OF_TIME,
   MUS_066,
   MUS_067,
+  /// The staff credits' music (the title's entrance 8, Credits_Run), as The
+  /// Broken Seal's MUS_ENDING.
   MUS_068,
   MUS_069,
   MUS_070,
@@ -140,7 +146,13 @@ enum SoundId {
   /// The music of the Clear scene, area "(Clear data)", where data is
   /// transferred.
   MUS_074,
+  /// The title held without its prompt: after the prologue (the title's
+  /// entrance 3), as The Broken Seal's MUS_TITLE_AFTER_PROLOGUE, and as the
+  /// logo shows after the ending (entrance 10).
   MUS_075,
+  /// The Trial Road race: Moapa's challenge, the rules and the countdown in
+  /// Shaman Village, and the Trial Road's music while
+  /// FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT is set.
   MUS_076,
   MUS_077,
   /// Not a sound: fades the music out.
@@ -185,6 +197,7 @@ enum SoundId {
   SE_SHOP_SELL,
   SE_CURSE,
   SE_104,
+  /// Super Lucky Dice's winnings counted into the party's coins.
   SE_105,
   SE_DRIP,
   SE_TREMOR,
@@ -815,6 +828,7 @@ enum SoundId {
   /// The field music of Lemuria's palace scene.
   MUS_LEMURIA_PALACE,
   MUS_704,
+  /// The reunion of the two parties in Contigo (Contigo_TheReunion).
   MUS_705,
   MUS_706,
   MUS_707,

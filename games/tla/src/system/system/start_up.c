@@ -179,16 +179,18 @@ UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
   }
 }
 
+/// Decodes the compressed code resource `index` to `destination` and resolves
+/// its long branches there, with a RAM copy of the ARM routine that does what
+/// Code_ResolveLongBranches does; the copy is allocated and freed again.
 void Overlay_Load(u32 index, void *destination) {
-  void (*routine)(void *, s32);
-  s32 end;
+  void (*patchBranches)(void *, s32);
+  s32 codeSize;
 
-  end = Decompress_TaggedLz((const void *)Resource_GetTableEntry(index),
-                            destination);
-  RamCode_Load(routine, Resource_PatchThumbBranch,
+  codeSize = Decompress_TaggedLz(Resource_GetTableEntry(index), destination);
+  RamCode_Load(patchBranches, Resource_PatchThumbBranch,
                Resource_PatchThumbBranchCodeSize);
-  routine(destination, end);
-  Heap_Release(routine);
+  patchBranches(destination, codeSize);
+  Heap_Release(patchBranches);
 }
 
 /// The handler of every interrupt nobody has claimed.

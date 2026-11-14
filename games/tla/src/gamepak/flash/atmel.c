@@ -30,7 +30,7 @@ u16 EraseAtmelFlashChip(void) {
 /// FLASH_ERASED_BYTE: one of gFlash_ChipAtmelLayout's 512 sectors of 128 bytes,
 /// written with interrupts off.
 u16 EraseAtmelFlashSector(u16 sector) {
-  struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
+  const struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
   u8 *cursor;
   s32 bytesRemaining;
   u16 result;

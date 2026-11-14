@@ -50,23 +50,25 @@ s32 VramCache_AllocateBlocks(u32 slot, u32 size) {
   return ret;
 }
 
+/// Returns the length, in blocks, of the longest run of free blocks. Nothing
+/// in the game calls it.
 s32 VramCache_GetLongestFreeRun(void) {
   s32 run = 0;
-  u8 *marker = gResourceBlockOwners;
-  s32 longest = 0;
+  u8 *owner = gResourceBlockOwners;
+  s32 longestRun = 0;
   s32 remaining = VRAM_BLOCK_COUNT;
 
   do {
-    if (*marker++ != VRAM_BLOCK_OWNER_FREE) {
+    if (*owner++ != VRAM_BLOCK_OWNER_FREE) {
       run = 0;
     } else {
       run++;
-      if (longest < run)
-        longest = run;
+      if (longestRun < run)
+        longestRun = run;
     }
     remaining--;
   } while (remaining != 0);
-  return longest;
+  return longestRun;
 }
 
 /// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512
@@ -87,26 +89,23 @@ s32 VramCache_CountFreeBlocks(void) {
   return freeCount;
 }
 
-s32 VramCache_FreeBlocks(s32 resourceId) {
-  s32 clearedCount = 0;
-  s32 remaining;
-  u8 *marker;
-  u8 emptyMarker;
+/// Frees every block entry `id` owns in gResourceBlockOwners. Returns -1 when
+/// it freed any (or `id` is out of range) and 0 when the entry owned none.
+s32 VramCache_FreeBlocks(s32 id) {
+  s32 freed = 0;
+  u8 *owner;
+  s32 block;
 
-  if ((u32)resourceId >= VRAM_CACHE_ENTRY_COUNT)
+  if ((u32)id >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
-  marker = gResourceBlockOwners;
-  emptyMarker = VRAM_BLOCK_OWNER_FREE;
-  remaining = VRAM_BLOCK_COUNT;
-  do {
-    if (*marker == resourceId) {
-      *marker = emptyMarker;
-      clearedCount++;
+  owner = gResourceBlockOwners;
+  for (block = 0; block < VRAM_BLOCK_COUNT; block++, owner++) {
+    if (*owner == id) {
+      *owner = VRAM_BLOCK_OWNER_FREE;
+      freed++;
     }
-    remaining--;
-    marker++;
-  } while (remaining != 0);
-  if (clearedCount != 0)
+  }
+  if (freed != 0)
     return -1;
   return 0;
 }
@@ -229,8 +228,8 @@ s32 VramCache_AllocEntry(s32 size) {
   return no;
 }
 
-/// Copies src into cache no again, keeping its current size. Returns the OBJ
-/// tile index.
+/// Copies `src` again into entry `no`'s VRAM, keeping its size. Returns the
+/// first sprite tile number.
 s32 VramCache_Reload(s32 no, s32 src) {
   return VramCache_Load(no, gResourceTableEntries[no].size, (const void *)src);
 }

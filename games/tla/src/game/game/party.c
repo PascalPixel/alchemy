@@ -103,42 +103,36 @@ s32 Party_CountMembers(void) {
   return count;
 }
 
-/// Adds character `unitId` to the end of the party: sets its game flag and
-/// appends it to gMainRoutineWork.party unless it is already listed.
-/// Returns the party size. Called by the events where a character joins, by
-/// the party member chooser and the File Screen, and by the debug parameter
-/// sets.
-s32 Party_AddMember(s32 value) {
-  s32 count = Party_CountMembers();
-  s32 index;
+/// Adds a character to the end of the party unless it is there already, and
+/// returns the party size.
+s32 Party_AddMember(s32 unitId) {
+  s32 partySize = Party_CountMembers();
+  s32 partyIndex;
 
-  GameFlag_Set(value);
-  index = 0;
-  while (index < count) {
-    if (gMainRoutineWork.activeOwners[index] == value)
-      return count;
-    index++;
+  GameFlag_Set(FLAG_IN_PARTY(unitId));
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    if (gMainRoutineWork.activeOwners[partyIndex] == unitId)
+      return partySize;
   }
-  gMainRoutineWork.activeOwners[index] = value;
-  return count + 1;
+  gMainRoutineWork.activeOwners[partyIndex] = unitId;
+  return partySize + 1;
 }
 
 /// Takes character `unitId` out of the party: clears its game flag and closes
-/// the gap it leaves in gMainRoutineWork.party. Returns the party size.
-/// Called by the events where a character leaves, by the party member chooser
-/// and the File Screen, and by the debug parameter sets.
-s32 Party_RemoveMember(s32 value) {
-  s32 count = Party_CountMembers();
-  s32 i;
-  s32 j;
+/// the gap it leaves in gMainRoutineWork.activeOwners. Returns the party size.
+s32 Party_RemoveMember(s32 unitId) {
+  s32 partySize = Party_CountMembers();
+  s32 removedIndex;
+  s32 partyIndex;
 
-  GameFlag_Clear(value);
-  for (i = 0; i < count; i++) {
-    if (gMainRoutineWork.activeOwners[i] == value)
+  GameFlag_Clear(FLAG_IN_PARTY(unitId));
+  for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
+    if (gMainRoutineWork.activeOwners[removedIndex] == unitId)
       break;
   }
-  for (j = i; j < count - 1; j++)
-    gMainRoutineWork.activeOwners[j] = gMainRoutineWork.activeOwners[j + 1];
+  for (partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
+    gMainRoutineWork.activeOwners[partyIndex] =
+        gMainRoutineWork.activeOwners[partyIndex + 1];
   return Party_CountMembers();
 }
 

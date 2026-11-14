@@ -178,7 +178,7 @@ void Scene_ReturnFromSequence(s32 result) {
 
 /// Returns the area sceneId belongs to. The scenes of one area share their
 /// music, area name and the flags kept while inside it.
-s8 Scene_GetArea(s32 sceneId) { return gScenes[sceneId].area; }
+s32 Scene_GetArea(s32 sceneId) { return gScenes[sceneId].area; }
 
 /// Returns the scene's attributes, the last halfword of its gScenes row, which
 /// The Broken Seal leaves 0; the field sequence splits it into two nibbles.
@@ -322,10 +322,10 @@ void MainRoutine_Run(s32 mode) {
 
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
 void Scene_LoadOverlay(s32 unused) {
-  const struct Scene *table = gScenes;
-  s16 sceneId = gMainRoutineWork.scene;
+  const struct Scene *table;
 
-  Overlay_Load(table[sceneId].resourceId, &gOverlayArea);
+  table = gScenes;
+  Overlay_Load(table[gMainRoutineWork.scene].resourceId, &gOverlayArea);
 }
 
 #define MAP_HEADER(id) (&gScenes[id])

@@ -5,10 +5,9 @@
 #include "../game_internal.h"
 #include "module/game/game.h"
 
-/// Returns the item's definition.
-/// item: item ID; the inventory's equipment and quantity bits are ignored.
+/// Returns an item's definition; an inventory entry's other bits are ignored.
 struct ItemDefinition *Item_GetDirect(s32 item) {
-  return (struct ItemDefinition *)gItem_DefinitionTable + (item & ITEM_ID_MASK);
+  return &gItem_DefinitionTable[item & ITEM_ID_MASK];
 }
 
 /// Returns whether a character can equip the item: bit classId of its
@@ -86,23 +85,21 @@ s32 Inventory_Count(s32 owner) {
   return count;
 }
 
+/// Returns 1 when the selected character or any party member has a free
+/// inventory slot.
 s32 PartyInventory_HasSpace(void) {
-  s16 owners[10];
-  s32 ownerCount;
-  s32 ownerIndex;
-  s16 *ownerCursor;
+  s16 unitIds[10];
+  s32 unitCount;
+  s16 *unitId;
+  s32 i;
 
-  if (Inventory_Count(gMainRoutineWork.currentOwner) != 15)
+  if (Inventory_Count(gMainRoutineWork.currentOwner) != INVENTORY_SLOTS)
     return 1;
-  ownerCount = Party_ListMembers(owners);
-  ownerCursor = owners;
-  ownerIndex = 0;
-  if (ownerIndex < ownerCount) {
-    do {
-      if (Inventory_Count(*ownerCursor++) != 15)
-        return 1;
-      ownerIndex++;
-    } while (ownerIndex < ownerCount);
+  unitCount = Party_ListMembers(unitIds);
+  unitId = unitIds;
+  for (i = 0; i < unitCount; i++) {
+    if (Inventory_Count(*unitId++) != INVENTORY_SLOTS)
+      return 1;
   }
   return 0;
 }
@@ -211,24 +208,20 @@ s32 Inventory_Find(s32 owner, s32 item_id) {
 
 /// Returns who carries `itemId`, asking the selected character first, or -1.
 s32 PartyInventory_FindMember(s32 itemId) {
-  s16 owners[10];
-  s32 ownerCount;
-  s32 ownerIndex;
-  s16 *ownerCursor;
-  s16 owner;
+  s16 unitIds[10];
+  s32 unitCount;
+  s16 *cursor;
+  s32 i;
 
   if (Inventory_Find(gMainRoutineWork.currentOwner, itemId) != -1)
     return gMainRoutineWork.currentOwner;
-  ownerCount = Party_ListMembers(owners);
-  ownerCursor = owners;
-  ownerIndex = 0;
-  if (ownerIndex < ownerCount) {
-    do {
-      owner = *ownerCursor++;
-      if (Inventory_Find(owner, itemId) != -1)
-        return owner;
-      ownerIndex++;
-    } while (ownerIndex < ownerCount);
+  unitCount = Party_ListMembers(unitIds);
+  cursor = unitIds;
+  for (i = 0; i < unitCount; i++) {
+    s16 unitId = *cursor++;
+
+    if (Inventory_Find(unitId, itemId) != -1)
+      return unitId;
   }
   return -1;
 }

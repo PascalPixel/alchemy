@@ -4,10 +4,13 @@
 
 #include "../system_internal.h"
 
+/// Advances the game's random number generator (the C library's classic
+/// linear congruential one), stores the new seed and returns its bits 8 to
+/// 23, 0 to 65535. Called throughout the game.
 u32 Random16(void) {
-  u32 value;
+  enum { MULTIPLIER = 1103515245, INCREMENT = 12345 };
+  u32 value = gRandomState * MULTIPLIER + INCREMENT;
 
-  value = gRandomState * 0x41c64e6dU + 0x3039U;
   gRandomState = value;
   return (value << 8) >> 16;
 }

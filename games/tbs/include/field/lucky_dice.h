@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_LUCKY_DICE_H
-#define ALCHEMY_FIELD_LUCKY_DICE_H
+#ifndef ALCHEMY_LUCKY_DICE_H
+#define ALCHEMY_LUCKY_DICE_H
 
 #include "types.h"
 

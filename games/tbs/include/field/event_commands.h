@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_EVENT_COMMANDS_H
-#define ALCHEMY_FIELD_EVENT_COMMANDS_H
+#ifndef ALCHEMY_EVENT_COMMANDS_H
+#define ALCHEMY_EVENT_COMMANDS_H
 
 #include "types.h"
 #include "field/field_particle.h"

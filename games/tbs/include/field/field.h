@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_FIELD_H
-#define ALCHEMY_FIELD_FIELD_H
+#ifndef ALCHEMY_FIELD_H
+#define ALCHEMY_FIELD_H
 
 /// @file
 /// The field's shared routines, globals and actor scripts.

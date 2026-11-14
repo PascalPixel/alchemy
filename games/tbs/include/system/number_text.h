@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_SYSTEM_NUMBER_TEXT_H
-#define ALCHEMY_SYSTEM_NUMBER_TEXT_H
+#ifndef ALCHEMY_NUMBER_TEXT_H
+#define ALCHEMY_NUMBER_TEXT_H
 
 #include "types.h"
 

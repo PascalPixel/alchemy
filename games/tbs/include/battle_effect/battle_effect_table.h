@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_BATTLE_EFFECT_BATTLE_EFFECT_TABLE_H
-#define ALCHEMY_BATTLE_EFFECT_BATTLE_EFFECT_TABLE_H
+#ifndef ALCHEMY_BATTLE_EFFECT_TABLE_H
+#define ALCHEMY_BATTLE_EFFECT_TABLE_H
 
 #include "types.h"
 #include "graphics/render_placement.h"

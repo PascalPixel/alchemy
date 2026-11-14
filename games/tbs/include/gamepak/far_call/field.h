@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_FIELD_H
+#define ALCHEMY_FAR_CALL_FIELD_H
+
 /// @file
 /// Actors, movement, map drawing and map routines.
 
@@ -90,3 +93,5 @@ void TilesetAnim_ResumeAllFar(void);
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *actor,
                                                   s32 *values);
 s32 MapGrid_GetCellAttributeLowNibbleFar(s32 index, s32 x, s32 y);
+
+#endif

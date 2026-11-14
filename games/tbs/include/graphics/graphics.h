@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef ALCHEMY_GRAPHICS_H
+#define ALCHEMY_GRAPHICS_H
 
 /// @file
 /// The screen blend's globals and the graphics routines.

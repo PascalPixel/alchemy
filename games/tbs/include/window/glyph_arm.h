@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_WINDOW_GLYPH_ARM_H
-#define ALCHEMY_WINDOW_GLYPH_ARM_H
+#ifndef ALCHEMY_GLYPH_ARM_H
+#define ALCHEMY_GLYPH_ARM_H
 
 #include "types.h"
 

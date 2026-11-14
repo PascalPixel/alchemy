@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_BATTLE_MUSIC_H
-#define ALCHEMY_FIELD_BATTLE_MUSIC_H
+#ifndef ALCHEMY_BATTLE_MUSIC_H
+#define ALCHEMY_BATTLE_MUSIC_H
 
 #include "types.h"
 

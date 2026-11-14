@@ -1,5 +1,5 @@
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef ALCHEMY_SOUND_H
+#define ALCHEMY_SOUND_H
 
 /// @file
 /// The sound tables (CGB codes, frequency steps, samples a VBlank) and the

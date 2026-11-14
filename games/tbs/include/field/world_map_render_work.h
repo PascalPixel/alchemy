@@ -1,9 +1,10 @@
+#ifndef ALCHEMY_WORLD_MAP_RENDER_WORK_H
+#define ALCHEMY_WORLD_MAP_RENDER_WORK_H
+
 /// @file
 /// WorldMapRenderWork, the map renderer's work.
 
 #include "system/heap_slots.h"
-#ifndef ALCHEMY_WORLD_MAP_RENDER_WORK_H
-#define ALCHEMY_WORLD_MAP_RENDER_WORK_H
 
 #include "types.h"
 #include "static_assert.h"

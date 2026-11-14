@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_WINDOW_H
+#define ALCHEMY_FAR_CALL_WINDOW_H
+
 /// @file
 /// Window construction, text drawing and selection interfaces.
 
@@ -131,3 +134,5 @@ void Window_EraseBorderRectFar(s32 x, s32 y, u32 width, u32 height);
 void Link_DrawPageArrowsFar(s32 offset);
 void Party_ShowJoinedMessageFar();
 void Party_ShowPairJoinedMessageFar(s32 first, s32 second);
+
+#endif

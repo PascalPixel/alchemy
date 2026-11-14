@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MENU_CREDITS_H
-#define ALCHEMY_MENU_CREDITS_H
+#ifndef ALCHEMY_CREDITS_H
+#define ALCHEMY_CREDITS_H
 
 #include "types.h"
 

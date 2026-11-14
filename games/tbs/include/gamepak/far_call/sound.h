@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_SOUND_H
+#define ALCHEMY_FAR_CALL_SOUND_H
+
 /// @file
 /// Audio mixing, playback commands and music-player updates.
 
@@ -9,3 +12,5 @@ void Sound_SetBgmTempoFar(u16 value);
 s32 Sound_GetBgmRestoreDelayFar(void);
 s32 Sound_GetCurrentBgmFar(void);
 void Sound_WaitForBgmRestoreFar(void);
+
+#endif

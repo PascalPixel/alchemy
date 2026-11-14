@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_FIELD_SEQUENCE_H
-#define ALCHEMY_FIELD_FIELD_SEQUENCE_H
+#ifndef ALCHEMY_FIELD_SEQUENCE_H
+#define ALCHEMY_FIELD_SEQUENCE_H
 
 #include "types.h"
 #include "field/field_particle.h"

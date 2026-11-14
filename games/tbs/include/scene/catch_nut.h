@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_CATCH_NUT_H
+#define ALCHEMY_CATCH_NUT_H
+
 /// @file
 /// The Nuts floating in Vale, Kolima Forest, Mogall Forest, Kalay, Crossbone
 /// Isle, Lunpa and McCoy's Palace.
@@ -15,3 +18,5 @@ static inline void Scene_CatchNut(s32 actorId, s32 flag) {
   PartyInventory_GiveItem(ITEM_NUT, 0);
   Event_End();
 }
+
+#endif

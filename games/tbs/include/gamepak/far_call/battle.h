@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FAR_CALL_BATTLE_H
+#define ALCHEMY_FAR_CALL_BATTLE_H
+
 /// @file
 /// Battle state, unit motion and presentation services.
 
@@ -36,3 +39,5 @@ s32 DebugParameterSet_LoadFar(s32 set);
 void BattleObject_PutFar(void);
 UNREAD_RESULT BattleMessage_WaitForAdvanceAtFar(s32 x, s32 y);
 s32 BattleDjinn_CountStandbyFar(u32 unitId, u8 *counts);
+
+#endif

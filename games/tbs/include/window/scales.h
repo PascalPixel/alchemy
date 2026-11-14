@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_WINDOW_SCALES_H
-#define ALCHEMY_WINDOW_SCALES_H
+#ifndef ALCHEMY_SCALES_H
+#define ALCHEMY_SCALES_H
 
 #include "types.h"
 

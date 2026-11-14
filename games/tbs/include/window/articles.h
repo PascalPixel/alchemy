@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_WINDOW_ARTICLES_H
-#define ALCHEMY_WINDOW_ARTICLES_H
+#ifndef ALCHEMY_ARTICLES_H
+#define ALCHEMY_ARTICLES_H
 
 #include "types.h"
 

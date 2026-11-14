@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_LUCKY_WHEELS_H
-#define ALCHEMY_FIELD_LUCKY_WHEELS_H
+#ifndef ALCHEMY_LUCKY_WHEELS_H
+#define ALCHEMY_LUCKY_WHEELS_H
 
 #include "types.h"
 

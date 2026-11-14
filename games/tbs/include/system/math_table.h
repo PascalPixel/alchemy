@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_SYSTEM_MATH_TABLE_H
-#define ALCHEMY_SYSTEM_MATH_TABLE_H
+#ifndef ALCHEMY_MATH_TABLE_H
+#define ALCHEMY_MATH_TABLE_H
 
 #include "types.h"
 

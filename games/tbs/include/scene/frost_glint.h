@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_FROST_GLINT_H
+#define ALCHEMY_FROST_GLINT_H
+
 /// @file
 /// Altin Peak's frozen puddle and the main image's Frost (frost.c), each with
 /// its own colour-mode routine.
@@ -13,3 +16,5 @@
       setColorMode(actor, SPRITE_COLOR_NORMAL);                                \
     }                                                                          \
   }
+
+#endif

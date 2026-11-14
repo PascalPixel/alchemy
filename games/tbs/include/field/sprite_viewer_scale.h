@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_SPRITE_VIEWER_SCALE_H
-#define ALCHEMY_FIELD_SPRITE_VIEWER_SCALE_H
+#ifndef ALCHEMY_SPRITE_VIEWER_SCALE_H
+#define ALCHEMY_SPRITE_VIEWER_SCALE_H
 
 #include "types.h"
 #include "graphics/render_placement.h"

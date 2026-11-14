@@ -1,5 +1,5 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef ALCHEMY_GAME_H
+#define ALCHEMY_GAME_H
 
 /// @file
 /// The item and summon tables and the game bank's routines.

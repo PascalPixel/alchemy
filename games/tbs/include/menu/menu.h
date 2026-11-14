@@ -1,5 +1,5 @@
-#ifndef MENU_H
-#define MENU_H
+#ifndef ALCHEMY_MENU_H
+#define ALCHEMY_MENU_H
 
 /// @file
 /// The menus' list orders, sign strings and routines.

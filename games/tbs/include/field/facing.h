@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_FACING_H
-#define ALCHEMY_FIELD_FACING_H
+#ifndef ALCHEMY_FACING_H
+#define ALCHEMY_FACING_H
 
 #include "types.h"
 

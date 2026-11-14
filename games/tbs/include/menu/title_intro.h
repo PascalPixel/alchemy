@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MENU_TITLE_INTRO_H
-#define ALCHEMY_MENU_TITLE_INTRO_H
+#ifndef ALCHEMY_TITLE_INTRO_H
+#define ALCHEMY_TITLE_INTRO_H
 
 #include "types.h"
 

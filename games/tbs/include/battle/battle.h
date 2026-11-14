@@ -1,5 +1,5 @@
-#ifndef BATTLE_H
-#define BATTLE_H
+#ifndef ALCHEMY_BATTLE_H
+#define ALCHEMY_BATTLE_H
 
 /// @file
 /// The battle bank's routines and globals, as the other banks see them.

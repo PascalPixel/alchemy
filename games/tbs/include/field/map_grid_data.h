@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_MAP_GRID_DATA_H
-#define ALCHEMY_FIELD_MAP_GRID_DATA_H
+#ifndef ALCHEMY_MAP_GRID_DATA_H
+#define ALCHEMY_MAP_GRID_DATA_H
 
 #include "types.h"
 #include "field/field.h"

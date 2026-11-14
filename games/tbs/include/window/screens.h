@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_WINDOW_SCREENS_H
-#define ALCHEMY_WINDOW_SCREENS_H
+#ifndef ALCHEMY_SCREENS_H
+#define ALCHEMY_SCREENS_H
 
 #include "edition.h"
 #include "types.h"

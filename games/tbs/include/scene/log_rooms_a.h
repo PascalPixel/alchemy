@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MAP_LOG_ROOMS_A_H
-#define ALCHEMY_MAP_LOG_ROOMS_A_H
+#ifndef ALCHEMY_LOG_ROOMS_A_H
+#define ALCHEMY_LOG_ROOMS_A_H
 
 /// @file
 /// The cell behaviors of the layout of Vault's houses, shops and inn, which

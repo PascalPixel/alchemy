@@ -1,3 +1,6 @@
+#ifndef ALCHEMY_WALK_INTO_LEADER_H
+#define ALCHEMY_WALK_INTO_LEADER_H
+
 /// @file
 /// A companion and the party leader: placed on the leader, walked toward the
 /// leader, or walked into the leader and taken off the map, as the scenes'
@@ -35,3 +38,5 @@ static inline void Scene_WalkIntoLeader(s32 actorId) {
   Actor_WaitForMoveById(actorId);
   Actor_SetPosition(actorId, 0, 0);
 }
+
+#endif

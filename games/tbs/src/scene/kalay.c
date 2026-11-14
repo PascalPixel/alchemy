@@ -466,9 +466,11 @@ static void Kalay_TalkAboutLeavingHome(void) {
 /// Entrance asks `Do you want to go to the cave up ahead?`, and turns the
 /// party away either way.
 static void Kalay_AskAboutCaveAccess(void) {
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+
   // From the north he only stands in the way.
-  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_EAST_SOUTHEAST) >
-      FACING_WEST_SOUTHWEST - FACING_EAST_SOUTHEAST) {
+  if (leader->facing < FACING_EAST_SOUTHEAST ||
+      leader->facing > FACING_WEST_SOUTHWEST) {
     Event_Start();
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TUNNEL_GUARD, 0);
     Event_Wait(10);
@@ -502,9 +504,10 @@ static void Kalay_TalkAboutLayana(void) {
 /// Talking to the weapon merchant in Kalay across the counter, with the leader
 /// facing north, opens the weapon shop.
 static void Kalay_TalkToWeaponMerchant(void) {
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+
   // Across the counter: between northwest and southeast, by way of north.
-  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
-      FACING_NORTHWEST - FACING_SOUTHEAST) {
+  if (leader->facing < FACING_SOUTHEAST || leader->facing > FACING_NORTHWEST) {
     Shop_Run(22, ACTOR_WEAPON_MERCHANT);
   } else {
     Event_Start();
@@ -518,9 +521,10 @@ static void Kalay_TalkToWeaponMerchant(void) {
 /// Talking to the armor merchant in Kalay across the counter, with the leader
 /// facing west to north, opens the armor shop.
 static void Kalay_TalkToArmorMerchant(void) {
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+
   // Across the counter: between southwest and northeast, by way of west.
-  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - (FACING_SOUTHWEST + 1)) <=
-      FACING_NORTHEAST - FACING_SOUTHWEST - 2) {
+  if (leader->facing > FACING_SOUTHWEST && leader->facing < FACING_NORTHEAST) {
     Shop_Run(23, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_Start();
@@ -536,9 +540,10 @@ static void Kalay_TalkToArmorMerchant(void) {
 /// Talking to the item merchant in Kalay across the counter, with the leader
 /// facing east, opens the item shop.
 static void Kalay_TalkToItemMerchant(void) {
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+
   // Across the counter: between northeast and southeast, by way of east.
-  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
-      FACING_NORTHEAST - FACING_SOUTHEAST) {
+  if (leader->facing < FACING_SOUTHEAST || leader->facing > FACING_NORTHEAST) {
     Shop_Run(24, ACTOR_ITEM_MERCHANT);
   } else {
     Event_Start();

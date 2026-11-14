@@ -817,8 +817,9 @@ static void TolbiShipDeck_GoBelow(void) {
 /// In the German, Spanish, French and Italian editions cell behavior 2 is a
 /// plain step trigger.
 static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
-  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - (FACING_SOUTHWEST + 1)) <
-      FACING_NORTHWEST - (FACING_SOUTHWEST + 1)) {
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+
+  if (leader->facing > FACING_SOUTHWEST && leader->facing < FACING_NORTHWEST) {
     Event_Start();
     Actor_WalkTo(ACTOR_PARTY_LEADER, 214, 664);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);

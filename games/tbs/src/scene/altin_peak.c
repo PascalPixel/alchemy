@@ -118,6 +118,7 @@
 #include "system/heap_slots.h"
 #include "system/input.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/iwram_call.h"
 #include "system/main_routine.h"
 #include "system/main_routine_work.h"
@@ -620,16 +621,12 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
 
 /// Interrupt handler while the water layer vanishes.
 static void AltinPeak_FlickerWaterOut(void) {
-  s16 control = REG_DISPCNT & ~DISPCNT_BG1_ON;
-  s32 bg1 = DISPCNT_BG1_ON;
-  /* FAKEMATCH(temporary): the new control widened into a word before its store.
-   */
-  u32 value;
+  u16 control = REG_DISPCNT & ~DISPCNT_BG1_ON;
 
-  if (Random_Below(100) >= gAltinPeak_FlickerTimer)
-    control |= bg1;
-  value = (u16)control;
-  REG_DISPCNT = value;
+  if (Random_Below(100) >= gAltinPeak_FlickerTimer) {
+    control |= DISPCNT_BG1_ON;
+  }
+  Io_Write16(control, &REG_DISPCNT);
 }
 
 /// Flickers the water away while the timer counts to 100, then lets the
@@ -1556,14 +1553,12 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
   } else {
     MapGrid_CopyCellAttributes(52, 42, 1, 1, 53, 42);
   }
-  {
-    // Either entrance from the Alpine Crossing: _EAST is the number
-    // after ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST.
-    if ((u32)(((u16)gMainRoutineWork.entrance -
-               ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST)
-              << 16) <= 1 << 16) {
-      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-    }
+  // Either entrance from the Alpine Crossing.
+  if (gMainRoutineWork.entrance ==
+          ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST ||
+      gMainRoutineWork.entrance ==
+          ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST) {
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
 }
 

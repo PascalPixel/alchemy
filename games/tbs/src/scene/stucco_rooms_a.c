@@ -252,8 +252,7 @@ static void StuccoRoomsA_AskAboutSouthernContinent(void) {
 static void StuccoRoomsA_TalkToInnkeeper(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((u16)(leader->facing - (FACING_SOUTHWEST + 1)) <
-      FACING_NORTHWEST - (FACING_SOUTHWEST + 1)) {
+  if (leader->facing > FACING_SOUTHWEST && leader->facing < FACING_NORTHWEST) {
     Inn_CheckIn(KALAY_INN, ACTOR_INNKEEPER);
   } else {
     Event_Start();
@@ -279,8 +278,7 @@ static void StuccoRoomsA_TalkToInnkeeper(void) {
 static void StuccoRoomsA_TalkToHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((u16)(leader->facing - (FACING_NORTHWEST + 1)) <
-      FACING_NORTHEAST - (FACING_NORTHWEST + 1)) {
+  if (leader->facing > FACING_NORTHWEST && leader->facing < FACING_NORTHEAST) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
     Event_Start();

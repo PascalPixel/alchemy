@@ -702,17 +702,19 @@ static void FuchinTemple_ToppleTreeSouth(void) {
 
 /// Routes the student around the tree according to the leader's facing.
 static void FuchinTemple_StudentWalksAroundTree(void) {
-  u32 leaderFacing;
+  u16 leaderFacing;
 
   leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
-  if ((u16)(leaderFacing - FACING_SOUTHEAST) <= 0x3fff) {
+  if (leaderFacing >= FACING_SOUTHEAST && leaderFacing < FACING_SOUTHWEST) {
     Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
     Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 168);
     Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
-  } else if ((u16)(leaderFacing - FACING_SOUTHWEST) <= 0x3fff) {
+  } else if (leaderFacing >= FACING_SOUTHWEST &&
+             leaderFacing < FACING_NORTHWEST) {
     Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
     Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH_SOUTHWEST, 20);
-  } else if ((u16)(leaderFacing - FACING_NORTHWEST) <= 0x3fff) {
+  } else if (leaderFacing >= FACING_NORTHWEST &&
+             leaderFacing < FACING_NORTHEAST) {
     Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
     Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 172);
     Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_NORTHEAST, 20);
@@ -866,11 +868,11 @@ static void FuchinTemple_PushTreeByHand(void) {
 
   facing = leader->facing;
 
-  if ((u16)(facing - FACING_SOUTHEAST) <= 0x3fffu) {
+  if (facing >= FACING_SOUTHEAST && facing < FACING_SOUTHWEST) {
     FuchinTemple_ToppleTreeSouth();
-  } else if ((u16)(facing - FACING_SOUTHWEST) <= 0x3fffu) {
+  } else if (facing >= FACING_SOUTHWEST && facing < FACING_NORTHWEST) {
     FuchinTemple_ToppleTreeWest();
-  } else if ((u16)(facing - FACING_NORTHWEST) <= 0x3fffu) {
+  } else if (facing >= FACING_NORTHWEST && facing < FACING_NORTHEAST) {
     FuchinTemple_ToppleTreeNorth();
   } else {
     FuchinTemple_ToppleTreeEast();
@@ -889,11 +891,11 @@ static void FuchinTemple_ForceTree(void) {
   Event_Start();
 
   facing = leader->facing;
-  if ((u16)(facing - FACING_SOUTHEAST) <= 0x3fff) {
+  if (facing >= FACING_SOUTHEAST && facing < FACING_SOUTHWEST) {
     FuchinTemple_ToppleTreeSouth();
-  } else if ((u16)(facing - FACING_SOUTHWEST) <= 0x3fff) {
+  } else if (facing >= FACING_SOUTHWEST && facing < FACING_NORTHWEST) {
     FuchinTemple_ToppleTreeWest();
-  } else if ((u16)(facing - FACING_NORTHWEST) <= 0x3fff) {
+  } else if (facing >= FACING_NORTHWEST && facing < FACING_NORTHEAST) {
     FuchinTemple_ToppleTreeNorth();
   } else {
     FuchinTemple_ToppleTreeEast();

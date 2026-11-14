@@ -1985,8 +1985,7 @@ static void Sanctum_RestoreQuestFloor(void) {
 static s32 Sanctum_IsLeaderFacingHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((u16)(leader->facing - (FACING_NORTHWEST + 1)) <
-      FACING_NORTHEAST - (FACING_NORTHWEST + 1)) {
+  if (leader->facing > FACING_NORTHWEST && leader->facing < FACING_NORTHEAST) {
     return 1;
   }
   return 0;

@@ -850,13 +850,9 @@ prompt:
       prizeIndex = 0;
       if (prizeIndex < result * 3 + 3) {
         do {
-          /* FAKEMATCH(temporary): the weight read as a byte from the work's
-           * start. */
-          u8 weight =
-              ((u8 *)routine)[prizeIndex +
-                              offsetof(struct MainRoutineWork, prizeWeights)];
+          s8 weight = *(routine->prizeWeights + prizeIndex);
 
-          totalWeight += (s8)weight;
+          totalWeight += weight;
           prizeIndex++;
         } while (prizeIndex < result * 3 + 3);
       }

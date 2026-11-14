@@ -1017,7 +1017,9 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
     Event_Start();
     if ((statueZ >> 20) == 8) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN) == 0) {
-        if ((u32)(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 17) {
+        s32 halfCell = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19;
+
+        if (halfCell >= 0 && halfCell <= 17) {
           Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 289, 158);
           Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
         }

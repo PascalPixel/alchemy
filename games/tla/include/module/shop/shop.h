@@ -8,57 +8,70 @@
 
 struct RenderInput;
 struct ShopCursor;
+struct WindowSprite;
 
 void Shop_InitializeWork(void);
-s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);
-void Shop_DrawMessage(s32 win, s32 message);
-s32 Shop_SelectBuyCount(s32 unit, s32 item);
-void Shop_BuyDone(s32 unit, s32 item, s32 quantity);
+s32 Shop_SelectBuy(void);
 void Shop_DrawStock(struct RenderInput *window, s32 selected);
-void Shop_DrawItemPrice(s32 window, s32 itemId, s32 price, s32 priceKind);
+void Shop_DrawItemPrice(struct RenderInput *window, s32 itemId, s32 price,
+                        s32 priceKind);
+void Shop_DrawMessage(struct RenderInput *window, s32 message);
 void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId);
+void Shop_DrawEquipComparison(struct RenderInput *window, s32 unitId,
+                              s32 itemId);
 void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId);
-void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId);
-void Shop_GiveGameTicket(void *partyWindow, void *itemWindow);
+s32 Shop_SelectBuyCount(s32 unitId, s32 itemId);
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price);
+void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity);
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
 s32 Shop_SellOld(s32 unitId, s32 slot);
-void Shop_DrawMemberItems(void *window, s32 item);
+void Shop_GiveGameTicket(struct RenderInput *window,
+                         struct RenderInput *itemWindow);
+s32 Shop_ChooseMember(void);
+s32 Shop_SelectSell(s32 unitId);
+void Shop_DrawMemberItems(struct RenderInput *window, s32 unitId);
+s32 Shop_SelectSellCount(s32 unitId, s32 slot);
+void Shop_SellItem(s32 unitId, s32 slot, s32 count);
+s32 Shop_RepairPrice(s32 inventoryEntry);
+s32 Shop_RunRepairMemberChoice(void);
+s32 Shop_SelectRepair(s32 unitId);
+void Shop_RepairItem(s32 unitId, s32 slot);
+void Shop_ShowKeeperMessage(s32 messageId);
+struct WindowSprite *
+Shop_CreatePriceSprite(s32 value, struct RenderInput *window, s32 x, s32 y);
+
 void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY,
                     s8 kind);
-void Inn_PlaySleep(s32 price);
-s32 Forge_ChooseMember(void);
-s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode);
-s32 ItemPicker_SelectItem(s32 unitId);
-void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot);
 void MenuCursor_Advance(struct ShopCursor *cursor);
-void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
-void ItemIconGrid_Initialize(void);
-void ItemIconGrid_Release(void);
-s32 ShopStock_GetRowCount(void);
-s32 ShopStock_GetType(s32 row);
-void ShopStock_AddArtifacts(s32 row);
 void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
-void Shop_ShowKeeperMessage(s32 message);
+void VramBlock_LoadResource(s32 entryId, s32 size, s32 resourceId);
+
+s32 ShopStock_GetRowCount(void);
+s32 ShopStock_GetType(s32 stockRow);
+void ShopStock_AddArtifacts(s32 stockRow);
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output);
-s32 Shop_SelectBuy(void);
-s32 Shop_ChooseMember(void);
-s32 Shop_RunRepairMemberChoice(void);
+
+s32 Inn_RoomPrice(s32 innId);
+void Inn_PlaySleep(s32 roomPrice);
+
+s32 Forge_ChooseMember(void);
+s32 Forge_SelectItem(s32 unitId);
+s32 Forge_GetItemCondition(s32 itemId);
+s32 Forge_OfferItem(s32 unitId, s32 slot);
+
 s32 Sanctum_RunPartyService(void);
-void Sanctum_HighlightMembers(void *window, s32 memberIndex);
-void Sanctum_DrawFee(s32 window, s32 unitId);
+void Sanctum_HighlightMembers(struct RenderInput *window, s32 selected);
+void Sanctum_DrawFee(struct RenderInput *window, s32 unitId);
 void Sanctum_ApplyService(s32 unitId, s32 serviceKind);
 void Sanctum_RunMemberIconBurst(s32 member);
-s32 Shop_SelectSell(s32 unitId);
-s32 Shop_SelectRepair(s32 unitId);
-s32 Forge_SelectItem(s32 unitId);
-s32 Shop_RepairPrice(s32 item);
-s32 Forge_GetMaterialChance(s32 item);
-s32 Shop_SelectSellCount(s32 unitId, s32 slot);
-void Shop_RepairItem(s32 unitId, s32 slot);
-s32 Forge_OfferItem(s32 unitId, s32 slot);
-void Shop_SellItem(s32 unitId, s32 slot, s32 count);
-void ItemIconGrid_ShowInventory(s16 *window, s32 x, s32 y, s32 owner);
+
+s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode);
+s32 ItemPicker_SelectItem(s32 unitId);
+void ItemPicker_DrawItem(struct RenderInput *window, s32 unitId, s32 slot);
+void ItemIconGrid_Initialize(void);
+void ItemIconGrid_Release(void);
+void ItemIconGrid_ShowInventory(struct RenderInput *window, s32 x, s32 y,
+                                s32 unitId);
 
 #endif

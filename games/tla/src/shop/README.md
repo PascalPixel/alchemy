@@ -69,7 +69,9 @@ enough, stay or not. Then his wife hands it over, for the item's price.
 
 When the party finds an item and every pack is full, the game asks what to
 drop. The screen it shows is the selling screen with the shopkeeper taken
-away, which is why it lives here (`ItemPicker_Run`).
+away, which is why it lives here (`ItemPicker_Run`). Naribwe's fortune
+teller uses it too, to be shown one of the party's items; it refuses only
+what cannot be taken off.
 
 ## Where the code is
 

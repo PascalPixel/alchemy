@@ -2,8 +2,9 @@
 #define ALCHEMY_SHOP_INTERNAL_H
 
 /// @file
-/// What every part of the shop object shares: its includes and the types two
-/// or more parts use. shop.c includes it before the parts, and each part
+/// What every part of the shop object shares: its includes, its work, the
+/// counters and services it runs, the stock table's columns and the tables
+/// shop_tables.c holds. shop.c includes it before the parts, and each part
 /// includes it too, so that a part read on its own still resolves. It places
 /// no bytes.
 
@@ -49,164 +50,142 @@
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
 #include "module/tla.h"
-
-struct FieldObject {
-  u8 unk000[0x34];
-  u16 savedX;
-  u16 savedY;
-  s16 x;
-  u16 y;
-  u8 unk03c[0x14];
-  struct ObjectSpriteInfo *sprite;
-};
+#include "item_icon.h"
+#include "field/field_particle.h"
 
 void WindowSprite_RedrawSavedRectFar(void *window);
 
-struct ShopCursorSprite {
-  u8 unk00[5];
-  u8 active;
-};
-
-struct UiSprite {
-  u8 unk00[24];
-  u16 tile : 10;
-  u16 flags : 6;
-};
-
-struct SpriteAttr2 {
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-};
-
-struct ShopCursorSprite3 {
-  struct WindowSprite *next;
-  u8 unk04[2];
-  u16 x;
-  u16 y;
-  u8 unk0a[0x0a];
-  struct SpriteAttr2 oam;
-};
-
-struct ForgeRecipe {
-  s16 item;
-  s16 chance;
-  s16 results[8];
-  s16 weights[8];
-};
-
-/// The inn's view of the shop work (heap slot 220).
-struct InnRuntime {
-  u8 unk000[0x4ca];
-  s16 partyMemberIds[8];
-  u8 unk4da[0x2a];
-  s8 partyMemberCount;
-  u8 unk505;
-  u8 busy;
-};
-
-// The inn work block, as this function reads it.
-struct InnRuntimeState {
-  u8 unk000[0x0c];
-  s32 window;
-  u8 unk010[0x4ea];
-  u16 resourceId;
-  u8 unk4fc[0x0a];
-  u8 active;
-};
-
-struct InnObjectComponent {
-  u8 padding00[0x28];
-  u16 *resourceId;
-};
-
-struct InnObject {
-  u8 padding00[0x50];
-  struct InnObjectComponent *component;
-};
-
-enum InnMessageId {
-  INN_MESSAGE_WELCOME,
-  INN_MESSAGE_STAY_COMPLETE,
-  INN_MESSAGE_NOT_ENOUGH_COINS,
-  INN_MESSAGE_GOODBYE,
-  INN_MESSAGE_REST_COMPLETE,
-};
-
-struct Effect_080b2f4c {
-  u8 unk000[0xc];
-  s32 x;
-  s32 z;
-  s32 sourceX;
-  s32 sourceZ;
-  s32 filler1C;
-  s32 velocity;
-  s32 acceleration;
-  u8 unk028[0x18];
-  s8 state;
-  u8 filler41;
-  s8 flag;
-  u8 unk043[5];
-};
-
-struct BurstSprite {
-  void *object;
-  s32 x, z, targetX, targetZ, originX, originZ, speed, speedMax, acceleration;
-  s32 scaleX;
-  s32 scaleY;
-  u16 heading;
-  s16 turnStepMax;
-  void *callback;
-  u16 age;
-  s16 callbackDelay;
-  s16 orbitRadius;
-  s16 orbitAngle;
-  s8 state;
-  s8 stopAtTarget;
-  s8 turnStepLimited;
-  s8 updateMotion;
-  s8 render;
-  s8 active;
-};
-
 /// What the player chose at a shop's counter, in the order of its menu's
-/// Buy, Sell, Artifacts and Repair, held in shop->action while it runs.
+/// Buy, Sell, Artifacts and Repair, held in shop->action while it runs. The
+/// forge, which The Lost Age adds, runs the sell counter's screens as a
+/// counter of its own.
 enum ShopAction {
   SHOP_ACTION_BUY,
   SHOP_ACTION_SELL,
   SHOP_ACTION_ARTIFACTS,
-  SHOP_ACTION_REPAIR
+  SHOP_ACTION_REPAIR,
+  SHOP_ACTION_FORGE
+};
+
+/// What Item_GetEquipmentGroup sorts an item into, as The Broken Seal's.
+enum EquipmentGroup {
+  EQUIPMENT_GROUP_NONE = 0, ///< anything not a weapon or armor, rings included
+  EQUIPMENT_GROUP_WEAPON = 1,
+  EQUIPMENT_GROUP_ARMOR = 2
 };
 
 /// A shop's type, the last column of its stock row: the equipment group it
 /// sells, as Item_GetEquipmentGroup sorts items, or a general store, which
 /// The Lost Age adds and which lists artifacts of every group. It picks the
-/// artifacts the shop lists and which of the keepers' lines it says.
+/// artifacts the shop lists and which of the keepers' lines it says: the inn
+/// and the forge take the weapon shop's type, whose lines are the messages as
+/// given.
 enum ShopType {
-  SHOP_TYPE_ITEMS = 0, ///< an item shop
-  SHOP_TYPE_WEAPONS = 1,
-  SHOP_TYPE_ARMOR = 2,
+  SHOP_TYPE_ITEMS = EQUIPMENT_GROUP_NONE,
+  SHOP_TYPE_WEAPONS = EQUIPMENT_GROUP_WEAPON,
+  SHOP_TYPE_ARMOR = EQUIPMENT_GROUP_ARMOR,
   SHOP_TYPE_GENERAL_STORE = 3
 };
 
-/// Byte view of the six colour writes in a quantity-bar segment, laid over a
-/// 4-bit tile at the segment's byte column (QuantityBar_Fill, cursor.c).
-struct TileQuantityBarSegmentView {
-  u8 filler0[4]; ///< the 4 bytes before the segment's byte in row 1, untouched
-  /// Rows 1 to 6: index 4n is the segment's byte in row n + 1.
-  u8 values[21];
+/// The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts
+/// (each list ending with 0 when shorter), then the shop's type.
+enum {
+  SHOP_STOCK_ITEMS = 0,          ///< the first ordinary item's column
+  SHOP_STOCK_ITEM_COUNT = 24,    ///< ordinary items a row holds
+  SHOP_STOCK_ARTIFACTS = 24,     ///< the first artifact's column
+  SHOP_STOCK_ARTIFACT_COUNT = 8, ///< artifacts a row holds
+  SHOP_STOCK_TYPE = 32,          ///< the shop's type (enum ShopType)
+  SHOP_STOCK_COLUMNS = 33,
+  /// Rows, by the stock row an event passes to Shop_Run; row 0 sells nothing
+  /// and stands in for a row out of range.
+  SHOP_STOCK_ROWS = 32
+};
+
+enum {
+  /// Icons a row in a party member's 15-slot inventory grid, 16 pixels apart.
+  SHOP_INVENTORY_COLUMNS = 5,
+  /// Stock items a page of the buy screen, 32 pixels apart.
+  SHOP_STOCK_PAGE_ITEMS = 7,
+  /// Party members a page of the party row, 24 pixels apart.
+  SHOP_PARTY_PAGE_MEMBERS = 4,
+  /// The most of one item a party member can carry, and so buy at once.
+  SHOP_STACK_LIMIT = 30
+};
+
+/// What Shop_DrawItemPrice says below an item: its price, or when the price is
+/// 0 that the shop does not buy it or that it is not broken; at the forge, the
+/// item's condition (Forge_GetItemCondition) in place of a price.
+enum ShopPriceKind {
+  SHOP_PRICE_KIND_BUY = 0,    ///< buying: the price, even when it is 0
+  SHOP_PRICE_KIND_SELL = 1,   ///< selling: the shop does not buy it
+  SHOP_PRICE_KIND_REPAIR = 2, ///< repairing: it is not broken
+  SHOP_PRICE_KIND_FORGE = 3   ///< forging: "Processed" or "Rusted"
+};
+
+/// What the sanctum does for one party member; each kind picks the party
+/// member's status it needs, its fee and its cure (sanctum.c).
+enum SanctumService {
+  SANCTUM_SERVICE_REVIVE,      ///< for a downed party member (HP 0)
+  SANCTUM_SERVICE_CURE_POISON, ///< for poison or deadly poison
+  SANCTUM_SERVICE_REPEL_EVIL,  ///< for a haunted party member
+  SANCTUM_SERVICE_REMOVE_CURSE ///< for any curse bit set
+};
+
+/// What a sparkle of the sanctum's burst is doing (FieldParticle.state,
+/// Sanctum_UpdateBurstSparkle).
+enum SanctumSparkleState {
+  /// Placed on a ring around the burst's centre and aimed inside it.
+  SANCTUM_SPARKLE_START = 0,
+  SANCTUM_SPARKLE_FLYING = 1, ///< flying in; starts again on arrival
+  /// Set as the burst ends: freed on arrival.
+  SANCTUM_SPARKLE_LAST_FLIGHT = 2
+};
+
+/// What the item picker chooses an item for (ShopWork.itemMode).
+enum ItemPickerMode {
+  ITEM_PICKER_DROP = 0, ///< an item to drop, by Inventory_CheckDiscard
+  ITEM_PICKER_SHOW = 1  ///< an item to show, by Inventory_CheckUnequip
+};
+
+/// Why Inventory_CheckDiscard or Inventory_CheckUnequip refuses an item, as
+/// bits; 0 when it may go.
+enum InventoryRefusal {
+  /// Equipped and ITEM_CANNOT_UNEQUIP: "You can't remove it!"
+  INVENTORY_REFUSE_CANNOT_UNEQUIP = 1,
+  /// ITEM_INDISPENSABLE: "You can't drop it!"
+  INVENTORY_REFUSE_INDISPENSABLE = 2,
+  INVENTORY_REFUSE_EMPTY = 8 ///< the slot holds no item
+};
+
+/// What using an item costs (ItemDefinition.useType), as The Broken Seal's;
+/// the shops test only this one.
+#define ITEM_USE_MAY_BREAK 2 ///< breaks one time in eight
+
+/// The flag a row of the stock table adds to: that shop's artifacts are in
+/// stock, for the shop counter's Artifacts list.
+#define FLAG_SHOP_ARTIFACTS_STOCKED 0x400
+
+/// What the forge does with a material, its recipe's second column; the item
+/// list shows it from MsgItemCondition on, after "----------" for an item the
+/// forge has no recipe for.
+enum ForgeCondition {
+  FORGE_CONDITION_PROCESSED = 0, ///< "Processed": a rare material
+  FORGE_CONDITION_RUSTED = 1     ///< "Rusted": a rusty weapon
+};
+
+/// What the forge makes of one material: one of its results, by weight out of
+/// 100. A rusted weapon has one result.
+struct ForgeRecipe {
+  s16 item;       ///< the material
+  s16 condition;  ///< enum ForgeCondition
+  s16 results[8]; ///< the items it may become, ended by 0 when fewer
+  s16 weights[8]; ///< each result's chance, in percent
 };
 
 /// The shop's work (heap slot 220, the menus' work), as The Broken Seal's
 /// struct ShopWork, its lists longer here: the windows, the party row, the
-/// stock, the hand cursor and its icons, what the player chose, and the
-/// sanctum service's particles.
+/// stock, the hand cursor and its icons, what the player chose, the
+/// sanctum service's particles and the item icon grid.
 struct ShopWork {
   u8 unused[8];       ///< no view of the menu work names it
   s32 selectedMember; ///< the menu screens' chosen party member; not named here
@@ -244,15 +223,23 @@ struct ShopWork {
   s8 partyMemberCount;
   u8 mode;        ///< passed on as the hand cursor's kind
   s8 shopType;    ///< the stock row's type (enum ShopType)
-  s8 action;      ///< the counter chosen (enum ShopAction)
+  s8 action;      ///< the counter or service chosen (enum ShopAction or
+                  ///< enum SanctumService)
   s8 burstMember; ///< the sanctum's party member whose pose is randomized; -1
                   ///< none
+  /// 0 while the item picker's details window shows over the grid, 1 after.
   u8 detailsHidden;
   u8 unk50a;
+  /// The item picker's check: 0 for an item to drop, 1 for one to remove.
   s8 itemMode;
-  struct BurstSprite effects[24]; ///< the sanctum service's particles
-  u8 unkbcc[0x11c];
-  void *listWindow;
+  struct FieldParticle effects[24]; ///< the sanctum service's particles
+  u8 unknownBeforeIcons[0x48];
+  /// The item icon grid (ItemIconGrid_ShowInventory): a sprite and a VRAM
+  /// cache slot (ICON_NONE when empty) for each inventory slot.
+  struct IconSprite iconSprites[ICON_COUNT];
+  u16 iconSlots[ICON_COUNT];
+  s8 iconsVisible;  ///< nonzero while ItemIconGrid_Draw queues the icons
+  void *listWindow; ///< the party row's window at the sell and forge counters
 };
 
 STATIC_ASSERT(offsetof(struct ShopWork, itemWindow) == 0x024);
@@ -265,33 +252,31 @@ STATIC_ASSERT(offsetof(struct ShopWork, keeperGraphics) == 0x4fa);
 STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 0x502);
 STATIC_ASSERT(offsetof(struct ShopWork, action) == 0x507);
 STATIC_ASSERT(offsetof(struct ShopWork, effects) == 0x50c);
+STATIC_ASSERT(offsetof(struct ShopWork, iconSprites) == 0xc14);
+STATIC_ASSERT(offsetof(struct ShopWork, iconsVisible) == 0xce6);
 STATIC_ASSERT(offsetof(struct ShopWork, listWindow) == 0xce8);
 STATIC_ASSERT(sizeof(struct ShopWork) == 0xcec);
 
-struct ShopCursorAnchor {
-  u8 unk00[5];
-  u8 active;
-  u8 unk006[2];
-};
-
-struct ObjectSpriteInfo {
-  u8 unk00[0x28];
-  u16 *portrait;
-};
+// The quantity cursor's x, in pixels: buy.c and sell.c both place it, further
+// left in the longer languages.
+#if LANGUAGE == LANGUAGE_GERMAN
+#define SHOP_QUANTITY_CURSOR_X 120
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||           \
+    LANGUAGE == LANGUAGE_ITALIAN
+#define SHOP_QUANTITY_CURSOR_X 104
+#else
+#define SHOP_QUANTITY_CURSOR_X 128
+#endif
 
 extern const u8 gShop_QuantityTiles[];
-
 extern const u8 gShop_PriceTiles[];
 
-extern struct ForgeRecipe gData_0810cc34[];
-
-/// The price per guest of each inn.
-extern const s8 gData_0810cf2c[];
-
-extern s8 sSanctumServiceCues[];
-
-extern const s16 sGameTicketCreditCosts[];
-
-extern const s16 sStockTable[][33];
+extern const u16 gShop_SelectorTileOffsets[30];
+extern const u16 gShop_PriceDigitTileOffsets[5];
+extern const s16 gShop_GameTicketCreditCosts[30];
+extern const s16 gShop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS];
+extern const struct ForgeRecipe gForge_Recipes[];
+extern const s8 gSanctum_ServiceTunes[4];
+extern const s8 gInn_PricesPerGuest[16];
 
 #endif

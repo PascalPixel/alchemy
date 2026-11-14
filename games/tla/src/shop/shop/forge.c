@@ -8,27 +8,31 @@
 
 /// The forge's recipe for an item, or NULL when it has none; the table ends at
 /// an item of -1.
-struct ForgeRecipe *Forge_FindRecipe(s32 item) {
-  struct ForgeRecipe *recipe;
+const struct ForgeRecipe *Forge_FindRecipe(s32 itemId) {
+  const struct ForgeRecipe *recipe;
 
-  item &= 0x1ff;
-  for (recipe = gData_0810cc34; recipe->item != -1; recipe++) {
-    if (recipe->item == item)
+  itemId &= ITEM_ID_MASK;
+  for (recipe = gForge_Recipes; recipe->item != -1; recipe++) {
+    if (recipe->item == itemId)
       return recipe;
   }
   return NULL;
 }
 
-s32 Forge_GetMaterialChance(s32 item) {
-  struct ForgeRecipe *recipe = Forge_FindRecipe(item);
+/// Returns what the forge makes of an item, counted from MsgItemCondition: 0
+/// for an item it has no recipe for, then enum ForgeCondition plus one.
+s32 Forge_GetItemCondition(s32 itemId) {
+  const struct ForgeRecipe *recipe = Forge_FindRecipe(itemId);
 
   if (recipe != NULL)
-    return recipe->chance + 1;
+    return recipe->condition + 1;
   return 0;
 }
 
-s32 Forge_RollResult(s32 item) {
-  struct ForgeRecipe *recipe = Forge_FindRecipe(item);
+/// Rolls what the forge makes of a material: one of its recipe's results, each
+/// as likely as its weight; 0 for an item with no recipe.
+s32 Forge_RollResult(s32 itemId) {
+  const struct ForgeRecipe *recipe = Forge_FindRecipe(itemId);
   s32 total = 0;
   s32 result = 0;
   s32 i;
@@ -49,43 +53,48 @@ s32 Forge_RollResult(s32 item) {
   return result;
 }
 
-s32 Forge_OwnerHasMaterial(s32 owner) {
-  u16 *item;
-  s32 i;
+/// Returns 1 when the party member carries anything the forge takes.
+s32 Forge_UnitHasMaterial(s32 unitId) {
+  struct BattleUnit *unit;
+  u16 *inventory;
+  s32 slot;
 
-  item = (u16 *)Unit_Get(owner);
-  i = 0;
-  item += 108;
+  unit = Unit_Get(unitId);
+  slot = 0;
+  inventory = unit->inventory;
   do {
-    if (Forge_GetMaterialChance(*item++) != 0)
+    if (Forge_GetItemCondition(*inventory++) != 0)
       return 1;
-    i++;
-  } while (i <= 14);
+    slot++;
+  } while (slot < INVENTORY_SLOTS);
   return 0;
 }
 
+/// Returns 1 when anyone in the party carries anything the forge takes.
 s32 Forge_PartyHasMaterial(void) {
-  u16 owners[16];
+  u16 partyMemberIds[16];
   s32 count;
   s32 i;
 
-  count = Party_ListMembersFar(owners);
+  count = Party_ListMembersFar(partyMemberIds);
   for (i = 0; i < count; i++) {
-    if (Forge_OwnerHasMaterial(owners[i]) != 0)
+    if (Forge_UnitHasMaterial(partyMemberIds[i]) != 0)
       return 1;
   }
   return 0;
 }
 
-void Forge_SetItem(s32 item) {
-  gMainRoutineWork.forgeItem = item & ITEM_ID_MASK;
+/// Records the item the forge is making, for the smith to hand over later.
+void Forge_SetItem(s32 itemId) {
+  gMainRoutineWork.forgeItem = itemId & ITEM_ID_MASK;
 }
 
+/// Returns the item the forge is making.
 s32 Forge_GetItem(void) {
-  u32 item = gMainRoutineWork.forgeItem;
+  u32 itemId = gMainRoutineWork.forgeItem;
   u32 mask;
 
-  mask = 0x1ff;
-  mask &= item;
+  mask = ITEM_ID_MASK;
+  mask &= itemId;
   return mask;
 }

@@ -1,9 +1,10 @@
 /// @file
 /// Running a shop: the artifacts it lists, opening its work, the counter's
-/// loop and its questions.
+/// loop and the message helpers every counter uses.
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "item_ids.h"
 #include "sounds.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
@@ -12,14 +13,9 @@
 #include "module/tla.h"
 
 extern char ResourceId_ShopGemTiles;
-
-/// Item menu workspace (known fields only).
 extern char ResourceId_MenuArrowTiles;
-
 extern char ResourceId_MenuSmallDownArrowTiles;
-
 extern char ResourceId_ShopUpArrowTiles;
-
 extern char ResourceId_ShopDownArrowTiles;
 
 /// Lists the current shop's artifacts: every item of the shop's type whose
@@ -64,35 +60,37 @@ void MenuCursor_Step(void) {
 /// the inn, the sanctum, the forge and the item picker. The block, the icons'
 /// cache entries and the task last until Shop_ReleaseWork.
 void Shop_InitializeWork(void) {
-  struct ShopWork *work;
-  s32 slot;
+  struct ShopWork *shop;
+  s32 resourceSlot;
 
-  work = HeapSlot_Alloc(220, 0xcec);
+  shop = HeapSlot_Alloc(220, sizeof(struct ShopWork));
   Event_ResolveAllPendingActionsFar();
-  Dma_Fill32(0, work, 0xcec);
+  Dma_Fill32(0, shop, sizeof(struct ShopWork));
   // The hand cursor's glides take 12 frames until a screen changes it
-  work->mode = 12;
-  work->partyMemberCount = Party_ListMembersFar(work->partyMemberIds);
+  shop->mode = 12;
+  shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   Palette_LoadIconsIntoHighlightFar();
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
-  slot = VramCache_FindFreeEntry();
-  work->cursorIcon = slot;
-  VramBlock_LoadResource(slot, 128, (s32)&ResourceId_UiIconTiles);
-  slot = VramCache_FindFreeEntry();
-  work->previousPageIcon = slot;
-  VramBlock_LoadResource(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
-  slot = VramCache_FindFreeEntry();
-  work->nextPageIcon = slot;
-  VramBlock_LoadResource(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
-  slot = VramCache_FindFreeEntry();
-  work->gemIcon = slot;
-  VramBlock_LoadResource(slot, 128, (s32)&ResourceId_ShopGemTiles);
-  slot = VramCache_FindFreeEntry();
-  work->statDownIcon = slot;
-  VramBlock_LoadResource(slot, 128, (s32)&ResourceId_MenuSmallDownArrowTiles);
-  slot = VramCache_FindFreeEntry();
-  work->statUpIcon = slot;
-  VramBlock_LoadResource(slot, 128, (s32)&ResourceId_MenuArrowTiles);
+  resourceSlot = VramCache_FindFreeEntry();
+  shop->cursorIcon = resourceSlot;
+  VramBlock_LoadResource(resourceSlot, 128, (s32)&ResourceId_UiIconTiles);
+  resourceSlot = VramCache_FindFreeEntry();
+  shop->previousPageIcon = resourceSlot;
+  VramBlock_LoadResource(resourceSlot, 128, (s32)&ResourceId_ShopUpArrowTiles);
+  resourceSlot = VramCache_FindFreeEntry();
+  shop->nextPageIcon = resourceSlot;
+  VramBlock_LoadResource(resourceSlot, 128,
+                         (s32)&ResourceId_ShopDownArrowTiles);
+  resourceSlot = VramCache_FindFreeEntry();
+  shop->gemIcon = resourceSlot;
+  VramBlock_LoadResource(resourceSlot, 128, (s32)&ResourceId_ShopGemTiles);
+  resourceSlot = VramCache_FindFreeEntry();
+  shop->statDownIcon = resourceSlot;
+  VramBlock_LoadResource(resourceSlot, 128,
+                         (s32)&ResourceId_MenuSmallDownArrowTiles);
+  resourceSlot = VramCache_FindFreeEntry();
+  shop->statUpIcon = resourceSlot;
+  VramBlock_LoadResource(resourceSlot, 128, (s32)&ResourceId_MenuArrowTiles);
   Task_Add(MenuCursor_Step, TASK_PASS_VBLANK);
   ItemIconGrid_Initialize();
 }
@@ -135,7 +133,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = ShopStock_GetType(stockRow);
   shop->keeperGraphics =
-      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(keeperId) + 80) + 40);
+      *((struct ObjectAnimationState *)Actor_GetByIdFar(keeperId)->sprite)
+           ->value28;
   // The shopkeeper's portrait window, or an empty one off the right edge when
   // there is no portrait.
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
@@ -189,11 +188,12 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 s32 Shop_OpenDebugShop(void) {
   gMainRoutineWork.coins = 200000;
   gMainRoutineWork.counterC = 28;
-  // A broken Virtuous Armlet (141), a broken Muramasa (11) and a Bone (231)
-  Inventory_EquipFar(GARET,
-                     Inventory_AddItemFar(GARET, INVENTORY_BROKEN | 141));
-  Inventory_EquipFar(ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
-  Inventory_AddItemFar(IVAN, 231);
+  Inventory_EquipFar(
+      GARET,
+      Inventory_AddItemFar(GARET, INVENTORY_BROKEN | ITEM_VIRTUOUS_ARMLET));
+  Inventory_EquipFar(
+      ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | ITEM_MURAMASA));
+  Inventory_AddItemFar(IVAN, ITEM_BONE);
   ((struct BattleUnit *)Unit_Get(MIA))->poison = 1;
   ((struct BattleUnit *)Unit_Get(JENNA))->poison = 1;
   ((struct BattleUnit *)Unit_Get(IVAN))->haunt = 1;
@@ -210,124 +210,134 @@ void Sound_WaitForJingle(void) {
   }
 }
 
+/// Shows a shopkeeper's line, given as the weapon shop's, and waits for its
+/// window; the other shops say their own.
 void Shop_ShowKeeperMessage(s32 messageId) {
-  struct ShopWork *state = Ram_HeapSlots->menuRuntime;
-  s32 message;
-  s32 value;
-  s8 mode;
+  struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
+  s32 resolvedMessage;
+  s32 portraitResource;
+  s8 shopType;
 
-  message = messageId;
-  value = Speaker_GetVoiceFar(state->keeperGraphics);
+  resolvedMessage = messageId;
+  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
   Message_CloseFinishedWindowsFar();
-  mode = state->shopType;
-  if (mode == 3)
-    message += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
-  if (mode == 2)
-    message += MsgArmorShopWelcome - MsgWeaponShopWelcome;
-  if (mode == 0)
-    message += MsgItemShopWelcome - MsgWeaponShopWelcome;
-  Message_OpenWindowFar(message, 5, 0, (value << 16) | 0x22);
+  shopType = shop->shopType;
+  if (shopType == SHOP_TYPE_GENERAL_STORE)
+    resolvedMessage += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
+  if (shopType == SHOP_TYPE_ARMOR)
+    resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
+  if (shopType == SHOP_TYPE_ITEMS)
+    resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
+  Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
 }
 
+/// Shows a shopkeeper's line as Shop_ShowKeeperMessage does, hiding the hand
+/// cursor while it shows and putting back its motion after.
 void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
-  s32 variant;
-  s32 no;
-  s8 mode;
-  u8 saved;
-  struct ShopWork *state;
-  struct WindowSprite **slot;
+  s32 portraitResource;
+  s32 resolvedMessage;
+  s8 shopType;
+  u8 savedCursorMode;
+  struct ShopWork *shop;
+  struct WindowSprite **cursorSlot;
 
-  state = Ram_HeapSlots->menuRuntime;
-  slot = &state->cursor.anchor;
-  saved = (*slot)->active;
-  no = messageId;
-  variant = Speaker_GetVoiceFar(state->keeperGraphics);
-  mode = state->shopType;
-  if (mode == 3)
-    no += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
-  if (mode == 2)
-    no += MsgArmorShopWelcome - MsgWeaponShopWelcome;
-  if (mode == 0)
-    no += MsgItemShopWelcome - MsgWeaponShopWelcome;
-  (*slot)->active = 0xD;
+  shop = Ram_HeapSlots->menuRuntime;
+  cursorSlot = &shop->cursor.anchor;
+  savedCursorMode = (*cursorSlot)->active;
+  resolvedMessage = messageId;
+  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
+  shopType = shop->shopType;
+  if (shopType == SHOP_TYPE_GENERAL_STORE)
+    resolvedMessage += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
+  if (shopType == SHOP_TYPE_ARMOR)
+    resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
+  if (shopType == SHOP_TYPE_ITEMS)
+    resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
+  (*cursorSlot)->active = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(no, 5, 0, (variant << 16) | 0x22);
+  Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
-  state->cursor.anchor->active = saved;
+  shop->cursor.anchor->active = savedCursorMode;
 }
+
+// The shop's Yes/No menu: one column further left in German, Spanish and
+// Italian.
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define SHOP_CONFIRM_MENU_X 6
+#else
+#define SHOP_CONFIRM_MENU_X 7
+#endif
 
 /// Runs the Yes or No choice beside the shopkeeper's line and returns it: 0
 /// for Yes, 1 for No or B. `choice` is where the cursor starts. Keeps the
 /// hand cursor's motion. Called by the counters before they buy, sell, equip
 /// or repair, and by the inn.
 s32 Shop_AskYesNo(s32 choice) {
-  struct WindowSprite **slot =
+  struct WindowSprite **cursorSlot =
       &((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
-  u8 saved = (*slot)->active;
+  u8 savedCursorMode = (*cursorSlot)->active;
 
-  Icon_PrepareActorFar(*slot);
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
-  choice = YesNoMenu_RunAtFar(6, 5, choice);
-#else
-  choice = YesNoMenu_RunAtFar(7, 5, choice);
-#endif
-  (*slot)->active = saved;
+  Icon_PrepareActorFar(*cursorSlot);
+  choice = YesNoMenu_RunAtFar(SHOP_CONFIRM_MENU_X, 5, choice);
+  (*cursorSlot)->active = savedCursorMode;
   return choice;
 }
+
+#undef SHOP_CONFIRM_MENU_X
 
 /// Runs the Yes or No choice at the sanctum's place on the screen and
 /// returns it, keeping the hand cursor's motion. Called by
 /// Sanctum_RunPartyService.
 s32 Sanctum_AskYesNo(s32 choice) {
-  struct WindowSprite **slot =
+  struct WindowSprite **cursorSlot =
       &((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
-  u8 saved = (*slot)->active;
+  u8 savedCursorMode = (*cursorSlot)->active;
 
-  Icon_PrepareActorFar(*slot);
+  Icon_PrepareActorFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(7, 7, choice);
-  (*slot)->active = saved;
+  (*cursorSlot)->active = savedCursorMode;
   return choice;
 }
 
 /// Moves a cursor over `count` entries laid out `columns` to a row by the
 /// d-pad: left and right wrap round, up and down stop at the ends. Plays the
 /// cursor sound when it moves. Returns 0 when it stayed, 1 when it moved
-/// within its row, 2 when it changed row. Called by every counter's lists.
+/// within its page, 2 when it changed page. Called by every counter's lists.
 s32 MenuGrid_MoveCursor(s32 *cursor, s32 count, s32 columns) {
   s32 changed = 0;
-  s32 old = *cursor;
-  s32 pos = old;
+  s32 previous = *cursor;
+  s32 position = previous;
 
   if (gInput.repeat & KEY_LEFT) {
-    pos--;
-    pos = (pos + count) % count;
+    position--;
+    position = (position + count) % count;
   }
   if (gInput.repeat & KEY_RIGHT) {
-    pos++;
-    pos = (pos + count) % count;
+    position++;
+    position = (position + count) % count;
   }
   if (gInput.repeat & KEY_UP) {
-    if (pos - columns >= 0)
-      pos -= columns;
+    if (position - columns >= 0)
+      position -= columns;
   }
   if (gInput.repeat & KEY_DOWN) {
-    if (pos + columns < (columns + count - 1) / columns * columns)
-      pos += columns;
-    if (pos > count - 1)
-      pos = count - 1;
+    if (position + columns < (columns + count - 1) / columns * columns)
+      position += columns;
+    if (position > count - 1)
+      position = count - 1;
   }
-  if (old != pos) {
+  if (previous != position) {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     changed = 1;
   }
-  if (old / columns * columns != pos / columns * columns)
+  if (previous / columns * columns != position / columns * columns)
     changed = 2;
-  *cursor = pos;
+  *cursor = position;
   return changed;
 }

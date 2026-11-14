@@ -82,7 +82,7 @@ extern s32 gLeaderDeckY;
 extern s32 gGaretDeckY;
 extern s32 gMiaDeckY;
 extern s32 gIvanDeckY;
-extern u32 gShipGlowStep[];
+extern u16 gShipGlowStep;
 extern s32 gLeaderBoardsShip[];
 extern s32 gGaretBoardsShip[];
 extern s32 gIvanBoardsShip[];
@@ -150,17 +150,14 @@ const struct Trigger *Scene_GetTriggers(void) { return gLemurianShipTriggers; }
 
 /// Makes the ship's glow ripple.
 static void ShipGlow_CyclePalette(void) {
-  u16 *frame;
-  s32 paletteIndex;
+  u16 paletteIndex;
 
-  frame = (u16 *)gShipGlowStep;
-  paletteIndex = Math_DivideUnsigned(*frame, 6);
-  Dma_Set((const void *)(((u32)(paletteIndex << 16) >> 15) +
-                         (u32)gShipGlowPalettes),
-          (void *)&BG_PLTT_COLOR(7, 4), DMA_COPY_HALFWORDS(6), REG_DMA3);
-  (*frame)++;
-  if (*frame > 35)
-    *frame = 0;
+  paletteIndex = Math_DivideUnsigned(gShipGlowStep, 6);
+  Dma_Set(&gShipGlowPalettes[paletteIndex], (void *)&BG_PLTT_COLOR(7, 4),
+          DMA_COPY_HALFWORDS(6), REG_DMA3);
+  gShipGlowStep++;
+  if (gShipGlowStep > 35)
+    gShipGlowStep = 0;
 }
 
 /// The water drop's burst into a ring of spray (water_drop.png), beyond enum
@@ -1004,9 +1001,7 @@ s32 gMiaDeckY = SHIP_NOT_ON_DECK;
 
 s32 gIvanDeckY = SHIP_NOT_ON_DECK;
 
-u32 gShipGlowStep[] = {
-    0,
-};
+u16 gShipGlowStep = 0;
 
 s32 gLeaderBoardsShip[] = {
     SC_ANIMATION(2),

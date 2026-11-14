@@ -319,7 +319,6 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   struct Actor *actor;
   struct FieldPosition originalPosition;
   struct FieldPosition tilePosition;
-  u8 *footprintTable;
   s32 direction;
   s32 horizontalExtent;
   s32 verticalExtent;
@@ -332,7 +331,6 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 #endif
   direction = (Actor_GetById(ACTOR_PARTY_LEADER))->facing >> 12;
   actor = Actor_GetById(probe.actorSlot);
-  footprintTable = (u8 *)gPushedActor_FootprintBounds;
   {
     s32 extentA = gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1];
     s32 extentB;
@@ -356,16 +354,13 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   actor->acceleration = px(1) / 10;
   originalPosition.x = actor->x.fixed;
   originalPosition.z = actor->z.fixed;
-  {
-    s32 tableOffset = probe.footprintIndex << 4;
-    tilePosition.x =
-        (actor->x.fixed + px(*(s32 *)(footprintTable + tableOffset)));
-    tableOffset += 4;
-    tilePosition.z =
-        (actor->z.fixed + px(*(s32 *)(footprintTable + tableOffset)));
-    tilePosition.x >>= 20;
-    tilePosition.z >>= 20;
-  }
+  tilePosition.x = actor->x.fixed +
+                   px(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
+  tilePosition.z =
+      actor->z.fixed +
+      px(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
+  tilePosition.x >>= 20;
+  tilePosition.z >>= 20;
 
   PushedActor_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                          horizontalExtent, verticalExtent,
@@ -426,15 +421,14 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Actor_SelectAnimation(actor, 1);
 
   {
-    u8 *table = (u8 *)gPushedActor_FootprintBounds;
     s32 horizontalOrigin;
     s32 verticalOrigin;
 
     {
-      s32 tableOffset = probe.footprintIndex << 4;
-      probe.position.x = (probe.position.x + px(*(s32 *)(table + tableOffset)));
-      tableOffset += 4;
-      probe.position.z = (probe.position.z + px(*(s32 *)(table + tableOffset)));
+      probe.position.x +=
+          px(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
+      probe.position.z +=
+          px(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
       probe.position.x >>= 20;
       probe.position.z >>= 20;
     }
@@ -452,12 +446,10 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
                                            verticalExtent, CELL_BEHAVIOR_WALL);
 
     {
-      s32 tableOffset = probe.footprintIndex << 4;
-      originalPosition.x =
-          (originalPosition.x + px(*(s32 *)(table + tableOffset)));
-      tableOffset += 4;
-      originalPosition.z =
-          (originalPosition.z + px(*(s32 *)(table + tableOffset)));
+      originalPosition.x +=
+          px(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
+      originalPosition.z +=
+          px(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
       originalPosition.x >>= 20;
       originalPosition.z >>= 20;
     }

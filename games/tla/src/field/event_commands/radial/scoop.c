@@ -192,12 +192,7 @@ struct RiseParticle {
   s32 timer;
 };
 
-/* VIEW(f0e6400): tag struct RiseWork as struct RiseWork__f0e6400; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:306: structure has no
- * member named `other'. */
-struct RiseWork__f0e6400 {
+struct ScoopWork {
   u8 tiles[0x400];
   u8 picture[0x400];
   struct EffectSprite sprites[64];
@@ -247,7 +242,7 @@ void Camera_WorldToScreen(s32 *position);
 void Scoop_DigUpItem(void);
 
 void FieldPsynergy_Scoop(void) {
-  struct RiseWork__f0e6400 *work = HeapSlot_Alloc(92, 0x193c);
+  struct ScoopWork *work = HeapSlot_Alloc(92, 0x193c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct FxEvent__f0e6400 *event = Ram_HeapSlots->eventWork;
   struct Actor *caster = scene->mainObject;
@@ -608,12 +603,7 @@ struct WhirlSpark {
 };
 
 // Heap block 92: the decoded picture, then the sparks and their sprites.
-/* VIEW(f0e6400): tag struct WhirlWork as struct WhirlWork__f0e6400; f0e2c38.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:666: structure has no
- * member named `sparks'. */
-struct WhirlWork__f0e6400 {
+struct TeleportWhirlWork {
   u8 picture[0x400];
   struct WhirlSpark sparks[WHIRL_COUNT];
   struct EffectSprite sprites[WHIRL_COUNT];
@@ -630,7 +620,7 @@ void Func_080dc954(void);
 // a render of a Teleport circle would settle it.
 void Teleport_PlayWhirl(void) {
   s32 position[3];
-  struct WhirlWork__f0e6400 *work = HeapSlot_Alloc(92, sizeof(*work));
+  struct TeleportWhirlWork *work = HeapSlot_Alloc(92, sizeof(*work));
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
@@ -960,18 +950,6 @@ struct PuffWork {
   struct PuffParticle particles[64];
 };
 
-/* VIEW(f0e6400): tag struct ObjectAnimation as struct ObjectAnimation__f0e6400;
- * f0e2c38.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:1053: structure has no
- * member named `unk18'. */
-struct ObjectAnimation__f0e6400 {
-  u8 unk00[24];
-  u8 unk18;
-  u8 unk19[15];
-  s16 *definition;
-};
-
 extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer);
@@ -988,7 +966,7 @@ void FieldPsynergy_Parch(void) {
   s32 offset; // byte offset of the event work's 80 object pointers
   struct Actor *caster;
   struct Actor *object;
-  struct ObjectAnimation__f0e6400 *animation;
+  struct ObjectAnimation *animation;
   struct EffectSprite *sprite;
   struct EffectSprite *cursor;
   struct EffectSprite *fresh;

@@ -269,7 +269,7 @@ end:
 /// holds for 10 frames, shrinks back to 2 and stops; then the map's view
 /// bounds come back.
 void FieldPsynergy_Grind(void) {
-  struct EffectScene *scene;
+  struct FxScene *scene;
   s32 phase;
   s32 amplitude;
   s32 state;

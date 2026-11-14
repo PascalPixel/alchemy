@@ -38,17 +38,6 @@ struct FxEvent {
   s8 unkd38;
 };
 
-/* VIEW(psynergy): tag struct ObjectAnimation as struct
- * ObjectAnimation__psynergy; module/field/field.h has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial/blaze.c:36: redefinition of
- * `struct ObjectAnimation'. */
-#define ObjectAnimation ObjectAnimation__psynergy
-struct ObjectAnimation {
-  u8 unk00[40];
-  s16 *definition;
-};
-
 struct ObjectMetadata {
   u8 unk00[8];
   s8 height;

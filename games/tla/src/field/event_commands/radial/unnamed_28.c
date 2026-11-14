@@ -543,22 +543,12 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   SET_POSITION(center, x, work->y, z);
 }
 
-/* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc;
- * f0e2c38.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/unnamed_28.c:572: structure has no
- * member named `firstObjectId'. */
-struct EffectScene__f0e82cc {
-  u8 unk00[0x18];
-  s16 firstObjectId;
-};
-
 // Ends a view move: gives the map back the view bounds ViewMove_Start kept
 // and lets the view follow the scene's first object again. Where the view
 // was held, it only stops the screen shake.
 void ViewMove_End(void) {
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct EffectScene__f0e82cc *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
 

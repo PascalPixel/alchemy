@@ -36,7 +36,6 @@
 
 #undef Camera_WorldToScreen
 #undef EffectSprite_DrawAtWorldPosition
-#undef ObjectAnimation
 #undef Resource_GetMetadataRecordFarFar
 #undef BattleEffect_DropObjectAtAnchor
 #undef SparkParticle

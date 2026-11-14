@@ -63,17 +63,6 @@ struct ObjectSprite {
   void *pictures;
 };
 
-/* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0;
- * f0e2c38.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/tremor.c:83: structure has no
- * member named `target'. */
-struct EffectScene__f0e8db0 {
-  u8 unk00[0x10];
-  void *mainObject;
-  struct Actor *target;
-};
-
 // The two 8x8 tiles of the shaken sprites (Resource_Data1EE): the row
 // needs a name in directory.s before this adopts.
 extern char ResourceId_ShakeTiles;
@@ -88,9 +77,9 @@ void Animation_ApplyChildValueFar(void *sprite, s32 value);
 // than 2,048 pixels gets no sway.
 void FieldPsynergy_TremorOnTarget(void) {
   struct ShakeWork *work = HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, sizeof(*work));
-  struct EffectScene__f0e8db0 *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct Actor *target = scene->target;
+  struct Actor *target = scene->child;
   struct ObjectSprite *targetSprite = target->sprite;
   s32 tiles;
   s32 shown;
@@ -240,7 +229,7 @@ release:
 void FieldPsynergy_Tremor(void) {
   struct ViewMoveWork *work =
       HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
-  struct EffectScene__f0e8db0 *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 frameCount;
   s32 phase;

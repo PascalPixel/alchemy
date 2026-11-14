@@ -31,12 +31,6 @@ struct EffectSprite__f0e446c {
   u8 unk20[8];
 };
 
-struct EffectScene {
-  u16 mode;
-  u8 unk02[14];
-  struct Actor *mainObject;
-};
-
 /// A particle's position and velocity (16.16), integrated each frame, and its
 /// age in frames.
 struct EffectParticle {
@@ -88,7 +82,7 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 /// Sets up the sprite the Sand draws the sinking leader as: the leader's
 /// depth, priority, scale (three quarters on the world map) and place.
 void Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles) {
-  struct EffectScene *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 position[3];
 
@@ -122,7 +116,7 @@ void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite,
                      struct EffectParticle *particle, s32 unused, s32 tiles,
                      s32 high) {
   struct Actor *mainObject =
-      ((struct EffectScene *)Ram_HeapSlots->effectWork)->mainObject;
+      ((struct FxScene *)Ram_HeapSlots->effectWork)->mainObject;
   s32 position[3];
   s32 y;
 

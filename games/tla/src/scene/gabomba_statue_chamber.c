@@ -851,19 +851,19 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   owner = (s32 *)&gMainRoutineWork;
   owner += 133;
   {
-    s32 angleA = 0xe000;
+    s32 angleA = FACING_NORTHEAST;
 
     Actor_SetPositionAndFacing(*owner, px(360), px(216), angleA);
     Actor_SetPositionAndFacing(ACTOR_PIERS, px(376), px(216), angleA);
   }
-  facing = 0xa000;
+  facing = FACING_NORTHWEST;
   zero = 0;
   Actor_SetPositionAndFacing(11, px(360), px(200), zero);
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(408), px(216), facing);
-  angleC = 0x8000;
+  angleC = FACING_WEST;
   Actor_SetPositionAndFacing(ACTOR_SHEBA, px(424), px(200), angleC);
   {
-    s32 angleB = 0xb000;
+    s32 angleB = FACING_NORTH_NORTHWEST;
 
     Actor_SetPositionAndFacing(12, px(392), px(200), angleB);
   }

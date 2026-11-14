@@ -628,7 +628,7 @@ visited:
   target[0] = 0x740000;
   target[1] = 0;
   target[2] = 0x6e0000;
-  angle = 0xb000;
+  angle = FACING_NORTH_NORTHWEST;
   for (i = 0; i <= 191; i++) {
     phase = i * 32768 / 192;
     radius = Trig_Sin(phase) * 32;
@@ -648,7 +648,7 @@ visited:
     }
     System_Wait(1);
   }
-  actor->facing = 0x8000;
+  actor->facing = FACING_WEST;
   FieldEvent_Wait(30);
   Actor_SetAnimation(11, 1);
   FieldEvent_Wait(20);
@@ -708,7 +708,7 @@ visited:
     System_Wait(1);
   }
   Actor_FaceDirection(10, FACING_NORTH_NORTHWEST, 0);
-  actor->facing = 0xd000;
+  actor->facing = FACING_NORTH_NORTHEAST;
   start[0] = actor->x;
   start[1] = actor->y;
   start[2] = actor->z;

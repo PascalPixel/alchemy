@@ -516,6 +516,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   Event_ResolvePendingActions(0);
   MessageArgument_Push(owner, 1);
   MessageArgument_Push(item, 2);
+  // "Felix put ...'s ... in the chest."
   FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
   Event_PlaySound(SE_CHEST_CLOSE);
   Actor_SetAnimationAndWait(kind, 5);
@@ -543,9 +544,11 @@ void TrialRoad_ExamineChest(s32 id) {
   if (!Event_GetFlag(flag)) {
     Event_Start();
     Event_ResolvePendingActions(0);
+    // "The chest won't open. There's something keeping it shut tight."
     FieldMessage_Show((s32)MsgTrialRoadChestBlocked, 1);
     Event_End();
   } else {
+    // "Place this item in the chest?"
     FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) == 0)
       gFieldWork->fieldMenu = 1;
@@ -1874,7 +1877,7 @@ void TrialRoad_UpdateRival(void) {
       break;
     case 653:
     case 708:
-      Actor_GetById(8)->facing = 0xc000;
+      Actor_GetById(8)->facing = FACING_NORTH;
       break;
     case 50:
     case 710:

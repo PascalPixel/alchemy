@@ -285,7 +285,7 @@ void LemurianShip_WalkIntoPassage(void) {
     Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y,
                         leader->z);
     FieldActor_WaitForMove(leader);
-    leader->facing = 0xc000;
+    leader->facing = FACING_NORTH;
     Actor_SetScript(party->currentOwner, gLemurianShip_IntoPassage);
     wait(12);
     Event_PlaySound(SE_MAP_EXIT);
@@ -374,6 +374,7 @@ void LemurianShip_ExamineLiftSwitch(void) {
       Event_SetFlag(FLAG_LIFT_LOWERED);
     }
   } else {
+    // "There's no reaction... It doesn't seem to be running."
     FieldMessage_Show((s32)MsgLemurianShip02, 1);
   }
   Event_End();

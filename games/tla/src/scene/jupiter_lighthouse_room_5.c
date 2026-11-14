@@ -484,7 +484,7 @@ void JupiterLighthouse_HealWithArc(s32 actor, s32 target) {
     FieldActor_SetSpriteColor(Actor_Get(target), (i & 4) ? 7 : 0);
     System_Wait(1);
   }
-  Actor_Get(target)->facing = 0xc000;
+  Actor_Get(target)->facing = FACING_NORTH;
   FieldActor_SetSpriteColor(Actor_Get(target), 0);
   BattleEffect_SetObjectUpdateMode(Actor_Get(actor), 0);
   BattleEffect_WaitForArcGroups();
@@ -524,7 +524,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   FieldEvent_Wait(10);
   Actor_SetSpriteFlags(((void *)Actor_Get(ACTOR_ALEX)), 0);
   FieldActor_SetSpriteColor(((void *)Actor_Get(ACTOR_ALEX)), 15);
-  angle = 0x4000;
+  angle = FACING_SOUTH;
   Actor_SetPositionAndFacing(ACTOR_ALEX, px(64), px(225), angle);
   JupiterLighthouse_AlexAppears();
   FieldEvent_Wait(40);
@@ -586,7 +586,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL))
     Event_ClearFlag(FLAG_ALEX_WAITING);
   if (Event_GetFlag(FLAG_ALEX_WAITING)) {
-    angle = 0x4000;
+    angle = FACING_SOUTH;
     Actor_SetPositionAndFacing(ACTOR_ALEX, px(64), px(225), angle);
   }
   Actor_PlaceBlocks(gJupiterLighthouse_Room5Blocks);

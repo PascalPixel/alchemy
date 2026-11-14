@@ -741,6 +741,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     Event_PlaySound(MUS_083);
     PartyInventory_Remove(ITEM_MYTHRIL_BAG);
     Inventory_AddItem(4, ITEM_MYTHRIL_BAG_MARS_STAR);
+    // "Felix got the Mars Star!"
     Message_ShowCentered((s32)MsgMarsStar08, 1);
     i = 0;
     offset = 216;
@@ -822,6 +823,7 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "There's a space for you to place something."
   Message_ShowCentered((s32)MsgMarsStar07, 1);
   ((struct EventNote *)work)->unk15a = 1;
   Event_End();
@@ -848,6 +850,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   screen = (u16 *)Ram_HeapSlots->block32;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "Felix used the Mars Star!"
   Message_ShowCentered((s32)MsgMarsStar09, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
@@ -968,6 +971,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
+    // "Felix used the Mars Star!"
     Message_ShowCentered((s32)MsgMarsStar09, 1);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     System_Wait(1);
@@ -1030,6 +1034,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   screen = (u16 *)Ram_HeapSlots->block32;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "Felix used the Mars Star!"
   Message_ShowCentered((s32)MsgMarsStar09, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
@@ -1757,7 +1762,7 @@ s32 Fireball_CarryLeader(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (void (*)(void))Actor_Blink;
-  leader->facing = 0x4000;
+  leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, 49);
   while (ride->car->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {

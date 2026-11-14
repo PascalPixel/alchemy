@@ -895,7 +895,7 @@ void ChampaCliffCaves_FightAvimander(void) {
   Event_SetMessageId((s32)MsgOhAllRightListen);
   Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHWEST);
   Event_Wait(20);
-  Actor_GetById(8)->facing = 0x5000;
+  Actor_GetById(8)->facing = FACING_SOUTH_SOUTHWEST;
   Actor_SetModeById(8, 5);
   Event_Wait(30);
   Actor_SetModeById(8, 6);
@@ -909,7 +909,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     Event_Wait(15);
     Actor_SetPosition(12, 0, 0);
     Actor_SetModeById(8, 1);
-    Actor_GetById(8)->facing = 0x8000;
+    Actor_GetById(8)->facing = FACING_WEST;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     gFieldWork->message++;
     Actor_WalkByAndWaitById(ACTOR_FELIX, -16, 0);
@@ -1252,7 +1252,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_SetSpritePriority(14, 2);
-  Actor_GetById(14)->facing = 0x3000;
+  Actor_GetById(14)->facing = FACING_SOUTH_SOUTHEAST;
   Actor_GetById(14)->motionFlags = 0;
   Actor_SetPositionFixed(14, px(520), px(200));
   Actor_SetSpeedFixed(14, 0x10000, 0x8000);

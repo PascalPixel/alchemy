@@ -2504,7 +2504,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   actor = Actor_Get(ACTOR_JENNA);
-  ((struct Actor *)actor)->facing = 0x6000;
+  ((struct Actor *)actor)->facing = FACING_SOUTHWEST;
   Actor_SetAnimation(ACTOR_JENNA, 22);
   FieldEvent_Wait(10);
   FieldActor_StartRepeatedMotion(ACTOR_JENNA, 2);

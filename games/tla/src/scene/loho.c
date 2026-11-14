@@ -128,6 +128,7 @@ void Loho_AskWantCannon(s32 actor) {
 
 /// "It looks like it's empty."
 void Loho_ExamineCannon(void) {
+  // "It looks like it's empty."
   FieldMessage_Show((s32)MsgLoho27, 1);
   gFieldWork->fieldMenu = 1;
 }
@@ -575,6 +576,7 @@ void Loho_ReadInnSign(void) {
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (facing == FACING_NORTH)
+    // "Felix checked the sign It reads "People staying at the inn can..."
     FieldMessage_Show((s32)MsgLoho57, 1);
 }
 

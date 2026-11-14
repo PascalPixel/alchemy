@@ -153,7 +153,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
     object->scaleY = object->scaleX;
     wait(1);
   }
-  object->facing = 0x3000;
+  object->facing = FACING_SOUTH_SOUTHEAST;
   object->scaleY = Q16_ONE;
   object->scaleX = Q16_ONE;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIME), 1);
@@ -234,7 +234,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
     p->scaleY = p->scaleX;
     wait(1);
   }
-  p->facing = 0x3000;
+  p->facing = FACING_SOUTH_SOUTHEAST;
   p->scaleY = Q16_ONE;
   p->scaleX = Q16_ONE;
   Actor_WaitForMoveById(ACTOR_RIME);

@@ -646,7 +646,7 @@ void AirsRockInside_RideWhirlwind(void) {
     if (gInput.held & KEY_UP) {
       dx = 0;
       dz = 0xfff00000;
-      leader->facing = 0xc000;
+      leader->facing = FACING_NORTH;
       moved = 1;
     }
     if (gInput.held & KEY_RIGHT) {
@@ -657,7 +657,7 @@ void AirsRockInside_RideWhirlwind(void) {
     }
     if (gInput.held & KEY_LEFT) {
       dx = 0xfff00000;
-      leader->facing = 0x8000;
+      leader->facing = FACING_WEST;
       dz = 0;
       moved = 1;
     }
@@ -672,7 +672,7 @@ void AirsRockInside_RideWhirlwind(void) {
       goto waiting;
     dx = 0;
     dz = 0xfff00000;
-    leader->facing = 0xc000;
+    leader->facing = FACING_NORTH;
     if ((u32)(MapCell_GetAttributes(2, ride->x >> 20,
                                     (ride->z - ride->y + dz) >> 20)
               << 8) >>
@@ -689,7 +689,7 @@ void AirsRockInside_RideWhirlwind(void) {
         255)
       goto found;
     dx = 0xfff00000;
-    leader->facing = 0x8000;
+    leader->facing = FACING_WEST;
   found:
     height =
         Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);

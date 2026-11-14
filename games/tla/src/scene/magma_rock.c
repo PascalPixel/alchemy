@@ -1198,7 +1198,7 @@ first:
   leader->gravity = 0xcccc;
   leader->bounce = 0;
   Event_Wait(1);
-  leader->facing = 0xc000;
+  leader->facing = FACING_NORTH;
   i = 60;
 second:
   phase = gFrameCount & 1;

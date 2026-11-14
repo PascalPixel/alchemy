@@ -1972,12 +1972,12 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_WalkByAndWait(29, 0, -4);
   FieldEvent_Wait(1);
   Actor_GetById(29)->actionFlags |= 1;
-  Actor_GetById(29)->facing = 0xb000;
+  Actor_GetById(29)->facing = FACING_NORTH_NORTHWEST;
   Actor_GetById(29)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(29, 0, -4);
   FieldEvent_Wait(1);
   Actor_GetById(29)->actionFlags |= 1;
-  Actor_GetById(29)->facing = 0xd000;
+  Actor_GetById(29)->facing = FACING_NORTH_NORTHEAST;
   Actor_GetById(29)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(29, 0, -4);
   FieldEvent_Wait(1);
@@ -1987,7 +1987,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_WalkByAndWait(29, 0, -4);
   FieldEvent_Wait(1);
   Actor_GetById(29)->actionFlags |= 1;
-  Actor_GetById(29)->facing = 0x3000;
+  Actor_GetById(29)->facing = FACING_SOUTH_SOUTHEAST;
   FieldEvent_Wait(20);
   Actor_GetById(25)->actionFlags |= 1;
   // "Get up!"
@@ -2022,12 +2022,12 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_WalkByAndWait(27, 0, 3);
   FieldEvent_Wait(1);
   Actor_GetById(27)->actionFlags |= 1;
-  Actor_GetById(27)->facing = 0xd000;
+  Actor_GetById(27)->facing = FACING_NORTH_NORTHEAST;
   Actor_GetById(27)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(27, 0, 3);
   FieldEvent_Wait(1);
   Actor_GetById(27)->actionFlags |= 1;
-  Actor_GetById(27)->facing = 0xb000;
+  Actor_GetById(27)->facing = FACING_NORTH_NORTHWEST;
   Actor_GetById(27)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(27, 0, 3);
   FieldEvent_Wait(1);
@@ -2037,14 +2037,14 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_WalkByAndWait(27, 0, 3);
   FieldEvent_Wait(1);
   Actor_GetById(27)->actionFlags |= 1;
-  Actor_GetById(27)->facing = 0x5000;
+  Actor_GetById(27)->facing = FACING_SOUTH_SOUTHWEST;
   FieldEvent_Wait(20);
   // "They're gone, and you let them escape!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_SetPosition(27, 168, 424);
   FieldActor_SetSpriteRotationById(27, 0);
   Actor_SetSpriteFlags(Actor_GetById(27), 1);
-  Actor_GetById(27)->facing = 0xb000;
+  Actor_GetById(27)->facing = FACING_NORTH_NORTHWEST;
   FieldActor_Jump(27, 6, 40);
   FieldActor_ShowEmote(0x1b, 0x102, 0x28);
   Actor_ArmCallback(25, FACING_NORTH_NORTHEAST, 0);

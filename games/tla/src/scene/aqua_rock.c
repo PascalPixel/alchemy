@@ -1213,7 +1213,7 @@ void AquaRock_FlowWithStream(void) {
     return;
   anchor->z += px(2);
   leader->z += px(2);
-  leader->facing = 0x4000;
+  leader->facing = FACING_SOUTH;
 }
 
 void AquaRock_SetMoaiFace(s32 id) {

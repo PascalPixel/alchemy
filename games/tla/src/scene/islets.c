@@ -512,6 +512,7 @@ void Islets_TradeWithBird(void) {
     }
     FieldEvent_Wait(10);
     FieldPsynergy_RestoreMindReadPalette();
+    // "Felix traded his stone for the very fancy neckerchief."
     Message_ShowCentered((s32)MsgOhMyThat + 1, 1);
     PartyInventory_Remove(0x1c4);
     Party_GiveItem(ITEM_RED_CLOTH, 0);
@@ -820,11 +821,12 @@ void Islets_TradeWithDog(void) {
     STEP(11, 280, 856);
     trader->update = 0;
     FieldPsynergy_RestoreMindReadPalette();
+    // "Felix traded his milk for the dog's turtle!"
     Message_ShowCentered((s32)MsgTradedHisMilk, 1);
     PartyInventory_Remove(454);
     Party_GiveItem(giftItem, 0);
     FieldPsynergy_GreyMindReadPalette();
-    Actor_GetById(gMainRoutineWork.currentOwner)->facing = 0x4000;
+    Actor_GetById(gMainRoutineWork.currentOwner)->facing = FACING_SOUTH;
     if (gift != 0) {
       Actor_Release(gift);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);

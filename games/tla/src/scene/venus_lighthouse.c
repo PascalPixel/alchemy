@@ -474,6 +474,7 @@ void VenusLighthouse_ReadRelief(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
+  // "There are words carved into the relief... If ye seek to climb Venus..."
   Message_ShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
   Event_End();
 }
@@ -482,6 +483,7 @@ void VenusLighthouse_ReadTrueHeart(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
+  // "The true road can only be known by he who bears a true heart."
   Message_ShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
   Event_End();
 }

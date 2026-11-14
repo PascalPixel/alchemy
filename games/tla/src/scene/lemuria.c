@@ -489,6 +489,7 @@ void Lemuria_DrinkFromSpring(void) {
   s32 y = Actor_Get(gMainRoutineWork.currentOwner)->y;
 
   if (y < 0x5a0000) {
+    // "Felix and the others drank of the spring. Their HP and PP were..."
     Message_ShowCentered((s32)MsgAndTheOthers, 1);
     Event_PlaySound(SE_RECOVERY);
     Party_RestoreHpPp(1);

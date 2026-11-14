@@ -451,6 +451,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
   if (GameFlag_Get(FLAG_ISAAC_AND_IVAN_FELL) != 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
+    // "There seems to be a wide hole for the Elemental Star. Cast the..."
     Message_ShowCentered((s32)MsgThereSeemsTo, 5);
     answer = Event_AskYesNoWithActorAnimation(4, 0);
     if (answer != 0) {

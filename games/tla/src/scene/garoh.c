@@ -526,7 +526,7 @@ s32 Scene_Initialize(void) {
     FieldActor_SetSpritePriority(13, 1);
     FieldActor_SetSpritePriority(14, 1);
     if (Event_GetFlag(FLAG_GAROH_HEARD_MAHA)) {
-      s32 angle = 0x4000;
+      s32 angle = FACING_SOUTH;
 
       Actor_SetPositionAndFacing(10, px(328), px(162), angle);
     }
@@ -841,7 +841,7 @@ void Garoh_PuffAround(s32 objectId) {
 
   object = Actor_Get(objectId);
   params.update = FieldEffect_AdvanceMotion;
-  angleStep = 0;
+  angleStep = FACING_EAST;
 burst:
   angle = angleStep << 12;
   vec.x = Trig_Cos(angle);

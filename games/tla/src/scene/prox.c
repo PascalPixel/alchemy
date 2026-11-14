@@ -1155,7 +1155,7 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     FieldActor_SetMoveTargetFixed(object, ((8 - cell % 16) << 16) + object->x,
                                   object->y, object->z);
     FieldActor_WaitForMove(object);
-    object->facing = 0xc000;
+    object->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.currentOwner, gProx_EnterDoorScript);
   System_Wait(12);
@@ -1193,7 +1193,7 @@ void Prox_ClimbStairs(void) {
   FieldActor_SetMoveTargetFixed(object, ((8 - cell % 16) << 16) + object->x,
                                 object->y, object->z - px(4));
   FieldActor_WaitForMove(object);
-  object->facing = 0xc000;
+  object->facing = FACING_NORTH;
   Event_PlaySound(SE_STAIRS_UP);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   id = gMainRoutineWork.currentOwner;
@@ -1265,11 +1265,11 @@ void Prox_GiveThanksForBeacon(void) {
   /* FAKEMATCH(temporary): the three facings held in locals set before their
    * first placement, where as constants each placement rebuilds them and the
    * later turns cannot share them. */
-  angleC000 = 0xc000;
-  angleB000 = 0xb000;
+  angleC000 = FACING_NORTH;
+  angleB000 = FACING_NORTH_NORTHWEST;
   Actor_SetPositionAndFacing(ACTOR_ISAAC, px(168), px(484), angleC000);
   Actor_SetPositionAndFacing(27, px(200), px(484), angleB000);
-  angle3000 = 0x3000;
+  angle3000 = FACING_SOUTH_SOUTHEAST;
   Actor_SetPositionAndFacing(17, px(138), px(412), angle3000);
   Actor_SetPositionAndFacing(20, px(220), px(600), angleB000);
   Actor_SetPosition(ACTOR_JENNA, 184, 684);
@@ -1660,7 +1660,7 @@ void Prox_InitializeRoom3(void) {
     }
     if (Event_GetFlag(FLAG_CLAN_SPOKE_OF_LIGHTHOUSE)) {
       object = Actor_Get(10);
-      object->facing = 0xb000;
+      object->facing = FACING_NORTH_NORTHWEST;
       System_Wait(1);
     }
   }

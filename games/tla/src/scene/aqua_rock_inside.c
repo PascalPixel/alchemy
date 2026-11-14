@@ -748,7 +748,7 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
   goto test;
 step:
   if (result < 0) {
-    object->facing = 0x4000;
+    object->facing = FACING_SOUTH;
     AquaRockInside_JumpDownLedge__rapids(trigger);
     return;
   }
@@ -1230,6 +1230,7 @@ void AquaRockInside_ReadParchTablet(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "Felix checked the tablet. It looks like there are strange characters..."
   Message_ShowCentered((s32)&MsgCheckedTheTabletIt, 1);
   if (Event_GetFlag(0x9ae)) {
     Event_End();
@@ -1937,7 +1938,7 @@ void AquaRockInside_FlowWithStream(void) {
     return;
   center->z += px(2);
   actor->z += px(2);
-  actor->facing = 0x4000;
+  actor->facing = FACING_SOUTH;
 }
 
 #include "shared/actor_show_parts.h"

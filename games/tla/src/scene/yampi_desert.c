@@ -144,16 +144,17 @@ static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
   Actor_ArmCallback(id, angle, flags);
 }
 
-static inline void Scene_Call4098(s32 actor, s32 x, s32 z, s32 angle) {
-  Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
+static inline void YampiDesert_SetPositionAndFacing(s32 actorId, s32 x, s32 z,
+                                                    s32 facing) {
+  Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, x, z, facing);
 }
 
-static inline void Scene_Call41d8(s32 a, s32 b, s32 c, s32 d) {
-  Rope_Place(a, b, c, d);
+static inline void YampiDesert_PlaceRope(s32 rope, s32 a, s32 b, s32 c) {
+  Rope_Place(rope, a, b, c);
 }
 
-static inline void Scene_Call4178(s32 a, s32 b, s32 c) {
-  Actor_ReturnHome(a, b, c);
+static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
+  Actor_ReturnHome(mode, actorId, flag);
 }
 
 #include "types.h"
@@ -323,7 +324,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gYampiDesert_Placements;
 }
 
-void YampiDesert_ScoopTreasurePit(s32 a) { Scene_Call4178(a, 64, 0x302); }
+void YampiDesert_ScoopTreasurePit(s32 a) {
+  YampiDesert_ReturnHome(a, 64, 0x302);
+}
 
 extern struct Trigger gYampiDesert_Triggers[];
 extern struct Trigger gYampiDesert_Room1Triggers[];
@@ -375,6 +378,7 @@ void YampiDesert_TalkToTraveler(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWeFollowedThe);
+  // "We followed the pirates here from Madra... Are you going to Alhafra..."
   Event_AskYesNoAndShowResponse(8, 0);
   Event_End();
 }
@@ -425,6 +429,7 @@ void YampiDesert_TalkToElder(void) {
 void YampiDesert_ReadSignpost(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "North: Alhafra South: Air's Rock Warning: Beyond this point, there..."
   FieldMessage_Show((s32)MsgNorthAlhafraSouth, 1);
   Event_End();
 }
@@ -838,8 +843,8 @@ loop_3:
   Actor_SetSpeedFixed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
-  angle = 0x4000;
-  Scene_Call4098(21, 232 << 16, 184 << 16, angle);
+  angle = FACING_SOUTH;
+  YampiDesert_SetPositionAndFacing(21, 232 << 16, 184 << 16, angle);
   wait(1);
   YampiDesert_BurstSand(232 << 16, 0, 184 << 16);
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
@@ -1183,29 +1188,29 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-  angle = 0xb000;
+  angle = FACING_NORTH_NORTHWEST;
   Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 8,
         0x2080000, 0xf20000, angle);
   {
-    s32 facing = 0x8000;
+    s32 facing = FACING_WEST;
 
     Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 9,
           0x2150000, 0x10f0000, facing);
   }
   {
-    s32 facing = 0x3000;
+    s32 facing = FACING_SOUTH_SOUTHEAST;
 
     Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 10,
           0x1b30000, 0xe80000, facing);
   }
   {
-    s32 facing = 0x5000;
+    s32 facing = FACING_SOUTH_SOUTHWEST;
 
     Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 11,
           0x1d30000, 0xf80000, facing);
   }
   {
-    s32 facing = 0xd000;
+    s32 facing = FACING_NORTH_NORTHEAST;
 
     Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 12,
           0x1ce0000, 0x1540000, facing);
@@ -1718,7 +1723,7 @@ void YampiDesert_SetUpRoom5Scorpion(void) {
   Actor_DisableById(21);
   Actor_GetById(21)->motionFlags = 3;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    Scene_Call4098(21, 232 << 16, 664 << 16, 0);
+    YampiDesert_SetPositionAndFacing(21, 232 << 16, 664 << 16, 0);
     *((u8 *)leader + 98) = 0;
     leader->update = YampiDesert_ScorpionRoamsRoom5;
   }
@@ -1831,12 +1836,12 @@ void YampiDesert_SetUpTrappedScorpion(void) {
   Actor_DisableById(21);
   Actor_GetById(21)->motionFlags = 3;
   if (GameFlag_Get(FLAG_YAMPI_DESERT_SCORPION_CORNERED)) {
-    angle = 0x4000;
-    Scene_Call4098(21, 232 << 16, 168 << 16, angle);
+    angle = FACING_SOUTH;
+    YampiDesert_SetPositionAndFacing(21, 232 << 16, 168 << 16, angle);
   } else {
     Scene_TaskAdd(YampiDesert_PlayScorpionRumble, 0x480);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Scene_Call4098(21, 200 << 16, 264 << 16, 0);
+      YampiDesert_SetPositionAndFacing(21, 200 << 16, 264 << 16, 0);
       *((u8 *)leader + 98) = 0;
       leader->update = YampiDesert_ScorpionRoamsToTrap;
     }
@@ -2059,18 +2064,18 @@ void YampiDesert_SetUpRoom2(void) {
     Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   } else if (GameFlag_Get(FLAG_YAMPI_DESERT_TRAVELERS_MET)) {
-    angleA = 0xb000;
-    Scene_Call4098(8, 520 << 16, 242 << 16, angleA);
-    angle = 0x8000;
-    Scene_Call4098(9, 533 << 16, 271 << 16, angle);
-    angle = 0x3000;
-    Scene_Call4098(10, 435 << 16, 232 << 16, angle);
-    angle = 0x5000;
-    Scene_Call4098(11, 467 << 16, 248 << 16, angle);
-    angleB = 0xd000;
-    Scene_Call4098(12, 462 << 16, 340 << 16, angleB);
-    Scene_Call4098(13, 482 << 16, 340 << 16, angleB);
-    Scene_Call4098(14, 489 << 16, 320 << 16, angleA);
+    angleA = FACING_NORTH_NORTHWEST;
+    YampiDesert_SetPositionAndFacing(8, 520 << 16, 242 << 16, angleA);
+    angle = FACING_WEST;
+    YampiDesert_SetPositionAndFacing(9, 533 << 16, 271 << 16, angle);
+    angle = FACING_SOUTH_SOUTHEAST;
+    YampiDesert_SetPositionAndFacing(10, 435 << 16, 232 << 16, angle);
+    angle = FACING_SOUTH_SOUTHWEST;
+    YampiDesert_SetPositionAndFacing(11, 467 << 16, 248 << 16, angle);
+    angleB = FACING_NORTH_NORTHEAST;
+    YampiDesert_SetPositionAndFacing(12, 462 << 16, 340 << 16, angleB);
+    YampiDesert_SetPositionAndFacing(13, 482 << 16, 340 << 16, angleB);
+    YampiDesert_SetPositionAndFacing(14, 489 << 16, 320 << 16, angleA);
   }
   if (GameFlag_Get(FLAG_YAMPI_DESERT_LADDER_DUG_UP))
     YampiDesert_OpenLadderPit();
@@ -2194,7 +2199,7 @@ void YampiDesert_SetUpRoom8(void) {
 
   Scene_QueueMusic(SE_137);
   Rope_Initialize();
-  Scene_Call41d8(0, 524, 8, 9);
+  YampiDesert_PlaceRope(0, 524, 8, 9);
   if (object != NULL)
     Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
   object = Actor_GetById(10);

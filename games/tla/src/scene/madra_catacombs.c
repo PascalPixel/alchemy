@@ -208,6 +208,7 @@ void MadraCatacombs_TryLockedDoor(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "The door won't budge. ...Must be locked."
   FieldMessage_Show((s32)&MsgFieldDoorWontBudge, 1);
   work->fieldMenu = 1;
   Event_End();
@@ -357,6 +358,7 @@ void MadraCatacombs_HearEyesOfTruth(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
+    // "Look upon me with eyes of truth... Then the door will open..."
     FieldMessage_Show((s32)&MsgFieldEyesOfTruth, 1);
     Event_End();
   }

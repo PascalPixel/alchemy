@@ -829,7 +829,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, 5);
       Event_SetMessageId(base + 1);
-      // "You've won Linked Battle. Keep up the good work!"
+      // "You've won ... Linked Battle. Keep up the good work!"
       Event_ShowMessage(actor, 0);
     } else {
       Event_SetMessageId((s32)MsgIWillTell);
@@ -843,7 +843,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, 5);
       Event_SetMessageId(base + 1);
-      // "You've won Linked Battle. Check the board on the wall for the best..."
+      // "You've won ... Linked Battle. Check the board on the wall for..."
       Event_ShowMessage(actor, 0);
     } else {
       Event_SetMessageId((s32)MsgIWillTellYou);
@@ -1342,12 +1342,12 @@ s32 LinkLobby_Initialize(void) {
       if (gMainRoutineWork.linkTallies[2] < score) {
         gMainRoutineWork.linkTallies[2] = score;
         Event_SetMessageId((s32)MsgYouWonBattle);
-        // "You won battle. You broke the record!"
+        // "You won ... battle. You broke the record!"
         Event_OpenMessage(8, 0);
         LinkLobby_SaveMonsterBattleResults();
       } else {
         Event_SetMessageId((s32)MsgYouWonBattlePlease);
-        // "You won battle. Please speak to me when you wish to battle again."
+        // "You won ... battle. Please speak to me when you wish to battle..."
         Event_OpenMessage(8, 0);
       }
       LinkLobby_WriteSlotValue(0);
@@ -1368,12 +1368,12 @@ s32 LinkLobby_Initialize(void) {
     if (gMainRoutineWork.linkTallies[2] < score) {
       gMainRoutineWork.linkTallies[2] = score;
       Event_SetMessageId((s32)MsgYouWonBattle);
-      // "You won battle. You broke the record!"
+      // "You won ... battle. You broke the record!"
       Event_OpenMessage(8, 0);
       LinkLobby_SaveMonsterBattleResults();
     } else {
       Event_SetMessageId((s32)MsgYouWonBattleI);
-      // "You won battle. I told you our monsters were tough! Please try again."
+      // "You won ... battle. I told you our monsters were tough! Please..."
       Event_OpenMessage(8, 0);
     }
     gMainRoutineWork.linkTallies[3] = 0;

@@ -746,7 +746,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   FieldActor_RefreshSelectorById(ACTOR_SHEBA);
   FieldActor_RefreshSelectorById(28);
   FieldEvent_Wait(20);
-  angle = 0x2000;
+  angle = FACING_SOUTHEAST;
   Actor_SetPositionAndFacing(ACTOR_IVAN, px(741), px(232), angle);
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(800, 0, 270, 1);
@@ -1246,18 +1246,18 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Party_AddMember(4);
   Actor_SetSpeed(ACTOR_FELIX, 1);
   {
-    s32 angle = 0x4000;
+    s32 angle = FACING_SOUTH;
 
     Actor_SetPositionAndFacing(ACTOR_FELIX, px(664), px(88), angle);
   }
   {
-    s32 angle = 0x2000;
+    s32 angle = FACING_SOUTHEAST;
 
     Actor_SetPositionAndFacing(27, px(717), px(208), angle);
   }
   Actor_SetPositionAndFacing(26, px(737), px(195), FACING_SOUTHEAST);
   {
-    s32 angle = 0xa000;
+    s32 angle = FACING_NORTHWEST;
 
     Actor_SetPositionAndFacing(ACTOR_ISAAC, px(761), px(219), angle);
   }

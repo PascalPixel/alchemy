@@ -729,7 +729,7 @@ void ApojiiIslands_FlowWithStream(void) {
           if (result <= 0) {
             anchor->z += px(2);
             leader->z += px(2);
-            leader->facing = 0x4000;
+            leader->facing = FACING_SOUTH;
           }
         }
       }

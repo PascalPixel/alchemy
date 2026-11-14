@@ -1035,7 +1035,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  // "But..."
+  // "But Felix's party can't carry any more, so they left it behind."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What is it now?"

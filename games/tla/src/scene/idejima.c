@@ -433,6 +433,7 @@ void Idejima_CatchUpWithFelix(void) {
                                ((s16 *)&leader->z)[1]);
     FieldActor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+    // "Kraden has joined your party."
     Message_ShowCentered((s32)MsgIdejimaHeyFelix + 8, 1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
     Event_SetFlag(FLAG_IDEJIMA_KRADEN_JOINED);
@@ -1237,16 +1238,16 @@ void Idejima_RideTheTidalWave(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   DriftScene_Prepare();
-  a3000 = 0x3000;
+  a3000 = FACING_SOUTH_SOUTHEAST;
   Actor_SetPositionAndFacing(ACTOR_KRADEN, px(314), px(200), a3000);
-  aD000 = 0xd000;
+  aD000 = FACING_NORTH_NORTHEAST;
   Actor_SetPositionAndFacing(ACTOR_ALEX, px(328), px(240), aD000);
-  a4000 = 0x4000;
+  a4000 = FACING_SOUTH;
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(340), px(200), a4000);
   Actor_SetPositionAndFacing(ACTOR_SHEBA, px(342), px(230), FACING_EAST);
   Actor_SetAnimation(ACTOR_SHEBA, 19);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
-  a8000 = 0x8000;
+  a8000 = FACING_WEST;
   Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(312), px(230),
                              a8000);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);

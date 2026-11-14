@@ -472,6 +472,7 @@ const struct Trigger *Scene_GetEvents(void) {
 void Contigo_ExamineWall(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Felix examined the wall. There are characters carved into it...."
   FieldMessage_Show((s32)MsgContigo110, 1);
   Event_End();
 }
@@ -479,6 +480,7 @@ void Contigo_ExamineWall(void) {
 void Contigo_ReadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Felix examined the sign. The characters from the wall are translated..."
   FieldMessage_Show((s32)MsgContigo111, 1);
   Event_End();
 }
@@ -486,6 +488,7 @@ void Contigo_ReadSign(void) {
 void Contigo_ReadLuckyWheelsSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Turn the slot and get a prize! The lottery slots are over here."
   FieldMessage_Show((s32)MsgContigo112, 1);
   Event_End();
 }
@@ -493,6 +496,7 @@ void Contigo_ReadLuckyWheelsSign(void) {
 void Contigo_ReadLuckyDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Drop some cash and double up! The hi-lo dice are over here!"
   FieldMessage_Show((s32)MsgContigo113, 1);
   Event_End();
 }
@@ -500,6 +504,7 @@ void Contigo_ReadLuckyDiceSign(void) {
 void Contigo_ReadSuperDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "You never know what the dice will do next! Come and give our dice a..."
   FieldMessage_Show((s32)MsgContigo114, 1);
   Event_End();
 }
@@ -510,6 +515,7 @@ void Contigo_AskAboutWindLegend(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigo35);
+  // "Do you know anything about a legend about these people who could..."
   Event_AskYesNoAndShowResponse(8, 0);
   Event_End();
 }
@@ -588,8 +594,10 @@ void Contigo_BabyThinks(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Get(0x9b2))
+    // "The baby's forehead is furrowed, like it's thinking."
     FieldMessage_Show((s32)MsgContigo163, 1);
   else
+    // "The baby's forehead is furrowed, like it's thinking."
     FieldMessage_Show((s32)MsgContigo64, 1);
   Actor_SetModeById(17, 3);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
@@ -751,6 +759,7 @@ void Contigo_AskAboutSuperDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigo26);
+  // "So, tell me, pal... Have you ever played Superdice before?"
   Event_AskYesNoAndShowResponse(10, 0);
   Event_End();
 }
@@ -845,6 +854,7 @@ void Contigo_AskAboutGeoglyph(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigo102);
+  // "Have you taken a good look at the Anemos geoglyph?"
   Event_AskYesNoAndShowResponse(14, 0);
   Event_End();
 }
@@ -1611,7 +1621,7 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_GARET, 261, 20);
   Sound_Play(MUS_000);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 15);
-  angle = 0xb000;
+  angle = FACING_NORTH_NORTHWEST;
   Actor_SetHorizontalPositionAndAngleWithTerrain(8, px(160), px(466), angle);
   wait(1);
   Event_ShowMessageAndWait(8, 0);
@@ -2233,7 +2243,7 @@ void Contigo_InitializeRoom4(void) {
       Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
     } else {
-      Actor_GetById(10)->facing = 0xd000;
+      Actor_GetById(10)->facing = FACING_NORTH_NORTHEAST;
       wait(1);
     }
   } else {

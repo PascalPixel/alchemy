@@ -445,7 +445,7 @@ void TaopoSwamp_StepOnVent(s32 hole) {
   goto test;
 sink:
   if (result < 0) {
-    leader->facing = 0x4000;
+    leader->facing = FACING_SOUTH;
     TaopoSwamp_FallThroughHole(hole);
     return;
   }

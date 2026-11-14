@@ -176,6 +176,7 @@ void Kibombo_AskAboutFewerWarriors(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgItLooksLikeThere);
+  // "It looks like there are fewer warriors in Kibombo now, huh?"
   Event_AskYesNoAndShowResponse(15, 0);
   Event_End();
 }
@@ -184,6 +185,7 @@ void Kibombo_AskAboutRevenge(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYouDidnT);
+  // "You didn't come to Kibombo to get revenge on us for that raid, did you?"
   Event_AskYesNoAndShowResponse(23, 0);
   Event_End();
 }
@@ -206,6 +208,7 @@ void Kibombo_AskGoingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAreYouGoing);
+  // "Are you going to head to western Gondowan?"
   Event_AskYesNoAndShowResponse(12, 0);
   Event_End();
 }
@@ -1901,7 +1904,7 @@ void Kibombo_AkafubuChants(void) {
   }
   Sound_Play(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
   i = 0;
-  angle = 0;
+  angle = FACING_EAST;
   do {
     x = center->x;
     y = center->y + px(24);
@@ -2083,7 +2086,7 @@ void Kibombo_EnterDoor(void) {
   px = x >> 16;
   Actor_SetMoveTarget(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);
   Actor_WaitForMove(leader);
-  leader->facing = 0xc000;
+  leader->facing = FACING_NORTH;
   if (GameFlag_Get(FLAG_SCENE_TEMP_02))
     Kibombo_StopFireFlicker();
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
@@ -3117,7 +3120,7 @@ void Kibombo_InitializeRoom5(void) {
   if (GameFlag_Get(FLAG_KIBOMBO_PIERS_WITH_PARTY))
     Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
   else if (GameFlag_Get(FLAG_KIBOMBO_PIERS_STAYED_BEHIND)) {
-    s32 angle = 0x2000;
+    s32 angle = FACING_SOUTHEAST;
 
     Kibombo_ObjPlaceFacing(7, 152 << 17, 176 << 15, angle);
   }

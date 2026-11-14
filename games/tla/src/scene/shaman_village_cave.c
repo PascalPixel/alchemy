@@ -247,7 +247,7 @@ taken:
 void ShamanVillageCave_PlaceGladiators(void) {
   s32 angle;
 
-  angle = 0x5000;
+  angle = FACING_SOUTH_SOUTHWEST;
   Actor_SetPositionAndFacing(19, px(231), px(199), angle);
   Actor_SetPositionAndFacing(20, px(220), px(191), angle);
   Actor_SetPositionAndFacing(21, px(204), px(191), angle);
@@ -259,7 +259,7 @@ void ShamanVillageCave_PlaceGoldenShirt(void) {
   s32 angle;
 
   FieldActor_ShowItemIconById(22, ITEM_GOLDEN_SHIRT);
-  angle = 0xc000;
+  angle = FACING_NORTH;
   Actor_SetPositionAndFacing(22, px(212), px(199), angle);
   Event_SetFlag(0xa73);
   return;
@@ -300,7 +300,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 177, 1);
   FieldCamera_WaitForArrival();
-  angle = 0x4000;
+  angle = FACING_SOUTH;
   Actor_SetPositionAndFacing(19, px(199), px(130), angle);
   Actor_WalkTo(19, 231, 199);
   FieldEvent_Wait(20);
@@ -428,7 +428,7 @@ void Event_SetDestination();
        ->message)
 
 void ShamanVillageCave_LoseToColossoFans(void) {
-  s32 angle = 0xa000;
+  s32 angle = FACING_NORTHWEST;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -487,7 +487,7 @@ void ShamanVillageCave_LoseToColossoFans(void) {
 
 void ShamanVillageCave_BeatColossoFans(void) {
   s16 *target;
-  s32 angle = 0xe000;
+  s32 angle = FACING_NORTHEAST;
 
   Event_ClearFlag(0xa71);
   Event_SetFlag(0xa72);

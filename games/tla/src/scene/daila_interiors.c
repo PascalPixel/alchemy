@@ -431,6 +431,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
     Sound_Play(MUS_083);
     MessageArgument_Push(item, 2);
+    // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
@@ -483,24 +484,30 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
   owner = PartyInventory_Add(item);
   if (owner == -1) {
     MessageArgument_Push(item, 2);
+    // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived, 1);
+    // "But you can't carry any more items."
     FieldMessage_Show((s32)MsgItemCannotCarry, 1);
   retry:
+    // "What will you drop?"
     FieldMessage_Show((s32)MsgItemDropPrompt, 1);
     result = ItemPicker_RunToDrop(&member, &slot);
     if (result == -1) {
       if (Item_GetDirect(item)->flags & 8) {
         MessageArgument_Push(item, 2);
+        // "That ...'s valuable! You must get it!"
         FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
         goto retry;
       }
       MessageArgument_Push(item, 2);
+      // "Drop the ...?"
       FieldMessage_Show((s32)MsgItemDropPrompt + 1, 5);
       result = FieldYesNo_Ask(1);
       Message_CloseFinishedWindows();
       if (result != 0)
         goto retry;
       MessageArgument_Push(item, 2);
+      // "Felix drops the ...."
       FieldMessage_Show((s32)MsgItemDropPrompt + 2, 1);
       work->message = saved;
       return owner;
@@ -510,6 +517,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       if (Inventory_CountItem(member, item) > 29) {
         MessageArgument_Push(member, 1);
         MessageArgument_Push(item, 2);
+        // "Empty"
         FieldMessage_Show((s32)MsgItemDropPrompt + 7, 1);
         goto retry;
       }
@@ -521,10 +529,12 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       Sound_Play(MUS_083);
       if (owner == gMainRoutineWork.currentOwner) {
         MessageArgument_Push(item, 2);
+        // "Felix got ...."
         FieldMessage_Show((s32)MsgItemReceived, 3);
       } else {
         MessageArgument_Push(item, 2);
         MessageArgument_Push(owner, 1);
+        // "Felix gave ... to ...."
         FieldMessage_Show((s32)MsgItemGiven, 3);
       }
       work->message = saved;
@@ -533,10 +543,12 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
   } else {
     Sound_Play(MUS_083);
     MessageArgument_Push(item, 2);
+    // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived, 3);
     if (owner != gMainRoutineWork.currentOwner) {
       MessageArgument_Push(item, 2);
       MessageArgument_Push(owner, 1);
+      // "Felix gave ... to ...."
       FieldMessage_Show((s32)MsgItemReceived + 1, 1);
     }
     work->message = saved;

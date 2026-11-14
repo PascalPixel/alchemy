@@ -637,7 +637,7 @@ void DehkanPlateau_StepOnCrack(void) {
       }
     }
     Event_Wait(12);
-    leader->facing = 0x4000;
+    leader->facing = FACING_SOUTH;
     leader->motionFlags = 0;
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     {
@@ -1470,7 +1470,7 @@ void DehkanPlateau_InitializeRoom2(void) {
   }
   DehkanPlateau_RestoreRoom2Cracks();
   if (GameFlag_Get(FLAG_CANNON_FLED_OVER_CRACKS) != 0) {
-    s32 angle = 0x4000;
+    s32 angle = FACING_SOUTH;
 
     Actor_PlaceFacing(ACTOR_ROOM2_CANNON, 222 << 18, 168 << 16, angle);
     MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
@@ -1550,7 +1550,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   Actor_SetSpritePriority(15, 1);
   DehkanPlateau_RestoreRoom3Cracks();
   if (GameFlag_Get(FLAG_CANNON_LEAPT_AWAY) != 0) {
-    s32 angle = 0x4000;
+    s32 angle = FACING_SOUTH;
 
     Actor_SetPositionAndFacing(ACTOR_ROOM3_CANNON, 212 << 17, 208 << 15, angle);
   }
@@ -1565,7 +1565,7 @@ void DehkanPlateau_InitializeRoom3(void) {
     GameFlag_Set(FLAG_SCENE_TEMP_41);
     MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
     {
-      s32 angle = 0x4000;
+      s32 angle = FACING_SOUTH;
 
       Actor_SetPositionAndFacing(ACTOR_ROOM3_CANNON, 154 << 18, 140 << 17,
                                  angle);

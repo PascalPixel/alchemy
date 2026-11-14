@@ -491,7 +491,7 @@ void TundariaTower_JumpDownSlide(void) {
   Event_ResolvePendingActions(0);
   FieldCamera_MoveToFixed(-1, -1, -1, 0);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  leader->facing = 0x4000;
+  leader->facing = FACING_SOUTH;
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Event_Wait(30);
@@ -499,7 +499,7 @@ void TundariaTower_JumpDownSlide(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Motion_SetVarCbAndRefresh(gMainRoutineWork.currentOwner, 2);
   Event_Wait(20);
-  leader->facing = 0xc000;
+  leader->facing = FACING_NORTH;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 5);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 24);
   Event_Wait(40);

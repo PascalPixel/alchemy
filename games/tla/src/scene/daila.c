@@ -293,7 +293,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(30);
   Actor_ShowEmoteById(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(60);
-  // "Felix..."
+  // "Felix placed ... on the table."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 8, 16, FACING_NORTHWEST);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, 16, 0, FACING_NORTHWEST);

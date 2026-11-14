@@ -1172,7 +1172,7 @@ void MagmaRockInside_FloodWithLava(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_00))
       open = 212;
     Event_ClearFlag(FLAG_AREA_TEMP_00);
-    facing = 0;
+    facing = FACING_EAST;
     ((s32 (*)())MagmaRockInside_SwapCells)(0, 15, 13, 64);
     FieldActor_SetSpritePriority(15, 3);
     for (j = 0; j != 7; j++)

@@ -222,6 +222,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void AirsRock_ExamineWindStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "Beware the Wind Stones. The stones magnify the power of the wind...."
   Message_ShowCentered((s32)MsgFieldWindStoneWarning, 1);
   Event_End();
 }
@@ -849,7 +850,7 @@ void AirsRock_RideWhirlwind(void) {
     if (gInput.held & KEY_UP) {
       dx = 0;
       dz = 0xfff00000;
-      leader->facing = 0xc000;
+      leader->facing = FACING_NORTH;
       moved = 1;
     }
     if (gInput.held & KEY_RIGHT) {
@@ -860,7 +861,7 @@ void AirsRock_RideWhirlwind(void) {
     }
     if (gInput.held & KEY_LEFT) {
       dx = 0xfff00000;
-      leader->facing = 0x8000;
+      leader->facing = FACING_WEST;
       dz = 0;
       moved = 1;
     }
@@ -873,7 +874,7 @@ void AirsRock_RideWhirlwind(void) {
     if (++i != 60)
       goto waiting;
     dx = 0;
-    leader->facing = 0xc000;
+    leader->facing = FACING_NORTH;
     dz = 0xfff00000;
     if ((u32)(MapCell_GetAttributes(2, ride->x >> 20,
                                     (ride->z - ride->y + dz) >> 20)
@@ -891,7 +892,7 @@ void AirsRock_RideWhirlwind(void) {
         255)
       goto found;
     dx = 0xfff00000;
-    leader->facing = 0x8000;
+    leader->facing = FACING_WEST;
   found:
     height =
         Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);

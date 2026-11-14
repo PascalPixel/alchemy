@@ -381,6 +381,7 @@ void ShrineOfTheSeaGod_ExamineStatue(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "This statue looks a lot like the one in Daila's Sanctum."
   FieldMessage_Show((s32)MsgFieldStatueLikeDailaShrine, 1);
   work->fieldMenu = 1;
   Event_End();
@@ -1528,7 +1529,7 @@ void ShrineOfTheSeaGod_DjinniRunsNorth(void) {
   Actor_WalkToAndWaitById(14, 280, 432);
   Actor_Stop(gMainRoutineWork.currentOwner);
   wait(1);
-  angle = 0x4000;
+  angle = FACING_SOUTH;
   ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
   Actor_SetSpritePriority(14, 2);
   Actor_GetById(14)->priorityFlags |= 1;

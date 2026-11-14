@@ -268,7 +268,7 @@ s32 Scene_Initialize(void) {
       System_Wait(2);
     }
     leader->terrainHeight = leader->y = 0;
-    leader->facing = 0x4000;
+    leader->facing = FACING_SOUTH;
     leader->motionFlags = 3;
     leader->velocityY = px(3);
     leader->gravity = px(1) / 2;

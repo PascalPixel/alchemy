@@ -1637,7 +1637,7 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 40);
   Actor_Get(ACTOR_PIERS)->facing = FACING_SOUTH;
-  Actor_Get(gMainRoutineWork.currentOwner)->facing = 0x4000;
+  Actor_Get(gMainRoutineWork.currentOwner)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_SHEBA)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_JENNA)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_PIERS)->actionFlags &= 0xfe;

@@ -93,6 +93,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// "Felix and the others drank of the spring. Their HP and PP were fully
 /// replenished!"
 void LemuriaSpring_DrinkFromSpring(void) {
+  // "Felix and the others drank of the spring. Their HP and PP were fully..."
   Message_ShowCentered((s32)MsgAndTheOthers, 1);
   Event_PlaySound(SE_RECOVERY);
   Party_RestoreHpPp(1);
@@ -392,7 +393,7 @@ toss:
         Event_PlaySound(MUS_091);
         MessageArgument_Push(gLemuriaSpring_CoinPrizes[result], 5);
         Event_SetMessageId((s32)MsgYouWonCoin);
-        // "You won coin!"
+        // "You won ... coin!"
         Event_ShowMessage((s32)minusOne, 0);
       } else {
         Event_PlaySound(SE_MENU_CANCEL);

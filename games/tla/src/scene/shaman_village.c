@@ -736,6 +736,7 @@ const struct Trigger *Scene_GetEvents(void) {
 void ShamanVillage_StopAtClosedEntrance(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "The entrance is closed. You probably shouldn't go in."
   FieldMessage_Show((s32)MsgShamanEntranceClosed, 1);
   Event_End();
 }
@@ -743,6 +744,7 @@ void ShamanVillage_StopAtClosedEntrance(void) {
 void ShamanVillage_ReadTrialRoadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Trial Road None may enter without permission from Moapa."
   FieldMessage_Show((s32)MsgShamanTrialRoadPermissionSign, 1);
   Event_End();
 }
@@ -850,7 +852,7 @@ s32 ShamanVillage_IsFacingCounter(void) {
       0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
-    facing = 0;
+    facing = FACING_EAST;
   return facing;
 }
 
@@ -881,7 +883,7 @@ void ShamanVillage_TalkToInnkeeper(void) {
       Event_SetMessageId((s32)MsgShamanInnPaymentPrompt);
       MessageArgument_Push(price, 5);
       MessageArgument_Push(price, 5);
-      // "The card reads "Put coins on the counter, and you can stay." Will..."
+      // "The card reads "Put ... coins on the counter, and you can stay."..."
       Event_OpenMessage(12, 0);
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
           0) {
@@ -1458,7 +1460,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  angle = 0xc000;
+  angle = FACING_NORTH;
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->facing =
       angle;
   wait(1);
@@ -2355,7 +2357,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(168, CAMERA_KEEP, 540, 1);
   Event_Wait(20);
-  angle = 0x4000;
+  angle = FACING_SOUTH;
   Actor_SetPositionAndFacing(15, px(224), px(280), angle);
   Actor_SetPositionAndFacing(16, px(208), px(264), angle);
   Actor_SetPositionAndFacing(17, px(240), px(264), angle);
@@ -2424,7 +2426,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                         object->z);
     FieldActor_WaitForMove(object);
-    object->facing = 0xc000;
+    object->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gShamanVillage_EnterDoorScript);
@@ -2477,12 +2479,12 @@ void ShamanVillage_RestartTrial(void) {
   Event_ResolvePendingActions(0);
   Actor_SetPosition(16, 0, 0);
   Actor_SetPosition(17, 0, 0);
-  ((struct Actor *)Actor_GetById(15))->facing = 0xc000;
+  ((struct Actor *)Actor_GetById(15))->facing = FACING_NORTH;
   FieldCamera_MoveTo(224, CAMERA_KEEP, 182, 0);
   wait(1);
   Map_CenterOnFollowedPoint();
   wait(1);
-  angle = 0x4000;
+  angle = FACING_SOUTH;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetPositionAndFacing(16, px(184), px(128), angle);
@@ -2547,9 +2549,9 @@ void ShamanVillage_AdviseQuitting(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanMoapaAdvisesLeaving);
-  ((struct Actor *)Actor_GetById(15))->facing = 0x8000;
-  ((struct Actor *)Actor_GetById(16))->facing = 0x8000;
-  ((struct Actor *)Actor_GetById(17))->facing = 0x8000;
+  ((struct Actor *)Actor_GetById(15))->facing = FACING_WEST;
+  ((struct Actor *)Actor_GetById(16))->facing = FACING_WEST;
+  ((struct Actor *)Actor_GetById(17))->facing = FACING_WEST;
   FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 0);
   wait(1);
   Map_CenterOnFollowedPoint();
@@ -2588,7 +2590,7 @@ void ShamanVillage_SetUpVillage(void) {
     MapGrid_CopyCellAttributes(1, 5, 9, 1, 6, 29);
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(14)), 6);
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    s32 angle = 0x4000;
+    s32 angle = FACING_SOUTH;
 
     Actor_SetPositionAndFacing(15, px(168), px(568), angle);
     Actor_SetPositionAndFacing(17, px(216), px(536), angle);
@@ -2759,7 +2761,7 @@ void ShamanVillage_SetUpRoom4(void) {
   gFieldWork->transition = 521;
   ((struct Actor *)Actor_GetById(12))->collisionFlags = 8;
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
-    s32 angle = 0x3000;
+    s32 angle = FACING_SOUTH_SOUTHEAST;
 
     Actor_SetPositionAndFacing(8, px(88), px(92), angle);
     Actor_SetPosition(11, 156, 72);

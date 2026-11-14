@@ -329,7 +329,7 @@ void Champa_FeizhiArrives(void) {
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgChampa52);
       {
-        s32 angle = 0xc000;
+        s32 angle = FACING_NORTH;
 
         Actor_SetPositionAndFacing(29, px(314), px(679), angle);
       }

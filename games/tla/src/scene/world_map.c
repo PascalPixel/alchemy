@@ -338,6 +338,7 @@ void WorldMap_SetUpFlyingShip(void) {
   if (Event_GetFlag(0x147)) {
     WorldMap_Freeze();
     MessageArgument_Push(153, 4);
+    // "..."
     Message_ShowCentered((s32)MsgBlank2, 4);
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
@@ -640,6 +641,7 @@ void WorldMap_GazeIntoPond(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "Felix gazed into the pond..."
   Message_ShowCentered((s32)MsgGazedIntoThe, 1);
   if (roll == 0) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -652,6 +654,7 @@ void WorldMap_GazeIntoPond(void) {
     /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount. */
     register struct Actor *object asm("r6");
 
+    // "There are some coins in the shallows!"
     Message_ShowCentered((s32)MsgThereAreSome, 1);
     position[0] = leader->x;
     position[1] = leader->y;
@@ -679,6 +682,7 @@ void WorldMap_GazeIntoPond(void) {
     MapGrid_SetShake(3, 5, 1);
     MapGrid_SetShakeFixed((s32)(-1), (s32)(-1), (s32)(0xe666));
     FieldEvent_Wait(30);
+    // "The boat's rocking! This thing's dangerous! I almost fell out!"
     Message_ShowCentered((s32)MsgTheBoatS, 1);
   } else {
     Message_ShowCentered((s32)MsgTheBoatS + (roll >> 1), 1);
@@ -1246,7 +1250,7 @@ void WorldMap_DeliverLohoCannon(void) {
   Actor_Get(18)->motionFlags = 2;
   /* FAKEMATCH(temporary): the facing angle held in a local is built once and
    * shared by the three placements. */
-  angle = 0xe000;
+  angle = FACING_NORTHEAST;
   Actor_SetPositionAndFacing(16, px(8913), px(5853), angle);
   Actor_SetPositionAndFacing(17, px(8929), px(5869), angle);
   Actor_SetPositionAndFacing(18, px(8929), px(5885), angle);

@@ -384,7 +384,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  angle = 0xd000;
+  angle = FACING_NORTH_NORTHEAST;
   Actor_SetHorizontalPositionAndAngleWithTerrain(24, px(504), px(460), angle);
   wait(1);
   Event_SetMessageId((s32)MsgHeyWait2);

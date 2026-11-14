@@ -1247,7 +1247,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(11, FACING_EAST, 0);
   FieldEvent_SetMessageId(message + 1);
-  // "Wielder of Earth's might... That'd be you, . Touch it. Go on, don't..."
+  // "Wielder of Earth's might... That'd be you, Felix. Touch it. Go on..."
   Event_ShowMessage(11, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
@@ -1417,6 +1417,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
   s32 count;
 
   if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
+    // "The serpent, with its eyes closed, looks almost alive."
     Message_ShowCentered((s32)MsgGaiaRockInside08, 1);
   } else {
     s32 a = Event_GetFlag(0x9bc);
@@ -1509,6 +1510,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   object = Actor_Get(13);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "Felix placed a doll on the altar."
   Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
   Event_PlaySound(SE_193);
   Actor_SetSpritePriorityDirect(object, 1);
@@ -1613,6 +1615,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   partner = Actor_GetById(12);
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
@@ -1701,6 +1704,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   partner = Actor_GetById(12);
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
@@ -1789,6 +1793,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
   partner = Actor_GetById(14);
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);

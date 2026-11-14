@@ -260,14 +260,14 @@ void DjinnMenu_ShowCurrentList(void) {
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   Text_DrawMessageAsTilesFar(MsgButtonReturn, menu->helpWindow, 0, 16);
   Text_DrawMessageFar(MsgCurrentDjinn, menu->helpWindow, -96, 132);
-  menu->arrows[0]->active = ICON_HIDDEN;
-  menu->arrows[1]->active = ICON_HIDDEN;
+  menu->pageArrows[0]->active = ICON_HIDDEN;
+  menu->pageArrows[1]->active = ICON_HIDDEN;
   MenuIcon_SetActive(0);
   menu->cursor->active = ICON_HIDDEN;
-  menu->selector->active = ICON_HIDDEN;
+  menu->secondCursor->active = ICON_HIDDEN;
   for (i = 0; i < 4; i++) {
-    menu->rowX[i] = 32 + i * 56;
-    menu->rowY[i] = 56;
+    menu->slotX[i] = 32 + i * 56;
+    menu->slotY[i] = 56;
     menu->memberY[i] = 26;
   }
   wait(1);
@@ -310,11 +310,11 @@ void DjinnMenu_ShowCurrentList(void) {
   WindowSprite_RedrawSavedRectFar(menu->window);
   WindowSprite_ClearListFar(menu->helpWindow);
   for (i = 0; i < 4; i++) {
-    menu->rowX[i] = 130 + i * 32;
-    menu->rowY[i] = 128;
+    menu->slotX[i] = 130 + i * 32;
+    menu->slotY[i] = 128;
   }
   menu->cursor->active = ICON_SHOWN;
-  menu->selector->active = ICON_SHOWN;
+  menu->secondCursor->active = ICON_SHOWN;
   MenuIcon_SetActive(1);
   Sound_PlayFar(SE_MENU_CANCEL);
 }

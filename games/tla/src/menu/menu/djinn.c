@@ -83,7 +83,7 @@ s32 DjinnMenu_Run(void) {
   Menu_SuspendFieldTasks();
   Text_UseExtraTilesFar(1);
   Link_DrawPageArrowsFar((void *)0x06002500);
-  menu->memberCount = Party_ListMembersFar(menu->owners);
+  menu->memberCount = Party_ListMembersFar(menu->members);
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Initialize(0, 3, 0, 7);
   Menu_SetFirstActorRowCoordinates(0);
@@ -117,11 +117,6 @@ s32 DjinnMenu_Run(void) {
   return 1;
 }
 
-struct DjinnElementList {
-  u16 ids[8][10];
-  s8 counts[8];
-};
-
 void Menu_OpenBackdropScreen(void);
 
 s32 DjinnMenu_SelectDjinn(s32 mode);
@@ -133,7 +128,7 @@ s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 recipient);
 u32 Djinn_PutOnStandbyFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 index);
 
-void DjinnMenu_BuildLists(struct OwnerList *list);
+void DjinnMenu_BuildLists(struct DjinnMenuBackdrop *backdrop);
 
 // Find the moved Djinni in the list and select its new position.
 #define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                     \
@@ -204,11 +199,11 @@ s32 DjinnMenu_RunScreen(void) {
       step = 3;
       break;
     case 10:
-      menu->owner = menu->owners[menu->selectedColumn[0]];
-      menu->shownMember[0] = menu->owners[menu->selectedColumn[0]];
-      icon = menu->arrows[0];
+      menu->member = menu->members[menu->selectedColumn[0]];
+      menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
+      icon = menu->pageArrows[0];
       icon->active = ICON_HIDDEN;
-      icon = menu->arrows[1];
+      icon = menu->pageArrows[1];
       icon->active = ICON_HIDDEN;
       result = DjinnMenu_ShowMemberStatus();
       if (result == -2)
@@ -216,9 +211,9 @@ s32 DjinnMenu_RunScreen(void) {
       step = 2;
       break;
     case 15:
-      icon = menu->arrows[0];
+      icon = menu->pageArrows[0];
       icon->active = ICON_HIDDEN;
-      icon = menu->arrows[1];
+      icon = menu->pageArrows[1];
       icon->active = ICON_HIDDEN;
       result = DjinnMenu_ShowHelp();
       if (result == -2)
@@ -227,8 +222,8 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case 3:
       Menu_SetFirstActorRowCoordinates(-8);
-      menu->owner = menu->owners[menu->selectedColumn[0]];
-      menu->shownMember[0] = menu->owners[menu->selectedColumn[0]];
+      menu->member = menu->members[menu->selectedColumn[0]];
+      menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
       MenuIcon_SetPosition(0, menu->selectedColumn[0] * 56 + 48, 54);
       result = DjinnMenu_SelectDjinn(1);
       for (listIndex = 0; listIndex < menu->memberCount; listIndex++)
@@ -240,7 +235,7 @@ s32 DjinnMenu_RunScreen(void) {
         break;
       }
       if (result == 3 || result == 4 || result == 8 || result == 9)
-        menu->shownMember[1] = menu->owners[menu->selectedColumn[1]];
+        menu->shownMember[1] = menu->members[menu->selectedColumn[1]];
       if (result < 0)
         step = 2;
       else if (result == 1)
@@ -266,9 +261,9 @@ s32 DjinnMenu_RunScreen(void) {
       }
       break;
     case 7:
-      icon = menu->arrows[0];
+      icon = menu->pageArrows[0];
       icon->active = ICON_HIDDEN;
-      icon = menu->arrows[1];
+      icon = menu->pageArrows[1];
       icon->active = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(1);
       if (result == -2)
@@ -290,9 +285,9 @@ s32 DjinnMenu_RunScreen(void) {
       step = 0;
       break;
     case 6:
-      icon = menu->arrows[0];
+      icon = menu->pageArrows[0];
       icon->active = ICON_HIDDEN;
-      icon = menu->arrows[1];
+      icon = menu->pageArrows[1];
       icon->active = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(2);
       if (result == -2)
@@ -313,9 +308,9 @@ s32 DjinnMenu_RunScreen(void) {
       step = 2;
       break;
     case 9:
-      icon = menu->arrows[0];
+      icon = menu->pageArrows[0];
       icon->active = ICON_HIDDEN;
-      icon = menu->arrows[1];
+      icon = menu->pageArrows[1];
       icon->active = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(0);
       if (result == -2)
@@ -337,9 +332,9 @@ s32 DjinnMenu_RunScreen(void) {
       step = 2;
       break;
     case 5:
-      icon = menu->arrows[0];
+      icon = menu->pageArrows[0];
       icon->active = ICON_HIDDEN;
-      icon = menu->arrows[1];
+      icon = menu->pageArrows[1];
       icon->active = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(3);
       if (result == -2)
@@ -481,20 +476,20 @@ void Menu_OpenBackdropScreen(void) {
     VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
     icon->active = ICON_HIDDEN;
-    menu->arrows[0] = icon;
+    menu->pageArrows[0] = icon;
     icon->sprite.oam.matrix |= 8;
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
     icon->active = ICON_HIDDEN;
-    menu->arrows[1] = icon;
+    menu->pageArrows[1] = icon;
   }
 
   window = menu->listWindow;
-  icon = menu->arrows[0];
+  icon = menu->pageArrows[0];
   x = window->x * 8;
   icon->sprite.oam.x = icon->x = x;
   y = window->y * 8 + 4;
   icon->sprite.oam.y = icon->y = y;
-  icon = menu->arrows[1];
+  icon = menu->pageArrows[1];
   x += 224;
   icon->sprite.oam.x = icon->x = x;
   icon->sprite.oam.y = icon->y = y;
@@ -562,28 +557,18 @@ s32 PsynergyList_Diff(struct OwnerActionSlot *before,
 #undef PREVIEW_GAINED
 #undef PREVIEW_LOST
 
-struct OwnerEntry {
-  u8 unk00[20];
-};
-
-struct OwnerList {
-  struct OwnerEntry entries[8];
-  u8 results[8];
-};
-
 s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element);
 
-/// For each active party member of the menu work, fills a 20-byte entry of the
-/// list with Djinn_ListUnitEntries (owner, -1) and keeps its result byte at
-/// offset 160 of the list.
-void DjinnMenu_BuildLists(struct OwnerList *list) {
+/// Lists each party member's Djinn of every element (Djinn_ListUnitEntries)
+/// into the backdrop's lists, with their counts.
+void DjinnMenu_BuildLists(struct DjinnMenuBackdrop *backdrop) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   s32 i;
 
   for (i = 0; i < menu->partyCount; i++) {
     s32 owner = (u16)menu->memberIds[i];
 
-    list->results[i] = Djinn_ListUnitEntries(&list->entries[i], owner, -1);
+    backdrop->counts[i] = Djinn_ListUnitEntries(backdrop->ids[i], owner, -1);
   }
 }
 
@@ -625,16 +610,8 @@ void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
-struct DjinnMenuState {
-  u8 unk000[0x34];
-  s32 listWindow;
-  u8 unk038[0xc0];
-  void *owners[4];
-};
-
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
-  struct DjinnMenuState *menu =
-      (struct DjinnMenuState *)Ram_HeapSlots->menuRuntime;
+  struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
   u8 *tiles = Ram_HeapSlots->windowTiles;
   s32 window = menu->listWindow;
   s32 owners;
@@ -658,7 +635,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
     u16 *entries = backdrop->ids[page + column];
 
     y = 16;
-    if (menu->owners[column] != NULL) {
+    if (menu->memberSprites[column] != NULL) {
       for (element = 0; element <= 3; element++) {
         for (i = 0; i < backdrop->counts[page + column]; i++) {
           if (element == (entries[i] & 0xe0) >> 5) {
@@ -1054,12 +1031,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             UiPanel_HighlightGridCell(listWindow, fromX, fromY, 1);
             Window_SetInteriorRectPalette(listWindow, (fromX - page) * 7 + 1, 2,
                                           GRID_CELL_WIDTH, height, 6);
-            menu->rowY[0] = 54;
+            menu->slotY[0] = 54;
           } else {
-            menu->rowY[0] = 200;
+            menu->slotY[0] = 200;
           }
           for (i = 0, x = 8; i <= 3; i++, x += 56) {
-            if (menu->headerWindows[i] != 0) {
+            if (menu->memberSprites[i] != NULL) {
               if (page + i == menu->selectedColumn[0]) {
                 if (menu->pairEntries[0] & 0x8000)
                   message = (s32)MsgDjinnStandbyAction;
@@ -1115,7 +1092,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         MenuIcon_ReplaceObject(mode, element, animation);
       }
       window = menu->statusWindow;
-      unit = Unit_Get(menu->owners[memberColumn]);
+      unit = Unit_Get(menu->members[memberColumn]);
       WindowSprite_RedrawSavedRectFar(window);
       Text_DrawStringAtOffsetFar(unit->name, window, 0, 0);
       Text_DrawMessageAsTilesFar(unit->classIndex + (s32)MsgClassName, window,

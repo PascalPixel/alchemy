@@ -370,7 +370,7 @@ void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window, s32 x,
 // Tags the parts name in prototypes before the part that defines them.
 struct MenuEntryWindow;
 struct MenuPanel;
-struct OwnerList;
+struct DjinnMenuBackdrop;
 
 // What several parts call, declared once here for all of them.
 s32 GameFlag_Get(s32);

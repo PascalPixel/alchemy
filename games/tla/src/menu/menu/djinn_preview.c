@@ -693,7 +693,7 @@ void Djinn_CountOwned(u8 *counts) {
 
   work = Ram_HeapSlots->menuRuntime;
   for (ownerIndex = 0; ownerIndex < work->memberCount; ownerIndex++) {
-    unit = Unit_Get(work->owners[ownerIndex]);
+    unit = Unit_Get(work->members[ownerIndex]);
     count = 0;
     for (element = 0; element <= 3; element++) {
       for (bit = 0; bit <= 19; bit++) {

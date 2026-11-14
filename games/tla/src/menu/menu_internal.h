@@ -22,6 +22,8 @@
 /// A linked battle has been arranged in the Battle Arena: only the first three
 /// party members take part.
 #define FLAG_LINK_BATTLE_ARRANGED 0x172
+
+#define TEXT_COLOR_NORMAL TEXT_COLOR_WHITE ///< the window text's default colour
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"

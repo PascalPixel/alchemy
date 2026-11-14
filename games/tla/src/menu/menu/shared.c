@@ -402,7 +402,7 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
     Text_SetColorFar(TEXT_COLOR_RED);
   }
   Text_DrawNumberRightAligned(value, window, 48, 40);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawStringAtOffsetFar(gStatusPanel_PpString, window, 0, 48);
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 48);
   value = unit->pp;
@@ -426,7 +426,7 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
     Text_SetColorFar(TEXT_COLOR_RED);
   }
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_PpRowString, window, 0, 48);
   value = unit->pp;
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
@@ -1168,7 +1168,7 @@ void Menu_StopWatchingStart(void) {
   }
 }
 
-void UiPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_WHITE); }
+void UiPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_NORMAL); }
 
 void UiPalette_SetColor2(void) { Text_SetColorFar(TEXT_COLOR_RED); }
 

@@ -1012,14 +1012,14 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
                      0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
         Text_SetColorFar(TEXT_COLOR_YELLOW);
       } else {
-        Text_SetColorFar(TEXT_COLOR_WHITE);
+        Text_SetColorFar(TEXT_COLOR_NORMAL);
       }
 
       Text_DrawMessageAsTilesFar((0x3fff & *(const u16 *)(cursor + (s32)menu)) +
                                      (s32)MsgAbilityNothing,
                                  window, NAME_X, row * 16 + 8);
       Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104, row * 16 + 8);
-      Text_SetColorFar(TEXT_COLOR_WHITE);
+      Text_SetColorFar(TEXT_COLOR_NORMAL);
 
       row++;
       cursor += 2;
@@ -1142,7 +1142,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         if ((gInput.pressed & KEY_SELECT) && shortcutHelp == 0) {
           ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                 OWNER_ACTION_ID_MASK);
-          if (ability->unk04[2] == 0) {
+          if (ability->fieldEffect == 0) {
             Sound_PlayFar(SE_MENU_ERROR);
           } else {
             Sound_PlayFar(SE_NOTE_MID);
@@ -1227,7 +1227,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       if ((gInput.pressed & KEY_L) && (gInput.held & KEY_SELECT)) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               OWNER_ACTION_ID_MASK);
-        if (ability->unk04[2] == 0) {
+        if (ability->fieldEffect == 0) {
           Sound_PlayFar(SE_MENU_ERROR);
         } else if (PsynergyMenu_SetShortcut(
                        menu->memberIds[paneIndex],
@@ -1243,7 +1243,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       if ((gInput.pressed & KEY_R) && (gInput.held & KEY_SELECT)) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               OWNER_ACTION_ID_MASK);
-        if (ability->unk04[2] == 0) {
+        if (ability->fieldEffect == 0) {
           Sound_PlayFar(SE_MENU_ERROR);
         } else if (PsynergyMenu_SetShortcut(
                        menu->memberIds[paneIndex],

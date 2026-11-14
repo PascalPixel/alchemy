@@ -1893,49 +1893,52 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 #define ITEM_COMMAND_TEXT_X 40
 #endif
 
+#define TEXT_COLOR_DISABLED                                                    \
+  TEXT_COLOR_GREY ///< the grey of a command that refuses A
+
 /// Writes the six command names into window, the disabled ones in grey.
 void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
   s32 disabled;
   s32 useState;
   u32 firstCommandMessage;
 
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   useState = commandStates[ITEM_COMMAND_USE];
   disabled = ITEM_COMMAND_STATE_DISABLED;
   if (useState == disabled)
-    Text_SetColorFar(TEXT_COLOR_GREY);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
 
   firstCommandMessage = (u32)MsgItemCommandUse;
   // "Use"
   Text_DrawMessageAsTilesFar(firstCommandMessage, window, 0, 24);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
-    Text_SetColorFar(TEXT_COLOR_GREY);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Equip"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 1, window,
                              ITEM_COMMAND_TEXT_X, 24);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_GIVE] == disabled)
-    Text_SetColorFar(TEXT_COLOR_GREY);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Give"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 2, window, 0, 32);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_DROP] == disabled)
-    Text_SetColorFar(TEXT_COLOR_GREY);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Drop"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 3, window, 80, 32);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_INSPECT] == disabled)
-    Text_SetColorFar(TEXT_COLOR_GREY);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Details"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 4, window, 80, 24);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
-    Text_SetColorFar(TEXT_COLOR_GREY);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Remove"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 5, window,
                              ITEM_COMMAND_TEXT_X, 32);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {

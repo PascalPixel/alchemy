@@ -1010,7 +1010,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 64, 56, 224, 96);
   }
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (mode == 1 || hasDjinn == 1) {
     Window_SetTilemapEntryFar(window, 1, 15, djinnRow, 4);
     Window_SetTilemapEntryFar(window, 2, 19, djinnRow, 4);
@@ -1090,7 +1090,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   Text_DrawMessageAsTilesFar(unit->classIndex + (s32)MsgClassName, window, 0,
                              32);
   DRAW_STAT_LABEL(gMenu_LvString, window, 104, 0);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
   DRAW_STAT_LABEL(gMenu_HpString, window, 40, 16);
   Text_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);

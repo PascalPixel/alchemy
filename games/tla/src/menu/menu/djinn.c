@@ -623,7 +623,7 @@ void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
   Text_DrawMessageAsTilesFar((s32)MsgDjinnName + element * 20 + (entry & 31),
                              window, x + 8, y);
   Window_SetTilemapEntryFar(window, element + 0x5001, x / 8, y / 8, 0);
-  Text_SetColorFar(TEXT_COLOR_WHITE);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
 struct DjinnMenuState {
@@ -668,7 +668,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
               Text_SetColorFar(TEXT_COLOR_RED);
               break;
             case 1:
-              Text_SetColorFar(TEXT_COLOR_WHITE);
+              Text_SetColorFar(TEXT_COLOR_NORMAL);
               break;
             default:
               Text_SetColorFar(TEXT_COLOR_YELLOW);
@@ -1924,7 +1924,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
       else if (actions[first] & 0x4000)
         Text_SetColorFar(TEXT_COLOR_RED);
       else
-        Text_SetColorFar(TEXT_COLOR_WHITE);
+        Text_SetColorFar(TEXT_COLOR_NORMAL);
       Text_DrawMessageAsTilesFar((s32)MsgAbilityNothing +
                                      (actions[first] & 0x3fff),
                                  window, x * 8 + 16, (y + line * 2) * 8 + 8);
@@ -1932,7 +1932,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
                                  x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }
-    Text_SetColorFar(TEXT_COLOR_WHITE);
+    Text_SetColorFar(TEXT_COLOR_NORMAL);
     Text_DrawMessageAsTilesFar((s32)MsgPsynergyPp, window, x * 8 + PP_HEADING_X,
                                y * 8);
     if (previewMode != 3) {
@@ -1953,7 +1953,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
       }
       if (lines == 0)
         Text_DrawMessageAsTilesFar(MSG_NO_CHANGE, window, x * 8, y * 8 + 88);
-      Text_SetColorFar(TEXT_COLOR_WHITE);
+      Text_SetColorFar(TEXT_COLOR_NORMAL);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
     ((struct WindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;

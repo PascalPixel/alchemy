@@ -817,8 +817,8 @@ struct AnimationGroup {
 };
 
 extern const u8 gData_081ba30c[];
-s32 Graphics_ScaleRgb555BufferB(u16 *source, u16 *destination, s32 scale,
-                                s32 count);
+s32 SuperLuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+                                     s32 count);
 void SuperLuckyDice_BrightenColors(u16 *source, u16 *destination, u32 count,
                                    s32 angle);
 s32 SuperLuckyDice_ScoreDice(s32 *dice);

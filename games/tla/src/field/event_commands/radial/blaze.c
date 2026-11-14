@@ -1,12 +1,10 @@
 /// @file
-/// A spray started from an event, and whether an object is blocked, with
-/// routines not yet understood.
+/// Blaze, and the check whether an actor is blocked.
 // Part of radial.c.
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
-
 #include "system/input.h"
 #include "system/iwram_call.h"
 #include "system/dma.h"
@@ -297,111 +295,3 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   }
   return result;
 }
-
-s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
-
-/// Task of the Sand: ends it (cue 0x208b) when the leader, not blocked, stands
-/// off sand or gMainRoutineWork's byte 707 is set, or while it climbs as sand
-/// it leaves a climbable cell or faces one that is not.
-void FieldPsynergy_WatchSandGround(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct MainRoutineWork *party = &gMainRoutineWork;
-  struct Actor *object = ObjectTable_Get(party->currentOwner);
-  s32 reason = 0;
-
-  if ((s8)party->unk2c3 != 0)
-    reason = 1;
-  if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0)
-    reason = 2;
-  if (party->renderMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
-      object->timer == 0) {
-    s32 x;
-    s32 z;
-    s32 back;
-
-    if (MapGrid_IsClimbableCell(object->x, object->z, 2) == 0)
-      reason = 3;
-    x = object->x & 0xfff00000;
-    z = object->z & 0xfff00000;
-    back = -0x80000;
-    /* FAKEMATCH(barrier): back through an empty asm. */
-    asm("" : "+l"(back));
-    /* FAKEMATCH(dead): an empty once-only block. */
-    do {
-    } while (0);
-    if (MapGrid_IsClimbableCell(x + 0x80000, z + back, 2) == 0)
-      reason = 4;
-  }
-  if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
-    event->psynergy = 0x208b;
-}
-
-/// The heap slot (a byte offset into Ram_HeapSlots) that holds the RAM copy of
-/// the ARM picture decoder while a picture is drawn.
-#define HEAP_SLOT_PICTURE_DECODER 80
-
-// How a picture is stored.
-#define PICTURE_FORMAT_TYPE01 1 ///< one type-01 stream
-#define PICTURE_FORMAT_COMPRESSED                                              \
-  3 ///< compressed, then run through the decoder
-
-struct PictureSource {
-  u8 unk00[5];
-  u8 decodeMode;
-  u8 unk06;
-  u8 format;
-  const void **pictures;
-  u8 unk0c[10];
-  u8 picture;
-};
-
-typedef void (*PictureDecoder)(const void *source, void *destination, s32 mode);
-
-extern const u8 BattleEffect_DecodePictureCode[];
-extern const u8 BattleEffect_DecodePictureCopyEnd[];
-/// The decoder with its tables and work area (ld_script.ld). The block is
-/// larger than the copy, which stops before the work area.
-extern u8 BattleEffect_DecodePictureBlockSize[];
-
-/// Draws the current picture into a cleared buffer of the given
-/// size. The ARM picture decoder runs from RAM: when no copy is loaded yet,
-/// this loads one for the call and releases it afterwards.
-void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
-                                 s32 size) {
-  s32 decoderLoaded = 1;
-  PictureDecoder decode = Ram_HeapSlots->unk4c[1];
-
-  if (decode == NULL) {
-    Dma_Set(BattleEffect_DecodePictureCode,
-            HeapSlot_Alloc(HEAP_SLOT_PICTURE_DECODER,
-                           (s32)BattleEffect_DecodePictureBlockSize),
-            DMA_COPY_WORDS((u32)(BattleEffect_DecodePictureCopyEnd -
-                                 BattleEffect_DecodePictureCode) >>
-                           2),
-            REG_DMA3);
-    decode = Ram_HeapSlots->unk4c[1];
-    decoderLoaded = 0;
-  }
-
-  Iwram_ClearWordsEntry(buffer, size);
-  if (source->format == PICTURE_FORMAT_TYPE01) {
-    Decompress_TaggedLz(source->pictures[source->picture], buffer);
-  } else if (source->format == PICTURE_FORMAT_COMPRESSED) {
-    const void *stream =
-        Iwram_Decompress(source->pictures[source->picture], buffer);
-
-    if (stream != NULL)
-      decode(stream, buffer, 0);
-  } else {
-    decode(source->pictures[source->picture], buffer, source->decodeMode);
-  }
-
-  if (!decoderLoaded)
-    HeapSlot_Release(HEAP_SLOT_PICTURE_DECODER);
-}
-#undef OBJECT_DEFINITION
-#undef SCRIPT_OBJECT_COUNT
-#undef EVENT_MODE_NO_CELL_TEST
-#undef HEAP_SLOT_PICTURE_DECODER
-#undef PICTURE_FORMAT_TYPE01
-#undef PICTURE_FORMAT_COMPRESSED

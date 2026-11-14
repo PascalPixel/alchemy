@@ -13,7 +13,7 @@
 /// Broken Seal's, so its tile id grid is 32 by 32, and it adds the still
 /// picture's state and the region tint at the end.
 struct WorldMapView {
-  s32 *origin; ///< the followed point, as in MapWork
+  s32 *origin;                    ///< the followed point, as in MapWork
   s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapWork
   u8 *script;                     ///< NULL at load
   u16 fade; ///< MapWork's flags: REG_DISPCNT bits, BG0 to BG3 and the sprites

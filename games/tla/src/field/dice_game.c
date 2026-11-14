@@ -43,8 +43,7 @@ s32 SuperLuckyDice_Start(void) {
 }
 
 /// Resets the scene camera and its projection, with the camera tilted to 147.
-// The Broken Seal's Camera_ResetViewDefaults.
-void Camera_ResetSceneDefaultsB(void) {
+void SuperLuckyDice_ResetViewDefaults(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition local;
   s32 *result;
@@ -81,8 +80,8 @@ void Camera_ResetSceneDefaultsB(void) {
   Projection_Set(param, ratio, 0x7fff0000);
 }
 
-s32 Graphics_ScaleRgb555BufferB(u16 *source, u16 *destination, s32 scale,
-                                s32 count) {
+s32 SuperLuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+                                     s32 count) {
   s32 remaining;
   u32 mask_red;
   u32 mask_green;
@@ -449,7 +448,7 @@ void SuperLuckyDice_Run(void) {
   sprites = HeapSlot_AllocEwram(180, 0x614);
   camera = HeapSlot_AllocEwram(48, 76);
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
-  Camera_ResetSceneDefaultsB();
+  SuperLuckyDice_ResetViewDefaults();
   Task_ResetAll();
   gRenderOamEnabled = 0;
   cellBuffer = gMapCellBuffer;
@@ -541,8 +540,8 @@ void SuperLuckyDice_Run(void) {
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06016600,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x140, REG_DMA3);
-  Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
-  Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)BG_PLTT, 0, 256);
+  SuperLuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
+  SuperLuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
 
   REG_BG1CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(6);
@@ -625,9 +624,10 @@ void SuperLuckyDice_Run(void) {
   for (;;) {
     spriteCount = 0;
     if (frame <= 16) {
-      Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
-                                  256);
-      Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
+      SuperLuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT,
+                                       frame << 12, 256);
+      SuperLuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12,
+                                       256);
     }
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
@@ -739,21 +739,21 @@ void SuperLuckyDice_Run(void) {
       if (lower == 0) {
         SuperLuckyDice_BrightenColors(
             spritePalette + 192, (u16 *)(OBJ_PLTT + 12 * 16), 16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 208,
-                                    (u16 *)(OBJ_PLTT + 13 * 16), 0x8000, 16);
+        SuperLuckyDice_ScaleRgb555Buffer(
+            spritePalette + 208, (u16 *)(OBJ_PLTT + 13 * 16), 0x8000, 16);
         SuperLuckyDice_BrightenColors(
             spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 240,
-                                    (u16 *)(OBJ_PLTT + 15 * 16), 0x8000, 16);
+        SuperLuckyDice_ScaleRgb555Buffer(
+            spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 0x8000, 16);
       } else {
         SuperLuckyDice_BrightenColors(
             spritePalette + 208, (u16 *)(OBJ_PLTT + 13 * 16), 16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 192,
-                                    (u16 *)(OBJ_PLTT + 12 * 16), 0x8000, 16);
+        SuperLuckyDice_ScaleRgb555Buffer(
+            spritePalette + 192, (u16 *)(OBJ_PLTT + 12 * 16), 0x8000, 16);
         SuperLuckyDice_BrightenColors(
             spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 224,
-                                    (u16 *)(OBJ_PLTT + 14 * 16), 0x8000, 16);
+        SuperLuckyDice_ScaleRgb555Buffer(
+            spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 0x8000, 16);
       }
     } else if (state == 2) {
       struct DiceParticle *die;
@@ -1057,13 +1057,13 @@ void SuperLuckyDice_Run(void) {
       if (cashOut == 0) {
         SuperLuckyDice_BrightenColors(
             spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 240,
-                                    (u16 *)(OBJ_PLTT + 15 * 16), 0x8000, 16);
+        SuperLuckyDice_ScaleRgb555Buffer(
+            spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 0x8000, 16);
       } else {
         SuperLuckyDice_BrightenColors(
             spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 224,
-                                    (u16 *)(OBJ_PLTT + 14 * 16), 0x8000, 16);
+        SuperLuckyDice_ScaleRgb555Buffer(
+            spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 0x8000, 16);
       }
     }
 
@@ -1478,10 +1478,10 @@ void SuperLuckyDice_Run(void) {
   }
 
   for (index = 0; index != 17; index++) {
-    Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)OBJ_PLTT,
-                                0x10000 - (index << 12), 256);
-    Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)BG_PLTT,
-                                0x10000 - (index << 12), 256);
+    SuperLuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT,
+                                     0x10000 - (index << 12), 256);
+    SuperLuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT,
+                                     0x10000 - (index << 12), 256);
     wait(1);
   }
   HeapSlot_Release(48);

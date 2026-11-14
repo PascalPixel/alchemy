@@ -1,15 +1,139 @@
 /// @file
-/// The burst of sparkles an effect ends with, and moving the view: opening the
-/// whole map to it, swinging it and giving the bounds back.
+/// Field Psynergy kind 28, of the two abilities whose names are question marks:
+/// its task, its burst of sparkles, and moving the view (opening the whole map
+/// to it, swinging it and giving the bounds back).
 // Part of radial.c.
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
+#include "field/field_work.h"
+#include "battle/battle_unit.h"
+#include "window.h"
+#include "bg_scroll.h"
 #include "map.h"
 #include "view_move.h"
 #include "version.h"
+
+struct Unk_080e807cEntry {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 unk0c;
+  s32 unk10;
+  s32 unk14;
+  s32 timer;
+};
+
+struct Unk_080e807cWork {
+  u8 unk0000[0x2100];
+  struct EffectSprite sprites[16];
+  u8 unk2380[0x280];
+  struct Unk_080e807cEntry entries[16];
+  u8 unk27c0[0x1c2];
+  u16 tile;
+  s8 unk2984;
+  s8 unk2985;
+  s8 unk2986;
+  u8 unk2987;
+  u16 phase;
+};
+
+/// Task of field Psynergy 28 (its name is question marks): its motes and
+/// colours each frame.
+void FieldPsynergy_UpdateUnnamed28(void) {
+  struct Unk_080e807cWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  s32 position[3];
+  s32 *pos = position;
+  struct Unk_080e807cEntry *entry;
+  struct EffectSprite *sprite;
+  s32 x;
+  s32 y;
+  s32 i;
+  s32 timer;
+  u16 *phase;
+  u16 *tile;
+  s32 red;
+
+  pos[0] = actor->x;
+  pos[1] = actor->y + 0x100000;
+  pos[2] = actor->z;
+  if (work->unk2985 != 0)
+    Vector_AddPolarOffset(px(2), -(event->unkcae << 11), pos);
+  Camera_WorldToScreen(pos);
+  x = pos[0] >> 16;
+  gBgScroll[0].x = 64 - x;
+  y = pos[2] >> 16;
+  gBgScroll[0].y = 64 - y;
+  BgMap_DrawClipped16x16(x - 64, y - 64);
+
+  if (work->unk2986 != 0) {
+    i = 0;
+    phase = &work->phase;
+    red = 28;
+  cycle:
+    {
+      /* FAKEMATCH(pin): green pinned to r5. */
+      register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
+      s32 blue;
+      s32 color;
+
+      blue = Trig_Sin((((*phase >> 2) + i) << 11) + 0x4800) * 10;
+      green = (green >> 16) + 23;
+      blue = ((blue >> 16) + 12) << 10;
+      green <<= 5;
+      /* FAKEMATCH(dead): an empty once-only loop. */
+      do {
+      } while (0);
+      color = blue | green | red;
+
+      ((u16 *)(BG_PLTT + 15 * 16))[i] = color;
+      ((u16 *)(OBJ_PLTT + 15 * 16))[i] = color;
+    }
+    if (++i < 16)
+      goto cycle;
+    work->phase++;
+  }
+
+  if (work->unk2984 != 0) {
+    entry = work->entries;
+    sprite = work->sprites;
+    tile = &work->tile;
+    for (i = 15; i >= 0; i--, sprite++, entry++) {
+      timer = entry->timer;
+      if (timer == 0) {
+        sprite->angle = Random16();
+        pos[2] = timer;
+        pos[1] = timer;
+        pos[0] = timer;
+        Vector_AddPolarOffset(px(54), sprite->angle + TRIG_TURN / 8, pos);
+        SET_POSITION(entry, pos[0], pos[1] + 0x100000, pos[2]);
+        timer = entry->timer;
+      }
+      if (timer >= 0) {
+        sprite->oam.index = *tile + ((timer >> 2) & 3) * 4;
+        pos[0] = actor->x + entry->x;
+        pos[1] = actor->y + entry->y;
+        pos[2] = actor->z + entry->z;
+        EffectSprite_DrawAtWorldPosition(sprite, pos);
+        timer = entry->timer;
+      }
+      if ((entry->timer = timer + 1) == 16)
+        entry->timer = 0;
+    }
+  }
+
+  if (event->unkcad != 0 && event->unkcae != 0)
+    event->unkcae--;
+  if (event->unkcae == 0)
+    event->psynergy = 0x209b;
+}
+#undef NEXT_PHASE
+#undef WHIRL_COUNT
+#undef SPARK_COUNT
 
 struct RingMote {
   s32 x;

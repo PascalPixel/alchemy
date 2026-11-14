@@ -4,14 +4,15 @@
    lines that test OVERLAY, and each overlay's objects from its statements.
 
    A scene's .text opens with its entry table, src/scene/entry.s, which most
-   scenes link (each resolves its names against its own code), or
-   DIR/entry/NAME.s for the few whose routines are named otherwise. Its import
+   scenes and the debug rooms link (each resolves its names against its own
+   code), or src/scene/entry/NAME.s for the few whose routines are named
+   otherwise. Its import
    table, imports.o, follows its code: the build writes it for each overlay
    from imports.inc, a stub for each main-image routine the overlay's code
    calls. libgcc's _call_via_rX follows where the scene calls through a
    register. Each statement names the sections it places, so the objects keep
    their order in each. Where its globals are written in assembly, its .bss is
-   DIR/bss/NAME.s. */
+   src/scene/bss/NAME.s. */
 
 /* Most scenes are one overlay of one shape: the entry table, the scene's
    code, its import table and libgcc's register calls, then its globals.

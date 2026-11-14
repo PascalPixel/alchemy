@@ -1693,10 +1693,10 @@ void GabombaStatue_WatchTheChargesStick(void) {
   System_Wait(20);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  GabombaStatue_ShowEmote(5, 256, 0);
-  GabombaStatue_ShowEmote(6, 256, 0);
-  GabombaStatue_ShowEmote(7, 256, 0);
-  GabombaStatue_ShowEmote(23, 256, 0);
+  GabombaStatue_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  GabombaStatue_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -1761,7 +1761,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
-  GabombaStatue_ShowEmote(23, 256, 20);
+  GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_SetMessageId(MsgGabombaUnderstandsChannel);
   // "Ah! So that's how it works!"
   Event_ShowMessage(23, 0);
@@ -1781,7 +1781,7 @@ void GabombaStatue_SeeHowItWorks(void) {
                              0));
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
-    GabombaStatue_ShowEmote(7, 256, 20);
+    GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     Actor_SetSpeed(ACTOR_PIERS, 2);
     Actor_WalkToAndWait(ACTOR_PIERS, 340, 296);
     Actor_WalkToAndWait(ACTOR_PIERS, 354, 296);
@@ -1809,22 +1809,22 @@ void GabombaStatue_SeeHowItWorks(void) {
   // "Piers, I understand that you're angry at them, but it really is in..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  GabombaStatue_ShowEmote(7, 257, 40);
+  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "Think about it, Piers... Akafubu stole the orb solely to perform..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
-  GabombaStatue_ShowEmote(23, 265, 20);
+  GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "So, what do you think he intends to do with the orb?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
   // "He means to give it to the Great Gabomba..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
-  GabombaStatue_ShowEmote(7, 256, 40);
+  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Oh! So...if his ceremony succeeds, the orb will be taken into the..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   Actor_SetAnimation(23, 3);
   // "And we're INSIDE the statue! If the ceremony succeeds, we can go..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 23, 0);
-  GabombaStatue_ShowEmote(7, 265, 10);
+  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 10);
   // "I...don't want to help that Akafubu, but..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
@@ -1834,11 +1834,11 @@ void GabombaStatue_SeeHowItWorks(void) {
   // "I don't like the idea of helping him any more than you do, but if we..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
-  GabombaStatue_ShowEmote(7, 261, 0);
+  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 80);
-  GabombaStatue_ShowEmote(7, 261, 40);
+  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
   // "You're right, Sheba. Let's see if we can't help him finish his..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
@@ -1852,7 +1852,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
   // "It looks like the energy charge is supposed to run over these blocks."
   Event_ShowMessage(23, 0);
-  GabombaStatue_ShowEmote(23, 257, 0);
+  GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(23, FACING_NORTH_NORTHEAST, 20);
   Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
   // "If we can just move these around a little, that might be enough to..."

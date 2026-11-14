@@ -1514,7 +1514,8 @@ void ShrineOfTheSeaGod_DjinniRunsNorth(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   ShrineOfTheSeaGod_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
   FieldCamera_WaitForArrival();

@@ -356,7 +356,7 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_MoveToObject(22, gMainRoutineWork.currentOwner);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
-  FieldActor_ShowEmote(22, 258, 20);
+  FieldActor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   // "Felix! Where do you intend to go? We should try to help Piers..."
   Event_ShowMessage(22, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 10);

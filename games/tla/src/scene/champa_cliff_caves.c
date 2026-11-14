@@ -555,10 +555,10 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellDoneYou);
   ChampaCliffCaves_HandPieceToObaba(value);
-  Actor_ShowEmote(8, 0x100, 30);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "Well done! You found all three pieces of the trident!"
   Event_ShowMessageThenWait(8, 0, 5);
-  Actor_ShowEmote(8, 0x108, 30);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "That means I can begin work reforging the ancient trident of Ankohl!..."
   Event_ShowMessageThenWait(8, 0, 5);
   ChampaCliffCaves_ObabaStepsForward(1);
@@ -587,7 +587,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   FieldCamera_MoveWithinMapBounds(px(664), -1, px(232), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
-  Actor_ShowEmote(8, 0x107, 40);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   // "Heart of the earth, fury of the forge's flames, grant me power!"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   for (i = 0; i <= 2; i++) {
@@ -627,7 +627,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_SetModeById(8, 7);
   Event_Wait(60);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Actor_ShowEmote(8, 0x101, 60);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   // "That's funny... Nothing happened."
   FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
   Event_Wait(20);

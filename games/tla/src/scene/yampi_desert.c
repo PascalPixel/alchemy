@@ -1073,7 +1073,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Event_SetMessageId((s32)MsgHeyLookUp);
   Actor_Stop(9);
   wait(1);
-  Actor_ShowEmote(9, 0x100, 0);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(9, FACING_EAST, 20);
   // "Hey! Look! Up there!"
   Event_ShowMessageAndWait(9, 0);
@@ -1087,7 +1087,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_FaceDirection(14, FACING_NORTH_NORTHEAST, 0);
   owner = (s32 *)&gMainRoutineWork;
   owner += 133;
-  FieldActor_ShowEmote(*owner, 0x100, 0);
+  FieldActor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(*owner, FACING_WEST, 0);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_SetSpeedFixed(0x19999, 0x3333);
@@ -1138,7 +1138,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
-  Actor_ShowEmote(8, 0x102, 0);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   // "Hey! I found it! I found a way through!"
   Event_ShowMessageAndWait(14, 0);

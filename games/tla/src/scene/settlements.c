@@ -380,7 +380,7 @@ void Settlements_EnterDoor5(void) {
 void Settlements_EnterDoor3(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceDirection(ACTOR_FELIX, 192 << 8, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Settlements_EnterDoor();
 }
 

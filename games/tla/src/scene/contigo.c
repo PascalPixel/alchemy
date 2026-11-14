@@ -414,7 +414,7 @@ near:
 }
 
 s32 Contigo_ShowSurprise(void) {
-  FieldActor_ShowEmote(11, 257, 0);
+  FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   return 0;
 }
 
@@ -651,7 +651,7 @@ void Contigo_BabyThinks(void) {
   // "Babu bawaba bibaw."
   Event_ShowMessageAndWait(17, 0);
   Actor_SetModeById(17, 1);
-  FieldActor_ShowEmote(14, 259, 0);
+  FieldActor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_FaceDirection(14, FACING_WEST, 20);
   // "It sure is drafty in this shabby old house."
   Event_ShowMessageAndWait(14, 0);
@@ -1433,7 +1433,7 @@ void Contigo_TheReunion(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   // "She was afraid that if we met, we would be forced to fight... She..."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 259, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   // "I know that, now... But it doesn't explain why you're doing this..."
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Motion_SetModeAndWaitAnimation(9, 3);
@@ -1465,14 +1465,14 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_MIA, 0);
   // "Why were you helping them?"
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
-  FieldActor_ShowEmote(ACTOR_JENNA, 261, 20);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
   // "Our parents' lives were at stake! We had to help!"
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
   Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
-  FieldActor_ShowEmote(ACTOR_GARET, 256, 40);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Parents? But...your parents died three years ago, in that storm..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   Motion_SetModeAndWaitAnimation(9, 4);
@@ -1486,8 +1486,8 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
   Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
-  FieldActor_ShowEmote(ACTOR_GARET, 256, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 40);
+  FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "They had failed to solve the mystery of Sol Sanctum. In doing so..."
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(ACTOR_JENNA, ANIM_NOD);
@@ -1498,14 +1498,14 @@ void Contigo_TheReunion(void) {
   Actor_SetModeById(9, 4);
   // "In fact, nobody was killed by the boulder that day!"
   Event_ShowMessageAndWait(9, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 265, 20);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   // "So that means..."
   Event_ShowMessageThenWait(ACTOR_ISAAC, 0, 40);
-  FieldActor_ShowEmote(ACTOR_IVAN, 257, 20);
+  FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "Wait a minute, Kraden... Did you just say that nobody was killed by..."
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
-  FieldActor_ShowEmote(ACTOR_MIA, 256, 0);
+  FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_SOUTH);
   // "But what about Isaac's dad? And Jenna and Felix's parents? I thought..."
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
@@ -1513,16 +1513,16 @@ void Contigo_TheReunion(void) {
   Motion_SetModeAndWaitAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
   Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 20);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "I'm not so sure now..."
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
-  FieldActor_ShowEmote(ACTOR_GARET, 257, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHEAST);
   Motion_SetModeAndWaitAnimation(9, 3);
   // "Yes! If Felix survived, Kyle and the others may have as well..."
   Event_ShowMessageAndWait(9, 0);
-  FieldActor_ShowEmote(ACTOR_MIA, 257, 20);
+  FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_SOUTHEAST);
   // "Why didn't you tell us? We could have worked together to save your..."
   FieldMessage_ShowAtActor(ACTOR_MIA, 0);
@@ -1552,9 +1552,9 @@ void Contigo_TheReunion(void) {
   Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
-  FieldActor_ShowEmote(9, 265, 20);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessageAndWait(9, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 20);
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
@@ -1564,20 +1564,20 @@ void Contigo_TheReunion(void) {
   Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
   Actor_ArmCallback(ACTOR_IVAN, FACING_EAST, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
-  FieldActor_ShowEmote(ACTOR_GARET, 256, 0);
-  FieldActor_ShowEmote(ACTOR_MIA, 256, 0);
-  FieldActor_ShowEmote(ACTOR_IVAN, 256, 20);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
-  FieldActor_ShowEmote(ACTOR_MIA, 257, 20);
+  FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
-  FieldActor_ShowEmote(9, 265, 40);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessageAndWait(9, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1604,21 +1604,21 @@ void Contigo_TheReunion(void) {
     gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(owner);
-    FieldActor_ShowEmote(ACTOR_GARET, 264, 20);
+    FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     gFieldWork->message++;
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   }
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 265, 20);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 261, 0);
-  FieldActor_ShowEmote(ACTOR_GARET, 261, 20);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Sound_Play(MUS_000);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 15);
   angle = FACING_NORTH_NORTHWEST;
@@ -1641,7 +1641,7 @@ void Contigo_TheReunion(void) {
   FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
   Actor_SetSpeed(8, 0.8);
   Actor_WalkToAndWait(8, 146, 406);
-  FieldActor_ShowEmote(ACTOR_MIA, 264, 20);
+  FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(ACTOR_JENNA);
@@ -1663,7 +1663,7 @@ void Contigo_TheReunion(void) {
   Actor_SetModeById(ACTOR_MIA, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
-  FieldActor_ShowEmote(9, 257, 20);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
   Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
@@ -1676,15 +1676,16 @@ void Contigo_TheReunion(void) {
                                     10);
 #endif
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 0);
-  FieldActor_ShowEmote(ACTOR_JENNA, 256, 0);
-  FieldActor_ShowEmote(ACTOR_PIERS, 256, 0);
-  FieldActor_ShowEmote(ACTOR_SHEBA, 256, 0);
-  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
-  FieldActor_ShowEmote(ACTOR_GARET, 256, 0);
-  FieldActor_ShowEmote(ACTOR_MIA, 256, 0);
-  FieldActor_ShowEmote(ACTOR_IVAN, 256, 0);
-  FieldActor_ShowEmote(9, 256, 40);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetModeById(8, 3);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -1694,7 +1695,7 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  FieldActor_ShowEmote(8, 265, 0);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirectionById(8, FACING_EAST);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
@@ -1702,7 +1703,7 @@ void Contigo_TheReunion(void) {
   Actor_ArmCallback(ACTOR_IVAN, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(8, FACING_WEST);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
-  FieldActor_ShowEmote(ACTOR_IVAN, 256, 20);
+  FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
@@ -1776,7 +1777,7 @@ void Contigo_TheReunion(void) {
   Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
-  FieldActor_ShowEmote(8, 264, 20);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetModeById(8, 3);
@@ -1789,7 +1790,7 @@ void Contigo_TheReunion(void) {
   FieldCamera_MoveWithinMapBounds(px(148), -1, px(368), 1);
   FieldCamera_WaitForArrival();
   Scene_PlayMusic();
-  FieldActor_ShowEmote(ACTOR_JENNA, 265, 20);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
@@ -1806,17 +1807,17 @@ void Contigo_TheReunion(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
-  FieldActor_ShowEmote(ACTOR_MIA, 264, 20);
+  FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  FieldActor_ShowEmote(ACTOR_GARET, 265, 20);
+  FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
   Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-  FieldActor_ShowEmote(ACTOR_JENNA, 264, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
   FieldMessage_ShowAtActor(ACTOR_JENNA, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -1874,7 +1875,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_WalkToAndWaitById(ACTOR_IVAN, 144, 374);
     Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
-    FieldActor_ShowEmote(8, 265, 20);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     Event_SetMessageId((s32)MsgReturnedToMyNewHome);
     // "Ah, you've returned! What brings you to my new home?"
     Event_ShowMessageAndWait(8, 0);
@@ -1893,17 +1894,17 @@ void Contigo_ReturnToNewHome(void) {
     Actor_WalkToAndWait(ACTOR_IVAN, 186, 388);
     Event_Wait(40);
     Actor_WalkToAndWait(ACTOR_IVAN, 146, 380);
-    FieldActor_ShowEmote(ACTOR_IVAN, 265, 20);
+    FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "This place is so familiar... I feel like I've lived here my whole life."
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
-    FieldActor_ShowEmote(8, 259, 20);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     // "Look at me, Ivan."
     Event_ShowMessageAndWait(8, 0);
-    FieldActor_ShowEmote(ACTOR_IVAN, 257, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 40);
     // "You're too sentimental. You would have given up your quest to find..."
     Event_ShowMessageAndWait(8, 0);
-    FieldActor_ShowEmote(ACTOR_IVAN, 256, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     // "What are you saying, sister?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_SetModeById(8, 4);
@@ -1913,18 +1914,18 @@ void Contigo_ReturnToNewHome(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "W-Why?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    FieldActor_ShowEmote(8, 265, 20);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "Our world is falling into ruin..."
     Event_ShowMessageAndWait(8, 0);
     Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.currentOwner);
     wait(1);
-    FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
+    FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_SetSpeed(ACTOR_ISAAC, 1.2);
     Actor_WalkToAndWaitById(ACTOR_ISAAC, 168, 380);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "What? Hamma, what do you mean? What's happening?"
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-    FieldActor_ShowEmote(8, 256, 0);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     wait(1);
@@ -1935,7 +1936,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_WalkToAndWait(9, 182, 378);
     Actor_WalkToAndWaitById(9, 182, 360);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
-    FieldActor_ShowEmote(9, 265, 20);
+    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "Look, I don't want to interrupt your reunion or anything, but..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
     Actor_ArmCallback(8, FACING_EAST, 0);
@@ -1945,10 +1946,11 @@ void Contigo_ReturnToNewHome(void) {
     Motion_SetModeAndWaitAnimation(8, 3);
     // "Our world requires a delicate balance of elemental forces. That..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
-    FieldActor_ShowEmote(9, 257, 0);
-    FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-    FieldActor_ShowEmote(ACTOR_ISAAC, 257, 0);
-    FieldActor_ShowEmote(ACTOR_IVAN, 257, 40);
+    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                         EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     // "Without that balance, one element might be lost beneath the others..."
     Event_ShowMessageAndWait(8, 0);
@@ -1962,7 +1964,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
     // "Isn't Agatio taking care of Mars Lighthouse? Everything should be..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    FieldActor_ShowEmote(8, 259, 0);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 20);
     // "Agatio will not light Mars Lighthouse."
     Event_ShowMessageAndWait(8, 0);
@@ -1976,10 +1978,11 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
     // "No. A great power stands ready to oppose them."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
-    FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 0);
-    FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
-    FieldActor_ShowEmote(ACTOR_IVAN, 256, 0);
-    FieldActor_ShowEmote(9, 256, 40);
+    FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(8, 4);
     // "They lack the power to resist that force, and they will fall before it."
@@ -1996,7 +1999,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_FaceDirection(9, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-    FieldActor_ShowEmote(8, 265, 0);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
     // "Our world will be plunged into ice."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
@@ -2006,19 +2009,20 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     // "Even I do not know the answer to that question."
     Event_ShowMessageAndWait(8, 0);
-    FieldActor_ShowEmote(9, 261, 20);
+    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
     Actor_ArmCallback(8, FACING_EAST, 80);
-    FieldActor_ShowEmote(9, 261, 40);
-    FieldActor_ShowEmote(ACTOR_ISAAC, 257, 0);
-    FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-    FieldActor_ShowEmote(ACTOR_IVAN, 257, 40);
-    FieldActor_ShowEmote(9, 262, 0);
+    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+    FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                         EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     // "Ah... Yes, given the way that the elements interact, I see..."
     Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0);
     // "Kraden, you understand?"
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
-    FieldActor_ShowEmote(9, 264, 0);
+    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 20);
     // "Well, I'm only guessing... But I think it's a good guess."
     Event_ShowMessageAndWait(9, 0);
@@ -2029,7 +2033,7 @@ void Contigo_ReturnToNewHome(void) {
     Motion_SetModeAndWaitAnimation(9, 3);
     // "The earth is nurturing and warm. Many creatures are reared in this..."
     FieldMessage_ShowAtActor(9, 0);
-    FieldActor_ShowEmote(ACTOR_IVAN, 257, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -2049,7 +2053,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetModeById(9, 4);
     // "Now, think about the ocean. It is a cold place, is it not?"
     FieldMessage_ShowAtActor(9, 0);
-    FieldActor_ShowEmote(ACTOR_ISAAC, 257, 0);
+    FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -2068,7 +2072,7 @@ void Contigo_ReturnToNewHome(void) {
     Motion_SetModeAndWaitAnimation(9, 3);
     // "Both lighthouses were lit, and a balance was reached."
     Event_ShowMessageAndWait(9, 0);
-    FieldActor_ShowEmote(9, 265, 0);
+    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     // "But with only the lighthouse of wind lit, the balance has been..."
     Event_ShowMessageAndWait(9, 0);
@@ -2083,7 +2087,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
     // "Right, yeah... I've always done that without thinking about it, but..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
-    FieldActor_ShowEmote(8, 257, 20);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     // "When Mercury Lighthouse was lit, this didn't happen, though. I..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
@@ -2091,7 +2095,7 @@ void Contigo_ReturnToNewHome(void) {
     // "Water cannot cool things as swiftly as wind, perhaps."
     Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0);
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-    FieldActor_ShowEmote(9, 265, 0);
+    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     // "Or maybe the combined power of water and wind is cooling things down..."
     Event_ShowMessageAndWait(9, 0);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);

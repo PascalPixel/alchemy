@@ -745,7 +745,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   JupiterLighthouse_PlaySound(34);
   FieldEvent_ShowMessageThenWait(4124, 0, 0);
   ((void *)Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0));
-  JupiterLighthouse_ShowEmote(4, 256, 30);
+  JupiterLighthouse_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   ACTOR_SET_MODE_AND_WAIT(27, 4, 33);
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
@@ -773,7 +773,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
     FIELD_AT(t79, u16, 452) = (t80 + 1);
     FieldEvent_ShowMessageThenWait(4124, 0, 0);
   }
-  JupiterLighthouse_ShowEmote(7, 256, 0);
+  JupiterLighthouse_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                            30));
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
@@ -782,7 +782,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_WalkByAndWait(28, -16, -24);
   Actor_FaceDirection(28, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
-  JupiterLighthouse_ShowEmote(7, 258, 0);
+  JupiterLighthouse_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_Get(28)->actionFlags &= 0xfe;
   Actor_Get(28)->velocityY = px(4);
   Actor_SetDestinationOffset(28, 0, 24);
@@ -808,14 +808,14 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_WalkByAndWait(27, -24, -8);
   Actor_Get(ACTOR_FELIX)->actionFlags &= 0xfe;
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, -8);
-  JupiterLighthouse_ShowEmote(28, 264, 30);
+  JupiterLighthouse_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(28, 0, 0);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
   Actor_Get(ACTOR_FELIX)->actionFlags &= 0xfe;
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30));
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
-  JupiterLighthouse_ShowEmote(27, 264, 30);
+  JupiterLighthouse_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceDirection(27, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_ShowMessageThenWait(8219, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
@@ -842,7 +842,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait_(5);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
-  JupiterLighthouse_ShowEmote(27, 265, 30);
+  JupiterLighthouse_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Actor_FaceDirection(27, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_ShowMessageThenWait(8219, 0, 0);
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SMILE, 30));

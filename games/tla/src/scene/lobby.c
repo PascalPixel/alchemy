@@ -1095,7 +1095,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
   Event_SetMessageId(base + actor);
   Event_ShowMessage(actor, 0);
   if (base == (s32)MsgILlFight && actor == 5) {
-    Actor_ShowEmoteById__talk(5, 263, 0);
+    Actor_ShowEmoteById__talk(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
     Event_Wait(10);
   }
   Event_End();

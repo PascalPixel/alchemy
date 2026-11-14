@@ -25,7 +25,7 @@ void Leader_CenterInCell(void);
 #include "call.h"
 #include "field_sprite.h"
 #include "system/frame.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
@@ -664,11 +664,11 @@ void Func_02000cac(s32 arg) {
     FieldEvent_Wait(20);
     FieldEvent_Wait(10);
     FieldEvent_ShowMessageThenWait(28, 0, 5);
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
   } else {
     Actor_SetAnimation(28, 4);
     FieldEvent_Wait(33);
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
     FieldEvent_ShowMessageThenWait(28, 0, 5);
   }
   Actor_RunRepeatedMotion(5, 2);
@@ -1164,7 +1164,7 @@ void Func_02001e38(void) {
   Actor_SetScript(3, gData_02005548);
 }
 
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK gFieldWork
 
 s32 Inventory_Equip();
 
@@ -1327,10 +1327,10 @@ void Func_02001ed0(void) {
   if (answer == 0) {
     ((struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30));
     FieldEvent_ShowMessageThenWait(27, 0, 5);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
   } else {
     ((struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30));
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     FieldEvent_ShowMessageThenWait(27, 0, 5);
   }
   Actor_FaceActor(7, 26, 0);
@@ -1400,10 +1400,10 @@ void Func_02001ed0(void) {
   if (answer == 0) {
     ACTOR_SET_MODE_AND_WAIT(26, 4, 33);
     FieldEvent_ShowMessageThenWait(26, 0, 5);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
   } else {
     ACTOR_SET_MODE_AND_WAIT(26, 4, 33);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     FieldEvent_ShowMessageThenWait(26, 0, 5);
   }
   Actor_FaceEachOther(28, 4, 0);
@@ -1486,7 +1486,7 @@ void Func_02001ed0(void) {
   Actor_RunRepeatedMotion(4, 2);
   PartyInventory_Remove(0xdf);
   PartyInventory_Add(245);
-  Message_ShowCentered((s16)EVENT_WORK->messageId++, 5);
+  Message_ShowCentered((s16)EVENT_WORK->message++, 5);
   index = 0;
   offset = 0xd8;
   for (index = 0; index <= 14; offset += 2, index++) {
@@ -1566,7 +1566,7 @@ void Func_02001ed0(void) {
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
+  gFieldWork->transition = 516;
   HangingVine_Place(8, 1);
   HangingVine_Place(9, 1);
   HangingVine_Place(10, 1);

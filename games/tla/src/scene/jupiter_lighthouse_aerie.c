@@ -14,7 +14,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "shared/jupiter_lighthouse_aerie.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -309,7 +309,7 @@ void Func_0200032c(s32 unused, s32 id) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
+  gFieldWork->transition = 513;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   JupiterLighthouse_LoadPalettesZero(0);
@@ -386,12 +386,12 @@ void PaletteCycle_Step(void) {
   u16 *p;
 
   if (gPaletteCyclePausesInEvents != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->fieldWork;
     s16 *state = (s16 *)(work + 358);
 
     if (*state != 0 && (*state & 0x3ff) != 153)
       return;
-    if (((struct EventWork *)work)->pendingFirst != 0)
+    if (((struct FieldWork *)work)->revealActive != 0)
       return;
     if (*(s16 *)(work + 350) != 0)
       return;
@@ -443,7 +443,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
 }
 
 void Func_02000930(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
@@ -453,7 +453,7 @@ void Func_02000930(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
-  work->unkd46 = 0;
+  work->glowHeld = 0;
   actor->motionFlags = 4;
   Actor_SetSpriteFlags(actor, 0);
   while (*((u8 *)linked + 0x63) != 0) {
@@ -466,8 +466,8 @@ void Func_02000930(void) {
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
-  work->unkd44 = 1;
-  work->unkd46 = 1;
+  work->glow = 1;
+  work->glowHeld = 1;
   facing = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (facing >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((facing >> 13) & 2) + 1) << 19;
@@ -496,8 +496,8 @@ void Func_02000930(void) {
   FieldActor_WaitForMove(shadow);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  work->unkd46 = 1;
-  work->exit = 0;
+  work->glowHeld = 1;
+  work->stepTrigger = 0;
   Event_End();
 }
 
@@ -510,7 +510,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_Update(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
@@ -699,7 +699,7 @@ struct BeamWork {
 void Func_02001080(void) {
   struct BeamWork *work = Ram_HeapSlots->menuRuntime;
   struct Actor *carrier =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
+      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 460);
   s32 t = work->frame;
   s32 position[3];
   s32 a[3];
@@ -896,7 +896,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   struct BeamWork__s17a8 *work =
       HeapSlot_Alloc(220, sizeof(struct BeamWork__s17a8));
   struct Actor *carrier =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
+      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 460);
   struct EffectSprite *sprite;
   struct EffectSprite *large;
   struct BeamSpark *spark;
@@ -1273,7 +1273,7 @@ void CrackedTile_Fall__s24a8(struct CellTarget__s24a8 *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -1332,7 +1332,7 @@ s32 CrackedTiles_Step(void) {
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gData_02003488;
   s32 x = FieldGameFlag_GetByte(work->flagByte);
   s32 z = FieldGameFlag_GetByte(work->flagByte + 8);
@@ -1349,7 +1349,7 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
     shadow->z = object->z;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
+    gFieldWork->transition = value;
   }
 }
 

@@ -70,7 +70,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position);
 #include "fixed_math.h"
 #include "macros.h"
 #include "system/main_routine_work.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
@@ -209,7 +209,7 @@ static __inline__ s32 Half(u8 *base, s32 offset) {
   SetHeight(x, z, height)
 
 void Func_0200053c(s32 offset) {
-  u8 *work = *(u8 **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+  u8 *work = *(u8 **)((u8 *)Ram_HeapSlots->fieldWork + 0xcbc);
   s32 height;
 
   offset <<= 3;
@@ -237,7 +237,7 @@ void Func_0200053c(s32 offset) {
 
 void Func_020006a8(void) {
   s32 position[3];
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct CurrentUnit *current = (struct CurrentUnit *)Ram_HeapSlots->effectWork;
   const u16 *ids = (const u16 *)gData_02001220;
   struct Actor *object = NULL;
@@ -336,7 +336,7 @@ void Func_0200087c(void) {
   u16 *blendControl;
   s32 sum;
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   current = Ram_HeapSlots->effectWork;
   object = FIELD_AT(work, struct Actor *, 3260);
   if (current != NULL && FIELD_AT(work, s16, 358) != 0) {
@@ -431,7 +431,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Caverns1)
     Func_02000ba8();
   if (gMainRoutineWork.scene == (s32)&SceneId_Caverns4)
@@ -538,7 +538,7 @@ void Func_02000d28(void) {
 }
 
 void Func_02000d68(void) {
-  s32 value = HALF_AT(Ram_HeapSlots->eventWork, 340);
+  s32 value = HALF_AT(Ram_HeapSlots->fieldWork, 340);
 
   if (value == 2)
     Actor_SetPosition(8, 144, 224);

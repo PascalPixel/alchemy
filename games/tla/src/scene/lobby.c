@@ -114,7 +114,7 @@ s32 LinkLobby_PollPeerReady(void) {
   s32 set;
   s32 z;
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   result = 1;
   z = Actor_GetById(4)->z;
 
@@ -200,7 +200,7 @@ s32 LinkLobby_PromptToParticipate(void) {
 }
 
 s32 LinkLobby_ReportDisconnection(void) {
-  struct LobbyEventWork *work = Ram_HeapSlots->eventWork;
+  struct LobbyEventWork *work = Ram_HeapSlots->fieldWork;
 
   LinkLobby_WriteSlotValue(4);
   Event_ClearFlag(FLAG_SCENE_TEMP_00);
@@ -589,7 +589,7 @@ s32 LinkLobby_EnterBattle(void) {
 
   failed = 0;
   window = 0;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   cnt = 0;
   if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
     Event_Start();
@@ -1275,7 +1275,7 @@ s32 LinkLobby_Initialize(void) {
   gMainRoutineWork.packedEvents[1] = 0;
   gLinkLobby_CallFrames = 0;
   gLinkLobby_WaitFrames = 0;
-  ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->eventWork)
+  ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->fieldWork)
       ->startTransition = 0x201;
   Sound_LoadReverbCode(2);
   LinkLobby_DrawThreeDigitValue(gMainRoutineWork.linkTallies[6]);
@@ -1383,7 +1383,7 @@ s32 LinkLobby_Initialize(void) {
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
     if (Event_GetFlag(FLAG_AREA_TEMP_E8)) {
-      work = Ram_HeapSlots->eventWork;
+      work = Ram_HeapSlots->fieldWork;
       Event_ClearFlag(FLAG_AREA_TEMP_E8);
       work->raisedTrigger = 2;
       Event_ClearFlag(FLAG_AREA_TEMP_04);

@@ -71,7 +71,7 @@ struct Actor *Actor_GetById(u32 objectId);
 void FieldPsynergy_EndSand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
   u8 *effect = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   s32 pictureEntry;
   struct Actor *owner = *(struct Actor **)(effect + 16);
   s32 particleEntry;

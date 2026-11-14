@@ -20,7 +20,7 @@
 #include "field_sprite.h"
 #include "system/field_effect.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/scene/gabomba_statue.h"
 #include "module/scene/scene.h"
@@ -375,7 +375,7 @@ void GabombaStatue_LashRope(void) {
     Func_020020f0(0);
     Event_SetFlag(FLAG_SCENE_TEMP_03);
     /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it. */
-    *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;
+    *(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x166) = zero;
     i = 0;
   loop:
     actor->phase += gData_02006b38[i] * direction;
@@ -597,7 +597,7 @@ void Func_02000a20(struct Actor *object) {
     if (i == 10)
       Event_PlaySound(SE_DUST_PUFF);
     if (i == 20) {
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+      gFieldWork->transition = 521;
       Event_FinishScreenTransition();
     }
   }
@@ -840,7 +840,7 @@ void GabombaStatue_HearTheOffering(void) {
   Event_PlaySound(MUS_011);
   result = Func_02004d48(11, 1);
   ObjectTable_Snapshot();
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   switch (result) {
@@ -890,7 +890,7 @@ const u8 *Scene_GetEvents(void) {
 }
 
 void Func_020011bc(s32 x, s32 z) {
-  struct GabombaStatueChamberEventWork *work = Ram_HeapSlots->eventWork;
+  struct GabombaStatueChamberEventWork *work = Ram_HeapSlots->fieldWork;
   struct GabombaStatueChamberObject *object =
       Actor_Get(gMainRoutineWork.currentOwner);
 
@@ -1047,7 +1047,7 @@ void Func_02001630(void) {
     return;
   if (x == 29 && z == 10 && !(gInput.held & KEY_UP))
     return;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1143,7 +1143,7 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
 void GabombaStatue_PoundConePillar(s32 a, s32 b) {
   Statue_Sink(gData_02005d7c, a, b);
   if (Event_GetFlag(0x8ce) && Event_GetFlag(0x8cf))
-    ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
+    ((struct GateEventWork *)Ram_HeapSlots->fieldWork)->gateTimer = 200;
 }
 
 void Func_020019d0(void) {
@@ -1174,7 +1174,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
   if (value == 1)
-    ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
+    ((struct GateEventWork *)Ram_HeapSlots->fieldWork)->gateTimer = 200;
 }
 
 void Func_02001a8c(void) {
@@ -1191,7 +1191,7 @@ void Func_02001a8c(void) {
 
 void Func_02001ac0(void) {
   if (Func_020053a0() == 0)
-    ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 201;
+    ((struct GateEventWork *)Ram_HeapSlots->fieldWork)->gateTimer = 201;
 }
 
 void Func_02001adc(s32 id) {
@@ -1234,7 +1234,7 @@ DEFINE_GABOMBA_STATUE_RAISE_ACTORS(Func_02001b68, 29, 2)
 void Func_02001b98(void) {
   s32 value = 16;
   s32 open = 0;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   s32 i;
 
   if (Event_GetFlag(FLAG_MENU_OPEN) || *(s16 *)(event + 358) != 0) {
@@ -1373,7 +1373,7 @@ void Func_02001c10(void) {
 void Func_02002074(void) {
   s32 blend;
   struct Actor *object =
-      ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->object;
+      ((struct EventWork1cc *)Ram_HeapSlots->fieldWork)->object;
   s32 level = object->z;
 
   level = (level - 0xe80000) >> 19;
@@ -1494,7 +1494,7 @@ void Func_02002394(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -1533,7 +1533,7 @@ void Func_02002394(void) {
   actor->bounce = Q16_ONE / 4;
   System_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_End();
 }
 
@@ -1636,7 +1636,7 @@ void Func_020027cc(void) {
   Actor_SetPositionAndFacing(6, px(448), px(312), speed);
   Actor_SetPositionAndFacing(5, px(468), px(312), speed);
   System_Wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
+  gFieldWork->transition = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -1714,7 +1714,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_SetPositionAndFacing(6, 224 << 17, 156 << 17, north);
   Actor_SetPositionAndFacing(5, 234 << 17, 156 << 17, north);
   System_Wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -1743,9 +1743,9 @@ void GabombaStatue_SeeHowItWorks(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 7, 0);
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
   } else {
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
     Actor_SetSpeed(7, 2);
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
@@ -1861,7 +1861,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
+  gFieldWork->transition = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(1.2);
@@ -1950,7 +1950,7 @@ struct EventWork1ac {
 s32 Scene_Initialize(void) {
   s16 scene;
 
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->screenEffect = 521;
   if (gMainRoutineWork.scene != (s32)&SceneId_GabombaStatue1) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       Func_020020f0(0);
@@ -2141,10 +2141,10 @@ L_0200b7e4:
     goto L_0200b856;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_ClearFlag(0x8fc);
   t59 = Event_GetFlag(0x9eb);
   if (t59 == 0)
@@ -3385,7 +3385,7 @@ s32 __divsi3(s32 numerator, s32 denominator);
 s32 __modsi3(s32 numerator, s32 denominator);
 
 void Func_02005210(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
@@ -3395,7 +3395,7 @@ void Func_02005210(void) {
 }
 
 void Func_0200525c(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&

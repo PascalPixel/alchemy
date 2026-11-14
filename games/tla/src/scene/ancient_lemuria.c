@@ -24,7 +24,7 @@
 #include "scene_tables.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -295,7 +295,7 @@ s32 AncientLemuria_CycleWaterColors(void) {
 }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
+  gFieldWork->transition = 513;
   Task_Add(AncientLemuria_CycleWaterColors, 0xc80);
   if (gMainRoutineWork.entrance != 1)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -397,14 +397,14 @@ void AncientLemuria_MeetTheLemurians(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     Event_ShowMessageThenWait(10, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
   } else {
     Event_Wait(40);
     Actor_StartRepeatedMotion(10, 3);
     FieldEffect_SetAttached(10,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
     Event_ShowMessageThenWait(10, 0, 0);
     Actor_Jump(10, 6, 15);
     Actor_Jump(10, 6, 23);
@@ -660,7 +660,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Motion_SetModeAndWaitAnimation(11, 3);
       Event_Wait(10);
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
-      ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+      ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
     } else {
       Event_Wait(35);
       Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -668,16 +668,16 @@ void AncientLemuria_MeetTheLemurians(void) {
       Actor_ArmCallback(11, 0x5000, 0);
       Event_Wait(30);
       Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-      ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+      ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
     }
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count += 2;
+    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count += 2;
   } else {
     /* FAKEMATCH(pin): the count pinned to r2. */
     register u32 n asm("r2");
 
-    n = ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count;
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count = n + 2;
+    n = ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count;
+    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count = n + 2;
     result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
     if (result == 0) {
       Event_Wait(25);
@@ -688,7 +688,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Motion_SetVarCbAndRefresh(11, 2);
       Event_Wait(10);
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
-      ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+      ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
     } else {
       Event_Wait(35);
       Actor_FaceDirection(11, FACING_SOUTH_SOUTHWEST, 0);
@@ -697,7 +697,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
       Actor_Jump(11, 6, 15);
       Actor_Jump(11, 6, 23);
-      ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+      ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
     }
     Actor_FaceDirectionById(7, FACING_NORTH);

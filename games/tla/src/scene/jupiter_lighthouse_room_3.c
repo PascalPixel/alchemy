@@ -36,7 +36,7 @@
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "field/cell_target.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "system/io_reg.h"
 #include "field_event.h"
@@ -181,7 +181,7 @@ void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(12); }
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   HangingVine_Place(12, 1);
   HangingVine_Place(13, 1);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
@@ -605,7 +605,7 @@ void CrackedTile_Fall(struct PushEvent *event) {
     Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   } while (0);
   event->busy = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

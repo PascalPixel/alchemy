@@ -56,7 +56,7 @@ void HoverGlow_Update(void);
 void FieldPsynergy_Hover(void) {
   struct GlowWork__f0e9af4 *work = HeapSlot_Alloc(92, 0x1038);
   struct GlowScene *scene = Ram_HeapSlots->effectWork;
-  struct GlowEvent__f0e9af4 *event = Ram_HeapSlots->eventWork;
+  struct GlowEvent__f0e9af4 *event = Ram_HeapSlots->fieldWork;
   struct Actor *player = scene->mainObject;
   struct PendingEvent *pending;
   struct EffectSprite *sprite;

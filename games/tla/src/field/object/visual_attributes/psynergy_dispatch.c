@@ -345,7 +345,7 @@ void FieldPsynergy_RunHandler(s32 kind) {
 /// yet: each kind runs its effect to the end.
 void FieldPsynergy_Run(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
   s32 objectId;
@@ -439,7 +439,7 @@ void FieldPsynergy_Run(void) {
 /// chose (BattleFxScene.secondObjectId).
 void FieldPsynergy_Dispatch(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
 
@@ -626,7 +626,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
   s32 depth;
   s32 *out;
 
-  if (*((s8 *)Ram_HeapSlots->eventWork + 394) == 3) {
+  if (*((s8 *)Ram_HeapSlots->fieldWork + 394) == 3) {
     point[0] = object->x;
     out = screen;
     point[1] = object->y;

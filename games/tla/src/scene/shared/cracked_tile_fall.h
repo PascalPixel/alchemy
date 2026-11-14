@@ -30,7 +30,7 @@ void CrackedTile_Fall(struct CellTarget__s41ac *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

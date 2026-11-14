@@ -24,8 +24,8 @@ void WorldMap_StepZoom(void) {
   s32 offset;
   s32 delta;
 
-  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))
-          ->viewCenter->movementState != 0)
+  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))
+          ->camera->movementState != 0)
     return;
   duration = &map->zoomFrames;
   if (*duration == 0)
@@ -47,7 +47,7 @@ void WorldMap_StartZoom(s32 zoom, s32 frames) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 result;
 
-  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->controlMode != 3)
+  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->mode != 3)
     return;
   {
     s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14;
@@ -64,7 +64,7 @@ void Event_WaitForZoomTransition(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 frames;
 
-  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->controlMode == 3) {
+  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->mode == 3) {
     frames = 0;
     if (map->zoomFrames != 0) {
       do {

@@ -5,7 +5,7 @@
 /// (FLAG_ALHAFRA_MAST_CLEARED).
 
 #include "system/main_routine_work.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -294,7 +294,7 @@ void BattleEffect_FillOverlayTiles(s32 mode);
 void EffectSprite_InitFromSlot94();
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+  gFieldWork->transition = 521;
   Actor_Get(16)->collisionFlags |= 4;
   Actor_Get(16)->collisionFlags |= 16;
   FieldActor_SetSpritePriority(9, 3);
@@ -339,7 +339,7 @@ void BattleEffect_FillOverlayTiles(s32 mode);
 void EffectSprite_InitFromSlot94();
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+  gFieldWork->transition = 521;
   Actor_Get(16)->collisionFlags |= 4;
   Actor_Get(16)->collisionFlags |= 16;
   FieldActor_SetSpritePriority(9, 3);

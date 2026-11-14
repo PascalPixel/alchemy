@@ -38,7 +38,7 @@ s32 Party_GetCharacterSprite(s32 character) {
 void Actor_ReservedNoOp(void) {}
 
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
-  struct FieldStepWork *work = Ram_HeapSlots->eventWork;
+  struct FieldStepWork *work = Ram_HeapSlots->fieldWork;
   s32 index = 0;
   s32 i;
   u16 id;
@@ -173,12 +173,12 @@ s32 ScenePoint_GetPosition(s32 id, s32 *position) {
 /// Releases the actor in slot actorIndex of the event work's table, if there
 /// is one, and empties the slot.
 void Actor_ReleaseAtIndex(u32 actorIndex) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = ObjectTable_Get(actorIndex);
 
   if (actor != NULL) {
     Actor_ReleaseFar(actor);
-    work->objects[actorIndex] = NULL;
+    work->actors[actorIndex] = NULL;
   }
 }
 
@@ -189,7 +189,7 @@ u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 /// puts it, the scene's placement table from actor slot 8, and the camera
 /// that follows the leader; it also chooses the leader's control mode.
 void Actor_ResetForLeader(s32 table) {
-  struct EventWork *work;
+  struct FieldWork *work;
   struct EventWorkPlacements *placements;
   struct ActorPlacement *entry;
   struct Actor *object;
@@ -200,7 +200,7 @@ void Actor_ResetForLeader(s32 table) {
   s32 i;
   s32 height;
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   placements = (struct EventWorkPlacements *)work;
   leader = gMainRoutineWork.currentOwner;
   entry = placements->leader;
@@ -218,18 +218,18 @@ void Actor_ResetForLeader(s32 table) {
     s32 y = gMainRoutineWork.y;
 
     if (y != 0) {
-      object = work->objects[leader];
+      object = work->actors[leader];
       object->y = y;
       object->terrainHeight = y;
     }
   }
   Event_SpawnObjectTable((struct ActorPlacement *)table, 8);
 
-  object = work->objects[leader];
+  object = work->actors[leader];
   object->terrainId = gMainRoutineWork.turn;
   object->timer = 0;
   object->unk66 = 0;
-  if (work->controlMode == 3) {
+  if (work->mode == 3) {
     if (gMainRoutineWork.ownerOverride != 0)
       gMainRoutineWork.renderMode = 7;
     else
@@ -257,7 +257,7 @@ void Actor_ResetForLeader(s32 table) {
   }
 
   if (gMainRoutineWork.ownerOverride != 0) {
-    struct Actor *stand = work->objects[8];
+    struct Actor *stand = work->actors[8];
 
     SET_POSITION(stand, object->x, object->y, object->z);
     stand->terrainHeight = object->terrainHeight;
@@ -270,23 +270,23 @@ void Actor_ResetForLeader(s32 table) {
   camera = Actor_CreateFar(0x8000, object->x, object->y, object->z);
   camera->terrainHeight = object->terrainHeight;
   Actor_StartCameraFar(camera, object);
-  if (work->controlMode == 3) {
+  if (work->mode == 3) {
     u8 *effect = ResourceMetadata_RegisterFar(object->sprite, 266);
 
     effect[5] = 15;
     effect[6] = 9;
   }
   Ram_HeapSlots->mapWork->origin = &camera->x;
-  work->viewCenter = camera;
+  work->camera = camera;
 }
 
 s32 Actor_FindLastActiveId(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 last = 7;
   s32 i;
 
   for (i = 8; i <= 63; i++) {
-    if (work->objects[i] != NULL)
+    if (work->actors[i] != NULL)
       last = i;
   }
   last++;
@@ -321,19 +321,19 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
 }
 
 void ObjectTable_Clear(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
   for (i = 0; i < 80; i++)
-    work->objects[i] = NULL;
+    work->actors[i] = NULL;
 }
 
 struct Actor *ObjectTable_Get(u32 objectId) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (objectId > 0xbf)
     return NULL;
-  return work->objects[objectId];
+  return work->actors[objectId];
 }
 
 void ObjectTable_Snapshot(void) {
@@ -408,7 +408,7 @@ void Actor_Restore(void) {
       sprite->priority = priority;
       sprite->partPriority = priority;
       if (index == Party_GetLeaderActor()) {
-        camera = ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
+        camera = gFieldWork->camera;
         view = Ram_HeapSlots->mapWork->origin;
         y = object->y;
         camera->x = object->x;

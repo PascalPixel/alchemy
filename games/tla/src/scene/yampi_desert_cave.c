@@ -12,7 +12,7 @@
 #include "actor.h"
 #include "macros.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
@@ -221,7 +221,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
 
 struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
                                             s32 *kind) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor **entry;
   struct Actor *object;
@@ -230,7 +230,7 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
 
   *direction = leader->facing >> 12;
   i = 8;
-  entry = &work->objects[8];
+  entry = &work->actors[8];
 outer:
   object = *entry;
   k = 0;
@@ -443,7 +443,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
 #include "shared/palette_cycle_start_vblank.h"
 
 void YampiDesertCave_StopMarkGlow(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 256;
   Task_Remove(PaletteCycle_Fade);
 }
 
@@ -501,13 +501,13 @@ void PaletteCycle_Fade(void) {
 /// Arriving by Teleport: the screen flashes as the marks' colours race, then
 /// fades back.
 void YampiDesertCave_ArriveByTeleport(void) {
-  struct YampiDesertCaveEventWork *work = Ram_HeapSlots->eventWork;
+  struct YampiDesertCaveEventWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
   saved = work->value1ac;
   BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct YampiDesertCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
+  ((struct YampiDesertCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
       0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -835,7 +835,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 px = column * 8;
   s16 row = gYampiDesertCave_RipplePath[index + 1];
   s32 pz = row * 8;
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *tracked =
       *(struct Actor **)(Ram_HeapSlots->battleFxWork[0] + 0x1930);
   s32 x = 0, z = 0;
@@ -936,7 +936,7 @@ void Actor_SetWideSprite(s32 id, s32 wide);
 /// palette cycle and Retreat destination, the third room's background
 /// priorities, and in each room the objects its flags place.
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave1) {
     YampiDesertCave_SetMarkColors(

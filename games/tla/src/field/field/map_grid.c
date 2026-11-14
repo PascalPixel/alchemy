@@ -297,7 +297,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
 
 counted:
   {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     if (work != NULL) {
       if (collision & 3)
@@ -356,7 +356,7 @@ counted:
       effect->motionFlags = 0;
       Sound_PlayFar(SE_596);
       if (sprite != NULL) {
-        struct Unk_ClimbEventWork *work = Ram_HeapSlots->eventWork;
+        struct Unk_ClimbEventWork *work = Ram_HeapSlots->fieldWork;
 
         Animation_ApplyChildArgument(sprite, 1);
         sprite->flags = 0;
@@ -400,7 +400,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   struct PlayerSprite__f0298c0 *playerSprite;
   struct Actor *ripple;
   struct PlayerSprite__f0298c0 *rippleSprite;
-  struct EventWork *work;
+  struct FieldWork *work;
   u8 *timer;
 
   collision = 0;
@@ -461,7 +461,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   }
 
 update_object:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if ((collision & 3) != 0)
       work->blockedSteps++;

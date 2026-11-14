@@ -108,7 +108,7 @@ static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 #include "system/io_reg.h"
 #include "field/event_inline.h"
 #include "field/event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "field_event.h"
 #include "flag_call.h"
@@ -206,13 +206,13 @@ extern u16 gData_02002998[];
 extern u16 gData_020029b8[];
 
 void Func_020003e8(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 phase, k, offset;
   u16 *firstCopy, *secondCopy;
 
   if (*(s16 *)(work + 0x166) != 0)
     return;
-  if (((struct EventWork *)work)->pendingFirst != 0)
+  if (((struct FieldWork *)work)->revealActive != 0)
     return;
   if (gData_020024c4 == -1) {
     Iwram_CopyWords(Data_02002958, (void *)0x05000060, 32);
@@ -242,12 +242,12 @@ extern u16 Data_02002a18[];
 extern u16 Data_02002a38[];
 
 void Func_02000540(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 busy, phase, k, j;
 
   if (*(s16 *)(work + 0x166) != 0)
     return;
-  busy = ((struct EventWork *)work)->pendingFirst;
+  busy = ((struct FieldWork *)work)->revealActive;
   if (busy != 0)
     return;
   if (gData_020024c8 == -1) {
@@ -453,7 +453,7 @@ DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(Func_02000ba8, 67, 11, 6, 8, 0xf9e,
 // Stepping onto a door: the leader walks through it and the scene leaves by
 // the exit of its number.
 void ApojiiIslands_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -464,7 +464,7 @@ void ApojiiIslands_EnterDoor(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterOnColumn_(gMainRoutineWork.currentOwner, 2, -6);
   FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(((struct EventWork *)work)->exit);
+  FieldEvent_SetExitRequest(((struct FieldWork *)work)->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -601,7 +601,7 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *party;
 
   ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
-  effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
+  effect = &gFieldWork->transition;
   *effect = 0x202;
   party = &gMainRoutineWork;
   scene = party->scene;
@@ -636,7 +636,7 @@ void ApojiiIslands_InitializeRoom2(void) {
 }
 
 void Func_020010b4(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
 }
 
@@ -666,7 +666,7 @@ void Func_020010d8(struct Actor *object) {
 #include "shared/actor_emit_water_drop.h"
 
 void Func_020011a8(void) {
-  struct EventWork1cc *work = Ram_HeapSlots->eventWork;
+  struct EventWork1cc *work = Ram_HeapSlots->fieldWork;
   s32 owner = gMainRoutineWork.currentOwner;
   struct Actor *anchor = work->object;
   struct Actor *leader = Actor_Get(owner);

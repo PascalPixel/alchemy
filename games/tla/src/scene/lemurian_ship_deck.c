@@ -24,7 +24,7 @@
 #include "system/io_reg.h"
 #include "map.h"
 #include "system/frame.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 #include "shared/tables.h"
 #include "version.h"
@@ -59,7 +59,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// opening first unless it already has (flag 0x201).
 void LemurianShipDeck_EnterCabin(void) {
   if (Event_GetFlag(0x985)) {
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->fieldWork;
     u32 i;
 
     Event_Start();
@@ -86,7 +86,7 @@ void LemurianShipDeck_EnterCabin(void) {
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
     FieldEvent_Wait(8);
     Event_PlaySound(SE_MAP_EXIT);
-    FieldEvent_SetExitRequest(((struct EventWork *)work)->exit);
+    FieldEvent_SetExitRequest(((struct FieldWork *)work)->stepTrigger);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Event_End();
@@ -278,7 +278,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+  gFieldWork->message++;
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 20);
   Event_ShowMessage(7, 0);
   FieldActor_Stop(5);
@@ -300,11 +300,11 @@ void LemurianShipDeck_TakeTheTiller(void) {
     Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     Event_ShowMessage(9, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessage(9, 0);
   }
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -505,7 +505,7 @@ s32 Scene_Initialize(void) {
   if (party->scene == (s32)&SceneId_LemurianShipDeck1) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
-    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+    *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x100;
     /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
@@ -585,7 +585,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAnimation(9, 3);
     Event_ShowMessage(9, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(owner);
     FieldEvent_SetMessageId(MsgLookItS + 5); // the fifth message after it
@@ -870,9 +870,9 @@ void LemurianShipDeck_ReachPiersShip(void) {
     Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessage(5, 0);
     Event_ShowMessage(6, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
     Actor_FaceDirection(7, FACING_NORTHWEST, 0);
     Actor_SetAnimationAndWait(5, 3);
     Event_ShowMessage(5, 0);
@@ -992,10 +992,10 @@ void LemurianShipDeck_ReachPiersShip(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 1) {
     Actor_SetAnimationAndWait(9, 4);
     Event_ShowMessage(9, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
     Actor_SetAnimationAndWait(9, 3);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Event_ShowMessage(9, 0);
   }
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);

@@ -33,7 +33,7 @@
 #include "field_sprite.h"
 #include "macros.h"
 #include "system/main_routine_work.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -183,7 +183,7 @@ void JupiterLighthouse_UseBlueKey(s32 item) {
 }
 
 void JupiterLighthouse_TryLockedDoor(void) {
-  ((struct EventWorkLock *)Ram_HeapSlots->eventWork)->locked = 1;
+  ((struct EventWorkLock *)Ram_HeapSlots->fieldWork)->locked = 1;
   Message_ShowCentered(MsgFieldDoorLocked, 1);
 }
 
@@ -242,7 +242,7 @@ s32 Scene_Initialize(void) {
   s32 flag;
   s32 i;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   JupiterLighthouse_HideThePassage();
   if (Event_GetFlag(FLAG_RED_DOOR_OPENED))
     JupiterLighthouse_OpenRedDoor();
@@ -344,7 +344,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_UpdateLower(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
@@ -869,7 +869,7 @@ void CrackedTile_Fall(struct CellTarget__s1888 *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -927,7 +927,7 @@ s32 CrackedTiles_Step(void) {
 
 void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gCrackedTiles;
   s32 x = ((s32)FieldGameFlag_GetByte(work->flagByte));
   s32 z = ((s32)FieldGameFlag_GetByte(work->flagByte + 8));
@@ -944,6 +944,6 @@ void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
     shadow->z = object->z;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
+    gFieldWork->transition = value;
   }
 }

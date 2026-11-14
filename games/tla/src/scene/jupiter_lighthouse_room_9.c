@@ -29,7 +29,7 @@
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -200,9 +200,9 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 /// actor 8 held still, then CrackedTiles_Find and CrackedTile_PlaceLanding by
 /// the entrance.
 s32 Scene_Initialize(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 0x204;
+  work->transition = 0x204;
   FieldActor_SetSpritePriority(64, 3);
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
@@ -553,7 +553,7 @@ void CrackedTile_Fall(struct CellTarget__s1648 *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

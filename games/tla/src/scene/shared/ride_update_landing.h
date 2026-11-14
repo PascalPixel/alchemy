@@ -3,7 +3,7 @@ void Ride_UpdateLanding(struct Actor *object) {
   struct RideWork__s1c44 *work =
       (struct RideWork__s1c44 *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
   s32 dz;
   s32 i;
@@ -33,7 +33,7 @@ void Ride_UpdateLanding(struct Actor *object) {
     object->gravity += object->bounce >> 2;
     object->unk4c = 0;
     work->landed = 1;
-    event->exit = work->value0a;
+    event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4; i++) {
     s32 id = work->slots[i].id;

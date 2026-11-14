@@ -79,7 +79,7 @@ void FieldPsynergy_UpdatePound(void);
 void FieldPsynergy_Pound(void) {
   struct ShineWork__f0e5d5c *work = HeapSlot_Alloc(92, 0x18b4);
   struct FxScene__f0e5d5c *scene = Ram_HeapSlots->effectWork;
-  struct FxEvent *event = Ram_HeapSlots->eventWork;
+  struct FxEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *child = scene->child;
   struct Actor *caster = scene->mainObject;
   struct Actor *object;

@@ -13,7 +13,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "types.h"
 #include "actor.h"
@@ -565,7 +565,7 @@ s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t5, t8, t15, t16, t17, t19, t20, t21, t23, t24, t25, t26, t27,
       t28, t29, v5;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) + -3) << 16) > (u32)0x10000)
     goto L_02008e6e;
   t1 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
@@ -734,7 +734,7 @@ s32 Trig_Cos(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_UpdateLower(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
@@ -1089,7 +1089,7 @@ void CrackedTile_Fall__s25a4(struct CellTarget__s25a4 *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -1121,7 +1121,7 @@ void CrackedTile_DropIn(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);

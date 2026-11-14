@@ -30,10 +30,10 @@
 #include "version.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field_sprite.h"
 #include "shared/mars_lighthouse_entrance_room.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "system/io_reg.h"
 #include "battle/battle_unit.h"
@@ -107,7 +107,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000060(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
 
   event[3384] = 1;
 }
@@ -122,7 +122,7 @@ void Func_0200007c(void) {}
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "actor.h"
 #include "field/event_inline.h"
 #include "system/input.h"
@@ -248,7 +248,7 @@ void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
 #if TLA_PATCH_1
     Event_SetFlag(FLAG_SCENE_TEMP_38);
 #endif
-    ((struct EventDelay *)Ram_HeapSlots->eventWork)->frames = 20;
+    ((struct EventDelay *)Ram_HeapSlots->fieldWork)->frames = 20;
   }
   if ((u32)(frame - 97) <= 174 && frame % 30 == 0)
     MarsLighthouseStarRoom_ScatterIceChips(10);
@@ -283,7 +283,7 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
 
-  ((struct Overlay6abEventWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
+  ((struct Overlay6abEventWork *)Ram_HeapSlots->fieldWork)->unk1ac = 0x204;
   gMarsLighthouseStarRoom_MarsStar = NULL;
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_02001d7c();
@@ -298,7 +298,7 @@ s32 Scene_Initialize(void) {
     }
     if (entrance == 11) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-      struct Overlay6abEventWork *work = Ram_HeapSlots->eventWork;
+      struct Overlay6abEventWork *work = Ram_HeapSlots->fieldWork;
       /* FAKEMATCH(signature): GameFlag_GetByte declared returning s32, where
        * its definition returns u8. */
       s32 column = GameFlag_GetByte(0x340);
@@ -545,11 +545,11 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
     Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
     Actor_SetAnimation(13, 7);
     Event_ShowMessage(13, 0);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), s16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), u16, 0) + 1);
   } else {
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), s16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), u16, 0) + 1);
     /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
      */
     do {
@@ -762,7 +762,7 @@ struct EventNote {
 };
 
 void MarsLighthouseStarRoom_ExamineStatue(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1209,7 +1209,7 @@ void Ride_UpdateCarried(struct Actor *object) {
   struct RideWork__s1424 *work =
       (struct RideWork__s1424 *)(gInventorySnapshot + 0x188);
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
   s32 dz;
   s32 i;
@@ -1250,7 +1250,7 @@ void Ride_UpdateCarried(struct Actor *object) {
       object->gravity += speed >> 2;
     }
     work->landed = 1;
-    event->exit = work->value0a;
+    event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
     actor = Actor_Get(id);
@@ -1331,7 +1331,7 @@ void Ride_UpdateLanding(struct Actor *object) {
   struct RideWork__spawn *work =
       (struct RideWork__spawn *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
   s32 dz;
   s32 i;
@@ -1361,7 +1361,7 @@ void Ride_UpdateLanding(struct Actor *object) {
     object->gravity += object->bounce >> 2;
     object->unk4c = 0;
     work->landed = 1;
-    event->exit = work->value0a;
+    event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4; i++) {
     s32 id = work->slots[i].id;
@@ -1909,7 +1909,7 @@ struct RideState {
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 s32 MarsLighthouseRoomF_SlideOnIce(void) {
-  struct RideEvent *event = Ram_HeapSlots->eventWork;
+  struct RideEvent *event = Ram_HeapSlots->fieldWork;
   struct RideState *ride;
   struct Actor *leader;
   s32 frame[3]; // Unused: gives the stack frame its 12 bytes.
@@ -2139,7 +2139,7 @@ struct WorkEvent {
 
 void Actor_RollAndCrumble(struct Actor *actor) {
   struct Vector3 position;
-  struct WorkEvent *work = Ram_HeapSlots->eventWork;
+  struct WorkEvent *work = Ram_HeapSlots->fieldWork;
   s32 state = actor->timer;
 
   if (state == 0) {
@@ -2234,7 +2234,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->eventWork;
+    work2 = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s236c *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.currentOwner);
     if (ABS(actor->x - target->x) < 0x140000 &&
@@ -2328,9 +2328,9 @@ void Actor_SteerByPad(struct Actor *object) {
 }
 
 void Func_02002d90(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (work->actionCounter != 0) {
+  if (work->busy != 0) {
     Event_SetFlag(FLAG_MENU_OPEN);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
@@ -2924,7 +2924,7 @@ s32 CrackedTiles_Step(void) {
 
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
+  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->fieldWork;
   s32 dx = FieldGameFlag_GetByte(gData_02004cf4.flagByte);
   s32 dz = FieldGameFlag_GetByte(gData_02004cf4.flagByte + 8);
 
@@ -2940,7 +2940,7 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
     marker->z = leader->z;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->fieldWork)
         ->screenEffect = effect;
   }
 }

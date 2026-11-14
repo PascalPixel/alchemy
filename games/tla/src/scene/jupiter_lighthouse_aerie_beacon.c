@@ -23,7 +23,7 @@
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "system/frame.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "field/cell_target.h"
 #include "module/scene/scene.h"
@@ -756,7 +756,7 @@ void Func_02000cd0(void) {
 
   Event_Start();
   Func_02005984_(0);
-  t2 = (s32)Ram_HeapSlots->eventWork;
+  t2 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t2, s32, 428) = 0x100;
   FIELD_AT(t2, s32, 436) = 120;
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
@@ -828,11 +828,11 @@ void Func_02000cd0(void) {
   FieldMessage_ShowAtActor_(0x101c, 0);
   if (!Event_AskYesNoWithActorAnimation_(4, 0)) {
     Func_020058d4_(4124, 0, 0);
-    t77 = (s32)Ram_HeapSlots->eventWork;
+    t77 = (s32)Ram_HeapSlots->fieldWork;
     t78 = FIELD_AT(t77, u16, 452);
     FIELD_AT(t77, u16, 452) = (t78 + 1);
   } else {
-    t79 = (s32)Ram_HeapSlots->eventWork;
+    t79 = (s32)Ram_HeapSlots->fieldWork;
     t80 = FIELD_AT(t79, u16, 452);
     FIELD_AT(t79, u16, 452) = (t80 + 1);
     Func_020058d4_(4124, 0, 0);
@@ -854,7 +854,7 @@ void Func_02000cd0(void) {
   Actor_ArmCallback_(28, 0xa000, 0);
   Actor_ArmCallback_(7, 0x4000, 0);
   Func_020058d4_(7, 0, 0);
-  t101 = (s32)Ram_HeapSlots->eventWork;
+  t101 = (s32)Ram_HeapSlots->fieldWork;
   t102 = FIELD_AT(t101, u16, 452);
   FIELD_AT(t101, u16, 452) = (t102 + 1);
   FieldMessage_Show_(((t102 << 16) >> 16), 5);
@@ -892,12 +892,12 @@ void Func_02000cd0(void) {
   if (!Event_AskYesNoWithActorAnimation_(4, 0)) {
     ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
     Func_020058d4_(28, 0, 0);
-    t139 = (s32)Ram_HeapSlots->eventWork;
+    t139 = (s32)Ram_HeapSlots->fieldWork;
     t140 = FIELD_AT(t139, u16, 452);
     FIELD_AT(t139, u16, 452) = (t140 + 1);
   } else {
     ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
-    t143 = (s32)Ram_HeapSlots->eventWork;
+    t143 = (s32)Ram_HeapSlots->fieldWork;
     t144 = FIELD_AT(t143, u16, 452);
     FIELD_AT(t143, u16, 452) = (t144 + 1);
     Func_020058d4_(28, 0, 0);
@@ -1516,7 +1516,7 @@ void Func_02001bc4(void) {
   } else {
     Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     ACTOR_SET_MODE_AND_WAIT(5, 4, 33);
-    t310 = (s32)Ram_HeapSlots->eventWork;
+    t310 = (s32)Ram_HeapSlots->fieldWork;
     t311 = FIELD_AT(t310, u16, 452);
     FIELD_AT(t310, u16, 452) = (t311 + 2);
     Actor_FaceDirectionAndWait(5, FACING_WEST);
@@ -1644,7 +1644,7 @@ void Func_02001bc4(void) {
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Func_02003a6c(2);
-  t438 = (s32)Ram_HeapSlots->eventWork;
+  t438 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t438, s32, 428) = 0x200;
   FIELD_AT(t438, s32, 436) = 24;
   Event_FinishScreenTransition();
@@ -1792,11 +1792,9 @@ void Func_02002ae4(void) {
   Actor_FaceDirection(4, FACING_WEST, 0);
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_ShowMessageThenWait(29, 0, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     FieldEvent_ShowMessageThenWait(29, 0, 0);
   }
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -2006,8 +2004,7 @@ void Func_02002ae4(void) {
   } else {
     FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     SET_MODE_AND_WAIT(5, 4, 33);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
-        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 2);
+    gFieldWork->message = (gFieldWork->message + 2);
     Actor_FaceDirectionAndWait(5, FACING_WEST);
     FieldEvent_ShowMessageThenWait(5, 0, 0);
     Actor_FaceDirectionAndWait(5, FACING_SOUTH);
@@ -2134,7 +2131,7 @@ void Func_02002ae4(void) {
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Func_02003a6c(2);
-  work = (s32)Ram_HeapSlots->eventWork;
+  work = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT((work + 0x1ac), s32, 0) = 0x200;
   FIELD_AT((work + 0x1b4), s32, 0) = 0x18;
   Event_FinishScreenTransition();
@@ -2150,12 +2147,12 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 // As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
 void Func_02003a28(s32 *out, s32 zArg) {
   s32 z = zArg;
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 slot;
 
   z = 64 - (z >> 20);
   for (slot = 0; slot <= 63; slot++) {
-    struct Actor *object = work->objects[slot];
+    struct Actor *object = work->actors[slot];
 
     if (object != NULL) {
       s32 column = object->x >> 20;
@@ -2345,7 +2342,7 @@ s32 Scene_Initialize(void) {
   s32 t7;
   s32 t8;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
+  gFieldWork->transition = 0x201;
   Call2(HangingVine_Place, 0xf, 1);
   HangingVine_Place(16, 1);
   t2 = Actor_Get(gMainRoutineWork.currentOwner);
@@ -2475,7 +2472,7 @@ void Actor_RaiseFromCell(s32 id) {
 }
 
 void Func_020040f4(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
@@ -2486,7 +2483,7 @@ void Func_020040f4(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
-  work->unkd46 = i;
+  work->glowHeld = i;
 
   actor->motionFlags = 4;
   Actor_SetSpriteFlags(actor, 0);
@@ -2502,8 +2499,8 @@ void Func_020040f4(void) {
     *p ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
-  work->unkd44 = 1;
-  work->unkd46 = 1;
+  work->glow = 1;
+  work->glowHeld = 1;
   angle = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
@@ -2540,8 +2537,8 @@ void Func_020040f4(void) {
   FieldActor_WaitForMove(shadow);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  work->unkd46 = 1;
-  work->exit = 0;
+  work->glowHeld = 1;
+  work->stepTrigger = 0;
   Event_End();
 }
 
@@ -2550,7 +2547,7 @@ void Func_020040f4(void) {
 extern u32 gData_020069fc[];
 
 void Whirlwind_Update(struct Object6a5 *object) {
-  struct EventWork6a5 *work = Ram_HeapSlots->eventWork;
+  struct EventWork6a5 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Vector3 position;
   s32 distance;
@@ -2847,7 +2844,7 @@ void CrackedTile_Fall(struct PushEvent *event) {
     Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   } while (0);
   event->busy = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -2881,7 +2878,7 @@ void CrackedTile_DropIn(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);

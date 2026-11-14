@@ -28,7 +28,7 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "field_event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -170,7 +170,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 s32 PushTarget_FillFootprint(s32 id);
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = Q16_ONE * 3 / 4;
   FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 1, 3);
@@ -677,7 +677,7 @@ void CrackedTile_Fall(struct CellTarget__s1c30 *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

@@ -29,7 +29,7 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "debug.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "system/irq.h"
@@ -146,7 +146,7 @@ void JupiterLighthouse_FinishMovingBlock(void) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
       gMainRoutineWork.entrance == 6)
     Actor_ArriveInRing(gMainRoutineWork.currentOwner);
@@ -466,7 +466,7 @@ void CrackedTile_Fall(struct CellTarget__s156c *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -511,7 +511,7 @@ void CrackedTile_DropIn(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);

@@ -10,7 +10,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "field/cell_target.h"
@@ -266,10 +266,10 @@ spin:
 
 #define DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(name, n1)                   \
   void name(void) {                                                            \
-    struct EventWork *event = Ram_HeapSlots->eventWork;                        \
+    struct FieldWork *event = Ram_HeapSlots->fieldWork;                        \
     u8 *effect = Ram_HeapSlots->effectWork;                                    \
                                                                                \
-    event->unk16a = n1;                                                        \
+    event->raisedTrigger = n1;                                                 \
     effect[52] = 1;                                                            \
   }
 
@@ -277,13 +277,9 @@ DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(Func_020003f4, 30)
 
 DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(Func_02000410, 31)
 
-void Func_0200042c(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 0x20;
-}
+void Func_0200042c(void) { gFieldWork->raisedTrigger = 0x20; }
 
-void Func_02000440(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 0x21;
-}
+void Func_02000440(void) { gFieldWork->raisedTrigger = 0x21; }
 
 /// Once the leader stands at height 32 or more, it rises and spins for 110
 /// frames.
@@ -446,9 +442,9 @@ void Func_020007d0(void) {
 /// variant 3, the blend registers, the particles, and the map and actors by
 /// flags 0xa02, 0xa00 and 0xa03 and the entrance.
 s32 Scene_Initialize(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 0x204;
+  work->transition = 0x204;
   FieldActor_SetSpritePriority(13, 3);
   FieldActor_SetSpritePriority(14, 3);
   Io_Write16(0x3f06, &REG_BLDCNT);
@@ -746,7 +742,7 @@ void CrackedTile_Fall(struct CellTarget__s1c8c *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

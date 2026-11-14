@@ -21,7 +21,7 @@
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "version.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "flags.h"
@@ -88,7 +88,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 s32 Scene_Initialize(void) {
-  s32 *effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
+  s32 *effect = &gFieldWork->transition;
 #if !TLA_PATCH_1
   s32 value = 0x201;
 #else

@@ -40,7 +40,7 @@ struct WarpTarget {
   u16 z;
 };
 
-#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
+#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->fieldWork)
 
 extern u8 MsgAreWeSetting[];
 extern s32 gLemuriaDock_Exits[];

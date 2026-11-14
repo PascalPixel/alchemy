@@ -1,7 +1,7 @@
 /// Finds the pushable object in front of the leader: its slot, kind and the
 /// direction pushed.
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor **entry;
   struct Actor *object;
@@ -10,7 +10,7 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
 
   *direction = leader->facing >> 12;
   i = 8;
-  entry = &work->objects[8];
+  entry = &work->actors[8];
 outer:
   object = *entry;
   k = 0;

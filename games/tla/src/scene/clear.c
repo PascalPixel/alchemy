@@ -21,7 +21,7 @@
 #include "field/event_inline.h"
 #include "system/input.h"
 #include "scene_ids.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "system/heap_slots.h"
 #include "module/game/game.h"
@@ -35,7 +35,7 @@
 #include "version.h"
 #include "system/iwram_call.h"
 #include "call.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "window.h"
 #include "graphics/uiwindow.h"
 #include "graphics/oam.h"
@@ -329,7 +329,7 @@ s32 Scene_Initialize(void) {
 
   Func_0200005c();
   Task_Add(Func_020001f4, 0x480);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = started;
+  gFieldWork->transition = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (gMainRoutineWork.entrance == 2) {
@@ -606,7 +606,7 @@ again:
   Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
 #endif
 finish:
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->countdown = 999;
+  gFieldWork->exit = 999;
   Event_Wait(30);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_FinishScreenTransition();

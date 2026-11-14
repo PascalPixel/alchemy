@@ -1,7 +1,7 @@
 /// An actor rolls forward, crumbling the cells it passes.
 void Actor_RollAndCrumble(struct Actor *actor) {
   struct Vector3 position;
-  struct WorkEvent *work = Ram_HeapSlots->eventWork;
+  struct WorkEvent *work = Ram_HeapSlots->fieldWork;
   s32 state = actor->timer;
 
   if (state == 0) {
@@ -96,7 +96,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->eventWork;
+    work2 = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.currentOwner);
     if (ABS(actor->x - target->x) < 0x140000 &&

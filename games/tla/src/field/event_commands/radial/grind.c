@@ -430,7 +430,7 @@ void Camera_WorldToScreen(s32 *position);
 void HoverGlow_Update(void) {
   struct GlowWork__f0e92b4 *work = Ram_HeapSlots->battleFxWork[0];
   struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
-  struct GlowEvent *event = Ram_HeapSlots->eventWork;
+  struct GlowEvent *event = Ram_HeapSlots->fieldWork;
   u16 *palette;
   s32 position[3];
   s32 level;

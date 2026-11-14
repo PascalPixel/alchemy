@@ -36,7 +36,7 @@
 #include "system/input.h"
 #include "call.h"
 #include "map.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
@@ -379,7 +379,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags((s32)(s32)Actor_Get(8), 0);
     Actor_SetAnimation(8, 12);
     Actor_SetAnimationSpeedById(8, 8);
-    ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
+    ((struct EventWorkView__s0478 *)Ram_HeapSlots->fieldWork)->unk1ac = 0;
     REG_DISPCNT &= 0xfdff;
     REG_BG1CNT &= 0xfffc;
     REG_BG1CNT |= 3;
@@ -477,7 +477,7 @@ s32 Scene_Initialize(void) {
     REG_BG3CNT &= 0xfffc;
     REG_BG3CNT |= 2;
     System_Wait(1);
-    ((struct EventWorkView__s0478 *)slots->eventWork)->unk1ac = scale;
+    ((struct EventWorkView__s0478 *)slots->fieldWork)->unk1ac = scale;
     REG_DISPCNT &= 0xfdff;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -797,7 +797,7 @@ s32 Scene_Initialize(void) {
     System_Wait(300);
     Event_SetDestination((s32)&SceneId_Epilogue, 1);
   } else {
-    ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
+    ((struct EventWorkView__s0478 *)Ram_HeapSlots->fieldWork)->unk1ac = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     for (j = 0; j != 0x140; j++) {

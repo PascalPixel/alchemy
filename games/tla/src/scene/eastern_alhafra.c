@@ -16,7 +16,7 @@
 #include "module/tla.h"
 #include "field/particle.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "actor.h"
 #include "system/io_reg.h"
 #include "system/dma.h"
@@ -409,21 +409,21 @@ void Func_02000730(void) {
     FieldEvent_ShowMessageThenWait(22, 0, 0);
   } else {
     FieldEvent_Wait(20);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Event_OpenMessage(22, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
       FieldEvent_Wait(30);
       FieldEvent_ShowMessageThenWait(22, 0, 0);
     } else {
       FieldEvent_Wait(20);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+      gFieldWork->message += 1;
       Event_OpenMessage(22, 0);
       if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
         FieldEvent_Wait(30);
         FieldEvent_ShowMessageThenWait(22, 0, 0);
       } else {
         FieldEvent_Wait(20);
-        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+        gFieldWork->message += 1;
         FieldEvent_ShowMessageThenWait(22, 0, 0);
       }
     }
@@ -552,7 +552,7 @@ void Func_02000af8(void) {
   Task_AddFrame(Func_02000a44, 0xc80);
 }
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 #define OBJECT(id) (Actor_Get((id)))
 
 void Func_020047fc();
@@ -561,7 +561,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 flag;
 
-  ((struct EventWork *)EVENT_WORK)->screenEffect = 0x100;
+  ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
   Func_02000af8();
   OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
@@ -1012,9 +1012,9 @@ void Func_020017ec(void) {
     FieldEvent_Wait(10);
     Actor_SetAnimationAndWait(5, 4);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(6, 3);
     Actor_FaceDirection(4, FACING_NORTHEAST, 0);
@@ -1239,12 +1239,12 @@ void Func_02001cb0(void) {
     Actor_SetAnimationAndWait(23, 3);
     FieldEvent_Wait(10);
     FieldEvent_ShowMessageThenWait(23, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(23, 4);
     FieldEvent_Wait(10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     FieldEvent_ShowMessageThenWait(23, 0, 10);
   }
   Actor_FaceDirection(23, FACING_EAST, 0);
@@ -1497,14 +1497,14 @@ void Func_02002048(void) {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(26, 4);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
     FieldEvent_Wait(30);
     Actor_FaceDirection(26, FACING_WEST, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(26, 3);
     FieldEvent_Wait(10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
   }
   Actor_FaceDirection(4, FACING_EAST, 0);
@@ -1532,10 +1532,10 @@ void Func_02002048(void) {
   Actor_WalkBy(27, 0, 80);
   Actor_WalkByAndWait(25, 0, 80);
   {
-    struct EventWork *event = Ram_HeapSlots->eventWork;
+    struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-    event->delay = 60;
-    event->screenEffect = 0x100;
+    event->transitionFrames = 60;
+    event->transition = 0x100;
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1591,8 +1591,7 @@ void Func_02002a08(void) {
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 664, 0);
   {
-    struct Actor *center =
-        ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
+    struct Actor *center = gFieldWork->camera;
 
     FieldActor_SetPositionAndResetMotion(center, center->x, center->y,
                                          center->z);
@@ -1799,8 +1798,7 @@ void Func_02003274(void) {
   FieldEvent_SetMessageId((s32)MsgWhatYouLet);
   FieldCamera_MoveTo(152, CAMERA_KEEP, 272, 0);
   {
-    struct Actor *center =
-        ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
+    struct Actor *center = gFieldWork->camera;
 
     FieldActor_SetPositionAndResetMotion(center, center->x, center->y,
                                          center->z);
@@ -2064,10 +2062,10 @@ void Func_02003274(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(20);
     FieldEvent_ShowMessageThenWait(26, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
   } else {
     FieldEvent_Wait(40);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     FieldEvent_ShowMessageThenWait(26, 0, 10);
   }
   Actor_SetSpeed(26, 0.8);
@@ -2089,10 +2087,10 @@ void Func_02003274(void) {
     Actor_SetAnimationAndWait(26, 3);
     FieldEvent_Wait(10);
     FieldEvent_ShowMessageThenWait(26, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
   } else {
     FieldEvent_Wait(20);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
     FieldEvent_ShowMessageThenWait(26, 0, 10);
   }
   Actor_SetAnimationAndWait(4, 3);

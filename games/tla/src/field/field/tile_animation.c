@@ -950,7 +950,7 @@ s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   u8 *shapes;
   u8 *code;
 
@@ -976,7 +976,7 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1015,7 +1015,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1055,7 +1055,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1173,7 +1173,7 @@ s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
 s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
   if (WorldMap_GetBlockPlace(position) != 255) {
     s32 collision = WorldMap_GetCollision(position);
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->fieldWork;
     s32 mode;
 
     mode = *(s8 *)(work + 0xd3a);
@@ -1197,7 +1197,7 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
                        struct WorldPosition *position) {
   if (WorldMap_GetBlockPlace(position) != 255) {
     s32 collision = WorldMap_GetCollision(position);
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->fieldWork;
 
     s32 height = mover->height;
 

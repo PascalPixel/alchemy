@@ -201,7 +201,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   Djinn_ShowJoinedMessageFar(owner, element, djinni);
   WorldMap_ReloadPendingAreaGraphics();
 #if TLA_PATCH_1
-  ((struct EventActors *)Ram_HeapSlots->eventWork)->actors[actor] = NULL;
+  ((struct EventActors *)Ram_HeapSlots->fieldWork)->actors[actor] = NULL;
 #endif
   Event_End();
 }

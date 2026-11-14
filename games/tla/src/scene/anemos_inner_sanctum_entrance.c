@@ -30,7 +30,7 @@ void Leader_PushObjectAhead(void);
 #include "actor.h"
 #include "field/event_inline.h"
 #include "field/event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -317,7 +317,7 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
 // the flag.
 s32 Scene_Initialize(void) {
   s32 *route =
-      &((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)
+      &((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->fieldWork)
            ->route;
   s32 value = 0x204;
 

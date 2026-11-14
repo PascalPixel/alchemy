@@ -191,7 +191,7 @@ static __inline__ void Func_02003d24_(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "module/field/map.h"
 #include "types.h"
@@ -493,7 +493,7 @@ void Func_02000690(void) {
   Actor_SetAnimation(8, 4);
   FieldActor_SetSpriteColor(Actor_Get(8), 6);
   Func_02003d14_(123, 15, 5, 3, 110, 15);
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->value16a = 88;
+  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->value16a = 88;
 }
 
 void Func_020006d0(void) {
@@ -631,7 +631,7 @@ void AquaRockInside_CheckColumn(void) {
     Message_ShowCentered(message, 1);
     Message_ShowCentered(message + 1, 1);
     if (FieldPartyInventory_FindMember(456) != -1)
-      ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->value15a = 1;
+      ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->value15a = 1;
   } else {
     Message_ShowCentered(message, 1);
     MessageArgument_Push(0x1c8, 2);
@@ -1257,8 +1257,8 @@ void AquaRockInside_ReadParchTablet(void) {
     goto L_02009c56;
   }
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
-      (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
+  FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), s16, 0) =
+      (gFieldWork->message + 1);
   Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   FieldEvent_Wait(1);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 184);
@@ -1499,7 +1499,7 @@ s32 Scene_Initialize(void) {
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   if (scene == (s32)&SceneId_AquaRockInside1) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_30)) {
       Func_02001e78(8);
@@ -1903,7 +1903,7 @@ void Func_02002ca4(void) {
   s32 hit;
 
   {
-    struct SlideWork *work = Ram_HeapSlots->eventWork;
+    struct SlideWork *work = Ram_HeapSlots->fieldWork;
 
     id = gMainRoutineWork.currentOwner;
     center = work->camera;

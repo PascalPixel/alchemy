@@ -14,7 +14,7 @@
 #include "module/field/object.h"
 
 void Event_UpdateDebugSkip(void) {
-  struct EventWaitWork *work = Ram_HeapSlots->eventWork;
+  struct EventWaitWork *work = Ram_HeapSlots->fieldWork;
 
   if (gDebugMode != 0) {
     if (((struct InputState *)&gInput)->pressed & KEY_L) {
@@ -27,8 +27,8 @@ void Event_UpdateDebugSkip(void) {
 }
 
 void Event_Wait(s32 frames) {
-  struct EventWork *state = Ram_HeapSlots->eventWork;
-  if (state->waitMode == 0 && frames != 0)
+  struct FieldWork *state = Ram_HeapSlots->fieldWork;
+  if (state->fastForward == 0 && frames != 0)
     wait(frames);
 }
 
@@ -47,25 +47,25 @@ void Leader_StopMoving(void) {
 }
 
 void Event_Start(void) {
-  struct EventWork *state = Ram_HeapSlots->eventWork;
+  struct FieldWork *state = Ram_HeapSlots->fieldWork;
   AreaNameWindow_HideFar();
   Leader_StopMoving();
-  if (state->actionCounter != 0)
+  if (state->busy != 0)
     Event_ResolveAllPendingActions();
-  state->unkcb0 = 0;
-  state->unkcb2 = 0;
-  state->unkcb4 = 0;
-  state->delay = 16;
-  state->waitMode = 0;
-  state->messageActor = 0xffff;
-  state->choice = -1;
-  state->messageState = -1;
+  state->choiceMessage = 0;
+  state->choiceWidth = 0;
+  state->choiceSelection = 0;
+  state->transitionFrames = 16;
+  state->fastForward = 0;
+  state->unusedAfterMessage = 0xffff;
+  state->unusedBeforeCamera[0] = -1;
+  state->unusedBeforeCamera[1] = -1;
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_VBLANK);
   GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
-    state->currentOwner = party->currentOwner;
-    state->objectStatus = 0;
+    state->speaker = party->currentOwner;
+    state->messageWindow = 0;
   }
 }
 
@@ -98,7 +98,7 @@ void Event_CallWithLastActiveObjectId(s32 event_id) {
 }
 
 void Event_SetSceneEvents(s32 events) {
-  ((struct EventWordWork *)Ram_HeapSlots->eventWork)->word10 = events;
+  ((struct EventWordWork *)Ram_HeapSlots->fieldWork)->word10 = events;
 }
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value) {
@@ -209,8 +209,8 @@ s32 Party_CheckItemLimit(s32 item) {
 #endif
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  s16 saved = work->messageId;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s16 saved = work->message;
   s32 owner;
   s32 result;
   s32 count;
@@ -270,7 +270,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       }
     }
   done:
-    work->messageId = saved;
+    work->message = saved;
     return owner;
   }
   Sound_PlayFar(MUS_083);
@@ -281,7 +281,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     MessageArgument_PushFar(owner, 1);
     FieldMessage_ShowFar((s32)&MsgItemReceived + 1, 1);
   }
-  work->messageId = saved;
+  work->message = saved;
   return owner;
 }
 
@@ -326,7 +326,7 @@ void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
 // As ☀️'s Event_AskYesNoWithActorAnimation
 // (games/tbs/src/object/psynergy_effects.c), less its wait for released keys.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 sprite = *(s16 *)Scene_FindActorPlacement(*(s32 *)(work + 0x1e0));
   struct Window *window = *(struct Window **)(work + 0x1e4);
   struct Window *side = *(struct Window **)(work + 0x1e8);
@@ -420,47 +420,47 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 }
 
 void Event_StartScreenTransition(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  ScreenTransition_Start(event->screenEffect, event->delay);
-  event->screenStatus = 1;
+  ScreenTransition_Start(event->transition, event->transitionFrames);
+  event->transitionActive = 1;
 }
 
 void Event_FinishScreenTransition(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  ScreenTransition_Finish(event->screenEffect, event->delay);
-  event->screenStatus = 0;
+  ScreenTransition_Finish(event->transition, event->transitionFrames);
+  event->transitionActive = 0;
 }
 
 void Event_WaitTransitionFrames(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  wait(event->delay);
+  wait(event->transitionFrames);
 }
 
 void Event_SetDestination(s32 scene, s32 entrance) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->countdown = 999;
+  event->exit = 999;
   party = &gMainRoutineWork;
   party->scene = scene;
   party->entrance = entrance;
 }
 
 void Event_SetRestartPoint(s32 scene, s32 entrance) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->countdown = 999;
+  event->exit = 999;
   party = &gMainRoutineWork;
   party->savedScene = scene;
   party->savedEntrance = entrance;
 }
 
 void Event_SetExitRequest(u16 frames) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->countdown = frames;
+  event->exit = frames;
 }

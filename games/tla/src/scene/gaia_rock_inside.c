@@ -26,7 +26,7 @@
 #include "system/ram_buffer.h"
 #include "system/field_effect.h"
 #include "field_sprite.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 #include "module/scene/scene.h"
@@ -312,7 +312,7 @@ s32 Func_0200042c(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -360,7 +360,7 @@ loop:
   actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   return Event_EndWithResult();
 }
 #endif
@@ -549,7 +549,7 @@ void Func_02000900(struct Counted *object) {
   struct Counted *other = (struct Counted *)Actor_Get(9);
 
   if (object->count == 30 || other->count == 30) {
-    ((struct EventWork900 *)Ram_HeapSlots->eventWork)->timer = 42;
+    ((struct EventWork900 *)Ram_HeapSlots->fieldWork)->timer = 42;
     if (object->count == 30)
       object->count = 31;
     if (other->count == 30)
@@ -1494,7 +1494,7 @@ void GaiaRockInside_CheckAltar(void) {
   owner = FieldPartyInventory_FindMember(451);
   next = message + 2;
   if (owner != -1) {
-    struct GaiaRockInsideEventWork *work = Ram_HeapSlots->eventWork;
+    struct GaiaRockInsideEventWork *work = Ram_HeapSlots->fieldWork;
 
     Message_ShowCentered(next, 1);
     work->unk15a = 1;
@@ -2019,11 +2019,11 @@ void Func_02002b8c(void) {
   struct SwayState *state = &gSceneState;
   u16 *pending = &state->pending;
   u16 *frame = &state->frame;
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 stopped = Event_GetFlag(FLAG_MENU_OPEN);
   s32 id;
 
-  if (work->unk166 != 0)
+  if (work->psynergy != 0)
     stopped |= 1;
   id = 8;
   do {
@@ -2032,7 +2032,7 @@ void Func_02002b8c(void) {
   if (stopped != 0)
     return;
   ++*pending;
-  if (work->unk156 != 0)
+  if (work->pushCell != 0)
     return;
   if (*pending == 0)
     return;
@@ -2227,7 +2227,7 @@ s32 Scene_Initialize(void) {
   s16 *early;
 
   work = &gMainRoutineWork;
-  ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->eventWork)->screenEffect =
+  ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->fieldWork)->screenEffect =
       516;
   if (work->scene == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
@@ -2931,7 +2931,7 @@ s32 Scene_Initialize(void) {
   s16 *early;
 
   work = &gMainRoutineWork;
-  ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->eventWork)->screenEffect =
+  ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->fieldWork)->screenEffect =
       516;
   if (work->scene == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
@@ -4025,7 +4025,7 @@ void Func_0200495c(s32 layer, s32 keep) {
 
 void Func_020049e4(void) {
   if (gMainRoutineWork.renderMode == 2) {
-    u8 *event = Ram_HeapSlots->eventWork;
+    u8 *event = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
     s32 x = object->x / 0x100000;

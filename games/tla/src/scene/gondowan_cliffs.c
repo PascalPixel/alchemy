@@ -33,7 +33,7 @@
 #include "objcmd.h"
 #include "flags.h"
 #include "map.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/tla.h"
@@ -282,7 +282,7 @@ void GondowanCliffs_TalkToDog(void) {
   out[2] = object->z;
   FieldVector_AddPolarOffset(px(16), object->facing, out);
   if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
+    gFieldWork->fieldMenu = 1;
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -411,7 +411,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
+  gFieldWork->transition = 513;
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass) {
     GondowanCliffs_SetUpPass();
     return 0;

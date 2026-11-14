@@ -15,7 +15,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/scene/mars_lighthouse_star_room.h"
@@ -64,7 +64,7 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
+#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->fieldWork)
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -110,7 +110,7 @@ static inline struct Actor *Func_02005498_(s32 kind, s32 x, s32 y, s32 z) {
 #include "system/field_effect.h"
 #include "call.h"
 #include "field/field_coordinate.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "battle/battle_unit.h"
 #include "module/field/event_commands.h"
 #include "system/vector3.h"
@@ -309,7 +309,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_020000bc(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
 
   event[3384] = 1;
 }
@@ -572,7 +572,7 @@ void Func_0200055c(s32 id) {
 }
 
 void Func_02000670(void) {
-  ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk166 = 0;
+  ((struct SceneWork *)Ram_HeapSlots->fieldWork)->unk166 = 0;
   Event_ClearFlag(FLAG_MENU_OPEN);
   Event_ClearFlag(0x104);
   Event_Start();
@@ -725,7 +725,7 @@ void Func_02000aac(void) {
 }
 
 void Func_02000ad8(void) {
-  struct SceneWork *work = Ram_HeapSlots->eventWork;
+  struct SceneWork *work = Ram_HeapSlots->fieldWork;
 
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
@@ -914,13 +914,13 @@ s32 Scene_Initialize(void) {
 
   /* FAKEMATCH(temporary): the first flag update through other. */
 
-  ((struct SceneWork *)heap->eventWork)->unk1ac = 516;
+  ((struct SceneWork *)heap->fieldWork)->unk1ac = 516;
   value = 516;
   Flag_Set(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_020025b0();
   if (scene == (s32)&SceneId_MarsLighthouseRoomF1) {
     FieldEffect_StartBlankOverlay(0);
-    ((struct SceneWork *)heap->eventWork)->unk1ac = value;
+    ((struct SceneWork *)heap->fieldWork)->unk1ac = value;
     if (entrance - 1 <= 1U) {
       Beam_Start(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
       if (Flag_IsSet(0xa42))
@@ -945,7 +945,7 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == (s32)&SceneId_MarsLighthouseRoomF2) {
     FieldEffect_StartBlankOverlay(0);
-    ((struct SceneWork *)heap->eventWork)->unk1ac = value;
+    ((struct SceneWork *)heap->fieldWork)->unk1ac = value;
     Beam_Start(gData_02005c14, gData_02005c26, Func_02001468, 88);
     Func_020027cc(3, 1);
     if (entrance == 2)
@@ -1002,7 +1002,7 @@ s32 Scene_Initialize(void) {
     Task_Add(Func_02000e68, 0x480);
   } else if (scene == (s32)&SceneId_MarsLighthouseRoomF3) {
     FieldEffect_StartBlankOverlay(0);
-    ((struct SceneWork *)heap->eventWork)->unk1ac = value;
+    ((struct SceneWork *)heap->fieldWork)->unk1ac = value;
     JupiterLighthouse_LoadPalettesZero(1);
     LightSprites_InitB();
     Func_020053bc(2);
@@ -1033,7 +1033,7 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == (s32)&SceneId_MarsLighthouseRoomF4) {
     FieldEffect_StartBlankOverlay(0);
-    ((struct SceneWork *)heap->eventWork)->unk1ac = value;
+    ((struct SceneWork *)heap->fieldWork)->unk1ac = value;
     Tightrope_Initialize();
     Tightrope_Place(0, 8, 9);
     BYTE_AT(Actor_GetById(8), 98) = 1;
@@ -1109,12 +1109,12 @@ void PaletteCycle_Step(void) {
   u16 *p;
 
   if (gData_02007040 != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->fieldWork;
     s16 *state = (s16 *)(work + 358);
 
     if (*state != 0 && (*state & 0x3ff) != 153)
       return;
-    if (((struct EventWork *)work)->pendingFirst != 0)
+    if (((struct FieldWork *)work)->revealActive != 0)
       return;
     if (*(s16 *)(work + 350) != 0)
       return;
@@ -1161,7 +1161,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 
 #include "shared/actor_raise_from_cell.h"
 
-/* VIEW(s167c): tag struct EventWork as struct EventWork__s167c; event_work.h
+/* VIEW(s167c): tag struct FieldWork as struct EventWork__s167c; event_work.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_room_f.c:1179: structure has no member
@@ -1175,7 +1175,7 @@ struct EventWork__s167c {
 };
 
 void Func_0200167c(void) {
-  struct EventWork__s167c *work = Ram_HeapSlots->eventWork;
+  struct EventWork__s167c *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
@@ -1251,7 +1251,7 @@ void Func_0200167c(void) {
 extern s32 gData_02007044[];
 
 void Whirlwind_Update(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
@@ -1515,7 +1515,7 @@ void Ride_UpdateLanding(struct Actor *object) {
   struct RideWork__s1ffc *work =
       (struct RideWork__s1ffc *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
   s32 dz;
   s32 i;
@@ -1545,7 +1545,7 @@ void Ride_UpdateLanding(struct Actor *object) {
     object->gravity += object->bounce >> 2;
     object->unk4c = 0;
     work->landed = 1;
-    event->exit = work->value0a;
+    event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4; i++) {
     s32 id = work->slots[i].id;
@@ -2170,22 +2170,22 @@ void ScreenTransition_Start(s32 mode, s32 frames);
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 s32 MarsLighthouseRoomF_SlideOnIce(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct RideWork *ride;
   struct Actor *leader;
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
-  if (*(u16 *)&event->screenStatus == 0) {
-    ScreenTransition_Start(event->screenEffect, event->delay);
-    event->screenStatus = 1;
+  if (*(u16 *)&event->transitionActive == 0) {
+    ScreenTransition_Start(event->transition, event->transitionFrames);
+    event->transitionActive = 1;
   }
   Flag_Clear(FLAG_MENU_OPEN);
-  event->unk166 = 0;
-  event->unk15a = 0;
-  *(u16 *)&event->unk15c[2] = 0;
-  *(u16 *)&event->unk15c[0] = 0;
-  event->encounterEnemyGroup = 0;
+  event->psynergy = 0;
+  event->fieldMenu = 0;
+  event->pauseMenu = 0;
+  event->aButton = 0;
+  event->encounter = 0;
   // UB: Party_TakeFallDamage takes no arguments and returns nothing; the bytes
   // call it with two through an int-returning type.
 #ifdef UBFIX
@@ -2417,7 +2417,7 @@ extern u8 gInventorySnapshot[];
 
 void Actor_RollAndCrumble(struct Actor *actor) {
   struct Vector3 position;
-  struct WorkEvent *work = Ram_HeapSlots->eventWork;
+  struct WorkEvent *work = Ram_HeapSlots->fieldWork;
   s32 state = actor->timer;
 
   if (state == 0) {
@@ -2512,7 +2512,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->eventWork;
+    work2 = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2f80 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.currentOwner);
     if (ABS(actor->x - target->x) < 0x140000 &&
@@ -2936,7 +2936,7 @@ end:
 
 void Func_02003fc8(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct WarpWork *work = &gData_020070a8;
   s32 x = FieldGameFlag_GetByte(work->positionFlag);
   s32 z = FieldGameFlag_GetByte(work->positionFlag + 8);
@@ -2953,7 +2953,7 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
     other->z = object->z;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    WORD_AT(Ram_HeapSlots->eventWork, 428) = value;
+    WORD_AT(Ram_HeapSlots->fieldWork, 428) = value;
   }
 }
 

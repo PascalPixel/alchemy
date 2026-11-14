@@ -21,7 +21,7 @@
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "actor.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
 
 /// What games/tla/src/field/map/ declares for the files that use it, written
@@ -64,7 +64,7 @@ void MadraDrawbridge_AskGoingToOsenia(void) {
     Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   } else {
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   }
   Event_End();
@@ -127,7 +127,7 @@ void MadraDrawbridge_GreetPermittedParty(void) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x100;
   return 0;
 }
 

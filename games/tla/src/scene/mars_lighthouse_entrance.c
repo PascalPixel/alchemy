@@ -27,7 +27,7 @@
 #include "map.h"
 #include "system/main_routine_work.h"
 #include "actor.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/field/field.h"
 #include "module/tla.h"
@@ -41,7 +41,7 @@
 #include "system/io_reg.h"
 #include "version.h"
 #include "call.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "battle/battle_unit.h"
 #include "system/vector3.h"
 #include "fixed_math.h"
@@ -160,7 +160,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000118(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
 
   event[0xd38] = 1;
 }
@@ -360,7 +360,7 @@ step:
 void MarsLighthouseEntrance_CheckIce(void) {
   FieldMessage_Show((s32)MsgCheckedTheIce, 1);
   FieldMessage_Show((s32)MsgCheckedTheIce + 1, 1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
+  gFieldWork->fieldMenu = 1;
 }
 
 /// Teleport on the circle: the first time the camera follows the leader across;
@@ -777,7 +777,7 @@ next:
   if (i <= 39)
     goto next;
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  ((struct Overlay6aaEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+  ((struct Overlay6aaEventWork *)Ram_HeapSlots->fieldWork)->screenEffect =
       0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1012,7 +1012,7 @@ s32 Scene_Initialize(void) {
   s32 i;
 
   Data_02006878 = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_02002270();
   if (scene == (s32)&SceneId_MarsLighthouseEntrance1) {
@@ -1256,7 +1256,7 @@ void Ride_UpdateCarried(struct Actor *object) {
   struct RideWork__s1930 *work =
       (struct RideWork__s1930 *)(gInventorySnapshot + 0x188);
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
   s32 dz;
   s32 i;
@@ -1297,7 +1297,7 @@ void Ride_UpdateCarried(struct Actor *object) {
       object->gravity += speed >> 2;
     }
     work->landed = 1;
-    event->exit = work->value0a;
+    event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
     actor = Actor_Get(id);
@@ -1593,11 +1593,11 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
  * #include "types.h" #include "call.h" #include "actor.h" #include
  * "main_routine_work.h" #include "ram_buffer.h" #include "vector3.h" #include
  * "fixed_math.h" #include "event_inline.h" #include "display_transition.h"
- * #include "event_work.h" #include "field.h" #include "item_icon.h" #include
- * "module/field/field.h" #include "module/scene/mars_lighthouse_entrance.h"
- * #include "module/system/system.h" #include "scene_ids.h" void
- * Party_TakeFallDamage(); tried as the definition's void Actor_Blink(struct
- * Actor *object), it does not compile in tla-ja:
+ * #include "field/field_sequence_event.h" #include "field.h" #include
+ * "item_icon.h" #include "module/field/field.h" #include
+ * "module/scene/mars_lighthouse_entrance.h" #include "module/system/system.h"
+ * #include "scene_ids.h" void Party_TakeFallDamage(); tried as the definition's
+ * void Actor_Blink(struct Actor *object), it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_entrance.c:1618: conflicting types for
  * `Actor_Blink'. */
 void Func_02002614__s263c(void) __asm__("Actor_Blink");
@@ -1667,7 +1667,7 @@ struct RideState {
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 int MarsLighthouseEntrance_SlideOnIce(void) {
-  struct RideEvent *event = Ram_HeapSlots->eventWork;
+  struct RideEvent *event = Ram_HeapSlots->fieldWork;
   struct RideState *ride;
   struct Actor *leader;
   // Unused: gives the stack frame its 12 bytes.
@@ -1858,7 +1858,7 @@ struct WorkEvent {
 
 void Actor_RollAndCrumble(struct Actor *actor) {
   struct Vector3 position;
-  struct WorkEvent *work = Ram_HeapSlots->eventWork;
+  struct WorkEvent *work = Ram_HeapSlots->fieldWork;
   s32 state = actor->timer;
 
   if (state == 0) {
@@ -1953,7 +1953,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->eventWork;
+    work2 = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2860 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.currentOwner);
     if (ABS(actor->x - target->x) < 0x140000 &&
@@ -2669,7 +2669,7 @@ void Func_02004160(struct PushEvent *event) {
     Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   } while (0);
   event->busy = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -2780,7 +2780,7 @@ s32 CrackedTiles_Step(void) {
 
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
+  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->fieldWork;
   s32 dx = FieldGameFlag_GetByte(Data_020068b4.flagByte);
   s32 dz = FieldGameFlag_GetByte(Data_020068b4.flagByte + 8);
 
@@ -2796,7 +2796,7 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
     marker->z = leader->z;
     Map_CenterOnFollowedPoint();
     Func_020042f8();
-    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->fieldWork)
         ->screenEffect = effect;
   }
 }
@@ -2821,7 +2821,7 @@ void Func_020046b4(void) {
 }
 
 void Func_02004718(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 256;
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
@@ -2877,13 +2877,13 @@ void PaletteCycle_Fade(void) {
 }
 
 void Func_020048e8(void) {
-  struct MarsLighthouseEntranceEventWork *work = Ram_HeapSlots->eventWork;
+  struct MarsLighthouseEntranceEventWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct MarsLighthouseEntranceEventWork *)Ram_HeapSlots->eventWork)
+  ((struct MarsLighthouseEntranceEventWork *)Ram_HeapSlots->fieldWork)
       ->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

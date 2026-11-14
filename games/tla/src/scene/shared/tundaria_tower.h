@@ -8,7 +8,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "graphics/resource.h"
 #include "system/heap_release.h"
 #include "system/field_effect.h"

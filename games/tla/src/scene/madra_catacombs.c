@@ -20,7 +20,7 @@
 #include "field_sprite.h"
 #include "field/field.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -108,7 +108,7 @@ s32 Actor_GetCellIndex(struct Actor *object);
 /// event work.
 void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
   struct Actor *held = Leader_FindActorAhead();
-  void *work = Ram_HeapSlots->eventWork;
+  void *work = Ram_HeapSlots->fieldWork;
   u8 *grid;
 
   if (held == NULL) {
@@ -208,7 +208,7 @@ void Actor_LiftTargetBlock(const void *data);
 void FlagBlock_ApplyFlags(const void *data);
 
 void MadraCatacombs_TryLockedDoor(void) {
-  struct EventWork15a *work = Ram_HeapSlots->eventWork;
+  struct EventWork15a *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -407,7 +407,7 @@ void MadraCatacombs_StartMovingClimbablePillar(void) {
 void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void MadraCatacombs_FinishMovingClimbablePillar(void) {
-  struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
+  struct EventWorkCbc *work = Ram_HeapSlots->fieldWork;
 
   if (work->active != 0)
     MadraCatacombs_SettleClimbablePillar(work->active);
@@ -464,7 +464,7 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
 /// The leader steps to the middle of a doorway, walks in and leaves by the exit
 /// the event work names.
 void MadraCatacombs_EnterDoorway(void) {
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct EventWork154 *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
   s32 cell;
@@ -490,7 +490,7 @@ void MadraCatacombs_EnterDoorway(void) {
 
 void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
                                      s32 f) {
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct EventWork154 *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
@@ -557,7 +557,7 @@ DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedVillage, 3)
 DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel, 8)
 
 s32 Scene_Initialize(void) {
-  ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
+  ((struct SceneWork *)Ram_HeapSlots->fieldWork)->unk1ac = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs1)
     MadraCatacombs_SetUpVillage();
   else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs3)

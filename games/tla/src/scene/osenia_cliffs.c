@@ -80,7 +80,7 @@ s32 Scene_Initialize(void) {
 
   map->mode = 1;
   gOseniaCliffs_PaletteCycleStep[0] = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 256;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 256;
   Task_Add(OseniaCliffs_CyclePalette, 0x480);
   {
     u8 *flags =

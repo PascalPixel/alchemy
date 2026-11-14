@@ -164,7 +164,7 @@ struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_0200021c(void) {
-  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct LemurianShipEventWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   u8 *entry;
   s32 offset;
@@ -213,7 +213,7 @@ next2:
 }
 
 void Func_02000324(void) {
-  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct LemurianShipEventWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   u8 *entry;
   s32 offset;
@@ -258,7 +258,7 @@ next2:
 
 void Func_02000438(void) {
   if (Event_GetFlag(0x982)) {
-    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+    struct LemurianShipEventWork *work = Ram_HeapSlots->fieldWork;
     struct MainRoutineWork *party = &gMainRoutineWork;
     struct Actor *leader;
     s32 x;
@@ -715,7 +715,7 @@ void Func_02001128(void) {
 
 #define DEFINE_FUNC_02001138(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
-    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;             \
+    struct LemurianShipEventWork *work = Ram_HeapSlots->fieldWork;             \
     struct Actor *object = ((struct Actor *)Actor_GetById(n1));                \
     u32 i;                                                                     \
                                                                                \
@@ -854,7 +854,7 @@ void Func_02001474(void) {
 }
 
 void Func_0200155c(void) {
-  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct LemurianShipEventWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
@@ -946,7 +946,7 @@ void LemurianShip_FindMonstersAboard(void) {
   Event_Wait(20);
   Event_PlaySound(SE_GLITTER);
   Event_Wait(80);
-  ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+  ((struct LemurianShipEventWork *)Ram_HeapSlots->fieldWork)->screenEffect =
       513;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1039,7 +1039,7 @@ void Func_02001a9c(void) {
 void Func_02001c88(void);
 
 s32 Scene_Initialize(void) {
-  ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+  ((struct LemurianShipEventWork *)Ram_HeapSlots->fieldWork)->screenEffect =
       0x209;
   if (Event_GetFlag(0x9b4))
     Event_SetFlag(FLAG_RETREAT_BLOCKED);

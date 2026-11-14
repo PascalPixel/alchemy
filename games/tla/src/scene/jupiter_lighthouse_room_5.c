@@ -18,7 +18,7 @@
 #include "macros.h"
 #include "system/task.h"
 #include "system/frame.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -455,7 +455,7 @@ void Func_02000810(s32 actor, s32 target) {
 }
 
 #define EVENT_WORK                                                             \
-  ((struct JupiterLighthouseRoom5EventWork *)Ram_HeapSlots->eventWork)
+  ((struct JupiterLighthouseRoom5EventWork *)Ram_HeapSlots->fieldWork)
 
 /// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
 /// about, actor 22 rises in sparks and talks with it, then joins it; flags
@@ -537,7 +537,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 angle;
 
-  ((struct JupiterLighthouseRoom5EventWork1ac *)Ram_HeapSlots->eventWork)
+  ((struct JupiterLighthouseRoom5EventWork1ac *)Ram_HeapSlots->fieldWork)
       ->value = 0x204;
   if (Event_GetFlag(0xa23))
     Event_ClearFlag(0xa22);
@@ -618,7 +618,7 @@ extern s32 gData_02003400;
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 void Func_02001070(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
@@ -1086,7 +1086,7 @@ void CrackedTile_Fall(struct CellTarget__s22b8 *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

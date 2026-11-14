@@ -742,7 +742,7 @@ void WorldMapPicture_UpdateScroll(void) {
 
 #include "system/io_write.h"
 #include "scene_ids.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "actor.h"
 #include "map.h"
 #include "field/sprite.h"
@@ -772,7 +772,7 @@ s32 WorldPicture_Show(s32 mode) {
   s32 screenX;
   s32 screenY;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ObjectSystemWork *objects = Ram_HeapSlots->objectSystem;
   s16 blend;
   s32 messageShown = 0;
@@ -802,11 +802,11 @@ s32 WorldPicture_Show(s32 mode) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   world->mode = mode;
-  if (mode != 0 || event->controlMode != 3)
+  if (mode != 0 || event->mode != 3)
     ObjectTable_Snapshot();
-  if (event->controlMode == 3) {
-    savedDelay = event->delay;
-    event->delay = 6;
+  if (event->mode == 3) {
+    savedDelay = event->transitionFrames;
+    event->transitionFrames = 6;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     layer = map->anim;
@@ -825,11 +825,11 @@ s32 WorldPicture_Show(s32 mode) {
   } else {
     do {
       /* FAKEMATCH(dead): the statement in a once-only block. */
-      event->viewCenter->movementState = 1;
+      event->camera->movementState = 1;
     } while (0);
-    savedDelay = event->delay;
-    event->delay = 6;
-    event->screenEffect = 0;
+    savedDelay = event->transitionFrames;
+    event->transitionFrames = 6;
+    event->transition = 0;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Task_ResetAll();
@@ -989,8 +989,8 @@ s32 WorldPicture_Show(s32 mode) {
 done:
   WorldPicture_Release();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
-  if (mode != 0 || event->controlMode != 3) {
-    event->countdown = 999;
+  if (mode != 0 || event->mode != 3) {
+    event->exit = 999;
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   } else {
     WorldMap_LoadAreaGraphicsFar();
@@ -1006,8 +1006,8 @@ done:
     ((struct MapViewWork *)map)->picturePending = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    event->delay = savedDelay;
-    event->viewCenter->movementState = 0;
+    event->transitionFrames = savedDelay;
+    event->camera->movementState = 0;
   }
   return 0;
 }
@@ -1021,7 +1021,7 @@ void WorldMap_StartZoom(s32 scale, s32 frames);
 void WorldMap_ZoomOutWhileLHeld(void) {
   struct MainRoutineWork *party;
 
-  if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
+  if (*(s8 *)((u8 *)Ram_HeapSlots->fieldWork + 394) == 3) {
     Leader_StopMoving();
     WorldMap_StartZoom(Q16_ONE * 8 / 13, 6);
     while (gInput.held & KEY_L)

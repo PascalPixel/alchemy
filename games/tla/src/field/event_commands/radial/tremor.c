@@ -89,7 +89,7 @@ void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void FieldPsynergy_TremorOnTarget(void) {
   struct ShakeWork *work = HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, sizeof(*work));
   struct EffectScene__f0e8db0 *scene = Ram_HeapSlots->effectWork;
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *target = scene->target;
   struct ObjectSprite *targetSprite = target->sprite;
   s32 tiles;
@@ -148,7 +148,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       Sound_PlayFar(SE_JUMP);
 
     // Shake the gathered objects' sprites with the view.
-    if (event->controlMode == 2) {
+    if (event->mode == 2) {
       for (i = 0; i < work->view.count; i++) {
         struct ObjectSprite *sprite = work->view.objects[i]->sprite;
         s32 offset = work->view.spriteOffsets[i];
@@ -241,7 +241,7 @@ void FieldPsynergy_Tremor(void) {
   struct ViewMoveWork *work =
       HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
   struct EffectScene__f0e8db0 *scene = Ram_HeapSlots->effectWork;
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 frameCount;
   s32 phase;
   s32 i;
@@ -265,7 +265,7 @@ void FieldPsynergy_Tremor(void) {
       Sound_PlayFar(SE_JUMP);
 
     // Shake the gathered objects' sprites with the view.
-    if (event->controlMode == 2) {
+    if (event->mode == 2) {
       for (i = 0; i < work->count; i++) {
         struct ObjectSprite *sprite = work->objects[i]->sprite;
         s32 offset = work->spriteOffsets[i];

@@ -113,7 +113,7 @@ static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -619,7 +619,7 @@ void Func_02000d80(void) {
   s32 result, i;
 
   if (GameFlag_Get(0xa68)) {
-    work = Ram_HeapSlots->eventWork;
+    work = Ram_HeapSlots->fieldWork;
     owner = gMainRoutineWork.currentOwner;
     carried = work->object;
     leader = Actor_GetById(owner);
@@ -697,7 +697,7 @@ static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
 
 void Func_02000f8c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct AquaRockEventWork *work = Ram_HeapSlots->eventWork;
+  struct AquaRockEventWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 col;
   s32 row;
@@ -1020,7 +1020,7 @@ s32 Scene_Initialize(void) {
   s32 id, x, z;
   s16 *entrance;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
+  gFieldWork->transition = 516;
   gMainRoutineWork.retreatScene = (s32)&SceneId_AquaRock1;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;
@@ -1187,7 +1187,7 @@ void Func_02001e00(void) {
   s32 result;
 
   {
-    struct EventWork1cc *work = Ram_HeapSlots->eventWork;
+    struct EventWork1cc *work = Ram_HeapSlots->fieldWork;
 
     owner = gMainRoutineWork.currentOwner;
     anchor = work->object;

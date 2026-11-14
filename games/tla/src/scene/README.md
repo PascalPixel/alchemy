@@ -151,7 +151,7 @@ bottom. This one walks the leader through one of Daila's doors:
 
 ```c
 void Daila_EnterDoor(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -162,7 +162,7 @@ void Daila_EnterDoor(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   Event_Wait(10);
-  Import_EventSetExitRequest(work->exit);
+  Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

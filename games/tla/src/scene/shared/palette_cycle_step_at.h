@@ -7,12 +7,12 @@ void PaletteCycle_StepAt(void) {
   u16 *p;
 
   if (gPaletteCyclePausesInEvents != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->fieldWork;
     s16 *state = (s16 *)(work + 358);
 
     if (*state != 0 && (*state & 0x3ff) != 153)
       return;
-    if (((struct EventWork *)work)->pendingFirst != 0)
+    if (((struct FieldWork *)work)->revealActive != 0)
       return;
     if (*(s16 *)(work + 350) != 0)
       return;

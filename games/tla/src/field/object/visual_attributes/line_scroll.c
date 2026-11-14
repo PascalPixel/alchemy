@@ -138,7 +138,7 @@ void LineScroll_ArmDma(void) {
   struct DmaFxPages *work = Ram_HeapSlots->unk84[1];
   u32 *line = work->pages[work->page].lines;
   volatile u32 *dest = (volatile u32 *)&REG_BG1HOFS;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   volatile u32 *target;
 
   if (event != NULL) {
@@ -177,7 +177,7 @@ void LineScroll_BuildPage(void) {
   s32 y2 = (s16)gBgScroll[2].y;
   s32 x3 = (s16)gBgScroll[3].x;
   s32 y3 = (s16)gBgScroll[3].y;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   u16 *row;
   s32 step;
   s32 phase;

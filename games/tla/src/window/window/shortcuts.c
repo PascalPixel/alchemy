@@ -10,7 +10,7 @@ struct TimedNoticeWork {
   u16 countdown;
 };
 
-#define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->eventWork)
+#define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->fieldWork)
 
 void AreaNameWindow_Update(void);
 /// Opens the area-name window, which closes after ninety frames.

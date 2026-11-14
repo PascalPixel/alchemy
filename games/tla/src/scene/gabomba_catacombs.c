@@ -6,7 +6,7 @@
 
 #include "flags.h"
 #include "shared/tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -264,7 +264,7 @@ void Func_020008a0(struct Actor *object, s32 dz) {
   struct GabombaCatacombsVec position;
 
   follower =
-      ((struct GabombaCatacombsEventWork *)Ram_HeapSlots->eventWork)->follower;
+      ((struct GabombaCatacombsEventWork *)Ram_HeapSlots->fieldWork)->follower;
 
   position.x = object->x;
   position.y = object->y;
@@ -321,7 +321,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 void Func_020009d4(void) {
   struct Actor *follower = Actor_GetById(9);
   struct Actor *statue = Actor_GetById(64);
-  u8 *work = (u8 *)Ram_HeapSlots->eventWork;
+  u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
   struct Actor *glow, *leader;
   s32 speed;
 
@@ -483,8 +483,7 @@ s32 Scene_Initialize(void) {
   s32 entrance;
   struct Actor *statue;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      CATACOMBS_SCREEN_EFFECT;
+  gFieldWork->transition = CATACOMBS_SCREEN_EFFECT;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {

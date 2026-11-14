@@ -72,7 +72,7 @@ struct HeapSlots {
   void *unk4c[4];
   u8 *battleFxWork[2];
   void *unk64[2];
-  void *eventWork;
+  void *fieldWork;
   void *unk70[3];
   struct ScreenTransitionState *screenTransition;
   void *block32;

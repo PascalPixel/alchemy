@@ -275,7 +275,7 @@ void Rope_Draw(void) {
 /// one (render mode 3, 0xfc86); then swings each swinging rope, its amplitude
 /// decaying by 0.95 a frame until it settles.
 void Rope_Update(void) {
-  struct SwingEvent *event = Ram_HeapSlots->eventWork;
+  struct SwingEvent *event = Ram_HeapSlots->fieldWork;
   struct RopeWork *work = ROPE_WORK;
   struct RopeSlot *slot;
   s32 i = 0;

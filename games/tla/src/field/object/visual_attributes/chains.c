@@ -583,7 +583,7 @@ void Tightrope_Draw(void) {
 /// decays by 0.95 a frame until it drops to 0x1998, and Tightrope_WobbleBetween
 /// redraws the slot with the sine of its angle times it.
 void Tightrope_Update(void) {
-  struct WobbleEvent *event = Ram_HeapSlots->eventWork;
+  struct WobbleEvent *event = Ram_HeapSlots->fieldWork;
   struct TightropeWork *work = TIGHTROPE_WORK;
   struct TightropeSlot *slot;
   s32 i = 0;

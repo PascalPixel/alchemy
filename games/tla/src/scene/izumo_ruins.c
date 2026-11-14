@@ -114,7 +114,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
@@ -771,7 +771,7 @@ void IzumoRuins_PoundPillar(s32 aArg, s32 b) {
 }
 
 void IzumoRuins_FreezePuddle(void) {
-  struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
+  struct IzumoRuinsEventWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
 
   Event_Start();
@@ -838,7 +838,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 s32 Scene_Initialize(void) {
-  struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
+  struct IzumoRuinsEventWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 height;
 

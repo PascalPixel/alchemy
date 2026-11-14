@@ -49,7 +49,7 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void FieldPsynergy_Unnamed28(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct RingEvent *event = Ram_HeapSlots->eventWork;
+  struct RingEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct CanvasSpriteWork *canvas;
   s32 entry;
@@ -299,7 +299,7 @@ extern char ResourceId_SparkleFade;
 /// and animates them for 40 frames before releasing the effect.
 void FieldPsynergy_EndUnnamed28(void) {
   struct BurstWork__f0e82cc *work = Ram_HeapSlots->battleFxWork[0];
-  struct BurstEvent *event = Ram_HeapSlots->eventWork;
+  struct BurstEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   struct BurstMote *mote;
   struct EffectSprite *sprite;
@@ -411,8 +411,8 @@ void MapGrid_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
 // move (the view is held, or the field is in control mode 3), it shakes the
 // screen along the asked direction instead.
 void ViewMove_Start(s32 direction) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct Actor *center = event->viewCenter;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct Actor *center = event->camera;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 viewX = map->viewX >> 16;
   s32 viewZ = map->viewZ >> 16;
@@ -440,7 +440,7 @@ void ViewMove_Start(s32 direction) {
     }
   }
 #endif
-  if (event->controlMode == 3) {
+  if (event->mode == 3) {
     if (direction & VIEW_MOVE_X) {
       MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
       return;
@@ -500,9 +500,9 @@ void ViewMove_Start(s32 direction) {
 /// into the room: away from the edge the view is beside, or forward when it is
 /// beside neither. A held view does not move.
 void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct Actor *center = event->viewCenter;
+  struct Actor *center = event->camera;
   s32 x;
   s32 z;
   s32 edge;
@@ -512,7 +512,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (*(s32 *)Ram_HeapSlots->mapWork->unk0fc != 0)
     return;
 #endif
-  if (event->controlMode == 3)
+  if (event->mode == 3)
     return;
 
   if (direction & VIEW_MOVE_X) {
@@ -564,13 +564,13 @@ struct EffectScene__f0e82cc {
 void ViewMove_End(void) {
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
   struct EffectScene__f0e82cc *scene = Ram_HeapSlots->effectWork;
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
 #if TLA_PATCH_1
-  if (*(s32 *)map->unk0fc != 0 || event->controlMode == 3) {
+  if (*(s32 *)map->unk0fc != 0 || event->mode == 3) {
 #else
-  if (event->controlMode == 3) {
+  if (event->mode == 3) {
 #endif
     MapGrid_SetScreenShakeFar(0, 0, 0);
   } else {
@@ -599,14 +599,14 @@ union FxSprite {
 /// with each one's sprite value.
 void ViewMove_SaveNearbySprites(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleFxWork[0];
   struct Actor **objects;
   struct Actor *obj;
   s32 i;
 
   group->count = 0;
-  objects = work->objects;
+  objects = work->actors;
   for (i = 0; i < 80; i++) {
     obj = *objects++;
     if (obj == NULL || obj->script == NULL || obj == scene->mainObject)

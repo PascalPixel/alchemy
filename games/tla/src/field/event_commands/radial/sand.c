@@ -40,7 +40,7 @@ struct Actor *Actor_GetById(u32 objectId);
 void FieldPsynergy_Sand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
   struct BattleFxScene *effect = Ram_HeapSlots->effectWork;
-  struct GrabEventWork *event = Ram_HeapSlots->eventWork;
+  struct GrabEventWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner;
   s32 pictureEntry;
   s32 particleEntry;

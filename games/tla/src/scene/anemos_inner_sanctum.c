@@ -7,7 +7,7 @@
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/cell_target.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
@@ -24,7 +24,7 @@
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "system/iwram_call.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "flags.h"
 #include "module/field/object.h"
@@ -193,7 +193,7 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 #include "shared/palette_cycle_start.h"
 
 void Func_02000158(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   FieldTask_Remove((s32)PaletteCycle_Fade);
 }
 
@@ -215,13 +215,13 @@ static __inline__ void Func_02003458_(s32 a, s32 b) {
 }
 
 void Func_02000328(void) {
-  struct AnemosInnerSanctumEventWork *work = Ram_HeapSlots->eventWork;
+  struct AnemosInnerSanctumEventWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
   Func_02003458_(0x10000, 2);
-  ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->eventWork)->value1ac =
+  ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
       0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -810,7 +810,7 @@ void Func_0200109c(void) {
 // at x 91, z 59 until flag 0xa84 is set.
 void Func_02001160(void) {
   struct Actor *leader =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 0xcbc);
   s32 x;
   s32 z;
 
@@ -879,7 +879,7 @@ extern s32 gData_02003574[];
 // 0x206 are all set, it moves object 8 in room 4 (else object 9) to mode 2 and
 // sets flag 0x207.
 void Func_02001398(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object;
   s32 all;
@@ -902,7 +902,7 @@ void Func_02001398(void) {
   Actor_SelectAnimation(object, 3);
   Actor_SetSpriteFlags(object, 0);
   Actor_StartScript(object, gData_02003574);
-  Event_SetFlag(work->exit + 0x1ce);
+  Event_SetFlag(work->stepTrigger + 0x1ce);
   all = Event_GetFlag(FLAG_SCENE_TEMP_00);
   for (i = 1; i != 7; i++)
     all &= Event_GetFlag(0x200 + i);
@@ -1095,10 +1095,10 @@ void Func_020017b4(struct Actor *self) {
     kind = FieldMapGrid_GetCellBehaviorAt(self->terrainId, x, next[1]);
   }
   if (kind == 52) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 201;
+    gFieldWork->raisedTrigger = 201;
     self->update = 0;
   } else if (kind == 51) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 200;
+    gFieldWork->raisedTrigger = 200;
     self->update = 0;
   }
 }
@@ -1298,7 +1298,7 @@ static __inline__ void Func_02003320_(const void *data, s32 a, s32 b) {
 // The scene opening: clears the actors' motion flags, plays the entrance's
 // map edit and steps the leader in.
 void Func_02001c94(void) {
-  struct EventWork154__s1938 *work = Ram_HeapSlots->eventWork;
+  struct EventWork154__s1938 *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
   Event_Start();
@@ -1868,7 +1868,7 @@ void CrackedTile_Fall(struct PushEvent *event) {
     Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
   } while (0);
   event->busy = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -1904,7 +1904,7 @@ void CrackedTile_DropIn(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);

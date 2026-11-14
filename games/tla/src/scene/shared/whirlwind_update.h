@@ -1,7 +1,7 @@
 /// A whirlwind's update: it travels forward, catches the leader it reaches and
 /// ends off screen or at a wall.
 void Whirlwind_Update(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;

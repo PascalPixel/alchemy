@@ -28,9 +28,9 @@
 #include "scene_ids.h"
 #include "system/frame.h"
 #include "field/event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "flag_call.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/field_effect.h"
 #include "macros.h"
 #include "call.h"
@@ -251,7 +251,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void Actor_LiftTargetBlock(s16 *table);
 
 void MagmaRock_UnblockMovedPillar(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock1) {
@@ -285,7 +285,7 @@ s32 Func_02003af4();
 // the leader stands on.
 s32 MagmaRock_BlockMovedPillar(void) {
   struct Actor *leader =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 3260);
+      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 3260);
   s32 x, z;
 
   Event_Start();
@@ -472,7 +472,7 @@ void MagmaRock_RollMagmaRock(struct Actor *object) {
       leader->z - px(8) < object->z + px(6) &&
       object->z - px(6) < leader->z + px(8) && leader->y < object->y + px(8) &&
       object->y - px(8) < leader->y + px(15)) {
-    ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->unk16a = 200;
+    ((struct MagmaRockEventWork *)Ram_HeapSlots->fieldWork)->unk16a = 200;
     object->update = NULL;
     object->x = 0;
     object->y = 0;
@@ -570,7 +570,7 @@ struct MagmaRockEventWork {
 };
 
 void MagmaRock_WarnStatue(struct Actor *object) {
-  struct MagmaRockEventWork *work = Ram_HeapSlots->eventWork;
+  struct MagmaRockEventWork *work = Ram_HeapSlots->fieldWork;
 
   if (object->timer > 528) {
     if (object->timer & 2)
@@ -726,7 +726,7 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
     if (attributes == 212 || attributes == 222)
       goto stop;
     for (i = 8; i != 64; i++) {
-      other = ((struct EventWork *)Ram_HeapSlots->eventWork)->objects[i];
+      other = gFieldWork->actors[i];
       if (other->script == NULL)
         continue;
       if (source->x >> 20 == other->x >> 20 &&
@@ -984,7 +984,7 @@ struct ResourceSprite {
 };
 
 void MagmaRock_BurnStatue(struct Actor *object) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 type = 0x15f;
 
   if ((gFrameCount & 15) == 0)
@@ -1081,9 +1081,9 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     FieldActor_SetSpriteColor(object, 0);
     object->update = NULL;
   }
-  if (work->unk166 == 0 && *(s16 *)&work->unk15a == 0 &&
-      *(s16 *)&work->unk15c[2] == 0 && *(s16 *)work->unk168 == 0 &&
-      (u16)work->screenStatus != 0)
+  if (work->psynergy == 0 && *(s16 *)&work->fieldMenu == 0 &&
+      work->pauseMenu == 0 && work->item == 0 &&
+      (u16)work->transitionActive != 0)
     object->timer++;
 }
 
@@ -1498,7 +1498,7 @@ void MagmaRock_LaunchLeader(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
+  ((struct MagmaRockEventWork *)Ram_HeapSlots->fieldWork)->field1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -1533,7 +1533,7 @@ loop:
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;
+  ((struct MagmaRockEventWork *)Ram_HeapSlots->fieldWork)->field1ac = 0x204;
   Func_02003af4();
 }
 
@@ -1645,7 +1645,7 @@ s32 Scene_Initialize(void) {
   s32 value1, value2, value3, value4;
   u8 zero;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   work = &gMainRoutineWork;
   work->retreatScene = (s32)&SceneId_MagmaRock1;
   work->retreatEntrance = 1;

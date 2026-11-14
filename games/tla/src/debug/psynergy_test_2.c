@@ -15,7 +15,7 @@
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "item_icon.h"
 
@@ -93,9 +93,9 @@ void Func_020000d8(s32 id) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Func_02000104(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 256;
+  work->transition = 256;
   ((struct EventFlags *)work)->unkd37 = 0;
   ((struct EventFlags *)work)->unkd36 = 0;
   gMainRoutineWork.eventMode = 2;

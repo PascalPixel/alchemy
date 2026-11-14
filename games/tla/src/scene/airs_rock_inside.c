@@ -91,7 +91,7 @@ static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
 #include "system/main_routine_work.h"
 #include "system/input.h"
 #include "system/iwram_call.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
 #include "macros.h"
@@ -103,7 +103,7 @@ static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/task.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
@@ -357,7 +357,7 @@ void Func_020004d4(struct Actor *object) {
 }
 
 void Func_02000550(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
 
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
@@ -725,7 +725,7 @@ s32 Trig_Sin(s32 angle);
 // is 0xc000.
 void Func_02000d48(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
@@ -767,7 +767,7 @@ void Func_02000d48(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      ((struct EventWork *)work)->unk16a = 200;
+      ((struct FieldWork *)work)->raisedTrigger = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
@@ -791,7 +791,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // 240 launches a shot 8 pixels ahead along its angle with a dust effect below
 // it.
 void Func_02000f34(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
@@ -845,7 +845,7 @@ extern u32 gData_020061cc[];
 
 void Func_020010b4(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
@@ -892,7 +892,7 @@ void Func_020010b4(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      ((struct EventWork *)work)->unk16a = 200;
+      ((struct FieldWork *)work)->raisedTrigger = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
@@ -913,7 +913,7 @@ void Func_020010b4(struct Actor *shot) {
 // of objects 13 to 15 from 8 pixels ahead along its angle, with Func_020010b4
 // as its update, and a dust effect below it.
 void Func_02001290(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
@@ -976,7 +976,7 @@ void Func_02001420(struct Actor *object, s16 timer, u8 value) {
 }
 
 void Func_02001458(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *other;
   s32 *pos;
@@ -1066,7 +1066,7 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
 // leader's position and flags 0x200 to 0x202. Places the two frame arms share
 // are one call, reached by goto from the other arm.
 void Func_02001690(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   u32 frame;
   s32 scene;
 
@@ -1542,7 +1542,7 @@ void Func_020026c0(void) {
             gData_020073e8);
   if (gMainRoutineWork.scene != (s32)&SceneId_AirsRockInside5)
     return;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   value = Func_02000690(2, x, z) >> 8;
   if (value != 0) {
     /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
@@ -1955,7 +1955,7 @@ void Func_02003254(void) {
   }
 }
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
 // After the pushed object (the event work's object at 0xcbc) comes to rest:
 // if it stopped above the ground it drops onto it with cue 188; then, by
@@ -2269,7 +2269,7 @@ fadeOut:
 // (Func_02002790), redraws the marker in the row the event work's counter
 // gives, sets flag 0x200 and the counter's flag (312 on).
 void Func_02003cac(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 cell, row = 54;
 
@@ -2568,7 +2568,7 @@ void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK gFieldWork
 
 s32 Actor_MoveToObject();
 s32 Actor_SetHorizontalPositionWithTerrain();
@@ -2595,7 +2595,7 @@ void AirsRockInside_ReadRevealTablet(void) {
     Event_End();
   } else {
     Event_SetMessageId((s32)MsgCheckedTheTablet);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xb333,
           0x5999);
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
@@ -2792,7 +2792,7 @@ void Func_02004ab8(void) {
 
   x = 0;
   z = 0;
-  warp = (s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
+  warp = (s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x154);
   if (*warp == 0)
     return;
   Event_Start();
@@ -3055,7 +3055,7 @@ void Func_0200505c(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -3093,7 +3093,7 @@ void Func_0200505c(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Event_End();
 }
 
@@ -3110,7 +3110,7 @@ s32 Scene_Initialize(void) {
   /* FAKEMATCH(wrapper): 48 calls forwarded through call.h's Call3, Call4 and
    * Call6. */
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
+  gFieldWork->transition = 516;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   GameFlag_Set(FLAG_AREA_TEMP_00);
   GameFlag_Set(0x89f);

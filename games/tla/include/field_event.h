@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "field_sprite.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 
 #include "actor.h"
 

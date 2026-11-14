@@ -28,7 +28,7 @@
 #include "system/ram_buffer.h"
 #include "bg_scroll.h"
 #include "system/frame.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/game/game.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
@@ -256,11 +256,11 @@ fade:
   wait(3);
   if (++i <= 16)
     goto fade;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 1;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 0;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 436) = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 60;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 436) = 60;
 }
 
 static __inline__ void Decode_(void *source, void *destination) {

@@ -18,7 +18,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/event_inline.h"
 #include "module/scene/scene.h"
 #include "field_sprite.h"
@@ -412,7 +412,7 @@ void Event_SetDestination();
   (((struct {                                                                  \
       u8 unk000[0x1c4];                                                        \
       s16 message;                                                             \
-    } *)Ram_HeapSlots->eventWork)                                              \
+    } *)Ram_HeapSlots->fieldWork)                                              \
        ->message)
 
 void ShamanVillageCave_LoseToColossoFans(void) {
@@ -467,7 +467,7 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   ((struct {
      u8 unk000[0x1ac];
      s32 value;
-   } *)Ram_HeapSlots->eventWork)
+   } *)Ram_HeapSlots->fieldWork)
       ->value = 0;
 }
 
@@ -574,7 +574,7 @@ void ShamanVillageCave_BeatColossoFans(void) {
 /// The party goes through a passage in the rock: everyone stops and the screen
 /// fades.
 void ShamanVillageCave_EnterPassage(void) {
-  struct ShamanVillageCaveEventWork *work = Ram_HeapSlots->eventWork;
+  struct ShamanVillageCaveEventWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   u32 id;
 
@@ -602,7 +602,7 @@ next:
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->eventWork)
+  ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->fieldWork)
       ->screenEffect = 516;
   if (Event_GetFlag(0x9a9))
     Actor_SetPosition(8, 0, 0);

@@ -37,7 +37,7 @@ void Func_020012a8(s32 id);
 #include "scene_ids.h"
 #include "types.h"
 #include "flags.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/ram_buffer.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
@@ -81,7 +81,7 @@ void Func_020002a4(void) {
   /* FAKEMATCH(pin): line held in r5. */
   register u16 *line asm("r5") = Data_02006340;
 
-  if (((struct EventWork *)Ram_HeapSlots->eventWork)->pendingFirst == 0) {
+  if (gFieldWork->revealActive == 0) {
     u32 frame;
     s32 z, a, b;
     s32 stepA, stepB;
@@ -197,7 +197,7 @@ const void *Scene_GetPlacements(void) {
 /// from 8 to 63, shows the picture the event work's index names and moves the
 /// party's current owner to it.
 void Func_020004cc(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 index;
   s32 i;
 
@@ -214,7 +214,7 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  index = ((struct EventWork *)work)->exit;
+  index = ((struct FieldWork *)work)->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gData_02005de0[index].steps, gData_02005de0[index].x,
@@ -230,7 +230,7 @@ loop:
       Actor_CenterAndWalk(owner, 2, -4);
   }
   FieldEvent_Wait(6);
-  FieldEvent_SetExitRequest(((struct EventWork *)work)->exit);
+  FieldEvent_SetExitRequest(((struct FieldWork *)work)->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -420,13 +420,13 @@ extern struct Trigger gGaroh_Room5Triggers[];
 extern s32 gData_0200632c;
 
 void Func_02000960(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   Event_PlaySound(SE_MAP_EXIT);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+  gFieldWork->transition = 521;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Flag_Set(0x121);
-  FieldEvent_SetExitRequest(event->exit);
+  FieldEvent_SetExitRequest(event->stepTrigger);
 }
 
 void Func_020009a4(void) {
@@ -470,10 +470,10 @@ void Func_02000a68(void) {
 void Garoh_InitializeRoom2(void);
 
 s32 Scene_Initialize(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Garoh4) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+    gFieldWork->transition = 0x204;
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh5) {
     FieldActor_SetSpritePriority(13, 1);
     FieldActor_SetSpritePriority(14, 1);
@@ -482,19 +482,19 @@ s32 Scene_Initialize(void) {
 
       Actor_SetPositionAndFacing(10, px(328), px(162), angle);
     }
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+    gFieldWork->transition = 0x204;
     FieldEffect_StartBlankOverlay(0);
     if (gMainRoutineWork.entrance == 6) {
-      work = Ram_HeapSlots->eventWork;
-      work->screenEffect = 0x209;
+      work = Ram_HeapSlots->fieldWork;
+      work->transition = 0x209;
       Event_ClearFlag(0x120);
       Event_ClearFlag(0x121);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+      gFieldWork->transition = 0x204;
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
     }
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
+    gFieldWork->transition = 0;
     if (gMainRoutineWork.scene == (s32)&SceneId_Garoh1) {
       Event_SetFlag(0x919);
       Func_02000be4();
@@ -515,7 +515,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02000be4(void) {
   FieldTask_AddFrame(Func_02000a68, 0x480);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
+  gFieldWork->transition = 0;
   if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
       Event_GetFlag(FLAG_GAROH_NIGHT) != 0) {
     Event_SetFlag(FLAG_GAROH_NIGHT);
@@ -541,14 +541,14 @@ void Func_02000be4(void) {
     MapGrid_CopyCellsTo(75, 33, 72, 22, 1, 1);
   }
   if (gMainRoutineWork.entrance == 12) {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-    work->screenEffect = 0x209;
+    work->transition = 0x209;
     Event_ClearFlag(0x120);
     Event_ClearFlag(0x121);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
+    gFieldWork->transition = 0;
   }
 }
 
@@ -741,7 +741,7 @@ void Func_02001144(void) {
       Flag_Clear(FLAG_GAROH_NIGHT);
       Flag_Clear(FLAG_AREA_TEMP_18);
     }
-    work = Ram_HeapSlots->eventWork;
+    work = Ram_HeapSlots->fieldWork;
     if (work->fadeLock == 0)
       PaletteFade_Interpolate(120);
   }
@@ -761,7 +761,7 @@ void Func_020011c8(void) {
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Clear(FLAG_AREA_TEMP_18);
     }
-    work = Ram_HeapSlots->eventWork;
+    work = Ram_HeapSlots->fieldWork;
     if (work->fadeLock == 0)
       PaletteFade_Interpolate(120);
   }
@@ -987,7 +987,7 @@ loop1:
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(8, 2);
   Actor_SetScript(8, gData_0200545c);
-  (*(s16 *)&((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)--;
+  (*(s16 *)&gFieldWork->message)--;
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   FieldActor_Stop(8);
   FieldEvent_Wait(20);
@@ -1142,7 +1142,7 @@ loop2:
     if (Event_GetFlag(7))
       Actor_FaceDirection(7, FACING_NORTH, 0);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     FieldEvent_Wait(40);
     Actor_RunRepeatedMotion(9, 2);
@@ -1151,7 +1151,7 @@ loop2:
     FieldEvent_Wait(20);
     if (Event_GetFlag(7))
       Actor_FaceDirection(7, FACING_NORTH, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   }
   FieldActor_Jump(9, 6, 15);
@@ -1434,13 +1434,13 @@ void Func_02002694(void) {
     FieldEvent_Wait(20);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_ShowMessageThenWait(9, 0, 0);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
   } else {
     FieldEvent_Wait(30);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
     FieldEvent_ShowMessageThenWait(9, 0, 0);
   }
   FieldEvent_ShowMessageThenWait(8, 0, 0);
@@ -1596,14 +1596,14 @@ void Func_02002694(void) {
       asm volatile("" : "+l"(a0));
       FieldEvent_ShowMessageThenWait(a0, 0, 0);
     }
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
   } else {
     FieldEvent_Wait(30);
     Actor_RunRepeatedMotion(10, 2);
     FieldEvent_Wait(10);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
     FieldEvent_ShowMessageThenWait(10, 0, 0);
   }
   Actor_RunRepeatedMotion(8, 2);
@@ -1668,8 +1668,8 @@ void Func_02002694(void) {
     Actor_RunRepeatedMotion(5, 2);
     FieldEvent_Wait(20);
     FieldEvent_ShowMessageThenWait(5, 0, 0);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
   } else {
     FieldEvent_Wait(30);
     {
@@ -1680,8 +1680,8 @@ void Func_02002694(void) {
     }
     FieldEvent_Wait(20);
     FieldEvent_Wait(20);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
     FieldEvent_ShowMessageThenWait(5, 0, 0);
   }
   Actor_FaceDirection(10, FACING_NORTHEAST, 0);
@@ -2422,12 +2422,12 @@ L_0200c400:;
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(25);
     FieldEvent_ShowMessageThenWait(6, 0, 0);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
   } else {
     FieldEvent_Wait(40);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
     FieldEvent_ShowMessageThenWait(6, 0, 0);
   }
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2546,8 +2546,8 @@ L_0200c694:;
     FieldEvent_Wait(20);
     FieldEvent_Wait(10);
   } else {
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
   }
   Actor_WalkByAndWait(9, -42, 0);
   Actor_FaceDirection(4, FACING_NORTH, 0);
@@ -2687,12 +2687,12 @@ L_0200cc42:;
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
   } else {
     FieldEvent_Wait(40);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
     {
       s32 a0 = 0x200a;
       FieldEvent_ShowMessageThenWait(a0, 0, 0);
@@ -2739,8 +2739,8 @@ L_0200cda2:;
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_FaceDirection(10, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);

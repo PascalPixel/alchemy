@@ -103,7 +103,7 @@ s32 FieldSequence_Run(void) {
     mode = 2;
     Encounter_SelectMapZones(1);
   }
-  work->eventMode = mode;
+  work->mode = mode;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     gData_02001000[0x194c] = 0;
   else
@@ -111,7 +111,7 @@ s32 FieldSequence_Run(void) {
   WindowSystem_InitFieldFar();
   ActorSystem_InitializeFar(mode);
   Field_ClearRequests();
-  work->events = (const void *)OVERLAY_CALL(9);
+  work->triggers = (const void *)OVERLAY_CALL(9);
   BattleMap_ApplySceneEntranceView();
   Actor_ResetForLeader(OVERLAY_CALL(7));
   Field_PlaceTreasureSpots();
@@ -134,10 +134,10 @@ s32 FieldSequence_Run(void) {
   work->transition = 0x100;
   work->transitionFrames = 16;
   work->transitionActive = 0;
-  work->walkingScale = 409;
+  work->walkingDistanceScale = 409;
   work->walkingDistance = 0;
   if (gMainRoutineWork.sceneVariant == 2) {
-    work->walkingScale = 0;
+    work->walkingDistanceScale = 0;
     GameFlag_Set(324);
   }
   work->previousCell = gMapCellBuffer;
@@ -163,10 +163,10 @@ s32 FieldSequence_Run(void) {
   Field_UpdateHoverReady();
   wait(2);
   OVERLAY_CALL(1);
-  code = work->warp;
+  code = work->exit;
   if (code != 0) {
     result = code;
-    work->warp = 0;
+    work->exit = 0;
     goto done;
   }
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
@@ -258,14 +258,14 @@ s32 FieldSequence_Run(void) {
     party->heading = leader->facing;
     *turn = leader->terrainId;
     while (Field_CountRequests() != 0) {
-      if (work->warp != 0) {
-        result = work->warp;
-        work->warp = 0;
+      if (work->exit != 0) {
+        result = work->exit;
+        work->exit = 0;
         goto done;
       }
-      if (work->raisedEvent != 0) {
+      if (work->raisedTrigger != 0) {
         work->busy = 1;
-        if (work->raisedEvent == -1) {
+        if (work->raisedTrigger == -1) {
           Leader_StopMoving();
           WorldMap_Freeze();
           for (value = 0; value < work->fallenCount; value++) {
@@ -298,80 +298,80 @@ s32 FieldSequence_Run(void) {
             goto done;
           }
           WorldMap_ReloadPendingAreaGraphics();
-        } else if (work->raisedEvent == -0x377) {
+        } else if (work->raisedTrigger == -0x377) {
           Leader_StopMoving();
           WorldPicture_Show(1);
           if (ARRIVAL.scene != -1)
             ARRIVAL.state = 1;
-        } else if (work->raisedEvent == -0x378) {
+        } else if (work->raisedTrigger == -0x378) {
           Leader_StopMoving();
           value = 0;
           while (WorldPicture_Show(value))
             value ^= 1;
-        } else if (work->raisedEvent == -0x379) {
+        } else if (work->raisedTrigger == -0x379) {
           Leader_StopMoving();
           WorldMap_ZoomOutWhileLHeld();
-        } else if (work->raisedEvent == -0x37b) {
-          if (work->keys == gInput.held) {
+        } else if (work->raisedTrigger == -0x37b) {
+          if (work->heldKeys == gInput.held) {
             Leader_StepOntoRope();
-            work->menu = 0;
-            work->start = 0;
-            work->examine = 0;
-            work->battle = 0;
+            work->fieldMenu = 0;
+            work->pauseMenu = 0;
+            work->aButton = 0;
+            work->encounter = 0;
             work->psynergy = 0;
           }
-        } else if (work->raisedEvent == -0x37a) {
-          if (work->keys == gInput.held) {
+        } else if (work->raisedTrigger == -0x37a) {
+          if (work->heldKeys == gInput.held) {
             Leader_StepOffRope();
-            work->menu = 0;
-            work->start = 0;
-            work->examine = 0;
-            work->battle = 0;
+            work->fieldMenu = 0;
+            work->pauseMenu = 0;
+            work->aButton = 0;
+            work->encounter = 0;
             work->psynergy = 0;
           }
-        } else if (work->raisedEvent == -0x37d) {
-          if (work->keys == gInput.held) {
+        } else if (work->raisedTrigger == -0x37d) {
+          if (work->heldKeys == gInput.held) {
             Leader_StepOntoTightrope();
-            work->menu = 0;
-            work->start = 0;
-            work->examine = 0;
-            work->battle = 0;
+            work->fieldMenu = 0;
+            work->pauseMenu = 0;
+            work->aButton = 0;
+            work->encounter = 0;
             work->psynergy = 0;
           }
-        } else if (work->raisedEvent == -0x37c) {
-          if (work->keys == gInput.held) {
+        } else if (work->raisedTrigger == -0x37c) {
+          if (work->heldKeys == gInput.held) {
             Leader_StepOffTightrope();
-            work->menu = 0;
-            work->start = 0;
-            work->examine = 0;
-            work->battle = 0;
+            work->fieldMenu = 0;
+            work->pauseMenu = 0;
+            work->aButton = 0;
+            work->encounter = 0;
             work->psynergy = 0;
           }
         } else {
-          Scene_RunRaisedEvent(work->raisedEvent);
+          Scene_RunRaisedEvent(work->raisedTrigger);
         }
         work->busy = 0;
-        work->raisedEvent = 0;
-      } else if (work->coordEvent != 0) {
+        work->raisedTrigger = 0;
+      } else if (work->stepTrigger != 0) {
         work->busy = 1;
-        Scene_RunStepTriggerOrExit(work->coordEvent);
+        Scene_RunStepTriggerOrExit(work->stepTrigger);
         work->busy = 0;
-        work->coordEvent = 0;
+        work->stepTrigger = 0;
       } else if (work->pushCell != 0) {
         Field_RunPushCell(work->pushCell);
         work->pushCell = 0;
-      } else if (work->battle != 0) {
+      } else if (work->encounter != 0) {
         Leader_StopMoving();
         ObjectTable_Snapshot();
         party->returnCue = -1;
         party->scene = 510;
-        *entrance = work->battle;
-        work->warp = 999;
-        Field_StartEncounterTransition(work->battle);
-        work->unk194 = 0;
-        work->battle = 0;
+        *entrance = work->encounter;
+        work->exit = 999;
+        Field_StartEncounterTransition(work->encounter);
+        work->encounterBias = 0;
+        work->encounter = 0;
         *steps = 0;
-      } else if (work->examine != 0) {
+      } else if (work->aButton != 0) {
         AreaNameWindow_HideFar();
         talk = 0;
         if (gMainRoutineWork.ownerOverride == 0)
@@ -385,15 +385,15 @@ s32 FieldSequence_Run(void) {
         }
         if (talk) {
           work->talk = value | 0x4000;
-          work->menu = 0;
+          work->fieldMenu = 0;
         } else if ((talk = Actor_GetTriggerCellAheadOfCurrent()) != 0) {
-          work->searchCell = talk;
-          work->menu = 0;
+          work->examineCell = talk;
+          work->fieldMenu = 0;
         } else {
-          work->menu = 1;
+          work->fieldMenu = 1;
         }
-        work->examine = 0;
-      } else if (work->menu != 0) {
+        work->aButton = 0;
+      } else if (work->fieldMenu != 0) {
         AreaNameWindow_HideFar();
         Leader_StopMoving();
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -403,7 +403,7 @@ s32 FieldSequence_Run(void) {
             ((*(volatile u32 *)&gInput.held & KEY_SELECT) != 0)) {
           DebugFlagEditor_RunFar();
         } else if (GameFlag_Get(263)) {
-          work->raisedEvent = 250;
+          work->raisedTrigger = 250;
         } else {
           work->effectTimerRunning = 0;
           FieldMenu_RunFar();
@@ -413,17 +413,17 @@ s32 FieldSequence_Run(void) {
         WorldMap_ReloadPendingAreaGraphics();
         GameFlag_Clear(262);
         GameFlag_RefreshLureCapFar();
-        work->menu = 0;
+        work->fieldMenu = 0;
       } else if (work->talk != 0) {
         WorldMap_Freeze();
         Scene_TalkToActor(work->talk & 0x3fff);
         WorldMap_ReloadPendingAreaGraphics();
         work->talk = 0;
-      } else if (work->searchCell != 0) {
+      } else if (work->examineCell != 0) {
         WorldMap_Freeze();
-        Field_ExamineCell(work->searchCell);
+        Field_ExamineCell(work->examineCell);
         WorldMap_ReloadPendingAreaGraphics();
-        work->searchCell = 0;
+        work->examineCell = 0;
       } else if (work->psynergy != 0) {
         packed = work->psynergy & 0x2000;
         AreaNameWindow_HideFar();
@@ -438,10 +438,10 @@ s32 FieldSequence_Run(void) {
         work->psynergy = 0;
       } else if (work->item != 0) {
         WorldMap_Freeze();
-        Field_UseItem(work->item, work->itemArgument);
+        Field_UseItem(work->item, work->itemSlot);
         WorldMap_ReloadPendingAreaGraphics();
         work->item = 0;
-      } else if (work->start != 0) {
+      } else if (work->pauseMenu != 0) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Leader_StopMoving();
         WorldMap_Freeze();
@@ -451,7 +451,7 @@ s32 FieldSequence_Run(void) {
         } else if (*(volatile u8 *)&gDebugMode && (gInput.held & KEY_L)) {
           PaletteEditor_Run();
         } else if (GameFlag_Get(263)) {
-          work->raisedEvent = 250;
+          work->raisedTrigger = 250;
         } else {
           Event_ResolveAllPendingActions();
           AreaNameWindow_HideFar();
@@ -478,7 +478,7 @@ s32 FieldSequence_Run(void) {
         }
         WorldMap_ReloadPendingAreaGraphics();
         GameFlag_Clear(262);
-        work->start = 0;
+        work->pauseMenu = 0;
       }
     }
     GameFlag_Clear(260);
@@ -533,7 +533,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
   result = 0;
   leader = WorldMap_Unfreeze();
-  workBytes = Ram_HeapSlots->eventWork;
+  workBytes = Ram_HeapSlots->fieldWork;
   mapBytes = (u8 *)Ram_HeapSlots->mapWork;
   if (leader != 0) {
     probePosition.vector.x = leader->pos.x;
@@ -738,11 +738,11 @@ s16 Stream_ReadS16(u8 **cursor) {
 }
 
 void BattleMap_ApplySceneEntranceView(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 done;
 
   done = Scene_ApplyEntrance(1);
-  if (event->controlMode == 2 && done == 0)
+  if (event->mode == 2 && done == 0)
     done = Field_PlaceAtEntrance();
   if (done == 0)
     Scene_ApplyEntrance(0);

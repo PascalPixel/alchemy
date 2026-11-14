@@ -21,7 +21,7 @@
 #include "scene_tables.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "field/event_inline.h"
@@ -100,7 +100,7 @@ extern struct WarpEntry__mikasalla gMikasalla_Doors[];
 /// in and leaves by the exit of the door's number. The fifth door is entered
 /// without the walk.
 void Mikasalla_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   u32 id;
   s16 *choice;
   s32 index;
@@ -198,7 +198,7 @@ void Mikasalla_CastParch(void) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x100;
   return 0;
 }
 

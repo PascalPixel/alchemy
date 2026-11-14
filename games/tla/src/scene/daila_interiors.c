@@ -28,7 +28,7 @@
 #include "scene_call.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "inventory.h"
 #include "module/game/game.h"
 #include "module/scene/scene.h"
@@ -484,7 +484,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
   s32 member;
   s32 slot;
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   saved = work->message;
   owner = PartyInventory_Add(item);
   if (owner == -1) {
@@ -557,7 +557,7 @@ void FlagBlock_PlaceAll(const s16 *flags);
 
 s32 DailaInteriors_Start(void) {
   struct DailaMapWork *map;
-  s32 *effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
+  s32 *effect = &gFieldWork->transition;
   s32 value = 0x209;
 
   *effect = value;

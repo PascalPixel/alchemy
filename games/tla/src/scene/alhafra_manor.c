@@ -16,7 +16,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/system/system.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -102,7 +102,7 @@ void AlhafraManor_AskIfTheHeroes(s32 actor) {
 }
 
 void AlhafraManor_GrumbleAboutTheMayor(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   GameFlag_Set(0x8ba);
   Event_Start();
@@ -122,7 +122,7 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
 }
 
 void AlhafraManor_DefendTheMayor(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   GameFlag_Set(0x8bb);
   Event_Start();
@@ -158,7 +158,7 @@ void AlhafraManor_DefendTheMayor(void) {
 }
 
 void AlhafraManor_TellOfTheEasternSea(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (*(s16 *)((u8 *)work + 0x166) != 0) {
     Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
@@ -196,10 +196,10 @@ void AlhafraManor_TellOfTheEasternSea(void) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(9, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Event_Wait(30);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(9, 0, 10);
   }
   Event_End();
@@ -214,7 +214,7 @@ s32 Scene_Initialize(void) {
   s32 cameraZ = 160 << 17;
   s16 *entrance;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Actor_GetById(15)->update = AlhafraManor_KeepToTheLeadersLayer;
   if (gMainRoutineWork.entrance == 80) {
     gMainRoutineWork.entrance = gMainRoutineWork.secondary = 14;
@@ -237,7 +237,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 99) {
     FieldCamera_MoveWithinMapBounds(152 << 17, cameraY, cameraZ, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
+    gFieldWork->transition = 256;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(10);
@@ -260,7 +260,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#define EVENT_WORD(offset) (*(s32 *)((u8 *)Ram_HeapSlots->eventWork + (offset)))
+#define EVENT_WORD(offset) (*(s32 *)((u8 *)Ram_HeapSlots->fieldWork + (offset)))
 
 void Func_020015f0(void);
 
@@ -604,12 +604,12 @@ void AlhafraManor_BriggsEscapes(void) {
     Event_Wait(30);
     Motion_SetModeAndWaitAnimation(6, 4);
     Event_ShowMessageThenWait(6, 0, 10);
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
   } else {
     Event_Wait(40);
     Motion_SetModeAndWaitAnimation(6, 3);
     Event_Wait(10);
-    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
+    (gFieldWork->message)++;
     Event_ShowMessageThenWait(6, 0, 10);
   }
   Motion_SetModeAndWaitAnimation(13, 3);

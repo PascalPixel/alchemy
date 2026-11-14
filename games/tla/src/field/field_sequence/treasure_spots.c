@@ -54,7 +54,7 @@ void Actor_ShowItemIconById(s32 id, s32 item);
 
 void Field_PlaceTreasureSpots(void) {
   s16 *rows = SceneItem_GetRows();
-  struct SceneItemWork *work = Ram_HeapSlots->eventWork;
+  struct SceneItemWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
   s16 type;
   s32 id;

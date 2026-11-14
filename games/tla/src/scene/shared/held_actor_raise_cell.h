@@ -1,6 +1,6 @@
 /// Raises the cell under the held actor.
 void HeldActor_RaiseCell(void) {
-  struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);
+  struct Actor *held = HELD_OBJECT(Ram_HeapSlots->fieldWork);
   u8 *layer;
   u8 *cells;
   u8 *shapes;

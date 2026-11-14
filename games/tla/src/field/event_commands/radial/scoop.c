@@ -180,7 +180,7 @@ void FieldPsynergy_Hover(void);
 /// Effect 20 cast on a target: runs the effect, ignoring the target.
 void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
 
-#include "field/event_work.h"
+#include "field/field_work.h"
 
 struct RiseParticle {
   s32 x;
@@ -237,21 +237,6 @@ struct FxScene__f0e6400 {
   s16 frame;
 };
 
-/* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:241: structure has no
- * member named `unkd4c'. */
-struct FxEvent__f0e6400 {
-  struct EventWork work;
-  u8 unkd48[4];
-  /// Bit 0 clear runs Func_080dba5c; bit 1 set fixes the risen object's sprite
-  /// priority at 1 directly, else its priority flag is set.
-  u16 unkd4c;
-};
-
-STATIC_ASSERT(offsetof(struct FxEvent__f0e6400, unkd4c) == 0xd4c);
-
 extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
     ResourceId_Data1E9;
 
@@ -274,7 +259,7 @@ void Scoop_DigUpItem(void);
 void FieldPsynergy_Scoop(void) {
   struct RiseWork__f0e6400 *work = HeapSlot_Alloc(92, 0x193c);
   struct FxScene__f0e6400 *scene = Ram_HeapSlots->effectWork;
-  struct FxEvent__f0e6400 *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *other = NULL;
   struct Actor *object;
@@ -294,7 +279,7 @@ void FieldPsynergy_Scoop(void) {
   s32 frame;
   s32 i;
 
-  if (event->work.controlMode != 3) {
+  if (event->mode != 3) {
     SET_POSITION(scene, (caster->x & 0xfff00000) + 0x80000, caster->y,
                  (caster->z & 0xfff00000) + 0x80000);
     Vector_AddPolarOffset(px(16), scene->facing, &scene->x);
@@ -345,7 +330,7 @@ void FieldPsynergy_Scoop(void) {
 
   failed = 0;
   for (i = 0; i < 80; i++) {
-    target = event->work.objects[i];
+    target = event->actors[i];
     if (target != NULL && target->script != NULL &&
         (Actor_GetSpriteIdFar(target) == 406 || (target->collisionFlags & 1)) &&
         target != scene->mainObject && ((u8 *)target->sprite)[27] != 0 &&
@@ -550,7 +535,7 @@ void BattleEffect_DropObjectAtAnchor__psynergy(s32 id) __asm__(
 #define BattleEffect_DropObjectAtAnchor                                        \
   BattleEffect_DropObjectAtAnchor__psynergy
 void BattleEffect_DropObjectAtAnchor(s32 id) {
-  struct ModeEvent *event = Ram_HeapSlots->eventWork;
+  struct ModeEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *anchor;
   struct Actor *object;
 
@@ -590,14 +575,14 @@ extern const u16 gData_080f0fc0[];
 void Scoop_DigUpItem(void) {
   struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *anchor;
-  struct EventWork *event;
+  struct FieldWork *event;
   struct BattleUnit *unit;
   struct Actor *object;
   s32 item;
   s32 id = 79;
 
   anchor = work->anchor;
-  event = Ram_HeapSlots->eventWork;
+  event = Ram_HeapSlots->fieldWork;
   unit = Unit_Get(gMainRoutineWork.currentOwner);
 
   object = Actor_GetById(id);
@@ -605,7 +590,7 @@ void Scoop_DigUpItem(void) {
     object = Actor_CreateFar(489, anchor->x, anchor->y, anchor->z);
     if (object == NULL)
       return;
-    event->objects[id] = object;
+    event->actors[id] = object;
   }
   if (Random16() < 0xc000) {
     item = gData_080f0fc0[(Random16() * 16) >> 16];
@@ -955,7 +940,7 @@ void FieldPsynergy_TeleportOnTarget(void) {}
 /// Field Psynergy kind 30.
 void FieldPsynergy_Teleport(void) {
   ObjectTable_Get(Party_GetLeaderActor());
-  ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = 0xfc89;
+  ((struct ControlEvent *)Ram_HeapSlots->fieldWork)->cue = 0xfc89;
 }
 
 /// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.
@@ -1058,7 +1043,7 @@ void FieldPsynergy_Parch(void) {
   kind = 290;
   slots = Ram_HeapSlots;
   for (offset = 20; i < 80; i++, offset += 4) {
-    object = *(struct Actor **)((u8 *)slots->eventWork + offset);
+    object = *(struct Actor **)((u8 *)slots->fieldWork + offset);
     animation = object->sprite;
     if (object->script != NULL && animation->definition[0] == kind &&
         animation->unk18 == 1 &&
@@ -1415,7 +1400,7 @@ struct Unk_080e807cEvent {
 /// colours each frame.
 void FieldPsynergy_UpdateUnnamed28(void) {
   struct Unk_080e807cWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct Unk_080e807cEvent *event = Ram_HeapSlots->eventWork;
+  struct Unk_080e807cEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 *pos = position;

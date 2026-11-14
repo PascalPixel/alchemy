@@ -9,10 +9,10 @@
 #include "module/field/object.h"
 
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->encounterEnemyGroup = Encounter_GetFormationAtSlot(row, column);
-  if (event->controlMode == 3)
+  event->encounter = Encounter_GetFormationAtSlot(row, column);
+  if (event->mode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         (u8 *)ObjectTable_Get(Party_GetLeaderActor()) + 8);
   BattleEffect_SelectBattleCue(row, column);
@@ -37,7 +37,7 @@ void Field_RequestDjinnBattle__event_commands(u32 flags, u32 djinn) __asm__(
     "Field_RequestDjinnBattle");
 #define Field_RequestDjinnBattle Field_RequestDjinnBattle__event_commands
 void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   u32 noPrepare = flags & 0x800;
   u32 group;
   s32 index;
@@ -95,19 +95,19 @@ void Party_SetFields1f2And1f4(u16 first, u16 second) {
 }
 
 void Event_LeaveFor(s16 scene, s16 entrance) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   gMainRoutineWork.scene = scene;
   gMainRoutineWork.entrance = entrance;
-  event->countdown = 999;
+  event->exit = 999;
 }
 
 void Scene_QueueMusic(s32 soundId) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 state;
 
   state = soundId;
-  event->cueState = state;
+  event->queuedSound = state;
   if ((s16)state == -1)
     state = 0x186;
   Sound_PlayFar(SE_298);
@@ -117,7 +117,7 @@ void Scene_QueueMusic(s32 soundId) {
 void Event_NoOp(void) {}
 
 void Scene_PlayQueuedMusic(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
 
   if (work != 0) {
     s16 cue = *(s16 *)(work + 0xcb8);
@@ -134,7 +134,7 @@ void Func_080d2cc4(s32 message) {
   GameFlag_Clear(0x142);
   Event_End();
   if (Party_FindOwnerWithActionFar(136) != -1)
-    ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
+    ((struct EventWork15a *)Ram_HeapSlots->fieldWork)->flag = 1;
 }
 
 /* VIEW(event_commands): tag struct EventWork1cc as struct
@@ -152,7 +152,7 @@ struct EventWork1cc {
 
 void Event_PlayCueNearFocus(struct CueObject *object, s32 cue) {
   struct CueObject *focus =
-      ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->focus;
+      ((struct EventWork1cc *)Ram_HeapSlots->fieldWork)->focus;
 
   if (object == 0 || focus == 0)
     return;

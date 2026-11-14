@@ -51,7 +51,7 @@ s32 PsynergyMenu_Run(void) {
   result = PsynergyMenu_RunSteps(&owner, &target, &item);
   Menu_StopWatchingStart();
   if (result == 1) {
-    u8 *event = Ram_HeapSlots->eventWork;
+    u8 *event = Ram_HeapSlots->fieldWork;
     u16 request;
 
     Ability_Get(0x3fff & screen->selectedItems[0]);

@@ -17,7 +17,7 @@
 #include "scene_tables.h"
 #include "actor.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "gamepak/far_call/system.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
@@ -157,7 +157,7 @@ s32 Scene_Initialize(void) {
   s32 t37;
   s32 t0;
 
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
+  FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1ac), s32, 0) = 0x100;
   t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   Actor_SetAnimation(10, 5);
@@ -458,13 +458,13 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
     Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
     FieldEvent_Wait(20);
     FieldEvent_ShowMessageThenWait(8, 0, 10);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) += 1;
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) += 1;
   } else {
     FieldEvent_Wait(30);
     Actor_FaceDirection(8, FACING_EAST, 0);
     FieldEvent_Wait(10);
     Actor_SetAnimationAndWait(8, 4);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) += 1;
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) += 1;
     FieldEvent_ShowMessageThenWait(8, 0, 10);
     Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
   }
@@ -937,10 +937,10 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(5, 0) == 0) {
     FieldEvent_Wait(20);
     FieldEvent_ShowMessageThenWait(8, 0, 10);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) += 1;
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) += 1;
   } else {
     FieldEvent_Wait(40);
-    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) += 1;
+    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) += 1;
     FieldEvent_ShowMessageThenWait(8, 0, 10);
   }
   Actor_SetAnimationAndWait(5, 3);
@@ -1054,7 +1054,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Actor_SetSpriteRotationById(5, 0x4000);
   Actor_SetSpriteFlags(((s32)Actor_Get(5)), 0);
   FieldCamera_MoveToActorById(5, 0);
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b4), s32, 0) = 0x3c;
+  FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1b4), s32, 0) = 0x3c;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
@@ -1144,7 +1144,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   }
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b4), s32, 0) = 8;
+  FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1b4), s32, 0) = 8;
   Event_End();
 }
 

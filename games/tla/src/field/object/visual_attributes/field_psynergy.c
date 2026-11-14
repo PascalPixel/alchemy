@@ -25,7 +25,7 @@ void FieldPsynergy_ReleaseSceneSprite(void) {
 /// Returns the map cell at position x, z in the given layer, read from the
 /// world map's blocks or the cell buffer by the event work's mode.
 struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapCell *cells;
 
@@ -46,7 +46,7 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
 /// on a Cyclone cell, water or raised ground, and then on sand, or where
 /// attribute bit 1 is set (clear, when the event work's byte 0xd36 is set).
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
 
   if (*(s8 *)(event + 394) == 3)
     return MapGrid_IsSandCell(x, z, layer);
@@ -77,7 +77,7 @@ s32 MapGrid_IsHoverCell(s32 x, s32 z) {
 /// collision code 232, or on the world map collision 5 or 6; the event work's
 /// byte 0xd37 turns the answer round.
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   s32 column = x;
   if (*(s8 *)(event + 394) == 3) {
     s32 position[3];
@@ -105,7 +105,7 @@ u8 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer) {
 /// Whether the cell at (x, z) is water: attribute bit 16, or on the world map
 /// collision 2 to 4.
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
 
   if (*(s8 *)(event + 394) == 3) {
     s32 position[3];
@@ -364,7 +364,7 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
 void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
 
 void Field_StartColorTransition(s32 frames, s32 color) {
-  u8 *state = Ram_HeapSlots->eventWork;
+  u8 *state = Ram_HeapSlots->fieldWork;
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   Dma_Set(buffers->target + 0x2a0, state + 0x762, DMA_COPY_WORDS(0x150),
@@ -378,7 +378,7 @@ void Field_StartColorTransition(s32 frames, s32 color) {
 }
 
 void Field_StartPaletteTransition(s32 frames) {
-  u8 *state = Ram_HeapSlots->eventWork;
+  u8 *state = Ram_HeapSlots->fieldWork;
   s32 colors = (s32)(state + 0x222);
 
   BattleEffect_ApplyColorToTargetBuffer(colors, 2);

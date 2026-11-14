@@ -24,7 +24,7 @@
 #include "system/main_routine_work.h"
 #include "macros.h"
 #include "system/vector3.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/window/window.h"
 #include "map.h"
 #include "system/field_effect.h"
@@ -434,7 +434,7 @@ DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
 /// A step at a stage's foot asks; giving up takes the party back to the start.
 s32 TrialRoad_OfferToGiveUp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 message;
 
   if (Event_GetFlag(0x9ff)) {
@@ -447,9 +447,9 @@ s32 TrialRoad_OfferToGiveUp(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     message = (s32)&MsgTrialRoadGiveUpPrompt;
     FieldMessage_Show(message, 13);
-    work->unkcb0 = message + 1;
-    work->unkcb2 = 4;
-    work->unkcb4 = 1;
+    work->choiceMessage = message + 1;
+    work->choiceWidth = 4;
+    work->choiceSelection = 1;
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) ==
         0) {
       Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
@@ -563,7 +563,7 @@ void TrialRoad_ExamineChest(s32 id) {
   } else {
     FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) == 0)
-      ((struct EventWork15a__s0218 *)Ram_HeapSlots->eventWork)->value = 1;
+      ((struct EventWork15a__s0218 *)Ram_HeapSlots->fieldWork)->value = 1;
   }
 }
 
@@ -1015,7 +1015,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Vector3 unused;
 
   if ((dx != 0 && toX != x + dx) || (dz != 0 && toZ != z + dz)) {
-    ((struct EventWork184 *)Ram_HeapSlots->eventWork)->value = 13;
+    ((struct EventWork184 *)Ram_HeapSlots->fieldWork)->value = 13;
     return;
   }
   for (n = 0; n <= 5;) {
@@ -1678,12 +1678,12 @@ void PaletteCycle_StepAt(void) {
   u16 *p;
 
   if (gTrialRoad_PaletteCycleRunning != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->fieldWork;
     s16 *state = (s16 *)(work + 358);
 
     if (*state != 0 && (*state & 0x3ff) != 153)
       return;
-    if (((struct EventWork *)work)->pendingFirst != 0)
+    if (((struct FieldWork *)work)->revealActive != 0)
       return;
     if (*(s16 *)(work + 350) != 0)
       return;
@@ -1773,7 +1773,7 @@ s32 Scene_Initialize(void) {
   s32 entrance = gMainRoutineWork.entrance;
   s32 pattern = gTrialRoadState->pattern;
 
-  if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 344) != 0)
+  if (*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 344) != 0)
     return 0;
   if (scene == (s32)&SceneId_TrialRoad1) {
     if (entrance <= 7) {
@@ -3486,12 +3486,12 @@ void TrialRoad_DrawProgress(void) {
   // One constant for its whole life: the markers' OAM size bits (attribute 1
   // size 1, 16 by 16), held in a register across both markers.
   u32 markerSize = 0x40000000;
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
 
   if (work->unke0 != 0) {
     work->fade = 2;
-  } else if (GameFlag_Get(FLAG_MENU_OPEN) || event->unk166 != 0) {
+  } else if (GameFlag_Get(FLAG_MENU_OPEN) || event->psynergy != 0) {
     if (work->fade > 0)
       work->fade--;
   } else if (work->fade <= 1) {

@@ -20,7 +20,7 @@
 #include "field_sprite.h"
 #include "debug.h"
 #include "field/cell_target.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
@@ -167,7 +167,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 void Func_020001d8(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
 
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
@@ -232,7 +232,7 @@ void Func_02000298(void) {
 }
 
 s32 Scene_Initialize(void) {
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
+  ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->value = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement1) {
     JupiterLighthouse_LoadPalettes(1);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
@@ -311,14 +311,14 @@ extern s32 gWhirlwindEndScript[];
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_UpdateLower(struct Actor *self) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
 
-  if (work->unk166 != 0 || *(s16 *)&work->unk15a != 0 ||
-      *(s16 *)&work->unk15c[2] != 0 || *(s16 *)work->unk168 != 0) {
+  if (work->psynergy != 0 || *(s16 *)&work->fieldMenu != 0 ||
+      work->pauseMenu != 0 || work->item != 0) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
@@ -350,7 +350,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
           leader->facing = self->facing;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
-          work->unk16a = 200;
+          work->raisedTrigger = 200;
           gMainRoutineWork.renderMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
@@ -748,7 +748,7 @@ void CrackedTile_Fall(struct CellTarget__s16c4 *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -784,7 +784,7 @@ void CrackedTile_DropIn(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);

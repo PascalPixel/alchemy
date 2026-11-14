@@ -24,7 +24,7 @@
 #include "system/frame.h"
 #include "shared/tables.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/event.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
@@ -588,7 +588,7 @@ struct AerieEventWork__floor {
 // entrance 22.
 #if !TLA_PATCH_1
 s32 VenusLighthouse_Start(void) {
-  ((struct AerieEventWork__floor *)Ram_HeapSlots->eventWork)->mode = 0x204;
+  ((struct AerieEventWork__floor *)Ram_HeapSlots->fieldWork)->mode = 0x204;
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -619,7 +619,7 @@ s32 VenusLighthouse_Start(void) {
   struct MainRoutineWork *routine;
 
   routine = &gMainRoutineWork;
-  ((struct AerieEventWork__floor *)Ram_HeapSlots->eventWork)->mode = 0x204;
+  ((struct AerieEventWork__floor *)Ram_HeapSlots->fieldWork)->mode = 0x204;
   if (routine->entrance == ENTRANCE_OPENING) {
     // From patch 1 it also saves this scene and entrance 22.
     routine->savedScene = (s32)&SceneId_VenusLighthouse;
@@ -654,7 +654,7 @@ static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
 // The prologue's opening: Felix moves the statue aside with Psynergy and
 // climbs off alone, leaving Jenna and Kraden.
 void VenusLighthouse_FelixLeaves(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   Actor_SetPosition(4, 712, 816);
   Actor_SetPosition(5, 696, 840);
@@ -667,9 +667,9 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_SetSpeed(8, 1);
   Actor_SetSpeed(9, 1);
   FieldCamera_MoveTo(664, CAMERA_KEEP, 824, 0);
-  work = Ram_HeapSlots->eventWork;
-  work->screenEffect = 256;
-  work->delay = 60;
+  work = Ram_HeapSlots->fieldWork;
+  work->transition = 256;
+  work->transitionFrames = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
@@ -712,7 +712,7 @@ void VenusLighthouse_FelixLeaves(void) {
 
 void VenusLighthouse_DoubtLeaving(void) {
   struct VenusActor *actor;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   FieldEvent_SetMessageId((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
   EventCamera_FollowActor(8, 1);
@@ -1123,9 +1123,9 @@ void VenusLighthouse_DoubtLeaving(void) {
   gMainRoutineWork.currentOwner = 5;
   Party_RemoveMember(4);
   FieldEvent_Wait(50);
-  work = Ram_HeapSlots->eventWork;
-  work->delay = 60;
-  work->screenEffect = 256;
+  work = Ram_HeapSlots->fieldWork;
+  work->transitionFrames = 60;
+  work->transition = 256;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(22);

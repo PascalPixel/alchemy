@@ -18,7 +18,7 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/event_inline.h"
 #include "system/dma.h"
 #include "gamepak/far_call/system.h"
@@ -244,7 +244,7 @@ ask:
   FieldEvent_Wait(5);
   goto putAway;
 ready:
-  t36 = (s32)Ram_HeapSlots->eventWork;
+  t36 = (s32)Ram_HeapSlots->fieldWork;
   t37 = FIELD_AT(t36, u16, 452);
   FIELD_AT(t36, u16, 452) = (t37 + 1);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
@@ -292,12 +292,12 @@ growBall:
   FieldEvent_Wait(20);
   Actor_SetPosition(10, 0, 0);
   Actor_SetPosition(9, 0, 0);
-  t66 = (s32)Ram_HeapSlots->eventWork;
+  t66 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t66, s32, 436) = 100;
   PaletteFade_ApplyTarget(0x10000, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  t70 = (s32)Ram_HeapSlots->eventWork;
+  t70 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t70, s32, 436) = 8;
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
@@ -368,7 +368,7 @@ struct SceneWork {
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *state;
 
-  ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 256;
+  ((struct SceneWork *)Ram_HeapSlots->fieldWork)->unk1ac = 256;
   state = &gMainRoutineWork;
   Actor_Get(state->currentOwner)->priorityFlags |= 32;
   if (state->entrance == 90) {

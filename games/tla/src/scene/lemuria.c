@@ -26,7 +26,7 @@
 #include "system/frame.h"
 #include "system/io_reg.h"
 #include "map.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "actor_view.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
@@ -71,7 +71,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 s32 Lemuria_NoticeLeader(struct Actor *self) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   u8 *state;
   u32 mode;
   s8 *effect;
@@ -213,7 +213,7 @@ void Lemuria_EnterDoor(s32 door) {
 /// leader, while the event work's halfword at 0x166 is 0, another once it is
 /// set; the actor's angle is restored after.
 void Lemuria_TalkToSpoiledChild(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_Get(18);
   s16 angle = object->facing;
 
@@ -236,7 +236,7 @@ void Lemuria_TalkToSpoiledChild(void) {
 
 /// The same for actor 19.
 void Lemuria_TalkToLonelyChild(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_Get(19);
   s16 angle = object->facing;
 
@@ -365,7 +365,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
 
   if (Actor_Get(gMainRoutineWork.currentOwner)->y > px(96) ||
       Event_GetFlag(0x969)) {
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x15a), s16, 0) = 1;
+    FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x15a), s16, 0) = 1;
     return;
   }
   if (!Event_GetFlag(0x966) || Event_GetFlag(0x968)) {
@@ -448,7 +448,7 @@ void Lemuria_DrinkFromSpring(void) {
     Event_PlaySound(SE_RECOVERY);
     Party_RestoreHpPp(1);
   } else {
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
+    FIELD_AT(Ram_HeapSlots->fieldWork, u16, 346) = 1;
   }
 }
 
@@ -477,7 +477,7 @@ void Lemuria_OfferSpringLuck(void) {
   } else {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(30, 3);
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
     FieldEvent_ShowMessageThenWait(30, 0, 5);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 464, 1040);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
@@ -580,7 +580,7 @@ void Actor_SetWideSprite();
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
+  FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1ac), s32, 0) = 0x201;
   FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, 0xc80);
   FieldEffect_StartBlankOverlay(0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
@@ -922,12 +922,12 @@ void Lemuria_MarvelAtCity(void) {
     FieldEvent_Wait(30);
     Actor_SetAnimationAndWait(7, 4);
     FieldEvent_ShowMessageThenWait(7, 0, 10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(7, 3);
     FieldEvent_Wait(10);
-    ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+    ((struct EventWork1c4 *)Ram_HeapSlots->fieldWork)->count++;
     FieldEvent_ShowMessageThenWait(7, 0, 10);
   }
   FieldActor_WatchAndSetScript(4, 7);

@@ -114,7 +114,7 @@ void Inn_PlaySleep(s32 roomPrice) {
     }
   }
 
-  state = Ram_HeapSlots->eventWork;
+  state = Ram_HeapSlots->fieldWork;
   state->effect = 0x209;
   state->delay = 60;
   wait(20);
@@ -126,5 +126,5 @@ void Inn_PlaySleep(s32 roomPrice) {
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   wait(30);
-  ((struct FieldEffectState *)Ram_HeapSlots->eventWork)->delay = 16;
+  ((struct FieldEffectState *)Ram_HeapSlots->fieldWork)->delay = 16;
 }

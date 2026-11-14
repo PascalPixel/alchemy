@@ -632,7 +632,7 @@ done:
   DebugShortcut_Release();
   wait(1);
   if (result != -1) {
-    events = Ram_HeapSlots->eventWork;
+    events = Ram_HeapSlots->fieldWork;
     ability = gDebugShortcut_Abilities[column][row];
     owner = Party_FindOwnerWithActionFar(ability);
     if (owner == -1)

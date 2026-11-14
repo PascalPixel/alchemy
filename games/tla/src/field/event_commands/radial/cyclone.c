@@ -240,7 +240,7 @@ void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
 void FieldPsynergy_Cyclone(void) {
   struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   u8 *effect = Ram_HeapSlots->effectWork;
   struct Actor *owner = *(struct Actor **)(effect + 16);
   s16 *points = (s16 *)(event + 0xcc0);
@@ -612,7 +612,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void Blaze_UpdateSpray(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
   struct SprayScene *scene = Ram_HeapSlots->effectWork;
-  struct SprayEvent *event = Ram_HeapSlots->eventWork;
+  struct SprayEvent *event = Ram_HeapSlots->fieldWork;
   struct EffectSprite *sprite;
   struct SprayParticle *particle;
   struct SprayParticle *puff;

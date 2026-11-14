@@ -65,7 +65,7 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 
 static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/scene/scene.h"
 #include "types.h"
@@ -252,7 +252,7 @@ void SeaOfTime_CircleSwirl(void) {
 
 void SeaOfTime_RideCurrent(void) {
   struct SeaOfTimeEventWork0154 *work =
-      (struct SeaOfTimeEventWork0154 *)Ram_HeapSlots->eventWork;
+      (struct SeaOfTimeEventWork0154 *)Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_GetById(8);
   struct {
     s32 x, y, z;
@@ -393,16 +393,16 @@ void SeaOfTime_RideCurrent(void) {
 void SeaOfTime_FollowChannel(void) {
   s32 pos[4];
   struct EffectOptions spark;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct Actor *actor;
   s16 angle;
   s32 x, z, dx, dz, targetX, targetZ;
   s32 cosine, sine;
   s32 x0, y0, z0, flip;
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   actor = Actor_GetById(8);
-  angle = (work->exit - 45) << 14;
+  angle = (work->stepTrigger - 45) << 14;
   Event_Start();
   Event_ResolvePendingActions(0);
   x = actor->x >> 20;
@@ -416,13 +416,13 @@ void SeaOfTime_FollowChannel(void) {
   if (SeaOfTime_GetCellCode(1, x + (dz < 0 ? -dz : dz),
                             z + (dx < 0 ? -dx : dx)) >>
           8 ==
-      work->exit) {
+      work->stepTrigger) {
     targetX = (dz < 0 ? -dz : dz) * 15 << 16;
     targetZ = (dx < 0 ? -dx : dx) * 15 << 16;
   }
   targetX += x << 20;
   targetZ += z << 20;
-  while (SeaOfTime_GetCellCode(1, x, z) >> 8 == work->exit) {
+  while (SeaOfTime_GetCellCode(1, x, z) >> 8 == work->stepTrigger) {
     x += dx;
     z += dz;
     targetX += dx << 20;
@@ -486,7 +486,7 @@ extern u8 gSeaOfTime_LapsNeeded[];
 // Tracks actor 8 around the ring of cells: counts steps made in one direction,
 // spawning an effect every fourth frame once past 3, and rewards a full count.
 void SeaOfTime_CountLaps(void) {
-  u8 *work = (u8 *)Ram_HeapSlots->eventWork;
+  u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(8);
   s16 index;
   s32 now;
@@ -505,7 +505,7 @@ void SeaOfTime_CountLaps(void) {
     gSeaOfTime_LapTurn = 0;
   }
   last = gSeaOfTime_LastLapCell;
-  now = ((struct EventWork *)work)->exit;
+  now = ((struct FieldWork *)work)->stepTrigger;
   nowRaw = *(u16 *)(work + 340);
   if (last != now) {
     s16 *delta = &gSeaOfTime_LapTurn;
@@ -572,7 +572,7 @@ void SeaOfTime_TrackWaves(void) {
   u32 *state = gSceneState;
 
   if (gFrameCount - gSeaOfTime_WaveStartFrame > 120)
-    ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->alarm = 201;
+    ((struct SeaOfTimeEventWork *)Ram_HeapSlots->fieldWork)->alarm = 201;
   *state++ = gSeaOfTime_WaveStartFrame;
   *state++ = gSeaOfTime_WaveState;
   *state = gFrameCount;
@@ -1010,7 +1010,7 @@ void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
   u8 *block = Ram_HeapSlots->block32;
-  struct EventWork_02001650 *event = Ram_HeapSlots->eventWork;
+  struct EventWork_02001650 *event = Ram_HeapSlots->fieldWork;
   s32 i;
   s16 color;
 
@@ -1067,12 +1067,12 @@ void SeaOfTime_AnimateSea(void) {
           gSeaOfTime_RedPulseStep[0] = -1;
         }
       } else {
-        if (((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->alarm ==
+        if (((struct SeaOfTimeEventWork *)Ram_HeapSlots->fieldWork)->alarm ==
             200) {
           u16 current = redBits >> 16;
           if (current != 0)
             red = (s16)(u16)(current - 1);
-        } else if (((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)
+        } else if (((struct SeaOfTimeEventWork *)Ram_HeapSlots->fieldWork)
                        ->alarm == 201) {
           u16 current = redBits >> 16;
           if (current < 30)
@@ -1171,7 +1171,7 @@ void SeaOfTime_Open(void) {
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 1);
   FieldCamera_WaitForArrival();
   Event_SetFlag(FLAG_SCENE_TEMP_00);
-  ((struct EventWork687 *)Ram_HeapSlots->eventWork)->unk16a = 200;
+  ((struct EventWork687 *)Ram_HeapSlots->fieldWork)->unk16a = 200;
   Event_PlaySound(SE_530);
   Event_Wait(40);
   for (i = 0; i != 360; i++) {
@@ -1271,7 +1271,7 @@ void SeaOfTime_Open(void) {
 // in the first room, draws the unlit cells in the second, and schedules the
 // frame callback.
 s32 Scene_Initialize(void) {
-  ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
+  ((struct SeaOfTimeEventWork *)Ram_HeapSlots->fieldWork)->screenEffect = 256;
   if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime1) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;

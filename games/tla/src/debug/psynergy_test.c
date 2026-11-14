@@ -22,7 +22,7 @@
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "call.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "fixed_math.h"
 #include "system/vector3.h"
 #include "inventory.h"
@@ -418,7 +418,7 @@ void Actor_FallOverById(s32 actor, s32 angle);
 void Actor_DepartInRing(s32 actor);
 
 s32 Func_0200079c(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
 
   *(s32 *)(work + 428) = 0x100;
   work[3383] = 0;

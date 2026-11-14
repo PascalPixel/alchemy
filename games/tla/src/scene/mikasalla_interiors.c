@@ -18,7 +18,7 @@
 #include "scene_ids.h"
 #include "actor.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/event_inline.h"
 #include "module/scene/scene.h"
 #include "objcmd.h"
@@ -192,7 +192,7 @@ void MikasallaInteriors_TalkAboutFarShores(s32 actor) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x209;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors1) {
     if (gMainRoutineWork.entrance == 5)
@@ -274,7 +274,7 @@ void MikasallaInteriors_MeetGalahad(void) {
     Event_ShowMessage(18, 0);
     Event_SetFlag(FLAG_AREA_TEMP_40);
   } else {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    gFieldWork->message += 1;
     Event_ShowMessage(18, 0);
   }
   Event_SetFlag(0xa39);

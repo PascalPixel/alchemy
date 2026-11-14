@@ -28,7 +28,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   struct FieldPosition position;
   struct MapCell *sourceCell;
   struct MapCell *destinationCell;
-  struct EventWork *work;
+  struct FieldWork *work;
   u16 angle;
   s32 animation;
   s32 collisionFlags;
@@ -95,7 +95,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
       }
     }
   }
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collisionFlags & 3)
       work->blockedSteps++;
@@ -136,7 +136,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   s32 turn;
   struct Actor *first;
   struct Actor *second;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   sprite = object->sprite;
   rope = *(struct RopeWork **)&Ram_HeapSlots->unk84[6];
@@ -163,7 +163,7 @@ s32 Actor_CrossRope(struct Actor *object) {
     if (rope == NULL) {
       collisionFlags = 1;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
-      Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
+      Ram_HeapSlots->fieldWork = Ram_HeapSlots->fieldWork;
       goto done;
     }
     for (count = 0; count < 128; count++, node++) {
@@ -213,7 +213,7 @@ s32 Actor_CrossRope(struct Actor *object) {
     }
   }
 done:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collisionFlags & 3)
       work->blockedSteps++;
@@ -262,7 +262,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   s32 bestDistance;
   u16 angle;
   s32 count;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   sprite = object->sprite;
   argument = 1;
@@ -285,7 +285,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     if (tightrope == NULL) {
       collisionFlags = 1;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
-      Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
+      Ram_HeapSlots->fieldWork = Ram_HeapSlots->fieldWork;
     } else {
       for (count = 0; count < 128; count++, point++) {
         if (point->kind == 1) {
@@ -321,7 +321,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
       }
     }
   }
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collisionFlags & 3)
       work->blockedSteps++;
@@ -379,7 +379,7 @@ void Sand_JitterGrain(struct Actor *object) {
 /// accepts the argument, else posts event request 0x208b and returns 1 while
 /// flag 0x146 is clear.
 s32 Sand_CheckEndKeys(s32 arg) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   /* FAKEMATCH(pin): pressed held in r0, the register the early zero is returned
    * in. */
   register s32 pressed asm("r0") = 0;
@@ -394,7 +394,7 @@ s32 Sand_CheckEndKeys(s32 arg) {
     if (Actor_CheckBlockedFar(arg)) {
       Sound_PlayFar(SE_MENU_CANCEL);
     } else if (!GameFlag_Get(0x146)) {
-      work->unk166 = 0x208b;
+      work->psynergy = 0x208b;
       return 1;
     }
   }

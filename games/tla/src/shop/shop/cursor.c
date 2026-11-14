@@ -88,7 +88,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
 }
 
 void Shop_SaveAndTintFieldPalette(s32 layer) {
-  u8 *map = Ram_HeapSlots->eventWork;
+  u8 *map = Ram_HeapSlots->fieldWork;
   u8 *work = Ram_HeapSlots->block32;
   u8 *saved = work + 0xe00;
 
@@ -100,7 +100,7 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
 
 void Shop_RestoreFieldPalette(void) {
   BattleEffect_ApplyColorToTargetBufferFar(
-      (s32)Ram_HeapSlots->eventWork + 0x222, 1);
+      (s32)Ram_HeapSlots->fieldWork + 0x222, 1);
   PaletteFade_StartInterpolationFar(16);
 }
 

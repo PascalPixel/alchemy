@@ -46,7 +46,7 @@
 #include "field_event.h"
 #include "system/frame.h"
 #include "field_sprite.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/heap_release.h"
 #include "system/io_write.h"
 #include "module/field/field_effect.h"
@@ -162,9 +162,9 @@ static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 s32 __modsi3();
 
 s32 Scene_Initialize(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 0x204;
+  work->transition = 0x204;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_SHORTCUT_PILLAR, 72, 600);
     JupiterLighthouse_OpenDoor(0);
@@ -537,7 +537,7 @@ void CrackedTile_Fall(struct CellTarget__s158c *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

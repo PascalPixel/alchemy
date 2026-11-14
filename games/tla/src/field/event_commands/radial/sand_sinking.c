@@ -83,13 +83,13 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   }
 }
 
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 
 /// Sets up the sprite the Sand draws the sinking leader as: the leader's
 /// depth, priority, scale (three quarters on the world map) and place.
 void Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 position[3];
 
   EffectSprite_Init(sprite, 16, 30, 0x80000000, tiles);
@@ -97,7 +97,7 @@ void Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   sprite->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   sprite->color = 1;
   sprite->palette = 0;
-  if (event->controlMode == 3) {
+  if (event->mode == 3) {
     sprite->scaleX = Q16_ONE * 3 / 4;
     sprite->scaleY = Q16_ONE * 3 / 4;
   } else {

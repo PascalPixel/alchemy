@@ -61,7 +61,7 @@ const u8 *Scene_GetPlacements(void) {
 /// Before Blaze is cast on the central fire, the event work notes whether the
 /// party came in by entrance 10.
 void Naribwe_PrepareBlaze(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   u8 *flag;
 
   flag = work + 0xd38;
@@ -195,7 +195,7 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
 /// The party leader walks into one of Naribwe's doors, which opens with its
 /// cell animation, and leaves by the exit of the door's number.
 void Naribwe_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 index;
   u32 id;
 
@@ -238,7 +238,7 @@ void Naribwe_BlowAwayIvy(void) {
 /// Unused: writes the rope's posts (24 and 25) into the event work; nothing
 /// calls it.
 UNUSED void Naribwe_SetRopeWork(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
 
   work[0xd31] = 0;
   work[0xd32] = 24;
@@ -257,7 +257,7 @@ void Naribwe_HideStone(void) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x100;
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
   Actor_SetSpriteFlags(Actor_GetById(23), 0);

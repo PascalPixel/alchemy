@@ -24,11 +24,11 @@
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
 #include "call.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/iwram_call.h"
 #include "hanging_vine.h"
 #include "system/frame.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "map.h"
 #include "system/task.h"
 #include "actor_view.h"
@@ -233,10 +233,10 @@ void Func_02000314(void) {
   if (object != NULL && object->x != 0) {
     Scene_TalkToActor(4160);
   } else if (Event_GetFlag(0xf74) == 0) {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Message_ShowCentered(MsgIMSensing, 1);
-    work->unk15a = 1;
+    work->fieldMenu = 1;
   } else {
     Message_ShowCentered(MsgICanT, 1);
   }
@@ -438,9 +438,9 @@ s32 HangingVine_Place();
 
 s32 Scene_Initialize(void) {
   struct Actor *actor;
-  struct EventWork *work;
+  struct FieldWork *work;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = SCREEN_EFFECT;
+  gFieldWork->transition = SCREEN_EFFECT;
   gMainRoutineWork.retreatScene = (s32)&SceneId_GaiaRock1;
   gMainRoutineWork.retreatEntrance = 5;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
@@ -524,9 +524,9 @@ s32 Scene_Initialize(void) {
     if (actor != 0) {
       Actor_SetPosition(64, 0, 0);
     }
-    work = Ram_HeapSlots->eventWork;
-    actor = work->objects[16];
-    work->objects[64] = actor;
+    work = Ram_HeapSlots->fieldWork;
+    actor = work->actors[16];
+    work->actors[64] = actor;
     actor = Actor_GetById(8);
     actor->motionFlags = 0;
     MapGrid_CopyCellAttributes(11, 14, 1, 1, 13, actor->z >> 20);
@@ -547,7 +547,7 @@ s32 Scene_PrepareMap(void) {
 
 void Func_02000ab4(void) {
   if (gMainRoutineWork.renderMode == 2) {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
     s32 x = object->x / 0x100000;
@@ -557,7 +557,7 @@ void Func_02000ab4(void) {
     s32 code = cell->collisionCode;
 
     if (code >= 1 && code <= 230)
-      work->exit = code;
+      work->stepTrigger = code;
   }
 }
 

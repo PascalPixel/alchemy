@@ -19,7 +19,7 @@
 #include "system/ram_buffer.h"
 #include "field/field.h"
 #include "map.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/scene/dehkan_plateau.h"
 #include "module/scene/scene.h"
@@ -578,7 +578,7 @@ void Leader_SetCellShapeAt(s32 a, s32 b) {
 
 void Func_02000d78(u16 *list) {
   struct Actor *held = Leader_FindActorAhead();
-  void *work = Ram_HeapSlots->eventWork;
+  void *work = Ram_HeapSlots->fieldWork;
   u8 *shapeGrid = gMapShapeGrid;
 
   if (held == NULL) {
@@ -1013,10 +1013,11 @@ extern s32 gDehkanPlateau_CrackZ;
 #define SCENE(name) ((s32)&SceneId_##name)
 
 // Steps onto a listed cell in rooms 1, 2, 3 and 5 (SceneId_DehkanPlateau1 to
-// Room5): either falls through to exit work->exit or opens the cell and sets
-// its flag. cellX is reused for the doubled index and the fall's frame count.
+// Room5): either falls through to exit work->stepTrigger or opens the cell and
+// sets its flag. cellX is reused for the doubled index and the fall's frame
+// count.
 void DehkanPlateau_StepOnCrack(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 cellX = ((leader->x >> 20) << 1) + 1;
   s32 cellZ = ((leader->z >> 20) << 1) + 1;
@@ -1024,20 +1025,20 @@ void DehkanPlateau_StepOnCrack(void) {
   u16 *record, *next;
 
   if (gMainRoutineWork.scene == SCENE(DehkanPlateau1)) {
-    n = work->exit - 11;
-    flag = work->exit + 0x235;
+    n = work->stepTrigger - 11;
+    flag = work->stepTrigger + 0x235;
     record = &gDehkanPlateau_Room1Cracks[n][1];
   } else if (gMainRoutineWork.scene == SCENE(DehkanPlateau2)) {
-    n = work->exit - 14;
-    flag = work->exit + 0x232;
+    n = work->stepTrigger - 14;
+    flag = work->stepTrigger + 0x232;
     record = &gDehkanPlateau_Room2Cracks[n][1];
   } else if (gMainRoutineWork.scene == SCENE(DehkanPlateau3)) {
-    n = work->exit - 12;
-    flag = work->exit + 0x234;
+    n = work->stepTrigger - 12;
+    flag = work->stepTrigger + 0x234;
     record = &gDehkanPlateau_Room3Cracks[n][1];
   } else if (gMainRoutineWork.scene == SCENE(DehkanPlateau5)) {
-    n = work->exit - 18;
-    flag = work->exit + 0x22e;
+    n = work->stepTrigger - 18;
+    flag = work->stepTrigger + 0x22e;
     record = &gDehkanPlateau_Room5Cracks[n][1];
     if (GameFlag_Get(FLAG_AREA_TEMP_3A))
       gDehkanPlateau_Room5Cracks[4][3] = 3;
@@ -1153,10 +1154,10 @@ void DehkanPlateau_StepOnCrack(void) {
       leader->y += -0x9999;
       wait(1);
     }
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+    gFieldWork->transition = 0x209;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Import_EventSetExitRequest(work->exit);
+    Import_EventSetExitRequest(work->stepTrigger);
   } else {
     s32 x, y;
 
@@ -1315,7 +1316,7 @@ void Scene_RunIfHeld(void) {
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }
 
 void Func_02002124(void) {
-  struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
+  struct EventWorkCbc *work = Ram_HeapSlots->fieldWork;
   struct Actor *active;
 
   active = work->active;
@@ -1689,7 +1690,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
     leader->y -= 0x9999;
     wait(1);
   }
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(23);
@@ -1762,7 +1763,7 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -1884,7 +1885,7 @@ void DehkanPlateau_TakePoundCube(void) {
 }
 
 void DehkanPlateau_LeaveRoom(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1893,7 +1894,7 @@ void DehkanPlateau_LeaveRoom(void) {
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(((struct EventWork *)work)->exit);
+  Import_EventSetExitRequest(((struct FieldWork *)work)->stepTrigger);
 }
 
 s32 Scene_Initialize(void) {
@@ -2151,7 +2152,7 @@ DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_0200353c, 3, 8, 67, 3, 66, 69)
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_020035ec, 13, 5, 77, 0, 65, 65)
 
 void DehkanPlateau_InitializeRoom4(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   DehkanPlateau_HideRoom4Actors();
   if (GameFlag_Get(0x86c) != 0) {
@@ -2195,7 +2196,7 @@ void Func_02003764(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -2245,7 +2246,7 @@ loop:
   leader->bounce = Q16_ONE / 4;
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Event_End();
 }
 
@@ -2253,7 +2254,7 @@ void DehkanPlateau_InitializeRoom5(void) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 entrance;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   owner->priorityFlags |= 32;
   if (GameFlag_Get(0x878) == 0) {
     Func_02003a30();
@@ -2313,7 +2314,7 @@ void Func_02003a30(void) {
 }
 
 void DehkanPlateau_InitializeRoom6(void) {
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (GameFlag_Get(95) != 0)
     GameFlag_Set(FLAG_SCENE_TEMP_09);

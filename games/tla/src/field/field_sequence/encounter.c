@@ -59,7 +59,7 @@ s32 FlagEntries_GetValue(s32 flag) {
 }
 
 void Encounter_SelectMapZones(s32 search) {
-  struct EventWorkView *work = Ram_HeapSlots->eventWork;
+  struct EventWorkView *work = Ram_HeapSlots->fieldWork;
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
   u8 *out = work->settings;
@@ -139,7 +139,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   /* FAKEMATCH(barrier): an empty asm reading pick before it is set. */
   asm("" : : "l"(pick));
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (GameFlag_Get(351) == 0) {
     if (GameFlag_Get(352) != 0 || GameFlag_Get(353) != 0)
       return 0;
@@ -197,7 +197,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 #define Scene_GetArea ((s32 (*)(s32))Scene_GetArea)
 
 s32 Encounter_RollTerrain(u32 index, s32 steps) {
-  u8 *table = (u8 *)Ram_HeapSlots->eventWork + 0x18c;
+  u8 *table = (u8 *)Ram_HeapSlots->fieldWork + 0x18c;
 
   return Encounter_CountStepsAndSelectFormation(table[index], steps);
 }

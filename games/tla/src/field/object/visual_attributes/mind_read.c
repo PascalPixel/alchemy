@@ -24,7 +24,7 @@
 #include "debug.h"
 #include "field/field_psynergy_work.h"
 #include "graphics/display_transition.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/scene.h"
 #include "macros.h"
 
@@ -682,7 +682,7 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   s32 dz;
   struct MainRoutineWork *party;
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   party = &gMainRoutineWork;
   actor = ObjectTable_Get(party->currentOwner);
   if (*(s8 *)(work + 0xca5) != 0) {
@@ -729,7 +729,7 @@ void FieldPsynergy_Reveal(void) {
   s32 frame;
 
   BattleEffect_RunBusyWaitDelay__f0dd820(6);
-  event = Ram_HeapSlots->eventWork;
+  event = Ram_HeapSlots->fieldWork;
   ScreenTransition_InitializeBattleEffectState(FIELD_PSYNERGY_REVEAL);
   transition = Ram_HeapSlots->screenTransition;
   caster = scene->mainObject;
@@ -771,7 +771,7 @@ void FieldPsynergy_Reveal(void) {
 void FieldPsynergy_EndReveal(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScreenTransitionState *transition = Ram_HeapSlots->screenTransition;
-  struct RevealEvent *event = Ram_HeapSlots->eventWork;
+  struct RevealEvent *event = Ram_HeapSlots->fieldWork;
   void *pending;
 
   if (event->active != 0) {
@@ -1684,7 +1684,7 @@ void FieldPsynergy_Ply(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/* VIEW(f0de21c): tag struct EventWork as struct EventWork__f0de21c;
+/* VIEW(f0de21c): tag struct FieldWork as struct EventWork__f0de21c;
  * event_work.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
  * games/tla/src/field/object/visual_attributes/mind_read.c:1706: structure has
@@ -1708,7 +1708,7 @@ s32 MapGrid_IsCloakCell__mind_read(s32 x, s32 z,
 /// A task of Cloak: when the controlled character does not
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
 void FieldEffect_CheckCloakTile(void) {
-  struct EventWork__f0de21c *event = Ram_HeapSlots->eventWork;
+  struct EventWork__f0de21c *event = Ram_HeapSlots->fieldWork;
   struct OwnerObject *owner = ObjectTable_Get(Party_GetLeaderActor());
 
   if (MapGrid_IsCloakCell(owner->x, owner->z, owner->layer) == 0)

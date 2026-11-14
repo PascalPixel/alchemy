@@ -67,7 +67,7 @@ void Func_02001d30(struct GabombaStatueChamberObject *object);
 void FieldPsynergy_RunHandler(s32 type);
 void Func_02001ea8(void);
 
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 
 void Actor_MoveToObject(s32 actor, s32 target);
 

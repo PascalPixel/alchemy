@@ -52,7 +52,7 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "field/field_coordinate.h"
 #include "module/field/field.h"
@@ -355,7 +355,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
 #include "shared/block_clear_cells.h"
 
 void MagmaRockInside_PausePlatform(struct Actor *object) {
-  u8 *work = (u8 *)Ram_HeapSlots->eventWork;
+  u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
   u8 *state = &object->movementState;
 
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
@@ -469,7 +469,7 @@ void MagmaRockInside_UnblockMovedPillar(void) {
   u8 *work;
   s16 scene;
 
-  work = (u8 *)Ram_HeapSlots->eventWork;
+  work = (u8 *)Ram_HeapSlots->fieldWork;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_MagmaRockInside2)
     Actor_LiftTargetBlock(gMagmaRockInside_Room2Pillars);
@@ -486,7 +486,7 @@ void MagmaRockInside_UnblockMovedPillar(void) {
 
 void MagmaRockInside_BlockMovedPillar(void) {
   struct Actor *object =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 0xcbc);
   /* FAKEMATCH(pin): copy in r5. */
   register struct Actor *copy asm("r5");
   s32 scene;
@@ -758,7 +758,7 @@ next:
     goto end;
   id = 8;
 inner:
-  other = ((struct ActorTable *)Ram_HeapSlots->eventWork)->actors[id];
+  other = ((struct ActorTable *)Ram_HeapSlots->fieldWork)->actors[id];
   if (other->script == 0)
     goto skip;
   if (source->x >> 20 == other->x >> 20 && source->y >> 20 == other->y >> 20 &&
@@ -1393,7 +1393,7 @@ loop:
 }
 
 void MagmaRockInside_TakeFlame(void) {
-  u8 *work = (u8 *)Ram_HeapSlots->eventWork;
+  u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
 
   *(work + 0xd38) = 1;
   if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
@@ -1418,7 +1418,7 @@ DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInside_LightTorch, 0x303, 21, 600,
 struct Actor;
 
 void MagmaRockInside_GrowFlame(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   struct Actor *actor;
   struct Actor *other;
@@ -1471,7 +1471,7 @@ void MagmaRockInside_GrowFlame(void) {
 }
 
 void MagmaRockInside_PutOutFlames(void) {
-  if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
+  if (*(s8 *)((u8 *)Ram_HeapSlots->fieldWork + 0xd30) == -1) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_04))
       Actor_SetPosition(22, 0, 0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_03))
@@ -1549,7 +1549,7 @@ void MagmaRockInside_TrackStepCell(void) {
       gMagmaRockInside_StepCellX, gMagmaRockInside_StepCellZ);
   if (gMainRoutineWork.scene != (s32)&SceneId_MagmaRockInside8)
     return;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   value = MapCell_Get(2, x, z) >> 8;
   if (value != 0) {
     /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
@@ -1657,7 +1657,7 @@ fadeOut:
 // clears (MagmaRockInside_StampStepCell), redraws the marker in the row the
 // event work's counter gives, sets flag 0x200 and the counter's flag (312 on).
 void MagmaRockInside_StepOnMarker(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 cell, row = 54;
 
@@ -1688,7 +1688,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   struct Actor *other;
   s32 i;
 
-  object = Actor_Get(((s8 *)Ram_HeapSlots->eventWork)[0xd30]);
+  object = Actor_Get(((s8 *)Ram_HeapSlots->fieldWork)[0xd30]);
   FieldActor_SetSpriteColor(object, 0);
   Event_PlaySound(SE_WHOOSH);
   i = 0;
@@ -1733,7 +1733,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
 }
 
 void MagmaRockInside_PutOutTabletFlame(void) {
-  if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
+  if (*(s8 *)((u8 *)Ram_HeapSlots->fieldWork + 0xd30) == -1) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_05))
       Actor_SetPosition(11, 0, 0);
   }
@@ -2024,7 +2024,7 @@ column:
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK gFieldWork
 
 s32 Actor_MoveToObject();
 
@@ -2040,7 +2040,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Event_End();
   } else {
     FieldEvent_SetMessageId((s32)MsgBlazeTabletInscription);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.7);
     Actor_SetSpeed(5, 0.7);
     Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
@@ -2308,7 +2308,7 @@ static __inline__ void Lower(s32 id, s32 height) {
 s32 Scene_Initialize(void) {
   s32 i;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 516;
   if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRockInside1) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath1, 768);

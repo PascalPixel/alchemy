@@ -367,7 +367,7 @@ void Party_RemoveMemberRestored(s32 owner);
 
 struct Actor;
 
-// The field event work's pending Psynergy request (eventWork + 0x166).
+// The field event work's pending Psynergy request (fieldWork + 0x166).
 struct CloakEvent {
   u8 unk000[0x166];
   s16 psynergyRequest;
@@ -659,7 +659,7 @@ struct OrbitingParticleChild {
   u8 flags;
 };
 
-// The field event work's Reveal state (eventWork + 0xca4).
+// The field event work's Reveal state (fieldWork + 0xca4).
 struct RevealEvent {
   u8 unk000[0xca4];
   s8 active;   // Reveal is showing

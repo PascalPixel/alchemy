@@ -434,7 +434,7 @@ extern volatile u16 gTreasureIsle_BgColors[];
 // A task: cycles four colours of a background and an object palette every
 // eight frames, saving both palettes the first time.
 void TreasureIsle_CycleWaterColors(void) {
-  struct TreasureIsleEventWork *work = Ram_HeapSlots->eventWork;
+  struct TreasureIsleEventWork *work = Ram_HeapSlots->fieldWork;
   s32 phase;
   s32 i;
   s32 busy;
@@ -490,7 +490,7 @@ struct TreasureIsleEventWork__s0cf4 {
 s32 Scene_Initialize(void) {
   s32 i;
 
-  ((struct TreasureIsleEventWork__s0cf4 *)Ram_HeapSlots->eventWork)->route =
+  ((struct TreasureIsleEventWork__s0cf4 *)Ram_HeapSlots->fieldWork)->route =
       0x204;
   Tightrope_Initialize();
   if (gMainRoutineWork.scene == (s32)&SceneId_TreasureIsle1) {

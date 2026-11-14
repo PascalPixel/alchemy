@@ -15,7 +15,7 @@
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"
 
@@ -49,7 +49,7 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 #include "flags.h"
 #include "shared/tables.h"
 #include "system/field_effect.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -214,9 +214,9 @@ void Contigo_StartSlowPaletteCycle(void) {
 }
 
 void Contigo_StopPaletteCycle(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 256;
+  work->transition = 256;
   Task_Remove(PaletteCycle_Fade);
 }
 
@@ -243,13 +243,13 @@ s32 List_CountEntries(u16 *list) {
 void Teleport_PlayWhirl(void);
 
 void Func_02000328(void) {
-  struct ContigoEventWork *work = Ram_HeapSlots->eventWork;
+  struct ContigoEventWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
   saved = work->value1ac;
   BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
+  ((struct ContigoEventWork *)Ram_HeapSlots->fieldWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Contigo_StartFastPaletteCycle();
@@ -383,7 +383,7 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 s32 Func_020006d0(struct Actor *self) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   u8 *state;
   u32 mode;
   s8 *effect;
@@ -860,14 +860,14 @@ struct TalkActor {
 };
 
 void Func_02001094(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_GetById(14));
   s16 angle = object->angle;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActorById(14, gMainRoutineWork.currentOwner, 0);
     if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo203);
@@ -884,7 +884,7 @@ void Func_02001094(void) {
       Event_SetMessageId((s32)MsgContigo49);
   }
   Event_ShowMessageAndWait(14, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Event_End();
@@ -898,14 +898,14 @@ struct ContigoObject {
 };
 
 void Func_0200118c(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ContigoObject *object = ((struct ContigoObject *)Actor_GetById(15));
   s16 angle = object->angle;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (event->unk166 == 0) {
+  if (event->psynergy == 0) {
     Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
     if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo143);
@@ -918,7 +918,7 @@ void Func_0200118c(void) {
       Event_SetMessageId((s32)MsgContigo50);
   }
   Event_ShowMessageAndWait(15, 0);
-  if (event->unk166 == 0)
+  if (event->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Event_End();
@@ -1002,14 +1002,14 @@ void Func_020014b4(void) {
 
 void Func_020014d4(void) {
   if (!GameFlag_Get(62)) {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
     Event_ResolvePendingActions(1);
     Actor_SetHorizontalPositionWithTerrain(16, 664 << 16, 952 << 16);
     wait(1);
     Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
-    work->unk16a = 200;
+    work->raisedTrigger = 200;
     Event_End();
   }
 }
@@ -1251,7 +1251,7 @@ void Func_02001abc(void) {
     Event_LeaveFor(509, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 19);
   } else {
-    ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
+    ((struct ContigoEventCount *)Ram_HeapSlots->fieldWork)->refusals++;
     Event_ShowMessageAndWait(14, 0);
   }
   Event_End();
@@ -1283,7 +1283,7 @@ void Func_02001b84(void) {
     Event_LeaveFor(507, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 18);
   } else {
-    ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
+    ((struct ContigoEventCount *)Ram_HeapSlots->fieldWork)->refusals++;
     Event_ShowMessageAndWait(8, 0);
   }
   Event_End();
@@ -1483,10 +1483,10 @@ void Func_02001d50(void) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetModeById(2, 3);
     Event_ShowMessageAndWait(2, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(owner);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Actor_SetModeById(2, 4);
     Event_ShowMessageAndWait(2, 0);
   }
@@ -1546,11 +1546,11 @@ void Func_02001d50(void) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(owner);
     Contigo_Jump(1, 264, 20);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
   }
   Actor_FaceDirection(5, FACING_WEST, 0);
@@ -1757,10 +1757,10 @@ void Func_02001d50(void) {
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 9, 0);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Actor_SetModeById(9, 4);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 9, 0);
   }
@@ -1936,10 +1936,10 @@ void Func_02002e18(void) {
       Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
       Actor_SetModeById(2, 3);
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
     } else {
       Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
       Actor_SetModeById(2, 4);
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
     }
@@ -1953,10 +1953,10 @@ void Func_02002e18(void) {
       Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
       Actor_SetModeById(0, 3);
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
     } else {
       Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
-      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+      gFieldWork->message++;
       Actor_SetModeById(0, 4);
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
     }
@@ -2138,7 +2138,7 @@ struct ContigoEventWork {
 };
 
 void Contigo_InitializeRoom2(void) {
-  ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
+  ((struct ContigoEventWork *)Ram_HeapSlots->fieldWork)->value1ac = 0x209;
   if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
       Func_02001d50();
@@ -2191,7 +2191,7 @@ void Contigo_InitializeRoom3(void) {
   s8 *prize;
   s32 item;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Func_02001c44(13);
   Func_02001c44(16);
   Func_02001c44(17);

@@ -15,7 +15,7 @@
 #include "scene_tables.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/event_inline.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -37,9 +37,9 @@ void ChampaSanctum_ServeAcrossTheCounter(void) { Sanctum_Run(); }
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->screenEffect = 513;
+  work->transition = 513;
   Actor_SetSpritePriority(8, 2);
   Actor_GetById(8)->collisionFlags |= 4;
   Actor_GetById(8)->collisionFlags |= 16;

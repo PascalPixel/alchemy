@@ -9,7 +9,7 @@
 #include "field_event.h"
 #include "scene_call.h"
 #include "field/event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
@@ -336,9 +336,9 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
 #if !TLA_PATCH_1
-  ((struct EventTransition *)Ram_HeapSlots->eventWork)->type = 516;
+  ((struct EventTransition *)Ram_HeapSlots->fieldWork)->type = 516;
 #else
-  ((struct EventTransition *)Ram_HeapSlots->eventWork)->type = 513;
+  ((struct EventTransition *)Ram_HeapSlots->fieldWork)->type = 513;
 #endif
   if (party->scene != (s32)&SceneId_ChampaCliffCaves1)
     Actor_GetById(party->currentOwner)->priorityFlags |= 32;
@@ -476,10 +476,10 @@ void Func_02000804(s32 actor) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(8, 0, 5);
-    ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+    ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
   } else {
     Event_Wait(35);
-    ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+    ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
     Event_ShowMessageThenWait(8, 0, 5);
   }
   Motion_SetModeAndWaitAnimation(8, 3);
@@ -569,10 +569,10 @@ void Func_02000a34(s32 value) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(8, 0, 5);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Event_Wait(40);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(8, 0, 5);
   }
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x2000, 0);
@@ -705,7 +705,7 @@ void Func_02000f48(s32 actor) {
 
   if ((Actor_GetById(gMainRoutineWork.currentOwner)->x >> 20) <= 41)
     goto first;
-  ((struct EventFlags685 *)Ram_HeapSlots->eventWork)->field15a = 1;
+  ((struct EventFlags685 *)Ram_HeapSlots->fieldWork)->field15a = 1;
   return;
 remove:
   PartyInventory_Remove(item);
@@ -888,12 +888,12 @@ void Func_0200115c(void) {
     Actor_SetModeById(8, 1);
     Actor_GetById(8)->facing = 0x8000;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
-    ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+    ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
     Actor_WalkByAndWaitById(4, -16, 0);
     Event_Wait(5);
   } else {
     Event_Wait(25);
-    ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
+    ((struct EventCounters *)Ram_HeapSlots->fieldWork)->count++;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
@@ -995,7 +995,7 @@ void Func_02001774(void) {
   Event_ShowMessageThenWait(11, 0, 5);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageThenWait(8, 0, 20);
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   work->frames = 40;
   work->type = 521;
   Event_FinishScreenTransition();
@@ -1129,13 +1129,13 @@ void Func_02001868(void) {
     Motion_SetModeAndWaitAnimation(6, 3);
     Event_Wait(10);
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 6, 0, 5);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
     Actor_FaceDirectionById(6, FACING_SOUTHEAST);
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(6, 4);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 6, 0, 5);
   }
   Actor_ArmCallback(15, FACING_EAST, 0);
@@ -1269,10 +1269,10 @@ void Func_02001868(void) {
     Event_Wait(10);
     Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     Event_ShowMessageThenWait(11, 0, 5);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
   } else {
     Event_Wait(35);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    gFieldWork->message += 2;
     Event_ShowMessageThenWait(8, 0, 5);
     Actor_FaceDirectionById(11, FACING_WEST);
     Event_Wait(5);
@@ -1334,12 +1334,12 @@ void Func_02001868(void) {
     Motion_SetModeAndWaitAnimation(15, 3);
     Event_Wait(10);
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 15, 0, 5);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
   } else {
     Event_Wait(35);
     Motion_SetModeAndWaitAnimation(15, 3);
     Event_Wait(10);
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    gFieldWork->message++;
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 15, 0, 5);
   }
   Actor_FaceDirection(8, 0x5000, 0);

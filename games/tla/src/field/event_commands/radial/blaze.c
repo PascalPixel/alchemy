@@ -106,7 +106,7 @@ void FieldPsynergy_Blaze(void) {
 
   work = HeapSlot_Alloc(92, sizeof(struct SprayWork));
   scene = Ram_HeapSlots->effectWork;
-  event = Ram_HeapSlots->eventWork;
+  event = Ram_HeapSlots->fieldWork;
   caster = scene->mainObject;
   look = 0;
   object = scene->child;
@@ -309,7 +309,7 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   struct Actor *other;
   s32 i;
 
-  s8 *work = Ram_HeapSlots->eventWork;
+  s8 *work = Ram_HeapSlots->fieldWork;
   result = 0;
   if (work[394] != EVENT_MODE_NO_CELL_TEST) {
     if (MapGrid_CheckCollisionAtFar(object->x, object->z, 0,
@@ -352,7 +352,7 @@ s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 /// off sand or gMainRoutineWork's byte 707 is set, or while it climbs as sand
 /// it leaves a climbable cell or faces one that is not.
 void FieldPsynergy_WatchSandGround(void) {
-  struct CueEvent *event = Ram_HeapSlots->eventWork;
+  struct CueEvent *event = Ram_HeapSlots->fieldWork;
   u8 *party = gMainRoutineWork__f0e3d04;
   struct Actor *object = ObjectTable_Get(*(s32 *)(party + 532));
   s32 reason = 0;

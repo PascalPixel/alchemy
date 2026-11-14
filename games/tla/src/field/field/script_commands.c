@@ -1615,7 +1615,7 @@ void ScriptObject_SetValue(struct ScriptObject *object, s32 value) {
 
 #include "system/input.h"
 #include "system/frame.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
@@ -1745,8 +1745,8 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
     }
   }
 
-  if (Ram_HeapSlots->eventWork != NULL) {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+  if (Ram_HeapSlots->fieldWork != NULL) {
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     if (collision & 3)
       work->blockedSteps++;
@@ -1788,7 +1788,7 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
   }
 
   pressed = 0;
-  if (Ram_HeapSlots->eventWork == NULL)
+  if (Ram_HeapSlots->fieldWork == NULL)
     return 0;
   if ((gInput.pressed & gMainRoutineWork.keys234) ||
       (gInput.pressed & gMainRoutineWork.keys230) ||

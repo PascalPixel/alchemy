@@ -20,7 +20,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/event_commands.h"
 #include "module/scene/scene.h"
 #include "system/ram_buffer.h"
@@ -205,7 +205,7 @@ void AlhafranCave_CloseWayToJail(void) {
 }
 
 void AlhafranCave_CastSand(void) {
-  struct AlhafranCaveEventWork *work = Ram_HeapSlots->eventWork;
+  struct AlhafranCaveEventWork *work = Ram_HeapSlots->fieldWork;
 
   work->valueD4a = 2;
 }
@@ -239,7 +239,7 @@ s32 AlhafranCave_DrawCrateSprite(void) {
 
 s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
-  ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
+  ((struct AlhafranCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac = 0x201;
   if (gMainRoutineWork.scene == (s32)&SceneId_AlhafranCave)
     AlhafranCave_SetUpCave();
   else if (gMainRoutineWork.scene == (s32)&SceneId_AlhafraJail)
@@ -249,15 +249,15 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_AlhafranCave) {
-    ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
+    ((struct AlhafranCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
         0x201;
     AlhafranCave_SetUpCave();
   } else if (scene == (s32)&SceneId_AlhafraJail) {
     if (gMainRoutineWork.entrance == 8 || gMainRoutineWork.entrance == 9)
-      ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
+      ((struct AlhafranCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
           0x209;
     else
-      ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
+      ((struct AlhafranCaveEventWork *)Ram_HeapSlots->fieldWork)->value1ac =
           0x201;
     AlhafranCave_SetUpJail();
   }
@@ -352,7 +352,7 @@ void AlhafranCave_SetUpJail(void) {
   Call4((void (*)())EffectSprite_InitFromSlot94, (s32)data, 8, 15, 0x40000000);
   FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
-    work = Ram_HeapSlots->eventWork;
+    work = Ram_HeapSlots->fieldWork;
 
     work->valueD4c = 3;
   }

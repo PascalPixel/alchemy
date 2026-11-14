@@ -1,6 +1,6 @@
 /// The party takes 10 damage from a fall; who goes down is noted.
 void Party_TakeFallDamage(void) {
-  struct MarsLighthouseEventWork *work = Ram_HeapSlots->eventWork;
+  struct MarsLighthouseEventWork *work = Ram_HeapSlots->fieldWork;
   s32 leader = FieldParty_GetLeaderActor();
   s32 count;
   s32 i;

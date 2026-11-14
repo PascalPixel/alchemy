@@ -24,7 +24,7 @@ struct ActionDescriptor *Scene_FindActorPlacement(s32 id) {
 
   for (i = 0; i < 4; i++) {
     entry =
-        ((struct ActionDescriptorTables *)Ram_HeapSlots->eventWork)->tables[i];
+        ((struct ActionDescriptorTables *)Ram_HeapSlots->fieldWork)->tables[i];
     if (entry == NULL)
       continue;
     if (id <= 7) {
@@ -72,7 +72,7 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 // XXX: what kinds 8 and 9 are; the triggers of the scenes that use them would
 // settle it.
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerView *trigger = work->triggers;
   s32 flags;
   u32 facing = ObjectTable_Get(gMainRoutineWork.currentOwner)->facing;
@@ -205,7 +205,7 @@ s32 Scene_TalkToActor(s32 id) {
   paused = 0;
   busyFlags = 0;
   silent = id & 0x1000;
-  event = Ram_HeapSlots->eventWork;
+  event = Ram_HeapSlots->fieldWork;
   id &= 0xfff;
   found = 0;
   object = Actor_GetById(id);
@@ -303,7 +303,7 @@ s32 Scene_TalkToActor(s32 id) {
         goto done;
       }
       if (type == 129) {
-        work = Ram_HeapSlots->eventWork;
+        work = Ram_HeapSlots->fieldWork;
         ObjectEvent_Spring(index);
         if (flag != -1)
           gMainRoutineWork.pendingDjinnEvent = flag | 0x1000;
@@ -323,7 +323,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (Actor_GetSpriteShape(index)) {
         FieldMessage_ShowFar((s32)&MsgKey0e1c, 1);
         if (Party_FindOwnerWithActionFar(136) != -1)
-          ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
+          gFieldWork->fieldMenu = 1;
         goto done;
       }
       if (contents & 0x8000) {
@@ -513,7 +513,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 
   event = Scene_FindTrigger(2, value);
   handled = -1;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (event != NULL && event->u.result != 0) {
     if (event->flags & 0x200)
       work->blockedSteps = 0;
@@ -561,7 +561,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// then the kind 9 event for keys (messages under 0x10000, otherwise a routine
 /// called with keys and the target). Always returns 0.
 s32 Field_RunPushCell(s32 keys) {
-  struct EventWorkView *work = Ram_HeapSlots->eventWork;
+  struct EventWorkView *work = Ram_HeapSlots->fieldWork;
   s32 owner = gMainRoutineWork.currentOwner;
   struct SceneEventEntry *event;
   s32 target;

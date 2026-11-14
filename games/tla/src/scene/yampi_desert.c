@@ -184,7 +184,7 @@ static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
 #include "system/main_routine_work.h"
 #include "map.h"
 #include "system/field_effect.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "flag_call.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
@@ -904,7 +904,7 @@ step_5:
   if (i <= 5)
     goto step_5;
   Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->screenEffect = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(4);
@@ -1299,7 +1299,7 @@ void YampiDesert_RippleFollowsScorpion(void) {
   struct Actor *object;
   s16 scene;
 
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->unk16a =
+  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->unk16a =
       gYampiDesert_RaisedEvent;
   if (gYampiDesert_SandRipple != 0) {
     scene = gMainRoutineWork.scene;
@@ -1388,7 +1388,7 @@ void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
 
 void YampiDesert_UpdateSandSlide(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 speed = 0x18000;
   struct MapWork *map;
@@ -1529,7 +1529,7 @@ void YampiDesert_TrackLeaderInPitArea(void) {
 }
 
 void YampiDesert_PlayScorpionRumble(void) {
-  if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 358) == 0 &&
+  if (*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 358) == 0 &&
       gFrameCount % 5 == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -1539,7 +1539,7 @@ void YampiDesert_PlayScorpionRumble(void) {
 }
 
 void YampiDesert_ClearRaisedEvent(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->unk16a = 0;
+  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->unk16a = 0;
   gYampiDesert_RaisedEvent = 0;
 }
 
@@ -1972,7 +1972,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   actor8->gravity = Q16_ONE / 2;
   actor8->bounce = 0;
   wait(1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
+  gFieldWork->transition = 0x203;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -2246,7 +2246,7 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
 
 // Room 10's setup.
 void YampiDesert_SetUpRoom10(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->screenEffect = 0x209;
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   if (gMainRoutineWork.entrance == 1 && !GameFlag_Get(0x88c)) {
     YampiDesert_LandAndFightKingScorpion();
@@ -2264,11 +2264,11 @@ void YampiDesert_SetUpRoom10(void) {
 }
 
 void YampiDesert_SetUpRoom11(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->screenEffect = 0x204;
 }
 
 void YampiDesert_SetUpRoom12(void) {
-  ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  ((struct SceneEventWork *)Ram_HeapSlots->fieldWork)->screenEffect = 0x204;
   Scene_QueueMusic(SE_137);
   YampiDesert_PlaceStakes(gYampiDesert_Room12Stakes);
   YampiDesert_SetUpRoom12SlideActors();

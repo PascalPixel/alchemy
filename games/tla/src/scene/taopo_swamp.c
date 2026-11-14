@@ -17,7 +17,7 @@
 #include "system/frame.h"
 #include "system/vector3.h"
 #include "version.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
@@ -1023,7 +1023,7 @@ void TaopoSwamp_CycleDjinniVents(void) {
   }
   if ((u32)(timer - 251) <= 178 && Event_GetFlag(0xa6e) && !Event_GetFlag(59) &&
       !Event_GetFlag(FLAG_AREA_TEMP_10))
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 100;
+    gFieldWork->raisedTrigger = 100;
   Vents_AdvanceCounter(480);
 }
 
@@ -1208,7 +1208,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 513;
   if (scene == (s32)&SceneId_TaopoSwamp2) {
     gMainRoutineWork.retreatScene = (s32)&SceneId_TaopoSwamp1;
     gMainRoutineWork.retreatEntrance = 1;
@@ -1396,7 +1396,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  s32 *effect = (s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac);
+  s32 *effect = (s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac);
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 

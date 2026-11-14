@@ -173,7 +173,7 @@ void Func_02000418(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct LandingEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
+  ((struct LandingEventWork *)Ram_HeapSlots->fieldWork)->field1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -210,7 +210,7 @@ loop:
   leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  ((struct LandingEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;
+  ((struct LandingEventWork *)Ram_HeapSlots->fieldWork)->field1ac = 0x204;
   Event_End();
 }
 
@@ -584,7 +584,7 @@ extern struct MapCell gMapCellBuffer[];
 void Func_020010f4(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct AnkohlRuinsEventWork *work =
-      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
+      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->fieldWork;
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
   struct Actor *companion = work->unk1cc;
   struct MapCell *ground;
@@ -826,7 +826,7 @@ fill:
 
 void AnkohlRuins_CountSandTime(void) {
   struct AnkohlRuinsEventWork *work =
-      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
+      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->fieldWork;
 
   if (Event_GetFlag(0x104) == 0) {
     if (++gAnkohlRuins_SandTimer >= gAnkohlRuins_SandTime) {
@@ -1073,11 +1073,11 @@ DEFINE_ANKOHL_RUINS_OPEN_ONCE(Func_02001f04, 0x9e3, 2, 83, 1, 23)
 // 0x201.
 void Func_02001f7c(void) {
   struct Actor *rider =
-      ((struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork)->unk1cc;
+      ((struct AnkohlRuinsEventWork *)Ram_HeapSlots->fieldWork)->unk1cc;
   struct Actor *raft = Actor_GetById(9);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct AnkohlRuinsEventWork *work =
-      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
+      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->fieldWork;
   s32 column;
   s32 row;
 

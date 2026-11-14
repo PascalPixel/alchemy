@@ -124,7 +124,7 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
 /// (264, 16).
 void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 leader = Party_GetLeaderActor();
-  u8 *state = Ram_HeapSlots->eventWork;
+  u8 *state = Ram_HeapSlots->fieldWork;
   u8 *object;
   s32 x;
   s32 z;

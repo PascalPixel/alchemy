@@ -11,7 +11,7 @@
 #include "flags.h"
 #include "system/main_routine_work.h"
 #include "field/field.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "map.h"
 #include "module/field/field.h"
@@ -35,7 +35,7 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "system/input.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "bg_scroll.h"
 #include "../field/object/set_sprite_priority.c"
@@ -916,7 +916,7 @@ extern u32 gData_02003dcc[];
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 speed = 0x18000;
   s32 cue = 539;
   struct Actor *other, *launcher;
@@ -964,7 +964,7 @@ void Func_02001908(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      ((struct EventWork *)work)->unk16a = 200;
+      ((struct FieldWork *)work)->raisedTrigger = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
@@ -998,7 +998,7 @@ void Func_02001908(struct Actor *shot) {
 // frames in its action parameter, and at 240 launches a shot 8 pixels ahead
 // along its angle with a dust effect below it.
 void Func_02001b54(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
@@ -1039,7 +1039,7 @@ void Func_02001b54(struct Actor *object) {
 }
 
 void Func_02001ca4(void) {
-  struct AirsRockEventWork *work = Ram_HeapSlots->eventWork;
+  struct AirsRockEventWork *work = Ram_HeapSlots->fieldWork;
 
   Actor_LiftTargetBlock(gData_02003d94);
   Func_02000468(work->valueCbc);
@@ -1055,7 +1055,7 @@ extern void Func_02003cc0__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 
 void Func_02001cc8(void) {
   struct Actor *object =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 0xcbc);
   s32 x, z;
 
   Event_Start();
@@ -1572,7 +1572,7 @@ s32 Scene_Initialize(void) {
   s32 *beam;
   volatile struct DmaRegisters *dma;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
+  gFieldWork->transition = 516;
   gMainRoutineWork.retreatScene = (s32)&SceneId_AirsRock1;
   gMainRoutineWork.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
@@ -1771,7 +1771,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(0x879))
         Actor_SetPosition(13, 184, 280);
       if (!GameFlag_Get(0x87a)) {
-        ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+        gFieldWork->transition = 0x100;
         REG_BLDALPHA = 0x1008;
         REG_BLDCNT = 0x3f42;
         dma = (volatile struct DmaRegisters *)0x040000b0;

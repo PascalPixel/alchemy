@@ -422,7 +422,7 @@ struct Trigger gSceneEvents[] = {
 #include "owner_state.h"
 #include "version.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "actor.h"
@@ -546,8 +546,8 @@ void Party_AddIsaacsParty(void);
 /// objects 16 to 19 in mode 5 and 30 to 33 in mode 6, and runs
 /// Party_AddIsaacsParty when the party came in by entrance 99.
 s32 Func_02000688(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  s32 *effect = &work->screenEffect;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s32 *effect = &work->transition;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   *effect = 256;

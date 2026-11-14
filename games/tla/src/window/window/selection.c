@@ -1644,7 +1644,7 @@ s32 FieldMenu_Run(void) {
   s32 selection;
   u8 *state;
 
-  state = Ram_HeapSlots->eventWork;
+  state = Ram_HeapSlots->fieldWork;
   selection = 0;
 
   for (;;) {

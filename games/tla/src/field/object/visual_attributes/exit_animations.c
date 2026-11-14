@@ -49,18 +49,18 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 /// white, finishes the screen transition and fades that colour to black
 /// over 16 frames.
 void Field_StartEncounterTransition(s32 unused) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 i;
   s32 c;
 
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   Sound_PlayFar(gMainRoutineWork.sceneCue);
   Sound_PlayFar(SE_298);
   Sound_PlayFar(SE_BEAST_CRY);
-  if (work->controlMode == 3) {
+  if (work->mode == 3) {
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     ScreenTransition_Finish(0x401, 16);
-    work->screenStatus = 0;
+    work->transitionActive = 0;
     wait(16);
     for (i = 0; i < 16; i++) {
       c = 30 - i * 2;
@@ -70,7 +70,7 @@ void Field_StartEncounterTransition(s32 unused) {
   } else {
     Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
     ScreenTransition_Finish(0x207, 16);
-    work->screenStatus = 0;
+    work->transitionActive = 0;
     wait(16);
     for (i = 0; i < 16; i++) {
       c = 30 - i * 2;

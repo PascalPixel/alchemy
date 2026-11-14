@@ -241,15 +241,15 @@ void Actor_ShowItemIconById(u32 id, s32 resource) {
 }
 
 void Event_SetMessageId(s32 message) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->messageId = message;
+  event->message = message;
 }
 
 s32 Actor_GetSpriteById(s32 key) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 result = -1;
-  struct Actor *object = event->objects[key & 0x0fff];
+  struct Actor *object = event->actors[key & 0x0fff];
 
   if (object != NULL && object->animationKind == 1)
     result = *((struct ObjectAnimationState *)object->sprite)->value28;
@@ -257,13 +257,13 @@ s32 Actor_GetSpriteById(s32 key) {
 }
 
 s32 Actor_FindBySprite(s32 value) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 result = -1;
   s32 index;
   struct Actor *object;
 
   for (index = 8; index <= 79; index++) {
-    object = event->objects[index];
+    object = event->actors[index];
     if (object != NULL && object->animationKind == 1 &&
         *((struct ObjectAnimationState *)object->sprite)->value28 == value) {
       result = index;

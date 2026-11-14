@@ -39,7 +39,7 @@
 #include "system/io_write.h"
 #include "system/main_routine_work.h"
 #include "macros.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/input.h"
 
 // The parts, in ROM order.
@@ -123,7 +123,7 @@ void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s32 revealState;
   u32 isActive = 0;
-  struct RevealWork *work = Ram_HeapSlots->eventWork;
+  struct RevealWork *work = Ram_HeapSlots->fieldWork;
 
   if (work != NULL) {
     revealState = work->revealActive;
@@ -139,7 +139,7 @@ void Reveal_EmitSparkles(const struct ParticleSource *source);
 /// Shows the picture of item above actor (in front of the controlled owner,
 /// on the centre of the cell), clearing Reveal's sparkles first.
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
-  struct EmitterWork *work = Ram_HeapSlots->eventWork;
+  struct EmitterWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *picture = work->actors[actor];
   struct Actor *object;
   struct EffectVisual *visual;

@@ -58,7 +58,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   struct PlayerSprite__f0279b0 *playerSprite;
   struct Actor *ripple;
   struct PlayerSprite__f0279b0 *rippleSprite;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   movementAnimation = 2;
   collision = 0;
@@ -116,7 +116,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   }
 
 update_object:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if ((collision & 3) != 0)
       work->blockedSteps++;
@@ -198,7 +198,7 @@ update_object:
   }
   Field_CheckConfiguredKeys();
   if (gInput.pressed & gMainRoutineWork.keys230)
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 251;
+    gFieldWork->raisedTrigger = 251;
   object->step++;
   return 1;
 }
@@ -234,7 +234,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   s32 onObject;
   s32 difference;
   struct Actor *other;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   collision = 0;
   pushed = 0;
@@ -431,7 +431,7 @@ push_objects:
   }
 
 counted:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collision & 3)
       work->blockedSteps++;
@@ -445,7 +445,7 @@ counted:
     Actor_SelectAnimation(object, 2);
 
   if (gInput.pressed & gMainRoutineWork.keys230) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
+    gFieldWork->raisedTrigger = 252;
     collision |= 4;
   }
 
@@ -555,13 +555,13 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   s32 yawStep;
   struct Actor *ripple;
   struct PlayerSprite__s28534 *rippleSprite;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct WorldEventWork *worldWork;
   u32 kind;
 
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&object->x);
-  worldWork = Ram_HeapSlots->eventWork;
+  worldWork = Ram_HeapSlots->fieldWork;
   if (terrain >= 1 && terrain <= 3)
     worldWork->terrainKind = 0;
   if (terrain >= 5 && terrain <= 6)
@@ -636,7 +636,7 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   }
 
 update_object:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if ((collision & 3) != 0)
       work->blockedSteps++;
@@ -650,15 +650,15 @@ update_object:
     Actor_SelectAnimation(object, 2);
 
   if (gInput.pressed & gMainRoutineWork.keys230) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
+    gFieldWork->raisedTrigger = 252;
     collision |= 4;
   }
   if (gInput.pressed &
       ((struct PartyKeys__s28534 *)&gMainRoutineWork)->keys23c) {
-    struct WorldEventWork *keyWork = Ram_HeapSlots->eventWork;
+    struct WorldEventWork *keyWork = Ram_HeapSlots->fieldWork;
     if (keyWork->unkd39 != 0) {
       GameFlag_Clear(0x147);
-      ((struct EventWork *)keyWork)->unk16a = 253;
+      ((struct FieldWork *)keyWork)->raisedTrigger = 253;
     }
   }
 
@@ -792,7 +792,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   s32 yawStep;
   struct Actor *ripple;
   struct PlayerSprite__f028aac *rippleSprite;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct WorldEventWork__f028aac *worldWork;
   struct Actor *other;
   u32 kind;
@@ -800,7 +800,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
 
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&object->x);
-  worldWork = Ram_HeapSlots->eventWork;
+  worldWork = Ram_HeapSlots->fieldWork;
   if (terrain >= 1 && terrain <= 3)
     worldWork->terrainKind = 0;
   if (terrain >= 5 && terrain <= 6)
@@ -886,7 +886,7 @@ check_objects:
   }
 
 update_object:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if ((collision & 3) != 0)
       work->blockedSteps++;
@@ -974,7 +974,7 @@ update_object:
     }
   }
 
-  flightWork = Ram_HeapSlots->eventWork;
+  flightWork = Ram_HeapSlots->fieldWork;
   if (gInput.held & (gMainRoutineWork.keys230 | gMainRoutineWork.unk232)) {
     flightWork->climbing = 1;
     object->y += px(1) / 8;
@@ -984,7 +984,7 @@ update_object:
   if (Party_GetPpRatioFar() == 0)
     object->y -= px(1) / 4;
   if (object->y <= 0 && flightWork->climbing != 0)
-    ((struct EventWork *)flightWork)->unk16a = 254;
+    ((struct FieldWork *)flightWork)->raisedTrigger = 254;
   if (object->y >= 0xc0000)
     object->y = px(12);
   if (object->y <= 0)

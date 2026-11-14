@@ -103,7 +103,7 @@ static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "system/input.h"
 #include "shared/tables.h"
@@ -343,7 +343,7 @@ void Settlements_CutStairsBush(void) {
 }
 
 void Settlements_EnterDoor(void) {
-  s32 next = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
+  s32 next = *(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x154);
 
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
@@ -547,7 +547,7 @@ extern s16 gSettlements_WallCrate[];
 void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Settlements7)
     Settlements_SetUpKaltIsland();
   if (gMainRoutineWork.scene == (s32)&SceneId_Settlements9) {
@@ -665,7 +665,7 @@ extern s32 gSettlements_WaterColorFrame;
 
 void Settlements_CycleWaterColors(void) {
   struct PaletteCycleWork *work =
-      (struct PaletteCycleWork *)Ram_HeapSlots->eventWork;
+      (struct PaletteCycleWork *)Ram_HeapSlots->fieldWork;
   s32 *frame;
   s32 phase, i;
 
@@ -705,7 +705,7 @@ void Settlements_CycleWaterColors(void) {
 }
 
 void Settlements_StartWaterfall(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 514;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 514;
   FieldTask_AddFrame(Settlements_CycleWaterColors, 0x480);
   Scene_QueueMusic(SE_170);
   Scroll_StartHBlank();
@@ -1023,9 +1023,9 @@ extern s16 gTundariaTower_SlideAngles[];
 #include "shared/actor_steer_by_pad.h"
 
 void TundariaTower_StopLeader(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (work->actionCounter != 0) {
+  if (work->busy != 0) {
     Event_SetFlag(FLAG_MENU_OPEN);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();

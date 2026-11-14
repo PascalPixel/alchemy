@@ -48,7 +48,7 @@ void CrackedTile_FallEvent(struct PushEvent *event) {
     Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   } while (0);
   event->busy = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

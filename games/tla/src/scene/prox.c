@@ -11,7 +11,7 @@
 #include "field/event_inline.h"
 #include "shared/tables.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "actor.h"
 #include "version.h"
 #include "battle/battle.h"
@@ -141,9 +141,9 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK gFieldWork
 
 #endif
 
@@ -257,7 +257,7 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
     if (ahead == facing || right == facing || left == facing || force != 0) {
       /* FAKEMATCH(temporary): the count and movementState's address held in
        * locals before the test. */
-      s16 count = ((struct EventWork *)Ram_HeapSlots->eventWork)->blockedSteps;
+      s16 count = gFieldWork->blockedSteps;
       u8 *movementState = &object->movementState;
 
       if (count > 120) {
@@ -285,7 +285,7 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 /// work's halfword 0x160 or byte 4 of the window tiles is nonzero.
 s32 Func_020003bc(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s32 flag = 0;
   struct Actor *target;
 
@@ -314,7 +314,7 @@ s32 Func_020003bc(struct Actor *actor) {
 
 s32 Func_020003bc(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   s16 *action = &actor->timer;
   s32 flag = 0;
   struct Actor *target;
@@ -493,63 +493,63 @@ struct TalkActor {
 };
 
 void Prox_TalkToPlayingChild(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(16));
   s16 angle = object->angle;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActor(16, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)MsgProx113);
   } else {
     FieldEvent_SetMessageId((s32)MsgProx117);
   }
   Event_ShowMessage(16, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Func_0200446c();
 }
 
 void Prox_TalkToRestlessChild(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(17));
   s16 angle = object->angle;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActor(17, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)MsgProx114);
   } else {
     FieldEvent_SetMessageId((s32)MsgProx118);
   }
   Event_ShowMessage(17, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Func_0200446c();
 }
 
 void Prox_TalkToTrainingChild(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(18));
   s16 angle = object->angle;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
-  if (work->unk166 == 0) {
+  if (work->psynergy == 0) {
     Actor_FaceActor(18, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)MsgProx115);
   } else {
     FieldEvent_SetMessageId((s32)MsgProx119);
   }
   Event_ShowMessage(18, 0);
-  if (work->unk166 == 0)
+  if (work->psynergy == 0)
     object->angle = angle;
   object->unk63 = 0;
   Func_0200446c();
@@ -847,10 +847,10 @@ test_wait:
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
   } else {
     FieldActor_WaitForMoveById(owner);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
   }
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
@@ -965,7 +965,7 @@ void Func_020015d0(void) {
 
 void Func_02001770(void) {
   if (Event_GetFlag(0xa3d) == 0 && Event_GetFlag(64) == 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(1);
@@ -1058,7 +1058,7 @@ struct EventWork154 {
 };
 
 void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct EventWork154 *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
@@ -1106,7 +1106,7 @@ void Func_02001b44(void) { Prox_EnterDoor(0x57, 2, 0x50, 7, 1, 2); }
 void Func_02001b60(void) { Prox_EnterDoor(0x59, 0, 0x4d, 0x10, 1, 2); }
 
 void Func_02001b7c(void) {
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct EventWork154 *work = Ram_HeapSlots->fieldWork;
   s32 entrance = work->returnEntrance;
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 cell;
@@ -1200,7 +1200,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetPositionAndFacing(20, px(220), px(600), angleB000);
   Actor_SetPosition(5, 184, 684);
   System_Wait(1);
-  EVENT_WORK->screenEffect = 0x100;
+  EVENT_WORK->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(0.8);
@@ -1277,9 +1277,9 @@ void Prox_GiveThanksForBeacon(void) {
                                              0)) {
     Actor_SetAnimationAndWait(26, 3);
     Event_ShowMessage(26, 0);
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
   } else {
-    EVENT_WORK->messageId++;
+    EVENT_WORK->message++;
     Actor_SetAnimationAndWait(26, 4);
     Event_ShowMessage(26, 0);
   }
@@ -1350,9 +1350,9 @@ void Prox_GiveThanksForBeacon(void) {
     Actor_WalkToAndWait(0, 168, 520);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
-    EVENT_WORK->messageId += 2;
+    EVENT_WORK->message += 2;
   } else {
-    EVENT_WORK->messageId += 2;
+    EVENT_WORK->message += 2;
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
     Actor_FaceDirectionAndWait(0, FACING_SOUTH);
@@ -1419,10 +1419,10 @@ void Prox_GiveThanksForBeacon(void) {
   FieldActor_WaitForMoveById(27);
   Actor_SetPosition(27, 0, 0);
   {
-    struct EventWork *work = EVENT_WORK;
+    struct FieldWork *work = EVENT_WORK;
 
-    work->screenEffect = 0x209;
-    work->delay = 0x10;
+    work->transition = 0x209;
+    work->transitionFrames = 0x10;
   }
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_SetFlag(0x9c5);
@@ -1449,14 +1449,14 @@ s32 Scene_Initialize(void) {
   }
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Prox4) {
-    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+    ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->screenEffect = 0x209;
     Func_020029c8();
   } else if (scene == (s32)&SceneId_Prox5) {
-    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+    ((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->screenEffect = 0x209;
     Func_02002a38();
   } else if (scene == (s32)&SceneId_Prox6) {
     s32 *effect =
-        &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
+        &((struct EventWork1ac *)Ram_HeapSlots->fieldWork)->screenEffect;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
     register s32 skip __asm__("r0");
     s32 value = 0x209;
@@ -1693,9 +1693,9 @@ void Prox_SayFarewell(void) {
       Event_ShowMessage(0, 0);
       Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
       Event_ShowMessage(8, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId += 2;
+      EVENT_WORK->message += 2;
       Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
       Event_ShowMessage(8, 0);
     }
@@ -1724,9 +1724,9 @@ void Prox_SayFarewell(void) {
                                               0) == 0) {
       Actor_SetAnimationAndWait(0, 3);
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
       Actor_SetAnimationAndWait(0, 4);
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
     }
@@ -1804,9 +1804,9 @@ void Prox_SayFarewell(void) {
                                               0) == 0) {
       Actor_SetAnimationAndWait(11, 3);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
       Actor_SetAnimationAndWait(11, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     }
@@ -1841,9 +1841,9 @@ void Prox_SayFarewell(void) {
                                               0) == 0) {
       Actor_SetAnimationAndWait(11, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
       Actor_SetAnimationAndWait(11, 3);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     }
@@ -1907,9 +1907,9 @@ void Prox_SayFarewell(void) {
                                               0) == 0) {
       Actor_SetAnimationAndWait(11, 3);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
     } else {
-      EVENT_WORK->messageId++;
+      EVENT_WORK->message++;
       Actor_SetAnimationAndWait(11, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     }
@@ -2024,7 +2024,7 @@ void Actor_SteerByPad(struct Actor *object) {
 }
 
 void Func_020038e8(void) {
-  void *work = Ram_HeapSlots->eventWork;
+  void *work = Ram_HeapSlots->fieldWork;
 
   if (FIELD_AT(work, s16, 0xca2) != 0) {
     Event_SetFlag(FLAG_MENU_OPEN);

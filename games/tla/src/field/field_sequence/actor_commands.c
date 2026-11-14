@@ -714,11 +714,11 @@ void Actor_TurnPairToFaceEachOther(struct FacingObject *first,
 
 void ObjectTable_DestroyById(s32 id) {
   void *object = ObjectTable_Get(id);
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (object != NULL) {
     Actor_ReleaseFar(object);
-    work->objects[id] = NULL;
+    work->actors[id] = NULL;
   }
 }
 

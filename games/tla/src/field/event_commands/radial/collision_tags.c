@@ -98,7 +98,7 @@ s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 /// set its cell is lowered 32 pixels and the flag cleared, with it clear the
 /// cell is raised and the flag set; the event work remembers the block.
 void FlagBlock_ApplyFlags(struct ActorFlag *list) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   u8 *grid = gMapShapeGrid;
 
   *(struct Actor **)(event + 0xcbc) = NULL;

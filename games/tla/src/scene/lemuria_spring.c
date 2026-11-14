@@ -19,7 +19,7 @@
 #include "system/ram_buffer.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
 #include "module/scene/scene.h"
@@ -152,7 +152,7 @@ s32 Scene_Initialize(void) {
   s32 blend;
   s32 alpha;
 
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
+  FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1ac), s32, 0) = 0x100;
   t0 = (s32)Actor_Get(gMainRoutineWork.currentOwner);
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;

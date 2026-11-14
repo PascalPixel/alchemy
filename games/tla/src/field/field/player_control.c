@@ -55,7 +55,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   s32 angleIndex;
   s32 onObject;
   struct Actor *other;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   movementAnimation = 2;
   collision = 0;
@@ -243,7 +243,7 @@ push_objects:
   }
 
 counted:
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if (collision & 3)
       work->blockedSteps++;
@@ -290,7 +290,7 @@ counted:
 }
 
 s32 Field_RequestShortcut(u32 value) {
-  struct EventPrompt *event = Ram_HeapSlots->eventWork;
+  struct EventPrompt *event = Ram_HeapSlots->fieldWork;
   u32 kind = value >> 14;
   s32 code = value & 0x3fff;
 
@@ -323,7 +323,7 @@ s32 Field_RequestShortcut(u32 value) {
 /// the five requests command 0x209b instead. Returns 0 when none is pressed.
 // As ☀️'s function of the same name.
 s32 Field_CheckConfiguredKeys(void) {
-  struct EventPrompt *work = Ram_HeapSlots->eventWork;
+  struct EventPrompt *work = Ram_HeapSlots->fieldWork;
   s32 result = 0;
 
   if (work == NULL)
@@ -447,7 +447,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   s32 headingCount;
   s32 footprintAngle;
   s32 onObject;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct MapFlagsWork *map;
   u16 angle;
   u16 direction;
@@ -458,7 +458,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   sprite = object->sprite;
   movementAnimation = 2;
   onObject = 0;
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   map = (struct MapFlagsWork *)Ram_HeapSlots->mapWork;
   collision = 0;
   pushed = 0;

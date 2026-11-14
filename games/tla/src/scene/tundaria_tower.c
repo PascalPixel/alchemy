@@ -37,7 +37,7 @@
 #include "call.h"
 #include "system/field_effect.h"
 #include "system/io_reg.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "field/event.h"
 #include "module/field/field.h"
@@ -218,7 +218,7 @@ void Func_0200058c(void) {
        ->v)
 
 void Func_020005d0(void) {
-  u8 *work = (u8 *)Ram_HeapSlots->eventWork;
+  u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
   s16 *choice;
   s32 x = 37;
   s32 *owner;
@@ -372,9 +372,9 @@ void Func_02000920(void) {
   Event_ResolvePendingActions(0);
   FieldMessage_Show(MsgThereSSomething, 1);
   if (GameFlag_Get(0x949)) {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-    work->unk15a = 1;
+    work->fieldMenu = 1;
   }
   Event_End();
 }
@@ -473,7 +473,7 @@ void Func_02000b3c(void) {
 }
 
 void Func_02000bfc(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->scene == (s32)&SceneId_TundariaTower6) {
@@ -492,7 +492,7 @@ void Func_02000bfc(void) {
 /// the next cell's layer 1 attribute is 50 and its layer 2 attribute is not
 /// 255, then settles on the middle of its cell.
 void Func_02000c64(s32 unused, s32 actorArg) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  u8 *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   u16 actor;
   s32 dx;
@@ -527,7 +527,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
 /// with motion flags 3. In room 6, column 27 sets flag 0x947, and column 25
 /// with that flag set sets 0x946.
 void Func_02000d2c(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *object;
 
   object = *(struct Actor **)(event + 0xcbc);
@@ -788,7 +788,7 @@ void Func_020011e0(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -824,7 +824,7 @@ void Func_020011e0(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  gFieldWork->transition = 0x204;
   Event_End();
 }
 
@@ -844,7 +844,7 @@ s32 Scene_Initialize(void) {
   s32 scene;
   s32 flag;
 
-  ((struct TundariaTowerEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+  ((struct TundariaTowerEventWork *)Ram_HeapSlots->fieldWork)->screenEffect =
       0x204;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_TundariaTower1) {
@@ -981,9 +981,9 @@ void Actor_SelectAnimation(struct Actor *object, s32 mode);
 #include "shared/actor_steer_by_pad.h"
 
 void TundariaTower_StopLeader(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (work->actionCounter != 0) {
+  if (work->busy != 0) {
     Event_SetFlag(0x106);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();

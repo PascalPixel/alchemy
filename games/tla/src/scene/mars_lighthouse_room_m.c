@@ -16,7 +16,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/scene/scene.h"
 #include "module/sound/sound.h"
 #include "module/system/system.h"
@@ -34,7 +34,7 @@
 #include "version.h"
 #include "system/dma.h"
 #include "shared/mars_lighthouse_entrance_room.h"
-#include "field/event_work.h"
+#include "field/field_sequence_event.h"
 #include "module/field/field.h"
 #include "module/scene/dehkan_plateau.h"
 #include "battle/battle_unit.h"
@@ -292,7 +292,7 @@ extern u16 gData_0200397c[];
 
 void Func_020000c0(void) {
   s32 entrance = gMainRoutineWork.entrance;
-  struct Overlay6acEventWork *work = Ram_HeapSlots->eventWork;
+  struct Overlay6acEventWork *work = Ram_HeapSlots->fieldWork;
   s32 base;
   s32 i;
   s8 busy;
@@ -337,7 +337,7 @@ void Func_020002c8(void) {
 }
 
 void Func_020002e8(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
 
   event[3384] = 1;
 }
@@ -370,7 +370,7 @@ void Func_0200030c(void) {
     Event_SetFlag(0xa35);
     break;
   }
-  work = Ram_HeapSlots->eventWork;
+  work = Ram_HeapSlots->fieldWork;
   work->field166 = 0;
   FieldEvent_Wait(30);
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -384,7 +384,7 @@ extern s32 gData_02003704;
 extern u16 gData_02003a5c[];
 
 void Func_020003c4(void) {
-  struct Overlay6acEventWork *work = Ram_HeapSlots->eventWork;
+  struct Overlay6acEventWork *work = Ram_HeapSlots->fieldWork;
   s32 base;
   s32 i;
   s8 busy;
@@ -622,14 +622,14 @@ s32 Scene_Initialize(void) {
   scene = gMainRoutineWork.scene;
   entrance = gMainRoutineWork.entrance;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 0x100;
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Palette_SetColorsFade((s32)gData_0200338c, (s32)gData_0200339c,
                         (s32)gData_020033c8, (s32)gData_020033f4);
   if (scene != (s32)&SceneId_MarsLighthouseRoomM6 &&
       scene == (s32)&SceneId_MarsLighthouseRoomM1) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
-    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
+    *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 0x204;
     if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
       s32 unset = Event_GetFlag(0xa31);
@@ -1043,7 +1043,7 @@ void Func_0200055c(void);
 void PaletteCycle_Fade(void);
 
 void Func_0200166c(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
+  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 256;
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
@@ -1103,13 +1103,13 @@ struct MarsLighthouseRoomMEventWork1ac {
 void Func_020017b4(void);
 
 void Func_0200183c(void) {
-  struct MarsLighthouseRoomMEventWork1ac *work = Ram_HeapSlots->eventWork;
+  struct MarsLighthouseRoomMEventWork1ac *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct MarsLighthouseRoomMEventWork1ac *)Ram_HeapSlots->eventWork)
+  ((struct MarsLighthouseRoomMEventWork1ac *)Ram_HeapSlots->fieldWork)
       ->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1180,7 +1180,7 @@ void Ride_UpdateCarried(struct Actor *object) {
   struct RideWork__s1988 *work =
       (struct RideWork__s1988 *)(gInventorySnapshot + 0x188);
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
   s32 dz;
   s32 i;
@@ -1221,7 +1221,7 @@ void Ride_UpdateCarried(struct Actor *object) {
       object->gravity += speed >> 2;
     }
     work->landed = 1;
-    event->exit = work->value0a;
+    event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
     actor = Actor_Get(id);
@@ -1308,7 +1308,7 @@ void Ride_UpdateLanding(struct Actor *object) {
   struct RideWork__s1b64 *work =
       (struct RideWork__s1b64 *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
   s32 dz;
   s32 i;
@@ -1338,7 +1338,7 @@ void Ride_UpdateLanding(struct Actor *object) {
     object->gravity += object->bounce >> 2;
     object->unk4c = 0;
     work->landed = 1;
-    event->exit = work->value0a;
+    event->stepTrigger = work->value0a;
   }
   for (i = 0; i < 4; i++) {
     s32 id = work->slots[i].id;
@@ -1794,7 +1794,7 @@ struct RideState {
 };
 
 s32 MarsLighthouseRoomF_SlideOnIce(void) {
-  struct RideEvent *event = Ram_HeapSlots->eventWork;
+  struct RideEvent *event = Ram_HeapSlots->fieldWork;
   struct RideState *ride;
   struct Actor *leader;
   // Unused: gives the stack frame its 12 bytes.

@@ -503,7 +503,7 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  ((struct YallamInteriorsEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+  ((struct YallamInteriorsEventWork *)Ram_HeapSlots->fieldWork)->screenEffect =
       0x209;
   {
     struct MainRoutineWork *party = &gMainRoutineWork;

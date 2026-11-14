@@ -546,7 +546,7 @@ void FieldPsynergy_UpdateLash(void) {
   struct ScatterWork *work =
       (struct ScatterWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct ScatterEvent *event = Ram_HeapSlots->eventWork;
+  struct ScatterEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *object = work->object;
   struct Vector3 position;
   struct EffectSprite *sprite;
@@ -661,7 +661,7 @@ struct EffectSceneWork__radial {
 /// marks the effect failed, else stores the target and both in the event work.
 /// Then runs FieldPsynergy_Lash.
 void FieldPsynergy_LashOnTarget(s32 value) {
-  struct EffectSceneState *state = Ram_HeapSlots->eventWork;
+  struct EffectSceneState *state = Ram_HeapSlots->fieldWork;
   struct EffectSceneWork__radial *work = Ram_HeapSlots->effectWork;
   s32 second;
   s32 first;
@@ -684,7 +684,7 @@ extern char ResourceId_StarSparkleFade;
 void FieldPsynergy_Lash(void) {
   struct ScatterWork *work = HeapSlot_Alloc(92, 0x2114);
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct ScatterEvent *event = Ram_HeapSlots->eventWork;
+  struct ScatterEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *object;
   struct EffectSprite *sprite;
@@ -845,7 +845,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
   }
 }
 #include "field/event.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "scene_call.h"
 
 #define SLOT_MAX 24
@@ -1295,7 +1295,7 @@ void FieldPsynergy_UpdateUnnamed29(void) {
   struct BowScene *scene = Ram_HeapSlots->effectWork;
   struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleFxWork[0];
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];
-  struct BowEvent *event = Ram_HeapSlots->eventWork;
+  struct BowEvent *event = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   struct BowMotion *motion;
   struct EffectSprite *sprite;
@@ -1574,7 +1574,7 @@ extern char ResourceId_BowDraw, ResourceId_FlamingArrow;
 void FieldPsynergy_Unnamed29(void) {
   struct BowWork *work = HeapSlot_Alloc(92, sizeof(struct BowWork));
   struct BowScene *scene = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct BowMotion *motion;
@@ -1695,7 +1695,7 @@ void FieldPsynergy_Unnamed29(void) {
 /// their tile, at 0xd3c and 0xd40.
 void FieldPsynergy_GatherNearbyCells(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
-  struct PointWork *event = Ram_HeapSlots->eventWork;
+  struct PointWork *event = Ram_HeapSlots->fieldWork;
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   s16 *points = event->points;
   struct Actor *owner = *(struct Actor **)(effect + 16);
@@ -1763,7 +1763,7 @@ static inline s32 Index(s32 i) { return i; }
 void FieldPsynergy_RunTouchedEvents(void) {
   struct TouchWork *work = Ram_HeapSlots->effectWork;
   struct TouchCell *cells =
-      (struct TouchCell *)((u8 *)Ram_HeapSlots->eventWork + 0xcc0);
+      (struct TouchCell *)((u8 *)Ram_HeapSlots->fieldWork + 0xcc0);
   struct TouchOwner *owner = work->owner;
   s32 count = 0;
   s16 ids[24];
@@ -1821,7 +1821,7 @@ struct MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
 void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
                                  s32 originX, s16 originZ, s32 layerIndex) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
   s32 ownerHeight = owner->terrainHeight >> 20;

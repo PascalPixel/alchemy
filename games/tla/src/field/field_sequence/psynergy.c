@@ -12,7 +12,7 @@
    FieldMessage_ShowFar((s32)&(message), 1))
 
 s32 Field_UsePsynergy(u32 code) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *event = Ram_HeapSlots->fieldWork;
   s32 abilityId = code & 0x3ff;
   struct PendingEvent *before;
   s32 group = Ability_Get(abilityId)->fieldEffect;
@@ -47,7 +47,7 @@ s32 Field_UsePsynergy(u32 code) {
       if (gMainRoutineWork.ownerOverride != 0 &&
           GameFlag_Get(FLAG_SHIP_FLIES)) {
         GameFlag_Set(327);
-        ((struct EventWork *)event)->unk16a = 253;
+        ((struct FieldWork *)event)->raisedTrigger = 253;
         return 0;
       }
       FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
@@ -78,7 +78,7 @@ s32 Field_UsePsynergy(u32 code) {
       entrance = (u16)state->retreatEntrance;
       state->entrance = entrance;
     }
-    ((struct EventWork *)event)->countdown = 999;
+    ((struct FieldWork *)event)->exit = 999;
     retreat = 1;
   }
 
@@ -110,7 +110,7 @@ s32 Field_UsePsynergy(u32 code) {
 
     if (unit->pp < ppCost) {
       if (retreat)
-        ((struct EventWork *)event)->countdown = 0;
+        ((struct FieldWork *)event)->exit = 0;
       FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dba);
       return 0;
     }

@@ -18,12 +18,12 @@ void Event_RunMessage(s32 actor, s32 message) {
 void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
 void Event_ResolvePendingActions(s32 skip) {
-  struct EventWork *state = Ram_HeapSlots->eventWork;
+  struct FieldWork *state = Ram_HeapSlots->fieldWork;
 
-  state->actionCounter = 0;
-  if (state->pendingFirst != 0 && !(skip & 1))
+  state->busy = 0;
+  if (state->revealActive != 0 && !(skip & 1))
     Field_RunPsynergyEndEvents(0x2090);
-  if (state->pendingSecond != 0 && !(skip & 2))
+  if (state->unkcac != 0 && !(skip & 2))
     Field_RunPsynergyEndEvents(0x209b);
   if (gMainRoutineWork.pendingThird != 0 && !(skip & 4))
     Field_RunPsynergyEndEvents(0x208b);
@@ -58,7 +58,7 @@ s32 Item_MatchesFilter(s32 filter, s32 item_id) {
 /// Party_GetLeaderActor for the actor and Item_MatchesFilter for
 /// the trigger's item.
 s32 Field_FindItemTrigger(s32 source) {
-  struct FieldStepWork *work = Ram_HeapSlots->eventWork;
+  struct FieldStepWork *work = Ram_HeapSlots->fieldWork;
   const struct Trigger *trigger = work->triggers;
   s32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 selected = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
@@ -184,7 +184,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_Set(0x142);
     actionId =
         ((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->actionId;
-    runtime = Ram_HeapSlots->eventWork;
+    runtime = Ram_HeapSlots->fieldWork;
 
     if (actionId != 0) {
       GameFlag_Set(0x145);
@@ -231,7 +231,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// nearest target in reach (its number with 0x100 set); else 0x200 for a
 /// trigger that applies anywhere, or -1.
 s32 Scene_SelectPsynergyTarget(s32 kind) {
-  struct TriggerWork *work = Ram_HeapSlots->eventWork;
+  struct TriggerWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerEvent *event = work->events;
   u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 focused = Field_GetCollisionAheadOfLeader();
@@ -299,7 +299,7 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
 
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector) {
-  struct TriggerWork *work = Ram_HeapSlots->eventWork;
+  struct TriggerWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerEvent *event = work->events;
   u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 flags;

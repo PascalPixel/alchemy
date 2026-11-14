@@ -17,7 +17,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "scene_tables.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "call.h"
 #include "module/scene/scene.h"
 #include "module/window/window.h"
@@ -61,7 +61,7 @@ void LemuriaEntrance_LeaveByExit3(s32 arg) {
   Event_ClearFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
   party->currentOwner = 8;
-  ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
+  ((struct EventWorkRoute *)Ram_HeapSlots->fieldWork)->route = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->currentOwner = 4;
@@ -74,7 +74,7 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   Event_SetFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
   party->currentOwner = 8;
-  ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
+  ((struct EventWorkRoute *)Ram_HeapSlots->fieldWork)->route = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->currentOwner = 4;
@@ -118,7 +118,7 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
 /// The scene's setup: places its actors, then plays what the entrance it was
 /// reached by calls for.
 s32 Scene_Initialize(void) {
-  s32 *screen = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
+  s32 *screen = &gFieldWork->transition;
   s32 effect = 0x204;
 
   *screen = effect;
@@ -144,11 +144,11 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5) {
     gMainRoutineWork.currentOwner = 8;
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+    gFieldWork->transition = 0x209;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     gMainRoutineWork.currentOwner = 4;
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
+    gFieldWork->transition = effect;
   }
   if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x96b)) {
     Event_ClearFlag(0x96b);
@@ -171,7 +171,7 @@ void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames) {
       s32 word;
     } u;
   };
-  struct EventWork1c4 *work = Ram_HeapSlots->eventWork;
+  struct EventWork1c4 *work = Ram_HeapSlots->fieldWork;
   s32 b;
   s32 a;
   s32 height;
@@ -209,7 +209,7 @@ void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames) {
 /// As the ship sails out of the harbour, Sheba asks Piers how old he really is.
 /// "Umm... Piers?"
 void LemuriaEntrance_ShebaAsksPiersAge(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   u8 saved;
 
   saved = gMainRoutineWork.eventMode;
@@ -243,9 +243,9 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   LemuriaEntrance_ShowPortraitLine(7, 250);
   FieldActor_RefreshSelectorById(8);
   FieldEvent_Wait(10);
-  work = Ram_HeapSlots->eventWork;
-  work->delay = 30;
-  work->screenEffect = 0x204;
+  work = Ram_HeapSlots->fieldWork;
+  work->transitionFrames = 30;
+  work->transition = 0x204;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(1);

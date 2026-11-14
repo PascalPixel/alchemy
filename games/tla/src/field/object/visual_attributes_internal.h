@@ -14,7 +14,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "event_work.h"
+#include "field/field_sequence_event.h"
 #include "actor.h"
 #include "field/objdisp.h"
 #include "field_sprite.h"

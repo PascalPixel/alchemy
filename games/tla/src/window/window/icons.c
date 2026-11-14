@@ -325,8 +325,7 @@ void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
   {
     u32 size;
 
-    // The size's load in a once-only block keeps it after both arguments are
-    // saved; as a plain assignment, 4 of 82 instructions differ in tla-en.
+    /* FAKEMATCH(dead): the size's load in a once-only block. */
     do {
       size = (u32)Tile_Decompress4bppCodeSize;
     } while (0);

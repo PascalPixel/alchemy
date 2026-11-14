@@ -3,11 +3,14 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "gamepak/far_call/shop.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "battle/object_effect_scripts.h"
+#include "macros.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -27,28 +30,26 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   FieldEffect_InitializeSlots();
   scene = Ram_HeapSlots->effectWork;
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
-  Sound_PlayFar(173);
+  Sound_PlayFar(SE_NOTE_LOW);
   Motion_SetVarCbAndRefresh(id, 1);
-  Sound_PlayFar(174);
+  Sound_PlayFar(SE_NOTE_MID);
   Motion_SetVarCbAndRefresh(id, 1);
-  Sound_PlayFar(175);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Motion_SetVarCbAndRefresh(id, 1);
   wait(20);
 
   // Spin, then leap high.
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   object->update = BattleEffect_AdvanceSpinAngle;
   wait(40);
-  Sound_PlayFar(153);
+  Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(id, 12, 22);
 
   // 24 sparks from the object's place on screen, one a frame.
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  SET_POSITION(&position, object->x, object->y, object->z);
   Camera_WorldToScreen(&position);
   Actor_ReleaseFar(object);
-  Sound_PlayFar(164);
+  Sound_PlayFar(SE_SCATTER);
   slot = scene->slots;
   count = 23;
   do {
@@ -70,7 +71,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(40);
-  Sound_PlayFar(164);
+  Sound_PlayFar(SE_SCATTER);
   wait(100);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ReleaseSlots();
@@ -114,7 +115,7 @@ void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
   ((struct MotionObject *)obj)->scaleY = scaleY;
   angle = ((struct MotionObject *)obj)->angle;
   scale += step;
-  ((struct MotionObject *)obj)->angle = angle + 0x2000;
+  ((struct MotionObject *)obj)->angle = angle + TRIG_TURN / 8;
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
     Actor_ReleaseFar(obj);
@@ -140,13 +141,13 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->z = effect->originZ;
     position.x = effect->x;
     position.z = effect->z;
-    Vector_AddPolarOffset(0x780000,
+    Vector_AddPolarOffset(px(120),
                           ((Random16() * 3 << 11) >> 16) -
                               ((Random16() * 3 << 11) >> 16) + 0xc000,
                           &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = 0x50000;
+    effect->acceleration = px(5);
     effect->maxSpeed = 0x50000;
     effect->limitTurnStep = state;
     effect->state++;
@@ -156,7 +157,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->flags = 0;
     effect->age = 0;
     if ((gVBlankCount & 1) != 0)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
   } else if (state == 1) {
     if ((s16)effect->age == 3) {
       ((struct AnimationObject *)effect->object)->image.priority = 0;
@@ -178,16 +179,15 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    position.x = owner->position.x;
-    position.y = owner->position.y + 0x140000;
-    position.z = owner->position.z;
+    SET_POSITION(&position, owner->position.x, owner->position.y + 0x140000,
+                 owner->position.z);
     Camera_WorldToScreen(&position);
-    Vector_AddPolarOffset(0x40000, Random16(), &position);
+    Vector_AddPolarOffset(px(4), Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->state++;
     if ((gVBlankCount & 1) != 0)
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
   } else if (state == 4) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;

@@ -19,9 +19,18 @@ enum InventoryEncoding {
   INVENTORY_SLOTS = 15
 };
 
+/// The equipMask bit of character `no` (ISAAC to PIERS), as The Broken
+/// Seal's.
+#define EQUIP_CHARACTER(no) (1 << (no))
+/// Every one of the eight characters' bits.
+#define EQUIP_ALL_CHARACTERS 0xff
+
 enum ItemFlags {
   ITEM_CURSED = 1,
   ITEM_CANNOT_UNEQUIP = 2,
+  /// A rare item, as The Broken Seal's: the rare weapons and armour, keys and
+  /// the other one-of-a-kind items carry it.
+  ITEM_RARE = 4,
   ITEM_INDISPENSABLE = 8,
   ITEM_STACKABLE = 0x10
 };

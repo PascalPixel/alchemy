@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "macros.h"
 
 #define STARS ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -30,9 +31,9 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
   BattleEffect_FetchRectangleBlitters(effect->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &STARS[i];
-    star->x = ((Random16() & 0xff) - 127) << 16;
-    star->y = ((Random16() & 0xff) - 127) << 16;
-    star->z = ((Random16() & 0xff) - 127) << 16;
+    SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
+                 ((Random16() & 0xff) - 127) << 16,
+                 ((Random16() & 0xff) - 127) << 16);
     star->velocityX = 0;
     star->velocityY = 0;
     star->velocityZ = 0;
@@ -137,7 +138,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
                              work->sheet + BURST_IMAGE, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-  Iwram_CopyWordsEntry((void *)0x05000000, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, CLIP));
   rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP));
@@ -150,9 +151,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
     step = &work->particles[i];
     angle = Random16() & 0xffff;
     magnitude = Random16() & 0xff;
-    step->x = 0;
-    step->y = 0;
-    step->z = 0;
+    SET_POSITION(step, 0, 0, 0);
     if (i % 6 == 5) {
       step->velocityX = 0;
       step->velocityY = 0;

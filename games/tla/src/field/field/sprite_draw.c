@@ -214,7 +214,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
       facing = gAnimationFacing_SixPictures[(dir >> 10) & 63];
       break;
     case 8:
-      facing = gData_0802eb44[((dir + 0x1000) >> 13) & 7];
+      facing = gData_0802eb44[((dir + TRIG_TURN / 16) >> 13) & 7];
       break;
     default:
       facing = 0;
@@ -299,14 +299,11 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
         Dma_Set(Grid_DrawOutlineCode, outline, 0x84000000 | (codeSize >> 2),
                 REG_DMA3);
         {
-          /* FAKEMATCH(temporary): the width read into a local before the
-           * asm below; as obj->width in the call, 2 of 578 instructions
-           * differ in tla-en. */
+          /* FAKEMATCH(temporary): the width read into a local before the asm
+           * below. */
           u32 outlineWidth = obj->width;
 
-          /* FAKEMATCH(barrier): an empty asm after the width, which keeps
-           * its load ahead of the system pointer and the height ahead of the
-           * edge; without it, 4 of 578 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm after the width. */
           asm("");
           outlineHeight = obj->height;
           outline(outlineWidth, outlineHeight, pixels, system->edge,
@@ -396,9 +393,8 @@ void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
   struct AnimationSpritePart *shadow;
 
   /* FAKEMATCH(temporary): the height read through HEIGHT_COPY, a u8 copy, at
-     both uses; as sprite->height at both, 3 of 107 instructions differ in
-     tla-en. */
-  if (scaleX > 0x10000 || scaleY > 0x10000) {
+   * both uses. */
+  if (scaleX > 0x10000 || scaleY > Q16_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -483,7 +479,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > 0x10000 || scaleY > 0x10000) {
+  if (scaleX > 0x10000 || scaleY > Q16_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -560,9 +556,8 @@ void Render_ApplyProjectedPlacementAtDepth(struct LayeredSprite *object,
   struct AnimationSpritePart *part;
 
   halfWidth = object->width >> 1;
-  /* FAKEMATCH(wrapper): the height read through the inline
-   * PlacedObject_Height; as object->height, 4 of 262 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): the height read through the inline PlacedObject_Height.
+   */
   halfHeight = PlacedObject_Height(object) >> 1;
   extentX = 8;
   extentY = 4;
@@ -586,7 +581,7 @@ void Render_ApplyProjectedPlacementAtDepth(struct LayeredSprite *object,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > 0x10000 || scaleY > 0x10000) {
+  if (scaleX > 0x10000 || scaleY > Q16_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -617,8 +612,7 @@ void Render_ApplyProjectedPlacementAtDepth(struct LayeredSprite *object,
     // own differ.
     extentX = object->offsetX * scaleX;
     /* FAKEMATCH(wrapper): the height read through the inline
-     * PlacedObject_Height; as object->height, 2 of 262 instructions differ in
-     * tla-en. */
+     * PlacedObject_Height. */
     extentY = ((PlacedObject_Height(object) >> 1) - object->offsetY) * scaleY;
 
     anchorX = Iwram_MulQ16(cos, extentX) + Iwram_MulQ16(sin, extentY);
@@ -677,7 +671,7 @@ void Render_PlaceProjectedSprite(struct LayeredSprite *sprite, s32 *point,
       halfHeight = sprite->height >> 1;
       offsetY = Iwram_MulQ16(sprite->offsetY - halfHeight, scaleY);
       halfWidth = sprite->width >> 1;
-      if (scaleX > 0x10000 || scaleY > 0x10000) {
+      if (scaleX > 0x10000 || scaleY > Q16_ONE) {
         affine = 3;
         halfWidth <<= 1;
         halfHeight <<= 1;

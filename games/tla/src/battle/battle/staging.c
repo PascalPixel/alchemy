@@ -4,6 +4,8 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
 #include "module/battle/presentation.h"
@@ -41,7 +43,6 @@ void Battle_TurnStartNoOp(void) {}
 /// The plan of an extra action queued for the turn's end (command 10): ability
 /// 403, Daedalus, from a random unit of the queuing side against every unit
 /// of the other, staged as a summon (0x8000 | 26).
-/// ★ Named from the game: "Daedalus" (MsgAbilityName + 403)
 void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
@@ -81,7 +82,6 @@ void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
 
 /// The plan of command 12: ability 103, High Impact, from the acting unit
 /// on every living unit of its own side.
-/// ★ Named from the game: "High Impact" (MsgAbilityName + 103)
 void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
@@ -105,7 +105,6 @@ void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
 
 /// The plan of command 13: ability 298, Aurora Field, over the acting unit's
 /// whole side, reserves included for the party.
-/// ★ Named from the game: "Aurora Field" (MsgAbilityName + 298)
 void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
@@ -125,8 +124,6 @@ void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
     targets->stateD[i] = 1;
   }
   {
-    // The zero in a local of its own takes r3 and leaves r2 to the two
-    // constants; as a plain 0, 18 of 69 instructions differ in tla-en.
     s32 zero = 0;
 
     targets->abilityId = 298;
@@ -194,15 +191,13 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     Projection_Set(param, ratio, 0x7fff0000);
   }
   if (delay != 0) {
-    view->targetYaw = 0x2000;
+    view->targetYaw = TRIG_TURN / 8;
     wait(delay);
   }
   if (request->command == 10) {
     BattleStaging_PlanDaedalus((u16 *)request,
                                (struct ActionTargets *)&battle->plan);
-    /* FAKEMATCH(dead): an empty once-only block after the call, so the plan's
-     * address is finished before request is copied to r0; without it, 2 of 421
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the call. */
     do {
     } while (0);
     result = 0;
@@ -329,7 +324,7 @@ finish:
   BattleBackground_SetMode(
       2, ((struct DispatchBattleWork *)Ram_HeapSlots->battleWork)->background,
       0);
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   return fled;
 }
 
@@ -384,7 +379,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 partyMode = 0;
 
   completed = 0;
-  presentation->targetYaw = 0x2000;
+  presentation->targetYaw = TRIG_TURN / 8;
   presentation->active = 1;
   BattleHighlight_SetModes(0, 0);
 
@@ -447,7 +442,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
 
     if (actor <= 7)
-      view->targetYaw = 0x2000;
+      view->targetYaw = TRIG_TURN / 8;
     else
       view->targetYaw = 0x5000;
     view->frames = 60;
@@ -455,9 +450,9 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
     s32 yaw;
 
-    yaw = -0x2000;
+    yaw = -TRIG_TURN / 8;
     if (actor <= 7)
-      yaw = 0x2000;
+      yaw = TRIG_TURN / 8;
     if (view->targetYaw != yaw)
       view->targetYaw = yaw;
   }
@@ -465,7 +460,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   BattleHighlight_SetModes(0, 0);
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(actor)->object;
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   list = units;
   i = 0;
   count = BattleParty_ListActorIds(3, list);
@@ -483,7 +478,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     }
   }
   if (!(mode & 2)) {
-    Sound_PlayFar(154);
+    Sound_PlayFar(SE_CAST);
     ElementGlow_Play(work.actor, plan->element, 0, 0);
   }
   if (mode & 1)
@@ -552,7 +547,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 
   BattleObject_Put();
   count = BattleParty_ListActorIds(3, units);
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   for (i = 0; i != count; i++) {
     u32 unit;
 

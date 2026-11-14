@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "module/system/system.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
@@ -342,8 +343,8 @@ s32 NameEntry_EditMemberName(s32 member) {
     x = 72 + NameEntry_CountLetters(editedName) * 10;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
-  palette = (u16 *)0x050001c0;
-  Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+  palette = (u16 *)(BG_PLTT + 14 * 16);
+  Dma_Set((void *)(BG_PLTT + 15 * 16), palette, 0x84000008, REG_DMA3);
   palette[4] = 0x6318;
   end = (u8 *)(byteCount + (s32)editedName) - 1;
   while (1) {
@@ -379,8 +380,8 @@ s32 NameEntry_EditMemberName(s32 member) {
       output->sprite.oam.x = output->x + gNameEntry_CaretWave[frame];
       output->sprite.oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
-    if (gInput.repeat & 0x40) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_UP) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -395,8 +396,8 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyRow *= NAME_REMOVE_ROW;
       }
     }
-    if (gInput.repeat & 0x80) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_DOWN) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -412,8 +413,8 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyRow = NAME_PAGE_ROW;
       }
     }
-    if (gInput.repeat & 0x20) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_LEFT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
@@ -426,8 +427,8 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyColumn--;
       }
     }
-    if (gInput.repeat & 0x10) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_RIGHT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
       if (keyColumn == 19)
@@ -442,14 +443,14 @@ s32 NameEntry_EditMemberName(s32 member) {
           keyColumn = 0;
       }
     }
-    if (gInput.pressed & 8) {
-      Sound_PlayFar(111);
+    if (gInput.pressed & KEY_START) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = NAME_FINISH_ROW;
     }
-    if (gInput.pressed & 4) {
-      Sound_PlayFar(111);
+    if (gInput.pressed & KEY_SELECT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     turn_page:
       page ^= 1;
       if (page)
@@ -461,8 +462,8 @@ s32 NameEntry_EditMemberName(s32 member) {
       render->dirty = 1;
       continue;
     }
-    if (gInput.repeat & 2) {
-      Sound_PlayFar(113);
+    if (gInput.repeat & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
     remove_character:
       if (letterCount != 0) {
         letterCount--;
@@ -484,9 +485,9 @@ s32 NameEntry_EditMemberName(s32 member) {
       textDirty = 1;
       continue;
     }
-    if (!(gInput.repeat & 1))
+    if (!(gInput.repeat & KEY_A))
       continue;
-    Sound_PlayFar(112);
+    Sound_PlayFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == NAME_FINISH_ROW) {
         if (letterCount == 0) {
@@ -514,8 +515,6 @@ s32 NameEntry_EditMemberName(s32 member) {
       u32 tx = (s16)keyboardWindow->x + keyColumn + 1;
       u8 *slot;
 
-      // `tx + tx`: as `tx << 1`, the shift is scheduled before the row's
-      // address.
       letter = ((u8 *)render->tilemap +
                 (((s16)keyboardWindow->y + keyRow + 1) << 6))[tx + tx];
       // The keyboard keeps the marks as 0xFE and 0xFF.
@@ -527,7 +526,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         continue;
       slot = editedName + byteCount;
       if (!NameEntry_AcceptsMark(letter, *end)) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         continue;
       }
       *slot = letter;
@@ -630,8 +629,8 @@ s32 NameEntry_EditMemberName(s32 member) {
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
                                        Text_SetString(editedName) + 70, 22);
   }
-  palette = (u16 *)0x050001c0;
-  Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+  palette = (u16 *)(BG_PLTT + 14 * 16);
+  Dma_Set((void *)(BG_PLTT + 15 * 16), palette, 0x84000008, REG_DMA3);
   palette[4] = 0x6318;
   end = (u8 *)(originalLength + (s32)editedName);
   while (1) {
@@ -665,8 +664,8 @@ s32 NameEntry_EditMemberName(s32 member) {
       output->sprite.oam.x = output->x + gNameEntry_CaretWave[frame];
       output->sprite.oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
-    if (gInput.repeat & 0x40) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_UP) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -677,8 +676,8 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyRow = 5 - keyRow;
       }
     }
-    if (gInput.repeat & 0x80) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_DOWN) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -689,8 +688,8 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyRow += 4;
       }
     }
-    if (gInput.repeat & 0x20) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_LEFT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
@@ -702,8 +701,8 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyColumn--;
       }
     }
-    if (gInput.repeat & 0x10) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_RIGHT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
       if (keyColumn == 19)
@@ -713,14 +712,14 @@ s32 NameEntry_EditMemberName(s32 member) {
       if (keyColumn == NAME_COMMAND_COLUMN && (keyRow < 4 || keyRow > 5))
         keyColumn = 0;
     }
-    if (gInput.pressed & 8) {
-      Sound_PlayFar(111);
+    if (gInput.pressed & KEY_START) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = 5;
     }
-    if (gInput.repeat & 2) {
-      Sound_PlayFar(113);
+    if (gInput.repeat & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
     remove_character:
       if (letterCount != 0) {
         letterCount--;
@@ -733,9 +732,9 @@ s32 NameEntry_EditMemberName(s32 member) {
       result = -1;
       break;
     }
-    if (!(gInput.repeat & 1))
+    if (!(gInput.repeat & KEY_A))
       continue;
-    Sound_PlayFar(112);
+    Sound_PlayFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 5) {
         if (letterCount == 0) {

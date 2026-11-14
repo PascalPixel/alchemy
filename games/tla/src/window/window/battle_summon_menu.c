@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/window/screens.h"
 
@@ -81,14 +82,10 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
 
   for (index = 0; index < 4; index++) {
     s32 y;
-    // t holds the attribute zero, then is reused for the window's y; as plain
-    // stores, 2 of 984 instructions differ in tla-en.
     u32 t = 0;
 
     y = index * 2;
-    /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
-     * and the zero ahead of the stores; without it, 6 of 984 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the row. */
     do {
     } while (0);
     sprite = &sprites[index];
@@ -106,9 +103,6 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   }
 
   count = Summon_ListLearnedFar(learnedSummons);
-  // The first scan's exit inside a block that runs once leaves the outer loop's
-  // select block in place; as a plain block, 226 of 984 instructions differ in
-  // tla-en.
   do {
     s32 i;
 
@@ -144,17 +138,14 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    /* FAKEMATCH(temporary): cur holds &cursorStorage; as cursorStorage used
-     * directly, 277 of 984 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): cur holds &cursorStorage. */
     cur = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       {
         s32 x = window->x + 1;
-        /* FAKEMATCH(barrier): an empty asm on x, which issues its add after the
-         * other arguments; as x inside the call, 2 of 984 instructions differ
-         * in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm on x. */
         asm("" : "=r"(x) : "0"(x));
         Window_HighlightRect(x, window->y + drawnRow * 2 + 1, window->width - 2,
                              1, 15);
@@ -179,9 +170,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
       }
 
       if (firstEntry != drawnFirstEntry) {
-        // The redraw in a once-only block keeps the element loop's zero ahead
-        // of the loads after the call; as a plain call, 2 of 984 instructions
-        // differ in tla-en.
+        /* FAKEMATCH(dead): the redraw in a once-only block. */
         do {
           WindowSprite_RedrawSavedRect(window);
         } while (0);
@@ -320,23 +309,23 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         navigation->tutorialDelay--;
       }
     }
-    if (pressed & 1) {
+    if (pressed & KEY_A) {
       result = orderedSummons[firstEntry + selectedRow];
       break;
     }
-    if (NAVIGATION->timer == 0 || (pressed & 2)) {
-      Sound_PlayFar(113);
+    if (NAVIGATION->timer == 0 || (pressed & KEY_B)) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
-    if (repeated & 0x80) {
-      Sound_PlayFar(111);
+    if (repeated & KEY_DOWN) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedRow++;
       if (selectedRow == 4 || firstEntry + selectedRow == count)
         selectedRow = 0;
       preferredRow = selectedRow;
-    } else if (repeated & 0x40) {
-      Sound_PlayFar(111);
+    } else if (repeated & KEY_UP) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedRow--;
       if (selectedRow < 0) {
         if (firstEntry == (count - 1) / 4 * 4)
@@ -345,8 +334,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
           selectedRow = 3;
       }
       preferredRow = selectedRow;
-    } else if (repeated & 0x10) {
-      Sound_PlayFar(111);
+    } else if (repeated & KEY_RIGHT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry + 4 >= count) {
         if (firstEntry != 0) {
@@ -362,8 +351,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
             selectedRow = preferredRow;
         }
       }
-    } else if (repeated & 0x20) {
-      Sound_PlayFar(111);
+    } else if (repeated & KEY_LEFT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry != 0) {
         firstEntry -= 4;

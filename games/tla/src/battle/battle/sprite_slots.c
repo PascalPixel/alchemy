@@ -62,9 +62,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
       (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
   struct BattleUnit *actor = Unit_Get(unit);
   s32 singleSlot = BattleSprite_IsSmall(actor->enemyId);
-  /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
-   * pass a copy of its register (mov r4, r10); as an s32 set to 0, 2 of 134
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): result cleared a halfword at a time. */
   union {
     s32 value;
     u16 halves[2];
@@ -95,8 +93,6 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
       break;
 
     // The buffers' address held in a local, taken before the palette's call,
-    // leaves r3 to the first result; inside the sum, 6 of 134 instructions
-    // differ in tla-en.
     slotBuffers = (s32)Data_02018000;
     {
       s32 flag = BattleSprite_GetPalette(actor->enemyId);

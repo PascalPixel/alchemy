@@ -1546,7 +1546,7 @@ void YampiDesert_ClearRaisedEvent(void) {
 s32 YampiDesert_HasArrived(struct Actor *object) {
   s32 x = object->targetX;
 
-  if (x == ACTOR_NO_TARGET && object->targetZ == x)
+  if (x == TARGET_UNSET && object->targetZ == x)
     return 1;
   return 0;
 }

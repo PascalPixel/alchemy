@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 // Flora, the blossom spirit's summon.
 
@@ -150,9 +153,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
   (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
 
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
-  /* FAKEMATCH(wrapper): the sheet's address through this inline; as
-   * work->sheet at the call, 56 of 2583 instructions of BattleEffect_RunFlora
-   * differ in tla-en. */
+  /* FAKEMATCH(wrapper): the sheet's address through this inline. */
   return owner->sheet;
 }
 
@@ -226,7 +227,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Task_Add(BattleEffect_AdvanceScrollOnInterval, 3200);
       transition[4] = 1;
       e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      Iwram_CopyWordsEntry((void *)0x050003e0, e, 32);
+      Iwram_CopyWordsEntry((void *)(OBJ_PLTT + 15 * 16), e, 32);
       e += 32;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
@@ -285,10 +286,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       sprites[i * 18 + 590 + j] = v;
     }
   }
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x100;
-  REG_BLDALPHA = 0x100e;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0;
   posX = 128;
   posY = 44;
@@ -311,11 +314,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   draw[0] = Ram_HeapSlots->unk64[1];
-  for (frame = 0; frame != 300 && (!(gInput.repeat & 3) || frame <= 16);
+  for (frame = 0;
+       frame != 300 && (!(gInput.repeat & (KEY_A | KEY_B)) || frame <= 16);
        frame++) {
     if (frame == 0) {
-      Iwram_ClearWords((void *)0x06004000, 0x4000);
-      Iwram_ClearWordsEntry(canvas, 0x4000);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+      Iwram_ClearWordsEntry(canvas, CANVAS_BYTES);
       for (i = 0; i != 240; i++) {
         w->palette[i] = 0x7fff;
       }
@@ -373,7 +377,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, Data_02014260, 480);
     }
     if (u <= 7) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f - u * 0x01010101 * 8);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(63) - u * 0x01010101 * 8);
     }
     req = Data_08196ec8;
     dy = 0;
@@ -617,7 +622,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
                                         (s32 *)&req, 0);
     }
     if (frame == 114) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     verts = Heap_AllocEwram(512);
     model = Render_AllocateModelList(1);
@@ -643,7 +648,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(Data_08199446[i] << 16,
                                         Data_0819944a[i] << 16, 0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyRoll(Data_08199436[i]);
           Transform_ApplyPitch(Data_0819943e[i]);
           SceneTransform_ApplyUniformScale(scale);
@@ -664,13 +669,13 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     }
     Transform_ApplyRoll(angle);
     if (frame == 156) {
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 223) {
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     }
     if (frame == 252) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if ((u32)(frame - 156) <= 74) {
       s32 r = 80 - (frame - 156) / 2;
@@ -817,21 +822,20 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     Sprite_DestroyFar(work->objects[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)0x050000a0, 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
           (volatile u32 *)0x040000d4);
-  *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   work->transferMode = 2;
   work->transferValue = 50;
   work->transferMode = 1;
   work->transferValue = 0;
   REG_BG2X = 0;
   REG_BLDCNT = 0;
-  REG_BG2CNT = 0x784;
-  REG_BLDALPHA = 0x1010;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2PA = 0x80;
   {
-    /* FAKEMATCH(pin): e kept in r6; as a plain u8 *, 61 of 2583 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(pin): e kept in r6. */
     register u8 *e asm("r6") =
         Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
     s32 row;
@@ -843,8 +847,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 t;
     u8 *sheet;
     s32 hi;
-    /* FAKEMATCH(pin): c kept in r1; as a plain u32, 641 of 2583 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(pin): c kept in r1. */
     register u32 c asm("r1");
 
     Iwram_CopyWordsEntry((void *)BG_PLTT, e, 32);
@@ -900,7 +903,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
                 HI(p->x) - 4, HI(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, 64, 0);
-        p->velocityX += -0x1000;
+        p->velocityX += -(px(1) / 16);
         p->variant++;
       }
     }
@@ -914,7 +917,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         if (--s->variant == 0) {
           s->variant = 15;
           work->shakeFrames = 4;
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
           BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
         }
@@ -943,10 +946,10 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   object = slot->object;
   enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
-    object->acceleration = 0x20000;
-    object->speedLimit = 0x80000;
+    object->acceleration = px(2);
+    object->speedLimit = px(8);
     if (object->y < 0xa0000)
-      object->velocityY += 0x28000;
+      object->velocityY += px(5) / 2;
     Actor_StartIdleFar(object);
     if (slot->anchorX > 0)
       x = object->x + 0xf0000;
@@ -974,8 +977,6 @@ struct DaggerTexture {
   void *pixels;
 };
 
-// One entry of the list Render_DrawModelList draws; kind 9 is a textured quad.
-// Render_AllocateModelList allocates the list with an empty entry after it.
 struct RenderPrimitive {
   s32 kind;
   s32 unk04;
@@ -1031,18 +1032,16 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
       s32 y;
       s32 zero;
 
-      for (i = 0, zero = 0, y = 128 << 16, dagger = work->particles; i != 32;
+      for (i = 0, zero = 0, y = px(128), dagger = work->particles; i != 32;
            i++, dagger++) {
-        dagger->x = ((Random16() & 63) + 32) << 16;
-        dagger->y = y;
-        dagger->z = Random16();
+        SET_POSITION(dagger, ((Random16() & 63) + 32) << 16, y, Random16());
         dagger->velocityX = zero;
         dagger->velocityY = -((Random16() & 31) + 32) << 10;
         dagger->velocityZ = (Random16() & 0x3ff) + 0x400;
         if (i & 1)
           dagger->velocityZ = -dagger->velocityZ;
         dagger->variant = zero;
-        y += 8 << 16;
+        y += px(8);
       }
     }
     Transform_Reset();
@@ -1052,16 +1051,16 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     for (i = 0, strikeFrame = 20; i != 8; i++, strikeFrame += 6) {
       if (frame == strikeFrame) {
         work->shakeFrames = 4;
-        Sound_PlayFar(133);
+        Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, px(3), 100);
       }
     }
     if (frame == DAGGER_LAST_HIT) {
       work->shakeFrames = 4;
       BattlePlayback_StartFar(134);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 10);
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, px(3), 100);
     }
 
     // One textured quad, drawn once for each dagger.
@@ -1082,19 +1081,18 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
         s32 angle;
         s32 drift;
 
-        dagger->y = -48 << 16;
+        dagger->y = -px(48);
         angle = (i << 10) + (Random16() & 0x3ff) - 0x1200;
-        dagger->x = (angle << 10) + (64 << 16);
+        dagger->x = (angle << 10) + px(64);
         dagger->z = angle;
         drift = -angle << 5;
-        dagger->velocityY = 12 << 16;
+        dagger->velocityY = px(12);
         dagger->velocityX = drift;
         dagger->velocityZ = 0;
       }
       Transform_Reset();
-      SceneTransform_ApplyPosition3(dagger->x - (64 << 16),
-                                    dagger->y - (64 << 16), 0);
-      SceneTransform_ApplyUniformScale(0x8000);
+      SceneTransform_ApplyPosition3(dagger->x - px(64), dagger->y - px(64), 0);
+      SceneTransform_ApplyUniformScale(Q16_ONE / 2);
       Transform_ApplyRoll(dagger->z);
       Render_TransformVertices(gData_08199474, vertices, 4);
       Render_DrawModelList(quad);
@@ -1192,7 +1190,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
@@ -1226,7 +1224,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
         step->velocityX = (Trig_Sin(angle) * speed) >> 5;
         step->velocityY = (Trig_Cos(angle) * speed) >> 5;
       }
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     }
 
     // The smoke rises through its six 24x48 cels, slowing; the caster
@@ -1252,7 +1250,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
 
     if (frame == STAR_LEAP_FRAME) {
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16, 120);
-      casterObject->velocityY = 7 << 16;
+      casterObject->velocityY = px(7);
     }
 
     // The strike: pink palette, the caster lands at 120 percent and the
@@ -1274,7 +1272,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
         step->variant = (Random16() & 15) + 16;
         step->x = (target.x / 2) << 16;
         step->y = (target.y - 8) << 16;
-        angle = (Random16() & 0x7fff) + 0x4000;
+        angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 255) + 127;
         step->velocityX = (Trig_Sin(angle) * speed) >> 7;
         step->velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -1282,8 +1280,8 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
       work->shakeFrames = 4;
       BattlePlayback_StartFar(134);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 8 << 16, 20 << 16,
-                                    6 << 16, 10);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, px(8), px(20), px(6),
+                                    10);
     }
 
     // The stars twinkle through their six cels as they fly.
@@ -1309,7 +1307,6 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   }
 
   {
-    // A local for the 0, so the address is built first, in r2.
     s32 cleared = 0;
 
     battle[0x866] = cleared;

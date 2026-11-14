@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Battle effects: sparks after approaching the target (type 4).
 
@@ -83,8 +84,6 @@ void BattleEffect_RunTwinShear(s32 a0) {
 #define RESULTS_FRAME 18
 #define HIT_FRAME 20
 
-#define SE_REVEAL 212
-
 extern char ResourceId_ArcFragmentsSheet;
 extern char ResourceId_RevealMaskA;
 extern char ResourceId_RevealMaskB;
@@ -115,7 +114,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   BattleEffect_StartCanvasLayer(0);
   if ((u32)(variant - 3) > 2)
     REG_BLDCNT = 0;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The pictures: 1 and 2 in the sheet, 3 and 4 in the map cell
   // buffer (variant 5's four half pictures all there).
@@ -160,12 +159,11 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   // The user closes on the target in 16 frames (variant 3 jumps in place,
   // variant 4 strikes a pose instead and waits 8).
   if (variant == 1 || variant == 5)
-    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16,
-                                   0x80000);
+    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, px(8));
   else if (variant == 3)
     // The target is a whole word: the user, passed twice, is loaded once and
     // copied, where an s16 parameter would load it again halved.
-    BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 16, 0xa0000);
+    BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 16, px(10));
   else if (variant == 4) {
     struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
 
@@ -202,7 +200,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
                                                         COMPOSITE_FLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
-  Sound_PlayFar(SE_REVEAL);
+  Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != REVEAL_FRAMES; frame++) {
     if (variant == 5) {
       // Half the picture, then its reflection below it.
@@ -242,7 +240,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
 
     // The flood: four frames of the canvas filled with colour 0x3f.
     if ((u32)(frame - FLOOD_FRAME) <= 3)
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     if (frame == RESULTS_FRAME)
       BattlePlayback_StartFar(PHASE_RESULTS);
     if (frame == HIT_FRAME) {
@@ -260,7 +258,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode2(effect);

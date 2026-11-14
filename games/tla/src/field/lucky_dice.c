@@ -3,6 +3,7 @@
 /// in the ROM.
 
 #include "battle/battle.h"
+#include "sounds.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -47,7 +48,7 @@ extern const s16 gLuckyDice_FaceHeights[];
 
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  Sound_PlayFar(2);
+  Sound_PlayFar(MUS_002);
   LuckyDice_Run();
   return 0;
 }
@@ -238,9 +239,8 @@ void LuckyDice_Run(void) {
   s32 groundPoint[3];
   s32 screen[3];
   s32 unused[8];
-  // volatile: four halfwords stored to sp+166..160 and each reloaded with ldrh,
-  // the form the bytes prove; as plain u16 locals, 888 of 2055 instructions
-  // differ in tla-en.
+  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each reloaded
+   * with ldrh. */
   volatile u16 affineA;
   volatile u16 affineB;
   volatile u16 affineC;
@@ -252,9 +252,6 @@ void LuckyDice_Run(void) {
   s32 matchedNumbers[2];
   u16 *spritePalette;
   struct DiceWork *diceWork;
-  // The OAM shadow it builds is struct DiceOam, whose words are volatile as
-  // The Broken Seal's struct OamWords; as plain u32 members, 1595 of 2055
-  // instructions differ in tla-en.
   struct LuckyDiceSprites *sprites;
   struct DiceCamera *camera;
   s32 frame;
@@ -311,9 +308,9 @@ void LuckyDice_Run(void) {
 
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
-  Dma_Set((void *)resourceAddress, (void *)0x05000000,
+  Dma_Set((void *)resourceAddress, (void *)BG_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
-  Dma_Set((void *)0x05000000, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+  Dma_Set((void *)BG_PLTT, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
   resourceAddress += 0x1c0;
   // UB: Call2 passes integers to the decoder's two pointer parameters, as
@@ -325,13 +322,13 @@ void LuckyDice_Run(void) {
   Call2((void (*)())Decompress_TaggedLz, resourceAddress,
         (s32)Ram_MapCellBuffer);
 #endif
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06004000,
+  Dma_Set(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(1),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
   Dma_Set((void *)resourceAddress, spritePalette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
-  Dma_Set((void *)resourceAddress, (void *)0x05000200,
+  Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
 #ifdef UBFIX
@@ -340,17 +337,23 @@ void LuckyDice_Run(void) {
   Call2((void (*)())Decompress_TaggedLz, resourceAddress,
         (s32)Ram_MapCellBuffer);
 #endif
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06010000,
+  Dma_Set(Ram_MapCellBuffer, (void *)OBJ_VRAM0,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
-  LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, 0, 256);
-  LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
 
-  REG_BG1CNT = 0x686;
-  REG_WININ = 0x3737;
-  REG_WINOUT = 0x2723;
-  REG_DISPCNT = 0x3340;
-  REG_BLDCNT = 0x3f44;
-  REG_BLDALPHA = 0x810;
+  REG_BG1CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(6);
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_CLR |
+               WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2 |
+               WINOUT_WINOBJ_CLR;
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 8);
   gBgScroll[1].x = 0;
   gBgScroll[1].y = 0;
   REG_BG1HOFS = 0;
@@ -385,12 +388,12 @@ void LuckyDice_Run(void) {
   do {
     luckyNumbers[1] = Random16() % 6;
   } while (luckyNumbers[0] == luckyNumbers[1]);
-  diceWork->particles[0].x = 0x280000;
-  diceWork->particles[0].y = 0x600000;
-  diceWork->particles[0].z = -0xa00000;
-  diceWork->particles[1].x = -0x280000;
-  diceWork->particles[1].y = 0x600000;
-  diceWork->particles[1].z = -0xa00000;
+  diceWork->particles[0].x = px(40);
+  diceWork->particles[0].y = px(96);
+  diceWork->particles[0].z = -px(160);
+  diceWork->particles[1].x = -px(40);
+  diceWork->particles[1].y = px(96);
+  diceWork->particles[1].z = -px(160);
 
   WindowSystem_InitFieldFar();
   window =
@@ -413,10 +416,9 @@ void LuckyDice_Run(void) {
   for (;;) {
     resetDice = 0;
     if (frame <= 16) {
-      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, frame << 12,
+      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
                                   256);
-      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, frame << 12,
-                                  256);
+      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
     }
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
@@ -446,7 +448,7 @@ void LuckyDice_Run(void) {
     if (state == 2 || state == 3) {
       for (index = 0; index != 4; index++) {
         if (resultTimer == index * 5) {
-          Sound_PlayFar(303);
+          Sound_PlayFar(SE_LUCKY_DICE_NUMBER);
         }
         if (resultTimer >= index * 5) {
           sprites->oam[spriteCount].attr01 =
@@ -500,8 +502,8 @@ void LuckyDice_Run(void) {
       if (payoutTimer > 0) {
         payoutTimer--;
       }
-      if (resultTimer > 19 && (gInput.repeat & 1)) {
-        Sound_PlayFar(112);
+      if (resultTimer > 19 && (gInput.repeat & KEY_A)) {
+        Sound_PlayFar(SE_MENU_CONFIRM);
         if (winnings > 0) {
           state = 3;
           payoutTimer = 0;
@@ -534,41 +536,38 @@ void LuckyDice_Run(void) {
     } else if (state == 0 && frame > 17) {
       (void)gInput.repeat;
       (void)gInput.repeat;
-      // The held keys read through a volatile pointer, as The Broken Seal's
-      // gKeysHeld is declared; as gInput.held, 10 of 2055 instructions differ
-      // in tla-en.
-      if (*(volatile u32 *)&gInput.held & 0x40) {
-        diceWork->particles[0].y += 0x40000;
-        diceWork->particles[1].y += 0x40000;
+      if (*(volatile u32 *)&gInput.held & KEY_UP) {
+        diceWork->particles[0].y += px(4);
+        diceWork->particles[1].y += px(4);
       }
-      if (gInput.held & 0x80) {
-        diceWork->particles[0].y += -0x40000;
-        diceWork->particles[1].y += -0x40000;
+      if (gInput.held & KEY_DOWN) {
+        diceWork->particles[0].y += -px(4);
+        diceWork->particles[1].y += -px(4);
       }
       if (diceWork->particles[0].y < 0x200000) {
-        diceWork->particles[0].y = 0x200000;
+        diceWork->particles[0].y = px(32);
       }
       if (diceWork->particles[0].y > 0xa00000) {
-        diceWork->particles[0].y = 0xa00000;
+        diceWork->particles[0].y = px(160);
       }
       if (diceWork->particles[1].y < 0x200000) {
-        diceWork->particles[1].y = 0x200000;
+        diceWork->particles[1].y = px(32);
       }
       if (diceWork->particles[1].y > 0xa00000) {
-        diceWork->particles[1].y = 0xa00000;
+        diceWork->particles[1].y = px(160);
       }
       if ((u32)gMainRoutineWork.coins <
           (u32)(Party_GetAverageLevelFar() * 10)) {
         Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
-      if (gInput.repeat & 2) {
-        Sound_PlayFar(113);
+      if (gInput.repeat & KEY_B) {
+        Sound_PlayFar(SE_MENU_CANCEL);
         Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
-      if (gInput.repeat & 1) {
-        Sound_PlayFar(302);
+      if (gInput.repeat & KEY_A) {
+        Sound_PlayFar(SE_LUCKY_DICE_THROW);
         Window_CloseFar(sprites->helpWindow, 1);
         state = 1;
         bet = Party_GetAverageLevelFar() * 10;
@@ -581,8 +580,8 @@ void LuckyDice_Run(void) {
         for (index = 0; index != 2; index++) {
           rollingDie = &diceWork->particles[index];
           if (index > 1) {
-            rollingDie->z = -0xb40000;
-            rollingDie->y = 0x600000;
+            rollingDie->z = -px(180);
+            rollingDie->y = px(96);
           }
           rollingDie->velocityX = ((Random16() & 127) - 64) << 12;
           rollingDie->velocityY = ((Random16() & 15) + 48) << 13;
@@ -595,12 +594,12 @@ void LuckyDice_Run(void) {
     }
 
     if (resetDice == 1) {
-      diceWork->particles[0].x = 0x280000;
-      diceWork->particles[0].y = 0x600000;
-      diceWork->particles[0].z = -0xa00000;
-      diceWork->particles[1].x = -0x280000;
-      diceWork->particles[1].y = 0x600000;
-      diceWork->particles[1].z = -0xa00000;
+      diceWork->particles[0].x = px(40);
+      diceWork->particles[0].y = px(96);
+      diceWork->particles[0].z = -px(160);
+      diceWork->particles[1].x = -px(40);
+      diceWork->particles[1].y = px(96);
+      diceWork->particles[1].z = -px(160);
       luckyNumbers[0] = Random16() % 6;
       do {
         luckyNumbers[1] = Random16() % 6;
@@ -722,15 +721,15 @@ void LuckyDice_Run(void) {
           }
         }
         if (rollingDie->x < -0xc80000) {
-          rollingDie->x = -0xc80000;
+          rollingDie->x = -px(200);
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
         if (rollingDie->x > 0xc80000) {
-          rollingDie->x = 0xc80000;
+          rollingDie->x = px(200);
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
         if (rollingDie->z < -0x960000) {
-          rollingDie->z = -0x960000;
+          rollingDie->z = -px(150);
           rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
         }
         if (rollingDie->z > rollingDie->y + 0xb40000) {
@@ -740,7 +739,7 @@ void LuckyDice_Run(void) {
             rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
           }
         }
-        rollingDie->velocityY += -0x8000;
+        rollingDie->velocityY += -(px(1) / 2);
         if (rollingDie->y <= 0) {
           rollingDie->y = 0;
           rollingDie->velocityY = -rollingDie->velocityY * 48 / 64;
@@ -771,7 +770,7 @@ void LuckyDice_Run(void) {
             rollAngle = rollingDie->variant;
             faceTile = rollAngle / 1024 % 3;
             if (faceTile == 1) {
-              rollingDie->variant = rollAngle + 0x800;
+              rollingDie->variant = rollAngle + TRIG_TURN / 32;
             } else if (faceTile == 2) {
               rollingDie->variant = rollAngle + 0x400;
             }
@@ -822,7 +821,7 @@ void LuckyDice_Run(void) {
           }
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      (s32)sprites->coinsWindow, 0, 0);
-          Sound_PlayFar(93);
+          Sound_PlayFar(MUS_093);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -845,7 +844,7 @@ void LuckyDice_Run(void) {
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            Sound_PlayFar(91);
+            Sound_PlayFar(MUS_091);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -853,7 +852,7 @@ void LuckyDice_Run(void) {
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            Sound_PlayFar(92);
+            Sound_PlayFar(MUS_092);
           }
         }
       }
@@ -876,16 +875,16 @@ void LuckyDice_Run(void) {
       sprites->oam[index * 4 + 3].attr2 |= affineD << 16;
     }
 
-    Dma_Set(sprites->oam, (void *)0x07000000,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
+    Dma_Set(sprites->oam, (void *)OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
+            REG_DMA3);
     wait(1);
     frame++;
   }
 
   for (index = 0; index != 17; index++) {
-    scale = 0x10000 - (index << 12);
-    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, scale, 256);
-    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
+    scale = Q16_ONE - (index << 12);
+    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     wait(1);
   }
   HeapSlot_Release(48);

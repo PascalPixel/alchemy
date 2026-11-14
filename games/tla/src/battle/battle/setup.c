@@ -8,6 +8,7 @@
 #include "module/battle/battle.h"
 #include "module/system/system.h"
 #include "system/transform.h"
+#include "macros.h"
 
 void SceneTransform_SetPosition(s32 *position);
 
@@ -52,13 +53,11 @@ void BattleCamera_Update(void) {
   Transform_ApplyPitch((s16)camera->pitch);
   SceneTransform_SetPosition(focus);
 
-  eyeOffset.x = 0;
-  eyeOffset.y = 0;
-  eyeOffset.z = camera->distance;
+  SET_POSITION(&eyeOffset, 0, 0, camera->distance);
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
   if (transition->flag == 0) {
-    BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
+    BattleCamera_SetRange(px(120), px(120), 0, 0, Q16_ONE);
   }
 }
 

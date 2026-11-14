@@ -4,6 +4,8 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 void Camera_WorldToScreen(s32 *position);
 
@@ -57,13 +59,6 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
 void FieldPsynergy_WatchSandGround(void);
 extern char ResourceId_DustPuffA;
-/* VIEW(growing_particle): routine Sand_InitLeaderSprite as void
- * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
- * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles); not
- * tried: Sand_InitLeaderSprite's bound declaration was not found. */
-extern void
-Func_080e4510__growing_particle(void *sprite,
-                                s32 tiles) __asm__("Sand_InitLeaderSprite");
 void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
 void Sand_DrawLeaderSprite(void *sprite);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -130,7 +125,7 @@ void FieldPsynergy_EndSand(void) {
   ((u8 *)owner->sprite)[7] = mask;
   if (*(s8 *)(event + 394) == 3)
     *(s32 *)((u8 *)owner->sprite + 12) = 0xc000;
-  owner->facing = 0x4000;
+  owner->facing = TRIG_TURN / 4;
   Actor_SelectAnimationFar(owner, 0);
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
   wait(1);
@@ -140,22 +135,18 @@ void FieldPsynergy_EndSand(void) {
 
     sprite = 0x400;
     {
-      /* FAKEMATCH(pin): the copy's size pinned to r2, so it is set before
-       * work's copy to r1; as FieldPsynergy_DecodePicture(source, work,
-       * sprite), 2 of 332 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the copy's size pinned to r2. */
       register s32 size asm("r2") = sprite;
 
       FieldPsynergy_DecodePicture(source, work, size);
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
-  /* FAKEMATCH(barrier): an empty asm reading party, which nothing reads after
-   * the animation's set, keeps it live in r6 to here; without it, 79 of 332
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm reading party. */
   asm("" : : "r"(party));
   pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
-  Func_080e4510__growing_particle(work + 0x1900, sprite);
+  Sand_InitLeaderSprite(work + 0x1900, sprite);
   wait(1);
 
   frame = 0;
@@ -164,11 +155,11 @@ void FieldPsynergy_EndSand(void) {
   pictureOffset = sprite * 32;
   for (; frame < 78; frame++) {
     if (frame == 0)
-      Sound_PlayFar(544);
+      Sound_PlayFar(SE_544);
     if (frame <= 64) {
       Picture_SinkColumnsByWave(work, rippled, 92 - ripple / 2);
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
-          rippled, 32, 32, (u8 *)0x06010000 + pictureOffset);
+          rippled, 32, 32, (u8 *)OBJ_VRAM0 + pictureOffset);
       Sand_DrawLeaderSprite(work + 0x1900);
     }
     if (frame == 66) {
@@ -176,7 +167,7 @@ void FieldPsynergy_EndSand(void) {
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
       Actor_SetSpriteFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
       FieldCamera_FollowActor(*(s16 *)(effect + 24), 1);
-      Sound_PlayFar(539);
+      Sound_PlayFar(SE_539);
       if (*(s8 *)(event + 394) == 3) {
         Data_02000452 = 1;
         *motionFlags = 2;

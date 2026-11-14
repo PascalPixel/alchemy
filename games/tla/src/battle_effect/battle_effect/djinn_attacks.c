@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 // Tiles: copy a byte image rotated 90 degrees clockwise.
 
@@ -107,7 +109,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   for (i = 0; i != 512; i++)
     DOTS[i].variant = -1;
 
-  Sound_PlayFar(162);
+  Sound_PlayFar(SE_162);
   frame = 0;
   do {
     // The battle resumes and resolves the targets, hit cue 133.
@@ -123,7 +125,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           for (j = 0; j != DOTS_PER_FLAME; j++) {
             s32 direction;
@@ -225,7 +227,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -247,9 +249,9 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   for (i = 0; i != DOT_COUNT; i++)
     DOTS[i].variant = -1;
 
-  Sound_PlayFar(171);
+  Sound_PlayFar(SE_THUNDER);
   frame = 0;
-  angle = 0x8000;
+  angle = TRIG_TURN / 2;
   do {
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
@@ -286,7 +288,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
             // Each dot lives 32 to 47 frames.
             dot->variant = (Random16() & 15) + 32;
           }
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != effect->count; j++) {
@@ -314,7 +316,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);
-    angle -= 0x800;
+    angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != 96);
 
@@ -334,8 +336,6 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   u8 *res = Resource_GetTableEntry(id);
 
   if (copy_pal != 0) {
-    // The entry held in a local loads after the destination is built; as a
-    // plain Iwram_CopyWords call, 2 of 26 instructions differ in tla-en.
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, res, 128);
@@ -371,7 +371,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
   canvas = slots->battleFxWork[1];
   sheet = slots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(
       HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP_Y));
@@ -399,9 +399,9 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
   for (i = 0; i != DOT_COUNT; i++)
     DOTS[i].variant = -1;
 
-  Sound_PlayFar(141);
+  Sound_PlayFar(SE_RUMBLE);
   frame = 0;
-  angle = 0x8000;
+  angle = TRIG_TURN / 2;
   do {
     // The Djinn swings on an arc that narrows by two pixels a frame.
     if (frame <= 79) {
@@ -436,7 +436,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
             dot->variant = (Random16() & 15) + 32;
           }
           if (i & 1)
-            Sound_PlayFar(133);
+            Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != effect->count; j++) {
@@ -465,7 +465,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);
-    angle -= 0x800;
+    angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != 96);
 
@@ -547,7 +547,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     member++;
   } while (member != PUFF_COUNT);
 
-  Sound_PlayFar(0x88);
+  Sound_PlayFar(SE_WHOOSH);
   frame = 0;
   diveY = -172;
   do {
@@ -572,7 +572,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     }
     // It lands: the ember sheet replaces the Djinn's.
     if (frame == 32) {
-      Sound_PlayFar(0x91);
+      Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 8;
       Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
                                  1, 1);

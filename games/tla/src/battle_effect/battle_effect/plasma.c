@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -35,7 +37,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 |
                                              COMPOSITE_CLIP_X |
                                              COMPOSITE_CLIP_Y);
@@ -52,8 +54,6 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 457 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   }
 
@@ -92,8 +92,8 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     for (i = 0; i != count; i++) {
       start = i * 8;
       if (frame == start) {
-        Sound_PlayFar(134);
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
@@ -115,7 +115,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - 0x4000;
+              angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
               spark->x = gPlasma_Columns[i + effect->side * 7] << 16;
               spark->y = PILLAR_BASE_Y << 16;
@@ -187,7 +187,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
 #define FLASH_POINTS 16 // flash points kept for each group
 #define FLASH_DRAWN 12  // of which the first 12 are drawn
 #define FLASH_FRAMES 18 // six cels of three frames
-#define GROUND_Y (108 << 16)
+#define GROUND_Y px(108)
 
 #define SHAPE(n) Data_081979de[effect->variant][n]
 #define SPARK_COUNT SHAPE(0)
@@ -236,7 +236,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
   }
 
   // The flash sheet, the particle sprites and the kind's palette.
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
@@ -247,8 +247,6 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 783 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   } else if (kind == SPARKS_FROM_ACTOR) {
     const void *palette =
@@ -256,8 +254,6 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 783 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   }
 
@@ -313,16 +309,16 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
         camera->yaw -= 256;
     }
     if (effect->variant == 3 && frame == 4)
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
 
     if (kind == SPARKS_ORANGE || kind == SPARKS_FROM_ACTOR) {
       if (frame == 2) {
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
         BattlePlayback_StartFar(145);
       }
     } else {
       if (frame == 2)
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       if (frame == 24)
         BattlePlayback_StartFar(134);
     }

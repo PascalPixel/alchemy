@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct MeshTriangle;
@@ -136,7 +139,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
     s16 savedYaw;
     void *caster;
     s32 frames;
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
     if (effect->side == 0) {
       BattleEffect_LoadBlitter(
           SLOT_BLITTER,
@@ -148,7 +152,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
                                                           COMPOSITE_FLIP_X));
     }
     blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
     work->transferMode = 2;
     work->transferValue = 50;
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -171,7 +175,6 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
       {
         const void *source =
             Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-        // A local for the routine: loads its address where the listing does.
         s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
         copy((void *)BG_PLTT, source, 128);
@@ -207,7 +210,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           work->particles[i].variant = -1;
         }
         if (mode == 1) {
-          Sound_PlayFar(145);
+          Sound_PlayFar(SE_CRASH);
         }
       }
       Transform_Reset();
@@ -217,8 +220,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         if ((u32)frame <= 15) {
           s32 turn;
 
-          // DEAD: frame is at most 15 here, so the second arm never runs. This
-          // arm order gives frame's reload into r4.
+          // DEAD: frame is at most 15 here, so the second arm never runs; the
+          // ROM keeps its test.
           if (frame <= 71) {
             turn = 256;
           } else {
@@ -244,7 +247,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           work->particles[63].y = work->particles[63].y * 56 / 64;
           work->particles[63].z = work->particles[63].z * 56 / 64;
           if (frame == 31) {
-            Sound_PlayFar(138);
+            Sound_PlayFar(SE_ITEM_BREAK);
           }
         } else if (frame <= 45) {
           // ...drive in...
@@ -265,7 +268,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             BattlePlayback_StartFar(134);
             work->shakeFrames = 8;
           } else {
-            Sound_PlayFar(138);
+            Sound_PlayFar(SE_ITEM_BREAK);
             work->shakeFrames = 2;
           }
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
@@ -273,9 +276,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             if (p->variant != -1) {
               continue;
             }
-            p->x = target[2];
-            p->y = target[3] + 0x50000;
-            p->z = target[4];
+            SET_POSITION(p, target[2], target[3] + 0x50000, target[4]);
             p->velocityX = ((Random16() & 511) + 256) << 10;
             if (effect->side == 1) {
               p->velocityX = -p->velocityX;
@@ -307,10 +308,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             s32 speed;
 
             p = &work->particles[i];
-            p->x = target[2];
-            p->y = target[3] + 0xa0000;
-            p->z = target[4];
-            angle = (Random16() & 0x7fff) - 0x4000;
+            SET_POSITION(p, target[2], target[3] + 0xa0000, target[4]);
+            angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
             // DEAD: both arms alike; the ROM keeps the test and both calls.
             if (i > 53) {
               speed = (Random16() & 511) + 256;
@@ -430,7 +429,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         texture.logWidth = 5;
         texture.logHeight = 5;
         texture.pixels = work->sheet;
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         gCameraSceneParameters[3] = 60;
         SceneTransform_ApplyPosition(focus);
         SceneTransform_ApplyPosition3(0, 0x100000, 0);
@@ -441,7 +440,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         }
         scale = 0xa000;
         if (frame > 31) {
-          scale = (frame << 10) + 0x2000;
+          scale = (frame << 10) + Q16_ONE / 8;
         }
         SceneTransform_ApplyUniformScale(scale);
         if (frame > 3) {

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "sounds.h"
 #include "field/event.h"
 #include "module/sound/sound.h"
 #include "system/system.h"
@@ -39,9 +40,7 @@ void SoundTest_Run(void) {
   cues = sSoundTestCues;
   row = 0;
   preset = 3;
-  // The store in a once-only block, after preset's setup and before the
-  // VBlank state's; as the plain store, 10 of 145 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the store in a once-only block. */
   do {
     gBuildStamp__noop_stub = 0;
   } while (0);
@@ -80,11 +79,11 @@ void SoundTest_Run(void) {
     if (gInput.repeat & KEY_A)
       Sound_Play(cues.cue[row]);
     if (gInput.repeat & KEY_B)
-      Sound_Play(0);
+      Sound_Play(MUS_000);
     if (gInput.repeat & KEY_START)
-      Sound_Play(78);
+      Sound_Play(SOUND_FADE_OUT_BGM);
     if (gInput.repeat & KEY_SELECT)
-      Sound_Play(390);
+      Sound_Play(SOUND_FADE_OUT_ACTION_SE);
 
     wait(1);
   }
@@ -170,17 +169,12 @@ void Sound_SetFixedSampleFreq(u32 mode) {
   samples = 528;
   work->pcmSamplesPerVBlank = samples;
   work->rateStep = 266;
-  // control holds both of timer 0's control values, each built in a register;
-  // as the constants written directly, 22 of 58 instructions differ in tla-en.
   control = 0;
-  // The timer's stop in a once-only block keeps its register's address after
-  // the work's stores; as the plain store, 8 of 58 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the timer's stop in a once-only block. */
   do {
     REG_TM0CNT_H = control;
   } while (0);
-  // The reload's store in a once-only block keeps it ahead of the buffer's
-  // address; as the plain store, 6 of 58 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the reload's store in a once-only block. */
   do {
     REG_TM0CNT_L = __divsi3(-140448, samples);
   } while (0);
@@ -189,8 +183,7 @@ void Sound_SetFixedSampleFreq(u32 mode) {
   m4aSoundVSyncOn();
   REG_DMA1SAD = (u32)buffer;
   buffer += 0xc60;
-  // The second source's store in a once-only block keeps it ahead of VCOUNT's
-  // address; as the plain store, 4 of 58 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the second source's store in a once-only block. */
   do {
     REG_DMA2SAD = (u32)buffer;
   } while (0);

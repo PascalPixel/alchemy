@@ -4,6 +4,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
 
@@ -13,9 +14,9 @@ void Actor_ResetTargetAndSetMode1(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     Actor_StartIdleFar(object);
     Actor_SelectAnimationFar(object, 1);
   }
@@ -115,12 +116,12 @@ void Actor_FallOverById(u32 id, u32 angle) {
 
   if (object != NULL && sprite != NULL) {
     Actor_SelectAnimationFar(object, 0);
-    angle = (angle + 0x2000) & 0xc000;
+    angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
     position[0] = object->x;
     position[2] = object->z;
     MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
                                  255);
-    Vector_AddPolarOffset(0x100000, angle, position);
+    Vector_AddPolarOffset(px(16), angle, position);
     MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
                                  255);
     switch (angle) {
@@ -142,7 +143,7 @@ void Actor_FallOverById(u32 id, u32 angle) {
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
     sprite->nextFrame = 0;
-    sprite->rotation = angle + 0x4000;
+    sprite->rotation = angle + TRIG_TURN / 4;
   }
 }
 
@@ -158,23 +159,23 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   if (mode != -1)
     Actor_SelectAnimationFar(object, mode);
   position[0] = object->x;
-  angle = (angle + 0x2000) & 0xc000;
+  angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
   position[2] = object->z;
   MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
                                255);
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
                                255);
   switch (angle) {
   case 0:
-    object->x += 0x80000;
-    object->z += 0x10000;
+    object->x += px(8);
+    object->z += px(1);
     ((s8 *)sprite->unk14)[2] -= 4;
     ((s8 *)sprite->unk14)[3] += 15;
     break;
   case 0x8000:
-    object->x -= 0x80000;
-    object->z += 0x10000;
+    object->x -= px(8);
+    object->z += px(1);
     ((s8 *)sprite->unk14)[2] += 3;
     ((s8 *)sprite->unk14)[3] += 16;
     break;
@@ -182,14 +183,14 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
     ((s8 *)sprite->unk14)[3] += 1;
     break;
   case 0x4000:
-    object->z += 0x80000;
+    object->z += px(8);
     ((s8 *)sprite->unk14)[3] += 13;
     break;
   }
   object->collisionFlags = 0;
   object->priorityFlags |= 2;
   sprite->nextFrame = 0;
-  sprite->rotation = angle + 0x4000;
+  sprite->rotation = angle + TRIG_TURN / 4;
 }
 
 /// Gives an actor's sprite a still picture: resource, drawn by Icon_DrawItemFar
@@ -208,8 +209,6 @@ void Actor_ShowItemIconById(u32 id, s32 resource) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite;
   u8 *buffer;
-  // One zero for the fill and the stores, set between the allocation and its
-  // 0x400 offset; a literal 0 at each use differs.
   s32 zero;
   s32 tile;
   u8 kind;
@@ -258,21 +257,15 @@ s32 Actor_GetSpriteById(s32 key) {
 s32 Actor_FindBySprite(s32 value) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 result = -1;
-  s32 index = 8;
-  struct Actor *object = event->objects[index];
+  s32 index;
+  struct Actor *object;
 
-  if (object != NULL && object->animationKind == 1 &&
-      *((struct ObjectAnimationState *)object->sprite)->value28 == value) {
-    result = index;
-  } else {
-  next:
-    index++;
-    if (index <= 79) {
-      object = event->objects[index];
-      if (object == NULL || object->animationKind != 1 ||
-          *((struct ObjectAnimationState *)object->sprite)->value28 != value)
-        goto next;
+  for (index = 8; index <= 79; index++) {
+    object = event->objects[index];
+    if (object != NULL && object->animationKind == 1 &&
+        *((struct ObjectAnimationState *)object->sprite)->value28 == value) {
       result = index;
+      break;
     }
   }
   return result;

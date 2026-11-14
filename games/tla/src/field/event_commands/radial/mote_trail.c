@@ -3,6 +3,8 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 extern const s32 gFieldEffect_TargetColors[];
 extern const u8 Data_080f1040[];
@@ -18,8 +20,6 @@ void SummonTablet_UpdateMotes(void);
 /// Plays a summon tablet's reading (a treasure of type 132, "examined the
 /// stone tablet"): the tablet's runes and pebbles fly as motes between it
 /// and the leader, with their sounds, before Summon_ShowLearnedMessage.
-/// ★ Named from the game: "{protagonist_name} examined the stone tablet..."
-/// (MsgKey0dc4 + 26)
 void SummonTablet_PlayRunes(s32 targetId) {
   struct MoteWork *work = HeapSlot_Alloc(92, sizeof(struct MoteWork));
   s32 ownerId = Party_GetLeaderActor();
@@ -100,12 +100,12 @@ void SummonTablet_PlayRunes(s32 targetId) {
     mote++;
   }
   wait(1);
-  Sound_PlayFar(139);
+  Sound_PlayFar(SE_139);
   Actor_SelectAnimationFar(target, 2);
   Event_Wait(60);
   target->timer = 0;
   target->update = SummonTablet_CyclePictures;
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
   Event_Wait(80);
   Actor_StartScriptFar(target, Data_080f1040);
   work->moving = 0;
@@ -118,11 +118,11 @@ void SummonTablet_PlayRunes(s32 targetId) {
       work->state = 0;
       if (timer <= 39) {
         if ((timer & 7) == 0)
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
         sparks = 1;
       }
       if (timer == 40) {
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         sparks = 25;
         Actor_StartIdleFar(target);
         target->scaleX = 0;
@@ -152,7 +152,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
           rune->oam.index += -32;
       }
       if (timer == 0)
-        Sound_PlayFar(246);
+        Sound_PlayFar(SE_GLITTER);
       if (timer == 56) {
         state++;
         timer = -1;
@@ -190,7 +190,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
           mote++;
         }
         work->radius = 60 * Q16_ONE;
-        work->angle = 0xc000;
+        work->angle = TRIG_TURN * 3 / 4;
         work->originX = startX;
         work->originZ = startZ;
         work->moving = 1;
@@ -198,11 +198,11 @@ void SummonTablet_PlayRunes(s32 targetId) {
         work->state = 2;
       }
       if (timer == 0)
-        Sound_PlayFar(187);
+        Sound_PlayFar(SE_FALLING_LIGHT);
       if (timer == 48)
-        Sound_PlayFar(187);
+        Sound_PlayFar(SE_FALLING_LIGHT);
       if (timer == 96)
-        Sound_PlayFar(187);
+        Sound_PlayFar(SE_FALLING_LIGHT);
       if (timer == 100) {
         state++;
         timer = -1;
@@ -230,7 +230,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       if (timer == 0)
         Actor_StartScriptFar(owner, gData_080f3614);
       if ((timer & 3) == 0)
-        Sound_PlayFar(167);
+        Sound_PlayFar(SE_MAP_TRANSITION);
       work->state = 3;
       if (timer == 60)
         state = 999;

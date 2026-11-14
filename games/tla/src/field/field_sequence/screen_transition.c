@@ -75,9 +75,9 @@ void Leader_StepAwayFromNearbyActor(void) {
         leader->x = other->x;
         leader->z = other->z;
         Vector_AddPolarOffset__f0cf050(0x140000, ArcTan2(dz, dx), &leader->x);
-        leader->targetX = 0x80000000;
-        leader->targetY = 0x80000000;
-        leader->targetZ = 0x80000000;
+        leader->targetX = TARGET_UNSET;
+        leader->targetY = TARGET_UNSET;
+        leader->targetZ = TARGET_UNSET;
         break;
       }
   }
@@ -97,9 +97,8 @@ void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
   if ((100 * Random16() >> 16) > 9)
     return;
 
-  position.x = emitter->position.x;
-  position.y = emitter->position.y;
-  position.z = emitter->position.z;
+  SET_POSITION(&position, emitter->position.x, emitter->position.y,
+               emitter->position.z);
   randomAngle = Random16();
   Vector_AddPolarOffset(randomAngle << 4, Random16(), &position);
   object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
@@ -162,7 +161,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   position[1] = picture->y;
   position[2] = picture->z;
   if (actor == Party_GetLeaderActor()) {
-    Vector_AddPolarOffset(0x100000, picture->facing, position);
+    Vector_AddPolarOffset(px(16), picture->facing, position);
     position[0] = (position[0] & 0xfff00000) + 0x80000;
     position[2] = (position[2] & 0xfff00000) + 0x80000;
   }
@@ -203,8 +202,8 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   ((u8 *)visual)[9] = mask;
   picture->motionFlags = 2;
   picture->terrainHeight = position[1];
-  picture->velocityY = 0x20000;
-  picture->gravity = 0x4000;
+  picture->velocityY = px(2);
+  picture->gravity = px(1) / 4;
   buffer = HeapSlot_Alloc(68, 0x608);
   Icon_DrawItemFar(item);
   tile = VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
@@ -248,7 +247,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   {
     struct Actor *found = ObjectTable_Get(Party_GetLeaderActor());
     actor->acceleration = Q16_ONE;
-    actor->speedLimit = 0x20000;
+    actor->speedLimit = px(2);
     actor->motionFlags = 0;
     owner = found;
   }
@@ -257,7 +256,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   wait(3);
   Actor_SelectAnimationFar(owner, 28);
   Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
-  owner->facing = 0x4000;
+  owner->facing = TRIG_TURN / 4;
 }
 
 void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
@@ -268,8 +267,8 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
     if (flags & 1) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
-      object->velocityY = 0x20000;
-      object->gravity = 0x4000;
+      object->velocityY = px(2);
+      object->gravity = px(1) / 4;
       object->update = ItemDisplay_EmitSparkles;
     }
     if (flags == 3)
@@ -348,9 +347,8 @@ void Reveal_EmitSparkles(const struct ParticleSource *source) {
   if ((100 * Random16() >> 16) > 9)
     return;
 
-  position.x = source->position.x;
-  position.y = source->position.y;
-  position.z = source->position.z;
+  SET_POSITION(&position, source->position.x, source->position.y,
+               source->position.z);
   random = Random16();
   Vector_AddPolarOffset(random << 4, Random16(), &position);
   object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
@@ -375,13 +373,6 @@ void Reveal_EmitSparkles(const struct ParticleSource *source) {
 // event has not run, a marker object goes at its event object, or at the map
 // cell of a tile event, when that point is on screen.
 
-/* VIEW(rising): variable gBattleEffect_MarkerParticleScript as extern const s32
- * gBattleEffect_MarkerParticleScript[]; emitter has extern const u8
- * gBattleEffect_MarkerParticleScript[]; not tried:
- * gBattleEffect_MarkerParticleScript's bound declaration was not found. */
-extern const s32
-    Data_080f01b8__rising[] __asm__("gBattleEffect_MarkerParticleScript");
-
 /// Places a marker at each waiting scene item event that is on screen.
 void FieldEffect_SpawnRevealMarkers(void) {
   // The row type is s16, as the rows are: with it the copied head test stays
@@ -392,8 +383,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
   s32 originX = origin[0] & 0xffff0000;
   s32 originZ = origin[1] & 0xffff0000;
   s32 result[3];
-  // volatile: headerWord lives at sp+4, stored once; as a plain s32, 86 of
-  // 193 instructions differ in tla-en.
+  /* FAKEMATCH(volatile): headerWord lives at sp+4, stored once. */
   volatile s32 headerWord;
   struct Actor *object;
   s16 type;
@@ -436,8 +426,6 @@ void FieldEffect_SpawnRevealMarkers(void) {
       y = object->y;
       z = object->z;
     }
-    // Both differences are taken before either is shifted; shifted as each is
-    // taken, 2 of 193 instructions differ in tla-en.
     dx = x - originX;
     dz = z - originZ - y;
     dx >>= 16;
@@ -449,7 +437,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
     object = Actor_CreateFar(673, x, y, z);
     if (object != NULL) {
       object->motionFlags = 0;
-      Actor_StartScriptFar((struct Actor *)object, Data_080f01b8__rising);
+      Actor_StartScriptFar((struct Actor *)object,
+                           gBattleEffect_MarkerParticleScript);
       Actor_SetSpriteFlagsFar((struct Actor *)object, 0);
       Actor_SelectAnimationFar(object, 1);
       ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -477,24 +466,22 @@ void FieldEffect_StartWindowHBlankDma(void) {
   channel[5] &= ~DMA_ENABLE;
   (void)channel[5];
   REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  // The load in a once-only block comes before the register address is
-  // built; as the plain load, 2 of 68 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the load in a once-only block comes before the register
+   * address is built. */
   do {
     in = *src;
   } while (0);
   REG_WININ = in;
   src++;
   /* FAKEMATCH(temporary): WINOUT's value read into out before the register
-   * address is built; as REG_WINOUT = *src, 10 of 68 instructions differ in
-   * tla-en. */
+   * address is built. */
   out = *src;
   REG_WINOUT = out;
   src++;
   REG_WIN0H = *src;
   src++;
   /* FAKEMATCH(temporary): WIN1H's value read into other before the register
-   * address is built; as REG_WIN1H = *src, 8 of 68 instructions differ in
-   * tla-en. */
+   * address is built. */
   other = *src;
   REG_WIN1H = other;
   src++;
@@ -703,8 +690,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewInverse[0] & 0xffff0000;
     cameraY = viewInverse[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
     *scanlineData++ = state->active;
     *scanlineData++ = state->mask;
     value = state->value;
@@ -740,8 +727,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     viewRipple = &map->viewX;
     cameraX = viewRipple[0] & 0xffff0000;
     cameraY8 = viewRipple[1] & 0xffff0000;
-    centerX = (state->centreX - cameraX) / 0x10000;
-    centerY = (state->centreY - cameraY8) / 0x10000 - 16;
+    centerX = (state->centreX - cameraX) / Q16_ONE;
+    centerY = (state->centreY - cameraY8) / Q16_ONE - 16;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -794,8 +781,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewLeader[0] & 0xffff0000;
     cameraY = viewLeader[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;
@@ -832,8 +819,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewLeaderLow[0] & 0xffff0000;
     cameraY = viewLeaderLow[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 8;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 8;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;
@@ -1071,9 +1058,7 @@ s32 ScreenTransition_IsScanlineActive(void) {
   return 1 - ((u32)(-other | other) >> 31);
 }
 
-/// The layer flags read through a volatile pointer, which keeps them the AND's
-/// second operand and builds the mask in the result register; as map->flags,
-/// 24 of 31 instructions of ScreenTransition_HideBackgrounds differ in tla-en.
+/* FAKEMATCH(volatile): the layer flags read through a volatile pointer. */
 #define MAP_LAYER_FLAGS(map) (*(volatile u16 *)&(map)->flags)
 
 /// Clears the flag of each map layer whose argument is nonzero.
@@ -1284,7 +1269,7 @@ void ScreenTransition_UpdateDissolve(void) {
 /// with that colour.
 void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   struct ScreenTransitionState *work = Ram_HeapSlots->screenTransition;
-  Dma_Fill32(0xf000f000, (void *)0x06002000, 0x500);
+  Dma_Fill32(0xf000f000, (void *)BG_SCREEN_BLOCK(4), 0x500);
   if (color != -1) {
     u32 pattern = 0;
     s32 cnt;
@@ -1294,7 +1279,8 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
     tile = work->solidTile;
     for (cnt = 7; cnt >= 0; --cnt)
       *tile++ = pattern;
-    Dma_Set(work->solidTile, (void *)0x06000000, DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(work->solidTile, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(8),
+            REG_DMA3);
   }
 }
 
@@ -1350,8 +1336,6 @@ void BattlePalette_UpdateBlend(void) {
       *sum++ += *add++;
     }
   } else {
-    // The routine's entry in a local loads ahead of the size's shift; as a
-    // direct call, 2 of 175 instructions differ in tla-en.
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy(work->current, work->target, sizeof(work->current));
@@ -1779,8 +1763,6 @@ void BattleEffect_LoadBufferPalette(const u16 *colours) {
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
-    // The routine's entry in a local loads after the size; as a direct call,
-    // 2 of 23 instructions differ in tla-en.
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
@@ -1889,7 +1871,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
-  Io_Write16(16, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, 28);
   if (object == NULL)
@@ -2140,7 +2122,7 @@ void Heading_Show(s32 heading) {
 
   tile = 16;
   Event_WaitTransitionFrames();
-  cell = (u16 *)0x06002000;
+  cell = (u16 *)BG_SCREEN_BLOCK(4);
   tiles = Heap_AllocEwram(0x1040);
   headings += headings[heading] / 4;
   Resource_DecodeByteLzInRam(headings, tiles);
@@ -2158,8 +2140,9 @@ void Heading_Show(s32 heading) {
   }
   REG_DISPCNT &= 0x1fff;
   REG_DISPCNT |= 0x2000;
-  REG_WININ = 0x3f;
-  REG_WINOUT = 0x3e;
+  REG_WININ = WININ_WIN0_ALL;
+  REG_WINOUT = WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 | WINOUT_WIN01_BG3 |
+               WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR;
   REG_WIN0H = 0x7878;
   REG_WIN0V = 0x1848;
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
@@ -2247,9 +2230,9 @@ void Heading_Close(void) {
     step++;
   }
   REG_DISPCNT ^= DISPCNT_BG0_ON | DISPCNT_WIN0_ON;
-  Dma_Fill32Cell(fill, 0xf000, (void *)0x06002000, 0x800);
+  Dma_Fill32Cell(fill, 0xf000, (void *)BG_SCREEN_BLOCK(4), 0x800);
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          (void *)0x06000000, 0x84000800, DMA3);
+          (void *)BG_CHAR_BLOCK(0), 0x84000800, DMA3);
   REG_DISPCNT ^= DISPCNT_BG0_ON;
 }
 #undef DMA3

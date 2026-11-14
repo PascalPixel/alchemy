@@ -4,6 +4,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct MeshTriangle;
@@ -187,7 +190,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(3);
-  REG_BLDCNT = 0x3f44;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
   blit = Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
@@ -238,12 +241,12 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   planes = gData_02014000;
   stripEnd = 0x3a08;
   for (frame = 0; frame != 228; frame++) {
-    if ((gInput.repeat & 3) && frame > 15 && frame <= 185) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       work->transferPending = 1;
       wait(1);
       frame = 186;
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0x4000;
       }
@@ -255,22 +258,22 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
                            0x10000 - fade * 1092, 128);
     }
     if (frame == 186) {
-      base.x = 0x300000;
+      base.x = px(48);
       base.y = 0x420003;
       vel.x = 0;
-      vel.y = -0x60000;
+      vel.y = -px(6);
     }
     if (frame == 0) {
-      REG_BLDALPHA = 0x10;
+      REG_BLDALPHA = BLEND_ALPHA(16, 0);
       work->transferMode = 1;
       work->transferValue = frame;
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0xc000;
       }
-      base.x = 0x780000;
-      base.y = -0x780000;
+      base.x = px(120);
+      base.y = -px(120);
       vel.x = 0;
-      vel.y = 0xc0000;
+      vel.y = px(12);
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (n = 0; n != 31; n++) {
         for (i = 0; i != 4; i++) {
@@ -303,7 +306,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       for (i = 0; i != effect->count; i++) {
         ((s32 *)BattleObject_GetFar(effect->actors[i])->object)[3] = 0;
       }
-      REG_BG2CNT = 0x787;
+      REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                   BGCNT_SCREEN_BASE(7);
     }
     t = frame - 10;
     if (t <= 16) {
@@ -388,10 +392,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       base.y += vel.y;
     }
     if (frame == 168) {
-      base.x = 0x300000;
-      base.y = 0xa80000;
+      base.x = px(48);
+      base.y = px(168);
       vel.x = 0;
-      vel.y = -0x60000;
+      vel.y = -px(6);
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0x4000;
       }
@@ -403,13 +407,13 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 186) {
-      vel.y = -0x100000;
+      vel.y = -px(16);
     }
     if ((frame < 54 || frame > 167) && frame < 214) {
       place[3] = 0;
       place[1] = 0xff0000;
       if (frame > 167) {
-        pos.y -= 0x60000;
+        pos.y -= px(6);
       }
       if (frame <= 53) {
         for (i = 0; i != 12; i++) {
@@ -473,13 +477,13 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         for (i = 0; i != 28; i++) {
           ((struct AzulObject *)work->objects[i])->shape = 0;
         }
-        base.x = 0x1000000;
-        base.y = 0x480000;
-        vel.x = -0x60000;
+        base.x = px(256);
+        base.y = px(72);
+        vel.x = -px(6);
         vel.y = 0;
       }
       if (frame == 138) {
-        vel.x = 0x80000;
+        vel.x = px(8);
       }
       place[3] = 0;
       place[1] = 0xff0000;
@@ -510,21 +514,21 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       pos.x = pos.x + d;
     }
     if (frame == 78) {
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     if (frame == 138) {
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     }
     if (frame == 152) {
-      Sound_PlayFar(163);
+      Sound_PlayFar(SE_163);
     }
     if (frame == 7) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 10) {
       const u8 *piece;
 
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       i = 0;
       p = work->particles;
       piece = Data_081986f2[0];
@@ -532,9 +536,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         s32 cx = piece[0] >> 1;
         s32 cy = piece[1];
 
-        p->x = cx << 16;
-        p->y = cy << 16;
-        p->z = 0;
+        SET_POSITION(p, cx << 16, cy << 16, 0);
         p->velocityX = (cx - 60) << 12;
         p->velocityY = (cy - 60) << 10;
         p->velocityZ = ((Random16() & 127) << 2) + 512;
@@ -592,7 +594,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         model->mesh = &faces[i * 3];
         Transform_Reset();
         SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         switch (i & 3) {
         case 0:
           Transform_ApplyPitch(p->z);
@@ -614,7 +616,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         Render_TransformVertices(&verts[i * 4], vertices, 4);
         BattleEffectKernels_IntegrateVector3(p, 62, 0);
         if (frame >= (8 - i) * 2 + 16) {
-          p->velocityY += -0x8000;
+          p->velocityY += -(px(1) / 2);
         }
         Render_DrawModelList(model);
       }
@@ -637,9 +639,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         j = 0;
         v = (struct AzulVertex *)(sphere + offset);
         for (; j != 16; j++) {
-          v->x = Trig_Sin(j << 12) * radius >> 16;
-          v->y = y;
-          v->z = Trig_Cos(j << 12) * radius >> 16;
+          SET_POSITION(v, Trig_Sin(j << 12) * radius >> 16, y,
+                       Trig_Cos(j << 12) * radius >> 16);
           v++;
         }
       }
@@ -671,7 +672,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       s32 shade;
       s32 size;
 
-      REG_BG2CNT = 0x784;
+      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       if ((u32)(frame - 168) <= 17) {
         s32 y;
         s32 f;
@@ -699,8 +700,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       model = Render_AllocateModelList(1);
       scale = u * 3 << 8;
       shade = 0;
-      if (scale > 0x10000) {
-        scale = 0x10000;
+      if (scale > Q16_ONE) {
+        scale = Q16_ONE;
       }
       texture2.logWidth = 7;
       texture2.logHeight = 7;
@@ -732,8 +733,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           texture2.pixels = gData_02014000;
           texture2.logWidth = 7;
           model->mesh = gData_08199364;
-          // A once-only block: its end parts the scheduler's rows, as the
-          // native's order needs (without it, 6 of 2209 differ).
+          /* FAKEMATCH(dead): a once-only block. */
           do {
             texture2.logHeight = 7;
           } while (0);
@@ -799,13 +799,13 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     }
     if (frame == 186) {
       BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
       }
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 16;
     }
     if (frame == 214) {

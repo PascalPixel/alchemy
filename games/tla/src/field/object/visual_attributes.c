@@ -42,7 +42,6 @@
 #include "visual_attributes/scene.c"
 #include "visual_attributes/mind_read.c"
 
-#undef SE_CLOAK_END
 #undef CLOAK_FLICKER_PALETTE
 
 #undef Actor_ApplyRandomChildValues

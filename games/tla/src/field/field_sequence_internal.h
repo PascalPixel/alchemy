@@ -356,11 +356,6 @@ struct UnitStepView {
   s8 poison;
 };
 
-// gMainRoutineWork as this function reads it: struct MainRoutineWork's
-// unk24c[6] holds the hazard's limit, mode (0 counts steps on hazard cells, 1
-// counts frames) and damage, which adoption names in main_routine_work.h; read
-// through one struct, as the native's alias order needs (through struct
-// MainRoutineWork and a view of the hazard fields, differ 103).
 struct PartyStepView {
   u8 unk000[0x212];
   u8 renderMode;

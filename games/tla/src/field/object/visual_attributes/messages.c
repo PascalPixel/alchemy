@@ -9,6 +9,7 @@
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
 #include "scene_call.h"
+#include "macros.h"
 
 s32 Portrait_OpenWindowFar(s32 sprite, s32 zero, s32 x, s32 y);
 
@@ -185,9 +186,8 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   return handle;
 }
 
-/// The held keys, read again at each test through a volatile pointer; as
-/// plain reads, combined into one test of 0x305, 62 of 82 instructions of
-/// FieldMessage_ShowAtActorAndWait differ in tla-en.
+/// The held keys, read again at each test.
+/* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
 #define HELD (*(volatile u32 *)&gInput.held)
 
 /// Opens the message at the object and waits for its window; after ten
@@ -364,7 +364,7 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
     wait(1);
 
   wait(1);
-  while (!(gInput.pressed & 0x303))
+  while (!(gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)))
     wait(1);
 
   wait(1);

@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 #undef BLITTER
 
@@ -71,7 +73,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   rocks = gSpire_RockCounts[effect->variant];
   for (i = 0; i != rocks; i++) {
     rock = &work->particles[i];
-    rock->y = -0x400000;
+    rock->y = -px(64);
     rock->velocityY = 0;
   }
   for (i = 0; i != rocks; i++) {
@@ -98,7 +100,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
         if (i == 0)
           BattlePlayback_StartFar(134);
         else
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 4;
       }
       // The shards fly, each tumbling through its kind's three cels more
@@ -124,9 +126,9 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
           blit(canvas, work->sheet, gSpire_RockX[i] + 47, HI(rock->y), 34, 62);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
-          rock->velocityY += 0x10000;
+          rock->velocityY += px(1);
         if (rock->y > 0x320000)
-          rock->y = 0x320000;
+          rock->y = px(50);
       }
       // Every target flashes for eight frames at each crash.
       if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {

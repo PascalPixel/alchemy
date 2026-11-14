@@ -3,6 +3,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1) { return (arg0 + arg1) % arg1; }
 
@@ -103,7 +104,7 @@ s32 DjinnMenu_Run(void) {
   Ram_HeapSlots->objectSystem->suspended = 0;
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)0x06004000, backdrop->tiles, 0x2000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), backdrop->tiles, 0x2000);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
   wait(1);
   Menu_ResumeFieldTasks();
@@ -275,7 +276,7 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case 13:
-      Sound_PlayFar(126);
+      Sound_PlayFar(SE_RECOVERY);
       result = Djinn_TransferFar(menu->shownMember[0], menu->pairElement[0],
                                  menu->pairIndex[0], menu->shownMember[1]);
       Unit_CalculateFar(menu->shownMember[0]);
@@ -299,7 +300,7 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case 12:
-      Sound_PlayFar(175);
+      Sound_PlayFar(SE_NOTE_HIGH);
       Djinn_PutOnStandbyFar(menu->shownMember[0], menu->pairElement[0],
                             menu->pairIndex[0]);
       result = DjinnRecovery_AddStandbyFar(
@@ -322,7 +323,7 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case 14:
-      Sound_PlayFar(126);
+      Sound_PlayFar(SE_RECOVERY);
       Djinn_TransferFar(menu->shownMember[0], menu->pairElement[0],
                         menu->pairIndex[0], menu->shownMember[1]);
       result = Djinn_TransferFar(menu->shownMember[1], menu->pairElement[1],
@@ -346,7 +347,7 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case 11:
-      Sound_PlayFar(139);
+      Sound_PlayFar(SE_139);
       Djinn_SetFar(menu->shownMember[0], menu->pairElement[0],
                    menu->pairIndex[0]);
       result = DjinnRecovery_RemoveFar(
@@ -391,7 +392,7 @@ void DjinnMenu_AdjustPalettes(s32 d) {
       s32 v;
 
       idx = paletteNumber * 16 + col;
-      color = ((u16 *)0x05000000)[idx];
+      color = ((u16 *)BG_PLTT)[idx];
       b = (color >> 10) & mask;
       g = (color >> 5) & mask;
       r = color & mask;
@@ -574,15 +575,12 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element);
 /// For each active party member of the menu work, fills a 20-byte entry of the
 /// list with Djinn_ListUnitEntries (owner, -1) and keeps its result byte at
 /// offset 160 of the list.
-// With the owner read as the argument the two walking pointers swap r5 and
-// r6 (differ 16).
 void DjinnMenu_BuildLists(struct OwnerList *list) {
   struct InventoryMenuState *menu =
       (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
   s32 i;
 
   for (i = 0; i < menu->partyCount; i++) {
-    // Read unsigned (ldrh): the party's ids, as this routine's bytes load them.
     s32 owner = (u16)menu->ownerIds[i];
 
     list->results[i] = Djinn_ListUnitEntries(&list->entries[i], owner, -1);
@@ -781,8 +779,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
           p++;
         } while (col != 0);
       }
-      /* FAKEMATCH(dead): the dirty bit's update in a once-only block;
-       * as the plain statement, 4 of 90 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): the dirty bit's update in a once-only block. */
       do {
         tiles->dirty |= 2 << ((u32)y >> 2);
       } while (0);
@@ -842,8 +839,7 @@ s32 DjinnMenu_ShowHelp(void) {
   helpIndex = 0;
   listMessage = (s32)MsgDjinnInfoTopic;
   do {
-    /* FAKEMATCH(temporary): the topic's row held in y before the call; as
-       the argument helpIndex * 8, 2 of 289 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the topic's row held in y before the call. */
     s32 y = helpIndex * 8;
 
     Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, y);
@@ -860,33 +856,33 @@ s32 DjinnMenu_ShowHelp(void) {
     for (;;) {
       MenuCursor_Position(-12, (list->y + selection) * 8 + 8);
       wait(1);
-      if (gInput.repeat & 0x90) {
+      if (gInput.repeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
         selection = Menu_GetModuloOfSum(selection, 7);
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
       }
-      if (gInput.repeat & 0x60) {
+      if (gInput.repeat & (KEY_LEFT | KEY_UP)) {
         selection--;
         selection = Menu_GetModuloOfSum(selection, 7);
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
-      } else if (gInput.pressed & 8) {
-        Sound_PlayFar(113);
+      } else if (gInput.pressed & KEY_START) {
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -2;
         break;
-      } else if (gInput.pressed & 6) {
-        Sound_PlayFar(113);
+      } else if (gInput.pressed & (KEY_B | KEY_SELECT)) {
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         break;
-      } else if (gInput.pressed & 1) {
+      } else if (gInput.pressed & KEY_A) {
         if (Message_AllTypedFar()) {
           selection++;
           selection = Menu_GetModuloOfSum(selection, 7);
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           break;
         }
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }
     if (render->glyphResource != 99) {
@@ -1206,7 +1202,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       redraw = 0;
     }
     wait(1);
-    if (!(gInput.held & 0x100) || (gInput.pendingPressed & 0x100)) {
+    if (!(gInput.held & KEY_R) || (gInput.pendingPressed & KEY_R)) {
       if (groupMode)
         redraw = 1;
       groupMode = 0;
@@ -1220,7 +1216,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       backdrop->tutorialTimer++;
       switch (backdrop->tutorialStep) {
       case 28:
-        while (!(gInput.pressed & 1)) {
+        while (!(gInput.pressed & KEY_A)) {
           MenuCursor_Position(150, 26);
           wait(1);
         }
@@ -1310,7 +1306,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           MenuCursor_Slide(2, 146);
           while (Message_AllTypedFar() == 0)
             wait(1);
-          while (!(gInput.pressed & 1)) {
+          while (!(gInput.pressed & KEY_A)) {
             MenuCursor_Position(2, 146);
             wait(1);
           }
@@ -1321,7 +1317,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 5, 9, 9, 1);
           while (Message_AllTypedFar() == 0)
             wait(1);
-          while (!(gInput.pressed & 1)) {
+          while (!(gInput.pressed & KEY_A)) {
             MenuCursor_Position(2, 146);
             wait(1);
           }
@@ -1332,7 +1328,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 6, 9, 9, 1);
           while (Message_AllTypedFar() == 0)
             wait(1);
-          while (!(gInput.pressed & 1)) {
+          while (!(gInput.pressed & KEY_A)) {
             MenuCursor_Position(2, 146);
             wait(1);
           }
@@ -1372,26 +1368,26 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       }
     }
     // R on a Djinni: put it on standby or set it at once.
-    if (mode == 0 && (pressed & 0x100)) {
+    if (mode == 0 && (pressed & KEY_R)) {
       if (selectedRow == -1) {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
       groupMode = 1;
       gInput.pendingPressed = 0;
       switch (state) {
       case 0:
-        Sound_PlayFar(139);
+        Sound_PlayFar(SE_139);
         Djinn_SetFar(owner, element, number);
         DjinnRecovery_RemoveFar(owner, element, number);
         break;
       case 1:
-        Sound_PlayFar(175);
+        Sound_PlayFar(SE_NOTE_HIGH);
         Djinn_PutOnStandbyFar(owner, element, number);
         DjinnRecovery_AddStandbyFar(owner, element, number);
         break;
       default:
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
         redraw = 1;
         continue;
       }
@@ -1399,14 +1395,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       DjinnMenu_DrawPage(backdrop, memberColumn / 4 * 4);
       redraw = 1;
     }
-    if (mode == 0 && (pressed & 0x200)) {
+    if (mode == 0 && (pressed & KEY_L)) {
       result = 7;
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
+    if ((pressed & KEY_A) || (mode == 1 && (pressed & KEY_R))) {
       if (selectedRow != -1 && state == 2) {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
         WindowSprite_ClearListFar(listWindow);
 #if TLA_PATCH_1
         Window_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
@@ -1433,28 +1429,28 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       } else {
         result = 1;
       }
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if (pressed & 8) {
-      Sound_PlayFar(113);
+    if (pressed & KEY_START) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -2;
       break;
     }
-    if (pressed & 2) {
-      Sound_PlayFar(113);
+    if (pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     // Select: with R held, set every Djinni not recovering or, the next
     // time, put every one on standby; otherwise open the help.
-    if (mode == 0 && (pressed & 4)) {
+    if (mode == 0 && (pressed & KEY_SELECT)) {
       if (groupMode) {
         setAll ^= 1;
         if (setAll)
-          Sound_PlayFar(139);
+          Sound_PlayFar(SE_139);
         else
-          Sound_PlayFar(175);
+          Sound_PlayFar(SE_NOTE_HIGH);
         for (i = 0; i < menu->memberCount; i++) {
           for (j = 0; j < backdrop->counts[i]; j++) {
             u32 entry = backdrop->ids[i][j];
@@ -1486,17 +1482,17 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       } else {
         UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
         result = 10;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
     }
-    if (repeat & 0x40) {
+    if (repeat & KEY_UP) {
       if (columnFlags[memberColumn] & 4)
         continue;
       if (backdrop->counts[memberColumn] == 0)
         continue;
       UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       if (columnFlags[memberColumn] & 1) {
         columnFlags[memberColumn] &= ~1;
         djinnRow = 0;
@@ -1511,13 +1507,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       redraw = 2;
       continue;
     }
-    if (repeat & 0x80) {
+    if (repeat & KEY_DOWN) {
       if (columnFlags[memberColumn] & 4)
         continue;
       if (backdrop->counts[memberColumn] == 0)
         continue;
       UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       djinnRow++;
       djinnRow = Menu_GetModuloOfSum(djinnRow, backdrop->counts[memberColumn]);
       if (columnFlags[memberColumn] & 1) {
@@ -1530,14 +1526,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       redraw = 2;
       continue;
     }
-    if (repeat & 0x30) {
+    if (repeat & KEYS_HORIZONTAL) {
       s32 oldColumn;
 
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       oldColumn = memberColumn;
       if (!(columnFlags[memberColumn] & 4))
         UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-      if (repeat & 0x20)
+      if (repeat & KEY_LEFT)
         memberColumn--;
       else
         memberColumn++;
@@ -1549,7 +1545,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         for (i = 0; i < menu->memberCount; i++) {
           if (columnFlags[memberColumn] != 4)
             break;
-          if (repeat & 0x20)
+          if (repeat & KEY_LEFT)
             memberColumn--;
           else
             memberColumn++;

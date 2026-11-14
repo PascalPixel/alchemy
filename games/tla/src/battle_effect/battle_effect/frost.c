@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 #define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -59,19 +61,19 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     REG_BG2X = -0x7000;
 
   for (frame = 0; frame != TIMING(RISE_FRAME) + 50; frame++) {
-    ymin = 120 << 16;
+    ymin = px(120);
     ymax = 0;
     if (frame == TIMING(RISE_FRAME) + 11)
       BattlePlayback_StartFar(133);
     point[0] = 0;
     point[1] = 0;
-    point[2] = 512 << 16;
+    point[2] = px(512);
     Transform_Reset();
     SceneTransform_ApplyPosition(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
-      Sound_PlayFar(115);
+      Sound_PlayFar(SE_ICE);
     if (frame == 85)
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 4 + 40)
         BattleEffect_TintBattler(effect->actors[i], 9, 5, -1, 0);
@@ -90,7 +92,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
           s32 cel = i % 8;
 
           mote = &work->particles[i];
-          if (mote->y < (48 - i / 2) << 16 && mote->y > -(48 << 16)) {
+          if (mote->y < (48 - i / 2) << 16 && mote->y > -px(48)) {
             struct EffectPosition *pos;
             u32 width;
             u32 height;
@@ -110,8 +112,8 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
             if (frame > i + 16) {
               if (mote->z > 4)
                 mote->z -= 2;
-              if (mote->y < 48 << 16)
-                mote->y += 5 << 16;
+              if (mote->y < px(48))
+                mote->y += px(5);
               mote->x += 0x200;
             }
           } else {
@@ -125,8 +127,8 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
         }
       }
     }
-    ymin += 64 << 16;
-    ymax += 64 << 16;
+    ymin += px(64);
+    ymax += px(64);
 
     // The pillars, 32 pixels wide: one more every three frames from frame
     // 36, drawn MAX for the last seven frames before the burst.
@@ -158,9 +160,9 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *chip = &CHIPS[i];
 
-        chip->x = (Random16() & 127) << 16;
-        chip->y = ((Random16() & 15) + 80) << 16;
-        chip->z = ((Random16() & 63) - 32) << 12;
+        SET_POSITION(chip, (Random16() & 127) << 16,
+                     ((Random16() & 15) + 80) << 16,
+                     ((Random16() & 63) - 32) << 12);
         chip->velocityY = ((-Random16() & 15) - 16) << 13;
         chip->variant = (Random16() & 15) + 16;
       }

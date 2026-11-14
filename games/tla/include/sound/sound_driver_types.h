@@ -44,7 +44,7 @@ struct SoundTrack;
 typedef void (*SoundCommand)(struct SoundPlayer *player,
                              struct SoundTrack *track);
 
-/// Entries of gSound_CommandTable, in gSound_CommandTableTemplate's order. A
+/// Entries of gSound_CommandTable, in gMPlayJumpTableTemplate's order. A
 /// song byte from 0xB1 to 0xCE runs entry (byte - 0xB1) for its track; bytes
 /// from 0xCF up start notes through the work's noteOn instead, so entries 30
 /// to 35 are the driver's helper tail, reached only by its own calls. Unused
@@ -62,7 +62,7 @@ typedef void (*SoundCommand)(struct SoundPlayer *player,
 /// Byte 0xC4: sets modDepth from the next byte; 0 clears the modulation.
 #define SOUND_COMMAND_MODULATION 19
 /// Byte 0xCD, installed by MPlayExtender: runs the entry of
-/// gSound_ExtendedCommandTable the next byte names (voice fields, tail level
+/// gXcmdTable the next byte names (voice fields, tail level
 /// and length).
 #define SOUND_COMMAND_EXTENDED 28
 /// Byte 0xCE: releases the track's sounding note of the key given (or of its
@@ -390,7 +390,7 @@ struct SoundWork {
   u8 reverb;       ///< 0 to 127 (mode bits 6..0); 0 skips the reverb pass.
   u8 pcmNoteCount; ///< PCM notes in use, 8 at start (mode bits 11..8).
   u8 volume;       ///< PCM volume 0 to 15, 15 at start (mode bits 15..12).
-  u8 rate;  ///< 1 to 12, indexes gSound_PcmSamplesPerVBlank (mode bits 19..16).
+  u8 rate;  ///< 1 to 12, indexes gPcmSamplesPerVBlankTable (mode bits 19..16).
   u8 unk09; ///< Not named by TLA code.
   /// Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
   /// step.
@@ -401,7 +401,7 @@ struct SoundWork {
   u8 maxLines;
   u8 unk0d[3];             ///< Not named by TLA code.
   u32 pcmSamplesPerVBlank; ///< Samples mixed a VBlank, from
-                           ///< gSound_PcmSamplesPerVBlank.
+                           ///< gPcmSamplesPerVBlankTable.
   u32 outputRate; ///< Samples a second: pcmSamplesPerVBlank * 59.7275, rounded.
   /// 2^23 / outputRate, rounded; a note's frequency times it is its step a
   /// sample.
@@ -480,6 +480,6 @@ void ClearModM(struct SoundTrack *track);
 extern const struct PlayerSlot gSound_PlayerSlots[];
 extern const struct SongEntry gSongTable[];
 extern SoundCommand gSound_CommandTable[36];
-extern const SoundCommand gSound_ExtendedCommandTable[];
+extern const SoundCommand gXcmdTable[];
 
 #endif

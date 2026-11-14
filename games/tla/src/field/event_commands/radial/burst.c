@@ -3,6 +3,8 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 /* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
@@ -51,7 +53,7 @@ void FieldPsynergy_Burst(void) {
   struct EffectSprite *burstSprite;
   s32 i;
 
-  scene->y += 0xa0000;
+  scene->y += px(10);
   FieldPsynergy_FadeToCastColor();
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
@@ -67,7 +69,7 @@ void FieldPsynergy_Burst(void) {
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->scaleX = 0;
   canvas->scaleY = 0;
-  if (scene->facing == 0xc000)
+  if (scene->facing == TRIG_TURN * 3 / 4)
     canvas->depth -= 4;
 
   sparkEntry = VramCache_FindFreeEntry();
@@ -80,13 +82,13 @@ void FieldPsynergy_Burst(void) {
     sprite->oam.palette = 0;
     sprite->oam.priority = canvas->priority;
     sprite->depth = canvas->depth + 1;
-    sprite->scaleY = sprite->scaleX = 0x10000;
+    sprite->scaleY = sprite->scaleX = Q16_ONE;
     radius = Random16() * 20 + 0x140000;
     angle = Random16();
     particle->x = mul(Trig_Cos(angle), radius);
     particle->y = mul(Trig_Sin(angle), radius);
     radius /= 12;
-    angle += 0x8000;
+    angle += TRIG_TURN / 2;
     particle->velocityX = mul(Trig_Cos(angle), radius);
     particle->velocityY = mul(Trig_Sin(angle), radius);
     particle->timer = -i * 2;
@@ -115,7 +117,7 @@ void FieldPsynergy_Burst(void) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
                       Ram_HeapSlots->battleFxWork[1]);
   canvas->command = CANVAS_UPLOAD;
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
   work->phase = 0;
   work->timer = 0;
@@ -197,24 +199,17 @@ void FieldPsynergy_UpdatePound(void) {
   if (work->state == 1) {
     i = 0;
     /* FAKEMATCH(temporary): the phase read through a pointer kept across the
-     * loop, whose address is built ahead of the loop's constants; as
-     * blend->phase, 4 of 302 instructions differ in tla-en. */
+     * loop. */
     phase = &blend->phase;
-    // The phase offset built in two steps stays in a register across the loop;
-    // as base = 0x90000, 48 of 302 instructions differ in tla-en.
     base = 9;
     base <<= 16;
     blue = 0x7c00;
-    // The loop is written with goto: as for (; i < 32; i++), 60 of 302
-    // instructions differ in tla-en.
   palette:
     red = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
     green = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
     red = (red >> 16) + 16;
     green = (green >> 16) + 16;
-    // The colour in a once-only block, so red and green are finished before it
-    // is put together; as plain statements, 10 of 302 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(dead): the colour in a once-only block. */
     do {
       color = (green << 5) | blue | red;
       *(u16 *)(0x050003c0 + i * 2) = color;
@@ -237,12 +232,12 @@ void FieldPsynergy_UpdatePound(void) {
   }
   switch (work->state) {
   case 0:
-    work->object->y -= 0x38000;
+    work->object->y -= px(7) / 2;
     if (work->timer == 8) {
-      blend->scaleX = 0x2000;
-      blend->scaleY = 0x2000;
-      MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
-      Sound_PlayFar(567);
+      blend->scaleX = Q16_ONE / 8;
+      blend->scaleY = Q16_ONE / 8;
+      MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
+      Sound_PlayFar(SE_567);
       work->sparkles = 1;
       work->fading = 1;
     }
@@ -252,7 +247,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 1:
-    blend->scaleX += 0x1000;
+    blend->scaleX += Q16_ONE / 16;
     blend->scaleY = blend->scaleX;
     if (blend->scaleX > 0xcccb) {
       blend->scaleX = 0xcccc;
@@ -277,7 +272,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 4:
-    work->object->y += 0x18000;
+    work->object->y += px(3) / 2;
     if (work->timer == 13)
       work->state = 999;
     break;

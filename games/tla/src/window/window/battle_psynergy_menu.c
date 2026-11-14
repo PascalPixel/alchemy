@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "window_tile.h"
 #include "module/window/screens.h"
 #include "menu/psynergy_menu.h"
@@ -122,14 +123,10 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
   for (i = 0; i < 5; i++) {
     s32 y;
-    // t holds the attribute zero, then is reused for the window's y; as plain
-    // stores, 2 of 817 instructions differ in tla-en.
     u32 t = 0;
 
     y = i * 2;
-    /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
-     * and the zero ahead of the stores; without it, 10 of 817 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the row. */
     do {
     } while (0);
     iconSprite = &sprites[i];
@@ -149,8 +146,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   Vram_CopyTile(0xf019, 0x211);
 
   for (;;) {
-    /* FAKEMATCH(temporary): iconSprite holds &cursor; as cursor used directly,
-     * 304 of 817 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): iconSprite holds &cursor. */
     iconSprite = &cursor;
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
@@ -255,7 +251,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
     MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = NAVIGATION;
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (count != 0) {
         result = firstEntry + selectedRow;
         if ((Ability_Get(actions[result])->flags & 0x80) == 0) {
@@ -267,21 +263,21 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
         result = -1;
         break;
       }
-    } else if (navigation->timer == 0 || (gInput.pressed & 2)) {
-      Sound_PlayFar(113);
+    } else if (navigation->timer == 0 || (gInput.pressed & KEY_B)) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
 
     if (count != 0) {
-      if (gInput.repeat & 0x80) {
-        Sound_PlayFar(111);
+      if (gInput.repeat & KEY_DOWN) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == 5 || firstEntry + selectedRow == count)
           selectedRow = 0;
         preferredRow = selectedRow;
-      } else if (gInput.repeat & 0x40) {
-        Sound_PlayFar(111);
+      } else if (gInput.repeat & KEY_UP) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (count - 1) / 5 * 5)
@@ -290,8 +286,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
             selectedRow = 4;
         }
         preferredRow = selectedRow;
-      } else if (gInput.repeat & 0x10) {
-        Sound_PlayFar(111);
+      } else if (gInput.repeat & KEY_RIGHT) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + 5 >= count) {
           if (firstEntry != 0) {
@@ -307,8 +303,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
               selectedRow = preferredRow;
           }
         }
-      } else if (gInput.repeat & 0x20) {
-        Sound_PlayFar(111);
+      } else if (gInput.repeat & KEY_LEFT) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= 5;

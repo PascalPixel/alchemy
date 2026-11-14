@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -99,7 +101,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT[1] = 0;
-  REG_BG2CNT = 0x2784;
+  REG_BG2CNT =
+      BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   work->scrollTimer = 0;
   work->scrollInterval = 2;
   work->scrollStepX = 1;
@@ -115,10 +118,12 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x80;
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
   blit[0] = BLITTER;
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x100f;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(15, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = 2;
   work->transferValue = 75;
 
@@ -133,7 +138,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       ramp[31 - i] = 63;
     }
   }
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
 
@@ -141,15 +146,15 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     if (frame == 132) {
-      Sound_PlayFar(131);
+      Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     }
     if (frame == 151) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       break;
     }
     for (i = 0; i != 2; i++) {
@@ -177,28 +182,28 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       if (sinkFrame > 22) {
         sinkFrame = 20;
       }
-      SET_VECTOR(position, 0, -sinkFrame << 17, 0x2000000);
+      SET_VECTOR(position, 0, -sinkFrame << 17, px(512));
       size = (sinkFrame >> 2) + 2;
       if (size > 8) {
         size = 8;
       }
       SceneTransform_ApplyPosition(position);
-      Transform_ApplyPitch(-0x1000);
-      Transform_ApplyRoll(0x8000);
-      Transform_ApplyPitch(0x8000);
+      Transform_ApplyPitch(-TRIG_TURN / 16);
+      Transform_ApplyRoll(TRIG_TURN / 2);
+      Transform_ApplyPitch(TRIG_TURN / 2);
       Transform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
         SET_VECTOR(scale, ((frame * 2 + frame) << 11) - 0xd9400, scale[0],
                    scale[0]);
         size = 5;
       } else {
-        SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0], scale[0]);
+        SET_VECTOR(scale, Q16_ONE - sinkFrame * 3 * 0x400, scale[0], scale[0]);
       }
       SceneTransform_ApplyScale(scale);
     } else {
-      SET_VECTOR(position, 0, 0, 0x1000000);
+      SET_VECTOR(position, 0, 0, px(256));
       SceneTransform_ApplyPosition(position);
-      Transform_ApplyPitch(-0x1000);
+      Transform_ApplyPitch(-TRIG_TURN / 16);
       Transform_ApplyRoll(frame << 8);
       Transform_ApplyPitch(frame << 8);
     }
@@ -299,9 +304,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
                         96);
       HeapSlot_Release(188);
-      /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0, that
-       * clears beamHeight; without it, 249 of 1676 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): a never-true test of never and neverToo. */
       if (never || neverToo) {
         beamHeight = 0;
       }
@@ -331,7 +334,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_CrystalSheet),
                        128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data135, sprites, 0, 0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
     s32 formationX = 0x500000;
     s32 formationY = 0x400000;
@@ -350,7 +353,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     }
     work->transferMode = 2;
     work->transferValue = 50;
-    Sound_PlayFar(145);
+    Sound_PlayFar(SE_CRASH);
 
     for (frame = 0; frame != STORM_LIGHTNING_FRAMES; frame++) {
       s32 stormFrame;
@@ -360,7 +363,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       }
       stormFrame = frame - 80;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 120) {
         BattlePlayback_StartFar(134);
@@ -384,7 +387,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                 s32 speed = 0x3ff;
                 s32 angle;
                 speed &= Random16();
-                angle = (Random16() & 0x7fff) - 0x4000;
+                angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
                 spark->x = pillarX << 16;
                 spark->y = pillarY << 16;
                 speed += 32;
@@ -413,7 +416,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         s32 mirrorX;
         for (i = 0; i != 6; i++) {
           if (frame == i * 8 + 80) {
-            Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
+            Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
           }
         }
         for (i = 0; i != STORM_BOLTS; i++) {
@@ -435,8 +438,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                   s32 angle;
                   speed &= Random16();
                   angle = Random16() & 0xffff;
-                  spark->x = 0x100000;
-                  spark->y = 0x500000;
+                  spark->x = px(16);
+                  spark->y = px(80);
                   speed += 32;
                   spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
                   spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
@@ -540,8 +543,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               (gData_08197492[cell] >> 1);
           y = ((Trig_Cos(angle) * 40) >> 16) - (gData_08197498[cell] >> 1);
           /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0,
-           * that clears y; without it, 248 of 1676 instructions differ in
-           * tla-en. */
+           * that clears y. */
           if (never || neverToo) {
             y = 0;
           }

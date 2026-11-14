@@ -3,25 +3,12 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-
-/* VIEW(cybele): routine EffectSprite_CreateWithTiles as struct SpriteObject
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
- * attributes); battle_effect/ability_effects has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags) {; tried as the definition's struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags), which the object already declares, it does not compile in tla-ja
- * (make modern): games/tla/include/module/battle_effect/battle_effect.h:210:64:
- * note: expected 'struct BattleEffectArgument *' but argument is of type 'u8
- * *'. */
-struct SpriteObject *EffectSprite_CreateWithTiles__cybele(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
-#define EffectSprite_CreateWithTiles EffectSprite_CreateWithTiles__cybele
+#include "fixed_math.h"
+#include "sounds.h"
 
 #define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
 #define MATRICES (Ram_MapCellBuffer + 0x3800)
-#define OBJ_VRAM ((u8 *)0x06010000)
+#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 
 #define GIANT_PIECES 11
 
@@ -111,10 +98,12 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
   presentation->active = 1;
   BattleEffect_WipeCanvas(0, 1);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   pathX = 0;
   pathY = 0;
 
@@ -138,9 +127,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
-  for (frame = 0; frame != 220 && !(gInput.repeat & 3); frame++) {
+  for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B)); frame++) {
     // The giant walks its path: two absolute words, then a step a frame.
     if (frame <= 209) {
       if (frame == 0) {
@@ -153,7 +142,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         path += 2;
       }
       position.groundHeight = 0;
-      position.height = 0xff0000;
+      position.height = px(255);
       for (row = 0; row != 4; row++) {
         for (column = 0; column != 3; column++) {
           if (row != 3 || column != 2) {
@@ -186,12 +175,12 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         s32 y = HI(slash->y);
 
         if (frame == i * 8 + 84)
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;
-          slash->velocityX -= 0x10000;
-          slash->velocityY += 0x20000;
+          slash->velocityX -= px(1);
+          slash->velocityY += px(2);
           draw[0](canvas, work->sheet + SLASH_TOP, x + 4, y - 40, 16, 21);
           draw[0](canvas, work->sheet + SLASH_MIDDLE, x - 16, y - 19, 29, 35);
           draw[0](canvas, work->sheet + SLASH_BOTTOM, x - 20, y + 16, 21, 24);
@@ -262,7 +251,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   for (i = 0; i != GIANT_PIECES; i++)
     Sprite_DestroyFar(work->objects[i]);
   REG_BG2PA = 0x80;
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              Ram_MapCellBuffer, 1, 0);
 
@@ -326,7 +317,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
             slash->variant = 0;
             work->shakeFrames = 2;
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             member = i % 6;
             if (member < effect->count) {
               BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 8);

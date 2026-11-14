@@ -4,6 +4,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 // The packed preparer word: kind | side << 4 | anchor << 5.
 #define PREPARE_KIND(packed) ((packed) & 7)
@@ -112,7 +115,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     break;
   }
   palette = Resource_GetTableEntry(resource);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   switch (kind) {
   case 0:
     resource = (s32)&ResourceId_VenusDjinnSmallSheet;
@@ -128,9 +131,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     break;
   }
   palette = Resource_GetTableEntry(resource);
-  /* FAKEMATCH(barrier): an empty asm between the picture's table entry and
-     its + 128 copies the entry before the sheet is read; without it, 2 of 818
-     instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm between the picture's table entry and its
+   * + 128 copies the entry before the sheet is read. */
   asm("");
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
@@ -155,9 +157,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     s32 angle = Random16() & 0xffff;
     s32 speed = (Random16() & 255) + 128;
 
-    spark->x = 0;
-    spark->y = ((Random16() & 31) + 20) << 16;
-    spark->z = 0;
+    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
     spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
     spark->velocityY = 0;
     spark->velocityZ = (Trig_Cos(angle) * speed) >> 5;
@@ -236,7 +236,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     if (anchor == ANCHOR_BRIGHTEN && frame > 23)
       Palette_BrightenBattleBg(2, 2, 2);
     if (frame == 8)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 6 && frame <= 45) {
@@ -355,9 +355,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
-  Iwram_ClearWords(canvas, 0x4000);
-  REG_BLDALPHA = 0x1010;
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 }
 
 #define Actor_SetAnimationSpeedFar                                             \
@@ -595,7 +595,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   if (effect->prelude == 1)
     BattleEffect_RunDjinniEntrance(effect, 1 | effect->side << 4 | 2 << 5,
                                    &screen, &world);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // A 128x128 blitter, mirrored for the other side.
   if (mode == 5 || mode == 12 || mode == 13) {
@@ -792,7 +792,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
           shot->y += shot->velocityY * 2;
           shot->z += shot->velocityZ * 2;
         } else if (mode == 18) {
-          // As mode 10, tested apart as the native does.
           shot->velocityY =
               (s32)(target->y + ((Random16() & 31) << 16) - shot->y + 0x40000) /
               steps;
@@ -822,9 +821,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     for (i = 0; i != 64; i++) {
       struct EffectStep *p = &PARTICLES[PTCL_STREAKS + i];
 
-      p->x = (origin.x / 2) << 16;
-      p->y = 80 << 16;
-      p->z = 0;
+      SET_POSITION(p, (origin.x / 2) << 16, px(80), 0);
       p->velocityX = ((Random16() & 255) - 128) << 9;
       p->velocityY = ((Random16() & 255) - 128) << 9;
       p->velocityZ = 0;
@@ -933,8 +930,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             if (target->x < 0) {
               hit = x < 0;
               /* FAKEMATCH(dead): the twin's cancelling updates under a test
-               * that emits nothing; as no updates, 35 of 2278 instructions
-               * differ in tla-en. */
+               * that emits nothing. */
               if (target) {
                 hit ^= x;
                 hit ^= x;
@@ -943,8 +939,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 goto draw_shot;
             } else {
               hit = x >= 0;
-              /* FAKEMATCH(dead): the same for the other side; as no updates,
-               * 28 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(dead): the same for the other side. */
               if (target) {
                 hit ^= x;
                 hit ^= x;
@@ -975,9 +970,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 shot->velocityX = -shot->velocityX;
               }
               flash->variant = 1;
-              flash->x = pos->x;
-              flash->y = pos->y;
-              flash->z = 0;
+              SET_POSITION(flash, pos->x, pos->y, 0);
               if (mode != 7)
                 work->shakeFrames = 2;
               BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
@@ -994,9 +987,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 s32 held;
 
                 for (n = 0, held = 0; n != 1; n++) {
-                  /* FAKEMATCH(barrier): the asm operand keeps held a register
-                   * the loop carries, so it is allocated r2 before n; as no
-                   * asm, 12 of 2278 instructions differ in tla-en. */
+                  /* FAKEMATCH(barrier): the asm operand. */
                   __asm__("" : "+r"(held));
                   PARTICLES[PTCL_STREAKS + j + n].variant = held;
                 }
@@ -1101,8 +1092,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984ec[step],
                              gProjectileVolley_FlashWidths[step],
                              gProjectileVolley_FlashHeights[step]);
-              /* FAKEMATCH(dead): an empty once-only block before the release;
-               * as no block, 68 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(dead): an empty once-only block before the release.
+               */
               do {
               } while (0);
               HeapSlot_Release(188);
@@ -1223,8 +1214,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             BattleEffect_BuildBlitter(188, 7, 7,
                                       Data_0819850a[Random16() & 3] | CLIP, 0);
             do {
-              // The empty once-only loop keeps loop.c from hoisting the glint
-              // size tables (without it, 1901 of 2278 differ, 2026-11-08).
+              /* FAKEMATCH(dead): an empty once-only block before the glints. */
             } while (0);
             DRAW_ALTERNATE(
                 canvas, work->sheet + 0x22 + gBattleEffect_GlintCells[glint],
@@ -1251,9 +1241,9 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
   struct BattleObj *context = BattleObject_GetFar(slot);
   struct Actor *object = context->object;
 
-  object->acceleration = 0x20000;
-  object->speedLimit = 0x80000;
-  object->velocityY = 0x40000;
+  object->acceleration = px(2);
+  object->speedLimit = px(8);
+  object->velocityY = px(4);
   object->gravity = 0xAB85;
   object->bounce = 0;
   object->actionFlags = 0;

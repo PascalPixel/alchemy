@@ -24,7 +24,6 @@ UNUSED void DebugBattle_RunForever(void) {
 void ScriptedBattle_SaveUnits(void) {
   s32 j;
   struct Snapshot *snap = &Data_0200ff58;
-  // Set here, between snap and ids: the native sets i before it loads ids.
   s32 i = 0;
   u8 *ids = gScriptedBattle_Units;
   struct SnapshotCopy *copies = Data_0200ff6c;
@@ -39,23 +38,18 @@ void ScriptedBattle_SaveUnits(void) {
         snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
         {
           struct SnapshotVitals *pv;
-          /* FAKEMATCH(pin): the PP base held in r0; as a plain local, 4 of
-           * 183 instructions differ in tla-en. */
+          /* FAKEMATCH(pin): the PP base held in r0. */
           register struct SnapshotVitals *base asm("r0");
           u32 pp;
 
           /* FAKEMATCH(temporary): the PP value held in a local while pv is
-           * built; as pv->pp = unit->unk3a, 121 of 183 instructions differ
-           * in tla-en. */
+           * built. */
           pp = unit->unk3a;
           base = Data_0200ffec;
           // The address as an integer sum, i * 4 first: &base[i] puts the
           // base first in the add.
           pv = (struct SnapshotVitals *)(i * 4 + (s32)base);
-          /* FAKEMATCH(dead): a store the tag loop's init overwrites; its
-           * test builds 300 in a reload register while pp and pv hold r2
-           * and r3, which puts r1 among reload's registers; without it, 121
-           * of 183 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): a store the tag loop's init overwrites. */
           if (i == 300)
             j = 0;
           pv->pp = pp;
@@ -97,8 +91,7 @@ void ScriptedBattle_SaveUnits(void) {
 /// Restores the five units ScriptedBattle_SaveUnits snapshotted: for each one
 /// still in the battle party and listed, the first three's four tag bytes and
 /// each one's 25 snapshot bytes, and the last two's HP and PP through
-/// Unit_SetHpFar and Unit_SetPpFar. PP is read through the global, which
-/// reloads the base as the native does.
+/// Unit_SetHpFar and Unit_SetPpFar.
 void ScriptedBattle_RestoreUnits(void) {
   s32 i;
   s32 j;
@@ -202,8 +195,6 @@ s32 DebugParty_LoadPreset(s32 preset) {
       ((struct OwnerDjinnState *)state)->flags.banks.active[i] = 0;
     }
     for (i = 0; i < 32; i++)
-      // Through a u16 cast the zero loads from the literal pool, as the ROM has
-      // it.
       *(u16 *)&((struct OwnerActionState *)state)->actionSlots[i] = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_ParameterSets[row].actions[i] != 0)
@@ -237,7 +228,7 @@ extern u8 gDebugTextEnabled;
 
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
-  s32 down = gInput.held & 0x80;
+  s32 down = gInput.held & KEY_DOWN;
   s32 encounter;
   s32 preset;
   s32 loadedPreset;
@@ -266,25 +257,25 @@ restart:
       GameFlag_Clear(32);
       wait(1);
       for (;;) {
-        if (input->repeat & 0x10)
+        if (input->repeat & KEY_RIGHT)
           encounter++;
-        if (input->repeat & 0x20)
+        if (input->repeat & KEY_LEFT)
           encounter--;
-        if (input->repeat & 0x40)
+        if (input->repeat & KEY_UP)
           encounter -= 10;
-        if (input->repeat & 0x80)
+        if (input->repeat & KEY_DOWN)
           encounter += 10;
-        if (input->repeat & 0x100)
+        if (input->repeat & KEY_R)
           preset++;
-        if (input->repeat & 0x200)
+        if (input->repeat & KEY_L)
           preset--;
-        if (input->repeat & 1)
+        if (input->repeat & KEY_A)
           break;
-        if (input->repeat & 8)
+        if (input->repeat & KEY_START)
           Battle_DebugStartNoOp();
         // DEAD: once startModeSet is set, setting it again changes nothing;
         // the ROM keeps the test.
-        if ((input->repeat & 2) || startModeSet)
+        if ((input->repeat & KEY_B) || startModeSet)
           startModeSet = 1;
         wait(1);
       }
@@ -293,7 +284,7 @@ restart:
         DebugParty_LoadPreset(preset);
         loadedPreset = preset;
       }
-      if (input->held & 0x80)
+      if (input->held & KEY_DOWN)
         GameFlag_Set(364);
       Unit_CalculateFar(0);
       *backdropId = (s32)&ResourceId_ColossoBackdrop;

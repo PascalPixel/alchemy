@@ -4,6 +4,8 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "system/frame.h"
 #include "gamepak/far_call/window.h"
@@ -57,15 +59,13 @@ void BattleParty_SwapInReserves(void) {
 }
 
 /// Allocates the battle camera (heap slot 48) and sets its starting view.
-// The values are those The Broken Seal's battle start sets inline after its
-// own allocation.
 void BattleCamera_Create(void) {
   struct BattleCamera *camera =
       HeapSlot_AllocEwram(48, sizeof(struct BattleCamera));
   s32 *focus = camera->pos;
 
-  SET_VECTOR(focus, 0, 0x400000, 0);
-  SET_VECTOR(camera->eye, 0, 0xb40000, 0x400000);
+  SET_VECTOR(focus, 0, px(64), 0);
+  SET_VECTOR(camera->eye, 0, px(180), px(64));
   camera->yaw = 0x2800;
   camera->pitch = 0x5000;
   camera->distance = 0x1000000;
@@ -168,8 +168,6 @@ struct EncounterWork {
 extern u8 Data_02018000__battle[] __asm__("Data_02018000");
 #define Data_02018000 Data_02018000__battle
 
-// The ROM's call here keeps the whole return register, as an s32 return
-// does; system/system/flags.c defines it returning u8.
 /* VIEW(battle): routine GameFlag_GetByte as s32 GameFlag_GetByte(s32 flag);
  * game/game_flags.h has u8 GameFlag_GetByte(s32 flag); tried as the
  * definition's u8 GameFlag_GetByte(s32 flag), which the object already
@@ -207,7 +205,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   result = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->unkd0[2], 0x7c8);
   Task_ResetAll();
-  transition->targetYaw = 0x2000;
+  transition->targetYaw = TRIG_TURN / 8;
   transition->frames = 0;
   transition->flag = 1;
   transition->unk18 = 0;
@@ -237,16 +235,13 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
 
   if (GameFlag_Get(0x16c) != 0) {
     battle->twoSided = 1;
-    /* FAKEMATCH(dead): an empty once-only block after the twoSided store, so
-     * battleStart's address is started after it; without it, 4 of 885
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the twoSided store. */
     do {
     } while (0);
     gMainRoutineWork.battleRule24b = 4;
   }
   if (battle->twoSided != 0) {
-    // The seed's store in a once-only block keeps it ahead of the wait loop's
-    // setup; as the plain store, 4 of 885 instructions differ in tla-en.
+    /* FAKEMATCH(dead): the seed's store in a once-only block. */
     do {
       gBattleRandomSeed = 0;
     } while (0);
@@ -274,11 +269,11 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_Get(0x16c) != 0) {
-      Sound_PlayFar(55);
+      Sound_PlayFar(MUS_055);
       Sound_LoadReverbCode(4);
     }
   } else {
-    Sound_PlayFar(50);
+    Sound_PlayFar(MUS_050);
   }
 
   BattleUnit_Collect();
@@ -296,7 +291,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattleObject_Put();
   BattleBackground_Init();
   BattleBackground_Load(1, battle->background, 0);
-  BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
+  BattleCamera_SetRange(px(160), px(80), 0, 0, Q16_ONE * 2);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   *(volatile u16 *)0x04000050 = 0;
@@ -370,9 +365,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         if (enemyGroup == 80)
           Battle_PlayFormChange(80);
         if (actingUnit <= 7 && battle->defeated == 1) {
-          /* FAKEMATCH(barrier): an empty asm before the defeatState store,
-           * so battle's copy (mov r5, r9) comes before the 3; without it, 2
-           * of 885 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm before the defeatState store. */
           asm("");
           battle->defeatState = 3;
         }
@@ -449,9 +442,9 @@ won_scripted:
   if ((u32)scripted > 1) {
     if (enemyGroup != 80 && GameFlag_Get(0x16e) == 0) {
       if (battle->twoSided != 0)
-        Sound_PlayFar(58);
+        Sound_PlayFar(MUS_058);
       if (battle->defeated != 0) {
-        Sound_PlayFar(58);
+        Sound_PlayFar(MUS_058);
         if (battle->defeatState <= 1) {
           BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                             26);
@@ -463,7 +456,7 @@ won_scripted:
       }
       Battle_AwardSpoils();
     }
-    Sound_PlayFar(78);
+    Sound_PlayFar(SOUND_FADE_OUT_BGM);
   }
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
@@ -485,7 +478,7 @@ party_lost:
   scripted = enemyGroup - 74;
   if ((u32)scripted > 1 && enemyGroup != 638) {
     if (enemyGroup != 76) {
-      Sound_PlayFar(59);
+      Sound_PlayFar(MUS_059);
       MessageArgument_ClearAllFar();
       if (BattleParty_PrepareMembers(0) == 1)
         BattleMessage_ShowAndWaitFar((s32)MsgGoesDownInDefeat);
@@ -493,7 +486,7 @@ party_lost:
         BattleMessage_ShowAndWaitFar((s32)MsgPartyDefeated);
       BattleMessage_WaitForAdvance();
     }
-    Sound_PlayFar(78);
+    Sound_PlayFar(SOUND_FADE_OUT_BGM);
   }
   ScreenFade_ToBlack(30);
   result = -1;
@@ -501,7 +494,7 @@ party_lost:
   goto finished;
 
 fled:
-  Sound_PlayFar(78);
+  Sound_PlayFar(SOUND_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
   result = 999;

@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 // Summon 10: a window opens over a violet sky on a field of rocks; a 3x3
 // block of ice rises, a great ice block falls into it and throws up debris
@@ -40,11 +42,12 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   step = 1;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  *(u16 *)0x05000000 = 0;
-  *(u16 *)0x05000002 = 0;
+  *(u16 *)BG_PLTT = 0;
+  *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_WININ = 0x2137;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(1, 0);
   REG_WIN0H = 0xf0f0;
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
@@ -61,10 +64,12 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   BattleEffect_SpawnObjects(9, FORMATION_ICE_BLOCKS, 1);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = 2;
   work->transferValue = 50;
 
@@ -80,12 +85,12 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     pts[i][1] = gBoreas_Points[i][1];
   }
 
-  Sound_PlayFar(141);
+  Sound_PlayFar(SE_RUMBLE);
 
   // The first half: rocks, the great ice block and its spray.
   for (frame = 0; frame != 288; frame++) {
     count = 16;
-    if ((gInput.repeat & 3) && frame > 16)
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 16)
       break;
 
     // Open the window from the left: its right edge speeds up, and each
@@ -156,10 +161,10 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       Animation_ApplyChildArgumentFar(work->objects[2],
                                       gBoreas_Animations[(frame / 4) & 3]);
 
-    scale.x = 0x10000;
-    scale.y = 0x10000;
+    scale.x = Q16_ONE;
+    scale.y = Q16_ONE;
     pos[3] = 0;
-    pos[1] = 255 << 16;
+    pos[1] = px(255);
     for (row = 0; row != 3; row++) {
       for (j = 0; j != 3; j++) {
         pos[0] = (j * 32 + 144 - ox) << 16;
@@ -187,15 +192,15 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 32)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     if (frame == 64)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     if (frame == 104)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     if (frame == 176)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     if (frame == 226)
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     Transform_Reset();
 
     // Each time rocks crumble, 32 pieces of debris fly up.
@@ -241,7 +246,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
                   gBoreas_DebrisWidths[n], gBoreas_DebrisHeights[n]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
-          PARTICLES[i].velocityY += 0x2000;
+          PARTICLES[i].velocityY += px(1) / 8;
         }
       }
     }
@@ -251,8 +256,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     if (frame > 223) {
       if (frame == 224) {
         for (i = 0; i != 128; i++) {
-          PARTICLES[i].x = 72 << 16;
-          PARTICLES[i].y = 56 << 16;
+          PARTICLES[i].x = px(72);
+          PARTICLES[i].y = px(56);
           PARTICLES[i].velocityX = (-(Random16() & 127) - 64) << 11;
           PARTICLES[i].velocityY = ((Random16() & 127) + 16) << 11;
           PARTICLES[i].variant = Random16();
@@ -270,8 +275,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
           if ((PARTICLES[i].x >> 16) < -16 || (PARTICLES[i].y >> 16) > 120) {
-            PARTICLES[i].x = 72 << 16;
-            PARTICLES[i].y = 56 << 16;
+            PARTICLES[i].x = px(72);
+            PARTICLES[i].y = px(56);
           }
           PARTICLES[i].variant++;
         }
@@ -309,12 +314,12 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   for (i = 0; i != 9; i++)
     Sprite_DestroyFar(work->objects[i]);
   BattleEffect_SetupBlendedDisplay();
-  REG_BLDALPHA = 0x1010;
-  Sound_PlayFar(390);
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].x = ((Random16() & 127) + 64) << 16;
-    work->particles[i].z = -(16 << 16);
+    work->particles[i].z = -px(16);
     work->particles[i].y = (-(Random16() & 127) - 64) << 16;
     work->particles[i].velocityX = (-(Random16() & 63) - 127) << 12;
     work->particles[i].velocityY = ((Random16() & 63) + 127) << 12;
@@ -339,9 +344,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
         count = 16;
     }
     if (frame >= 9 && frame < 72 && (frame & 3) == 0)
-      Sound_PlayFar(132);
+      Sound_PlayFar(SE_WATER);
     if (frame == 72)
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     // A block (40x80) falls in from the upper right.
     if (frame > 64)
       draw(canvas, work->sheet + 0x14f9, (64 - frame) * 7 + 88,
@@ -380,10 +385,10 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
           draw(canvas, work->sheet + gBoreas_FallPictures[n], HI(q->x),
                y - Data_081982db[n], Data_081982d8[n], Data_081982db[n]);
-          BattleEffectKernels_IntegrateVector2(q, 64, 1 << 16);
-          if (HI(q->y) > 120 && q->velocityY > 8 << 16) {
+          BattleEffectKernels_IntegrateVector2(q, 64, px(1));
+          if (HI(q->y) > 120 && q->velocityY > px(8)) {
             q->velocityY = -q->velocityY / 4;
-            q->y = 120 << 16;
+            q->y = px(120);
             work->shakeFrames = 1;
           }
         }
@@ -398,7 +403,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
         work->particles[i].y += work->particles[i].velocityY;
         if ((work->particles[i].y >> 16) > 120 && frame <= 47) {
           work->particles[i].x = ((Random16() & 127) + 64) << 16;
-          work->particles[i].y = -(16 << 16);
+          work->particles[i].y = -px(16);
         }
       }
     }

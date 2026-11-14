@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 void *GetMotionRecordFar(void *object, s32 index);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -49,7 +51,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
 
   HeapSlot_AllocEwram(100, 0x60e);
   HeapSlot_Alloc(92, 0x7b7c);
-  HeapSlot_Alloc(96, 0x4000);
+  HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
   work->effect = effect;
   work->active = 1;
@@ -160,7 +162,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   wait(1);
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_SetupCanvasTileMap();
-  REG_BG1CNT = 0x1f80;
+  REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   wait(1);
   if (kind == 5 || kind == 6) {
     if (effect->side == 0) {
@@ -241,7 +243,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The layer is centred on the first target, kept within 128 pixels.
-  REG_BG1CNT = 0x1f81;
+  REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectSprite(effect->actors[0], &anchor);
   if (effect->side == 0)
     shake = 96 - anchor.x;
@@ -263,9 +265,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
 
-    spark->x = target->x;
-    spark->y = target->y + half;
-    spark->z = target->z;
+    SET_POSITION(spark, target->x, target->y + half, target->z);
     spark->velocityX = (Random16() & 255) << 10;
     spark->velocityY = ((Random16() & 255) - 32) << 10;
     spark->velocityZ = ((Random16() & 255) - 127) << 10;
@@ -427,7 +427,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
                                         130);
   wait(1);
   BattleEffect_SetupCanvasTileMap();
-  REG_BG1CNT = 0x1f80;
+  REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(
         HEAP_BLITTER,
@@ -480,9 +480,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
     for (i = 0; i != SPARK_COUNT; i++) {
       struct EffectStep *mote = &work->particles[i];
 
-      mote->x = (Random16() & 63) + 16;
-      mote->y = 0;
-      mote->z = 0;
+      SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
       mote->velocityX = Random16() & 0xffff;
       mote->velocityY = Random16() & 0xffff;
       mote->velocityZ = Random16() & 0xffff;
@@ -505,7 +503,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, 0x480);
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != 32; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
                                             130);
@@ -549,10 +547,10 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   // The burst: clear both canvases, blend, and centre the layer on the
   // first target, kept within 128 pixels.
   Iwram_ClearWordsEntry(canvas, words);
-  Iwram_ClearWordsEntry((void *)0x06004000, words);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), words);
   work->transferMode = 2;
   work->transferValue = 75;
-  REG_BG1CNT = 0x1f81;
+  REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   if (effect->side == 0)
     shake = 32 - anchor.x;
@@ -573,9 +571,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
 
-    spark->x = target->x;
-    spark->y = target->y + half;
-    spark->z = target->z;
+    SET_POSITION(spark, target->x, target->y + half, target->z);
     spark->velocityX = (Random16() & 255) << 10;
     spark->velocityY = (Random16() & 255) << 10;
     spark->velocityZ = ((Random16() & 255) - 127) << 10;

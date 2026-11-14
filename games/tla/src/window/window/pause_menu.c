@@ -79,14 +79,6 @@ void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
-/* VIEW(flag_bit_rect): routine Window_Create as struct RenderInput
- * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); selrow has
- * struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer); not
- * tried: Window_Create's declaration holds a FAKEMATCH tag. */
-extern struct RenderInput *
-Window_Create__flag_bit_rect(s32 x, s32 y, s32 width, s32 height,
-                             s32 style) __asm__("Window_Create");
-
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
 /// field's actor system while the browser owns its window and cache entries.
 /// L and R switch the kind, Left and Right turn its 8 pages of 32 icons
@@ -114,32 +106,32 @@ s32 DebugBrowser_Icons(void) {
   wait(1);
 
   while (1) {
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       page--;
       redraw = 1;
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       redraw = 1;
       page++;
     }
-    if (gInput.repeat & 0x200) {
+    if (gInput.repeat & KEY_L) {
       mode--;
       redraw = 1;
     }
-    if (gInput.repeat & 0x100) {
+    if (gInput.repeat & KEY_R) {
       redraw = 1;
       mode++;
     }
-    if (gInput.repeat & 1)
+    if (gInput.repeat & KEY_A)
       break;
-    if (gInput.repeat & 2)
+    if (gInput.repeat & KEY_B)
       break;
     if (redraw != 0) {
       redraw = 0;
       page = (page + 12) % 12;
       mode = (mode + 3) % 3;
       Window_Close(window, 2);
-      window = Window_Create__flag_bit_rect(10, 0, 18, 12, 2);
+      window = Window_Create(10, 0, 18, 12, 2);
       if (mode == 0)
         Text_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
       else if (mode == 1)
@@ -199,7 +191,7 @@ s32 DebugBrowser_Portraits(void) {
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
-  window = Window_Create__flag_bit_rect(10, 10, 14, 3, 2);
+  window = Window_Create(10, 10, 14, 3, 2);
   index = 0;
   palette = 15;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
@@ -208,28 +200,27 @@ s32 DebugBrowser_Portraits(void) {
   for (i = 0; gPortrait_SpriteMap[i * 2] != -1; i++) {
   }
   total = count + i;
-  /* FAKEMATCH(dead): a zero from the count keeps the mask in r9 and work in
-   * fp; as cancel = 2, 30 of 180 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a zero from the count. */
   cancel = ((u32)(u16)count >> 16) | 2;
   slotOffset = offsetof(struct WindowWork, outputIds[1]);
   while (1) {
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       redraw = 1;
       index--;
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       redraw = 1;
       index++;
     }
-    if (gInput.repeat & 0x200) {
+    if (gInput.repeat & KEY_L) {
       redraw = 1;
       index -= 10;
     }
-    if (gInput.repeat & 0x100) {
+    if (gInput.repeat & KEY_R) {
       redraw = 1;
       index += 10;
     }
-    if (gInput.repeat & 1)
+    if (gInput.repeat & KEY_A)
       break;
     if (gInput.repeat & cancel)
       break;

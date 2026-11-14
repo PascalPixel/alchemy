@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "version.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
@@ -166,8 +167,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
   work->dirty = 1;
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorSprite; as cursorSprite used
-     * directly, 417 of 1246 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): sprite holds &cursorSprite. */
     struct DjinnMenuOam *sprite = &cursorSprite;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||
@@ -309,7 +309,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
       for (j = 0; j < (djinnCount + 4) / 5; j++) {
         s32 tile = j + 0xf301;
 
-        if ((gInput.held & 0x100) || (gFrameCount & 15) <= 11) {
+        if ((gInput.held & KEY_R) || (gFrameCount & 15) <= 11) {
           if (j == firstEntry / 5)
             tile = j + 0xf30b;
         }
@@ -317,7 +317,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
                                listWindow->width - (djinnCount + 4) / 5 + j - 2,
                                -1, 0);
       }
-      if ((gInput.held & 0x100) == 0) {
+      if ((gInput.held & KEY_R) == 0) {
         Window_SetTilemapEntry(listWindow, 0xf334,
                                listWindow->width - (djinnCount + 4) / 5 - 3, -1,
                                0);
@@ -350,12 +350,12 @@ s32 BattleDjinnMenu_Run(s32 member) {
       }
     }
     navigation = NAVIGATION;
-    if (navigation->timer == 0 || (pressed & 2)) {
-      Sound_PlayFar(113);
+    if (navigation->timer == 0 || (pressed & KEY_B)) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       encodedDjinn = -1;
       break;
     }
-    if (pressed & 1) {
+    if (pressed & KEY_A) {
       if (djinnCount != 0) {
         u32 selection = djinnEntries[firstEntry + selectedRow];
         u32 turns = selection & DJINN_ENTRY_RECOVERY_MASK;
@@ -378,7 +378,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
                                DJINN_MESSAGE_CAPACITY);
           Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       } else {
         encodedDjinn = -1;
         break;
@@ -386,14 +386,14 @@ s32 BattleDjinnMenu_Run(s32 member) {
     }
 
     if (djinnCount != 0) {
-      if (repeated & 0x80) {
-        Sound_PlayFar(111);
+      if (repeated & KEY_DOWN) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == 5 || firstEntry + selectedRow == djinnCount)
           selectedRow = 0;
         preferredRow = selectedRow;
-      } else if (repeated & 0x40) {
-        Sound_PlayFar(111);
+      } else if (repeated & KEY_UP) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (djinnCount - 1) / 5 * 5)
@@ -402,7 +402,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
             selectedRow = 4;
         }
         preferredRow = selectedRow;
-      } else if (held & 0x100) {
+      } else if (held & KEY_R) {
         if (previewWindow != NULL) {
           for (i = 0; i < previewPages; i++) {
             s32 tile = i + 0xf301;
@@ -429,14 +429,14 @@ s32 BattleDjinnMenu_Run(s32 member) {
           if (previewPage > previewPages)
             previewPage = previewPages;
           if (previewPage != 0) {
-            if (repeated & 0x10) {
-              Sound_PlayFar(111);
+            if (repeated & KEY_RIGHT) {
+              Sound_PlayFar(SE_MENU_CURSOR_MOVE);
               previewPage++;
               if (previewPage > previewPages)
                 previewPage = 1;
               redraw = 1;
-            } else if (repeated & 0x20) {
-              Sound_PlayFar(111);
+            } else if (repeated & KEY_LEFT) {
+              Sound_PlayFar(SE_MENU_CURSOR_MOVE);
               previewPage--;
               if (previewPage <= 0)
                 previewPage = previewPages;
@@ -452,8 +452,8 @@ s32 BattleDjinnMenu_Run(s32 member) {
 #if TLA_PATCH_1
         redrawList = 1;
 #endif
-      } else if (repeated & 0x10) {
-        Sound_PlayFar(111);
+      } else if (repeated & KEY_RIGHT) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + 5 >= djinnCount) {
           if (firstEntry != 0) {
@@ -469,8 +469,8 @@ s32 BattleDjinnMenu_Run(s32 member) {
               selectedRow = preferredRow;
           }
         }
-      } else if (repeated & 0x20) {
-        Sound_PlayFar(111);
+      } else if (repeated & KEY_LEFT) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= 5;

@@ -122,10 +122,9 @@ void *Heap_Alloc(s32 size) {
       return NULL;
     }
     state[0] = other;
-    goto finish;
+  } else {
+    state[1] = next;
   }
-  state[1] = next;
-finish:
   return (void *)address;
 }
 
@@ -147,9 +146,8 @@ void *Heap_AllocEwram(s32 size) {
       return NULL;
     }
     state[1] = other;
-    goto finish;
+  } else {
+    state[0] = next;
   }
-  state[0] = next;
-finish:
   return (void *)address;
 }

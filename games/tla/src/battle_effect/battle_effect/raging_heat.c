@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -107,7 +109,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0xa10;
+  REG_BLDALPHA = BLEND_ALPHA(16, 10);
   BattleEffect_LoadBlitter(
       SLOT_BLITTER,
       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
@@ -140,13 +142,13 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       for (i = 0; i != 256; i++) {
         EMBERS[i].variant = -1;
       }
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     if ((u32)(frame - 40) <= 15) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if (frame == 56) {
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
     }
 
     // The pillar falls eight lines a frame and bursts where it lands.
@@ -172,7 +174,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
 
           EMBERS[i].x = (centerX / 2) << 16;
           EMBERS[i].y = ((Random16() & 15) + y + 24) << 16;
-          angle = (Random16() & 0x7fff) + 0x4000;
+          angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
           speed = (Random16() & 255) + 127;
           EMBERS[i].velocityX = (Trig_Sin(angle) * speed) >> 5;
           EMBERS[i].velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -190,8 +192,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         draw[1](canvas, buffer, centerX / 2, y, 24, 64);
       }
       i = 0;
-      /* FAKEMATCH(dead): the test repeats the loop's own; as a plain for loop,
-       * 4 of 669 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): the test repeats the loop's own. */
       if (i != Data_08199400[effect->variant][0]) {
         for (particle = work->particles; i != Data_08199400[effect->variant][0];
              i++, particle++) {
@@ -247,7 +248,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         s32 scale;
 
         Transform_Reset();
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (i == 0) {
           SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
                                         (baseY << 16) - 0x400000, 0);
@@ -274,7 +275,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           if (scale < 0) {
             continue;
           }
-          scale += 0x4000;
+          scale += Q16_ONE / 4;
           shade = 512 - frame * 8;
           model->shade = shade;
           texture.pixels = TEXTURE_PIXELS;
@@ -358,7 +359,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   s32 i;
 
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_SmallFlameSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
@@ -385,7 +386,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != RING_FRAMES; frame++) {
     if (frame == RING_CUE_FRAME)
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     if (frame == 0)
       lift = 0;
 
@@ -427,12 +428,11 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       s32 y;
 
       Transform_Reset();
-      SceneTransform_ApplyPosition3(ring->x - (128 << 16), ring->y - (64 << 16),
-                                    0);
+      SceneTransform_ApplyPosition3(ring->x - px(128), ring->y - px(64), 0);
       Transform_ApplyRoll(frame * 256);
       Transform_ApplyPitch(frame * 256 + 500);
       if (i > 7)
-        Transform_ApplyPitch(0x4000);
+        Transform_ApplyPitch(TRIG_TURN / 4);
       Transform_ApplyYaw(
           (frame * 4 + i * Data_0819940c[effect->variant][RING_SPACING]) << 8);
       place = vector;
@@ -510,11 +510,11 @@ void RagingHeat_FillGradientCanvas(void) {
   s32 x;
 
   Graphics_LoadGreyRamp();
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT_BACKDROP = 0;
   REG_BG2PA = 0x4e;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   for (y = 0; y != 128; y++) {
     for (x = 0; x != 128; x++) {
       s32 level;

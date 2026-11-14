@@ -29,8 +29,7 @@ struct MotionView {
   u32 flags : 8;
 };
 
-/// A map cell, or a step between cells, kept as one 8-byte pair: written by the
-/// word, it keeps the native's store before the travel loop.
+/// A map cell, or a step between cells, kept as one 8-byte pair.
 struct Cell {
   s32 x, z;
 };
@@ -392,10 +391,7 @@ struct EventWorkCbc {
   struct Actor *active;
 };
 
-// One-field views: the terminator's read and the shape store are memory of
-// their own to sched2, which sinks them past the cell stores; plain reads and
-// stores keep their order. A struct is padded to 4 bytes here, so the pointers
-// stay plain.
+/* FAKEMATCH(signature): one-field views of the list's terminator and shape. */
 struct ListedActor {
   u16 id;
 };

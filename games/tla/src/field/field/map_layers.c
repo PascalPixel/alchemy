@@ -88,7 +88,6 @@ s32 MapGrid_LoadMap(s32 index) {
     u32 y = layerSource->y;
     s32 scaleX;
     s32 cell;
-    // Set inside the loop, where the original's register allocation needs it.
     u8 *shapeGrid;
     u32 maskY;
 
@@ -238,7 +237,7 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayerWindow *window = (struct MapLayerWindow *)&map->layers[layer];
   u32 originY = window->originY;
-  u8 *screenMap = (u8 *)0x06002800 + (layer << 11);
+  u8 *screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 maskY = window->maskY;
   u32 sourceRow = ((tileY / 2) & 0x7f) << 7;
   u32 screenRowOffset = (tileY & 30) << 5;
@@ -308,7 +307,7 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayerWindow *window = (struct MapLayerWindow *)&map->layers[layer];
-  u8 *screenMap = (u8 *)0x06002800 + (layer << 11);
+  u8 *screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 maskY = window->maskY;
   u32 originY = window->originY;
   u32 sourceRow = ((tileY / 2) & 0x7f) << 7;
@@ -496,7 +495,7 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       y += layer->offsetY;
       x /= 0x80000;
       y /= 0x80000;
-      screenMap = (u8 *)0x06002800 + (layerIndex << 11);
+      screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layerIndex << 11);
       maskY = layer->maskY;
       maskX = layer->maskX;
       originY = layer->originY;
@@ -613,11 +612,9 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   u32 firstSourceCopy = sourceX;
 
   // endMarker set after the copy, which puts the ip copy among its
-  // instructions; as an initializer, 2 of 53 instructions differ in tla-en.
   endMarker = 0xffff;
   /* FAKEMATCH(dead): the updates that cancel out emit nothing but end CSE
-   * before the comparison, keeping its ip copy while source stays in r0;
-   * without them, 5 of 53 instructions differ in tla-en. */
+   * before the comparison. */
   if (copyCommand) {
     sourceX ^= firstSourceCopy;
     sourceX ^= firstSourceCopy;
@@ -638,9 +635,8 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       copyCommand++;
       wait((u16)delay);
       sourceX = copyCommand->source;
-      /* FAKEMATCH(dead): updates that cancel out between the load and its
-       * copy, so CSE does not swap the load into the copy and source stays in
-       * r0; without them, 8 of 53 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): updates that cancel out between the load and its copy.
+       */
       if (copyCommand) {
         sourceX++;
         sourceX--;
@@ -649,8 +645,7 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
         u32 nextSourceCopy = sourceX;
 
         /* FAKEMATCH(dead): updates that cancel out after the copy end CSE's
-         * knowledge of source, so the comparison keeps its ip copy; without
-         * them, 7 of 53 instructions differ in tla-en. */
+         * knowledge of source. */
         if (copyCommand) {
           sourceX++;
           sourceX--;
@@ -708,17 +703,11 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064
- * has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja: games/tla/src/field/field.c:8873:
- * `gMapCellBuffer__f02aa74' undeclared (first use in this function). */
-extern u8 gMapCellBuffer__f02aa74[] __asm__("gMapCellBuffer");
-
 void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                       s32 dstX, s32 dstY) {
   s32 y;
-  u32 *src = (u32 *)gMapCellBuffer__f02aa74 + (srcY * 128 + srcX);
-  u32 *dst = &((u32 *)gMapCellBuffer__f02aa74)[dstY * 128 + dstX];
+  u32 *src = (u32 *)gMapCellBuffer + (srcY * 128 + srcX);
+  u32 *dst = &((u32 *)gMapCellBuffer)[dstY * 128 + dstX];
   struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
   struct TilePos views[3];
   s32 i;
@@ -743,14 +732,9 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
         u32 scaled;
         u32 mask;
 
-        // cellPictureId holds its mask before the masked cell; as cell & 0xfff,
-        // 110 of 148 instructions differ in tla-en.
         cellPictureId = 0xfff;
         mask = 0x7ff;
-        /* FAKEMATCH(barrier): an empty asm on mask once it holds 0x7ff, which
-         * ranks mask above the destination word in local allocation, so mask
-         * keeps r3, the word r2 and 0xfffff800 r1; without it, 23 of 145
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm on mask once it holds 0x7ff. */
         __asm__("" : "+r"(mask));
         cellPictureId = cell & cellPictureId;
         mask &= cell;
@@ -844,25 +828,26 @@ void Map_ApplySetFlagEdits(void) {
   s32 srcX, srcY, dstX, dstY, width, height;
 
   cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
-next:
-  entry = (u16)Map_ReadEditU16(&cursor);
-  if (((entry + 1) & 0xffff) == 0)
-    return;
-  if (GameFlag_Get(entry & 0xfff) != 0) {
-    srcX = *cursor++;
-    srcY = *cursor++;
-    dstX = *cursor++;
-    dstY = *cursor++;
-    width = *cursor++;
-    height = *cursor++;
-    if (entry & 0x1000)
-      Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
-    else
-      MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
-  } else {
-    cursor += 6;
+  for (;;) {
+    entry = (u16)Map_ReadEditU16(&cursor);
+    if (((entry + 1) & 0xffff) == 0)
+      return;
+    if (GameFlag_Get(entry & 0xfff) != 0) {
+      srcX = *cursor++;
+      srcY = *cursor++;
+      dstX = *cursor++;
+      dstY = *cursor++;
+      width = *cursor++;
+      height = *cursor++;
+      if (entry & 0x1000)
+        Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
+      else
+        MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width,
+                                           height);
+    } else {
+      cursor += 6;
+    }
   }
-  goto next;
 }
 
 u32 Map_ReadEditU16(u8 **cursor) {
@@ -890,25 +875,26 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
   s32 srcX, srcY, dstX, dstY, width, height;
 
   cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
-next:
-  entry = (u16)Map_ReadEditU16(&cursor);
-  if (((entry + 1) & 0xffff) == 0)
-    return;
-  if ((entry & 0xfff) == flag) {
-    srcX = *cursor++;
-    srcY = *cursor++;
-    dstX = *cursor++;
-    dstY = *cursor++;
-    width = *cursor++;
-    height = *cursor++;
-    if (attributes != 0)
-      Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
-    else
-      MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
-  } else {
-    cursor += 6;
+  for (;;) {
+    entry = (u16)Map_ReadEditU16(&cursor);
+    if (((entry + 1) & 0xffff) == 0)
+      return;
+    if ((entry & 0xfff) == flag) {
+      srcX = *cursor++;
+      srcY = *cursor++;
+      dstX = *cursor++;
+      dstY = *cursor++;
+      width = *cursor++;
+      height = *cursor++;
+      if (attributes != 0)
+        Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
+      else
+        MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width,
+                                           height);
+    } else {
+      cursor += 6;
+    }
   }
-  goto next;
 }
 
 void Map_GetHeaderSize(s32 map, s32 *size) {
@@ -969,8 +955,6 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
     Iwram_ClearWordsEntry(decodedTile, 0x400);
 
   sourceTiles = decodedTile;
-  // The block table at its fixed address: as the symbol gMapBlocks, its
-  // address forms in r2 rather than r1 and update reloads into r3, not r2.
   quarterCells = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
   for (rowIndex = 0; rowIndex < 16; rowIndex++) {
     Dma_Set(sourceTiles, quarterCells, 0x84000010, REG_DMA3);

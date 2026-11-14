@@ -4,6 +4,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -129,11 +132,13 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(4, 664, 1);
-  REG_WININ = 0x2737;
-  REG_WINOUT = 0x3f21;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
   REG_WIN0V = 0x107c;
   REG_WIN1V = 0x1088;
   BattleEffect_LoadBlitter(
@@ -142,9 +147,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   blit[0] = draw;
-  /* FAKEMATCH(temporary): the orange palette's id in a local, summed after the
-   * 0xF8 load from the address four below it; as the id at its two uses, 56 of
-   * 1122 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the orange palette's id in a local. */
   orangeBase = (s32)&ResourceId_OrangePaletteB - 4;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   circles = (s16 *)(work->sheet + 0x4c56);
@@ -155,13 +158,9 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
                              0);
   orange = orangeBase + 4;
   size = 2;
-  /* FAKEMATCH(dead): a test on the blitter, which the routine calls through and
-   * is never null; as its three statements alone, 77 of 1122 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): a test on the blitter. */
   if (draw) {
-    /* FAKEMATCH(temporary): the effect palette's id in a local, summed from the
-     * address four below it; as the id at its three uses, 6 of 1122
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the effect palette's id in a local. */
     paletteBase = (s32)&ResourceId_EffectPalette02 - 4;
     cells = (s32)gMapCellBuffer;
     palette = paletteBase + 4;
@@ -226,16 +225,16 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 0) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 4) {
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
     }
     if (frame == 16) {
-      Sound_PlayFar(164);
+      Sound_PlayFar(SE_SCATTER);
     }
     if (frame == 64) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
 
     // Poseidon rises.
@@ -255,7 +254,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       if (visible > 0) {
         source = Data_08196f18;
         placement[3] = 0;
-        placement[1] = 255 << 16;
+        placement[1] = px(255);
         for (i = 0; i != 4; i++) {
           placement[0] = (left << 17) + 0x100000;
           placement[2] = (rise + 40 + i * 32) << 16;
@@ -286,7 +285,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         if (p->variant == 0) {
           s32 angle = Random16() & 0x7fff;
-          s32 heading = angle + 0x4000;
+          s32 heading = angle + TRIG_TURN / 4;
           s32 speed = (Random16() & 511) + 512;
           s32 sine;
 
@@ -294,7 +293,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           x = centerX << 16;
           p->x = (sine >> 4) + x;
           p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
-          angle += 0xc000;
+          angle += TRIG_TURN * 3 / 4;
           p->velocityX = (Trig_Sin(angle) * speed) >> 9;
           p->velocityY = (Trig_Cos(angle) * speed) >> 8;
           p->velocityZ = (Random16() & 7) + 4;
@@ -389,8 +388,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             continue;
           }
           x = (spinner->variant / 8) % 3;
-          /* FAKEMATCH(dead): a test on x with both arms alike; as one
-           * model->shade = -16, 192 of 1122 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): a test on x with both arms alike. */
           if (x) {
             model->shade = -16;
           } else {
@@ -401,10 +399,10 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3((centerX - 64) << 16, 0x200000, 0);
           Transform_ApplyRoll(spinner->z);
           if (i & 1) {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
           }
           spinner->z += spinner->velocityZ;
-          SceneTransform_ApplyScale3(0x20000, 0x12710, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE * 2, 0x12710, Q16_ONE);
           Render_TransformVertices(Data_08199e24 + x * 16, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -439,11 +437,11 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         for (i = 0, p = (struct EffectStep *)Data_02012964; i != 128;
              i++, p++) {
-          s32 angle = (Random16() & 0x7fff) + 0x4000;
+          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
           s32 speed = (Random16() & 511) + 512;
 
           p->x = x;
-          p->y = 0x640000;
+          p->y = px(100);
           p->velocityX = (Trig_Sin(angle) * speed) >> 6;
           p->velocityY = (Trig_Cos(angle) * speed) >> 5;
           p->variant = (Random16() & 15) + 16;
@@ -458,9 +456,6 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         drawn->variant++;
       }
-      // The cell table's address is a local set before the walker, and each
-      // spark's cell is read at its byte offset: the listing's pool order
-      // and its ldrh by register offset.
       for (i = 0, cellTable = (const u8 *)gBattleEffect_MoteCells,
           drawn = (struct EffectStep *)Data_02012964;
            i != 128; i++, drawn++) {
@@ -493,8 +488,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         {
           s32 c = Data_08199e54[Random16() & 3] | 3;
 
-          /* FAKEMATCH(dead): an empty once-only block before the blitter call;
-           * as no block, 277 of 1122 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): an empty once-only block before the blitter call.
+           */
           do {
           } while (0);
           BattleEffect_BuildBlitter(188, 7, 7, c, 1);
@@ -580,7 +575,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
   graphics = Ram_HeapSlots->unk64[0];
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -623,9 +618,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
 
   for (frame = 0; frame != LEAP_FRAMES; frame++) {
     if (frame == 0) {
-      caster->x = homeX;
-      caster->y = 0;
-      caster->z = homeZ;
+      SET_POSITION(caster, homeX, 0, homeZ);
       landed = 0;
     }
     if (frame > 17 || frame == 0) {
@@ -650,16 +643,16 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
     if (frame == 4) {
       caster->autoFaceMotion = 0;
       caster->verticalMotionStrength = 0x9999;
-      caster->velocityY = 15 << 16;
+      caster->velocityY = px(15);
       if (caster->x < 0)
-        caster->velocityX = -8 << 16;
+        caster->velocityX = -px(8);
       else
-        caster->velocityX = 8 << 16;
+        caster->velocityX = px(8);
       if (mode == 1)
         caster->velocityX = -caster->velocityX;
       Actor_SelectAnimationFar(caster, 2);
       work->shakeFrames = 4;
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     }
 
     // Frame 16: down at the target's depth, then sliding to it over 16
@@ -715,7 +708,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
             BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
           } else {
-            Sound_PlayFar(145);
+            Sound_PlayFar(SE_CRASH);
             for (i = 0; i != effect->count; i++) {
               BattleMotion_ApplyKnockbackFar(effect->actors[i], 3);
               BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
@@ -755,11 +748,11 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
           Transform_Reset();
           SceneTransform_ApplyPosition3((pos.x - 60) << 16, (pos.y - 80) << 16,
                                         0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (effect->side == 0) {
             Transform_ApplyRoll(-0x3388);
           } else {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
             Transform_ApplyRoll(-0x3388);
           }
           SceneTransform_ApplyUniformScale(0x286a0);
@@ -785,7 +778,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
               s32 scale;
 
               start = frame - start;
-              scale = start * Data_08199e5c[i] * 2000 + 0x8000;
+              scale = start * Data_08199e5c[i] * 2000 + Q16_ONE / 2;
 
               model->shade = shade;
               Transform_Reset();
@@ -863,9 +856,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
       if (spark->variant > 0) {
         spark->variant--;
         BattleEffectKernels_IntegrateVector2(spark, 56, 0x2000);
-        if (spark->y > 112 << 16) {
+        if (spark->y > px(112)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((u32)spark->x < 127 << 16 && spark->y >= 0) {
+        } else if ((u32)spark->x < px(127) && spark->y >= 0) {
           s32 size = spark->variant / 8 + 1;
 
           draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
@@ -919,8 +912,6 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
   for (row = 0; row != rows; row++) {
     for (column = 0; column != columns; column++) {
       if (row < rows - 1) {
-        // The address as an integer sum, which adds the offset to the base
-        // as the native does.
         struct MeshTriangle *triangle =
             (struct MeshTriangle *)((row * columns + column) * 24 +
                                     (u32)triangles);

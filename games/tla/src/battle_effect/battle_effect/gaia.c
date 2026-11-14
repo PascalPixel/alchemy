@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 #undef ROCK_COUNT
 
@@ -174,8 +177,9 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
                                                  COMPOSITE_CLIP_Y |
                                                  COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  REG_BLDCNT = 0x3f46;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDCNT =
+      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
@@ -186,12 +190,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   for (i = 0; i != ROCK_COUNT; i++) {
     struct EffectStep *rock = &work->particles[FIRST_ROCK + i];
 
-    rock->x = (Random16() & 15) + 88;
-    rock->y = 128;
-    rock->z = (Random16() & 15) + 2;
+    SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
     rock->velocityX = i;
     rock->velocityY = 1;
-    rock->velocityZ = 0x8000;
+    rock->velocityZ = px(1) / 2;
     rock->variant = 44 - i * 4;
   }
   for (i = 0; i != 6; i++)
@@ -206,16 +208,17 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     dust->velocityY = ((Random16() & 63) + 32) << 13;
     dust->variant = Random16() & 31;
   }
-  REG_BG2CNT = 0x785;
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
   work->shakeFrames = 250;
 
   for (frame = 0; frame != 192; frame++) {
     if (frame == 0)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 40)
-      Sound_PlayFar(141);
+      Sound_PlayFar(SE_RUMBLE);
     if (frame == 96)
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     // The battle resumes and resolves the targets, hit cue 134.
     if (frame == 120)
       BattlePlayback_StartFar(134);
@@ -290,7 +293,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
                   HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
-            dust->y = 0x600000;
+            dust->y = px(96);
         } else {
           dust->variant--;
         }
@@ -310,10 +313,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
         if (rock->variant == 0) {
           scale = Data_08196e44;
           if (frame > 71) {
-            scale.x = (k << 12) + 0x8000;
+            scale.x = (k << 12) + Q16_ONE / 2;
             scale.x += effect->variant << 14;
           } else {
-            scale.x = 0x8000;
+            scale.x = Q16_ONE / 2;
           }
           scale.y = scale.x;
           position[3] = 0;
@@ -390,9 +393,6 @@ struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
   struct AnimationEntry *entry = Ram_HeapSlots->unk0c[0];
   struct AnimationEntry *found = NULL;
   s32 i = 0;
-  // The script's NULL held from the start lives longest, so the word zero
-  // takes r3 and the byte zero r2; as a plain NULL, 24 of 30 instructions
-  // differ in tla-en.
   void *none = NULL;
 
   while (i <= 63) {

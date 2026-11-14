@@ -3,6 +3,8 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "gamepak/far_call/shop.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -10,12 +12,9 @@
 #include "module/system/system.h"
 #include "battle/object_effect_scripts.h"
 #include "scene_call.h"
+#include "macros.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(mars_join): routine Actor_ReleaseFar as void Actor_ReleaseFar(void
- * *object); battle.h has void Actor_ReleaseFar(struct Actor *object); not
- * tried: Actor_ReleaseFar's bound declaration was not found. */
-extern void Actor_Destroy__mars_join(void *object) __asm__("Actor_ReleaseFar");
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
@@ -44,14 +43,14 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   wait(30);
   Actor_ArmCallback(djinniId, 0x4000, 0);
   wait(20);
-  Sound_PlayFar(173);
+  Sound_PlayFar(SE_NOTE_LOW);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlayFar(174);
+  Sound_PlayFar(SE_NOTE_MID);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlayFar(175);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   wait(20);
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   wait(80);
@@ -153,27 +152,19 @@ void FieldEffect_ShrinkActorAndDestroyFast(void *obj) {
   ((struct MotionObject *)obj)->scaleY = scaleY;
   angle = ((struct MotionObject *)obj)->angle;
   scale += step;
-  ((struct MotionObject *)obj)->angle = angle + 0x2000;
+  ((struct MotionObject *)obj)->angle = angle + TRIG_TURN / 8;
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
-    Actor_Destroy__mars_join(obj);
+    Actor_ReleaseFar(obj);
 }
 
 struct BattleFxScene;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define Actor_ReleaseFar Actor_Destroy__mars_join
+#define Actor_ReleaseFar Actor_ReleaseFar
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
-
-/* VIEW(mars_join): routine Actor_SetSpriteColorModeFar as void
- * Actor_SetSpriteColorModeFar(struct CaptureObject *object, s32 value); motes
- * has void Actor_SetSpriteColorModeFar(struct Actor *object, u32 value); not
- * tried: Actor_SetSpriteColorModeFar's bound declaration was not found. */
-extern void Animation_ApplyChildValuesFar__mars_join(
-    struct CaptureObject *object,
-    s32 value) __asm__("Actor_SetSpriteColorModeFar");
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
@@ -219,9 +210,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   state = effect->state;
 
   if (state == 0) {
-    position.x = source->x;
-    position.y = source->y;
-    position.z = source->z;
+    SET_POSITION(&position, source->x, source->y, source->z);
 
     random = Random16() * 10 + 0xa0000;
     Vector_AddPolarOffset(random, Random16(), &position);
@@ -246,7 +235,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     effect->state++;
 
     if ((gVBlankCount & 1) != 0)
-      Sound_PlayFar(0x90);
+      Sound_PlayFar(SE_CLATTER);
   } else if (state == 1) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;

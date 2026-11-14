@@ -5,6 +5,8 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
 #include "gamepak/far_call/field.h"
@@ -13,6 +15,7 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 #include "text/msg_ids.h"
+#include "macros.h"
 
 /* VIEW(presentation): routine BattleObject_Reset as void BattleObject_Reset();
  * the definition has another declaration; tried as the definition's void
@@ -27,8 +30,6 @@ void BattleObject_Reset__presentation() __asm__("BattleObject_Reset");
 /// a call that lands, saves the battle object it borrows and brings in the
 /// beast's class (Wild Wolf's 117 and so on) to play the attack; returns the
 /// save, or NULL for any other ability. BattleMotion_DismissBeast undoes it.
-/// ★ Named from the game: "Call on a feral ally's aid." (Wild Wolf's
-/// description)
 struct SavedBattleObj *
 BattleMotion_CallBeast(struct BattlePlan *plan,
                        struct BattlePresentationWork *work) {
@@ -165,7 +166,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   Actor_SelectAnimationFar(actor, 3);
   Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
   IoWriteQueue_Store16(0x04000050, 0x3f40);
-  Sound_PlayFar(154);
+  Sound_PlayFar(SE_CAST);
   wait(10);
   if (single) {
     BattleHighlight_SetSpriteMode(saved->unitId, 1);
@@ -213,8 +214,8 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   ids[0] = saved->unitId;
   ids[1] = 255;
   BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
-  object->y = 0x280000;
-  object->angle = plan->targetIds[0] <= 7 ? 0 : 0x8000;
+  object->y = px(40);
+  object->angle = plan->targetIds[0] <= 7 ? 0 : TRIG_TURN / 2;
   BattleHighlight_SetSpriteMode(saved->unitId, 1);
   for (i = 0; i <= 29; i++) {
     object->y = (29 - i) * 3 << 16;
@@ -263,7 +264,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
     s32 fade;
 
     object->y = i << 18;
-    object->angle += 0x2000;
+    object->angle += TRIG_TURN / 8;
     fade = i * 2 - 16;
     if (fade < 0)
       fade = 0;
@@ -296,9 +297,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
       BattleHighlight_SetSpriteMode(ids[i], 1);
   }
   BattleMotion_ReturnToSpot(unitId);
-  object->x = object->targetX;
-  object->y = object->targetY;
-  object->z = object->targetZ;
+  SET_POSITION(object, object->targetX, object->targetY, object->targetZ);
   for (i = 0; i <= 15; i++) {
     object->y = 0;
     *(volatile u16 *)0x04000052 = ((16 - i) << 8) | i;
@@ -344,12 +343,12 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     z = battleObject->anchorZ;
     battleObject->object->z = z;
     angle = (u16)ArcTan2(x, z);
-    adjusted = angle - 0x2000;
+    adjusted = angle - TRIG_TURN / 8;
     if (actorId > 7)
-      adjusted = angle + 0x6000;
+      adjusted = angle + TRIG_TURN * 3 / 8;
   }
   adjusted &= 0x7fff;
-  facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
+  facingAngle = (adjusted - TRIG_TURN / 8) / 2 + TRIG_TURN / 8;
   if (view->targetYaw == facingAngle) {
     view->targetYaw = facingAngle;
     wait(1);
@@ -404,8 +403,10 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   REG_WIN0V = 0x1088;
   REG_WIN1H = 0xf0;
   REG_WIN1V = 0x1088;
-  REG_WININ = 0x3537;
-  REG_WINOUT = 0x3f21;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
   REG_DISPCNT |= 0x6000;
 
   if (missed != 0) {
@@ -476,17 +477,6 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-// BattleStaging_RunItem: The Broken Seal's BattleStaging_RunItem
-// (games/tbs/src/battle/battle/staging.c), ported: plays an item's use, the
-// camera turned to the user's side, the user raising the item and, for an item
-// with an effect, the screen dimming while the effect plays with the events;
-// then spends the item as its use type says. This game sets the user's mode
-// from the battle work's byte 0x869. The dimming loop reads the battle work
-// through a heap pointer, which keeps 0x03000000 in r11 as the native. Message
-// 3176 is MsgItemBroke here, a name not yet in the catalogs.
-// BattleStaging_BuildTargetList is void (r0 is set before r1 for the call, as
-// the native).
-
 s32 Inventory_BreakFar(s32 owner, s32 slot);
 
 /// Plays an item's use: the camera turns to the user's side, the user raises
@@ -512,9 +502,9 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   s32 targetYaw;
 
   if (plan->actorId > 4)
-    targetYaw = -0x2000;
+    targetYaw = -TRIG_TURN / 8;
   else
-    targetYaw = 0x2000;
+    targetYaw = TRIG_TURN / 8;
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
   BattleStaging_BuildTargetList(plan, &work);
@@ -679,7 +669,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 
   if (plan->presentationFlags & 0x40000) {
     if (plan->actorId <= 7)
-      transition->targetYaw = -0x2000;
+      transition->targetYaw = -TRIG_TURN / 8;
     else
       transition->targetYaw = 0x5000;
     transition->frames = 60;
@@ -695,7 +685,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     else
       targetYaw = angle + 0x1800;
     targetYaw = (s16)targetYaw;
-    targetYaw += ((actorId <= 7 ? 0x2000 : -0x2000) - targetYaw) * 3 / 4;
+    targetYaw +=
+        ((actorId <= 7 ? TRIG_TURN / 8 : -TRIG_TURN / 8) - targetYaw) * 3 / 4;
     if (!((actorId <= 7) ^ (target <= 7)))
       targetYaw = actorId <= 7 ? 0x2400 : -0x2400;
     if (transition->targetYaw != targetYaw)
@@ -703,9 +694,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->presentationFlags & 0x80000) {
     if (plan->actorId <= 7)
-      transition->targetYaw = -0x2000;
+      transition->targetYaw = -TRIG_TURN / 8;
     else
-      transition->targetYaw = 0x2000;
+      transition->targetYaw = TRIG_TURN / 8;
     transition->frames = 60;
   }
 
@@ -720,7 +711,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar(object, ((u8 *)heap->battleWork)[0x869]);
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
-  Sound_PlayFar(154);
+  Sound_PlayFar(SE_CAST);
   if (mode & 2)
     ElementGlow_Play(work.actor, plan->element, 1, 0);
   else if (!isDjinni)

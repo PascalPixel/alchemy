@@ -3,11 +3,14 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 /// Abilities: Numbing Sting, Paralytail (kind 313).
 void BattleEffect_RunNumbingSting(void *object) {
@@ -191,7 +194,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (mode == 8) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
@@ -249,9 +252,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     for (i = 0; i != 64; i++) {
       struct EffectStep *step = &work->particles[i];
 
-      step->x = (ground.x / 2) << 16;
-      step->y = 0x500000;
-      step->z = 0;
+      SET_POSITION(step, (ground.x / 2) << 16, px(80), 0);
       step->velocityX = ((Random16() & 255) - 128) << 9;
       step->velocityY = ((Random16() & 255) - 128) << 9;
       step->velocityZ = 0;
@@ -262,9 +263,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     for (i = 0; i != 128; i++) {
       struct EffectStep *step = &gMotes[k * 128 + i];
 
-      step->x = target->x;
-      step->y = 0x140000;
-      step->z = target->z;
+      SET_POSITION(step, target->x, px(20), target->z);
       step->velocityX = ((Random16() & 255) - 128) << 11;
       step->velocityY = ((Random16() & 255) - 128) << 11;
       step->velocityZ = ((Random16() & 255) - 128) << 11;
@@ -274,9 +273,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     // The sparks fly away from the hit: heavy hits throw them in a fan
     // away from the user, the others towards the middle of the field.
     for (i = 0; i != 256; i++) {
-      gSparks[i].x = target->x;
-      gSparks[i].y = 0x140000;
-      gSparks[i].z = target->z;
+      SET_POSITION(&gSparks[i], target->x, px(20), target->z);
       if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
         s32 angle = Random16();
         s32 speed = Random16() & 255;
@@ -357,26 +354,26 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
                 RECORD(mode, RECORD_RATE) * 4 - 4 &&
             (RECORD(mode, RECORD_FLAGS) & FLAG_STAR))
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
 
         // The hit, on the strike's fifth picture.
         if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
             RECORD(mode, RECORD_RATE) * 4) {
           if (mode == 12) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 <= 2)
-              Sound_PlayFar(133);
+              Sound_PlayFar(SE_IMPACT);
             else
               BattlePlayback_StartFar(133);
           } else if (mode == 7) {
             if (frame <= 8)
-              Sound_PlayFar(133);
+              Sound_PlayFar(SE_IMPACT);
             else
               BattlePlayback_StartFar(133);
           } else if (mode == 13) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 > 6)
               BattlePlayback_StartFar(134);
             else
-              Sound_PlayFar(134);
+              Sound_PlayFar(SE_HEAVY_IMPACT);
           } else if ((RECORD(mode, RECORD_FLAGS) & FLAG_STAR) ||
                      (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH)) {
             BattlePlayback_StartFar(144);
@@ -451,7 +448,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       BattleEffect_BuildBlitter(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
                                 RECORD(mode, RECORD_BLEND));
       do {
-        // Empty: its loop notes end CSE's block after the blitter call.
+        /* FAKEMATCH(dead): an empty once-only block. */
       } while (0);
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
                56, 18, 48);
@@ -469,7 +466,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                              RECORD(mode, RECORD_RATE))
           BattlePlayback_StartFar(133);
         else
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
         if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
           work->shakeFrames = 8;
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
@@ -524,7 +521,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
             SLOT_BLITTER_ALTERNATE, 7, 7,
             gDeathPlunge_SwordWidths[Random16() & 3] | CLIP, BLIT_ADDITIVE);
         do {
-          // Empty: its loop notes end CSE's block after the blitter call.
+          /* FAKEMATCH(dead): an empty once-only block. */
         } while (0);
         gBlitterAlternate(canvas, work->sheet + gBattleEffect_GlintCells[image],
                           x, y, gData_08197492[image], gData_08197498[image]);
@@ -647,15 +644,16 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       model->texture = &texture;
       model->corners = corners;
       if (frame == 8)
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       if (frame >= 8 && frame <= 17) {
-        s32 scale = Trig_Sin(((frame - 8) << 11) + 0x3000) * 612 >> 8;
+        s32 scale =
+            Trig_Sin(((frame - 8) << 11) + TRIG_TURN * 3 / 16) * 612 >> 8;
 
         Transform_Reset();
         SceneTransform_ApplyPosition3((targetPosition.x / 2 - 64) << 16,
                                       (targetPosition.y - 64) << 16, 0);
-        Transform_ApplyPitch(0x4000);
-        Transform_ApplyYaw(0x2000);
+        Transform_ApplyPitch(TRIG_TURN / 4);
+        Transform_ApplyYaw(TRIG_TURN / 8);
         SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);
         Render_TransformVertices(gData_08199210, corners, 4);
         Render_DrawModelList(model);
@@ -699,7 +697,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
-  REG_BLDALPHA = 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(0, 16);
 
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
@@ -742,10 +740,10 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
     else
       dagger->velocityX = -3;
     dagger->velocityX <<= 17;
-    dagger->velocityY = 8 << 16;
+    dagger->velocityY = px(8);
     dagger->x <<= 16;
   }
-  Sound_PlayFar(212);
+  Sound_PlayFar(SE_POWER_UP);
 
   for (frame = 0; frame != 120; frame++) {
     if (frame <= 16) {
@@ -756,7 +754,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
     if (frame > 103) {
       REG_BLDALPHA = (120 - frame) | 0x1000;
       if (frame == 104)
-        REG_BLDCNT = 0x3f44;
+        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     }
 
     // The drift picks the picture; a dagger going left is drawn mirrored.
@@ -793,7 +791,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
       work->shakeFrames = 1;
       if ((frame & 7) == 0)
-        Sound_PlayFar(133);
+        Sound_PlayFar(SE_IMPACT);
     }
     BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
@@ -809,7 +807,6 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BATTLE_EFFECT 92 // battleFxWork[0]
-#define SLOT_BATTLE_CANVAS 96 // battleFxWork[1]
 #define SLOT_BATTLE_SHEET 100 // unk64[0]
 
 // The whole effect work block: struct BattleEffectWork names only its first
@@ -844,7 +841,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   s32 i;
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, 0x60e);
   camera = Ram_HeapSlots->cameraWork;
   work->vblanksSinceTransfer = 1;
@@ -852,7 +849,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  REG_BLDALPHA = 0x100c;
+  REG_BLDALPHA = BLEND_ALPHA(12, 16);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
@@ -890,7 +887,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
     effect->variant = 1;
   if (effect->variant > 4)
     effect->variant = 4;
-  Sound_PlayFar(212);
+  Sound_PlayFar(SE_POWER_UP);
 
   for (frame = 0; frame != 56; frame++) {
     EffectPosition_ProjectBattler(effect->actor, &ground);
@@ -907,9 +904,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
 
       n = frame / 2 % 4; // a pillar picture every 2 frames
       BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
-      // The left half's pillar draw and glow index in a once-only block,
-      // which ends CSE's block so the mirrored half works out both pictures
-      // again; as plain statements, 235 of 456 instructions differ in tla-en.
+      /* FAKEMATCH(dead): the left half's pillar draw and glow index in a
+       * once-only block. */
       do {
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
@@ -943,7 +939,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
         point[1] = fleck->y;
         fleck->x += 0x400;
-        fleck->y += 5 << 16;
+        fleck->y += px(5);
         fleck->z += 64;
         EffectPosition_ProjectPoint(point, &pos);
         pos.x /= 2;
@@ -962,7 +958,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
   HeapSlot_Release(SLOT_BATTLE_SHEET);
-  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 
@@ -981,7 +977,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   s32 k;
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;
@@ -993,7 +989,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   view->secondMode = 1;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = 0;
   REG_BG2X = 0;
@@ -1006,8 +1002,10 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   REG_WIN0V = 0x1088;
   REG_WIN1H = 0xf0;
   REG_WIN1V = 0x1088;
-  REG_WININ = 0x3537;
-  REG_WINOUT = 0x3f21;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
 
   i = 0;
   for (k = 0; k != 16; k++) {
@@ -1015,17 +1013,15 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
       s32 entry;
 
       entry = (s16)(((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2));
-      // The map written through a volatile pointer, which keeps the ROM's
-      // order of stores; as a plain pointer, 185 of 376 instructions differ in
-      // tla-en.
+      /* FAKEMATCH(volatile): the map written through a volatile pointer. */
       *(volatile u16 *)(0x06003800 + i) = *(u16 *)&entry;
     }
   }
 
-  Iwram_ClearWords(canvas, 0x4000);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
   work->transferMode = 1;
   work->transferValue = 0;
@@ -1035,7 +1031,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
 
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
   Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
@@ -1045,12 +1041,11 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
 
   // Fade the colours up a shade every two frames; B starts again, A ends.
   for (frame = 0; frame != 32096; frame++) {
-    // The A test reads the held keys through a volatile pointer, a load apart
-    // from the B test's; as gInput.held, 10 of 376 instructions differ in
-    // tla-en.
-    if (gInput.held & 2)
+    /* FAKEMATCH(volatile): the A test reads the held keys through a volatile
+     * pointer. */
+    if (gInput.held & KEY_B)
       frame = 0;
-    if (*(volatile u32 *)&gInput.held & 1)
+    if (*(volatile u32 *)&gInput.held & KEY_A)
       break;
     if (frame <= 63)
       Palette_BrightenSavedBattleBg(frame / 2 - 31, frame / 2 - 31,
@@ -1071,7 +1066,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   wait(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   HeapSlot_Release(SLOT_BATTLE_SHEET);
-  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 #undef SLOT_BLITTER
@@ -1100,7 +1095,6 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
 #undef gSparks
 #undef BUILD_BLITTER
 #undef SLOT_BATTLE_EFFECT
-#undef SLOT_BATTLE_CANVAS
 #undef SLOT_BATTLE_SHEET
 #undef BATTLE_EFFECT_WORK_SIZE
 #undef gFlecks

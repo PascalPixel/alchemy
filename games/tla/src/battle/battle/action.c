@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/battle.h"
@@ -85,7 +86,7 @@ s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
 
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {
-  struct BattleUnit *actor = Unit_Get__f11f66c(request->unitId);
+  struct BattleUnit *actor = Unit_Get(request->unitId);
   struct ActionRunBattleWork *battle =
       (struct ActionRunBattleWork *)Ram_HeapSlots->battleWork;
   s32 selectedTargetId;
@@ -144,7 +145,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
               if (targetId == 254)
                 continue;
               if (!includeDowned &&
-                  ((struct BattleUnit *)Unit_Get__f11f66c(targetId))->hp == 0)
+                  ((struct BattleUnit *)Unit_Get(targetId))->hp == 0)
                 continue;
               plan->targetMultiplier[targetCount] = 1;
               plan->targetOffset[targetCount] = place - aimedPlace;
@@ -157,7 +158,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
               if (targetId == 254)
                 continue;
               if (!includeDowned &&
-                  ((struct BattleUnit *)Unit_Get__f11f66c(targetId))->hp == 0)
+                  ((struct BattleUnit *)Unit_Get(targetId))->hp == 0)
                 continue;
               plan->targetMultiplier[targetCount] = 1;
               plan->targetOffset[targetCount] = place - aimedPlace;
@@ -197,13 +198,12 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   if (actor->hp == 0)
     return -2;
 
-  if (gDebugMode && GameFlag_Get(365) && (gInput.held & 0x100)) {
+  if (gDebugMode && GameFlag_Get(365) && (gInput.held & KEY_R)) {
     s32 enemy = 1;
     s32 index;
     s32 id;
 
-    // The held keys reread through a volatile pointer, a load apart from the R
-    // test's; as gInput.held, 12 of 1601 instructions differ in tla-en.
+    /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
     if (KEYS_HELD & 4)
       enemy = 0;
     for (index = 0;; index++) {
@@ -395,7 +395,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       return -1;
     MessageArgument_PushFar(request->unitId, 1);
     MessageArgument_PushFar(abilityId, 4);
-    if ((Ability_Get(abilityId)->flags & 15) == 6)
+    if ((Ability_Get(abilityId)->flags & ABILITY_FORMULA_MASK) ==
+        ABILITY_FORMULA_ENEMY_DAMAGE)
       message = (s32)&MsgActorUnleashesAbility;
     else
       message = (s32)&MsgActorUsesAbility;
@@ -483,7 +484,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         BattlePlayback_Push(BATTLE_EVENT_DRAW_STATUS, 0);
         BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnIsSet);
         BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(request->unitId)->object, 32);
@@ -493,7 +494,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       }
       MessageArgument_PushFar(request->unitId, 1);
       MessageArgument_PushFar(abilityId, 4);
-      Sound_PlayFar(114);
+      Sound_PlayFar(SE_MENU_ERROR);
       BattleMessage_ShowAndWaitFar((s32)&MsgDjinnInRecovery);
       wait(60);
       return -1;
@@ -567,7 +568,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   }
 
   if (abilityId == 1) {
-    struct BattleUnit *target = Unit_Get__f11f66c(plan->targetIds[0]);
+    struct BattleUnit *target = Unit_Get(plan->targetIds[0]);
 
     plan->abilityId = 1;
     plan->element = Item_GetEquippedElementFar(request->unitId);
@@ -581,9 +582,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     }
     MessageArgument_PushFar(request->unitId, 1);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorAttacks);
-    // The rolls in a one-pass block left by break, which places them ahead of
-    // the five tests; as an if on the negated tests, 119 of 1601 instructions
-    // differ in tla-en.
+    /* FAKEMATCH(dead): the rolls in a one-pass block left by break. */
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)

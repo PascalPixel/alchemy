@@ -36,9 +36,6 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   if (window->origin != NULL) {
     s32 *p = window->origin;
 
-    // origin[0] and origin[2], read through a stepped pointer: the only
-    // spelling that gives the native's post-increment load (4 of 277 as
-    // indexes).
     x = *p++;
     y = p[1];
   }
@@ -59,9 +56,6 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   block = (struct Data02020000 *)Ram_MapBlocks +
           (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
   WorldMap_UpdateRegionTint(block->region, 1);
-  // One local holds the region, then ScreenTransition_IsScanlineActiveFar's
-  // result: set twice, it reads the region into r3 for the divide, as the
-  // original does.
   value = block->region;
   switch (value / 10) {
   case 3:
@@ -90,11 +84,11 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   buffer = Heap_Alloc(0x200);
   switch (window->reloadSteps) {
   case 12: {
-    s16 backdropColor = *(s16 *)0x05000000;
+    s16 backdropColor = *(s16 *)BG_PLTT;
 
     Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = backdropColor;
-    Dma_Set(buffer, (void *)0x05000000, 0x84000070, REG_DMA3);
+    Dma_Set(buffer, (void *)BG_PLTT, 0x84000070, REG_DMA3);
     {
       u8 *anim = Data_0202d000;
       BattleEffect_LoadBufferPaletteFar(buffer);
@@ -108,25 +102,25 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
     break;
   case 10:
-    Dma_Set(gData_02038000, (void *)0x06008000, 0x84000800, REG_DMA3);
+    Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), 0x84000800, REG_DMA3);
     break;
   case 9:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
     break;
   case 8:
-    Dma_Set(gData_0203a000, (void *)0x0600a000, 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203a000, (void *)BG_SCREEN_BLOCK(20), 0x84000800, REG_DMA3);
     break;
   case 7:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
     break;
   case 6:
-    Dma_Set(gData_0203c000, (void *)0x0600c000, 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203c000, (void *)BG_CHAR_BLOCK(3), 0x84000800, REG_DMA3);
     break;
   case 5:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
     break;
   case 4:
-    Dma_Set(gData_0203e000, (void *)0x0600e000, 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203e000, (void *)BG_SCREEN_BLOCK(28), 0x84000800, REG_DMA3);
     break;
   case 3:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
@@ -153,12 +147,10 @@ void MapAnimation_PresentPicture(void) {
   control = 0x682;
   REG_BG1CNT = control;
   dma = REG_DMA3;
-  /* FAKEMATCH(barrier): an empty asm on dma, which loads the DMA channel's
-   * address before the transfer's operands; without it, 2 of 24 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm on dma. */
   __asm__ volatile("" : "+l"(dma));
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06006000, DMA_COPY_WORDS(0xa000 / 4),
-          dma);
+  Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(12),
+          DMA_COPY_WORDS(0xa000 / 4), dma);
 }
 
 void MapAnimation_Start(void) {
@@ -178,7 +170,7 @@ void MapAnimation_Start(void) {
   if (work->extraTiles != 0)
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
   work->extraTiles = 0;
-  Dma_Set((void *)0x06004000, gDecodeBuffer, DMA_COPY_WORDS(0x2000 / 4),
+  Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_COPY_WORDS(0x2000 / 4),
           REG_DMA3);
   wait(1);
   TileMap_DrawRowsFromRam(pages + (gFrameCount & one) * 0x1400 + 0xc80,
@@ -200,11 +192,10 @@ void Map_ShowBg1FromBuffer(void) {
   control = 0x501;
   REG_BG1CNT = control;
   dma = REG_DMA3;
-  /* FAKEMATCH(barrier): an empty asm on dma, which loads the DMA channel's
-   * address before the transfer's operands; without it, 2 of 24 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm on dma. */
   __asm__ volatile("" : "+l"(dma));
-  Dma_Set(gData_02038000, (void *)0x06008000, DMA_COPY_WORDS(0x8000 / 4), dma);
+  Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(0x8000 / 4),
+          dma);
 }
 
 s32 WorldMap_LoadAreaGraphics(void) {
@@ -216,7 +207,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   state = (struct MapViewWork *)Ram_HeapSlots->mapWork;
   buffer = Ram_MapCellBuffer;
   resources = state->resources;
-  value = *(s16 *)0x05000000;
+  value = *(s16 *)BG_PLTT;
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = value;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
@@ -556,15 +547,12 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
       if (count <= 31) {
         u32 *entry;
         /* FAKEMATCH(temporary): the entry's byte offset held in offset and
-         * scaled after the count store; as u32 *entry = q->entries[count]
-         * before the store, 21 of 210 instructions differ in tla-en. */
+         * scaled after the count store. */
         s32 offset = count * 3;
 
         q->count = count + 1;
         offset *= sizeof(u32);
-        /* FAKEMATCH(barrier): an empty asm keeps the tint's load after the
-         * offset's scaling; without it, 2 of 210 instructions differ in
-         * tla-en. */
+        /* FAKEMATCH(barrier): an empty asm. */
         asm("");
         entry = (u32 *)((u8 *)q->entries + offset);
         *entry++ = (u16)work->tint;
@@ -720,9 +708,7 @@ s32 Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   start = samples[0];
   end = samples[1];
   table = gTerrain_LerpWeightTable;
-  /* FAKEMATCH(barrier): an empty asm reading the table's address keeps its
-   * load after both samples' and before the row's scaling; without it, 15 of
-   * 15 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm reading the table's address. */
   __asm__("" : : "r"(table));
   position += row * CURVE_FULL_STEPS;
   weight = table[position];
@@ -1015,9 +1001,9 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
          height;
-  if (rise > 8 << 16)
+  if (rise > px(8))
     return 1;
-  if (rise < -(12 << 16))
+  if (rise < -px(12))
     return -1;
   return 0;
 }
@@ -1054,9 +1040,9 @@ s32 MapGrid_CheckCollision(struct Actor *actor, s16 *position) {
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
          actor->terrainHeight;
-  if (rise > 8 << 16)
+  if (rise > px(8))
     return 1;
-  if (rise < -(12 << 16))
+  if (rise < -px(12))
     return -1;
   return 0;
 }
@@ -1093,7 +1079,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor, s16 *position) {
   code = Ram_MapCollision + *shapes * 4;
   if (gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
           actor->y >
-      8 << 16)
+      px(8))
     return 1;
   return 0;
 }

@@ -4,6 +4,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
@@ -107,7 +109,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
 
   for (frame = 0; frame != QUAD_FRAMES; frame++) {
     if (frame == 8)
-      Sound_PlayFar(246);
+      Sound_PlayFar(SE_GLITTER);
 
     // The quads start above the screen (or at the target for mode 2), each
     // with its own heading, spin and size.
@@ -117,9 +119,9 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
         quad = &work->particles[i];
         quad->x = Random16() & 0xffff;
         Random16();
-        quad->z = 1 << 16;
+        quad->z = px(1);
         if (mode == QUADS_RISING)
-          quad->y = 32 << 16;
+          quad->y = px(32);
         else
           quad->y = height;
         quad->velocityY = ((Random16() & 0xffff) << 1) + 0x10000;
@@ -132,7 +134,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
 
     // Frame 56: the next phase, and every target flashes.
     if (frame == 56) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
       BattlePlayback_StartFar(-1);
       for (i = 0; i != effect->count; i++)
         BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
@@ -163,7 +165,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
           lineX = ((Trig_Sin(angle) * frame) >> 16) + 64;
           lineY = ((Trig_Cos(angle) * frame) / 8 >> 16) - 16;
           draws[0](canvas, work->sheet, lineX, lineY, 1, 128);
-          angle += 0x1000;
+          angle += TRIG_TURN / 16;
         }
       }
     }
@@ -207,9 +209,9 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
           else
             quad->y += quad->velocityY;
           if (quad->velocityY < -0x20000)
-            quad->z += 0x10000;
+            quad->z += px(1);
           else
-            quad->z += 0xc000;
+            quad->z += px(3) / 4;
           across = Trig_Sin(quad->x) * ((s16 *)&quad->z)[1];
           deep = Trig_Cos(quad->x) * ((s16 *)&quad->z)[1];
           quad->x += 0x200;
@@ -217,8 +219,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(quad->velocityX);
           Transform_ApplyRoll(quad->velocityZ);
-          quad->velocityX += 0x400;
-          quad->velocityZ += 0x400;
+          quad->velocityX += px(1) / 64;
+          quad->velocityZ += px(1) / 64;
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(job);
         }
@@ -347,20 +349,20 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x80;
 
   for (frame = 0; frame != 200; frame++) {
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       skip = 1;
     }
     if (frame == 0) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 32) {
-      Sound_PlayFar(191);
+      Sound_PlayFar(SE_191);
     }
     if ((u32)(frame - 78) <= 31) {
       REG_BLDALPHA = (16 - (frame - 78) / 2) | 0x1000;
     }
     if (frame == 140) {
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
     }
     if (frame == 157) {
       BattlePlayback_StartFar(145);
@@ -375,14 +377,14 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       transition[4] = 1;
-      position.x = 240 << 16;
-      position.y = 0x400000;
-      velocity.x = -0x140000;
+      position.x = px(240);
+      position.y = px(64);
+      velocity.x = -px(20);
       velocity.y = 0;
       for (i = 0; i != ZAGAN_PARTS; i++) {
         Animation_ApplyChildArgumentFar(work->objects[i], i + 12);
       }
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
       work->scrollStepX = -8;
       gCameraSceneParameters[3] = -968;
@@ -434,17 +436,17 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 64) <= 35) {
-      velocity.x += 0x8000;
-      velocity.y += -0x1000;
+      velocity.x += px(1) / 2;
+      velocity.y += -(px(1) / 16);
     }
     if (frame > 177) {
-      velocity.x += -0x20000;
-      velocity.y += -0x10000;
+      velocity.x += -px(2);
+      velocity.y += -px(1);
     } else if (frame > 139) {
       velocity.x += -40000;
-      velocity.y += 0x2000;
+      velocity.y += px(1) / 8;
     } else if (frame > 99) {
-      velocity.x += -0x2000;
+      velocity.x += -(px(1) / 8);
       velocity.y += 0x800;
     }
     if (frame == 156) {
@@ -588,7 +590,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
         if (frame <= start) {
           continue;
         }
-        scale = (((frame - start) * Data_08197a98[k] * 125) << 4) + 0x8000;
+        scale = (((frame - start) * Data_08197a98[k] * 125) << 4) + Q16_ONE / 2;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;

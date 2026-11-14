@@ -144,11 +144,11 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   resourceData = Resource_GetTableEntry(resourceId);
   if (alternate == 0) {
     paletteOffset = 0;
-    tileDestination = (void *)0x06000000;
+    tileDestination = (void *)BG_CHAR_BLOCK(0);
     paletteDestination = 0x05000000;
   } else {
     paletteOffset = 0x80808080;
-    tileDestination = (void *)0x06008000;
+    tileDestination = (void *)BG_CHAR_BLOCK(2);
     paletteDestination = 0x05000100;
   }
   size = (u32)BattleEffect_ExpandCodeSize;
@@ -221,15 +221,22 @@ s32 Credits_Run(s32 mode) {
   gAutoSleepEnabled = 0;
   Task_ResetAll();
   Task_Add(Credits_ScrollBackgrounds, TASK_PASS_FRAME);
-  Io_Write16(0x40, &REG_DISPCNT);
-  Credits_BuildBackgroundTilemap((u32 *)0x06007800);
-  Credits_BuildBackgroundTilemap((u32 *)0x0600f800);
+  Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
+  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
+  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
   Graphics_ClearCharacterBlockAndPalette(0);
   Graphics_ClearCharacterBlockAndPalette(1);
-  Io_Write16(0x1f8a, &REG_BG2CNT);
-  Io_Write16(0x0f83, &REG_BG3CNT);
-  Io_Write16(0x1c40, &REG_DISPCNT);
-  Io_Write16(0x2844, &REG_BLDCNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(31),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(15),
+             &REG_BG3CNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                 DISPCNT_OBJ_ON,
+             &REG_DISPCNT);
+  Io_Write16(BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 |
+                 BLDCNT_TGT2_BD,
+             &REG_BLDCNT);
 
   if (mode == 1) {
 
@@ -249,7 +256,7 @@ s32 Credits_Run(s32 mode) {
         } else
           REG_BLDALPHA = ((16 - step) << 8) | step;
         for (frame = 0; frame <= 3; frame++) {
-          if (gInput.held & 8)
+          if (gInput.held & KEY_START)
             goto done;
           wait(1);
         }
@@ -257,7 +264,7 @@ s32 Credits_Run(s32 mode) {
       if (*count == 0) {
         do {
           gInput.pressed;
-          if (gInput.held & 8)
+          if (gInput.held & KEY_START)
             goto done;
           if (gDisplayScroll_Busy == 2)
             goto done;
@@ -275,7 +282,7 @@ s32 Credits_Run(s32 mode) {
 
 done:
   Io_Write16(0, &REG_BLDCNT);
-  Io_Write16(0x1040, &REG_DISPCNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);
   Window_LoadGraphics();
   DebugText_Clear();
   gRenderOamEnabled = 1;
@@ -305,23 +312,22 @@ void Credits_UpdateCrawlSprites(void) {
         tile = 0;
     }
   }
-  Dma_Set(gDisplayScroll_Objects, (void *)0x07000000, 0x84000100,
-          (u32 *)0x040000d4);
+  Dma_Set(gDisplayScroll_Objects, (void *)OAM, 0x84000100, (u32 *)0x040000d4);
 
-  if (gDisplayScroll_Busy == 1 && (gInput.held & 3)) {
+  if (gDisplayScroll_Busy == 1 && (gInput.held & (KEY_A | KEY_B))) {
     gDisplayScroll_Busy = 0;
     gCredits_PendingSlides++;
   }
 #if TLA_PATCH_1
   // From patch 1 a held button also releases state 3; the Japanese release
   // checks only state 1.
-  if (gDisplayScroll_Busy == 3 && (gInput.held & 3))
+  if (gDisplayScroll_Busy == 3 && (gInput.held & (KEY_A | KEY_B)))
     gDisplayScroll_Busy = 0;
 #endif
   if (gDisplayScroll_Busy == 0) {
     if ((gVBlankCount & 3) == 0)
       gDisplayScroll_Position++;
-    if ((gInput.held & 2) && (gVBlankCount & 3))
+    if ((gInput.held & KEY_B) && (gVBlankCount & 3))
       gDisplayScroll_Position++;
   }
 }
@@ -348,8 +354,7 @@ void Credits_DrawEnteringCrawlLine(void) {
 /// adds Credits_UpdateCrawlSprites and Credits_DrawEnteringCrawlLine, as The
 /// Broken Seal's Credits_InitTextSprites starts its credits.
 void Credits_InitCrawlSprites(void) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 152
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 fill;
   u32 *entry;
   u32 i;
@@ -535,8 +540,7 @@ void Credits_DrawEnteringLine(void) {
 /// Credits_UpdateTextSprites and Credits_DrawEnteringLine to the task table and
 /// draws the first 32 lines blank.
 void Credits_InitTextSpritesAtPage(s32 page) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 178
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 fill;
   s32 marks;
   u32 *entry;
@@ -661,8 +665,7 @@ s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align) {
   u32 bits;
   u32 mask;
   /* FAKEMATCH(dead): an unused array for the stack frame's 32 bytes no
-   * instruction touches; as no array, 4 of 279 instructions differ in tla-en.
-   */
+   * instruction touches. */
   u32 unused[8];
 
   if (text == NULL)
@@ -821,8 +824,7 @@ void EndingPicture_Scroll(void) {
     gEndingPicture_Row += d;
   }
   {
-    /* FAKEMATCH(temporary): the form kept; as scroll = gEndingPicture_Scroll, 6
-     * of 212 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the scroll read through a word pointer. */
     s32 *word = (s32 *)&gEndingPicture_Scroll;
     s32 target = gEndingPicture_Row << 16;
 
@@ -843,10 +845,10 @@ void EndingPicture_Scroll(void) {
   }
   if ((gEndingPicture_Scroll ^ old) & 0x80000) {
     source = gEndingPicture_Map;
-    destination = (u8 *)0x06000000;
+    destination = (u8 *)BG_CHAR_BLOCK(0);
     start = (gEndingPicture_MapScroll >> 19) << 6;
     if (gEndingPicture_Block != 0)
-      destination = (u8 *)0x06008000;
+      destination = (u8 *)BG_CHAR_BLOCK(2);
     scroll = gEndingPicture_Scroll;
     if (scroll > old) {
       from = (((u32)scroll >> 19) << 6) + 0x780;
@@ -887,16 +889,23 @@ void EndingPicture_Start(void) {
   gEndingPicture_Speed = 1;
   gEndingPicture_Block = 0;
   Task_Add(EndingPicture_Scroll, TASK_PASS_VBLANK);
-  Io_Write16(0x40, &REG_DISPCNT);
-  Credits_BuildBackgroundTilemap((u32 *)0x06007800);
-  Credits_BuildBackgroundTilemap((u32 *)0x0600f800);
+  Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
+  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
+  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
   Graphics_ClearCharacterBlockAndPalette(0);
   Graphics_ClearCharacterBlockAndPalette(1);
-  Io_Write16(0x1f8a, &REG_BG2CNT);
-  Io_Write16(0x0f83, &REG_BG3CNT);
-  Io_Write16(0x1c40, &REG_DISPCNT);
-  Io_Write16(0x2844, &REG_BLDCNT);
-  Io_Write16(16, &REG_BLDALPHA);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(31),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(15),
+             &REG_BG3CNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                 DISPCNT_OBJ_ON,
+             &REG_DISPCNT);
+  Io_Write16(BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 |
+                 BLDCNT_TGT2_BD,
+             &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
   EndingPicture_InitStrips();
 }
 
@@ -934,11 +943,8 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
 /// heap (the fill word marks the second block's tiles), and queues the
 /// resource's 64-colour palette. Then it copies the map at position into the
 /// tilemap (CopyScrollMap), flips the block and restarts the fade-in counter.
-/// The size is a linker symbol (the pool holds 0x234 where movs and a shift
-/// would do).
 void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile, so its address stays in a
-   * register; as a plain u32, 10 of 209 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 cell;
   u32 word;
   u32 fill = 0;
@@ -950,23 +956,23 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
   if (resource == 0) {
     if (gEndingPicture_Block != 0) {
       word = 0x01010101;
-      tiles = (u8 *)0x06000000;
-      palette = (u16 *)0x05000000;
+      tiles = (u8 *)BG_CHAR_BLOCK(0);
+      palette = (u16 *)BG_PLTT;
     } else {
       word = 0x81818181;
-      tiles = (u8 *)0x06008000;
-      palette = (u16 *)0x05000100;
+      tiles = (u8 *)BG_CHAR_BLOCK(2);
+      palette = (u16 *)(BG_PLTT + 8 * 16);
     }
     Dma_Fill32Cell(cell, word, map, 0xf000);
     Dma_Fill32Cell(cell, 0, palette, 0x100);
   } else {
     if (gEndingPicture_Block != 0) {
-      tiles = (u8 *)0x06000000;
-      palette = (u16 *)0x05000000;
+      tiles = (u8 *)BG_CHAR_BLOCK(0);
+      palette = (u16 *)BG_PLTT;
     } else {
       fill = 0x80808080;
-      tiles = (u8 *)0x06008000;
-      palette = (u16 *)0x05000100;
+      tiles = (u8 *)BG_CHAR_BLOCK(2);
+      palette = (u16 *)(BG_PLTT + 8 * 16);
     }
     Dma_Fill32Cell(cell, 0, tiles, 0x800);
     data = Resource_GetTableEntry(resource);
@@ -1016,9 +1022,7 @@ void EndingPicture_InitStrips(void) {
   s32 tile;
   u32 i;
 
-  /* FAKEMATCH(temporary): the allocation kept in entries; as
-   * gEndingPicture_Strips = Heap_AllocEwram(0x120), 1 of 82
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the allocation kept in entries. */
   entries = Heap_AllocEwram(0x120);
   gEndingPicture_Strips = entries;
   tile = VramCache_Load(slot, 0x200, 0);

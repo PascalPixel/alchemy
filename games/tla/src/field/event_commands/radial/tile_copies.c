@@ -4,6 +4,9 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
@@ -37,9 +40,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
   lift = -(owner->terrainHeight >> 20);
 
   /* FAKEMATCH(signature): gData_02001000 typed as 1491 TouchCells before the
-   * copies, which it does not hold, so the cell's z is read after the last
-   * copy's address is built; as u8 unk0000[0x174c], 2 of 169 instructions
-   * differ in tla-en. */
+   * copies. */
   for (i = 0; cell[i].x != -1; i++) {
     s32 cz, cx, cellX, cellZ;
 
@@ -90,14 +91,14 @@ void FieldItem_JumpToLeader(s32 sprite, s32 x, s32 z) {
     return;
   Actor_SetSpriteFlagsFar(object, 0);
   object->gravity = 0x5999;
-  object->velocityY = 0x50000;
+  object->velocityY = px(5);
   object->scaleY = object->scaleX = 0x6666;
   do {
     wait(1);
     object->scaleY = object->scaleX = object->scaleX + 0x3d7;
-    object->facing += 0x1000;
+    object->facing += TRIG_TURN / 16;
   } while (object->scaleX <= 0xffff);
-  object->scaleY = object->scaleX = 0x10000;
+  object->scaleY = object->scaleX = Q16_ONE;
   Actor_SelectAnimationFar(owner, 1);
   Actor_TurnPairToFaceEachOther(object, owner);
   owner->timer = owner->facing;
@@ -105,14 +106,14 @@ void FieldItem_JumpToLeader(s32 sprite, s32 x, s32 z) {
   Actor_StartRepeatedMotion(ownerId, 3);
   FieldEffect_SetAttached(ownerId, 258);
   Event_Wait(32);
-  object->gravity = 0x10000;
-  object->velocityY = 0x60000;
-  Sound_PlayFar(152);
+  object->gravity = px(1);
+  object->velocityY = px(6);
+  Sound_PlayFar(SE_JUMP);
   Event_Wait(15);
-  object->velocityY = 0x60000;
-  Sound_PlayFar(152);
+  object->velocityY = px(6);
+  Sound_PlayFar(SE_JUMP);
   Event_Wait(23);
-  Sound_PlayFar(146);
+  Sound_PlayFar(SE_ENEMY_CRY);
 
   from[0] = object->x;
   from[1] = object->y;
@@ -178,9 +179,7 @@ void ParticleBurst_Start(void) {
     sprite->oam.priority = 0;
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
-    particle->x = owner->x;
-    particle->y = owner->y;
-    particle->z = owner->z;
+    SET_POSITION(particle, owner->x, owner->y, owner->z);
     Vector_AddPolarOffset(Random16() * 8 + 0x80000, Random16(), &particle->x);
     particle->heading = heading;
     particle->speed = Random16() + 0x10000;
@@ -189,6 +188,6 @@ void ParticleBurst_Start(void) {
       particle->spin = -particle->spin;
     particle->delay = -i / 2;
   }
-  Sound_PlayFar(220);
+  Sound_PlayFar(SE_SHIMMER);
   Task_Add(ParticleBurst_Update, TASK_PASS_VBLANK);
 }

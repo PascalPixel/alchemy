@@ -3,6 +3,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/battle.h"
 #include "module/battle/presentation.h"
@@ -119,7 +120,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   s32 slot;
   s32 classIndex;
 
-  unit = Unit_Get__f11f66c(unitId);
+  unit = Unit_Get(unitId);
   battle = (struct DefeatBattleWork *)Ram_HeapSlots->battleWork;
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId < 8)
@@ -230,14 +231,14 @@ void Battle_AwardSpoils(void) {
   backup = Heap_AllocEwram(sizeof(struct BattleUnit));
   for (i = 0; i < count; i++) {
     unitId = list[i];
-    unit = Unit_Get__f11f66c(unitId);
+    unit = Unit_Get(unitId);
     if (i >= living)
       unit->experience += (u32)spoils->experience >> 1;
     else
       unit->experience += spoils->experience;
     while (Iwram_CopyWordsEntry(backup, unit, sizeof(struct BattleUnit)),
            Unit_TryLevelUpFar(unitId, gains) != 0) {
-      Sound_PlayFar(89);
+      Sound_PlayFar(MUS_089);
       MessageArgument_ClearAllFar();
       MessageArgument_PushFar(unit->classIndex, 3);
       MessageArgument_PushFar(list[i], 1);
@@ -257,7 +258,7 @@ void Battle_AwardSpoils(void) {
             MessageArgument_PushFar(unit->classIndex, 3);
             MessageArgument_PushFar(unitId, 1);
             MessageArgument_PushFar(learned & ACTION_ID_MASK, 4);
-            Sound_PlayFar(154);
+            Sound_PlayFar(SE_CAST);
             // "Mastered the <class>'s <ability>"
             BattleMessage_ShowAndWaitFar((s32)MsgMasteredAbility);
             BattleMessage_WaitForAdvance();

@@ -3,6 +3,9 @@
 
 #include "types.h"
 
+/// Actor.targetX, targetY and targetZ when it has no movement target.
+#define TARGET_UNSET ((s32)0x80000000)
+
 /// A field object's sprite animation, which Actor.sprite points to
 /// when animationKind is 1.
 struct ObjectAnimationState {

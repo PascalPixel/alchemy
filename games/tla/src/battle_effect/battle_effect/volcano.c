@@ -3,9 +3,12 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 #define PILLAR_FRAMES 96
 
@@ -31,7 +34,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -40,8 +43,6 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 604 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   } else if (effect->variant == 2) {
     const void *palette =
@@ -49,8 +50,6 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 604 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   }
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
@@ -72,9 +71,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     s32 x;
 
     x = ((Random16() & 15) + 72) << 16;
-    base->x = x;
-    base->y = 0;
-    base->z = gVolcano_Depths[effect->variant][i] << 16;
+    SET_POSITION(base, x, 0, gVolcano_Depths[effect->variant][i] << 16);
     if (object->x < 0)
       base->x = -x;
   }
@@ -103,7 +100,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
         screen.x /= 2;
         screen.y -= 8;
         if (frame == gVolcano_StartFrames[pillar])
-          Sound_PlayFar(145);
+          Sound_PlayFar(SE_CRASH);
 
         // Four frames after it starts the pillar burns: its flames scroll
         // up through two copies, and its base flickers between two cels.
@@ -141,10 +138,9 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - 0x4000;
-              spark->x = screen.x << 8;
-              spark->y = (screen.y << 8) + 0x1000;
-              spark->z = (Trig_Sin(angle) * speed) >> 15;
+              angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+              SET_POSITION(spark, screen.x << 8, (screen.y << 8) + 0x1000,
+                           (Trig_Sin(angle) * speed) >> 15);
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;
               spawned++;
               if (frame == gVolcano_StartFrames[pillar]) {

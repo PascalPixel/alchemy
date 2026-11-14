@@ -3,6 +3,9 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct SplashParticle {
   s32 x;
@@ -112,7 +115,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     scene->x = caster->x;
     scene->z = caster->z + 0x80000;
     scene->y = caster->y;
-    Vector_AddPolarOffset(0x200000, scene->facing, &scene->x);
+    Vector_AddPolarOffset(px(32), scene->facing, &scene->x);
   }
   isWaterObject = 0;
   if (Actor_GetSpriteIdFar(child) == 424) {
@@ -150,7 +153,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   }
   ViewMove_Start(2);
   wait(1);
-  Sound_PlayFar(238);
+  Sound_PlayFar(SE_PUSH_STEP);
   counter = 0;
   amplitude = 0x20000;
   phase = 0;
@@ -167,7 +170,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     for (i = 0; i < spraying; i++) {
       angle = Random16();
       if (mode == 2)
-        angle = ((Random16() * 10) >> 4) - 0x1000;
+        angle = ((Random16() * 10) >> 4) - TRIG_TURN / 16;
       sprite = &work->sprites[next];
       particle = &work->particles[next];
       if (child != NULL) {
@@ -178,9 +181,7 @@ void FieldPsynergy_GrindOnTarget(void) {
           sprite->depth = BattleEffect_GetObjectDepth(child) - 15;
       }
       particle->timer = 0;
-      particle->x = scene->x;
-      particle->y = scene->y + 0x50000;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y + 0x50000, scene->z);
       if (radius > 0x50000)
         Vector_AddPolarOffset(radius + Random16() * 5, angle, &particle->x);
       else
@@ -206,8 +207,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     }
     if (child != NULL && animation != NULL && animating) {
       s32 size = animation->width * animation->height;
-      dst =
-          (u8 *)0x06010000 + VramCache_Load(animation->entry, size, NULL) * 32;
+      dst = (u8 *)OBJ_VRAM0 + VramCache_Load(animation->entry, size, NULL) * 32;
       if (shifts % 3 == 0)
         BattleEffect_ShiftRowsDown(picture, animation->width,
                                    animation->height);
@@ -262,7 +262,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     wait(1);
     timer++;
   } while (phase != 999);
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   ViewMove_End();
   FieldPsynergy_FadeFromCastColor();
   VramCache_FreeEntry(entry);
@@ -381,7 +381,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   return (blue << 10) | (green << 5) | red;
 }
 
-#define OBJ_PALETTE_14 ((u16 *)0x050003c0)
+#define OBJ_PALETTE_14 ((u16 *)(OBJ_PLTT + 14 * 16))
 
 // The glow's strength, in frames: full at 112, and it fades out a frame at a
 // time once the player leaves the place that feeds it.
@@ -445,7 +445,7 @@ void HoverGlow_Update(void) {
       level = GLOW_FULL;
     if (level < 0)
       level = 0;
-    work->scale = (level << 15) / GLOW_FULL + 0x8000;
+    work->scale = (level << 15) / GLOW_FULL + Q16_ONE / 2;
     if (level == 0)
       event->cue = GLOW_SPENT_CUE;
   }
@@ -453,9 +453,7 @@ void HoverGlow_Update(void) {
   // Cycle the glow's colours; the last takes the 15th's level.
   palette = OBJ_PALETTE_14;
   for (i = 0; i < 16; i++) {
-    // The colour's store in a once-only block, which ends the scheduler's
-    // region there; as the plain store, 2 of 194 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(dead): the colour's store in a once-only block. */
     do {
       *palette++ = HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
                                       i == 15 ? 14 : i);

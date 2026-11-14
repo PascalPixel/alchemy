@@ -11,8 +11,6 @@ extern char ResourceId_PinkStarSheet;
 extern char ResourceId_SkullSheet;
 extern char ResourceId_BlueFlameSheet;
 
-// The swirl's seven growth frames, cut from one sheet. Not const: the native
-// reloads them after every call.
 extern u16 gHelmSplitter_Cells[];
 extern s8 gHelmSplitter_CellBiasX[];
 extern s8 gHelmSplitter_CellBiasY[];
@@ -46,7 +44,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
 
   // Set up the canvas and load the swirl and the spark sheets.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->variant == 0) {
     REG_BG2PA = 0x100;
   }
@@ -71,7 +69,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet,
                                work->sheet + 0x3e80, 1, 1);
     Iwram_CopyWordsEntry(
-        (void *)0x05000000,
+        (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     work->transferValue = 75;
   }
@@ -87,7 +85,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
   sparks = work->particles;
 
   // The caster dashes at the target.
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0x70000);
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, px(7));
 
   for (frame = 0; frame != 70; frame++) {
     // Frames 8-23: the swirl grows, one cell every second frame.
@@ -151,10 +149,10 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
 
         spark = &sparks[i];
         if (effect->variant == 0)
-          spark->x = 0x400000;
+          spark->x = px(64);
         else
           spark->x = (position.x / 2) << 16;
-        spark->y = 0x500000;
+        spark->y = px(80);
         spark->velocityX = (Trig_Sin(angle) * force) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
         spark->variant = (Random16() & 15) + 16;

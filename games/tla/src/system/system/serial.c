@@ -3,6 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
+#include "sounds.h"
 #include "actor.h"
 
 void Serial_QueueCommand(u32 command) {
@@ -212,9 +213,8 @@ void Serial_PrepareSendPacket(void *payload) {
     cur = sr->currentMask;
     recv = sr->receivedMask;
     sum = 0;
-    // The checksum's zero stored through a volatile cast, so it comes after
-    // both masks are read; as a plain store, 2 of 50 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(volatile): the checksum's zero stored through a volatile cast.
+     */
     *(volatile u16 *)(pkt + 2) = sum;
     pkt[1] = recv ^ cur;
     Dma_Set(payload, pkt + 4, DMA_COPY_WORDS(6), REG_DMA3);
@@ -457,8 +457,7 @@ void LinkBattle_ResetTransferState(void) {
 
   state = &gSerialTransfer;
   ime = &REG_IME;
-  // The IME exchange in a once-only block keeps it before the zero and the
-  // status store; as plain statements, 10 of 19 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the IME exchange in a once-only block. */
   do {
     saved = *ime;
     *ime = (u16)ime;
@@ -479,9 +478,8 @@ void Serial_StepBlockTransfer(void) {
   u32 id;
   struct SerialTransferState *own;
   u32 gap;
-  /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the
-   * pool into r8 at entry; as the constant 1 at both stores, 86 of 268
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the pool
+   * into r8 at entry. */
   struct SerialHalfword one;
 
   id = ~((REG_SIOCNT << 26) >> 30) & 1;
@@ -586,13 +584,9 @@ void SerialTest_Run(void) {
   s32 value;
   s32 n;
   s32 delay;
-  // The held keys read through a volatile pointer, so each key test loads them
-  // afresh into the register it masks, as The Broken Seal reads its volatile
-  // gKeysHeld; as gInput.held read plainly, 16 of 74 instructions differ in
-  // tla-en.
   volatile u32 *held;
 
-  Sound_PlayFar(3);
+  Sound_PlayFar(MUS_003);
   Serial_Initialize();
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
@@ -609,11 +603,11 @@ restart:
   Serial_StartReceive(gMapCellBuffer);
   held = &gInput.held;
   for (;;) {
-    if (*held & 1)
+    if (*held & KEY_A)
       Serial_StartSend((void *)Cart_Restart, 0x280);
-    if (*held & 2)
+    if (*held & KEY_B)
       Serial_StartSend((void *)(Cartridge_Restart + 0x1000), 0x280);
-    if (*held & 8) {
+    if (*held & KEY_START) {
       delay = 9999;
       do {
         delay--;
@@ -621,7 +615,7 @@ restart:
       } while (delay >= 0);
     }
     if (gSerialReceiveDest == 0) {
-      Dma_Set(gMapCellBuffer, (void *)0x06001000, DMA_COPY_WORDS(160),
+      Dma_Set(gMapCellBuffer, (void *)BG_SCREEN_BLOCK(2), DMA_COPY_WORDS(160),
               REG_DMA3);
       goto restart;
     }

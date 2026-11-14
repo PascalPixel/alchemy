@@ -3,6 +3,9 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 #include "field/field_psynergy_work.h"
 #include "system/main_routine_work.h"
@@ -25,12 +28,6 @@ s32 MapGrid_IsSandCell(s32 x, s32 z, s32 terrain);
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
 void FieldPsynergy_WatchSandGround(void);
 void FieldPsynergy_EndSand(void);
-/* VIEW(f0e4a34): routine Sand_InitLeaderSprite as void
- * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
- * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles); not
- * tried: Sand_InitLeaderSprite's bound declaration was not found. */
-extern void Func_080e4510__f0e4a34(void *sprite,
-                                   s32 tiles) __asm__("Sand_InitLeaderSprite");
 void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
 void Sand_DrawLeaderSprite(void *sprite);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -94,17 +91,17 @@ void FieldPsynergy_Sand(void) {
     if (frame > 0)
       owner->y += 0x3999;
     if (frame & 31)
-      Sound_PlayFar(566);
-    owner->facing += 0x2000;
+      Sound_PlayFar(SE_566);
+    owner->facing += TRIG_TURN / 8;
     wait(1);
   }
-  owner->facing = 0x4000;
+  owner->facing = TRIG_TURN / 4;
   wait(1);
   FieldPsynergy_DecodePicture(*(void **)((u8 *)owner->sprite + 40), work,
                               0x400);
   pictureEntry = VramCache_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
-  Func_080e4510__f0e4a34(work + 0x1900, pictureTiles);
+  Sand_InitLeaderSprite(work + 0x1900, pictureTiles);
   frame = 15;
   for (; frame <= 92; frame++) {
     Picture_SinkColumnsByWave(work, work + 0x400, frame * 3 / 2);
@@ -122,7 +119,7 @@ void FieldPsynergy_Sand(void) {
     if (frame == 16)
       Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
     if (frame == 45)
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     if (frame == 60) {
       Actor_SetFirstSpriteAnimationFar(owner, 251);
       ((u8 *)owner->sprite)[5] &= 63;
@@ -206,7 +203,7 @@ void FieldPsynergy_UpdateBurst(void) {
 
   work->shake = 0;
   if (work->paletteMode == 1) {
-    palette = (volatile u16 *)0x050003c0;
+    palette = (volatile u16 *)(OBJ_PLTT + 14 * 16);
     i = 0;
     frames = &canvas->drawnFrames;
     red = 31;
@@ -218,19 +215,17 @@ void FieldPsynergy_UpdateBurst(void) {
            16)
           << 5;
 
-      // An empty once-only loop keeps the green term's shift ahead of blue's
-      // copy; without it, 2 of 950 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       *palette++ = green | blue | red;
-      // An empty once-only loop that ends the body keeps i's update after the
-      // colour's store; without it, 4 of 950 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
     }
   } else if (work->paletteMode == 2) {
-    Dma_Set(Data_080f0fa0, (void *)0x050003e0, DMA_ENABLE << 16 | 0x10,
-            REG_DMA3);
+    Dma_Set(Data_080f0fa0, (void *)(OBJ_PLTT + 15 * 16),
+            DMA_ENABLE << 16 | 0x10, REG_DMA3);
     work->paletteMode = 0;
   }
   pos[0] = scene->x;
@@ -256,9 +251,7 @@ void FieldPsynergy_UpdateBurst(void) {
     for (i = 0; i < work->newBursts; i++) {
       particle = &work->bursts[work->nextBurst];
       particle->timer = 0;
-      particle->x = scene->x;
-      particle->y = scene->y;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
       Vector_AddPolarOffset(Random16() * 12 + 0x40000, Random16(),
                             &particle->x);
       work->nextBurst = ++work->nextBurst % 32;
@@ -299,14 +292,14 @@ void FieldPsynergy_UpdateBurst(void) {
     switch (work->phase) {
     case 0:
       if (work->timer == 0)
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
       if (work->timer == 10)
         GLOW_NEXT_PHASE(work);
       break;
     case 1:
       canvas->scaleX += 0x300;
       canvas->scaleY = canvas->scaleX;
-      if (canvas->scaleX >= 0x8000) {
+      if (canvas->scaleX >= Q16_ONE / 2) {
         work->phase++;
         work->timer = 0;
       }
@@ -319,9 +312,9 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0)
         work->paletteMode = 2;
       if (work->timer == 0)
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
-        MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+        MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -331,9 +324,9 @@ void FieldPsynergy_UpdateBurst(void) {
       break;
     case 4:
       if ((work->timer & 15) == 0)
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
-        MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+        MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -350,8 +343,8 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 4)
         work->newBursts = 10;
       if (work->timer == 0) {
-        MapGrid_SetScreenShakeFar(0xc0000, 0xc0000, 0xe666);
-        Sound_PlayFar(145);
+        MapGrid_SetScreenShakeFar(px(12), px(12), 0xe666);
+        Sound_PlayFar(SE_CRASH);
         if (work->timer == 0)
           work->shake = 3;
       }
@@ -379,9 +372,7 @@ void FieldPsynergy_UpdateBurst(void) {
     for (i = 0; i < work->newBursts; i++) {
       particle = &work->bursts[work->nextBurst];
       particle->timer = 0;
-      particle->x = scene->x;
-      particle->y = scene->y;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
       work->nextBurst = ++work->nextBurst % 32;
     }
     work->newBursts = 0;
@@ -420,7 +411,7 @@ void FieldPsynergy_UpdateBurst(void) {
     switch (work->phase) {
     case 0:
       if (work->timer == 0)
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
       if (work->timer == 10)
         GLOW_NEXT_PHASE(work);
       break;
@@ -440,9 +431,9 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0) {
         work->paletteMode = 2;
         if (work->timer == 0) {
-          MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+          MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
           work->newBursts = 1;
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         }
       }
       canvas->command = CANVAS_UPLOAD_AND_FADE3;

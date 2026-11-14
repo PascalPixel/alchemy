@@ -3,11 +3,13 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 // The skulls live in the map buffer, 64 for each target.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
@@ -50,11 +52,11 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
   // Scatter every skull up to 64 pixels from its centre.
   for (i = 0; i != 512; i++) {
-    PARTICLES[i].x = ((Random16() & 255) - 127) << 15;
-    PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
-    PARTICLES[i].z = ((Random16() & 255) - 127) << 15;
+    SET_POSITION(&PARTICLES[i], ((Random16() & 255) - 127) << 15,
+                 ((Random16() & 255) - 127) << 15,
+                 ((Random16() & 255) - 127) << 15);
   }
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != effect->count * 32 + 64; frame++) {
     s32 *row;
@@ -79,14 +81,9 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
       // Each target's skulls turn about a point 20 pixels above it.
       Transform_Reset();
-      // The look-at call in a once-only block, so the eye loads before the
-      // point it looks at; as the plain call, 2 of 355 instructions differ in
-      // tla-en.
-      do {
-        Transform_SetLookAt(camera, camera + 3);
-      } while (0);
+      Transform_SetLookAt(camera, camera + 3);
       point[0] = target->x;
-      point[1] = 20 << 16;
+      point[1] = px(20);
       point[2] = target->z;
       SceneTransform_ApplyPosition(point);
       if (frame > k * 32) {
@@ -219,7 +216,7 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
           if (frame == (member * 16) + 32)
             BattleEffect_TintBattler(effect->actors[member], 0, 5, -1, 0);
           point[0] = target->x;
-          point[1] = 40 << 16;
+          point[1] = px(40);
           point[2] = target->z;
           EffectPosition_ProjectPoint(point, &screen);
 
@@ -304,8 +301,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
     palette = (s32)&ResourceId_MarsDjinnSheet;
   else
     palette = (s32)&ResourceId_MercuryDjinnSheet;
-  // The entry held in a local loads before the arguments; as a plain
-  // Iwram_CopyWords call, 2 of 511 instructions differ in tla-en.
   {
     const void *source_ = Resource_GetTableEntry(palette);
     __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
@@ -326,9 +321,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
     for (i = 0; i != MOTES_PER_TARGET; i++) {
       struct EffectStep *mote = &PARTICLES[k * 128 + i];
 
-      mote->x = source->x;
-      mote->y = height;
-      mote->z = source->z;
+      SET_POSITION(mote, source->x, height, source->z);
       mote->velocityX = ((Random16() & 255) - 128) << 10;
       mote->velocityY = ((Random16() & 255) - 128) << 10;
       mote->velocityZ = ((Random16() & 255) - 128) << 10;
@@ -340,7 +333,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Sound_PlayFar(146);
+  Sound_PlayFar(SE_ENEMY_CRY);
 
   for (frame = 0; frame != Data_08197864[mode * 2 + 1] + effect->count * 20;
        frame++) {
@@ -361,10 +354,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
-    /* FAKEMATCH(barrier): an empty asm after the look-at call keeps its
-     * arguments loaded in order, r0 before r1; without it, 2 of 511
-     * instructions differ in tla-en. */
-    __asm__("");
     row = work->bg2xLines;
     sway = Trig_Sin((frame << 15) /
                     (Data_08197864[mode * 2 + 1] + effect->count * 20)) *
@@ -386,9 +375,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
 
       if (frame == k * 20 + 71) {
         if (mode == 0)
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         else if (mode != 3)
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
         BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 26);
@@ -421,16 +410,12 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
               // target is, on the target's side.
               targetDistance = target->x < 0 ? -target->x : target->x;
               moteDistance = x;
-              /* FAKEMATCH(barrier): an empty asm through moteDistance keeps it
-               * a copy apart from x, so the sign test and the negation read the
-               * copy; as x < 0 ? -x : x, 4 of 511 instructions differ in
-               * tla-en. */
+              /* FAKEMATCH(barrier): an empty asm through moteDistance. */
               __asm__("" : "=r"(moteDistance) : "0"(moteDistance));
               if (moteDistance < 0)
                 moteDistance = -moteDistance;
               /* FAKEMATCH(dead): each arm stores its test in crossed, never
-               * read; as the tests without the stores, 81 of 511 instructions
-               * differ in tla-en. */
+               * read. */
               if (targetDistance <= moteDistance &&
                   ((x < 0 && (crossed = target->x < 0)) ||
                    (x >= 0 && (crossed = target->x >= 0)))) {
@@ -439,7 +424,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
                   BattleEffect_StartActorMotion(effect->actors[k], 1, 0x20000,
                                                 0x20000, 0x20000, i * 8 + 100);
                   if ((i & 1) && frame != 80)
-                    Sound_PlayFar(134);
+                    Sound_PlayFar(SE_HEAVY_IMPACT);
                 }
               }
             }

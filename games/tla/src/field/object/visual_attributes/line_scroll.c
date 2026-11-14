@@ -4,6 +4,8 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/field/field.h"
 
 /// Starts the leader's animation for leaving through an exit: centres it on
@@ -27,8 +29,7 @@ void Exit_PrepareAnimation(s32 animation) {
   effect = ResourceMetadata_RegisterFar(context, 267);
   zero = 0;
   context->flags = zero;
-  // An empty once-only loop keeps the cleared flags' store before the kind's
-  // load; without it, 8 of 47 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
   param = 15;
@@ -37,8 +38,8 @@ void Exit_PrepareAnimation(s32 animation) {
   object->z = (object->z & 0xFFF00000) + 0x100000;
   object->velocityX = zero;
   object->velocityZ = zero;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
+  object->targetX = TARGET_UNSET;
+  object->targetZ = TARGET_UNSET;
   Actor_SelectAnimationFar(object, mode);
   wait(18);
 }
@@ -69,16 +70,14 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   ctx->count = 1;
   SpriteAnimation_ClearFar(ctx->entries[1]);
   {
-    /* FAKEMATCH(pin): the sprite copied into r1 for its two stores, leaving
-     * r3 to the zero's copy from sl; as ctx in both stores, 8 of 69
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the sprite copied into r1 for its two stores. */
     register struct ContextSprite *pinnedCtx asm("r1") = ctx;
 
     pinnedCtx->flags = 1;
     pinnedCtx->entries[1] = (void *)zero;
   }
-  obj->acceleration = 0x10000;
-  obj->speedLimit = 0x10000;
+  obj->acceleration = px(1);
+  obj->speedLimit = px(1);
   Actor_SetMoveTargetFar(obj, obj->x, obj->y, obj->z + 0x80000);
   Actor_WaitForMoveFar(obj);
 }
@@ -108,12 +107,12 @@ s32 Entrance_PlayArrival(void) {
         GameFlag_Clear(flag);
         id = gMainRoutineWork.currentOwner;
         object = ObjectTable_Get(id);
-        object->y += 0x00a00000;
+        object->y += px(160);
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
         while (object->y + object->velocityY > object->terrainHeight) {
           wait(1);
         }
-        Sound_PlayFar(159);
+        Sound_PlayFar(SE_DOOR_CLOSE);
         object->y = object->terrainHeight;
         Actor_SelectAnimationFar(object, 22);
         Event_Wait(15);
@@ -396,8 +395,8 @@ void GroundParticles_Update(void) {
     if (GameFlag_Get(358))
       particle->timer++;
     frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
-    x = (particle->posX - originX) / 0x10000 + *frame++;
-    y = (particle->posZ - particle->posY - originZ) / 0x10000 + *frame++;
+    x = (particle->posX - originX) / Q16_ONE + *frame++;
+    y = (particle->posZ - particle->posY - originZ) / Q16_ONE + *frame++;
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
       particle->priority = 1;
       particle->x = x;

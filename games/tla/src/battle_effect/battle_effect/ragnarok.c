@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #undef RESULTS_FRAME
 
@@ -23,9 +24,6 @@
 #define BLADE_LAST_FRAME 39
 #define FIRST_STRIKE_FRAME 16 // each column strikes 8 frames after the last
 #define RESULTS_FRAME 40
-
-#define SE_SWING 212
-#define SE_STRIKE 145
 
 extern char ResourceId_FlameBladeSheet;
 extern char ResourceId_FlashBurstSheet;
@@ -67,7 +65,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   // Open the canvas, pose the user and place the columns.
   user = BattleObject_GetFar(effect->actor)->object;
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
   Actor_SelectAnimationFar(user, 2);
   Actor_SetAnimationSpeedFar(user, 48);
@@ -109,7 +107,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
       angle = Random16() & 0xffff;
       spark->x = (gRagnarok_StrikeColumns[col + effect->side * 3] + baseX)
                  << 16;
-      spark->y = 88 << 16;
+      spark->y = px(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
       spark->variant = (Random16() & 7) + 32;
@@ -125,11 +123,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 4)
-      Sound_PlayFar(SE_SWING);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 8)
       work->shakeFrames = frame;
     if (frame == 18)
-      Sound_PlayFar(SE_STRIKE);
+      Sound_PlayFar(SE_CRASH);
     if (frame == RESULTS_FRAME)
       BattlePlayback_StartFar(PHASE_RESULTS);
 
@@ -222,7 +220,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
             BattleEffectKernels_IntegrateVector2(spark, 64, 0x1000);
             spark->variant--;
             y = spark->y;
-            if (y > (108 << 16)) {
+            if (y > px(108)) {
               spark->velocityY = -spark->velocityY / 2;
             } else {
               x = spark->x;
@@ -293,8 +291,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
 #define SPARK                                                                  \
   ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
-#define SE_SPRAY 164
-
 extern char ResourceId_SwordSheet;
 
 extern u8 gTitanBlade_FlashPictures[]; // ☀️ gPlasma_FlashCells
@@ -333,7 +329,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
 
   // Open the canvas on BG1 over the target and build the blitters.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   centerX = target.x / 2;
 
@@ -357,7 +353,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
   // Mode 1 turns the first 64 BG colours: red to blue, blue to green, green
   // to red.
   if (mode == 1) {
-    u16 *color = (u16 *)0x05000000;
+    u16 *color = (u16 *)BG_PLTT;
 
     for (i = 0; i != 64; i++) {
       s32 red = *color & 0x1f;
@@ -418,7 +414,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
     } else if (mode == 1) {
       if (frame == 61) {
         Iwram_CopyWordsEntry(
-            (void *)0x05000000,
+            (void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
         Palette_MirrorBgColors();
       }
@@ -432,9 +428,9 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
       work->shakeFrames = 16;
 
     if (frame == 4)
-      Sound_PlayFar(SE_SWING);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 32)
-      Sound_PlayFar(SE_SPRAY);
+      Sound_PlayFar(SE_SCATTER);
     if (frame == 60) {
       if (mode == 1)
         BattlePlayback_StartFar(144);
@@ -782,6 +778,6 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
 
 static inline u8 *PassBuffer(u8 *buffer) {
   /* FAKEMATCH(wrapper): the second queue's source base passed through this
-   * inline; as Ram_MapCellBuffer, 52 of 2680 instructions differ in tla-en. */
+   * inline. */
   return buffer;
 }

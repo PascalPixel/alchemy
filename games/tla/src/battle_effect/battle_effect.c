@@ -65,7 +65,6 @@
 #undef HI
 
 // The effects from the Cybele summon to Bolt.
-#define FxGroup FxGroup__cybele
 #include "battle_effect/cybele.c"
 #include "battle_effect/boreas.c"
 #include "battle_effect/drain.c"

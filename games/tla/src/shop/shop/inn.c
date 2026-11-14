@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "module/shop/shop.h"
 
@@ -119,7 +120,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   wait(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
-  Sound_PlayFar(86);
+  Sound_PlayFar(MUS_086);
   Sound_WaitForJingle();
   wait(10);
   Event_StartScreenTransitionFar();

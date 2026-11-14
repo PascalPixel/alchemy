@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "module/field/field.h"
 
 /// Sets the map coordinates the camera keeps the screen inside.
@@ -117,7 +118,7 @@ struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
   struct BattleEffectWatchedObject *object;
 
   if ((flags & 0xff) == 6) {
-    Sound_PlayFar(110);
+    Sound_PlayFar(SE_CHIME);
   }
 
   resource = ObjectTable_Get(resourceId);

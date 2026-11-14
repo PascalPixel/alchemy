@@ -4,6 +4,8 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "flags.h"
+#include "sounds.h"
 
 struct ScreenWork {
   u8 unk000[0x5a4];
@@ -48,13 +50,10 @@ struct RenderInput *DebugSoundTest_Open(void) {
   work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
                                      OUTPUT_SIZE_16X16, window, 0, 0);
   {
-    /* FAKEMATCH(pin): the cursor's address held in r0 for the barrier to
-     * read; as &work->cursor read by the barrier directly, 4 of 39
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the cursor's address held in r0 for the barrier to read.
+     */
     register struct WindowSprite **cursor asm("r0") = &work->cursor;
-    /* FAKEMATCH(barrier): the empty asm reads r0 and rewrites window, so
-     * the window's loads wait for the address copy; as the plain call with
-     * no asm, 4 of 39 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the empty asm reads r0 and rewrites window. */
     asm("" : "+r"(window) : "r"(cursor));
     MenuCursor_SetPositionImmediateFar(&work->cursor, ((s16)window->x << 3) - 4,
                                        ((s16)window->y << 3) + 12);
@@ -112,39 +111,39 @@ UNUSED s32 DebugSoundTest_Run(void) {
                         ((s16)window->y << 3) + (cursor << 4) + 12, 3);
     }
     wait(1);
-    if (gInput.pressed & 2)
+    if (gInput.pressed & KEY_B)
       break;
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (cursor == 3)
         Sound_LoadReverbCode(test.values[3]);
       else
         Sound_PlayFar(test.values[cursor]);
     }
-    if (gInput.pressed & 8) {
-      Sound_PlayFar(390);
-      Sound_PlayFar(0);
+    if (gInput.pressed & KEY_START) {
+      Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
+      Sound_PlayFar(MUS_000);
     }
-    if (gInput.repeat & 0x100) {
+    if (gInput.repeat & KEY_R) {
       test.values[cursor] += 10;
       redraw = 1;
     }
-    if (gInput.repeat & 0x200) {
+    if (gInput.repeat & KEY_L) {
       test.values[cursor] -= 10;
       redraw = 1;
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       test.values[cursor]++;
       redraw = 1;
     }
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       test.values[cursor]--;
       redraw = 1;
     }
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       cursor--;
       redraw = 1;
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       cursor++;
       redraw = 1;
     }
@@ -220,7 +219,6 @@ UNUSED s32 DebugMenu_Run(s32 index) {
 
       index = (index + 5) % 5;
       x = (s16)window->x * 8 - 4;
-      // The row is read first: as one expression, 4 of 105 instructions differ.
       y = (s16)window->y;
       y = (index * 3 + y) * 8 + 16;
       if (moved == -1)
@@ -230,24 +228,24 @@ UNUSED s32 DebugMenu_Run(s32 index) {
       moved = 0;
     }
     wait(1);
-    if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       index = -1;
       goto done;
     }
-    if (gInput.pressed & 1) {
-      Sound_PlayFar(112);
+    if (gInput.pressed & KEY_A) {
+      Sound_PlayFar(SE_MENU_CONFIRM);
       goto done;
     }
-    if (gInput.repeat & 64) {
+    if (gInput.repeat & KEY_UP) {
       index--;
       moved = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 128) {
+    if (gInput.repeat & KEY_DOWN) {
       index++;
       moved = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   } while (1);
 done:
@@ -292,8 +290,8 @@ void DebugWarp_Jupiter(void) {
 }
 
 void DebugWarp_Arafura2(void) {
-  GameFlag_Set(0x8ab);
-  GameFlag_Clear(0x8a7);
+  GameFlag_Set(FLAG_BRIGGS_CAUGHT);
+  GameFlag_Clear(FLAG_ALHAFRA_MAST_CLEARED);
   GameFlag_Set(0x8aa);
   Inventory_AddItemFar(4, 457);
   {
@@ -307,8 +305,8 @@ void DebugWarp_Arafura2(void) {
 void DebugWarp_EnergySample(void) {}
 
 void DebugWarp_Arafura3(void) {
-  GameFlag_Set(0x8ab);
-  GameFlag_Set(0x8a7);
+  GameFlag_Set(FLAG_BRIGGS_CAUGHT);
+  GameFlag_Set(FLAG_ALHAFRA_MAST_CLEARED);
   GameFlag_Set(0x8aa);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -322,7 +320,7 @@ void DebugWarp_Champa2(void) {
   PartyInventory_AddFar(439);
   PartyInventory_AddFar(440);
   PartyInventory_AddFar(441);
-  GameFlag_Set(0x97f);
+  GameFlag_Set(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -449,35 +447,31 @@ UNUSED s32 DebugWarp_Run(s32 index) {
     }
     wait(1);
     if (gInput.pressed & KEY_B) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       index = -1;
       goto done;
     }
     if (gInput.pressed & KEY_A) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       goto done;
     }
     if (gInput.repeat & KEY_UP) {
       index--;
       moved = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    // down holds the Down mask; as gInput.repeat & KEY_DOWN, 32 of 115
-    // instructions differ in tla-en.
     down = KEY_DOWN;
     if (gInput.repeat & down) {
       index++;
       moved = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   } while (1);
 done:
   Window_Close(window, 2);
   DebugWarp_Release();
   wait(1);
-  /* FAKEMATCH(signature): the handlers are typed as returning s32, which
-   * puts the handler in r0 for the call; as void (*)(void), 4 of 115
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(signature): the handlers are typed as returning s32. */
   if (index != -1)
     gDebugWarp_Presets[index].warp();
   return index;
@@ -566,8 +560,6 @@ UNUSED s32 DebugShortcut_Run(void) {
   s32 x;
   s32 y;
   s32 pp;
-  // columns holds 4, so the wrap divides with __modsi3; as a constant 4, which
-  // the compiler reduces to shifts, 84 of 261 instructions differ in tla-en.
   s32 columns = 4;
 
   DebugShortcut_Initialize();
@@ -580,9 +572,8 @@ UNUSED s32 DebugShortcut_Run(void) {
     if (result != 0) {
       column = (column + columns) % columns;
       row = (row + 9) % 9;
-      /* FAKEMATCH(temporary): the window's x read through a halfword
-       * temporary, which copies the window out of r10 for each field; as
-       * (s16)window->x in place, 23 of 261 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the window's x read through a halfword temporary.
+       */
       left = window->x;
       x = (column * 7 + left) * 8 - 4;
       y = ((s16)window->y << 3) + (row << 4) + 12;
@@ -593,45 +584,45 @@ UNUSED s32 DebugShortcut_Run(void) {
       result = 0;
     }
     wait(1);
-    if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       goto done;
     }
-    if (gInput.pressed & 1) {
-      Sound_PlayFar(112);
+    if (gInput.pressed & KEY_A) {
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 0;
       goto done;
     }
-    if (gInput.pressed & 0x200) {
-      Sound_PlayFar(112);
+    if (gInput.pressed & KEY_L) {
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       goto done;
     }
-    if (gInput.pressed & 0x100) {
-      Sound_PlayFar(112);
+    if (gInput.pressed & KEY_R) {
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 2;
       goto done;
     }
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       column--;
       result = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       column++;
       result = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       row--;
       result = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       row++;
       result = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   } while (1);
 done:

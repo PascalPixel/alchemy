@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "gamepak/far_call/battle.h"
 #include "item_icon.h"
@@ -32,13 +33,6 @@ extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
 #endif
 
-/* VIEW(menus): routine VramCache_Reload as s32 VramCache_Reload(s32 entry,
- * const void *tiles); resource.h has s32 VramCache_Reload(s32 slot, s32
- * source); tried as the definition's s32 VramCache_Reload(s32 no, s32 src),
- * BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
-extern s32
-VramCache_Reload__menus(s32 entry,
-                        const void *tiles) __asm__("VramCache_Reload");
 /* VIEW(menus): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the
  * definition has s32 BattleParty_ChooseReserve(s32 slot) { u16 owners[6]; u16
  * selected[2]; struct BattleWork *battle; s32 count; count =
@@ -52,16 +46,6 @@ extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
  */
 extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
     "Oam_AddSpriteAtDepth"); // Returns void; see the tag.
-/* VIEW(menus): routine Text_DrawStringAtOffset as void
- * Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x,
- * s32 y); text_render.h has void Text_DrawStringAtOffset(u8 *text, struct
- * RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void
- * Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32
- * offsetY), which the object already declares, BattleTarget_RunSelection moves:
- * 8 of 1647 instructions in tla-ja. */
-extern void
-Text_DrawStringAtOffset__menus(const u8 *text, struct TargetWindow *window,
-                               s32 x, s32 y) __asm__("Text_DrawStringAtOffset");
 
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \
@@ -72,8 +56,6 @@ Text_DrawStringAtOffset__menus(const u8 *text, struct TargetWindow *window,
       helpColumn = (last);                                                     \
   }
 
-// The window listing the aimed member's conditions, count lines tall. The
-// European editions share one image and widen it at run time for Spanish.
 #if TLA_PATCH_2
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \
@@ -112,9 +94,7 @@ Text_DrawStringAtOffset__menus(const u8 *text, struct TargetWindow *window,
 
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   /* FAKEMATCH(signature): Oam_AddSpriteAtDepth declared returning s32, though
-   * it returns nothing, so the call sets r0 and the marker's last attribute
-   * byte is stored before its address goes to r0; as void, 2 of 1647
-   * instructions differ in tla-en. */
+   * it returns nothing. */
   u16 candidateIds[8];
   struct TargetSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
@@ -163,9 +143,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   targetCount = 0;
   redraw = 0xffff;
   cursorSlot = VramCache_AllocEntry(256);
-  /* FAKEMATCH(dead): a null computed from selection, which the compiler cannot
-   * fold to a constant, keeps conditionWindow in a register; as
-   * conditionWindow = NULL, 492 of 1647 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a null computed from selection. */
   conditionWindow = (struct TargetWindow *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
@@ -259,19 +237,15 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   }
 #if !TLA_PATCH_2
   /* FAKEMATCH(barrier): an empty asm clobbering r8 and r10 once selection and
-   * mode are dead, so conditionWindow takes r9, selection r10 and mode r8; as
-   * no asm, 96 of 1647 instructions differ in tla-en. */
+   * mode are dead. */
   __asm__("" : : : "r8", "r10");
 #endif
   window = Window_Create(0, 12, 30, 4, 74);
 
   for (;;) {
-    // A once-only block: its end keeps the tile reload after the sprite's
-    // words.
+    /* FAKEMATCH(dead): a once-only block. */
     do {
-      /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]; as
-       * cursorSprites used directly, 399 of 1647 instructions differ in tla-en.
-       */
+      /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
       firstSprite = cursorSprites;
       drawCursors = 0;
       BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
@@ -280,8 +254,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       ((u32 *)firstSprite)[2] = 0;
     } while (0);
     firstSprite->tile =
-        VramCache_Reload__menus(cursorSlot, ((gFrameCount >> 2) & 31) * 256 +
-                                                gMenu_AnimatedCursorTiles);
+        VramCache_Reload(cursorSlot, ((gFrameCount >> 2) & 31) * 256 +
+                                         gMenu_AnimatedCursorTiles);
     TARGET_BOB(selectedPosition.y);
     y = selectedPosition.y;
     if (cursorTracks[0].flags & 1) {
@@ -397,36 +371,36 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #if TLA_PATCH_2
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
-              Text_DrawStringAtOffset__menus(gOwnerStatus_KpString,
-                                             conditionWindow, 0, 0);
+              Text_DrawStringAtOffset(gOwnerStatus_KpString, conditionWindow, 0,
+                                      0);
               break;
             case CARTRIDGE_LANGUAGE_FRENCH:
             case CARTRIDGE_LANGUAGE_SPANISH:
-              Text_DrawStringAtOffset__menus(gOwnerStatus_PvString,
-                                             conditionWindow, 0, 0);
+              Text_DrawStringAtOffset(gOwnerStatus_PvString, conditionWindow, 0,
+                                      0);
               break;
             case CARTRIDGE_LANGUAGE_ITALIAN:
-              Text_DrawStringAtOffset__menus(gOwnerStatus_HpString,
-                                             conditionWindow, 0, 0);
+              Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
+                                      0);
               break;
             }
 #else
-            Text_DrawStringAtOffset__menus(gOwnerStatus_HpString,
-                                           conditionWindow, 0, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
+                                    0);
 #endif
             Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
-            Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString,
-                                           conditionWindow, 48, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
+                                    48, 0);
             Text_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
             break;
           case 2:
             TARGET_HELP_COLUMN(7, 6, 17);
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
-            Text_DrawStringAtOffset__menus(gOwnerStatus_PpString,
-                                           conditionWindow, 0, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_PpString, conditionWindow, 0,
+                                    0);
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
-            Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString,
-                                           conditionWindow, 48, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
+                                    48, 0);
             Text_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
             break;
           case 5:
@@ -502,9 +476,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (unit->delusion != 0)
               count++;
 #if TLA_PATCH_2
-            /* FAKEMATCH(temporary): count read back through a pointer to it,
-             * which keeps count in its stack slot; as count == 0, 142 of 1748
-             * instructions differ in tla-de. */
+            /* FAKEMATCH(temporary): count read back through a pointer to it. */
             countAddress = &count;
 #endif
             if (unit->stun != 0)
@@ -656,7 +628,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         NAVIGATION->tutorialDelay--;
       }
     }
-    if (pressed & 1) {
+    if (pressed & KEY_A) {
       s32 id = candidateIds[targetIndex];
       s32 k;
 
@@ -678,16 +650,16 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       }
       targetIndex = result;
     } else if (spread != 255) {
-      if (repeated & 0x90) {
-        Sound_PlayFar(111);
+      if (repeated & (KEY_RIGHT | KEY_DOWN)) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex++;
           targetIndex %= candidateCount;
         } while (candidateIds[targetIndex] == 254);
         redraw |= 1;
       }
-      if (repeated & 0x60) {
-        Sound_PlayFar(111);
+      if (repeated & (KEY_LEFT | KEY_UP)) {
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex = targetIndex + candidateCount - 1;
           targetIndex %= candidateCount;
@@ -695,8 +667,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
     }
-    if (NAVIGATION->timer == 0 || (pressed & 2)) {
-      Sound_PlayFar(113);
+    if (NAVIGATION->timer == 0 || (pressed & KEY_B)) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;
     }

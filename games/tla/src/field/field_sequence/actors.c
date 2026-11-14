@@ -4,12 +4,15 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "flags.h"
+#include "fixed_math.h"
 #include "actor_view.h"
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
 #include "gamepak/far_call/field.h"
 #include "system/ram_buffer.h"
 #include "module/tla.h"
+#include "macros.h"
 
 /// Picks the sprite a scene placement's character id shows: character 8
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is
@@ -24,7 +27,7 @@ s32 Party_GetCharacterSprite(s32 character) {
       sprite = 9;
       if (gMainRoutineWork.map != (s32)&SceneId_Clear)
         sprite = 11;
-      if (GameFlag_Get(0x8df))
+      if (GameFlag_Get(FLAG_SHIP_FLIES))
         sprite++;
     }
   }
@@ -126,16 +129,16 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       object->facing = entry->facing;
       object->collisionFlags = 1;
       Actor_SetActionCallback(object, entry->behavior);
-      ((struct SpawnActor *)object)->homeX = object->x / 0x10000;
-      ((struct SpawnActor *)object)->homeZ = object->z / 0x10000;
+      ((struct SpawnActor *)object)->homeX = object->x / Q16_ONE;
+      ((struct SpawnActor *)object)->homeZ = object->z / Q16_ONE;
       if (object->y != 0) {
         object->motionFlags = 4;
-        object->y += 0x8000;
+        object->y += px(1) / 2;
       }
       if (work->mode == 3) {
         object->motionFlags &= 0xfe;
         if (!GameFlag_Get(33))
-          sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
+          sprite->scale = Iwram_MulQ16(sprite->scale, Q16_ONE * 3 / 4);
       } else {
         object->terrainHeight =
             MapGrid_GetTerrainHeightFar(0, object->x, object->z);
@@ -208,9 +211,7 @@ void Actor_ResetForLeader(s32 table) {
   ObjectTable_Clear();
   entry->condition = -1;
   entry->sprite = leader;
-  entry->x = gMainRoutineWork.x;
-  entry->y = 0;
-  entry->z = gMainRoutineWork.z;
+  SET_POSITION(entry, gMainRoutineWork.x, 0, gMainRoutineWork.z);
   entry->facing = gMainRoutineWork.heading;
   Event_SpawnObjectTable(entry, leader);
   {
@@ -237,9 +238,7 @@ void Actor_ResetForLeader(s32 table) {
     gMainRoutineWork.renderMode = 6;
   } else {
     gMainRoutineWork.renderMode = 0;
-    /* FAKEMATCH(barrier): an empty asm after the store keeps the terrain id's
-     * load and the heap slots' address after it; without it, 6 of 292
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
     cell = Ram_HeapSlots->mapWork->layers[object->terrainId].cells +
            ((object->x / 0x100000) + ((object->z / 0x100000) << 7));
@@ -260,9 +259,7 @@ void Actor_ResetForLeader(s32 table) {
   if (gMainRoutineWork.ownerOverride != 0) {
     struct Actor *stand = work->objects[8];
 
-    stand->x = object->x;
-    stand->y = object->y;
-    stand->z = object->z;
+    SET_POSITION(stand, object->x, object->y, object->z);
     stand->terrainHeight = object->terrainHeight;
     stand->facing = object->facing;
     object->x = 0;

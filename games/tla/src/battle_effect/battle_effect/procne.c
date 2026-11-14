@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -10,6 +12,7 @@
 #include "gamepak/far_call/field.h"
 #include "system/mul_q16.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 // Summon 8 (BattleEffect_RunSceneEffect's case 8). Twin: The Broken Seal's
 // BattleEffect_RunProcne, ported by trial 2 and rewritten here. The
@@ -22,12 +25,6 @@
 // Iwram_TransformVector at the comet sparks; formation resource 646; the effect
 // argument for the actor loops; gCameraSceneParameters declared unsized (with
 // the shared u32[3], word 3 folds into the address).
-
-// What fixed the frame and slots: screen.y >> 16 and screen.depth >>= 16 as the
-// twin writes them (combine makes the ldrsh off the pointer to screen; a cast
-// to s16 * gave screen + 6 its own register and two spills); the twin's
-// declaration order; wave and drift in a block opened after the blitter fetch,
-// whose spill slots fall below the pointer to draw.
 
 // frame / 4 % 3, as the source writes it: the multiply-high routine with the
 // reciprocal of 3, where a plain % calls __modsi3.
@@ -92,8 +89,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     work->transferMode = 2;
     work->transferValue = 50;
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-    wave.x = 0x800000;
-    wave.y = 0x280000;
+    wave.x = px(128);
+    wave.y = px(40);
     drift.x = 0;
     drift.y = 0;
 
@@ -128,7 +125,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
     frame = 0;
     do {
-      if ((gInput.repeat & 3) != 0) {
+      if ((gInput.repeat & (KEY_A | KEY_B)) != 0) {
         if (frame <= 159)
           frame = 160;
         else if (frame <= 394)
@@ -139,17 +136,17 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
       Transform_SetLookAt(camera, (s32 *)((u8 *)camera + 12));
 
       if (frame == 16)
-        Sound_PlayFar(141);
+        Sound_PlayFar(SE_RUMBLE);
       if (frame == 256)
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
       if (frame == 334)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == 347)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == 359)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == 372)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
 
       // The enemies, one every 16 frames, spiral in toward the centre and
       // rise, spinning faster; each comet strike knocks them down.
@@ -164,17 +161,17 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
             if (frame > index * 16 + 16)
               spin[index] += 48;
             if (radius[index] <= 31)
-              object->y += 0x60000;
+              object->y += px(6);
             else
-              object->y += 0x8000;
+              object->y += px(1) / 2;
             if (object->y > 0x7c0000)
-              object->y = 0x7c0000;
+              object->y = px(124);
           }
 
           if (frame <= 490) {
             heading[index] += spin[index];
-            if (heading[index] > 0x10000)
-              heading[index] -= 0x10000;
+            if (heading[index] > TRIG_TURN)
+              heading[index] -= TRIG_TURN;
             object->angle += spin[index] / 4;
           }
 
@@ -241,7 +238,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               point[index].z -= 4;
             point[index].velocityY += point[index].velocityX * 2;
             if (point[index].velocityY > 0x10000)
-              point[index].velocityY -= 0x10000;
+              point[index].velocityY -= px(1);
             point[index].velocityX += 50;
             if (point[index].velocityX > 4096)
               point[index].velocityX = 4096;
@@ -317,8 +314,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         drift.x /= 2;
         drift.y /= 2;
 
-        scale.x = 0x10000;
-        scale.y = 0x10000;
+        scale.x = Q16_ONE;
+        scale.y = Q16_ONE;
         place[3] = 0;
         index = 0;
         do {
@@ -399,9 +396,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
                 spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
                 spark->velocityY = ((Random16() & 255) - 128) << 10;
-                spark->x = 0;
-                spark->y = 0;
-                spark->z = 0;
+                SET_POSITION(spark, 0, 0, 0);
                 spark->variant = (Random16() & 15) + 64;
                 index++;
               } while (index != 96);
@@ -412,15 +407,12 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               index = 0;
               do {
                 if (spark[index].variant > 0) {
-                  // The transform in a once-only block, which ends CSE's block
-                  // before it; as a plain block, 6 of 1493 instructions differ
-                  // in tla-en.
+                  /* FAKEMATCH(dead): the transform in a once-only block. */
                   do {
                     void (*transform)(const void *, s32 *) =
                         Iwram_TransformVector;
                     /* FAKEMATCH(pin): the result pointer in r1, set before the
-                     * point in r0; as a plain argument, 2 of 1493 instructions
-                     * differ in tla-en. */
+                     * point in r0. */
                     register s32 *result __asm__("r1") = &screen.x;
                     transform(&spark[index].x, result);
                   } while (0);
@@ -465,8 +457,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 slot++;
               } while (slot != 28);
 
-              drift.x = 0x80000;
-              drift.y = -0x20000;
+              drift.x = px(8);
+              drift.y = -px(2);
               work->shakeFrames = 8;
             }
 
@@ -593,8 +585,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
   // with their palette, the streaks, the dots, and in mode 1 the lightning
   // palette.
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
-  REG_BG2CNT = 0x784;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
@@ -607,8 +599,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 1072 instructions differ in tla-en.
     copy((void *)BG_PLTT, lightning, 128);
   }
   work->transferMode = 2;
@@ -647,11 +637,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
     // The formation enters from above the right edge.
     if (alternate == 1) {
-      focus.x = 220 << 16;
-      focus.y = -(52 << 16);
+      focus.x = px(220);
+      focus.y = -px(52);
     } else {
-      focus.x = 212 << 16;
-      focus.y = -(60 << 16);
+      focus.x = px(212);
+      focus.y = -px(60);
     }
     for (i = 0; i != 64; i++)
       work->particles[i].variant = -1;
@@ -674,7 +664,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     for (frame = 0; frame != 208; frame++) {
-      if ((gInput.repeat & 3) && frame > 48 && frame <= 159) {
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
         if (mode == 0) {
           Animation_ApplyChildArgumentFar(work->objects[0], 8);
           Animation_ApplyChildArgumentFar(work->objects[1], 9);
@@ -722,7 +712,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
           if (grain->variant == -1) {
             grain->x = ((Random16() & 255) - 32) << 16;
-            grain->y = 112 << 16;
+            grain->y = px(112);
             grain->velocityX = ((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
                                << 9;
             grain->velocityY = -((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
@@ -750,10 +740,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
               if (mode == 0) {
                 if (alternate == 1) {
                   spark->x = ((Random16() & 7) + 78) << 16;
-                  spark->y = 78 << 16;
+                  spark->y = px(78);
                 } else {
                   spark->x = ((Random16() & 7) + 78) << 16;
-                  spark->y = 70 << 16;
+                  spark->y = px(70);
                 }
               } else {
                 spark->x = ((Random16() & 7) + origin.x - 8) << 16;
@@ -770,9 +760,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 48)
-        Sound_PlayFar(141);
+        Sound_PlayFar(SE_RUMBLE);
       if (frame == 128)
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
 
       // Flashes fly out sideways, one a frame from 129.
       if (frame >= 129 && frame <= 175) {
@@ -787,11 +777,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
             if (mode == 0) {
               if (alternate == 1) {
-                flash->x = 72 << 16;
-                flash->y = 72 << 16;
+                flash->x = px(72);
+                flash->y = px(72);
               } else {
-                flash->x = 68 << 16;
-                flash->y = 64 << 16;
+                flash->x = px(68);
+                flash->y = px(64);
               }
             } else {
               flash->x = origin.x << 16;
@@ -834,7 +824,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
                   HI(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX * dir;
           spark->y += spark->velocityY;
-          spark->velocityY += -0x400;
+          spark->velocityY += -(px(1) / 64);
           spark->variant++;
           if (spark->variant == 48)
             spark->variant = -1;
@@ -857,11 +847,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
             grain->y += grain->velocityY;
             if (frame > 128) {
               if (i & 1)
-                grain->velocityX += -0x8000;
+                grain->velocityX += -(px(1) / 2);
               else
-                grain->velocityX += -0x2000;
+                grain->velocityX += -(px(1) / 8);
             } else {
-              grain->velocityY += -0x400;
+              grain->velocityY += -(px(1) / 64);
             }
             grain->variant++;
             if (grain->variant == 256)
@@ -877,8 +867,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
       if (mode == 0 && frame == 48)
         work->shakeFrames = 8;
       if (frame >= 40 && frame <= 47) {
-        focus.x += -(8 << 16);
-        focus.y += 16 << 16;
+        focus.x += -px(8);
+        focus.y += px(16);
       }
       if (mode == 0) {
         if (frame == 128) {
@@ -930,7 +920,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
             streak->x -= dir * 6;
             streak->y += 6;
             if (frame <= 47 && streak->y > 55)
-              Sound_PlayFar(136);
+              Sound_PlayFar(SE_WHOOSH);
             draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                     streak->x - size / 2, streak->y + 30, size, size * 2);
           } else {

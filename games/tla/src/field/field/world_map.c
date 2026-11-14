@@ -10,6 +10,7 @@
 #include "module/system/system.h"
 #include "resource_ids.h"
 #include "system/transform.h"
+#include "macros.h"
 
 /* VIEW(f02b998): routine Transform_Reset as u32 Transform_Reset(void);
  * graphics.h has void Transform_Reset(void); not tried: Transform_Reset's bound
@@ -18,8 +19,7 @@ extern u32 Render_ResetTransformState__f02b998(void) __asm__(
     "Transform_Reset"); // Returns void; see the tag.
 
 void WorldMap_InitializePerspective(void) {
-  /* FAKEMATCH(signature): Transform_Reset declared returning u32;
-   * as void, 2 of 376 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): Transform_Reset declared returning u32. */
   u8 *perspective;
   struct WorldView *view;
   u8 *camera;
@@ -31,32 +31,40 @@ void WorldMap_InitializePerspective(void) {
   s32 farPlane;
   s32 tileIndex;
 
-  REG_DISPCNT &= 0xc1ff;
+  REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                   DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
   perspective = HeapSlot_Alloc(32, 0x978);
   view = (struct WorldView *)perspective;
   Dma_Fill32Cell(fill, 0, perspective, 0x978);
   view->viewX = 0;
   view->viewY = 0;
-  *(s32 *)(perspective + 0xec) = 0x200000;
-  *(s32 *)(perspective + 0xf0) = 0x400000;
-  *(s32 *)(perspective + 0xf4) = 0x3fe00000;
-  *(s32 *)(perspective + 0xf8) = 0x3fe00000;
-  view->unk010 = NULL;
-  *(void **)(perspective + 0x114) =
-      Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
-  Io_Write16(0x3f9e, &REG_BLDCNT);
-  Io_Write16(0x1010, &REG_BLDALPHA);
+  view->scaleX = Q16_ONE * 32;
+  view->scaleY = Q16_ONE * 64;
+  view->limitX = px(16352);
+  view->limitY = px(16352);
+  view->script = NULL;
+  view->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
+  Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                 BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
+             &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   REG_BLDY = 0;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
                       gMapCellBuffer);
-  view->unk014 = 0x1f00;
-  view->unk016 = 0x80;
+  view->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
+               DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
+  view->fadeStep = 128;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data199),
                       gData_0202e000);
-  Io_Write16(0xa80a, &REG_BG3CNT);
-  Io_Write16(0xaa0e, &REG_BG2CNT);
-  Io_Write16(0x8501, &REG_BG1CNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG3CNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(10) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5) | BGCNT_SIZE(2),
+             &REG_BG1CNT);
   Io_Write16(0x100, &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
@@ -91,9 +99,7 @@ void WorldMap_InitializePerspective(void) {
   SceneTransform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(view->yaw);
   Transform_ApplyPitch(view->pitch);
-  eyeOffset.x = 0;
-  eyeOffset.y = 0;
-  eyeOffset.z = farPlane;
+  SET_POSITION(&eyeOffset, 0, 0, farPlane);
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState__f02b998();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
@@ -118,13 +124,11 @@ void WorldMap_InitializePerspective(void) {
   Transform_ApplyYaw(view->yaw);
   Transform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
-    eyeOffset.x = 0;
-    eyeOffset.y = 0;
-    eyeOffset.z = view->distance + 0x10000;
+    SET_POSITION(&eyeOffset, 0, 0, view->distance + 0x10000);
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   REG_MOSAIC = 0;
-  Io_Write16(0x42, &REG_DISPCNT);
+  Io_Write16(DISPCNT_MODE_2 | DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   gBgScroll[1].x = 0;
   gBgScroll[1].y = 0;
   gBgScroll[2].x = 0;
@@ -136,7 +140,7 @@ void WorldMap_InitializePerspective(void) {
   Task_Add(WorldMap_UpdateView, 0x485);
   Task_Add(WorldMap_ApplyAffinePage, 0xc80);
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)
-    ((u16 *)(perspective + 0x148))[tileIndex] = tileIndex;
+    view->tileIds[tileIndex] = tileIndex;
 }
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
@@ -228,8 +232,8 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   buffer = Heap_Alloc(512);
   view = (struct MapViewWork *)Ram_HeapSlots->mapWork;
   block =
-      &((struct Data02020000 *)Ram_MapBlocks)[((x / (32 << 16)) & 31) +
-                                              (((z / (32 << 16)) & 31) << 5)];
+      &((struct Data02020000 *)
+            Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
   WorldMap_UpdateRegionTint(block->region, 0);
   // Reused: the region, then its group of ten.
   region = block->region;
@@ -375,14 +379,10 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
 
   cellBytes = gMapBlocks__world_map + ((((s32)tileRow / 2) & 31) << 7);
   {
-    /* FAKEMATCH(pin): the BG map address held in r5, loaded right after the
-     * cell address is formed; as a plain local, 4 of 57 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(pin): the BG map address held in r5. */
     register u32 screenBase asm("r5") = 0x06004000;
 
-    /* FAKEMATCH(barrier): the empty asm holding the pin above, which keeps the
-     * address's load where it is; without it, 10 of 57 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): the empty asm. */
     __asm__ volatile("" : "+l"(screenBase));
     screenTile = (u8 *)(((tileRow & 62) << 6) + screenBase);
   }
@@ -395,12 +395,10 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   } while (column <= 31);
 
   {
-    /* FAKEMATCH(pin): the step to the next half's screen row held in r2; as a
-     * plain local, built in r3, 6 of 57 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the step to the next half's screen row held in r2. */
     register u32 screenStep asm("r2") = 0xfc0;
 
-    /* FAKEMATCH(barrier): the empty asm holding the pin above; without it, 10
-     * of 57 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the empty asm holding the pin above. */
     __asm__("" : "+l"(screenStep));
     screenTile += screenStep;
   }
@@ -420,14 +418,11 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   u8 *cellBytes;
   u8 *screenTile;
   u32 row;
-  /* FAKEMATCH(pin): the BG map address held in r5, loaded between the cell
-   * offset's shift and add; as a plain local, 4 of 32 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(pin): the BG map address held in r5. */
   register u32 screenBase asm("r5") = 0x06004000;
 
   cellBytes = gMapBlocks__world_map + ((((s32)tileColumn / 2) & 31) << 2);
-  /* FAKEMATCH(barrier): the empty asm holding the pin above after the cell
-   * address; without it, 4 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm. */
   __asm__ volatile("" : "+l"(screenBase));
   screenTile = (u8 *)((tileColumn & 62) + screenBase);
   row = 0;
@@ -507,8 +502,8 @@ void WorldMap_UpdateView(void) {
   cameraPosition[1] = 0;
   cameraPosition[2] = view->viewY;
   if (view->flat != 0) {
-    gBgScroll[1].x = shakeOffsetX / 0x10000;
-    gBgScroll[1].y = shakeOffsetY / 0x10000;
+    gBgScroll[1].x = shakeOffsetX / Q16_ONE;
+    gBgScroll[1].y = shakeOffsetY / Q16_ONE;
     return;
   }
   gCameraSceneParameters[3] = 120;
@@ -519,9 +514,7 @@ void WorldMap_UpdateView(void) {
   Transform_ApplyYaw(view->yaw);
   Transform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
-    eyeOffset.x = 0;
-    eyeOffset.y = 0;
-    eyeOffset.z = height + 0x10000;
+    SET_POSITION(&eyeOffset, 0, 0, height + 0x10000);
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   Transform_Reset();

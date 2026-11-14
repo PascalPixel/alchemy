@@ -8,6 +8,7 @@
 #include "module/field/field.h"
 #include "module/field/field_effect.h"
 #include "module/field/object.h"
+#include "macros.h"
 
 /// If the scene's sprite is active, stops its update callback
 /// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
@@ -217,9 +218,9 @@ void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   start[1] = mainObject->y + 0x100000;
   start[2] = mainObject->z;
   do {
-    object->x = start[0] + (x - start[0]) * i / 10;
-    object->y = start[1] + (y - start[1]) * i / 10;
-    object->z = start[2] + (z - start[2]) * i / 10;
+    SET_POSITION(object, start[0] + (x - start[0]) * i / 10,
+                 start[1] + (y - start[1]) * i / 10,
+                 start[2] + (z - start[2]) * i / 10);
     object->scaleY = object->scaleX = i * (Q16_ONE * 3 / 4) / 10 + Q16_ONE / 4;
     wait(1);
     i++;
@@ -241,9 +242,8 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   start[1] = mainObject->y + PIXELS(16);
   start[2] = mainObject->z;
   do {
-    object->x = x + (start[0] - x) * i / 10;
-    object->y = y + (start[1] - y) * i / 10;
-    object->z = z + (start[2] - z) * i / 10;
+    SET_POSITION(object, x + (start[0] - x) * i / 10,
+                 y + (start[1] - y) * i / 10, z + (start[2] - z) * i / 10);
     object->scaleY = object->scaleX = i * -(Q16_ONE * 3 / 4) / 10 + Q16_ONE;
     wait(1);
     i++;
@@ -406,9 +406,7 @@ void FieldPsynergy_FadeToCastColor(void) {
 
   tint = gFrameCount & 7;
   raw = *(u16 *)&scene->fieldKind;
-  /* FAKEMATCH(barrier): raw passed through an empty asm, which keeps the
-   * animation's signed read (ldrsh) apart from raw's unsigned one (ldrh);
-   * without it, 7 of 102 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): raw passed through an empty asm. */
   asm("" : "+r"(raw));
   animation = scene->fieldKind;
   if (animation == 18)

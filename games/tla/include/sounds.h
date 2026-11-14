@@ -3,12 +3,13 @@
 
 /// @file
 /// Sound ids, one for each row of gSongTable (sound/song_table.s) in order, as
-/// The Broken Seal's: MUS_ ids are music and jingles, SE_ ids sound effects, as
-/// their sequences in sound/songs are named. A sequence that is The Broken
-/// Seal's note for note takes that game's name; the rest keep their row number
-/// as a placeholder. Four rows are controls no sound plays from: Sound_Play
-/// tests SOUND_FADE_OUT_BGM, SOUND_KEEP_BGM, SOUND_FADE_OUT_ACTION_SE and
-/// SOUND_FADE_OUT_SE5 before the ranges in sound_driver_symbols.h.
+/// The Broken Seal's: MUS_ ids are music and jingles, SE_ ids sound effects,
+/// as their sequences in sound/songs are named. A row with no name yet keeps
+/// its number as its placeholder; a row whose header is Sound_EmptySong plays
+/// nothing. Four rows are controls no sound plays from. Sound_Play tests the
+/// controls first, then the ranges: from SOUND_SE_FIRST to SOUND_SE_END on the
+/// player its gSongTable row names, from SOUND_JINGLE_FIRST jingles, music
+/// otherwise (sound_driver_symbols.h).
 
 enum SoundId {
   MUS_000,

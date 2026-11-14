@@ -104,9 +104,7 @@ void InventorySnapshot_Restore(void) {
       u16 *owners = (u16 *)gMainRoutineWork.activeOwners;
 
       /* FAKEMATCH(temporary): both party-order halfwords stored through one
-       * cursor over activeOwners; as stores through
-       * *(u16 *)&gMainRoutineWork.activeOwners[0] and [2], 4 of 58
-       * instructions differ in tla-en. */
+       * cursor over activeOwners. */
       *owners++ = *src++;
       *owners = *src;
     }

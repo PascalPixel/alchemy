@@ -4,6 +4,8 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 // Kind 24's work (battle_fx_work[0]), as HoverGlow_Update's draft has it.
 /* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has
@@ -77,7 +79,7 @@ void FieldPsynergy_Hover(void) {
   Actor_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
   BattleEffect_SetObjectUpdateMode(player, 0);
   Actor_SelectAnimationFar(player, 5);
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
   work->unk1030 = 0;
   work->phase = 0;
@@ -106,7 +108,7 @@ void FieldPsynergy_Hover(void) {
 
   if (found) {
     wait(5);
-    Sound_PlayFar(246);
+    Sound_PlayFar(SE_GLITTER);
     for (i = 0; i < 32; i++) {
       work->scale = i << 11;
       wait(1);
@@ -130,14 +132,14 @@ void FieldPsynergy_Hover(void) {
     event->glow = 100;
     for (i = 0; i < 32; i++) {
       if (i == 10)
-        Sound_PlayFar(246);
-      player->y += 0x10000;
+        Sound_PlayFar(SE_GLITTER);
+      player->y += px(1);
       work->scale = i << 11;
       wait(1);
     }
     player->motionFlags = 4;
     player->y = player->terrainHeight + 0x248000;
-    player->gravity = 0x30000;
+    player->gravity = px(3);
     gMainRoutineWork.renderMode = 10;
     work->fading = 1;
     event->glowHeld = 1;
@@ -164,7 +166,7 @@ void FieldPsynergy_EndHover(void) {
       break;
     wait(1);
   }
-  Sound_PlayFar(132);
+  Sound_PlayFar(SE_WATER);
   wait(1);
   for (i = 0; i < 20; i++) {
     if (object->y <= object->terrainHeight)
@@ -181,7 +183,7 @@ void FieldPsynergy_EndHover(void) {
   object->bounce = 0;
   object->velocityY = 0;
   object->y = object->terrainHeight;
-  object->gravity = 0x10000;
+  object->gravity = px(1);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(92);
 }

@@ -39,7 +39,7 @@ void GroundParticles_Start(void) {
   work = HeapSlot_AllocEwram(
       116, sizeof(struct GroundParticleWork__ground_particles));
   leader = Ram_HeapSlots->mapWork->origin;
-  Scene_QueueMusic(170);
+  Scene_QueueMusic(SE_170);
   particle = work->particles;
   Dma_Fill32(zero, work, sizeof(struct GroundParticleWork__ground_particles));
   words = HeapSlot_AllocEwram(56, 0x400);
@@ -129,8 +129,8 @@ void RisingParticles_Start(void) {
   struct RisingParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;
-  /* FAKEMATCH(pin): the fill's zero held in r2, built after the copy of
-   * work; as a plain local, 8 of 85 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the fill's zero held in r2, built after the copy of work.
+   */
   register u32 zero asm("r2");
   s32 priority;
   u8 *tiles;

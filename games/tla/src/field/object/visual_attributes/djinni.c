@@ -3,16 +3,20 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "flags.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
 #include "scene_call.h"
+#include "macros.h"
 
 /// Per-frame update: spins an object 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
-  object->angle += 0x2000;
+  object->angle += TRIG_TURN / 8;
 }
 
 // Objects: follow a watched object.
@@ -60,12 +64,12 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni = Actor_GetById(djinniId);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  dir = (leader->facing + 0x2000) & 0xc000;
+  dir = (leader->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
   Event_Start();
   wait(10);
-  Sound_PlayFar(173);
+  Sound_PlayFar(SE_NOTE_LOW);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlayFar(175);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   wait(10);
   back = dir + 0x8000;
@@ -77,19 +81,19 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->motionFlags = 2;
   djinni->update = (void (*)(void))FieldEffect_AdvanceSpinAngle;
 #if TLA_PATCH_1
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
 #endif
-  djinni->gravity = 0x4000;
-  djinni->velocityY = 0x48000;
+  djinni->gravity = px(1) / 4;
+  djinni->velocityY = px(9) / 2;
   wait(33);
   ((struct AnimationObject *)djinni->sprite)->image.priority = 0;
 #if TLA_PATCH_1
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
 #endif
   djinni->velocityY = 0x4cccc;
   wait(35);
 #if TLA_PATCH_1
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
 #endif
   djinni->velocityY = 0x4e666;
   wait(38);
@@ -131,7 +135,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni->speedLimit = 0x4ccc;
   djinni->acceleration = 0x4ccc;
-  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000, dir + 0x8000);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(16),
+                                            dir + TRIG_TURN / 2);
   Sound_PlayFar(LEAP_SOUND);
   Actor_Jump(djinniId, 6, 5);
   wait(24);
@@ -144,13 +149,13 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->velocityX = 0;
   djinni->velocityZ = 0;
   djinni->velocityY = 0;
-  djinni->targetX = 0x80000000;
-  djinni->targetZ = 0x80000000;
-  djinni->targetY = 0x80000000;
+  djinni->targetX = TARGET_UNSET;
+  djinni->targetZ = TARGET_UNSET;
+  djinni->targetY = TARGET_UNSET;
   Actor_SelectAnimationFar(djinni, 0);
   ((struct AnimationObject *)djinni->sprite)->image.priority = 2;
 #if TLA_PATCH_1
-  djinni->gravity = 0x10000;
+  djinni->gravity = px(1);
 #endif
   Event_End();
 }
@@ -218,7 +223,7 @@ void Djinn_RestoreActorAfterBattle(void) {
   s32 id;
 
   scene &= raw;
-  if (GameFlag_Get(0x109) != 0 && flags == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
     flags = scene & 0x800;
     scene &= 0x7ff;
     if (scene - 300 <= 80 && party->sequenceResult > 0) {
@@ -241,7 +246,7 @@ void Djinn_RestoreActorAfterBattle(void) {
           struct Actor *selection = ObjectTable_Get(*owner);
 
           Actor_SetPositionAndResetMotionFar(obj, selection->x, selection->y,
-                                             selection->z - (32 << 16));
+                                             selection->z - px(32));
         }
         Actor_SelectAnimationFar(obj, 1);
       }
@@ -351,7 +356,7 @@ void FieldEffect_ReleaseSlots(void) {
 }
 
 void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
-  object->angle += 0x2000;
+  object->angle += TRIG_TURN / 8;
 }
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
@@ -365,8 +370,6 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct EffectVector position;
 
   owner = Actor_GetById(gMainRoutineWork.currentOwner);
-  // Each age test reads age signed (ldrsh); as particle->age == 60 and so on,
-  // 54 of 122 instructions differ in tla-en.
   if (particle->state == 0) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;
@@ -382,9 +385,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     }
   } else if (particle->state == 2) {
     particle->orbitAngle += 1;
-    position.x = owner->x;
-    position.y = owner->y + 20 * Q16_ONE;
-    position.z = owner->z;
+    SET_POSITION(&position, owner->x, owner->y + 20 * Q16_ONE, owner->z);
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;

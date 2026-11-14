@@ -3,6 +3,8 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "system/frame.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
@@ -81,9 +83,9 @@ void Actor_ResetTargetsAndVelocity(u32 objectId) {
   if (object != NULL) {
     object->actionFlags = (u8)(object->actionFlags | 1);
     Actor_StartIdleFar(object);
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     SET_VELOCITY(object, 0, 0, 0);
     object->unk56 = 0;
   }
@@ -434,9 +436,7 @@ void Actor_SetActionById(u32 objectId, s32 action) {
 void Actor_WaitForAnimationChange(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
   struct AnimationGroup *group;
-  // volatile: saved lives in a 4-byte stack frame, stored once and loaded again
-  // for each compare, as the bytes have it; as a plain u32, 29 of 37
-  // instructions differ in tla-en.
+  /* FAKEMATCH(volatile): saved lives in a 4-byte stack frame. */
   volatile u32 saved;
   s32 elapsedFrames;
 
@@ -493,9 +493,9 @@ void Actor_Jump(u32 objectId, s32 speed, s32 eventId) {
     *objectFlags = updatedFlags;
     object->velocityY = verticalVelocity;
     if (speed > 5) {
-      Sound_PlayFar(0x99);
+      Sound_PlayFar(SE_HIGH_JUMP);
     } else {
-      Sound_PlayFar(0x98);
+      Sound_PlayFar(SE_JUMP);
     }
     Event_Wait(eventId);
   }
@@ -598,10 +598,6 @@ void Actor_ArmCallback(s32 id, s32 value, s32 mode);
 /// `particle` every other frame (none for -1), and jumps on 16 pixels to land,
 /// waiting up to 180 frames for it unless `particle` has flag 0x1000. The
 /// Broken Seal's twin is Actor_JumpDownLedge.
-// The landing wait matches only as a guarded do-while: as
-// while (y > ground) { wait(1); if (++i >= 180) break; } agscc keeps
-// the test at the top and jumps back to it (differ 18), where the native has
-// the test copied below the body as loop rotation would place it.
 void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   struct Actor *object = Actor_GetById(id);
   s32 z = object->z;
@@ -617,21 +613,21 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   Actor_SelectAnimationFar(object, 1);
   Actor_SetSpriteFlagsFar(object, 0);
   object->motionFlags |= 2;
-  object->velocityY = 0x40000;
+  object->velocityY = px(4);
   Actor_SetMoveTargetFar(object, x, object->y, z + 0xc0000);
   wait(6);
-  Sound_PlayFar(217);
+  Sound_PlayFar(SE_FLOOR_SWITCH);
   Actor_ArmCallback(id, 0x5000, 0);
   object->motionFlags = 0;
   for (i = 0; i < 14; i++) {
-    object->y -= 0x20000;
+    object->y -= px(2);
     object->targetY = object->y;
     wait(1);
     if (particle != -1 && (i & 1))
       FieldEffect_SpawnDustPuff(object, particle);
   }
   object->motionFlags = 3;
-  object->velocityY = 0x30000;
+  object->velocityY = px(3);
   Actor_SetMoveTargetFar(object, x, object->y, z + 0x100000);
   Actor_WaitForMoveFar(object);
   if (particle & 0x1000) {

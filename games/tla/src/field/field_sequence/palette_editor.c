@@ -5,7 +5,7 @@
 #include "../field_sequence_internal.h"
 #include "module/system/system.h"
 
-#define PALETTE ((u16 *)0x05000000)
+#define PALETTE ((u16 *)BG_PLTT)
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define HEX_DIGIT 0xf0e0
 

@@ -3,9 +3,9 @@
 #include "macros.h"
 
 void SceneActor_ParkRecord(struct Actor *actor) {
-  actor->targetX = ACTOR_NO_TARGET;
-  actor->targetY = ACTOR_NO_TARGET;
-  actor->targetZ = ACTOR_NO_TARGET;
+  actor->targetX = TARGET_UNSET;
+  actor->targetY = TARGET_UNSET;
+  actor->targetZ = TARGET_UNSET;
 
   SET_VELOCITY(actor, 0, 0, 0);
 

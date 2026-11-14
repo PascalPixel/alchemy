@@ -192,8 +192,7 @@ void Unit_Calculate(s32 owner) {
         st->curse |= 3;
       work->atk += work->item->primaryBonus;
       /* FAKEMATCH(barrier): an empty asm after `work->atk +=
-       * work->item->primaryBonus;`; as plain statements, 2 of 900 instructions
-       * differ in tla-en. */
+       * work->item->primaryBonus. */
       asm("");
       work->def += work->item->secondaryBonus;
       for (j = 0; j < 4; j++) {
@@ -640,8 +639,7 @@ void MainRoutineWork_InitializeDefaults(void) {
 #else
   {
     /* FAKEMATCH(pin): the channel kept in r3 through the transfer and copied
-     * from there for the wait, r3 then holding the busy bit; as START_DMA and
-     * WaitDma(DMA3), 10 of 320 instructions differ in tla-ja. */
+     * from there for the wait. */
     register u32 held asm("r3") = (u32)DMA3;
     struct DmaRegisters volatile *channel;
 
@@ -699,10 +697,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gFrameWaitCount = 0;
   gAutoSleepEnabled = 0;
   gMainRoutineWork.playTime = 0;
-  /* FAKEMATCH(volatile): the auto-sleep flag, declared volatile above, read
-   * again after the play time store, as The Broken Seal declares its
-   * gIdleSleepEnabled; as plain u8, as frame.h declares it, 108 of 322
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the auto-sleep flag. */
   gMainRoutineWork.unk244[6] = gAutoSleepEnabled;
   gIdleFrameCount = 0;
   gSaveSlot = -1;
@@ -1010,9 +1005,7 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
         GameFlag_SetBit__game(flag);
       else
         GameFlag_Clear(flag);
-      /* FAKEMATCH(barrier): an empty asm reading j, which keeps the counter
-       * the native's one long-lived register; without it, 105 of 219
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading j. */
       asm("" : : "r"(j));
     }
   }
@@ -1123,14 +1116,10 @@ void Party_AddIsaacsParty(void) {
     for (j = 0; j < 7; j++) {
       if (GameFlag_Get(0x800 + k + j))
         GameFlag_SetBit__game(0x30 + i * 20 + j);
-      /* FAKEMATCH(barrier): an empty asm reading j keeps loop.c from
-       * reversing the signed counter; as the same loop without it, 8 of
-       * 142 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading j. */
       asm("" : : "r"(j));
     }
-    /* FAKEMATCH(barrier): an empty asm on i keeps i * 20 from being
-     * strength-reduced; as the same loops without it, 20 of 142
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on i. */
     asm("" : "+r"(i));
   }
   PartyInventory_Remove(222);
@@ -1255,8 +1244,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
     s32 flag;
 
     for (j = 0; j < 7; j++) {
-      /* FAKEMATCH(temporary): the form kept; as GameFlag_Set(0x800 + k + j),
-         8 of 206 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the flag number held in a local. */
       flag = 0x800 + k + j;
       // element carries the flag to read after the one to set.
       element = 0x30 + i * 20 + j;

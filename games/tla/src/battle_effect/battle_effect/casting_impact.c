@@ -4,6 +4,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 // Steps the 64 background colours one shade toward the resource's palette.
 void BattleEffect_StepPaletteToResource(s32 resource) {
@@ -234,14 +237,13 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_DrawModelList__ability_effects(struct Model *);
 
-#define PLTT ((void *)0x05000000)
-#define BG_VRAM ((void *)0x06004000)
+#define PLTT ((void *)BG_PLTT)
+#define BG_VRAM ((void *)BG_CHAR_BLOCK(1))
 #define SPARKS sparks
 #define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
-// The second release in a once-only block, whose loop note sets kinds 68 and
-// 84's scheduling; the other sites spell the releases out.
+/* FAKEMATCH(dead): the second release in a once-only block. */
 #define RELEASE_BLITTERS()                                                     \
   HeapSlot_Release(188);                                                       \
   do {                                                                         \
@@ -295,7 +297,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
   else
     BattleEffect_StartCanvasLayer(0);
 
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, tiles, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->frames, 1,
                              0);
@@ -412,7 +414,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture, buffer + 0x2000,
                                1, 1);
   } else if (kind == 73) {
-    REG_BLDALPHA = 0xc10;
+    REG_BLDALPHA = BLEND_ALPHA(16, 12);
   } else if (kind == 70) {
     Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, buffer, 1, 0);
   } else if (kind == 66) {
@@ -595,8 +597,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     }
     Actor_SetAnimationSpeedFar(object, 0);
     /* FAKEMATCH(temporary): vec holds origin and then base while each is
-     * filled; as origin[...] and base[...], 62 of 7666 instructions differ in
-     * tla-en. */
+     * filled. */
     vec = origin;
     vec[0] = object->x;
     vec[1] = object->y + 0x500000;
@@ -614,7 +615,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     vec = base;
     EffectPosition_ProjectScaledBattler(action->actor, vec);
     vec[0] = vec[0] / 2;
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
 
     for (frame = 0; frame != 32; frame++) {
       struct Particle *p;
@@ -657,8 +658,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         pos[0] = pos[0] / 2;
         drawFuncs.draw[0](screen, buffer + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
                           40);
-        /* FAKEMATCH(barrier): an empty asm reading origin keeps it live past
-         * the draw; without it, 287 of 7666 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm reading origin. */
         __asm__("" : : "X"(origin));
       }
       work->unk78e8 = 1;
@@ -770,9 +770,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       i = 0;
       p = work->particle;
       for (; i != 32; i++, p++) {
-        p->x = object2->x;
-        p->y = half;
-        p->z = object2->z;
+        SET_POSITION(p, object2->x, half, object2->z);
         if (kind == 61) {
           p->vx = ((Random16() & 255) - 127) << 12;
           p->vy = ((Random16() & 255) - 64) << 10;
@@ -793,26 +791,26 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                                  work->frames, 1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, buffer, 1,
                                  0);
-      REG_BLDALPHA = 0xe10;
+      REG_BLDALPHA = BLEND_ALPHA(16, 14);
     }
     if (kind == 86) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0F1, buffer, 1, 1);
-      REG_BLDALPHA = 0x810;
+      REG_BLDALPHA = BLEND_ALPHA(16, 8);
     }
     if (kind == 88) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0DD, buffer, 1, 1);
-      REG_BLDALPHA = 0x810;
+      REG_BLDALPHA = BLEND_ALPHA(16, 8);
     }
     if (kind == 62) {
       Resource_LoadAndDecompress((s32)&ResourceId_BlueBeastSheet, work->frames,
                                  1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetB, buffer, 1,
                                  0);
-      REG_BLDALPHA = 0xe10;
+      REG_BLDALPHA = BLEND_ALPHA(16, 14);
     }
     if (kind == 85) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0F0, buffer, 1, 1);
-      REG_BLDALPHA = 0xe10;
+      REG_BLDALPHA = BLEND_ALPHA(16, 14);
     }
 
     if (kind == 7 || kind == 43 || kind == 48 || kind == 73 || kind == 77 ||
@@ -822,9 +820,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       for (i = 0; i != 64; i++) {
         struct Particle *q;
         q = &SPARKS[i];
-        q->x = object2->x;
-        q->y = 0x140000;
-        q->z = object2->z;
+        SET_POSITION(q, object2->x, px(20), object2->z);
         if (object2->x < 0)
           q->vx = -((Random16() & 255) + 128) << 11;
         else
@@ -841,9 +837,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         height = 0x140000;
       p = SPARKS;
       for (i = 0; i != 64; i++, p++) {
-        p->x = object2->x;
-        p->y = height;
-        p->z = object2->z;
+        SET_POSITION(p, object2->x, height, object2->z);
         if (kind == 5 || kind == 53) {
           p->vx = ((Random16() & 255) - 127) << 11;
           p->vy = (Random16() & 255) << 11;
@@ -1075,7 +1069,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
 
         start = 12;
         if (frame == 12)
-          Sound_PlayFar(142);
+          Sound_PlayFar(SE_SWIRL);
         if (kind == 78)
           start = 0;
         if (frame == 50)
@@ -1086,9 +1080,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           struct Particle *p;
           p = SPARKS;
           for (i = 0; i != 64; i++, p++) {
-            p->x = object2->x;
-            p->y = 0x140000;
-            p->z = object2->z;
+            SET_POSITION(p, object2->x, px(20), object2->z);
             p->vx = ((Random16() & 255) - 128) << 10;
             p->vy = ((Random16() & 255) - 128) << 10;
             p->vz = ((Random16() & 255) - 128) << 10;
@@ -1153,7 +1145,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (frame == 4)
             work->unk77a8 = 12;
           if (frame == 8)
-            Sound_PlayFar(221);
+            Sound_PlayFar(SE_RISE_WITH_SPARKS);
         }
         if (kind == 6 || kind == 57) {
           if (frame >= 6 && frame < 20) {
@@ -1166,7 +1158,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           s32 x;
           for (i = 0; i != 4; i++) {
             s32 m;
-            angle = frame * 1848 + i * 0x4000;
+            angle = frame * 1848 + i * (TRIG_TURN / 4);
             m = ((frame + i * 3) / 2) & 3;
             x = target[0] / 2 + ((Trig_Sin(angle) << 5) >> 16);
             // DEAD: the cosine is computed and dropped; the source keeps the
@@ -1198,8 +1190,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             y = ((Trig_Cos(angle) * amp) >> 16) + off - gData_08197498[m] / 2;
             HeapSlot_Release(188);
             HeapSlot_Release(104);
-            // Once-only block: its loop notes keep sched2 from moving the
-            // releases' argument loads, as the listing has them.
+            /* FAKEMATCH(dead): a once-only block. */
             do {
               BattleEffect_BuildBlitter(188, 7, 7,
                                         gData_0819887e[Random16() & 3] | 3, 0);
@@ -1249,7 +1240,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           }
         }
         if (frame == 6)
-          Sound_PlayFar(221);
+          Sound_PlayFar(SE_RISE_WITH_SPARKS);
       } else if (kind == 44) {
         s32 count;
         HeapSlot_Release(188);
@@ -1278,9 +1269,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             for (; i != 64; i++, p++) {
               if (p->life == 0) {
                 count++;
-                p->x = object2->x;
-                p->y = 0x140000;
-                p->z = object2->z;
+                SET_POSITION(p, object2->x, px(20), object2->z);
                 p->vx = ((Random16() & 255) - 127) << 12;
                 p->vy = ((Random16() & 255) - 64) << 10;
                 p->vz = ((Random16() & 255) - 127) << 12;
@@ -1404,13 +1393,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (y > 16)
           y = 16;
         {
-          /* FAKEMATCH(pin): hold, an input of the empty asm below, keeps r2 for
-           * h; as a plain local, 1602 of 7666 instructions differ in tla-en. */
+          /* FAKEMATCH(pin): hold, an input of the empty asm below. */
           register s32 hold __asm__("r2");
           h = 96;
-          /* FAKEMATCH(barrier): an empty asm through h, with hold as an
-           * input, keeps r2 held until h is set; as h = 96 alone, 16 of 7666
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm through h, with hold as an input.
+           */
           __asm__("" : "=r"(h) : "0"(h), "r"(hold));
         }
         if (frame > 7) {
@@ -1423,9 +1410,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               s32 k;
               s32 threshold;
               for (k = 0, threshold = t; k != 69; k++) {
-                /* FAKEMATCH(barrier): an empty asm through threshold keeps it a
-                 * copy of t in a register of its own; without it, 48 of 7666
-                 * instructions differ in tla-en. */
+                /* FAKEMATCH(barrier): an empty asm through threshold. */
                 __asm__("" : "=r"(threshold) : "0"(threshold));
                 if (work->frames[(row & 15) * 69 + k] < threshold)
                   buffer[row * 69 + k] = 0;
@@ -1469,12 +1454,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           else
             m = 3;
           HeapSlot_Release(188);
-          // Once-only block: it ends CSE's block before the second draw reads
-          // target again, with no scheduling barrier inside the first draw.
+          /* FAKEMATCH(dead): a once-only block. */
           do {
-            /* FAKEMATCH(pin): pinned, set to 56 among the first draw's
-             * arguments, takes r3 while they are evaluated; as a plain 56, 2 of
-             * 7666 instructions differ in tla-en. */
+            /* FAKEMATCH(pin): a 56 pinned to r3 for the first draw. */
             register s32 pinned __asm__("r3");
             HeapSlot_Release(104);
             BattleEffect_LoadBlitter(104, 3);
@@ -1557,12 +1539,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         work->unk7784 = 0;
         if (frame == 7) {
           work->unk77a8 = 16;
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         }
         if (frame == 11)
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         if (frame == 15)
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         HeapSlot_Release(188);
         HeapSlot_Release(104);
         if (action->side == 0)
@@ -1623,7 +1605,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           scrollB = scrollB * 48 / 64;
         REG_BG2X = (scrollA >> 16) << 8;
         if (frame == 0)
-          REG_BLDALPHA = 0x810;
+          REG_BLDALPHA = BLEND_ALPHA(16, 8);
         t = frame - 24;
         if (t >= 0 && t < 16)
           REG_BLDALPHA = (16 - t) | 0x1000;
@@ -1684,9 +1666,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           struct Particle *p;
           p = SPARKS;
           for (i = 0; i != 64; i++, p++) {
-            p->x = (Random16() & 127) + 32;
-            p->y = 0;
-            p->z = 0;
+            SET_POSITION(p, (Random16() & 127) + 32, 0, 0);
             p->vx = Random16() & 0xffff;
             p->vy = Random16() & 0xffff;
             p->vz = Random16() & 0xffff;
@@ -1708,7 +1688,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                               point[0] - 4, point[1] - 4, 8, 8);
             p->x -= 6;
             if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
-              Sound_PlayFar(133);
+              Sound_PlayFar(SE_IMPACT);
               BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
             }
           }
@@ -1744,7 +1724,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         } else {
           work->unk7780 = 2;
           work->unk7784 = 50;
-          REG_BLDCNT = 0x3f44;
+          REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         }
         if (frame < 32) {
           drawFuncs.draw[1](screen, buffer + 0x800, (p->x >> 16) - 24,
@@ -1757,7 +1737,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0x4000);
         }
         if (frame == 11) {
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
           work->unk77a8 = 16;
         }
       } else if (kind == 63 || kind == 64) {
@@ -1789,7 +1769,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           }
           drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
           if (frame == 13) {
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             work->unk77a8 = 8;
             BattleEffect_StartActorMotion(action->actors[0], 1, 0x20000,
                                           0x80000, 0x30000, 150);
@@ -1831,15 +1811,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           struct Particle *p;
           Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture,
                                      buffer + 0x2000, 1, 1);
-          REG_BLDALPHA = 0x410;
+          REG_BLDALPHA = BLEND_ALPHA(16, 4);
           work->unk7780 = 1;
           work->unk7784 = 0;
           REG_BG2PA = 0x100;
           p = work->particle;
           for (i = 0; i != 32; i++, p++) {
-            p->x = ((Random16() & 31) + 48) << 16;
-            p->y = ((Random16() & 31) + 64) << 16;
-            p->z = Random16();
+            SET_POSITION(p, ((Random16() & 31) + 48) << 16,
+                         ((Random16() & 31) + 64) << 16, Random16());
             p->vx = ((Random16() & 63) - 32) << 12;
             p->vy = -((Random16() & 127) + 16) << 12;
             p->vz = (Random16() & 15) + 16;
@@ -1849,7 +1828,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 14) {
           BattleEffect_StartActorMotion(action->actors[0], 1, 0x20000, 0x80000,
                                         0x30000, 150);
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
           work->unk77a8 = 8;
         }
         i = 0;
@@ -1903,9 +1882,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 4)
           work->unk77a8 = 8;
         if (frame == 6)
-          Sound_PlayFar(221);
+          Sound_PlayFar(SE_RISE_WITH_SPARKS);
         if (frame == 24)
-          Sound_PlayFar(390);
+          Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
         if (frame >= 8 && frame < 24) {
           s32 y;
           for (i = 0; i != 3; i++) {
@@ -1956,7 +1935,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                                             (target[1] - 64) << 16, 0);
               Transform_ApplyRoll(p->z);
               p->z += p->vz;
-              SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
+              SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
               Render_TransformVertices(gData_081991b0, matrix, 4);
               Render_DrawModelList(model);
             }
@@ -1986,17 +1965,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         Transform_Reset();
         SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
                                       (target[1] - 64) << 16, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (frame == 8)
-          Sound_PlayFar(104);
+          Sound_PlayFar(SE_104);
         if (fade >= -63) {
           fade = frame << 12;
           if (kind == 82) {
-            Transform_ApplyPitch(-0x800);
+            Transform_ApplyPitch(-TRIG_TURN / 32);
             Transform_ApplyYaw(-frame << 11);
             Transform_ApplyPitch(-frame << 4);
           } else {
-            Transform_ApplyPitch(-0x1000);
+            Transform_ApplyPitch(-TRIG_TURN / 16);
             Transform_ApplyYaw(frame << 11);
           }
           SceneTransform_ApplyUniformScale(fade);
@@ -2004,7 +1983,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Render_DrawModelList(model);
           if (kind != 82) {
             Transform_ApplyYaw(-frame << 12);
-            SceneTransform_ApplyUniformScale(0x8000);
+            SceneTransform_ApplyUniformScale(Q16_ONE / 2);
             Render_TransformVertices(gData_08199210, matrix, 4);
             Render_DrawModelList(model);
           }
@@ -2052,9 +2031,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 Transform_Reset();
                 SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
                                               (target[1] - 64) << 16, 0);
-                SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-                Transform_ApplyRoll((i << 14) + 0x2000);
-                Transform_ApplyPitch(-0x1000);
+                SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyPitch(-TRIG_TURN / 16);
                 SceneTransform_ApplyUniformScale(angle >> 1);
                 Render_TransformVertices(gData_08199210, matrix, 4);
                 Render_DrawModelList(model);
@@ -2075,8 +2054,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               Transform_Reset();
               SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
                                             (target[1] - 64) << 16, 0);
-              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-              Transform_ApplyPitch(0x4000);
+              SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+              Transform_ApplyPitch(TRIG_TURN / 4);
               SceneTransform_ApplyUniformScale(angle);
               Render_TransformVertices(gData_08199210, matrix, 4);
               Render_DrawModelList(model);
@@ -2095,9 +2074,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 Transform_Reset();
                 SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
                                               (target[1] - 64) << 16, 0);
-                SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-                Transform_ApplyRoll((i << 14) + 0x2000);
-                Transform_ApplyPitch(-0x1000);
+                SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyPitch(-TRIG_TURN / 16);
                 SceneTransform_ApplyUniformScale(t * 3 << 12);
                 Render_TransformVertices(gData_08199210, matrix, 4);
                 Render_DrawModelList(model);
@@ -2165,7 +2144,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             Transform_Reset();
             SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16, 0x280000,
                                           0);
-            SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+            SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             Transform_ApplyPitch(1000);
             SceneTransform_ApplyUniformScale(angle);
             Render_TransformVertices(gData_08199210, matrix, 4);
@@ -2209,8 +2188,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         s32 scale;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
-        /* FAKEMATCH(temporary): tex holds &texture132; as texture132.width and
-         * so on, 106 of 7666 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): tex holds &texture132. */
         tex = &texture132;
         tex->width = 6;
         tex->height = 6;
@@ -2223,13 +2201,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           start = gData_0819895e[i] + 4;
           model->frame = (frame * 8 + i * 32) & 127;
           if (frame == start + 4)
-            Sound_PlayFar(104);
+            Sound_PlayFar(SE_104);
           if (frame > start) {
             fade = (start - frame) * 8 + 56;
             if (fade > -16)
               fade = -16;
             if (fade > -64) {
-              scale = (frame - start) * gData_08198962[i] * 2000 + 0x4000;
+              scale = (frame - start) * gData_08198962[i] * 2000 + Q16_ONE / 4;
               model->fade = fade;
               Transform_Reset();
               SceneTransform_ApplyPosition3((target[0] / 2 - 60) << 16,
@@ -2309,12 +2287,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 4)
           work->unk77a8 = 12;
         if (frame == 8)
-          Sound_PlayFar(103);
+          Sound_PlayFar(SE_CURSE);
       } else if (kind == 10) {
         if (frame == 0) {
           work->unk7780 = 1;
           work->unk7784 = 0;
-          REG_BLDALPHA = 0x610;
+          REG_BLDALPHA = BLEND_ALPHA(16, 6);
         }
         p = SPARKS;
         for (i = 0; i != 24; i++, p++) {
@@ -2334,7 +2312,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 4)
           work->unk77a8 = 12;
         if (frame == 8)
-          Sound_PlayFar(103);
+          Sound_PlayFar(SE_CURSE);
       } else if (kind == 42) {
         s32 m;
         if (frame > 47)
@@ -2351,16 +2329,16 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
       } else if (kind == 76) {
         if (frame == 18)
-          Sound_PlayFar(390);
+          Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
         for (i = 0; i != 3; i++) {
           if (frame == i * 3 + 3) {
-            Sound_PlayFar(212);
+            Sound_PlayFar(SE_POWER_UP);
             Iwram_FillWords(screen, 0x4000, 0x2f2f2f2f);
           }
         }
       } else if (kind == 74) {
         if (frame == 8)
-          Sound_PlayFar(103);
+          Sound_PlayFar(SE_CURSE);
         p = SPARKS;
         for (i = 0; i != 32; i++, p++) {
           if (frame >= i / 2 + 4) {
@@ -2415,7 +2393,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         drawFuncs.draw[1](screen, buffer + 0x3c56, point[0] - 10, point[1] - 4,
                           20, 40);
         if (frame == 23)
-          (BattleObject_GetFar(action->actor)->object)->velocityY = 0x30000;
+          (BattleObject_GetFar(action->actor)->object)->velocityY = px(3);
         if (frame > 19)
           origin[1] += 0x40000;
         if (frame == 23) {
@@ -2424,9 +2402,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               BattleUnit_GetEffectHeightFar(action->actors[0]) / 2 + 0x1e0000;
           p = work->particle;
           for (i = 0; i != 64; i++, p++) {
-            p->x = object2->x;
-            p->y = half;
-            p->z = object2->z;
+            SET_POSITION(p, object2->x, half, object2->z);
             p->vx = ((Random16() & 255) - 127) << 11;
             p->vy = ((Random16() & 255) - 64) << 11;
             p->vz = ((Random16() & 255) - 127) << 11;
@@ -2450,7 +2426,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (frame == i * 4 + 8) {
             BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 2);
             work->unk77a8 = 2;
-            Sound_PlayFar(133);
+            Sound_PlayFar(SE_IMPACT);
           }
         }
       }
@@ -2467,11 +2443,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         BattlePlayback_StartFar(-1);
       if (frame == 4) {
         if (kind == 91)
-          Sound_PlayFar(145);
+          Sound_PlayFar(SE_CRASH);
         else if (kind == 78 || kind == 81 || kind == 98)
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         else
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 6) {
         if (kind == 4 || kind == 5 || kind == 7 || kind == 43 || kind == 48 ||

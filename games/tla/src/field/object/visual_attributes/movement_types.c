@@ -3,6 +3,8 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
 #include "scene_call.h"
@@ -336,22 +338,22 @@ s32 Field_TryJumpForward(void) {
     return result;
   if (gMainRoutineWork.renderMode == 3)
     return result;
-  if ((angle + 0x1000) & 0x2000) // not facing a quarter turn
+  if ((angle + TRIG_TURN / 16) & TRIG_TURN / 8) // not facing a quarter turn
     return result;
-  angle = (angle + 0x2000) & 0xc000;
+  angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
   positionWords = position;
 again:
   // The middle of the tile in front, then of the tile beyond.
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == 1)
     return -1;
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
-  Vector_AddPolarOffset(0x200000, angle, position);
+  Vector_AddPolarOffset(px(32), angle, position);
   canJump = 0;
   if (MapGrid_BlocksJump(leader, position) == 0 &&
       MapGrid_CheckCollisionFar(leader, position) == 0)
@@ -422,11 +424,11 @@ again:
     Event_Start();
     Actor_SelectAnimationFar(leader, 6);
     wait(6);
-    Sound_PlayFar(152);
+    Sound_PlayFar(SE_JUMP);
     Actor_SelectAnimationFar(leader, 7);
-    leader->speedLimit = 0x30000;
-    leader->acceleration = 0x20000;
-    leader->velocityY = 0x40000;
+    leader->speedLimit = px(3);
+    leader->acceleration = px(2);
+    leader->velocityY = px(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner,
@@ -456,17 +458,17 @@ again:
          (platform = Actor_FindNearestFacingTarget(leader, 259)) != NULL) &&
         (platform->priorityFlags & 2)) {
       Actor_SelectAnimationFar(platform, 7);
-      leader->y -= 0x10000;
-      leader->terrainHeight -= 0x10000;
+      leader->y -= px(1);
+      leader->terrainHeight -= px(1);
       wait(2);
-      leader->y -= 0x10000;
-      leader->terrainHeight -= 0x10000;
+      leader->y -= px(1);
+      leader->terrainHeight -= px(1);
       wait(10);
-      leader->y += 0x10000;
-      leader->terrainHeight += 0x10000;
+      leader->y += px(1);
+      leader->terrainHeight += px(1);
       wait(4);
-      leader->y += 0x10000;
-      leader->terrainHeight += 0x10000;
+      leader->y += px(1);
+      leader->terrainHeight += px(1);
     } else {
       wait(6);
     }
@@ -553,7 +555,7 @@ s32 Field_ClimbDown(void) {
 
     // Step to the middle of the tile, face north and climb down a tile.
     Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, gridX, gridZ);
-    leader->speedLimit = 0x10000;
+    leader->speedLimit = px(1);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
     Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
     leader->actionFlags = 1;
@@ -570,14 +572,14 @@ s32 Field_ClimbDown(void) {
     // Let go of the wall and fall.
     Actor_SelectAnimationFar(leader, 10);
     leader->motionFlags = 3;
-    leader->velocityY = 0x40000;
+    leader->velocityY = px(4);
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(6);
     gMainRoutineWork.renderMode = 0;
     leader->actionFlags = 1;
-    leader->facing = 0xc000;
+    leader->facing = TRIG_TURN * 3 / 4;
     leader->timer = 0;
     leader->unk66 = 0;
   }
@@ -639,12 +641,12 @@ s32 Field_ClimbUp(void) {
     Actor_SelectAnimationFar(leader, 6);
     wait(4);
     Actor_SelectAnimationFar(leader, 7);
-    leader->velocityY = 0x40000;
+    leader->velocityY = px(4);
     wait(4);
     leader->motionFlags = result;
     spriteFlags &= 0xfe;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
-    leader->speedLimit = 0x10000;
+    leader->speedLimit = px(1);
     leader->velocityY = result;
     Actor_SelectAnimationFar(leader, 12);
     wait(4);
@@ -706,10 +708,7 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
   work = ROPE_WORK;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH(barrier): an empty asm keeps the loop's set-up (the node
-   * pointer, the best distance, the count and the IWRAM entry) after the
-   * workspace test, where if-conversion would hoist it; without it, 29 of 85
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm. */
   asm("");
   node = work->nodes;
   best = 0x10000000;
@@ -741,10 +740,10 @@ s32 Leader_StepOntoRope(void) {
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
   if (node == NULL)
     return 0;
-  Sound_PlayFar(152);
-  leader->acceleration = 0x10000;
-  leader->speedLimit = 0x20000;
-  leader->velocityY = 0x40000;
+  Sound_PlayFar(SE_JUMP);
+  leader->acceleration = px(1);
+  leader->speedLimit = px(2);
+  leader->velocityY = px(4);
   leader->watchedObject = (struct Actor *)node;
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
@@ -777,7 +776,7 @@ s32 Leader_StepOffRope(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   leader->terrainHeight = leader->y - 0x80000;
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->terrainId, position[0],
                                            position[2]) ||
@@ -786,13 +785,13 @@ s32 Leader_StepOffRope(void) {
   leader->facing = angle;
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->timer;
-  leader->scaleX = 0x10000;
+  leader->scaleX = Q16_ONE;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
-  Sound_PlayFar(152);
-  leader->speedLimit = 0x20000;
-  leader->velocityY = 0x40000;
-  leader->acceleration = 0x10000;
+  Sound_PlayFar(SE_JUMP);
+  leader->speedLimit = px(2);
+  leader->velocityY = px(4);
+  leader->acceleration = px(1);
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
@@ -813,10 +812,7 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
   work = TIGHTROPE_WORK;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH(barrier): an empty asm keeps the loop's set-up (the node
-   * pointer, the best distance, the count and the IWRAM entry) after the
-   * workspace test, where if-conversion would hoist it; without it, 29 of 84
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm. */
   asm("");
   node = work->nodes;
   best = 0x10000000;
@@ -849,10 +845,10 @@ s32 Leader_StepOntoTightrope(void) {
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
   if (node == NULL)
     return 0;
-  Sound_PlayFar(152);
-  leader->acceleration = 0x10000;
-  leader->speedLimit = 0x20000;
-  leader->velocityY = 0x40000;
+  Sound_PlayFar(SE_JUMP);
+  leader->acceleration = px(1);
+  leader->speedLimit = px(2);
+  leader->velocityY = px(4);
   leader->watchedObject = (struct Actor *)node;
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
@@ -885,7 +881,7 @@ s32 Leader_StepOffTightrope(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   leader->terrainHeight = leader->y - 0x80000;
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->terrainId, position[0],
                                            position[2]) ||
@@ -896,10 +892,10 @@ s32 Leader_StepOffTightrope(void) {
   leader->motionFlags = leader->timer;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
-  Sound_PlayFar(152);
-  leader->acceleration = 0x10000;
-  leader->speedLimit = 0x20000;
-  leader->velocityY = 0x40000;
+  Sound_PlayFar(SE_JUMP);
+  leader->acceleration = px(1);
+  leader->speedLimit = px(2);
+  leader->velocityY = px(4);
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);

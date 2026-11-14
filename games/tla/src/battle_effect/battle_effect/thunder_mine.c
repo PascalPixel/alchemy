@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -117,9 +119,9 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
   buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(1);
   if (mode == 0) {
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
   } else {
-    REG_BLDALPHA = 0x810;
+    REG_BLDALPHA = BLEND_ALPHA(16, 8);
   }
   BattleEffect_LoadBlitter(
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
@@ -157,9 +159,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 0) {
     frames = 24;
-    /* FAKEMATCH(barrier): an empty asm after Thunder Mine's 24, which puts
-     * its arm over BRANCH_COST so if-conversion keeps both arms; as the bare
-     * `frames = 24;`, 27 of 747 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm after Thunder Mine's 24. */
     asm("");
   } else {
     frames = 40;
@@ -184,7 +184,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         ball->velocityX = (((target.x - 32) << 16) - ball->x) / frames;
       }
       ball->velocityY = (((target.y - 32) << 16) - ball->y) / frames;
-      Sound_PlayFar(221);
+      Sound_PlayFar(SE_RISE_WITH_SPARKS);
       for (i = 0, bolt = &work->particles[1]; i != 63; i++, bolt++) {
         bolt->z = Random16();
         bolt->velocityZ = (Random16() & 255) + 128;
@@ -234,7 +234,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         BattlePlayback_StartFar(145);
       } else {
         BattlePlayback_StartFar(-1);
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       }
     }
 
@@ -277,8 +277,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
             y + ((Trig_Cos(angle) * half) >> 16) - (gData_08197498[cell] >> 1);
         s32 flags = 3 | Data_08198bee[Random16() & 3];
 
-        // Once-only block: it ends CSE's block, so the width and height tables
-        // stay in the flash loop.
+        /* FAKEMATCH(dead): a once-only block. */
         do {
         } while (0);
         BattleEffect_BuildBlitter(188, 7, 7, flags, 1);
@@ -337,8 +336,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         if (frame == i) {
           shade = -16;
         } else if (frame >= i + 4) {
-          /* FAKEMATCH(temporary): the fade negated through a local; as shade =
-           * 64 - (frame - i) * 16, 4 of 747 instructions differ in tla-en. */
+          /* FAKEMATCH(temporary): the fade negated through a local. */
           s32 fade = (frame - i) * 16 - 64;
 
           shade = -fade;
@@ -351,10 +349,10 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         Transform_ApplyRoll(bolt->z);
         bolt->z += bolt->velocityZ;
         if (mode == 0) {
-          SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
           Render_TransformVertices(gData_081991b0, vertices, 4);
         } else {
-          SceneTransform_ApplyScale3(radius << 11, radius * 312, 0x10000);
+          SceneTransform_ApplyScale3(radius << 11, radius * 312, Q16_ONE);
           Render_TransformVertices(Data_081991c0, vertices, 4);
         }
         Render_DrawModelList(model);
@@ -430,7 +428,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   pictures = PICTURES;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   rects = blitters;
   BattleEffect_FetchRectangleBlitters(0, (void **)rects);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -471,24 +469,24 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   wait(1);
 
   for (frame = 0; frame != 170; frame++) {
-    if ((gInput.repeat & 3) && frame > 10) {
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 10) {
       if (frame > 107) {
         goto skipped;
       }
       frame = 107;
     }
     if (frame == 107) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
   skipped:
     if (frame == 148) {
       BattlePlayback_StartFar(134);
     }
     if (frame == 0) {
-      position.x = 0x200000;
-      position.y = 0x480000;
-      velocity.x = 0x90000;
-      velocity.y = -0x20000;
+      position.x = px(32);
+      position.y = px(72);
+      velocity.x = px(9);
+      velocity.y = -px(2);
       BattleEffect_SpawnObjects(2, 657, 2);
     }
     if (frame == 108) {
@@ -536,7 +534,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 64) <= 3) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame > 103) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
@@ -562,7 +560,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           s32 picture2 = (frame / 2) % 3;
           u8 *cells2;
 
-          sway = (Trig_Sin((frame << 12) + 0x8000) << 3) >> 16;
+          sway = (Trig_Sin((frame << 12) + TRIG_TURN / 2) << 3) >> 16;
           cells2 = work->sheet + picture2 * 3 * 0x800;
           (*draw)(canvas, cells2, sway, 0, 96, 64);
           (*draw)(canvas, cells2, sway, 64, 96, 52);
@@ -579,7 +577,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         }
         p->variant++;
         if (frame == 108) {
-          p->velocityX += 0x20000;
+          p->velocityX += px(2);
           p->velocityY /= 4;
         }
         if (frame <= 107) {
@@ -598,14 +596,14 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 64) {
-      Sound_PlayFar(163);
+      Sound_PlayFar(SE_163);
     }
     {
       s32 crackle;
 
       for (i = 0, crackle = 75; i != 8; i++, crackle += 4) {
         if (frame == crackle) {
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         }
       }
     }
@@ -629,11 +627,11 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
                     gBattleEffect_PuffSizes[k], gBattleEffect_PuffSizes[k]);
         BattleEffectKernels_IntegrateVector2(p, 58, 0);
         if (i & 1) {
-          p->velocityX += -0x800;
-          p->velocityY += 0x1000;
+          p->velocityX += -(px(1) / 32);
+          p->velocityY += px(1) / 16;
         } else {
-          p->velocityX += -0x1000;
-          p->velocityY += 0x800;
+          p->velocityX += -(px(1) / 16);
+          p->velocityY += px(1) / 32;
         }
         p->variant++;
       }
@@ -647,12 +645,12 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         s32 column = i * 32 + 24;
 
         if (frame == start + 5) {
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
         }
         if (frame == start + 9) {
           work->shakeFrames = 8;
           Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         }
         if (frame >= start) {
           s32 t = frame - start;
@@ -681,7 +679,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               s32 speed = Random16() & 255;
 
               spark->x = column << 16;
-              spark->y = 0x700000;
+              spark->y = px(112);
               spark->velocityY = (-Trig_Sin(angle) * speed) >> 5;
               spark->velocityX = (Trig_Cos(angle) * speed) >> 5;
               spark->variant = 0;
@@ -698,9 +696,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               s32 gx = column + (Random16() & 7) - (gData_08197492[k] >> 1);
               s32 gy = (Random16() & 63) - (gData_08197498[k] >> 1);
 
-              // An empty once-only loop ends CSE's block, so the table reads
-              // stay apart; without it, 188 of 1152 instructions differ in
-              // tla-en.
+              /* FAKEMATCH(dead): an empty once-only loop. */
               do {
               } while (0);
               BattleEffect_BuildBlitter(188, 7, 7,
@@ -842,7 +838,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
       *row++ = shade;
     }
   }
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   flip = 4;
   if (effect->side != 0) {
     flip = 0;
@@ -857,7 +853,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   size = 4;
 
   for (frame = 0; frame != VOID_BEAM_FRAMES; frame++) {
@@ -953,11 +949,12 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
         if (frame == 72) {
           work->particles[0].x = point[0];
           if (work->particles[0].x > 0) {
-            work->particles[0].velocityX = -0x200000;
+            work->particles[0].velocityX = -(px(32));
           } else {
-            work->particles[0].velocityX = 0x200000;
+            work->particles[0].velocityX = px(32);
           }
-          REG_BG2CNT = 0x784;
+          REG_BG2CNT =
+              BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
         }
         if (frame == 72) {
           work->shakeFrames = 8;

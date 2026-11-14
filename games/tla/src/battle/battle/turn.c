@@ -4,9 +4,11 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/window.h"
 #include "module/battle/presentation.h"
+#include "macros.h"
 
 void BattleCamera_SetCommandView(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
@@ -31,9 +33,7 @@ void BattleCamera_SetCommandView(s32 pos) {
   Transform_ApplyYaw((s16)state->yaw);
   Transform_ApplyPitch((s16)state->pitch);
 
-  local.x = 0;
-  local.y = 0;
-  local.z = state->distance;
+  SET_POSITION(&local, 0, 0, state->distance);
   Iwram_TransformVector(&local, (s32 *)state);
   one = 1;
 
@@ -201,9 +201,6 @@ static inline void BattleAction_Swap(struct BattleActionRecord *a,
                                      struct BattleActionRecord *b) {
   struct BattleActionRecord temporary;
 
-  // The swap as an inline takes the temporary's address afresh at each copy;
-  // written in the sort's loop, 44 of 110 instructions of
-  // BattleActionOrder_Sort differ in tla-en.
   Iwram_CopyWordsEntry(&temporary, a, sizeof(struct BattleActionRecord));
   Iwram_CopyWordsEntry(a, b, sizeof(struct BattleActionRecord));
   Iwram_CopyWordsEntry(b, &temporary, sizeof(struct BattleActionRecord));
@@ -418,7 +415,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
       s32 val;
 
       idx = paletteNumber * 16 + col;
-      color = ((u16 *)0x05000000)[idx];
+      color = ((u16 *)BG_PLTT)[idx];
       b = (color >> 10) & mask;
       g = (color >> 5) & mask;
       r = color & mask;
@@ -526,7 +523,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
 finish:
   GameFlag_Clear(363);
   Camera_InitializeDefaultTransform();
-  Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
+  Ram_HeapSlots->transitionWork->targetYaw = TRIG_TURN / 8;
   return cnt;
 }
 

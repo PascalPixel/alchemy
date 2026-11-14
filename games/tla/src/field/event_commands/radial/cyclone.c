@@ -6,6 +6,8 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct BurstSprite {
   u8 unk00[8];
@@ -70,7 +72,7 @@ void ParticleBurst_Update(void) {
       position[0] = particle->x;
       position[1] = particle->y;
       position[2] = particle->z;
-      Vector_AddPolarOffset(0x300000, particle->heading, position);
+      Vector_AddPolarOffset(px(48), particle->heading, position);
       Camera_WorldToScreen(position);
       sprite->x = position[0];
       sprite->y = position[2];
@@ -133,9 +135,7 @@ void Cyclone_CarryLeader(void) {
                   (Trig_Sin(timer << 8) << 6);
     position[2] = work->from[2] + (work->to[2] - work->from[2]) * timer / 128;
     Vector_AddPolarOffset(work->radius, work->angle, position);
-    owner->x = position[0];
-    owner->y = position[1];
-    owner->z = position[2];
+    SET_POSITION(owner, position[0], position[1], position[2]);
     if (timer > 127) {
       work->state++;
       work->timer = -1;
@@ -168,9 +168,7 @@ void Cyclone_LiftLeader(void) {
     position[1] = work->from[1] + (work->to[1] - work->from[1]) * timer / 128;
     position[2] = work->from[2] + (work->to[2] - work->from[2]) * timer / 128;
     Vector_AddPolarOffset(work->radius, work->angle, position);
-    owner->x = position[0];
-    owner->y = position[1];
-    owner->z = position[2];
+    SET_POSITION(owner, position[0], position[1], position[2]);
     if (timer > 127) {
       work->state++;
       work->timer = -1;
@@ -210,7 +208,7 @@ void Cyclone_LiftLeader(void) {
 #include "battle/motobj.h"
 
 void BattleEffect_SpinObject(struct MotionObject *object) {
-  object->angle += 0x1000;
+  object->angle += TRIG_TURN / 16;
 }
 
 void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
@@ -265,18 +263,15 @@ void FieldPsynergy_Cyclone(void) {
   BattleEffect_SetObjectUpdateMode(*(struct Actor **)(effect + 16), 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
-  palette = (u16 *)0x050003c0;
+  palette = (u16 *)(OBJ_PLTT + 14 * 16);
   blue = 31 << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;
-    // An empty once-only loop keeps c's add ahead of the colour's copy;
-    // without it, 2 of 713 instructions differ in tla-en.
+    /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
     *palette++ = (c << 5) | blue | c;
-    /* FAKEMATCH(barrier): an empty asm that ends the loop's body, which keeps
-     * the counters' updates after the colour's store; without it, 4 of 713
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm. */
     asm("");
   }
   BattleEffect_StartCanvasSprite();
@@ -290,8 +285,8 @@ void FieldPsynergy_Cyclone(void) {
   canvas->priority = 1;
   canvas->depth = 240;
   canvas->mode = CANVAS_SPRITE_KEPT;
-  canvas->scaleX = 0x18000;
-  canvas->scaleY = 0x18000;
+  canvas->scaleX = Q16_ONE * 3 / 2;
+  canvas->scaleY = Q16_ONE * 3 / 2;
   EffectSprite_Init(&canvas->sprite, 32, 32, 0xc0000000, canvas->tile);
   canvas->sprite.oam.palette256 = 1;
   canvas->sprite.oam.palette = 0;
@@ -299,10 +294,10 @@ void FieldPsynergy_Cyclone(void) {
   pixels = Ram_HeapSlots->battleFxWork[1];
   ring = Actor_Spawn(280, owner->x, owner->y - 0x60000, owner->z);
   Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = 0x18000;
+  ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = 0;
   wait(1);
-  Sound_PlayFar(207);
+  Sound_PlayFar(SE_RUSH);
   for (i = 0; i < 20; i++) {
     ring->scaleY = (i << 16) / 20;
     wait(1);
@@ -360,9 +355,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[2] = *(s16 *)(event + 0xd42) << 16;
     Task_Add(Cyclone_LiftLeader, 0x480);
     while (work->state != 999) {
-      /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
-       * 999's copy to r8 ahead of the state's address; without it, 2 of 713
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
       asm("");
       if (frame == 30)
         FieldPsynergy_RunTouchedEvents();
@@ -394,9 +387,7 @@ void FieldPsynergy_Cyclone(void) {
     Task_Add(Cyclone_CarryLeader, 0x480);
     frame = 0;
     while (work->state != 999) {
-      /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
-       * 999's copy to r8 ahead of the state's address; without it, 2 of 713
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
       asm("");
       if (frame == 30)
         FieldPsynergy_RunTouchedEvents();
@@ -419,7 +410,7 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       BattleEffect_EndX();
   } else if (mode == 1) {
-    Sound_PlayFar(136);
+    Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(ring, 6);
     if (work->kind)
       ParticleBurst_Start();
@@ -440,16 +431,16 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       BattleEffect_EndX();
   } else {
-    Sound_PlayFar(136);
+    Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(ring, 6);
     for (i = 0; i < 16; i++) {
-      owner->facing += 0x1000;
+      owner->facing += TRIG_TURN / 16;
       canvas->angle += 0x400;
       canvas->command = 3;
       wait(1);
     }
   }
-  Sound_PlayFar(136);
+  Sound_PlayFar(SE_WHOOSH);
   Actor_ReleaseFar(ring);
   owner->update = NULL;
   owner->facing = owner->timer;
@@ -478,7 +469,7 @@ void Actor_DepartInRing(s32 actor) {
   object->update = BattleEffect_SpinObject;
   ring = Actor_Spawn(280, object->x, object->y, object->z);
   Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = 0x18000;
+  ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = Q16_ONE;
   x = object->x;
   y = object->y;
@@ -492,17 +483,13 @@ void Actor_DepartInRing(s32 actor) {
     position[1] = y + Trig_Cos(i << 7) * 96;
     position[2] = z;
     Vector_AddPolarOffset(Trig_Cos(i << 7) << 5, spin, position);
-    object->x = position[0];
-    object->y = position[1];
-    object->z = position[2];
+    SET_POSITION(object, position[0], position[1], position[2]);
     spin += 0x400;
-    ring->x = object->x;
-    ring->y = object->y - 0x60000;
-    ring->z = object->z;
+    SET_POSITION(ring, object->x, object->y - 0x60000, object->z);
     wait(1);
   }
   Actor_SetPositionAndResetMotionFar(object, x, y, z);
-  Sound_PlayFar(136);
+  Sound_PlayFar(SE_WHOOSH);
   Actor_SelectAnimationFar(ring, 6);
   Event_Wait(15);
   Actor_ReleaseFar(ring);
@@ -536,18 +523,18 @@ void Actor_ArriveInRing(s32 actor) {
   Event_WaitTransitionFrames();
   ring = Actor_Spawn(280, object->x, object->y, object->z);
   Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = 0x8000;
-  ring->scaleY = 0xc000;
+  ring->scaleX = Q16_ONE / 2;
+  ring->scaleY = Q16_ONE * 3 / 4;
   for (i = 0; i < 32; i++) {
     ring->scaleX += 0x800;
     ring->scaleY += 0x200;
     wait(1);
   }
-  ring->scaleX = 0x18000;
+  ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = Q16_ONE;
-  Sound_PlayFar(136);
+  Sound_PlayFar(SE_WHOOSH);
   Actor_SelectAnimationFar(ring, 6);
-  object->scaleY = object->scaleX = 0x8000;
+  object->scaleY = object->scaleX = Q16_ONE / 2;
   for (i = 0; i < 16; i++) {
     object->scaleY = object->scaleX = object->scaleX + 0x800;
     wait(1);
@@ -609,17 +596,7 @@ struct SprayEvent {
 };
 
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
-/* VIEW(psynergy): routine EffectSprite_DrawAtWorldPosition as void
- * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * SprayParticle *particle); field/event_commands/radial has void
- * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * ScatterParticle *p); not tried: EffectSprite_DrawAtWorldPosition's marker was
- * not found. */
-void EffectSprite_DrawAtWorldPosition__psynergy(
-    struct EffectSprite *sprite,
-    struct SprayParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
-#define EffectSprite_DrawAtWorldPosition                                       \
-  EffectSprite_DrawAtWorldPosition__psynergy
+#define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
 s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
@@ -657,15 +634,14 @@ void Blaze_UpdateSpray(void) {
         if (work->mode == 3) {
           work->speed = 0x26666;
           work->lifetime = 33;
-          work->gravity = 0x1800;
+          work->gravity = px(3) / 32;
         } else {
           work->speed = 0x1cccc;
           work->lifetime = 25;
-          work->gravity = 0x2000;
+          work->gravity = px(1) / 8;
         }
-        particle->x = work->origin[0];
-        particle->y = work->origin[1];
-        particle->z = work->origin[2];
+        SET_POSITION(particle, work->origin[0], work->origin[1],
+                     work->origin[2]);
         particle->velocityX = 0;
         particle->velocityY = -0x13333;
         particle->velocityZ = 0;
@@ -682,10 +658,10 @@ void Blaze_UpdateSpray(void) {
     if (particle->timer == -1)
       continue;
     sprite = &work->drops[i];
-    sprite->scaleY = sprite->scaleX = particle->timer * 0xa3d + 0x8000;
+    sprite->scaleY = sprite->scaleX = particle->timer * 0xa3d + Q16_ONE / 2;
     sprite->oam.index =
         work->dropTile + (((particle->timer >> 1) + i) & 3) * 32;
-    if (work->angle > 0x8000)
+    if (work->angle > TRIG_TURN / 2)
       sprite->depth--;
     else
       sprite->depth++;
@@ -717,12 +693,10 @@ void Blaze_UpdateSpray(void) {
       pos[0] = particle->x;
       pos[1] = particle->y - (Random16() << 2);
       pos[2] = particle->z;
-      Vector_AddPolarOffset(0xa0000, work->angle + 0x8000, pos);
-      Vector_AddPolarOffset(0xc0000, Random16(), pos);
+      Vector_AddPolarOffset(px(10), work->angle + TRIG_TURN / 2, pos);
+      Vector_AddPolarOffset(px(12), Random16(), pos);
       puff = &work->puffMotion[i];
-      puff->x = pos[0];
-      puff->y = pos[1];
-      puff->z = pos[2];
+      SET_POSITION(puff, pos[0], pos[1], pos[2]);
       puff->timer = 0;
     }
     if (work->hit != 0)
@@ -748,7 +722,7 @@ void Blaze_UpdateSpray(void) {
     }
   }
 
-  target = scene->angle - 0x4000;
+  target = scene->angle - TRIG_TURN / 4;
   turn = (s16)(work->targetAngle - work->angle);
   if ((u16)(work->targetAngle - target) - (u16)(work->angle - target) ==
       0x8000) {

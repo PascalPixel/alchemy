@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -115,8 +117,6 @@ extern struct StripVertex
 void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: blit[1] gives the stack frame its 8 bytes at sp+68 as one DImode
-  // pseudo.
   DrawRectangle blit[2];
   s32 frame;
   s32 *camera;
@@ -148,7 +148,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
                                             COMPOSITE_FLIP_X));
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -204,13 +204,13 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           spark->velocityY = (Trig_Cos(angle) * speed) >> 6;
           spark->variant = (Random16() & 15) + 16;
         }
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->shakeFrames = 8;
         if (frame == 28) {
           if (effect->variant == 0) {
             BattlePlayback_StartFar(144);
           } else {
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
           }
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
                                         0x40000, 150);
@@ -278,7 +278,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           if (width > 32) {
             width = 32;
           }
-          width = width * scale / 0x10000;
+          width = width * scale / (Q16_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
             struct StripVertex *corner = strip0 + (j * 2 + i);
@@ -310,7 +310,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           if (width > 24) {
             width = 24;
           }
-          width = width * scale / 0x10000;
+          width = width * scale / (Q16_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
             struct StripVertex *strip1 =
@@ -353,12 +353,12 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyPosition3((source.x / 2 - 52) << 16,
                                           (source.y << 16) - 0x600000, 0);
           }
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (effect->side == 1) {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
           }
-          Transform_ApplyRoll(i * 14192 - 0x1000);
-          SceneTransform_ApplyUniformScale(0x40000);
+          Transform_ApplyRoll(i * 14192 - TRIG_TURN / 16);
+          SceneTransform_ApplyUniformScale(Q16_ONE * 4);
           Render_TransformVertices(strip0 + i * 66, vertices, 66);
           Render_DrawModelList(model);
           if (frame < i * 16 + 40) {
@@ -468,13 +468,13 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
         work->particles[0].x = (target.x + 40) << 16;
       else
         work->particles[0].x = (target.x - 168) << 16;
-      work->particles[0].y = -100 << 16;
+      work->particles[0].y = -px(100);
       if (effect->side == 0)
-        work->particles[0].velocityX = -6 << 16;
+        work->particles[0].velocityX = -px(6);
       else
-        work->particles[0].velocityX = 6 << 16;
-      work->particles[0].velocityY = 8 << 16;
-      REG_BLDALPHA = 0x1000;
+        work->particles[0].velocityX = px(6);
+      work->particles[0].velocityY = px(8);
+      REG_BLDALPHA = BLEND_ALPHA(0, 16);
     }
     if (frame < 32)
       BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, 0);
@@ -569,9 +569,9 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
     }
     if (frame == FIGURE_SWING_FRAME) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       work->shakeFrames = 3;
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
     }
 

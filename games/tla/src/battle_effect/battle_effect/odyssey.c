@@ -4,6 +4,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct Model;
 
@@ -12,10 +15,6 @@ struct Model;
 
 #define KIND125_FRAMES 114
 
-// The battle background's id, read through a union view of the bytes that
-// begin with it. Its s32 member gives the read the alias set of
-// transition->active, so the read waits for that store; as
-// *(u16 *)(battle)->unk670, 6 of 1075 instructions differ in tla-en.
 /* VIEW(summon_effects): tag union BattleBackgroundId as union
  * BattleBackgroundId__summon_effects; module/battle_effect/battle_effect.h has
  * another definition; not tried: struct BattleBackgroundId__summon_effects was
@@ -131,7 +130,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data102, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
@@ -160,7 +159,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, gData_02014000, 0,
                                  0);
       Graphics_LoadGreyRamp();
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != 64; i++)
         work->particles[i].variant = -1;
     }
@@ -184,9 +183,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         s32 blue;
 
         red &= entry;
-        /* FAKEMATCH(dead): green is taken and clamped, then never used, which
-         * keeps blue's (u16) cast as a shift pair; as no green at all, 61 of
-         * 1075 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): green is taken and clamped, then never used. */
         green = ((u16)entry >> 5) & 31;
         blue = ((u16)entry >> 10) & 31;
 
@@ -217,7 +214,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
       Actor_SelectAnimationFar(caster, 2);
       Actor_SetAnimationSpeedFar(caster, 48);
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
@@ -228,7 +225,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       struct EffectStep *shard;
 
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
       shard = Data_02016000;
@@ -237,7 +234,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         s32 angle = Random16() & 0x7fff;
 
         if (effect->side == 1)
-          angle += 0x8000;
+          angle += TRIG_TURN / 2;
         shard->x = (to.x / 2) << 16;
         shard->y = to.y << 16;
         shard->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -293,7 +290,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       s32 start = i * 16 + 24;
 
       if (frame == i * 16 + 28)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == i * 16 + 32) {
         for (k = 0; k != 16; k++) {
           struct EffectStep *spark;
@@ -302,11 +299,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
           if (effect->side == 0) {
             if (i != 0)
-              angle += 0x4000;
+              angle += TRIG_TURN / 4;
           } else if (i == 0) {
-            angle -= 0x4000;
+            angle -= TRIG_TURN / 4;
           } else {
-            angle += 0x8000;
+            angle += TRIG_TURN / 2;
           }
           spark = &work->particles[i * 32 + k];
           spark->x = (to.x / 2) << 16;
@@ -315,7 +312,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           spark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
           spark->variant = (Random16() & 7) + 17;
         }
-        Sound_PlayFar(133);
+        Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 64);
         work->shakeFrames = 4;
       }
@@ -370,7 +367,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       // Two flashes rise from the caster (frames 2 and 8).
       start = i * 6 + 2;
       if (frame == start)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame >= start && frame < i * 6 + 18) {
         s32 age = frame - start;
         s32 shade = 64 - age * 8;
@@ -378,7 +375,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         if (shade > 0)
           shade = 0;
         if (shade > -64) {
-          s32 scale = (age << 14) + 0x4000;
+          s32 scale = (age << 14) + Q16_ONE / 4;
 
           model->look.shade = shade;
           Transform_Reset();
@@ -394,7 +391,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       // Frames 64-82: the caster gathers itself, flashing.
       start = i * 8 + 64;
       if (frame == i * 8 + 68)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == i * 8 + 72) {
         s32 none = 0;
 
@@ -402,7 +399,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       } else if (frame == i * 8 + 76)
         BattleEffect_TintBattler(effect->actor, 0, -1, 0, 0);
       if (frame >= start && frame < start + 11) {
-        s32 scale = 0x30000 - ((frame - start) << 14);
+        s32 scale = Q16_ONE * 3 - ((frame - start) << 14);
 
         model->look.shade = 0;
         Transform_Reset();
@@ -423,7 +420,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         if (shade > 0)
           shade = 0;
         if (shade > -64) {
-          s32 scale = (age << 14) + 0x4000;
+          s32 scale = (age << 14) + Q16_ONE / 4;
 
           model->look.shade = shade;
           Transform_Reset();
@@ -460,7 +457,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         Transform_Reset();
         x = step->x;
         y = step->y;
-        center = -(64 << 16);
+        center = -px(64);
         SceneTransform_ApplyPosition3(x + center, y + center, 0);
         SceneTransform_ApplyScale3(step->variant * 3, step->variant * 6,
                                    step->variant);
@@ -539,10 +536,13 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   savedScrollX = gBgScroll[1].x;
   transition = Ram_HeapSlots->transitionWork;
   BattleEffect_StartCanvasLayer(3);
-  REG_DISPCNT = 0x7741;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f42;
-  REG_BG2CNT = 0x787;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 0;
   work->transferMode = 2;
@@ -553,8 +553,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
-  /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette; as a direct
-   * Iwram_CopyWords, 22 of 468 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette. */
   Swirl_CopyPalette(palette);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
@@ -585,17 +584,17 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
   transition->active = enabled;
-  /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer;
-   * as a direct draw, 58 of 468 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer.
+   */
   Swirl_Draw(draw, Ram_MapCellBuffer, canvas, 0, 128);
   draw(Ram_MapCellBuffer, canvas, 128, 0, 128, 128);
   work->transferPending = enabled;
   wait(1);
 
   for (frame = 0; frame != SWIRL_MAX_FRAMES; frame++) {
-    if (gInput.repeat & 2)
+    if (gInput.repeat & KEY_B)
       frame = 0;
-    if (gInput.repeat & 1)
+    if (gInput.repeat & KEY_A)
       break;
 
     if (frame == 0)
@@ -657,8 +656,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   /* FAKEMATCH(dead): a never-taken five-argument call reserves the stack
-   * frame's outgoing argument word at sp+0; as no call, 18 of 185
-   * instructions differ in tla-en. */
+   * frame's outgoing argument word at sp+0. */
   if (0)
     BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
   BattleEffect_LoadBlitter(104, 3);
@@ -849,9 +847,7 @@ void Iris_RestoreBattle(void) {
     struct MotionObject *object =
         BattleObject_GetFar(work->effect->actors[i])->object;
 
-    object->x = 0;
-    object->y = 120 << 16;
-    object->z = 0;
+    SET_POSITION(object, 0, px(120), 0);
     object->verticalMotionStrength = 0xab85;
     BattleMotion_ApplyKnockbackFar(work->effect->actors[i], 1);
   }

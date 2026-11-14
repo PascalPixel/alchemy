@@ -282,16 +282,15 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) | 0x4000;
   ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
   /* FAKEMATCH(temporary): the cell read back through a pointer to output's
-   * sprite; as output->sprite.oam.x and .y, 27 of 99 instructions differ in
-   * tla-en. */
+   * sprite. */
   sprite = &output->sprite;
   output->sentinel = 253;
   output->x = sprite->oam.x;
   output->y = sprite->oam.y;
   output->index = index;
   output->next = NULL;
-  /* FAKEMATCH(dead): active stored a second time with the 1 it already holds;
-   * as the first store alone, 46 of 99 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): active stored a second time with the 1 it already holds.
+   */
   output->active = 1;
   WindowSprite_AppendToList(&window->output, output);
   return vram;
@@ -345,8 +344,6 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     slot = &base->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
       *slot = VramCache_FindFreeEntry();
-    // column holds its one constant, -2 as a halfword: added inline, it folds
-    // into the width check above (52 of 116 instructions differ in tla-en).
     column = (u16)-2;
     left = win->x;
     sprite->oam.x = (left + (column + win->width)) * 8 + PAGE_ARROW_OFFSET_X;
@@ -354,8 +351,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     row = (u8)win->height + (u8)-2;
     row = (u8)win->y + row;
 #else
-    // UB: row is written twice with no sequence point between; as the two
-    // statements above, 6 of 116 instructions differ in tla-en.
+    // UB: row is written twice with no sequence point between.
     row = (u8)win->y + (row = (u8)win->height + (u8)-2);
 #endif
     sprite->oam.y = row * 8 + PAGE_ARROW_OFFSET_Y;
@@ -363,8 +359,6 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     out->y = sprite->oam.y;
     out->index = idx;
     out->next = NULL;
-    // Read as a byte: active is never negative, and the code loads it
-    // unsigned (read signed, 5 of 116 instructions differ in tla-en).
     if ((u8)out->active == 0)
       out->active = mode;
     WindowSprite_AppendToList(&win->output, out);
@@ -398,8 +392,6 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     y++;
 #endif
     pos = ((s16)win->y + y) * 32 + ((s16)win->x + x);
-    // The entry's address as an integer: tilemap[pos] takes its registers
-    // the other way round (2 of 116 instructions differ in tla-en).
     if (pos < 32 * 20)
       *(u16 *)((u32)tilemap + (pos << 1)) = WINDOW_TILE(tile);
   }
@@ -445,8 +437,6 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   }
 
   // Both entries are stored at a byte offset from map, which keeps each store's
-  // base and offset in the registers they take; as map[index], 4 of 73
-  // instructions differ in tla-en.
   switch (mode) {
   case TILEMAP_ENTRY_NONE:
     return;

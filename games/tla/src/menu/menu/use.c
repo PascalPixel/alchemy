@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct InventoryMenuState *menu;
@@ -62,16 +63,13 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   else
     target = Unit_Get(targetId);
 
-  /* FAKEMATCH(dead): the dead test loads effect->range ahead of the
-   * count guard, as in The Broken Seal's twin; as plain code, 84 of 501
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the dead test loads effect->range ahead of the count
+   * guard. */
   if (effect->range == 0xff && partyResultShown != 0)
     messageOffset = 3;
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == 0xff) {
-      // Read unsigned (ldrh): the party's ids, as this routine's bytes load
-      // them.
       targetId = (u16)menu->ownerIds[targetIndex];
       target = Unit_Get(targetId);
     }
@@ -311,9 +309,9 @@ s32 Ability_PlayUseAnimation(s32 action) {
 
   switch (definition[1] & 15) {
   case 1:
-    Sound_PlayReturnOne(126);
+    Sound_PlayReturnOne(SE_RECOVERY);
   case 11:
-    Sound_PlayReturnOne(126);
+    Sound_PlayReturnOne(SE_RECOVERY);
     break;
   default:
     switch (definition[3]) {
@@ -323,13 +321,13 @@ s32 Ability_PlayUseAnimation(s32 action) {
     case 32:
       break;
     case 5:
-      Sound_PlayReturnOne(82);
+      Sound_PlayReturnOne(MUS_082);
       break;
     case 3:
-      Sound_PlayReturnOne(84);
+      Sound_PlayReturnOne(MUS_084);
       break;
     default:
-      Sound_PlayReturnOne(91);
+      Sound_PlayReturnOne(MUS_091);
       break;
     }
     break;

@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 #define EMBERS ((struct EffectStep *)Ram_MapCellBuffer)
 #define IN_FLIGHT -1 // an ember's variant; 0 and up count its flare's frames
@@ -45,7 +47,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(
       188, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The embers leave the top of the user's body: a random heading and
   // speed across, -16 to 111 sixty-fourths of a pixel up.
@@ -61,9 +63,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
     ember->velocityX = (Trig_Sin(angle) * speed) >> 6;
     ember->velocityY = (s32)(((Random16() & 127) - 16) << 16) >> 6;
     ember->velocityZ = (Trig_Cos(angle) * speed) >> 6;
-    ember->x = user->x;
-    ember->y = top;
-    ember->z = user->z;
+    SET_POSITION(ember, user->x, top, user->z);
     ember->variant = IN_FLIGHT;
   }
 
@@ -136,9 +136,9 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
           ember->x = screen.x;
           ember->y = screen.y;
           if (effect->variant == 2)
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
           else
-            Sound_PlayFar(136);
+            Sound_PlayFar(SE_WHOOSH);
           BattleEffect_TintBattler(effect->actors[i % effect->count], 10, 5,
                                    i % effect->count, 4);
           work->shakeFrames = 2;

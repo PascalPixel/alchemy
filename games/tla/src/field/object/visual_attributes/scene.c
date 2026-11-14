@@ -5,6 +5,8 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 #include "types.h"
 #include "system/task.h"
@@ -118,8 +120,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 
   if (event->unkcb6 == 0) {
     work = HeapSlot_Alloc(HEAP_SLOT_FX, sizeof(*work));
-    // An empty once-only loop keeps the work's copy at once after the
-    // allocation; without it, 4 of 239 instructions differ in tla-en.
+    /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
     Iwram_FillWordsEntry(work, sizeof(*work), 0);
@@ -186,8 +187,9 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   scene->secondObjectId = targetId;
   scene->mainObject = user;
   target = ObjectTable_Get((s16)targetId);
-  scene->angle = (user->facing + 0x2000) & 0xc000; // Round to four directions.
-  scene->angle8 = (user->facing + 0x1000) & 0xe000;
+  scene->angle = (user->facing + TRIG_TURN / 8) &
+                 TRIG_TURN * 3 / 4; // Round to four directions.
+  scene->angle8 = (user->facing + TRIG_TURN / 16) & 0xe000;
   scene->child = target;
   if (user != NULL) {
     u8 terrain;
@@ -210,7 +212,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
     scene->x = user->x;
     scene->z = user->z;
     scene->y = user->y;
-    Vector_AddPolarOffset(0x100000, scene->angle, &scene->x);
+    Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
   }
 }
 
@@ -223,8 +225,8 @@ void EventObject_Initialize(void) {
   s8 sound;
 
   Actor_SelectAnimationFar(object, 20);
-  // The stores in a once-only block keep them all ahead of the sound's read;
-  // as plain statements, 8 of 109 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the stores in a once-only block keep them all ahead of the
+   * sound's read. */
   do {
     object->targetX = object->x;
     object->velocityX = 0;
@@ -235,11 +237,10 @@ void EventObject_Initialize(void) {
   } while (0);
   sound = work->sound;
   /* FAKEMATCH(barrier): the zero set through an empty asm after the sound's
-   * read, so its copy to r8 comes after that read; as zero = 0, 4 of 109
-   * instructions differ in tla-en. */
+   * read. */
   asm("" : "=r"(zero) : "0"(0));
   if (sound != 0) {
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
     BattleEffect_SetObjectUpdateMode(object, 1);
   }
   if (work->showQuantity != 0) {
@@ -286,8 +287,6 @@ void BattleEffect_CleanupSceneObjects(void) {
     if (slot->active)
       FieldEffect_ClearOwnedSlot(slot);
   }
-  // A local that holds one constant: it makes the first test cmp #17; blt as
-  // the native (with the literal, 4 of 171 differ in tla-en).
   first = 17;
   if (work->animation >= first &&
       (work->animation <= 27 || work->animation == 30))

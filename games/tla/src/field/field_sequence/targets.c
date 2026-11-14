@@ -3,6 +3,8 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
 #include "module/field/map.h"
@@ -41,9 +43,9 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
         continue;
 
       if (obj->y - src->y >= 0) {
-        if (obj->y - src->y >= 48 << 16)
+        if (obj->y - src->y >= px(48))
           continue;
-      } else if (src->y - obj->y >= 48 << 16) {
+      } else if (src->y - obj->y >= px(48)) {
         continue;
       }
 
@@ -145,8 +147,8 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   range = rule->range + 1;
   if ((other->collisionFlags & 0x10) != 0)
     range = range * 3 / 2;
-  dx = (other->x - self->x) / 0x10000;
-  dz = (other->z - self->z) / 0x10000;
+  dx = (other->x - self->x) / Q16_ONE;
+  dz = (other->z - self->z) / Q16_ONE;
   distance = Iwram_Sqrt(dx * dx + dz * dz);
   if (distance > range)
     return -1;
@@ -158,7 +160,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
     width = rule->width;
     if (distance > 19)
       width = width * 2 / 3;
-    facing = (self->facing + 0x2000) & 0xc000;
+    facing = (self->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
     angle = (u16)ArcTan2(other->z - self->z, other->x - self->x);
     diff = (s16)(angle - facing);
     if (diff < 0)
@@ -195,7 +197,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
   object = (s32)Actor_GetById(target);
   result = 0;
   if (object != 0) {
-    Sound_PlayFar(0x7C);
+    Sound_PlayFar(SE_CHEST_OPEN);
     Actor_SelectAnimationFar(object, 4);
     wait(0xC);
     result = (s32)BattleEffect_StartRandomParticleEmitter(effect, mode);
@@ -209,10 +211,8 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
 /// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
 /// nothing solid stands on the cell beyond it or above it and its terrain
 /// test passes there, else 0. Leader_PushObjectAhead, after it, makes the push.
-// The test against the paused object comes from patch 1. The Japanese release
-// has none and stays on its scaffold: with the branch below it differs by one
-// reordered row (the angle's argument copy issued after the next position
-// load, differ 4).
+// The test against the paused object comes from patch 1; the Japanese release
+// has none.
 s32 Leader_CanPushObjectAhead(void) {
   s32 position[3];
   s32 above[3];
@@ -230,7 +230,7 @@ s32 Leader_CanPushObjectAhead(void) {
   half = 128;
   position[1] = (owner->y + (half << 11)) & 0xfff80000;
   position[2] = owner->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   target = Actor_FindAtCell(position, 1);
   if (target == 0)
     return 0;
@@ -244,7 +244,7 @@ s32 Leader_CanPushObjectAhead(void) {
   position[0] = target->x;
   position[1] = target->y;
   position[2] = target->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
@@ -281,12 +281,12 @@ void Leader_PushObjectAhead(void) {
   position[0] = owner->x;
   position[1] = (owner->y + 0x40000) & 0xfff80000;
   position[2] = owner->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   target = Actor_FindAtCell(position, 1);
   position[0] = target->x;
   position[1] = target->y;
   position[2] = target->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   terrain = target->terrainId;
   target->terrainId = 2;
   result = MapGrid_CheckCollisionFar(target, position);
@@ -294,7 +294,7 @@ void Leader_PushObjectAhead(void) {
   if (result <= 0) {
     Actor_SelectAnimationFar(owner, 8);
     wait(15);
-    Sound_PlayFar(185);
+    Sound_PlayFar(SE_PUSH);
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
     Actor_SetMoveTargetFar(target, position[0], position[1], position[2]);

@@ -3,6 +3,8 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
+#include "macros.h"
 
 #include "types.h"
 #include "system/system.h"
@@ -27,9 +29,7 @@ void FieldPsynergy_Carry(void) {
 
   work = Ram_HeapSlots->effectWork;
   FieldPsynergy_FadeToCastColor();
-  pos.x = work->x;
-  pos.y = work->y + 0x100000;
-  pos.z = work->z;
+  SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
   pair[0] = FieldEffect_SpawnCarryHand(pos.x + 0x200000, pos.y, pos.z, 0x8000);
   pair[1] = FieldEffect_SpawnCarryHand(pos.x - 0x200000, pos.y, pos.z, 0);
 
@@ -38,20 +38,18 @@ void FieldPsynergy_Carry(void) {
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, px(24), obj->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);
-  Sound_PlayFar(134);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
-    pos.x = work->x;
-    pos.y = work->y + 0x100000;
-    pos.z = work->z;
+    SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
     obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
       obj->speedLimit = Random16() + 0x20000;
-      obj->acceleration = 0x20000;
+      obj->acceleration = px(2);
       obj->motionFlags = 0;
       dist = Random16() * 24 + 0x80000;
       Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
@@ -71,13 +69,13 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *object;
   s32 scale;
 
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   object = Actor_Spawn(278, x, y, z);
   if (object != NULL) {
-    object->scaleY = 0x4000;
-    object->scaleX = 0x4000;
-    object->speedLimit = 0x30000;
-    object->acceleration = 0x30000;
+    object->scaleY = Q16_ONE / 4;
+    object->scaleX = Q16_ONE / 4;
+    object->speedLimit = px(3);
+    object->acceleration = px(3);
     object->actionFlags = 0;
     Actor_SelectAnimationFar(object, 1);
     scale = object->scaleX;
@@ -86,7 +84,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
         scale += 0x800;
         object->scaleY = scale;
         object->scaleX = scale;
-        object->facing += 0x2000;
+        object->facing += TRIG_TURN / 8;
         wait(1);
         scale = object->scaleX;
       } while (scale <= 0xffff);

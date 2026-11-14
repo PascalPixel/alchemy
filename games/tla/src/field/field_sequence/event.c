@@ -3,6 +3,8 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "system/frame.h"
 #include "gamepak/far_call/game.h"
@@ -15,10 +17,10 @@ void Event_UpdateDebugSkip(void) {
   struct EventWaitWork *work = Ram_HeapSlots->eventWork;
 
   if (gDebugMode != 0) {
-    if (((struct InputState *)&gInput)->pressed & 0x200) {
+    if (((struct InputState *)&gInput)->pressed & KEY_L) {
       work->waitMode = 0;
     }
-    if (((volatile struct InputState *)&gInput)->pressed & 0x100) {
+    if (((volatile struct InputState *)&gInput)->pressed & KEY_R) {
       work->waitMode = -1;
     }
   }
@@ -33,9 +35,9 @@ void Event_Wait(s32 frames) {
 void Leader_StopMoving(void) {
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   object->speedLimit = Q16_ONE;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
+  object->acceleration = px(1) / 2;
+  object->targetX = TARGET_UNSET;
+  object->targetZ = TARGET_UNSET;
   object->velocityX = 0;
   object->velocityZ = 0;
   if (gMainRoutineWork.renderMode == 2)
@@ -154,8 +156,8 @@ void Party_RemoveMemberRestored(s32 owner) {
   Party_RemoveMemberFar(owner);
   Party_ClearUnusableShortcuts();
   vitals = Unit_Get(owner);
-  // The two copies in a once-only block keep both ahead of the ratio; as the
-  // plain stores, 2 of 148 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the two copies in a once-only block keep both ahead of the
+   * ratio. */
   do {
     vitals->hp = vitals->maxHp;
     vitals->pp = vitals->maxPp;
@@ -255,7 +257,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       Unit_RefreshPsynergyFar(member);
       Unit_CalculateFar(member);
       owner = PartyInventory_AddFar(item);
-      Sound_PlayFar(83);
+      Sound_PlayFar(MUS_083);
       if (owner == gMainRoutineWork.currentOwner) {
         MessageArgument_PushFar(item, 2);
         FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
@@ -271,7 +273,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     work->messageId = saved;
     return owner;
   }
-  Sound_PlayFar(83);
+  Sound_PlayFar(MUS_083);
   MessageArgument_PushFar(item, 2);
   FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
   if (owner != gMainRoutineWork.currentOwner) {
@@ -410,9 +412,8 @@ Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
 /// unit: character ID (message name 1).
 /// ability: ability ID (message ability 4).
 void Party_LearnAbility(s32 unit, s32 ability) {
-  // Declared without arguments, but unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar__event_commands();
-  Sound_PlayFar(83);
+  Sound_PlayFar(MUS_083);
   MessageArgument_PushFar(unit, 1);
   MessageArgument_PushFar(ability, 4);
   FieldMessage_ShowFar(MsgAbilityLearned, 3);

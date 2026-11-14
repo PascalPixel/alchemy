@@ -39,15 +39,6 @@ struct ResourceSprite {
   struct AnimationEntry *entries[4];
 };
 
-/* VIEW(resource_slot): routine SpriteAnimation_Alloc as s32
- * SpriteAnimation_Alloc(s32 id); the definition has struct AnimationEntry
- * *SpriteAnimation_Alloc(s32 id); tried as the definition's struct
- * AnimationEntry *SpriteAnimation_Alloc(s32 id), which the object already
- * declares, SpriteAnimation_Alloc (gone) moves: 60 of 60 instructions in
- * tla-ja. */
-extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__(
-    "SpriteAnimation_Alloc");
-#define SpriteAnimation_Alloc AnimationObject_Allocate__resource_slot
 #include "system/system.h"
 #undef SpriteAnimation_Alloc
 #include "types.h"
@@ -241,9 +232,7 @@ void SpriteAnimation_Reset(struct AnimationEntry *work) {
       z = 0;
       work->kind = info->drawKind;
       work->script = (u8 *)z;
-      /* FAKEMATCH(dead): an empty once-only block keeps the kind's store and
-       * the script's clear ahead of the lists' stores; without it, 6 of 30
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an empty once-only block. */
       do {
       } while (0);
       animation = info->animation;
@@ -285,7 +274,7 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
   }
   if (index == 4)
     return -1;
-  value = AnimationObject_Allocate__resource_slot(id);
+  value = SpriteAnimation_Alloc(id);
   if (value == 0)
     return 0;
   state->slots[index] = value;
@@ -684,9 +673,7 @@ struct ResourceObject *Sprite_Create(s32 id) {
   *attribute++ = 0x6000;
   *attribute = (gResourceTableEntries[93].offset >> 5) | 0x800;
   if (ResourceMetadata_Register(sprite, id) == -1) {
-    /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 built after
-     * the call and never used; with the call alone, 20 of 154 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): a store of the byte it reloads. */
     freeSprite->dirty = freeSprite->dirty;
   }
   return (struct ResourceObject *)freeSprite;

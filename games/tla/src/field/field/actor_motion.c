@@ -3,8 +3,10 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "fixed_math.h"
 #include "module/field/resource_slot.h"
 #include "module/tla.h"
+#include "macros.h"
 
 s32 Actor_IsTargetUnset(struct Actor *object) {
   s32 first;
@@ -78,8 +80,6 @@ typedef s32 (*MotionCommand)(struct MotionObject *object);
 
 extern const MotionCommand gData_0802f204[];
 extern const s32 gActorScript_CycleTable[];
-
-#define TARGET_UNSET ((s32)0x80000000)
 
 /// A whole-pixel distance squared.
 static __inline__ s32 Object_Square(s32 value) { return value * value; }
@@ -289,9 +289,6 @@ void Actor_UpdateAllThumb(void) {
           if (velocityY > maximumChange)
             velocityY = maximumChange;
           velocityY *= 3;
-          // This slowdown and the landing bounce below call IwramMulQ16 by its
-          // linked name, so each call reads the routine's address from the
-          // literal pool after the call before it.
           if (velocityY != 0 && !(object->motionFlags & 16) && !standing) {
             dx = object->velocityX;
             dy = object->velocityY;
@@ -398,9 +395,7 @@ void Actor_UpdateAllThumb(void) {
     object->moved[0] = x - object->x;
     object->moved[1] = y - object->y;
     object->moved[2] = z - object->z;
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
 
     // Turn to face the direction of travel, at most a sixteenth of a turn a
     // frame.
@@ -413,10 +408,10 @@ void Actor_UpdateAllThumb(void) {
 
         facingStep = (s16)(ArcTan2(z, x) - object->angle);
 
-        maximumFacingStep = 0x1000;
+        maximumFacingStep = TRIG_TURN / 16;
         if (facingStep > maximumFacingStep)
           facingStep = maximumFacingStep;
-        maximumFacingStep = -0x1000;
+        maximumFacingStep = -TRIG_TURN / 16;
         if (facingStep < maximumFacingStep)
           facingStep = maximumFacingStep;
         object->angle += facingStep;
@@ -469,9 +464,9 @@ void Actor_MoveWithCarriers(void) {
 /// x, y, z: 16.16 fixed-point position.
 void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z) {
   obj->z = z;
-  obj->targetX = 0x80000000; // No destination.
-  obj->targetY = 0x80000000;
-  obj->targetZ = 0x80000000;
+  obj->targetX = TARGET_UNSET; // No destination.
+  obj->targetY = TARGET_UNSET;
+  obj->targetZ = TARGET_UNSET;
   obj->x = x;
   obj->y = y;
   SET_VELOCITY(obj, 0, 0, 0);
@@ -498,9 +493,7 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
                          Iwram_MulQ16(dz, dz));
   }
   if (distance < 0x10000) {
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;
@@ -552,5 +545,4 @@ void ObjectList_CollectActive(u8 *object, u8 **out) {
   } while (object != end);
   *out = NULL;
 }
-#undef TARGET_UNSET
 #undef WORD_AT

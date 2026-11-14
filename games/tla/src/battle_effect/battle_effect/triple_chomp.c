@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -25,8 +27,6 @@
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
-// One entry of a model list, as Render_AllocateModelList allocates them and
-// Render_DrawModelList draws them.
 /* VIEW(f18b868): tag struct Model as struct Model__f18b868; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
@@ -107,7 +107,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
 
   // Set up the canvas, then let the caster lunge.
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -123,7 +123,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  Iwram_CopyWordsEntry((void *)0x05000000,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        128);
 
@@ -146,8 +146,6 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     model->texture = &texture;
     model->vertices = vertices;
 
-    // The three bites; the native counts them in the same register as the
-    // spark loops, as one variable.
     for (i = 0; i != 3; i++) {
       // The bite closes: 32 sparks fly from the target's middle, and the
       // target jolts and flashes. The last bite ends the action.
@@ -164,9 +162,9 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           spark->velocityX = (Trig_Sin(angle) * force) >> 8;
           spark->velocityY = (Trig_Cos(angle) * force) >> 6;
           if (effect->side == 0)
-            spark->velocityX += -0x8000;
+            spark->velocityX += -(px(1) / 2);
           else
-            spark->velocityX += 0x8000;
+            spark->velocityX += px(1) / 2;
           BITE_ANCHOR(i)->x = position.x;
           BITE_ANCHOR(i)->y = position.y - 24;
           spark->variant = (Random16() & 7) + 16;
@@ -174,7 +172,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
         if (i == 2)
           BattlePlayback_StartFar(134);
         else
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000, 0,
                                       i * 20 + 120);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
@@ -185,18 +183,18 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
       if (frame >= gData_08199d94[i] && frame < gData_08199d94[i] + 16) {
         s32 age = frame - gData_08199d94[i];
         s32 alpha = 64 - age * 8;
-        s32 scale = age * 10192 + 0x4000;
+        s32 scale = age * 10192 + Q16_ONE / 4;
 
         if (alpha > 0)
           alpha = 0;
         if (alpha > -64) {
           model->alpha = alpha;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3((BITE_ANCHOR(i)->x - 128) << 16,
                                         (BITE_ANCHOR(i)->y - 64) << 16, 0);
-          Transform_ApplyRoll((i << 14) + 0x2000);
-          Transform_ApplyPitch(-0x1000);
+          Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+          Transform_ApplyPitch(-TRIG_TURN / 16);
           SceneTransform_ApplyUniformScale(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);

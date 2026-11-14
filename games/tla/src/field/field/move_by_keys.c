@@ -3,23 +3,19 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "module/field/field.h"
 #include "module/field/resource_slot.h"
+#include "macros.h"
 
 /// The heading of each direction-pad combination, 0xffff for none.
-/* VIEW(move_by_keys): variable gWorldMap_KeyHeadings as extern const u16
- * gWorldMap_KeyHeadings[16]; f028aac has extern const s16
- * gWorldMap_KeyHeadings[16]; not tried: gWorldMap_KeyHeadings's bound
- * declaration was not found. */
-extern const u16
-    gData_0802ec5c__move_by_keys[16] __asm__("gWorldMap_KeyHeadings");
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
-/// The held keys, read again at each use through a volatile pointer, as The
-/// Broken Seal's gKeysHeld is declared; as gInput.held, 45 of 241 instructions
-/// of Actor_MoveByKeys differ in tla-en.
+/// The held keys, read again at each use, as The Broken Seal's gKeysHeld is.
+/* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
 #define INPUT_HELD (((volatile struct InputState *)&gInput)->held)
 
 /// The script command 0x1b: moves an object 8 pixels at a time by the
@@ -42,7 +38,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   u32 keys;
   s32 half;
 
-  object->acceleration = 0x4000;
+  object->acceleration = px(1) / 4;
   animation = 12;
   half = 0x8000;
   object->speedLimit = half;
@@ -50,7 +46,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     keys = INPUT_HELD;
   keys = INPUT_HELD;
   {
-    const u16 *table = gData_0802ec5c__move_by_keys;
+    const u16 *table = gWorldMap_KeyHeadings;
 
     angle = *(const u16 *)((const u8 *)table + (((keys >> 4) & 15) << 1));
   }
@@ -64,16 +60,14 @@ s32 Actor_MoveByKeys(struct Actor *object) {
         animation = 10;
     }
     collisionFlags = 0;
-    position.x = 0;
-    position.y = 0;
-    position.z = 0;
-    Vector_AddPolarOffset(0x80000, angle, &position);
+    SET_POSITION(&position, 0, 0, 0);
+    Vector_AddPolarOffset(px(8), angle, &position);
     position.x += object->x;
     deltaZ = position.z;
     if (deltaZ < 0)
-      object->facing = 0xc000;
+      object->facing = TRIG_TURN * 3 / 4;
     if (deltaZ > 0)
-      object->facing = 0x4000;
+      object->facing = TRIG_TURN / 4;
     position.y = object->y - position.z;
     position.z = object->z;
     map = Ram_HeapSlots->mapWork;
@@ -111,9 +105,9 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   }
   Actor_SelectAnimation(object, animation);
   if (collisionFlags != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;
@@ -148,19 +142,17 @@ s32 Actor_CrossRope(struct Actor *object) {
   rope = *(struct RopeWork **)&Ram_HeapSlots->unk84[6];
   speed = 0x10000;
   collisionFlags = 0;
-  object->speedLimit = 0x8000;
-  object->acceleration = 0x8000;
+  object->speedLimit = px(1) / 2;
+  object->acceleration = px(1) / 2;
   object->motionFlags = 0;
-  angle = gData_0802ec5c__move_by_keys[(INPUT_HELD >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(INPUT_HELD >> 4) & 15];
   if (angle == 0xffff) {
     best = (struct RopeNode *)object->watchedObject;
     value = 0;
   } else {
     value = 16;
-    position.x = 0;
-    position.y = 0;
-    position.z = 0;
-    Vector_AddPolarOffset(0x80000, angle, &position);
+    SET_POSITION(&position, 0, 0, 0);
+    Vector_AddPolarOffset(px(8), angle, &position);
     position.x += object->x;
     position.y = object->y - position.z;
     position.z = object->z;
@@ -170,10 +162,7 @@ s32 Actor_CrossRope(struct Actor *object) {
     bestDistance = 0x10000000;
     if (rope == NULL) {
       collisionFlags = 1;
-      /* FAKEMATCH(dead): the event work slot copied onto itself, a second
-       * store in the null branch that keeps the loop count from being lifted
-       * above the null test; without it, 21 of 300 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): the event work slot copied onto itself. */
       Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
       goto done;
     }
@@ -219,9 +208,7 @@ s32 Actor_CrossRope(struct Actor *object) {
       if (slot->amplitude > 0x20000)
         slot->amplitude = 0x20000;
       object->watchedObject = (struct Actor *)best;
-      position.x = best->x;
-      position.y = best->y;
-      position.z = best->z;
+      SET_POSITION(&position, best->x, best->y, best->z);
       sprite->angle = best->angle + turn;
     }
   }
@@ -237,9 +224,9 @@ done:
   Actor_SelectAnimation(object, 29);
   Actor_SetAnimationSpeed(object, value);
   if (collisionFlags != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;
@@ -280,33 +267,24 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   sprite = object->sprite;
   argument = 1;
   collisionFlags = 0;
-  object->speedLimit = 0x8000;
-  object->acceleration = 0x8000;
+  object->speedLimit = px(1) / 2;
+  object->acceleration = px(1) / 2;
   object->motionFlags = 0;
-  angle = gData_0802ec5c__move_by_keys[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
     collisionFlags = 4;
     best = (struct TightropeNode *)object->watchedObject;
-    position.x = object->x;
-    position.y = best->y;
-    position.z = object->z;
+    SET_POSITION(&position, object->x, best->y, object->z);
   } else {
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
-    Vector_AddPolarOffset(0x80000, angle, &position);
-    // Read through the slot's address: as Ram_HeapSlots->unk84[7], 44 of 324
-    // instructions differ in tla-en.
+    SET_POSITION(&position, object->x, object->y, object->z);
+    Vector_AddPolarOffset(px(8), angle, &position);
     tightrope = *(struct TightropeWork **)&Ram_HeapSlots->unk84[7];
     point = tightrope->nodes;
     best = NULL;
     bestDistance = 0x10000000;
     if (tightrope == NULL) {
       collisionFlags = 1;
-      /* FAKEMATCH(dead): the event work slot copied onto itself, a second
-       * store in the null branch that keeps the loop count from being lifted
-       * above the null test; without it, 29 of 324 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): the event work slot copied onto itself. */
       Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
     } else {
       for (count = 0; count < 128; count++, point++) {
@@ -337,13 +315,9 @@ s32 Actor_CrossTightrope(struct Actor *object) {
             slot->amplitude = 0x20000;
           object->watchedObject = (struct Actor *)best;
         }
-        /* FAKEMATCH(dead): position.x copied onto itself before the copies, a
-         * store that stops GCSE carrying the compare's x load past the pair
-         * block; without it, 45 of 324 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): position.x copied onto itself before the copies. */
         position.x = position.x;
-        position.x = best->x;
-        position.y = best->y;
-        position.z = best->z;
+        SET_POSITION(&position, best->x, best->y, best->z);
       }
     }
   }
@@ -361,9 +335,9 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 8);
   sprite->unk00[23] = 4;
   if (collisionFlags != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;
@@ -406,9 +380,8 @@ void Sand_JitterGrain(struct Actor *object) {
 /// flag 0x146 is clear.
 s32 Sand_CheckEndKeys(s32 arg) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  /* FAKEMATCH(pin): pressed held in r0, the register the early zero is
-   * returned in, so the argument moves to r6; as a plain local, which takes r6
-   * itself, 14 of 61 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): pressed held in r0, the register the early zero is returned
+   * in. */
   register s32 pressed asm("r0") = 0;
 
   if (work == NULL)
@@ -419,7 +392,7 @@ s32 Sand_CheckEndKeys(s32 arg) {
     pressed = 1;
   if (pressed) {
     if (Actor_CheckBlockedFar(arg)) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
     } else if (!GameFlag_Get(0x146)) {
       work->unk166 = 0x208b;
       return 1;

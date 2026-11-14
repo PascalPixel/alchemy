@@ -4,10 +4,13 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 // Battle effects: particle effect entry points.
 
@@ -108,13 +111,13 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
     struct EffectStep *mote = &PARTICLES[i];
 
     if (CONVERGES(mode)) {
-      mote->x = ((Random16() & 0xff) - 127) << 15;
-      mote->y = ((Random16() & 0xff) - 127) << 14;
-      mote->z = ((Random16() & 0xff) - 127) << 15;
+      SET_POSITION(mote, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 14,
+                   ((Random16() & 0xff) - 127) << 15);
     } else {
-      mote->x = ((Random16() & 0xff) - 127) << 13;
-      mote->y = ((Random16() & 0xff) - 255) << 13;
-      mote->z = ((Random16() & 0xff) - 127) << 13;
+      SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
+                   ((Random16() & 0xff) - 255) << 13,
+                   ((Random16() & 0xff) - 127) << 13);
     }
     mote->variant = 0;
   }
@@ -128,7 +131,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -170,8 +173,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           const u8 *w;
 
           /* FAKEMATCH(temporary): w and h set inside statement expressions at
-           * their first reads; as (w = gData_08197492)[frame & 3] and its twin
-           * for h, 4 of 755 instructions differ in tla-en. */
+           * their first reads. */
           angle = Random16() & 0xffff;
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
@@ -181,8 +183,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
                })[frame & 3] >>
                1);
           /* FAKEMATCH(barrier): an empty asm through w hides that it holds the
-           * width table's address, so the draw reads through w's register;
-           * without it, 233 of 755 instructions differ in tla-en. */
+           * width table's address. */
           __asm__("" : "=r"(w) : "0"(w));
           y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
               (({
@@ -190,9 +191,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
                  h;
                })[frame & 3] >>
                1);
-          /* FAKEMATCH(barrier): an empty asm through h, the same for the
-           * height table; without it, 331 of 755 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(barrier): an empty asm through h, the same for the height
+           * table. */
           __asm__("" : "=r"(h) : "0"(h));
           BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
                                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
@@ -262,16 +262,16 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
                 mote->y -= mote->y / distance;
                 mote->z -= mote->z / distance;
               } else {
-                mote->y += 0x10000;
+                mote->y += px(1);
               }
               mote->variant++;
               if (mote->variant == 24) {
                 if (DECAYS(mode)) {
                   mote->variant = 0;
                 } else {
-                  mote->x = ((Random16() & 0xff) - 127) << 13;
-                  mote->y = ((Random16() & 0xff) - 255) << 12;
-                  mote->z = ((Random16() & 0xff) - 127) << 13;
+                  SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
+                               ((Random16() & 0xff) - 255) << 12,
+                               ((Random16() & 0xff) - 127) << 13);
                 }
               }
             }
@@ -308,7 +308,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 
 #define SHEEP_COUNT 12
 #define SHEEP_FRAMES 98
-#define GROUND_Y (92 << 16)
+#define GROUND_Y px(92)
 
 // A flock of sheep cards drops in over the targets, one every four frames,
 // and bounces on the ground, tumbling through eight cels; at frame 80 the
@@ -351,7 +351,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   for (i = 0; i != 32; i++) {
     one = &sheep[i];
     one->x = ((Random16() & 63) + 32) << 16;
-    one->y = -0x200000;
+    one->y = -px(32);
     one->velocityY = Random16() & 0;
     one->z = Random16() & 3;
     one->variant = Random16() & 255;
@@ -371,7 +371,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != SHEEP_FRAMES; frame++) {
     struct BattleCamera *camera;
@@ -411,7 +411,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
           drawB(canvas, work->sheet + (cel << 10) - 0x800,
                 scroll + (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
         one->y += one->velocityY;
-        one->velocityY += 0x2000;
+        one->velocityY += px(1) / 8;
         one->variant += one->z;
         if (one->y > GROUND_Y && one->velocityY == 0) {
           s32 speed = one->velocityY + 1;
@@ -442,8 +442,6 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
 void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
-  // Unused: the second blitter gives the stack frame its 4 bytes (as one, 154
-  // of 222 differ in tla-en); the family's pair, as in The Broken Seal.
   DrawRectangle draw[2];
   struct EffectStep *marker;
   s32 i;
@@ -488,7 +486,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
       do {
         start = i * MARKER_STAGGER;
         if (frame == start) {
-          Sound_PlayFar(143);
+          Sound_PlayFar(SE_CRACK);
         }
         if (frame >= start && frame < start + MARKER_FRAMES) {
           // The marker at the target's feet, then the flame, six frames a cel.
@@ -562,9 +560,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
     s32 heading = Random16() & 0xffff;
     s32 speed = (Random16() & 0xff) + 128;
 
-    spark->x = 0;
-    spark->y = ((Random16() & 31) + 20) << 16;
-    spark->z = 0;
+    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
     spark->velocityX = (Trig_Sin(heading) * speed) >> 5;
     spark->velocityY = 0;
     spark->velocityZ = (Trig_Cos(heading) * speed) >> 5;
@@ -590,9 +586,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 8)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 80)
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 30 && frame < 70) {
@@ -672,9 +668,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
   for (i = 0; i != 512; i++) {
     struct EffectStep *spark = &PARTICLES[i];
 
-    spark->x = ((Random16() & 0xff) - 127) << 15;
-    spark->y = ((Random16() & 0x7f) + 64) << 15;
-    spark->z = ((Random16() & 0xff) - 127) << 15;
+    SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                 ((Random16() & 0x7f) + 64) << 15,
+                 ((Random16() & 0xff) - 127) << 15);
     spark->variant = 0;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
@@ -709,7 +705,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       position[2] = object->z;
       SceneTransform_ApplyPosition(position);
       if (frame == start + 30)
-        Sound_PlayFar(126);
+        Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
         BattleEffect_TintBattler(effect->actors[member], 7, -1, -1, 0);
       if (frame == start + 64)

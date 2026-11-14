@@ -2,6 +2,7 @@
 /// FieldEffect_SpawnResident, an object of its own between the event commands.
 
 #include "types.h"
+#include "fixed_math.h"
 #include "system/field_effect.h"
 #include "field/objdisp.h"
 #include "gamepak/far_call/field.h"
@@ -75,8 +76,8 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
       effect->scaleRateX = (options->targetScaleX - effect->scaleX) / script[3];
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (options->targetScaleX - 0x10000) / script[3];
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (options->targetScaleX - Q16_ONE) / script[3];
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {

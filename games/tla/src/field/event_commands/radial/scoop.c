@@ -5,6 +5,9 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 struct Work080e6400 {
   u8 tiles[0x400];
@@ -67,9 +70,6 @@ void Scoop_Update(void) {
       picture = work->picture;
       vram = (u8 *)OBJ_VRAM0 + work->pictureTile * TILE_SIZE_4BPP;
       Picture_ShiftColumnsByWave(work->tiles, picture, work->timer + 14);
-      // The heap copy of Render_CopyStrided called as returning the source
-      // pointer it leaves in r0, which moves picture to r0 after the width's
-      // 32; called as void, 2 of 596 instructions differ in tla-en.
       ((const u8 *(*)(const u8 *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
           picture, 32, 32, vram);
       sprite = &work->pictureSprite;
@@ -235,9 +235,6 @@ struct FxScene__f0e6400 {
   s16 frame;
 };
 
-// The event work with its flag word past the shared struct. Read as a member,
-// the flag word takes this struct's alias set, which orders its reads after
-// s32 stores but not after an Actor's u8 stores, as the listing has them.
 /* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:5251:
@@ -295,10 +292,9 @@ void FieldPsynergy_Scoop(void) {
   s32 i;
 
   if (event->work.controlMode != 3) {
-    scene->x = (caster->x & 0xfff00000) + 0x80000;
-    scene->y = caster->y;
-    scene->z = (caster->z & 0xfff00000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, scene->facing, &scene->x);
+    SET_POSITION(scene, (caster->x & 0xfff00000) + 0x80000, caster->y,
+                 (caster->z & 0xfff00000) + 0x80000);
+    Vector_AddPolarOffset(px(16), scene->facing, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
   object = Actor_Spawn(353, 0, 0, 0);
@@ -326,23 +322,23 @@ void FieldPsynergy_Scoop(void) {
   work->other = other;
   if (other == NULL)
     goto end;
-  other->z += 0x30000;
+  other->z += px(3);
   other->motionFlags = 0;
   other->priorityFlags = 1;
   other->scaleX = 0;
   if (!(event->unkd4c & 1))
     Func_080dba5c();
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + 0x200000, scene->z);
   wait(10);
   Actor_SelectAnimationFar(object, 1);
   wait(15);
   for (i = 9; i >= 0; i--) {
-    object->y += -0x28000;
+    object->y += -(px(5) / 2);
     wait(1);
   }
   Actor_SelectAnimationFar(object, 2);
-  Sound_PlayFar(132);
+  Sound_PlayFar(SE_WATER);
 
   failed = 0;
   for (i = 0; i < 80; i++) {
@@ -366,7 +362,7 @@ void FieldPsynergy_Scoop(void) {
     wait(2);
     for (i = 15; i >= 0; i--)
       BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
-    Sound_PlayFar(114);
+    Sound_PlayFar(SE_MENU_ERROR);
     wait(1);
     goto end;
   }
@@ -398,10 +394,8 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
       sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
       sprite->scaleY = sprite->scaleX = 0x3333;
-      particle->x = scene->x;
-      particle->y = scene->y;
-      particle->z = scene->z;
-      Vector_AddPolarOffset(0x20000, Random16(), &particle->x);
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
+      Vector_AddPolarOffset(px(2), Random16(), &particle->x);
       particle->velocityX = 0;
       particle->velocityY = 0;
       particle->velocityZ = 0;
@@ -426,14 +420,12 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
       sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
-      particle->x = scene->x;
-      particle->y = scene->y;
-      particle->z = scene->z;
-      Vector_AddPolarOffset(0x20000, Random16(), &particle->x);
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
+      Vector_AddPolarOffset(px(2), Random16(), &particle->x);
       particle->velocityX = 0;
       particle->velocityY = 0;
       particle->velocityZ = 0;
-      Vector_AddPolarOffset(0x10000, Random16(), &particle->velocityX);
+      Vector_AddPolarOffset(px(1), Random16(), &particle->velocityX);
       particle->timer = -i;
     }
   } else if (work->mode == 3) {
@@ -451,9 +443,7 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
-      particle->x = scene->x;
-      particle->y = scene->y + 0x280000;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y + 0x280000, scene->z);
       Vector_AddPolarOffset(Random16() * 4 + 0x30000, Random16(), &particle->x);
       particle->timer = -i * 3 / 4;
       sprite++;
@@ -481,7 +471,7 @@ void FieldPsynergy_Scoop(void) {
   }
   if (work->mode == 0 || work->mode == 3) {
     wait(6);
-    work->other->scaleX = 0x10000;
+    work->other->scaleX = Q16_ONE;
     wait(4);
   } else {
     wait(10);
@@ -490,7 +480,6 @@ void FieldPsynergy_Scoop(void) {
   work->phase = 0;
   work->timer = 0;
   {
-    // A local holding one constant: keeps 0x480's load where the native has it.
     s32 order = 0x480;
 
     Task_Add(Scoop_Update, order);
@@ -516,10 +505,7 @@ void FieldPsynergy_Scoop(void) {
       if (frame == 50)
         stage = 2;
       {
-        /* FAKEMATCH(barrier): frame copied through an empty asm, so its move
-         * to r2 comes before pending's to r0; as
-         * Field_RunPsynergyEvent(pending, stage, frame), 2 of 938 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(barrier): frame copied through an empty asm. */
         s32 frameCopy;
 
         asm("" : "=r"(frameCopy) : "0"(frame));
@@ -532,7 +518,7 @@ void FieldPsynergy_Scoop(void) {
     Field_RunPsynergyEvent(pending, 999, frame);
   }
   Task_Remove(Scoop_Update);
-  Sound_PlayFar(114);
+  Sound_PlayFar(SE_MENU_ERROR);
   FieldPsynergy_ShrinkToCaster(object, object->x, object->y, object->z);
   if (particleEntry != 96)
     VramCache_FreeEntry(particleEntry);
@@ -625,9 +611,7 @@ void Scoop_DigUpItem(void) {
   } else {
     item = (((Random16() * unit->level) * 2) >> 16) + 1 | 0x8000;
   }
-  object->x = anchor->x;
-  object->y = anchor->y;
-  object->z = anchor->z;
+  SET_POSITION(object, anchor->x, anchor->y, anchor->z);
   Actor_ShowItemIconById(id, item);
   ((struct DropEvent *)event)->item = item;
   BattleEffect_DropObjectAtAnchor(id);
@@ -695,7 +679,7 @@ void Teleport_PlayWhirl(void) {
     sprite->depth = 240;
     spark->age = -1;
   }
-  Sound_PlayFar(200);
+  Sound_PlayFar(SE_SPARKLE_FALL);
   wait(20);
   object->scaleX = 0;
   object->scaleY = 0;
@@ -713,9 +697,7 @@ void Teleport_PlayWhirl(void) {
         angle = Random16();
         spark = &work->sparks[next];
         spark->age = 0;
-        spark->x = object->x;
-        spark->y = object->y + Random16() * 20;
-        spark->z = object->z;
+        SET_POSITION(spark, object->x, object->y + Random16() * 20, object->z);
         Vector_AddPolarOffset(Random16() << 3, angle, &spark->x);
         next++;
         spark->angle = angle;
@@ -740,7 +722,7 @@ void Teleport_PlayWhirl(void) {
           sprite->x = position[0];
           sprite->y = position[2];
           EffectSprite_Draw(sprite);
-          spark->angle += 0x800;
+          spark->angle += TRIG_TURN / 32;
           spark->radius += -0x40000;
         }
         if (++spark->age == 20)
@@ -759,10 +741,10 @@ void Teleport_PlayWhirl(void) {
       }
       break;
     case 1:
-      object->facing += 0x2000;
+      object->facing += TRIG_TURN / 8;
       object->scaleX = (frame << 16) / 30;
-      if (object->scaleX > 0x10000)
-        object->scaleX = 0x10000;
+      if (object->scaleX > Q16_ONE)
+        object->scaleX = Q16_ONE;
       object->scaleY = object->scaleX;
       if (frame == 40) {
         state = 2;
@@ -771,7 +753,7 @@ void Teleport_PlayWhirl(void) {
       break;
     case 2:
       if (frame == 0) {
-        object->facing = 0x4000;
+        object->facing = TRIG_TURN / 4;
         Actor_SetSpriteFlagsFar(object, 1);
         count = 3;
       }
@@ -858,12 +840,12 @@ void Teleport_PlaySparks(void) {
   wait(20);
   Actor_SelectAnimationFar(object, 28);
   object->update = Actor_ApplyRandomChildValues;
-  Sound_PlayFar(131);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(30);
-  Sound_PlayFar(220);
+  Sound_PlayFar(SE_SHIMMER);
   Actor_SelectAnimationFar(object, 3);
   for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
-    object->facing += spin + 0x1000;
+    object->facing += spin + TRIG_TURN / 16;
     wait(1);
   }
 
@@ -876,19 +858,17 @@ void Teleport_PlaySparks(void) {
       angle = Random16();
       particle = &work->particles[next];
       particle->age = zero;
-      particle->x = object->x;
-      particle->y = object->y + Random16() * 20;
-      particle->z = object->z;
+      SET_POSITION(particle, object->x, object->y + Random16() * 20, object->z);
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
         particle->velocityX = zero;
-        particle->velocityY = -0x40000;
+        particle->velocityY = -(px(4));
         particle->velocityZ = zero;
         Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
                               &work->particles[next].velocityX);
       } else {
         particle->velocityX = 0;
-        particle->velocityY = 0x50000;
+        particle->velocityY = px(5);
         particle->velocityZ = 0;
         Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
                               &work->particles[next].velocityX);
@@ -921,8 +901,8 @@ void Teleport_PlaySparks(void) {
     switch (state) {
     case 0:
       if (frame == 10)
-        Sound_PlayFar(198);
-      object->facing += 0x2000;
+        Sound_PlayFar(SE_KOLIMA_BRIDGE_POST);
+      object->facing += TRIG_TURN / 8;
       if (frame == 40)
         count = 3;
       if (frame == 50)
@@ -934,8 +914,8 @@ void Teleport_PlaySparks(void) {
       }
       break;
     case 1:
-      object->facing += 0x2000;
-      object->scaleX = 0x10000 - (frame << 16) / 30;
+      object->facing += TRIG_TURN / 8;
+      object->scaleX = Q16_ONE - (frame << 16) / 30;
       if (object->scaleX < 0)
         object->scaleX = 0;
       object->scaleY = object->scaleX;
@@ -1069,10 +1049,8 @@ void FieldPsynergy_Parch(void) {
   pos[0] = caster->x;
   pos[1] = caster->y;
   pos[2] = caster->z;
-  Vector_AddPolarOffset(0x200000, scene->facing, pos);
+  Vector_AddPolarOffset(px(32), scene->facing, pos);
 
-  // The kind and the heap slots are locals that hold one value each, set
-  // after i so the kind's constant is built where the listing builds it.
   i = 0;
   kind = 290;
   slots = Ram_HeapSlots;
@@ -1132,7 +1110,7 @@ loaded:
     particle->timer = -1;
     particle++;
   }
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
   next = 0;
   spawn = 0;
@@ -1146,9 +1124,7 @@ loaded:
       sprite->scaleX = 0x3333;
       sprite->scaleY = 0x3333;
       particle = &work->particles[slot];
-      particle->x = pos[0];
-      particle->y = pos[1];
-      particle->z = pos[2];
+      SET_POSITION(particle, pos[0], pos[1], pos[2]);
       Vector_AddPolarOffset(Random16() * 12 + 0x90000, Random16(),
                             &particle->x);
       particle->sway = (Random16() << 5) >> 16;
@@ -1162,8 +1138,7 @@ loaded:
     for (i = 63; i >= 0; i--) {
       if (particle->timer >= 0) {
         s32 grown;
-        /* FAKEMATCH(temporary): sprite holds a copy of cursor; as cursor used
-         * directly, 57 of 871 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): sprite holds a copy of cursor. */
         sprite = cursor;
         sprite->oam.index = tile + ((particle->timer >> 2) & 7) * 8;
         grown = sprite->scaleX + 0x1999;
@@ -1210,7 +1185,7 @@ loaded:
         blue = 31;
       do { // once-only block: the listing schedules the store with it
         packed = (blue << 10) | (green << 5) | red;
-        ((u16 *)0x05000200)[255 - i] = packed;
+        ((u16 *)OBJ_PLTT)[255 - i] = packed;
       } while (0);
     }
     if (fade != -1 && fade <= 126)
@@ -1238,7 +1213,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 10)
-          Sound_PlayFar(542);
+          Sound_PlayFar(SE_542);
         work->discScaleX += 0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0x3fff) {
@@ -1265,7 +1240,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 30)
-          Sound_PlayFar(140);
+          Sound_PlayFar(SE_SPIN);
         work->discScaleX += 0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0xbfff) {
@@ -1300,7 +1275,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 40)
-          Sound_PlayFar(140);
+          Sound_PlayFar(SE_SPIN);
         work->discScaleX += 0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0xbfff) {
@@ -1354,8 +1329,7 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);
 /// (63, 63): a radius (16.16) and an angle, the cosine leftward and the sine
 /// upward.
 void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
-  /* FAKEMATCH(pin): the angle pinned to r8, which leaves the multiply's entry
-   * to r10; as angle itself, 12 of 39 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the angle pinned to r8. */
   register s32 turn asm("r8") = angle;
   s32 center = 63;
   s32 x = Iwram_MulQ16(Trig_Cos(turn), radius);
@@ -1376,18 +1350,14 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
   s32 sy;
   s32 (*fill)(void *, s32, u32);
 
-  // The opening in a once-only block keeps the destination's load after the
-  // fill value's 0; as plain statements, 4 of 66 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the opening in a once-only block. */
   do {
     x /= 8;
     y /= 8;
     fill = Iwram_FillWordsEntry;
-    /* FAKEMATCH(barrier): an empty asm taking the fill routine's entry, so its
-     * load comes before the size; without it, 4 of 66 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm taking the fill routine's entry. */
     asm volatile("" : : "l"(fill));
-    fill((void *)0x06002000, 0x400, 0);
+    fill((void *)BG_SCREEN_BLOCK(4), 0x400, 0);
   } while (0);
   for (row = 0, sy = y; row < 16; row++, sy++) {
     if (sy < 0)
@@ -1399,7 +1369,7 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
         continue;
       if (sx > 29)
         break;
-      ((u16 *)0x06002000)[row * 32 + column] = tiles[row * 16 + column];
+      ((u16 *)BG_SCREEN_BLOCK(4))[row * 32 + column] = tiles[row * 16 + column];
     }
   }
 }
@@ -1460,7 +1430,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   pos[1] = actor->y + 0x100000;
   pos[2] = actor->z;
   if (work->unk2985 != 0)
-    Vector_AddPolarOffset(0x20000, -(event->count << 11), pos);
+    Vector_AddPolarOffset(px(2), -(event->count << 11), pos);
   Camera_WorldToScreen(pos);
   x = pos[0] >> 16;
   gBgScroll[0].x = 64 - x;
@@ -1474,9 +1444,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
     red = 28;
   cycle:
     {
-      /* FAKEMATCH(pin): green pinned to r5, so the call's result is shifted
-       * straight into it; as a plain local, 17 of 272 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(pin): green pinned to r5. */
       register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
       s32 blue;
       s32 color;
@@ -1485,14 +1453,13 @@ void FieldPsynergy_UpdateUnnamed28(void) {
       green = (green >> 16) + 23;
       blue = ((blue >> 16) + 12) << 10;
       green <<= 5;
-      // An empty once-only loop keeps red's 28 after green's or; without it, 2
-      // of 272 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       color = blue | green | red;
 
-      ((u16 *)0x050001e0)[i] = color;
-      ((u16 *)0x050003e0)[i] = color;
+      ((u16 *)(BG_PLTT + 15 * 16))[i] = color;
+      ((u16 *)(OBJ_PLTT + 15 * 16))[i] = color;
     }
     if (++i < 16)
       goto cycle;
@@ -1510,10 +1477,8 @@ void FieldPsynergy_UpdateUnnamed28(void) {
         pos[2] = timer;
         pos[1] = timer;
         pos[0] = timer;
-        Vector_AddPolarOffset(0x360000, sprite->angle + 0x2000, pos);
-        entry->x = pos[0];
-        entry->y = pos[1] + 0x100000;
-        entry->z = pos[2];
+        Vector_AddPolarOffset(px(54), sprite->angle + TRIG_TURN / 8, pos);
+        SET_POSITION(entry, pos[0], pos[1] + 0x100000, pos[2]);
         timer = entry->timer;
       }
       if (timer >= 0) {

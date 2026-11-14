@@ -4,6 +4,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
 #include "gamepak/far_call/menu.h"
@@ -305,26 +306,26 @@ s32 MenuGrid_MoveCursor(s32 *cursor, s32 count, s32 columns) {
   s32 old = *cursor;
   s32 pos = old;
 
-  if (gInput.repeat & 0x20) {
+  if (gInput.repeat & KEY_LEFT) {
     pos--;
     pos = (pos + count) % count;
   }
-  if (gInput.repeat & 0x10) {
+  if (gInput.repeat & KEY_RIGHT) {
     pos++;
     pos = (pos + count) % count;
   }
-  if (gInput.repeat & 0x40) {
+  if (gInput.repeat & KEY_UP) {
     if (pos - columns >= 0)
       pos -= columns;
   }
-  if (gInput.repeat & 0x80) {
+  if (gInput.repeat & KEY_DOWN) {
     if (pos + columns < (columns + count - 1) / columns * columns)
       pos += columns;
     if (pos > count - 1)
       pos = count - 1;
   }
   if (old != pos) {
-    Sound_PlayFar(111);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     changed = 1;
   }
   if (old / columns * columns != pos / columns * columns)

@@ -52,22 +52,6 @@
 #undef EffectPosition
 #undef Event_SetDestinationFar
 
-// The screens built on the window system, as The Broken Seal's screens object
-// holds them: creating window sprites and the portraits, the party status
-// window, the save files, the file list and the saving screen's progress bar,
-// the name entry screen, the joined-party and found-Djinni messages, the
-// pictures and command icons loaded for the menus, the command row, the Djinn
-// change preview, the Status screen and the battle Djinn, summon, item and
-// Psynergy menus. They see the names below as they were matched, each a view
-// until the parts agree. Where to start:
-//
-//   Party status    party_status.c: PartyStatus_CreateWindow,
-//                   PartyStatus_Draw
-//   Saving          save.c: Save_WriteFile, Save_ChooseAndLoadFile
-//   Menus           menu_titles.c: MenuTitle_Create,
-//                   CommandIcon_Create
-//   Battle menus    battle_command_row.c: BattleCommandRow_Run
-
 /* VIEW(screens): routine Text_DrawPrefixedNumberAtOffset as int
  * Text_DrawPrefixedNumberAtOffset(), called with no declaration in scope;
  * another part has its declaration; tried as the definition's void
@@ -726,11 +710,6 @@ extern u8 Tile_BuildCellPicturesCode[];
 #undef Text_DrawPrefixedNumberAtOffset
 #undef Text_DrawWideStringInWindow
 #undef Window_MapTextCanvasTiles
-
-// The rest of the screens, as The Broken Seal's screens object ends: the
-// battle target selection, the link timer, the party's battle commands, the
-// command icon menus, the debug menus' destination row and the Pause menu,
-// with the names they see as they were matched.
 
 struct TargetNavigation {
   u8 unk00[0x28];

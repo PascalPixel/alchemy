@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -11,7 +12,7 @@
 #undef GROUND_Y
 
 #define SHARDS_PER_CRYSTAL 16
-#define GROUND_Y (56 << 16)
+#define GROUND_Y px(56)
 #define SHATTERED 1 // a crystal's z once it has hit the ground
 
 // Crystals fall one after another, eight frames apart, onto the targets'
@@ -37,7 +38,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
@@ -50,7 +51,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   for (k = 0; k != Data_081979b7[effect->variant * 3]; k++) {
     seed = &work->particles[k];
     x = Random16() & 31;
-    seed->y = -0x400000;
+    seed->y = -px(64);
     if (effect->side == 1) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;
@@ -127,7 +128,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
               shard->variant = 0;
             }
             work->shakeFrames = 8;
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
             for (j = 0; j != effect->count; j++)
               BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 4);
           }
@@ -193,5 +194,5 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     index++;
   } while (index != 64);
 
-  Iwram_CopyWords((void *)0x05000002, palette, sizeof(palette));
+  Iwram_CopyWords((void *)(BG_PLTT + 1), palette, sizeof(palette));
 }

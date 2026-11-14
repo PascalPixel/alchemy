@@ -36,8 +36,6 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
     return 0;
   unit = Unit_Get(unitId);
   {
-    // The entry held in a local loads before the size; as a plain
-    // Iwram_ClearWords call, 1 of 219 instructions differ in tla-en.
     s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
 
     clear(unit, BATTLE_UNIT_SIZE);

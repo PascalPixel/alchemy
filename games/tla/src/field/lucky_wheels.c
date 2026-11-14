@@ -3,6 +3,7 @@
 /// in the order it has in the ROM.
 
 #include "types.h"
+#include "sounds.h"
 #include "system/task.h"
 #include "system/io_reg.h"
 #include "system/main_routine_work.h"
@@ -35,14 +36,11 @@ extern const u8 gLuckyWheels_MachineSpriteX[];
 extern const u8 gLuckyWheels_MachineSpriteY[];
 
 /// Blanks the display but for 1D objects, seeds the random state from the
-/// play time, plays sound 709 and runs Lucky Wheels.
-// As The Broken Seal's.
-// XXX: sound 709's name; The Lost Age has no sounds.h yet, and The Broken
-// Seal plays MUS_DJINN_LESSON here.
+/// play time, starts Lucky Wheels' music and runs Lucky Wheels.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomState = gMainRoutineWork.playTime;
-  Sound_PlayFar(709);
+  Sound_PlayFar(MUS_709);
   LuckyWheels_Run();
   return 0;
 }
@@ -101,7 +99,8 @@ void LuckyWheels_TransferCanvas(void) {
       if (work->transferValue == 50)
         ColorBuffer_HalveNonzero(buf, (u8 *)0x06003500, 0x8000);
       else
-        ColorBuffer_ScaleNonzeroThreeQuarters(buf, (u8 *)0x06003500, 0x8000);
+        ColorBuffer_ScaleNonzeroThreeQuarters(buf, (u8 *)0x06003500,
+                                              Q16_ONE / 2);
       break;
     }
     work->transferPending = 0;
@@ -115,7 +114,7 @@ void Palette_DarkenScreenStep(void) {
   u16 *color;
   s32 i;
 
-  color = (u16 *)0x05000140;
+  color = (u16 *)(BG_PLTT + 10 * 16);
   for (i = 0; i != 16; i++) {
     s32 blue = (*color >> 10) & 0x1f;
     s32 green = (*color >> 5) & 0x1f;
@@ -133,7 +132,7 @@ void Palette_DarkenScreenStep(void) {
       red = 0;
     *color++ = RGB(red, green, blue);
   }
-  color = (u16 *)0x05000202;
+  color = (u16 *)(OBJ_PLTT + 1);
   for (i = 0; i != 239; i++) {
     s32 blue = (*color >> 10) & 0x1f;
     s32 green = (*color >> 5) & 0x1f;
@@ -410,7 +409,7 @@ void LuckyWheels_Update(void) {
   Random16();
 
   keys = *(volatile u32 *)&gInput.held;
-  dpad = *(volatile u32 *)&gInput.held & 0xf0;
+  dpad = *(volatile u32 *)&gInput.held & KEYS_DPAD;
   work->pressed = keys & ~work->keys;
   work->direction = dpad;
   if ((work->keys & 0xf0) == work->direction) {
@@ -443,21 +442,21 @@ void LuckyWheels_Update(void) {
         if (work->pressed & KEY_UP) {
           if (work->bet <= 3 && tickets > work->bet) {
             work->bet++;
-            Sound_PlayFar(111);
+            Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
-            Sound_PlayFar(113);
+            Sound_PlayFar(SE_MENU_CANCEL);
           }
         }
         if (work->pressed & KEY_DOWN) {
           if (work->bet > 1) {
             work->bet--;
-            Sound_PlayFar(111);
+            Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
-            Sound_PlayFar(113);
+            Sound_PlayFar(SE_MENU_CANCEL);
           }
         }
-        REG_BLDCNT = 0x3fd0;
-        REG_BLDALPHA = 0x10;
+        REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_ALL;
+        REG_BLDALPHA = BLEND_ALPHA(16, 0);
         if (work->pressed & KEY_A) {
           work->state = 1;
           fx->frame = 0;
@@ -465,7 +464,7 @@ void LuckyWheels_Update(void) {
           for (k = 0; k != work->bet; k++)
             PartyInventory_RemoveFar(228);
           Window_CloseFar(work->subWindow, 1);
-          Sound_PlayFar(304);
+          Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
         }
       }
     } else if (work->state == 5) {
@@ -487,26 +486,26 @@ void LuckyWheels_Update(void) {
             work->reels[i].stop = -1;
           }
         } else if (work->cursor <= 4) {
-          Sound_PlayFar(305);
+          Sound_PlayFar(SE_LUCKY_WHEELS_HOLD);
           work->reels[work->cursor].held ^= 1;
         } else if (allHeld == 0) {
-          Sound_PlayFar(304);
+          Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
           work->state = 1;
           work->cursor = 0;
           for (i = 0; i != 5; i++)
             work->reels[i].stop = -1;
           work->spins++;
         } else {
-          Sound_PlayFar(113);
+          Sound_PlayFar(SE_MENU_CANCEL);
         }
       } else {
         if (work->direction & KEY_RIGHT) {
           work->cursor = (work->cursor + 1) % 6;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         if (work->direction & KEY_LEFT) {
           work->cursor = (work->cursor + 5) % 6;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
       }
 
@@ -586,10 +585,10 @@ void LuckyWheels_Update(void) {
       objMode = 0;
       if (work->timer == 60) {
         work->state = 3;
-        Sound_PlayFar(93);
+        Sound_PlayFar(MUS_093);
         work->timer = 0;
-        REG_BLDCNT = 0x3f44;
-        REG_BLDALPHA = 0x1010;
+        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+        REG_BLDALPHA = BLEND_ALPHA(16, 16);
         fx->transferMode = 2;
         fx->transferValue = 75;
       }
@@ -598,7 +597,7 @@ void LuckyWheels_Update(void) {
       objMode = 0;
       if (work->pressed & KEY_A) {
         work->state = 10;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
       }
     } else if (work->state == 11) {
 #if TLA_PATCH_1
@@ -612,7 +611,7 @@ void LuckyWheels_Update(void) {
 #if TLA_PATCH_1
         work->phase = 0;
 #endif
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         Window_CloseFar(work->window, 1);
       }
     } else if (work->state == 20) {
@@ -626,14 +625,14 @@ void LuckyWheels_Update(void) {
         Text_DrawMessageAsTilesFar((s32)MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
-        Sound_PlayFar(306);
+        Sound_PlayFar(SE_LUCKY_WHEELS_STOP_PROMPT);
       if (work->timer > 56) {
         if (fx->frame > 31 || (work->pressed & KEY_R)) {
           fx->frame = 0;
           for (i = 0; i != 5; i++) {
             if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
               work->reels[i].stop = (Random16() & 3) + 4;
-              Sound_PlayFar(307);
+              Sound_PlayFar(SE_LUCKY_WHEELS_STOP);
               break;
             }
           }
@@ -699,7 +698,7 @@ void LuckyWheels_Update(void) {
         if (hits != 0) {
           save->wonPrizes[hits] = -1;
           work->state = 2;
-          Sound_PlayFar(171);
+          Sound_PlayFar(SE_THUNDER);
           fx->transferMode = 1;
           fx->transferValue = 0;
           REG_BLDCNT = 0;
@@ -810,13 +809,13 @@ void LuckyWheels_Update(void) {
 #if TLA_PATCH_1
       // The Japanese release draws the letters without moving them.
       p->y += p->velocityY;
-      p->velocityY += 0x4000;
+      p->velocityY += px(1) / 4;
       if (work->timer % 256 == i * 4 + 200) {
-        p->velocityY = 0x60000;
+        p->velocityY = px(6);
         p->variant = 0;
       }
       if (p->y > 0x400000) {
-        p->y = 0x400000;
+        p->y = px(64);
         if (p->variant <= 1)
           p->velocityY = -p->velocityY / 2;
         p->variant++;
@@ -938,13 +937,13 @@ void LuckyWheels_FinishFrame(void) {
       struct EffectStep *p = &fx->particles[i];
 
       p->y += p->velocityY;
-      p->velocityY += 0x4000;
+      p->velocityY += px(1) / 4;
       if (work->timer % 256 == i * 4 + 200) {
-        p->velocityY = 0x60000;
+        p->velocityY = px(6);
         p->variant = 0;
       }
       if (p->y > 0x400000) {
-        p->y = 0x400000;
+        p->y = px(64);
         if (p->variant <= 1)
           p->velocityY = -p->velocityY / 2;
         p->variant++;
@@ -997,8 +996,6 @@ void LuckyWheels_InitializeTitle(void) {
     SPARKS[i].variant = 0;
 
   letter = work->particles;
-  // The Broken Seal walks a pointer and steps a height; this game's bytes match
-  // only with the table read by name and the height worked out from the index.
   for (i = 0; i != REEL_TITLE_LETTERS; i++) {
     letter[i].x = (left + REEL_TITLE_LEFT) << 16;
     left += gLuckyWheels_TitleLetterWidths[i];
@@ -1099,7 +1096,7 @@ void LuckyWheels_Run(void) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
                       sheet);
   entry = Resource_GetTableEntry((s32)&ResourceId_SlotsMachinePicture);
-  Dma_Set(entry, (void *)0x05000140, 0x84000008, REG_DMA3);
+  Dma_Set(entry, (void *)(BG_PLTT + 10 * 16), 0x84000008, REG_DMA3);
   entry += 32;
   Decompress_TaggedLz(entry, tiles);
   j = 0;
@@ -1122,18 +1119,22 @@ void LuckyWheels_Run(void) {
         *(volatile u16 *)(0x06003000 + j) = k * 32 + i + 148;
     }
   }
-  REG_BG1CNT = 0x509;
-  REG_BG2CNT = 0x680;
+  REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(5);
+  REG_BG2CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   gBgScroll[1].x = 0;
   gBgScroll[1].y = 0;
   gBgScroll[2].x = 0;
   gBgScroll[2].y = 0;
-  REG_WININ = 0x3737;
-  REG_WINOUT = 0x2727;
-  REG_BLDCNT = 0x3f44;
-  REG_BLDALPHA = 0x1010;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
+               WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
+               WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_CLR;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG1HOFS = 0;
   REG_BG2HOFS = 0;
   REG_BG1VOFS = 0xff60;
@@ -1156,16 +1157,16 @@ void LuckyWheels_Run(void) {
     work->frame = 0;
     state->timer = 0;
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
-            (void *)0x05000000, 0x84000020, REG_DMA3);
-    *(u16 *)0x05000080 = 0x2f8b;
-    *(u16 *)0x05000082 = 0x5bf6;
+            (void *)BG_PLTT, 0x84000020, REG_DMA3);
+    *(u16 *)(BG_PLTT + 4 * 16) = 0x2f8b;
+    *(u16 *)(BG_PLTT + 65) = 0x5bf6;
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
-    Dma_Set(entry, (void *)0x05000200, 0x84000078, REG_DMA3);
+    Dma_Set(entry, (void *)OBJ_PLTT, 0x84000078, REG_DMA3);
     entry += 480;
     Decompress_TaggedLz(entry, tiles);
-    Dma_Set(tiles, (void *)0x06010000, 0x84001b30, REG_DMA3);
+    Dma_Set(tiles, (void *)OBJ_VRAM0, 0x84001b30, REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpotBanner);
-    Dma_Set(entry, (void *)0x050003e0, 0x84000008, REG_DMA3);
+    Dma_Set(entry, (void *)(OBJ_PLTT + 15 * 16), 0x84000008, REG_DMA3);
     entry += 32;
     Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)JACKPOT_TILES, JACKPOT_COPY, REG_DMA3);
@@ -1208,11 +1209,12 @@ void LuckyWheels_Run(void) {
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     Iwram_FillWordsEntry(canvas, size, 0);
     Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);
-    Dma_Set((void *)0x05000000, bgShade, 0x84000080, REG_DMA3);
-    Dma_Set((void *)0x05000200, shade, 0x84000080, REG_DMA3);
-    LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
-    LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
-    REG_DISPCNT = 0x3740;
+    Dma_Set((void *)BG_PLTT, bgShade, 0x84000080, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, shade, 0x84000080, REG_DMA3);
+    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
+    LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, 0, 0x100);
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                  DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
     if (PartyInventory_CountItemFar(228) == 1) {
       struct Window *window = Window_CreateFar(
           HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, CONTROLS_WINDOW_HEIGHT, 6);
@@ -1236,8 +1238,8 @@ void LuckyWheels_Run(void) {
 
     for (frame = 0; state->state != 10; frame++) {
       if (frame <= 16) {
-        LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, frame << 12, 0x100);
-        LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, frame << 12, 0x100);
       }
       if (state->state == 3) {
         s32 phase = frame % 80;
@@ -1350,9 +1352,9 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != 17; j++) {
-      LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, 0x10000 - (j << 12),
+      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, Q16_ONE - (j << 12),
                               0x100);
-      LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, 0x10000 - (j << 12),
+      LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, Q16_ONE - (j << 12),
                               0x100);
       wait(1);
     }

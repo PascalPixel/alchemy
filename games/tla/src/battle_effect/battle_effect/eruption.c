@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #include "battle/battle_effect_argument.h"
 
@@ -38,7 +39,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   if (mode == 1) {
     for (i = 0; i != 64; i++) {
@@ -98,7 +99,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 2)
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
     if (frame == gEruption_Counts[variant][FIELD_FRAMES] - 48)
       BattlePlayback_StartFar(133);
 

@@ -32,7 +32,7 @@ void BattleEffect_RunSceneEffect(s32 *arg) {
 
   HeapSlot_Alloc(100, 0x302);
   HeapSlot_Alloc(92, 0x7b7c);
-  HeapSlot_Alloc(96, 0x4000);
+  HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
   work->script = arg;
   work->active = 1;
@@ -141,7 +141,7 @@ void BattleEffect_RunFromTable(s32 *script) {
 
   HeapSlot_Alloc(100, 0x302);
   HeapSlot_Alloc(92, 0x7b7c);
-  HeapSlot_Alloc(96, 0x4000);
+  HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
   work->script = script;
   work->active = 1;

@@ -184,7 +184,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
 s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
-  if (gInput.repeat & 1) {
+  if (gInput.repeat & KEY_A) {
     s32 flag = ((*page << 4) + *row << 4) + cursor[0];
 
     if (GameFlag_Get(flag))
@@ -193,35 +193,35 @@ s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
       GameFlag_Set(flag);
     return 1;
   }
-  if ((gInput.pressed & 2) || (gInput.repeat & 4))
+  if ((gInput.pressed & KEY_B) || (gInput.repeat & KEY_SELECT))
     return -1;
-  if (gInput.repeat & 0x40) {
+  if (gInput.repeat & KEY_UP) {
     if (--*row < 0)
       *row = 15;
-  } else if (gInput.repeat & 0x80) {
+  } else if (gInput.repeat & KEY_DOWN) {
     if (++*row > 15)
       *row = 0;
-  } else if (gInput.repeat & 0x20) {
+  } else if (gInput.repeat & KEY_LEFT) {
     if (--cursor[0] < 0)
       cursor[0] = 15;
-  } else if (gInput.repeat & 0x10) {
+  } else if (gInput.repeat & KEY_RIGHT) {
     if (++cursor[0] > 15)
       cursor[0] = 0;
-  } else if ((gInput.repeat & 0x200) && (gInput.repeat & 8)) {
+  } else if ((gInput.repeat & KEY_L) && (gInput.repeat & KEY_START)) {
     *page -= 10;
     if (*page < 0)
       *page = 15;
     return 1;
-  } else if ((gInput.repeat & 0x100) && (gInput.repeat & 8)) {
+  } else if ((gInput.repeat & KEY_R) && (gInput.repeat & KEY_START)) {
     *page += 10;
     if (*page > 15)
       *page = 0;
     return 1;
-  } else if (gInput.repeat & 0x200) {
+  } else if (gInput.repeat & KEY_L) {
     if (--*page < 0)
       *page = 15;
     return 1;
-  } else if (gInput.repeat & 0x100) {
+  } else if (gInput.repeat & KEY_R) {
     if (++*page > 15)
       *page = 0;
     return 1;

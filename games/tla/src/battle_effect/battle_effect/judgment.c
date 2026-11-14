@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 // Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
 // then the sigil's beam strikes and the ground erupts in a ring of
@@ -67,10 +69,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   transition[4] = 1;
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(0, 1);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   depth = -0x400000;
   zoom = 0x80000;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
@@ -83,7 +87,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, pal, 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  REG_BG2CNT = 0x784;
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
   // The gathering: motes rise, the tiles fold in and flash.
   frame = 0;
@@ -111,11 +115,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       zoom = 0x80000;
     }
     if (frame == 143) {
-      FILL__actor_move_random(canvas, 0x4000, 0x2a2a2a2a);
-      Sound_PlayFar(145);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
+      Sound_PlayFar(SE_CRASH);
     }
     if (frame == 80) {
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 72) {
       work->fadeFrames = 24;
@@ -214,8 +218,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, 0x10000);
       }
       Canvas_BlitAtFoot(work->sheet + 0x1256, 60, 80, n);
-      /* FAKEMATCH(dead): the test of the block it stands in, made again; as a
-       * plain block, 8 of 2680 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): the test of the block it stands in, made again. */
       if ((u32)(frame - 116) <= 27) {
         s32 size = (frame - 116) / 3 + 16;
 
@@ -252,9 +255,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         flag = 1;
       }
       if ((u32)(frame - 144) <= 8) {
-        /* FAKEMATCH(temporary): the step taken through a local assigned twice;
-         * as addB = addR = addG = 304 - frame * 2, 40 of 2680 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(temporary): the step taken through a local assigned twice.
+         */
         addB = addR = addG = step = (step = 304 - frame * 2);
         flag = 1;
       }
@@ -288,10 +290,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       s32 y = frame * 16 - 2272;
 
       DRAW_ALT(3, work->sheet, 36, y, 24, 64);
-      /* FAKEMATCH(dead): a test that is never true, cells being the cell
-       * buffer's address, kept between the two draws so that each builds
-       * the sheet's address anew; as no test, 104 of 2680 instructions differ
-       * in tla-en. */
+      /* FAKEMATCH(dead): a test that is never true. */
       if (!cells && !canvas)
         y = 0;
       DRAW_ALT(7, work->sheet, 60, y, 24, 64);
@@ -331,9 +330,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
     frame++;
-  } while (frame != 160 && (frame <= 4 || !(gInput.repeat & 3)));
+  } while (frame != 160 && (frame <= 4 || !(gInput.repeat & (KEY_A | KEY_B))));
 
-  Iwram_FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   for (i = 0; i != 16; i++) {
     Sprite_DestroyFar(work->objects[i]);
   }
@@ -373,8 +372,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   REG_BG2PA = 0x100;
   REG_BG2X = -0x3c00;
-  REG_BG2CNT = 0x784;
-  FILL__actor_move_random(canvas, 0x4000, 0);
+  REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
+  FILL__actor_move_random(canvas, CANVAS_BYTES, 0);
   cx = 60;
   cy = 44;
   squash = 6;
@@ -389,19 +388,19 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   // The strike: the beam, the shockwave rings and the debris.
   for (frame = 0; frame != 336; frame++) {
     if (frame == 66) {
-      Sound_PlayFar(208);
+      Sound_PlayFar(SE_BANE_ESCAPE);
     }
     if (frame == 88) {
-      Sound_PlayFar(230);
+      Sound_PlayFar(SE_230);
     }
     if (frame == 155) {
-      Sound_PlayFar(162);
+      Sound_PlayFar(SE_162);
     }
     if (frame == 217) {
-      Sound_PlayFar(156);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     }
     if (frame == 280) {
-      Sound_PlayFar(157);
+      Sound_PlayFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
       for (i = 0; i != effect->count; i++) {
@@ -410,7 +409,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
       BattlePlayback_StartFar(145);
     }
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       if ((u32)(frame - 5) <= 144) {
         frame = 150;
         IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
@@ -424,7 +423,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 318) {
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 319) {
       Graphics_LoadGreyRamp();
@@ -434,7 +433,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame == 64) {
       IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
       IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
-      FILL__actor_move_random(canvas, 0x4000, 0);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                  work->sheet + 0x4000, 1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
@@ -448,7 +447,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 69) {
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 70) {
       BattleBackground_SetModeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
@@ -460,12 +459,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       rings = 4;
       squash = 8;
       FILL__actor_move_random(work->sheet, 0x3840, 0);
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
     }
     if (frame == 214) {
       FILL__actor_move_random(work->sheet, 0x3840, 0);
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
       {
         struct EffectStep *p = work->particles;
@@ -482,9 +481,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame == 280) {
       BattleEffect_SetupBlendedDisplay();
       FILL__actor_move_random(work->sheet, 0x3840, 0);
-      FILL__actor_move_random(canvas, 0x4000, 0x01010101);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
       transition[4] = 0;
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       {
         struct EffectStep *p = work->particles;
 
@@ -522,7 +521,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 182) {
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
 
     if (frame <= 63) {
@@ -546,8 +545,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 66) <= 1) {
       /* FAKEMATCH(temporary): the width through a local set at both draws of
-       * this picture; as 24 at both, 116 of 2680 instructions differ in
-       * tla-en. */
+       * this picture. */
       width = 24;
       draw[0](canvas, work->sheet + 0x6110, 48, 40, width, 41);
     }
@@ -618,16 +616,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
             half = radius / 2;
             dx = (half * sx) / 8;
-            /* FAKEMATCH(dead): a store top's own line overwrites; its test
-             * builds 1000 in a reload register before cx's reload, the one
-             * pick that sends cx to r4; without it, 28 of 2680 instructions
-             * differ in tla-en. */
+            /* FAKEMATCH(dead): a store top's own line overwrites. */
             if (dx > 1000)
               top = 0;
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges; without
-             * it, 231 of 2680 instructions differ in tla-en. */
+             * restores the label CSE and reload saw between the edges. */
             if (dx > cx)
               left = 0;
             left = cx - dx;
@@ -659,14 +653,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
             /* FAKEMATCH(dead): as above, the pick before cx's reload in the
-             * second half; without it, 28 of 2680 instructions differ in
-             * tla-en. */
+             * second half. */
             if (dx > 1000)
               top = 0;
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges; without
-             * it, 205 of 2680 instructions differ in tla-en. */
+             * restores the label CSE and reload saw between the edges. */
             if (dx > cx)
               left = 0;
             left = cx - dx;
@@ -707,9 +699,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
 
     if ((u32)(frame - 86) <= 63) {
-      s32 angle = -0x4000;
+      s32 angle = -TRIG_TURN / 4;
 
-      for (i = 0; i != 9; i++, angle += 0x1000) {
+      for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
         s32 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
         s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
 
@@ -727,7 +719,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       shift -= 8;
     }
     if (frame == 238) {
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if ((u32)(frame - 214) <= 65) {
       gBgScroll[1].x += 8;
@@ -765,7 +757,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
             if (frame > 301) {
               p->variant = 0;
             } else if (frame > 245) {
-              p->y = 0x600000;
+              p->y = px(96);
             } else {
               p->y = 0xc00000 - p->x;
             }
@@ -794,8 +786,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     HeapSlot_Release(SLOT_ALT);
     if (frame > 63) {
-      /* FAKEMATCH(temporary): the scroll value through a local; as stored
-       * straight to gBgScroll[1].y, 2 of 2680 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the scroll value through a local. */
       s32 y = Random16() % 4 + 30;
 
       gBgScroll[1].y = y;

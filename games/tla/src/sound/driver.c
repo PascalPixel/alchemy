@@ -10,7 +10,7 @@ void DummyFunc(void);
 void SampleFreqSet(u32 mode);
 void m4aSoundVSyncOff(void);
 void m4aSoundVSyncOn(void);
-extern const u16 gSound_PcmSamplesPerVBlank[];
+extern const u16 gPcmSamplesPerVBlankTable[];
 
 void ClearChain(struct SoundNote *note) {
   void (*func)(struct SoundNote *) =
@@ -29,13 +29,13 @@ void MPlayMain(struct SoundPlayer *player);
 void TrackStop(struct SoundPlayer *player, struct SoundTrack *track);
 void m4aSoundMode(u32 mode);
 
-extern const u8 gSound_CgbPitchCodes[];
-extern const s16 gSound_CgbFrequencySteps[];
-extern const u8 gSound_NoisePitchCodes[];
+extern const u8 gCgbScaleTable[];
+extern const s16 gCgbFreqTable[];
+extern const u8 gNoiseTable[];
 
 void CgbOscOff(u8 channel);
 
-extern const u8 gSound_Cgb3LevelCodes[];
+extern const u8 gCgb3Vol[];
 
 void SoundInit(struct SoundWork *work) {
   u32 zero;
@@ -80,7 +80,7 @@ void SampleFreqSet(u32 mode) {
 
   mode = (mode & 0xF0000) >> 16;
   work->rate = mode;
-  samples = gSound_PcmSamplesPerVBlank[mode - 1];
+  samples = gPcmSamplesPerVBlankTable[mode - 1];
   work->pcmSamplesPerVBlank = samples;
   work->transferPeriod = __divsi3(0x630, samples);
   work->outputRate = __divsi3(0x91D1B * samples + 5000, 10000);
@@ -387,7 +387,7 @@ s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine) {
       if (key > 59)
         key = 59;
     }
-    return gSound_NoisePitchCodes[key];
+    return gNoiseTable[key];
   }
 
   if (key <= 35) {
@@ -400,10 +400,10 @@ s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine) {
       fine = 255;
     }
   }
-  low = gSound_CgbPitchCodes[key];
-  low = gSound_CgbFrequencySteps[low & 15] >> (low >> 4);
-  high = gSound_CgbPitchCodes[key + 1];
-  high = gSound_CgbFrequencySteps[high & 15] >> (high >> 4);
+  low = gCgbScaleTable[key];
+  low = gCgbFreqTable[low & 15] >> (low >> 4);
+  high = gCgbScaleTable[key + 1];
+  high = gCgbFreqTable[high & 15] >> (high >> 4);
   return low + ((fine * (high - low)) >> 8) + 2048;
 }
 
@@ -659,7 +659,7 @@ void CgbSound(void) {
     if (note->modified & CGB_NOTE_VOLUME_DIRTY) {
       REG_NR51 = (REG_NR51 & ~note->channelBits) | note->panBits;
       if (channel == 3) {
-        *reg2 = gSound_Cgb3LevelCodes[note->level];
+        *reg2 = gCgb3Vol[note->level];
         if (note->trigger & 0x80) {
           *reg0 = 0x80;
           *reg4 = note->trigger;
@@ -929,7 +929,7 @@ void ply_xcmd(struct SoundPlayer *player, struct SoundTrack *track) {
 
   command = *track->cursor;
   track->cursor++;
-  gSound_ExtendedCommandTable[command](player, track);
+  gXcmdTable[command](player, track);
 }
 
 union PackedWord {

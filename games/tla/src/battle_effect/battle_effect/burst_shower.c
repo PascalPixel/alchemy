@@ -3,6 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "macros.h"
 
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
 /// table into BG2X, one word a line.
@@ -158,12 +161,6 @@ void BattleEffect_RunVolleyBMode11WithAction(
 // BattleEffect_BlastSheet, 0x190 BattleEffect_BlueBeamSheet and 0xb9
 // BattleEffect_EffectPalette01.
 
-// Forms that decided the allocation: i is one counter for every r9 loop;
-// user is a pointer spilled to sp+60; targets and aim are arrays; widths and
-// heights are set inside the glint loop, their NULL defaults keeping loop.c
-// from hoisting them; height 12 is hoisted only as a local; a launch with
-// x += dx << 12 sends the whole allocation away.
-
 #define DJINNI_BEHIND 64
 
 // A volley of shots flies from the user at the targets, one launched each
@@ -225,10 +222,11 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     }
-    REG_BG2CNT = 0x785;
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(7);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
   if (effect->prelude == 1) {
@@ -250,7 +248,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         188, BLIT_MODE(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
 
     pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-    REG_BLDALPHA = 0x310;
+    REG_BLDALPHA = BLEND_ALPHA(16, 3);
   } else if (mode == 7 || mode == 21) {
     BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -307,7 +305,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     }
     Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 0);
-    REG_BLDALPHA = 0x410;
+    REG_BLDALPHA = BLEND_ALPHA(16, 4);
   } else if (mode == 18) {
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
@@ -413,8 +411,6 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         break;
       }
       if (palette != NULL) {
-        // The entry held in a local loads before the arguments; as a plain
-        // Iwram_CopyWords call, 2 of 2239 instructions differ in tla-en.
         __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
         routine((void *)BG_PLTT, palette, 128);
       }
@@ -527,9 +523,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       for (i = 0; i != 128; i++) {
         struct EffectStep *mote = &MOTES[i];
 
-        mote->x = object->x;
-        mote->y = object->y + half;
-        mote->z = object->z;
+        SET_POSITION(mote, object->x, object->y + half, object->z);
         mote->velocityX = ((Random16() & 0xff) - 128) << 10;
         mote->velocityY = ((Random16() & 0xff) - 128) << 10;
         mote->velocityZ = ((Random16() & 0xff) - 128) << 10;
@@ -549,9 +543,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
       if (frame == 4) {
         if (mode == 9 || mode == 17)
-          Sound_PlayFar(92);
+          Sound_PlayFar(MUS_092);
         else
-          Sound_PlayFar(136);
+          Sound_PlayFar(SE_WHOOSH);
       }
       if (mode == 8) {
       } else if (mode == 6) {
@@ -701,7 +695,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         shot->x += shot->velocityX;
         shot->y += shot->velocityY;
         if (mode == 10)
-          shot->velocityY -= 0x4000;
+          shot->velocityY -= px(1) / 4;
         shot->variant++;
         if (mode == 9 || mode == 17) {
           if (shot->variant == 32)
@@ -823,12 +817,10 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
               dy = object->y + half - mote->y;
               dz = object->z - mote->z;
               /* FAKEMATCH(barrier): an empty asm through dy adds the references
-               * that rank it above dz and dx; without it, 18 of 2239
-               * instructions differ in tla-en. */
+               * that rank it above dz and dx. */
               __asm__("" : "=r"(dy) : "0"(dy));
-              /* FAKEMATCH(barrier): an empty asm through dz ranks it above dx,
-               * which takes the register after it; without it, 16 of 2239
-               * instructions differ in tla-en. */
+              /* FAKEMATCH(barrier): an empty asm through dz ranks it above dx.
+               */
               __asm__("" : "=r"(dz) : "0"(dz));
               mote->velocityX += dx >> 7;
               mote->velocityY += dy >> 8;
@@ -852,7 +844,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     HeapSlot_Release(104);
     if (mode == 11 || mode == 14 || mode == 18) {
       // Hand over to the canvas effect: clear both canvases first.
-      Iwram_ClearWords((void *)0x06004000, 0x3c00);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
       Iwram_ClearWords(canvas, 0x3c00);
       effect->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);

@@ -33,13 +33,6 @@
 
 #include "field_sequence/screen_transition.c"
 
-// The event commands, as The Broken Seal's event_commands.c begins: the
-// commands events run (waits, received items, questions and destinations), the
-// battles and destinations an event requests, and the commands on actors. Here
-// the ROM breaks The Broken Seal's object in three: object/step_angle.c, which
-// an overlay links too, follows this object, and the rest of the commands are
-// still separate files. These parts see the names below as they were matched.
-
 /* VIEW(event_commands): routine GameFlag_GetByte as u8 GameFlag_GetByte(s32
  * flag); field/event.h has s32 GameFlag_GetByte(s32 flag); tried as the
  * definition's u8 GameFlag_GetByte(s32 flag), which the object already

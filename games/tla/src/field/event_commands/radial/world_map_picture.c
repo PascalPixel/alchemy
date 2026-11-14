@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "flags.h"
 
 #include "text/msg_ids.h"
 
@@ -465,10 +466,8 @@ void WorldPicture_UpdateMarkers(void) {
     if (cursorY < 0)
       cursorY = 0;
     width = cursorX - NAME_BOX_X;
-    /* FAKEMATCH(temporary): the name box's y read through a pointer to a
-       struct with an s32 member standing in for its own address, so its
-       load may alias width's store to the stack and stays after it; as
-       NAME_BOX_Y, 10 of 1044 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the name box's y read through a pointer to a struct
+     * with an s32 member standing in for its own address. */
     height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
     WindowSpriteList_Move(work->window, width, height);
     NAME_BOX_X = cursorX;
@@ -504,8 +503,8 @@ void WorldMapPicture_Draw(void) {
   u8 *buffer;
   s32 resource = (s32)&ResourceId_Data024;
   s32 *cursor = work->cursor;
-  s32 x = *cursor++ - (120 << 16);
-  s32 z = *cursor - (80 << 16);
+  s32 x = *cursor++ - px(120);
+  s32 z = *cursor - px(80);
   u32 *graphics;
   u32 column;
   u32 firstRow;
@@ -523,12 +522,12 @@ void WorldMapPicture_Draw(void) {
     z = 0;
   }
   graphics = Resource_GetTableEntry(resource);
-  Dma_Set((u8 *)graphics + graphics[0], (void *)0x05000000, 0x84000078,
+  Dma_Set((u8 *)graphics + graphics[0], (void *)BG_PLTT, 0x84000078,
           (volatile u32 *)0x040000d4);
-  *(u16 *)0x05000000 = 0;
+  *(u16 *)BG_PLTT = 0;
   buffer = Ram_MapCellBuffer;
-  right = 272 << 16;
-  bottom = 224 << 16;
+  right = px(272);
+  bottom = px(224);
   if (x < 0)
     x = 0;
   if (x > right)
@@ -545,8 +544,7 @@ void WorldMapPicture_Draw(void) {
   for (row = 0; row <= 20; row++) {
     bufferRow = firstRow + row;
     unwrapped = bufferRow;
-    /* FAKEMATCH(barrier): an empty asm reading x, which keeps it live over the
-       row's start; without it, 118 of 149 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm reading x. */
     asm("" : : "r"(x));
     if (bufferRow > 23)
       bufferRow -= 24;
@@ -565,9 +563,8 @@ void WorldMapPicture_Draw(void) {
       to = 0x06000000;
       x <<= 6;
       x += (s32)buffer;
-      /* FAKEMATCH(barrier): VRAM's address through an empty asm that also
-         reads i, which builds it once in r7 ahead of the loop; without it, 10
-         of 149 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): VRAM's address through an empty asm that also reads
+       * i. */
       asm("" : "=r"(to) : "0"(to), "r"(i));
       for (; i <= 30; i++) {
         Dma_Set((void *)x, (void *)((tile << 6) + to), 0x84000010,
@@ -630,9 +627,7 @@ void WorldMapPicture_DrawRow(u32 column, s32 row) {
 }
 
 static inline s32 WorldMap_AddColumn(s32 column, s32 cell) {
-  /* FAKEMATCH(wrapper): the column added through an inline, so the sum
-   * keeps the column as its first operand; as column + cell, 2 of 51
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the column added through an inline. */
   return column + cell;
 }
 
@@ -655,8 +650,6 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
     cell = WorldMap_AddColumn(column, cell);
     cell <<= 6;
     tile <<= 6;
-    // line is reused for the screen's address; as (u8 *)BG_VRAM + (256 << 6) +
-    // tile in the call, 6 of 51 instructions differ in tla-en.
     line = BG_VRAM + (256 << 6);
     Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile, DMA_COPY_WORDS(16),
             REG_DMA3);
@@ -678,8 +671,8 @@ extern s32 *Data_0202a62c;
 /// values are 16.16 pixels.
 void WorldMapPicture_UpdateScroll(void) {
   s32 *cursor = Data_0202a62c;
-  s32 x = *cursor++ - (120 << 16);
-  s32 y = *cursor - (80 << 16);
+  s32 x = *cursor++ - px(120);
+  s32 y = *cursor - px(80);
   s32 dx;
   s32 dy;
   s32 distance;
@@ -826,13 +819,12 @@ s32 WorldPicture_Show(s32 mode) {
     wait(1);
     ((struct MapViewWork *)map)->picturePending = 1;
     do {
-      // A once-only block: as a plain statement, 16 of 548 instructions differ.
+      /* FAKEMATCH(dead): the statement in a once-only block. */
       blend = REG_BLDALPHA;
     } while (0);
   } else {
     do {
-      // A once-only block: as a plain statement, 281 of 548 instructions
-      // differ.
+      /* FAKEMATCH(dead): the statement in a once-only block. */
       event->viewCenter->movementState = 1;
     } while (0);
     savedDelay = event->delay;
@@ -845,7 +837,7 @@ s32 WorldPicture_Show(s32 mode) {
     objects->suspended = 1;
     wait(1);
     blend = REG_BLDALPHA;
-    tiles = (u32 *)0x06003000;
+    tiles = (u32 *)BG_SCREEN_BLOCK(6);
     tile = 0x01810180;
     for (row = 0; row < 20; row++)
       for (column = 0; column < 16; column++) {
@@ -867,8 +859,11 @@ s32 WorldPicture_Show(s32 mode) {
     map->origin = 0;
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
-    Io_Write16(0x682, &REG_BG1CNT);
-    Io_Write16(0x1340, &REG_DISPCNT);
+    Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
+               &REG_BG1CNT);
+    Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                   DISPCNT_OBJ_ON,
+               &REG_DISPCNT);
   }
   // Default: no pointer yet.
   wayX = NULL;
@@ -881,8 +876,12 @@ s32 WorldPicture_Show(s32 mode) {
     Data_0202a640 = zoomed;
     WorldMapPicture_Draw();
     wait(1);
-    Io_Write16(0x8682, &REG_BG1CNT);
-    Io_Write16(0x1340, &REG_DISPCNT);
+    Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) |
+                   BGCNT_SIZE(2),
+               &REG_BG1CNT);
+    Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                   DISPCNT_OBJ_ON,
+               &REG_DISPCNT);
     if ((GameFlag_Get(284) || GameFlag_Get(286)) && !messageShown) {
       FieldMessage_ShowFar((s32)MsgNotOnMap, 1);
       messageShown = 1;
@@ -896,16 +895,16 @@ s32 WorldPicture_Show(s32 mode) {
       WorldPicture_UpdateMarkers();
       input = keys;
       wait(1);
-      if ((input->repeat & 8) && gliding == 0) {
+      if ((input->repeat & KEY_START) && gliding == 0) {
         WorldPicture_GetLeaderPoint(&screenX, &screenY);
         *cursorX = screenX << 16;
         // DEAD: input set again to the &gInput it already holds; the ROM keeps
-        // the reload.
+        // the load.
         input = &gInput;
         *cursorZ = screenY << 16;
         gliding = 1;
       }
-      if (!(keys->held & 8) && gliding == 1) {
+      if (!(keys->held & KEY_START) && gliding == 1) {
         *cursorX = *wayX;
         // DEAD: input set again to the &gInput it already holds; the ROM keeps
         // the reload.
@@ -913,7 +912,7 @@ s32 WorldPicture_Show(s32 mode) {
         *cursorZ = Data_0202a650;
         gliding = 0;
       }
-      if (keys->repeat & 0x100) {
+      if (keys->repeat & KEY_R) {
         WorldPicture_StepToPlace(&screenX, &screenY, 1);
         *cursorX = screenX << 16;
         // wayZ only ever holds &Data_0202a650, set where it is used.
@@ -922,7 +921,7 @@ s32 WorldPicture_Show(s32 mode) {
         *wayX = *cursorX;
         *wayZ = *cursorZ;
       }
-      if (input->repeat & 0x200) {
+      if (input->repeat & KEY_L) {
         WorldPicture_StepToPlace(&screenX, &screenY, -1);
         *cursorX = screenX << 16;
         wayZ = &Data_0202a650;
@@ -930,10 +929,10 @@ s32 WorldPicture_Show(s32 mode) {
         *wayX = *cursorX;
         *wayZ = *cursorZ;
       }
-      if (input->repeat & 4) {
+      if (input->repeat & KEY_SELECT) {
         world->shown = -1;
         WindowSprite_PrepareForRedrawFar(world->window);
-        Io_Write16(64, &REG_DISPCNT);
+        Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
         zoomed ^= 1;
         if (*cursorX != 0) {
           world->x = *cursorX;
@@ -962,7 +961,7 @@ s32 WorldPicture_Show(s32 mode) {
         }
         break;
       }
-      if (input->repeat & 1) {
+      if (input->repeat & KEY_A) {
         if (mode == 0)
           goto done;
         if (world->shown == -1)
@@ -974,12 +973,10 @@ s32 WorldPicture_Show(s32 mode) {
         WorldMap_SetReturnForScene(place->scene, place->entrance);
         goto done;
       }
-      if (input->repeat & 2) {
+      if (input->repeat & KEY_B) {
         if (mode != 0) {
           routine->unk2be = 0xffff;
           {
-            // The -1 in a local of its own; as choice->flag = -1, 40 of 548
-            // instructions differ in tla-en.
             s32 none = -1;
 
             choice->flag = none;
@@ -991,10 +988,10 @@ s32 WorldPicture_Show(s32 mode) {
   }
 done:
   WorldPicture_Release();
-  Io_Write16(64, &REG_DISPCNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   if (mode != 0 || event->controlMode != 3) {
     event->countdown = 999;
-    GameFlag_Set(265);
+    GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   } else {
     WorldMap_LoadAreaGraphicsFar();
     IO_WRITE_QUEUE_PUSH(0x04000052, (u16)blend, 0x20000);

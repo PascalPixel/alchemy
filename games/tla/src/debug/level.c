@@ -5,6 +5,7 @@
 /// rooms of people in rows, each of whom says their name when talked to.
 
 #include "battle/battle.h"
+#include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -194,18 +195,18 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
     if ((gInput.pressed & KEY_START) != 0 ||
         Input_PressedFenced(KEY_SELECT) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(5);
-      Sound_Play(93);
+      Sound_Play(MUS_093);
       redraw = 1;
     }
 
     if ((gInput.pressed & KEY_A) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(1);
-      Sound_Play(91);
+      Sound_Play(MUS_091);
       redraw = 1;
     }
 
     if ((gInput.pressed & KEY_B) != 0) {
-      Sound_Play(113);
+      Sound_Play(SE_MENU_CANCEL);
       WindowSprite_RedrawSavedRect(window);
       wait(1);
       Window_Close(window, 1);
@@ -244,7 +245,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
 
   entryCount = ITEM_COUNT;
   seekDirection = 0;
-  Sound_Play(112);
+  Sound_Play(SE_MENU_CONFIRM);
   selectedItemId = 1;
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
@@ -256,9 +257,9 @@ void IncreaseItemAndLevel_SelectItem(void) {
   // Lend the highlight palette (BG palette 14) to the item icons, as The
   // Broken Seal's: sprite palette 0 into it, then the window background colour
   // over its text background.
-  Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 14 * 16), 0x80000010,
           (volatile u32 *)0x040000d4);
-  Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
+  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238), 0x80000001,
           (volatile u32 *)0x040000d4);
   wait(1);
   while (1) {
@@ -286,50 +287,50 @@ void IncreaseItemAndLevel_SelectItem(void) {
     }
     if (Input_PressedFenced(KEY_A)) {
       if (PartyInventory_Add(selectedItemId) == -1) {
-        Sound_Play(113);
+        Sound_Play(SE_MENU_CANCEL);
         break;
       }
-      Sound_Play(175);
+      Sound_Play(SE_NOTE_HIGH);
     }
     if (gInput.pressed & KEY_B) {
-      Sound_Play(113);
+      Sound_Play(SE_MENU_CANCEL);
       break;
     }
     if (gInput.repeat & KEY_UP) {
       seekDirection = -1;
       selectedItemId--;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_DOWN) {
       seekDirection = 1;
       selectedItemId++;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_RIGHT) {
       seekDirection = 1;
       selectedItemId += BROWSER_ROW_STEP;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_LEFT) {
       seekDirection = -1;
       selectedItemId -= BROWSER_ROW_STEP;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_R) {
       seekDirection = 1;
       selectedItemId += BROWSER_PAGE_STEP;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_L) {
       seekDirection = -1;
       selectedItemId -= BROWSER_PAGE_STEP;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     // Skip items with no icon in the chosen direction.
     if (seekDirection == -1) {
@@ -598,9 +599,7 @@ void IncreaseItemAndLevel_RunMotionTest(void) {
   x = 156;
   z = 208;
   id = ACTOR_LEVEL_EDITOR;
-  /* FAKEMATCH(barrier): x, z and the actor held at an empty asm, so the actor
-   * is set between the halves of the position, as the ROM has it; as no asm,
-   * 2 of 20 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): x, z and the actor held at an empty asm. */
   asm("" : "+l"(x), "+l"(z), "+l"(id));
   Actor_SetHorizontalPositionWithTerrain(id, x << 17, z << 17);
   Event_End();

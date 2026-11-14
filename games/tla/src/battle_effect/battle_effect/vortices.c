@@ -3,10 +3,13 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 #undef HEAP_BLITTER
 #undef HEAP_BLITTER_ALTERNATE
@@ -58,9 +61,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   y = source->y + BattleUnit_GetEffectHeightFar(effect->actor);
   for (i = 0; i != MOTE_COUNT; i++) {
     point = &work->particles[i];
-    point->x = source->x;
-    point->y = y;
-    point->z = source->z;
+    SET_POSITION(point, source->x, y, source->z);
     point->velocityX = ((s32)((Random16() & 255) - 127) << 16) >> 5;
     point->velocityY = ((s32)((Random16() & 127) - 16) << 16) >> 6;
     point->velocityZ = ((s32)((Random16() & 255) - 127) << 16) >> 5;
@@ -72,9 +73,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   for (i = 0; i != effect->count; i++) {
     seat = &work->particles[SEAT_FIRST + i];
     object = BattleObject_GetFar(effect->actors[i])->object;
-    seat->x = object->x;
-    seat->y = 0;
-    seat->z = object->z;
+    SET_POSITION(seat, object->x, 0, object->z);
   }
 
   work->cameraDelta = 0;
@@ -83,7 +82,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(164);
+  Sound_PlayFar(SE_SCATTER);
 
   for (frame = 0; frame != gVortices_Counts[effect->variant * 2 + 1]; frame++) {
     // The camera turns between frames 17 and 63.
@@ -135,7 +134,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
                                    i % effect->count, 4);
           BattleMotion_ApplyKnockbackFar(effect->actors[i % effect->count], 0);
           work->shakeFrames = 4;
-          Sound_PlayFar(132);
+          Sound_PlayFar(SE_WATER);
         }
       }
 
@@ -191,7 +190,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                              COMPOSITE_CLIP_Y);
@@ -211,9 +210,9 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_BLDALPHA = 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(0, 16);
   wait(1);
-  Sound_PlayFar(141);
+  Sound_PlayFar(SE_RUMBLE);
 
   for (frame = 0; frame != TORNADO_FRAMES; frame++) {
     wave = Trig_Sin(frame << 10) << 4;
@@ -223,7 +222,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     // Wipe the canvas every eight frames from frame 16, leaving a trail.
     for (i = 0; i != 7; i++) {
       if (frame == i * 8 + 16)
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x08080808);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(8));
     }
 
     // Sway toward the targets' side; fade in over 16 frames and out over the
@@ -240,11 +239,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     for (i = 0; i != gVortices_Shapes[effect->variant * 3]; i++) {
       // Each funnel circles its own phase, a quarter turn from the next.
       x = ((gVortices_Shapes[effect->variant * 3 + 1] *
-                Trig_Sin((frame << 11) + i * 0x4000) +
+                Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
             wave) >>
            16) +
           40;
-      y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
+      y = (Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2) >> 16;
       segment = (frame / 2) % 3;
       draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
       draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40,

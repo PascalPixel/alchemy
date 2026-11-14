@@ -3,6 +3,8 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 
 #undef FORMATION
 #undef FORMATION_SIZE
@@ -29,9 +31,6 @@
 #define WIND_UP_FRAME 244 // the orb draws back, then flies left
 #define THROW_FRAME 252
 #define HIT_FRAME 260
-
-#define SE_DROP 156
-#define SE_HIT 145
 
 struct FxScale {
   s32 x;
@@ -112,7 +111,9 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       HEAP_BLITTER_ALTERNATE,
       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  REG_WININ = 0x2737;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = 0xf0;
   REG_WIN1V = 0x1088;
   wait(1);
@@ -122,19 +123,21 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   BattleEffect_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
-  REG_DISPCNT = 0x7741;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = 2;
   work->transferValue = 50;
 
   // The formation's corner and the orb's start; the rocks wait above the
   // screen one after another; every puff and spark is idle.
-  base.x = 0xbc0000;
-  base.y = 0x5c0000;
-  orb.x = 0xa00000;
-  orb.y = 0x5c0000;
+  base.x = px(188);
+  base.y = px(92);
+  orb.x = px(160);
+  orb.y = px(92);
   for (i = 0; i != ROCK_COUNT; i++) {
     struct EffectStep *rock = &work->particles[i];
 
@@ -151,15 +154,16 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
-  for (frame = 0; frame != SCENE_FRAMES && !(gInput.repeat & 3); frame++) {
+  for (frame = 0; frame != SCENE_FRAMES && !(gInput.repeat & (KEY_A | KEY_B));
+       frame++) {
     if (frame == FIRST_DROP + 3)
-      Sound_PlayFar(SE_DROP);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == FIRST_DROP + 45)
-      Sound_PlayFar(SE_DROP);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == FIRST_DROP + 87)
-      Sound_PlayFar(SE_DROP);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == HIT_FRAME)
-      Sound_PlayFar(SE_HIT);
+      Sound_PlayFar(SE_CRASH);
     scale = gData_08196e6c;
     if (frame >= ROCKS_FALL && frame <= 251)
       work->shakeFrames = 1;
@@ -187,31 +191,31 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
 
       for (i = 0, start = FIRST_DROP; i != 3; start += 40, i++) {
         if (frame >= start && frame < start + 4)
-          orb.y += 0x80000;
+          orb.y += px(8);
         if (frame == start + 3) {
           for (k = 0; k != 4; k++) {
             struct EffectStep *puff = &work->particles[ROCK_COUNT + i * 8 + k];
 
-            puff->x = 0x400000;
-            puff->y = 0x600000;
+            puff->x = px(64);
+            puff->y = px(96);
             puff->velocityX = ((Random16() & 255) - 127) << 10;
             puff->velocityY = ((Random16() & 255) - 127) << 10;
             puff->variant = Random16() & 15;
           }
         }
         if (frame >= start + 20 && frame < start + 36)
-          orb.y -= 0x20000;
+          orb.y -= px(2);
       }
     }
 
     // The throw: back a pixel a frame, then left ever faster.
     if (frame >= WIND_UP_FRAME && frame < THROW_FRAME)
-      orb.x -= 0x10000;
+      orb.x -= px(1);
     if (frame >= THROW_FRAME && frame <= 275)
       orb.x -= (frame - 250) << 16;
     if (frame < HIT_FRAME) {
       position.x = orb.x;
-      position.height = -0x1000000;
+      position.height = -px(256);
       position.y = orb.y - 0x1000000;
       Render_ApplyProjectedPlacementFar(work->objects[ORB_LEFT], &position,
                                         &scale.x, 0);
@@ -234,7 +238,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
         if (frame > ROCKS_FALL)
-          rock->velocityY += 0x4000;
+          rock->velocityY += px(1) / 4;
         if (rock->y > 0x780000) {
           rock->variant++;
           if (rock->variant == 1) {
@@ -293,8 +297,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
         speed = 0x3ff;
         speed &= Random16();
         angle = Random16() & 0xffff;
-        spark->x = 0x200000;
-        spark->y = 0x5c0000;
+        spark->x = px(32);
+        spark->y = px(92);
         spark->velocityX = Trig_Sin(angle) * (speed + 32) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * (speed + 32) << 1) >> 7;
         spark->variant = (Random16() & 15) + 32;

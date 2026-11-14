@@ -3,6 +3,8 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
 #include "system/io_write.h"
 #include "gamepak/far_call/game.h"
 #include "module/system/system.h"
@@ -51,7 +53,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   window = Window_Create(0, 0, 30, 20, 0);
   tiles = Heap_AllocEwram(0x100);
   Decompress_TaggedLz(gWindow_ProgressBarTiles, tiles);
-  Dma_Set(tiles, (void *)0x06001000, DMA_COPY_WORDS(64), REG_DMA3);
+  Dma_Set(tiles, (void *)BG_SCREEN_BLOCK(2), DMA_COPY_WORDS(64), REG_DMA3);
   switch (kind) {
   case 0:
     Text_DrawMessage((s32)&MsgSaving, (s32)window, SAVING_X, 40);
@@ -67,7 +69,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   Text_DrawMessage(message, (s32)window, 40, 88);
   Text_DrawMessage(message + 1, (s32)window, 40, 104);
   Sound_SetBgmVolumeTargetFar(0, 30);
-  Sound_PlayFar(298);
+  Sound_PlayFar(SE_298);
   wait(10);
   Heap_Release(tiles);
   return window;
@@ -99,9 +101,7 @@ s32 Save_WritePartMasked(s32 partId, void *buffer) {
   volatile u32 ie;
   s32 result;
 
-  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime, which
-   * starts ime's address before REG_IME's load; as IRQ_LOCK(ime), 4 of 102
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime. */
   do {
     volatile u32 *saved = &ime;
     volatile u16 *imeReg = &REG_IME;
@@ -135,9 +135,7 @@ s32 Save_DeletePartMasked(s32 partId) {
   volatile u32 ie;
   s32 result;
 
-  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime, which
-   * starts ime's address before REG_IME's load; as IRQ_LOCK(ime), 4 of 97
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime. */
   do {
     volatile u32 *saved = &ime;
     volatile u16 *imeReg = &REG_IME;
@@ -393,15 +391,12 @@ s32 Save_BuildFileSummary(void) {
 
     frames = SAVE_GAME_WORDS->buildStamp;
     word = (u32 *)gGameFlagBytes;
-    /* FAKEMATCH(barrier): an empty asm reading frames and word, so both load
-     * before the bound; without it, 4 of 179 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm reading frames and word. */
     __asm__("" : : "r"(frames), "r"(word));
     n = 242;
     i = 0;
     n <<= 2;
     summary->frames = frames;
-    // Entered at its test: as a while loop, 32 of 179 instructions differ (it
-    // counts down and loses the entry jump).
     goto test;
     do {
       sum += *word++;
@@ -483,7 +478,7 @@ s32 Save_ToFile(u32 slot) {
   } else {
     Save_LoadFileSummaries();
     gSaveSlot = slot;
-    Sound_PlayFar(85);
+    Sound_PlayFar(MUS_085);
     FieldMessage_Show((s32)&MsgSaving, 13);
     Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
@@ -677,7 +672,7 @@ void FileList_UpdatePulse(void) {
   s32 i;
 
   vblankCount = (s32 *)&gVBlankCount;
-  pal = (volatile u16 *)0x050001D0; // Background palette 14, color 8.
+  pal = (volatile u16 *)(BG_PLTT + 232); // Background palette 14, color 8.
   i = 0;
   do {
 #ifdef UBFIX
@@ -773,7 +768,7 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
     state->icons[i] = object;
     state->x[i] = (x + (s16)origin->x + i * 3) * 8 + 0x10;
     state->y[i] = (y + (s16)origin->y) * 8 + 0x10;
-    state->scale[i] = 0x10000;
+    state->scale[i] = Q16_ONE;
   }
 
   Task_Add(FileList_PlacePartySprites, TASK_PASS_VBLANK);
@@ -1099,8 +1094,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     }
     MenuTitle_Bob(modePicture);
     wait(1);
-    if (gInput.repeat & 0x40) {
-      Sound_PlayFar(111);
+    if (gInput.repeat & KEY_UP) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT - 1) % SAVE_FILE_COUNT;
@@ -1111,8 +1106,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                (menuMode == 4 && save->summary[selectedFile].flagCount == 0) ||
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
-    } else if (gInput.repeat & 0x80) {
-      Sound_PlayFar(111);
+    } else if (gInput.repeat & KEY_DOWN) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT + 1) % SAVE_FILE_COUNT;
@@ -1123,12 +1118,12 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                (menuMode == 4 && save->summary[selectedFile].flagCount == 0) ||
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
-    } else if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+    } else if (gInput.pressed & KEY_B) {
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
-    } else if (gInput.pressed & 1) {
-      Sound_PlayFar(112);
+    } else if (gInput.pressed & KEY_A) {
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = selectedFile;
       break;
     }

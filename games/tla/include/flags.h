@@ -248,6 +248,10 @@
 /// "only Mars Lighthouse still needs lighting" while it is clear and thank the
 /// party for lighting the beacon once it is set.
 #define FLAG_MARS_BEACON_LIT 0xa3d
+/// Set in the dragon hall once the Mars Star is set in the statue's face: the
+/// lighthouse turns to fire and its ice is gone, and battles there take the
+/// dragon hall's backdrop A in place of B.
+#define FLAG_MARS_LIGHTHOUSE_THAWED 0xa30
 /// Set at the end of the reunion in Contigo, where the two parties hear what
 /// happened on Mt. Aleph; the shipwrights at Atteka Inlet then wait with the
 /// wings.

@@ -68,8 +68,6 @@
 #include "system/dma.h"
 #include "objcmd.h"
 
-/// The Mars Star is set: the lighthouse has turned to fire and its ice is gone.
-#define FLAG_MARS_LIGHTHOUSE_THAWED 0xa30
 #define FLAG_TELEPORTED_ONCE 0xa36
 /// Grind on the dead end cracked the ice sheet a floor below.
 #define FLAG_ICE_GROUND 0xa3e
@@ -1539,7 +1537,8 @@ extern u8 gInventorySnapshot[];
 #undef KNOCK_BACK_CHECK_COLLISION
 #undef KNOCK_BACK_SPHERES_OVERLAP
 
-void MarsLighthouseEntrance_ContinueSlide(void) {
+/// Hit by the flames, the leader is knocked back.
+void MarsLighthouseEntrance_KnockBackIfHit(void) {
   if (RIDE_WORK->active)
     Leader_KnockBack();
 }

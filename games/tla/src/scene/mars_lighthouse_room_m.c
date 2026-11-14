@@ -58,8 +58,6 @@
 #include "objcmd.h"
 #include "field/sprite.h"
 
-/// The Mars Star is set: the lighthouse has turned to fire and its ice is gone.
-#define FLAG_MARS_LIGHTHOUSE_THAWED 0xa30
 /// All four flames lit: the floor before the statue has broken open.
 #define FLAG_WAY_TO_AERIE_OPEN 0xa31
 #define FLAG_VENUS_FLAME_LIT 0xa32
@@ -1607,8 +1605,8 @@ s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 #undef KNOCK_BACK_CHECK_COLLISION
 #undef KNOCK_BACK_SPHERES_OVERLAP
 
-/// A ride knocks the leader back while it runs.
-void MarsLighthouseRoomM_ContinueSlide(void) {
+/// Hit by the flames, the leader is knocked back.
+void MarsLighthouseRoomM_KnockBackIfHit(void) {
   if (((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active)
     Leader_KnockBack();
 }

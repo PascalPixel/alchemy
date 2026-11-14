@@ -63,8 +63,6 @@
 #define ICE_CHIP_SPRITE 325
 #define SPARK_SPRITE 285
 
-/// The Mars Star is set: the lighthouse has turned to fire and its ice is gone.
-#define FLAG_MARS_LIGHTHOUSE_THAWED 0xa30
 #define FLAG_MARS_STAR_TAKEN 0xa3a ///< Felix took it from where Agatio left it
 #define FLAG_ADEPTS_WOKE 0xa3b     ///< Agatio and Karst woke after the battle
 #define FLAG_DRAGON_ICE_CRACKED 0xa4a
@@ -1699,8 +1697,8 @@ extern u8 gInventorySnapshot[];
 #undef KNOCK_BACK_CHECK_COLLISION
 #undef KNOCK_BACK_SPHERES_OVERLAP
 
-/// A ride knocks the leader back while it runs.
-void MarsLighthouseStarRoom_ContinueSlide(void) {
+/// Hit by the flames, the leader is knocked back.
+void MarsLighthouseStarRoom_KnockBackIfHit(void) {
   if (((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active)
     Leader_KnockBack();
 }

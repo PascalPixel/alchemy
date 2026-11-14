@@ -54,8 +54,6 @@
 #define U16_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-/// The Mars Star is set: the lighthouse has turned to fire and its ice is gone.
-#define FLAG_MARS_LIGHTHOUSE_THAWED 0xa30
 #define FLAG_JUPITER_STATUE_BLOCKS_FLAMES 0xa37
 #define FLAG_VENUS_STATUE_BLOCKS_FLAMES 0xa38
 #define FLAG_ICEBERGS_MELTED 0xa40

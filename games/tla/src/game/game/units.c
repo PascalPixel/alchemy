@@ -23,11 +23,11 @@ void Game_RestartQuest(void) {
   MainRoutine_RunFar(0);
 }
 
-struct TradeOfferState *Djinn_GetRecoveryTable(s32 which) {
+struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 which) {
   if (which != 0) {
     return Unit_Get(0x83);
   }
-  return (struct TradeOfferState *)&gMainRoutineWork.summonMask;
+  return (struct DjinnRecoveryTable *)&gMainRoutineWork.summonMask;
 }
 
 u32 Party_GetAverageLevel(void) {

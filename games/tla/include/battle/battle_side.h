@@ -55,9 +55,13 @@ struct DjinnRecoveryList {
   s32 count; ///< entries in use
 };
 
-/// One side's Djinn recovery table.
+/// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
+/// party's inside gMainRoutineWork from summonMask on, the enemies' in unit
+/// 0x83.
 struct DjinnRecoveryTable {
-  u8 unk00[8]; ///< its first word is BattleSummonState's availableMask
+  /// The summons the side can call, bit n for summon n (summon_table.c).
+  u32 summonMask;
+  u32 partyCoins; ///< in the party's table, gMainRoutineWork.coins
   struct DjinnRecoveryList list;
 };
 

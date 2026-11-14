@@ -61,7 +61,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
     redraw = 1;
     battle = Ram_HeapSlots->battleWork;
     result = 0;
-    reserve = Ram_HeapSlots->unke4[0];
+    reserve = Ram_HeapSlots->battleMenuWork;
     if (count <= 0)
       return -1;
     slot &= 0xff;

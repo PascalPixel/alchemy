@@ -44,11 +44,11 @@ struct MainRoutineWork {
   u32 playTime; ///< frames
   u8 unused[4];
   /// The summons the party can call, bit n for summon n: the first word of
-  /// the party's TradeOfferState, which Djinn_GetRecoveryTable returns from
+  /// the party's DjinnRecoveryTable, which Djinn_GetRecoveryTable returns from
   /// here, its next word running over coins.
   u32 summonMask;
   s32 coins; ///< at most 999999 (Party_AdjustCoins)
-  /// The party's Djinn recovery list (TradeOfferState from its offers on),
+  /// The party's Djinn recovery list (DjinnRecoveryTable from its offers on),
   /// read through Djinn_GetRecoveryTable.
   u8 djinnRecovery[0x124];
   s32 shopCredit; ///< shop credit, at most 999999 (Party_AdjustShopCredit)
@@ -160,9 +160,9 @@ struct MainRoutineWork {
   /// SceneId_WorldMap after a destination is chosen on the world map, 0xffff
   /// after cancelling (WorldPicture_Show); not read by name in ⚓️ code.
   u16 unk2be;
-  u8 unusedAfterWorldPicture[2];
-  u8 unk2c2; ///< 0, 1 or 2, set by the Islet Cave and Contigo scenes
-  u8 unk2c3; ///< 0 or 1, set by a Yampi Desert scene
+  s16 worldPictureFlag; ///< the chosen place's flag; -1 after cancelling
+  u8 unk2c2;            ///< 0, 1 or 2, set by the Islet Cave and Contigo scenes
+  u8 unk2c3;            ///< 0 or 1, set by a Yampi Desert scene
   /// The link lobby's tallies, as ☀️'s: 3 cleared on choosing a monster
   /// battle, 0 and 3 counted up together, 6 read by the lobby.
   u16 linkTallies[8];

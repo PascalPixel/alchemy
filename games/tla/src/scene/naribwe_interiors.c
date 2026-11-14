@@ -5,6 +5,7 @@
 /// for the path to follow.
 
 #include "flags.h"
+#include "window/message_argument.h"
 #include "shared/tables.h"
 #include "field/field.h"
 #include "battle/battle.h"
@@ -253,7 +254,7 @@ ask:
   Actor_SetItemIcon(Actor_Get(18), unitData->items[slot]);
   Actor_SetPosition(18, 672, 104);
   FieldEvent_Wait(60);
-  MessageArgument_Push(unitData->items[slot], 2);
+  MessageArgument_Push(unitData->items[slot], MESSAGE_ARGUMENT_ITEM);
   Message_ShowCentered(MsgPlacedOnThe, 1);
   message = MsgAreYouPrepared;
   FieldEvent_SetMessageId(message);
@@ -262,7 +263,7 @@ ask:
       1)
     goto read;
   Actor_SetPosition(18, 0, 0);
-  MessageArgument_Push(unitData->items[slot], 2);
+  MessageArgument_Push(unitData->items[slot], MESSAGE_ARGUMENT_ITEM);
   Message_ShowCentered(message + 1, 1);
   FieldEvent_SetMessageId(message + 2);
   Event_OpenMessage(10, 0);

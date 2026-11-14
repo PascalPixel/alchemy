@@ -10,7 +10,7 @@
 /// play tag, the people give thanks for the beacon and the party says its
 /// farewell at the south gate before the credits.
 #include "../field/object/set_sprite_priority.c"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 
 #include "../field/field_effect/move.c"
 #include "types.h"

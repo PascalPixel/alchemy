@@ -1492,7 +1492,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
 #endif
   }
 
-  Djinn_GetRecoveryTable(0)->count = 0;
+  Djinn_GetRecoveryTable(0)->list.count = 0;
   for (i = 0; i != 4; i++) {
     struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
 

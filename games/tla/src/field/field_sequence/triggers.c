@@ -250,7 +250,7 @@ s32 Scene_TalkToActor(s32 id) {
         FieldMessage_ShowFar(found + (s32)&MsgKey0dc4, 1);
       if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE && noHint == 0 &&
           !GameFlag_Get(flag)) {
-        MessageArgument_PushFar(contents, 2);
+        MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgKey15b5, 1);
       }
       if (!GameFlag_IsConditionActive(flag))
@@ -269,7 +269,7 @@ s32 Scene_TalkToActor(s32 id) {
         trap->update = ItemDisplay_EmitSparkles;
         ItemDisplay_RaiseAboveLeader(trap);
         Sound_PlayFar(MUS_TREASURE_FOUND);
-        MessageArgument_PushFar(contents, 5);
+        MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_NUMBER);
         FieldMessage_ShowFar((s32)&MsgKey0e17, 3);
         Party_AddPp(1999, 0);
         PartyStatus_CreateWindowFar(1);
@@ -337,7 +337,7 @@ s32 Scene_TalkToActor(s32 id) {
         ItemDisplay_RaiseAboveLeader(shown);
         Sound_PlayFar(MUS_TREASURE_FOUND);
         contents &= 0x7fff;
-        MessageArgument_PushFar(contents, 5);
+        MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_NUMBER);
         FieldMessage_ShowFar((s32)&MsgKey0e10, 3);
         Party_AdjustCoinsFar(contents);
         if (flag != -1)
@@ -364,7 +364,7 @@ s32 Scene_TalkToActor(s32 id) {
       }
       slot = PartyInventory_AddFar(contents);
       if (slot == -1) {
-        MessageArgument_PushFar(contents, 2);
+        MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgFoundItem, 1);
         FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
         if (type != 131)
@@ -377,11 +377,11 @@ s32 Scene_TalkToActor(s32 id) {
         ObjectEvent_SetMode2(index);
       ItemDisplay_RaiseAboveLeader(shown);
       Sound_PlayFar(MUS_TREASURE_FOUND);
-      MessageArgument_PushFar(contents, 2);
+      MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
       if (slot == gMainRoutineWork.leaderActorId) {
         FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
       } else {
-        MessageArgument_PushFar(slot, 1);
+        MessageArgument_PushFar(slot, MESSAGE_ARGUMENT_ACTOR);
         FieldMessage_ShowFar((s32)&MsgItemGiven, 3);
       }
       if (flag != -1)

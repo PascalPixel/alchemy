@@ -70,21 +70,6 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
 #include "owner_state.h"
 
 /// One of the 48 element presets an enemy record names.
-/// One side's Djinn recovery list: up to 72 entries and their count, as The
-/// Broken Seal's DjinnRecoveryList.
-struct DjinnRecoveryList {
-  struct TradeOffer entries[72];
-  s32 count; ///< entries in use
-};
-
-/// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it and
-/// The Broken Seal's DjinnRecoveryTable is laid out.
-struct DjinnRecoveryTable {
-  u32 summonMask; ///< the summons the side can call
-  u32 partyCoins; ///< in the party's table, gMainRoutineWork.coins
-  struct DjinnRecoveryList list;
-};
-
 enum { ITEM_COUNTER_COUNT = 300 };
 
 enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };

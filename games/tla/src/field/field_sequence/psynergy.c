@@ -63,7 +63,7 @@ s32 Field_UsePsynergy(u32 code) {
       FIELD_PSYNERGY_MESSAGE(userId, 149, MsgKey0dbd);
       return 0;
     }
-    MessageArgument_PushFar(149, 4);
+    MessageArgument_PushFar(149, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgKey0dbc, 13);
     cost = FieldYesNo_Ask(1);
     Message_CloseFinishedWindowsFar();

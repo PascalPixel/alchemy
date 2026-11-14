@@ -164,9 +164,9 @@ void Party_RemoveMemberRestored(s32 unit) {
 s32 Party_CheckItemLimit(s32 item) {
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
-    MessageArgument_PushFar(item, 2);
+    MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_ShowFar((s32)MsgPartyCannotCarry, 1);
-    MessageArgument_PushFar(item, 2);
+    MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_ShowFar((s32)MsgPartyCannotCarry + 1, 1);
     return -1;
   }
@@ -193,7 +193,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
-    MessageArgument_PushFar(item, 2);
+    MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_ShowFar((s32)&MsgItemReceived, 1);
     FieldMessage_ShowFar((s32)&MsgItemCannotCarry, 1);
   retry:
@@ -202,26 +202,26 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       result = ItemPicker_RunToDropFar(&member, &slot);
       if (result == -1) {
         if (((struct ItemHead *)Item_GetDirectFar(item))->flags & 8) {
-          MessageArgument_PushFar(item, 2);
+          MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
           FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, 1);
           goto retry;
         }
-        MessageArgument_PushFar(item, 2);
+        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1, 5);
         result = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
         if (result != 0)
           goto retry;
         Item_AdjustCounterFar(item, 1);
-        MessageArgument_PushFar(item, 2);
+        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, 1);
         goto done;
       }
       Unit_Get(member);
       count = Inventory_GetQuantityFar(member, slot);
       if (Inventory_CountItemFar(member, item) > 29) {
-        MessageArgument_PushFar(member, 1);
-        MessageArgument_PushFar(item, 2);
+        MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
+        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, 1);
         goto retry;
       }
@@ -232,11 +232,11 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       owner = PartyInventory_AddFar(item);
       Sound_PlayFar(MUS_TREASURE_FOUND);
       if (owner == gMainRoutineWork.leaderActorId) {
-        MessageArgument_PushFar(item, 2);
+        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
       } else {
-        MessageArgument_PushFar(item, 2);
-        MessageArgument_PushFar(owner, 1);
+        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+        MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
 #if !TLA_PATCH_3
         FieldMessage_ShowFar((s32)&MsgItemGiven, ITEM_GIVEN_MODE);
 #endif
@@ -247,11 +247,11 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     return owner;
   }
   Sound_PlayFar(MUS_TREASURE_FOUND);
-  MessageArgument_PushFar(item, 2);
+  MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
   FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
   if (owner != gMainRoutineWork.leaderActorId) {
-    MessageArgument_PushFar(item, 2);
-    MessageArgument_PushFar(owner, 1);
+    MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
     FieldMessage_ShowFar((s32)&MsgItemReceived + 1, 1);
   }
   work->message = saved;
@@ -353,7 +353,7 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
   if (PartyInventory_FindRoomFar(item) < 0) {
     Actor_GetById(actor)->scaleX = 0;
     ItemDisplay_ShowItem(item, 3);
-    MessageArgument_PushFar(item, 2);
+    MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_ShowFar((s32)&MsgFoundItem, 1);
     // Four messages on: "But <protagonist>'s party can't carry any more".
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
@@ -388,8 +388,8 @@ Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
 void Party_LearnAbility(s32 unit, s32 ability) {
   Unit_LearnPsynergyFar__event_commands();
   Sound_PlayFar(MUS_TREASURE_FOUND);
-  MessageArgument_PushFar(unit, 1);
-  MessageArgument_PushFar(ability, 4);
+  MessageArgument_PushFar(unit, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
   FieldMessage_ShowFar(MsgAbilityLearned, 3);
 }
 

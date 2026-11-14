@@ -12,36 +12,20 @@ gMainRoutineWork:
 Data_0200024c:
 	.space 0x000001d6
 	.space 0x00000014
-	.global Data_02000436
-Data_02000436:
 	.space 0x00000012
-	.global Data_02000448
-Data_02000448:
 	.space 0x00000004
-	.global Data_0200044c
-Data_0200044c:
 	.space 0x00000006
-	.global Data_02000452
-Data_02000452:
 	.space 0x00000002
 	.space 0x00000004
 	.space 0x00000040
 	.space 0x00000004
-	.global Data_0200049c
-Data_0200049c:
 	.space 0x0000000e
-	.global gPlayerObjectId
-gPlayerObjectId:
 	.space 0x00000002
 	.space 0x0000000c
-	.global Data_020004b8
-Data_020004b8:
 	.space 0x00000048
 	.global Data_02000500
 Data_02000500:
 	.space 0x00000004
-	.global gData_02000504
-gData_02000504:
 	.space 0x0000001c
 	.global gOwnerStates
 gOwnerStates:

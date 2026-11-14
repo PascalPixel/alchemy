@@ -8,6 +8,7 @@
 /// its rooms (AquaRockInside_FightSteam).
 
 #include "types.h"
+#include "window/message_argument.h"
 #include "item_ids.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -611,7 +612,7 @@ void AquaRockInside_CheckColumn(void) {
       gFieldWork->fieldMenu = 1;
   } else {
     Message_ShowCentered(message, 1);
-    MessageArgument_Push(0x1c8, 2);
+    MessageArgument_Push(0x1c8, MESSAGE_ARGUMENT_ITEM);
     Message_ShowCentered(message + 2, 1);
   }
   Event_End();

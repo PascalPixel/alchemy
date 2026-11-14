@@ -30,7 +30,7 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define WINDOW_X 23
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
 
 extern struct BgScrollPair gBgScroll[];

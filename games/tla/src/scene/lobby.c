@@ -4,6 +4,7 @@
 /// a visitor takes song requests.
 
 #include "battle/battle.h"
+#include "window/message_argument.h"
 #include "field/field_work.h"
 #include "sound_driver_symbols.h"
 #include "flags.h"
@@ -349,7 +350,7 @@ done:
 
 /// The list inside a sent recovery table, as ☀️'s DjinnRecoveryList.
 struct OfferList {
-  struct TradeOffer offers[72];
+  struct DjinnRecoveryEntry offers[72];
   s32 count;
 };
 
@@ -459,8 +460,8 @@ next:
     tries = 0;
     timeout = 600;
     for (j = 0; j < list->count; j++) {
-      list->offers[j].owner = peerSlots[list->offers[j].owner];
-      if (list->offers[j].owner == 0) {
+      list->offers[j].unitId = peerSlots[list->offers[j].unitId];
+      if (list->offers[j].unitId == 0) {
         for (k = j; k < list->count - 1; k++)
           list->offers[k] = list->offers[k + 1];
         list->count--;
@@ -825,7 +826,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
     count = &gMainRoutineWork.linkTallies[4];
     if (*count != 0) {
       MessageArgument_ClearAll();
-      MessageArgument_Push(*count, 5);
+      MessageArgument_Push(*count, MESSAGE_ARGUMENT_NUMBER);
       Event_SetMessageId(base + 1);
       // "You've won ... Linked Battle. Keep up the good work!"
       Event_ShowMessage(actor, 0);
@@ -839,7 +840,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
     count = &gMainRoutineWork.linkTallies[7];
     if (*count != 0) {
       MessageArgument_ClearAll();
-      MessageArgument_Push(*count, 5);
+      MessageArgument_Push(*count, MESSAGE_ARGUMENT_NUMBER);
       Event_SetMessageId(base + 1);
       // "You've won ... Linked Battle. Check the board on the wall for..."
       Event_ShowMessage(actor, 0);
@@ -1194,7 +1195,7 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   gs = &gMainRoutineWork;
   Actor_FaceActor(id, gs->leaderActorId, 0);
   if (gs->linkTallies[2] != 0) {
-    MessageArgument_Push(gs->linkTallies[2], 5);
+    MessageArgument_Push(gs->linkTallies[2], MESSAGE_ARGUMENT_NUMBER);
     Event_SetMessageId((s32)MsgYouVeWon);
   } else {
     Event_SetMessageId((s32)MsgICanTWaitTo);
@@ -1335,7 +1336,7 @@ s32 LinkLobby_Initialize(void) {
       GameFlag_SetByte(0x3f8, -1);
       // score holds the row's address, then the score read through it.
       score = (u32)&gMainRoutineWork.linkTallies[3];
-      MessageArgument_Push(*(u16 *)score, 5);
+      MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
       score = *(u16 *)score;
       if (gMainRoutineWork.linkTallies[2] < score) {
         gMainRoutineWork.linkTallies[2] = score;
@@ -1361,7 +1362,7 @@ s32 LinkLobby_Initialize(void) {
     Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
     // score holds the row's address, then the score read through it.
     score = (u32)&gMainRoutineWork.linkTallies[3];
-    MessageArgument_Push(*(u16 *)score, 5);
+    MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
     score = *(u16 *)score;
     if (gMainRoutineWork.linkTallies[2] < score) {
       gMainRoutineWork.linkTallies[2] = score;

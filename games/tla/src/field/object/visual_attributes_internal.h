@@ -7,6 +7,7 @@
 /// too.
 
 #include "battle/battle.h"
+#include "window/message_argument.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

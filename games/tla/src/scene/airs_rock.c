@@ -822,7 +822,7 @@ void AirsRock_RideWhirlwind(void) {
   *motion = 4;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(FLAG_RIDING_WHIRLWIND);
-  Sound_Play(SE_137);
+  Sound_Play(SE_KIRIN);
   riding = (u8 *)ride + 99;
   rise = 0;
   while (*riding != 0) {

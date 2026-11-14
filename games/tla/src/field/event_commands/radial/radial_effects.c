@@ -1055,10 +1055,10 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
   gMainRoutineWork.avoidDistance = 0;
   WorldMap_Freeze();
   if (gMainRoutineWork.avoidByItem == 0) {
-    MessageArgument_PushFar(150, 4);
+    MessageArgument_PushFar(150, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgAbilityWoreOff, 1);
   } else {
-    MessageArgument_PushFar(236, 2);
+    MessageArgument_PushFar(236, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_ShowFar((s32)&MsgItemWoreOff, 1);
   }
   WorldMap_ReloadPendingAreaGraphics();

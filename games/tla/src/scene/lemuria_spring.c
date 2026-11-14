@@ -391,7 +391,8 @@ toss:
       if (result != 4) {
         Party_AdjustCoins(gLemuriaSpring_CoinPrizes[result]);
         Event_PlaySound(MUS_JINGLE_SMALL);
-        MessageArgument_Push(gLemuriaSpring_CoinPrizes[result], 5);
+        MessageArgument_Push(gLemuriaSpring_CoinPrizes[result],
+                             MESSAGE_ARGUMENT_NUMBER);
         Event_SetMessageId((s32)MsgYouWonCoin);
         // "You won ... coin!"
         Event_ShowMessage((s32)minusOne, 0);

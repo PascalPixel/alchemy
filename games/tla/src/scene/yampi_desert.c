@@ -2196,7 +2196,7 @@ void YampiDesert_SetUpRoom8(void) {
   struct Actor *object = Actor_GetById(64);
   s32 scene;
 
-  Scene_QueueMusic(SE_137);
+  Scene_QueueMusic(SE_KIRIN);
   Rope_Initialize();
   YampiDesert_PlaceRope(0, 524, 8, 9);
   if (object != NULL)
@@ -2269,7 +2269,7 @@ void YampiDesert_SetUpRoom11(void) { gFieldWork->transition = 0x204; }
 
 void YampiDesert_SetUpRoom12(void) {
   gFieldWork->transition = 0x204;
-  Scene_QueueMusic(SE_137);
+  Scene_QueueMusic(SE_KIRIN);
   YampiDesert_PlaceStakes(gYampiDesert_Room12Stakes);
   YampiDesert_SetUpRoom12SlideActors();
   Scene_TaskAdd(YampiDesert_UpdateSandSlide, 0x480);

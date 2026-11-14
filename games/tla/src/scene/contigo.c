@@ -6,6 +6,7 @@
 /// (Contigo_StartSlowPaletteCycle).
 
 #include "types.h"
+#include "window/message_argument.h"
 #include "item_ids.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
@@ -1162,7 +1163,7 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
       return;
     }
     Event_SetMessageId(message + 2);
-    MessageArgument_Push(tickets, 5);
+    MessageArgument_Push(tickets, MESSAGE_ARGUMENT_NUMBER);
     FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
         1) {
@@ -1250,7 +1251,7 @@ void Contigo_SendToLuckyDice(void) {
     return;
   }
   Event_SetMessageId((s32)MsgContigo01);
-  MessageArgument_Push(price, 5);
+  MessageArgument_Push(price, MESSAGE_ARGUMENT_NUMBER);
   // "Hey, buddy, wanna try yer luck at the dice? It's coin to play." Yes: "OK!
   // Then take the dice." No: "No? Oh, well. Who's next?"
   FieldMessage_ShowAtActor(14, 0);
@@ -2347,12 +2348,12 @@ void Contigo_InitializeRoom3(void) {
         Sound_Play(MUS_JINGLE_SMALL);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      MessageArgument_Push(diff, 5);
+      MessageArgument_Push(diff, MESSAGE_ARGUMENT_NUMBER);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      MessageArgument_Push(-diff, 5);
+      MessageArgument_Push(-diff, MESSAGE_ARGUMENT_NUMBER);
       Event_ShowMessageAndWait(14, 0);
     }
     Event_End();
@@ -2371,12 +2372,12 @@ void Contigo_InitializeRoom3(void) {
         Sound_Play(MUS_JINGLE_SMALL);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      MessageArgument_Push(diff, 5);
+      MessageArgument_Push(diff, MESSAGE_ARGUMENT_NUMBER);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      MessageArgument_Push(-diff, 5);
+      MessageArgument_Push(-diff, MESSAGE_ARGUMENT_NUMBER);
       Event_ShowMessageAndWait(14, 0);
     }
     Event_End();
@@ -2403,7 +2404,7 @@ void Contigo_InitializeRoom3(void) {
         else
           Event_SetMessageId(MSG_NEXT_PRIZE);
         item = Contigo_PickTopic(*prize);
-        MessageArgument_Push(item, 2);
+        MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
         Event_ShowMessageAndWait(18, 0);
         ItemDisplay_ShowItem(item, 3);
         PartyInventory_GiveItem(item, 0);

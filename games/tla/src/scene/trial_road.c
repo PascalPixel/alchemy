@@ -514,8 +514,8 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  MessageArgument_Push(owner, 1);
-  MessageArgument_Push(item, 2);
+  MessageArgument_Push(owner, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
   // "Felix put ...'s ... in the chest."
   FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
   Event_PlaySound(SE_CHEST_CLOSE);

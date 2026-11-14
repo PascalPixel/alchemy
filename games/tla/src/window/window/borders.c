@@ -549,7 +549,7 @@ void WindowSystem_Update(void) {
 }
 
 void WindowSystem_UpdateBattle(void) {
-  if (Ram_HeapSlots->unke4[0] != 0) {
+  if (Ram_HeapSlots->battleMenuWork != 0) {
     Window_UpdateZooms();
     Message_UpdateAll();
     WindowSprite_UpdateAll();

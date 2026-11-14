@@ -31,7 +31,7 @@
 #define DJINN_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 
 // Reads the menu's page, row and preferred row.
 #define DJINN_MENU_GET_CURSOR(page_, row_, preferred_)                         \
@@ -134,9 +134,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
         u32 v;
         s32 k;
 
-        list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                     (u32)member > 7 ? 1 : 0))
-                    ->list;
+        list = &(Djinn_GetRecoveryTableFar((u32)member > 7 ? 1 : 0))->list;
         for (k = 0; k < list->count; k++) {
           if (list->entries[k].unitId == member &&
               list->entries[k].element == element &&

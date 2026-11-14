@@ -25,7 +25,7 @@
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define SUMMON_END 32
 
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {

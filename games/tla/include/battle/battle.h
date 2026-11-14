@@ -22,7 +22,6 @@ extern u16 gBattleEffect_CyclePatternWords[];
 extern s8 gBattleEffect_RandomChildValues[];
 extern const s8 gBattlePlacement_StepPairs[];
 extern u8 gEncounter_AreaEntryTable[];
-extern u8 gPlayerObjectId[];
 extern u16 gBattleUnit_WeaponKinds[];
 s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot);
 struct BattleObj;
@@ -174,7 +173,7 @@ void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
                                   s32 mode);
-struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
+struct DjinnRecoveryTable *Djinn_GetRecoveryTableFar(s32 owner);
 s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
 void MessageArgument_PushFar(s32, s32);
 void BattleMessage_ShowAndWaitFar(s32 messageId);

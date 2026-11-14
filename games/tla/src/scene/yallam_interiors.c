@@ -4,6 +4,7 @@
 /// let him reach Taopo Swamp.
 
 #include "battle/battle.h"
+#include "window/message_argument.h"
 #include "field/field_work.h"
 #include "flags.h"
 #include "field/field.h"
@@ -474,8 +475,8 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
     u32 price = Item_GetDirect(item)->price;
     s32 message;
 
-    MessageArgument_Push(item, 2);
-    MessageArgument_Push(price, 5);
+    MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_Push(price, MESSAGE_ARGUMENT_NUMBER);
     message = (s32)MsgHereSThe;
     Event_SetMessageId(message);
     // "Here's the item you wanted. Now, about the payment... We only take..."

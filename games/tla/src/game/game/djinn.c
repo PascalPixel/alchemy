@@ -111,15 +111,13 @@ s32 Djinn_CanSet(s32 owner, s32 index, s32 bit) {
   if ((state->flags.banks.active[index] & (1 << bit)) != 0)
     return 0;
 
-  table = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-                (owner < 0 || owner > 7)))
-               ->list;
+  table = &(Djinn_GetRecoveryTable((owner < 0 || owner > 7)))->list;
   for (i = 0; i < table->count; i++) {
-    if (index == table->entries[i].element && bit == table->entries[i].djinn)
+    if (index == table->entries[i].element && bit == table->entries[i].index)
       break;
   }
   if (i == table->count ||
-      ((status = table->entries[i].status) <= 0 && status != -2))
+      ((status = table->entries[i].turns) <= 0 && status != -2))
     return 1;
   return 0;
 }
@@ -173,11 +171,9 @@ s32 DjinnRecovery_Remove(s32 owner, s32 index, s32 bit) {
   s32 found = 0;
   s32 i;
 
-  table = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-                (owner < 0 || owner > 7)))
-               ->list;
+  table = &(Djinn_GetRecoveryTable((owner < 0 || owner > 7)))->list;
   for (i = 0; i < table->count; i++) {
-    if (index == table->entries[i].element && bit == table->entries[i].djinn) {
+    if (index == table->entries[i].element && bit == table->entries[i].index) {
       table->count--;
       found = 1;
       break;
@@ -189,26 +185,26 @@ s32 DjinnRecovery_Remove(s32 owner, s32 index, s32 bit) {
 }
 
 u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinn) {
-  struct TradeOfferState *state;
+  struct DjinnRecoveryTable *state;
   u8 *entries;
-  struct TradeOffer *entry;
+  struct DjinnRecoveryEntry *entry;
   u32 *count_p;
   u32 count;
   u32 offset;
 
   DjinnRecovery_Remove(owner, element, djinn);
   state = Djinn_GetRecoveryTable(owner > 7);
-  entries = (u8 *)state->offers;
-  count_p = &state->count;
+  entries = (u8 *)state->list.entries;
+  count_p = &state->list.count;
   count = *count_p;
   /* FAKEMATCH(temporary): the entry's offset as a byte stride of its own. */
-  offset = count * sizeof(struct TradeOffer);
+  offset = count * sizeof(struct DjinnRecoveryEntry);
   entries[offset] = element;
   count++;
-  entry = (struct TradeOffer *)(entries + offset);
-  entry->djinn = djinn;
-  entry->owner = owner;
-  entry->status = TRADE_OFFER_PENDING;
+  entry = (struct DjinnRecoveryEntry *)(entries + offset);
+  entry->index = djinn;
+  entry->unitId = owner;
+  entry->turns = DJINN_RECOVERY_AFTER_BATTLE;
   *count_p = count;
   return count_p;
 }
@@ -239,8 +235,8 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
 
 s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 found = 0;
-  struct TradeOfferState *state = Djinn_GetRecoveryTable(0);
-  struct TradeOffer *entry = state->offers;
+  struct DjinnRecoveryTable *state = Djinn_GetRecoveryTable(0);
+  struct DjinnRecoveryEntry *entry = state->list.entries;
   s32 index;
 
   if (counts != 0) {
@@ -255,16 +251,16 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
     counts[0] = found;
   }
   index = 0;
-  if (state->count != 0) {
+  if (state->list.count != 0) {
     do {
-      if (entry->status == TRADE_OFFER_PENDING) {
+      if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE) {
         if (counts != 0)
           counts[entry->element]++;
         found++;
       }
       index++;
       entry++;
-    } while (index != state->count);
+    } while (index != state->list.count);
   }
   return found;
 }

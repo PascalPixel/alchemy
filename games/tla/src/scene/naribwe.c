@@ -14,7 +14,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "shared/tables.h"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 
 extern u32 gSceneExits[];
 

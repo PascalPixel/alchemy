@@ -163,8 +163,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_Clear(FLAG_ITEM_USED_UP);
     GameFlag_Clear(FLAG_NOTHING_HAPPENS);
     if (!(event->trigger & 0x400)) {
-      MessageArgument_PushFar(actor, 1);
-      MessageArgument_PushFar(itemId, 2);
+      MessageArgument_PushFar(actor, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
@@ -192,7 +192,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       GameFlag_Clear(FLAG_NOTHING_HAPPENS);
 
       if (actionId == 149 && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
-        MessageArgument_PushFar(itemId, 2);
+        MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgUseItemQuestion, 13);
         i = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
@@ -204,8 +204,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         runtime->exit = 999;
       }
 
-      MessageArgument_PushFar(actor, 1);
-      MessageArgument_PushFar(itemId, 2);
+      MessageArgument_PushFar(actor, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
       BattleEffect_LoadActionEffectResources(actionId, 0);
       runtime->psynergyActing = 1;
@@ -355,7 +355,7 @@ s32 Field_RunPsynergyEndEvents(u32 packed) {
 
   action = packed & 0x3ff;
   mode = (packed >> 10) & 15;
-  kind = Ability_Get(action)->unk04[2];
+  kind = Ability_Get(action)->fieldEffect;
   selector = Scene_SelectPsynergyTarget(kind);
   first = (struct PendingEvent *)Scene_FindPsynergyTrigger(0x30000005, kind,
                                                            selector);

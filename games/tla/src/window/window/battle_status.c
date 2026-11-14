@@ -44,7 +44,7 @@
 #define SUMMARY_STAT_VALUE_X 184
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 
 #if TLA_PATCH_2
 extern const u8 gOwnerStatus_NivString[];

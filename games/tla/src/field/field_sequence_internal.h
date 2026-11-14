@@ -9,6 +9,7 @@
 /// bytes.
 
 #include "types.h"
+#include "window/message_argument.h"
 #include "field/world_map.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
@@ -350,8 +351,6 @@ extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
 extern const s16 gParty_PairResolveRules[];
 
-extern u8 Data_020004b8[];
-
 extern s32 gScene_BattleBackgroundRules[];
 
 extern char ResourceId_DragonHallABackdrop;
@@ -375,10 +374,6 @@ extern char ResourceId_BlizzardBackdrop;
 extern const s16 gEncounter_BattleMusic[];
 
 extern u8 Data_0202e004[];
-
-extern s32 Data_02000448;
-
-extern u16 Data_0200044c;
 
 extern s16 Data_080f2204[];
 

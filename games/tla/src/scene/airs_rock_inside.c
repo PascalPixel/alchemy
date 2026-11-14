@@ -600,7 +600,7 @@ void AirsRockInside_RideWhirlwind(void) {
   *motion = 4;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(FLAG_SCENE_TEMP_50);
-  Sound_Play(SE_137);
+  Sound_Play(SE_KIRIN);
   riding = (u8 *)ride + 99;
   rise = 0;
   while (*riding != 0) {
@@ -2957,7 +2957,7 @@ void AirsRockInside_RiseOnLift(void) {
   lift->acceleration = 0x16666;
   Actor_SetMoveTarget(leader, leader->x, leader->y + px(80), leader->z);
   Actor_SetMoveTarget(lift, lift->x, lift->y + px(72), lift->z);
-  Sound_Play(SE_137);
+  Sound_Play(SE_KIRIN);
   Event_StartScreenTransition();
   while (!Actor_HasArrived(leader)) {
     leader->facing = (u8)gFrameCount << 12;

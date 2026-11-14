@@ -58,7 +58,9 @@ STATIC_ASSERT(offsetof(struct FlagEntry, id) == 0x0c);
 STATIC_ASSERT(offsetof(struct FlagEntry, scene) == 0x10);
 STATIC_ASSERT(sizeof(struct FlagEntry) == 20);
 
-/// Data_02000500: the destination last chosen on the world map.
+/// Data_02000500, gMainRoutineWork.worldPictureFlag under a label of its own:
+/// the destination last chosen on the world map. Written through the member,
+/// WorldPicture_Show compiles otherwise.
 struct WorldMapChoice {
   s16 flag; ///< the chosen FlagEntry's flag; -1 when cancelled
 };

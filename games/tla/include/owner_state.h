@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "battle/battle_unit.h"
+#include "battle/battle_side.h"
 #include "static_assert.h"
 
 struct OwnerInventoryState {
@@ -37,27 +38,6 @@ struct OwnerDjinnState {
   u8 unk000[0xf8];
   union OwnerDjinnFlags flags;
   union OwnerDjinnCounts counts;
-};
-
-enum { TRADE_OFFER_PENDING = -1 };
-
-/// A Djinni on standby or recovering, as ☀️'s DjinnRecoveryEntry: its element
-/// and index, its owner and its status.
-struct TradeOffer {
-  u8 element;
-  u8 djinn; ///< the Djinni within its element
-  u8 owner;
-  s8 status; ///< TRADE_OFFER_PENDING (-1) on standby; -2 is tested apart
-};
-
-/// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
-/// party's inside gMainRoutineWork from byte 0xc, the enemies' in unit 0x83.
-struct TradeOfferState {
-  /// The summons the side can call, bit n for summon n (summon_table.c).
-  u32 summonMask;
-  u8 unusedAfterSummons[4]; ///< the party's runs over its coins
-  struct TradeOffer offers[72];
-  u32 count; ///< offers in use
 };
 
 /// An ability a class teaches, and the level it is learned at; The Broken
@@ -141,9 +121,8 @@ STATIC_ASSERT(offsetof(struct OwnerDjinnState, flags.banks.owned) == 0xf8);
 STATIC_ASSERT(offsetof(struct OwnerDjinnState, flags.banks.active) == 0x108);
 STATIC_ASSERT(offsetof(struct OwnerDjinnState, counts.banks.owned) == 0x118);
 STATIC_ASSERT(offsetof(struct OwnerDjinnState, counts.banks.active) == 0x11c);
-STATIC_ASSERT(sizeof(struct TradeOffer) == 4);
-STATIC_ASSERT(offsetof(struct TradeOfferState, offers) == 8);
-STATIC_ASSERT(offsetof(struct TradeOfferState, count) == 0x128);
+STATIC_ASSERT(offsetof(struct DjinnRecoveryTable, list) == 8);
+STATIC_ASSERT(offsetof(struct DjinnRecoveryTable, list.count) == 0x128);
 
 void *Unit_Get(s32 owner);
 void Unit_UpdateClass(s32 owner);
@@ -159,7 +138,7 @@ s32 Djinn_Set(s32 owner, s32 element, s32 djinn);
 u32 Djinn_PutOnStandby(s32 owner, s32 element, s32 djinn);
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinn, s32 target);
 
-struct TradeOfferState *Djinn_GetRecoveryTable(s32 which);
+struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 which);
 u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinn);
 s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinn);
 s32 DjinnRecovery_CountStandby(u8 *counts);

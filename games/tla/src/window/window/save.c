@@ -448,9 +448,9 @@ s32 Save_ProcessSelectedFile(void) {
         FieldMessage_Show((s32)&MsgSaveFailed, 1);
         result = -2;
       }
-      dst = (u8 *)buffer + (s32)gData_02000504;
+      dst = (u8 *)buffer + (s32)gMainRoutineWork.linkTallies;
       dst -= (s32)gSaveBuffer;
-      Iwram_CopyWordsEntry(dst, gData_02000504, 16);
+      Iwram_CopyWordsEntry(dst, gMainRoutineWork.linkTallies, 16);
       token = (s32)SaveProgress_Open(0);
       found = Save_WritePartMasked(gSaveSlot, buffer);
       SaveProgress_Close((struct Window *)token);

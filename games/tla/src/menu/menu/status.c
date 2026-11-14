@@ -1197,7 +1197,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #if LANGUAGE == LANGUAGE_JAPANESE
     // One line for each place the ability works, then the end of the
     // sentence on the line below them.
-    if (ability->unk04[2] != 0 ||
+    if (ability->fieldEffect != 0 ||
         (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       Text_DrawMessageAsTilesFar(MSG_USABLE_IN_FIELD, window, 0, USABLE_TOP);
       row = 1;
@@ -1210,7 +1210,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     Text_DrawMessageAsTilesFar(MSG_CAN_BE_USED, window, 0,
                                row * 8 + USABLE_TOP);
 #else
-    if (ability->unk04[2] != 0 ||
+    if (ability->fieldEffect != 0 ||
         (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       row = 2;
     }

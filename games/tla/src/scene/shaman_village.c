@@ -883,8 +883,8 @@ void ShamanVillage_TalkToInnkeeper(void) {
       Actor_SetAnimation(13, 5);
       Event_Wait(30);
       Event_SetMessageId((s32)MsgShamanInnPaymentPrompt);
-      MessageArgument_Push(price, 5);
-      MessageArgument_Push(price, 5);
+      MessageArgument_Push(price, MESSAGE_ARGUMENT_NUMBER);
+      MessageArgument_Push(price, MESSAGE_ARGUMENT_NUMBER);
       // "The card reads "Put ... coins on the counter, and you can stay."..."
       Event_OpenMessage(12, 0);
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==

@@ -58,7 +58,7 @@
 #define PSYNERGY_MENU_ICON_X 48
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 
 /* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile
  * u16 gLinkStatus; tried as the rest of the object declares it, it does not

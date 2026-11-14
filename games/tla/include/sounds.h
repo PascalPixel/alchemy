@@ -230,7 +230,9 @@ enum SoundId {
   SE_HEAVY_IMPACT,
   SE_CLICK,
   SE_WHOOSH,
-  SE_137,
+  /// Plays in the Kirin summon, 46 frames into its charge; the field plays it
+  /// too, as rain starts and in Air's Rock.
+  SE_KIRIN,
   SE_ITEM_BREAK,
   SE_139,
   SE_SPIN,

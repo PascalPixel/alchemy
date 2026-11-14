@@ -134,7 +134,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     work = Ram_HeapSlots->effectWork;
   }
   work->action = abilityId;
-  work->animation = Ability_Get(abilityId)->unk04[2];
+  work->animation = Ability_Get(abilityId)->fieldEffect;
   running = event->psynergyActing;
   if (running != 0)
     return;
@@ -249,7 +249,7 @@ void EventObject_Initialize(void) {
   if (work->showQuantity != 0) {
     work->messageShown = 1;
     Actor_SetOthersPaused(object, 1, 0);
-    MessageArgument_PushFar(quantity, 4);
+    MessageArgument_PushFar(quantity, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgBlank2, work->messageRow);
     Actor_SetOthersPaused(object, 0, 16);
     work->messageShown = zero;

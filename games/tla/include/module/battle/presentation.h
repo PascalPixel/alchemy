@@ -348,8 +348,6 @@ void BattleMessage_OpenFar(s32 message);
 
 void SpriteDissolve_StepFar(void *record, s32 step);
 
-extern u16 Data_0200049c;
-
 s32 Unit_TryLevelUpFar(s32 unitId, s16 *gains);
 
 extern u8 gBattleMessage_AdvanceArrowTiles[];

@@ -337,7 +337,7 @@ void WorldMap_SetUpFlyingShip(void) {
   gMainRoutineWork.movementMode = 8;
   if (Event_GetFlag(0x147)) {
     WorldMap_Freeze();
-    MessageArgument_Push(153, 4);
+    MessageArgument_Push(153, MESSAGE_ARGUMENT_ABILITY);
     // "..."
     Message_ShowCentered((s32)MsgBlank2, 4);
   }
@@ -1476,7 +1476,7 @@ void WorldMap_MeetEcho(void) {
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgIMSo));
     Event_ShowMessageAndWait(9, 0);
   joined:
-    MessageArgument_Push(0x133, 4);
+    MessageArgument_Push(0x133, MESSAGE_ARGUMENT_ABILITY);
     Sound_Play(MUS_JOINED);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));

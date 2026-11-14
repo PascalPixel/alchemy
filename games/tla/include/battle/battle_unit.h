@@ -172,7 +172,7 @@ struct BattleAct {
   u8 flags;
   u8 element; ///< enum Element
   u8 effect;  ///< enum AbilityEffect
-  u8 unk04[2];
+  u16 icon;   ///< the ability's icon
   u8 fieldEffect;
   u8 unk07;
   u8 range;  ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL

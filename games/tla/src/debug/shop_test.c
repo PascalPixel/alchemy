@@ -6,6 +6,7 @@
 /// ShopTest_DamageAndAfflictParty before its tables, and the rest after.
 
 #include "flags.h"
+#include "window/message_argument.h"
 #include "battle/battle.h"
 #include "system/io_reg.h"
 #include "sounds.h"
@@ -90,9 +91,9 @@ void ShopTest_BrowseMessageRange(s32 message, s32 count) {
   if (i >= count)
     goto done;
 loop:
-  MessageArgument_Push(1, 1);
-  MessageArgument_Push(5, 2);
-  MessageArgument_Push(123456, 5);
+  MessageArgument_Push(1, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_Push(5, MESSAGE_ARGUMENT_ITEM);
+  MessageArgument_Push(123456, MESSAGE_ARGUMENT_NUMBER);
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   frames = 0;
@@ -246,8 +247,8 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
     u32 price = (u16)Item_GetDirect(item)->price;
     s32 message;
 
-    MessageArgument_Push(item, 2);
-    MessageArgument_Push(price, 5);
+    MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_Push(price, MESSAGE_ARGUMENT_NUMBER);
     message = (s32)MsgHereSThe;
     Event_SetMessageId(message);
     FieldMessage_ShowAtActor(actor, 0);

@@ -6,17 +6,11 @@
 
 #include "types.h"
 #include "field/field_coordinate.h"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 #include "graphics/render_input.h"
 #include "module/scene/mars_lighthouse_aerie.h"
 #include "scene_tables.h"
 #include "system/vector3.h"
-
-/// A facing rounded to the nearest of east, south, west and north, as The
-/// Broken Seal's: a shopkeeper sells only to a leader who faces him across the
-/// counter, FACING_NORTH.
-#define FACING_NEAREST_CARDINAL(facing)                                        \
-  ((u16)(((facing) + TRIG_TURN / 8) & ~0x3fff))
 
 struct Actor;
 struct FieldEffect;

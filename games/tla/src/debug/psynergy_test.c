@@ -140,9 +140,9 @@ void PsynergyTest_BrowseMessageRange(s32 message, s32 count) {
 
   window = Portrait_OpenWindow(206, 0, 0, 0);
   for (i = 0; i < count; i++) {
-    MessageArgument_Push(1, 1);
-    MessageArgument_Push(5, 2);
-    MessageArgument_Push(123456, 5);
+    MessageArgument_Push(1, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_Push(5, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_Push(123456, MESSAGE_ARGUMENT_NUMBER);
     PsynergyTest_ShowMessageAndWait(message);
     goto check;
   wait:

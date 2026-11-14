@@ -32,7 +32,7 @@
 #include "module/system/system.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 
 /// Set once the party has taken the test of luck offered at the Spring of
 /// Lemuria (Lemuria_OfferSpringLuck).

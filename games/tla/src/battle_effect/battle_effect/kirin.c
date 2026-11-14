@@ -345,7 +345,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       if (frame == 11)
         Sound_PlayFar(SE_CRASH);
       if (frame == 46)
-        Sound_PlayFar(SE_137);
+        Sound_PlayFar(SE_KIRIN);
 
       // Each target the row passes is struck once, in a burst of sparks.
       for (i = 0; i != effect->count; i++) {

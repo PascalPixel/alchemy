@@ -23,7 +23,7 @@
 #include "system/frame.h"
 #include "version.h"
 #include "system/io_reg.h"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 

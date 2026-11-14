@@ -7,6 +7,7 @@
 #include "types.h"
 #include "system/io_reg.h"
 #include "window_tile.h"
+#include "window/message_argument.h"
 
 struct NameCursorMotion;
 struct Window;
@@ -209,18 +210,6 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
 void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
-
-/// The kinds of message argument (MessageArgument_Push), which the message
-/// codes such as {argument_item_name} read.
-enum {
-  MESSAGE_ARGUMENT_NONE = 0, ///< an empty place in the argument table
-  MESSAGE_ARGUMENT_ACTOR = 1,
-  MESSAGE_ARGUMENT_ITEM = 2,
-  MESSAGE_ARGUMENT_CLASS = 3,
-  MESSAGE_ARGUMENT_ABILITY = 4,
-  MESSAGE_ARGUMENT_NUMBER = 5,
-  MESSAGE_ARGUMENT_LOCATION = 6,
-};
 
 void MessageArgument_Push(u32 value, u32 kind);
 

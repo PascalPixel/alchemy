@@ -308,8 +308,6 @@ extern const u8 gWindow_ProgressBarRows[];
 
 extern const u8 gWindow_ProgressBarTiles[];
 
-extern u8 gData_02000504[];
-
 extern u8 Tile_BuildCellPicturesCode[];
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and

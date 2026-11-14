@@ -24,7 +24,7 @@
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "system/input.h"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 
 // Talks each person gives once, the first time spoken to.
 #define FLAG_GRUMBLED_ABOUT_THE_MAYOR 0x8ba

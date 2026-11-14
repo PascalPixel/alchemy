@@ -274,8 +274,6 @@ void GrowingParticle_Update(struct EffectSprite *sprite,
 
 struct PendingEvent;
 
-extern u8 Data_02000452;
-
 void Actor_SetFirstSpriteAnimationFar(struct Actor *object, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 
@@ -380,10 +378,10 @@ void FieldPsynergy_EndSand(void) {
       FieldCamera_FollowActor(effect->firstObjectId, 1);
       Sound_PlayFar(SE_539);
       if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Data_02000452 = 1;
+        gMainRoutineWork.movementMode = 1;
         *motionFlags = 2;
       } else {
-        Data_02000452 = 0;
+        gMainRoutineWork.movementMode = 0;
         *motionFlags = 3;
       }
       if (event->standing == 0)

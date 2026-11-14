@@ -7,7 +7,7 @@
 #include "window_tile.h"
 #include "module/window/screens.h"
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 
 // How much of the description under the cursor is copied: more outside
 // Japanese.

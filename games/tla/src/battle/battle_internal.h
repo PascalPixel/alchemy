@@ -393,8 +393,6 @@ extern u8 gScriptedBattle_Units[];
 
 extern struct DebugPartyEntry gDebug_ParameterSets[];
 
-extern u16 Data_02000436;
-
 // A knocked-back unit's motion by variant (BattleMotion_Knockback), as The
 // Broken Seal's.
 extern const s32 gBattleKnockback_Acceleration[]; ///< acceleration

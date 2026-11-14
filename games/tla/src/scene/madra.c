@@ -1259,12 +1259,12 @@ void Madra_MeetKarst(void) {
     s32 count = gFieldWork->message + 1;
 
     Event_SetMessageId(MsgTheMayorTried);
-    MessageArgument_Push(ITEM_CYCLONE_CHIP, 2);
+    MessageArgument_Push(ITEM_CYCLONE_CHIP, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_Show((gFieldWork->message)++, 5);
     Motion_SetVarCbAndRefresh(ACTOR_MAYOR, 2);
     Event_ShowMessageAndWait(ACTOR_MAYOR, 0);
     Actor_WalkByAndWaitById(ACTOR_MAYOR, 16, 0);
-    MessageArgument_Push(ITEM_CYCLONE_CHIP, 2);
+    MessageArgument_Push(ITEM_CYCLONE_CHIP, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_Show((gFieldWork->message)++, 5);
     Actor_WalkByAndWait(ACTOR_MAYOR, -16, 0);
     Actor_FaceDirectionAndWait(ACTOR_MAYOR, FACING_SOUTH);

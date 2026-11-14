@@ -23,7 +23,7 @@
 #include "actor.h"
 #include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 
 /// What games/tla/src/field/map/ declares for the files that use it, written
 /// once.

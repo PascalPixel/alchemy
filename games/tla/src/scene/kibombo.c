@@ -11,7 +11,7 @@
 
 #include "flags.h"
 #include "item_ids.h"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 
 /// Set once the party has found the dead end by the statue and turned back
 /// (Kibombo_DeadEndByTheStatue).

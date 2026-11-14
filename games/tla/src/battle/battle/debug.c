@@ -161,7 +161,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
   Party_RemoveMemberFar(4);
   Party_RemoveMemberFar(6);
   Party_RemoveMemberFar(7);
-  ((struct TradeOfferState *)Djinn_GetRecoveryTableFar(0))->count = done;
+  Djinn_GetRecoveryTableFar(0)->list.count = done;
 
   set = 0;
   for (i = 0; i < 4; i++)
@@ -253,7 +253,7 @@ restart:
     input = &gInput;
     // Held for the loop's life: the backdrop id's value loads before its
     // address.
-    backdropId = &Data_02000436;
+    backdropId = (u16 *)&gMainRoutineWork.battleBackground;
     for (;;) {
       GameFlag_Clear(32);
       wait(1);

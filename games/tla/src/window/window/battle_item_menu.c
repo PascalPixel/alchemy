@@ -110,7 +110,7 @@ struct ItemMenuWork {
   u8 holdTilemapUpload;
 };
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define ITEM_BROKEN 0x400
 
 // Sets a menu sprite's attribute words.

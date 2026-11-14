@@ -87,7 +87,7 @@ struct HeapSlots {
   void *unkd0[3];
   void *menuRuntime;
   void *effectWork;
-  void *unke4[1];
+  void *battleMenuWork; ///< the battle menus' struct BattleMenuWork
   void *menuSelectWork;
   void *unkec[3];
   void *block62;

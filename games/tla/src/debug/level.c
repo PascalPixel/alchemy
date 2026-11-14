@@ -116,7 +116,7 @@ void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(character + (s32)MsgIsaac2);
-  MessageArgument_Push(character, 1);
+  MessageArgument_Push(character, MESSAGE_ARGUMENT_ACTOR);
   Event_ShowMessageAndWait(character, 0);
   // XXX: why Garet's name is followed by a message from Isaac; the room's
   // render, talking to Garet, would settle it.

@@ -9,6 +9,7 @@
 // before its definition keeps a smaller alignment, which world_picture.c's
 // copies of it show.
 #include "field/world_map.h"
+#include "window/message_argument.h"
 #include "field/perspective.h"
 #include "system/iwram_call.h"
 #include "field/objdisp.h"

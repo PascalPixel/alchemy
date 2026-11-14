@@ -35,7 +35,7 @@
 #include "version.h"
 #include "system/frame.h"
 #include "objcmd.h"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 
 // Set as the stone circle's guard finds the misaligned stone back in place.
 #define FLAG_GUARD_SAW_STONE_MOVED 0x924

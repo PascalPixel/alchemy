@@ -26,7 +26,7 @@
 #include "actor.h"
 #include "field/event_inline.h"
 #include "objcmd.h"
-#include "module/scene/actor_animation.h"
+#include "field/sprite.h"
 
 /// Set once Scoop has dug up the ladder down to the tunnels by the sheep; the
 /// village redraws it on every visit.

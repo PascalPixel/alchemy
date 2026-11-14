@@ -39,18 +39,11 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountItemIcons(void);
 
-/* VIEW(window): routine Ability_Get as u8 *Ability_Get(s32);
- * battle/battle_system.h has struct BattleAct *Ability_Get(s32 abilityId);
- * tried as the rest of the object declares it, Ability_RequestGlyph moves: 2 of
- * 21 instructions in tla-ja. */
-u8 *Ability_Get__window(s32) __asm__("Ability_Get");
-#define Ability_Get Ability_Get__window
-
 /// Builds the icon of a battle action's item.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
-  Icon_BuildItemIconTiles(*(u16 *)(Ability_Get(action) + 4), withBase, slot,
-                          tile, reuse);
+  Icon_BuildItemIconTiles(Ability_Get(action)->icon, withBase, slot, tile,
+                          reuse);
 }
 
 /// Builds item icon glyph, over the icon base when withBase is set, and loads

@@ -239,9 +239,7 @@ void DjinnRecovery_Reconcile(void) {
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {
         if (Djinn_CanSetFar(owner, element, djinn) != 0) {
-          list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                       owner > 7))
-                      ->list;
+          list = &(Djinn_GetRecoveryTableFar(owner > 7))->list;
           for (i = 0; i < list->count; i++) {
             if (element == list->entries[i].element &&
                 djinn == list->entries[i].index)

@@ -251,7 +251,8 @@ s32 FieldSequence_Run(void) {
           WorldMap_Freeze();
           for (value = 0; value < work->fallenCount; value++) {
             Actor_SelectAnimationFar(leader, 22);
-            MessageArgument_PushFar(work->fallenOwners[value], 1);
+            MessageArgument_PushFar(work->fallenOwners[value],
+                                    MESSAGE_ARGUMENT_ACTOR);
             FieldMessage_ShowFar((s32)MsgFieldStrengthExhausted, 1);
           }
           if (work->survivorCount == 0) {
@@ -634,8 +635,8 @@ s32 Field_PlaceAtEntrance(void) {
   s32 leftEdge, topEdge, rightEdge, bottomEdge;
 
   cursor = gData_0202e000 + (u16)Stream_ReadU16(&cursor);
-  angle = &Data_02000448;
-  turn = &Data_0200044c;
+  angle = &gMainRoutineWork.heading;
+  turn = &gMainRoutineWork.layer;
   for (;; cursor += 6) {
     if (*(s8 *)cursor == -1) {
       *angle = 0x4000;

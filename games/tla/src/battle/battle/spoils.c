@@ -308,7 +308,7 @@ void Battle_AwardSpoils(void) {
     Party_AdjustCoinsFar(spoils->coins);
     BattleMessage_WaitForAdvance();
   }
-  found = &Data_0200049c;
+  found = &gMainRoutineWork.pendingItem;
   for (;;) {
     bestSlot = -1;
     best = -1;

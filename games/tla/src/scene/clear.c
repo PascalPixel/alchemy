@@ -509,7 +509,7 @@ top:
           goto refuse;
         }
         RETURN_TO_SAVED(party)
-        Event_SetFlag(0x13e);
+        Event_SetFlag(FLAG_SAVE_RESTARTED_AT_SANCTUM);
       } else if (party->playTime != gData_02001000__clear) {
         recovery = (s32)MsgSomeDataIsCorrupted;
         FieldMessage_Show(recovery, 9);
@@ -526,7 +526,7 @@ top:
           goto top;
         }
         RETURN_TO_SAVED(party)
-        Event_SetFlag(0x13f);
+        Event_SetFlag(FLAG_SAVE_RECOVERED_AT_SANCTUM);
       }
     }
     Event_ClearFlag(FLAG_MENU_OPEN);

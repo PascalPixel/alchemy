@@ -642,9 +642,9 @@ s32 Field_ExamineCell(s32 id) {
     if (!(event->subject & 0x400) && kind != 0) {
       Leader_StopMoving();
       FieldMessage_ShowFar(kind + (s32)&MsgKey0dc4, 1);
-      GameFlag_Set(0x142);
+      GameFlag_Set(FLAG_NOTHING_HAPPENS);
     } else {
-      GameFlag_Clear(0x142);
+      GameFlag_Clear(FLAG_NOTHING_HAPPENS);
     }
     result = event->value;
     if ((result & 0xf000000) == 0) {
@@ -654,7 +654,7 @@ s32 Field_ExamineCell(s32 id) {
     }
     if (GameFlag_IsConditionActive(condition))
       ((void (*)(s32))event->value)(gMainRoutineWork.currentOwner);
-    if (GameFlag_Get(0x142))
+    if (GameFlag_Get(FLAG_NOTHING_HAPPENS))
       FieldMessage_ShowFar(kind + (s32)&MsgKey0def, 1);
     goto done;
   message:
@@ -667,6 +667,6 @@ s32 Field_ExamineCell(s32 id) {
     FieldMessage_ShowFar((s32)&MsgKey0def + 5, 1);
   }
 done:
-  GameFlag_Clear(0x142);
+  GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   return 0;
 }

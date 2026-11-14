@@ -471,7 +471,7 @@ aborted_scripted:
   Task_SuspendAll(0);
   *(volatile u16 *)0x04000000 = 1;
   result = battle->defeated;
-  GameFlag_Set(1000);
+  GameFlag_Set(FLAG_AREA_TEMP_E8);
   goto finished;
 
 party_lost:
@@ -610,7 +610,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   output = unitIds;
   livingCount = 0;
   enemyCapacity = 6;
-  if (GameFlag_Get(0x16C) != 0) {
+  if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = 3;
   }
   if (sideMask & BATTLE_SIDE_PARTY) {
@@ -676,7 +676,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   output = unitIds;
   livingCount = 0;
   enemyCapacity = 6;
-  if (GameFlag_Get(0x16C) != 0) {
+  if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = 3;
   }
   if (sideMask & BATTLE_SIDE_PARTY) {

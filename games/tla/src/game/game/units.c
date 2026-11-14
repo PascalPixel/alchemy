@@ -344,24 +344,24 @@ void Unit_Calculate(s32 owner) {
     flag = 0;
     switch (st->id) {
     case 1:
-      flag = GameFlag_Get(0x112);
+      flag = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
     case 3:
-      flag = GameFlag_Get(0x111);
+      flag = GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT);
       break;
     case 5:
-      flag = GameFlag_Get(0x112);
+      flag = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
     case 0:
     case 4:
-      flag = GameFlag_Get(0x110);
+      flag = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT);
       break;
     case 2:
     case 6:
-      flag = GameFlag_Get(0x113);
+      flag = GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT);
       break;
     case 7:
-      flag = GameFlag_Get(0x111);
+      flag = GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT);
       break;
     }
     if (flag)

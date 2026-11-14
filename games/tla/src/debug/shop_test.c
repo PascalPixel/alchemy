@@ -2,6 +2,7 @@
 /// Overlay 0x6ba's scene: its code up to Func_02000520, then its tables, in ROM
 /// order.
 
+#include "flags.h"
 #include "battle/battle.h"
 #include "system/io_reg.h"
 #include "sounds.h"
@@ -164,7 +165,7 @@ void Func_020001d4(s32 actor) {
       Event_SetMessageId(message + 2);
     }
     Event_ShowMessageAndWait(actor, 0);
-  } else if (Event_GetFlag(0x200)) {
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     Event_SetMessageId((s32)MsgICanTWait);
     Event_ShowMessageAndWait(actor, 0);
   } else if (Forge_GetItem()) {
@@ -179,7 +180,7 @@ void Func_020001d4(s32 actor) {
       Event_ShowMessageAndWait(actor, 0);
       Forge_Run(actor);
       if (Forge_GetItem())
-        Event_SetFlag(0x200);
+        Event_SetFlag(FLAG_SCENE_TEMP_00);
     } else {
       Event_SetMessageId(message + 2);
       Event_ShowMessageAndWait(actor, 0);
@@ -191,7 +192,7 @@ void Func_020002a8(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
     Event_SetMessageId((s32)MsgThisThisIs);
     Event_ShowMessageAndWait(actor, 0);
-  } else if (Event_GetFlag(0x200)) {
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     Event_SetMessageId((s32)MsgItTakesOur);
     Event_ShowMessageAndWait(actor, 0);
   } else if (Forge_GetItem()) {

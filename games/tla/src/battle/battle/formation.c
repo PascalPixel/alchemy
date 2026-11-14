@@ -441,7 +441,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   // Through a byte pointer, which keeps the level adjustment stored first.
   *(u8 *)&battle->unk40 = 0;
   enemyClasses = listBuffer;
-  if (GameFlag_Get(0x173))
+  if (GameFlag_Get(FLAG_MONSTER_BATTLE))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
   if ((u32)recordId >= 660)
     recordId = 1;
@@ -578,7 +578,7 @@ assign_enemy:
     unit = Unit_Get(memberOrEnemyIndex + 128);
     if (levelAdjustment != 0)
       BattleEnemy_AdjustLevel(memberOrEnemyIndex + 128, levelAdjustment);
-    else if (!GameFlag_Get(0x173) && GameFlag_Get(0x2e))
+    else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) && GameFlag_Get(0x2e))
       BattleUnit_Strengthen(memberOrEnemyIndex + 128);
     battle->unk868 = 0;
     enemyId = unit->enemyId;
@@ -586,7 +586,7 @@ assign_enemy:
     case 101:
     case 102:
     case 103:
-      if (!GameFlag_Get(0x173))
+      if (!GameFlag_Get(FLAG_MONSTER_BATTLE))
         battle->unk868 = 1;
       break;
     }

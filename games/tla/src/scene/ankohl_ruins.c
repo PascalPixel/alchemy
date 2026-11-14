@@ -110,7 +110,7 @@ void AnkohlRuins_JumpDownLedge(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_Start(gMainRoutineWork.currentOwner, 6, 0x1000);
   Event_PlaySound(SE_310);
-  Event_SetFlag(0x122);
+  Event_SetFlag(FLAG_ARRIVE_FALLING);
   FieldEvent_SetExitRequest(13);
 }
 
@@ -563,7 +563,7 @@ void AnkohlRuins_FlowWithSand(void) {
   s32 index;
   s32 position[3];
 
-  if (Event_GetFlag(0x104))
+  if (Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS))
     return;
   if (map == NULL) {
     upper = gMapCellBuffer;
@@ -798,7 +798,7 @@ fill:
 void AnkohlRuins_CountSandTime(void) {
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
 
-  if (Event_GetFlag(0x104) == 0) {
+  if (Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
     if (++gAnkohlRuins_SandTimer >= gAnkohlRuins_SandTime) {
       FieldTask_Remove(AnkohlRuins_CountSandTime);
       if (gAnkohlRuins_SandRoom == 1)
@@ -1051,7 +1051,7 @@ void AnkohlRuins_RideRaftDown(void) {
   s32 column;
   s32 row;
 
-  if (GameFlag_Get(0x104) && work->stepTrigger != 40)
+  if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && work->stepTrigger != 40)
     return;
   raft->z += 0xcccc;
   column = leader->x >> 20;
@@ -1391,7 +1391,7 @@ s32 Scene_Initialize(s32 a0) {
         gMainRoutineWork.entrance == 17) {
       AnkohlRuins_LandFromFall();
 #if TLA_PATCH_4
-      Event_ClearFlag(0x122);
+      Event_ClearFlag(FLAG_ARRIVE_FALLING);
 #endif
     }
     {

@@ -205,8 +205,8 @@ s32 FieldSequence_Run(void) {
 #ifdef UBFIX
       Djinn_ResolvePending(gMainRoutineWork.pendingDjinni);
 #else
-      ((void (*)(s32, s32))Djinn_ResolvePending)(
-          gMainRoutineWork.pendingDjinni, 1);
+      ((void (*)(s32, s32))Djinn_ResolvePending)(gMainRoutineWork.pendingDjinni,
+                                                 1);
 #endif
       gMainRoutineWork.pendingDjinni = 0;
     }
@@ -232,7 +232,7 @@ s32 FieldSequence_Run(void) {
   entrance = &gMainRoutineWork.entrance;
   turn = &gMainRoutineWork.turn;
   for (;;) {
-    GameFlag_Set(260);
+    GameFlag_Set(FLAG_FIELD_HANDLING_REQUESTS);
     leader = WorldMap_Unfreeze();
     Actor_StartIdleFar(leader);
     SET_POSITION(party, leader->x, 0, leader->z);
@@ -462,7 +462,7 @@ s32 FieldSequence_Run(void) {
         work->pauseMenu = 0;
       }
     }
-    GameFlag_Clear(260);
+    GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
     if (WorldMap_Unfreeze() != NULL)
       Actor_StartRenderModeScriptFar();
     pending = &gMainRoutineWork.pendingThird;

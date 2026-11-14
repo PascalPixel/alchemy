@@ -381,7 +381,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
         if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
             distance < 0xc0000)
           near = 1;
-        if (near && !Event_GetFlag(260)) {
+        if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;

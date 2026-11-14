@@ -980,7 +980,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
           leader->y >> 20 == shot->y >> 20)
         i = 1;
     }
-    if (i && !GameFlag_Get(0x104)) {
+    if (i && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
       leader->watchedObject = shot;
       leader->priorityFlags &= ~1;

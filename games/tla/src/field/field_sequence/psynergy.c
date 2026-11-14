@@ -31,7 +31,7 @@ s32 Field_UsePsynergy(u32 code) {
   Leader_StopMoving();
   event->unkd30 = 255;
   event->standing = retreat;
-  GameFlag_Clear(325);
+  GameFlag_Clear(FLAG_ITEM_USE);
   if (userId == 15)
     userId = 0;
   if (GameFlag_Get(382)) {
@@ -196,7 +196,7 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
         ((void (*)(s32, s32))event->action)(mode, target);
       }
     }
-    if (GameFlag_Get(0x142)) {
+    if (GameFlag_Get(FLAG_NOTHING_HAPPENS)) {
       Event_Start();
       FieldMessage_ShowFar((s32)MsgNothingHappens, 1);
       Event_End();

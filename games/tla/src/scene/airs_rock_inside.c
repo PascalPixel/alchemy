@@ -774,7 +774,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
           leader->y >> 20 == shot->y >> 20)
         near = 1;
     }
-    if (near && !GameFlag_Get(0x104)) {
+    if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
       leader->watchedObject = shot;
       leader->priorityFlags &= ~1;
@@ -898,7 +898,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
           leader->y >> 20 == shot->y >> 20)
         near = 1;
     }
-    if (near && !GameFlag_Get(0x104)) {
+    if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
       leader->watchedObject = shot;
       leader->priorityFlags &= ~1;

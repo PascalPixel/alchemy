@@ -160,8 +160,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   event = (struct ItemTrigger *)Field_FindItemTrigger(itemId);
   if (event != 0 && event->value != 0) {
-    GameFlag_Clear(0x143);
-    GameFlag_Clear(0x142);
+    GameFlag_Clear(FLAG_ITEM_USED_UP);
+    GameFlag_Clear(FLAG_NOTHING_HAPPENS);
     if (!(event->trigger & 0x400)) {
       MessageArgument_PushFar(actor, 1);
       MessageArgument_PushFar(itemId, 2);
@@ -181,15 +181,15 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   } else {
     s32 actionId;
 
-    GameFlag_Clear(0x143);
-    GameFlag_Set(0x142);
+    GameFlag_Clear(FLAG_ITEM_USED_UP);
+    GameFlag_Set(FLAG_NOTHING_HAPPENS);
     actionId =
         ((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->actionId;
     runtime = Ram_HeapSlots->fieldWork;
 
     if (actionId != 0) {
-      GameFlag_Set(0x145);
-      GameFlag_Clear(0x142);
+      GameFlag_Set(FLAG_ITEM_USE);
+      GameFlag_Clear(FLAG_NOTHING_HAPPENS);
 
       if (actionId == 149 && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
         MessageArgument_PushFar(itemId, 2);
@@ -214,13 +214,13 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       BattleEffect_CleanupSceneObjects();
 
       if (((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->useType & 1)
-        GameFlag_Set(0x143);
+        GameFlag_Set(FLAG_ITEM_USED_UP);
     }
   }
 
-  if (GameFlag_Get(0x142))
+  if (GameFlag_Get(FLAG_NOTHING_HAPPENS))
     FieldMessage_ShowFar((s32)&MsgNothingHappens, 1);
-  if (GameFlag_Get(0x143))
+  if (GameFlag_Get(FLAG_ITEM_USED_UP))
     Inventory_RemoveFar(actor, slot);
   return result;
 }

@@ -569,7 +569,7 @@ cell:
   Event_End();
   Scene_PlayMusic();
   Event_SetFlag(0x95d);
-  Event_SetFlag(0x143);
+  Event_SetFlag(FLAG_ITEM_USED_UP);
 }
 
 void AquaRockInside_StepOnLoosePlank(s32 value) {

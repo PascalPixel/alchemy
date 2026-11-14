@@ -516,7 +516,7 @@ void Geysers_Update(void) {
         entry->phase = 0;
       }
     }
-    if (!GameFlag_Get(0x104)) {
+    if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       if (++entry->timer >= entry->period)
         entry->timer = 0;
     }

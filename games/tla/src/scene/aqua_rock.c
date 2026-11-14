@@ -366,7 +366,7 @@ extern s32 gAquaRock_FourthStreamTimer;
 // 0x200 to 0x203 set for their last 90 frames; in their first 150 the first two
 // follow flags 0x320 and 0x321 and the last two are clear.
 void AquaRock_TimeStreams(void) {
-  if (GameFlag_Get(0x104))
+  if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS))
     return;
   if (gAquaRock_FirstStreamTimer <= 149) {
     if (GameFlag_Get(FLAG_AREA_TEMP_20))

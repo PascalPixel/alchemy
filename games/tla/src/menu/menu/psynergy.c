@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "flags.h"
 #include "sounds.h"
 
 s32 PsynergyMenu_IsActionRestricted(s32 no);
@@ -90,7 +91,6 @@ s32 BattleEffect_HasMatchingEvent5Far(s32 type);
 
 #define MENU_TARGET_WHOLE_PARTY 9 ///< memberIds[1] for the whole party
 #define PSYNERGY_ABILITY_MASK 0x3fff
-#define FLAG_MENU_START_PRESSED 0x150
 
 /// The steps of the Psynergy menu (PsynergyMenu_RunSteps).
 enum PsynergyMenuStep {
@@ -357,8 +357,6 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   return ret;
 }
 
-#undef FLAG_MENU_START_PRESSED
-
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode);
 s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
@@ -433,7 +431,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         2, 0, menu->shortcutWindow, 0, result);
     menu->cursorIcon->active = 13;
   }
-  while (!GameFlag_Get(0x150)) {
+  while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       window = menu->statusWindow;
       unit = Unit_Get(ownerIds[selection]);
@@ -543,7 +541,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   Unit_Get(menu->ownerIds[menu->tabIndex[0]]);
   redraw = 2;
   MenuCursor_Slide(selection * 24 - 10, 16);
-  while (!GameFlag_Get(0x150)) {
+  while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       Unit_Get(menu->ownerIds[selection]);
       icon = menu->sideIcons[1];
@@ -928,7 +926,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 #endif
     }
   } else {
-    GameFlag_Clear(0x2ff);
+    GameFlag_Clear(FLAG_SCENE_TEMP_FF);
   }
 
   row = 0;
@@ -1080,7 +1078,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   window = menu->listWindow;
   done = 0;
 
-  while (done == 0 && !GameFlag_Get(0x150)) {
+  while (done == 0 && !GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     owner = Unit_Get(menu->memberIds[paneIndex]);
     if (menu->mode != 0)
       menu->psynergyCount =
@@ -1094,7 +1092,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
     redraw = 1;
     menu->sideIcons[paneIndex]->active = 1;
 
-    while (!GameFlag_Get(0x150)) {
+    while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
       MenuCursor_Position(CURSOR_X, state.row * 16 + 36);
 
       if (changed != 0) {
@@ -1263,7 +1261,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   menu->paneRow[paneIndex] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->memberIds[paneIndex]] = state.selectedIndex;
   menu->paneAction[paneIndex] = result;
-  if (GameFlag_Get(0x150) != 0)
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED) != 0)
     result = -1;
   wait(1);
   return result;

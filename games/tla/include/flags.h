@@ -36,13 +36,35 @@
 /// scene's flags are not reset, the actors come back from their snapshot,
 /// and the music saved in gMainRoutineWork.returnMusic resumes if there is
 /// one. The scenes skip their arrival events while it is set.
+/// Set while the field sequence handles its requests, and cleared while the
+/// party walks (FieldSequence_Run), as ☀️'s.
+#define FLAG_FIELD_HANDLING_REQUESTS 0x104
 #define FLAG_KEEP_PARTY_POSITION 0x109
+/// The next scene keeps the music that is playing; main_routine.c clears
+/// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
+#define FLAG_KEEP_MUSIC_ONCE 0x11a
+/// As FLAG_KEEP_MUSIC_ONCE, for as long as it is set.
+#define FLAG_KEEP_MUSIC_HELD 0x11b
+#define FLAG_WORLD_MAP_LEFT 0x11c ///< the current scene is not the World Map
+/// The leader falls into the next scene from above, as after jumping down a
+/// ledge into it.
+#define FLAG_ARRIVE_FALLING 0x122
+/// The party is in a town; the scene loader sets and clears it.
+#define FLAG_IN_TOWN 0x123
+/// The file was loaded to restart at its last Sanctum, as ☀️'s.
+#define FLAG_SAVE_RESTARTED_AT_SANCTUM 0x13e
+/// The file was recovered at its last Sanctum, as ☀️'s.
+#define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
+#define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
+#define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
 /// While set, the save screen refuses to save with "Cannot save here".
 #define FLAG_CANNOT_SAVE_HERE 0x17c
 /// While set, the save screen refuses to save with "This is no place for
 /// that!": the scenes set it while the party rides a moving platform, lift or
 /// raft.
 #define FLAG_NO_PLACE_TO_SAVE 0x17d
+/// Set while Start is pressed in the Psynergy menu, which ends its waits.
+#define FLAG_MENU_START_PRESSED 0x150
 /// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next scene plays
 /// the leader's arrival, unless its setup clears this first.
 #define FLAG_ARRIVAL_STAIRS_UP 0x120

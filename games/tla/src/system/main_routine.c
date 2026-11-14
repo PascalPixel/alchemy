@@ -225,8 +225,8 @@ void MainRoutine_Run(s32 mode) {
   Task_ResetAll();
   Task_ResetAll();
   for (;;) {
-    if (GameFlag_Get(0x101))
-      GameFlag_Clear(0x101);
+    if (GameFlag_Get(FLAG_SKIP_SCENE_CHANGE_SOUND))
+      GameFlag_Clear(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
       Sound_PlayFar(SE_288);
     record = &table[gMainRoutineWork.scene];
@@ -268,8 +268,9 @@ void MainRoutine_Run(s32 mode) {
                  GameFlag_Get(FLAG_KEEP_PARTY_POSITION));
     Scene_ChooseMusic();
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      if (GameFlag_Get(0x11a) || GameFlag_Get(0x11b))
-        GameFlag_Clear(0x11a);
+      if (GameFlag_Get(FLAG_KEEP_MUSIC_ONCE) ||
+          GameFlag_Get(FLAG_KEEP_MUSIC_HELD))
+        GameFlag_Clear(FLAG_KEEP_MUSIC_ONCE);
       else
         Scene_PlayMusic();
     } else if (gMainRoutineWork.returnCue != -1) {
@@ -308,10 +309,10 @@ void Scene_Arrive(s32 unused, s32 keep) {
       GameFlag_Set(FLAG_SHOW_AREA_NAME);
       gMainRoutineWork.encounterSteps = 0;
       gMainRoutineWork.hazardSteps = 0;
-      GameFlag_Clear(0x110);
-      GameFlag_Clear(0x111);
-      GameFlag_Clear(0x112);
-      GameFlag_Clear(0x113);
+      GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_LIT);
+      GameFlag_Clear(FLAG_MERCURY_LIGHTHOUSE_LIT);
+      GameFlag_Clear(FLAG_MARS_LIGHTHOUSE_LIT);
+      GameFlag_Clear(FLAG_JUPITER_LIGHTHOUSE_LIT);
       gMainRoutineWork.retreatScene = gMainRoutineWork.scene;
       gMainRoutineWork.retreatEntrance = gMainRoutineWork.entrance;
     }
@@ -320,8 +321,8 @@ void Scene_Arrive(s32 unused, s32 keep) {
     GameFlag_Clear(FLAG_LINK_BATTLE);
     GameFlag_Clear(FLAG_RETREAT_BLOCKED);
     GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
-    GameFlag_Clear(0x123);
-    GameFlag_Clear(0x11c);
+    GameFlag_Clear(FLAG_IN_TOWN);
+    GameFlag_Clear(FLAG_WORLD_MAP_LEFT);
     GameFlag_Clear(0x146);
     GameFlag_Clear(FLAG_CANNOT_SAVE_HERE);
     GameFlag_Clear(FLAG_NO_PLACE_TO_SAVE);
@@ -336,7 +337,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
   WorldMap_MarkPlaceVisited(gMainRoutineWork.scene, gMainRoutineWork.entrance);
   gMainRoutineWork.sceneVariant = SCENE_RECORD(gMainRoutineWork.scene)->variant;
   if (gMainRoutineWork.sceneVariant == 2)
-    GameFlag_Set(0x123);
+    GameFlag_Set(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
 

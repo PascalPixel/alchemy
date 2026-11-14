@@ -635,7 +635,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       Event_PlaySound(SE_RUMBLE);
       System_Wait(60);
       FieldTask_Remove(JupiterLighthouse_SpawnBeaconParticle);
-      Event_SetFlag(0x11a);
+      Event_SetFlag(FLAG_KEEP_MUSIC_ONCE);
       FieldEvent_SetExitRequest(2);
     }
     Event_End();
@@ -1105,7 +1105,7 @@ void JupiterLighthouse_AfterTheFight(void) {
   FieldEvent_SetAfterBattleDestination(
       (s32)&SceneId_JupiterLighthouseAerieBeacon, 12);
   Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 13);
-  Event_ClearFlag(0x11b);
+  Event_ClearFlag(FLAG_KEEP_MUSIC_HELD);
   Field_RequestBattleFromEncounterTable(13, 7);
 }
 
@@ -2520,7 +2520,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
           if (Position_FlatDistance(&leader->x, &object->x) <= 12 &&
               distance < 0xc0000)
             near = 1;
-          if (near != 0 && Event_GetFlag(0x104) == 0) {
+          if (near != 0 && Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
             leader->watchedObject = (struct Actor *)object;
             leader->facing = object->angle;
             flags = &leader->priorityFlags;

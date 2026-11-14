@@ -174,9 +174,6 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 count;
-  u16 *unitIds;
-  s32 unitIndex;
-  s32 unitId;
   struct Unit *unit;
   struct Unit *beforeLevelUp;
   s32 abilityIndex;
@@ -198,74 +195,77 @@ void Battle_AwardSpoils(void) {
   }
   // Experience and level ups: each party member is copied before every level it
   // may gain, so that what the level brought can be read against the copy.
-  /* FAKEMATCH(temporary): unitIds stands in for units' own address. */
-  unitIds = units;
-  count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
+  count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, units);
   beforeLevelUp = Heap_AllocEwram(sizeof(struct Unit));
-  for (unitIndex = 0; unitIndex < count; unitIndex++) {
-    unitId = unitIds[unitIndex];
-    unit = Unit_GetFar(unitId);
-    unit->experience += spoils->experience;
-    while (Iwram_CopyWords(beforeLevelUp, unit, sizeof(struct Unit)),
-           Unit_TryLevelUpFar(unitId, &gains) != 0) {
-      Sound_PlayFar(MUS_LEVEL_UP);
-      MessageArgument_ClearAllFar();
-      MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
-      MessageArgument_PushFar(unitIds[unitIndex], MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(unit->level, MESSAGE_ARGUMENT_NUMBER);
-      BattleMessage_ShowAndWaitFar(MsgLevelUp);
-      BattleMessage_WaitForAdvance();
-      // A class ability (bit 15) the copy lacks is newly learned.
-      for (abilityIndex = 0; abilityIndex < 32; abilityIndex++) {
-        encodedAbility = unit->psynergy[abilityIndex].encodedAction;
-        if ((encodedAbility & PSYNERGY_ABILITY_MASK) &&
-            (encodedAbility >> 15)) {
-          for (oldAbilityIndex = 0; oldAbilityIndex < 32; oldAbilityIndex++) {
-            if (encodedAbility ==
-                beforeLevelUp->psynergy[oldAbilityIndex].encodedAction)
-              break;
-          }
-          if (oldAbilityIndex == 32) {
-            MessageArgument_ClearAllFar();
-            MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
-            MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
-            MessageArgument_PushFar(encodedAbility & PSYNERGY_ABILITY_MASK,
-                                    MESSAGE_ARGUMENT_ABILITY);
-            Sound_PlayFar(SE_CAST);
-            BattleMessage_ShowAndWaitFar(MsgAbilityMastered);
-            BattleMessage_WaitForAdvance();
+  {
+    s32 unitIndex;
+
+    for (unitIndex = 0; unitIndex < count; unitIndex++) {
+      s32 unitId = units[unitIndex];
+
+      unit = Unit_GetFar(unitId);
+      unit->experience += spoils->experience;
+      while (Iwram_CopyWords(beforeLevelUp, unit, sizeof(struct Unit)),
+             Unit_TryLevelUpFar(unitId, &gains) != 0) {
+        Sound_PlayFar(MUS_LEVEL_UP);
+        MessageArgument_ClearAllFar();
+        MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
+        MessageArgument_PushFar(units[unitIndex], MESSAGE_ARGUMENT_ACTOR);
+        MessageArgument_PushFar(unit->level, MESSAGE_ARGUMENT_NUMBER);
+        BattleMessage_ShowAndWaitFar(MsgLevelUp);
+        BattleMessage_WaitForAdvance();
+        // A class ability (bit 15) the copy lacks is newly learned.
+        for (abilityIndex = 0; abilityIndex < 32; abilityIndex++) {
+          encodedAbility = unit->psynergy[abilityIndex].encodedAction;
+          if ((encodedAbility & PSYNERGY_ABILITY_MASK) &&
+              (encodedAbility >> 15)) {
+            for (oldAbilityIndex = 0; oldAbilityIndex < 32; oldAbilityIndex++) {
+              if (encodedAbility ==
+                  beforeLevelUp->psynergy[oldAbilityIndex].encodedAction)
+                break;
+            }
+            if (oldAbilityIndex == 32) {
+              MessageArgument_ClearAllFar();
+              MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
+              MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+              MessageArgument_PushFar(encodedAbility & PSYNERGY_ABILITY_MASK,
+                                      MESSAGE_ARGUMENT_ABILITY);
+              Sound_PlayFar(SE_CAST);
+              BattleMessage_ShowAndWaitFar(MsgAbilityMastered);
+              BattleMessage_WaitForAdvance();
+            }
           }
         }
-      }
-      if ((s16)gains.hp != 0) {
-        MessageArgument_PushFar((s16)gains.hp, MESSAGE_ARGUMENT_NUMBER);
-        BattleMessage_ShowAndWaitFar(MsgMaxHpRises);
-        BattleMessage_WaitForAdvance();
-      }
-      if ((s16)gains.pp != 0) {
-        MessageArgument_PushFar((s16)gains.pp, MESSAGE_ARGUMENT_NUMBER);
-        BattleMessage_ShowAndWaitFar(MsgMaxPpRises);
-        BattleMessage_WaitForAdvance();
-      }
-      if ((s16)gains.atk != 0) {
-        MessageArgument_PushFar((s16)gains.atk, MESSAGE_ARGUMENT_NUMBER);
-        BattleMessage_ShowAndWaitFar(MsgAttackRises);
-        BattleMessage_WaitForAdvance();
-      }
-      if ((s16)gains.def != 0) {
-        MessageArgument_PushFar((s16)gains.def, MESSAGE_ARGUMENT_NUMBER);
-        BattleMessage_ShowAndWaitFar(MsgDefenseRises);
-        BattleMessage_WaitForAdvance();
-      }
-      if ((s16)gains.agi != 0) {
-        MessageArgument_PushFar((s16)gains.agi, MESSAGE_ARGUMENT_NUMBER);
-        BattleMessage_ShowAndWaitFar(MsgAgilityRises);
-        BattleMessage_WaitForAdvance();
-      }
-      if ((s16)gains.luck != 0) {
-        MessageArgument_PushFar((s16)gains.luck, MESSAGE_ARGUMENT_NUMBER);
-        BattleMessage_ShowAndWaitFar(MsgLuckRises);
-        BattleMessage_WaitForAdvance();
+        if ((s16)gains.hp != 0) {
+          MessageArgument_PushFar((s16)gains.hp, MESSAGE_ARGUMENT_NUMBER);
+          BattleMessage_ShowAndWaitFar(MsgMaxHpRises);
+          BattleMessage_WaitForAdvance();
+        }
+        if ((s16)gains.pp != 0) {
+          MessageArgument_PushFar((s16)gains.pp, MESSAGE_ARGUMENT_NUMBER);
+          BattleMessage_ShowAndWaitFar(MsgMaxPpRises);
+          BattleMessage_WaitForAdvance();
+        }
+        if ((s16)gains.atk != 0) {
+          MessageArgument_PushFar((s16)gains.atk, MESSAGE_ARGUMENT_NUMBER);
+          BattleMessage_ShowAndWaitFar(MsgAttackRises);
+          BattleMessage_WaitForAdvance();
+        }
+        if ((s16)gains.def != 0) {
+          MessageArgument_PushFar((s16)gains.def, MESSAGE_ARGUMENT_NUMBER);
+          BattleMessage_ShowAndWaitFar(MsgDefenseRises);
+          BattleMessage_WaitForAdvance();
+        }
+        if ((s16)gains.agi != 0) {
+          MessageArgument_PushFar((s16)gains.agi, MESSAGE_ARGUMENT_NUMBER);
+          BattleMessage_ShowAndWaitFar(MsgAgilityRises);
+          BattleMessage_WaitForAdvance();
+        }
+        if ((s16)gains.luck != 0) {
+          MessageArgument_PushFar((s16)gains.luck, MESSAGE_ARGUMENT_NUMBER);
+          BattleMessage_ShowAndWaitFar(MsgLuckRises);
+          BattleMessage_WaitForAdvance();
+        }
       }
     }
   }

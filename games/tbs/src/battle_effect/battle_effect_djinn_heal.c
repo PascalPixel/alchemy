@@ -15,9 +15,6 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   void *canvas;
   s32 member;
   u8 *sheet;
-  DrawRectangle *draw;
-  struct Actor *actor;
-  struct Actor *goal;
   s32 frame;
   s32 i;
   s32 position[3];
@@ -37,25 +34,28 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  /* FAKEMATCH(temporary): draw stands in for callbacks. */
-  BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw = callbacks);
-  actor = GetBattleObjectSlotFar(work->args->user)->actor;
-  goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  for (i = 0; i != 64; i++) {
-    struct Particle *spark = &PARTICLES[i];
-    s32 heading = Random16() & TRIG_ANGLE_MASK;
-    s32 speed = (Random16() & 0xff) + 128;
+  BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, callbacks);
+  {
+    struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
+    struct Actor *goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
-    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
-    SET_VELOCITY(spark, (Trig_Sin(heading) * speed) >> 5, 0,
-                 (Trig_Cos(heading) * speed) >> 5);
-    spark->variant = 0;
+    for (i = 0; i != 64; i++) {
+      struct Particle *spark = &PARTICLES[i];
+      s32 heading = Random16() & TRIG_ANGLE_MASK;
+      s32 speed = (Random16() & 0xff) + 128;
+
+      SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
+      SET_VELOCITY(spark, (Trig_Sin(heading) * speed) >> 5, 0,
+                   (Trig_Cos(heading) * speed) >> 5);
+      spark->variant = 0;
+    }
+    EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                          CANVAS_FADE_THREE_QUARTERS);
+
+    // The swirl.
+    SET_VECTOR(position, actor->x.fixed, 0, actor->z.fixed);
+    SET_VECTOR(target, goal->x.fixed, 180 << 15, 0);
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-
-  // The swirl.
-  SET_VECTOR(position, actor->x.fixed, 0, actor->z.fixed);
-  SET_VECTOR(target, goal->x.fixed, 180 << 15, 0);
   SET_VECTOR(delta, (target[0] - position[0]) / 40,
              (target[1] - position[1]) / 40, (target[2] - position[2]) / 40);
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
@@ -185,8 +185,8 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                 u32 edge = gBattleEffect_SparkleSizes[pictureIndex];
                 u32 half = edge >> 1;
 
-                draw[1](canvas, picture, view.x - half, view.y - half, edge,
-                        edge);
+                callbacks[1](canvas, picture, view.x - half, view.y - half,
+                             edge, edge);
               }
               spark->x -= spark->x / distance;
               spark->y -= spark->y / distance;

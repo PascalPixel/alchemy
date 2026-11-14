@@ -132,7 +132,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   struct SpritePlacement position;
   s32 vector[3];
   struct ScreenPoint spot;
-  struct ScreenPoint *screenPosition;
   struct ScreenPoint screen;
   struct SpriteScale scale;
   s32 frame;
@@ -395,10 +394,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         SET_VECTOR(vector, px(gParticleStreams_OrbitPoints[i][0] / 2),
                    px(gParticleStreams_OrbitPoints[i][1] + frame),
                    px(gParticleStreams_OrbitPoints[i][2] / 2));
-        /* FAKEMATCH(temporary): screenPosition holds &spot. */
-        Projection_Point(vector, screenPosition = &spot);
-        screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
-        screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
+        Projection_Point(vector, &spot);
+        spot.x = Q_16_16_TO_INT(spot.x) + 128;
+        spot.y = Q_16_16_TO_INT(spot.y) + 60;
         draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_SMALL_GLOW,
              spot.x - 4, spot.y - 4, 8, 8);
       }

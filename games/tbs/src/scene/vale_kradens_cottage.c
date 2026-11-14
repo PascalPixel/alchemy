@@ -506,16 +506,12 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
 /// In Vale, when the party comes back out of Kraden's cottage, Kraden comes out
 /// ready and everyone joins Isaac for Mt. Aleph.
 static void ValeKradensCottage_KradenSetsOff(void) {
-  struct Actor *actor;
-
   Event_Start();
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(ACTOR_GARET, 216, 264);
   Actor_SetPosition(ACTOR_JENNA, 248, 264);
-  actor = Actor_Get(ACTOR_GARET);
-  actor->facing = FACING_NORTH;
-  actor = Actor_Get(ACTOR_JENNA);
-  actor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_GARET)->facing = FACING_NORTH;
+  Actor_Get(ACTOR_JENNA)->facing = FACING_NORTH;
   MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);

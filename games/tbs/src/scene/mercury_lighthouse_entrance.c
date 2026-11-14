@@ -559,12 +559,9 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   struct Actor *actor;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
-  actor->scaleX = -Q16_ONE;
-  actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 1);
-  actor->scaleX = -Q16_ONE;
-  actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 2);
-  actor->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -Q16_ONE;
   Actor_SetPosition(ACTOR_MIA, 136, 184);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 136, 296);
   Actor_SetPosition(ACTOR_LIZARD_MAN, 136, 152);
@@ -635,17 +632,12 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, back from the
 /// Lizard Man battle, once.
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
-  struct Actor *actor;
-
   if (Event_GetFlag(FLAG_MIA_GOES_IN_SEEN) == 0) {
     GameFlag_Set(FLAG_MIA_GOES_IN_SEEN);
     Event_Start();
-    actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
-    actor->scaleX = -Q16_ONE;
-    actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 1);
-    actor->scaleX = -Q16_ONE;
-    actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 2);
-    actor->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -Q16_ONE;
     Actor_SetPosition(ACTOR_MIA, 136, 144);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 10);
     gFieldWork->transition =

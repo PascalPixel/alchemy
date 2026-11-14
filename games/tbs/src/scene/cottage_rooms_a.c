@@ -504,7 +504,6 @@ static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 actorId,
 
 /// In Garet's house in Vale, back from Kalay, Garet comes home.
 static void CottageRoomsA_GaretComesHome(void) {
-  struct Actor *sleepZ;
   struct Actor *actor;
   s32 motionFlags = 0;
   TaskFunc timedUpdate;
@@ -522,12 +521,9 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetSpeed(ACTOR_MIA, 0.4);
   Actor_SetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
-  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z);
-  Actor_SetSpriteFlags(sleepZ, 0);
-  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 1);
-  Actor_SetSpriteFlags(sleepZ, 0);
-  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 2);
-  Actor_SetSpriteFlags(sleepZ, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SLEEP_Z), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SLEEP_Z + 1), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SLEEP_Z + 2), 0);
   Actor_Get(ACTOR_FIRST_SLEEP_Z)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;

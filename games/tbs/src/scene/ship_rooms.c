@@ -3184,8 +3184,8 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
       struct Actor *actor;
 
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 3, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3);
-      actor->facing = FACING_SOUTH_SOUTHEAST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3)->facing =
+          FACING_SOUTH_SOUTHEAST;
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3);
       actor->scaleX = Q16_ONE;
     }
@@ -3193,19 +3193,18 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
       struct Actor *actor;
 
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 4, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 4);
-      actor->facing = FACING_SOUTH_SOUTHWEST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 4)->facing =
+          FACING_SOUTH_SOUTHWEST;
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 5, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5);
-      actor->facing = FACING_SOUTH_SOUTHEAST;
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5);
-      actor->scaleX = Q16_ONE;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5)->facing =
+          FACING_SOUTH_SOUTHEAST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5)->scaleX = Q16_ONE;
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 6, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 6);
-      actor->facing = FACING_SOUTH_SOUTHWEST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 6)->facing =
+          FACING_SOUTH_SOUTHWEST;
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 7, ANIM_STAND);
-      actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7);
-      actor->facing = FACING_SOUTH_SOUTHEAST;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7)->facing =
+          FACING_SOUTH_SOUTHEAST;
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7);
       actor->scaleX = Q16_ONE;
     }
@@ -3679,7 +3678,6 @@ static void ShipRooms_NoticeShipRocking(void) {
   s32 secondRower;
   s32 thirdRower;
   s32 firstRower;
-  struct Actor *actor;
   const s32 *action;
 
   firstRower = ShipRooms_FindFirstSetFlag(0, 0);
@@ -3692,8 +3690,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
   Actor_SetPosition(ACTOR_ROWING_KAJA, 440, 134);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_HIDDEN);
-  actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), 0);
   ShipRooms_InstallRowingDeckActors(16);
   ShipRooms_MoveCameraAndWait(438, CAMERA_KEEP, 174,
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
@@ -3741,8 +3738,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_NORMAL);
-  actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 430, 134);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST);
@@ -3842,7 +3838,6 @@ static void ShipRooms_ReachIsland(void) {
   s32 secondRower;
   s32 thirdRower;
   s32 firstRower;
-  struct Actor *actor;
   s32 reaction = 0;
   const s32 *progressB;
   const s32 *progressC;
@@ -3859,16 +3854,14 @@ static void ShipRooms_ReachIsland(void) {
   Actor_SetPosition(ACTOR_ROWING_CREWMAN, 472, 152);
   Actor_SetPosition(ACTOR_ROWING_KAJA, 440, 134);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_HIDDEN);
-  actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), 0);
   ShipRooms_InstallRowingDeckActors(16);
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
   ShipRooms_MoveCameraAndWait(438, CAMERA_KEEP, 174,
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 1, 20);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_NORMAL);
-  actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 132);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 142);

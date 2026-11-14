@@ -461,8 +461,7 @@ static void LunpaFortress_CratesSink(void) {
 static void LunpaFortress_MoveCrates(void) {
   struct Actor *cratesActor;
 
-  cratesActor = Actor_Get(ACTOR_CAVE_CRATES);
-  if (FIELD_CELL(cratesActor->z.fixed) > 22) {
+  if (FIELD_CELL(Actor_Get(ACTOR_CAVE_CRATES)->z.fixed) > 22) {
     MapGrid_SetShake(4, 4, 1);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     Sound_Play(SE_CLATTER);
@@ -2036,8 +2035,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   MapGrid_CopyCells(16, 75, 7, 4, 26, 55);
   LunpaFortress_OpenToadonpaDoor(4);
   Event_Start();
-  actor = Actor_Get(ACTOR_TOADONPA_HAMMET);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 456, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_SetPosition(ACTOR_GARET, 440, 192);

@@ -833,8 +833,6 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 
 /// The captain decides to set sail without the replacement ship.
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
-  struct Actor *actor;
-
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     Event_Start();
     Field_EndBusyAndReveal();
@@ -940,10 +938,8 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     TolbiShipDeck_OpenSecondDoor();
     Actor_WalkToAndWait(ACTOR_KALAY_CREWMAN, 216, 798);
     Actor_SetPosition(ACTOR_KALAY_CREWMAN, 0, 0);
-    actor = Actor_Get(ACTOR_KALAY_CREWMAN);
-    actor->scaleX = Q16_ONE;
-    actor = Actor_Get(ACTOR_KALAY_CREWMAN);
-    actor->scaleY = Q16_ONE;
+    Actor_Get(ACTOR_KALAY_CREWMAN)->scaleX = Q16_ONE;
+    Actor_Get(ACTOR_KALAY_CREWMAN)->scaleY = Q16_ONE;
     GameFlag_Set(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY);
     Event_End();
   }
@@ -1157,7 +1153,6 @@ static void TolbiShipDeck_ApplyEntryState(void) {
 /// At Kalay while the ship waits, places the passengers by what has happened
 /// so far.
 static void TolbiShipDeck_PlaceWaitingPassengers(void) {
-  struct Actor *actor;
   s32 flag;
 
   Actor_SetSpritePriority(ACTOR_KALAY_PASSENGER_KARAGOL, 1);
@@ -1175,13 +1170,13 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
   if (flag != 0) {
     Actor_SetPosition(ACTOR_KALAY_CREW_MEMBER, 264, 702);
     Actor_Get(ACTOR_KALAY_CREW_MEMBER)->facing = FACING_SOUTH_SOUTHWEST;
-    actor = Actor_Get(ACTOR_KALAY_CREW_MEMBER);
-    actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    Actor_Get(ACTOR_KALAY_CREW_MEMBER)->timer =
+        Math_RemainderUnsigned(Random_Next(), 90) + 60;
     Actor_SetScript(ACTOR_KALAY_CREW_MEMBER,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_TOUR_GUIDE, 248, 680);
-    actor = Actor_Get(ACTOR_KALAY_TOUR_GUIDE);
-    actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    Actor_Get(ACTOR_KALAY_TOUR_GUIDE)->timer =
+        Math_RemainderUnsigned(Random_Next(), 90) + 60;
     Actor_SetScript(ACTOR_KALAY_TOUR_GUIDE,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_CAPTAIN, 0, 0);
@@ -1260,8 +1255,6 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
 /// At anchor off the island, the crew stand where they were left, by whether
 /// the party has agreed to scout the island.
 static void TolbiShipDeck_SetUpAtAnchor(void) {
-  struct Actor *actor;
-
   ((struct MapGridScrollWork *)gMapGridWork[0])->minX = px(65);
   Event_Start();
   Event_AppendActorPlacements(
@@ -1269,22 +1262,17 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   wait(1);
   Actor_ReleaseById(ACTOR_SEA_KRAKEN);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, 238, 626);
-  actor = Actor_Get(ACTOR_SEA_CREW_MEMBER);
-  actor->facing = FACING_SOUTH_SOUTHEAST;
+  Actor_Get(ACTOR_SEA_CREW_MEMBER)->facing = FACING_SOUTH_SOUTHEAST;
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED) != 0) {
     Actor_SetPosition(ACTOR_SEA_SEAN, 162, 634);
-    actor = Actor_Get(ACTOR_SEA_SEAN);
-    actor->facing = FACING_SOUTH_SOUTHEAST;
+    Actor_Get(ACTOR_SEA_SEAN)->facing = FACING_SOUTH_SOUTHEAST;
     Actor_SetPosition(ACTOR_SEA_OURANOS, 162, 676);
-    actor = Actor_Get(ACTOR_SEA_OURANOS);
-    actor->facing = FACING_NORTH_NORTHEAST;
+    Actor_Get(ACTOR_SEA_OURANOS)->facing = FACING_NORTH_NORTHEAST;
   } else {
     Actor_SetPosition(ACTOR_SEA_SEAN, 160, 652);
-    actor = Actor_Get(ACTOR_SEA_SEAN);
-    actor->facing = FACING_SOUTH_SOUTHEAST;
+    Actor_Get(ACTOR_SEA_SEAN)->facing = FACING_SOUTH_SOUTHEAST;
     Actor_SetPosition(ACTOR_SEA_OURANOS, 166, 668);
-    actor = Actor_Get(ACTOR_SEA_OURANOS);
-    actor->facing = FACING_NORTH_NORTHWEST;
+    Actor_Get(ACTOR_SEA_OURANOS)->facing = FACING_NORTH_NORTHWEST;
   }
   if (gMainRoutineWork.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
     TolbiShipDeck_ReturnFromIsland();
@@ -1296,8 +1284,6 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
 /// (ACTOR_KALAY_KAJA) brings word to ACTOR_KALAY_CREW_MEMBER that all is
 /// ready.
 static void TolbiShipDeck_DepartFromKalay(void) {
-  struct Actor *actor;
-
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
@@ -1309,11 +1295,9 @@ static void TolbiShipDeck_DepartFromKalay(void) {
   Actor_SetPosition(ACTOR_KALAY_PASSENGER_KARAGOL, 0, 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetPosition(ACTOR_KALAY_KAJA, 0, 0);
-  actor = Actor_Get(ACTOR_KALAY_KAJA);
-  actor->facing = FACING_SOUTH_SOUTHEAST;
+  Actor_Get(ACTOR_KALAY_KAJA)->facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPosition(ACTOR_KALAY_CREW_MEMBER, 232, 650);
-  actor = Actor_Get(ACTOR_KALAY_CREW_MEMBER);
-  actor->facing = FACING_NORTH_NORTHWEST;
+  Actor_Get(ACTOR_KALAY_CREW_MEMBER)->facing = FACING_NORTH_NORTHWEST;
   FieldCamera_MoveTo(232, CAMERA_KEEP, 636, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -1324,16 +1308,13 @@ static void TolbiShipDeck_DepartFromKalay(void) {
 /// On later departures, with the party aboard, Kaja brings word to
 /// ACTOR_SEA_CREW_MEMBER.
 static void TolbiShipDeck_DepartWithParty(void) {
-  struct Actor *actor;
-
   Event_Start();
   Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 232, 636);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -1344,11 +1325,9 @@ static void TolbiShipDeck_DepartWithParty(void) {
   Actor_SetPosition(ACTOR_SEA_SEAN, 0, 0);
   Actor_SetPosition(ACTOR_SEA_OURANOS, 0, 0);
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
-  actor = Actor_Get(ACTOR_SEA_KAJA);
-  actor->facing = FACING_SOUTH_SOUTHEAST;
+  Actor_Get(ACTOR_SEA_KAJA)->facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, 232, 650);
-  actor = Actor_Get(ACTOR_SEA_CREW_MEMBER);
-  actor->facing = FACING_NORTH_NORTHWEST;
+  Actor_Get(ACTOR_SEA_CREW_MEMBER)->facing = FACING_NORTH_NORTHWEST;
   wait(1);
   TolbiShipDeck_AnnouncePreparationsReady(ACTOR_SEA_KAJA,
                                           ACTOR_SEA_CREW_MEMBER);
@@ -1586,14 +1565,12 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
 /// A great shape rises from the sea and a monster drops onto the deck.
 static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   struct Actor *monster;
-  struct Actor *actor;
   u32 frame;
   const s32 *sailorActions;
 
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
@@ -1601,11 +1578,9 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
       (struct ActorPlacement *)gTolbiShipDeck_ThirdAttackActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_SEA_SEAN, 176, 696);
-  actor = Actor_Get(ACTOR_SEA_SEAN);
-  actor->facing = FACING_NORTH_NORTHEAST;
+  Actor_Get(ACTOR_SEA_SEAN)->facing = FACING_NORTH_NORTHEAST;
   Actor_SetPosition(ACTOR_SEA_OURANOS, 264, 662);
-  actor = Actor_Get(ACTOR_SEA_OURANOS);
-  actor->facing = FACING_NORTH_NORTHWEST;
+  Actor_Get(ACTOR_SEA_OURANOS)->facing = FACING_NORTH_NORTHWEST;
   Actor_SetPosition(ACTOR_SEA_FIRST_LEAPING_MONSTER, 184, 672);
   Actor_SetPosition(ACTOR_SEA_FIRST_LEAPING_MONSTER + 1, 202, 692);
   Actor_SetPosition(ACTOR_SEA_FIRST_LEAPING_MONSTER + 2, 252, 646);
@@ -1668,8 +1643,8 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Event_Wait(80);
   Sound_Play(SE_BEAST_CRY);
   Actor_SetPosition(ACTOR_SEA_FALLING_MONSTER_SHADOW, 0, 0);
-  actor = Actor_Get(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2),
+                       SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
   monster = Actor_Get(ACTOR_PARTY_LEADER);
   monster->motionFlags = 0;
@@ -1721,8 +1696,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_SetAnimation(ACTOR_SEA_OURANOS, ANIM_LYING_FLAT);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_OURANOS), 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
@@ -1872,25 +1846,19 @@ static void TolbiShipDeck_ThankForKraken(void) {
 
 /// Land is sighted.
 static void TolbiShipDeck_SightLand(void) {
-  struct Actor *actor;
-
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_SEA_KAJA, 196, 502);
-  actor = Actor_Get(ACTOR_SEA_KAJA);
-  actor->facing = FACING_NORTHWEST;
+  Actor_Get(ACTOR_SEA_KAJA)->facing = FACING_NORTHWEST;
   Actor_SetPosition(ACTOR_SEA_SEAN, 184, 524);
-  actor = Actor_Get(ACTOR_SEA_SEAN);
-  actor->facing = FACING_NORTH_NORTHWEST;
+  Actor_Get(ACTOR_SEA_SEAN)->facing = FACING_NORTH_NORTHWEST;
   Actor_SetSpritePriority(ACTOR_SEA_OURANOS, 1);
   Actor_SetPosition(ACTOR_SEA_OURANOS, 184, 632);
-  actor = Actor_Get(ACTOR_SEA_OURANOS);
-  actor->facing = FACING_NORTH_NORTHWEST;
+  Actor_Get(ACTOR_SEA_OURANOS)->facing = FACING_NORTH_NORTHWEST;
   // UB: the field work's pointer is read through a u32 lvalue, which keeps
   // the facing store ahead of its load; UBFIX reads it as declared.
 #ifdef UBFIX

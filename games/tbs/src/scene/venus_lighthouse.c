@@ -811,7 +811,6 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   struct EffectOptions options;
   s32 velocityX;
   s32 velocityZ;
-  s32 random;
 
   if ((gFrameCount & 3) != 0) {
     RETURN_UNREAD(0);
@@ -827,10 +826,8 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   options.startScaleY = Q16_ONE;
   options.targetScaleX = -327;
   options.targetScaleY = -327;
-  random = Random_Next();
-  velocityX = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
-  random = Random_Next();
-  velocityZ = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
+  velocityX = Math_Divide(px(Random_Below(9) - 4), 10);
+  velocityZ = Math_Divide(px(Random_Below(9) - 4), 10);
   FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - px(1),
                     velocityX, 0, velocityZ,
                     EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
@@ -1253,8 +1250,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
   walkAcceleration = px(2) / 5;
   emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
   Event_Start();
-  actor = Actor_Get(ACTOR_WALL_PILLAR);
-  if (FIELD_CELL(actor->x.fixed) == 53) {
+  if (FIELD_CELL(Actor_Get(ACTOR_WALL_PILLAR)->x.fixed) == 53) {
     if (GameFlag_Get(talked) == 0) {
       GameFlag_Set(talked);
       actor = Actor_Get(ACTOR_PARTY_LEADER);

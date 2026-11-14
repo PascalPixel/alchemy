@@ -576,8 +576,6 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 
 /// Sets up Vault as the party finds it after reaching Kalay.
 s32 Scene_Initialize(void) {
-  struct Actor *actor;
-
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   // A still actor on the well that shows nothing. XXX (no evidence): what it
@@ -586,11 +584,11 @@ s32 Scene_Initialize(void) {
   Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   wait(1);
-  actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
-  actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->update =
+      (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = 1;
-  actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
-  actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->update =
+      (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, 216, 392);

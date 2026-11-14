@@ -494,7 +494,6 @@ static void ValeCave_HaltKite(void) {
 /// In Vale Cave's third room, pushing the eastern log along the ledge makes it
 /// fall off at the ledge's edge, opening the way.
 static void ValeCave_PushLogOverEdge(void) {
-  struct Actor *movedLog;
   struct PushedActorProbe probe;
 
   Event_Start();
@@ -504,8 +503,7 @@ static void ValeCave_PushLogOverEdge(void) {
     if (FIELD_CELL(probe.position.x) == 17) {
       Actor_SetAnimation(probe.actorSlot, 3);
       Actor_Get(probe.actorSlot)->motionFlags = 0;
-      movedLog = Actor_Get(probe.actorSlot);
-      movedLog->bounce = 0;
+      Actor_Get(probe.actorSlot)->bounce = 0;
       Actor_SetDestinationOffset(probe.actorSlot, -12, 0);
       Actor_WaitForMoveById(probe.actorSlot);
       Actor_SetAnimation(probe.actorSlot, 3);
@@ -515,9 +513,8 @@ static void ValeCave_PushLogOverEdge(void) {
       Actor_SetDestinationOffset(probe.actorSlot, -6, 0);
       ValeCave_WaitForActorLanding(Actor_Get(probe.actorSlot));
       Actor_SetAnimation(probe.actorSlot, 8);
-      movedLog = Actor_Get(probe.actorSlot);
 
-      movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      Actor_Get(probe.actorSlot)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       // The cells it held on the ledge, and its landing, become open floor.
       PushedActor_FillGridAttributeRectangle(0, FIELD_CELL(probe.position.x),
                                              (FIELD_CELL(probe.position.z) - 2),

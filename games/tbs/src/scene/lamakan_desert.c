@@ -452,14 +452,12 @@ static void LamakanDesert_FightManticore(void) {
 static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   s32 tries;
   s32 quarter;
-  s32 random;
   s32 flag;
   s32 member;
 
   quarter = mark;
   for (tries = 0; tries <= 2; tries++) {
-    random = Random_Next();
-    member = (u32)((random << 1) + random) >> 16; // 0 to 2
+    member = Random_Below(3);
     flag = member + FLAG_GARET_COMPLAINED;
     if (GameFlag_Get(flag) == 0) {
       GameFlag_Set(flag);
@@ -600,8 +598,8 @@ static void LamakanDesert_BatheInOasis(void) {
 
   // Hop the leader into the middle of the oasis before draining the heat gauge.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  FieldActor_SetMoveTargetFixed(leader, oases[nearest], 0, oases[nearest + 1]);
+  FieldActor_SetMoveTargetFixed(Actor_Get(ACTOR_PARTY_LEADER), oases[nearest],
+                                0, oases[nearest + 1]);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
   Sound_Play(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);

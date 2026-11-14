@@ -411,11 +411,10 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
 static void KalayTolbiDocks_TalkToTicketTaker(void) {
   s32 ticketHolder;
   s32 ticketSlot;
-  struct Actor *leader;
   s16 cardinalFacing;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  cardinalFacing = ((leader->facing + TRIG_TURN / 8) & ~0x3fff);
+  cardinalFacing =
+      ((Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff);
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     if (Event_GetFlag(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
@@ -459,8 +458,8 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
       Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
       Inventory_Discard(ticketHolder, ticketSlot);
       GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, leader->x.part.pixel, 1304);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER,
+                          Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel, 1304);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 72, 1304);
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1304);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_EAST, 0);

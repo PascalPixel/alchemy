@@ -250,18 +250,13 @@ static void BabiLighthouse_LandWithParticles(void) {
 /// The leader arrives at one of the drop entrances of BabiLighthouseLuff. He
 /// drops in and falls on, out through the given exit.
 static void BabiLighthouse_FallToExit(s32 exit) {
-  struct Actor *leader;
-
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->y.fixed = px(130);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->gravity = px(1) / 4;
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->bounce = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = px(130);
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_StartScreenTransition();
@@ -270,8 +265,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Sound_Play(SE_DUST_PUFF);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->velocityY = -px(5);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = -px(5);
   Actor_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_EventSetExitRequest(exit);
@@ -1266,8 +1260,8 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
   s32 priority;
 
   sprite = Actor_Get(ACTOR_PARTY_LEADER)->sprite;
-  actor = Actor_Get(ACTOR_LEFT_PILLAR);
-  if (actor->z.fixed < Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
+  if (Actor_Get(ACTOR_LEFT_PILLAR)->z.fixed <
+      Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
     Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
@@ -1276,8 +1270,8 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
     Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, priority);
     Actor_Get(ACTOR_LEFT_PILLAR)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
-  actor = Actor_Get(ACTOR_RIGHT_PILLAR);
-  if (actor->z.fixed < Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
+  if (Actor_Get(ACTOR_RIGHT_PILLAR)->z.fixed <
+      Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
     Actor_SetSpritePriority(ACTOR_RIGHT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;

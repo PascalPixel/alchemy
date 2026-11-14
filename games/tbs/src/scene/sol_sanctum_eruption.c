@@ -258,8 +258,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
   // The Wise One, a floating rock, appears over the chamber and the quake
   // stops.
-  actor = Actor_Get(ACTOR_WISE_ONE);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_WISE_ONE), 0);
   Actor_SetPosition(ACTOR_WISE_ONE, 325, 302);
   actor = Actor_Get(ACTOR_WISE_ONE);
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;

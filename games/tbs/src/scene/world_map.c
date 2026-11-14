@@ -978,8 +978,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, 5848, 1576);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_HIDDEN);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CARAVAN_HAMMET), 0);
   Actor_SetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON, 1.6, 0.4);
   Actor_SetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON + 1, 1.6, 0.4);
   Actor_SetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON + 2, 1.6, 0.4);
@@ -1057,8 +1056,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, 5656, 1784);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_NORMAL);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
-  Actor_SetSpriteFlags(spriteActor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CARAVAN_HAMMET), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_CARAVAN_HAMMET, 0.8);
   Actor_WalkToAndWait(ACTOR_CARAVAN_HAMMET, 5640, 1784);
   Event_Wait(20);
@@ -1128,21 +1126,16 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetSpriteFlags(actor, 0);
   Actor_SelectAnimation(actor, FALLING_ROCK_ANIMATION_TUMBLE);
   wait(1);
-  spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLING_ROCK), 0);
   Task_AddFrame(WorldMap_UpdateFallingRock, TASK_PASS_FRAME);
   do {
     wait(1);
   } while (actor->timer == 0);
-  spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
-  Actor_SetSpriteFlags(spriteActor, 0);
-  spriteActor = Actor_Get(ACTOR_INVISIBLE_ROCK_GUIDE);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLING_ROCK), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_ROCK_GUIDE), 0);
   Event_Wait(10);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_MAN);
-  spriteActor->velocityY = px(6);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
-  spriteActor->velocityY = px(6);
+  Actor_Get(ACTOR_CARAVAN_MAN)->velocityY = px(6);
+  Actor_Get(ACTOR_CARAVAN_HAMMET)->velocityY = px(6);
   Sound_Play(SE_CRASH);
   FieldCamera_SetSpeedAndAcceleration(4, 4);
   WorldMap_ShakeCameraWhereRockFalls();
@@ -2380,7 +2373,6 @@ static void WorldMap_SpawnIslandWake(void) {
 /// with its wake under warm colours.
 static void WorldMap_ShowIslandDrifting(void) {
   struct Actor *actor;
-  struct Actor *spriteActor;
 
   actor = Actor_Get(ACTOR_DRIFTING_ISLAND);
   Event_Wait(60);
@@ -2391,10 +2383,8 @@ static void WorldMap_ShowIslandDrifting(void) {
   FieldCamera_FollowActor(ACTOR_DRIFTING_ISLAND, 1);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  spriteActor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(spriteActor, 0);
-  spriteActor = Actor_Get(ACTOR_DRIFTING_ISLAND);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_DRIFTING_ISLAND), 0);
   Actor_SetSpeed(ACTOR_DRIFTING_ISLAND, 0.4);
   actor->timer = 0;
   Actor_SetScript(ACTOR_DRIFTING_ISLAND, gIslandDriftsEast);

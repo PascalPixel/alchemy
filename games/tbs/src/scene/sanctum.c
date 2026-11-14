@@ -1115,7 +1115,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
 /// Garet.
 static void Sanctum_ReceiveWiseOnesMission(void) {
   u32 sparkIndex;
-  struct Actor *wiseOne;
 
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1225,10 +1224,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
     Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
     Event_Wait(4);
-    wiseOne = Actor_Get(ACTOR_WISE_ONE);
-    wiseOne->scaleX -= Q16_ONE / 100;
-    wiseOne = Actor_Get(ACTOR_WISE_ONE);
-    wiseOne->scaleY -= Q16_ONE / 100;
+    Actor_Get(ACTOR_WISE_ONE)->scaleX -= Q16_ONE / 100;
+    Actor_Get(ACTOR_WISE_ONE)->scaleY -= Q16_ONE / 100;
   }
   Sound_Play(SE_STOP_ACTION_SE);
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
@@ -1506,12 +1503,9 @@ static void Sanctum_ShowHealerAfterimage(void) {
   }
   Actor_SetAnimation(ACTOR_HEALER_AFTERIMAGE, ANIM_STILL);
   afterimage = Actor_Get(ACTOR_HEALER_AFTERIMAGE);
-  actor = Actor_Get(ACTOR_HEALER);
-  afterimage->facing = actor->facing;
-  actor = Actor_Get(ACTOR_HEALER_AFTERIMAGE);
-  actor->update = Sanctum_UpdateHealerAfterimage;
-  actor = Actor_Get(ACTOR_HEALER_AFTERIMAGE);
-  sprite = actor->sprite;
+  afterimage->facing = Actor_Get(ACTOR_HEALER)->facing;
+  Actor_Get(ACTOR_HEALER_AFTERIMAGE)->update = Sanctum_UpdateHealerAfterimage;
+  sprite = Actor_Get(ACTOR_HEALER_AFTERIMAGE)->sprite;
   {
     for (entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
       struct SpriteAnimation *entry = sprite->entries[entryIndex];

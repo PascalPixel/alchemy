@@ -1018,7 +1018,6 @@ static inline void ColosseumAzartMatch_SetPipeHeight(struct Actor *actor,
 static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
   s32 path;
   struct Actor *second;
-  struct Actor *first;
 
   if (gMainRoutineWork.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
@@ -1043,14 +1042,12 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_HidePointer();
       wait(2);
-      first = Actor_Get(ACTOR_PIPE_WEST);
-      ColosseumAzartMatch_SetPipeHeight(first, px(8));
+      ColosseumAzartMatch_SetPipeHeight(Actor_Get(ACTOR_PIPE_WEST), px(8));
       second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, px(32));
       Actor_WaitForMove(second);
       Event_Wait(45);
-      first = Actor_Get(ACTOR_PIPE_WEST);
-      ColosseumAzartMatch_SetPipeHeight(first, px(24));
+      ColosseumAzartMatch_SetPipeHeight(Actor_Get(ACTOR_PIPE_WEST), px(24));
       second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, 0);
       Actor_WaitForMove(second);

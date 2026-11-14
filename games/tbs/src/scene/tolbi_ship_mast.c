@@ -661,12 +661,7 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   actor->motionFlags = 0;
   actor->timer = (u32)Random_Next() >> 15;
   actor->userValue = (u32)Random_Next() >> 15;
-  randomValue = Random_Next();
-  randomValue <<= 2;
-  randomValue >>= 16;
-  randomValue <<= 16;
-  randomValue += px(6);
-  actor->y.fixed = randomValue;
+  actor->y.fixed = px(Random_Below(4)) + px(6);
   randomValue = Random_Next();
   actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - px(3) / 16;
   actor->scaleX = 5 * Q16_ONE / 4;

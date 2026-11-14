@@ -651,7 +651,6 @@ static inline void AltinPeak_FlickerWaterAway(void) {
 static void AltinPeak_DrainFirstWater(void) {
   struct MapGridScrollWork *map = gMapGridWork[0];
   struct MapGridLayerScroll *water;
-  struct Actor *puddle;
   s32 step;
 
   Sound_Play(SE_WATER_DRAIN);
@@ -662,10 +661,8 @@ static void AltinPeak_DrainFirstWater(void) {
     water->offsetY -= px(1);
     wait(4);
     if (step == 8) {
-      puddle = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
-      puddle->scaleX = Q16_ONE / 10;
-      puddle = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
-      puddle->scaleY = Q16_ONE / 10;
+      Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE)->scaleX = Q16_ONE / 10;
+      Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE)->scaleY = Q16_ONE / 10;
       Actor_SetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, 152, 216);
       Actor_SetScript(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE,
                       gAltinPeak_PuddleGrowScript);
@@ -969,8 +966,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gAltinPeak_LeaderFleePath);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     Actor_SetPosition(ACTOR_GARET, 878, 528);
-    actor = Actor_Get(ACTOR_GARET);
-    actor->facing = FACING_SOUTH_SOUTHWEST;
+    Actor_Get(ACTOR_GARET)->facing = FACING_SOUTH_SOUTHWEST;
   }
   FieldCamera_SetSpeed(1.25);
   FieldCamera_MoveTo(786, CAMERA_KEEP, 556, 1);
@@ -1339,7 +1335,6 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
 /// settles down, spitting water.
 static void AltinPeak_ShowSecondBeastRoute(void) {
   struct Actor *actor;
-  struct Actor *movingActor;
   u32 waitedFrames;
 
   actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
@@ -1373,16 +1368,13 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 40);
   Actor_Get(ACTOR_FIRST_WATER_BEAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, 1.2);
-  movingActor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  Actor_SetSpriteFlags(movingActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER_BEAST), 0);
   Sound_Play(SE_HIGH_JUMP);
-  movingActor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  movingActor->velocityY = px(4);
+  Actor_Get(ACTOR_FIRST_WATER_BEAST)->velocityY = px(4);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 86, 214);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
-  movingActor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  Actor_SetSpriteFlags(movingActor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER_BEAST), SPRITE_FLAG_SHADOW);
   Event_Wait(10);
   AltinPeak_PlayLandingShake(2, 8);
   Event_Wait(40);

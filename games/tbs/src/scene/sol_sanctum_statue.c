@@ -1005,7 +1005,6 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
 /// the statue into the floor.
 static void SolSanctumStatue_CenterStatueMoved(void) {
   struct Actor *statue;
-  struct Actor *leader;
   s32 statueZ;
 
   statue = Actor_Get(ACTOR_CENTER_STATUE);
@@ -1016,11 +1015,9 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
     Event_Start();
     if ((statueZ >> 20) == 8) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN) == 0) {
-        leader = Actor_Get(ACTOR_PARTY_LEADER);
-        if ((u32)(leader->z.fixed >> 19) <= 17) {
+        if ((u32)(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 17) {
           Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 289, 158);
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          leader->facing = FACING_NORTH;
+          Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
         }
       }
       if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
@@ -1096,8 +1093,8 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
       Actor_Get(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-      movingActor = Actor_Get(ACTOR_PARTY_LEADER);
-      Actor_SetDestination(ACTOR_PARTY_LEADER, movingActor->x.part.pixel, 136);
+      Actor_SetDestination(ACTOR_PARTY_LEADER,
+                           Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel, 136);
       Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
       Actor_WaitForMoveById(ACTOR_CENTER_STATUE);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

@@ -785,7 +785,6 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
 /// Searching the switch beside CrossboneIsleFloodgate's floodgate flips it.
 static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   s32 waterRaised;
-  struct Actor *water;
 
   Event_Start();
   FieldCamera_SetSpeed(1);
@@ -800,8 +799,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     Sound_Play(SE_LOG_FALL);
     Actor_SetSpritePriority(ACTOR_WATER, 1);
     Actor_Get(ACTOR_WATER)->motionFlags = waterRaised;
-    water = Actor_Get(ACTOR_WATER);
-    water->y.fixed = -px(32);
+    Actor_Get(ACTOR_WATER)->y.fixed = -px(32);
     Actor_SetPosition(ACTOR_WATER, 272, 416);
     Actor_SetAnimation(ACTOR_WATER, SPLASH_ANIMATION_BURST);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateCloseSteps, 80,
@@ -819,8 +817,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     Event_Wait(30);
     Sound_Play(SE_WATER_DRAIN);
     Actor_Get(ACTOR_WATER)->motionFlags = 0;
-    water = Actor_Get(ACTOR_WATER);
-    water->y.fixed = -px(32);
+    Actor_Get(ACTOR_WATER)->y.fixed = -px(32);
     Actor_SetPosition(ACTOR_WATER, 272, 436);
     Actor_SetAnimation(ACTOR_WATER, SPLASH_ANIMATION_CHURN);
     MapGrid_CopyCellsTo(65, 45, 16, 27, 2, 4);

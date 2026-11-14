@@ -558,8 +558,6 @@ static void BabiPalace_OfferCloakBall(void) {
 /// Waking after resting before the finals, the leader has dreamt of fighting in
 /// them. The others tease, and the party sets off for the colosseum.
 static void BabiPalace_WakeFromFinalsDream(void) {
-  struct Actor *leader;
-
   Event_Start();
   Event_SetMessageId(MsgTolbiGetUp);
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 0;
@@ -572,8 +570,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 1;
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 1;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetPosition(ACTOR_GARET, 120, 104);
   Actor_SetPosition(ACTOR_MIA, 104, 80);
   Actor_SetPosition(ACTOR_IVAN, 120, 120);
@@ -594,10 +591,8 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   // "Are you okay? You were having nightmares for quite a while..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->z.fixed -= px(3);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->targetZ -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->targetZ -= px(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -672,8 +667,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.9);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, 0);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(40);

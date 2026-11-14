@@ -1000,13 +1000,11 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
 static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   u32 i;
   struct Actor *actor;
-  struct Actor *alex;
 
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
-  alex = Actor_Get(ACTOR_ALEX);
-  Actor_SetSpriteFlags(alex, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
   Actor_SetPosition(ACTOR_ALEX, 392, 454);
   SolSanctumElementalStarRoom_AnimateAlexReappearing();
@@ -1053,8 +1051,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH, 20);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
-  alex = Actor_Get(ACTOR_ALEX);
-  Actor_SetSpriteFlags(alex, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   actor = Actor_Get(ACTOR_ALEX);
   actor->motionFlags = 0;
   Sound_Play(SE_SHIMMER);
@@ -1122,8 +1119,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   FieldActor_SetMoveTarget(actor, 460, 0, 360);
   Actor_WaitForMoveById(ACTOR_ALEX);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
-  alex = Actor_Get(ACTOR_ALEX);
-  Actor_SetSpriteFlags(alex, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
   Event_Wait(30);
   FieldCamera_FollowActor(ACTOR_GARET, 1);
   FieldCamera_WaitForMove();
@@ -1226,7 +1222,6 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
 static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   u8 pass;
   s32 member;
-  struct Actor *leader;
 
   Event_Start();
   Sound_Play(SE_RUMBLE);
@@ -1406,7 +1401,6 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   struct Actor *rising;
   struct Sprite *sprite;
   struct Actor *shadow;
-  struct Actor *leader;
 
   Event_Start();
   MapGrid_CopyCellAttributes(27, 16, 5, 1, 27, 17);

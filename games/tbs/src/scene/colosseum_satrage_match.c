@@ -348,23 +348,19 @@ static void ColosseumSatrageMatch_PushWallPillar(void) {
 /// Move on a stone pillar in the Mini-Maze, and each push, keeps where the
 /// pillars stand.
 static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
-  struct Actor *obstacle;
   s32 column;
 
   MapGrid_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
-  obstacle = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR);
-  column = FIELD_CELL(obstacle->x.fixed);
+  column = FIELD_CELL(Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR)->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  obstacle = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
-  column = FIELD_CELL(obstacle->x.fixed);
+  column = FIELD_CELL(Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1)->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  obstacle = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
-  column = FIELD_CELL(obstacle->x.fixed);
+  column = FIELD_CELL(Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2)->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
@@ -662,7 +658,6 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   s32 liftZ;
   s32 riderZ;
   s32 deltaZ;
-  struct Actor *liftActor;
 
   rider = Actor_Get(gMainRoutineWork.leaderActorId);
   // Carry a rider only while both horizontal distances are less than ten
@@ -721,24 +716,26 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   if (gColosseumSatrageMatch_LiftTimer == 0) {
     gColosseumSatrageMatch_LiftPhase ^= 1;
     if (gColosseumSatrageMatch_LiftPhase != 0) {
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, 936, 0, 184);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
-      FieldActor_SetMoveTarget(liftActor, 968, 0, 248);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
-      FieldActor_SetMoveTarget(liftActor, 1000, 0, 184);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, 1032, 0, 248);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT), 936, 0, 184);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1), 968, 0, 248);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2), 1000, 0,
+          184);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT), 1032, 0, 248);
       Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 11);
     } else {
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, 936, 0, 216);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
-      FieldActor_SetMoveTarget(liftActor, 968, 0, 216);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
-      FieldActor_SetMoveTarget(liftActor, 1000, 0, 216);
-      liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, 1032, 0, 216);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT), 936, 0, 216);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1), 968, 0, 216);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2), 1000, 0,
+          216);
+      FieldActor_SetMoveTarget(
+          Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT), 1032, 0, 216);
       Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 10);
     }
   }

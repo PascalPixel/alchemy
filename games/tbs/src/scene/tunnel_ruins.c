@@ -618,8 +618,8 @@ static inline void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
 static void TunnelRuins_SinkNorthwestPillar(void) {
   u32 i;
   struct Actor *overlay;
-  s32 randomX;
-  s32 randomZ;
+  s32 effectX;
+  s32 effectZ;
   struct EffectOptions options;
 
   Event_Start();
@@ -635,13 +635,10 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     for (i = 0; i < 16; i++) {
       wait(3);
       Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= px(1);
-      randomX = Random_Next();
-      randomX = ((((u32)(randomX << 4) >> 16) << 16) + px(736));
-      randomZ = Random_Next();
-      FieldEffect_Spawn(
-          randomX, 0,
-          ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(128)), 0,
-          0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
+      effectX = px(Random_Below(16)) + px(736);
+      effectZ = px(Random_Below(18)) + px(128);
+      FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
     }
     MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     Event_Wait(30);
@@ -688,8 +685,6 @@ static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
 static void TunnelRuins_SinkSoutheastPillar(void) {
   u32 i;
   struct Actor *overlay;
-  s32 randomX;
-  s32 randomZ;
   s32 effectX;
   s32 effectZ;
   struct EffectOptions options;
@@ -707,11 +702,8 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       for (i = 0; i < 16; i++) {
         wait(3);
         Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= px(1);
-        randomX = Random_Next();
-        effectX = ((((u32)(randomX << 4) >> 16) << 16) + px(768));
-        randomZ = Random_Next();
-        effectZ =
-            ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(224));
+        effectX = px(Random_Below(16)) + px(768);
+        effectZ = px(Random_Below(18)) + px(224);
         FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                           &options);
@@ -810,7 +802,6 @@ static void TunnelRuins_DouseStartsOnPillar(void) {
 
 /// Frost on the pillar's hidden target raises a pillar of ice where it stands.
 static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
-  struct Actor *actor;
   s32 column;
   s32 row;
 
@@ -830,11 +821,9 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   row = FIELD_CELL(Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed);
   MapGrid_CopyCellAttributes(26, 8, 1, 1, column >> 20, row);
 
-  actor = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET);
-  actor->update = UPDATE_BY_RELATIVE_DEPTH;
+  Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update = UPDATE_BY_RELATIVE_DEPTH;
 
-  actor = Actor_Get(ACTOR_DOUSE_PILLAR);
-  actor->update = UPDATE_BY_RELATIVE_DEPTH;
+  Actor_Get(ACTOR_DOUSE_PILLAR)->update = UPDATE_BY_RELATIVE_DEPTH;
 
   Event_End();
 }
@@ -1074,76 +1063,48 @@ static void TunnelRuins_HideFalseStatues(void) {
 /// Moving one of the five coloured statues in TunnelRuinsLadyStatues opens the
 /// door once all five are on their marks.
 static void TunnelRuins_MoveLadyStatue(void) {
-  struct Actor *actor;
   s32 correctPositions;
-  s32 column;
-  s32 row;
 
   correctPositions = 0;
   Event_Start();
   MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
-  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-  column = actor->x.fixed;
-  row = Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed;
-  row >>= 20;
-  column >>= 20;
-  MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-  if (FIELD_CELL(actor->x.fixed) == 25) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-    if (FIELD_CELL(actor->z.fixed) == 49) {
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed));
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed) == 25) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed) == 49) {
       correctPositions = 1;
     }
   }
-  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-  if (FIELD_CELL(actor->x.fixed) == 23) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-    if (FIELD_CELL(actor->z.fixed) == 49) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed) == 23) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed) == 49) {
       correctPositions++;
     }
   }
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-  if (FIELD_CELL(actor->x.fixed) == 25) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-    if (FIELD_CELL(actor->z.fixed) == 47) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed) == 25) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed) == 47) {
       correctPositions++;
     }
   }
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-  if (FIELD_CELL(actor->x.fixed) == 23) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-    if (FIELD_CELL(actor->z.fixed) == 47) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed) == 23) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed) == 47) {
       correctPositions++;
     }
   }
-  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-  if (FIELD_CELL(actor->x.fixed) == 24) {
-    actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-    if (FIELD_CELL(actor->z.fixed) == 48) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed) == 24) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed) == 48) {
       correctPositions++;
     }
   }
@@ -1255,30 +1216,18 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
 /// After the small pillars move, redraws their room's cells and marks the cells
 /// they stand on.
 static void TunnelRuins_UpdateSmallPillarCells(void) {
-  struct Actor *actor;
-  s32 column;
-
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   MapGrid_CopyCellAttributes(89, 51, 8, 5, 25, 51);
   Actor_Get(ACTOR_SMALL_PILLAR_C)->layer = 1;
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_A);
-  column = actor->x.fixed;
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_A);
-  column >>= 20;
-  MapGrid_CopyCellAttributes(22, 52, 1, 1, column,
-                             (FIELD_CELL(actor->z.fixed)));
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_B);
-  column = actor->x.fixed;
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_B);
-  column >>= 20;
-  MapGrid_CopyCellAttributes(22, 52, 1, 1, column,
-                             (FIELD_CELL(actor->z.fixed)));
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_C);
-  column = actor->x.fixed;
-  actor = Actor_Get(ACTOR_SMALL_PILLAR_C);
-  column >>= 20;
-  MapGrid_CopyCellAttributes(22, 52, 1, 1, column,
-                             (FIELD_CELL(actor->z.fixed)));
+  MapGrid_CopyCellAttributes(
+      22, 52, 1, 1, FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_A)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_A)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      22, 52, 1, 1, FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_B)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_B)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      22, 52, 1, 1, FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_C)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_C)->z.fixed));
 }
 
 /// Redraws the east pillars' row and marks the cells they stand on.

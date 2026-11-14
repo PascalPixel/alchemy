@@ -797,8 +797,7 @@ s32 Scene_Initialize(void) {
   suspectsMindRead = GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     if ((suspectsMindRead & 1) != 0) {
-      actor = Actor_Get(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED);
-      actor->update =
+      Actor_Get(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED)->update =
           (void (*)(struct Actor *))Vault_UpdateRoofComplainerProximity;
     }
   }

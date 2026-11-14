@@ -893,8 +893,8 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   // Yes: "Mt. Aleph is a sacred peak. No one can climb it without..."
   // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
-  actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
-  actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
+  Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
+      (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   Event_End();
 }
@@ -1817,16 +1817,12 @@ static void Vale_GaretAsksToProtectFamily(void) {
 /// FLAG_VALE_UNUSED_WATER_BURST_SEEN. His talk and Mind Read rows show the same
 /// two lines.
 UNUSED static void Vale_UnusedWaterBurstsByTheRiver(void) {
-  struct Actor *actor;
   const s32 *actions;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_FIRST_WATER);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FIRST_WATER + 1);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FIRST_WATER + 2);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER + 1), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER + 2), 0);
   Actor_SetAnimation(ACTOR_FIRST_WATER, 0);
   Actor_SetAnimation(ACTOR_FIRST_WATER + 1, 0);
   Actor_SetAnimation(ACTOR_FIRST_WATER + 2, 0);
@@ -1952,7 +1948,6 @@ static void Vale_MendingTheRoof(void) {
   struct Actor *repairActor = NULL;
   struct Actor *leader;
   struct Actor *moveHand;
-  struct Actor *actor;
   s32 message;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1985,10 +1980,8 @@ static void Vale_MendingTheRoof(void) {
   repairActor->y.fixed = px(160);
   repairActor->x.fixed = px(388);
   Actor_SetSpriteFlags(repairActor, 0);
-  actor = Actor_Get(ACTOR_OPENING_FIRST_BOARD);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_OPENING_SECOND_BOARD);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_OPENING_FIRST_BOARD), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_OPENING_SECOND_BOARD), 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   ActorSystem_SuspendProjectionAndShowSprites();
@@ -2100,8 +2093,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_SetSpritePriority(ACTOR_GARET, 1);
   Task_AddFrame(Vale_UpdateGaretPaletteAndEffects, TASK_PASS_FRAME);
   Task_AddFrame(Vale_CycleOpeningPillarPalette, TASK_PASS_FRAME);
-  actor = Actor_Get(ACTOR_OPENING_MOVE_HAND);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_OPENING_MOVE_HAND), 0);
   moveHand->motionFlags = 0;
   moveHand->x.fixed = px(428);
   moveHand->y.fixed = px(208);
@@ -2293,11 +2285,9 @@ static void Vale_RoofMended(void) {
   turned->facing = FACING_EAST;
   turned->facing = FACING_NORTH;
   Actor_SetPosition(ACTOR_GARET, 298, 736);
-  turned = Actor_Get(ACTOR_GARET);
-  turned->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_GARET)->facing = FACING_SOUTH;
   Actor_SetPosition(ACTOR_JENNA, 298, 760);
-  turned = Actor_Get(ACTOR_JENNA);
-  turned->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_JENNA)->facing = FACING_SOUTH;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   actor = Actor_Get(ACTOR_FIRST_BOARD);

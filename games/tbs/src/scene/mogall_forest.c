@@ -916,20 +916,13 @@ static void MogallForest_ThirdArea_UpdateNorthRock(void) {
 /// Mogall Forest, the third area: Move on the south rock, which sinks into
 /// place on row 27 and stays.
 static void MogallForest_ThirdArea_UpdateSouthRock(void) {
-  s32 column;
-  s32 row;
   struct Actor *rock;
 
   Event_Start();
-  rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
-  column = rock->x.fixed;
-  rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
-  row = rock->z.fixed;
-  column >>= 20;
-  row >>= 20;
-  MogallForest_UpdateRockFootprint(column, row);
-  rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
-  if (FIELD_CELL(rock->z.fixed) == 27) {
+  MogallForest_UpdateRockFootprint(
+      FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed));
+  if (FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed) == 27) {
     rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
     rock->motionFlags = 0;
     rock->groundHeight = -px(2);
@@ -1233,8 +1226,6 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 sceneId;
   s32 entrance;
-  s32 column;
-  s32 fixedZ;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1289,11 +1280,9 @@ s32 Scene_Initialize(void) {
       if (actor != NULL) {
         Actor_SetPositionFixed(ACTOR_NUT, actor->x.fixed, actor->z.fixed);
       }
-      actor = Actor_Get(ACTOR_NUT);
-      actor->update = 0;
+      Actor_Get(ACTOR_NUT)->update = 0;
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-        actor = Actor_Get(ACTOR_NUT);
-        actor->y.fixed = px(32);
+        Actor_Get(ACTOR_NUT)->y.fixed = px(32);
       }
       wait(1);
       Actor_SetPosition(ACTOR_NUT, 632, 440);
@@ -1360,11 +1349,10 @@ s32 Scene_Initialize(void) {
       }
       Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_LOG);
       Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_SOUTH_LOG);
-      column = Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed;
-      fixedZ = Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed;
-      column >>= 20;
-      PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                             CELL_BEHAVIOR_WALL);
+      PushedActor_FillGridAttributeRectangle(
+          2, FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed), 1, 1,
+          CELL_BEHAVIOR_WALL);
       wait(1);
       Actor_SetSpriteColorById(ACTOR_SECOND_AREA_ROCK, SPRITE_COLOR_GREY);
       Actor_Get(ACTOR_SECOND_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
@@ -1411,11 +1399,10 @@ s32 Scene_Initialize(void) {
       break;
 
     case MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS:
-      column = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed;
-      fixedZ = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed;
-      column >>= 20;
-      PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                             CELL_BEHAVIOR_WALL);
+      PushedActor_FillGridAttributeRectangle(
+          2, FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed), 1, 1,
+          CELL_BEHAVIOR_WALL);
       Actor_SetSpriteColorById(ACTOR_THIRD_AREA_NORTH_ROCK, SPRITE_COLOR_GREY);
       wait(1);
       Actor_Get(ACTOR_THIRD_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
@@ -1457,11 +1444,10 @@ s32 Scene_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(26, 20, 2, 4, 40, 32);
       }
-      column = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed;
-      fixedZ = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed;
-      column >>= 20;
-      PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                             CELL_BEHAVIOR_WALL);
+      PushedActor_FillGridAttributeRectangle(
+          2, FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed), 1, 1,
+          CELL_BEHAVIOR_WALL);
       Actor_SetSpriteColorById(ACTOR_THIRD_AREA_SOUTH_ROCK, SPRITE_COLOR_GREY);
       wait(1);
       Actor_Get(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlags |=

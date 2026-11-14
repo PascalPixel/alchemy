@@ -802,7 +802,6 @@ static void MercuryLighthouse_StopFountainSpray(void) {
   u32 row;
   u32 particleIndex;
   s32 offsetX;
-  s32 random;
   s32 particleX;
   s32 particleZ;
   struct EffectOptions options;
@@ -815,8 +814,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
     offsetX = -px(2);
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
-        random = Random_Next();
-        particleZ = ((584 - ((u32)(random * 5) >> 16)) & 0xffff) << 16;
+        particleZ = ((584 - Random_Below(5)) & 0xffff) << 16;
         particleX = (offsetX - (row << 19)) + px(728);
         FieldEffect_Spawn(particleX, 0, particleZ, -px(1) / 4, 0, 0,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
@@ -1135,9 +1133,7 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
 /// Sparkles rise from the sliding statue as it moves.
 static void MercuryLighthouse_SprayAboveStatue(void) {
   struct Actor *statue = Actor_Get(ACTOR_SLIDING_STATUE);
-  u32 random = Random_Next();
-
-  s32 particleY = statue->y.fixed + (((random << 2) >> 16) << 16);
+  s32 particleY = statue->y.fixed + px(Random_Below(4));
   s32 particleZ = statue->z.fixed;
 
   MercuryLighthouse_SparkleAt(statue->x.fixed, particleY, particleZ);
@@ -1317,11 +1313,8 @@ static void MercuryLighthouse_SyncRowStatueFlags(void) {
 /// good (FLAG_PASSAGE_STATUE_MOVED) and the cell at (31, 20) takes the behavior
 /// of the cell at (29, 20), a jump spot.
 static void MercuryLighthouse_ChangeCellForGapStatue(void) {
-  s32 column;
-
   Event_Start();
-  column = Actor_Get(ACTOR_GAP_STATUE)->x.fixed / px(16);
-  if (column == 28) {
+  if (Actor_Get(ACTOR_GAP_STATUE)->x.fixed / px(16) == 28) {
     GameFlag_Set(FLAG_PASSAGE_STATUE_MOVED);
     {
       MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
@@ -1363,8 +1356,6 @@ static void MercuryLighthouse_CycleEntrancePalette(void) {
 /// MercuryLighthouseExterior, talking to Mia at the door or Mind Read on her,
 /// before it is open: she senses someone. "Somebody...is here."
 static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
-  struct Actor *mia;
-
   Event_Start();
   Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
@@ -1375,14 +1366,12 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
   Actor_SetAnimation(ACTOR_MIA, 16);
-  mia = Actor_Get(ACTOR_MIA);
-  mia->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_MIA)->scaleX = -Q16_ONE;
   Event_Wait(20);
   // "Someone is here..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
-  mia = Actor_Get(ACTOR_MIA);
-  mia->scaleX = Q16_ONE;
+  Actor_Get(ACTOR_MIA)->scaleX = Q16_ONE;
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
   // "Can you hear it, too?"
@@ -1468,8 +1457,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   struct Actor *actor;
   s32 column;
 
-  actor = Actor_Get(ACTOR_DOOR_STATUE);
-  column = actor->x.fixed;
+  column = Actor_Get(ACTOR_DOOR_STATUE)->x.fixed;
   if (column < 0)
     column += px(16) - 1;
   column >>= 20;
@@ -1500,10 +1488,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     }
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     // Garet and Ivan step out to explain Psynergy; Mia tells of Ply.
-    actor = Actor_Get(ACTOR_GARET);
-    SetEffectRecordMode(actor, 1);
-    actor = Actor_Get(ACTOR_IVAN);
-    SetEffectRecordMode(actor, 1);
+    SetEffectRecordMode(Actor_Get(ACTOR_GARET), 1);
+    SetEffectRecordMode(Actor_Get(ACTOR_IVAN), 1);
     Actor_SetSpeed(ACTOR_GARET, 0.8);
     Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_SetPosition(ACTOR_GARET, 872, 600);
@@ -1733,16 +1719,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     if ((1 & wave) != 0) {
       Sound_Play(SE_GLITTER);
     }
-    random = Random_Next();
-    particleX = random * 48;
-    particleX >>= 16;
-    particleX <<= 16;
-    particleX += px(768);
-    random = Random_Next();
-    z = random * 56;
-    z >>= 16;
-    z <<= 16;
-    z += px(136);
+    particleX = px(Random_Below(48)) + px(768);
+    z = px(Random_Below(56)) + px(136);
     FieldEffect_Spawn(particleX, 0, z, 0, 0, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
@@ -1758,16 +1736,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     if ((1 & wave) != 0) {
       Sound_Play(SE_GLITTER);
     }
-    random = Random_Next();
-    particleX = random * 48;
-    particleX >>= 16;
-    particleX <<= 16;
-    particleX += px(768);
-    random = Random_Next();
-    z = random * 56;
-    z >>= 16;
-    z <<= 16;
-    z += px(152);
+    particleX = px(Random_Below(48)) + px(768);
+    z = px(Random_Below(56)) + px(152);
     random = Random_Next();
     particleSpeed = -((random * 10 >> 16) * (px(1) / 5)) - px(1) / 5;
     FieldEffect_Spawn(particleX, 0, z, 0, 0, particleSpeed,
@@ -1793,8 +1763,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     particleIndex = 0;
     rowOffset = (wave << 4);
     do {
-      random = Random_Next();
-      particleX = ((random * 48 >> 16) << 16) + px(768);
+      particleX = px(Random_Below(48)) + px(768);
       particleVelocityX = ((px(1) / 10) * (Random_Below(8))) - 4 * (px(1) / 10);
       particleSpeed = (px(1) / 10) * (Random_Below(8));
       FieldEffect_Spawn(particleX, 0,
@@ -2595,11 +2564,9 @@ s32 Scene_Initialize(void) {
 /// joined: once it stands at column 48, Mia thanks the party.
 static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 firstMessage;
-  s32 pillarColumn;
   s32 questionMessage;
 
-  pillarColumn = Actor_Get(ACTOR_STATUE_BLOCKING_MIA)->x.fixed / px(16);
-  if (pillarColumn != 48) {
+  if (Actor_Get(ACTOR_STATUE_BLOCKING_MIA)->x.fixed / px(16) != 48) {
     return;
   }
   Event_Start();

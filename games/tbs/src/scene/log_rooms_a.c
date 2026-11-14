@@ -375,8 +375,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 #if TBS_PATCH_1
     Field_TryJumpForward();
 #else
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    SET_POSITION(&target, leader->x.fixed,
+    SET_POSITION(&target, Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed - px(30));
     LogRoomsA_TryJumpTo(&target);
@@ -389,8 +388,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 #if TBS_PATCH_1
     Field_TryJumpForward();
 #else
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    SET_POSITION(&target, leader->x.fixed,
+    SET_POSITION(&target, Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed + px(30));
     LogRoomsA_TryJumpTo(&target);

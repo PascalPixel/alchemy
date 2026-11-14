@@ -1677,9 +1677,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_SetDestination(ACTOR_JENNAS_MOTHER, 247, 1210);
   Actor_MoveToAndWait(ACTOR_JENNA_CHILD, 227, 1189);
   {
-    struct Actor *actor;
-    actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-    actor->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_JENNAS_MOTHER)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Actor_Get(ACTOR_JENNA_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTHWEST, 0);
@@ -2174,10 +2172,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   PaletteFade_StartInterpolation(40);
   wait(40);
   Actor_SetSpriteColorById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
-  currentActor = Actor_Get(ACTOR_BOULDER);
-  Actor_SetSpriteFlags(currentActor, 0);
-  currentActor = Actor_Get(ACTOR_BOULDER_SHADOW);
-  Actor_SetSpriteFlags(currentActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER_SHADOW), 0);
   boulderShadow->scaleX = 4 * Q16_ONE / 5;
   boulderShadow->scaleY = 4 * Q16_ONE / 5;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2378,8 +2374,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
       ~ACTOR_PRIORITY_AUTOMATIC;
   Task_AddFrame(ValePrologue_CopyLeaderSpritePriority, TASK_PASS_FRAME);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 181, 1273);
-  currentActor = Actor_Get(ACTOR_PARTY_LEADER);
-  currentActor->facing = FACING_NORTHEAST;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTHEAST;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldCamera_MoveTo(181, 0, 1273, 0);
   MapGrid_CenterOnFollowedPoint();

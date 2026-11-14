@@ -599,7 +599,7 @@ void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
 /// Each frame in the sprite viewer: places each copy of the sprite at its ring
 /// position, facing the way that position stands for.
 void SpriteViewer_PlaceRing(void) {
-  struct Sprite *sprite = HEAP_SLOT_BLOCK(HEAP_SLOT_SPRITES);
+  struct Sprite *sprite = gSprites;
   u32 facingKind = sprite->entries[0]->kind;
   struct SpriteScale scale;
   struct SpritePlacement *facingPositions;

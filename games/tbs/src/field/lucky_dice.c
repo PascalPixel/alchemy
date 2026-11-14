@@ -34,7 +34,7 @@ s32 LuckyDice_Start(void) {
 /// Puts the 3D camera back at its starting view: at the origin, unturned,
 /// pitched to 152 and 510 units away, following nothing.
 void Camera_ResetViewDefaults(void) {
-  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  struct BattleCamera *camera = gBattleCamera;
   s32 offset[3];
   u32 nearPlane;
 

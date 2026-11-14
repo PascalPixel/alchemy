@@ -40,8 +40,6 @@ extern u32 gIncreaseItemAndLevel_Exits[];
 extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
 extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 
-void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
-
 // Edition-specific text and window layout values: outside Japanese the item
 // browser's details window is 28 tiles wide rather than 13, and its
 // MsgItemPlainName line is drawn as tiles (Text_DrawMessageAsTiles)

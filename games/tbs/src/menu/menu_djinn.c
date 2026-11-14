@@ -584,7 +584,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   s32 canChangeState;
   u16 *entries;
 
-  menu = HEAP_SLOT_BLOCK(HEAP_SLOT_MENU);
+  menu = gMenuWork;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW);
   work->holdTilemapUpload = 1;
   listIndex = 0;
@@ -660,7 +660,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   u32 tile;
   u32 masked;
 
-  work = (struct WindowWork *)gWindowWork[0];
+  work = WINDOW_WORK;
   palette <<= 12;
   if (x < 0) {
     width += x;
@@ -719,7 +719,7 @@ s32 DjinnMenu_ShowHelp(void) {
   s32 helpIndex;
   s32 listMessage;
 
-  menu = HEAP_SLOT_BLOCK(HEAP_SLOT_MENU);
+  menu = gMenuWork;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW);
   result = 0;
   previous = 0;
@@ -789,7 +789,7 @@ s32 DjinnMenu_ShowHelp(void) {
       VramCache_FreeEntry(work->glyphResource);
       work->glyphResource = 99;
     }
-    ((struct WindowWork *)gWindowWork[0])->pageArrowShown = 0;
+    WINDOW_WORK->pageArrowShown = 0;
     WindowSprite_PrepareForRedrawFar(helpWindow);
     {
       struct Window *window = typing->window;
@@ -800,7 +800,7 @@ s32 DjinnMenu_ShowHelp(void) {
     }
     typing->window = NULL;
   } while (result == 0);
-  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
+  WINDOW_WORK->holdTilemapUpload = 1;
   WindowSprite_ClearListFar(statusWindow);
   WindowSprite_ClearListFar(helpWindow);
   wait(1);
@@ -812,7 +812,7 @@ s32 DjinnMenu_ShowHelp(void) {
     WindowSprite_PrepareForRedrawFar(menu->helpWindow);
     WindowSprite_PrepareForRedrawFar(menu->listWindow);
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
-    ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
+    WINDOW_WORK->holdTilemapUpload = 0;
   }
   Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
   return result;
@@ -1062,7 +1062,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
                                          HIGHLIGHT_PALETTE);
-      ((struct WindowWork *)gWindowWork[0])->dirty = 1;
+      WINDOW_WORK->dirty = 1;
     }
     if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
       MenuCursor_Position(memberColumn * 56 - 8, 52);
@@ -1839,7 +1839,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
       Text_SetColorFar(TEXT_COLOR_NORMAL);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
-    ((struct WindowWork *)gWindowWork[0])->dirty = 1;
+    WINDOW_WORK->dirty = 1;
   }
 
   if (page == 0)

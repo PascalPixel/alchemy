@@ -221,7 +221,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     //------------------------------------------------------------------
     for (index = 0; index <= 3; index++) {
       if (visibleSummons[index] != 0)
-        Oam_AddSpriteAtDepth((s32 *)&sprites[index], 240);
+        Oam_AddSpriteAtDepth(&sprites[index], 240);
     }
 
     // The cursor wobbles every four frames.

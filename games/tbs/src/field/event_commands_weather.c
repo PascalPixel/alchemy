@@ -149,8 +149,8 @@ union ParticleLinkWord {
 
 /// Task: the floating motes.
 void FieldMotes_Update(void) {
-  struct WeatherWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_WEATHER);
-  struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct WeatherWork *work = gWeatherWork;
+  struct MapGridScrollWork *grid = gMapGridWork[0];
   u32 spawned = 0;
   u32 i;
   struct GroundParticle *mote = work->particles;
@@ -281,9 +281,9 @@ void FieldEffect_UpdateSparkles(void) {
   u32 b;
   u32 frames;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_WEATHER);
+  work = gWeatherWork;
   spawned = 0;
-  grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  grid = gMapGridWork[0];
   camera = grid->view;
   spawnX = 0;
   spawnZ = 0;

@@ -1033,7 +1033,7 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
 /// is the new palette number.
 void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
                                s32 width, s32 height, u32 palette) {
-  struct WindowWork *work = (struct WindowWork *)gWindowWork[0];
+  struct WindowWork *work = WINDOW_WORK;
   u8 *tilemap = (u8 *)work->tilemap;
 
   x += window->x + 1;
@@ -1139,15 +1139,11 @@ void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
 /// Holds back the window tilemap's upload (holdTilemapUpload), so that what a
 /// menu draws meanwhile appears at once when Window_ReleaseTilemapUpload lets
 /// it go. Nothing calls it: the screens set holdTilemapUpload themselves.
-void Window_HoldTilemapUpload(void) {
-  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
-}
+void Window_HoldTilemapUpload(void) { WINDOW_WORK->holdTilemapUpload = 1; }
 
 /// Lets the window tilemap be uploaded again after Window_HoldTilemapUpload.
 /// Nothing calls it.
-void Window_ReleaseTilemapUpload(void) {
-  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
-}
+void Window_ReleaseTilemapUpload(void) { WINDOW_WORK->holdTilemapUpload = 0; }
 
 /// Plays a sound and returns 1.
 s32 Sound_PlayReturnOne(s32 sound) {

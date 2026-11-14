@@ -77,7 +77,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct SelectionSprite *firstSprite;
   struct Unit *target;
 
-  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  battle = gBattleWork;
   targetCount = 0;
   redraw = 0xFFFF;
   cursorSlot = VramCache_AllocEntry(256);
@@ -237,7 +237,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = (u8)(selectedPosition.y - 16);
-    Oam_AddSpriteAtDepth((s32 *)firstSprite, 240);
+    Oam_AddSpriteAtDepth(firstSprite, 240);
     // The other markers' scale in 8.8: 176 (0.69 times) beside an aimed one,
     // full size when the action takes every unit.
     if (spread == ABILITY_RANGE_ALL) {
@@ -679,7 +679,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         else
           marker->affine = 1;
         marker->matrix = matrix;
-        Oam_AddSpriteAtDepth((s32 *)marker, 240);
+        Oam_AddSpriteAtDepth(marker, 240);
       }
     }
     pressed = gKeysPressed;

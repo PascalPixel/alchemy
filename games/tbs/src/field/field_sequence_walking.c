@@ -59,10 +59,10 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedX;
   s32 fixedZ;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  work = gFieldWork;
   leader = work->actors[gMainRoutineWork.leaderActorId];
 
-  gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  gridState = gMapGridWork[0];
 
   if (leader == 0)
     return 0;
@@ -164,8 +164,8 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// while walking advances the encounter counter, regenerates PP, hurts the
 /// party with poison and hazardous ground, and wears Avoid off.
 void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
-  struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  struct MapGridScrollWork *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct FieldWork *work = gFieldWork;
+  struct MapGridScrollWork *gridState = gMapGridWork[0];
   s32 leaderId = gMainRoutineWork.leaderActorId;
   struct Actor *leader = work->actors[leaderId];
   s16 previousHp[8];

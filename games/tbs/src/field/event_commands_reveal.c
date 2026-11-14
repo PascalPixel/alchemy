@@ -71,7 +71,7 @@ void FieldPsynergy_Reveal(void) {
   void *event;
   s32 frame;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  work = gFieldWork;
   Actor_SetRevealSpriteColor(6);
   ScreenTransition_InitializeBattleEffectState(8);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);

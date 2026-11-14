@@ -68,7 +68,7 @@ s32 PsynergyMenu_Run(void) {
   result = PsynergyMenu_RunSteps(&member, &unused, &psynergy);
   Menu_StopWatchingStart();
   if (result == 1) {
-    struct FieldWork *target = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+    struct FieldWork *target = gFieldWork;
     u16 request;
     // The action looked up here is not used.
     Ability_Get(PSYNERGY_ABILITY_MASK & menu->sideAction[0]);

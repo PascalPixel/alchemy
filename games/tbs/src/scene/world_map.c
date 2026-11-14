@@ -1957,8 +1957,9 @@ static void WorldMap_UseBlackOrb(void) {
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    /* FAKEMATCH(dead): clearing the motion flags again through a pointer. */
-    *(u8 *)&orb->motionFlags = 0;
+    /* FAKEMATCH(dead): the motion flags cleared again, as the icon set-up
+     * that follows the sprite resets clears them. */
+    orb->motionFlags = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
     Vram_Load(sprite->slot, 128, buffer + 1024);

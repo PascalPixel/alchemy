@@ -73,16 +73,15 @@ void Graphics_LoadGreyRamp(void) {
   s32 i = 0;
   u16 *color = (u16 *)(BG_PLTT + 1);
 
-next:
-  {
-    s32 level = i / 2;
+  do {
+    {
+      s32 level = i / 2;
 
-    i++;
-    *color = level << 10 | level << 5 | level;
-  }
-  color++;
-  if (i != 63)
-    goto next;
+      i++;
+      *color = level << 10 | level << 5 | level;
+    }
+    color++;
+  } while (i != 63);
 }
 
 void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale) {

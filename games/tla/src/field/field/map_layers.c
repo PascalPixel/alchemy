@@ -828,25 +828,26 @@ void Map_ApplySetFlagEdits(void) {
   s32 srcX, srcY, dstX, dstY, width, height;
 
   cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
-next:
-  entry = (u16)Map_ReadEditU16(&cursor);
-  if (((entry + 1) & 0xffff) == 0)
-    return;
-  if (GameFlag_Get(entry & 0xfff) != 0) {
-    srcX = *cursor++;
-    srcY = *cursor++;
-    dstX = *cursor++;
-    dstY = *cursor++;
-    width = *cursor++;
-    height = *cursor++;
-    if (entry & 0x1000)
-      Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
-    else
-      MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
-  } else {
-    cursor += 6;
+  for (;;) {
+    entry = (u16)Map_ReadEditU16(&cursor);
+    if (((entry + 1) & 0xffff) == 0)
+      return;
+    if (GameFlag_Get(entry & 0xfff) != 0) {
+      srcX = *cursor++;
+      srcY = *cursor++;
+      dstX = *cursor++;
+      dstY = *cursor++;
+      width = *cursor++;
+      height = *cursor++;
+      if (entry & 0x1000)
+        Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
+      else
+        MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width,
+                                           height);
+    } else {
+      cursor += 6;
+    }
   }
-  goto next;
 }
 
 u32 Map_ReadEditU16(u8 **cursor) {
@@ -874,25 +875,26 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
   s32 srcX, srcY, dstX, dstY, width, height;
 
   cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
-next:
-  entry = (u16)Map_ReadEditU16(&cursor);
-  if (((entry + 1) & 0xffff) == 0)
-    return;
-  if ((entry & 0xfff) == flag) {
-    srcX = *cursor++;
-    srcY = *cursor++;
-    dstX = *cursor++;
-    dstY = *cursor++;
-    width = *cursor++;
-    height = *cursor++;
-    if (attributes != 0)
-      Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
-    else
-      MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
-  } else {
-    cursor += 6;
+  for (;;) {
+    entry = (u16)Map_ReadEditU16(&cursor);
+    if (((entry + 1) & 0xffff) == 0)
+      return;
+    if ((entry & 0xfff) == flag) {
+      srcX = *cursor++;
+      srcY = *cursor++;
+      dstX = *cursor++;
+      dstY = *cursor++;
+      width = *cursor++;
+      height = *cursor++;
+      if (attributes != 0)
+        Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
+      else
+        MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width,
+                                           height);
+    } else {
+      cursor += 6;
+    }
   }
-  goto next;
 }
 
 void Map_GetHeaderSize(s32 map, s32 *size) {

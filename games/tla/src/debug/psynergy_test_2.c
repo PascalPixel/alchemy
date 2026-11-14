@@ -121,23 +121,22 @@ void Func_0200015c(void) {
   s32 step = -0x8000;
 
   i = 63;
-next:
-  if ((u32)particle->age <= 19) {
-    u16 *base = &work->tile;
-    s32 mask = 7;
-    s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
-    s32 attr = sprite->attr;
+  do {
+    if ((u32)particle->age <= 19) {
+      u16 *base = &work->tile;
+      s32 mask = 7;
+      s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
+      s32 attr = sprite->attr;
 
-    sprite->attr = (attr & ~0x3ff) | tile;
-    EffectSprite_DrawAtWorldPosition(sprite, particle);
-    BattleEffect_StepVector3(particle, 63, step);
-    particle->age++;
-  }
-  i--;
-  sprite++;
-  particle++;
-  if (i >= 0)
-    goto next;
+      sprite->attr = (attr & ~0x3ff) | tile;
+      EffectSprite_DrawAtWorldPosition(sprite, particle);
+      BattleEffect_StepVector3(particle, 63, step);
+      particle->age++;
+    }
+    i--;
+    sprite++;
+    particle++;
+  } while (i >= 0);
 }
 
 struct SceneEntrance gSceneEntrances[] = {

@@ -60,13 +60,12 @@ loop:
   frames = 0;
   if (INPUT_HELD & 3)
     goto shown;
-wait:
-  wait(1);
-  frames++;
-  if (frames > 59)
-    goto shown;
-  if (!(INPUT_HELD & 3))
-    goto wait;
+  do {
+    wait(1);
+    frames++;
+    if (frames > 59)
+      goto shown;
+  } while (!(INPUT_HELD & 3));
   for (;;) {
   shown:
     typed = Message_AllTyped();

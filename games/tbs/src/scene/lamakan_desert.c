@@ -89,7 +89,7 @@
 #include "text/msg_ids.h"
 
 /// The VRAM cache entry holding the gauge's tiles.
-u16 gHeatGauge_VramSlot BSS_DATA ALIGNED(16);
+s16 gHeatGauge_VramSlot BSS_DATA ALIGNED(16);
 u8 gLamakanDesert_Unk_2[14] BSS_DATA;
 /// The gauge's five sprites: four 16x32 ones down the screen's left edge and a
 /// 16x16 cap at its foot.
@@ -98,7 +98,7 @@ u8 gLamakanDesert_Unk_4c[20] BSS_DATA;
 /// The gauge's decoded tiles, which each frame's drawing starts from.
 u8 gHeatGauge_TileBuffer[2304] BSS_DATA;
 /// 1 while the gauge is held on screen (HeatGauge_SetHeld).
-u16 gHeatGauge_Held BSS_DATA;
+s16 gHeatGauge_Held BSS_DATA;
 
 s32 Scene_Initialize(void);
 void HeatGauge_Start(void);
@@ -1002,9 +1002,8 @@ static void HeatGauge_Draw(void) {
   s32 y;
   u32 offset;
 
-  // The gauge's two halfwords are read signed.
-  tile = gVramCacheEntries[*(s16 *)&gHeatGauge_VramSlot].offset >> 5;
-  if (*(s16 *)&gHeatGauge_Held != 0) {
+  tile = gVramCacheEntries[gHeatGauge_VramSlot].offset >> 5;
+  if (gHeatGauge_Held != 0) {
     gHeatGaugeSlide = 2;
   } else if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
     if (gHeatGaugeSlide > 0) {
@@ -1018,7 +1017,7 @@ static void HeatGauge_Draw(void) {
   }
   slide = gHeatGaugeSlide;
   if (slide == 0) {
-    VramCache_ReleaseVram(*(s16 *)&gHeatGauge_VramSlot);
+    VramCache_ReleaseVram(gHeatGauge_VramSlot);
     return;
   }
 
@@ -1112,7 +1111,7 @@ static void HeatGauge_Draw(void) {
     }
     bar++;
   }
-  VramCache_Load(*(s16 *)&gHeatGauge_VramSlot, 1152, buffer);
+  VramCache_Load(gHeatGauge_VramSlot, 1152, buffer);
 
   // Four 16x32 sprites down the screen's left edge and the 16x16 cap at the
   // gauge's foot.
@@ -1140,7 +1139,7 @@ static void HeatGauge_Draw(void) {
 void HeatGauge_Start(void) {
   FieldDecompress_TaggedLz(gHeatGauge_Tiles, gHeatGauge_TileBuffer);
   gHeatGauge_VramSlot = VramCache_FindFreeEntry();
-  VramCache_Load((s16)gHeatGauge_VramSlot, 1152, 0);
+  VramCache_Load(gHeatGauge_VramSlot, 1152, 0);
   gHeatGaugeSlide = 0;
   gHeatGauge_Held = 0;
   Task_AddFrame(HeatGauge_Draw, TASK_PASS_FRAME - 10);

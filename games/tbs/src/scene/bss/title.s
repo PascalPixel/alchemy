@@ -1,4 +1,4 @@
-	.include "games/tbs/include/ed_asm.h"
+	.include "games/tbs/include/edition.inc"
 	.section .bss,"aw",%nobits
 	.ifdef TBS_EDITION_EN
 	.space 58

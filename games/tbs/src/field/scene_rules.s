@@ -1,4 +1,4 @@
-	.include "games/tbs/include/ed_asm.h"
+	.include "games/tbs/include/edition.inc"
 	.include "enums/sounds.inc"
 
 @ Field music: the music (a MUS_ id) of the first rule matching the scene or

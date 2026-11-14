@@ -1,5 +1,7 @@
-	.ifndef ALCHEMY_ED_ASM_H
-	.set ALCHEMY_ED_ASM_H, 1
+@ The edition for the assembler: EDITION_INTERNATIONAL is 1 in every edition
+@ but the Japanese, and building more than one edition at once is an error.
+	.ifndef ALCHEMY_EDITION_INC
+	.set ALCHEMY_EDITION_INC, 1
 	.set EDITION_INTERNATIONAL, 0
 	.ifdef TBS_EDITION_JA
 	.ifdef EDITION_SELECTED

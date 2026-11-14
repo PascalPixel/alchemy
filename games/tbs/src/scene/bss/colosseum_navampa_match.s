@@ -1,4 +1,4 @@
-	.include "games/tbs/include/ed_asm.h"
+	.include "games/tbs/include/edition.inc"
 	.section .bss,"aw",%nobits
 	.balign 16
 	.global gColossoParticleCount

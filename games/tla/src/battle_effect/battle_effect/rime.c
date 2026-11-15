@@ -78,8 +78,11 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     s32 row;
     s32 column;
 
-    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 1, center,
-                                   base);
+    BattleEffect_RunDjinniEntrance(args,
+                                   DJINNI_ENTRANCE(ELEMENT_MERCURY,
+                                                   args->side ^ 1,
+                                                   DJINNI_ANCHOR_OVER_TARGET),
+                                   center, base);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + DJINNI_OFFSET, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 0);
@@ -98,8 +101,11 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   } else {
     s32 haze[3];
 
-    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 3, center,
-                                   haze);
+    BattleEffect_RunDjinniEntrance(args,
+                                   DJINNI_ENTRANCE(ELEMENT_JUPITER,
+                                                   args->side ^ 1,
+                                                   DJINNI_ANCHOR_OVER_TARGET),
+                                   center, haze);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
                                work->sheet + DJINNI_OFFSET, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet, work->sheet, 1,

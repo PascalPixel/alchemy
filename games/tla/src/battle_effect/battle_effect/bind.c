@@ -142,8 +142,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   // frame.
   BattleEffect_StartCanvasLayer(1);
   if (args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 3, origin,
-                                   originSize);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_OVER_TARGET),
+        origin, originSize);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);

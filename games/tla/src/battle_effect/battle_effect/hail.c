@@ -8,7 +8,6 @@
 #include "macros.h"
 
 // The canvas preparer's packed arguments.
-#define PREPARE(kind, side, anchor) ((kind) | (side) << 4 | (anchor) << 5)
 
 // The ice chips live in the map cell buffer.
 #define CHIPS ((struct Particle *)Ram_MapCellBuffer)
@@ -30,8 +29,10 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(args, PREPARE(1, args->side, 2), screen,
-                                 otherPoint);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side, DJINNI_ANCHOR_OVER_USER),
+      screen, otherPoint);
   BattleEffect_FetchRectangleBlitters(args->side, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
@@ -178,8 +179,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(args, PREPARE(0, args->side, 2), screen,
-                                 otherPoint);
+  BattleEffect_RunDjinniEntrance(
+      args, DJINNI_ENTRANCE(ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
+      screen, otherPoint);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,

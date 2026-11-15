@@ -52,8 +52,11 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 
   // Open the canvas on BG2 over the target's side.
   BattleEffect_StartCanvasLayer(0x2000);
-  BattleEffect_RunDjinniEntrance(args, 6 | args->side << 4 | 2 << 5, screenX,
-                                 screenY);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_MARS + DJINNI_ENTRANCE_LONG, args->side,
+                      DJINNI_ANCHOR_OVER_USER),
+      screenX, screenY);
   REG_BG2CNT =
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
@@ -169,6 +172,10 @@ void BattleEffect_RunKite(struct BattleEffectParams *args) {
   s32 a[3];
 
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(args, ((args->side ^ 1) << 4) | 7, b, a);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG, args->side ^ 1,
+                      DJINNI_ANCHOR_OVER_TARGET),
+      b, a);
   BattleEffect_EndCanvasLayer();
 }

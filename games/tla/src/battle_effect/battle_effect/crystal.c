@@ -55,8 +55,10 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, work->sheet, 0, 0);
   Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(args, ((args->side ^ 1) << 4) | 32, center,
-                                 other);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_VENUS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
+      center, other);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,

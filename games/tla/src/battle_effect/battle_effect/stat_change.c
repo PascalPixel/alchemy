@@ -110,20 +110,27 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   // The prelude: the Djinni appears on the far side; origin receives where.
   if (args->prelude == 1) {
     if (mode == 3 || mode == 6)
-      BattleEffect_RunDjinniEntrance(
-          args, DJINNI_VENUS | DJINNI_SIDE(args->side ^ 1) | DJINNI_ANCHORED,
-          origin, target);
+      BattleEffect_RunDjinniEntrance(args,
+                                     DJINNI_ENTRANCE(ELEMENT_VENUS,
+                                                     args->side ^ 1,
+                                                     DJINNI_ANCHOR_TARGET_X),
+                                     origin, target);
     else if (mode == 7 || mode == 8 || mode == 11)
-      BattleEffect_RunDjinniEntrance(
-          args, DJINNI_MERCURY | DJINNI_SIDE(args->side ^ 1) | DJINNI_ANCHORED,
-          origin, target);
+      BattleEffect_RunDjinniEntrance(args,
+                                     DJINNI_ENTRANCE(ELEMENT_MERCURY,
+                                                     args->side ^ 1,
+                                                     DJINNI_ANCHOR_TARGET_X),
+                                     origin, target);
     else if (mode == 2 || mode == 4)
-      BattleEffect_RunDjinniEntrance(
-          args, DJINNI_JUPITER | DJINNI_SIDE(args->side ^ 1) | DJINNI_ANCHORED,
-          origin, target);
+      BattleEffect_RunDjinniEntrance(args,
+                                     DJINNI_ENTRANCE(ELEMENT_JUPITER,
+                                                     args->side ^ 1,
+                                                     DJINNI_ANCHOR_TARGET_X),
+                                     origin, target);
     else if (mode != 10)
       BattleEffect_RunDjinniEntrance(
-          args, DJINNI_MARS | DJINNI_SIDE(args->side ^ 1) | DJINNI_ANCHORED,
+          args,
+          DJINNI_ENTRANCE(ELEMENT_MARS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
           origin, target);
     origin[0] = origin[0] * 4 / 5;
   }

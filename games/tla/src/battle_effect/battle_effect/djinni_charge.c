@@ -63,7 +63,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
-      args, (args->side << 4) | (gDjinniCharge_EntranceFlags[mode] << 5) | 2,
+      args,
+      DJINNI_ENTRANCE(ELEMENT_MARS, args->side,
+                      gDjinniCharge_EntranceFlags[mode]),
       (s32 *)&screen, focus);
   {
     s32 *target;

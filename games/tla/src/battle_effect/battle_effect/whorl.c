@@ -64,8 +64,10 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   BattleEffect_StartCanvasLayer(0);
   if (mode <= 1) {
     frames = 38;
-    BattleEffect_RunDjinniEntrance(args, (args->side << 4) | 163, screen,
-                                   point);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_HIGH_USER_X),
+        screen, point);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   } else if (mode == 2 || mode == 4) {

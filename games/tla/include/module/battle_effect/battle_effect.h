@@ -7,6 +7,7 @@
 #include "types.h"
 #include "field/particle.h"
 #include "battle/battle_effect.h"
+#include "battle/battle_unit.h"
 
 struct BattleEffectParams;
 struct ScreenPoint;
@@ -287,9 +288,37 @@ typedef struct {
   s32 reserved18[3];
   s16 values[1];
 } BattleEffectIndexWindow;
-// BattleEffect_RunDjinniEntrance's packed argument: the Djinni's element, the
-// side, and whether the Djinni stands at the anchor.
-enum { DJINNI_VENUS, DJINNI_MERCURY, DJINNI_MARS, DJINNI_JUPITER };
+/// BattleEffect_RunDjinniEntrance's longer entrance, added to the Djinni's
+/// element: 84 frames in place of 55.
+enum { DJINNI_ENTRANCE_LONG = ELEMENT_COUNT };
+
+/// Where BattleEffect_RunDjinniEntrance's Djinni appears: the first five as The
+/// Broken Seal's, 60 pixels up, and this game's own after them.
+enum DjinniEntranceAnchor {
+  DJINNI_ANCHOR_OVER_TARGET, ///< over the first target
+  DJINNI_ANCHOR_TARGET_X,    ///< at the first target's x, at depth 0
+  DJINNI_ANCHOR_OVER_USER,
+  DJINNI_ANCHOR_USER_X,      ///< at the user's x, at depth 0
+  DJINNI_ANCHOR_CENTRE,      ///< in the centre of the field
+  DJINNI_ANCHOR_HIGH_USER_X, ///< at the user's x, 80 pixels up
+  /// In the centre: the entrance takes 40 frames with no fade, and the
+  /// backdrop brightens from frame 24.
+  DJINNI_ANCHOR_CENTRE_BRIGHTENING,
+  DJINNI_ANCHOR_LOW_CENTRE, ///< in the centre, 20 pixels up
+  /// Over the first target: the entrance takes 54 frames.
+  DJINNI_ANCHOR_OVER_TARGET_SHORT,
+  DJINNI_ANCHOR_HIGH_TARGET_X, ///< at the first target's x, 120 pixels up
+  DJINNI_ANCHOR_LOW_USER_X     ///< at the user's x, 30 pixels up
+};
+
+/// BattleEffect_RunDjinniEntrance's packed argument: which Djinni (an element,
+/// plus DJINNI_ENTRANCE_LONG for the longer entrance), the side whose way it
+/// faces, and where it appears (enum DjinniEntranceAnchor).
+#define DJINNI_ENTRANCE(element, side, anchor)                                 \
+  ((element) | (side) << 4 | (anchor) << 5)
+#define DJINNI_ENTRANCE_ELEMENT(packed) ((packed) & 7)
+#define DJINNI_ENTRANCE_SIDE(packed) (((packed) >> 4) & 1)
+#define DJINNI_ENTRANCE_ANCHOR(packed) (((packed) >> 5) & 15)
 
 // Places in the sheet.
 enum SeriesBSheet {

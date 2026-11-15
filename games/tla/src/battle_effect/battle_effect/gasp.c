@@ -68,8 +68,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (mode == 0) {
-    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 35, screen,
-                                   other);
+    BattleEffect_RunDjinniEntrance(args,
+                                   DJINNI_ENTRANCE(ELEMENT_JUPITER,
+                                                   args->side ^ 1,
+                                                   DJINNI_ANCHOR_TARGET_X),
+                                   screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                FIGURE(work), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D8, work->sheet, 0, 0);
@@ -77,8 +80,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                  BGCNT_SCREEN_BASE(7);
     frames = 84;
   } else if (mode == 1) {
-    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 33, screen,
-                                   other);
+    BattleEffect_RunDjinniEntrance(args,
+                                   DJINNI_ENTRANCE(ELEMENT_MERCURY,
+                                                   args->side ^ 1,
+                                                   DJINNI_ANCHOR_TARGET_X),
+                                   screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_LightBurstSheet, work->sheet, 1,
                                0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
@@ -89,8 +95,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     s32 j;
     s32 k;
 
-    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 0x120, screen,
-                                   other);
+    BattleEffect_RunDjinniEntrance(args,
+                                   DJINNI_ENTRANCE(ELEMENT_VENUS,
+                                                   args->side ^ 1,
+                                                   DJINNI_ANCHOR_HIGH_TARGET_X),
+                                   screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
@@ -105,8 +114,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         work->sheet[0x30c + k * 64 + j] = work->sheet[0x1000 + k * 40 + j];
     frames = 42;
   } else if (mode == 6) {
-    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 131, screen,
-                                   other);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side ^ 1, DJINNI_ANCHOR_CENTRE),
+        screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                FIGURE(work), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
@@ -143,7 +154,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == 5) {
-    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 226, screen, other);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_MARS, args->side, DJINNI_ANCHOR_LOW_CENTRE),
+        screen, other);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
@@ -201,8 +215,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     frames = 41;
   } else {
     if (mode == 2) {
-      BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 2, screen,
-                                     other);
+      BattleEffect_RunDjinniEntrance(args,
+                                     DJINNI_ENTRANCE(ELEMENT_MARS,
+                                                     args->side ^ 1,
+                                                     DJINNI_ANCHOR_OVER_TARGET),
+                                     screen, other);
       frames = 76;
     } else {
       work->fadeFrames = 24;

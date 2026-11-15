@@ -88,8 +88,6 @@
 #undef ALTERNATE_BLITTER_SLOT
 #undef OBJ_VRAM
 #undef COLUMN_COUNT
-#undef PREPARE_KIND
-#undef PREPARE_ANCHOR
 
 #undef FxGroup
 #undef PUFF_COUNT

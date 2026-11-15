@@ -269,8 +269,6 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 #define CANVAS_MIDDLE 64
 
 // BattleEffect_RunDjinniEntrance's flags: kind | side << 4 | anchor << 5.
-#define PREPARE_KIND 4
-#define PREPARE_ANCHOR 4
 
 void BattleEffect_RunVine(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
@@ -296,8 +294,10 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   canvas = heap->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
-      args, PREPARE_KIND | args->side << 4 | PREPARE_ANCHOR << 5, &screen,
-      &world);
+      args,
+      DJINNI_ENTRANCE(ELEMENT_VENUS + DJINNI_ENTRANCE_LONG, args->side,
+                      DJINNI_ANCHOR_CENTRE),
+      &screen, &world);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   REG_BG2PA = Q_8_8(1);

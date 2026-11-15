@@ -568,8 +568,11 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   } else {
     BattleEffect_StartTiledCanvas(0x2000);
   }
-  BattleEffect_RunDjinniEntrance(args, (args->side << 4) | 0x101, screenA,
-                                 screenB);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side,
+                      DJINNI_ANCHOR_OVER_TARGET_SHORT),
+      screenA, screenB);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Iwram_ClearWordsEntry(canvas, 0x3c00);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

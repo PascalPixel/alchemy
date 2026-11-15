@@ -53,9 +53,6 @@ void BattleEffect_RunReverseStar(struct BattleEffectParams *args) {
   BattleEffect_RunHealingMotes(args, 13);
 }
 
-#define DJINNI_SIDE(side) ((side) << 4)
-#define DJINNI_ANCHORED 32
-
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define SPARKS_PER_MEMBER 64
 #define BEAM_SHEET 0x800    // the blue beam as unpacked, two bytes a pixel
@@ -106,20 +103,21 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     s32 djinni;
 
     if (mode == 6)
-      djinni = DJINNI_MARS;
+      djinni = ELEMENT_MARS;
     else if (mode == 2 || mode == 7)
-      djinni = DJINNI_VENUS;
+      djinni = ELEMENT_VENUS;
     else if (mode == 9 || mode == 10)
-      djinni = DJINNI_JUPITER;
+      djinni = ELEMENT_JUPITER;
     else
-      djinni = DJINNI_MERCURY;
+      djinni = ELEMENT_MERCURY;
     if (mode == 6 || mode == 0 || mode == 8 || mode == 9 || mode == 10)
-      BattleEffect_RunDjinniEntrance(args, djinni | DJINNI_SIDE(args->side),
-                                     origin, target);
+      BattleEffect_RunDjinniEntrance(
+          args, DJINNI_ENTRANCE(djinni, args->side, DJINNI_ANCHOR_OVER_TARGET),
+          origin, target);
     else
       BattleEffect_RunDjinniEntrance(
-          args, djinni | DJINNI_SIDE(args->side) | DJINNI_ANCHORED, origin,
-          target);
+          args, DJINNI_ENTRANCE(djinni, args->side, DJINNI_ANCHOR_TARGET_X),
+          origin, target);
     args->variant = 0;
   }
 

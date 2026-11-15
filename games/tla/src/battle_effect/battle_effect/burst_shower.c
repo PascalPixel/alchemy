@@ -141,8 +141,6 @@ void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
 // glints around the targets, and modes 11, 14 and 18 hand over to
 // BattleEffect_RunStatReduction at the end.
 
-#define DJINNI_BEHIND 64
-
 // A volley of shots flies from the user at the targets, one launched each
 // frame toward the next target.
 
@@ -191,14 +189,16 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
   if (args->prelude == 1) {
     if (mode == 9 || mode == 22 || mode == 24) {
       BattleEffect_RunDjinniEntrance(
-          args, DJINNI_MARS | DJINNI_SIDE(args->side) | DJINNI_BEHIND, origin,
-          djinniTarget);
+          args,
+          DJINNI_ENTRANCE(ELEMENT_MARS, args->side, DJINNI_ANCHOR_OVER_USER),
+          origin, djinniTarget);
       Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     } else {
       BattleEffect_RunDjinniEntrance(
-          args, DJINNI_VENUS | DJINNI_SIDE(args->side) | DJINNI_BEHIND, origin,
-          djinniTarget);
+          args,
+          DJINNI_ENTRANCE(ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
+          origin, djinniTarget);
       Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     }

@@ -58,8 +58,11 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(2);
-  BattleEffect_RunDjinniEntrance(args, (args->side << 4) | 0xc0, screenA,
-                                 screenB);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_VENUS, args->side,
+                      DJINNI_ANCHOR_CENTRE_BRIGHTENING),
+      screenA, screenB);
   BattleEffect_ConfigureEffectDisplay();
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |

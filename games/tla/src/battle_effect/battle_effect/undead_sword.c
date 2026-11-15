@@ -761,13 +761,17 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   funnel = gMapGridCellBuffer;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
-    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 3, (s32 *)&screen,
-                                   (s32 *)&other);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_OVER_TARGET),
+        (s32 *)&screen, (s32 *)&other);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   } else {
-    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 35, (s32 *)&screen,
-                                   (s32 *)&other);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_TARGET_X),
+        (s32 *)&screen, (s32 *)&other);
   }
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);

@@ -8,25 +8,13 @@
 #include "sounds.h"
 #include "macros.h"
 
-// The packed preparer word: kind | side << 4 | anchor << 5.
-#define PREPARE_KIND(packed) ((packed) & 7)
-#define PREPARE_SIDE(packed) (((packed) >> 4) & 1)
-#define PREPARE_ANCHOR(packed) (((packed) >> 5) & 15)
-
-// The anchor that keeps the effect short (40 frames, no palette fade) and
-// brightens the backdrop from frame 24.
-#define ANCHOR_BRIGHTEN 6
-// The anchor whose effect runs 54 frames.
-#define ANCHOR_SHORT 8
-
-// The opening every Djinn effect shares: sparks gather from around the
-// caster, spin about a point travelling from the caster to the anchor, and
-// fall into it; a small Djinn (the kind) appears there at frame 54 and
-// bursts into motes at frame 64. The anchor's screen point goes to screen
-// and its world point to world.
+/// Sparks swirl around a point that travels from the user to the anchor and
+/// gather into a Djinni, which sways for 16 frames and bursts into motes.
+/// packed is DJINNI_ENTRANCE's; the anchor's screen point goes to screen and
+/// its world point to world.
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
                                     s32 *screen, s32 *world) {
-  s32 base[3];
+  s32 center[3];
   s32 goal[3];
   s32 step[3];
   s32 point[3];
@@ -35,49 +23,49 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   void *canvas;
   DrawRectangle draw[2];
   u8 *sheet;
-  s32 total;
+  s32 frameCount;
   struct MotionObject *target;
   struct MotionObject *actor;
   u8 *palette;
   s32 resource;
   s32 frame;
   s32 i;
-  s32 kind;
+  s32 element;
   s32 side;
   s32 anchor;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
-  kind = PREPARE_KIND(packed);
-  side = PREPARE_SIDE(packed);
-  anchor = PREPARE_ANCHOR(packed);
-  if (anchor == ANCHOR_BRIGHTEN) {
-    total = 40;
-  } else if (anchor == ANCHOR_SHORT) {
+  element = DJINNI_ENTRANCE_ELEMENT(packed);
+  side = DJINNI_ENTRANCE_SIDE(packed);
+  anchor = DJINNI_ENTRANCE_ANCHOR(packed);
+  if (anchor == DJINNI_ANCHOR_CENTRE_BRIGHTENING) {
+    frameCount = 40;
+  } else if (anchor == DJINNI_ANCHOR_OVER_TARGET_SHORT) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    total = 54;
+    frameCount = 54;
   } else {
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    if (kind > 3) {
-      kind -= 4;
-      total = 84;
+    if (element > ELEMENT_JUPITER) {
+      element -= DJINNI_ENTRANCE_LONG;
+      frameCount = 84;
     } else {
-      total = 55;
+      frameCount = 55;
     }
   }
 
   // The Djinn's palette, then its small picture.
-  switch (kind) {
-  case 0:
+  switch (element) {
+  case ELEMENT_VENUS:
     resource = (s32)&ResourceId_BlastSheet;
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     resource = (s32)&ResourceId_MercuryDjinnSmallSheet;
     break;
-  case 2:
+  case ELEMENT_MARS:
     resource = (s32)&ResourceId_MarsDjinnSmallSheet;
     break;
   default:
@@ -86,14 +74,14 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   }
   palette = Resource_GetTableEntry(resource);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  switch (kind) {
-  case 0:
+  switch (element) {
+  case ELEMENT_VENUS:
     resource = (s32)&ResourceId_VenusDjinnSmallSheet;
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     resource = (s32)&ResourceId_MercuryDjinnSmallSheet;
     break;
-  case 2:
+  case ELEMENT_MARS:
     resource = (s32)&ResourceId_MarsDjinnSmallSheet;
     break;
   default:
@@ -109,7 +97,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
   // Additive and max blitters, clipped (flipped for side 1).
-  if (side == 1) {
+  if (side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
@@ -140,83 +128,83 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The spin's centre moves from the caster to the anchor over frames 6-45.
-  base[0] = actor->x;
-  base[1] = 0;
-  base[2] = actor->z;
+  center[0] = actor->x;
+  center[1] = 0;
+  center[2] = actor->z;
   switch (anchor) {
-  case 0:
+  case DJINNI_ANCHOR_OVER_TARGET:
     goal[0] = target->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = target->z;
     break;
-  case 8:
+  case DJINNI_ANCHOR_OVER_TARGET_SHORT:
     goal[0] = target->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = target->z;
     break;
-  case 1:
+  case DJINNI_ANCHOR_TARGET_X:
     goal[0] = target->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = 0;
     break;
-  case 9:
+  case DJINNI_ANCHOR_HIGH_TARGET_X:
     goal[0] = target->x;
-    goal[1] = 0x780000;
+    goal[1] = px(120);
     goal[2] = 0;
     break;
-  case 2:
+  case DJINNI_ANCHOR_OVER_USER:
     goal[0] = actor->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = actor->z;
     break;
-  case 3:
+  case DJINNI_ANCHOR_USER_X:
     goal[0] = actor->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = 0;
     break;
-  case 4:
-  case 6:
+  case DJINNI_ANCHOR_CENTRE:
+  case DJINNI_ANCHOR_CENTRE_BRIGHTENING:
     goal[0] = 0;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = 0;
     break;
-  case 7:
+  case DJINNI_ANCHOR_LOW_CENTRE:
     goal[0] = 0;
-    goal[1] = 0x140000;
+    goal[1] = px(20);
     goal[2] = 0;
     break;
-  case 5:
+  case DJINNI_ANCHOR_HIGH_USER_X:
     goal[0] = actor->x;
-    goal[1] = 0x500000;
+    goal[1] = px(80);
     goal[2] = 0;
     break;
-  case 10:
+  case DJINNI_ANCHOR_LOW_USER_X:
     goal[0] = actor->x;
-    goal[1] = 0x1e0000;
+    goal[1] = px(30);
     goal[2] = 0;
     break;
   }
-  step[0] = (goal[0] - base[0]) / 40;
-  step[1] = (goal[1] - base[1]) / 40;
-  step[2] = (goal[2] - base[2]) / 40;
+  step[0] = (goal[0] - center[0]) / 40;
+  step[1] = (goal[1] - center[1]) / 40;
+  step[2] = (goal[2] - center[2]) / 40;
 
-  for (frame = 0; frame != total; frame++) {
+  for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame > 75)
       REG_BLDALPHA = (168 - frame * 2) | 0x1000;
-    if (anchor == ANCHOR_BRIGHTEN && frame > 23)
+    if (anchor == DJINNI_ANCHOR_CENTRE_BRIGHTENING && frame > 23)
       Palette_BrightenBattleBg(2, 2, 2);
     if (frame == 8)
       Sound_PlayFar(SE_POWER_UP);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
     if (frame >= 6 && frame <= 45) {
-      base[0] += step[0];
-      base[1] += step[1];
-      base[2] += step[2];
+      center[0] += step[0];
+      center[1] += step[1];
+      center[2] += step[2];
     }
-    SceneTransform_ApplyPosition(base);
+    SceneTransform_ApplyPosition(center);
     if (frame == 0)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
@@ -498,8 +486,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   kind = args->variant;
   BattleEffect_StartCanvasLayer(1);
   if (args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(args, 1 | args->side << 4 | 2 << 5, &screen,
-                                   &world);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side, DJINNI_ANCHOR_OVER_USER),
+        &screen, &world);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // A 128x128 blitter, mirrored for the other side.

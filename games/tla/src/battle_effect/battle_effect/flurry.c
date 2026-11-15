@@ -157,8 +157,11 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(args, PREPARE(7, args->side, 2), screen,
-                                   otherPoint);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG, args->side,
+                        DJINNI_ANCHOR_OVER_USER),
+        screen, otherPoint);
 
   // The pictures and the palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);

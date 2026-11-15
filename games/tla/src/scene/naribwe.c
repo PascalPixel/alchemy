@@ -354,8 +354,9 @@ void Naribwe_HideStone(void);
 /// The village's placements, the same before and after the return with Piers.
 #define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
   struct ActorPlacement name[] = {                                             \
-      ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, \
-                      FACING_SOUTH, TALK_FACING_PARTY, 0),                     \
+      ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS,                    \
+                      MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH,          \
+                      TALK_FACING_PARTY, 0),                                   \
       {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(316), 0, px(132), \
        FACING_SOUTH, 0, 0},                                                    \
       {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(372), 0, px(132), \
@@ -364,8 +365,9 @@ void Naribwe_HideStone(void);
        FACING_SOUTH, 0, 0},                                                    \
       {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, px(372), 0, px(132),   \
        FACING_SOUTH, 0, 0},                                                    \
-      ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 344, \
-                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,                \
+                      MOVEMENT_TYPE_STAND, 248, 0, 344, FACING_SOUTH,          \
+                      TALK_FACING_PARTY_AND_BACK, 0),                          \
       ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 200,   \
                       0, 296, FACING_EAST, TALK_FACING_PARTY, 0),              \
       ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 152, \
@@ -376,14 +378,16 @@ void Naribwe_HideStone(void);
                       FACING_SOUTHEAST, 1, 0),                                 \
       ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 224, \
                       FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),        \
-      ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 200, 0,     \
-                      200, FACING_NORTHEAST, TALK_FACING_PARTY, 0),            \
+      ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,            \
+                      MOVEMENT_TYPE_WANDER, 200, 0, 200, FACING_NORTHEAST,     \
+                      TALK_FACING_PARTY, 0),                                   \
       ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 232, \
                       FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),        \
       ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 56, 0, 232, \
                       FACING_EAST, TALK_FACING_PARTY, 0),                      \
-      ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 360, \
-                      FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),             \
+      ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,       \
+                      MOVEMENT_TYPE_STAND, 168, 0, 360, FACING_EAST,           \
+                      TALK_FACING_PARTY_AND_BACK, 0),                          \
       {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, px(40), 0, px(168),  \
        FACING_SOUTH, 2, 0},                                                    \
       ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS,                 \
@@ -391,10 +395,12 @@ void Naribwe_HideStone(void);
                       TALK_FACING_KEEP, 0),                                    \
       ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, \
                       FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
-      ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 168, \
-                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
-      ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 104, \
-                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,    \
+                      376, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK,   \
+                      0),                                                      \
+      ACTOR_PLACEMENT(SPRITE_ROCK_PILE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, \
+                      104, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK,   \
+                      0),                                                      \
       {SCENE_TABLE_END},                                                       \
   };
 
@@ -454,7 +460,7 @@ u32 gSceneExits[] = {
 DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements)
 
 struct ActorPlacement gNaribwe_Entrance10Placements[] = {
-    ACTOR_PLACEMENT(364, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_LARGE_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),

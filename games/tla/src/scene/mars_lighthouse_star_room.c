@@ -235,8 +235,8 @@ void MarsLighthouseStarRoom_WestFireballCracksIce(void) {
       Event_GetFlag(FLAG_FLAME_DRAGONS_BEATEN) == 0) {
 #endif
     Event_PlaySound(SE_ICE_CRACK);
-    object->x.fixed = object->timer << 16;
-    object->z.fixed = *(s16 *)((u8 *)object + 0x66) << 16;
+    object->x.fixed = object->homeX << 16;
+    object->z.fixed = object->homeZ << 16;
     if (Event_GetFlag(FLAG_DRAGON_ICE_CRACKED) == 0) {
       object->scaleX = 0x9999;
       object->scaleY = 0x9999;
@@ -260,8 +260,8 @@ void MarsLighthouseStarRoom_EastFireballCracksIce(void) {
 #endif
     Event_PlaySound(SE_ICE_CRACK);
     Event_SetFlag(FLAG_DRAGON_ICE_BURSTABLE);
-    object->x.fixed = object->timer << 16;
-    object->z.fixed = *(s16 *)((u8 *)object + 0x66) << 16;
+    object->x.fixed = object->homeX << 16;
+    object->z.fixed = object->homeZ << 16;
     object->scaleX = Q16_ONE;
     object->scaleY = Q16_ONE;
     Event_SetFlag(FLAG_DRAGON_ICE_CRACKED);
@@ -1475,7 +1475,7 @@ void Ride_Create(void) {
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
-  object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
+  object = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
   object->retainSpriteCache = 2;
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
@@ -1862,10 +1862,10 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     tileZ = FIELD_CELL(actor->z.fixed);
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
     cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
-    widthA = map->layers[1].offsetX >> 20;
-    heightA = map->layers[1].offsetY >> 20;
-    widthB = map->layers[2].offsetX >> 20;
-    heightB = map->layers[2].offsetY >> 20;
+    widthA = FIELD_CELL(map->layers[1].offsetX);
+    heightA = FIELD_CELL(map->layers[1].offsetY);
+    widthB = FIELD_CELL(map->layers[2].offsetX);
+    heightB = FIELD_CELL(map->layers[2].offsetY);
 
     for (dz = -1, zB = tileZ + heightB - 2, z = tileZ - 1,
         zA = tileZ + heightA - 1;
@@ -1943,7 +1943,7 @@ void Actor_Attach(s32 sourceId, s32 id, s32 kind, s32 value,
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   Actor_SelectAnimation(object, 1);
-  *(struct Actor **)((u8 *)object + 0x68) = source;
+  object->watchedActor = source;
   object->timer = 0;
   *(s16 *)((u8 *)object + 0x66) = value;
   *(u8 *)((u8 *)object + 0x62) = kind;
@@ -2018,7 +2018,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
+    effect =
+        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
   if (effect == 0)
     return;
 
@@ -2463,14 +2464,14 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS,
                     (s32)gMarsLighthouseStarRoom_StatueScript, 648, 0, 264,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(291, CONDITION_ALWAYS, 7, 680, 0, 240, FACING_SOUTH,
-                    TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(181, FLAG_MARS_LIGHTHOUSE_THAWED, 7, 664, 0, 216,
+    ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, 7, 680, 0, 240,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(181, FLAG_MARS_LIGHTHOUSE_THAWED, 7, 696, 0, 216,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(33, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLAME_DRAGON, FLAG_MARS_LIGHTHOUSE_THAWED, 7, 664, 0,
+                    216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLAME_DRAGON, FLAG_MARS_LIGHTHOUSE_THAWED, 7, 696, 0,
+                    216, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_AGATIO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
+                    0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KARST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
                     0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
@@ -2481,9 +2482,9 @@ struct ActorPlacement gActorPlacements[] = {
                     TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

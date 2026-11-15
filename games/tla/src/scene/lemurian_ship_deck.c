@@ -738,7 +738,8 @@ void LemurianShipDeck_EmitSparkle(void) {
 
   SET_VECTOR(position, px(360), px(64), px(424));
   FieldVector_AddPolarOffset(32, Random16(), position);
-  object = FieldActor_Create(0x2a2, position[0], position[1], position[2]);
+  object =
+      FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
     *(s32 *)((u8 *)object + 0x30) = 0x20000;

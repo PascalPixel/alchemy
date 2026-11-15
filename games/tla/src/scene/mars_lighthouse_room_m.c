@@ -1348,8 +1348,8 @@ void Ride_UpdateDrift(struct Actor *object) {
 
 void Ride_SpawnSpark(struct MarsLighthouseRoomMVector *position, s32 value,
                      s32 mode) {
-  struct Actor *object =
-      FieldActor_Create(285, position->x, position->y, position->z - px(2));
+  struct Actor *object = FieldActor_Create(SPRITE_DUST_CLOUD, position->x,
+                                           position->y, position->z - px(2));
   s32 spin;
 
   if (object != 0) {
@@ -1510,7 +1510,7 @@ void Ride_Create(void) {
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
-  object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
+  object = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
   object->retainSpriteCache = 2;
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
@@ -1841,10 +1841,10 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     tileZ = FIELD_CELL(actor->z.fixed);
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
     cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
-    widthA = map->layers[1].offsetX >> 20;
-    heightA = map->layers[1].offsetY >> 20;
-    widthB = map->layers[2].offsetX >> 20;
-    heightB = map->layers[2].offsetY >> 20;
+    widthA = FIELD_CELL(map->layers[1].offsetX);
+    heightA = FIELD_CELL(map->layers[1].offsetY);
+    widthB = FIELD_CELL(map->layers[2].offsetX);
+    heightB = FIELD_CELL(map->layers[2].offsetY);
 
     for (dz = -1, zB = tileZ + heightB - 2, z = tileZ - 1,
         zA = tileZ + heightA - 1;
@@ -2031,7 +2031,7 @@ struct ActorPlacement gMarsLighthouseRoomM_Placements[] = {
 
 struct ActorPlacement gMarsLighthouseRoomM_Room6Placements[] = {
     ACTOR_PLACEMENT(418, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomM_StatueScript, 504, 0, 184, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(365, CONDITION_ALWAYS, 7, 504, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, 7, 504, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomM_StatueScript, 504, 0, 112, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
@@ -2043,13 +2043,13 @@ struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[] = {
     ACTOR_PLACEMENT(416, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(416, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 216, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(416, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 216, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 224, 0, 144, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

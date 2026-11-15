@@ -239,7 +239,7 @@ void MadraCatacombs_DropPillarIntoHole(void) {
   struct Actor *object = Actor_GetById(ACTOR_HOLE_PILLAR);
   s32 z;
 
-  if ((FIELD_CELL(object->x.fixed)) == 40) {
+  if (FIELD_CELL(object->x.fixed) == 40) {
     z = FIELD_CELL(object->z.fixed);
     if (z == 13) {
       Event_Start();
@@ -261,8 +261,7 @@ void MadraCatacombs_FinishMovingPushedPillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_PUSHED_PILLAR);
 
   Actor_PlaceMovedBlock();
-  if ((FIELD_CELL(object->x.fixed)) == 44 &&
-      (FIELD_CELL(object->z.fixed)) == 26)
+  if (FIELD_CELL(object->x.fixed) == 44 && FIELD_CELL(object->z.fixed) == 26)
     Event_SetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED);
 }
 
@@ -406,8 +405,7 @@ void MadraCatacombs_ShakeBookshelf(void) {
 
 void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
   HeldActor_RaiseCell();
-  if ((FIELD_CELL(object->x.fixed)) == 35 &&
-      (FIELD_CELL(object->z.fixed)) == 17)
+  if (FIELD_CELL(object->x.fixed) == 35 && FIELD_CELL(object->z.fixed) == 17)
     Event_SetFlag(FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED);
 }
 

@@ -123,7 +123,7 @@ void MercuryLighthouse_SpawnMotes(void) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   phase = gFrameCount & 15;
   if (phase == 0) {
-    object = ((struct Actor *)Import_ActorCreate(0x2a2, 0, 0, 0));
+    object = ((struct Actor *)Import_ActorCreate(SPRITE_GLINT, 0, 0, 0));
     if (object != NULL) {
       sprite = object->sprite;
       x = Random16() * 40 + 0x32c0000;

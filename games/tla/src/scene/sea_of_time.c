@@ -241,7 +241,10 @@ void SeaOfTime_CircleSwirl(void) {
       object->z.fixed += 0x3333;
     else
       object->z.fixed -= 0x3333;
-    if (SeaOfTime_GetCellCode(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
+    if (SeaOfTime_GetCellCode(1, FIELD_CELL(center[0]),
+                              FIELD_CELL(center[2])) >>
+            8 ==
+        40) {
       turn[0] = SeaOfTime_Cos(-0x200);
       sine = Trig_Sin(-0x200);
     } else {
@@ -331,7 +334,9 @@ void SeaOfTime_RideCurrent(void) {
     else
       object->z.fixed -= px(1) / 2;
   }
-  if (SeaOfTime_GetCellCode(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
+  if (SeaOfTime_GetCellCode(1, FIELD_CELL(center.x), FIELD_CELL(center.z)) >>
+          8 ==
+      40) {
     turn[0] = SeaOfTime_Cos(-0x200);
     s = Trig_Sin(-0x200);
   } else {
@@ -970,9 +975,8 @@ next:
     }
     i++;
   }
-  object = Import_ActorCreate(159, px(348), 0, px(184));
-  // The object's per-frame hook, struct Actor's update.
-  *(void (**)(struct Actor *))((u8 *)object + 0x6c) = SeaOfTime_UpdateSpray;
+  object = Import_ActorCreate(SPRITE_POSEIDON, px(348), 0, px(184));
+  object->update = (void (*)(void))SeaOfTime_UpdateSpray;
   Event_Wait(60);
   Actor_SelectAnimation(object, 1);
   Event_Wait(40);
@@ -983,8 +987,8 @@ next:
 }
 
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
-  s32 cx = x >> 20;
-  s32 cz = z >> 20;
+  s32 cx = FIELD_CELL(x);
+  s32 cz = FIELD_CELL(z);
 
   SeaOfTime_SetCellCode(1, cx - 1, cz - 1, 0);
   SeaOfTime_SetCellCode(1, cx, cz - 1, 0);
@@ -1162,7 +1166,7 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   spark.startScaleX = 0x13333;
   spark.startScaleY = 0x18000;
   spark.priority = 1;
-  spark.type = 276;
+  spark.type = SPRITE_SPLASH;
   FieldEffect_Spawn(
       px, 0, pz, 0, 0, 0,
       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &spark);
@@ -1191,7 +1195,7 @@ void SeaOfTime_Open(void) {
   Event_ResolvePendingActions(0);
   Event_PlaySound(MUS_SILENCE);
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
-  actor = FieldActor_Create(159, px(348), 0, px(184));
+  actor = FieldActor_Create(SPRITE_POSEIDON, px(348), 0, px(184));
   actor->update = (void (*)(void))SeaOfTime_UpdateSpray;
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 0);
   Event_StartScreenTransition();

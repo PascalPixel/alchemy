@@ -996,8 +996,8 @@ void LemurianShip_DrawLightToOrb(void) {
 
   SET_VECTOR(position, px(808), px(8), px(140));
   Vector_AddPolarOffset(0x200000, Random16(), position);
-  object = ((struct Actor *)Import_ActorCreate(0x2a2, position[0], position[1],
-                                               position[2]));
+  object = ((struct Actor *)Import_ActorCreate(SPRITE_GLINT, position[0],
+                                               position[1], position[2]));
   if (object != NULL) {
     object->motionFlags = 0;
     *(s32 *)((u8 *)object + 0x30) = 0x20000;

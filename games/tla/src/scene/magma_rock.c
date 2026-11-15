@@ -151,7 +151,7 @@ void Blocks_MarkCells(u16 *ids) {
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
-      z = (object->z.fixed - object->y.fixed) >> 20;
+      z = FIELD_CELL(object->z.fixed - object->y.fixed);
       x = FIELD_CELL(object->x.fixed);
       cell = *cells;
       cell += x + ((z + 1) << 7);
@@ -208,7 +208,7 @@ void MagmaRock_SettleBlocks(u16 *ids) {
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
-      z = (object->z.fixed - object->y.fixed) >> 20;
+      z = FIELD_CELL(object->z.fixed - object->y.fixed);
       x = FIELD_CELL(object->x.fixed);
       cell = *cells;
       cell += x + ((z + 1) << 7);
@@ -585,7 +585,8 @@ void MagmaRock_WarnStatue(struct Actor *object) {
 s32 MagmaRock_FindStatue(u16 *table) {
   struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
-  s32 code = MapCell_GetAttributes(0, work->x >> 20, work->z >> 20) >> 8;
+  s32 code =
+      MapCell_GetAttributes(0, FIELD_CELL(work->x), FIELD_CELL(work->z)) >> 8;
   s32 id;
 
   goto check;
@@ -605,7 +606,7 @@ done:
 
 s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
   s32 result = 0;
-  s32 code = MapCell_GetAttributes(0, x >> 20, z >> 20) >> 8;
+  s32 code = MapCell_GetAttributes(0, FIELD_CELL(x), FIELD_CELL(z)) >> 8;
 
   while (*table != 0xffff) {
     table++;
@@ -711,8 +712,8 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
   position[2] = object->z.fixed;
   for (;;) {
     position[0] += step;
-    attributes = MapCell_GetAttributes(2, position[0] >> 20,
-                                       (position[2] - position[1]) >> 20) >>
+    attributes = MapCell_GetAttributes(2, FIELD_CELL(position[0]),
+                                       FIELD_CELL(position[2] - position[1])) >>
                  8;
     if (attributes == 212 || attributes == 222)
       goto stop;
@@ -726,7 +727,7 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
         continue;
       if (Position_FlatDistance(&other->x.fixed, position) > 8)
         continue;
-      if (FIELD_CELL(other->y.fixed) != position[1] >> 20)
+      if (FIELD_CELL(other->y.fixed) != FIELD_CELL(position[1]))
         continue;
       if (((struct Sprite *)other->sprite)->entries[0]->animationId == 0x110)
         goto stop;
@@ -2550,46 +2551,46 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gMagmaRock_Placements[] = {
-    {272, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
-    {377, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 2},
-    {272, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_NORTH, 2, 2},
-    {377, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_WEST, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 6, 0, 0, FACING_EAST, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 7, 0, 0, FACING_WEST, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 8, 0, 0, FACING_NORTH, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 9, 0, 0, FACING_NORTH, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 10, 0, 0, FACING_NORTH, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 11, 0, 0, FACING_NORTH, 2, 2},
-    {329, CONDITION_ALWAYS, 1, 12, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_WEST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 6, 0, 0, FACING_EAST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 7, 0, 0, FACING_WEST, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 8, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 9, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 10, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 11, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, 1, 12, 0, 0, FACING_NORTH, 2, 2},
     {379, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 2, 2},
     ACTOR_PLACEMENT(403, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gMagmaRock_Room2LowerPlacements[] = {
-    {272, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
-    {407, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_SOUTH, 2, 2},
-    {407, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_SOUTH, 2, 3},
-    {377, CONDITION_ALWAYS, 1, 6, 0, 0, FACING_EAST, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 7, 0, 0, FACING_NORTH, 2, 2},
-    {272, CONDITION_ALWAYS, 1, 8, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_SOUTH, 2, 3},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 6, 0, 0, FACING_EAST, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 7, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 8, 0, 0, FACING_NORTH, 2, 2},
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gMagmaRock_Room2MiddlePlacements[] = {
-    {377, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
-    {377, CONDITION_ALWAYS, 1, 11, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 11, 0, 0, FACING_SOUTH, 2, 2},
     {379, CONDITION_ALWAYS, 1, 11, 0, 0, FACING_NORTH, 2, 2},
-    {272, CONDITION_ALWAYS, 1, 12, 0, 0, FACING_NORTH, 2, 2},
-    {377, CONDITION_ALWAYS, 1, 13, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 12, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 13, 0, 0, FACING_SOUTH, 2, 2},
     {379, CONDITION_ALWAYS, 1, 13, 0, 0, FACING_NORTH, 2, 2},
     ACTOR_PLACEMENT(403, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(403, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
@@ -2598,34 +2599,34 @@ struct ActorPlacement gMagmaRock_Room2MiddlePlacements[] = {
 };
 
 struct ActorPlacement gMagmaRock_Room2UpperPlacements[] = {
-    {272, CONDITION_ALWAYS, 1, 14, 0, 0, FACING_NORTH, 2, 2},
-    {377, CONDITION_ALWAYS, 1, 15, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 14, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 15, 0, 0, FACING_SOUTH, 2, 2},
     {379, CONDITION_ALWAYS, 1, 15, 0, 0, FACING_NORTH, 2, 2},
-    {377, CONDITION_ALWAYS, 1, 16, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 16, 0, 0, FACING_SOUTH, 2, 2},
     {379, CONDITION_ALWAYS, 1, 16, 0, 0, FACING_NORTH, 2, 2},
-    {407, CONDITION_ALWAYS, 1, 17, 0, 0, FACING_SOUTH, 2, 2},
-    {407, CONDITION_ALWAYS, 1, 18, 0, 0, FACING_SOUTH, 2, 3},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 17, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 18, 0, 0, FACING_SOUTH, 2, 3},
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gMagmaRock_Room2TopPlacements[] = {
-    {272, CONDITION_ALWAYS, 1, 19, 0, 0, FACING_NORTH, 2, 2},
-    {272, CONDITION_ALWAYS, 1, 20, 0, 0, FACING_NORTH, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 21, 0, 0, FACING_NORTH, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 22, 0, 0, FACING_WEST, 2, 2},
-    {377, CONDITION_ALWAYS, 1, 23, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 19, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 20, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 21, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 22, 0, 0, FACING_WEST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 23, 0, 0, FACING_SOUTH, 2, 2},
     {379, CONDITION_ALWAYS, 1, 23, 0, 0, FACING_NORTH, 2, 2},
-    {404, CONDITION_ALWAYS, 1, 24, 0, 0, FACING_NORTH, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 25, 0, 0, FACING_WEST, 2, 2},
-    {299, CONDITION_ALWAYS, 7, 26, 0, 0, FACING_NORTH, 2, 2},
-    {299, CONDITION_ALWAYS, 7, 27, 0, 0, FACING_NORTH, 2, 2},
-    {299, CONDITION_ALWAYS, 7, 28, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 24, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 25, 0, 0, FACING_WEST, 2, 2},
+    {SPRITE_SPROUT, CONDITION_ALWAYS, 7, 26, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_SPROUT, CONDITION_ALWAYS, 7, 27, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_SPROUT, CONDITION_ALWAYS, 7, 28, 0, 0, FACING_NORTH, 2, 2},
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gMagmaRock_Room3Placements[] = {
     {384, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
-    {377, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_WEST, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_WEST, 2, 2},
     {SCENE_TABLE_END},
 };
 // clang-format on

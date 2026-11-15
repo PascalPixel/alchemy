@@ -468,7 +468,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
-      z = (object->z.fixed - object->y.fixed) >> 20;
+      z = FIELD_CELL(object->z.fixed - object->y.fixed);
       x = FIELD_CELL(object->x.fixed);
       cell = *cells;
       cell += x + ((z + 1) << 7);
@@ -750,7 +750,7 @@ void MagmaRockInside_FlashStatue(struct Actor *object) {
 s32 MagmaRockInside_FindStatue(u16 *table) {
   struct CellWatch *watch = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
-  s32 cell = MapCell_Get(0, watch->x >> 20, watch->z >> 20) >> 8;
+  s32 cell = MapCell_Get(0, FIELD_CELL(watch->x), FIELD_CELL(watch->z)) >> 8;
   u32 id;
 
   goto test;
@@ -865,8 +865,9 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
   position[2] = flame->z.fixed;
 next:
   position[0] += step;
-  cell =
-      MapCell_Get(2, position[0] >> 20, (position[2] - position[1]) >> 20) >> 8;
+  cell = MapCell_Get(2, FIELD_CELL(position[0]),
+                     FIELD_CELL(position[2] - position[1])) >>
+         8;
   if (cell == 212 || cell == 222)
     goto end;
   id = ACTOR_FIRST_PLACED;
@@ -880,7 +881,7 @@ inner:
     goto skip;
   if (Position_FlatDistance(&other->x.fixed, position) > 8)
     goto skip;
-  if (FIELD_CELL(other->y.fixed) != position[1] >> 20)
+  if (FIELD_CELL(other->y.fixed) != FIELD_CELL(position[1]))
     goto skip;
   if (*(s16 *)(*(u8 **)((u8 *)other->sprite + 40)) == 272)
     goto end;
@@ -1762,7 +1763,7 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   s32 i;
   s32 cellZ;
 
-  object = FieldActor_Create(288, x << 16, 0, z << 16);
+  object = FieldActor_Create(SPRITE_STACKED_CRATES, x << 16, 0, z << 16);
   REG_BLDALPHA = 16;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(object, 0);
@@ -1887,8 +1888,8 @@ void MagmaRockInside_PutOutTabletFlame(void) {
 }
 
 void MagmaRockInside_SpawnSpark(struct Actor *source) {
-  struct Actor *object =
-      Create(0x2a0, source->x.fixed, source->y.fixed, source->z.fixed);
+  struct Actor *object = Create(SPRITE_PARTICLE, source->x.fixed,
+                                source->y.fixed, source->z.fixed);
 
   object->scaleY = 0x6666;
   object->scaleX = 0x6666;
@@ -1981,7 +1982,7 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
   if (frame != 0)
     return;
   options.palette = 7;
-  options.type = 673;
+  options.type = SPRITE_SPARKLE;
   options.priority = 1;
   position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
   position[1] = object->y.fixed + ((Random16() & 31) << 16) + 0x80000;
@@ -2715,7 +2716,7 @@ void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
       MagmaRockInside_SpawnRubble(0);
       System_Wait(8);
       Actor_SelectAnimation(object, 2);
-      MagmaRockInside_SetActorCellShape(-4, OBJECT_BYTE(object, 34), id);
+      MagmaRockInside_SetActorCellShape(-4, object->layer, id);
       MagmaRockInside_SpawnRubble(1);
       System_Wait(16);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);

@@ -67,9 +67,6 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif
 
-/// A glyph resource id meaning no glyph resource is loaded.
-#define NO_GLYPH_RESOURCE 99
-
 // WindowWork owns three messages, each with four line gaps.
 #define MESSAGE_COUNT 3
 #define MESSAGE_LINE_COUNT 4 ///< lines a page; spacing has one gap each

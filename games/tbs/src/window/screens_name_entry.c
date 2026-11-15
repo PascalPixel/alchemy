@@ -76,8 +76,8 @@ void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
       *vram++ = value;
       *mirror++ = value;
     }
-    vram += 32 - window->width;
-    mirror += 32 - window->width;
+    vram += BG_SCREEN_WIDTH - window->width;
+    mirror += BG_SCREEN_WIDTH - window->width;
   }
   Heap_Release(buffer);
 }
@@ -203,14 +203,14 @@ void NameEntry_DrawName(struct Window *window, u8 *name) {
   }
 
   text[length++] = TEXT_COLOR_COMMAND;
-  text[length++] = 2;
+  text[length++] = TEXT_COLOR_RED;
 
   while (length <= 6) {
     text[length++] = '_';
   }
 
   text[length++] = TEXT_COLOR_COMMAND;
-  text[length++] = 15;
+  text[length++] = TEXT_COLOR_WHITE;
   text[length] = 0;
   Text_DrawString(text, window, 0, -2);
 }

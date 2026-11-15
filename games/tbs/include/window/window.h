@@ -108,6 +108,9 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 #define TEXT_TILES 128
 #define TEXT_EXTRA_TILE_FIRST 512
 
+/// WindowWork.glyphResource when no glyph resource is loaded.
+#define NO_GLYPH_RESOURCE 99
+
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
@@ -135,9 +138,10 @@ struct WindowWork {
   u16 letterSpacing;                    ///< pixels between sprite glyphs; 9
   u16 textBufferEnd;    ///< where the next code goes in textBuffer
   u16 lastMessageStart; ///< where the last decoded message began in textBuffer
-  u16 glyphResource;    ///< VRAM cache slot of the page arrow; 99 when none
-  u16 glyphTiles;       ///< first sprite tile of the glyph sheet
-                        ///< (VRAM_CACHE_ENTRY_GLYPH_SHEET)
+  /// VRAM cache slot of the page arrow; NO_GLYPH_RESOURCE when none.
+  u16 glyphResource;
+  u16 glyphTiles; ///< first sprite tile of the glyph sheet
+                  ///< (VRAM_CACHE_ENTRY_GLYPH_SHEET)
   /// Message argument values (MessageArgument_Push).
   u32 argumentValues[8];
   u16 argumentKinds[8]; ///< the MESSAGE_ARGUMENT_ kind of each value; 0 for a

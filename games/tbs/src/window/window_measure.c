@@ -320,7 +320,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   for (;;) {
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
-    if (code >= 32) {
+    if (code >= TEXT_SPACE) {
 #if LANGUAGE != LANGUAGE_JAPANESE
       if (code == TEXT_SPACE) {
         width += WINDOW_SPRITE_SPACE_WIDTH;

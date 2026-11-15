@@ -44,6 +44,9 @@
 /// The y of the preview's stat row `row` (0 to 5: HP, PP, Attack, Defense,
 /// Agility and Luck) in a window whose top is tile row y.
 #define DJINN_PREVIEW_STAT_Y(y, row) ((y) * 8 + 56 + (row) * 8)
+/// The x of a changed stat's new value on that row, for a window whose left
+/// is tile column x.
+#define DJINN_PREVIEW_VALUE_X(x) ((x) * 8 + 72)
 
 /// The party's Djinn columns, one a member, 7 tiles wide, and the x of a
 /// column's figure.
@@ -807,9 +810,9 @@ s32 DjinnMenu_ShowHelp(void) {
     }
     // Before the next topic: free the page arrow's VRAM slot the text took
     // (99: none), and stop its typing.
-    if (work->glyphResource != 99) {
+    if (work->glyphResource != NO_GLYPH_RESOURCE) {
       VramCache_FreeEntry(work->glyphResource);
-      work->glyphResource = 99;
+      work->glyphResource = NO_GLYPH_RESOURCE;
     }
     WINDOW_WORK->pageArrowShown = 0;
     WindowSprite_PrepareForRedrawFar(helpWindow);
@@ -1774,7 +1777,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
       iconX = x * 8 + 70;
 #endif
       if (unit->hp != originalUnit->hp) {
-        Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->hp, 4, window,
+                                   DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 0));
         if (unit->hp > originalUnit->hp)
           Icon_DrawVariantWithTileOffset(window,
@@ -1786,7 +1790,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                                          DJINN_PREVIEW_STAT_Y(y, 0), 1);
       }
       if (unit->pp != originalUnit->pp) {
-        Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->pp, 4, window,
+                                   DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 1));
         if (unit->pp > originalUnit->pp)
           Icon_DrawVariantWithTileOffset(window,
@@ -1798,7 +1803,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                                          DJINN_PREVIEW_STAT_Y(y, 1), 1);
       }
       if (unit->atk != originalUnit->atk) {
-        Text_DrawNumberInWindowFar(unit->atk, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->atk, 4, window,
+                                   DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 2));
         if (unit->atk > originalUnit->atk)
           Icon_DrawVariantWithTileOffset(window,
@@ -1810,7 +1816,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                                          DJINN_PREVIEW_STAT_Y(y, 2), 1);
       }
       if (unit->def != originalUnit->def) {
-        Text_DrawNumberInWindowFar(unit->def, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->def, 4, window,
+                                   DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 3));
         if (unit->def > originalUnit->def)
           Icon_DrawVariantWithTileOffset(window,
@@ -1822,7 +1829,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                                          DJINN_PREVIEW_STAT_Y(y, 3), 1);
       }
       if (unit->agi != originalUnit->agi) {
-        Text_DrawNumberInWindowFar(unit->agi, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->agi, 4, window,
+                                   DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 4));
         if (unit->agi > originalUnit->agi)
           Icon_DrawVariantWithTileOffset(window,
@@ -1932,3 +1940,4 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
 #undef DJINN_COLUMN_WIDTH
 #undef DJINN_FIGURE_X
 #undef DJINN_CURSOR_ROW_STRIDE
+#undef DJINN_PREVIEW_VALUE_X

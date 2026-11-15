@@ -1949,6 +1949,14 @@ s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction) {
 /// Nothing calls it.
 s32 Menu_ReservedStatusOne(void) { return 1; }
 
+/// The worn items' rows in ItemMenu_DrawCategory's window, 16 pixels apart:
+/// weapon, helm, shield and armor from the top. A slot's label stands on its
+/// row, its item's name a line below, and its icon at EQUIPPED_ICON_X on
+/// screen.
+#define EQUIPPED_ROW_Y(row) ((row) * 16)
+#define EQUIPPED_ICON_X 216
+#define EQUIPPED_ICON_Y(row) (EQUIPPED_ROW_Y(row) + 32)
+
 /// Writes the four equipment slot labels (Weapon, Head, Shield and Chest, one a
 /// 16-pixel row) and the names of the items worn in them into window; mode 0
 /// also shows their icons at the right.
@@ -1960,9 +1968,12 @@ void ItemMenu_DrawCategory(struct Window *window, s32 memberId, s32 mode) {
   ItemMenu_PositionCategory();
   ItemMenu_HideAllIcons();
   Text_DrawMessageAsTilesFar(MsgEquipSlotLabels, window, 0, 0);
-  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 1, window, 0, 32);
-  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 2, window, 0, 16);
-  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 3, window, 0, 48);
+  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 1, window, 0,
+                             EQUIPPED_ROW_Y(2));
+  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 2, window, 0,
+                             EQUIPPED_ROW_Y(1));
+  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 3, window, 0,
+                             EQUIPPED_ROW_Y(3));
   items = menu->items;
   ItemMenu_DrawEquippedItemNames(window, items);
   if (mode == 0) {
@@ -1984,19 +1995,23 @@ void ItemMenu_DrawEquippedItemNames(struct Window *window, u16 *items) {
       switch (Item_GetDirectFar(itemId)->type) {
       case ITEM_TYPE_WEAPON:
         Text_DrawMessageAsTilesFar(itemId + MsgItemName, window,
-                                   STATUS_EQUIPPED_NAME_X, 8);
+                                   STATUS_EQUIPPED_NAME_X,
+                                   EQUIPPED_ROW_Y(0) + 8);
         break;
       case ITEM_TYPE_ARMOR:
         Text_DrawMessageAsTilesFar(itemId + MsgItemName, window,
-                                   STATUS_EQUIPPED_NAME_X, 56);
+                                   STATUS_EQUIPPED_NAME_X,
+                                   EQUIPPED_ROW_Y(3) + 8);
         break;
       case ITEM_TYPE_SHIELD:
         Text_DrawMessageAsTilesFar(itemId + MsgItemName, window,
-                                   STATUS_EQUIPPED_NAME_X, 40);
+                                   STATUS_EQUIPPED_NAME_X,
+                                   EQUIPPED_ROW_Y(2) + 8);
         break;
       case ITEM_TYPE_HELM:
         Text_DrawMessageAsTilesFar(itemId + MsgItemName, window,
-                                   STATUS_EQUIPPED_NAME_X, 24);
+                                   STATUS_EQUIPPED_NAME_X,
+                                   EQUIPPED_ROW_Y(1) + 8);
         break;
       }
     }
@@ -2035,8 +2050,8 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
   Icon_PrepareActor(icon);
 }
 
-/// Places the icon of each worn weapon, armor, shield and helm at x 216, on its
-/// slot's row of ItemMenu_DrawCategory's window; the others stay off screen.
+/// Places the icon of each worn weapon, armor, shield and helm at
+/// EQUIPPED_ICON_X, on its slot's row; the others stay off screen.
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   struct ItemMenuWork *menu;
   struct WindowSprite *icon;
@@ -2051,20 +2066,20 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
         switch (Item_GetDirectFar(items[slotIndex] & INVENTORY_ITEM_ID_MASK)
                     ->type) {
         case ITEM_TYPE_WEAPON:
-          icon->x = 216;
-          icon->y = 32;
+          icon->x = EQUIPPED_ICON_X;
+          icon->y = EQUIPPED_ICON_Y(0);
           break;
         case ITEM_TYPE_ARMOR:
-          icon->x = 216;
-          icon->y = 80;
+          icon->x = EQUIPPED_ICON_X;
+          icon->y = EQUIPPED_ICON_Y(3);
           break;
         case ITEM_TYPE_SHIELD:
-          icon->x = 216;
-          icon->y = 64;
+          icon->x = EQUIPPED_ICON_X;
+          icon->y = EQUIPPED_ICON_Y(2);
           break;
         case ITEM_TYPE_HELM:
-          icon->x = 216;
-          icon->y = 48;
+          icon->x = EQUIPPED_ICON_X;
+          icon->y = EQUIPPED_ICON_Y(1);
           break;
         }
         Icon_PrepareActor(icon);
@@ -2218,3 +2233,6 @@ s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
 #undef SWITCH_HELP_Y
 #undef STATUS_AILMENT_Y
 #undef STATUS_ELEMENT_X
+#undef EQUIPPED_ICON_X
+#undef EQUIPPED_ICON_Y
+#undef EQUIPPED_ROW_Y

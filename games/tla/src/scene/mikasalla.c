@@ -91,18 +91,15 @@ void Mikasalla_ClimbDownLadder(void);
 
 extern u8 MsgFieldAreYouLookingForSomeone[];
 
-/* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla;
- * scene/scene.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mikasalla.c:110: invalid use of undefined type `struct
- * WarpEntry'. */
-struct WarpEntry__mikasalla {
-  s32 map;
+/// A door that opens with a cell animation: the animation and the cell it
+/// plays at.
+struct WarpTarget {
+  const void *script;
   u16 x;
   u16 z;
 };
 
-extern struct WarpEntry__mikasalla gMikasalla_Doors[];
+extern struct WarpTarget gMikasalla_Doors[];
 
 /// The party leader walks into one of the village's doors. Everyone stops, the
 /// door opens with its cell animation (gMikasalla_Doors), and the leader walks
@@ -126,8 +123,8 @@ void Mikasalla_EnterDoor(void) {
   index = *choice;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
-  MapGrid_AnimateCells(gMikasalla_Doors[index].map, gMikasalla_Doors[index].x,
-                       gMikasalla_Doors[index].z);
+  MapGrid_AnimateCells(gMikasalla_Doors[index].script,
+                       gMikasalla_Doors[index].x, gMikasalla_Doors[index].z);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 
@@ -364,12 +361,12 @@ s16 gMikasalla_WideDoorOpening[] = {
 
 /// The village's doors that open with a cell animation as the party walks
 /// through.
-struct WarpEntry__mikasalla gMikasalla_Doors[] = {
-    {(s32)gMikasalla_DoorOpening, 84, 29},
-    {(s32)gMikasalla_DoorOpening, 77, 34},
-    {(s32)gMikasalla_ThirdDoorOpening, 86, 38},
-    {(s32)gMikasalla_DoorOpening, 75, 41},
-    {(s32)gMikasalla_WideDoorOpening, 69, 27},
+struct WarpTarget gMikasalla_Doors[] = {
+    {gMikasalla_DoorOpening, 84, 29},
+    {gMikasalla_DoorOpening, 77, 34},
+    {gMikasalla_ThirdDoorOpening, 86, 38},
+    {gMikasalla_DoorOpening, 75, 41},
+    {gMikasalla_WideDoorOpening, 69, 27},
 };
 
 struct SceneEntrance gSceneEntrances[] = {

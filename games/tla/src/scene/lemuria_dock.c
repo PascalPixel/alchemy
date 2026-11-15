@@ -36,7 +36,7 @@ enum {
 };
 
 struct WarpTarget {
-  s32 scene;
+  s32 script; ///< the door's cell animation
   u16 x;
   u16 z;
 };
@@ -160,7 +160,7 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
+  MapGrid_AnimateCells(warp->script, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);

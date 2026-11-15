@@ -77,12 +77,7 @@ extern struct ActorPlacement gNaribwe_Entrance10Placements[];
 extern struct ActorPlacement gNaribwe_PlacementsOnReturn[];
 extern struct Trigger gNaribwe_Triggers[];
 extern struct Trigger gNaribwe_TriggersOnReturn[];
-/* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gNaribwe_Doors[], it does
- * not compile in tla-ja: games/tla/src/scene/naribwe.c:213: `gNaribwe_Doors'
- * undeclared (first use in this function). */
-extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
-#define gNaribwe_Doors gNaribwe_Doors__first
+extern struct WarpEntry gNaribwe_Doors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -327,7 +322,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#undef gNaribwe_Doors
 // Naribwe's data: its scripts, door, placements and triggers.
 
 #include "text/msg_ids.h"
@@ -428,12 +422,12 @@ s16 gNaribwe_DoorOpening[] = {
     8, 42, 1, 2, 6, -1,
 };
 
-s32 gNaribwe_Doors[] = {                                                               
-      (s32)gNaribwe_DoorOpening,                                                              
-      0x330012,                                                                      
-      (s32)gNaribwe_DoorOpening,                                                              
-      0x220015,                                                                      
-  };
+/// The village's doors that open with a cell animation as the party walks
+/// through.
+struct WarpEntry gNaribwe_Doors[] = {
+    {gNaribwe_DoorOpening, 18, 51},
+    {gNaribwe_DoorOpening, 21, 34},
+};
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 224, 0, 190, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

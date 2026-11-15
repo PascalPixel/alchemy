@@ -487,22 +487,10 @@ void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
 /// them ten frames later; GaiaRock_DropPillar of Gaia Rock is the same
 /// function.
 void AnkohlRuins_SettleObject(s32 id, s32 cue) {
+  s32 frames = 60;
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first. */
-  register u8 *flags asm("r2");
-  u8 *held;
-  /* FAKEMATCH(pin): the counter in r6 and the object in r5. */
-  register s32 frames asm("r6");
 
-  flags = (u8 *)85;
-  /* FAKEMATCH(barrier): keeps 85 in a register. */
-  asm("" : "+r"(flags));
-  flags += (s32)object;
-  *flags = 3;
-  frames = 60;
-  /* FAKEMATCH(temporary): the address copied to r8 for the calls after the
-   * counter starts. */
-  held = flags;
+  object->motionFlags = 3;
   while (frames != 0) {
     System_Wait(1);
     frames--;
@@ -512,7 +500,7 @@ void AnkohlRuins_SettleObject(s32 id, s32 cue) {
   if (cue != 0)
     Event_PlaySound(cue);
   System_Wait(10);
-  *held = 0;
+  object->motionFlags = 0;
 }
 
 /// Places count effects in a row, rows times, each row two pixels further down,

@@ -120,36 +120,25 @@ void GaiaRock_StepOnThirdStatueSpot(void) {
 // editions after the Japanese one also run the given cue first.
 #if !TLA_PATCH_1
 void GaiaRock_DropPillar(s32 id) {
+  s32 frames = 60;
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH(pin): the counter fixed to r6. */
-  register s32 frames asm("r6");
 
   object->motionFlags = 3;
-  for (frames = 60; frames != 0; frames--) {
+  while (frames != 0) {
     System_Wait(1);
     if (object->velocityY == 0)
       break;
+    frames--;
   }
   System_Wait(10);
   object->motionFlags = 0;
 }
 #else
 void GaiaRock_DropPillar(s32 id, s32 cue) {
+  s32 frames = 60;
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH(pin): the flags' address fixed to r2. */
-  register u8 *flags asm("r2");
-  u8 *held;
-  /* FAKEMATCH(pin): the counter fixed to r6. */
-  register s32 frames asm("r6");
 
-  flags = (u8 *)85;
-  /* FAKEMATCH(barrier): an empty asm on flags. */
-  asm("" : "+r"(flags));
-  flags += (s32)object;
-  *flags = 3;
-  frames = 60;
-  /* FAKEMATCH(temporary): a copy of the flags' address. */
-  held = flags;
+  object->motionFlags = 3;
   while (frames != 0) {
     System_Wait(1);
     frames--;
@@ -159,7 +148,7 @@ void GaiaRock_DropPillar(s32 id, s32 cue) {
   if (cue != 0)
     Event_PlaySound(cue);
   System_Wait(10);
-  *held = 0;
+  object->motionFlags = 0;
 }
 #endif
 

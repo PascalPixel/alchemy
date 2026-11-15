@@ -485,12 +485,6 @@ void SuperLuckyDice_Run(void) {
   s32 groundPoint[3];
   s32 screen[3];
   s32 drawOrder[4];
-  /* FAKEMATCH(volatile): four halfwords stored to sp+138..132 and each reloaded
-   * with ldrh. */
-  volatile u16 affineA;
-  volatile u16 affineB;
-  volatile u16 affineC;
-  volatile u16 affineD;
   u16 *spritePalette;
   u8 *cellBuffer;
   struct DiceWork *dice;
@@ -1620,16 +1614,22 @@ void SuperLuckyDice_Run(void) {
       sprites->oam[spriteCount].attr2 = 0;
     }
     for (index = 0; index != 8; index++) {
+      // The sprite's matrix, each element stored through its address: the four
+      // stay in the frame and are read back from it.
+      u16 affineA;
+      u16 affineB;
+      u16 affineC;
+      u16 affineD;
       s16 scaleX;
       s16 scaleY;
       s32 zero = 0;
 
       scaleX = spriteDepth[index] / 4 + 128;
-      affineA = scaleX;
-      affineB = zero;
-      affineC = zero;
+      *&affineA = scaleX;
+      *&affineB = zero;
+      *&affineC = zero;
       scaleY = spriteDepth[index] / 4 + 128;
-      affineD = scaleY;
+      *&affineD = scaleY;
       sprites->oam[index * 4 + 0].attr2 |= affineA << 16;
       sprites->oam[index * 4 + 1].attr2 |= affineB << 16;
       sprites->oam[index * 4 + 2].attr2 |= affineC << 16;

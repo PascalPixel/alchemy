@@ -1678,9 +1678,9 @@ s32 Ride_GetEntryFlags(s32 index) {
 
 #include "shared/ride_set_slot.h"
 
-/* VIEW(ride_handle): routine Unit_Get as struct Unit *Unit_Get(s32
- * owner); scene/mars_lighthouse_star_room has void *Unit_Get(s32 owner); not
- * tried: Unit_Get's declaration holds a FAKEMATCH tag. */
+/* VIEW(ride_handle): routine Unit_Get as struct Unit *Unit_Get(s32 owner);
+ * scene/mars_lighthouse_star_room has void *Unit_Get(s32 owner); not tried:
+ * Unit_Get's declaration holds a FAKEMATCH tag. */
 struct Unit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__ride_handle
 

@@ -987,8 +987,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
 
 /* VIEW(undead_sword): tag struct RenderModel as struct
  * RenderModel__undead_sword; render_model.h has another definition; tried with
- * the definition the rest of the object has, BattleEffect_RunDiamondBerg
- * moves: 1 of 655 instructions in tla-en. */
+ * the definition the rest of the object has, BattleEffect_RunDiamondBerg moves:
+ * 1 of 655 instructions in tla-en. */
 struct RenderModel__undead_sword {
   s32 kind;
   s32 flags;

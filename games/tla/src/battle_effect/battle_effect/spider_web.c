@@ -8,9 +8,9 @@
 
 /* VIEW(f15b3b0): routine Sprite_StartAnimationFar as s32
  * Sprite_StartAnimationFar(void *, s32); ability_effects has void
- * Sprite_StartAnimationFar(void *object, s32 value); tried as the rest
- * of the object declares it, EffectSprite_Acquire moves: 1 of 46 instructions
- * in tla-ja. */
+ * Sprite_StartAnimationFar(void *object, s32 value); tried as the rest of the
+ * object declares it, EffectSprite_Acquire moves: 1 of 46 instructions in
+ * tla-ja. */
 /// Sprite_StartAnimationFar as Ulysses's part sees it: returning a word.
 extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
     "Sprite_StartAnimationFar");

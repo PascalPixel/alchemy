@@ -18,10 +18,10 @@ struct MeteorStar {
 
 extern const struct Scale gMeteorBlow_DoubleScale;
 
-/* VIEW(meteor_blow): tag struct RenderModel as struct
- * RenderModel__meteor_blow; render_model.h has another definition; tried with
- * the definition the rest of the object has, BattleEffect_RunMeteorBlow
- * moves: 1 of 1545 instructions in tla-en. */
+/* VIEW(meteor_blow): tag struct RenderModel as struct RenderModel__meteor_blow;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunMeteorBlow moves: 1 of 1545 instructions in
+ * tla-en. */
 struct RenderModel__meteor_blow {
   s32 kind;
   s32 flags;

@@ -775,9 +775,9 @@ MarsLighthouseRoomM_ShowFlame__s0b64() __asm__("MarsLighthouseRoomM_ShowFlame");
 /* VIEW(mars_lighthouse_room_m): routine TilesetAnim_Resume as void
  * TilesetAnim_Resume(s32 value); module/scene/scene.h has u32
  * TilesetAnim_Resume(struct FieldSprite *sprite, u32 frame); tried as the
- * definition's void TilesetAnim_Resume(u32 no), it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:673: conflicting types
- * for `TilesetAnim_Resume'. */
+ * definition's void TilesetAnim_Resume(u32 no), it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:673: conflicting types for
+ * `TilesetAnim_Resume'. */
 extern void
 Map_ClearLayerEntryFlag__s0b64(s32 value) __asm__("TilesetAnim_Resume");
 void Weather_StartRain(s32 a);

@@ -7,10 +7,10 @@
 
 struct StripQuad;
 
-/* VIEW(megiddo): tag struct RenderModel as struct
- * RenderModel__megiddo; render_model.h has another definition; tried with
- * the definition the rest of the object has, BattleEffect_RunMegiddo
- * moves: 1 of 1354 instructions in tla-en. */
+/* VIEW(megiddo): tag struct RenderModel as struct RenderModel__megiddo;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunMegiddo moves: 1 of 1354 instructions in
+ * tla-en. */
 struct RenderModel__megiddo {
   s32 kind;
   s32 flags;

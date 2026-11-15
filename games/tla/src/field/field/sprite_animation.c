@@ -169,8 +169,8 @@ struct ActorSpriteView__resource_slot {
 };
 /* VIEW(resource_slot): routine Sprite_ResetAnimations as s32
  * Sprite_ResetAnimations(struct ActorSpriteView__resource_slot *state);
- * actor_view.h has s32 Sprite_ResetAnimations(struct ActorSpriteView *);
- * tried as the definition's s32 Sprite_ResetAnimations(struct
+ * actor_view.h has s32 Sprite_ResetAnimations(struct ActorSpriteView *); tried
+ * as the definition's s32 Sprite_ResetAnimations(struct
  * ActorSpriteView__resource_slot *state), which the object already declares, it
  * does not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:157:
  * conflicting types for `Sprite_ResetAnimations'. */
@@ -262,12 +262,12 @@ void SpriteAnimation_Reset(struct SpriteAnimation *work) {
 }
 
 /* VIEW(resource_slot): routine Sprite_AddAnimation as s32
- * Sprite_AddAnimation(struct MetadataSlotState *state, s32 id);
- * actor_view.h has s32 Sprite_AddAnimation(struct ActorSpriteView *,
- * s32); tried as the definition's s32 Sprite_AddAnimation(struct
- * MetadataSlotState *state, s32 id), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:248:
- * conflicting types for `Sprite_AddAnimation'. */
+ * Sprite_AddAnimation(struct MetadataSlotState *state, s32 id); actor_view.h
+ * has s32 Sprite_AddAnimation(struct ActorSpriteView *, s32); tried as the
+ * definition's s32 Sprite_AddAnimation(struct MetadataSlotState *state, s32
+ * id), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/field/sprite_animation.c:248: conflicting types for
+ * `Sprite_AddAnimation'. */
 s32 ResourceMetadata_Register__resource_slot(
     struct MetadataSlotState *state, s32 id) __asm__("Sprite_AddAnimation");
 #define Sprite_AddAnimation ResourceMetadata_Register__resource_slot
@@ -382,12 +382,12 @@ void SpriteAnimation_Start(struct SpriteAnimation *work, s32 no) {
 }
 
 /* VIEW(resource_slot): routine Sprite_StartAnimation as s32
- * Sprite_StartAnimation(struct AnimationGroup *state, s32 flags);
- * actor_view.h has s32 Sprite_StartAnimation(struct ActorSpriteView *,
- * s32); tried as the definition's s32 Sprite_StartAnimation(struct
- * AnimationGroup *state, s32 flags), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:360:
- * conflicting types for `Sprite_StartAnimation'. */
+ * Sprite_StartAnimation(struct AnimationGroup *state, s32 flags); actor_view.h
+ * has s32 Sprite_StartAnimation(struct ActorSpriteView *, s32); tried as the
+ * definition's s32 Sprite_StartAnimation(struct AnimationGroup *state, s32
+ * flags), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/field/sprite_animation.c:360: conflicting types for
+ * `Sprite_StartAnimation'. */
 s32 Animation_ApplyChildArgument__resource_slot(
     struct AnimationGroup *state, s32 flags) __asm__("Sprite_StartAnimation");
 #define Sprite_StartAnimation Animation_ApplyChildArgument__resource_slot

@@ -56,7 +56,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   DrawRectangle draw[2];
   s32 frames;
   u8 *sprites = Ram_HeapSlots->battleSheet;
-  s32 *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   u8 *cells = Ram_MapCellBuffer;
   struct RenderModel *model;
   void *verts;
@@ -475,7 +475,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         fall->z += fall->velocityZ;
       }
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       EffectPosition_ProjectPoint(&ball->velocityX, &pos);
       x = pos.x >> 1;
       pos.x = x;

@@ -27,7 +27,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
-  s32 *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   u8 *sparkCels = Ram_HeapSlots->battleSheet;
   struct MotionObject *targetObject;
   struct RenderModel *quad;
@@ -202,7 +202,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       spark = Ram_MapCellBuffer + 0x4000;
       /* FAKEMATCH(barrier): an empty asm on spark. */
       __asm__("" : "=r"(spark) : "0"(spark));
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;
 

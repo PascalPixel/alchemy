@@ -491,7 +491,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           {
             s32 h;
 
-            k = (i << 21) + waveX;
+            k = px(i * 32) + waveX;
             h = (j << 5) + 103;
             posp->x = k;
             posp->y = px(h);
@@ -601,8 +601,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           struct Particle *p;
 
           p = &work->particles[32 + i];
-          p->x = ((i / 3) << 18) + px(176);
-          p->y = ((i % 3) * 3 << 17) + px(74);
+          p->x = px((i / 3) * 4) + px(176);
+          p->y = px((i % 3) * 3 * 2) + px(74);
           p->velocityX = 0;
           p->velocityY = 0;
           p->variant = 0;
@@ -611,8 +611,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           struct Particle *p;
 
           p = &work->particles[40 + i];
-          p->x = ((i / 3) << 18) + px(112);
-          p->y = ((i % 3) * 3 << 17) + px(82);
+          p->x = px((i / 3) * 4) + px(112);
+          p->y = px((i % 3) * 3 * 2) + px(82);
           p->velocityX = 0;
           p->velocityY = 0;
           p->variant = 0;
@@ -1134,7 +1134,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->velocityY = p->velocityY * 63 / DAMPING_SCALE;
         }
         for (i = 0; i != 4; i++) {
-          shipPlace.x = ((i & 1) << 21) + p->x + camera + px(128);
+          shipPlace.x = px((i & 1) * 32) + p->x + camera + px(128);
           shipPlace.y =
               ((((i / 2) << 5) - gDaedalus_ShakeOffsets[work->shakeFrames])
                << 16) +
@@ -1175,7 +1175,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             s32 v;
 
             wave = &shipPlace;
-            wave->x = (i << 21) + waveX;
+            wave->x = px(i * 32) + waveX;
             wave->y = px((j << 5) - gDaedalus_ShakeOffsets[work->shakeFrames]) +
                       shipY + px(132);
             if (i == 8) {
@@ -1650,7 +1650,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
 
           Transform_Reset();
           k = i & 3;
-          Transform_ApplyTranslation((k << 17) + ringX + ringOffset,
+          Transform_ApplyTranslation(px(k * 2) + ringX + ringOffset,
                                      discY - px(k + 2) + ringOffset, 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(ring->x);

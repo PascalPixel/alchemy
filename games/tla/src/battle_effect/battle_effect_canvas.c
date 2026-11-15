@@ -308,7 +308,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
               work->particles[i].variant <= 47) {
             Transform_Reset();
             {
-              s32 x = ((i & 3) << 17) + px(2);
+              s32 x = px((i & 3) * 2) + px(2);
               s32 o = -0x400000;
               Transform_ApplyTranslation(cx + x + o, cy - px((i & 3) + 2) + o,
                                          0);

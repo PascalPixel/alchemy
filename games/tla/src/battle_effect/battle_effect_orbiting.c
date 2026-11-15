@@ -44,12 +44,12 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   record[1] = px(80);
   record[2] = 0;
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
-    s32 *camera;
+    struct BattleCamera *camera;
 
     // The stars turn about a point 80 pixels in front of the camera.
     camera = Ram_HeapSlots->cameraWork;
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->focus);
     Transform_ApplyPosition(record);
     star = STARS;
     for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
@@ -160,7 +160,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != TARGET_BURSTS_FRAMES; frame++) {
     s32 member;
-    s32 *camera;
+    struct BattleCamera *camera;
 
     camera = Ram_HeapSlots->cameraWork;
     for (member = 0; member != args->targetCount; member++) {
@@ -169,7 +169,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
       // The puffs rise from 40 pixels above the target.
       memberObject = BattleObject_GetFar(args->targets[member])->object;
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       record[0] = memberObject->x;
       record[1] = px(20);
       record[2] = memberObject->z;

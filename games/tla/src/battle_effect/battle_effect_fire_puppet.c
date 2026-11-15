@@ -44,7 +44,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   u8 *sprites;
-  s32 *camera;
+  struct BattleCamera *camera;
   struct MotionObject *target;
   struct ScreenPoint pos;
   struct ModelTexture texture;
@@ -89,7 +89,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != FIRE_PUPPET_FRAMES; frame++) {
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->focus);
     if (frame == 0) {
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_GREY, POSE_PARTY_HELD,
                                0, -1);

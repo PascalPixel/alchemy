@@ -39,7 +39,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   void *canvas;
   DrawRectangle blit[2];
   s32 frame;
-  s32 *camera;
+  struct BattleCamera *camera;
   u8 *sprites;
   void *caster;
   s32 arcs[4];
@@ -92,7 +92,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 
     for (frame = 0; frame != args->variant * 10 + 60; frame++) {
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       if (frame == 0) {
         arcs[0] = 0;
         arcs[1] = 0;

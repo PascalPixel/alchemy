@@ -1512,8 +1512,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           s32 mask = ~0x3ff;
           s32 k_ = 64;
           s32 tile = i + k_ + phase;
-          place[0] = (i << 21) + scrollX;
-          place[2] = px(121) + (j << 21);
+          place[0] = px(i * 32) + scrollX;
+          place[2] = px(121) + px(j * 32);
           /* FAKEMATCH(dead): a store both arms below overwrite. */
           if (i == 300 && row == j && last == 0)
             u = 0;

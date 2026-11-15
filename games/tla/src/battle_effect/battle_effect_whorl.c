@@ -32,7 +32,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   // bytes.
   DrawRectangle blit[2];
   s32 frame;
-  s32 *camera;
+  struct BattleCamera *camera;
   u8 *sprites;
   s32 frames;
   u8 *unit;
@@ -193,7 +193,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         }
       }
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       if (mode <= WATER_COLUMN_GALE) {
         s32 k = 4;
 

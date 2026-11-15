@@ -1584,8 +1584,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         grid.y += px(16);
       }
       for (i = 0; i != 12; i++) {
-        place[0] = ((i % 3) << 21) + grid.x;
-        place[2] = ((i / 3) << 21) + grid.y;
+        place[0] = px((i % 3) * 32) + grid.x;
+        place[2] = px((i / 3) * 32) + grid.y;
         Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                           0);
       }

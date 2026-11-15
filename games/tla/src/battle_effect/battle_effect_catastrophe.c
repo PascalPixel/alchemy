@@ -540,8 +540,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       for (i = 0; i != CATASTROPHE_SCALES_COUNT; i++) {
         s32 h = i / 2;
 
-        place[0] = ((i - h * 2) << 21) + drift + px(72);
-        place[2] = (h << 21) + camZ + sway + px(60);
+        place[0] = px((i - h * 2) * 32) + drift + px(72);
+        place[2] = px(h * 32) + camZ + sway + px(60);
         if (place[2] > 0xfffff) {
           if (place[2] <= px(168)) {
             Render_ApplyProjectedPlacementFar(

@@ -9,7 +9,7 @@
 /// Projects a unit onto the screen, raised by half its height, from the battle
 /// camera.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
-  u8 *camera;
+  struct BattleCamera *camera;
   s32 *object;
   u8 *info;
   s32 scale;
@@ -18,7 +18,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   object = BattleObject_GetFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
   Transform_Reset();
-  Transform_SetLookAt(camera, camera + 12);
+  Transform_SetLookAt(camera->eye, camera->focus);
   scale = Iwram_MulQ16(Render_ProjectPoint(object + 2, screen),
                        *(s32 *)(info + 12));
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);

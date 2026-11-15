@@ -215,8 +215,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if (frame > 75 && (i == 8 || i == 12 || i == 15)) {
         continue;
       }
-      place[0] = ((i % 4) << 21) + px(76);
-      place[2] = ((i / 4) << 21) + depth;
+      place[0] = px((i % 4) * 32) + px(76);
+      place[2] = px((i / 4) * 32) + depth;
       Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                         0);
     }

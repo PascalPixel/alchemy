@@ -315,15 +315,15 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   case 0:
     objects = work->sprites;
     for (i = 0; i != 9; i++) {
-      pos[0] = (i % 3 << 21) + x;
-      pos[2] = (i / 3 << 21) + z;
+      pos[0] = px((i % 3) * 32) + x;
+      pos[2] = px((i / 3) * 32) + z;
       Render_ApplyProjectedPlacementFar(*objects++, pos, &normal.x, 0);
     }
     break;
   case 5:
     for (i = 0; i != 12; i++) {
-      pos[0] = (i % 4 << 21) + x;
-      pos[2] = (i / 4 << 21) + z;
+      pos[0] = px((i % 4) * 32) + x;
+      pos[2] = px((i / 4) * 32) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;

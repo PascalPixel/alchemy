@@ -631,8 +631,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         objectScale[1] = Q16_ONE;
         objectScale[0] = Q16_ONE;
         for (i = 0; i != CHARON_BEAST_SPRITES; i++) {
-          objectPlace[0] = ((i % CHARON_BEAST_COLUMNS) << 21) + posX;
-          objectPlace[2] = ((i / CHARON_BEAST_COLUMNS) << 21) + posZ;
+          objectPlace[0] = px((i % CHARON_BEAST_COLUMNS) * 32) + posX;
+          objectPlace[2] = px((i / CHARON_BEAST_COLUMNS) * 32) + posZ;
           Render_ApplyProjectedPlacementFar(OBJECTS[i], objectPlace,
                                             objectScale, 0);
         }

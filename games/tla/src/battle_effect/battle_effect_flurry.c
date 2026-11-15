@@ -140,7 +140,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   void *canvas;
   s32 frame;
   u8 *sheet;
-  s32 *camera;
+  struct BattleCamera *camera;
   struct MotionObject *target;
   s32 resource;
   u8 *cels;
@@ -337,7 +337,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
     // The motes, until their life runs out, bouncing off the ground.
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->focus);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,

@@ -191,7 +191,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         placement[3] = 0;
         placement[1] = px(255);
         for (i = 0; i != 4; i++) {
-          placement[0] = (left << 17) + px(16);
+          placement[0] = px(left * 2) + px(16);
           placement[2] = px(rise + 40 + i * 32);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&source, 0);

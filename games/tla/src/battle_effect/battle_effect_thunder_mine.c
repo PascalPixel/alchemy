@@ -698,7 +698,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
-  s32 *camera;
+  struct BattleCamera *camera;
   u8 *sprites;
   s32 point[3];
   struct ScreenPoint corners[11];
@@ -800,7 +800,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
     }
     BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->focus);
     {
       struct MotionObject *caster;
       s32 traced;

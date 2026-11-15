@@ -23,6 +23,9 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define WINDOW_X 23
 #endif
 
+/// The command window's top tile row: it runs along the bottom three rows.
+#define COMMAND_ROW_TOP 17
+
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until a
 /// command is chosen.
@@ -50,7 +53,8 @@ s32 BattleCommandRow_Run(s32 mode) {
   if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);
   else
-    selectionUi->window = Window_Create(WINDOW_X, 17, 30 - WINDOW_X, 3, 6);
+    selectionUi->window = Window_Create(WINDOW_X, COMMAND_ROW_TOP,
+                                        DISPLAY_TILE_WIDTH - WINDOW_X, 3, 6);
   selectionUi->drawnIndex = -1;
   // The commands, as listed above. tradeCount counts the party's standby
   // Djinn.
@@ -133,22 +137,24 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++)
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + WINDOW_X -
-                18 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
+              *(work->tilemap +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                WINDOW_X - 18 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram =
-                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
+              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
+                                   21 * BG_SCREEN_WIDTH + WINDOW_X;
 
-              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+              vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
-                selectionUi->iconCount * 3 + WINDOW_X) = 0;
+              *(work->tilemap +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                (col & 3) - selectionUi->iconCount * 3 + WINDOW_X) = 0;
             }
           }
         }
@@ -158,22 +164,24 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++)
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 2 +
-                (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
+              *(work->tilemap +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                2 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram =
-                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
+              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
+                                   21 * BG_SCREEN_WIDTH + 20;
 
-              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+              vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
-                selectionUi->iconCount * 3 + 20) = 0;
+              *(work->tilemap +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                (col & 3) - selectionUi->iconCount * 3 + 20) = 0;
             }
           }
         }
@@ -310,8 +318,10 @@ s32 BattleCommandRow_Run(s32 mode) {
         /* FAKEMATCH(volatile): the window tilemap, in RAM, stored through a
          * volatile pointer. */
         for (col = 0; col <= 2; col++)
-          *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
-                            5 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
+          *(volatile u16 *)(work->tilemap +
+                            (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
+                            panel * 3 + 5 + (col & 3)) =
+              WINDOW_TILE_COMMAND_PANEL;
       }
     }
   }

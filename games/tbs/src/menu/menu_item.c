@@ -222,8 +222,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     // Choose whose items to look at.
     case ITEM_STEP_MEMBER:
       menu->selectedSlots[0] = 0;
-      ItemMenu_SetMessageWindowHeight3();
-      ItemMenu_SetItemWindowRow3();
+      ItemMenu_FitMessageWindowToQuestion();
+      ItemMenu_PlaceItemWindowBelowQuestion();
       menu->selectedItemIcon->motion = ICON_HIDDEN;
       ItemMenu_DrawMessage(0, MsgWhoseItem);
 #if TBS_PATCH_1
@@ -259,8 +259,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         state = ITEM_STEP_MEMBER;
         break;
       }
-      ItemMenu_SetMessageWindowHeight3();
-      ItemMenu_SetItemWindowRow3();
+      ItemMenu_FitMessageWindowToQuestion();
+      ItemMenu_PlaceItemWindowBelowQuestion();
       menu->selectedItemIcon->motion = ICON_HIDDEN;
       menu->sideIcons[0]->motion = ICON_SHOWN;
       ItemMenu_DrawMessage(0, MsgWhichItem);
@@ -346,8 +346,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     // Use the item on the party member chosen.
     case ITEM_STEP_USE:
       ItemMenu_HideAllIcons();
-      ItemMenu_SetMessageWindowHeight5();
-      ItemMenu_SetItemWindowRow5();
+      ItemMenu_FitMessageWindowToItemQuestion();
+      ItemMenu_PlaceItemWindowBelowItemQuestion();
       WindowSprite_RedrawSavedRectFar(menu->questionWindow);
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar(MsgUseOnWhom, menu->questionWindow, 16, 16);
@@ -385,8 +385,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
 
     // Give: choose to whom.
     case ITEM_STEP_TARGET:
-      ItemMenu_SetMessageWindowHeight5();
-      ItemMenu_SetItemWindowRow5();
+      ItemMenu_FitMessageWindowToItemQuestion();
+      ItemMenu_PlaceItemWindowBelowItemQuestion();
       WindowSprite_RedrawSavedRectFar(menu->questionWindow);
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar(MsgGiveToWhom, menu->questionWindow, 16, 16);
@@ -454,7 +454,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         }
         Unit_CalculateFar(member);
 #endif
-        ItemMenu_SetItemWindowRow3();
+        ItemMenu_PlaceItemWindowBelowQuestion();
         ItemMenu_RefreshMember(menu->sideMember[0], 0);
         menu->selectedItemIcon->motion = ICON_HIDDEN;
         menu->sideIcons[0]->motion = ICON_HIDDEN;
@@ -545,7 +545,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         menu->sideMember[0] = menu->sideMember[1];
         menu->selectedItems[0] &= INVENTORY_ITEM_ID_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
-        ItemMenu_SetMessageWindowHeight6();
+        ItemMenu_FitMessageWindowToLongItemQuestion();
 #endif
         WindowSprite_RedrawSavedRectFar(menu->questionWindow);
         ItemMenu_DrawItemHead();
@@ -586,8 +586,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     // Trade: the receiver gives back one of their items.
     case ITEM_STEP_TRADE:
       transferFailed = 0;
-      ItemMenu_SetMessageWindowHeight3();
-      ItemMenu_SetItemWindowRow3();
+      ItemMenu_FitMessageWindowToQuestion();
+      ItemMenu_PlaceItemWindowBelowQuestion();
       ItemMenu_DrawMessage(0, MsgSwapForWhat);
 #if TBS_PATCH_4
       if (ItemMenu_RunList(1) == -1) {
@@ -684,9 +684,9 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         Unit_CalculateFar(menu->sideMember[1]);
         Unit_RefreshPsynergyFar(menu->sideMember[0]);
         Unit_RefreshPsynergyFar(menu->sideMember[1]);
-        ItemMenu_SetMessageWindowHeight5();
+        ItemMenu_FitMessageWindowToItemQuestion();
 #if LANGUAGE != LANGUAGE_JAPANESE
-        ItemMenu_SetMessageWindowHeight6();
+        ItemMenu_FitMessageWindowToLongItemQuestion();
         ItemMenu_HidePageIcons();
 #endif
         WindowSprite_RedrawSavedRectFar(menu->questionWindow);
@@ -696,7 +696,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         result = ItemMenu_ConfirmEquip(0);
         if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
           WindowSprite_ClearListFar(menu->descriptionWindow);
-          ItemMenu_SetItemWindowRow5();
+          ItemMenu_PlaceItemWindowBelowItemQuestion();
           ItemMenu_RefreshMember(menu->sideMember[1], 1);
           if (result == 0) {
             ItemMenu_DrawEquipPreview(menu->sideMember[1],
@@ -1620,7 +1620,7 @@ s32 ItemMenu_ChooseCommand(void) {
     ItemMenu_HideAllIcons();
     WindowSprite_RedrawSavedRectFar((void *)menu->listWindow);
     messageWindow = menu->questionWindow;
-    ItemMenu_SetMessageWindowHeight7();
+    ItemMenu_FitMessageWindowToItemChoices();
     WindowSprite_RedrawSavedRectFar((void *)messageWindow);
     Window_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
     ItemMenu_DrawItemHead();
@@ -2291,40 +2291,48 @@ void ItemMenu_DrawStat(s32 statChange, s32 unused, struct Window *window, s32 x,
   }
 }
 
-/// Moves the item window to row 5 of the right-hand side.
-void ItemMenu_SetItemWindowRow5(void) {
+/// Moves the item window to row 5 of the right-hand side, below a question
+/// headed by the item.
+void ItemMenu_PlaceItemWindowBelowItemQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->itemWindow, 13, 5,
       17, 10);
 }
 
-/// Moves the item window to row 3 of the right-hand side.
-void ItemMenu_SetItemWindowRow3(void) {
+/// Moves the item window to row 3 of the right-hand side, below a one-line
+/// question.
+void ItemMenu_PlaceItemWindowBelowQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->itemWindow, 13, 3,
       17, 10);
 }
 
-/// Makes the message window, along the top right, 5 rows tall.
-void ItemMenu_SetMessageWindowHeight5(void) {
+/// Makes the message window, along the top right, 5 rows tall: the item's name
+/// and a question below it.
+void ItemMenu_FitMessageWindowToItemQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
       0, 17, 5);
 }
 
-void ItemMenu_SetMessageWindowHeight6(void) {
+/// Makes the message window 6 rows tall, for the longer questions outside
+/// Japanese.
+void ItemMenu_FitMessageWindowToLongItemQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
       0, 17, 6);
 }
 
-void ItemMenu_SetMessageWindowHeight7(void) {
+/// Makes the message window 7 rows tall: the item's name above the command grid
+/// or the quantity dial.
+void ItemMenu_FitMessageWindowToItemChoices(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
       0, 17, 7);
 }
 
-void ItemMenu_SetMessageWindowHeight3(void) {
+/// Makes the message window 3 rows tall, for a one-line question.
+void ItemMenu_FitMessageWindowToQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
       0, 17, 3);
@@ -2352,7 +2360,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   changed = 1;
   receiverCount = 0;
   window = menu->questionWindow;
-  ItemMenu_SetMessageWindowHeight7();
+  ItemMenu_FitMessageWindowToItemChoices();
   WindowSprite_RedrawSavedRectFar(window);
   // How many each party member holds now.
   if (dropMode == 0)

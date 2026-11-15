@@ -12,12 +12,12 @@
 /// commands (Battle_CollectPartyCommands), which starts this side's
 /// countdown.
 struct LinkSignature {
-  u8 padding000[8]; ///< halfwords 0 to 3, "EXEC" while the link holds
+  u8 exec[8]; ///< halfwords 0 to 3, "EXEC" while the link holds
   u16 e;
   u16 d;
   u16 v;
   u16 s;
-  u8 padding010[8];
+  u8 paddingAfterSignature[8];
 };
 
 /// A task while the party's commands are chosen (Battle_CollectPartyCommands):

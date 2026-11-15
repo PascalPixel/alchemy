@@ -355,7 +355,7 @@ enum {
   /// Three motions WindowSprite_UpdateAll runs alike: a hop down and back.
   WINDOW_SPRITE_MOTION_HOP_DOWN = 14,
   WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE = 15,
-  WINDOW_SPRITE_MOTION_HOP_DOWN_3 = 16,
+  WINDOW_SPRITE_MOTION_HOP_DOWN_UNUSED = 16, ///< Unused: nothing sets it
   WINDOW_SPRITE_MOTION_HOP_UP = 17,
   WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT = 18,
 };
@@ -694,10 +694,10 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
 u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen);
 void MenuArrow_NoOpCallback(void);
 void MenuArrow_NoOpCallbackBank(void);
-void MenuArrow_NoOpCallback1(void);
-void MenuArrow_NoOpCallback2(void);
-void MenuArrow_NoOpCallback3(void);
-void MenuArrow_NoOpCallback4(void);
+void MenuArrow_NoOpCallbackA(void);
+void MenuArrow_NoOpCallbackB(void);
+void MenuArrow_NoOpCallbackC(void);
+void MenuArrow_NoOpCallbackD(void);
 void MenuArrow_Create(struct MenuSprite *object, s32 *slot);
 void MenuArrow_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
 void MenuArrow_Release(s32 value);

@@ -55,13 +55,13 @@ FarCall_WindowTable:
 	overlay_veneer SelectionMenu_Run
 	overlay_veneer SelectionMenu_RunWithSounds
 	overlay_veneer MenuArrow_NoOpCallbackBank
-	overlay_veneer MenuArrow_NoOpCallback1
+	overlay_veneer MenuArrow_NoOpCallbackA
 	overlay_veneer SelectionMenu_BuildEntries
 	overlay_veneer SelectionMenu_ReservedNoOp
 	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
 	export BattleMessage_ShowAndWaitFar, BattleMessage_ShowAndWait
 	export BattleMessage_OpenFar, BattleMessage_Open
-	overlay_veneer MenuArrow_NoOpCallback4
+	overlay_veneer MenuArrow_NoOpCallbackD
 	export Portrait_GetForSpeakerFar, Portrait_GetForSpeaker
 	export FieldMenu_RunFar, FieldMenu_Run
 	export FileList_SelectActionFar, FileList_SelectAction

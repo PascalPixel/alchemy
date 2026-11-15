@@ -88,10 +88,10 @@ struct SerialWork {
   /// LINK_STATUS_ERROR to the link status and refuses the packets heard
   /// meanwhile.
   u8 transferError;
-  u8 reserved0a;
+  u8 reservedAfterError;
   /// The packet number, counted up each frame once connected.
   u8 packetNumber;
-  u8 reserved0c[8];
+  u8 reservedAfterPacketNumber[8];
   /// The halfword of sendBuffer[1] sent next; -1 between packets, when
   /// system_serial.c's SERIAL_IDLE_HALFWORD is sent and the two send buffers
   /// swap.
@@ -99,7 +99,7 @@ struct SerialWork {
   /// Each console's next halfword in its incomingBuffer; -1 after an idle
   /// system_serial.c's SERIAL_IDLE_HALFWORD.
   s32 receiveIndex[2];
-  u8 reserved20[8];
+  u8 reservedAfterReceiveIndex[8];
   /// The packet being built ([0]) and the packet being sent ([1]).
   u16 *sendBuffer[2];
   /// Each console's packet being received; two are used.

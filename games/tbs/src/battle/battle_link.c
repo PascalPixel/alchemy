@@ -149,7 +149,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
 
 /// Copies a name's first four characters, an underscore for each zero, and
 /// returns a pointer to the end. UB: the copy is on the stack; UBFIX keeps it.
-UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
+UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB,
                                                u16 *source) {
 #ifdef UBFIX
   static u8 sBuffer[5];

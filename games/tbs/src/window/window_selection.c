@@ -1236,10 +1236,10 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
 /// others are reached only through bare entries of the window far-call table.
 UNUSED void MenuArrow_NoOpCallback(void) {}
 void MenuArrow_NoOpCallbackBank(void) {}
-void MenuArrow_NoOpCallback1(void) {}
-UNUSED void MenuArrow_NoOpCallback2(void) {}
-UNUSED void MenuArrow_NoOpCallback3(void) {}
-void MenuArrow_NoOpCallback4(void) {}
+void MenuArrow_NoOpCallbackA(void) {}
+UNUSED void MenuArrow_NoOpCallbackB(void) {}
+UNUSED void MenuArrow_NoOpCallbackC(void) {}
+void MenuArrow_NoOpCallbackD(void) {}
 
 /// Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
 /// in *slot).

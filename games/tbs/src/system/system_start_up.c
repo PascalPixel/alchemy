@@ -116,7 +116,7 @@ UNUSED void Stub_ReservedNoOpD(void) {}
 UNUSED void Stub_ReservedNoOpE(void) {}
 
 /// An exported stub that ignores its arguments and reports 0.
-s32 Stub_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
+s32 Stub_ReturnZero(s32 resourceId, const u8 *table) { return 0; }
 
 /// The build stamp's twelve digit characters copied to IWRAM, and a zero word
 /// after them that ends the string.

@@ -955,18 +955,18 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             menu->helpWindow,
             DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 0, 0, 0);
         MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
-        MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) *
-                                        DJINN_PER_ELEMENT +
-                                    DJINN_NUMBER(menu->pairEntries[0]) + 300,
-                                MESSAGE_ARGUMENT_ABILITY);
+        MessageArgument_PushFar(
+            DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
+                DJINN_NUMBER(menu->pairEntries[0]) + ABILITY_DJINNI_FIRST,
+            MESSAGE_ARGUMENT_ABILITY);
         Text_DrawMessageAsTilesFar(MsgDjinnOwnerLabel, menu->helpWindow, 8, 0);
 #else
         MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
         Text_DrawMessageAsTilesFar(MsgDjinnOwnerLabel, menu->helpWindow, 0, 0);
-        MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) *
-                                        DJINN_PER_ELEMENT +
-                                    DJINN_NUMBER(menu->pairEntries[0]) + 300,
-                                MESSAGE_ARGUMENT_ABILITY);
+        MessageArgument_PushFar(
+            DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
+                DJINN_NUMBER(menu->pairEntries[0]) + ABILITY_DJINNI_FIRST,
+            MESSAGE_ARGUMENT_ABILITY);
         Window_SetTilemapEntryFar(
             menu->helpWindow,
             DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 6, 0, 0);

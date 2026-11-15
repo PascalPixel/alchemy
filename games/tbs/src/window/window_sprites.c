@@ -533,7 +533,7 @@ void WindowSprite_UpdateAll(void) {
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN:
       case WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE:
-      case WINDOW_SPRITE_MOTION_HOP_DOWN_3:
+      case WINDOW_SPRITE_MOTION_HOP_DOWN_UNUSED:
         windowSprite->animationStep++;
         sprite->y =
             windowSprite->y +

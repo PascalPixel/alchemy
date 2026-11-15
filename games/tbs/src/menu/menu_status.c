@@ -95,6 +95,10 @@
 #define STATUS_EQUIPPED_NAME_X 16
 #endif
 
+/// The Djinn figures stand in a row 32 pixels apart, at y STATUS_FIGURE_ROW_Y.
+#define STATUS_FIGURE_X(index) (130 + (index) * 32)
+#define STATUS_FIGURE_ROW_Y 128
+
 /// Lets the player choose one party member, over the field (the Colosso scenes
 /// use it, through menu.s, and so does the debug test).
 s32 PartyMemberChooser_Open(void) {
@@ -193,10 +197,9 @@ s32 StatusScreen_Run(void) {
     menu->memberY[index] = MENU_MEMBER_Y;
   if (Party_SumDjinnCountsFar(-1) != 0)
     DjinnFigures_InitializeTopRow(menu->selectorWindow, 0);
-  // The four Djinn figures in a row 32 pixels apart, at screen y 128.
   for (index = 0; index < 4; index++) {
-    menu->rowX[index] = 130 + index * 32;
-    menu->rowY[index] = 128;
+    menu->rowX[index] = STATUS_FIGURE_X(index);
+    menu->rowY[index] = STATUS_FIGURE_ROW_Y;
   }
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   // Run the pages.
@@ -385,8 +388,8 @@ s32 DjinnMenu_ShowCurrentList(void) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
-      menu->slotX[i] = 130 + i * 32;
-      menu->slotY[i] = 128;
+      menu->slotX[i] = STATUS_FIGURE_X(i);
+      menu->slotY[i] = STATUS_FIGURE_ROW_Y;
     }
   }
   menu->cursor->motion = ICON_SHOWN;
@@ -432,8 +435,8 @@ s32 PartyMemberChooser_RunRearrange(void) {
   page = menu->page;
   Unit_GetFar(menu->memberIds[memberIndex]);
   for (rowIndex = 0; rowIndex < 4; rowIndex++) {
-    menu->rowX[rowIndex] = 130 + rowIndex * 32;
-    menu->rowY[rowIndex] = 128;
+    menu->rowX[rowIndex] = STATUS_FIGURE_X(rowIndex);
+    menu->rowY[rowIndex] = STATUS_FIGURE_ROW_Y;
   }
   // The highlight palette, and the first sprite palette into background
   // palettes 0 and 1, as StatusScreen_Run sets them.
@@ -664,8 +667,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 
 /// Sets up the Status menu's first screen: the cursor window with the party's
 /// figures, no other windows yet, and an 8 by 2 cursor grid.
-void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
-                             s32 unused3) {
+void StatusScreen_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   struct StatusScreenWork *menu;
 
   menu = gMenuWork;
@@ -858,7 +860,7 @@ s32 StatusScreen_SelectCommand(void) {
   Window_ClearInteriorTilesFar(menu->statusWindow, 64, 56, 224, 96);
   Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
   for (i = 3; i >= 0; i--)
-    menu->rowY[i] = 128;
+    menu->rowY[i] = STATUS_FIGURE_ROW_Y;
   ItemMenu_ResetCategory();
   return result;
 }
@@ -960,7 +962,7 @@ void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
   if (messageVariant == 1) {
     struct Unit *member = Unit_GetFar(menu->selectedIds[0]);
 
-    if (member->level == 99) {
+    if (member->level == UNIT_LEVEL_MAX) {
       messageVariant = 8; // "These are your experience points."
     } else {
       ExperienceDifference remaining =

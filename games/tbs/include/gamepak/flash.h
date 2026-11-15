@@ -12,13 +12,13 @@
 /// command sequences.
 #define FLASH_WRITE(addr, data) (*(volatile u8 *)(FLASH_BASE + (addr)) = (data))
 
-// A command reaches the chip as GBATEK lists it: FLASH_UNLOCK_1 written to
-// FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_2 to FLASH_UNLOCK_ADDRESS, then the
+// A command reaches the chip as GBATEK lists it: FLASH_UNLOCK_A written to
+// FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_B to FLASH_UNLOCK_ADDRESS, then the
 // command to FLASH_COMMAND_ADDRESS.
 #define FLASH_COMMAND_ADDRESS 0x5555 ///< where the chip takes its commands
 #define FLASH_UNLOCK_ADDRESS 0x2AAA  ///< the second unlock write's address
-#define FLASH_UNLOCK_1 0xAA          ///< the first unlock byte
-#define FLASH_UNLOCK_2 0x55          ///< the second unlock byte
+#define FLASH_UNLOCK_A 0xAA          ///< the first unlock byte
+#define FLASH_UNLOCK_B 0x55          ///< the second unlock byte
 /// The chip answers with its maker and device ids at offsets 0 and 1.
 #define FLASH_COMMAND_ENTER_ID_MODE 0x90
 /// Leaves ID mode; also resets a Macronix chip after a timeout.
@@ -35,8 +35,8 @@
 
 /// Writes one command to the chip, after its two unlock writes.
 #define FLASH_SEND_COMMAND(command)                                            \
-  (FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_1),                         \
-   FLASH_WRITE(FLASH_UNLOCK_ADDRESS, FLASH_UNLOCK_2),                          \
+  (FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_A),                         \
+   FLASH_WRITE(FLASH_UNLOCK_ADDRESS, FLASH_UNLOCK_B),                          \
    FLASH_WRITE(FLASH_COMMAND_ADDRESS, (command)))
 
 /// The phase of a write the library waits on (WaitForFlashWrite): it picks the

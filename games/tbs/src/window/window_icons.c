@@ -182,19 +182,19 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
 /// Loads 32 bytes, one sprite tile, from the start of gMenuTitlePictures into
 /// the VRAM cache entry slot.
 s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
-  extern const u8 *gMenuTitlePicturesCase1[] __asm__("gMenuTitlePictures"),
-      *gMenuTitlePicturesCase2[] __asm__("gMenuTitlePictures"),
-      *gMenuTitlePicturesCase3[] __asm__("gMenuTitlePictures");
+  extern const u8 *gMenuTitlePicturesCaseA[] __asm__("gMenuTitlePictures"),
+      *gMenuTitlePicturesCaseB[] __asm__("gMenuTitlePictures"),
+      *gMenuTitlePicturesCaseC[] __asm__("gMenuTitlePictures");
   void *source;
   switch (value) {
   case 1:
-    source = gMenuTitlePicturesCase1;
+    source = gMenuTitlePicturesCaseA;
     break;
   case 2:
-    source = gMenuTitlePicturesCase2;
+    source = gMenuTitlePicturesCaseB;
     break;
   case 3:
-    source = gMenuTitlePicturesCase3;
+    source = gMenuTitlePicturesCaseC;
     break;
   case 0:
   default:

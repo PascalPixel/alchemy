@@ -10,6 +10,12 @@
 
 /// The curtain's map entries: tile 128 + n of CURTAIN_TILE, WINDOW_PALETTE.
 #define TRANSITION_CURTAIN_ENTRY(n) (0xf080 + (n))
+/// The screen block of the curtain's map, and its middle row, from which it
+/// opens a row up and a row down every eight frames for TRANSITION_OPEN_FRAMES.
+#define TRANSITION_CURTAIN_SCREEN 12
+#define TRANSITION_CURTAIN_MIDDLE_ROW 13
+#define TRANSITION_CURTAIN_LAST_ROW 20
+#define TRANSITION_OPEN_FRAMES 80
 
 /// Fades the screen to black over sixteen frames as every background's mosaic
 /// grows, then shows no layer.
@@ -137,10 +143,10 @@ void BattleTransition_AdvanceTimer(void) {
   if (scroll < 0)
     scroll = 0;
   gBgScroll[0].y = scroll;
-  if (frame <= 80)
+  if (frame <= TRANSITION_OPEN_FRAMES)
     camera->yaw = frame * 360 + 44928;
   frame = ++*timer;
-  if (frame <= 80)
+  if (frame <= TRANSITION_OPEN_FRAMES)
     BattleCamera_SetView(0, 0, 0, 180 - frame);
   else
     BattleCamera_SetView(0, 0, 0, 100);
@@ -156,19 +162,21 @@ void BattleTransition_DrawRows(void) {
   u16 *tilemap;
 
   transitionFrame = *gBattleEntryTimer;
-  if (transitionFrame >= 0 && transitionFrame <= 79) {
+  if (transitionFrame >= 0 && transitionFrame < TRANSITION_OPEN_FRAMES) {
     tileEntry = (7 & transitionFrame) + TRANSITION_CURTAIN_ENTRY(1);
-    tileRow = 13 - transitionFrame / 8;
-    tilemap = (u16 *)BG_SCREEN_BLOCK(12) + tileRow * 32;
-    for (column = 0; column != 32; column++)
+    tileRow = TRANSITION_CURTAIN_MIDDLE_ROW - transitionFrame / 8;
+    tilemap = (u16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN) +
+              tileRow * BG_SCREEN_WIDTH;
+    for (column = 0; column != BG_SCREEN_WIDTH; column++)
       tilemap[column] = tileEntry;
 
     // The lower half: the same tile flipped vertically.
     tileEntry |= TILE_VFLIP;
-    tileRow = transitionFrame / 8 + 13;
-    if (tileRow <= 20) {
-      tilemap = (u16 *)BG_SCREEN_BLOCK(12) + tileRow * 32;
-      for (column = 0; column != 32; column++)
+    tileRow = transitionFrame / 8 + TRANSITION_CURTAIN_MIDDLE_ROW;
+    if (tileRow <= TRANSITION_CURTAIN_LAST_ROW) {
+      tilemap = (u16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN) +
+                tileRow * BG_SCREEN_WIDTH;
+      for (column = 0; column != BG_SCREEN_WIDTH; column++)
         tilemap[column] = tileEntry;
     }
   }
@@ -203,18 +211,18 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     // The curtain's seven edge tiles.
     Dma_Set(gBattleTransition_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
             REG_DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 32, CURTAIN_TILE(2),
-            DMA_COPY_WORDS(8), REG_DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 64, CURTAIN_TILE(3),
-            DMA_COPY_WORDS(8), REG_DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 96, CURTAIN_TILE(4),
-            DMA_COPY_WORDS(8), REG_DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 128, CURTAIN_TILE(5),
-            DMA_COPY_WORDS(8), REG_DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 160, CURTAIN_TILE(6),
-            DMA_COPY_WORDS(8), REG_DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 192, CURTAIN_TILE(7),
-            DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 1 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(2), DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 2 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(3), DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 3 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(4), DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 4 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(5), DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 5 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(6), DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 6 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(7), DMA_COPY_WORDS(8), REG_DMA3);
     view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->mode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
@@ -222,17 +230,19 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     REG_DISPCNT = DISPCNT_MODE_1;
     Dma_Fill32Cell(fill, 0x33333333, CURTAIN_TILE(0), TILE_SIZE_4BPP);
     Dma_Fill32Cell(fill, 0, CURTAIN_TILE(8), TILE_SIZE_4BPP);
-    REG_BG1CNT = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(12);
+    REG_BG1CNT =
+        BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(TRANSITION_CURTAIN_SCREEN);
     REG_BG0CNT |= BGCNT_PRIORITY(2);
     view->mode = BATTLE_BACKGROUND_ZOOMED;
-    // A closed curtain: solid rows 0 to 20, clear below.
-    tilemap = (u16 *)BG_SCREEN_BLOCK(12);
-    for (index = 0; index <= 31; index++) {
-      if (index <= 20)
+    // A closed curtain: solid rows 0 to TRANSITION_CURTAIN_LAST_ROW, clear
+    // below.
+    tilemap = (u16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN);
+    for (index = 0; index < BG_SCREEN_WIDTH; index++) {
+      if (index <= TRANSITION_CURTAIN_LAST_ROW)
         tile = TRANSITION_CURTAIN_ENTRY(0);
       else
         tile = TRANSITION_CURTAIN_ENTRY(8);
-      for (column = 0; column <= 31; column++)
+      for (column = 0; column < BG_SCREEN_WIDTH; column++)
         *tilemap++ = tile;
     }
     {

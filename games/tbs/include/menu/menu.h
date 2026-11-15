@@ -280,12 +280,12 @@ s32 ItemMenu_ShowDetails(s32 value);
 void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry);
 void ItemMenu_DrawStat(s32 statChange, s32 unused, struct Window *window, s32 x,
                        s32 y);
-void ItemMenu_SetItemWindowRow5(void);
-void ItemMenu_SetItemWindowRow3(void);
-void ItemMenu_SetMessageWindowHeight5(void);
-void ItemMenu_SetMessageWindowHeight6(void);
-void ItemMenu_SetMessageWindowHeight7(void);
-void ItemMenu_SetMessageWindowHeight3(void);
+void ItemMenu_PlaceItemWindowBelowItemQuestion(void);
+void ItemMenu_PlaceItemWindowBelowQuestion(void);
+void ItemMenu_FitMessageWindowToItemQuestion(void);
+void ItemMenu_FitMessageWindowToLongItemQuestion(void);
+void ItemMenu_FitMessageWindowToItemChoices(void);
+void ItemMenu_FitMessageWindowToQuestion(void);
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode);
 void ItemMenu_DrawItemHead(void);
@@ -333,8 +333,7 @@ s32 DjinnMenu_ShowCurrentList(void);
 s32 PartyMemberChooser_RunRearrange(void);
 s32 PsynergyMenu_ChooseMember(void);
 s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction);
-void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
-                             s32 unused3);
+void StatusScreen_Initialize(s32 x, s32 y, s32 mode, s32 columns);
 void StatusScreen_ShowMemberStatus(s32 member, s32 frame);
 s32 StatusScreen_SelectCommand(void);
 void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
@@ -423,10 +422,10 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                               s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side);
 
-void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1);
+void DjinnFigures_InitializeTopRow(void *window, s32 unused);
 void DjinnFigures_UpdateAllPositions(void);
 void DjinnFigures_UpdateBottomRow(void);
-void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1);
+void DjinnFigures_InitializeBottomRow(s32 window, s32 unused);
 s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
 s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase);
 s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation);

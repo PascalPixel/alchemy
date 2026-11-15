@@ -102,7 +102,7 @@ void Stub_ReservedNoOpB(void);
 void Stub_ReservedNoOpC(void);
 void Stub_ReservedNoOpD(void);
 void Stub_ReservedNoOpE(void);
-s32 Stub_ReturnZero(s32 unused0, const u8 *unused1);
+s32 Stub_ReturnZero(s32 resourceId, const u8 *table);
 void System_CopyBuildStamp(void);
 void Stub_NoOpHook(s32 unused);
 void *Resource_GetTableEntry(s32 index);

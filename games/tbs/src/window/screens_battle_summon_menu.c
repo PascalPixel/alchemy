@@ -19,7 +19,7 @@
 /// (Summon_ListLearnedFar, DjinnRecoveryTable.summonMask), four to a page,
 /// those `standby` can pay for first, each with its Djinn cost by element, the
 /// others in TEXT_COLOR_RED.
-s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
+s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   struct MenuSprite cursorStorage;
   struct MenuSprite sprites[4];
   u8 learnedSummons[33]; // The callable summons, in menu order

@@ -28,8 +28,7 @@ void Portrait_Reload(u32 side, s32 character, s32 unused);
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
 void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
 void ScanlineWindow_FillSpans(void *spans);
-void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
-                       s32 value);
+void BgScreen_FillRect(s32 x, s32 y, u32 width, u32 height, s32 value);
 
 void PartyStatus_BuildLayoutBounds(s32 flags);
 void PartyStatus_CreateWindow(s32 flags);
@@ -139,7 +138,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 *pageCount);
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
-s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby);
+s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby);
 s32 Item_ClassifyUseAbility(s32 unit, s32 itemId);
 void Vram_CopyTile(u32 source_tile, u32 destination_tile);
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);

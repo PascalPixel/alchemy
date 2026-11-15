@@ -717,7 +717,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Message_CopyExpanded(statusKind + MsgOwnerStatusConditionHelp, helpText,
                              OWNER_STATUS_TEXT_MAX);
       } else if (cursor.helpEntry == OWNER_STATUS_HELP_EXPERIENCE &&
-                 unit->level <= 98) {
+                 unit->level < UNIT_LEVEL_MAX) {
         // Experience below level 99: the points still needed for the next.
         MessageArgument_Push(
             Unit_GetExperienceForLevelFar(member, unit->level + 1) -

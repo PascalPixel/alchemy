@@ -15,6 +15,7 @@
 #include "flags.h"
 #include "item_ids.h"
 #include "scene_ids.h"
+#include "sprite_ids.h"
 #include "types.h"
 #include "version.h"
 #include "battle/battle.h"
@@ -299,8 +300,10 @@ void TundariaTower_OpenDoor(void) {
   FieldEvent_Wait(10);
   MapGrid_CopyCellsTo(32, 38, x, 49, one, height);
   FieldEvent_Wait(10);
+  /* FAKEMATCH(temporary): the leader's id read through a word pointer into
+   * the work. */
   owner = (s32 *)&gMainRoutineWork;
-  owner += 133;
+  owner += offsetof(struct MainRoutineWork, leaderActorId) / sizeof(s32);
   Actor_SetSpeed(*owner, 0.5);
   ((struct Actor *)((s32)Actor_GetById(*owner)))->motionFlags = 0;
   cell = (((struct Actor *)((s32)Actor_GetById(*owner)))->x.fixed >> 19) | one;
@@ -324,7 +327,7 @@ void TundariaTower_AdvanceIceShard(union FieldObject *object) {
   object->effect.z += object->effect.velocity.z;
   object->effect.scaleX += object->effect.scaleRateX;
   object->effect.scaleY += object->effect.scaleRateY;
-  object->effect.velocity.y -= 0x4ccc;
+  object->effect.velocity.y -= px(3) / 10;
 }
 
 /// Scatters shards of ice (effect 279) around a position, each turned at
@@ -339,8 +342,8 @@ void TundariaTower_ScatterIceShards(struct TundariaTowerPosition *position,
 
   options.priority = 1;
   options.type = SPRITE_BLUE_CRYSTAL;
-  options.targetScaleY = 0xcccc;
-  options.targetScaleX = 0xcccc;
+  options.targetScaleY = Q16_ONE * 8 / 10;
+  options.targetScaleX = Q16_ONE * 8 / 10;
   options.startScaleY = scale;
   options.startScaleX = scale;
   options.update = TundariaTower_AdvanceIceShard;
@@ -358,7 +361,11 @@ void TundariaTower_ScatterIceShards(struct TundariaTowerPosition *position,
     velocityY <<= 14;
     x = position->x - ((Random16() & 31) << 16) + 0xf0000;
     FieldEffect_Spawn(x, position->y + ((Random16() & mask) << 16), position->z,
-                      velocityX, velocityY, 0, 0x15e0000, &options);
+                      velocityX, velocityY, 0,
+                      EFFECT_USE_UPDATE | EFFECT_USE_ROTATION |
+                          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                          EFFECT_SCALE_TO_TARGET | EFFECT_USE_PRIORITY,
+                      &options);
   }
 }
 
@@ -373,7 +380,7 @@ void TundariaTower_BurstCrystal(s32 step) {
     position.x = px(347);
     position.y = 0;
     position.z = px(376);
-    TundariaTower_ScatterIceShards(&position, 1, 0xcccc);
+    TundariaTower_ScatterIceShards(&position, 1, Q16_ONE * 8 / 10);
     break;
   case 3:
     MapGrid_CopyCellPictureIndicesRect(31, 85, 20, 85, 3, 4);
@@ -452,8 +459,8 @@ void TundariaTower_RefluxAppears(void) {
   PaletteFade_SetTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(2);
   Sound_Play(SE_WATER);
-  TundariaTower_SetWork(0x50000, 0x70000, 0x10000);
-  TundariaTower_SetWork(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 7, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(2);
   PaletteFade_SetTarget(Q16_ONE, 0);
   PaletteFade_StartInterpolation(2);
@@ -490,7 +497,7 @@ void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
                       EFFECT_USE_ROTATION | EFFECT_USE_TYPE |
                           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                       &options);
-    object->scaleY -= 7936;
+    object->scaleY -= Q16_ONE * 31 / 256;
   }
   if (phase == 1) {
     object->scaleY = Q16_ONE;
@@ -668,7 +675,7 @@ void TundariaTower_BurstBrownWall(s32 step) {
     position.x = px(120);
     position.y = 0;
     position.z = px(568);
-    TundariaTower_ScatterIceShards(&position, 1, 0xcccc);
+    TundariaTower_ScatterIceShards(&position, 1, Q16_ONE * 8 / 10);
     break;
   case 3:
     position.x = px(120);
@@ -830,8 +837,8 @@ void TundariaTower_LandFromSlide(void) {
   Event_Wait(24);
   options.palette = 7;
   options.update = (void *)FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xcccc;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = Q16_ONE * 8 / 10;
+  options.startScaleY = Q16_ONE * 8 / 10;
   i = 0;
   do {
     s32 velocity[3];
@@ -844,7 +851,9 @@ void TundariaTower_LandFromSlide(void) {
     velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
     velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                      velocity[0], velocity[1], velocity[2], 0x01090001,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
                       &options);
     i++;
   } while (i <= 16);
@@ -942,7 +951,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TUNDARIA_TOWER_LIFT_PILLARS) {
     switch (gMainRoutineWork.entrance) {
     case 3:
-      object = FieldActor_Create(0x11e, px(472), 0, px(200));
+      object = FieldActor_Create(SPRITE_CRATE, px(472), 0, px(200));
       if (object != NULL) {
         Scene_SetActorSpritePriority((s32)object, 1);
         object->motionFlags = 0;
@@ -1073,7 +1082,7 @@ top:
       a = list[0];
       flag = list[1];
       if (count < 8)
-        object->scaleY -= 0x1f00;
+        object->scaleY -= Q16_ONE * 31 / 256;
       if (mode == 1) {
         GameFlag_Set(flag);
         Actor_SetCellOpen(id, a, flag, object->layer);
@@ -1237,14 +1246,14 @@ loop:
   nextFlag = flag + 1;
   if (!GameFlag_Get(nextFlag)) {
     Sound_Play(SE_PUSH);
-    TundariaTower_SetWork(0x10000, 0x40000, 0x10000);
+    MapGrid_SetShake(1, 4, 1);
     TundariaTower_SpawnRubble(0);
     wait(8);
     Actor_SelectAnimation(object, 2);
     Actor_SetCellShape(-4, object->layer, id);
     TundariaTower_SpawnRubble(1);
     wait(16);
-    TundariaTower_SetWork(-1, -1, 0xe666);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     wait(8);
     Actor_SetPositionAndResetMotion(object, 0, 0, 0);
     wait(2);
@@ -1437,7 +1446,8 @@ void TundariaTower_SpawnRubble(s32 spread) {
       s32 y = leader->y.fixed - ((Random_Below(14)) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
+          SPRITE_DUST_CLOUD, (i << 17) + leader->x.fixed - px(8), y - px(2),
+          leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -1446,10 +1456,10 @@ void TundariaTower_SpawnRubble(s32 spread) {
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
       TundariaTower_StartEffectScript(effect, gTundariaTower_RubbleScript);
-      effect->scaleY = effect->scaleX = 0xb333;
+      effect->scaleY = effect->scaleX = Q16_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
+        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), Q16_ONE * 12 / 10);
         effect->velocity.z = Trig_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
@@ -1457,8 +1467,8 @@ void TundariaTower_SpawnRubble(s32 spread) {
       }
       effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
       effect->spin = ((Random16() << 9) >> 16) - 0x100;
-      effect->scaleRateX = -0x800;
-      effect->scaleRateY = -0x600;
+      effect->scaleRateX = -(Q16_ONE / 32);
+      effect->scaleRateY = -(Q16_ONE * 3 / 128);
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
     }
     i++;
@@ -1475,7 +1485,8 @@ void TundariaTower_SpawnDustRing(void) {
     state = 0;
     for (i = 0; i < 17; i++) {
       struct FieldEffect *effect = ((struct FieldEffect *)Import_ActorCreate(
-          285, leader->x.fixed, leader->y.fixed, leader->z.fixed));
+          SPRITE_DUST_CLOUD, leader->x.fixed, leader->y.fixed,
+          leader->z.fixed));
 
       if (effect != NULL) {
         s32 angle;
@@ -1516,7 +1527,7 @@ void TundariaTower_UpdateFallingRocks(void) {
   struct Particle *particle = work->particles;
   struct ParticleSprite *sprite = work->sprites;
   s32 i;
-  s32 step = -0x8000;
+  s32 step = -(px(1) / 2);
 
   i = 63;
 next:

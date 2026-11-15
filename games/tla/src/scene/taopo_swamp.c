@@ -131,17 +131,6 @@ void Vent_SetActive(s32 index, s32 active);
 #endif
 s32 Vents_AdvanceCounter(s32 a);
 
-struct SpriteWork {
-  u8 unk00[17];
-  u8 layer : 2;
-  u8 level : 6;
-  u8 unk12[7];
-  u8 dirty;
-  u8 mode;
-  u8 unk1b[17];
-  u8 *child;
-};
-
 struct SceneState {
   s16 mode;
   s16 timer;
@@ -1775,15 +1764,15 @@ extern volatile u32 gInput;
 void TaopoSwamp_SinkInMud(void) {
   struct SceneState *state = &gSceneState;
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
-  struct SpriteWork *sprite = actor->sprite;
+  struct Sprite *sprite = actor->sprite;
   struct Actor *spark;
   struct FieldSprite *sparkSprite;
   s32 charge, step, i;
 
-  if (sprite->child != 0)
-    sprite->child[6] = 1;
-  sprite->mode |= 8;
-  sprite->mode &= 0xfe;
+  if (sprite->entries[1] != 0)
+    sprite->entries[1]->priority = 1;
+  sprite->flags |= 8;
+  sprite->flags &= ~SPRITE_FLAG_SHADOW;
   Io_Write8(1, &sprite->dirty);
   if (gInput & 0xf0) {
     step = 0x1400;
@@ -1791,7 +1780,7 @@ void TaopoSwamp_SinkInMud(void) {
       step = step * 3 >> 1;
     state->timer += step / 96 + 1;
   }
-  sprite->level = state->timer / 256;
+  sprite->sunkRows = state->timer / 256;
   state->mode = 1;
   if (state->timer < 0x1400)
     return;
@@ -1816,8 +1805,8 @@ void TaopoSwamp_SinkInMud(void) {
   }
   FieldEvent_Wait(30);
   actor->spriteStorageKind = 1;
-  sprite->level = 0;
-  sprite->mode = 0;
+  sprite->sunkRows = 0;
+  sprite->flags = 0;
   Event_End();
   actor->x.fixed = state->x;
   actor->z.fixed = state->z;
@@ -1829,7 +1818,7 @@ void TaopoSwamp_SinkInMud(void) {
 void TaopoSwamp_RiseOnBubble(void) {
   struct SceneState *state = &gSceneState;
   struct Actor *object;
-  struct SpriteWork *sprite;
+  struct Sprite *sprite;
 
   if (state->mode != 2) {
     object = Actor_Get(FieldParty_GetLeaderActor());
@@ -1840,14 +1829,14 @@ void TaopoSwamp_RiseOnBubble(void) {
                                   object->y.fixed,
                                   (object->z.fixed & -px(16)) + px(8));
     FieldActor_WaitForMove(object);
-    while (sprite->level != 0) {
-      sprite->level--;
+    while (sprite->sunkRows != 0) {
+      sprite->sunkRows--;
       sprite->dirty = 1;
       System_Wait(1);
     }
     Event_End();
-    sprite->mode |= 8;
-    sprite->mode &= 0xfe;
+    sprite->flags |= 8;
+    sprite->flags &= ~SPRITE_FLAG_SHADOW;
     state->mode = 2;
     state->timer = 0;
   }
@@ -1856,15 +1845,15 @@ void TaopoSwamp_RiseOnBubble(void) {
 /// Off the mud: the leader stands at full height again.
 void TaopoSwamp_StepOnFirmGround(void) {
   struct SceneState *state = &gSceneState;
-  struct SpriteWork *sprite;
+  struct Sprite *sprite;
 
   TaopoSwamp_SaveFirmGround();
   if (state->mode != 0) {
     sprite = Actor_Get(FieldParty_GetLeaderActor())->sprite;
-    if (sprite->child)
-      sprite->child[6] = 9;
-    sprite->mode = (sprite->mode & 0xf7) | 1;
-    sprite->level = 0;
+    if (sprite->entries[1])
+      sprite->entries[1]->priority = 9;
+    sprite->flags = (sprite->flags & 0xf7) | SPRITE_FLAG_SHADOW;
+    sprite->sunkRows = 0;
     sprite->dirty = 1;
     state->mode = 0;
     state->timer = 0;

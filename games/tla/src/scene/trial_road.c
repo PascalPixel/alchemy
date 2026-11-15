@@ -47,6 +47,11 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
+/// Set once the Mad Plant hiding in the bushes Cyclone cuts has been beaten.
+#define FLAG_TRIAL_ROAD_MAD_PLANT_BEATEN 0x9b9
+/// Set once Move has pushed the peak's pillar into column 8, where it stays.
+#define FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED 0x9fc
+
 #include "shared/trial_road.h"
 
 /// The actors every stage room places first, numbering the rows of each
@@ -972,11 +977,11 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
     }
   }
   if (frame == 9)
-    partner->scaleY = 0x13333;
+    partner->scaleY = Q16_ONE * 12 / 10;
   else if (frame == 11)
-    partner->scaleY = 0x11999;
+    partner->scaleY = Q16_ONE * 11 / 10;
   else if (frame == 13)
-    partner->scaleY = 0x10ccc;
+    partner->scaleY = Q16_ONE * 105 / 100;
   else
     partner->scaleY = Q16_ONE;
 }
@@ -1186,7 +1191,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 8);
   Event_Wait(6);
   object->speedLimit = px(1) / 2;
-  object->acceleration = 0x3333;
+  object->acceleration = px(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
   if (dx < 0 || dz < 0)
     mode = 3;
@@ -1418,7 +1423,8 @@ void TrialRoad_DriftWithStream(void) {
   velocity[0] += ((Random16() << 17) >> 16) - 0x10000;
   velocity[2] += ((Random16() << 16) >> 16) - 0x8000;
   FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                    velocity[0], velocity[1], velocity[2], 0x1000001, &options);
+                    velocity[0], velocity[1], velocity[2],
+                    EFFECT_USE_UPDATE | 1, &options);
 }
 
 // Trial Road's rooms set up, the rival Moapa's race, the peak, the
@@ -1432,9 +1438,10 @@ void TrialRoad_CutBushes(void) {
 
 void TrialRoad_CutMadPlantBushes(void) {
   Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
-  if (!Event_GetFlag(0x9b9)) {
+  if (!Event_GetFlag(FLAG_TRIAL_ROAD_MAD_PLANT_BEATEN)) {
     Import_MadPlantLeapAtLeader(249, 72, 152);
-    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(0x9b9);
+    gMainRoutineWork.pendingDjinni =
+        IF_FLAG_SET(FLAG_TRIAL_ROAD_MAD_PLANT_BEATEN);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(106, 4);
   }
@@ -1493,13 +1500,13 @@ void TrialRoad_ChallengeMoapa(void) {
   Field_RequestBattleFromEncounterTable(ACTOR_WEST_GUARD, 4 - count);
 }
 
-/// When the object stands in column 8, sets flag 0x9fc, stops its motion and
-/// lifts it one pixel.
+/// When the object stands in column 8, sets FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED,
+/// stops its motion and lifts it one pixel.
 void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (FIELD_CELL(object->x.fixed) == 8) {
-    Event_SetFlag(0x9fc);
+    Event_SetFlag(FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED);
     object->motionFlags = 0;
     object->y.fixed -= px(1);
   }
@@ -1680,6 +1687,9 @@ struct TrialRoadFountains {
   struct TrialRoadFountain fountains[16];
   u32 *sprites;
 };
+
+#define TRIAL_ROAD_FOUNTAINS                                                   \
+  ((struct TrialRoadFountains *)(gInventorySnapshot + 0x188))
 
 struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
                                                 s32 low, s32 high);
@@ -1886,7 +1896,7 @@ void TrialRoad_SetUpPeak(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
   TrialRoad_StartPaletteCycle(1);
   TrialRoad_AddPillarTop(ACTOR_PEAK_PILLAR);
-  if (Event_GetFlag(0x9fc))
+  if (Event_GetFlag(FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED))
     Actor_SetPosition(ACTOR_PEAK_PILLAR, 136, 328);
 }
 
@@ -2592,9 +2602,9 @@ void TrialRoad_BeatMoapa(void) {
   Actor_FaceActor(ACTOR_SHEBA, ACTOR_FELIX, 0);
   Actor_FaceActor(ACTOR_JENNA, ACTOR_FELIX, 0);
   Event_Wait(20);
-  PartyInventory_Discard(65);
+  PartyInventory_Discard(ITEM_SHAMANS_ROD);
   Party_GiveItem(ITEM_HOVER_JADE, 0);
-  Actor_FaceActor(ACTOR_FELIX, 8, 0);
+  Actor_FaceActor(ACTOR_FELIX, ACTOR_MOAPA, 0);
   Actor_GetById(ACTOR_MOAPA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MOAPA, TrialRoad_MirrorCellX(35), 264);
   Event_Wait(1);
@@ -2812,22 +2822,14 @@ void TrialRoad_ShowTraps(void) {
   Import_EventSetExitRequest(10);
 }
 
-// Updates the sixteen movers at gInventorySnapshot + 0x188 each frame: at its
-// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by
-// 4 or -8 a frame until it reaches its high or low offset; its phase counts
-// round its period unless flag 260 is set. Each mover's shape, collision
-// height and cell attribute byte follow its actor and offset, and its marker
-// actor is placed over it, bobbing on a sine while the offset is not 0.
-
-/// Updates the sixteen movers at gInventorySnapshot + 0x188 each frame: at its
+/// Updates the sixteen movers at TRIAL_ROAD_FOUNTAINS each frame: at its
 /// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4
 /// or -8 a frame until it reaches its high or low offset; its phase counts
 /// round its period unless flag 260 is set. Each mover's shape, collision
 /// height and cell attribute byte follow its actor and offset, and its marker
 /// actor is placed over it, bobbing on a sine while the offset is not 0.
 void TrialRoad_UpdateFountains(void) {
-  struct TrialRoadFountains *work =
-      (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
+  struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
   struct TrialRoadFountain *mover = work->fountains;
   struct TrialRoadMapWork *map = Ram_HeapSlots->mapGrid;
   s32 shape = work->shape;
@@ -2915,8 +2917,7 @@ void TrialRoad_UpdateFountains(void) {
 
 /// Queues the Trial Road movers' sprites.
 void TrialRoad_DrawFountains(void) {
-  struct TrialRoadFountains *base =
-      (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
+  struct TrialRoadFountains *base = TRIAL_ROAD_FOUNTAINS;
   struct TrialRoadFountain *mover = base->fountains;
   s32 i;
   s32 tile;
@@ -3009,8 +3010,7 @@ void TrialRoad_DrawFountains(void) {
 static __inline__ void *Pool_Alloc(s32 size) { return Heap_AllocEwram(size); }
 
 void TrialRoad_StartFountains(s32 unused, s32 shape) {
-  struct TrialRoadFountains *work =
-      (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
+  struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
   void *buffer;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
@@ -3029,8 +3029,7 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
 
 struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
                                                 s32 low, s32 high) {
-  struct TrialRoadFountains *work =
-      (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
+  struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
   struct TrialRoadFountain *fountain = &work->fountains[slot];
   struct Actor *object = Actor_GetById(id);
   struct Actor *spout;
@@ -4584,9 +4583,10 @@ LAST_DATA struct Trigger gTrialRoad_SummitTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9fc,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED,
      EVENT(TrialRoad_SetSummitPillar)},
-    {TRIGGER_PUSHED, 0, 0x9fc, EVENT(TrialRoad_SetSummitPillar)},
+    {TRIGGER_PUSHED, 0, FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED,
+     EVENT(TrialRoad_SetSummitPillar)},
     {TRIGGER_TABLE_END},
 };
 

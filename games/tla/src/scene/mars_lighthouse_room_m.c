@@ -160,8 +160,12 @@ void FieldCamera_MoveToActorById(s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
 void Teleport_PlaySparks(void);
 extern u16 gMarsLighthouseRoomM_LedgeSavedPalette[];
-extern volatile u16 gMarsLighthouseRoomM_HallFlameColors[];
-extern u16 gMarsLighthouseRoomM_HallPalette[];
+/// The colours of BG palettes 8 and 9.
+struct HallColors {
+  u16 colors[2 * PALETTE_COLORS];
+};
+extern struct HallColors gMarsLighthouseRoomM_HallFlameColors;
+extern struct HallColors gMarsLighthouseRoomM_HallPalette;
 extern const u16 gMarsLighthouseRoomM_UnlitFlameColors[];
 extern s16 gMarsLighthouseRoomM_DoorwayBlend;
 extern s16 gMarsLighthouseRoomM_DoorwayBlendTarget;
@@ -428,38 +432,37 @@ void MarsLighthouseRoomM_CycleHallFlames(void) {
   if (gMarsLighthouseRoomM_HallCycleFrame == -1) {
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallSavedPalette,
                          (void *)&BG_PLTT_COLOR(2, 0), 32);
-    Iwram_CopyWordsEntry((void *)gMarsLighthouseRoomM_HallFlameColors,
+    Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallFlameColors.colors,
                          (void *)&BG_PLTT_COLOR(8, 0), 64);
-    Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallPalette,
-                         (void *)gMarsLighthouseRoomM_HallFlameColors, 64);
+    Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallPalette.colors,
+                         gMarsLighthouseRoomM_HallFlameColors.colors, 64);
     gMarsLighthouseRoomM_HallCycleFrame = 0;
   }
-  /* FAKEMATCH(volatile): the saved colours read as volatile. */
   base = gMarsLighthouseRoomM_HallCycleFrame / 8 % 6;
   for (i = 0; i <= 5; i++) {
-    gMarsLighthouseRoomM_HallPalette[i + 4] =
-        gMarsLighthouseRoomM_HallFlameColors[(base + i) % 6 + 4];
-    gMarsLighthouseRoomM_HallPalette[i + 10] =
-        gMarsLighthouseRoomM_HallFlameColors[(base + i) % 6 + 10];
-    gMarsLighthouseRoomM_HallPalette[i + 20] =
-        gMarsLighthouseRoomM_HallFlameColors[(base + i) % 6 + 20];
-    gMarsLighthouseRoomM_HallPalette[i + 26] =
-        gMarsLighthouseRoomM_HallFlameColors[(base + i) % 6 + 26];
+    gMarsLighthouseRoomM_HallPalette.colors[i + 4] =
+        gMarsLighthouseRoomM_HallFlameColors.colors[(base + i) % 6 + 4];
+    gMarsLighthouseRoomM_HallPalette.colors[i + 10] =
+        gMarsLighthouseRoomM_HallFlameColors.colors[(base + i) % 6 + 10];
+    gMarsLighthouseRoomM_HallPalette.colors[i + 20] =
+        gMarsLighthouseRoomM_HallFlameColors.colors[(base + i) % 6 + 20];
+    gMarsLighthouseRoomM_HallPalette.colors[i + 26] =
+        gMarsLighthouseRoomM_HallFlameColors.colors[(base + i) % 6 + 26];
   }
   if (!Event_GetFlag(FLAG_VENUS_FLAME_LIT))
-    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette[10],
+    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[10],
                          gMarsLighthouseRoomM_UnlitFlameColors, 12);
   if (!Event_GetFlag(FLAG_MERCURY_FLAME_LIT))
-    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette[20],
+    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[20],
                          gMarsLighthouseRoomM_UnlitFlameColors, 12);
   if (!Event_GetFlag(FLAG_MARS_FLAME_LIT))
-    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette[26],
+    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[26],
                          gMarsLighthouseRoomM_UnlitFlameColors, 12);
   if (!Event_GetFlag(FLAG_JUPITER_FLAME_LIT))
-    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette[4],
+    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[4],
                          gMarsLighthouseRoomM_UnlitFlameColors, 12);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(8, 0),
-                      (u32)gMarsLighthouseRoomM_HallPalette, 0x84000010);
+                      (u32)gMarsLighthouseRoomM_HallPalette.colors, 0x84000010);
   gMarsLighthouseRoomM_HallCycleFrame++;
 }
 

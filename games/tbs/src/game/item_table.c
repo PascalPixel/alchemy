@@ -1,5 +1,5 @@
 /// @file
-/// The 324 items, by item id. Each name is the English release's.
+/// The items, by item id. Each name is the English release's.
 
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -7,8 +7,7 @@
 
 // clang-format off
 const struct ItemDefinition gItem_DefinitionTable[] = {
-    // ???
-    [ITEM_000] = {
+    [ITEM_NONE] = {
         .element = ELEMENT_NONE,
     },
     [ITEM_LONG_SWORD] = {
@@ -119,9 +118,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .unleashAbility = ABILITY_DEMON_FIRE,
         .element = ELEMENT_NONE,
     },
-    [ITEM_012] = {0},
-    [ITEM_013] = {0},
-    [ITEM_014] = {0},
     [ITEM_MACHETE] = {
         .price = 30,
         .type = ITEM_TYPE_WEAPON,
@@ -250,9 +246,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .unleashAbility = ABILITY_RAPID_SMASH,
         .element = ELEMENT_NONE,
     },
-    [ITEM_028] = {0},
-    [ITEM_029] = {0},
-    [ITEM_030] = {0},
     [ITEM_BATTLE_AXE] = {
         .price = 280,
         .type = ITEM_TYPE_WEAPON,
@@ -332,10 +325,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .unleashAbility = ABILITY_POISON_CLOUD,
         .element = ELEMENT_NONE,
     },
-    [ITEM_039] = {0},
-    [ITEM_040] = {0},
-    [ITEM_041] = {0},
-    [ITEM_042] = {0},
     [ITEM_MACE] = {
         .price = 80,
         .type = ITEM_TYPE_WEAPON,
@@ -413,10 +402,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .unleashAbility = ABILITY_DEADLY_POISON,
         .element = ELEMENT_NONE,
     },
-    [ITEM_051] = {0},
-    [ITEM_052] = {0},
-    [ITEM_053] = {0},
-    [ITEM_054] = {0},
     [ITEM_WOODEN_STICK] = {
         .price = 40,
         .type = ITEM_TYPE_WEAPON,
@@ -532,15 +517,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .primaryBonus = 10,
         .element = ELEMENT_NONE,
     },
-    [ITEM_066] = {0},
-    [ITEM_067] = {0},
-    [ITEM_068] = {0},
-    [ITEM_069] = {0},
-    [ITEM_070] = {0},
-    [ITEM_071] = {0},
-    [ITEM_072] = {0},
-    [ITEM_073] = {0},
-    [ITEM_074] = {0},
     [ITEM_LEATHER_ARMOR] = {
         .price = 240,
         .type = ITEM_TYPE_ARMOR,
@@ -650,9 +626,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_ADD_UNLEASH_CHANCE, .amount = 6}},
     },
-    [ITEM_086] = {0},
-    [ITEM_087] = {0},
-    [ITEM_088] = {0},
     [ITEM_COTTON_SHIRT] = {
         .price = 20,
         .type = ITEM_TYPE_ARMOR,
@@ -758,10 +731,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
             {.kind = EQUIP_EFFECT_ADD_JUPITER_RESIST, .amount = 10},
         },
     },
-    [ITEM_099] = {0},
-    [ITEM_100] = {0},
-    [ITEM_101] = {0},
-    [ITEM_102] = {0},
     [ITEM_ONE_PIECE_DRESS] = {
         .price = 25,
         .type = ITEM_TYPE_ARMOR,
@@ -871,10 +840,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
             {.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 10},
         },
     },
-    [ITEM_114] = {0},
-    [ITEM_115] = {0},
-    [ITEM_116] = {0},
-    [ITEM_117] = {0},
     [ITEM_WOODEN_SHIELD] = {
         .price = 40,
         .type = ITEM_TYPE_SHIELD,
@@ -940,8 +905,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .effects = {{.kind = EQUIP_EFFECT_ADD_VENUS_RESIST, .amount = 20}},
         .abilityId = ABILITY_CURE_WELL,
     },
-    [ITEM_125] = {0},
-    [ITEM_126] = {0},
     [ITEM_PADDED_GLOVES] = {
         .price = 10,
         .type = ITEM_TYPE_SHIELD,
@@ -1022,7 +985,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_WARD,
     },
-    [ITEM_135] = {0},
     [ITEM_LEATHER_ARMLET] = {
         .price = 180,
         .type = ITEM_TYPE_SHIELD,
@@ -1096,8 +1058,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_GUARD,
     },
-    [ITEM_143] = {0},
-    [ITEM_144] = {0},
     [ITEM_OPEN_HELM] = {
         .price = 180,
         .type = ITEM_TYPE_HELM,
@@ -1169,9 +1129,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_SCALE_PP, .amount = 12}},
     },
-    [ITEM_153] = {0},
-    [ITEM_154] = {0},
-    [ITEM_155] = {0},
     [ITEM_LEATHER_CAP] = {
         .price = 30,
         .type = ITEM_TYPE_HELM,
@@ -1260,7 +1217,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_LURE}},
     },
-    [ITEM_165] = {0},
     [ITEM_CIRCLET] = {
         .price = 120,
         .type = ITEM_TYPE_HELM,
@@ -1314,14 +1270,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_DELUDE,
     },
-    [ITEM_172] = {0},
-    [ITEM_173] = {0},
-    [ITEM_174] = {0},
-    [ITEM_175] = {0},
-    [ITEM_176] = {0},
-    [ITEM_177] = {0},
-    [ITEM_178] = {0},
-    [ITEM_179] = {0},
     [ITEM_HERB] = {
         .price = 10,
         .flags = ITEM_STACKABLE,
@@ -1400,7 +1348,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_WATER_OF_LIFE,
     },
-    [ITEM_190] = {0},
     [ITEM_POWER_BREAD] = {
         .price = 500,
         .flags = ITEM_RARE | ITEM_STACKABLE,
@@ -1449,9 +1396,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_LUCKY_PEPPER,
     },
-    [ITEM_197] = {0},
-    [ITEM_198] = {0},
-    [ITEM_199] = {0},
     [ITEM_ORB_OF_FORCE] = {
         .type = ITEM_TYPE_PSYNERGY,
         .flags = ITEM_INDISPENSABLE,
@@ -1524,18 +1468,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_CATCH,
     },
-    [ITEM_208] = {0},
-    [ITEM_209] = {0},
-    [ITEM_210] = {0},
-    [ITEM_211] = {0},
-    [ITEM_212] = {0},
-    [ITEM_213] = {0},
-    [ITEM_214] = {0},
-    [ITEM_215] = {0},
-    [ITEM_216] = {0},
-    [ITEM_217] = {0},
-    [ITEM_218] = {0},
-    [ITEM_219] = {0},
     [ITEM_VENUS_STAR] = {
         .flags = ITEM_INDISPENSABLE,
         .icon = 119,
@@ -1687,11 +1619,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 191,
         .element = ELEMENT_NONE,
     },
-    [ITEM_245] = {0},
-    [ITEM_246] = {0},
-    [ITEM_247] = {0},
-    [ITEM_248] = {0},
-    [ITEM_249] = {0},
     [ITEM_MYTHRIL_SHIRT] = {
         .price = 2900,
         .type = ITEM_TYPE_SHIRT,
@@ -1722,9 +1649,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 15}},
     },
-    [ITEM_253] = {0},
-    [ITEM_254] = {0},
-    [ITEM_255] = {0},
     [ITEM_HYPER_BOOTS] = {
         .price = 2400,
         .type = ITEM_TYPE_BOOTS,
@@ -1765,8 +1689,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_SCALE_AGILITY, .amount = 5}},
     },
-    [ITEM_260] = {0},
-    [ITEM_261] = {0},
     [ITEM_ADEPT_RING] = {
         .price = 3100,
         .type = ITEM_TYPE_RING,
@@ -1836,602 +1758,9 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_CURSE_REMOVABLE}},
     },
-    // (no name message)
-    [ITEM_269] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_270] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_271] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_272] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_273] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_274] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_275] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_276] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_277] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_278] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_279] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_280] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_281] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_282] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_283] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_284] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_285] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_286] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_287] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_288] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_289] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_290] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_291] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_292] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_293] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_294] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_295] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_296] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_297] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_298] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_299] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_300] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_301] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_302] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_303] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_304] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_305] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_306] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_307] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_308] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_309] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_310] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_311] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_312] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_313] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_314] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_315] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_316] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_317] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_318] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_319] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_320] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_321] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_322] = {
-        .price = 100,
-        .type = ITEM_TYPE_WEAPON,
-        .equipMask = EQUIP_CHARACTER(ISAAC),
-        .primaryBonus = 11,
-        .secondaryBonus = 12,
-        .unleashChance = 64,
-        .unleashAbility = ABILITY_MOVE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
-    },
-    // (no name message)
-    [ITEM_323] = {
+    // Spares: one weapon for Isaac, priced 100, copied to every row. Nothing gives
+    // them and the text has no names for them.
+    [ITEM_SPARE_FIRST ... ITEM_SPARE_LAST] = {
         .price = 100,
         .type = ITEM_TYPE_WEAPON,
         .equipMask = EQUIP_CHARACTER(ISAAC),

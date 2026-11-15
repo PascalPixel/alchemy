@@ -391,7 +391,7 @@ s32 Sand_CheckEndKeys(s32 arg) {
     if (Actor_CheckBlockedFar(arg)) {
       Sound_PlayFar(SE_MENU_CANCEL);
     } else if (!GameFlag_Get(0x146)) {
-      work->psynergy = 0x208b;
+      work->psynergy = ABILITY_SAND | ACT_PACKED;
       return 1;
     }
   }

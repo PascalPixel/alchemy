@@ -47,7 +47,6 @@ struct IceShardSprite;
 
 void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
                                     void (*callback)(void));
-void Oam_AddSpriteAtDepthClamped(struct IceShardSpark *spark, s32 value);
 
 void EffectSprite_DrawAtWorldPosition(struct IceShardSprite *sprite,
                                       struct IceShard *particle);

@@ -59,7 +59,6 @@
 #include "system/vector3.h"
 #include "fixed_math.h"
 #include "graphics/display_transition.h"
-#include "system/system_bank.h"
 #include "field/field_sprite.h"
 #include "macros.h"
 #include "system/input.h"

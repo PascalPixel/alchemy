@@ -27,7 +27,6 @@
 #include "field/lucky_wheels_title.h"
 #include "field/field_bank.h"
 #include "field/field_sequence.h"
-#include "system/system_bank.h"
 #include "resource_ids.h"
 #include "graphics/graphics.h"
 

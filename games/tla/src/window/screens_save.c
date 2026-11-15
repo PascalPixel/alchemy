@@ -7,7 +7,7 @@
 #include "sounds.h"
 #include "system/io_write.h"
 #include "gamepak/far_call/game.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "scene/shared.h"
 #include "window/screens.h"
 

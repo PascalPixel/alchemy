@@ -776,7 +776,6 @@ void YampiDesert_WatchScorpionStop(void) {
 #include "text/msg_ids.h"
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

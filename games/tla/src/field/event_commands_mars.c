@@ -9,7 +9,7 @@
 #include "field/event_commands.h"
 #include "field/field_bank.h"
 #include "field/object.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "battle/object_effect_scripts.h"
 #include "field/scene_call.h"
 #include "macros.h"

@@ -3,7 +3,7 @@
 // Part of game.c.
 
 #include "game_internal.h"
-#include "game/game_bank.h"
+#include "game/game.h"
 
 /// Returns an item's definition; an inventory entry's other bits are ignored.
 struct ItemDefinition *Item_GetDirect(s32 item) {

@@ -38,7 +38,6 @@ enum {
 #include "field/scene_tables.h"
 #include "gamepak/far_call/system.h"
 #include "scene/scene.h"
-#include "system/system_bank.h"
 #include "types.h"
 #include "system/system.h"
 #include "system/main_routine_work.h"

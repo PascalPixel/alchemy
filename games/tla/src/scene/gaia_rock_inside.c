@@ -39,7 +39,6 @@
 #include "system/frame.h"
 #include "system/io_reg.h"
 #include "fixed_math.h"
-#include "system/system_bank.h"
 #include "field/actor_view.h"
 #include "field/map_grid.h"
 #include "shared/tables.h"

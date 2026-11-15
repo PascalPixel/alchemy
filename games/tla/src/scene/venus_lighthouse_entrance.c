@@ -35,7 +35,6 @@
 #include "scene/shared.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"
-#include "game/game_bank.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "field/call.h"

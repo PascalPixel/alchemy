@@ -5,7 +5,7 @@
 #include "window_internal.h"
 #include "resource_ids.h"
 #include "sounds.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "window/screens.h"
 #include "window/window.h"
 

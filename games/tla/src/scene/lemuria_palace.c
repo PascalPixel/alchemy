@@ -27,7 +27,6 @@
 #include "window/item_icon.h"
 #include "field/event_commands.h"
 #include "scene/scene.h"
-#include "game/game_bank.h"
 #include "system/task.h"
 #include "field/call.h"
 #include "system/io_write.h"

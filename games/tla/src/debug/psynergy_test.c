@@ -38,7 +38,6 @@
 #include "window/item_icon.h"
 #include "item_ids.h"
 #include "game/character_ids.h"
-#include "game/game_bank.h"
 #include "scene/shared.h"
 #include "window/window.h"
 #include "scene/sparkle.h"

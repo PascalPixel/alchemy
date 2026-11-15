@@ -5,7 +5,6 @@
 #include "field_internal.h"
 #include "field/field_bank.h"
 #include "field/resource_slot.h"
-#include "system/system_bank.h"
 #include "scene/shared.h"
 #include "system/system.h"
 #include "types.h"

@@ -176,7 +176,6 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "types.h"
 #include "scene/scene.h"
 #include "sound/sound.h"
-#include "system/system_bank.h"
 #include "scene/shared.h"
 #include "battle/battle.h"
 #include "game/game.h"

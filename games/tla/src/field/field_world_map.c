@@ -7,7 +7,7 @@
 #include "fixed_math.h"
 #include "field/field_bank.h"
 #include "field/resource_slot.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "resource_ids.h"
 #include "system/transform.h"
 #include "macros.h"

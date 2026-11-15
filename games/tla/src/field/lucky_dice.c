@@ -35,7 +35,6 @@
 #include "system/heap_release.h"
 #include "field/field_bank.h"
 #include "field/field_sequence.h"
-#include "system/system_bank.h"
 #include "graphics/resource.h"
 #include "resource_ids.h"
 #include "system/task.h"

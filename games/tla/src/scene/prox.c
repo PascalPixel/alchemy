@@ -181,7 +181,6 @@ enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
 #include "window/item_icon.h"
 #include "field/field_bank.h"
 #include "scene/magma_rock.h"
-#include "system/system_bank.h"
 #include "field/particle.h"
 #include "graphics/resource.h"
 #include "system/io_reg.h"

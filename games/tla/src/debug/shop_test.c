@@ -193,7 +193,6 @@ void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
 /// Opens the Sanctum.
 void ShopTest_OpenSanctum(void) { Sanctum_Run(); }
 
-void Party_AdjustCoins(s32 amount);
 s32 PartyInventory_FindRoom(s32 item);
 void ItemDisplay_ShowItem(s32 item, s32 mode);
 void Forge_Run(s32 actor);
@@ -297,8 +296,6 @@ void ShopTest_EditPartyNames(void) {
   for (i = 0; i < 8; i++)
     NameEntry_EditMemberName(i);
 }
-
-void Party_RemoveMember(s32 owner);
 
 /// Adds an item to a member's inventory.
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
@@ -474,7 +471,6 @@ struct Trigger gSceneEvents[] = {
 
 // Overlay 0x6ba's code from ShopTest_DamageAndAfflictParty on, in ROM order.
 
-void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
 void GameFlag_RefreshLureCap(void);
 

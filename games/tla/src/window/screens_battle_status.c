@@ -4,7 +4,7 @@
 
 #include "window_internal.h"
 #include "sounds.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "version.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/battle.h"

@@ -7,7 +7,7 @@
 
 #include "gamepak/far_call/battle.h"
 #include "field/object.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "gamepak/far_call/field.h"
 #include "window/screens.h"
 #include "resource_ids.h"

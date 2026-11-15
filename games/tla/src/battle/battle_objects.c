@@ -6,7 +6,7 @@
 #include "battle_internal.h"
 #include "battle/battle.h"
 #include "gamepak/far_call/field.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "macros.h"
 
 // The status icons' bits in BattleObject.activeStatuses

@@ -34,7 +34,6 @@
 #include "system/heap_release.h"
 #include "window/item_icon.h"
 #include "scene/scene.h"
-#include "system/system_bank.h"
 #include "scene/shared.h"
 #include "graphics/resource.h"
 #include "system/serial.h"

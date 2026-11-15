@@ -32,7 +32,6 @@
 #include "field/actor.h"
 #include "field/field_sequence_event.h"
 #include "game/inventory.h"
-#include "game/game_bank.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "window/window.h"

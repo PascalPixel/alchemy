@@ -24,7 +24,6 @@
 #include "system/frame.h"
 #include "game/inventory.h"
 #include "version.h"
-#include "game/game_bank.h"
 #include "scene/scene.h"
 #include "text/msg_ids.h"
 #include "field/actor_script.h"

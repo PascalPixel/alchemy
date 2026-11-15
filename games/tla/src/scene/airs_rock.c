@@ -18,7 +18,6 @@
 #include "field/map_grid.h"
 #include "field/field_bank.h"
 #include "scene/scene.h"
-#include "system/system_bank.h"
 #include "scene/shared.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"

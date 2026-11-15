@@ -48,7 +48,6 @@
 #include "fixed_math.h"
 #include "graphics/display_transition.h"
 #include "window/item_icon.h"
-#include "system/system_bank.h"
 #include "field/map_grid.h"
 #include "macros.h"
 #include "system/input.h"
@@ -674,7 +673,6 @@ void MarsLighthouseStarRoom_HoldWarmHand(void) {
   Event_End();
 }
 
-void PartyInventory_Remove(s32 item);
 s32 Inventory_AddItem(s32 owner, s32 item);
 struct Unit *Unit_Get(u32 unitId);
 void Inventory_Equip(s32 owner, s32 slot);

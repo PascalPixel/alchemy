@@ -7,7 +7,7 @@
 #include "gamepak/far_call/window.h"
 #include "battle/battle.h"
 #include "battle/presentation.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 
 /// The curtain's map entries: tile 128 + n, WINDOW_PALETTE.
 #define TRANSITION_CURTAIN_ENTRY(n) (0xf080 + (n))

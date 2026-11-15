@@ -4,7 +4,7 @@
 // Part of game.c.
 
 #include "game_internal.h"
-#include "game/game_bank.h"
+#include "game/game.h"
 
 // Added in patch 1; the Japanese release has no such function.
 #if TLA_PATCH_1

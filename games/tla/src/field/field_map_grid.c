@@ -15,7 +15,7 @@
 #include "macros.h"
 #include "system/io_write.h"
 #include "field/flag_call.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "scene/shared.h"
 #include "system/bg_scroll.h"
 #include "field/mapcopy.h"

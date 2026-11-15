@@ -9,7 +9,7 @@
 #include "field/field_bank.h"
 #include "field/object.h"
 #include "field/resource_slot.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "system/task.h"
 #include "field/objdisp.h"
 #include "field/actor.h"

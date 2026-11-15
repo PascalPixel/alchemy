@@ -218,7 +218,6 @@ void MarsLighthouseRoomF_ShootFireballAtWall(void);
 #include "field/cell_target.h"
 #include "shared/tables.h"
 #include "field/field_effect.h"
-#include "system/system_bank.h"
 #include "graphics/vram_tab.h"
 #include "system/task.h"
 #include "field/actor_script.h"

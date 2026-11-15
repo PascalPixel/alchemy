@@ -72,7 +72,6 @@
 #include "field/event.h"
 #include "field/field_bank.h"
 #include "scene/scene.h"
-#include "system/system_bank.h"
 #include "scene/shared.h"
 #include "field/field_effect.h"
 #include "system/input.h"

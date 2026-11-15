@@ -14,7 +14,7 @@
 #include "gamepak/far_call/battle_effect.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "battle/presentation.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "battle/range_falloff.h"
 
 /// With the front line down and someone living, sends the reserve members in

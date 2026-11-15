@@ -575,8 +575,6 @@ void Geysers_Update(void) {
   }
 }
 
-void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
-
 /// Draws the swinging actors' ropes and heads (the 16 records of
 /// gInventorySnapshot
 /// + 0x188 kept by Geyser_Add): for each raised actor, a rope segment every

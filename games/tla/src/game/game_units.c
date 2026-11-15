@@ -7,7 +7,7 @@
 #include "macros.h"
 #include "field/flag_call.h"
 #include "gamepak/far_call/field_sequence.h"
-#include "game/game_bank.h"
+#include "game/game.h"
 #include "gamepak/far_call/window.h"
 #include "system/ram_buffer.h"
 #include "resource_ids.h"

@@ -181,7 +181,6 @@ static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
 #include "field/field_bank.h"
 #include "field/field_effect.h"
 #include "scene/scene.h"
-#include "system/system_bank.h"
 #include "scene/shared.h"
 #include "field/field_sequence_event.h"
 #include "field/call.h"

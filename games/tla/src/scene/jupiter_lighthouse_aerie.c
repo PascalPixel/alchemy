@@ -108,7 +108,6 @@ extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-void Oam_AddSpriteAtDepthClamped(void *entry, s32 depth);
 
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];

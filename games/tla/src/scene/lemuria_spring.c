@@ -57,7 +57,6 @@ enum LemuriaSpringActorId {
 #include "field/event_inline.h"
 #include "field/field_sequence_event.h"
 #include "field/field_bank.h"
-#include "game/game_bank.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
 #include "window/window.h"

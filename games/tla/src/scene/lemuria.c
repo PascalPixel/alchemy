@@ -72,7 +72,6 @@ enum LemuriaActorId {
 #include "field/field_sequence_event.h"
 #include "field/actor_view.h"
 #include "field/field_bank.h"
-#include "system/system_bank.h"
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 #include "field/sprite.h"

@@ -9,7 +9,7 @@
 #include "gamepak/far_call/window.h"
 #include "shop/shop.h"
 #include "gamepak/far_call/menu.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "scene/shared.h"
 
 /// Returns the sanctum's fee, in coins, for `serviceKind` on party member

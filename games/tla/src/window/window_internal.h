@@ -70,7 +70,6 @@
 #include "system/io_write_queue.h"
 #include "battle/battle_system.h"
 #include "field/event.h"
-#include "system/system_bank.h"
 #include "window/screens.h"
 #include "window/window.h"
 #include "field/actor.h"

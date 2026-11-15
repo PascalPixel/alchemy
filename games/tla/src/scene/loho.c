@@ -100,8 +100,6 @@ extern u32 gLoho_VillagerPaces[];
 
 extern s16 gLoho_DoorOpening[];
 
-s32 Oam_AddSpriteAtDepthClamped();
-
 /// One of the 96 sparks the cannon's blast throws over the screen: the link the
 /// sprite list threads it by, its sprite, and its age in frames, negative while
 /// it waits to appear.

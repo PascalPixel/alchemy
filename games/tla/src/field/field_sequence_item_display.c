@@ -42,7 +42,6 @@
 #include "system/input.h"
 
 // The parts, in ROM order.
-#include "system/system_bank.h"
 #include "field/screen_transition.h"
 #include "field/field_bank.h"
 #include "field/object.h"

@@ -97,7 +97,6 @@ enum {
 #include "field/event_inline.h"
 #include "field/event.h"
 #include "scene/scene.h"
-#include "system/system_bank.h"
 #include "graphics/resource.h"
 #include "window/window.h"
 #include "battle/battle.h"

@@ -8,7 +8,7 @@
 #include "gamepak/far_call/game.h"
 #include "battle/battle.h"
 #include "battle/presentation.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "resource_ids.h"
 
 /// Unused: nothing refers to it. Runs random encounters one after another,

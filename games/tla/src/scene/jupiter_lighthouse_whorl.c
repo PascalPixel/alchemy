@@ -877,8 +877,6 @@ extern s16 gLightSpriteTile;
 extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 
-void Oam_AddSpriteAtDepthClamped(void *entry, s32 depth);
-
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void CrackedTile_Fall(struct CellTargetHead *table,

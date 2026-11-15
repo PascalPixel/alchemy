@@ -6,7 +6,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "gamepak/far_call/field.h"
 #include "resource_ids.h"
 

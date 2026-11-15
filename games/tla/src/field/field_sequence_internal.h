@@ -68,7 +68,6 @@
 #include "field/field_bank.h"
 #include "field/field_sequence.h"
 #include "field/object.h"
-#include "system/system_bank.h"
 #include "gamepak/far_call/field.h"
 
 // The object's functions its parts call before their definitions.

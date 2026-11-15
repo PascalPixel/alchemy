@@ -9,7 +9,7 @@
 #include "battle/battle_effect_work.h"
 #include "fixed_math.h"
 #include "battle/presentation.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 
 /// Lines outside the plane read the padded map in this screen block.
 #define BACKGROUND_PADDED_SCREEN 31

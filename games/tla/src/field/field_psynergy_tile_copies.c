@@ -8,7 +8,7 @@
 #include "sounds.h"
 #include "macros.h"
 
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "gamepak/far_call/field.h"
 #include "field/field.h"
 

@@ -222,7 +222,6 @@ extern s32 gAirsRockInside_StampedZ;
 #include "field/flag_call.h"
 #include "field/event_commands.h"
 #include "field/object.h"
-#include "system/system_bank.h"
 #include "graphics/resource.h"
 #include "system/bg_scroll.h"
 #include "system/io_reg.h"

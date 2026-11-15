@@ -34,7 +34,6 @@
 #include "field/event.h"
 #include "field/flag_call.h"
 #include "field/event_commands.h"
-#include "game/game_bank.h"
 #include "tla_edition.h"
 #include "scene_ids.h"
 #include "version.h"

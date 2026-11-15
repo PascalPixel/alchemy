@@ -12,7 +12,7 @@
 #include "gamepak/far_call/field.h"
 #include "battle/presentation.h"
 #include "battle/presentation.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "scene/shared.h"
 #include "text/msg_ids.h"
 #include "macros.h"

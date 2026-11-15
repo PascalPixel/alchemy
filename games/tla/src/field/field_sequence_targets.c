@@ -8,7 +8,7 @@
 #include "field/field_bank.h"
 #include "field/field_sequence.h"
 #include "field/map.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 
 /// Picks the object nearest object id, under 32 pixels away and 48 pixels in
 /// height. Distances to ids above 63 count double and to objects with

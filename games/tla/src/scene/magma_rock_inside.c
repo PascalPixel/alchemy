@@ -52,7 +52,6 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "field/object.h"
 #include "scene/mars_lighthouse_aerie.h"
 #include "scene/scene.h"
-#include "system/system_bank.h"
 #include "scene/shared.h"
 #include "system/scene.h"
 #include "system/ram_buffer.h"

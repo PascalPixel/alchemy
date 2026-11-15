@@ -133,8 +133,6 @@ void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d);
 #include "window/item_icon.h"
 #include "field/event_commands.h"
 #include "field/field_bank.h"
-#include "game/game_bank.h"
-#include "system/system_bank.h"
 #include "system/iwram_call.h"
 #include "battle/battle.h"
 #include "field/field.h"

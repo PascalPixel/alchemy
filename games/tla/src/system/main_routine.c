@@ -14,7 +14,6 @@
 #include "gamepak/far_call/lucky_dice.h"
 #include "gamepak/far_call/window.h"
 #include "field/field_bank.h"
-#include "system/system_bank.h"
 #include "sound/sound.h"
 #include "system/dma.h"
 #include "system/frame.h"

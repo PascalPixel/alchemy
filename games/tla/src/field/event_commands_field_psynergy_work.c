@@ -24,7 +24,7 @@
 #include "field/field_bank.h"
 #include "field/object.h"
 #include "text/msg_ids.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "field/map_grid.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"

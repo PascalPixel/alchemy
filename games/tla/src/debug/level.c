@@ -28,7 +28,6 @@
 #include "game/character_ids.h"
 #include "edition.h"
 #include "field/field_sequence_event.h"
-#include "game/game_bank.h"
 #include "window/screens.h"
 #include "window/window.h"
 #include "graphics/text_render.h"

@@ -29,9 +29,7 @@
 #include "system/bg_scroll.h"
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
-#include "game/game_bank.h"
 #include "scene/scene.h"
-#include "system/system_bank.h"
 #include "resource_ids.h"
 #include "system/system_call.h"
 

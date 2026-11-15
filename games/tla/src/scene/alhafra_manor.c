@@ -17,7 +17,6 @@
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "system/system_bank.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"

@@ -46,7 +46,6 @@ enum MtAlephSummitActorId {
 #include "field/event_commands.h"
 #include "field/field_effect.h"
 #include "scene/scene.h"
-#include "system/system_bank.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 

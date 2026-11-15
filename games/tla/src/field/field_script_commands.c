@@ -8,7 +8,7 @@
 #include "field/flag_call.h"
 #include "field/field_bank.h"
 #include "field/resource_slot.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "scene/shared.h"
 #include "system/scene.h"
 #include "macros.h"

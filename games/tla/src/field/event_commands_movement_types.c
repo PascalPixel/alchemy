@@ -6,7 +6,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "field/field_bank.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "field/scene_call.h"
 
 extern const u8 gActor_WaitScript[];

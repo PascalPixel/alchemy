@@ -32,7 +32,6 @@
 #include "scene/gabomba_statue.h"
 #include "scene/scene.h"
 #include "scene/staff_credit.h"
-#include "system/system_bank.h"
 #include "scene/shared.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"

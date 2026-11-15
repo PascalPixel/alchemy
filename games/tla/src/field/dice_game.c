@@ -33,7 +33,6 @@
 #include "gamepak/far_call/window.h"
 #include "system/heap_release.h"
 #include "field/field_bank.h"
-#include "system/system_bank.h"
 #include "graphics/resource.h"
 #include "system/task.h"
 #include "system/transform.h"

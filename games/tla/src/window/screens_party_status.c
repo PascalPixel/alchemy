@@ -4,7 +4,7 @@
 
 #include "window_internal.h"
 #include "window/menu_list.h"
-#include "system/system_bank.h"
+#include "system/system.h"
 #include "window/screens.h"
 #include "window/window.h"
 

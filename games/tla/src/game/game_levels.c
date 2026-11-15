@@ -4,7 +4,7 @@
 
 #include "game_internal.h"
 #include "game/character.h"
-#include "game/game_bank.h"
+#include "game/game.h"
 #include "text/msg_ids.h"
 
 /// Returns the definition of ability `abilityId` (its low 14 bits); an id

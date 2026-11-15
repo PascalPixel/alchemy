@@ -21,7 +21,6 @@
 #include "version.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
-#include "game/game_bank.h"
 #include "system/iwram_call.h"
 #include "field/field_event.h"
 #include "text/msg_ids.h"

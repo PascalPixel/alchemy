@@ -15,7 +15,6 @@
 #include "system/task.h"
 #include "field/event_commands.h"
 #include "field/field_bank.h"
-#include "system/system_bank.h"
 #include "system/system.h"
 #include "field/object.h"
 #include "battle/battle.h"

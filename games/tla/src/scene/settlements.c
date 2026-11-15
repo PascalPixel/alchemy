@@ -569,9 +569,9 @@ void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
 static __inline__ void Settlements_PlaceRope(s32 index, s32 flag, s32 post,
                                              s32 otherPost) {
-  /* FAKEMATCH(wrapper): Rope_Place called through an inline; as
-   * Rope_Place(1, FLAG_ROPE_TIED, ...) direct, 2 of 120 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): the form kept; as Rope_Place(1, FLAG_KALT_ROPE_TIED,
+   * ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B) called directly, 2 of 143
+   * instructions differ in tla-en. */
   Rope_Place(index, flag, post, otherPost);
 }
 

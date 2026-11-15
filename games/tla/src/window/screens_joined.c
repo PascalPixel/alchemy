@@ -64,21 +64,23 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     work->dirty = 1;
 
     id = Portrait_GetForSpeaker(name);
-    Icon_LoadWithPalette(id, zero, &slot, &tile, 14, zero);
+    Icon_LoadWithPalette(id, zero, &slot, &tile, PORTRAIT_PALETTE, zero);
 
     // The portrait as a bare OAM entry, pushed at depth 250 each frame: a link
     // word, attributes 0 and 1 (32x32 at y 12) and attribute 2, its tile with
     // palette 14.
     p = entry;
     *p++ = zero;
-    *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
+    *p++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
     *p = tile | (14 << 12);
 
     work->speakerVoiceSound = zero;
     work->speakerVoiceCountdown = zero;
 
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_Push(element * 20 + djinn + 300, MESSAGE_ARGUMENT_ABILITY);
+    MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
+                             ABILITY_DJINNI_FIRST,
+                         MESSAGE_ARGUMENT_ABILITY);
 
     text = Message_DecodeMode1(element + (s32)MsgFoundVenusDjinni);
 
@@ -136,7 +138,7 @@ void Party_ShowJoinedMessage(s32 member) {
     // with palette 14.
     p = entry;
     *p++ = 0;
-    *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
+    *p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
     *p = tile | (14 << 12);
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;

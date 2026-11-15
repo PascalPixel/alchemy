@@ -406,7 +406,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     Menu_SpawnIconEntries(menu, menu->psynergyWindow);
   if (Window_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
     menu->cursorIcon = WindowSprite_CreateFromResourceFar(
-        2, 0, menu->shortcutWindow, 0, result);
+        ICON_KIND_ITEM, 0, menu->shortcutWindow, 0, result);
     menu->cursorIcon->motion = ICON_HIDDEN;
   }
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
@@ -414,7 +414,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
       window = menu->statusWindow;
       unit = Unit_Get(ownerIds[selection]);
       PsynergyMenu_RefreshMemberPsynergy(ownerIds[selection]);
-      StatusPanel_Draw(window, ownerIds[selection], 0, 0);
+      StatusPanel_Draw(window, ownerIds[selection], 0, STATUS_PANEL_EXPERIENCE);
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, ownerIds[selection]);
       PsynergyMenu_CallIconRoutineWithValue(menu, ownerIds[selection]);
       if (redraw == 2) {
@@ -436,7 +436,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
-    if (KEYS_PRESSED & 1) {
+    if (KEYS_PRESSED & KEY_A) {
       if (menu->psynergyCount) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         result = ownerIds[selection];
@@ -447,11 +447,12 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     if ((KEYS_PRESSED & KEY_L) || (KEYS_PRESSED & KEY_R)) {
       result = ownerIds[selection];
       if (KEYS_PRESSED & KEY_L)
-        menu->mode = 1;
+        menu->mode = PSYNERGY_MODE_SET_L;
       else
-        menu->mode = 2;
+        menu->mode = PSYNERGY_MODE_SET_R;
       actions = Heap_Alloc(32 * sizeof(u16));
-      fieldCount = PsynergyMenu_CollectActions(unit, actions, 1);
+      fieldCount =
+          PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_SHORTCUTS);
       Heap_Release(actions);
       shortcutCount = fieldCount;
       if (shortcutCount == 0) {
@@ -462,7 +463,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         break;
       }
     }
-    if (KEYS_PRESSED & 2) {
+    if (KEYS_PRESSED & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;

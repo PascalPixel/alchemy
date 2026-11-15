@@ -934,8 +934,8 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 0x13);
-  Task_Add(ElementGlow_UpdateStarField, 0x480);
-  return Task_Add(ElementGlow_UploadStarField, 0x480);
+  Task_Add(ElementGlow_UpdateStarField, TASK_PASS_VBLANK);
+  return Task_Add(ElementGlow_UploadStarField, TASK_PASS_VBLANK);
 }
 
 /// Ends a star field: clears the tiles in character block 1, releases its
@@ -1088,7 +1088,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
     if (enemy == 0)
       continue;
     if (!GameFlag_Get(FLAG_MONSTER_BATTLE_ANY_ENEMY) &&
-        !GameFlag_Get(enemyId + 0x608))
+        !GameFlag_Get(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
       return -2;
     levelTotal += enemy->level;
     enemyCount++;

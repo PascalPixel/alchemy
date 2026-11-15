@@ -415,12 +415,12 @@ s32 PartyMemberChooser_RunRearrange(void) {
     }
     MenuCursor_Position((ownerIndex % 4) * 24 - 10, 16);
     wait(1);
-    if (KEYS_PRESSED & 1) {
+    if (KEYS_PRESSED & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (KEYS_PRESSED & 2) {
+    if (KEYS_PRESSED & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -445,7 +445,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Sound_PlayFar(SE_MENU_ERROR);
       }
       wait(1);
-    } else if ((KEYS_PRESSED & 4) && GameFlag_Get(55)) {
+    } else if ((KEYS_PRESSED & KEY_SELECT) && GameFlag_Get(55)) {
       DjinnMenu_ShowCurrentList();
       redraw = 1;
     } else {
@@ -489,8 +489,9 @@ s32 PsynergyMenu_ChooseMember(void) {
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberIds[selection], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[selection]);
-      menu->entryCount = PsynergyMenu_CollectActions(
-          Unit_Get(menu->memberIds[selection]), menu->entries, 0);
+      menu->entryCount =
+          PsynergyMenu_CollectActions(Unit_Get(menu->memberIds[selection]),
+                                      menu->entries, PSYNERGY_LIST_ALL);
       PsynergyMenu_DrawPsynergyIcons(menu->entries);
       Menu_PlaceEntryActorsInGrid(96, 96, 8);
       Menu_HideEmptyEntryIcons(menu->entries);
@@ -1759,7 +1760,7 @@ s32 ItemMenu_SelectItem(void) {
   s32 ownerIndex;
   s32 i;
   struct PagedList state;
-  u16 savedInventory[15];
+  u16 savedInventory[INVENTORY_SLOTS];
 
   menu = Ram_HeapSlots->menuWork;
   window = menu->statusWindow;
@@ -1810,12 +1811,12 @@ s32 ItemMenu_SelectItem(void) {
       refresh = 1;
     if (navigation == -1)
       refresh = 0;
-    if (KEYS_PRESSED & 1) {
+    if (KEYS_PRESSED & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (KEYS_PRESSED & 2) {
+    if (KEYS_PRESSED & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;

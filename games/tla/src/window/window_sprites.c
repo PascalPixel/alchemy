@@ -112,7 +112,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       return 0;
     index = (output - work->outputs) * 4;
     output->motion = WINDOW_SPRITE_MOTION_STILL;
-    output->kind = 0;
+    output->kind = WINDOW_SPRITE_GLYPH;
     if (mode == GLYPH_DRAW_PAGE_ARROW) {
       width = 1;
       output->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
@@ -222,7 +222,8 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output->motion = WINDOW_SPRITE_MOTION_STILL;
   output->kind = 0;
   width = Text_DrawGlyphPair(character, tiles);
-  Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
+  Dma_Set(tiles,
+          (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
           DMA_COPY_WORDS(32), REG_DMA3);
   ((u16 *)&output->sprite.oam)[0] =
       y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;

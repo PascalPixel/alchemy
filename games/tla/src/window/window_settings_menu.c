@@ -16,9 +16,9 @@ u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
   s32 g = rgb[1] * scale_g >> 16;
   s32 b = rgb[2] * scale_b >> 16;
 
-  CLAMP(r, 0, 31);
-  CLAMP(g, 0, 31);
-  CLAMP(b, 0, 31);
+  CLAMP(r, 0, RGB_LEVEL_MAX);
+  CLAMP(g, 0, RGB_LEVEL_MAX);
+  CLAMP(b, 0, RGB_LEVEL_MAX);
   r |= b << 10 | g << 5;
   return r;
 }

@@ -394,9 +394,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       void *tile;
       u32 fill = TEXT_CANVAS_BACKGROUND_WORD;
 
-      tile = (void *)0x060052c0;
+      tile = (void *)DJINN_BACKDROP_BORDER_VRAM;
       if ((frame & 4) != 0) {
-        Iwram_CopyWords(tile, gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWords(tile, gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
       } else {
         Iwram_FillWords(tile, 32, fill);
       }
@@ -449,7 +449,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);
-  Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
   ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
@@ -589,9 +589,10 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       redraw = 0;
     if ((frame & 3) == 0) {
       if (frame & 4)
-        Iwram_CopyWordsEntry((void *)0x060052c0, gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWordsEntry((void *)DJINN_BACKDROP_BORDER_VRAM,
+                             gMenu_BackdropBorderTile, 32);
       else
-        Iwram_FillWordsEntry((void *)0x060052c0, 32,
+        Iwram_FillWordsEntry((void *)DJINN_BACKDROP_BORDER_VRAM, TILE_SIZE_4BPP,
                              TEXT_CANVAS_BACKGROUND_WORD);
     }
     if (pressedKeys & KEY_START) {

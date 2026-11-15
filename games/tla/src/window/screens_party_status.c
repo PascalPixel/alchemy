@@ -86,9 +86,9 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   u16 *dest;
   const s8 *table;
 
-  if ((flags & 1) == 0)
-    flags &= ~2;
-  if (flags & 2) {
+  if ((flags & PARTY_STATUS_SHOW_PP) == 0)
+    flags &= ~PARTY_STATUS_SHOW_DJINN;
+  if (flags & PARTY_STATUS_SHOW_DJINN) {
     bias = 5;
     first = 0;
   }

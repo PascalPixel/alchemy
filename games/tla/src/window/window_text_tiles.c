@@ -621,7 +621,7 @@ void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
   s32 dst;
   s32 phase;
 
-  buffer = Heap_AllocEwram(0x200);
+  buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   output = buffer;
   while (*text != 0) {

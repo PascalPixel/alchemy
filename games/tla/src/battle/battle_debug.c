@@ -161,9 +161,9 @@ s32 DebugParameterSet_Load(s32 preset) {
   Party_RemoveMemberFar(1);
   Party_RemoveMemberFar(2);
   Party_RemoveMemberFar(3);
-  Party_RemoveMemberFar(5);
-  Party_RemoveMemberFar(4);
-  Party_RemoveMemberFar(6);
+  Party_RemoveMemberFar(JENNA);
+  Party_RemoveMemberFar(FELIX);
+  Party_RemoveMemberFar(SHEBA);
   Party_RemoveMemberFar(7);
   Djinn_GetRecoveryTableFar(0)->list.count = done;
 

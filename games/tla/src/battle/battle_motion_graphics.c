@@ -394,9 +394,9 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       (struct Actor *)BattleObject_Get(work.actor)->object, 16);
 
   if ((u16)work.actors[0] <= ALLY_MAX)
-    work.side = 1;
+    work.side = EFFECT_SIDE_PARTY;
   else
-    work.side = 0;
+    work.side = EFFECT_SIDE_ENEMIES;
 
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN0V = WIN_RANGE(16, 136);
@@ -454,7 +454,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (work.kind != 0) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
-      if (plan->battleEffect & 0x4000)
+      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
         BattleEffect_RunByIdRangeFar(&work);
       else
         BattleEffect_RunFromTableFar(&work);
@@ -467,7 +467,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (critical != 0) {
       view->flag = 0;
       BattleUnit_ListAllAndSubmit();
-      BattleCamera_SetView(0, 0, 0, 100);
+      BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     }
     BattleMotion_ReturnToSpot(work.actors[0]);
   }
@@ -823,7 +823,7 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 
 removed:
   BattleEnemy_ReleaseNameLetter(id);
-  for (j = 0; j < 20; j++) {
+  for (j = 0; j < BATTLE_ACTION_CAPACITY; j++) {
     if (work->actions[j].unitId == id)
       work->actions[j].unitId = BATTLE_UNIT_LIST_END;
   }

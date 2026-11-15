@@ -137,7 +137,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
-  Task_Add(CommandRow_PutBg1Behind, 0xc80);
+  Task_Add(CommandRow_PutBg1Behind, TASK_PASS_FRAME);
   Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 
   for (;;) {
@@ -159,7 +159,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             for (col = 0; col <= 2; col++)
               *(work->tilemap[0] +
                 (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
-                WINDOW_X - 18 + (col & 3)) = 0xf07f;
+                WINDOW_X - 18 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -189,7 +189,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             for (col = 0; col <= 2; col++)
               *(work->tilemap[0] +
                 (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
-                2 + (col & 3)) = 0xf07f;
+                2 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -347,7 +347,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap[0] +
                             (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
-                            panel * 3 + 5 + (col & 3)) = 0xf07f;
+                            panel * 3 + 5 + (col & 3)) =
+              WINDOW_TILE_COMMAND_PANEL;
       }
     }
   }
@@ -358,7 +359,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      0x20000);
+                      IO_WRITE_HALFWORD);
   Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
   wait(1);
@@ -376,14 +377,14 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
     x = 0;
   }
   if (x + width > 29) {
-    width = 30 - x;
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29) {
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
   }
 
   if (width > 0 && height > 0) {

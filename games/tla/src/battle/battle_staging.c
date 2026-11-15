@@ -323,7 +323,8 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   BattleParty_ReturnAllToSpots();
   request->unitId = BATTLE_UNIT_LIST_END;
 finish:
-  BattleBackground_SetMode(2, (Ram_HeapSlots->battleWork)->background, 0);
+  BattleBackground_SetMode(BATTLE_BACKGROUND_ZOOMED,
+                           (Ram_HeapSlots->battleWork)->background, 0);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   return fled;
 }
@@ -343,7 +344,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
   effect->flags = 0;
   flags = plan->battleEffect;
   effect->kind = flags & 0xfff;
-  effect->variant = (flags & 0x3000) >> 12;
+  effect->variant = (flags & 0x3000) >> EFFECT_VARIANT_SHIFT;
   effect->actor = plan->unitId;
   targetIndex = 0;
   if (targetIndex < plan->targetCount) {

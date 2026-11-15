@@ -345,11 +345,12 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       zero = 0;
       *slot = background;
     }
-    work.count = BattleUnit_ListIds(2, (u16 *)work.actors);
-    work.actors[work.count] = 255;
+    work.count =
+        BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
+    work.actors[work.count] = BATTLE_UNIT_LIST_END;
     BattleActor_SpawnObjectsForList(work.actors, 0);
     BattleEffect_RunShatteringOpeningFar(&work);
-    BattleCamera_SetView(0, 0, 0, 100);
+    BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     *timer = zero;
     Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ResetBg0Scroll);
     wait(1);
@@ -358,18 +359,18 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
     IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-    count = BattleUnit_ListIds(3, shown);
-    shown[count] = 255;
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, shown);
+    shown[count] = BATTLE_UNIT_LIST_END;
     BattleActor_SpawnObjectsForList((s16 *)shown, 0);
-    count = BattleUnit_ListIds(1, shown);
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, shown);
     for (i = 0; i != count; i++)
-      BattleHighlight_SetSpriteMode(shown[i], 1);
-    for (i = 0; i != 16; i++) {
+      BattleHighlight_SetSpriteMode(shown[i], SPRITE_SEMI_TRANSPARENT);
+    for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
       REG_BLDALPHA = i | 0x1000;
       wait(1);
     }
     for (i = 0; i != count; i++)
-      BattleHighlight_SetSpriteMode(shown[i], 0);
+      BattleHighlight_SetSpriteMode(shown[i], SPRITE_OPAQUE);
     BattleIntro_AnnounceEncounter(arg);
     gBgScroll[0].y = 0;
     wait(1);

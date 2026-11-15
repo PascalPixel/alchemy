@@ -362,7 +362,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         } else if (keys & KEYS_HORIZONTAL) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-          cursor.group ^= 2;
+          cursor.group ^= STATUS_CURSOR_CONDITIONS;
           if (gInput.repeat & KEY_LEFT)
             groupPosition = statusCount - 1;
           else
@@ -1099,8 +1099,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         s32 agilityDelta;
         s32 helpValue;
 
-        if (statusKind == 0 && unit->hp == 0)
-          statusKind = 16;
+        if (statusKind == OWNER_CONDITION_NORMAL && unit->hp == 0)
+          statusKind = OWNER_CONDITION_DOWNED;
         savedUnit = Heap_Alloc(sizeof(*savedUnit));
         Iwram_CopyWordsEntry(savedUnit, unit, sizeof(*savedUnit));
         attackDelta = unit->atk;
@@ -1183,7 +1183,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         sprite->oam.f.tile = entry[*slot++].offset >> 5;
         sprite->oam.f.x = iconX;
         sprite->oam.f.y = (s16)statusWindow->y * 8 + 8;
-        if (statusKinds[i] > 0)
+        if (statusKinds[i] > OWNER_CONDITION_NORMAL)
           Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
         iconX += 15;
         sprite++;

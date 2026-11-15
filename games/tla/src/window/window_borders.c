@@ -185,21 +185,22 @@ void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
-  if (width <= 1 || height <= 1 || width > 30 || height > 30)
+  if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
+      height > DISPLAY_TILE_WIDTH)
     return;
   Window_ClearTextTilesInRect(x, y, width, height);
   *cursor++ = WINDOW_TILE_FLASH_TOP_LEFT;
   cursor = Memory_FillHalfwordsDma(
       cursor, WINDOW_TILE_PAIR(WINDOW_TILE_FLASH_TOP), width - 2);
   *cursor++ = WINDOW_TILE_FLASH_TOP_RIGHT;
-  cursor += 32 - width;
+  cursor += BG_SCREEN_WIDTH - width;
   for (row = 1; row < height - 1; row++) {
     *cursor++ = WINDOW_TILE_FLASH_LEFT;
     if (width != 2)
       cursor = Memory_FillHalfwordsDma(
           cursor, WINDOW_TILE_PAIR(WINDOW_TILE_WINDOW_FILL), width - 2);
     *cursor++ = WINDOW_TILE_FLASH_RIGHT;
-    cursor += 32 - width;
+    cursor += BG_SCREEN_WIDTH - width;
   }
   *cursor++ = WINDOW_TILE_FLASH_BOTTOM_LEFT;
   cursor = Memory_FillHalfwordsDma(

@@ -408,7 +408,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       }
       objects[unitIndex] = object;
       unitIndex++;
-      if (unitIndex >= 14 || unitIds[unitIndex] == BATTLE_UNIT_LIST_END)
+      if (unitIndex >= UNIT_MAX || unitIds[unitIndex] == BATTLE_UNIT_LIST_END)
         break;
     }
   }
@@ -427,8 +427,8 @@ void BattleObject_UpdateSpritePriorities(void) {
   for (unitIndex = 0; unitIndex < partyCount; unitIndex++) {
     object = objects[unitIndex];
     if (object != 0) {
-      switch (object->recordStorageKind & 15) {
-      case 1:
+      switch (object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
+      case ACTOR_SPRITE_ONE:
         record = object->records;
         record->image.priority = partyPriority;
         if (Unit_Get(unitIds[unitIndex])->defendLevel == 4)
@@ -436,7 +436,7 @@ void BattleObject_UpdateSpritePriorities(void) {
         else
           record->flags &= ~2;
         break;
-      case 2:
+      case ACTOR_SPRITE_GROUP:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
           struct Sprite *part = *records++;
@@ -455,8 +455,8 @@ void BattleObject_UpdateSpritePriorities(void) {
        unitIndex++) {
     object = objects[unitIndex];
     if (object != 0) {
-      switch (object->recordStorageKind & 15) {
-      case 1:
+      switch (object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
+      case ACTOR_SPRITE_ONE:
         record = object->records;
         record->image.priority = enemyPriority;
         if (Unit_Get(unitIds[unitIndex])->defendLevel == 4)
@@ -464,7 +464,7 @@ void BattleObject_UpdateSpritePriorities(void) {
         else
           record->flags &= ~2;
         break;
-      case 2:
+      case ACTOR_SPRITE_GROUP:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
           struct Sprite *part = *records++;
@@ -543,7 +543,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
   i = 0;
   do {
     no = i + 0x78;
-    if (i <= 7) {
+    if (i <= ALLY_MAX) {
       no = i;
     }
     slot = BattleObject_FindSlot(no);

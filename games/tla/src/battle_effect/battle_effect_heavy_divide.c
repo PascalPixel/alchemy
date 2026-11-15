@@ -331,8 +331,8 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
         draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-        EFFECT_LOAD_BLITTER(
-            188, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
         // At its address: through the slots' base it would share the base
         // above.
         draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCodePaired;

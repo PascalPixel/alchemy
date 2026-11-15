@@ -375,11 +375,10 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-// Reached from the scenes through the far-call table (table_47.s). Like
-// 0813e3d0 it sets up its own heap blocks, stores work->effect and marks the
-// work active itself, and reads the actors from the argument. The corner
-// sparks' four blitters are loaded through BattleEffect_BuildBlitter directly,
-// with all five arguments.
+// Reached from the scenes through the far-call table. Like
+// BattleEffect_RunElementPillar it sets up its own heap blocks, stores
+// work->effect and marks the work active itself, and reads the actors from the
+// argument.
 
 /// The rising sparkles live in the map cell buffer.
 #define gSparkles ((struct Particle *)Ram_MapCellBuffer)

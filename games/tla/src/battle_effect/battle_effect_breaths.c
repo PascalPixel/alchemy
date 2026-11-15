@@ -47,15 +47,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   if (mode == BREATH_PIKE) {
-    void *palette = Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet);
-    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-    copyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_BlueFlameSheet);
   } else {
-    void *palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-    copyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                              Ram_MapCellBuffer, 0, 0);

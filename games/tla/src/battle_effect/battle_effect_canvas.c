@@ -163,7 +163,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 
           void *o = (void *)OBJ_TILES(
               (struct Sprite *)work->sprites[gEclipse_TileObjects[i]]);
-          // Default: set for real below; as s32 size = 0x400, 762 differ.
+          // Default: set for real below.
           s32 size = 0;
           size = 0x400;
           Iwram_CopyWordsEntry(o, &dst[i * 0x400], size);
@@ -581,8 +581,6 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != 16; i++) {
-        // A constant here and in p below, so both share one pool word (as
-        // gData_02014000, 70 to 786 differ).
         struct Particle *q = (struct Particle *)(Ram_MapCellBuffer + 0x4000) +
                              ((frame * 16 + i) & 511);
         // Default: set for real below.

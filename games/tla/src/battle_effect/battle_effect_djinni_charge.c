@@ -97,13 +97,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
                                  work->sheet + DJINNI_CHARGE_BURST_PICTURES, 1,
                                  1);
-      {
-        const void *source =
-            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-        copy((void *)BG_PLTT, source, SHEET_PALETTE_BYTES);
-      }
+      LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
       frames = 102;
     } else {
       Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, cells, 1, 0);

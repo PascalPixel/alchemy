@@ -115,7 +115,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct TargetPoint markerPosition;
   struct TargetAffine effect;
   struct BattleUnit *unit;
-  struct TargetBattle *battle;
+  struct BattleWork *battle;
   struct RenderInput *window;
   struct RenderInput *conditionWindow;
   s32 targetIndex;

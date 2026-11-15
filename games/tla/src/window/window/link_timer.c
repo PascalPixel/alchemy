@@ -28,7 +28,7 @@ extern struct LinkSignature
 void UpdateLinkSessionCountdown(void) {
   struct LinkCountdownState *state =
       (struct LinkCountdownState *)Ram_HeapSlots->battleMenuWork;
-  struct LinkRuntimeState *runtime;
+  struct BattleWork *runtime;
   struct CountdownDisplayEntry *entry;
   u8 *active;
   struct LinkSignature *signature;
@@ -72,8 +72,8 @@ void UpdateLinkSessionCountdown(void) {
     if (state->enabled == 0)
       goto done;
 
-    runtime = (struct LinkRuntimeState *)Ram_HeapSlots->battleWork;
-    if (runtime->paused == 0)
+    runtime = Ram_HeapSlots->battleWork;
+    if (runtime->linkPaused == 0)
       goto load_timer;
     state->timer = 0;
     goto done;
@@ -91,7 +91,7 @@ void UpdateLinkSessionCountdown(void) {
     timer = state->timer;
     if (timer >= 0)
       goto timer_ready;
-    signature = &gLinkPeerSignatures__menus[runtime->side ^ 1];
+    signature = &gLinkPeerSignatures__menus[runtime->linkSide ^ 1];
     if (signature->e != 'E')
       goto signature_done;
     if (signature->d == 'D')

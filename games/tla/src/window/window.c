@@ -80,7 +80,10 @@ s32 Window_MapTextCanvasTiles__screens() __asm__("Window_MapTextCanvasTiles");
 // The screens object's functions its parts call before their definitions.
 struct BobPairObject;
 
-struct CommandRowIcon {
+/// One icon of the command row (struct BattleCommandRowWork): its sprite, where
+/// it stands and the command it stands for. menu_titles.c loads it,
+/// battle_command_row.c runs the row.
+struct BattleCommandRowIcon {
   u8 unk00[4];
   u8 y;
   u8 objMode : 2; ///< 3: double-size affine
@@ -96,16 +99,19 @@ struct CommandRowIcon {
   s32 kind;
 };
 
+/// The pulsing icon's transform: its scale, 8.8 fixed point, and angle.
 struct CommandRowAffine {
   u16 scaleX;
   u16 scaleY;
   u16 angle;
 };
 
-struct CommandRowWork {
+/// The command row's work block: the icons' shared palette, up to six icons,
+/// the label window, the pulsing icon's transform and the selection.
+struct BattleCommandRowWork {
   u8 paletteSlots[256];
   s32 paletteCount;
-  struct CommandRowIcon entries[6];
+  struct BattleCommandRowIcon entries[6];
   void *window;
   s32 iconCount;
   struct CommandRowAffine affine;
@@ -163,7 +169,9 @@ struct SummaryPoint {
   s32 y;
 };
 
-struct SummaryCursor {
+/// The Status screen's cursor: its place in each group, the help entry it
+/// shows and where it points.
+struct StatusCursor {
   s8 groupPositions[8];
   s32 helpEntry;
   s32 drawnHelpEntry;
@@ -173,7 +181,9 @@ struct SummaryCursor {
   s32 row;
 };
 
-struct SummaryStatCursor {
+/// A cursor stop among the Status screen's stats: its help entry, where the
+/// cursor points and the run of the row it highlights.
+struct BattleSummaryStatCursor {
   u8 entry;
   u8 column;
   u8 row;
@@ -183,7 +193,9 @@ struct SummaryStatCursor {
   u8 unk06[2];
 };
 
-struct SummaryCursorStop {
+/// A cursor stop on the Status screen's equipment or statuses: its help
+/// entry and where the cursor points.
+struct BattleSummaryCursor {
   u8 entry;
   u8 column;
   u8 row;
@@ -212,13 +224,6 @@ struct SummaryResourceEntry {
   u16 offset;
 };
 
-struct SummonMenuWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04[2];
-  u8 holdTilemapUpload;
-};
-
 struct BobPairObject {
   struct BobPairObject *next;
   u8 unk04[4];
@@ -227,11 +232,15 @@ struct BobPairObject {
   u8 y;
 };
 
+/// A row of gMenu_BarPatternRows: the two words a menu bar's tile pair is
+/// XORed with (Menu_BuildLocalizedPatternTiles).
 struct BarPatternRow {
   u32 word0;
   u32 word1;
 };
 
+/// The name entry screen's cursors: the hand on the keyboard and the caret
+/// under the name, each a window sprite moved as a NameCursorMotion.
 union NameCursor {
   struct WindowSprite *sprite;
   struct NameCursorMotion cursor;
@@ -288,11 +297,11 @@ extern u8 Msg_0d17[];
 
 extern u8 Msg_0d19[];
 
-extern const struct SummaryStatCursor gOwnerStatus_StatCursors[];
+extern const struct BattleSummaryStatCursor gOwnerStatus_StatCursors[];
 
-extern const struct SummaryCursorStop gOwnerStatus_EquipmentCursors[];
+extern const struct BattleSummaryCursor gOwnerStatus_EquipmentCursors[];
 
-extern const struct SummaryCursorStop gOwnerStatus_ConditionCursors[];
+extern const struct BattleSummaryCursor gOwnerStatus_ConditionCursors[];
 
 extern const u8 gOwnerStatus_LevelString[];
 
@@ -332,12 +341,6 @@ extern u8 Tile_BuildCellPicturesCode[];
 #undef Text_DrawPrefixedNumberAtOffset
 #undef Text_DrawWideStringInWindow
 #undef Window_MapTextCanvasTiles
-
-struct TargetBattle {
-  u8 unk00[0x58];
-  s16 partyUnits[7];
-  s16 enemyIds[7];
-};
 
 struct TargetPoint {
   s32 x;
@@ -387,26 +390,6 @@ struct WindowBuffer {
   struct WindowLine lines[160];
 };
 
-struct MenuSelectionState {
-  u8 padding000[0x78];
-  void *work;
-  u8 padding07c[8];
-  u8 resourceIds[8];
-  s16 selection;
-  s16 itemCount;
-  s16 field090;
-  s16 resourceBase;
-};
-
-struct MenuModeLabelState {
-  u8 unk00[0x7c];
-  void *window;
-  u8 unk80[0x0c];
-  s16 mode;
-  u8 unk8e[8];
-  s16 previousMode;
-};
-
 struct CountdownDisplayEntry {
   u8 data[12];
 };
@@ -431,13 +414,6 @@ struct LinkCountdownState {
   s32 secondaryHandle;
   s32 timer;
   s32 enabled;
-};
-
-struct LinkRuntimeState {
-  u8 padding000[80];
-  u8 side;
-  u8 padding051;
-  u8 paused;
 };
 
 extern u8 gWorkspace_ItemTitle[];

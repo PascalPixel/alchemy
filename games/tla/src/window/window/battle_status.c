@@ -90,7 +90,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct SummaryOam statusSprites[11];
   struct SummaryOam iconSprites[4];
   struct SummaryOam nameSprite;
-  struct SummaryCursor cursor;
+  struct StatusCursor cursor;
   s32 iconSlots[4];
   u16 figureList[2];
   u16 spawnList[2];
@@ -390,7 +390,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     }
 
     if (cursor.group == 0) {
-      const struct SummaryStatCursor *stop;
+      const struct BattleSummaryStatCursor *stop;
       s32 k = cursor.groupPositions[cursor.group];
 
       if (hasDjinn == 0)

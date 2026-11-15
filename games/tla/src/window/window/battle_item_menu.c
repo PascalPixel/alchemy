@@ -103,13 +103,6 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 #define MENU_TEXT_COPY Message_DecodeRaw
 #endif
 
-struct ItemMenuWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04[2];
-  u8 holdTilemapUpload;
-};
-
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define ITEM_BROKEN 0x400
 
@@ -121,7 +114,7 @@ struct ItemMenuWork {
   } while (0)
 
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
-  struct ItemMenuWork *work;
+  struct WindowWork *work;
   s32 drawnFirstEntry;
   s32 drawnRow;
   s32 cursorHandle;
@@ -148,7 +141,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 iconSlots[5];
   struct MenuSprite sprites[5];
 
-  work = (struct ItemMenuWork *)Ram_HeapSlots->windowWork;
+  work = Ram_HeapSlots->windowWork;
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);

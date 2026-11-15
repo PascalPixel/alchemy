@@ -116,13 +116,15 @@ struct BowWork {
   s8 arrowMoving;
 };
 
+/// FieldWork as FieldPsynergy_GatherNearbyCells writes it: the cells a Psynergy
+/// touches and the Cyclone's two spots, here unsigned.
 struct PointWork {
   u8 unused[0xcc0]; ///< no code names it
   s16 points[62];
-  u16 unk_d3c;
-  u16 unk_d3e;
-  u16 unk_d40;
-  u16 unk_d42;
+  u16 cycloneCarryX;
+  u16 cycloneCarryZ;
+  u16 cycloneLiftX;
+  u16 cycloneLiftZ;
 };
 
 struct TouchOwner {

@@ -1744,10 +1744,10 @@ void FieldPsynergy_GatherNearbyCells(void) {
   s32 count = 0;
 
   work[0x1b34] = count;
-  event->unk_d3c = -1;
-  event->unk_d3e = -1;
-  event->unk_d40 = -1;
-  event->unk_d42 = -1;
+  event->cycloneCarryX = -1;
+  event->cycloneCarryZ = -1;
+  event->cycloneLiftX = -1;
+  event->cycloneLiftZ = -1;
   for (i = 0; i <= 20; i++) {
     x = owner->x.fixed + (gFieldPsynergy_NearbyCellOffsets[i * 2] << 20);
     z = owner->z.fixed + (gFieldPsynergy_NearbyCellOffsets[i * 2 + 1] << 20);
@@ -1764,20 +1764,20 @@ void FieldPsynergy_GatherNearbyCells(void) {
     }
     if (kind == 2 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
                                                  position) != -1) {
-      event->unk_d3c = FIELD_PIXEL(x);
-      event->unk_d3e = FIELD_PIXEL(z);
-      event->unk_d3c = (event->unk_d3c & 0xfff0) + 8;
-      event->unk_d3e = (event->unk_d3e & 0xfff0) + 8;
+      event->cycloneCarryX = FIELD_PIXEL(x);
+      event->cycloneCarryZ = FIELD_PIXEL(z);
+      event->cycloneCarryX = (event->cycloneCarryX & 0xfff0) + 8;
+      event->cycloneCarryZ = (event->cycloneCarryZ & 0xfff0) + 8;
       points[count * 2] = x / px(16);
       points[count * 2 + 1] = z / px(16);
       count++;
     }
     if (kind == 3 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
                                                  position) != -1) {
-      event->unk_d40 = FIELD_PIXEL(x);
-      event->unk_d42 = FIELD_PIXEL(z);
-      event->unk_d40 = (event->unk_d40 & 0xfff0) + 8;
-      event->unk_d42 = (event->unk_d42 & 0xfff0) + 8;
+      event->cycloneLiftX = FIELD_PIXEL(x);
+      event->cycloneLiftZ = FIELD_PIXEL(z);
+      event->cycloneLiftX = (event->cycloneLiftX & 0xfff0) + 8;
+      event->cycloneLiftZ = (event->cycloneLiftZ & 0xfff0) + 8;
       points[count * 2] = x / px(16);
       points[count * 2 + 1] = z / px(16);
       count++;

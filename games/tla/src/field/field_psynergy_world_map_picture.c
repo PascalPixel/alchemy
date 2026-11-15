@@ -54,9 +54,9 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
   best = -1;
   cursorX = FIELD_PIXEL(work->x);
   cursorY = FIELD_PIXEL(work->z);
-  if (work->unk644 != 0) {
-    cursorX = work->unk644 >> 16;
-    cursorY = work->unk648 >> 16;
+  if (work->searchX != 0) {
+    cursorX = FIELD_PIXEL(work->searchX);
+    cursorY = FIELD_PIXEL(work->searchZ);
   }
   for (count = 0; count < 128; count++) {
 

@@ -176,10 +176,14 @@ struct FieldWork {
   s8 hoverReady; ///< a party member knows Hover and the ship flies
   s8 terrainKind;
   s8 climbing;
-  s16 unkd3c;
-  s16 unkd3e;
-  s16 unkd40;
-  s16 unkd42;
+  /// The centre of the Cyclone teleporter cell (kind 2) beside the caster,
+  /// in pixels, that the Cyclone carries the leader to; -1 for none.
+  s16 cycloneCarryX;
+  s16 cycloneCarryZ;
+  /// The centre of the Cyclone lift cell (kind 3) beside the caster, in
+  /// pixels, that the Cyclone lifts the leader onto; -1 for none.
+  s16 cycloneLiftX;
+  s16 cycloneLiftZ;
   s16 glow;
   s16 glowHeld;
   s16 standing;

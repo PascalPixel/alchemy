@@ -28,14 +28,16 @@ struct WorldMapWork {
   s16 centered;             ///< nonzero draws resource 35 at the origin
                             ///< (WorldMapPicture_Draw)
   u16 mode;                 ///< 0 to look, nonzero to choose a destination
-  s32 unk644;
-  s32 unk648;
+  /// Where the nearest-place search looks from in place of the cursor, 16.16
+  /// pixels, when nonzero; the field code only ever clears it.
+  s32 searchX;
+  s32 searchZ;
 };
 
 STATIC_ASSERT(offsetof(struct WorldMapWork, window) == 0x1c);
 STATIC_ASSERT(offsetof(struct WorldMapWork, cursor) == 0x62c);
 STATIC_ASSERT(offsetof(struct WorldMapWork, mode) == 0x642);
-STATIC_ASSERT(offsetof(struct WorldMapWork, unk648) == 0x648);
+STATIC_ASSERT(offsetof(struct WorldMapWork, searchZ) == 0x648);
 
 /// A world map destination, keyed by its flag (WorldMap_MarkPlaceVisited sets
 /// game flag 0x180 + flag); FlagEntries_GetTable returns them, ended by a zero

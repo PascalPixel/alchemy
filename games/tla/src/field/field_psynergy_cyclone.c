@@ -286,9 +286,9 @@ void FieldPsynergy_Cyclone(void) {
   work->state = 0;
   work->timer = 0;
   work->state = 0;
-  if (event->unkd40 != -1)
+  if (event->cycloneLiftX != -1)
     mode = 3;
-  else if (event->unkd3c != -1)
+  else if (event->cycloneCarryX != -1)
     mode = 2;
   else {
     point = points[0];
@@ -311,9 +311,9 @@ void FieldPsynergy_Cyclone(void) {
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
-    work->to[0] = event->unkd40 << 16;
+    work->to[0] = event->cycloneLiftX << 16;
     work->to[1] = owner->y.fixed + px(32);
-    work->to[2] = event->unkd42 << 16;
+    work->to[2] = event->cycloneLiftZ << 16;
     Task_Add(Cyclone_LiftLeader, TASK_PASS_VBLANK);
     while (work->state != FIELD_PSYNERGY_FINISHED) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
@@ -343,9 +343,9 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetSpriteFlagsFar(owner, 0);
     owner->motionFlags = 0;
     wait(1);
-    work->to[0] = event->unkd3c << 16;
+    work->to[0] = event->cycloneCarryX << 16;
     work->to[1] = owner->y.fixed;
-    work->to[2] = event->unkd3e << 16;
+    work->to[2] = event->cycloneCarryZ << 16;
     Task_Add(Cyclone_CarryLeader, TASK_PASS_VBLANK);
     frame = 0;
     while (work->state != FIELD_PSYNERGY_FINISHED) {

@@ -32,8 +32,8 @@ void WorldPicture_Initialize(void) {
   screenX = 0;
   screenY = 0;
   work->vramBlock = VramCache_FindFreeEntry();
-  work->unk644 = 0;
-  work->unk648 = 0;
+  work->searchX = 0;
+  work->searchZ = 0;
   Dma_Fill32(0, markerTiles, 0x80);
   markerTiles[0] = 255;
   markerTiles[1] = 0x1ff;

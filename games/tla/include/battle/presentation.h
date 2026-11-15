@@ -50,7 +50,9 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts);
 
 struct BattlePresentationWork;
 
-typedef void (*ModelDecoder)(const void *source, void *destination);
+/// The bit decoder BattleBackground_Load copies to RAM and runs. It returns
+/// the source after the last halfword it read.
+typedef const u8 *(*ModelDecoder)(const u8 *source, void *destination);
 
 struct DjinnRecoveryEntryDraft {
   u8 element;

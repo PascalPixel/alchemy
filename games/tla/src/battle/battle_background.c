@@ -158,18 +158,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   u16 *palette;
 
   RamCode_Load(decode, Model_DecodeCode, Model_DecodeCodeSize);
-  {
-    u32 offset = 0x100;
-    void *vram;
-
-    /* FAKEMATCH(dead): two updates that cancel. */
-    if (session) {
-      offset++;
-      offset--;
-    }
-    vram = (void *)BG_CHAR_BLOCK(2);
-    decode(data + offset, vram);
-  }
+  decode(data + 256, (void *)BG_CHAR_BLOCK(2));
   Heap_Release(decode);
   palette = session->palette;
   Dma_Set(data, palette, DMA_COPY_WORDS(64), REG_DMA3);

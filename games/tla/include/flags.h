@@ -119,6 +119,10 @@
 /// The scene shows its area's name once it is on screen; entering a new area
 /// sets it.
 #define FLAG_SHOW_AREA_NAME 0x12f
+/// Encounters are rolled even where FLAG_NO_ENCOUNTERS,
+/// FLAG_NO_ENCOUNTERS_IN_AREA, a zone of 0 or Cloak would stop them
+/// (Encounter_CountStepsAndSelectFormation).
+#define FLAG_IGNORE_ENCOUNTER_CHECKS 0x15f
 /// Set before the party acts on the field; still set afterwards, nothing came
 /// of it and the game says so. An event that acts clears it.
 #define FLAG_NOTHING_HAPPENS 0x142

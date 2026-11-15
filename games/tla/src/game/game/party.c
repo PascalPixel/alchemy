@@ -85,11 +85,15 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->enemyId = enemyId;
   Unit_CalculateBaseElements(unitId, unit->baseElement);
   Unit_Calculate(unitId);
-  unit->side = 1;
-  if ((u16)(unit->enemyId - 9) <= 57)
-    unit->side = 2;
-  if ((u16)(unit->enemyId - 369) <= 8)
-    unit->side = 2;
+  unit->side = BATTLE_UNIT_ENEMY;
+  // The Djinn fought, and the Doom Dragon's nine rows, are put on the party's
+  // side.
+  if ((u16)(unit->enemyId - ENEMY_VENUS_DJINNI) <=
+      ENEMY_JUPITER_DJINNI_15 - ENEMY_VENUS_DJINNI)
+    unit->side = BATTLE_UNIT_PARTY;
+  if ((u16)(unit->enemyId - ENEMY_DOOM_DRAGON) <=
+      ENEMY_DOOM_DRAGON_9 - ENEMY_DOOM_DRAGON)
+    unit->side = BATTLE_UNIT_PARTY;
   return 1;
 }
 

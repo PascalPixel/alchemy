@@ -19,6 +19,59 @@ struct ObjectAnimationState {
   s16 *value28;
 };
 
+/// Actor.priorityFlags bits.
+enum ActorPriorityFlag {
+  /// The sprite takes its priority from the map cell under it.
+  ACTOR_PRIORITY_AUTOMATIC = 0x01,
+  /// The depth sort treats it as 320 pixels higher on the screen.
+  ACTOR_PRIORITY_UNDERFOOT = 0x02,
+  /// The depth sort treats it as 320 pixels lower on the screen.
+  ACTOR_PRIORITY_OVERHEAD = 0x04
+};
+
+/// Actor.motionFlags bits.
+enum ActorMotionFlag {
+  ACTOR_FOLLOWS_TERRAIN = 0x01, ///< moves with the ground height under it
+  ACTOR_FALLS = 0x02,           ///< falls by its gravity and bounces
+  ACTOR_FLOATS = 0x04,          ///< bobs up and down by its gravity
+  ACTOR_FLOATS_HIGH = 0x08,     ///< with ACTOR_FLOATS, four times as far
+  /// Keeps its speed on slopes, which slow others down.
+  ACTOR_KEEPS_SPEED_ON_SLOPES = 0x10,
+  /// Unused: nothing sets or reads it; a jump clears it with
+  /// ACTOR_FOLLOWS_TERRAIN.
+  ACTOR_MOTION_SPARE = 0x80
+};
+
+/// The motion flags a jump keeps as the actor leaves the ground: all but
+/// ACTOR_FOLLOWS_TERRAIN and the spare bit.
+#define ACTOR_JUMP_KEEPS_MOTION                                                \
+  ((u8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE))
+
+/// Actor.collisionFlags bits.
+enum ActorCollisionFlag {
+  ACTOR_SOLID = 0x01,         ///< blocks other actors and the player
+  ACTOR_PUSHABLE = 0x02,      ///< the player pushes it
+  ACTOR_NEAR_TALK = 0x04,     ///< nearer to talk to
+  ACTOR_NOT_TARGETED = 0x08,  ///< never a talk or Psynergy target
+  ACTOR_NEAR_PSYNERGY = 0x10, ///< nearer for Psynergy targets
+  /// Refuses to move into a solid actor (Actor.refused).
+  ACTOR_BLOCKED_BY_SOLID = 0x80
+};
+
+/// Actor.steeringFlags bits.
+enum ActorSteeringFlag {
+  ACTOR_FACES_MOTION = 0x01 ///< turns toward its velocity, 1/16 turn a frame
+};
+
+/// The axis a moving actor watches to know it has arrived at its target: the
+/// one along which it has the furthest to go.
+enum ArrivalAxis {
+  ARRIVAL_AXIS_NONE = 0, ///< no arrival test; set again once it arrives
+  ARRIVAL_AXIS_X = 16,
+  ARRIVAL_AXIS_Y = 17,
+  ARRIVAL_AXIS_Z = 18
+};
+
 /// A field object: its script, position, motion toward a target, sprites and
 /// update hook.
 struct Actor {

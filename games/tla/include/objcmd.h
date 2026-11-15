@@ -42,6 +42,10 @@
 #define SC_FLAG_OFF(f) 0x14, (f)
 #define SC_FLAG_REV(f) 0x15, (f)
 #define SC_SET(w, v) 0x16, (w), (v) ///< write a work value
+/// Set the speed limit, in pixels a frame: SC_SPEED(0.8).
+#define SC_SPEED(speed) SC_SET(SW_SPEED, Q16(speed))
+/// Set the acceleration, in pixels a frame each frame.
+#define SC_ACCELERATION(acceleration) SC_SET(SW_ACCEL, Q16(acceleration))
 #define SC_ADD(w, v) 0x17, (w), (v)
 #define SC_CMP(w, v) 0x18, (w), (v)
 #define SC_PLAYER 0x19 ///< key control

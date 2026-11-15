@@ -59,7 +59,7 @@ enum FieldPsynergy {
 enum FieldPsynergyHandler {
   /// Casts it with no target (FieldPsynergy_Run).
   FIELD_PSYNERGY_HANDLER_UNTARGETED = 0,
-  /// Casts it on its target, secondObjectId (FieldPsynergy_Dispatch).
+  /// Casts it on its target, secondActorId (FieldPsynergy_Dispatch).
   FIELD_PSYNERGY_HANDLER_ON_TARGET = 1,
   FIELD_PSYNERGY_HANDLER_FINISH = 2, ///< finishes it
   FIELD_PSYNERGY_HANDLER_EXTRA = 3   ///< runs its kind's extra handler

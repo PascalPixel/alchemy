@@ -82,7 +82,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
 
 void TitlePaletteFade_Initialize(void);
 void TitlePaletteFade_Update(void);
-void TitlePaletteFade_SetTarget(s32 index, s32 transform);
+void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes);
 void TitlePaletteFade_SetBackdrop(s32 value);
 void TitlePaletteFade_Start(s32 frames);
 void TitlePaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,

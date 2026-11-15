@@ -407,8 +407,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
     work.count = 1;
   }
   for (i = 0; i != work.count; i++) {
-    struct ActorSpriteView *animation =
-        BattleObject_Get(work.actors[i])->object->records;
+    struct Sprite *animation =
+        (struct Sprite *)BattleObject_Get(work.actors[i])->object->records;
     s32 j;
 
     for (j = 0; j != animation->count - 1; j++)

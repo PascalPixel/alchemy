@@ -14,7 +14,8 @@ void Actor_StopAtPushTarget(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)hit->sprite)->value28 == gPushKinds[i])
+    if (((struct Sprite *)hit->sprite)->entries[0]->animationId ==
+        gPushKinds[i])
       return;
     i++;
     if (i <= 5)

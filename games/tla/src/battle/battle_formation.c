@@ -138,7 +138,7 @@ struct OwnerStats {
 
 /// A unit as BattleEnemy_AdjustLevel reads it: its level and its stats.
 struct OwnerState {
-  u8 name[15]; ///< not read here
+  u8 name[UNIT_NAME_SIZE]; ///< not read here
   u8 level;
   struct OwnerStats stats;
 };

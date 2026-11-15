@@ -115,10 +115,10 @@ void Battle_PlayFormChange(s32 value) {
 }
 
 /// Returns the first of the Djinn tutorial's messages: the second set's
-/// (MsgDjinnGiveTutorialB) while flag 0x175 is set, as Up held when Echo's
-/// tutorial begins sets it.
+/// (MsgDjinnGiveTutorialB) while FLAG_ALREADY_KNOWS_DJINN is set, as Up held
+/// when Echo's tutorial begins sets it.
 s32 Tutorial_GetDjinnGiveMessage(void) {
-  if (GameFlag_Get(0x175))
+  if (GameFlag_Get(FLAG_ALREADY_KNOWS_DJINN))
     return (s32)MsgDjinnGiveTutorialB;
   return (s32)MsgDjinnGiveTutorialA;
 }

@@ -840,8 +840,8 @@ s32 Scene_Initialize(void) {
     WorldMap_CarryPartyToAquaRock();
     break;
   case 59:
-    if (!Event_GetFlag(0x90a) && GameFlag_Get(0xa5f) != 0) {
-      GameFlag_Set(0x90a);
+    if (!Event_GetFlag(FLAG_SHIP_CARRIES_CANNON) && GameFlag_Get(0xa5f) != 0) {
+      GameFlag_Set(FLAG_SHIP_CARRIES_CANNON);
       WorldMap_DeliverLohoCannon();
     }
     break;
@@ -2656,7 +2656,7 @@ void Gauge_Update(void) {
     *oam++ = (y | (x << 16)) | attributes;
   }
   *oam = tile | 0x400;
-  Oam_AddSpriteAtDepthClamped(gGauge_Sprite, 255);
+  Oam_AddSpriteAtDepthClamped(gGauge_Sprite, OAM_DEPTH_FRONT);
 }
 
 /// Sets up the gauge.

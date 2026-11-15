@@ -679,7 +679,8 @@ s32 NaribweInteriors_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
 /// The message telling where an unfound Djinni waits, or
 /// MsgNaribweInteriorsInItemYouHavePlaced when none is left to find.
 u8 *NaribweInteriors_GetDjinniHint(void) {
-  s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, 252, 320);
+  s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram,
+                             HEAP_SLOT_DJINNI_HINTS, 320);
   s32 limits[4];
   s32 count = 0;
   s32 lowest = 9999;
@@ -703,7 +704,7 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
     for (group = 0; group <= 3; group++)
       count += NaribweInteriors_ListUnfoundDjinn(18, group, hints + count);
     if (count == 0) {
-      HeapSlot_Release(252);
+      HeapSlot_Release(HEAP_SLOT_DJINNI_HINTS);
       return MsgNaribweInteriorsInItemYouHavePlaced;
     }
     NaribweInteriors_ListUnfoundDjinn(18, lowestGroup, hints);
@@ -839,7 +840,7 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
     message = MsgNaribweInteriorsInItemYouHavePlaced;
     break;
   }
-  HeapSlot_Release(252);
+  HeapSlot_Release(HEAP_SLOT_DJINNI_HINTS);
   return message;
 }
 

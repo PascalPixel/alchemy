@@ -309,13 +309,11 @@ void TaopoSwamp_GrowVine(void) {
 }
 
 struct AnimationGroup;
-struct ActorSpriteView;
 struct ChildGroup;
 
 extern u32 gTaopoSwamp_SplashFades[];
 s32 Sprite_StartAnimation(struct AnimationGroup *state, s32 flags);
-void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
-                                        u32 value);
+void Animation_ApplyChildValuesToRecord(struct FieldSprite *record, u32 value);
 void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value);
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then

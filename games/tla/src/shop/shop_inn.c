@@ -65,7 +65,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
 
   innkeeper = Actor_GetByIdFar(actorId);
   shop->keeperGraphics =
-      *((struct ObjectAnimationState *)innkeeper->sprite)->value28;
+      ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
   innkeeperWindow = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
 
   roomPrice = Inn_RoomPrice(innId);
@@ -90,7 +90,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
 
     innkeeper = Actor_GetByIdFar(actorId);
     shop->keeperGraphics =
-        *((struct ObjectAnimationState *)innkeeper->sprite)->value28;
+        ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
     innkeeperWindow = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
     Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_REST_COMPLETE);
   }

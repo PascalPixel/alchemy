@@ -6,6 +6,7 @@
 /// as window.c declares them for the files that use them.
 
 #include "types.h"
+#include "system/system.h"
 #include "system/frame.h"
 #include "system/io_reg.h"
 #include "window/window_tile.h"
@@ -506,12 +507,6 @@ enum PauseMenuEntry {
   PAUSE_MENU_SLEEP = 1,
   PAUSE_MENU_CHANGE_SETTINGS = 2
 };
-
-/// Depth slots of Oam_AddSpriteAtDepth: a higher slot is drawn in front. The
-/// windows' sprites, icons and cursors take the slots from OAM_DEPTH_WINDOW up,
-/// in front of the field's and the battle's.
-#define OAM_DEPTH_WINDOW 240
-#define OAM_DEPTH_FRONT 255
 
 #define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
 

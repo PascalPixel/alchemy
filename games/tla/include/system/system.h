@@ -300,4 +300,11 @@ extern s16 gSaveSlot;
 extern s16 gAnyFileCleared;
 extern u8 gSaveBuffer[];
 
+/// Depth slots of Oam_AddSpriteAtDepth: a higher slot is drawn in front. The
+/// windows' sprites, icons and cursors take the slots from OAM_DEPTH_WINDOW up,
+/// in front of the field's and the battle's, and OAM_DEPTH_FRONT is in front of
+/// everything.
+#define OAM_DEPTH_WINDOW 240
+#define OAM_DEPTH_FRONT 255
+
 #endif

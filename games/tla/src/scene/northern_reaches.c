@@ -346,7 +346,7 @@ s32 Scene_Initialize(void) {
   state = &gMainRoutineWork;
   Actor_Get(state->leaderActorId)->priorityFlags |= 32;
   if (state->entrance == 90) {
-    Event_SetFlag(0x90a);
+    Event_SetFlag(FLAG_SHIP_CARRIES_CANNON);
     state->ownerOverride = 1;
     Event_SetDestination(SCENE_NORTHERN_REACHES, 4);
   }
@@ -524,6 +524,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_STEP, 20, 0x190a, EVENT(NorthernReaches_DiscussIceWall)},
     {TRIGGER_STEP, 21, 0x190a, EVENT(NorthernReaches_FireMagmaBall)},
-    {TRIGGER_STEP, 22, 0x90a, EVENT(NorthernReaches_SightIceWall)},
+    {TRIGGER_STEP, 22, FLAG_SHIP_CARRIES_CANNON,
+     EVENT(NorthernReaches_SightIceWall)},
     {TRIGGER_TABLE_END},
 };

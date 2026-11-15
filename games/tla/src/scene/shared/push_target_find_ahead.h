@@ -15,7 +15,7 @@ outer:
   object = *entry;
   k = 0;
 inner:
-  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
+  if (((struct Sprite *)object->sprite)->entries[0]->animationId ==
       gPushKinds[k]) {
     x = (PIXEL_PART(leader->x.fixed) + (gPushLeaderSteps[*direction] >> 16)) >>
         4;

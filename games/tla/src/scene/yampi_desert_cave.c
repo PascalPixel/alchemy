@@ -148,7 +148,7 @@ extern s8 gYampiDesertCave_LogFootprints[];
 s32 YampiDesertCave_SetLogCells(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
-  s16 sprite = ((struct ObjectAnimationState *)object->sprite)->value28[0];
+  s16 sprite = ((struct Sprite *)object->sprite)->entries[0]->animationId;
   s16 i;
   u32 kind;
   s32 w, h, x, z;
@@ -297,7 +297,7 @@ outer:
   object = *entry;
   k = 0;
 inner:
-  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
+  if (((struct Sprite *)object->sprite)->entries[0]->animationId ==
       gYampiDesertCave_LogSprites[k]) {
     x = (PIXEL_PART(leader->x.fixed) + (gPushLeaderSteps[*direction] >> 16)) >>
         4;
@@ -479,7 +479,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
+    if (((struct Sprite *)hit->sprite)->entries[0]->animationId ==
         gYampiDesertCave_LogSprites[i])
       return;
     i++;

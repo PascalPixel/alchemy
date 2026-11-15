@@ -5,6 +5,8 @@
 #include "window_internal.h"
 #include "resource_ids.h"
 
+#include "system/system.h"
+
 typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 
 extern const u8 Glyph_DrawCode[];
@@ -677,7 +679,7 @@ void WindowSprite_UpdateAll(void) {
       }
       if (output->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
         if (work->glyphResource != 0x60)
-          Oam_AddSpriteAtDepth(sprite, 255);
+          Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT);
       } else if (output->active == WINDOW_SPRITE_MOTION_ON_SCREEN) {
         s32 x = (s16)output->x;
         s32 y = (s16)output->y;

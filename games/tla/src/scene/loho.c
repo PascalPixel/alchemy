@@ -595,7 +595,7 @@ crewLeaves:
 /// "Now that the wall's been breached, we can get on with the mining! Good
 /// work!"
 void Loho_TalkAboutBreachedWall(void) {
-  if (Event_GetFlag(0x90a))
+  if (Event_GetFlag(FLAG_SHIP_CARRIES_CANNON))
     Event_SetMessageId((s32)MsgLohoNowThatWallsBeenBreached);
   else
     Event_SetMessageId((s32)MsgLohoISawSomeOfVillage);
@@ -604,7 +604,7 @@ void Loho_TalkAboutBreachedWall(void) {
 }
 
 void Loho_MindReadMiner(void) {
-  if (Event_GetFlag(0x90a))
+  if (Event_GetFlag(FLAG_SHIP_CARRIES_CANNON))
     Event_SetMessageId((s32)MsgLohoWeDontHaveAnything);
   else
     Event_SetMessageId((s32)MsgLohoIDontKnowWhereThey);
@@ -841,7 +841,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_CANNON, 0, 0);
     Actor_SetPositionAndFacing(ACTOR_MINER_AT_HIS_SPOT, px(248), px(480),
                                FACING_EAST);
-    if (!Event_GetFlag(0x90a)) {
+    if (!Event_GetFlag(FLAG_SHIP_CARRIES_CANNON)) {
       Actor_SetPosition(ACTOR_MAN_KEEPING_THE_CANNON, 0, 0);
       Actor_SetPosition(ACTOR_MINER_BY_THE_CANNON, 0, 0);
       Actor_SetPosition(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0, 0);

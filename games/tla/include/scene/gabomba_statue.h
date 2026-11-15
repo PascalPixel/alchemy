@@ -9,18 +9,6 @@
 
 struct Actor;
 
-struct Unk02004d48 {
-  u8 unk00[8];
-  s32 x;
-  u8 unk0c[76 - 12];
-  u32 unk4c;
-  u8 unk50[98 - 80];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u16 unk66;
-};
-
 void GabombaStatue_TurnCogs(s32 value);
 
 void GabombaStatue_StopClock(void);

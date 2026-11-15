@@ -3535,7 +3535,7 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     y |= markerSize;                                                           \
     *cursor++ = y;                                                             \
     *cursor++ = (tile + (tileAdd)) | 0xe400;                                   \
-    Oam_AddSpriteAtDepth(entry++, 255);                                        \
+    Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);                            \
   } while (0)
 
 /// The Trial Road link display's scheduled callback, which
@@ -3598,12 +3598,12 @@ void TrialRoad_DrawProgress(void) {
       *cursor++ = 0;
       *cursor++ = y | (x << 16) | flip | 0x80008000;
       *cursor++ = tile | 0xe400;
-      Oam_AddSpriteAtDepth(entry++, 255);
+      Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
       word = y + 32;
       *cursor++ = 0;
       *cursor++ = word | (x << 16) | flip | 0x4000;
       *cursor++ = (tile + 8) | 0xe400;
-      Oam_AddSpriteAtDepth(entry++, 255);
+      Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
       y += 36;
     }
   }

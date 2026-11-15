@@ -440,9 +440,6 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
 
 extern struct Unit gCharacterUnits[];
 
-/// A unit's name buffer: 14 characters and the 0 that ends them.
-#define UNIT_NAME_SIZE 15
-
 struct UnitBaseStats {
   s16 hp;
   s16 pp;

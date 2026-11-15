@@ -131,9 +131,9 @@ s32 Sanctum_Run(s32 actorId) {
   shop = Ram_HeapSlots->menuWork;
   shop->action = serviceSelection;
 
-  shop->keeperGraphics =
-      *((struct ObjectAnimationState *)Actor_GetByIdFar(actorId)->sprite)
-           ->value28;
+  shop->keeperGraphics = ((struct Sprite *)Actor_GetByIdFar(actorId)->sprite)
+                             ->entries[0]
+                             ->animationId;
 
   // The keeper's portrait window; failing that an empty one off the left
   // edge, and failing that one on screen with Ivan's portrait

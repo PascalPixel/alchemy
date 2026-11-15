@@ -774,7 +774,7 @@ void AnkohlRuins_DrawSand(void) {
         sprite->oam[0] = 0;
         sprite->oam[1] = sy | (sx << 16) | 0x40000800;
         sprite->oam[2] = tile | 0x400;
-        Oam_AddSpriteAtDepthClamped(sprite->oam, 255);
+        Oam_AddSpriteAtDepthClamped(sprite->oam, OAM_DEPTH_FRONT);
       }
       sprite++;
     }

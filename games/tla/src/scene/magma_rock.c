@@ -724,7 +724,7 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
         continue;
       if (FIELD_CELL(other->y.fixed) != position[1] >> 20)
         continue;
-      if (*((struct ObjectAnimationState *)other->sprite)->value28 == 0x110)
+      if (((struct Sprite *)other->sprite)->entries[0]->animationId == 0x110)
         goto stop;
       goto hit;
     }

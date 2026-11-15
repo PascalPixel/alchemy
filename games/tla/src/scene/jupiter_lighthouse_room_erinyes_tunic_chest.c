@@ -492,7 +492,7 @@ void PushTarget_UpdatePusher(struct Actor *object) {
   if (other != NULL) {
     i = 0;
     do {
-      if (*((struct ObjectAnimationState *)other->sprite)->value28 ==
+      if (((struct Sprite *)other->sprite)->entries[0]->animationId ==
           gPushKinds[i])
         return;
       i++;

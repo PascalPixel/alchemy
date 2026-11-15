@@ -8,26 +8,6 @@
 struct Sprite;
 struct SpriteAnimation;
 
-/// An actor's sprite as the actor setters write it: the same
-/// bytes as FieldSprite.
-struct ActorSpriteView {
-  u8 unused[5]; ///< no code names it
-  u8 unk05Low : 2;
-  u8 stateFlags : 2; ///< the image's OAM object mode (FieldSprite.blendMode)
-  u8 unk05High : 4;
-  u8 unusedB[0x0b]; ///< no code names it
-  u8 unk11Low : 1;
-  u8 displayFlag : 1; ///< the own-scale bit in the projection draft's layout
-  u8 unk11High : 6;
-  s16 value12; ///< FieldSprite.rotation, 1/65536 turns
-  u8 unk14[5];
-  u8 dirty;                  ///< nonzero redraws its pixels
-  u8 value1a;                ///< the sprite flags (FieldSprite.nextFrame)
-  u8 count;                  ///< layers in use
-  u8 unusedAfterCount[0x0c]; ///< no code names it
-  struct SpriteAnimation *entries[4]; ///< its layers; empty ones null
-};
-
 struct FieldSprite;
 
 s32 Sprite_StartAnimation(struct Sprite *, s32);

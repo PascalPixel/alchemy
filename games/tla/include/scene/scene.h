@@ -480,11 +480,6 @@ struct MadraPlacement {
   u16 y;
 };
 
-struct AnimationRecord18 {
-  u8 unk00[0x12];
-  u16 frame;
-};
-
 struct StagedActor {
   u8 unk00[6];
   u16 facing;
@@ -815,13 +810,6 @@ struct YampiDesertVisual {
   u8 unk11[9];
   u8 value1a;
   u8 value1b;
-};
-
-struct DustSprite {
-  u8 unk00[9];
-  u8 unk09 : 2;
-  u8 mode : 2;
-  u8 unk09High : 4;
 };
 
 struct YampiDesertRideWork {

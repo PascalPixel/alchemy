@@ -930,4 +930,12 @@
 #define FLAG_MAD_PLANT_FIRST 0x9b5
 #define FLAG_MAD_PLANT(n) (FLAG_MAD_PLANT_FIRST + (n))
 
+/// Set as the World Map delivers Loho's cannon to the ship
+/// (WorldMap_DeliverLohoCannon), and by the Northern Reaches' entrance 90;
+/// Loho, Atteka Inlet and the Lemurian dock then place the cannon aboard.
+#define FLAG_SHIP_CARRIES_CANNON 0x90a
+/// Set as the parties, reunited at Atteka Inlet (or Contigo), set out on the
+/// winged ship.
+#define FLAG_SET_OUT_WITH_WINGS 0x9b2
+
 #endif

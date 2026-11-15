@@ -2266,7 +2266,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 s32 PushTarget_FillFootprint(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
-  s16 kind = *((struct ObjectAnimationState *)actor->sprite)->value28;
+  s16 kind = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i = 0;
   s32 next;
   u32 index;
@@ -2415,7 +2415,7 @@ outer:
   object = *entry;
   k = 0;
 inner:
-  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
+  if (((struct Sprite *)object->sprite)->entries[0]->animationId ==
       gPushKinds[k]) {
     x = (HI(leader->x.fixed) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
     z = (HI(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >> 4;
@@ -2555,7 +2555,8 @@ void Actor_StopAtPushTarget(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)hit->sprite)->value28 == gPushKinds[i])
+    if (((struct Sprite *)hit->sprite)->entries[0]->animationId ==
+        gPushKinds[i])
       return;
     i++;
     if (i <= 5)

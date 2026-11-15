@@ -220,7 +220,7 @@ s32 Scene_Initialize(void) {
   Task_Add(LemuriaDock_CyclePalette, TASK_PASS_VBLANK);
   Flag_Clear(FLAG_SHOW_AREA_NAME);
 #if TLA_PATCH_1 /* From patch 1. */
-  if (Flag_IsSet(0x90a))
+  if (Flag_IsSet(FLAG_SHIP_CARRIES_CANNON))
     Actor_SetSpritePriority(ACTOR_CANNON, 1);
   else
     Actor_SetPosition(ACTOR_CANNON, 0, 0);

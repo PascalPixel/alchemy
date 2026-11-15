@@ -21,7 +21,6 @@
 #include "scene/sparkle.h"
 
 /// The party set out on the winged ship (as Atteka Inlet names it).
-#define FLAG_SET_OUT_WITH_WINGS 0x9b2
 /// Force has freed Shine from the ground it was stuck in.
 #define FLAG_SHINE_FREED 0x9e7
 

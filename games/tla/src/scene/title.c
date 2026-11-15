@@ -232,7 +232,7 @@ void Title_UpdateSpriteReveal(void) {
     if (revealAge <= 2 && (gFrameCount & 1))
       revealAge = 0;
     if (revealAge != 0)
-      Oam_AddSpriteAtDepthClamped(sprite++, 255);
+      Oam_AddSpriteAtDepthClamped(sprite++, OAM_DEPTH_FRONT);
     tileIndex += 2;
   } while (++column <= 17);
   gTitleRevealFrame++;

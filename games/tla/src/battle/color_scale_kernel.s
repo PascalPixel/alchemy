@@ -1,5 +1,5 @@
 @ Why assembly: its Thumb entry's bx pc switches to the ARM code that follows,
-@ a mode switch inside a function, as the kernels in color_backup_kernels.s
+@ a mode switch inside a function, as the colour backup kernels in system/decompress_byte_lz.s
 @ do; the halfword after bx pc is never run.
 @ ColorBuffer_ScaleKernelCode(source, destination, scale, count): the ARM
 @ kernel ColorBuffer_Scale (color_scale_loader.s) copies to the stack and

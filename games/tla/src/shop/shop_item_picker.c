@@ -23,9 +23,9 @@ s32 Forge_Run(s32 actorId) {
   shop = Ram_HeapSlots->menuWork;
   shop->shopType = SHOP_TYPE_WEAPONS;
   shop->action = SHOP_ACTION_FORGE;
-  shop->keeperGraphics =
-      *((struct ObjectAnimationState *)Actor_GetByIdFar(actorId)->sprite)
-           ->value28;
+  shop->keeperGraphics = ((struct Sprite *)Actor_GetByIdFar(actorId)->sprite)
+                             ->entries[0]
+                             ->animationId;
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   icon =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);

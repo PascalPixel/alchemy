@@ -127,9 +127,9 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   Shop_InitializeWork();
   shop = Ram_HeapSlots->menuWork;
   shop->shopType = ShopStock_GetType(stockRow);
-  shop->keeperGraphics =
-      *((struct ObjectAnimationState *)Actor_GetByIdFar(keeperId)->sprite)
-           ->value28;
+  shop->keeperGraphics = ((struct Sprite *)Actor_GetByIdFar(keeperId)->sprite)
+                             ->entries[0]
+                             ->animationId;
   // The shopkeeper's portrait window, or an empty one off the right edge when
   // there is no portrait.
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);

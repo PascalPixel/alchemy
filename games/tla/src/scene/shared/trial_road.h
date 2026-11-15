@@ -45,11 +45,6 @@ s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Import_FieldTryJumpForward(void);
 void Func_02005a38(void);
 
-struct MainRoutineWork254 {
-  u8 unk000[0x254];
-  u16 value;
-};
-
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void TrialRoad_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                 s32 g);

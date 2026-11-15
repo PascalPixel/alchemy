@@ -3,7 +3,7 @@
 @ ldmia r4, {r4, r5, r7}).
 @ ColorBuffer_Scale(source, destination, scale, count): copies the ARM kernel
 @ ColorBuffer_ScaleKernelCode by DMA into a buffer on the stack and calls it
-@ there, through lr with a lone BL suffix, as color_backup_loaders.s does.
+@ there, through lr with a lone BL suffix, as the colour backup loaders in system/decompress_byte_lz.s do.
 
 .syntax unified
 	.thumb

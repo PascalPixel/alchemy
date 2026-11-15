@@ -9,8 +9,6 @@
 #include "resource_ids.h"
 #include "battle/battle.h"
 
-struct ObjectAnimationState;
-
 /// A row of gSpeakerDefinitions, as The Broken Seal's: a sprite's voice and
 /// the lines it says while Halted.
 struct SpeakerDefinition {
@@ -21,12 +19,6 @@ struct SpeakerDefinition {
   /// The pair of lines from MsgPonderEllipsis it says when talked to while
   /// Halted with no event for that (Speaker_GetHaltedLines).
   u8 haltedLines;
-};
-
-struct BattleRenderObject {
-  u8 unused[0x50]; ///< no code names it
-  struct ObjectAnimationState *animation;
-  u8 kind;
 };
 
 struct FadeActor {

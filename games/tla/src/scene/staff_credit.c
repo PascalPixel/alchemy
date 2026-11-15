@@ -921,7 +921,7 @@ void Gauge_Update(void) {
     *oam++ = (y | (x << 16)) | attributes;
   }
   *oam = tile | 0x400;
-  Oam_AddSpriteAtDepthClamped(gGauge_Sprite, 255);
+  Oam_AddSpriteAtDepthClamped(gGauge_Sprite, OAM_DEPTH_FRONT);
 }
 
 void Gauge_Init(void) {

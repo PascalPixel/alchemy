@@ -40,7 +40,6 @@
 #define FLAG_SHIPWRIGHTS_STOPPED_PARTY                                         \
   0x9b0 ///< "We worked really hard on that ship"
 #define FLAG_HAMMA_SHOWED_THE_WINGS 0x9b1 ///< Hamma showed the ship's wings
-#define FLAG_SET_OUT_WITH_WINGS 0x9b2 ///< the party set out on the winged ship
 #define FLAG_HAMMETS_GIFT_DELIVERED 0x9ad ///< Master Hammet's messenger came
 
 extern struct ActorPlacement gAttekaInlet_ActorPlacements[];
@@ -716,8 +715,9 @@ struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[] = {
                     FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 260, 0, 158,
                     FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(420, IF_FLAG_SET(0x90a), MOVEMENT_TYPE_STAND, 464, 0, 264,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(420, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
+                    MOVEMENT_TYPE_STAND, 464, 0, 264, FACING_EAST,
+                    TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 424,
@@ -770,8 +770,9 @@ struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[] = {
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 380, 0, 280,
                     FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(420, IF_FLAG_SET(0x90a), MOVEMENT_TYPE_STAND, 464, 0, 264,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(420, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
+                    MOVEMENT_TYPE_STAND, 464, 0, 264, FACING_EAST,
+                    TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 392,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_GEODE),
@@ -789,8 +790,9 @@ struct ActorPlacement gAttekaInlet_ShoreActorPlacements[] = {
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                     FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(420, IF_FLAG_SET(0x90a), MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(420, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP,
+                    0),
     ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 392,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_GEODE),

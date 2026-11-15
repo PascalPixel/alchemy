@@ -432,7 +432,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         qty = ItemMenu_GetItemQuantity(menu->sideMember[1],
                                        menu->selectedItems[0] &
                                            INVENTORY_ITEM_ID_MASK);
-        if (qty == 30) {
+        if (qty == INVENTORY_STACK_MAX) {
           aborted = 1;
         }
         if (ItemMenu_CountItems(menu->sideMember[1]) == INVENTORY_SLOTS &&

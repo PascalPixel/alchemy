@@ -750,7 +750,8 @@ static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 void ChampaCliffCaves_ObabaOffersHelp(s32 actor) {
   s32 item;
-  /* FAKEMATCH(dead): each owner stored and never read. */
+  // DEAD: each owner is stored and never read; the ROM keeps the copies of
+  // the first two into sl and r8, which later stand for -1.
   s32 owner;
 
   if (FIELD_CELL(Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed) <= 41)

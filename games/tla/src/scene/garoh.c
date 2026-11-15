@@ -201,13 +201,13 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
     volatile u16 *dma;
 
     layer->speedY = 0;
-    frame = *(u8 *)&gFrameCount;
+    frame = (u8)gFrameCount;
     i = 0;
     /* FAKEMATCH(barrier): the form kept; as no asm, 48 of 124 instructions
      * differ in tla-en. */
     asm("" : "+r"(i));
-    z = *(s16 *)((u8 *)layer + 6);
-    x = *(s16 *)((u8 *)layer + 2);
+    z = ((s16 *)&layer->y)[1];
+    x = ((s16 *)&layer->x)[1];
     // Each step held in a local for its whole life: as z * 0x3300 and
     // z * 0x1320 the starting phases are built differently.
     stepA = 0x3300;

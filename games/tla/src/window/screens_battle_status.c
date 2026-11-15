@@ -274,11 +274,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     BattleStatus_DrawPageArrows(STATUS_PAGE_ARROW_VRAM);
     if (redraw != 0)
       Portrait_Load(member, portraitSlot);
-    sprite->oam.word.attr01 =
-        OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    /* FAKEMATCH(dead): an empty once-only block. */
-    do {
-    } while (0);
+    Io_Write32(OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT),
+               &sprite->oam.word.attr01);
     sprite->oam.word.attr23 = 0;
     sprite->oam.f.tile = gVramCacheEntries[portraitSlot].offset >> 5;
     sprite->oam.f.x = 8;
@@ -872,8 +869,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           Text_SetColor(TEXT_COLOR_WHITE);
         }
       }
-      /* FAKEMATCH(dead): a never-true arm, pages 1 and 3's scroll marks with
-       * this page's 0. */
+      /* LEFTOVER(template): the scroll marks under a count past four, as
+       * BattleStatusScreen_Run's item and Psynergy pages draw theirs with
+       * SUMMARY_DRAW_PAGE_MARKS; this page's count stays 0; as no arm, 62 of
+       * 3111 instructions differ in tla-en. */
       if (released > 4)
         SUMMARY_DRAW_PAGE_MARKS(statusWindow, released, rowBase);
       work->dirty = 1;

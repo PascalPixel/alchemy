@@ -490,10 +490,7 @@ next:
   Heap_Release(heap);
   size = 0x154;
   heap = Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the statement in a once-only block. */
-  do {
-    Iwram_CopyWordsEntry(heap, Djinn_GetRecoveryTable(0), size);
-  } while (0);
+  IWRAM_COPY_WORDS(heap, Djinn_GetRecoveryTable(0), size);
   {
     s32 timeout;
     s32 tries;

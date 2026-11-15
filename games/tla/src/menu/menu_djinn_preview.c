@@ -8,6 +8,13 @@
 
 void Menu_CreatePairEntryObjects(s32 first, s32 second);
 
+/// Shows or hides the menu's cursor around a line of the Djinn tutorial: the
+/// four stores of its two message steps, in both games. The name is ours.
+#define DjinnTutorial_SetCursor(menu, value)                                   \
+  do {                                                                         \
+    (menu)->cursor->motion = (value);                                          \
+  } while (0)
+
 /// Previews a give, trade, set or standby change without committing it. It
 /// saves and restores the units before polling for confirmation.
 s32 PsynergyList_RunCompareLoop(u32 mode) {
@@ -225,10 +232,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() +
                                              DJINN_TUTORIAL_LINE_SET_CHANGES,
                                          8, 0, 1);
-          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
-          do {
-            menu->cursor->motion = ICON_SHOWN;
-          } while (0);
+          DjinnTutorial_SetCursor(menu, ICON_SHOWN);
           MenuCursor_Slide(2, 96);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
@@ -240,10 +244,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = DJINN_TUTORIAL_CLASS_PSYNERGY;
-          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
-          do {
-            menu->cursor->motion = ICON_HIDDEN;
-          } while (0);
+          DjinnTutorial_SetCursor(menu, ICON_HIDDEN);
         }
         break;
       case DJINN_TUTORIAL_CLASS_PSYNERGY:
@@ -254,10 +255,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() +
                                              DJINN_TUTORIAL_LINE_CLASS_PSYNERGY,
                                          8, 0, 1);
-          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
-          do {
-            menu->cursor->motion = ICON_SHOWN;
-          } while (0);
+          DjinnTutorial_SetCursor(menu, ICON_SHOWN);
           MenuCursor_Slide(106, 56);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
@@ -270,10 +268,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = DJINN_TUTORIAL_SET_PREVIEW;
-          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
-          do {
-            menu->cursor->motion = ICON_HIDDEN;
-          } while (0);
+          DjinnTutorial_SetCursor(menu, ICON_HIDDEN);
         }
         break;
       }

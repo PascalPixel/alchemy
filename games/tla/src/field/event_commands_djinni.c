@@ -117,7 +117,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
     tint = 2;
   if (sprite == SPRITE_MARS_DJINNI)
     tint = 10;
-  // DEAD: tint is already 9 for sprite 244; the source keeps the test.
+  // DEAD: tint is already 9 for sprite 244; the ROM keeps the test and the
+  // store.
   if (sprite == 244)
     tint = 9;
   sharedSprite = NULL;
@@ -125,7 +126,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   for (i = 0; i < DJINNI_CLONE_MAX; i++) {
     copy = Actor_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
                            djinni->z.fixed);
-    // DEAD: nothing reads copies; the source keeps the store.
+    // DEAD: nothing reads copies; the ROM keeps the store and its slot.
     copies[i] = copy;
     if (copy != NULL) {
       copy->scaleY = AFTERIMAGE_SCALE;

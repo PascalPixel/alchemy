@@ -181,8 +181,8 @@ s32 Actor_CrossRope(struct Actor *object) {
     }
   }
   if (best == NULL) {
-    // DEAD: collisionFlags is still 0 here, so the OR reads nothing; the source
-    // keeps it.
+    // DEAD: collisionFlags is still 0 here, so the OR changes nothing; the ROM
+    // keeps its load, OR and store.
     collisionFlags |= 1;
   } else {
     slot = &rope->slots[best->slot - 1];

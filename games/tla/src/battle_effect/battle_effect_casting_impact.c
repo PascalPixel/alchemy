@@ -1638,9 +1638,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             if (row >= 0 && row < 96) {
               s32 k;
               s32 threshold;
-              for (k = 0, threshold = t; k != SARCOPHAGUS_COFFIN_WIDTH; k++) {
-                /* FAKEMATCH(barrier): an empty asm through threshold. */
-                __asm__("" : "=r"(threshold) : "0"(threshold));
+              /* FAKEMATCH(dead): threshold set through its own address, so it stays
+               * a copy of t in a register of its own; as threshold = t, 48 of
+               * 7666 instructions differ in tla-en. */
+              for (k = 0, *&threshold = t; k != SARCOPHAGUS_COFFIN_WIDTH; k++) {
                 if (work->sheet[(row & 15) * SARCOPHAGUS_COFFIN_WIDTH + k] <
                     threshold)
                   buffer[row * SARCOPHAGUS_COFFIN_WIDTH + k] = 0;

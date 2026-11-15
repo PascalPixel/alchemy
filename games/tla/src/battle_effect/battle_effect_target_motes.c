@@ -204,7 +204,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                   (gBattleEffect_GlintPictureHeights[cel] >> 1);
           u32 flip = Random16();
 
-          /* FAKEMATCH(dead): an empty once-only loop. */
+          /* FAKEMATCH(dead): an empty once-only loop before the blitter is
+           * built, as every glint draw keeps one; without it, 362 of 755
+           * instructions differ in tla-en. */
           do {
           } while (0);
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,

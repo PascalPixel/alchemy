@@ -2812,17 +2812,18 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   }
 }
 
-// The runner for the ARM kernel at Data_081380ac (relocated_kernel_0.s), the
-// same wrapper as Render_TransformVertices (below) and
-// Message_Find, with two arguments. Nothing in the image calls it.
+// The same wrapper as Render_TransformVertices (below) and Message_Find, with
+// two arguments. Nothing in the image calls it.
 
-/// Copies the ARM kernel at Data_081380ac into a heap block (DMA 3, words),
-/// runs it there with the caller's two arguments and frees the block.
-void RamCode_RunKernel0(s32 first, s32 second) {
+/// Copies Render_FillMeshKernel (render_fill_mesh_kernels.s), an ARM build of
+/// Render_FillMesh: the same transform of vertexCount points centred at
+/// (64, 64), back faces dropped and each triangle sorted by y with XOR swaps,
+/// into a heap block (DMA 3, words), runs it there and frees the block.
+void Render_RunFillMeshKernel(s32 vertexCount, s32 faceCount) {
   void (*routine)(s32, s32);
 
-  RamCode_Load(routine, Data_081380ac, Data_081380acCodeSize);
-  routine(first, second);
+  RamCode_Load(routine, Render_FillMeshKernel, Render_FillMeshKernelCodeSize);
+  routine(vertexCount, faceCount);
   Heap_Release(routine);
 }
 

@@ -131,4 +131,6 @@ of them, each adding something of its own.
   `render_textured_additive_kernel.s`, the three `render_shaded_*` files,
   `render_textured_narrow_kernel.s` and
   `render_solid_narrow_and_transform_kernels.s`, which also holds the
-  routine that turns a model's corners (`Render_TransformVertices`).
+  routine that turns a model's corners (`Render_TransformVertices`);
+  `render_fill_mesh_kernels.s` is an ARM build of `Render_FillMesh` that
+  nothing runs.

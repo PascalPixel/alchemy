@@ -1729,8 +1729,8 @@ extern const u32 BattleEffect_AdditiveReverse[];
 extern const u32 BattleEffect_AdditiveForward[];
 extern const u32 BattleEffect_ColorReverse[];
 extern const u32 BattleEffect_ColorForward[];
-extern const u8 Data_081380ac[];
-extern u8 Data_081380acCodeSize[];
+extern const u8 Render_FillMeshKernel[];
+extern u8 Render_FillMeshKernelCodeSize[];
 extern const u8 Render_TransformKernel[];
 extern u8 Render_TransformKernelCodeSize[];
 /// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in

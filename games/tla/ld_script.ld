@@ -262,7 +262,7 @@ SECTIONS
         . = ABSOLUTE(ROM_SHIFT + 0x08138000);
         "*/games/tla/src/gamepak/far_call/battle_effect.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/kernel_bank_integrate_vectors.o"(.text .rodata .data .padding)
-        "*/games/tla/src/battle_effect/relocated_kernel_0.o"(.text .rodata .data .padding)
+        "*/games/tla/src/battle_effect/render_fill_mesh_kernels.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/render_solid_kernels.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/render_textured_kernel.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/render_textured_max_kernel.o"(.text .rodata .data .padding)

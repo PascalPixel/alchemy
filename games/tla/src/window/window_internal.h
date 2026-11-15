@@ -253,4 +253,17 @@ enum BattleTargetHint {
 /// cleared (its sendFlag set by saving at the game's end).
 #define SAVE_SCAN_ALL_CLEARED 100
 
+/// Places a battle menu's pointing hand at its list window's selected row:
+/// `position` takes the hand's spot, `margin` pixels left of the window and
+/// 20 below the row's top, and `sprite` becomes a plain 16x16 sprite, its
+/// position still to come. The Djinn, item, summon and Psynergy battle menus
+/// each place their cursor so; the name is ours, as The Broken Seal's.
+#define MENU_PLACE_CURSOR(position, window, row, margin, sprite)               \
+  do {                                                                         \
+    (position).x = (s16)(window)->x * 8 - (margin);                            \
+    (position).y = ((row) * 2 + (s16)(window)->y) * 8 + 20;                    \
+    ((u32 *)(sprite))[1] = OBJ_SIZE_16X16;                                     \
+    ((u32 *)(sprite))[2] = 0;                                                  \
+  } while (0)
+
 #endif

@@ -498,13 +498,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
     }
 
-    cursorPos.x = (s16)listWindow->x * 8 - 2;
-    cursorPos.y = (selectedRow * 2 + (s16)listWindow->y) * 8 + 20;
-    ((struct MenuSprite *)sprite)->oam.word.attr01 = OBJ_SIZE_16X16;
-    ((struct MenuSprite *)sprite)->oam.word.attr23 = 0;
-    // Once-only: keeps cursorSlot's load before the tiles address.
-    do {
-    } while (0);
+    MENU_PLACE_CURSOR(cursorPos, listWindow, selectedRow, 2, sprite);
     sprite->oam.index =
         VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
     sprite->oam.x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;

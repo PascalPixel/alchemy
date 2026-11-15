@@ -254,12 +254,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       Oam_AddSpriteAtDepth(iconSprite, OAM_DEPTH_WINDOW);
     }
 
-    cursorPosition.x = (s16)window->x * 8 - 2;
-    cursorPosition.y = (selectedRow * 2 + (s16)window->y) * 8 + 20;
     /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds. */
     sprite = &cursorStorage;
-    ((u32 *)sprite)[1] = 0x40000000;
-    ((u32 *)sprite)[2] = 0;
+    MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, sprite);
     sprite->oam.index =
         VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
     sprite->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;

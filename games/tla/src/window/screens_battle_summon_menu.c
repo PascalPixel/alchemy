@@ -262,10 +262,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
         Oam_AddSpriteAtDepth(&sprites[index], OAM_DEPTH_WINDOW);
     }
 
-    cursorPosition.x = (s16)window->x * 8 - 2;
-    cursorPosition.y = (selectedRow * 2 + (s16)window->y) * 8 + 20;
-    ((u32 *)cur)[1] = 0x40000000;
-    ((u32 *)cur)[2] = 0;
+    MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, cur);
     cur->oam.index =
         VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
     cur->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;

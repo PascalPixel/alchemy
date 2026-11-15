@@ -1866,7 +1866,7 @@ static void AltinPeak_SpawnDebris(void) {
       debris->sprite->image.priority = 1;
       Actor_SelectAnimation(debris, 1);
       Actor_StartScript(debris, gAltinPeak_DebrisScript);
-      SET_VELOCITY(debris, ((Random_Below(6)) - 3) << 16, px(8),
+      SET_VELOCITY(debris, px(Random_Below(6) - 3), px(8),
                    (Random_Below(1536)) - 768);
     }
   }

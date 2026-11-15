@@ -16,7 +16,7 @@ void Actor_ResetMotionFields(s32 actorId);
 
 void Colosso_MovePointer(u32 x, u32 y, u32 duration);
 void Colosso_HidePointer(void);
-void Colosso_WalkActorTo(s32 a, s32 b, s32 c);
+void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z);
 
 /// The pointer's glide start on one axis, read signed or unsigned.
 union MarkerCoordinate {

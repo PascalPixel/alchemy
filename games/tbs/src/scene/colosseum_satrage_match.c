@@ -178,7 +178,7 @@ extern s16 gColosso_MarkerSlot;
 #ifdef UBFIX
 #define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) ((value) * px(1))
 #else
-#define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) ((value) << 16)
+#define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) px(value)
 #endif
 
 // UB: each of these calls a void function through an s32 function type, the

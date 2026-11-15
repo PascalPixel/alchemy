@@ -61,6 +61,7 @@
 #include "field/event_commands.h"
 #include "field/event_inline.h"
 #include "field/field.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -1480,12 +1481,12 @@ struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[] = {
 };
 // clang-format on
 
-/// Packs a push step, with X in the upper halfword and Z in the lower (pixels).
-#define PUSH_STEP(x, z) (((x) << 16) | ((z) & 0xffff))
-
+/// The push step for each of the 16 facings.
 s32 gSolSanctumPushSteps[] = {
-    PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(0, 16),
-    PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(-16, 0),
-    PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),
-    PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(16, 0),
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),
 };

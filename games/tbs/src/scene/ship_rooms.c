@@ -109,6 +109,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_sequence.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "game/game.h"
@@ -3082,6 +3083,9 @@ static void ShipRooms_MoveCameraAndWaitFixed(s32 x, s32 y, s32 z, u32 flags) {
 }
 
 /// Reuses the voyage's actor, camera, transition and selection operations.
+/// `opt` is most often a wait in frames (the party's last turn, a nod, an
+/// emote); other steps take it as an animation speed, a second actor or the
+/// last of a range of flags.
 static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
   u32 slot;
 
@@ -4065,15 +4069,14 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
   GameFlag_Set(firstSeatFlags + secondPassenger);
 }
 
-/// The step beside the leader for each of the 16 facings, with x in the high 16
-/// bits and z in the low 16 bits.
-#define TURN_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
-
+/// The step beside the leader for each of the 16 facings.
 s32 gShipRooms_TurnSteps[] = {
-    TURN_STEP(16, 0),  TURN_STEP(16, 0),  TURN_STEP(16, 0),  TURN_STEP(0, 16),
-    TURN_STEP(0, 16),  TURN_STEP(0, 16),  TURN_STEP(0, 16),  TURN_STEP(-16, 0),
-    TURN_STEP(-16, 0), TURN_STEP(-16, 0), TURN_STEP(-16, 0), TURN_STEP(0, -16),
-    TURN_STEP(0, -16), TURN_STEP(0, -16), TURN_STEP(0, -16), TURN_STEP(16, 0),
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),
 };
 
 /// The warriors walk out of the hold.

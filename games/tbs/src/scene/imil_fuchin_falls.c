@@ -126,6 +126,7 @@
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
+#include "system/heap.h"
 #include "system/input.h"
 #include "system/io_reg.h"
 #include "system/main_routine.h"
@@ -1292,7 +1293,7 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
 /// The fade overlay follows the leader through the dragon statue room.
 static void FuchinFallsCave_FollowLeaderWithLight(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayWork *work = *(gHeapSlots + 36);
+    struct FadeOverlayWork *work = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
 
     work->actor = Actor_Get(ACTOR_PARTY_LEADER);
   }
@@ -1302,7 +1303,7 @@ static void FuchinFallsCave_FollowLeaderWithLight(void) {
 /// following the leader.
 static void FuchinFallsCave_StopLightFollowingLeader(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayWork *work = *(gHeapSlots + 36);
+    struct FadeOverlayWork *work = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
 
     work->actor = NULL;
   }
@@ -1694,8 +1695,8 @@ static void FuchinFallsCave_EndRevealLighting(void) {
 
   if (gMainRoutineWork.entrance <=
       FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
-    effectWork = *(gHeapSlots + 56);
-    state = *(gHeapSlots + 31);
+    effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
+    state = *(gHeapSlots + HEAP_SLOT_SCREEN_TRANSITION);
     effectWork->childOption = 1;
     state->nextMode = 0;
     state->duration = 1;

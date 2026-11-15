@@ -1690,10 +1690,10 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   speed = px(1) / 10;
   n = 0;
   for (i = 0; i <= 4; i++)
-    ids[i] = 66;
+    ids[i] = ACTOR_ID_COUNT;
   MercuryLighthouseAerie_FindLiftRiders(ids, lift->offsetY);
   for (i = 0; i <= 4; i++) {
-    if (ids[i] == 66)
+    if (ids[i] == ACTOR_ID_COUNT)
       break;
     Actor_Get(ids[i])->motionFlags = 0;
     n++;
@@ -1728,10 +1728,10 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   speed = px(3) / 2;
   n = 0;
   for (i = 0; i <= 4; i++)
-    ids[i] = 66;
+    ids[i] = ACTOR_ID_COUNT;
   MercuryLighthouseAerie_FindLiftRiders(ids, lift->offsetY);
   for (i = 0; i <= 4; i++) {
-    if (ids[i] == 66)
+    if (ids[i] == ACTOR_ID_COUNT)
       break;
     Actor_Get(ids[i])->motionFlags = 0;
     n++;

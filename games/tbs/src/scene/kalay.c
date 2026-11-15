@@ -127,6 +127,7 @@
 #include "field/event.h"
 #include "field/field.h"
 #include "field/ground_mask.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "game/game.h"
@@ -2252,19 +2253,14 @@ static void Kalay_FreezePuddle(void) {
 
 #include "shared/actor_orbit.c"
 
-// One cell in each facing direction: x in the high 16 bits, z in the low 16.
-// UB: negative x coordinates cannot be left-shifted as signed integers.
-#ifdef UBFIX
-#define TILE_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
-#else
-#define TILE_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
-#endif
-
+/// One cell in each facing direction.
 s32 gKalay_TileStepByFacing[] = {
-    TILE_STEP(16, 0),  TILE_STEP(16, 0),  TILE_STEP(16, 0),  TILE_STEP(0, 16),
-    TILE_STEP(0, 16),  TILE_STEP(0, 16),  TILE_STEP(0, 16),  TILE_STEP(-16, 0),
-    TILE_STEP(-16, 0), TILE_STEP(-16, 0), TILE_STEP(-16, 0), TILE_STEP(0, -16),
-    TILE_STEP(0, -16), TILE_STEP(0, -16), TILE_STEP(0, -16), TILE_STEP(16, 0),
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),
 };
 
 s32 gKalay_TourGroupWalkScript[] = {

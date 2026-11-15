@@ -313,7 +313,7 @@ enum {
 #ifdef UBFIX
 #define MERCURY_LIGHTHOUSE_OFFSET_FIXED(value) ((value) * Q16_ONE)
 #else
-#define MERCURY_LIGHTHOUSE_OFFSET_FIXED(value) ((value) << 16)
+#define MERCURY_LIGHTHOUSE_OFFSET_FIXED(value) px(value)
 #endif
 
 #include "shared/field_effect_create.c"

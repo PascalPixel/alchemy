@@ -1611,7 +1611,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
         wait(1);
       }
       layer->offsetX += px(1) / 2;
-      layer->offsetX = layer->offsetX / px(1) << 16;
+      layer->offsetX = px(layer->offsetX / px(1));
       MapGrid_CopyCellAttributes(15, 32, 3, 1, 9, 32);
       MapGrid_CopyCellAttributes(12, 32, 3, 1, 15, 32);
       Sound_Play(SE_STOP_ACTION_SE);
@@ -2094,7 +2094,7 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
         wait(1);
       }
       layer->offsetX += px(1) / 2;
-      layer->offsetX = layer->offsetX / px(1) << 16;
+      layer->offsetX = px(layer->offsetX / px(1));
       Sound_Play(SE_STOP_ACTION_SE);
       Sound_Play(SE_THUMP);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -2159,7 +2159,7 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
         wait(1);
       }
       layer->offsetX += px(1) / 2;
-      layer->offsetX = layer->offsetX / px(1) << 16;
+      layer->offsetX = px(layer->offsetX / px(1));
       Sound_Play(SE_STOP_ACTION_SE);
       Sound_Play(SE_THUMP);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);

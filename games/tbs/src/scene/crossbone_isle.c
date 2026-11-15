@@ -189,6 +189,23 @@ enum CrossboneIsleFloatingLogsActorId {
   ACTOR_TWELFTH_LOG
 };
 
+/// The cell behaviour under each floating log, whose step trigger plays its
+/// animation (gCrossboneIsle_FloatingLogsTriggers).
+enum {
+  CELL_BEHAVIOR_CROSSBONE_ISLE_FIRST_LOG = 21,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_THIRD_LOG = 22,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_FOURTH_LOG = 23,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_FIFTH_LOG = 24,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_SIXTH_LOG = 25,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_EIGHTH_LOG = 26,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_TENTH_LOG = 31,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_ELEVENTH_LOG = 32,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_SECOND_LOG = 33,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_TWELFTH_LOG = 34,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_SEVENTH_LOG = 35,
+  CELL_BEHAVIOR_CROSSBONE_ISLE_NINTH_LOG = 36
+};
+
 /// The corridor rooms' one placed actor
 /// (gCrossboneIsle_CorridorActorPlacements).
 enum CrossboneIsleCorridorActorId {
@@ -763,11 +780,12 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   Event_End();
 }
 
-/// Draws the three-cell horizontal footprint centered on this log.
+/// Draws the three-cell horizontal footprint centered on this log; its cell
+/// behaviour is passed and not used.
 static void CrossboneIsle_DrawHorizontalLogFootprint(s32 actorId,
                                                      s32 sourceColumn,
                                                      s32 sourceRow,
-                                                     s32 unused) {
+                                                     s32 cellBehavior) {
   struct Actor *actor = Actor_Get(actorId);
 
   if (actor != NULL) {
@@ -783,10 +801,12 @@ static void CrossboneIsle_DrawHorizontalLogFootprint(s32 actorId,
   }
 }
 
-/// Draws the three-cell vertical footprint centered on this log.
+/// Draws the three-cell vertical footprint centered on this log; its cell
+/// behaviour is passed and not used.
 static void CrossboneIsle_DrawVerticalLogFootprint(s32 actorId,
                                                    s32 sourceColumn,
-                                                   s32 sourceRow, s32 unused) {
+                                                   s32 sourceRow,
+                                                   s32 cellBehavior) {
   struct Actor *actor = Actor_Get(actorId);
 
   if (actor != NULL) {
@@ -811,18 +831,30 @@ static void CrossboneIsle_AnimateTouchedLog(int actorId) {
 /// Draws all twelve log footprints in Crossbone Isle Cave
 /// (CrossboneIsleFloatingLogs).
 static void CrossboneIsle_DrawLogPuzzleFootprints(void) {
-  CrossboneIsle_DrawHorizontalLogFootprint(ACTOR_FIRST_LOG, 17, 30, 21);
-  CrossboneIsle_DrawHorizontalLogFootprint(ACTOR_THIRD_LOG, 17, 31, 22);
-  CrossboneIsle_DrawVerticalLogFootprint(ACTOR_FOURTH_LOG, 20, 30, 23);
-  CrossboneIsle_DrawVerticalLogFootprint(ACTOR_FIFTH_LOG, 21, 30, 24);
-  CrossboneIsle_DrawVerticalLogFootprint(ACTOR_SIXTH_LOG, 22, 30, 25);
-  CrossboneIsle_DrawVerticalLogFootprint(ACTOR_EIGHTH_LOG, 23, 30, 26);
-  CrossboneIsle_DrawHorizontalLogFootprint(ACTOR_TENTH_LOG, 0, 30, 31);
-  CrossboneIsle_DrawHorizontalLogFootprint(ACTOR_ELEVENTH_LOG, 0, 31, 32);
-  CrossboneIsle_DrawHorizontalLogFootprint(ACTOR_SECOND_LOG, 0, 32, 33);
-  CrossboneIsle_DrawVerticalLogFootprint(ACTOR_TWELFTH_LOG, 4, 30, 34);
-  CrossboneIsle_DrawVerticalLogFootprint(ACTOR_SEVENTH_LOG, 5, 30, 35);
-  CrossboneIsle_DrawVerticalLogFootprint(ACTOR_NINTH_LOG, 6, 30, 36);
+  CrossboneIsle_DrawHorizontalLogFootprint(
+      ACTOR_FIRST_LOG, 17, 30, CELL_BEHAVIOR_CROSSBONE_ISLE_FIRST_LOG);
+  CrossboneIsle_DrawHorizontalLogFootprint(
+      ACTOR_THIRD_LOG, 17, 31, CELL_BEHAVIOR_CROSSBONE_ISLE_THIRD_LOG);
+  CrossboneIsle_DrawVerticalLogFootprint(
+      ACTOR_FOURTH_LOG, 20, 30, CELL_BEHAVIOR_CROSSBONE_ISLE_FOURTH_LOG);
+  CrossboneIsle_DrawVerticalLogFootprint(
+      ACTOR_FIFTH_LOG, 21, 30, CELL_BEHAVIOR_CROSSBONE_ISLE_FIFTH_LOG);
+  CrossboneIsle_DrawVerticalLogFootprint(
+      ACTOR_SIXTH_LOG, 22, 30, CELL_BEHAVIOR_CROSSBONE_ISLE_SIXTH_LOG);
+  CrossboneIsle_DrawVerticalLogFootprint(
+      ACTOR_EIGHTH_LOG, 23, 30, CELL_BEHAVIOR_CROSSBONE_ISLE_EIGHTH_LOG);
+  CrossboneIsle_DrawHorizontalLogFootprint(
+      ACTOR_TENTH_LOG, 0, 30, CELL_BEHAVIOR_CROSSBONE_ISLE_TENTH_LOG);
+  CrossboneIsle_DrawHorizontalLogFootprint(
+      ACTOR_ELEVENTH_LOG, 0, 31, CELL_BEHAVIOR_CROSSBONE_ISLE_ELEVENTH_LOG);
+  CrossboneIsle_DrawHorizontalLogFootprint(
+      ACTOR_SECOND_LOG, 0, 32, CELL_BEHAVIOR_CROSSBONE_ISLE_SECOND_LOG);
+  CrossboneIsle_DrawVerticalLogFootprint(
+      ACTOR_TWELFTH_LOG, 4, 30, CELL_BEHAVIOR_CROSSBONE_ISLE_TWELFTH_LOG);
+  CrossboneIsle_DrawVerticalLogFootprint(
+      ACTOR_SEVENTH_LOG, 5, 30, CELL_BEHAVIOR_CROSSBONE_ISLE_SEVENTH_LOG);
+  CrossboneIsle_DrawVerticalLogFootprint(
+      ACTOR_NINTH_LOG, 6, 30, CELL_BEHAVIOR_CROSSBONE_ISLE_NINTH_LOG);
 }
 
 // Crossbone Isle Cave (CrossboneIsleFloatingLogs), the ninth floor's side room:
@@ -2271,18 +2303,18 @@ struct Trigger gCrossboneIsle_FloatingLogsTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideNinthLogEast) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 36, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 36, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnFirstLog) },
-    { TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnThirdLog) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnFourthLog) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnFifthLog) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnSixthLog) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnEighthLog) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnTenthLog) },
-    { TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnEleventhLog) },
-    { TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnSecondLog) },
-    { TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnTwelfthLog) },
-    { TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnSeventhLog) },
-    { TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnNinthLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_FIRST_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnFirstLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_THIRD_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnThirdLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_FOURTH_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnFourthLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_FIFTH_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnFifthLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_SIXTH_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnSixthLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_EIGHTH_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnEighthLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_TENTH_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnTenthLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_ELEVENTH_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnEleventhLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_SECOND_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnSecondLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_TWELFTH_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnTwelfthLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_SEVENTH_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnSeventhLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_CROSSBONE_ISLE_NINTH_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnNinthLog) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_999_COINS, FIND_COINS(999) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_MURAMASA, FIND_ITEM(ITEM_MURAMASA) },

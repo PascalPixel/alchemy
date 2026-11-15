@@ -414,14 +414,11 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   ApojiiIslands_SetSparkleAnchor(ACTOR_AQUA_STONE);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   i = 3;
-  /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash. */
-  /* FAKEMATCH(signature): PaletteFade_SetTarget declared
-   * returning s32, though its target returns nothing. */
 flash:
-  ApojiiIslands_Flash(Random16() & 0x7fff, 0);
+  Value2((s32 (*)())PaletteFade_SetTarget, Random16() & 0x7fff, 0);
   PaletteFade_StartInterpolation(15);
   wait(10);
-  ApojiiIslands_Flash(0x10000, 0);
+  Value2((s32 (*)())PaletteFade_SetTarget, 0x10000, 0);
   PaletteFade_StartInterpolation(10);
   i--;
   wait(10);

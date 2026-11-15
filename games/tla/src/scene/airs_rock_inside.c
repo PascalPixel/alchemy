@@ -892,11 +892,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
                             (shot->z.fixed - shot->y.fixed) >> 20) >>
           8 ==
       212) {
-    {
-      s32 cue = 284;
-
-      Actor_PlaySoundInView(shot, cue + 255);
-    }
+    Actor_PlaySoundInView(shot, 539);
     shot->riseEnabled = 0;
     shot->update = 0;
     Actor_StartScript(shot, gAirsRockInside_PooledWhirlwindFadesScript);

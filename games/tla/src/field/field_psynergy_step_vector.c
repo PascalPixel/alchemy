@@ -210,16 +210,7 @@ void BattleEffect_UploadCanvas(void) {
     break;
   case CANVAS_UPLOAD_AND_CLEAR:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    {
-      s32 size = 128;
-      /* FAKEMATCH(pin): the canvas pinned to the r0 it is passed in. */
-      register u8 *buffer asm("r0");
-      s32 (*fill)(void *, s32, u32);
-
-      fill = Iwram_FillWordsEntry;
-      buffer = canvas;
-      fill(buffer, size << 5, 0);
-    }
+    Iwram_FillWords(canvas, CANVAS_SIZE, 0);
     break;
   case CANVAS_UPLOAD_AND_FADE1:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);

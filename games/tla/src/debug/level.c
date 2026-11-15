@@ -14,6 +14,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "field/event.h"
 #include "field/scene_tables.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
@@ -584,23 +585,14 @@ s32 Scene_Initialize(void) {
 /// position, as The Broken Seal's Japanese edition: Force cast at
 /// ACTOR_PORTRAIT_BROWSER gives it mode 2 and ACTOR_LEVEL_EDITOR mode 4; once
 /// ACTOR_PORTRAIT_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves to
-/// (156, 208).
+/// (312, 416).
 void IncreaseItemAndLevel_RunMotionTest(void) {
-  s32 x;
-  s32 z;
-  s32 id;
-
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAnimationById(ACTOR_PORTRAIT_BROWSER, 2);
   Actor_SetAnimationById(ACTOR_LEVEL_EDITOR, 4);
   Actor_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
-  x = 156;
-  z = 208;
-  id = ACTOR_LEVEL_EDITOR;
-  /* FAKEMATCH(barrier): x, z and the actor held at an empty asm. */
-  asm("" : "+l"(x), "+l"(z), "+l"(id));
-  Actor_SetHorizontalPositionWithTerrain(id, x << 17, z << 17);
+  Actor_SetPosition(ACTOR_LEVEL_EDITOR, 312, 416);
   Event_End();
 }
 

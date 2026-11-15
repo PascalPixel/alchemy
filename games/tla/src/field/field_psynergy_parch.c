@@ -390,17 +390,10 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
   s32 column;
   s32 sx;
   s32 sy;
-  s32 (*fill)(void *, s32, u32);
 
-  /* FAKEMATCH(dead): the opening in a once-only block. */
-  do {
-    x /= 8;
-    y /= 8;
-    fill = Iwram_FillWordsEntry;
-    /* FAKEMATCH(barrier): an empty asm taking the fill routine's entry. */
-    asm volatile("" : : "l"(fill));
-    fill((void *)BG_SCREEN_BLOCK(4), 0x400, 0);
-  } while (0);
+  x /= 8;
+  y /= 8;
+  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x400, 0);
   for (row = 0, sy = y; row < 16; row++, sy++) {
     if (sy < 0)
       continue;

@@ -43,23 +43,16 @@ void FieldPsynergy_WatchSandGround(void) {
     reason = 1;
   if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) == 0)
     reason = 2;
-  if (party->movementMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
+  if (party->movementMode == 5 && object->userValue != 0 &&
       object->timer == 0) {
     s32 x;
     s32 z;
-    s32 back;
 
     if (MapGrid_IsClimbableCell(object->x.fixed, object->z.fixed, 2) == 0)
       reason = 3;
-    x = object->x.fixed & FIELD_CELL_MASK;
-    z = object->z.fixed & FIELD_CELL_MASK;
-    back = -0x80000;
-    /* FAKEMATCH(barrier): back through an empty asm. */
-    asm("" : "+l"(back));
-    /* FAKEMATCH(dead): an empty once-only block. */
-    do {
-    } while (0);
-    if (MapGrid_IsClimbableCell(x + px(8), z + back, 2) == 0)
+    x = (object->x.fixed & FIELD_CELL_MASK) + px(8);
+    z = (object->z.fixed & FIELD_CELL_MASK) - px(8);
+    if (MapGrid_IsClimbableCell(x, z, 2) == 0)
       reason = 4;
   }
   if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
@@ -343,12 +336,7 @@ void FieldPsynergy_EndSand(void) {
     void *source = *(void **)((u8 *)owner->sprite + 40);
 
     sprite = 0x400;
-    {
-      /* FAKEMATCH(pin): the copy's size pinned to r2. */
-      register s32 size asm("r2") = sprite;
-
-      FieldPsynergy_DecodePicture(source, work->picture, size);
-    }
+    FieldPsynergy_DecodePicture(source, work->picture, sprite);
   }
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
   pictureEntry = VramCache_FindFreeEntry();

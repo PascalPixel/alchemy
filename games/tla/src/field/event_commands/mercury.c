@@ -50,6 +50,9 @@ struct CaptureObject__f0d8740 {
   void *callback;
 };
 
+/// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
+/// bounces twice and hops three times ever higher, then rises 120 pixels out of
+/// sight trailing eight afterimages.
 void Djinn_RunMercuryJoinEffect(s32 arg) {
   struct CaptureObject__f0d8740 *djinni;
   struct CaptureObject__f0d8740 *copy;

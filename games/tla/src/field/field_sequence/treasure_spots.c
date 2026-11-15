@@ -7,6 +7,7 @@
 #include "sounds.h"
 #include "module/field/field_sequence.h"
 
+/// Sets an actor's y and groundHeight to the map's height at its x and z.
 void Actor_SnapToTerrain(void *object) {
   struct Actor *state = object;
   s32 height;

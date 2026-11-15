@@ -91,6 +91,8 @@ void Leader_StepAwayFromNearbyActor(void) {
   }
 }
 
+/// Each frame of a found item's picture: one time in ten, a sparkle appears
+/// within 16 pixels of it.
 void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
@@ -124,7 +126,7 @@ void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
 }
 
 /// Returns 1 while Reveal is active, else 0.
-s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
+s32 Field_IsRevealActive(struct Actor *interpreter) {
   s32 revealState;
   u32 isActive = 0;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -257,6 +259,9 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   owner->facing = TRIG_TURN / 4;
 }
 
+/// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
+/// above the leader, with waits of 60 and 80 frames around that when both are
+/// set.
 void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
   struct Actor *owner;
 
@@ -337,6 +342,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
   }
 }
 
+/// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
+/// pixels of it.
 void Reveal_EmitSparkles(const struct ParticleSource *source) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
@@ -1291,6 +1298,9 @@ void ScreenTransition_InitializeState(s32 value) {
   wait(0x78);
 }
 
+/// Sets each of the 1344 colour channels of step to the amount to add each
+/// frame for source to reach target in frames frames; with frames 0 or less
+/// step is left as it was.
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames) {
   s32 index;
@@ -1313,12 +1323,15 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
   }
 }
 
+/// Each frame (unless FLAG_PALETTE_BLEND_HELD is set): moves the palette fade
+/// one step toward its target, packs it into RGB555 and queues it for the BG
+/// and OBJ palettes.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
   u16 *add = work->delta;
   s32 i;
 
-  if (GameFlag_Get(0x152) != 0) {
+  if (GameFlag_Get(FLAG_PALETTE_BLEND_HELD) != 0) {
     return;
   }
   if (work->duration == 0) {
@@ -1696,6 +1709,8 @@ void PaletteFade_Release(void) {
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
+/// Sets the colours the buffer moves toward (see PaletteFade_Build); does
+/// nothing without a palette fade.
 void PaletteFade_SetTarget(s32 value, s32 mode) {
   struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
@@ -1712,6 +1727,7 @@ void PaletteFade_SetSource(s32 value, s32 mode) {
   }
 }
 
+/// Sets the buffer's source backdrop colour (BG colour 0 of its palette copy).
 void PaletteFade_SetBackdrop(u32 value) {
   struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
@@ -1741,6 +1757,8 @@ void PaletteFade_PackTarget(void) {
   work--;
 }
 
+/// Starts moving the shown colours to the target colours over frames frames:
+/// sets work->duration, clears work->step and fills work->delta.
 void PaletteFade_StartInterpolation(s32 mode) {
   struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 
@@ -2016,6 +2034,8 @@ struct BattleFxDefinition *Speaker_FindDefinition(u32 id) {
   return entry;
 }
 
+/// Returns the sprite id stored by a live actor's animated sprite, or 0 when
+/// that actor has no animated sprite or its sprite-id pointer is absent.
 s32 Speaker_GetActorSprite(u32 objectId) {
   struct BattleRenderObject *object =
       (struct BattleRenderObject *)ObjectTable_Get(objectId);

@@ -264,11 +264,6 @@ struct SceneEventEntry {
   s32 result;
 };
 
-struct BattleEffectCounterState {
-  u8 unk000[0x154];
-  s16 counters[12];
-};
-
 // A box of the map in whole cells (16.16 when compared) and the value it
 // selects while its condition holds; a row with minX -1 ends the list.
 struct MapRegion {

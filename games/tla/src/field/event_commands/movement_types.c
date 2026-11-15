@@ -88,6 +88,8 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   }
 }
 
+/// The SC_CALL routine of movement type 7: clears an actor's sprite flags and
+/// its collision flags, so nothing collides with it.
 s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
   Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
   obj->collisionFlags = 0;
@@ -104,6 +106,7 @@ s32 Actor_SetPriorityBit5(struct ObjectFlags23 *obj) {
   return 0;
 }
 
+/// The SC_CALL routine of movement type 5: follows the watched actor.
 s32 Actor_MoveTowardTarget(struct Actor *object) {
   struct Actor *target;
   s32 deltaX;

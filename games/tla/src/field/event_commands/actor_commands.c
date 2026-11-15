@@ -10,6 +10,8 @@
 
 struct Actor *Actor_GetById(u32 objectId);
 
+/// Clears an actor's destination, puts it under script control and
+/// stands it still.
 void Actor_ClearDestinationAndStand(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -22,6 +24,9 @@ void Actor_ClearDestinationAndStand(u32 objectId) {
   }
 }
 
+/// The event command "actor face direction": the actor turns toward angle
+/// (TRIG_TURN a full turn; Actor_StepAngle), then the event waits the given
+/// number of frames.
 void Actor_FaceDirectionById(s32 objectId, s32 angle, s32 frames) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -42,6 +47,9 @@ void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
   }
 }
 
+/// The event command "set actor sprite priority": fixes the priority of the
+/// actor's sprite and its shadow, which then no longer follow its depth
+/// (clears priorityFlags bit 0).
 void Actor_SetSpritePriority(u32 objectId, s32 priority) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -221,6 +229,8 @@ void Event_SetMessageId(s32 message) {
   event->message = message;
 }
 
+/// Returns the sprite (the first animation's id) of the actor in the low 12
+/// bits of actorId, or -1 if there is no such animated actor.
 s32 Actor_GetSpriteById(s32 key) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 result = -1;
@@ -231,6 +241,8 @@ s32 Actor_GetSpriteById(s32 key) {
   return result;
 }
 
+/// Returns the first of the scene's placed actors (ids 8 to 79) showing
+/// sprite, or -1.
 s32 Actor_FindBySprite(s32 value) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 result = -1;

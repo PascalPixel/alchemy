@@ -449,6 +449,9 @@ void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
   } while (count >= 0);
 }
 
+/// Starts animation value on layer slot of each of the viewer's ten sprites,
+/// each one a frame (16 timer units) behind the last, so the copies are
+/// staggered.
 void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
   s32 index;
   s32 count;
@@ -482,6 +485,8 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
   } while (count <= 9);
 }
 
+/// Sets sprite no on layer slot of each of the viewer's ten sprites, and resets
+/// each sprite animation from its new metadata.
 void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
   u8 *base = Ram_HeapSlots->sprites;
   s32 offset;
@@ -502,6 +507,8 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
 
 extern struct Vec2 gBattle_FormationPlacementScale;
 
+/// Each frame in the sprite viewer: places each copy of the sprite at its ring
+/// position, facing the way that position stands for.
 void SpriteViewer_PlaceRing(void) {
   u8 *actor = Ram_HeapSlots->sprites;
   u32 kind = (*(u8 **)(actor + 40))[4];

@@ -269,6 +269,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   wait(1);
 }
 
+/// Each frame: runs the 16 tileset animations.
 void TilesetAnim_Update(void) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
   u32 i;
@@ -337,6 +338,9 @@ void Map_SetLayerEntryFlag(u32 no) {
   anim->paused = 1;
 }
 
+/// Starts the tileset animations a map's animation script lists: each 0xfdNN
+/// marker starts the tileset animation its low four bits name there, paused
+/// when bit 7 is set.
 void TilesetAnim_StartAll(const u16 *script) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
   s32 count;
@@ -376,6 +380,7 @@ void TilesetAnim_ResumeAll(void) {
     Task_ResumeAll(TilesetAnim_Update);
 }
 
+/// Each frame: runs the map's blend script.
 void BlendScript_Run(void) {
   struct MapWork *work = Ram_HeapSlots->mapGrid;
   struct BlendScriptState *state;
@@ -458,6 +463,8 @@ void BlendScript_Suspend(void) { Task_SuspendAll((u32)BlendScript_Run); }
 
 void BlendScript_Resume(void) { Task_ResumeAll((u32)BlendScript_Run); }
 
+/// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
+/// its four entries cleared.
 void PaletteCycle_Initialize(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
@@ -616,6 +623,8 @@ s32 Terrain_GetSlopeYHeight(const s8 *samples, s32 unused, s32 position) {
   return base + (offset >> 4);
 }
 
+/// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
+/// it and the higher of the two on it.
 s32 Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
   s32 first;
   s32 second;
@@ -663,6 +672,8 @@ s32 Terrain_GetStepDifferenceDiagonalHeight(const s8 *samples, s32 start,
   return second;
 }
 
+/// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
+/// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
 s32 Terrain_GetBendSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
   s32 first;
   s32 middle;
@@ -684,6 +695,8 @@ s32 Terrain_GetBendSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
   return result;
 }
 
+/// A slope that bends on the diagonal x = y: from sample 0 at the top right
+/// corner to sample 1 on the diagonal to sample 2 at the bottom left.
 s32 Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 start,
                                             s32 end) {
   s32 first;
@@ -1103,6 +1116,9 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
   return 0;
 }
 
+/// Returns -1 when the cell under position (its x, and z less its height) in
+/// the overhead layer is a wall (cell behavior 255), else 0; also 0 before the
+/// map work exists.
 s32 MapGrid_IsWallAt(s32 *position) {
   s32 x = position[0] / 65536;
   s32 z = (u32)((position[2] & 0xfff00000) - position[1]) >> 16;
@@ -1141,6 +1157,8 @@ s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   return gMapBlocks__f02c58c[x + z * 32].unk2;
 }
 
+/// Returns the world map's collision value (1-15) at position: from the upper
+/// collision layer where it has one, else the lower, else 7.
 s32 WorldMap_GetCollision(struct WorldPosition *position) {
   s32 x_step = position->x >> 17;
   s32 y = position->y;
@@ -1179,6 +1197,8 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
   return 7;
 }
 
+/// Returns 0 when the world map at position can be walked on (a place there,
+/// and collision 5 to 12), else -1.
 s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
   if (WorldMap_GetBlockPlace(position) != 255) {
     if ((u32)(WorldMap_GetCollision(position) - 5) <= 7)

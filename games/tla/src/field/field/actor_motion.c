@@ -535,14 +535,18 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   }
 }
 
-void ObjectList_CollectActive(u8 *object, u8 **out) {
-  u8 *end = object + 0x700;
+/// Lists the first 14 actors whose script is running, in slot order, ended by
+/// NULL; out holds 15.
+void Actor_ListRunning(struct Actor *actor, struct Actor **out) {
+  struct Actor *end = actor + 14;
 
   do {
-    if (*(u16 *)(object + 2) != 0)
-      *out++ = object;
-    object += 128;
-  } while (object != end);
+    // A running script's address is above 0xffff, so its upper half alone
+    // tells a running actor from a free one.
+    if (((u16 *)&actor->script)[1] != 0)
+      *out++ = actor;
+    actor++;
+  } while (actor != end);
   *out = NULL;
 }
 #undef WORD_AT

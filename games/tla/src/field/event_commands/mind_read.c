@@ -486,6 +486,8 @@ void FieldPsynergy_SteerPushedTarget(void) {
   UpdateRisingParticleBurst(pusher);
 }
 
+/// Field effect sprite callback of a particle that flies 30 pixels out from
+/// where it started, comes back and is freed.
 void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect) {
   struct Output_08097f80 position;
   s8 *statePointer = &effect->state;
@@ -535,6 +537,8 @@ next_state:
 }
 #undef MOVE_CELL_MASK
 
+/// When Move is cast with no target, the hand appears beside the caster for 30
+/// frames and then turns into particles.
 void FieldPsynergy_Move(void) {
   // Unused: gives the stack frame its 12 bytes.
   s32 work[3];
@@ -866,6 +870,9 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
   FieldPsynergy_FadeFromCastColor();
 }
 
+/// When Growth is cast with no target, particles fly out from in front of the
+/// caster, and then five falling actors appear 4 to 10 pixels round the
+/// Psynergy's position.
 void FieldPsynergy_Growth(void) {
   u8 *state = Ram_HeapSlots->fieldEffectWork;
   struct BurstParticleVector position;
@@ -968,6 +975,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
 
 void Actor_ApplyRandomChildValues(void);
 
+/// A hand appears 32 pixels to either side, each moves 14 pixels in, and they
+/// lift the target 32 pixels with them.
 void FieldPsynergy_LiftOnTarget(void) {
   struct BattleEffectScene *scene;
   void *mainObject;
@@ -1359,6 +1368,7 @@ s32 FieldEffect_UpdateFrostGlint(struct OrbitingParticle *particle) {
   return 0;
 }
 
+/// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
 void FieldEffect_UpdateOrbitingParticleFade(struct Actor *object) {
   s32 scale;
 
@@ -1372,6 +1382,7 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *object) {
   }
 }
 
+/// Spirals anticlockwise at twice the frames left in pixels, then fades.
 void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
   struct OrbitingParticleVector pos;
   s16 life;
@@ -1393,6 +1404,7 @@ void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
   }
 }
 
+/// Per-frame update: as FieldEffect_UpdateOrbitingParticleLeft, clockwise.
 void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
   struct OrbitingParticleVector pos;
   s16 life;
@@ -1414,6 +1426,7 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
   }
 }
 
+/// Runs Frost cast on a target.
 void FieldPsynergy_FrostOnTarget(void) {
   struct BattleFxScene *state = Ram_HeapSlots->fieldEffectWork;
   struct OrbitingParticleChild *child = state->child;

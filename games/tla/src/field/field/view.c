@@ -13,6 +13,9 @@
 #include "system/ram_code.h"
 #include "module/field/resource_slot.h"
 
+/// Returns the world map's battle environment at position from
+/// gWorldMap_TerrainBehaviorTable, by its collision value and its block's
+/// terrain, and stores the block's terrain kind in terrainKind.
 u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
                                  s32 *terrainKind) {
   s32 selector = WorldMap_GetCollision(position);
@@ -48,6 +51,8 @@ u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
   return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
 
+/// Changes the shake without restarting an axis whose argument is negative.
+/// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
 void MapGrid_SetScreenShake(s32 value0, s32 value1, s32 value2) {
   struct MapWork *work;
 
@@ -65,6 +70,8 @@ void MapGrid_SetScreenShake(s32 value0, s32 value1, s32 value2) {
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
+/// Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
+/// limit for a shake whose decay never settles.
 void MapGrid_WaitForShakeToSettle(void) {
   s32 *work;
   s32 cnt;

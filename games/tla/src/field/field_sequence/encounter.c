@@ -124,6 +124,9 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
 
 #define ENCOUNTER_STEPS (gMainRoutineWork.encounterSteps)
 
+/// Advances the encounter counter for zone and returns the formation to fight,
+/// or 0 for no battle. steps (16.16) scales how far the counter moves; a
+/// battle starts once it reaches encounterThreshold.
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct FieldWork *work;
   const struct EncounterZone *entry;
@@ -232,6 +235,9 @@ u16 Encounter_GetDjinnFormation(s32 djinni) {
 #endif
 }
 
+/// Chooses the current scene's field music (gMainRoutineWork.cue) from the
+/// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
+/// when none does.
 void Scene_ChooseMusic(void) {
   s16 cue = 79;
   s16 scene = gMainRoutineWork.next;
@@ -264,6 +270,8 @@ void Scene_ChooseMusic(void) {
   gMainRoutineWork.sceneMusic = cue;
 }
 
+/// Returns the area name of sceneId and entrance, from the first rule matching
+/// the scene or its area; 0, the Title's name, when none does.
 s32 Area_GetNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
   s32 areaNameIndex = 0;
@@ -360,6 +368,7 @@ void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
   }
 }
 
+/// Returns the battle background chosen for the current scene.
 s16 BattleBackground_GetSelected(void) {
   return gMainRoutineWork.battleBackground;
 }

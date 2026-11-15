@@ -18,6 +18,9 @@ s32 Portrait_OpenWindowFar(s32 sprite, s32 zero, s32 x, s32 y);
 #define SPEAKER_WINDOW_ABOVE 0x4000
 #define SPEAKER_WINDOW_BELOW 0x8000
 
+/// The event command "open message": opens the event's current message in a
+/// speech window next to the speaking actor, with the speaker's portrait beside
+/// it when it has one, and moves on to the next message.
 s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   u8 *win;
   struct FieldWork *work;
@@ -284,6 +287,9 @@ void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
   Event_ShowMessageAtPosition(a, b, c, d);
 }
 
+/// Unused: reached only through a bare veneer in field_sequence.s. It would
+/// open the event's message at (x, y), wait for it and advance the message
+/// index; its units are as unknown as Event_ShowSpeakerMessage's.
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   s32 x0 = x;
   struct FieldWork *state = Ram_HeapSlots->fieldWork;

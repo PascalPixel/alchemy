@@ -298,6 +298,8 @@ s32 Actor_FindLastActiveId(void) {
   return last;
 }
 
+/// Gives each actor placement with condition 0 a condition saying whether
+/// it lies within the map's view bounds, so that only those inside appear.
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
   struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->mapGrid;
 

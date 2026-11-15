@@ -278,22 +278,17 @@ struct WorldEventWork {
   u8 terrainKind;
 };
 
-/// The actor as SC_SYNC reads it: the frames a solid object has blocked it
-/// are a byte of the actor itself, which struct Actor leaves unnamed.
+/// The actor as SC_SYNC clears it when it gives up waiting: its target, arrival
+/// axis and blocked count.
 struct WaitingActor {
   u8 unk00[0x38];
   s32 targetX;
   s32 targetY;
   s32 targetZ;
   u8 unk44[0x12];
-  u8 unk56;
+  u8 arrivalAxis;
   u8 unk57[9];
-  u8 delay;
-};
-
-struct ScriptObject {
-  u8 unk00[0x6c];
-  s32 value;
+  u8 refused;
 };
 
 enum { RESOURCE_SLOT_COUNT = 8 };

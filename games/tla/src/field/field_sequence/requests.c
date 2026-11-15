@@ -61,6 +61,8 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   BattleEffect_SelectBattleCue(0, 0);
 }
 
+/// Sets the after-battle destination (gMainRoutineWork.afterBattleScene and
+/// afterBattleEntrance), where the party goes once the coming battle is won.
 void Event_SetAfterBattleDestination(s32 first, s32 second) {
   gMainRoutineWork.afterBattleScene = first;
   gMainRoutineWork.afterBattleEntrance = second;
@@ -71,6 +73,9 @@ void Party_SetFields1f2And1f4(s32 first, s32 second) {
   gMainRoutineWork.defeatEntrance = second;
 }
 
+/// Makes the event leave for entrance entrance of scene sceneId: sets
+/// gMainRoutineWork.next and entrance and raises the exit request
+/// EXIT_KEEP_DESTINATION (999), so the field sequence leaves on its next pass.
 void Event_LeaveFor(s16 scene, s16 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -79,16 +84,17 @@ void Event_LeaveFor(s16 scene, s16 entrance) {
   event->exit = 999;
 }
 
+/// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SOUND_FADE_OUT_ACTION_SE for
+/// -1), and remembers soundId for Scene_PlayQueuedMusic in the field work's
+/// queuedSound; -1 is remembered as none, so it plays SOUND_FADE_OUT_ACTION_SE
+/// now and nothing later.
 void Scene_QueueMusic(s32 soundId) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 state;
-
-  state = soundId;
-  event->queuedSound = state;
-  if ((s16)state == -1)
-    state = 0x186;
+  gFieldWork->queuedSound = soundId;
+  if ((s16)soundId == -1) {
+    soundId = SOUND_FADE_OUT_ACTION_SE;
+  }
   Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
-  Sound_PlayFar(state);
+  Sound_PlayFar(soundId);
 }
 
 void Event_NoOp(void) {}
@@ -127,16 +133,19 @@ struct EventWork1cc {
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
-void Event_PlayCueNearFocus(struct CueObject *object, s32 cue) {
-  struct CueObject *focus = gFieldWork->camera;
+/// Plays sound when the actor is in view: within 152 pixels across and 112 up
+/// or down the screen of the actor the camera follows.
+void Event_PlayCueNearFocus(struct Actor *actor, s32 sound) {
+  struct Actor *focus = gFieldWork->camera;
 
-  if (object == 0 || focus == 0)
+  if (actor == 0 || focus == 0)
     return;
-  if (ABS(focus->x - object->x) > 0x980000)
+  if (ABS(focus->x.fixed - actor->x.fixed) > px(152))
     return;
-  if (ABS((focus->top - focus->base) - (object->top - object->base)) > 0x700000)
+  if (ABS((focus->z.fixed - focus->y.fixed) -
+          (actor->z.fixed - actor->y.fixed)) > px(112))
     return;
-  Sound_PlayFar(cue);
+  Sound_PlayFar(sound);
 }
 
 /// Counts up the main routine's countedAnswers.

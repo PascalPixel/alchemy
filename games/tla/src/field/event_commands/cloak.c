@@ -104,10 +104,12 @@ void BattleEffect_LandFallingObject(struct FallingObject *object) {
   }
 }
 
+/// Per-frame update: drifts from side to side, up to a pixel a frame, as it
+/// falls 0.3 pixels a frame, and is released on reaching its ground height.
 void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
   s32 r;
 
-  object->y.fixed -= 0x4ccc;
+  object->y.fixed -= px(3) / 10;
   r = Random16();
   object->x.fixed += r - Random16();
   if (object->y.fixed <= object->groundHeight) {
@@ -341,6 +343,9 @@ static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
   return hit;
 }
 
+/// When Carry is cast on a target, two hands lift it to 24 pixels above the
+/// ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
+/// where it is.
 void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   struct EffectWork__f0decb8 *work;
   struct FxObject *source;

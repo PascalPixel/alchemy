@@ -489,6 +489,8 @@ void Actor_VanishInSparks(s32 objectId) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+/// Updates one field effect sprite: counts its age, runs its callback (after
+/// any delay), moves it and draws it.
 void FieldParticle_Update(struct FieldParticle *effect) {
   if (effect->active != 0) {
     effect->age++;
@@ -588,6 +590,7 @@ u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
   return ((0u - value) | value) >> 31;
 }
 
+/// Places a field effect sprite at (x, z), at rest with no target.
 void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
   effect->targetX = EFFECT_NO_TARGET;
   effect->targetZ = EFFECT_NO_TARGET;

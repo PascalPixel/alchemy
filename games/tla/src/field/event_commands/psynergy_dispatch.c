@@ -238,6 +238,8 @@ void FieldPsynergy_Dispatch(void) {
   }
 }
 
+/// Finishes the current field Psynergy when it is Mind Read: ends it and lets
+/// its target move again, unless the target is the actor kept stopped.
 void FieldPsynergy_FinishMindRead(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->fieldEffectWork;
 

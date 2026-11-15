@@ -54,6 +54,11 @@ struct ResourceSprite {
 
 #undef SpriteAnimation_Alloc
 
+/// Loads the pictures of animation id number into picture cache slot's buffer:
+/// the resource listed for it in gResourceSlot_NumberTable, decoded, its
+/// picture offsets turned into pointers, and for variant 1-5 its pixel colours
+/// (those up to 223, the basic sprite palettes 0 to 13) remapped through that
+/// variant's conversion table; a variant above 5 uses variant 1's.
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ObjectSystemWork *work;
@@ -296,6 +301,8 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
   return value;
 }
 
+/// Removes the sprite animation handle from a sprite and clears it, trimming
+/// the sprite's animation count when no later sprite animation remains.
 void Sprite_RemoveAnimation(struct MetadataSlotState *state, s32 handle) {
   s32 count;
   u32 slot;
@@ -320,6 +327,8 @@ void Sprite_RemoveAnimation(struct MetadataSlotState *state, s32 handle) {
   }
 }
 
+/// Removes and clears a sprite's animation number no (0-3), trimming the
+/// sprite's animation count when no later sprite animation remains.
 void Sprite_RemoveAnimationAt(struct MetadataSlotState *state, u32 no) {
   s32 slot;
   s32 count;
@@ -341,6 +350,8 @@ void Sprite_RemoveAnimationAt(struct MetadataSlotState *state, u32 no) {
   }
 }
 
+/// Starts animation no on a sprite animation when its metadata has it; with
+/// bit 7 of no set it keeps the place and timer of the script already running.
 void SpriteAnimation_Start(struct AnimationEntry *work, s32 no) {
   s32 hi;
   struct AnimationMetadata *info;
@@ -507,6 +518,8 @@ void VramBlock_Load93(void) {
   VramCache_Load(93, size, data);
 }
 
+/// Takes a free sprite animation and starts it on animation id's first
+/// animation.
 struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationEntry *entry;

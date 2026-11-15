@@ -99,6 +99,8 @@ void Event_CallWithLastActiveObjectId(s32 event_id) {
 
 void Event_SetSceneEvents(s32 events) { gFieldWork->triggers = events; }
 
+/// Adds unit to the party. With announce nonzero it also shows `<name> joined
+/// your party.` (Party_ShowJoinedMessage, which receives announce too).
 void Event_AddPartyMember(s32 event_id, s32 value) {
   Unit_Get(event_id);
   Party_AddMemberFar(event_id);
@@ -113,6 +115,8 @@ void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_ShowPairJoinedMessageFar(first, second);
 }
 
+/// Checks an L or R button shortcut, packed as the party member in bits 10 to
+/// 13 and the Psynergy in bits 0 to 9.
 s32 Party_CheckShortcut(u32 packed_id) {
   s32 group = (packed_id >> 10) & 0xf;
   s32 entry = packed_id & 0x3ff;
@@ -126,6 +130,8 @@ s32 Party_CheckShortcut(u32 packed_id) {
   return 0;
 }
 
+/// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
+/// gMainRoutineWork.firstShortcut or secondShortcut.
 void Party_ClearUnusableShortcuts(void) {
   if (Party_CheckShortcut(gMainRoutineWork.firstShortcut))
     gMainRoutineWork.firstShortcut = 0;
@@ -133,6 +139,8 @@ void Party_ClearUnusableShortcuts(void) {
     gMainRoutineWork.secondShortcut = 0;
 }
 
+/// Takes unit out of the party, fully restoring its HP and PP and curing its
+/// poison.
 void Party_RemoveMemberRestored(s32 unit) {
   struct BattleUnit *vitals;
   s32 partyIndex;
@@ -181,6 +189,8 @@ s32 Party_CheckItemLimit(s32 item) {
 #define ITEM_GIVEN_MODE 3
 #endif
 
+/// The event command "give item": gives item to the first party member with
+/// room for it and says so; with no room, the player chooses what to drop.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 saved = work->message;
@@ -344,6 +354,8 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   return answer;
 }
 
+/// Asks yes or no at the top of the screen, or at the bottom with atBottom set.
+/// Returns 0 for yes, 1 for no.
 s32 FieldYesNo_Ask(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 
 /// Gives the party item from actor: with no room it shows the item, says it
@@ -393,6 +405,8 @@ void Party_LearnAbility(s32 unit, s32 ability) {
   FieldMessage_ShowFar(MsgAbilityLearned, 3);
 }
 
+/// The event command "open screen": starts the event's screen transition and
+/// sets transitionActive.
 void Event_StartScreenTransition(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -400,6 +414,8 @@ void Event_StartScreenTransition(void) {
   event->transitionActive = 1;
 }
 
+/// The event command "close screen": finishes the event's screen transition
+/// and clears transitionActive.
 void Event_FinishScreenTransition(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 

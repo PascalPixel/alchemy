@@ -41,6 +41,9 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *);
 };
 
+/// Spawns 17 particles that spread from origin in a flat ring, their x velocity
+/// 1.5 times their z velocity, so the ring is wider than deep as the field is
+/// drawn.
 void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   struct EffectOptions options;
   s32 velocity[3];
@@ -121,6 +124,8 @@ void FieldEffect_CircleAnchor(struct OrbitEffect *effect) {
 #define Actor_SetPositionAndResetMotionFar                                     \
   ((s32 (*)(void *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
 
+/// Shrinks an event-selected Whirlwind target each frame; below half size,
+/// moves it to the origin, stops it and removes the update.
 void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
   s32 scale;
 
@@ -288,6 +293,9 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   object->age++;
 }
 
+/// Field effect sprite callback: the particle heads for a point 40 to 70 pixels
+/// from where it appeared, then for a point 4 pixels round 8 pixels above the
+/// Psynergy's position on screen, and is freed on arrival.
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   struct BattleFxScene *scene;
   struct EffectVector pos;
@@ -408,12 +416,16 @@ void FieldPsynergy_Halt(void) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
 
+/// Per-frame update of a paused actor: gives its sprite one of the table's
+/// eight params at random.
 void FieldPsynergy_UpdateHaltedActor(struct ActorView *object) {
   s8 *table = gBattleEffect_RandomChildValues;
   s32 index = Random16();
   Actor_SetSpriteColorModeFar(object, table[(u32)(index * 8) >> 16]);
 }
 
+/// Pauses actor id, keeping its per-frame update and, if it is animated, its
+/// first animation's param in gMainRoutineWork.
 void FieldPsynergy_HaltActor(s32 id) {
   struct ActorView *object;
   struct AnimationEntry *entry;
@@ -434,6 +446,7 @@ void FieldPsynergy_HaltActor(s32 id) {
   }
 }
 
+/// Resumes actor id with the update and param kept by FieldPsynergy_HaltActor.
 void FieldPsynergy_ResumeHaltedActor(s32 id) {
   struct ActorView *object = ObjectTable_Get(id);
 
@@ -468,6 +481,9 @@ static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
   return from + (to - from) * step / 10;
 }
 
+/// Catch: carries the hand (sprite 278) from 16 pixels above the caster to the
+/// goal in 10 steps, growing from a quarter to full size, presses down 20
+/// pixels moving the target to (-9, -9), rises 19.5 pixels and shrinks back.
 void FieldPsynergy_Catch(void) {
   struct FxScene13 *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainObject = scene->mainObject;
@@ -963,6 +979,8 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
                      source->z.fixed + ((Q16_ONE - scale) * 5) + 0x90000);
 }
 
+/// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
+/// down, 16 pixels in front of the actor and up to 5 pixels nearer.
 void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   struct Actor *source;
   s32 y;
@@ -1055,6 +1073,12 @@ void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject *caster) {
     caster->angle += 0xc00;
 }
 
+/// Avoid (or the Sacred Feather) has worn off, and the game says so.
+/// "Avoid's effects wore off." (or "Sacred Feather's ...").
+///
+/// Clears gMainRoutineWork.avoidDistance. Reached through
+/// FieldPsynergy_RunExtraHandler when the Psynergy request the leader's walking
+/// raises as Avoid runs out (field_sequence_walking.c) is handled.
 void FieldPsynergy_ShowAvoidWoreOff(void) {
   gMainRoutineWork.avoidDistance = 0;
   WorldMap_Freeze();

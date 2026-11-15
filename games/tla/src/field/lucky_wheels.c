@@ -111,6 +111,8 @@ void LuckyWheels_TransferCanvas(void) {
   }
 }
 
+/// Darkens the screen one step: lowers each channel of the 16 colours of BG
+/// palette 10 and of OBJ colours 1 to 239 by 1.
 void Palette_DarkenScreenStep(void) {
   u16 *color;
   s32 i;
@@ -1369,6 +1371,8 @@ void LuckyWheels_Run(void) {
   }
 }
 
+/// The LZ packer below: empties its 256 hash chains (one per byte value) and
+/// numbers its 1024 window nodes.
 void LzPack_ResetSlotBuckets(void) {
   s32 index;
   struct LzPackNode **bucket;
@@ -1383,6 +1387,7 @@ void LzPack_ResetSlotBuckets(void) {
   }
 }
 
+/// Adds window position index to the chain of the byte it holds.
 void LzPack_InsertSlotNode(s32 index) {
   struct LzPackWork *work = gLzPackWork;
 
@@ -1394,6 +1399,7 @@ void LzPack_InsertSlotNode(s32 index) {
     work->nodes[index].next->previous = &work->nodes[index];
 }
 
+/// Removes window position slot from its chain.
 void LzPack_RemoveSlotNode(s32 slot) {
   if (gLzPackWork->nodes[slot].previous != NULL) {
     if (gLzPackWork->nodes[slot].next != NULL)

@@ -127,6 +127,11 @@ struct BattleFxScene__motes;
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define gEffectWork Ram_HeapSlots->fieldEffectWork
 
+/// Field effect sprite callback of a Mars Djinni's sparks: the spark flies 120
+/// pixels up the screen (give or take 3/32 turn) from its origin at up to 5
+/// pixels a frame and starts over, until it stops where it arrives, hidden; 40
+/// frames later it swarms to points within 4 pixels of one 20 pixels over the
+/// leader, until it is freed once it arrives.
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct EffectOwner *owner;
   struct EffectVector position;

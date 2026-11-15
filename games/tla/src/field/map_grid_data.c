@@ -7,7 +7,7 @@
 #include "types.h"
 #include "module/field/field.h"
 #include "curve.h"
-#include "field/script.h"
+#include "field/script_operands.h"
 #include "objcmd.h"
 
 //--------------------------------------------------------------------------
@@ -104,11 +104,8 @@ const s32 gBattle_FormationPlacementScale[2] = {
 // table and the work value handlers SC_SET, SC_ADD and SC_CMP call.
 //--------------------------------------------------------------------------
 
-typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
-                            s32 value);
-
 s32 ActorScript_Wait();
-s32 Script_WaitForArrival();
+s32 ActorScript_WaitForArrival();
 s32 ActorScript_SetPositionAndResetMotion();
 s32 ActorScript_ResetToOrigin();
 s32 ActorScript_ApplyAbsolutePosition();
@@ -145,11 +142,11 @@ s32 Actor_MoveAsSandOnWorldMap();
 s32 Actor_UpdateHoverControl();
 s32 Actor_UpdateWalkingControl();
 s32 Field_CheckConfiguredKeysAndCount();
-s32 Actor_ReleaseAndClear();
+s32 ActorScript_Release();
 s32 ActorScript_SetAnimation();
 s32 ActorScript_Nop();
-s32 Script_PlaySound();
-s32 Script_CallWithOperand();
+s32 ActorScript_PlaySound();
+s32 ActorScript_PlaySoundInView();
 s32 ActorScript_InvokeCallback();
 s32 FieldCamera_FollowWatchedInBounds();
 s32 ActorScript_SetMoveTargetXZ();
@@ -253,7 +250,7 @@ const s32 gActorScript_EndScript[] = {
 /// The handler of each command. 0x31 to 0x35 repeat SC_END's.
 const ScriptCommandFn gActorScript_CommandTable[54] = {
     ActorScript_Wait,                         // 0x00 SC_WAIT
-    Script_WaitForArrival,                    // 0x01 SC_SYNC
+    ActorScript_WaitForArrival,               // 0x01 SC_SYNC
     ActorScript_SetPositionAndResetMotion,    // 0x02 SC_POSITION
     ActorScript_ResetToOrigin,                // 0x03 SC_CMD_03
     ActorScript_ApplyAbsolutePosition,        // 0x04 SC_MOVE
@@ -290,12 +287,12 @@ const ScriptCommandFn gActorScript_CommandTable[54] = {
     Actor_UpdateHoverControl,                 // 0x23 SC_HOVER
     Actor_UpdateWalkingControl,               // 0x24 SC_WALK
     Field_CheckConfiguredKeysAndCount,        // 0x25 SC_KEY_COUNT
-    Actor_ReleaseAndClear,                    // 0x26 SC_FREE
+    ActorScript_Release,                      // 0x26 SC_FREE
     ActorScript_SetAnimation,                 // 0x27 SC_ARG
     ActorScript_Nop,                          // 0x28 SC_NOP
-    Script_PlaySound,                         // 0x29 SC_SE
-    Script_CallWithOperand,                   // 0x2a SC_CALL_WITH
-    Script_JumpToNextOperandPointer,          // 0x2b SC_GOTO
+    ActorScript_PlaySound,                    // 0x29 SC_SE
+    ActorScript_PlaySoundInView,              // 0x2a SC_CALL_WITH
+    ActorScript_Goto,                         // 0x2b SC_GOTO
     ActorScript_HideSprites,                  // 0x2c SC_HIDE_SPRITES
     ActorScript_ShowSprite,                   // 0x2d SC_SHOW_SPRITE
     ActorScript_InvokeCallback,               // 0x2e SC_CALL

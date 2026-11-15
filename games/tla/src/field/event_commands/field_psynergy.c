@@ -341,6 +341,8 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   return object;
 }
 
+/// Sets the movement state and animation timer steps of every actor but the
+/// player's and except.
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action) {
   s16 *activeObjectId;

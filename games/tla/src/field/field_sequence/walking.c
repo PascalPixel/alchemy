@@ -17,42 +17,53 @@
 /// Unused: returns 0.
 UNUSED s32 FieldSequence_ReturnZero(void) { return 0; }
 
+/// Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
-  s16 value;
-  struct BattleEffectCounterState *state;
+  struct FieldWork *work = gFieldWork;
 
-  value = 0;
-  state = Ram_HeapSlots->fieldWork;
-  state->counters[0] = value;
-  state->counters[1] = 0;
-  state->counters[2] = 0;
-  state->counters[3] = 0;
-  state->counters[4] = 0;
-  state->counters[5] = 0;
-  state->counters[6] = 0;
-  state->counters[7] = 0;
-  state->counters[8] = 0;
-  state->counters[9] = 0;
-  state->counters[10] = 0;
-  state->counters[11] = 0;
+  work->stepTrigger = 0;
+  work->pushCell = 0;
+  work->exit = 0;
+  work->fieldMenu = 0;
+  work->aButton = 0;
+  work->pauseMenu = 0;
+  work->talk = 0;
+  work->examineCell = 0;
+  work->encounter = 0;
+  work->psynergy = 0;
+  work->item = 0;
+  work->raisedTrigger = 0;
 }
 
+/// Returns the sum of the field's twelve pending requests: non-zero while any
+/// request is pending.
 s32 Field_CountRequests(void) {
-  struct BattleEffectCounterState *state = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
 
-  return state->counters[0] + state->counters[1] + state->counters[2] +
-         state->counters[3] + state->counters[4] + state->counters[5] +
-         state->counters[6] + state->counters[7] + state->counters[8] +
-         state->counters[9] + state->counters[10] + state->counters[11];
+  // BUG: a sum can be 0 with requests pending. Field_UpdateWalking raises
+  // FIELD_RAISED_TRIGGER_PARTY_FELL (-1) on the frame a party member falls to
+  // poison, and the step trigger request is the cell's cell behavior, 1 on
+  // step trigger 1's cells; together they sum to 0, and both wait until
+  // another request breaks the tie. BUGFIX tests each request instead.
+#ifdef BUGFIX
+  return work->stepTrigger | work->pushCell | work->exit | work->fieldMenu |
+         work->aButton | work->pauseMenu | work->talk | work->examineCell |
+         work->encounter | work->psynergy | work->item | work->raisedTrigger;
+#else
+  return work->stepTrigger + work->pushCell + work->exit + work->fieldMenu +
+         work->aButton + work->pauseMenu + work->talk + work->examineCell +
+         work->encounter + work->psynergy + work->item + work->raisedTrigger;
+#endif
 }
 
-/// Sets event work byte 0xd39 when flag 0x8df is set and a party member
-/// knows Hover (ABILITY_HOVER); clears it otherwise. The world map's pad
-/// movement reads it.
+/// Sets the field work's hoverReady when the ship flies (FLAG_SHIP_FLIES) and a
+/// party member knows Hover; clears it otherwise. The world map's pad movement
+/// reads it.
 void Field_UpdateHoverReady(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (GameFlag_Get(FLAG_SHIP_FLIES) && Party_FindOwnerWithActionFar(153) != -1)
+  if (GameFlag_Get(FLAG_SHIP_FLIES) &&
+      Party_FindOwnerWithActionFar(ABILITY_HOVER) != -1)
     work->hoverReady = 1;
   else
     work->hoverReady = 0;
@@ -298,6 +309,8 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   }
 }
 
+/// Gives each character in the party amount PP (PP regenerates as the party
+/// walks).
 void Party_AddPp(s32 amount, s32 unused) {
   s32 targetCount = Party_CountMembersFar();
   s32 i;
@@ -306,6 +319,8 @@ void Party_AddPp(s32 amount, s32 unused) {
     Unit_AddPpFar(gMainRoutineWork.party[i], amount);
 }
 
+/// Changes each party member's HP by amount, or by that percentage of maximum
+/// HP when percent is set.
 void Party_AddHp(s32 amount, s32 scaled) {
   s32 count;
   s32 i;
@@ -338,6 +353,9 @@ void Party_AddHp(s32 amount, s32 scaled) {
   }
 }
 
+/// Hurts each poisoned character in the party: poison takes a twentieth of
+/// their maximum HP and deadly poison a tenth, rounded to the nearest and at
+/// least 1.
 s32 Party_ApplyPoisonDamage(void) {
   s32 result = 0;
   s32 count = Party_CountMembersFar();

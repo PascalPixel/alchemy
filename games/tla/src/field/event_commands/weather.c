@@ -151,7 +151,9 @@ void Weather_UpdateRain(void) {
 void PaletteFade_SetTarget(s32 value, s32 mode);
 #define PaletteFade_SetTarget PaletteFade_SetTarget
 
-// Lightning: selects the palette according to the remaining duration.
+/// Task for the storm: lightning flashes the BG colours three times, 5 frames
+/// apart, with thunder; while lightning is on, the next burst comes 50 to 550
+/// frames later. While game flag 358 is set no burst comes.
 void Weather_UpdateLightning(void) {
   struct FieldBlendWork *work = Ram_HeapSlots->fieldBlend;
   struct PaletteFade *target = Ram_HeapSlots->paletteFade;

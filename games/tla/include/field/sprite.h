@@ -140,7 +140,17 @@ enum ActorAnimation {
   ANIM_STAND = 1,
   ANIM_WALK = 2,
   ANIM_NOD = 3,
-  ANIM_SHAKE_HEAD = 4
+  ANIM_SHAKE_HEAD = 4,
+  /// The arrivals and leavings of the animated exits, each four frames of the
+  /// leader turning: an arrival grows from a small figure seen side-on to full
+  /// size facing the player, a leaving turns from his back to side-on as he
+  /// shrinks and is then hidden.
+  ///@{
+  ANIM_LEADER_ARRIVE_ALTERNATE = 23,
+  ANIM_LEADER_ARRIVE = 24,
+  ANIM_LEADER_LEAVE_ALTERNATE = 25,
+  ANIM_LEADER_LEAVE = 26
+  ///@}
 };
 
 #endif

@@ -352,6 +352,7 @@ void Weather_StartLightning(void) {
   Task_Add(Weather_UpdateLightning, TASK_PASS_VBLANK);
 }
 
+/// Stops the lightning: no flash for 0x7fff frames, and none after.
 void Weather_StopLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
@@ -359,6 +360,8 @@ void Weather_StopLightning(void) {
   state->enabled = 0;
 }
 
+/// One last burst of lightning, its first flash two frames from now (timer 12;
+/// Weather_UpdateLightning flashes at 11), then no more.
 void Weather_LastLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
@@ -366,6 +369,8 @@ void Weather_LastLightning(void) {
   state->enabled = 0;
 }
 
+/// Restarts the lightning: the next burst ends in 128 frames, and bursts
+/// repeat.
 void Weather_ResumeLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));

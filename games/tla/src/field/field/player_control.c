@@ -365,6 +365,8 @@ s32 Field_CheckConfiguredKeys(void) {
   return result;
 }
 
+/// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels) with
+/// radii radius_a and radius_b (pixels); -1 otherwise.
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   s32 dx = (*a++ - *b++) >> 16;
   s32 dy = (*a++ - *b++) >> 16;

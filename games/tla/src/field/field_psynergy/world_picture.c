@@ -92,6 +92,8 @@ void WorldPicture_Initialize(void) {
   Ram_WorldMapScroll[1] = screenY;
 }
 
+/// Closes the World Map screen: returns its VRAM blocks and removes the
+/// name window.
 void WorldPicture_Release(void) {
   VramCache_FreeEntry(gWorldMapWork.vramBlock);
   VramCache_FreeEntry(gWorldMapWork.windowSlot);

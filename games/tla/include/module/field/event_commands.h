@@ -119,13 +119,6 @@ struct BurstCell {
   s16 z;
 };
 
-struct CueObject {
-  u8 unk00[8];
-  s32 x;
-  s32 base;
-  s32 top;
-};
-
 struct ScaledSprite {
   u8 unk00[0xc];
   s32 scale;

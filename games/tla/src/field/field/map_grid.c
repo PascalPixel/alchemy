@@ -631,6 +631,9 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
   }
 }
 
+/// Copies the cell picture numbers of a rectangle of cells from (srcX, srcY) to
+/// (dstX, dstY), width by height cells, keeping each destination's attributes,
+/// and redraws the copied cells that are on screen.
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                         u32 width, u32 height) {
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
@@ -707,6 +710,10 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
   }
 }
 
+/// Plays a map edit (struct MapGridCellAnimationStep entries, ended by a source
+/// of MAPGRID_ANIMATION_STEPS_END): copies each entry's rectangle of cell
+/// picture numbers to (destinationX, destinationY) and waits its delay in
+/// frames.
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapCopyCommand *copyCommand = (struct MapCopyCommand *)steps;
   u32 sourceX = copyCommand->source;

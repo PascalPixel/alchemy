@@ -93,6 +93,7 @@ void Camera_ResetViewDefaults(void) {
   Projection_Set(param, ratio, 0x7fff0000);
 }
 
+/// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.
 s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1) {
   s16 left = arg0;
   s16 right = arg1;
@@ -111,10 +112,14 @@ s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1) {
   return (s16)(adjusted >> 8);
 }
 
+/// Unused: divides two 8.8 fixed-point values.
 s16 Math_ScaleByRatio(s16 arg0, s16 arg1) { return (arg0 << 8) / arg1; }
 
+/// Unused: the reciprocal of an 8.8 fixed-point value.
 s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
+/// Copies count RGB555 colours from source to destination with each channel
+/// multiplied by scale (16.16: 0 is black, Q16_ONE unchanged), for fades.
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;

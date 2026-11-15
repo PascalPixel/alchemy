@@ -47,6 +47,9 @@ found:
   return entry;
 }
 
+/// Returns whether an event condition holds: -1 always holds; a condition with
+/// CONDITION_FLAG_SET holds while that flag is set, any other while its flag is
+/// clear.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flag_state;
 

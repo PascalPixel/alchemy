@@ -786,7 +786,7 @@ SECTIONS
         "*/games/tla/src/graphics/summon/golden_dragon.o"(.rodata)
         "*/games/tla/src/graphics/summon/summon.o"(.rodata.c)
         "*/games/tla/src/graphics/battle_effects/battle_effects.o"(.rodata)
-        "*/games/tla/src/graphics/battle_effects/sheet_0d7.o"(.rodata)
+        "*/games/tla/src/graphics/battle_effects/music_note_sheet.o"(.rodata)
         "*/games/tla/src/graphics/battle_effects/battle_effects.o"(.rodata.a)
         "*/games/tla/src/graphics/battle_effects/corner_rune_a.o"(.rodata)
         "*/games/tla/src/graphics/battle_effects/battle_effects.o"(.rodata.b)

@@ -697,17 +697,6 @@ extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-/* VIEW(window): routine Portrait_Create as s32 Portrait_Create(s32 id, s32
- * kind, s32 slot, struct Window *window, s32 x, s32 y); window/screens has
- * struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
- * s32 arg3, s32 arg4, s32 arg5) {; tried as the definition's struct
- * WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side, s32
- * arg3, s32 arg4, s32 arg5), it does not compile in tla-ja (make modern):
- * games/tla/include/system/task.h:53:23: note: expected 'TaskFunc' {aka 'void
- * (*)(void)'} but argument is of type 'int'. */
-s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
-                            s32 x, s32 y) __asm__("Portrait_Create");
-#define Portrait_Create Portrait_Create__window
 
 /// Marks both portrait slots free (resource 999). Only the window system's
 /// setup calls it.
@@ -725,8 +714,6 @@ extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
-                            s32 x, s32 y) __asm__("Portrait_Create");
 
 /// Returns the portrait of a character (ids below 20) or another speaker's
 /// sprite (128 and up for those), or -1 when it has none.

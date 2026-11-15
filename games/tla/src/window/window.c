@@ -24,6 +24,7 @@
 
 #include "window_internal.h"
 #include "graphics/output.h"
+#include "window/screens.h"
 
 // Called before their definitions; the screens object calls them with no
 // declaration in scope.

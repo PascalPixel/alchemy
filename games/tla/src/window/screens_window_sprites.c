@@ -91,7 +91,7 @@ WindowSprite_CreateWithTransform(s32 icon, struct RenderInput *window, s32 x,
 /// one (resource id 999) when the side is 2 or more, and creates its output
 /// with that side's palette (14 + side).
 struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
-                                     s32 window, s32 x, s32 y) {
+                                     struct Window *window, s32 x, s32 y) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct WindowSprite *object = 0;
   s32 first;

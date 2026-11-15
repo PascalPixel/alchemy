@@ -214,7 +214,7 @@ s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();
 
 void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
-  s32 t3, v10, v6, v7, v8, v9;
+  s32 v10, v6, v7, v8, v9;
   struct Actor *v5;
   u8 *v11;
 
@@ -224,8 +224,7 @@ void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
   v8 = MapCell_Get(0, v9, v10);
   v6 = MapCell_Get(2, v9, v10);
   v11 = &v5->layer;
-  t3 = Map_GetTerrainHeight(v5->layer, v5->x.fixed, v5->z.fixed);
-  v7 = (t3 >> 19);
+  v7 = ((Map_GetTerrainHeight(v5->layer, v5->x.fixed, v5->z.fixed)) >> 19);
   if (Event_GetFlag(v5->timer)) {
     v6 &= -0xff01;
     v8 &= -129;
@@ -879,7 +878,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
-  leader->update = 0;
+  leader->update = NULL;
   FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SelectAnimation(leader, 27);
@@ -1749,7 +1748,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
     System_Wait(1);
   }
   FieldEvent_Wait(30);
-  leader->update = 0;
+  leader->update = NULL;
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 #ifdef UBFIX

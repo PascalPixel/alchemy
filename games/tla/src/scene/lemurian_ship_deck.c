@@ -1162,14 +1162,14 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     FieldEvent_SetMessageId(MsgLemurianShipDeckThenLetsWasteNoTime);
     FieldActor_WaitForMoveById(ACTOR_PIERS);
-    Actor_Get(ACTOR_PIERS)->update = 0;
+    Actor_Get(ACTOR_PIERS)->update = NULL;
     // "Then let's waste no time! We should set out for Madra at once!"
     Event_ShowMessage(ACTOR_PIERS, 0);
     Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
     Actor_Get(gMainRoutineWork.leaderActorId)->update =
         (void (*)(void))Actor_EmitSmoke;
     Actor_WalkByAndWait(ACTOR_FELIX, 0, 16);
-    Actor_Get(gMainRoutineWork.leaderActorId)->update = 0;
+    Actor_Get(gMainRoutineWork.leaderActorId)->update = NULL;
     Actor_Get(ACTOR_PIERS)->update = (void (*)(void))Actor_EmitSmoke;
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
     object = Actor_Get(ACTOR_FELIX);
@@ -1178,7 +1178,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
                            object->z.part[0].pixel);
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
-    Actor_Get(ACTOR_PIERS)->update = 0;
+    Actor_Get(ACTOR_PIERS)->update = NULL;
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PIERS), 1);
     Event_End();
   }

@@ -2120,7 +2120,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
 #if TLA_PATCH_1
   done:
 #endif
-    actor->update = 0;
+    actor->update = NULL;
     Actor_SetSpriteColorMode(actor, 0);
   }
   work->unk04 = 0;
@@ -2193,7 +2193,7 @@ s32 Fireball_CarryLeader(void) {
     System_Wait(1);
   }
   FieldEvent_Wait(30);
-  leader->update = 0;
+  leader->update = NULL;
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 #ifdef UBFIX
@@ -2888,7 +2888,7 @@ void PushTarget_Push(struct PushTarget target) {
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  leader->update = 0;
+  leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);

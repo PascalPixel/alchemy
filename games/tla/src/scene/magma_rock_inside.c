@@ -788,7 +788,7 @@ end:
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(flame);
-  flame->update = 0;
+  flame->update = NULL;
   Actor_Release(flame);
   id = 0;
 spark:
@@ -827,7 +827,7 @@ hit:
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(flame);
-  flame->update = 0;
+  flame->update = NULL;
   Actor_Release(flame);
   Event_SetFlag(FLAG_SCENE_TEMP_F0);
   MagmaRockInside_PlayBurst__s0e20((u16)id);
@@ -1306,7 +1306,7 @@ DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillar2, 11,
 
 void MagmaRockInside_SmokeEmber(struct Actor *object) {
   if (++object->timer > 64)
-    object->update = 0;
+    object->update = NULL;
   if ((object->timer & 1) == 0) {
     struct EffectConfig config;
 
@@ -2024,7 +2024,7 @@ column:
   Actor_SetScript(b, gMagmaRockInside_BlazeWatcherReturnScript);
   second->update = (void (*)(void))MagmaRockInside_TrailSparks;
   wait(120);
-  second->update = 0;
+  second->update = NULL;
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Scene_PlayMusic();
   wait(1);

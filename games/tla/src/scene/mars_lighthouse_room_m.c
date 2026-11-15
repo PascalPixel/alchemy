@@ -1665,7 +1665,7 @@ s32 Fireball_CarryLeader(void) {
     System_Wait(1);
   }
   FieldEvent_Wait(30);
-  leader->update = 0;
+  leader->update = NULL;
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 #ifdef UBFIX
